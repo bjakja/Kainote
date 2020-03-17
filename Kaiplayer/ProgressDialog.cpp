@@ -30,6 +30,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	RegisterWindowMessage(L"TaskbarButtonCreated");
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetFont(*Options.GetFont());
 	taskbar = NULL;
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	text = new KaiStaticText(this, -1, title);

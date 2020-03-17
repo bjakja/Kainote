@@ -144,7 +144,7 @@ public:
 	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
 	void CloseAudio();
 	TextEditor *GetEditor();
-
+	bool SetFont(const wxFont &font);
 
 	wxBoxSizer* BoxSizer1;
 

@@ -28,8 +28,8 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 	DialogSizer *sizer2 = new DialogSizer(wxVERTICAL);
 	KaiStaticText *txt = new KaiStaticText(this, -1, msg);
 	MappedButton *btn = NULL;
-	wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
-	SetFont(thisFont);
+	//wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
+	//SetFont(thisFont);
 	int whichFocus = 0;
 	bool setFocus = true;
 	if (elems & wxOK){

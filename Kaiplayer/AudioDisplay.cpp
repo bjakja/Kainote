@@ -75,7 +75,7 @@ int64_t abs64(int64_t input) {
 ///////////////
 // Constructor
 AudioDisplay::AudioDisplay(wxWindow *parent)
-	: wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 100), wxBORDER_SIMPLE | wxWANTS_CHARS, _T("Audio Display"))
+	: wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 100), wxWANTS_CHARS, _T("Audio Display"))
 	, spectrumSurface(NULL)
 	, d3dDevice(NULL)
 	, d3dObject(NULL)

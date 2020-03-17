@@ -782,9 +782,11 @@ D3DXVECTOR2 DrawingAndClip::CalcWH()
 {
 	if (alignment == 7 || Points.size() < 1){ return D3DXVECTOR2(0, 0); }
 	float offx = 0, offy = 0;
+	//it's probably unused cause calculations is wrong
+	//pixel size in place point size and no float calculation
 	if (textwithclip != L""){
 		Styles *textstyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
-		wxFont stylefont(wxAtoi(textstyle->Fontsize), wxFONTFAMILY_SWISS, 
+		wxFont stylefont(textstyle->GetFontSizeDouble(), wxFONTFAMILY_SWISS, 
 			(textstyle->Italic) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL,
 			(textstyle->Bold) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL, 
 			textstyle->Underline, textstyle->Fontname);//, textstyle->Encoding

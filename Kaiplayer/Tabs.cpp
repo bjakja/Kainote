@@ -31,7 +31,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	block = split = onx = leftArrowHover = rightArrowHover = newTabHover = false;
 	allTabsVisible = arrow = true;
 	sline = NULL;
-	font = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont(-1);//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	sthis = this;
 	int fx, fy;
 	GetTextExtent(L"X", &fx, &fy, 0, 0, &font);
@@ -1345,6 +1345,18 @@ void Notebook::RefreshVideo()
 		}
 	}
 
+}
+
+bool Notebook::SetFont(const wxFont &_font)
+{
+	for (auto &page : Pages){
+		page->SetFont(_font);
+	}
+
+	//wxWindow::SetFont(_font);
+	font = _font;
+	Refresh(false);
+	return true;
 }
 
 

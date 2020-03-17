@@ -341,7 +341,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
-		wxFlexGridSizer *MainSizer2 = new wxFlexGridSizer(8, 2, wxSize(5, 5));
+		wxFlexGridSizer *MainSizer2 = new wxFlexGridSizer(9, 2, wxSize(5, 5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
 		NumCtrl *gridSaveAfter = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy edycji"));
@@ -386,6 +386,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(optf, GridFontName);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 3, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
 		MainSizer2->Add(optf, 1, wxEXPAND);
+
+		FontPickerButton *programFont = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(PROGRAM_FONT_SIZE), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(PROGRAM_FONT)));
+		ConOpt(programFont, PROGRAM_FONT);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka programu:")), 3, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
+		MainSizer2->Add(programFont, 1, wxEXPAND);
 
 		KaiStaticBoxSizer *alm = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _("Sposób wczytywania skryptów autoload"));
 		wxString methods[] = { _("Przy starcie programu asynchronicznie"), _("Przy starcie programu"), _("Przy otwarciu menu asynchronicznie"), _("Przy otwarciu menu") };
@@ -1035,24 +1040,42 @@ void OptionsDialog::SetOptions(bool saveall)
 			wxString fontname = font.GetFaceName();
 			int fontsize = font.GetPointSize();
 			if (Options.GetString(OB.option) != fontname){
-				Options.SetString(OB.option, fontname); fontmod = true;
+				Options.SetString(OB.option, fontname); 
+				fontmod = true;
 			}
-			if (Options.GetInt(GridFontSize) != fontsize){
-				Options.SetInt(GridFontSize, fontsize); fontmod = true;
+			CONFIG fontSizeOption = (OB.option == GridFontName) ? GridFontSize : PROGRAM_FONT_SIZE;
+			if (Options.GetInt(fontSizeOption) != fontsize){
+				Options.SetInt(fontSizeOption, fontsize); 
+				fontmod = true;
+			}
+			if (OB.option == PROGRAM_FONT && fontmod){
+				Options.FontsClear();
+				//Kai->SetFont(*Options.GetFont());
+				//Kai->Layout();
+				wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
+				while (node)
+				{
+					wxWindow* win = node->GetData();
+					// do something with "win"
+					win->SetFont(*Options.GetFont());
+					win->Layout();
+					node = node->GetNext();
+				}
+				
 			}
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
 			KaiChoice *cbx = (KaiChoice*)OB.ctrl;
 			if (cbx->GetWindowStyle() & KAI_COMBO_BOX){
-				wxString kol = cbx->GetValue();
-				if (Options.GetString(OB.option) != kol){
-					Options.SetString(OB.option, kol);
+				wxString color = cbx->GetValue();
+				if (Options.GetString(OB.option) != color){
+					Options.SetString(OB.option, color);
 				}
 			}
 			else if (cbx->GetId() != 10000){
-				wxString kol = cbx->GetString(cbx->GetSelection());
-				if (Options.GetString(OB.option) != kol){
-					Options.SetString(OB.option, kol);
+				wxString color = cbx->GetString(cbx->GetSelection());
+				if (Options.GetString(OB.option) != color){
+					Options.SetString(OB.option, color);
 					if (cbx->GetId() == 10001){
 						SpellChecker::Destroy();
 						Kai->Tabs->GetTab()->Edit->ClearErrs();
@@ -1149,10 +1172,10 @@ void OptionsDialog::SetOptions(bool saveall)
 	}
 	if (colmod){
 		Kai->GetTab()->Grid->Refresh(false);
-		if (Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours(); }
+		//if (Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours(); }
 		if (Kai->Tabs->split){
 			Kai->Tabs->GetSecondPage()->Grid->Refresh(false);
-			if (Kai->Tabs->GetSecondPage()->Edit->ABox){ Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours(); }
+			//if (Kai->Tabs->GetSecondPage()->Edit->ABox){ Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours(); }
 		}
 	}
 	if (audio && Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeOptions(); }

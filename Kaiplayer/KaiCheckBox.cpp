@@ -47,7 +47,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	label = _label;
 	label.Replace(L"&", L"");
 	wxSize newSize = size;
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	int fullw = 0;
 	wxArrayString lines = wxStringTokenize(label, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (size_t i = 0; i < lines.size(); i++){
@@ -189,4 +189,25 @@ bool KaiCheckBox::Enable(bool enable)
 	return true;
 }
 
+bool KaiCheckBox::SetFont(const wxFont &font)
+{
+	wxSize newSize = GetMinSize();
+	wxWindow::SetFont(font);
+	int fullw = 0;
+	fontHeight = 0;
+	wxArrayString lines = wxStringTokenize(label, L"\n", wxTOKEN_RET_EMPTY_ALL);
+	for (size_t i = 0; i < lines.size(); i++){
+		int fw, fh;
+		GetTextExtent((lines[i].empty()) ? L"|" : lines[i], &fw, &fh);
+		fontHeight += fh;
+		if (fullw < fw){ fullw = fw; }
+	}
+	newSize.x = fullw + 20;
+	newSize.y = fontHeight + 2;
+	if (fontHeight < 17){ newSize.y = 17; }
+
+	SetMinSize(newSize);
+	Refresh(false);
+	return true;
+}
 wxIMPLEMENT_ABSTRACT_CLASS(KaiCheckBox, wxWindow);

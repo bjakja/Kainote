@@ -21,12 +21,13 @@ class KaiStaticBox : public wxStaticBox
 {
 public:
 	KaiStaticBox(wxWindow *parent, const wxString& label);
+	KaiStaticBox(wxWindow *parent, int numLabels, wxString* labels);
 	virtual ~KaiStaticBox(){};
 	wxSize CalcBorders();
 	bool Enable(bool enable = true);
 private:
 	void PaintForeground(wxDC& dc, const RECT& rc);
-	wxString label;
+	wxArrayString labels;
 	int heightText;
 };
 
@@ -34,6 +35,7 @@ class KaiStaticBoxSizer : public wxBoxSizer
 {
 public:
 	KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label);
+	KaiStaticBoxSizer(int orient, wxWindow *parent, int n, wxString * _labels);
 	virtual ~KaiStaticBoxSizer();
 	void ShowItems( bool show );
 	bool Enable(bool enable);

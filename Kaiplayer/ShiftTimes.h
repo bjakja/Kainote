@@ -82,6 +82,7 @@ public:
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetForegroundColour(const wxColour &col);
+	bool SetFont(const wxFont &font);
 
 private:
 

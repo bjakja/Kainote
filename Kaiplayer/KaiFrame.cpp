@@ -70,7 +70,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 
 	MARGINS borderless = { 0, 0, 0, 0 };
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
-	SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
+	wxWindow::SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -521,7 +521,21 @@ bool KaiFrame::SetFont(const wxFont &font)
 	int fw, fh;
 	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
 	frameTopBorder = (fh + 10 < 26) ? 26 : fh + 10;
-	return wxWindow::SetFont(font);
+	wxWindow::SetFont(font);
+
+	const wxWindowList& siblings = GetChildren();
+	wxWindowList::compatibility_iterator nodeThis = siblings.GetFirst();
+	if (nodeThis){
+		for (wxWindowList::compatibility_iterator nodeAfter = nodeThis;
+			nodeAfter;
+			nodeAfter = nodeAfter->GetNext()){
+
+			wxWindow *win = nodeAfter->GetData();
+			win->SetFont(font);
+		}
+		Refresh(false);
+	}
+	return true;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);

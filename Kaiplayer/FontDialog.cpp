@@ -34,7 +34,7 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 		Refresh(false);
 	});
 
-	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont();//wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 
 	wxClientDC dc(this);
 	dc.SetFont(font);
@@ -329,8 +329,9 @@ END_EVENT_TABLE()
 
 FontDialog *FontDialog::FDialog = NULL;
 
-FontDialog::FontDialog(wxWindow *parent, Styles *acst)
-	:KaiDialog(parent, -1, _("Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
+	: KaiDialog(parent, -1, _("Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	, pointToPixel(changePointToPixel)
 {
 	editedStyle = acst;
 	SetForegroundColour(Options.GetColour(WindowText));
@@ -435,7 +436,7 @@ void FontDialog::SetStyle()
 {
 	FontName->SetValue(editedStyle->Fontname);
 	Fonts->SetSelectionByName(editedStyle->Fontname);
-	FontSize->SetValue(editedStyle->Fontsize);
+	FontSize->SetString(editedStyle->Fontsize);
 	Bold->SetValue(editedStyle->Bold);
 	Italic->SetValue(editedStyle->Italic);
 	Underl->SetValue(editedStyle->Underline);
@@ -484,20 +485,18 @@ Styles * FontDialog::GetFont()
 	resultStyle->Underline = Underl->GetValue();
 	resultStyle->StrikeOut = Strike->GetValue();
 	resultStyle->Fontname = Fonts->GetString(Fonts->GetSelection());
-	wxString fontSize;
-	fontSize << FontSize->GetValue();
-	if (fontSize != L""){ resultStyle->Fontsize = fontSize; }
+	resultStyle->Fontsize = FontSize->GetString(); 
 	return resultStyle;
 }
 
-FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle)
+FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle, bool changePointToPixel)
 {
 	if (FDialog && FDialog->GetParent() != parent){
 		FDialog->Destroy();
 		FDialog = NULL;
 	}
 	if (!FDialog)
-		FDialog = new FontDialog(parent, actualStyle);
+		FDialog = new FontDialog(parent, actualStyle, changePointToPixel);
 	else{
 		if (FDialog->editedStyle){
 			delete FDialog->editedStyle;
@@ -527,8 +526,10 @@ void FontDialog::OnUpdatePreview(wxCommandEvent& event)
 
 void FontDialog::UpdatePreview()
 {
-	Styles *styl = GetFont();
-	Preview->DrawPreview(styl);
+	Styles *style = GetFont();
+	wxFont tmpfont(style->GetFontSizeDouble(), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, style->Fontname);
+	style->SetFontSizeDouble(tmpfont.GetPixelSize().GetHeight());
+	Preview->DrawPreview(style);
 	fontChangedTimer.Start(200, true);
 }
 
@@ -583,12 +584,12 @@ void FontPickerButton::OnClick(wxCommandEvent &evt)
 	wxFont font = GetFont();
 	Styles *mstyle = new Styles();
 	mstyle->Fontname = font.GetFaceName();
-	mstyle->Fontsize = std::to_wstring(font.GetPointSize());
+	mstyle->SetFontSizeDouble(font.GetPointSize());
 	FontDialog * FD = FontDialog::Get(this, mstyle);
 	if (FD->ShowModal() == wxID_OK){
 		Styles *retstyle = FD->GetFont();
 		font.SetFaceName(retstyle->Fontname);
-		font.SetPointSize(wxAtoi(retstyle->Fontsize));
+		font.SetPointSize(MID(retstyle->GetFontSizeDouble(), 8, 20));
 		ChangeFont(font);
 		//delete retstyle;
 	}

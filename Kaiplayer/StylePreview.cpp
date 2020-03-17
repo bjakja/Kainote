@@ -92,8 +92,8 @@ void StylePreview::DrawPreview(Styles *style)
 		ch = ch1;
 		for (int j = 0; j < width; j++)
 		{
-			int k = ((i*width) + j) * 4;
-			if ((j % 10) == 0 && j>0){ ch = !ch; }
+			int k = ((i * width) + j) * 4;
+			if ((j % 10) == 0 && j > 0){ ch = !ch; }
 			data[k] = (ch) ? b : b1;
 			data[k + 1] = (ch) ? g : g1;
 			data[k + 2] = (ch) ? r : r1;
@@ -162,6 +162,13 @@ void StylePreview::SubsText(wxString *text)
 		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(PreviewText) << L"\r\n"
 		/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
 
+	//previewStyle->Alignment = "5";
+	//wchar_t bom = 0xFEFF;
+	//*text << wxString(bom);
+	//*text << "[Script Info]\r\nPlayResX: " << width << "\r\nPlayResY: " << height << "\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
+	//	<< "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
+	//	<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText) <<
+	//	"\r\n"/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
 }
 
 void StylePreview::OnMouseEvent(wxMouseEvent& event)

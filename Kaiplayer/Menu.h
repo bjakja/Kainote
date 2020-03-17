@@ -249,6 +249,7 @@ public:
 	MenuItem *FindItem(int id);
 	void Enable(int id, bool enable = true);
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
+	bool SetFont(const wxFont &font);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnCharHook(wxKeyEvent &evt);

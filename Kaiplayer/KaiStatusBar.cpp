@@ -213,3 +213,10 @@ void KaiStatusBar::SetLabelBackgroundColour(size_t field, COLOR backgroundColour
 	background[field] = backgroundColour;
 	Refresh(false);
 }
+
+bool KaiStatusBar::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	Refresh(false);
+	return true;
+}

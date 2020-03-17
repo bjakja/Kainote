@@ -85,6 +85,7 @@ public:
 		else{ return wxWindow::SetCursor(cursor); } 
 	};
 	bool SetBackgroundColour(const wxColour &col);
+	bool SetFont(const wxFont &font);
 	float coeffX, coeffY;
 	wxSize lastSize;
 	Fullscreen *TD;

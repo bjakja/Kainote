@@ -20,11 +20,12 @@
 
 class Page{
 public:
-	Page(wxWindow *_page, const wxString &_name, int _whichSupbage=0){
+	Page(wxWindow *_page, const wxString &_name, int _whichSupbage = 0){
 		page = _page; name = _name; whichSubpage = _whichSupbage;
 		collapsed = false; canCollapse = false;
 	}
-	~Page(){page->Destroy();}
+	~Page(){ page->Destroy(); }
+	bool SetFont(const wxFont &font);
 	wxWindow *page;
 	wxString name;
 	bool collapsed;
@@ -36,7 +37,7 @@ class KaiTreebook :public wxWindow
 {
 public:
 	KaiTreebook(wxWindow *parent, int id,
-        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	virtual ~KaiTreebook();
 	void AddPage(wxWindow *page, const wxString &name, bool selected = false);
 	void AddSubPage(wxWindow *page, const wxString &name, bool nextTree = false, bool selected = false);
@@ -46,10 +47,11 @@ public:
 	void ChangeSelection(int sel);
 	void RefreshTree();
 	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
+	bool SetFont(const wxFont &font);
 private:
 	void OnKeyPress(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
-    void OnSize(wxSizeEvent& event);
+	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void ChangePage(int page);
 	void CalcWidth();
@@ -58,6 +60,7 @@ private:
 	wxBitmap *bmp;
 	int treeWidth;
 	int selection;
+	int textHeight = 12;
 	DECLARE_EVENT_TABLE()
 };
 

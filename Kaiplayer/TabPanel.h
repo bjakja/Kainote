@@ -43,6 +43,7 @@ public:
 
 	void SetAccels(bool onlyGridAudio = false);
 	void SetVideoWindowSizes(int w, int h);
+	bool SetFont(const wxFont &font);
 
 	bool editor;
 	bool audioHotkeysLoaded = false;

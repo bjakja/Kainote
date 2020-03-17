@@ -30,6 +30,7 @@ public:
 	void SetLabelTextColour(size_t field, COLOR textColor);
 	void SetLabelBackgroundColour(size_t field, COLOR backgroundColor);
 	void SetTooltips(wxString *tips, int count);
+	bool SetFont(const wxFont &font);
 
 private:
 	void OnSize(wxSizeEvent& event);

@@ -41,8 +41,8 @@ inline void KaiChoice::CalcMaxWidth(wxSize *result, bool changex, bool changey){
 		if (tx > result->x && changex){ result->x = tx; }
 		else if (!changex){ break; }
 	}
-	if (changex){ 
-		result->x += 26; 
+	if (changex){
+		result->x += 26;
 		if (result->x > 300){ result->x = 300; }
 		if (isize < 1)
 			result->x += 100;
@@ -72,7 +72,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	list = new wxArrayString(n, choices);
 	disabled = new std::map<int, bool>();
 
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	wxSize newSize = size;
 	if (size.x < 1 || size.y < 1){
 		CalcMaxWidth(&newSize, size.x < 1, size.y < 1);
@@ -105,7 +105,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	disabled = new std::map<int, bool>();
 
 
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	wxSize newSize = size;
 	if (size.x < 1 || size.y < 1){
 		CalcMaxWidth(&newSize, size.x < 1, size.y < 1);
@@ -138,7 +138,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	disabled = new std::map<int, bool>();
 
 
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	wxSize newSize = size;
 	if (size.x < 1 || size.y < 1){
 		CalcMaxWidth(&newSize, size.x < 1, size.y < 1);
@@ -149,7 +149,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		choice = FindString(comboBoxText);
 		return;
 	}
-	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1), 
+	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1),
 		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE, validator);
 	choiceText->Bind(wxEVT_ENTER_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
@@ -212,7 +212,7 @@ KaiChoice::~KaiChoice()
 void KaiChoice::SetToolTip(const wxString &tooltip)
 {
 	if (tooltip != L""){ toolTip = tooltip; }
-	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ? 
+	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ?
 		toolTip + L"\n" + GetString(choice) : tooltip;
 	if (tt.length() > 1000){
 		tt = tt.Mid(0, 1000) + L"...";
@@ -396,7 +396,7 @@ void KaiChoice::OnKeyHook(wxKeyEvent &event)
 void KaiChoice::OnArrow(wxCommandEvent &evt)
 {
 	int id = evt.GetId();
-	
+
 	bool up = id == 7865;
 	if (choice <= 0 && up || choice >= (int)list->size() - 1 && !up)return;
 	if (choiceText){
@@ -560,13 +560,13 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool setT
 		}
 	}
 
-	
+
 done:
 	if (scrollTo < 0)
 		scrollTo = lastMatch;
 
 	if (itemList){
-		itemList->sel = (selectOnList) ? scrollTo : - 1;
+		itemList->sel = (selectOnList) ? scrollTo : -1;
 		itemList->ScrollTo(scrollTo);
 	}
 	if (setText){
@@ -652,6 +652,17 @@ void KaiChoice::SetFocus()
 void KaiChoice::SetMaxLength(int maxLen)
 {
 	if (choiceText){ choiceText->SetMaxLength(maxLen); }
+}
+
+bool KaiChoice::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	wxSize newSize = GetMinSize();
+	CalcMaxWidth(&newSize, false, true);
+
+	SetMinSize(newSize);
+	Refresh(false);
+	return true;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);
@@ -835,11 +846,11 @@ void PopupList::OnPaint(wxPaintEvent &event)
 
 void PopupList::SetSelection(int pos){
 	sel = pos;
-	if (sel < scPos && sel != -1){ 
-		scPos = sel; 
+	if (sel < scPos && sel != -1){
+		scPos = sel;
 	}
-	else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){ 
-		scPos = sel - maxVisible + 1; 
+	else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){
+		scPos = sel - maxVisible + 1;
 	}
 	Refresh(false);
 };
@@ -869,31 +880,31 @@ void PopupList::OnKeyPress(wxKeyEvent &event)
 		EndPartialModal(sel);
 		wxCommandEvent evt((HasFlag(KAI_COMBO_BOX)) ? wxEVT_COMMAND_COMBOBOX_SELECTED : wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		this->ProcessEvent(evt);
-	}
-	else if (event.GetKeyCode() == WXK_ESCAPE){
+		}
+		else if (event.GetKeyCode() == WXK_ESCAPE){
 		EndPartialModal(-3);
 		((KaiChoice*)Parent)->listIsShown = false;
-	}
-	else */if (event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN){
-		int step = (event.GetKeyCode() == WXK_DOWN) ? 1 : -1;
-		sel += step;
-		if (sel < scPos && sel != -1){
-			scPos = sel;
 		}
-		else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){
-			scPos = sel - maxVisible + 1;
+		else */if (event.GetKeyCode() == WXK_UP || event.GetKeyCode() == WXK_DOWN){
+			int step = (event.GetKeyCode() == WXK_DOWN) ? 1 : -1;
+			sel += step;
+			if (sel < scPos && sel != -1){
+				scPos = sel;
+			}
+			else if (sel >= scPos + maxVisible && (sel - maxVisible + 1) >= 0){
+				scPos = sel - maxVisible + 1;
+			}
+			if (sel >= (int)itemsList->size()){
+				sel = 0;
+				scPos = 0;
+			}
+			else if (sel < 0){
+				sel = itemsList->size() - 1;
+				scPos = sel;
+			}
+			((KaiChoice*)Parent)->SelectChoice(sel, true, false);
+			Refresh(false);
 		}
-		if (sel >= (int)itemsList->size()){
-			sel = 0;
-			scPos = 0;
-		}
-		else if (sel < 0){
-			sel = itemsList->size() - 1;
-			scPos = sel;
-		}
-		((KaiChoice*)Parent)->SelectChoice(sel, true, false);
-		Refresh(false);
-	}
 }
 
 

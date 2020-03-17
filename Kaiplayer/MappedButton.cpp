@@ -58,7 +58,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	if (name.IsEmpty()){ name = AddText(id); }
 	name.Replace(L"&", L"");
 	wxSize newSize = size;
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
@@ -115,7 +115,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	if (name.IsEmpty()){ name = AddText(id); }
 	name.Replace(L"&", L"");
 	wxSize newSize = size;
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	bool makeSquare = (style & MAKE_SQUARE_BUTTON) != 0;
@@ -216,7 +216,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	//wxAcceleratorTable caccel(1, centries);
 	//SetAcceleratorTable(caccel);
 	if (tooltip != L""){ SetToolTip(tooltip); }
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	//SetForegroundColour(parent->GetForegroundColour());
 }
 
@@ -486,6 +486,21 @@ bool MappedButton::Enable(bool enable)
 	return true;
 }
 
+bool MappedButton::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	int fw;
+	CalculateSize(&fw, &textHeight);
+	wxSize minSize = GetMinSize();
+	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
+		minSize.x = fw + 16;
+		minSize.y = textHeight + 10;
+		SetMinSize(minSize);
+	}
+	Refresh(false);
+	return true;
+}
+
 ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
 	const wxPoint& pos, const wxSize& size, long style)
 	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
@@ -499,7 +514,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	if (name.IsEmpty()){ name = AddText(id); }
 	name.Replace(L"&", L"");
 	wxSize newSize = size;
-	SetFont(parent->GetFont());
+	wxWindow::SetFont(parent->GetFont());
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	if (style & MAKE_SQUARE_BUTTON){
@@ -704,6 +719,21 @@ void ToggleButton::CalculateSize(int *w, int *h)
 		*w = resultw;
 	if (h)
 		*h = resulth;
+}
+
+bool ToggleButton::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	int fw;
+	CalculateSize(&fw, &textHeight);
+	wxSize minSize = GetMinSize();
+	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
+		minSize.x = fw + 16;
+		minSize.y = textHeight + 10;
+		SetMinSize(minSize);
+	}
+	Refresh(false);
+	return true;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(MappedButton, wxWindow);

@@ -45,7 +45,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, h));
-	tdc.SetFont(wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
+	tdc.SetFont(*Options.GetFont()/*wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma")*/);
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));

@@ -22,23 +22,24 @@
 class KaiStaticText : public wxWindow
 {
 public:
-	KaiStaticText(wxWindow *parent, int id, const wxString& text, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxALIGN_LEFT|wxALIGN_CENTER_VERTICAL);
+	KaiStaticText(wxWindow *parent, int id, const wxString& text, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 	void CalculateSize(int *w, int *h);
 	virtual ~KaiStaticText(){};
 
 	void OnPaint(wxPaintEvent &evt);
 	void SetLabelText(const wxString &_text);
-	bool SetForegroundColour(COLOR txtColor){textColour=txtColor, Refresh(false);return false;}
-	wxString GetLabelText() const {return text;}
-	
+	bool SetForegroundColour(COLOR txtColor){ textColour = txtColor, Refresh(false); return false; }
+	wxString GetLabelText() const { return text; }
+	bool SetFont(const wxFont &font);
+
 private:
-	bool AcceptsFocus( ) const{return false;}
-	bool AcceptsFocusFromKeyboard () const {return false;}
-	bool AcceptsFocusRecursively () const{return false;}
+	bool AcceptsFocus() const{ return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const{ return false; }
 	void OnScroll(wxScrollEvent& event);
 	void OnMouseScroll(wxMouseEvent &evt);
-	//void OnSize(wxSizeEvent& event);
-	
+	void OnSize(wxSizeEvent& event);
+
 	int textHeight;
 	int scPos;
 	wxSize originalSize;

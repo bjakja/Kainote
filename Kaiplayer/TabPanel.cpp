@@ -220,6 +220,14 @@ bool TabPanel::Hide()
 //	return ret;
 //}
 
+bool TabPanel::SetFont(const wxFont &font)
+{
+	Video->SetFont(font);
+	Edit->SetFont(font);
+	ShiftTimes->SetFont(font);
+
+	return wxWindow::SetFont(font);
+}
 BEGIN_EVENT_TABLE(TabPanel, wxWindow)
 //EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)
 EVT_CHILD_FOCUS(TabPanel::OnFocus)

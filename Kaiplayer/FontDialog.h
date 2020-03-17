@@ -70,9 +70,9 @@ public:
 	void GetStyles(Styles **inputStyle, Styles **outputStyle);
 	Styles *GetFont();
 	// class gets style and release it later
-	static FontDialog *Get(wxWindow *parent, Styles *acstyl);
+	static FontDialog *Get(wxWindow *parent, Styles *acstyl, bool changePointToPixel = false);
 private:
-	FontDialog(wxWindow *parent, Styles *acstyl);
+	FontDialog(wxWindow *parent, Styles *acstyl, bool changePointToPixel);
 	FontDialog(const FontDialog & copy) = delete;
 	void SetStyle();
 	FontList *Fonts;
@@ -88,6 +88,7 @@ private:
 	Styles *editedStyle = NULL;
 	Styles *resultStyle = NULL;
 	wxTimer fontChangedTimer;
+	bool pointToPixel = false;
 
 	void OnUpdatePreview(wxCommandEvent& event);
 	void OnFontChanged(wxCommandEvent& event);

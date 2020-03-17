@@ -238,8 +238,8 @@ void ShiftTimesWindow::SaveOptions()
 
 void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 {
-	wxFont thisFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
-	panel->SetFont(thisFont);
+	//wxFont thisFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	panel->SetFont(*Options.GetFont(-2)/*thisFont*/);
 	panel->SetForegroundColour(Options.GetColour(WindowText));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 	Main = new wxBoxSizer(wxVERTICAL);
@@ -956,6 +956,23 @@ void ShiftTimesWindow::OnEdition(wxCommandEvent& event)
 		return;
 
 	ProfilesList->SetSelection(-1);
+}
+
+bool ShiftTimesWindow::SetFont(const wxFont &font)
+{
+	wxFont stFont = font;
+	stFont.SetPointSize(font.GetPointSize() - 2);
+
+	const wxWindowList& siblings = panel->GetChildren();
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(stFont);
+	}
+
+	return wxWindow::SetFont(stFont);
 }
 
 BEGIN_EVENT_TABLE(ShiftTimesWindow, wxWindow)

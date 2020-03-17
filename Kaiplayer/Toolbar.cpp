@@ -400,6 +400,13 @@ void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 
 }
 
+bool KaiToolbar::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	//write rest when add custom size
+	return true;
+}
+
 BEGIN_EVENT_TABLE(KaiToolbar, wxWindow)
 EVT_MOUSE_EVENTS(KaiToolbar::OnMouseEvent)
 EVT_PAINT(KaiToolbar::OnPaint)
@@ -603,6 +610,8 @@ void ToolbarMenu::OnScroll(wxScrollEvent& event)
 		Refresh(false);
 	}
 }
+
+
 
 BEGIN_EVENT_TABLE(ToolbarMenu, wxDialog)
 EVT_MOUSE_EVENTS(ToolbarMenu::OnMouseEvent)

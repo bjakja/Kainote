@@ -127,7 +127,7 @@ namespace Auto{
 
 			lua_pushstring(L, astyle->Fontname.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "fontname");
-			lua_pushnumber(L, wxAtoi(astyle->Fontsize));
+			lua_pushnumber(L, astyle->GetFontSizeDouble());
 			lua_setfield(L, -2, "fontsize");
 
 			lua_pushstring(L, astyle->PrimaryColour.GetAss(true).mb_str(wxConvUTF8).data());
@@ -381,8 +381,7 @@ namespace Auto{
 				e->astyle = new Styles();
 			e->astyle->Name = name;
 			e->astyle->Fontname = fontname;
-			e->astyle->Fontsize = L"";
-			e->astyle->Fontsize << fontsize;
+			e->astyle->SetFontSizeDouble(fontsize);
 			e->astyle->PrimaryColour = color1;
 			e->astyle->SecondaryColour = color2;
 			e->astyle->OutlineColour = color3;

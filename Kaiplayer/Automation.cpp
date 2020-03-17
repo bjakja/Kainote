@@ -247,7 +247,7 @@ namespace Auto{
 		//if(text==""){return 0;}
 
 		double width = 0, height = 0, descent = 0, extlead = 0;
-		double fontsize = wxAtoi(st->Fontsize) * 32;
+		double fontsize = st->GetFontSizeDouble() * 32;
 		double spacing = wxAtoi(st->Spacing) * 32;
 
 

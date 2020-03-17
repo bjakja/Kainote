@@ -836,8 +836,8 @@ MenuBar::MenuBar(wxWindow *_parent)
 	, altDown(false)
 {
 	int x = 0, y = 0;
-	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
-	SetFont(font);
+	font = *Options.GetFont();//wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
+	wxWindow::SetFont(font);
 	GetTextExtent(L"#TWFfGHj", &x, &y);
 	y += 6;
 	if (y > height){
@@ -1286,6 +1286,15 @@ void MenuBar::HideMnemonics()
 	sel = -1;
 	altDown = false;
 	Refresh(false);
+}
+
+bool MenuBar::SetFont(const wxFont &_font)
+{
+	wxWindow::SetFont(_font);
+	font = _font;
+
+	Refresh(false);
+	return true;
 }
 
 BEGIN_EVENT_TABLE(MenuBar, wxWindow)

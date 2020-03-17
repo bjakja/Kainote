@@ -99,7 +99,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 
 	holding = dholding = firstdhold = modified = wasDoubleClick = false;
 	//font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Verdana");
-	font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont();//wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
@@ -2296,6 +2296,14 @@ void TextEditor::SetState(int _state, bool refresh){
 		Refresh(false);
 	//}
 };
+
+bool TextEditor::SetFont(const wxFont &_font)
+{
+	font = _font;
+	CalcWrap();
+	Refresh(false);
+	return true;
+}
 
 BEGIN_EVENT_TABLE(TextEditor, wxWindow)
 EVT_PAINT(TextEditor::OnPaint)

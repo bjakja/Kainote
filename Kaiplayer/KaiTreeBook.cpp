@@ -18,7 +18,21 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
-int textHeight = 18;
+bool Page::SetFont(const wxFont &font)
+{
+	page->SetFont(font);
+	const wxWindowList& siblings = page->GetChildren();
+
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(font);
+	}
+	page->Layout();
+	return true;
+}
 
 KaiTreebook::KaiTreebook(wxWindow *parent, int id,
 	const wxPoint& pos, const wxSize& size, long style)
@@ -99,7 +113,10 @@ void KaiTreebook::CalcWidth()
 		wxSize txtsize = GetTextExtent(Pages[i]->name);
 		txtsize.x += 25 + (Pages[i]->whichSubpage * 20);
 		if (txtsize.x > treeWidth){ treeWidth = txtsize.x; }
+		if (txtsize.y > textHeight){ textHeight = txtsize.y; }
 	}
+	textHeight += 6;
+	textHeight = (textHeight / 2) * 2;
 }
 
 //Warning!!! never change "selection" before use this function
@@ -212,7 +229,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 			tdc.DrawPoint(k, cur.y + halfHeight);
 		}
 		if (subPage){
-			int start = (isFirstSubPage) ? posY + 1 : posY + 2 - halfHeight;
+			int start = (isFirstSubPage) ? (posY + (halfHeight % 2)) : posY + 2 - halfHeight;
 			for (int l = start; l <= posY + 1 + halfHeight; l += 2){
 				tdc.DrawPoint(8 + subPage, l);
 			}
@@ -221,10 +238,10 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 		else{ isFirstSubPage = true; }
 		if (Pages[i]->canCollapse){
 			tdc.SetBrush(wxBrush(wbg));
-			tdc.DrawRectangle(5 + subPage, posY + 4, 11, 11);
+			tdc.DrawRectangle(5 + subPage, posY + halfHeight - 5, 11, 11);
 			tdc.DrawLine(7 + subPage, posY + halfHeight, 14 + subPage, posY + halfHeight);
 			if (Pages[i]->collapsed){
-				tdc.DrawLine(10 + subPage, posY + 6, 10 + subPage, posY + 13);
+				tdc.DrawLine(10 + subPage, posY + halfHeight - 3, 10 + subPage, posY + halfHeight + 4);
 			}
 		}
 		posY += textHeight;
@@ -276,6 +293,16 @@ void KaiTreebook::SetColours(const wxColour &bgcol, const wxColour &fgcol)
 	}
 	SetBackgroundColour(bgcol);
 	SetForegroundColour(fgcol);
+}
+
+bool KaiTreebook::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	for (auto page : Pages){
+		page->SetFont(font);
+	}
+	Fit();
+	return true;
 }
 
 BEGIN_EVENT_TABLE(KaiTreebook, wxWindow)

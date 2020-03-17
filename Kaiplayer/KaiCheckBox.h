@@ -22,12 +22,12 @@ class KaiCheckBox : public wxWindow
 {
 public:
 	KaiCheckBox(wxWindow *parent, int id, const wxString& label,
-			 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0);
 	virtual ~KaiCheckBox(){};
 	//return false if not enabled
-	bool GetValue(){return value;}
+	bool GetValue(){ return value; }
 	bool GetRealValue(){ return value; }
-	void SetValue(bool _value){value = _value; Refresh(false);}
+	void SetValue(bool _value){ value = _value; Refresh(false); }
 	bool SetBackgroundColour(COLOR bgcolor){
 		background = bgcolor;
 		Refresh(false);
@@ -38,7 +38,9 @@ public:
 		Refresh(false);
 		return true;
 	}
-	bool Enable(bool enable=true);
+	bool Enable(bool enable = true);
+	// this don't layout do it after changing font
+	bool SetFont(const wxFont &font);
 	bool isCheckBox;
 	bool value;
 	bool enter;

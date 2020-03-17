@@ -105,6 +105,7 @@ public:
 		CalcMaxWidth(&newSize, true, true);
 		return newSize;
 	}
+	bool SetFont(const wxFont &font);
 	KaiTextCtrl *choiceText;
 private:
 	void OnSize(wxSizeEvent& event);

@@ -151,7 +151,7 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 			sizer->Layout();
 		}
 		//GetParent()->Layout();
-		Refresh(false);
+		//Refresh(false);
 		//Update();
 		return;
 	}
@@ -176,7 +176,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 		}
 		int pageSize = h;
 		if (scPos<0){ scPos = 0; }
-		else if (scPos >(textHeight + 20) - pageSize){ scPos = (textHeight + 20) - pageSize; }
+		else if (scPos > (textHeight + 20) - pageSize){ scPos = (textHeight + 20) - pageSize; }
 		textScroll->SetScrollbar(scPos, pageSize, textHeight + 20, pageSize - 1);
 	}
 	else if (textScroll){
@@ -232,21 +232,32 @@ void KaiStaticText::OnMouseScroll(wxMouseEvent &evt)
 	evt.Skip();
 }
 
-//void KaiStaticText::OnSize(wxSizeEvent& event)
-//{
-//	if (lastSize != event.GetSize()){
-//		int fullw = originalSize.x;
-//		int windowHeight = originalSize.y;
-//		CalculateSize(&fullw, &windowHeight);
-//		
-//		Refresh(false);
-//		lastSize = event.GetSize();
-//	}
-//}
+bool KaiStaticText::SetFont(const wxFont &font)
+{
+	wxWindow::SetFont(font);
+	int fullw, windowHeight;
+	CalculateSize(&fullw, &windowHeight);
+	if (windowHeight < 17){ windowHeight = 17; }
+	SetMinSize(wxSize(fullw, (windowHeight > 400)? 400 : windowHeight));
+	return true;
+}
+
+void KaiStaticText::OnSize(wxSizeEvent& event)
+{
+	/*if (lastSize != event.GetSize()){
+		int fullw = originalSize.x;
+		int windowHeight = originalSize.y;
+		CalculateSize(&fullw, &windowHeight);
+
+		Refresh(false);
+		lastSize = event.GetSize();
+		}*/
+	Refresh(false);
+}
 
 BEGIN_EVENT_TABLE(KaiStaticText, wxWindow)
 EVT_COMMAND_SCROLL(9999, KaiStaticText::OnScroll)
 EVT_MOUSEWHEEL(KaiStaticText::OnMouseScroll)
+EVT_SIZE(KaiStaticText::OnSize)
 END_EVENT_TABLE()
 
-//EVT_SIZE(KaiStaticText::OnSize)

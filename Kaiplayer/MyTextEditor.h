@@ -45,6 +45,7 @@ public:
 	void ClearSpellcheckerTable();
 	//0-normal, 1-comment, 2-template line, 3-code template line
 	void SetState(int _state, bool refresh = false);
+	bool SetFont(const wxFont &font);
 	EditBox* EB;
 
 protected:

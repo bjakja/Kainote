@@ -47,11 +47,16 @@ class Styles
 {
 public:
 	wxString Name;
-	wxString Fontname, Fontsize, ScaleX, ScaleY, Spacing, Angle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding;
+	wxString Fontname, ScaleX, ScaleY, Spacing, Angle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding;
 	//wxString Scomment;
+	wxString Fontsize;
 	AssColor PrimaryColour, SecondaryColour, OutlineColour, BackColour;
 	bool Bold, Italic, Underline, StrikeOut, BorderStyle;
 	wxString GetRaw();
+	wxString GetFontSizeString(){ return Fontsize; };
+	double GetFontSizeDouble();
+	void SetFontSizeString(const wxString &size){ Fontsize = size; };
+	void SetFontSizeDouble(double size);
 	Styles();
 	Styles(wxString styledata, char format = 1);
 	~Styles();

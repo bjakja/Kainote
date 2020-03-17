@@ -61,6 +61,16 @@ config::~config()
 	assstore.clear();
 	if (vsfilter)
 		csri_close_renderer(vsfilter);
+
+	FontsClear();
+}
+
+void config::FontsClear()
+{
+	for (std::map<int, wxFont*>::iterator it = programFonts.begin(); it != programFonts.end(); it++){
+		delete it->second;
+	}
+	programFonts.clear();
 }
 
 wxString config::GetReleaseDate()
@@ -120,7 +130,7 @@ void config::GetVSFiltersList(wxArrayString &filtersList)
 		info = csri_renderer_info(filter);
 		filtersList.Add(info->name);
 	}
-	csri_close_renderer(filter);
+	//csri_close_renderer(filter);
 }
 
 bool config::SetRawOptions(const wxString &textconfig)
@@ -346,6 +356,8 @@ void config::LoadDefaultConfig()
 	stringConfig[MoveTimesByTime] = L"false";
 	stringConfig[GridFontName] = L"Tahoma";
 	stringConfig[GridFontSize] = L"10";
+	stringConfig[PROGRAM_FONT] = L"Tahoma";
+	stringConfig[PROGRAM_FONT_SIZE] = L"10";
 	stringConfig[GridSaveAfterCharacterCount] = L"1";
 	stringConfig[GridTagsSwapChar] = L"☀";
 	stringConfig[MoveTimesForward] = L"true";
@@ -806,6 +818,26 @@ void config::SaveColors(const wxString &path){
 	for (size_t i = 1; i < colorsSize; i++){
 		ow.PartFileWrite(wxString(::GetString((COLOR)i)) + L"=" + GetStringColor(i) + L"\r\n");
 	}
+}
+
+wxFont *config::GetFont(int offset)
+{
+	auto it = programFonts.find(10 + offset);
+	if (it != programFonts.end()){
+		return it->second;
+	}
+	
+	int fontSize = GetInt(PROGRAM_FONT_SIZE);
+	if (!fontSize)
+		fontSize = 10;
+	fontSize += offset;//*= ((10.f + (float)offset + 0.5f) / 10.f);
+	wxString fontName = GetString(PROGRAM_FONT);
+	if (fontName.empty())
+		fontName = L"Tahoma";
+
+	wxFont *newFont = new wxFont(fontSize, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, fontName);
+	programFonts.insert(std::pair<int, wxFont*>(10 + offset, newFont));
+	return newFont;
 }
 
 wxString getfloat(float num, const wxString &format, bool Truncate)

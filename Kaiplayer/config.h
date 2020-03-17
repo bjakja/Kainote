@@ -177,6 +177,8 @@
 	CG(PostprocessorThresholdStart,)\
 	CG(PostprocessorThresholdEnd,)\
 	CG(PreviewText,)\
+	CG(PROGRAM_FONT,)\
+	CG(PROGRAM_FONT_SIZE,)\
 	CG(ProgramLanguage,)\
 	CG(ProgramTheme,)\
 	CG(ReplaceRecent,)\
@@ -395,7 +397,9 @@ private:
 	static const unsigned int colorsSize = StylePreviewColor2 + 1;
 	wxColour colors[colorsSize];
 	bool isClosing = false;
-
+	std::map<int, wxFont*> programFonts;
+	csri_rend *vsfilter = NULL;
+	wxColour defaultColour;
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -449,6 +453,9 @@ public:
 	void clearstyles();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
+	//main value is 10 offset from 10
+	wxFont *GetFont(int offset = 0);
+	void FontsClear();
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
@@ -457,8 +464,6 @@ public:
 	void GetVSFiltersList(wxArrayString &filters);
 	config();
 	~config();
-	wxColour defaultColour;
-	csri_rend *vsfilter = NULL;
 };
 bool sortfunc(Styles *styl1, Styles *styl2);
 //formating here works like this, 

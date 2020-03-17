@@ -18,15 +18,35 @@
 
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	: wxStaticBox(parent, -1, _label)
-	, label(_label)
 {
-	//Bind(wxEVT_SIZE, &KaiStaticBox::OnSize, this);
-	//Bind(wxEVT_PAINT, &KaiStaticBox::OnPaint, this);
+	labels.Add(_label);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 	SetFont(parent->GetFont());
-	wxSize fsize = GetTextExtent(label);
+	wxSize fsize = GetTextExtent(_label);
 	SetInitialSize(wxSize(fsize.x + 16, fsize.y + 10));
 	heightText = fsize.y;
+}
+
+//empty table = crash
+KaiStaticBox::KaiStaticBox(wxWindow *parent, int numLabels, wxString * _labels)
+	: wxStaticBox(parent, -1, _labels[0])
+{
+	for (int i = 0; i < numLabels; i++){
+		labels.Add(_labels[i]);
+	}
+	
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	SetFont(parent->GetFont());
+	int fw, fh, maxfw = 0, maxfh = 0;
+	for (auto &label : labels){
+		 GetTextExtent(label, &fw, &fh);
+		 if (fw > maxfw)
+			 maxfw = fw;
+		 if (fh > maxfh)
+			 maxfh = fh;
+	}
+	SetInitialSize(wxSize(maxfw + 16, maxfh + 10));
+	heightText = maxfh;
 }
 
 
@@ -46,14 +66,23 @@ void KaiStaticBox::PaintForeground(wxDC& tdc, const RECT& rc)
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	wxSize fsize = tdc.GetTextExtent(label);
+	wxSize fsize = tdc.GetTextExtent(labels[0]);
 	int halfY = fsize.y / 2;
 	tdc.SetPen(wxPen(Options.GetColour(StaticboxBorder)));
 	tdc.DrawRectangle(4, halfY, w - 8, h - halfY - 2);
 	tdc.SetBackgroundMode(wxPENSTYLE_SOLID);
 	tdc.SetTextBackground(background);
 	tdc.SetTextForeground(GetParent()->GetForegroundColour());
-	tdc.DrawText(L" " + label + L" ", 8, 0);
+	int posx = 8;
+	int cellWidth = (w - 16) / labels.size();
+	for (int i = 0; i < labels.GetCount(); i++){
+		wxString text = L" " + labels[i] + L" ";
+		int fw, fh;
+		tdc.GetTextExtent(text, &fw, &fh);
+		int wdiff = MAX(fw - cellWidth, 0);
+		tdc.DrawText(text, posx, 0);
+		posx += cellWidth + wdiff;
+	}
 }
 
 wxSize KaiStaticBox::CalcBorders()
@@ -69,8 +98,15 @@ bool KaiStaticBox::Enable(bool enable)
 }
 
 KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, const wxString& _label)
-	:wxBoxSizer(orient)
+	: wxBoxSizer(orient)
 	, box(new KaiStaticBox(parent, _label))
+{
+	box->SetContainingSizer(this);
+}
+
+KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, int n, wxString *labels)
+	: wxBoxSizer(orient)
+	, box(new KaiStaticBox(parent, n, labels))
 {
 	box->SetContainingSizer(this);
 }

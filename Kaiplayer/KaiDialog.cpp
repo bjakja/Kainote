@@ -77,9 +77,8 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
 	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL);
 	if ( !m_hasFont )
-		SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
-	//wxFont font(16, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, "Tahoma", wxFONTENCODING_DEFAULT);
-	//SetFont(font);
+		wxWindow::SetFont(*Options.GetFont());
+	
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
@@ -440,7 +439,19 @@ bool KaiDialog::SetFont(const wxFont &font)
 	int fw, fh;
 	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
 	topBorder = (fh + 8 < 24) ? 24 : fh + 8;
-	return wxWindow::SetFont(font);
+
+	const wxWindowList& siblings = GetChildren();
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(font);
+	}
+
+	wxWindow::SetFont(font);
+	Layout();
+	return true;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiDialog, wxTopLevelWindow);

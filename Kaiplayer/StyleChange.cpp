@@ -55,8 +55,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	Preview = NULL;
 	updateStyle = NULL;
 	block = true;
-	wxFont font(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
-	SetFont(font);
+	//wxFont font(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	wxWindow::SetFont(*Options.GetFont(-2)/*font*/);
 
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 
@@ -156,7 +156,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	stylekol->Add(kolgrid, 1, wxEXPAND | wxALL, 2);
 
-	KaiStaticBoxSizer *styleattr = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Obwódka:               Cień:                      Skala X:                 Skala Y:"));
+	wxString labels[] = { _("Obwódka:"), _("Cień:"), _("Skala X:"), _("Skala Y:") };
+	KaiStaticBoxSizer *styleattr = new KaiStaticBoxSizer(wxHORIZONTAL, this, 4, labels);
 
 	outline = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
 	shadow = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
@@ -170,7 +171,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *sizer2 = new wxBoxSizer(wxHORIZONTAL);
-	KaiStaticBoxSizer *styleattr1 = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kąt:                     Odstępy:              Typ obwódki:"));
+	wxString labels1[] = { _("Kąt:"), _("Odstępy:"), _("Typ obwódki:") };
+	KaiStaticBoxSizer *styleattr1 = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels1);
 
 	angle = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 	spacing = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
@@ -179,8 +181,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	styleattr1->Add(angle, 1, wxEXPAND | wxALL, 2);
 	styleattr1->Add(spacing, 1, wxEXPAND | wxALL, 2);
 	styleattr1->Add(borderStyle, 1, wxEXPAND | wxALL, 2);
-
-	KaiStaticBoxSizer *stylemargs = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Margines lewy:     Prawy:                Pionowy:"));
+	wxString labels2[] = { _("Margines lewy:"), _("Prawy:"), _("Pionowy:") };
+	KaiStaticBoxSizer *stylemargs = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels2);
 
 	leftMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 	rightMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
@@ -679,4 +681,23 @@ bool StyleChange::IsShown()
 {
 	if (SCD){ return SCD->IsShown(); }
 	else{ return wxWindow::IsShown(); }
+}
+
+bool StyleChange::SetFont(const wxFont &font)
+{
+	wxFont scFont = font;
+	scFont.SetPointSize(font.GetPointSize() - 2);
+	const wxWindowList& siblings = (SCD) ? SCD->GetChildren() : GetChildren();
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(scFont);
+	}
+	if (SCD){
+		return SCD->SetFont(font);
+	}
+
+	return wxWindow::SetFont(scFont);
 }

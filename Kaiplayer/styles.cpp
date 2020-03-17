@@ -17,6 +17,7 @@
 #include "styles.h"
 #include <wx/tokenzr.h>
 #include <wx/log.h>
+#include "config.h"
 
 AssColor::AssColor()
 {
@@ -55,8 +56,8 @@ void AssColor::SetAss(wxString color)
 		color.Upper();
 		bool ishtml = color.StartsWith(L"#");
 		wxString astr, rstr, gstr, bstr;
-		color.Replace(L"&", L""); 
-		color.Replace(L"H", L""); 
+		color.Replace(L"&", L"");
+		color.Replace(L"H", L"");
 		color.Replace(L"#", L"");
 		if (color.Len() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
 		rstr = color.SubString(4, 5), gstr = color.SubString(2, 3), bstr = color.SubString(0, 1);
@@ -127,7 +128,7 @@ Styles::Styles()
 {
 	Name = _T("Default");
 	Fontname = _T("Garamond");
-	Fontsize = _T("30");
+	Fontsize = L"30";
 	PrimaryColour.SetAss(_T("&H00FFFFFF&"));
 	SecondaryColour.SetAss(_T("&H000000FF&"));
 	OutlineColour.SetAss(_T("&H00FF0000&"));
@@ -166,39 +167,40 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 {
 	wxStringTokenizer assstyle(styledata, _T(","));
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	wxString token2 = assstyle.GetNextToken();
 	Name = token2.AfterFirst(L' ');
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Fontname = assstyle.GetNextToken();
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Fontsize = assstyle.GetNextToken();
+	
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	PrimaryColour.SetAss(assstyle.GetNextToken());
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	SecondaryColour.SetAss(assstyle.GetNextToken());
 
 	if (form < 2){
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		OutlineColour.SetAss(assstyle.GetNextToken());
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		BackColour.SetAss(assstyle.GetNextToken());
 	}
 	else
 	{
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		assstyle.GetNextToken();
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		OutlineColour.SetAss(assstyle.GetNextToken());
 
 		BackColour = OutlineColour;
@@ -206,18 +208,18 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	if (assstyle.GetNextToken() == _T("0")){ Bold = false; }
 	else{ Bold = true; };
 
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	if (assstyle.GetNextToken() == _T("0")){ Italic = false; }
 	else{ Italic = true; };
 
 	if (form < 2){
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		if (assstyle.GetNextToken() == _T("0"))
 		{
 			Underline = false;
@@ -225,7 +227,7 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 		else{ Underline = true; };
 
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		if (assstyle.GetNextToken() == _T("0"))
 		{
 			StrikeOut = false;
@@ -233,19 +235,19 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 		else{ StrikeOut = true; };
 
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		ScaleX = assstyle.GetNextToken();
 
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		ScaleY = assstyle.GetNextToken();
 
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		Spacing = assstyle.GetNextToken();
 
 
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		Angle = assstyle.GetNextToken();
 
 	}
@@ -258,20 +260,20 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 		Angle = L"0";
 	}
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	if (assstyle.GetNextToken() == _T("3")){ BorderStyle = true; }
 	else{ BorderStyle = false; };
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Outline = assstyle.GetNextToken();
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Shadow = assstyle.GetNextToken();
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Alignment = assstyle.GetNextToken();
 
 	if (form == 2)
@@ -285,24 +287,24 @@ bool Styles::parseStyle(const wxString &styledata, char form)
 	}
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	MarginL = assstyle.GetNextToken();
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	MarginR = assstyle.GetNextToken();
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	MarginV = assstyle.GetNextToken();
 
 	if (form == 2){
-		if (!assstyle.HasMoreTokens())return false;
+		if (!assstyle.HasMoreTokens()) return false;
 		assstyle.GetNextToken();
 	}
 
 
-	if (!assstyle.HasMoreTokens())return false;
+	if (!assstyle.HasMoreTokens()) return false;
 	Encoding = assstyle.GetNextToken();
 	Encoding.Trim(true);
 
@@ -317,64 +319,64 @@ void Styles::CopyChanges(Styles *changedStyle, int whatToChange)
 	if (whatToChange & STYLE_FONT_SIZE){
 		Fontsize = changedStyle->Fontsize;
 	}
-	if(whatToChange & STYLE_FONT_BOLD){
+	if (whatToChange & STYLE_FONT_BOLD){
 		Bold = changedStyle->Bold;
 	}
-	if(whatToChange & STYLE_FONT_ITALIC){
+	if (whatToChange & STYLE_FONT_ITALIC){
 		Italic = changedStyle->Italic;
 	}
-	if(whatToChange & STYLE_FONT_UNDERLINE){
+	if (whatToChange & STYLE_FONT_UNDERLINE){
 		Underline = changedStyle->Underline;
 	}
-	if(whatToChange & STYLE_FONT_STRIKEOUT){
+	if (whatToChange & STYLE_FONT_STRIKEOUT){
 		StrikeOut = changedStyle->StrikeOut;
 	}
-	if(whatToChange & STYLE_COLOR_PRIMARY){
+	if (whatToChange & STYLE_COLOR_PRIMARY){
 		PrimaryColour = changedStyle->PrimaryColour;
 	}
-	if(whatToChange & STYLE_COLOR_SECONDARY){
+	if (whatToChange & STYLE_COLOR_SECONDARY){
 		SecondaryColour = changedStyle->SecondaryColour;
 	}
-	if(whatToChange & STYLE_COLOR_OUTLINE){
+	if (whatToChange & STYLE_COLOR_OUTLINE){
 		OutlineColour = changedStyle->OutlineColour;
 	}
-	if(whatToChange & STYLE_COLOR_SHADOW){
+	if (whatToChange & STYLE_COLOR_SHADOW){
 		BackColour = changedStyle->BackColour;
 	}
-	if(whatToChange & STYLE_OUTLINE){
+	if (whatToChange & STYLE_OUTLINE){
 		Outline = changedStyle->Outline;
 	}
-	if(whatToChange & STYLE_SHADOW){
+	if (whatToChange & STYLE_SHADOW){
 		Shadow = changedStyle->Shadow;
 	}
-	if(whatToChange & STYLE_SCALE_X){
+	if (whatToChange & STYLE_SCALE_X){
 		ScaleX = changedStyle->ScaleX;
 	}
-	if(whatToChange & STYLE_SCALE_Y){
+	if (whatToChange & STYLE_SCALE_Y){
 		ScaleY = changedStyle->ScaleY;
 	}
-	if(whatToChange & STYLE_ANGLE){
+	if (whatToChange & STYLE_ANGLE){
 		Angle = changedStyle->Angle;
 	}
-	if(whatToChange & STYLE_SPACING){
+	if (whatToChange & STYLE_SPACING){
 		Spacing = changedStyle->Spacing;
 	}
-	if(whatToChange & STYLE_BORDER_STYLE){
+	if (whatToChange & STYLE_BORDER_STYLE){
 		BorderStyle = changedStyle->BorderStyle;
 	}
-	if(whatToChange & STYLE_ALIGNMENT){
+	if (whatToChange & STYLE_ALIGNMENT){
 		Alignment = changedStyle->Alignment;
 	}
-	if(whatToChange & STYLE_MARGIN_LEFT){
+	if (whatToChange & STYLE_MARGIN_LEFT){
 		MarginL = changedStyle->MarginL;
 	}
-	if(whatToChange & STYLE_MARGIN_RIGHT){
+	if (whatToChange & STYLE_MARGIN_RIGHT){
 		MarginR = changedStyle->MarginR;
 	}
-	if(whatToChange & STYLE_MARGIN_VERTICAL){
+	if (whatToChange & STYLE_MARGIN_VERTICAL){
 		MarginV = changedStyle->MarginV;
 	}
-	if(whatToChange & STYLE_ENCODING){
+	if (whatToChange & STYLE_ENCODING){
 		Encoding = changedStyle->Encoding;
 	}
 }
@@ -514,4 +516,20 @@ SInfo *SInfo::Copy()
 	inf->Val = Val;
 	//inf->Scomment=Scomment;
 	return inf;
+}
+
+double Styles::GetFontSizeDouble()
+{
+	//try to convert to double if failed then to int
+	//if there are plain text it returns 0
+	double fontSize = 0.;
+	if (!Fontsize.ToDouble(&fontSize))
+		fontSize = wxAtoi(Fontsize);
+
+	return fontSize;
+}
+
+void Styles::SetFontSizeDouble(double size)
+{
+	Fontsize = getfloat(size);
 }

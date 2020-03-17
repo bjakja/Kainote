@@ -77,6 +77,7 @@ public:
 	void AddID(int id);
 	int GetThickness(){ return thickness; }
 	//void ChangeOrientation(byte _alignment){ alignment = _alignment; }
+	bool SetFont(const wxFont &font);
 	wxArrayInt ids;
 
 private:

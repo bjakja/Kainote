@@ -1615,14 +1615,14 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 	else{
 		if (pixelPos.y < 3){
 			scPos -= (pixelPos.y > -Fheight) ? Fheight : (abs(pixelPos.y) + 10);
-			scPos = ((scPos / Fheight)*Fheight) - Fheight;
+			scPos = ((scPos / Fheight) * Fheight) - Fheight;
 			if (scPos<0){ scPos = 0; }
 		}
 		else if (pixelPos.y > size.y - 4){
-			int bitmaph = (wraps.size()*Fheight) + 4;
+			int bitmaph = (wraps.size() * Fheight) + 4;
 			int moving = pixelPos.y - (size.y - 10);
 			scPos += (moving < Fheight) ? Fheight : moving + Fheight;
-			scPos = ((scPos / Fheight)*Fheight)/* + Fheight*/;
+			scPos = ((scPos / Fheight) * Fheight)/* + Fheight*/;
 			if (scPos > bitmaph){ scPos = bitmaph; }
 		}
 	}
@@ -1647,6 +1647,25 @@ void KaiTextCtrl::SetMaxLength(int maxLen){
 		maxLen = MAXINT;
 
 	maxSize = maxLen;
+}
+
+
+bool KaiTextCtrl::SetFont(const wxFont &_font)
+{
+	//wxWindow::SetFont(font);
+	font = _font;
+	int fw, fh;
+	GetTextExtent(L"#TWFfGH", &fw, &fh);
+	Fheight = fh;
+	wxSize minSize = GetMinSize();
+	minSize.y = fh + 10;
+	if (minSize.x < minSize.y)
+		minSize.x = minSize.y;
+
+	SetMinSize(minSize);
+	CalcWrap(false);
+	MakeCursorVisible();
+	return true;
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiTextCtrl, wxWindow);

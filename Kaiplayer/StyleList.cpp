@@ -31,7 +31,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	stylenames = stylearray;
 	//SetMinSize(size);
 
-	font = wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont();//wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_UP, 15555);
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 15556);

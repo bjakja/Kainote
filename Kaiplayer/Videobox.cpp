@@ -1471,6 +1471,32 @@ bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 	return true;
 }
 
+bool VideoCtrl::SetFont(const wxFont &font)
+{
+	const wxWindowList& siblings = panel->GetChildren();
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(font);
+	}
+	if (TD){
+		const wxWindowList& TDsiblings = TD->GetChildren();
+		for (wxWindowList::compatibility_iterator nodeAfter = TDsiblings.GetFirst();
+			nodeAfter;
+			nodeAfter = nodeAfter->GetNext()){
+
+			wxWindow *win = nodeAfter->GetData();
+			win->SetFont(font);
+		}
+	}
+	
+	wxWindow::SetFont(font);
+	Refresh(false);
+	return true;
+}
+
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)

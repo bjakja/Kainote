@@ -143,7 +143,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
-	SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma"));
+	wxWindow::SetFont(*Options.GetFont(-1)/*wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma")*/);
 	currentLine = 0;
 	grid = grid1;
 	grid->Edit = this;
@@ -766,22 +766,24 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	if (form < SRT){
 
 		if (FindValue(L"b(0|1)", &tmp)){ 
-			if (mstyle->Bold&&tmp == L"0"){ mstyle->Bold = false; } 
-			else if (!mstyle->Bold&&tmp == L"1"){ mstyle->Bold = true; } 
+			if (mstyle->Bold && tmp == L"0"){ mstyle->Bold = false; } 
+			else if (!mstyle->Bold && tmp == L"1"){ mstyle->Bold = true; } 
 		}
 		if (FindValue(L"i(0|1)", &tmp)){ 
-			if (mstyle->Italic&&tmp == L"0"){ mstyle->Italic = false; } 
-			else if (!mstyle->Italic&&tmp == L"1"){ mstyle->Italic = true; } 
+			if (mstyle->Italic && tmp == L"0"){ mstyle->Italic = false; } 
+			else if (!mstyle->Italic && tmp == L"1"){ mstyle->Italic = true; } 
 		}
 		if (FindValue(L"u(0|1)", &tmp)){ 
-			if (mstyle->Underline&&tmp == L"0"){ mstyle->Underline = false; } 
-			else if (!mstyle->Underline&&tmp == L"1"){ mstyle->Underline = true; } 
+			if (mstyle->Underline && tmp == L"0"){ mstyle->Underline = false; } 
+			else if (!mstyle->Underline && tmp == L"1"){ mstyle->Underline = true; } 
 		}
 		if (FindValue(L"s(0|1)", &tmp)){ 
-			if (mstyle->StrikeOut&&tmp == L"0"){ mstyle->StrikeOut = false; } 
-			else if (!mstyle->StrikeOut&&tmp == L"1"){ mstyle->StrikeOut = true; } 
+			if (mstyle->StrikeOut && tmp == L"0"){ mstyle->StrikeOut = false; } 
+			else if (!mstyle->StrikeOut && tmp == L"1"){ mstyle->StrikeOut = true; } 
 		}
-		if (FindValue(L"fs([0-9]+)", &tmp)){ mstyle->Fontsize = tmp; }
+		if (FindValue(L"fs([0-9]+)", &tmp)){ 
+			mstyle->SetFontSizeString(tmp); 
+		}
 		if (FindValue(L"fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
 	}
 	FontDialog *FD = FontDialog::Get(this, mstyle);
@@ -2208,4 +2210,21 @@ TextEditor * EditBox::GetEditor()
 		return TextEditOrig;
 
 	return TextEdit;
+}
+
+bool EditBox::SetFont(const wxFont &font)
+{
+	wxFont ebFont = font;
+	ebFont.SetPointSize(font.GetPointSize() - 1);
+	const wxWindowList& siblings = GetChildren();
+
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(ebFont);
+	}
+
+	return wxWindow::SetFont(ebFont);
 }

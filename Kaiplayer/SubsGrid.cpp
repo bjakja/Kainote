@@ -998,11 +998,10 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			fscx *= valFscx;
 			resized->ScaleX = getfloat(fscx);
 		}
-		double fs = 0;
-		resized->Fontsize.ToCDouble(&fs);
+		double fs = resized->GetFontSizeDouble();
 		//TODO: sprawdzić czy nie ma jakiegoś przypadku, gdzie ta wartość będzie musiała przyjąć val1
 		fs *= val/*1*/;
-		resized->Fontsize = getfloat(fs);
+		resized->SetFontSizeDouble(fs);
 		double ol = 0;
 		resized->Outline.ToCDouble(&ol);
 		ol *= val;

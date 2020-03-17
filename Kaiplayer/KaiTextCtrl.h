@@ -79,7 +79,8 @@ public:
 	bool Enable(bool enable = true);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void FindWord(int pos, int *start, int *end);
-
+	// this don't layout do it after changing font
+	bool SetFont(const wxFont &font);
 protected:
 	void ContextMenu(wxPoint mpos);
 	inline int FindY(int x);
