@@ -687,16 +687,17 @@ bool StyleChange::SetFont(const wxFont &font)
 {
 	wxFont scFont = font;
 	scFont.SetPointSize(font.GetPointSize() - 2);
-	const wxWindowList& siblings = (SCD) ? SCD->GetChildren() : GetChildren();
+	
+	//if (SCD){
+		//return SCD->SetFont(font);
+	//}
+	const wxWindowList& siblings = GetChildren();
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
 		nodeAfter;
 		nodeAfter = nodeAfter->GetNext()){
 
 		wxWindow *win = nodeAfter->GetData();
 		win->SetFont(scFont);
-	}
-	if (SCD){
-		return SCD->SetFont(font);
 	}
 
 	return wxWindow::SetFont(scFont);

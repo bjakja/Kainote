@@ -2168,3 +2168,8 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 	}
 }
 
+bool KainoteFrame::Layout()
+{
+	OnSize(wxSizeEvent());
+	return true;
+}

@@ -37,7 +37,7 @@ public:
 	int GetNumSelections(){ return sels.size(); }
 	void SetArray(std::vector<Styles*> *stylearray);
 	void SendSelectionEvent();
-
+	bool SetFont(const wxFont &font);
 private:
 
 	void OnPaint(wxPaintEvent& event);

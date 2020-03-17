@@ -708,13 +708,13 @@ void ToggleButton::CalculateSize(int *w, int *h)
 	int resultw = 0, resulth = 0;
 	wxArrayString namewraps = wxStringTokenize(name, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (auto &token : namewraps){
-		GetTextExtent((token == L"") ? L"TEXT" : token, &fw, &fh);
+		GetTextExtent((token == L"") ? L"T" : token, &fw, &fh);
 		resulth += fh;
 		if (resultw < fw)
 			resultw = fw;
 	}
 	if (!resultw && !resulth)
-		GetTextExtent(L"TEXT", &resultw, &resulth);
+		GetTextExtent(L"T", &resultw, &resulth);
 	if (w)
 		*w = resultw;
 	if (h)

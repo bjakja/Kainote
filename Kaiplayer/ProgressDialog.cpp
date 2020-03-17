@@ -161,7 +161,7 @@ void ProgresDialog::OnTitle(wxThreadEvent& evt)
 ProgressSink::ProgressSink(wxWindow *parent, const wxString &title, const wxPoint &pos, const wxSize &size, int style)
 	: wxThread(wxTHREAD_JOINABLE)
 {
-	dlg = new ProgresDialog(parent, title, pos, size, style);
+	dlg = new ProgresDialog(parent, title, pos, size, style | wxBORDER_NONE);
 }
 
 ProgressSink::~ProgressSink()

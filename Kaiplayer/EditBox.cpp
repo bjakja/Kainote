@@ -2226,5 +2226,10 @@ bool EditBox::SetFont(const wxFont &font)
 		win->SetFont(ebFont);
 	}
 
-	return wxWindow::SetFont(ebFont);
+	wxWindow::SetFont(ebFont);
+	if (ABox){
+		ABox->Layout();
+	}
+	Layout();
+	return true;
 }

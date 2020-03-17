@@ -1655,10 +1655,13 @@ bool KaiTextCtrl::SetFont(const wxFont &_font)
 	//wxWindow::SetFont(font);
 	font = _font;
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh);
+	GetTextExtent((style & wxTE_MULTILINE != 0) ? L"#TWFfGH" : KText, &fw, &fh);
 	Fheight = fh;
 	wxSize minSize = GetMinSize();
 	minSize.y = fh + 10;
+	if (minSize.x > fw + 16 && fw < 400)
+		minSize.x = fw + 16;
+
 	if (minSize.x < minSize.y)
 		minSize.x = minSize.y;
 

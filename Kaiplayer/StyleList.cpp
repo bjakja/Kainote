@@ -438,6 +438,13 @@ void StyleList::OnArrow(wxCommandEvent& event)
 	Refresh(false);
 }
 
+bool StyleList::SetFont(const wxFont &_font)
+{
+	font = _font;
+	Refresh(false);
+	return true;
+}
+
 BEGIN_EVENT_TABLE(StyleList, KaiScrolledWindow)
 EVT_PAINT(StyleList::OnPaint)
 EVT_SIZE(StyleList::OnSize)

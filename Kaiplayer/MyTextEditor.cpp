@@ -2300,6 +2300,9 @@ void TextEditor::SetState(int _state, bool refresh){
 bool TextEditor::SetFont(const wxFont &_font)
 {
 	font = _font;
+	int fw, fh;
+	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	fontHeight = fh;
 	CalcWrap();
 	Refresh(false);
 	return true;

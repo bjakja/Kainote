@@ -538,4 +538,6 @@ bool KaiFrame::SetFont(const wxFont &font)
 	return true;
 }
 
+
+
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);

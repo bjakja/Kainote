@@ -94,6 +94,7 @@ public:
 	void SetVideoResolution(int w, int h, bool dialog = false);
 	void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
 	void OnSize(wxSizeEvent& event);
+	bool Layout();
 	FindReplaceDialog *FR;
 	SelectLines *SL;
 	Auto::Automation *Auto;

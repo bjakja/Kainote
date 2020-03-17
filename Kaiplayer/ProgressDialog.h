@@ -29,7 +29,7 @@ private:
 	KaiGauge *gauge;
 	KaiStaticText *text;
 	KaiStaticText *text1;
-	
+
 	bool canceled;
 	int oldtime;
 	void OnCancel(wxCommandEvent& event);
@@ -37,9 +37,9 @@ private:
 	void OnProgress(wxThreadEvent& evt);
 	void OnTitle(wxThreadEvent& evt);
 	int firsttime;
-	
+
 public:
-	ProgresDialog(wxWindow *parent, const wxString &title, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, int style=0);
+	ProgresDialog(wxWindow *parent, const wxString &title, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~ProgresDialog();
 
 	void Progress(int num);
@@ -53,7 +53,7 @@ public:
 class ProgressSink : public wxThread
 {
 public:
-	ProgressSink(wxWindow *parent, const wxString &title, const wxPoint &pos=wxDefaultPosition, const wxSize &size=wxDefaultSize, int style=0);
+	ProgressSink(wxWindow *parent, const wxString &title, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = 0);
 	virtual ~ProgressSink();
 	//Pamiêtaj o poprawnej kolejnoœci, najpierw tworzysz sink
 	//póŸniej ustawiasz zadanie b¹dŸ tworzysz w¹tek
@@ -75,7 +75,7 @@ private:
 	wxThread::ExitCode Entry();
 	std::function<int()> task;
 	ProgresDialog *dlg;
-	
+
 };
 
 

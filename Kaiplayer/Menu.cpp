@@ -1292,6 +1292,15 @@ bool MenuBar::SetFont(const wxFont &_font)
 {
 	wxWindow::SetFont(_font);
 	font = _font;
+	wxWindow::SetFont(font);
+	int x, y;
+	GetTextExtent(L"#TWFfGHj", &x, &y);
+	y += 6;
+	if (y > height){
+		SetMinSize(wxSize(200, y));
+		//SetSize(wxSize(-1, y));
+		height = y;
+	}
 
 	Refresh(false);
 	return true;

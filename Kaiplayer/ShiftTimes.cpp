@@ -972,7 +972,9 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 		win->SetFont(stFont);
 	}
 
-	return wxWindow::SetFont(stFont);
+	wxWindow::SetFont(stFont);
+	panel->Layout();
+	return true;
 }
 
 BEGIN_EVENT_TABLE(ShiftTimesWindow, wxWindow)

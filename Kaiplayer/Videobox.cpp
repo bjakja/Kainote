@@ -1473,6 +1473,7 @@ bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 
 bool VideoCtrl::SetFont(const wxFont &font)
 {
+	wxWindow::SetFont(font);
 	const wxWindowList& siblings = panel->GetChildren();
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
 		nodeAfter;
@@ -1481,6 +1482,7 @@ bool VideoCtrl::SetFont(const wxFont &font)
 		wxWindow *win = nodeAfter->GetData();
 		win->SetFont(font);
 	}
+	panel->Layout();
 	if (TD){
 		const wxWindowList& TDsiblings = TD->GetChildren();
 		for (wxWindowList::compatibility_iterator nodeAfter = TDsiblings.GetFirst();
@@ -1490,10 +1492,11 @@ bool VideoCtrl::SetFont(const wxFont &font)
 			wxWindow *win = nodeAfter->GetData();
 			win->SetFont(font);
 		}
+		TD->Layout();
 	}
 	
-	wxWindow::SetFont(font);
-	Refresh(false);
+	//Refresh(false);
+
 	return true;
 }
 

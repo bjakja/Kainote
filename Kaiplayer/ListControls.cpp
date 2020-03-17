@@ -657,6 +657,9 @@ void KaiChoice::SetMaxLength(int maxLen)
 bool KaiChoice::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
+	if (choiceText){
+		choiceText->SetFont(font);
+	}
 	wxSize newSize = GetMinSize();
 	CalcMaxWidth(&newSize, false, true);
 
