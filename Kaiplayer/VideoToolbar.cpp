@@ -215,18 +215,17 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 
 void VideoToolbar::OnSize(wxSizeEvent &evt)
 {
-	//int minSize = 70;
-	int w, h;
-	GetSize(&w, &h);
+	
+	wxSize size = evt.GetSize();
 
 	wxSize seekMinSize = videoSeekAfter->GetBestSize();
 	wxSize playMinSize = videoPlayAfter->GetBestSize();
 	int seekMinWidth = seekMinSize.GetWidth();
 	int playMinWidth = playMinSize.GetWidth();
-	int height = h - 2;
-	int allToolsSize = 18 * h;
+	int height = size.y - 2;
+	int allToolsSize = 18 * size.y;
 	//one square for spacing
-	int spaceForLists = (w - allToolsSize - 6);
+	int spaceForLists = (size.x - allToolsSize - 6);
 	if (spaceForLists < seekMinWidth + playMinWidth){
 		seekMinWidth = spaceForLists / 2;
 		playMinWidth = seekMinWidth;
@@ -235,15 +234,11 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 		if (playMinWidth < 70)
 			playMinWidth = 70;
 	}
-	//if (seekMinWidth != videoSeekAfter->GetMinSize().GetWidth()){
-		videoSeekAfter->SetSize(seekMinWidth, height);
-		videoPlayAfter->SetSize(seekMinWidth + 2, 1, playMinWidth, height);
-	//}
+	videoSeekAfter->SetSize(seekMinWidth, height);
+	videoPlayAfter->SetSize(seekMinWidth + 2, 1, playMinWidth, height);
+	
 	startDrawPos = playMinWidth + seekMinWidth + 6;
-	//if (height + 2 != GetMinSize().GetHeight()){
-		//SetMinSize(wxSize(100, height + 2));
-	//}
-
+	
 	Refresh(false);
 }
 
@@ -265,8 +260,15 @@ bool VideoToolbar::SetFont(const wxFont &font)
 	vFont.SetPointSize(font.GetPointSize() - 1);
 	videoSeekAfter->SetFont(vFont);
 	videoPlayAfter->SetFont(vFont);
-	OnSize(wxSizeEvent());
+
 	return true;
+}
+void VideoToolbar::SetHeight(int height)
+{
+	wxSizeEvent evt;
+	wxSize size = GetClientSize();
+	size.y = height;
+	SetSize(size);
 }
 
 void MoveAllItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)

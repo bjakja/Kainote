@@ -1474,29 +1474,30 @@ bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 bool VideoCtrl::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
-	const wxWindowList& siblings = panel->GetChildren();
-	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
-		nodeAfter;
-		nodeAfter = nodeAfter->GetNext()){
-
-		wxWindow *win = nodeAfter->GetData();
-		win->SetFont(font);
+	int fw;
+	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
+	toolBarHeight += 8;
+	panelHeight = 44 + toolBarHeight;
+	wxSize size = panel->GetSize();
+	size.y = panelHeight;
+	panel->SetSize(size);
+	if (GetState() != None){
+		size.y += GetVideoSize().GetHeight();
+		SetSize(size);
 	}
-	panel->Layout();
-	if (TD){
-		const wxWindowList& TDsiblings = TD->GetChildren();
-		for (wxWindowList::compatibility_iterator nodeAfter = TDsiblings.GetFirst();
-			nodeAfter;
-			nodeAfter = nodeAfter->GetNext()){
+	mstimes->SetFont(font);
+	vToolbar->SetFont(font);
+	vToolbar->SetHeight(toolBarHeight);
 
-			wxWindow *win = nodeAfter->GetData();
-			win->SetFont(font);
-		}
-		TD->Layout();
+	if (TD){
+		wxSize size1 = TD->panel->GetSize();
+		size1.y = panelHeight;
+		TD->panel->SetSize(size1);
+		TD->mstimes->SetFont(font);
+		TD->vToolbar->SetFont(font);
+		TD->vToolbar->SetHeight(toolBarHeight);
 	}
 	
-	//Refresh(false);
-
 	return true;
 }
 

@@ -151,6 +151,7 @@ public:
 		return startDrawPos;
 	}
 	bool SetFont(const wxFont &font);
+	void SetHeight(int height);
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
 	static std::vector<itemdata*> icons;

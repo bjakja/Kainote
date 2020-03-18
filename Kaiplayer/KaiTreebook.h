@@ -47,7 +47,7 @@ public:
 	void ChangeSelection(int sel);
 	void RefreshTree();
 	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
-	bool SetFont(const wxFont &font);
+	//bool SetFont(const wxFont &font);
 private:
 	void OnKeyPress(wxKeyEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);

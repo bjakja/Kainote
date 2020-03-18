@@ -295,15 +295,15 @@ void KaiTreebook::SetColours(const wxColour &bgcol, const wxColour &fgcol)
 	SetForegroundColour(fgcol);
 }
 
-bool KaiTreebook::SetFont(const wxFont &font)
-{
-	wxWindow::SetFont(font);
-	for (auto page : Pages){
-		page->SetFont(font);
-	}
-	Fit();
-	return true;
-}
+//bool KaiTreebook::SetFont(const wxFont &font)
+//{
+//	wxWindow::SetFont(font);
+//	for (auto page : Pages){
+//		page->SetFont(font);
+//	}
+//	Fit();
+//	return true;
+//}
 
 BEGIN_EVENT_TABLE(KaiTreebook, wxWindow)
 EVT_PAINT(KaiTreebook::OnPaint)
