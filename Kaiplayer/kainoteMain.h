@@ -95,10 +95,11 @@ public:
 	void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
 	void OnSize(wxSizeEvent& event);
 	bool Layout();
-	FindReplaceDialog *FR;
-	SelectLines *SL;
-	Auto::Automation *Auto;
-	FontCollector *fc;
+	void DestroyDialogs();
+	FindReplaceDialog *FR = NULL;
+	SelectLines *SL = NULL;
+	Auto::Automation *Auto = NULL;
+	FontCollector *FC = NULL;
 	MisspellReplacer *MR = NULL;
 	RECT borders;
 private:

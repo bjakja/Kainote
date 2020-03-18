@@ -693,7 +693,23 @@ int AudioBox::GetVolume()
 	return VolumeBar->GetValue();
 }
 
+bool AudioBox::SetFont(const wxFont &font)
+{
+	//wxFont ebFont = font;
+	//ebFont.SetPointSize(font.GetPointSize() - 1);
+	const wxWindowList& siblings = GetChildren();
 
+	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
+		nodeAfter;
+		nodeAfter = nodeAfter->GetNext()){
+
+		wxWindow *win = nodeAfter->GetData();
+		win->SetFont(font);
+	}
+
+	wxWindow::SetFont(font);
+	return true;
+}
 ///////////////
 // Event table
 BEGIN_EVENT_TABLE(AudioBox, wxPanel)

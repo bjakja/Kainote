@@ -138,6 +138,7 @@ public:
 		audioDisplay->isHidden = true;
 		return wxWindow::Show(false);
 	}
+	bool SetFont(const wxFont &font);
 	DECLARE_EVENT_TABLE()
 };
 

@@ -1050,17 +1050,18 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 			if (OB.option == PROGRAM_FONT && fontmod){
 				Options.FontsClear();
-				//Kai->SetFont(*Options.GetFont());
-				//Kai->Layout();
-				wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
-				while (node)
-				{
-					wxWindow* win = node->GetData();
-					// do something with "win"
-					win->SetFont(*Options.GetFont());
-					win->Layout();
-					node = node->GetNext();
-				}
+				Kai->DestroyDialogs();
+				Kai->SetFont(*Options.GetFont());
+				Kai->Layout();
+				//wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
+				//while (node)
+				//{
+				//	wxWindow* win = node->GetData();
+				//	// do something with "win"
+				//	win->SetFont(*Options.GetFont());
+				//	win->Layout();
+				//	node = node->GetNext();
+				//}
 				
 			}
 		}

@@ -78,6 +78,8 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	Connect(wxEVT_MOTION, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_LEAVE_WINDOW, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
 	Connect(wxEVT_MOUSEWHEEL, (wxObjectEventFunction)&VideoToolbar::OnMouseEvent);
+	wxWindow::SetFont(*Options.GetFont(-1));
+
 	wxString movopts[6] = { _("Dwukrotnym kliknięciu na linię (zawsze włączone)"), _("Każdej zmianie linii"),
 		_("Kliknięciu na linię lub edycji na pauzie"), _("Kliknięciu na linię lub edycji"),
 		_("Edycji na pauzie"), _("Edycji") };
@@ -102,7 +104,6 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		Options.SaveOptions(true, false);
 	}, ID_PLAY_AFTER);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
-
 }
 
 int VideoToolbar::GetToggled()
@@ -223,7 +224,7 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 	int seekMinWidth = seekMinSize.GetWidth();
 	int playMinWidth = playMinSize.GetWidth();
 	int height = h - 2;
-	int allToolsSize = 18.f * (float)h;
+	int allToolsSize = 18 * h;
 	//one square for spacing
 	int spaceForLists = (w - allToolsSize - 6);
 	if (spaceForLists < seekMinWidth + playMinWidth){
@@ -256,6 +257,16 @@ void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
 	blockScroll = vtoolbar->blockScroll;
 	iconsEnabled = vtoolbar->iconsEnabled;
 	if (IsShown()){ Refresh(false); }
+}
+
+bool VideoToolbar::SetFont(const wxFont &font)
+{
+	wxFont vFont = font;
+	vFont.SetPointSize(font.GetPointSize() - 1);
+	videoSeekAfter->SetFont(vFont);
+	videoPlayAfter->SetFont(vFont);
+	OnSize(wxSizeEvent());
+	return true;
 }
 
 void MoveAllItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)

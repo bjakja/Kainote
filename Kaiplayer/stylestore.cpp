@@ -36,7 +36,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 {
 	bool isDetached = detachedEtit = Options.GetBool(StyleManagerDetachEditor);
 	wxIcon icn;
-	icn.CopyFromBitmap(wxBITMAP_PNG("styles"));
+	icn.CopyFromBitmap(wxBITMAP_PNG(L"styles"));
 	SetIcon(icn);
 
 	cc = new StyleChange(this, !isDetached);
@@ -45,8 +45,8 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 
-	wxBitmap arrowDown = wxBITMAP_PNG("arrow_list");
-	wxBitmap arrowDownDouble = wxBITMAP_PNG("ARROW_LIST_DOUBLE");
+	wxBitmap arrowDown = wxBITMAP_PNG(L"arrow_list");
+	wxBitmap arrowDownDouble = wxBITMAP_PNG(L"ARROW_LIST_DOUBLE");
 	wxImage arrowcopy = arrowDown.ConvertToImage();
 	arrowcopy = arrowcopy.Rotate180();
 	wxImage arrowDoublecopy = arrowDownDouble.ConvertToImage();
@@ -215,6 +215,10 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 StyleStore::~StyleStore()
 {
+	if (cc){
+		cc->Destroy();
+		cc = NULL;
+	}
 }
 
 void StyleStore::OnSwitchLines(wxCommandEvent& event)

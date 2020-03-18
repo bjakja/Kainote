@@ -2204,7 +2204,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 	if (samples) {
 		UpdatePosition(PositionSample / samples);
 	}
-	UpdateImage();
+	UpdateImage(false, true);
 
 	// Update scrollbar
 	UpdateScrollbar();

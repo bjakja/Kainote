@@ -963,17 +963,31 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	wxFont stFont = font;
 	stFont.SetPointSize(font.GetPointSize() - 2);
 
-	const wxWindowList& siblings = panel->GetChildren();
+	/*const wxWindowList& siblings = panel->GetChildren();
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
 		nodeAfter;
 		nodeAfter = nodeAfter->GetNext()){
 
 		wxWindow *win = nodeAfter->GetData();
 		win->SetFont(stFont);
-	}
+	}*/
 
 	wxWindow::SetFont(stFont);
-	panel->Layout();
+	//panel->Layout();
+	SaveOptions();
+	Freeze();
+	bool normal = LeadIn == NULL;
+	panel->Destroy();
+	LeadIn = NULL;
+	panel = new wxWindow(this, -1);
+	CreateControls(normal);
+	Thaw();
+	isscrollbar = false;
+	wxSizeEvent evt;
+	OnSize(evt);
+	RefVals();
+	TabPanel* cur = (TabPanel*)GetParent();
+	cur->BoxSizer3->Layout();
 	return true;
 }
 

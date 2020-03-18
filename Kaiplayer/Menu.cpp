@@ -1296,9 +1296,9 @@ bool MenuBar::SetFont(const wxFont &_font)
 	int x, y;
 	GetTextExtent(L"#TWFfGHj", &x, &y);
 	y += 6;
-	if (y > height){
+	if (y != height){
 		SetMinSize(wxSize(200, y));
-		//SetSize(wxSize(-1, y));
+		SetSize(wxSize(-1, y));
 		height = y;
 	}
 

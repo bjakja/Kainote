@@ -75,7 +75,6 @@ void EnableCrashingOnCrashes()
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), pos, size, wxDEFAULT_FRAME_STYLE, L"Kainote_main_window")
 	, badResolution(false)
-	, fc(NULL)
 {
 	LogHandler::Create(this);
 	//when need log window on start uncomment this
@@ -83,9 +82,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	//LogHandler::ShowLogWindow();
 #endif
 
-	FR = NULL;
-	SL = NULL;
-	Auto = NULL;
 	Options.GetTable(SubsRecent, subsrec);
 	Options.GetTable(VideoRecent, videorec);
 	Options.GetTable(AudioRecent, audsrec);
@@ -347,11 +343,19 @@ KainoteFrame::~KainoteFrame()
 
 	StyleStore::DestroyStore();
 	if (Auto){ delete Auto; Auto = NULL; }
-	if (fc){ delete fc; fc = NULL; }
+	if (FC){ delete FC; FC = NULL; }
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 	LogHandler::Destroy();
 }
+
+void KainoteFrame::DestroyDialogs(){
+	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
+	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
+	if (FC){ delete FC; FC = NULL; }
+	if (MR){ MR->Destroy(); MR = NULL; }
+	StyleStore::DestroyStore();
+};
 
 
 //elementy menu które ulegają wyłączaniu
@@ -495,8 +499,8 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		SRD.ShowModal();
 	}
 	else if (id == FontCollectorID && tab->Grid->subsFormat < SRT){
-		if (!fc){ fc = new FontCollector(this); }
-		fc->ShowDialog(this);
+		if (!FC){ FC = new FontCollector(this); }
+		FC->ShowDialog(this);
 	}
 	else if (id == GLOBAL_MISSPELLS_REPLACER){
 		if (!MR){ MR = new MisspellReplacer(this); }

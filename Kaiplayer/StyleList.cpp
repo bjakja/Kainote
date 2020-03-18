@@ -40,10 +40,9 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 
-	wxClientDC dc(this);
-	dc.SetFont(font);
+	
 	int fw, fh;
-	dc.GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Height = fh;
 
 	bmp = NULL;
@@ -441,6 +440,9 @@ void StyleList::OnArrow(wxCommandEvent& event)
 bool StyleList::SetFont(const wxFont &_font)
 {
 	font = _font;
+	int fw, fh;
+	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	Height = fh;
 	Refresh(false);
 	return true;
 }

@@ -564,7 +564,8 @@ FontCollector::FontCollector(wxWindow *parent)
 
 FontCollector::~FontCollector()
 {
-	//fcd->Destroy();
+	//test if it not crash nothing
+	fcd->Destroy();
 };
 
 void FontCollector::GetAssFonts(SubsFile *subs, int tab)

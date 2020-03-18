@@ -217,6 +217,12 @@ void KaiStatusBar::SetLabelBackgroundColour(size_t field, COLOR backgroundColour
 bool KaiStatusBar::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
-	Refresh(false);
+	int x = 0, y = 0;
+	GetTextExtent(L"#TWFfGHj", &x, &y);
+	y += 8;
+	if (y != GetClientSize().GetHeight()){
+		SetMinSize(wxSize(200, y));
+		SetSize(wxSize(-1, y));
+	}
 	return true;
 }

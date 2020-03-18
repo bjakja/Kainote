@@ -1355,6 +1355,11 @@ bool Notebook::SetFont(const wxFont &_font)
 
 	//wxWindow::SetFont(_font);
 	font = _font;
+	int fx, fy;
+	GetTextExtent(L"X", &fx, &fy, 0, 0, &font);
+	TabHeight = fy + 12;
+	xWidth = fx + 10;
+	CalcSizes(true);
 	Refresh(false);
 	return true;
 }
