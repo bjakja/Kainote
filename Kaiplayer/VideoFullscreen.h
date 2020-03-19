@@ -22,6 +22,7 @@
 #include "BitmapButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiStaticText.h"
+#include "KaiCheckBox.h"
 class VideoToolbar;
 
 class Fullscreen : public wxFrame
@@ -40,9 +41,11 @@ public:
 	VolSlider* volslider;
 	wxPanel* panel;
 	VideoToolbar *vToolbar;
+	KaiCheckBox *showToolbar;
 	void OnSize();	
 	void HideToolbar(bool hide);
 	int panelsize;
+	int buttonSection;
 private:
 	
 	wxWindow *vb;

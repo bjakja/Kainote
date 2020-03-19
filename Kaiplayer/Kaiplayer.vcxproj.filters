@@ -5,40 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
-    </Filter>
-    <Filter Include="Header Files\Audio">
-      <UniqueIdentifier>{fb524458-4501-4a5f-a272-b17aa7173d91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Automation">
-      <UniqueIdentifier>{64cbbe00-e41e-4e9d-b121-679107d62803}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Controls">
-      <UniqueIdentifier>{aa1b55ea-ce14-4340-ac00-a4d4971a2e99}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Subs">
-      <UniqueIdentifier>{dabe59be-b301-47a4-810a-796c752b1453}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Video">
-      <UniqueIdentifier>{bb4d9894-a69e-4e70-89e1-2cb001a88743}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Styles">
-      <UniqueIdentifier>{5f33d49e-eaec-40c9-8f12-700a2dd92a14}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Fonts">
-      <UniqueIdentifier>{20f952de-6d34-4f2b-a2e2-a223ac3486d1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Windows &amp; Dialogs">
-      <UniqueIdentifier>{319527d3-65b9-4bb3-8ecf-77027aa4222a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Utils &amp; Config">
-      <UniqueIdentifier>{b26cff62-6614-4706-94bd-3edca4f8a452}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Audio">
       <UniqueIdentifier>{61386176-a1b1-4f98-aaaf-04539c5d4183}</UniqueIdentifier>
@@ -417,334 +386,334 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
-      <Filter>Header Files\Audio</Filter>
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AudioDisplay.h">
-      <Filter>Header Files\Audio</Filter>
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AudioPlayerDSound.h">
-      <Filter>Header Files\Audio</Filter>
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AudioSpectrum.h">
-      <Filter>Header Files\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationUtils.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="Automation.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationDialog.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationLPeg.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationProgress.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationScriptReader.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="AutomationToFile.h">
-      <Filter>Header Files\Automation</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiCheckBox.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiDialog.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiFrame.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiListCtrl.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiMessageBox.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiRadioButton.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiScrollbar.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiSlider.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiStaticBoxSizer.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiStaticText.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiStatusBar.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiTextCtrl.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiTextValidator.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaiTreebook.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="ListControls.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="MappedButton.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="BitmapButton.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsDialogue.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsFile.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGrid.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGridBase.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGridFiltering.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGridPreview.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsGridWindow.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsLoader.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsResampleDialog.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="SubsTime.h">
-      <Filter>Header Files\Subs</Filter>
-    </ClInclude>
-    <ClInclude Include="Videobox.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoFfmpeg.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoFullscreen.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoRenderer.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoSlider.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoToolbar.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="Visuals.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="StyleChange.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="StyleList.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="Stylelistbox.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="StylePreview.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="Styles.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="StyleStore.h">
-      <Filter>Header Files\Styles</Filter>
-    </ClInclude>
-    <ClInclude Include="DShowPlayer.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="DshowRenderer.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="FontCollector.h">
-      <Filter>Header Files\Fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="FontDialog.h">
-      <Filter>Header Files\Fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="FontEnumerator.h">
-      <Filter>Header Files\Fonts</Filter>
-    </ClInclude>
-    <ClInclude Include="Menu.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="MenuButton.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="OptionsPanels.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="OptionsDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="ProgressDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptInfo.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="SelectLines.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="SpellCheckerDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="TabPanel.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="Tabs.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="TLDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="Toolbar.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="NumCtrl.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="TimeCtrl.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="MyTextEditor.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="KaraokeSplitting.h">
-      <Filter>Header Files\Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorPicker.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="FindReplace.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
     <ClInclude Include="GFFT\GFFT.h">
-      <Filter>Header Files\Audio</Filter>
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="ColorSpaceConverter.h">
-      <Filter>Header Files\Video</Filter>
+    <ClInclude Include="KaraokeSplitting.h">
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="EditBox.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    <ClInclude Include="Automation.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="NewCatalog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorSpace.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="Config.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="DropFiles.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="EnumFactory.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="Hotkeys.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="MatroskaParser.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="MKVWrap.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="OpennWrite.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="SpellChecker.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="VersionKainote.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="KainoteApp.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="KainoteMain.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="Registry.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="HotkeysNaming.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
+    <ClInclude Include="AutomationDialog.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
     <ClInclude Include="AutomationHotkeysDialog.h">
-      <Filter>Header Files\Automation</Filter>
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="SubsGridDialogs.h">
-      <Filter>Header Files\Subs</Filter>
+    <ClInclude Include="AutomationLPeg.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="KaiTabBar.h">
-      <Filter>Header Files\Controls</Filter>
+    <ClInclude Include="AutomationProgress.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="FindReplaceDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    <ClInclude Include="AutomationScriptReader.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="FindReplaceResultsDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    <ClInclude Include="AutomationToFile.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="KeyframesLoader.h">
-      <Filter>Header Files\Video</Filter>
+    <ClInclude Include="AutomationUtils.h">
+      <Filter>Source Files\Automation</Filter>
     </ClInclude>
-    <ClInclude Include="LogHandler.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
+    <ClInclude Include="BitmapButton.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="KaiWindowResizer.h">
-      <Filter>Header Files\Controls</Filter>
+    <ClInclude Include="KaiCheckBox.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="MispellReplacerDialog.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    <ClInclude Include="KaiDialog.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="MisspellReplacer.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
-    </ClInclude>
-    <ClInclude Include="CsriMod.h">
-      <Filter>Header Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="TextEditorTagList.h">
-      <Filter>Header Files\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphicsD2D.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="D2DInit.h">
-      <Filter>Header Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="ShiftTimes.h">
-      <Filter>Header Files\Windows &amp; Dialogs</Filter>
+    <ClInclude Include="KaiFrame.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="KaiGauge.h">
-      <Filter>Header Files\Controls</Filter>
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiListCtrl.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiMessageBox.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiRadioButton.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiScrollbar.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiSlider.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticBoxSizer.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticText.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStatusBar.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTabBar.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextCtrl.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextValidator.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTreebook.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiWindowResizer.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ListControls.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MappedButton.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTextEditor.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="NumCtrl.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditorTagList.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCtrl.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Toolbar.h">
+      <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCollector.h">
+      <Filter>Source Files\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="FontDialog.h">
+      <Filter>Source Files\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="FontEnumerator.h">
+      <Filter>Source Files\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleChange.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleList.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="Stylelistbox.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StylePreview.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="Styles.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleStore.h">
+      <Filter>Source Files\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsDialogue.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsFile.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGrid.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridBase.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridDialogs.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridFiltering.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridPreview.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridWindow.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsLoader.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsResampleDialog.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsTime.h">
+      <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpace.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DInit.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFiles.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumFactory.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsD2D.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Hotkeys.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="HotkeysNaming.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="LogHandler.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="MatroskaParser.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="MKVWrap.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="OpennWrite.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellChecker.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionKainote.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpaceConverter.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="CsriMod.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DShowPlayer.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DshowRenderer.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyframesLoader.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Videobox.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFfmpeg.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFullscreen.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRenderer.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoSlider.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoToolbar.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Visuals.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="EditBox.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplace.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceResultsDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteApp.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteMain.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MispellReplacerDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MisspellReplacer.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCatalog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsPanels.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptInfo.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLines.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftTimes.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellCheckerDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="TabPanel.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="Tabs.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="TLDialog.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

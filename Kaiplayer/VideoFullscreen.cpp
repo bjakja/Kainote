@@ -16,13 +16,13 @@
 #include "VideoFullscreen.h"
 #include "Videobox.h"
 #include "Config.h"
-#include "KaiCheckBox.h"
 #include "KainoteMain.h"
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	: wxFrame(parent, -1, L"", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)//
 {
+	SetFont(*Options.GetFont());
 	vb = parent;
 	VideoCtrl *vc = (VideoCtrl*)parent;
 	SetBackgroundColour(L"#000000");
@@ -30,53 +30,56 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
 	if (!vc->IsDshow){ 
-		panelsize = 44 + toolBarHeight;
+		buttonSection = 30 + toolBarHeight - 8;
+		panelsize = buttonSection + toolBarHeight;
 		vc->panelOnFullscreen = true; 
 	}
-	else{ panelsize = 44; }
+	else{ 
+		panelsize = buttonSection = 30 + toolBarHeight - 8;
+	}
 	panel = new wxPanel(this, -1, wxPoint(0, size.y - panelsize), wxSize(size.x, panelsize));
 	panel->SetForegroundColour(Options.GetColour(WindowText));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
-	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, 14));
+	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = vc;
 	vslider->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
 	});
 	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"), 
-		PreviousVideo, _("Poprzedni plik wideo"), wxPoint(5, 16), wxSize(26, 26));
+		PreviousVideo, _("Poprzedni plik wideo"), wxPoint(5, toolBarHeight - 6), wxSize(26, 26));
 	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"), 
-		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
+		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, toolBarHeight - 6), wxSize(26, 26));
 	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"), 
-		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26));
+		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, toolBarHeight - 6), wxSize(26, 26));
 	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"), 
-		StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
+		StopPlayback, _("Zatrzymaj"), wxPoint(110, toolBarHeight - 6), wxSize(26, 26));
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"), 
-		NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
-	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
-	KaiCheckBox *showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, 21), wxSize(150, -1));
+		NextVideo, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
+	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
+	showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, toolBarHeight - 4), wxSize(-1, -1));
 	showToolbar->SetValue(!vc->IsDshow);
-	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, 16), wxSize(300, 26), wxTE_READONLY);
+	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
-	Videolabel = new KaiStaticText(panel, -1, L"", wxPoint(644, 22), wxSize(1200,-1));
+	Videolabel = new KaiStaticText(panel, -1, L"", wxPoint(644, toolBarHeight - 6), wxSize(1200, 26));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
 	});
-	vToolbar = new VideoToolbar(panel, wxPoint(0, 44), wxSize(-1, -1));
+	vToolbar = new VideoToolbar(panel, wxPoint(0, buttonSection), wxSize(-1, -1));
 	vToolbar->SetSize(wxSize(size.x, toolBarHeight));
 	vToolbar->Show(!vc->IsDshow);
 	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
 		bool show = showToolbar->GetValue();
 		vToolbar->Show(show);
 		if (show){ 
-			panelsize = 44 + toolBarHeight; 
+			panelsize = buttonSection + toolBarHeight;
 			vc->panelOnFullscreen = true; 
 		}
 		else{ 
-			panelsize = 44; 
+			panelsize = buttonSection;
 			vc->panelOnFullscreen = false; 
 		}
 		OnSize();
@@ -111,34 +114,57 @@ void Fullscreen::OnSize()
 	//if(vc->lastSize == asize){return;}
 	vc->lastSize = asize;
 	int fw;
-	if (panelsize > 44){
-		GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
-		toolBarHeight += 8;
-		panelsize = 44 + toolBarHeight;
+	int oldPanelSize = panelsize;
+	bool toolbarShown = panelsize > buttonSection;
+	
+	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
+	toolBarHeight += 8;
+	buttonSection = 30 + toolBarHeight - 8;
+	panelsize = buttonSection;
+	if (toolbarShown)
+		panelsize += toolBarHeight;
+
+	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
+
+	if (oldPanelSize == panelsize){
+		bprev->SetPosition(wxPoint(5, toolBarHeight - 6));
+		bpause->SetPosition(wxPoint(40, toolBarHeight - 6));
+		bpline->SetPosition(wxPoint(75, toolBarHeight - 6));
+		bstop->SetPosition(wxPoint(110, toolBarHeight - 6));
+		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
+		wxSize toolbarSize = showToolbar->GetMinSize();
+		showToolbar->SetSize(180, toolBarHeight - 6 + ((26 - toolbarSize.y) / 2), toolbarSize.x, toolbarSize.y);
+		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 6, 13 * toolBarHeight, 26);
+		if (vToolbar->IsShown()){
+			vToolbar->SetSize(0, buttonSection, asize.x, toolBarHeight);
+		}
+		Videolabel->SetSize(180 + toolbarSize.x + 25 + (13 * toolBarHeight), toolBarHeight - 6, asize.x - 758, 26);
+	}
+	else{
+		//mstimes->SetSize(asize.x - difSize, -1);
+		if (vToolbar->IsShown()){
+			vToolbar->SetSize(asize.x, toolBarHeight);
+		}
+		Videolabel->SetSize(asize.x - 758, 26);
 	}
 	
 	vslider->SetSize(wxSize(asize.x, 14));
 	if(vc->IsDshow){
 		volslider->Show(); 
-		volslider->SetPosition(wxPoint(asize.x - 110, 17));
+		volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));
 	}
 	else{volslider->Show(false);}
-	Videolabel->SetSize(asize.x - 758, -1);
-	if (vToolbar->IsShown()){ 
-		vToolbar->SetSize(asize.x, toolBarHeight); 
-	}
-	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 }
 
 void Fullscreen::HideToolbar(bool hide){
-	if (hide && panelsize == 44 || !hide && panelsize != 44)
+	if (hide && panelsize == buttonSection || !hide && panelsize != buttonSection)
 		return;
 	Videolabel->Show(!hide);
 	if (hide){
-		panelsize = 44;
+		panelsize = buttonSection;
 	}
 	else{
-		panelsize = 44 + toolBarHeight;
+		panelsize = buttonSection + toolBarHeight;
 	}
 	OnSize();
 	VideoCtrl *vc = (VideoCtrl*)vb;

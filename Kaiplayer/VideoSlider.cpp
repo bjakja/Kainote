@@ -45,11 +45,12 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, h));
-	tdc.SetFont(*Options.GetFont()/*wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma")*/);
+	tdc.SetFont(*Options.GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
+	int posY = ((h - 12) / 2) + 4;
 	if (VB->GetState() != None){
 		tdc.SetPen(wxPen(L"#2EA6E2"));
 		int duration = VB->GetDuration();
@@ -69,41 +70,41 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 				label = time;
 				tdc.SetPen(wxPen(L"#2583C8"));
 			}
-			tdc.DrawLine(chpos, 0, chpos, 5);
+			tdc.DrawLine(chpos, 0, chpos, posY);
 		}
 	}
 	wxBitmap start = prb.GetSubBitmap(wxRect(0, 0, 10, 5));
-	tdc.DrawBitmap(start, 10, 5);
+	tdc.DrawBitmap(start, 10, posY);
 	wxBitmap px = prb.GetSubBitmap(wxRect(3, 0, 80, 5));
+	
 	int i = 20;
-	for (; i < w - 90; i += 80)
-	{
-		tdc.DrawBitmap(px, i, 5);
+	for (; i < w - 90; i += 80){
+		tdc.DrawBitmap(px, i, posY);
 	}
 	int diff = w - i - 10;
 	wxBitmap end = prb.GetSubBitmap(wxRect(86 - diff, 0, diff, 5));
-	tdc.DrawBitmap(end, w - diff - 10, 5);
+	tdc.DrawBitmap(end, w - diff - 10, posY);
 	if (position > 5){
 		tdc.SetPen(wxPen(L"#2583C8"));
-		tdc.DrawLine(11, 6, position + 8, 6);
-		tdc.DrawLine(11, 8, position + 8, 8);
+		tdc.DrawLine(11, posY + 1, position + 8, posY + 1);
+		tdc.DrawLine(11, posY + 3, position + 8, posY + 3);
 		tdc.SetPen(wxPen(L"#2EA6E2"));
-		tdc.DrawLine(11, 7, position + 8, 7);
+		tdc.DrawLine(11, posY + 2, position + 8, posY + 2);
 	}
-	tdc.DrawBitmap(prbh, position + 5, 1);
+	tdc.DrawBitmap(prbh, position + 5, posY - 4);
 	if (showlabel){
 		int fw, fh;
 		tdc.GetTextExtent(label, &fw, &fh);
-		fh = labelpos;
-		if (fh < w / 2){ fh += 15; }
-		else{ fh -= (fw + 15); }
+		int posX = labelpos;
+		if (posX < w / 2){ posX += 15; }
+		else{ posX -= (fw + 15); }
 		tdc.SetTextForeground(wxColour(L"#0C2B87"));
-		tdc.DrawText(label, fh + 1, -1);
-		tdc.DrawText(label, fh - 1, -1);
-		tdc.DrawText(label, fh + 1, -3);
-		tdc.DrawText(label, fh - 1, -3);
+		tdc.DrawText(label, posX + 1, -1);
+		tdc.DrawText(label, posX - 1, -1);
+		tdc.DrawText(label, posX + 1, -3);
+		tdc.DrawText(label, posX - 1, -3);
 		tdc.SetTextForeground(wxColour(L"#FFFFFF"));
-		tdc.DrawText(label, fh, -2);
+		tdc.DrawText(label, posX, -2);
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);

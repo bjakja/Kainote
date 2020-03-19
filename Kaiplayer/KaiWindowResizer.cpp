@@ -17,7 +17,7 @@
 #include "config.h"
 #include "wx/dcmemory.h"
 
-KaiWindowResizer::KaiWindowResizer(wxWindow *parent/*, wxWindow *_windowBeforeResizer*/, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize)
+KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize)
 	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1, 5))
 	, canResize(_canResize)
 	, doResize(_doResize)

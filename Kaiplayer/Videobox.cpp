@@ -117,26 +117,26 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
-	panelHeight = 44 + toolBarHeight;
+	panelHeight = 30 + (toolBarHeight * 2) - 8;
 
 	panel = new wxWindow(this, -1, wxPoint(0, size.y - panelHeight), wxSize(size.x, panelHeight));
 	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
 
-	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, 14));
+	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = this;
 	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"),
-		PreviousVideo, _("Poprzedni plik"), wxPoint(5, 16), wxSize(26, 26));
+		PreviousVideo, _("Poprzedni plik"), wxPoint(5, toolBarHeight - 6), wxSize(26, 26));
 	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"),
-		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, 16), wxSize(26, 26));
+		PlayPause, _("Odtwórz / Pauza"), wxPoint(40, toolBarHeight - 6), wxSize(26, 26));
 	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"),
-		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, 16), wxSize(26, 26), GLOBAL_HOTKEY);
+		PlayActualLine, _("Odtwórz aktywną linię"), wxPoint(75, toolBarHeight - 6), wxSize(26, 26), GLOBAL_HOTKEY);
 	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"),
-		StopPlayback, _("Zatrzymaj"), wxPoint(110, 16), wxSize(26, 26));
+		StopPlayback, _("Zatrzymaj"), wxPoint(110, toolBarHeight - 6), wxSize(26, 26));
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
-		NextVideo, _("Następny plik"), wxPoint(145, 16), wxSize(26, 26));
+		NextVideo, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
 
-	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, 17), wxSize(110, 25));
-	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, 16), wxSize(360, 26), wxTE_READONLY);
+	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
+	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, toolBarHeight - 6), wxSize(360, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WindowBackground);
@@ -376,16 +376,29 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 	wxSize asize = GetClientSize();
 	if (lastSize == asize){ return; }
 	lastSize = asize;
+	int oldToolbarHeight = toolBarHeight;
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
-	panelHeight = 44 + toolBarHeight;
+	panelHeight = 30 + (toolBarHeight * 2) - 8;
 	panel->SetSize(0, asize.y - panelHeight, asize.x, panelHeight);
-	vslider->SetSize(wxSize(asize.x, 14));
-	volslider->SetPosition(wxPoint(asize.x - 110, 17));
 	int difSize = (volslider->IsShown()) ? 290 : 185;
-	mstimes->SetSize(asize.x - difSize, -1);
-	vToolbar->SetSize(asize.x, toolBarHeight);
+	if (oldToolbarHeight == toolBarHeight){
+		bprev->SetPosition(wxPoint(5, toolBarHeight - 6));
+		bpause->SetPosition(wxPoint(40, toolBarHeight - 6));
+		bpline->SetPosition(wxPoint(75, toolBarHeight - 6));
+		bstop->SetPosition(wxPoint(110, toolBarHeight - 6));
+		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
+
+		mstimes->SetSize(180, toolBarHeight - 6, asize.x - difSize, -1);
+		vToolbar->SetSize(0, panelHeight - toolBarHeight, asize.x, toolBarHeight);
+	}
+	else{
+		mstimes->SetSize(asize.x - difSize, -1);
+		vToolbar->SetSize(asize.x, toolBarHeight);
+	}
+	volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));
+	vslider->SetSize(wxSize(asize.x, toolBarHeight - 8));
 	if (vstate != None){
 		UpdateVideoWindow();
 	}
@@ -419,19 +432,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			int w, h, mw, mh;
 			GetClientSize(&w, &h);
 			GetParent()->GetClientSize(&mw, &mh);
-			int incr = h + (step * 20);
-			if (incr >= mh){ incr = mh - 3; }
+			int newHeight = h + (step * 20);
+			if (newHeight >= mh){ newHeight = mh - 3; }
 			if (y < h - panelHeight){
-				if (h <= 350 && step < 0 || h == incr){ return; }
-				int ww, hh;
-				CalcSize(&ww, &hh, w, incr, false, true);
-				SetMinSize(wxSize(ww, hh + panelHeight));
-				tab->Edit->SetMinSize(wxSize(-1, hh + panelHeight));
-				Options.SetCoords(VideoWindowSize, ww, hh + panelHeight);
-				tab->BoxSizer1->Layout();
-				if (event.ShiftDown()){
-					tab->SetVideoWindowSizes(w, incr);
-				}
+				if (h <= 350 && step < 0 || h == newHeight){ return; }
+				tab->SetVideoWindowSizes(w, newHeight, event.ShiftDown());
 			}
 			return;
 		}
@@ -1477,23 +1482,29 @@ bool VideoCtrl::SetFont(const wxFont &font)
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
-	panelHeight = 44 + toolBarHeight;
+	
+	int oldPanelHeight = panelHeight;
+	panelHeight = 30 + (toolBarHeight * 2) - 8;
 	wxSize size = panel->GetSize();
 	size.y = panelHeight;
 	panel->SetSize(size);
-	if (GetState() != None){
-		size.y += GetVideoSize().GetHeight();
-		SetSize(size);
-	}
 	mstimes->SetFont(font);
 	vToolbar->SetFont(font);
 	vToolbar->SetHeight(toolBarHeight);
+	if (IsShown()){
+		wxSize windowSize = GetSize();
+		windowSize.y -= (oldPanelHeight - panelHeight);
+		TabPanel *tab = (TabPanel*)this->GetParent();
+		tab->SetVideoWindowSizes(windowSize.x, windowSize.y, false);
+	}
 
 	if (TD){
 		wxSize size1 = TD->panel->GetSize();
 		size1.y = panelHeight;
 		TD->panel->SetSize(size1);
 		TD->mstimes->SetFont(font);
+		TD->Videolabel->SetFont(font);
+		TD->showToolbar->SetFont(font);
 		TD->vToolbar->SetFont(font);
 		TD->vToolbar->SetHeight(toolBarHeight);
 	}

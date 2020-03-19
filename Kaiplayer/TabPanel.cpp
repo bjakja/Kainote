@@ -33,7 +33,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	if (vw < 200){ vw = 550; vh = 400; }
 	Video = new VideoCtrl(this, kai, wxSize(vw, vh));
 	Video->Hide();
-	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200),/*wxBORDER_SIMPLE|*/wxWANTS_CHARS);//
+	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
 	Edit = new EditBox(this, Grid, -1);
 	//check if there is nothing in constructor that crash or get something wrong when construct
 	Edit->StartEdit->SetVideoCtrl(Video);
@@ -43,7 +43,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	Edit->SetLine(0);
 
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
-	ShiftTimes = new ShiftTimesWindow(this, kai, -1, wxDefaultPosition, wxDefaultSize/*,wxBORDER_SIMPLE*/);
+	ShiftTimes = new ShiftTimesWindow(this, kai, -1);
 	ShiftTimes->Show(Options.GetBool(MoveTimesOn));
 	BoxSizer3->Add(Grid, 1, wxEXPAND, 0);
 	BoxSizer3->Add(ShiftTimes, 0, wxEXPAND, 0);
@@ -58,19 +58,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	}, [=](int newpos, bool shiftDown){
 		int w, h;
 		Edit->GetClientSize(&w, &h);
-		
-		if (Video->GetState() != None && Video->IsShown()){
-			Options.GetCoords(VideoWindowSize, &w, &h);
-			int ww, hh;
-			Video->CalcSize(&ww, &hh, w, newpos, false, true);
-			Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
-			Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
-		}
-		Edit->SetMinSize(wxSize(-1, newpos));
-		BoxSizer1->Layout();
-		if (shiftDown){
-			SetVideoWindowSizes(w, newpos);
-		}
+		SetVideoWindowSizes(w, newpos, shiftDown);
 	});
 
 	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
@@ -173,13 +161,26 @@ void TabPanel::OnFocus(wxChildFocusEvent& event)
 	event.Skip();
 }
 
-void TabPanel::SetVideoWindowSizes(int w, int h)
+void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 {
 	Notebook *nb = Notebook::GetTabs();
+
+	if (Video->GetState() != None && Video->IsShown()){
+		//Options.GetCoords(VideoWindowSize, &w, &h);
+		int ww, hh;
+		Video->CalcSize(&ww, &hh, w, h, false, true);
+		Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
+		Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
+	}
+	Edit->SetMinSize(wxSize(-1, h));
+	BoxSizer1->Layout();
+	if (!allTabs)
+		return;
+
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
 		if (tab == this){ continue; }
-		if (tab->Video->GetState() != None/* && tab->Video->IsShown()*/){
+		if (tab->Video->GetState() != None){
 			int ww, hh;
 			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
 			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->panelHeight));

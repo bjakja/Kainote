@@ -741,12 +741,13 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 	if (mouseWheel) {
 		if (event.ControlDown()){
 			fsize += event.GetWheelRotation() / event.GetWheelDelta();
-			if (fsize < 7 || fsize>70){ fsize = MID(7, fsize, 70); return; }
+			if (fsize < 7 || fsize > 70){ fsize = MID(7, fsize, 70); return; }
 			font.SetPointSize(fsize);
 			int fw, fh;
 			GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 			fontHeight = fh;
 			caret->SetSize(1, fh);
+			fontSizes.clear();
 			CalcWrap(false, false);
 			Refresh(false);
 		}
@@ -2303,6 +2304,7 @@ bool TextEditor::SetFont(const wxFont &_font)
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
+	fontSizes.clear();
 	CalcWrap();
 	Refresh(false);
 	return true;

@@ -42,7 +42,7 @@ public:
 	wxBoxSizer* BoxSizer3;
 
 	void SetAccels(bool onlyGridAudio = false);
-	void SetVideoWindowSizes(int w, int h);
+	void SetVideoWindowSizes(int w, int h, bool allTabs);
 	bool SetFont(const wxFont &font);
 
 	bool editor;
