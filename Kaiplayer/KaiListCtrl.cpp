@@ -505,8 +505,10 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		for (size_t j = 0; j < widths.size(); j++){
 			wxString headerTxt = ((ItemText*)header.row[j])->GetName();
 			wxSize ex = tdc.GetTextExtent(headerTxt);
+			wxRect rect(posX, 0, widths[j] - 3, headerHeight);
+			tdc.SetClippingRegion(rect);
 			tdc.DrawText(headerTxt, posX, ((headerHeight - ex.y) / 2));
-
+			tdc.DestroyClippingRegion();
 			posX += widths[j];
 			tdc.DrawLine(posX - 3, 0, posX - 3, h);
 		}

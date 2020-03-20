@@ -44,10 +44,10 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 
 	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Znajdź"));
 	wxBoxSizer *sltpsizer = new wxBoxSizer(wxHORIZONTAL);
-	FindText = new KaiChoice(this, -1, L"", wxDefaultPosition, wxSize(-1, 24), selsRecent);
+	FindText = new KaiChoice(this, -1, L"", wxDefaultPosition, wxSize(-1, -1), selsRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
-	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, L"+", -1, wxDefaultPosition, wxSize(24, 24));
+	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, L"+", -1/*, wxDefaultPosition, wxSize(-1, -1)*/);
 	sltpsizer->Add(FindText, 1, wxALL | wxEXPAND, 3);
 	sltpsizer->Add(ChooseStyles, 0, wxALL, 3);
 

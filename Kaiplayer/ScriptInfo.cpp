@@ -58,14 +58,14 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 
 	width = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
 	height = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
-	resolutionFromVideo = new MappedButton(this, 25456, _("Z wideo"), -1, wxDefaultPosition, wxSize(85, -1));
+	resolutionFromVideo = new MappedButton(this, 25456, _("Z wideo"), -1, wxDefaultPosition, wxSize(70, -1));
 	resolutionFromVideo->Enable(w > 0);
 
-	boxsizer->Add(new KaiStaticText(this, -1, _("Szerokość"), wxDefaultPosition, wxSize(60, -1)), 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	boxsizer->Add(width, 0, wxALL, 5);
-	boxsizer->Add(new KaiStaticText(this, -1, _("Wysokość"), wxDefaultPosition, wxSize(60, -1)), 0, wxALL | wxALIGN_CENTER_VERTICAL, 5);
-	boxsizer->Add(height, 0, wxALL, 5);
-	boxsizer->Add(resolutionFromVideo, 0, wxALL, 5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Szerokość"), wxDefaultPosition, wxSize(-1, -1)), 1, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	boxsizer->Add(width, 1, wxALL, 5);
+	boxsizer->Add(new KaiStaticText(this, -1, _("Wysokość"), wxDefaultPosition, wxSize(-1, -1)), 1, wxALL | wxALIGN_CENTER_VERTICAL, 5);
+	boxsizer->Add(height, 1, wxALL, 5);
+	boxsizer->Add(resolutionFromVideo, 1, wxALL, 5);
 
 	StaticBox2->Add(boxsizer, 0, wxEXPAND);
 

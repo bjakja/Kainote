@@ -19,14 +19,13 @@
 #include "Menu.h"
 #include <vector>
 
-static int iconsize=24;
 
 class toolitem
 {
 public:
-	toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
+	toolitem::toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
 	{
-		icon = _icon; label = _label; id = _id; enabled = _enable; type = _type; size = iconsize;
+		icon = _icon; label = _label; id = _id; enabled = _enable; type = _type; size = 24;
 		if (type == 2){ toggled = _toggled; }
 	}
 	//types 0 - normal icon, 1 -icon with submenu, 2 - togglebutton, 3 - clickable element, 4 - spacer
@@ -79,7 +78,6 @@ public:
 	//void ChangeOrientation(byte _alignment){ alignment = _alignment; }
 	bool SetFont(const wxFont &font);
 	wxArrayInt ids;
-
 private:
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnToolbarOpts(wxCommandEvent &event);
@@ -88,16 +86,17 @@ private:
 	//void OnEraseBackground(wxEraseEvent &evt){};
 	wxPoint FindElem(wxPoint pos);
 	std::vector<toolitem*> tools;
-	
+
 	byte alignment;
 	bool Clicked;
 	bool wasmoved;
 	int wh;
 	int oldelem;
 	int sel;
-	int thickness = iconsize;
+	int thickness = 24;
 	wxBitmap *bmp;
 	MenuBar *mb;
+
 	DECLARE_EVENT_TABLE()
 };
 

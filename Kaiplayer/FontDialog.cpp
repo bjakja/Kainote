@@ -557,11 +557,11 @@ FontPickerButton::FontPickerButton(wxWindow *parent, int id, const wxFont& font,
 
 void FontPickerButton::ChangeFont(const wxFont &font)
 {
+	wxSize newSize = GetMinSize();
 	SetLabelText(font.GetFaceName() + L" " + std::to_wstring(font.GetPointSize()));
 	SetFont(font);
 	int fw, fh;
 	GetTextExtent(GetLabelText(), &fw, &fh);
-	wxSize newSize = GetMinSize();
 	bool isChanged = false;
 	if (newSize.x < fw + 16){
 		newSize.x = fw + 16;
@@ -571,8 +571,10 @@ void FontPickerButton::ChangeFont(const wxFont &font)
 		newSize.y = fh + 10;
 		isChanged = true;
 	}
-	if (isChanged){ SetMinSize(newSize); }
-	GetParent()->Layout();
+	//if (isChanged){
+		SetMinSize(newSize);
+		GetParent()->Layout();
+	//}
 }
 
 wxFont FontPickerButton::GetSelectedFont(){
@@ -587,6 +589,7 @@ void FontPickerButton::OnClick(wxCommandEvent &evt)
 	mstyle->SetFontSizeDouble(font.GetPointSize());
 	FontDialog * FD = FontDialog::Get(this, mstyle, true);
 	if (FD->ShowModal() == wxID_OK){
+		//wxSize newSize = GetMinSize();
 		Styles *retstyle = FD->GetFont();
 		font.SetFaceName(retstyle->Fontname);
 		font.SetPointSize(MID(retstyle->GetFontSizeDouble(), 8, 20));

@@ -341,7 +341,6 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
-		wxFlexGridSizer *MainSizer2 = new wxFlexGridSizer(9, 2, wxSize(5, 5));
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
 		NumCtrl *gridSaveAfter = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy edycji"));
@@ -364,33 +363,43 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(sc, InsertStartOffset);
 		ConOpt(sc1, InsertEndOffset);
 		ConOpt(sc2, GridTagsSwapChar);
-		
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu"), wxDefaultPosition, wxSize(256, -1)), 3, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
+		wxBoxSizer *MainSizer2 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu"), wxDefaultPosition, wxSize(256, -1)), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(autoSaveMax, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki początkowej w ms:"), wxDefaultPosition, wxSize(256, -1)), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(sc, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki końcowej w ms:")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(sc1, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(sc2, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość znaków widocznych na zakładce")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(maxTabChars, 0, wxEXPAND);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Poziom śledzenia logów skryptów LUA")), 3, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
-		MainSizer2->Add(ltl, 0, wxEXPAND);
+		wxBoxSizer *MainSizer3 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer3->Add(new KaiStaticText(EditorAdvanced, -1, _("Maksymalna ilość plików autozapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer3->Add(autoSaveMax, 0, wxEXPAND);
+		wxBoxSizer *MainSizer4 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer4->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki początkowej w ms:")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer4->Add(sc, 0, wxEXPAND);
+		wxBoxSizer *MainSizer5 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer5->Add(new KaiStaticText(EditorAdvanced, -1, _("Przyspieszenie klatki końcowej w ms:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer5->Add(sc1, 0, wxEXPAND);
+		wxBoxSizer *MainSizer6 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer6->Add(new KaiStaticText(EditorAdvanced, -1, _("Znak podmiany tagów ASS:")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer6->Add(sc2, 0, wxEXPAND);
+		wxBoxSizer *MainSizer7 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer7->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość znaków widocznych na zakładce")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer7->Add(maxTabChars, 0, wxEXPAND);
+		wxBoxSizer *MainSizer8 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer8->Add(new KaiStaticText(EditorAdvanced, -1, _("Poziom śledzenia logów skryptów LUA")), 5, /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND);
+		MainSizer8->Add(ltl, 0, wxEXPAND);
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
 		FontPickerButton *optf = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(GridFontSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(GridFontName)));
 		ConOpt(optf, GridFontName);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 3, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
-		MainSizer2->Add(optf, 1, wxEXPAND);
+		optf->SetMinSize(ltl->GetMinSize());
+		wxBoxSizer *MainSizer9 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer9->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
+		MainSizer9->Add(optf, 0, wxEXPAND);
 
 		FontPickerButton *programFont = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(PROGRAM_FONT_SIZE), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(PROGRAM_FONT)));
 		ConOpt(programFont, PROGRAM_FONT);
-		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka programu:")), 3, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
-		MainSizer2->Add(programFont, 1, wxEXPAND);
+		programFont->SetMinSize(ltl->GetMinSize());
+		wxBoxSizer *MainSizer10 = new wxBoxSizer(wxHORIZONTAL);
+		MainSizer10->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka programu:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
+		MainSizer10->Add(programFont, 0, wxEXPAND);
 
 		KaiStaticBoxSizer *alm = new KaiStaticBoxSizer(wxHORIZONTAL, EditorAdvanced, _("Sposób wczytywania skryptów autoload"));
 		wxString methods[] = { _("Przy starcie programu asynchronicznie"), _("Przy starcie programu"), _("Przy otwarciu menu asynchronicznie"), _("Przy otwarciu menu") };
@@ -398,7 +407,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		cmb->SetSelection(Options.GetInt(AutomationLoadingMethod));
 		ConOpt(cmb, AutomationLoadingMethod);
 		alm->Add(cmb, 1, wxCENTER | wxEXPAND | wxALL, 2);
+
 		Main1Sizer->Add(MainSizer2, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer3, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer4, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer5, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer6, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer7, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer8, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer9, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer10, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
 		Main1Sizer->Add(alm, 0, wxRIGHT | wxEXPAND, 4);
 
 		EditorAdvanced->SetSizerAndFit(Main1Sizer);
@@ -688,7 +706,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(leadOutTime, opts1[6]);
 		KaiStaticBoxSizer *DelaySizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Opóźnienie audio w ms"));
 		KaiStaticBoxSizer *markPlayTimeSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Czas odtwarzania audio przed i po znaczniku w ms"));
-		KaiStaticBoxSizer *leadInAndOut = new KaiStaticBoxSizer(wxHORIZONTAL, AudioSecond, _("Wstęp                                                   Zakończenie"));
+		wxString elems[] = { _("Wstęp"), _("Zakończenie") };
+		KaiStaticBoxSizer *leadInAndOut = new KaiStaticBoxSizer(wxHORIZONTAL, AudioSecond, 2, elems);
 		KaiStaticBoxSizer *lineThicknessSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Grubość linii znaczników"));
 		KaiStaticBoxSizer *audioCacheFilesLimitSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Limit plików audio cache"));
 		KaiStaticBoxSizer *displayNonActiveLinesSizer = new KaiStaticBoxSizer(wxVERTICAL, AudioSecond, _("Sposób wyświetlania nieaktywnych linijek"));

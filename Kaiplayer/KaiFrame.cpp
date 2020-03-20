@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//#include <WindowsX.h>
+
 #include "KaiFrame.h"
 #include "Utils.h"
 #include <wx/dcclient.h>
@@ -24,8 +24,8 @@
 #include <Dwmapi.h>
 #include "GraphicsD2D.h"
 #pragma comment(lib, "Dwmapi.lib")
-#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+//#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+//#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)

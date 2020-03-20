@@ -73,7 +73,8 @@ void EnableCrashingOnCrashes()
 }
 
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
-	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), pos, size, wxDEFAULT_FRAME_STYLE, L"Kainote_main_window")
+	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), 
+	pos, size, wxDEFAULT_FRAME_STYLE, L"Kainote_main_window")
 	, badResolution(false)
 {
 	LogHandler::Create(this);
@@ -86,8 +87,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Options.GetTable(VideoRecent, videorec);
 	Options.GetTable(AudioRecent, audsrec);
 	Options.GetTable(KEYFRAMES_RECENT, keyframesRecent);
-	//wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
-	SetFont(*Options.GetFont()/*thisFont*/);
+
+	SetFont(*Options.GetFont());
 	wxIcon KaiIcon(L"KAI_SMALL_ICON", wxBITMAP_TYPE_ICO_RESOURCE);
 	//::SendMessage(GetHwnd(), WM_SETICON, ICON_SMALL, (LPARAM)GetHiconOf(KaiIcon));
 	SetIcon(KaiIcon);
@@ -99,7 +100,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	else{
 		::SendMessage(GetHwnd(), WM_SETICON, ICON_BIG, (LPARAM)GetHiconOf(KaiIcon));
 	}
-	//height 22 zmieniając jedną z tych wartości popraw je też dropfiles
+
 	Menubar = new MenuBar(this);
 
 	//FrameSizer *mains1= new FrameSizer(wxVERTICAL);
@@ -110,7 +111,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	//SetMinSize(wxSize(500,300));
 	Toolbar = new KaiToolbar(this, Menubar, -1);
 
-	//height 26 zmieniając jedną z tych wartości popraw je też dropfiles
 	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22 };
 	StatusBar->SetFieldsCount(9, StatusBarWidths);
@@ -251,7 +251,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(ID_ADDPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageAdd);
 	Connect(ID_CLOSEPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
 	Connect(NextTab, PreviousTab, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
-	//tutaj dodawaj nowe idy
+	//Here add new ids
 	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
 	Connect(GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
 	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);

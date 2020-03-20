@@ -22,8 +22,8 @@
 #include <Dwmapi.h>
 #pragma comment(lib, "Dwmapi.lib")
 
-#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
-#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+//#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+//#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
 int border = 5;
 int topBorder = 24;
@@ -77,7 +77,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	SetExtraStyle(GetExtraStyle() | wxTOPLEVEL_EX_DIALOG | wxWS_EX_BLOCK_EVENTS);// | wxCLIP_CHILDREN
 	Create(parent, id, title, pos, size, wxBORDER_NONE | wxTAB_TRAVERSAL);
 	if ( !m_hasFont )
-		wxWindow::SetFont(*Options.GetFont());
+		SetFont(*Options.GetFont());
 	
 	SetForegroundColour(Options.GetColour(WindowText));
 	SetBackgroundColour(Options.GetColour(WindowBackground));
@@ -221,11 +221,11 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	mdc.SetTextForeground(text);
 	wxIconBundle icon = GetIcons();
 	if (icon.GetIconCount()){
-		mdc.DrawIcon(icon.GetIconByIndex(0), 4, (topBorder - 16) / 2);
+		mdc.DrawIcon(icon.GetIconByIndex(0), 6, (topBorder - 16) / 2);
 	}
 	wxString title = GetTitle();
 	if (title != L""){
-		int start = icon.GetIconCount() ? 26 : 6;
+		int start = icon.GetIconCount() ? 28 : 8;
 		int removed = 0, fw = 0, fh = 0;
 		mdc.GetTextExtent(title, &fw, &fh);
 		while (fw > w - 22 - start && title != L""){
@@ -439,18 +439,19 @@ bool KaiDialog::SetFont(const wxFont &font)
 	int fw, fh;
 	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
 	topBorder = (fh + 8 < 24) ? 24 : fh + 8;
-
-	const wxWindowList& siblings = GetChildren();
+	//cannot set font in dialogs cause of static text sizer
+	//is not window cannot make it change sizes
+	/*const wxWindowList& siblings = GetChildren();
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
 		nodeAfter;
 		nodeAfter = nodeAfter->GetNext()){
 
 		wxWindow *win = nodeAfter->GetData();
 		win->SetFont(font);
-	}
+	}*/
 
 	wxWindow::SetFont(font);
-	Layout();
+	//Layout();
 	return true;
 }
 
