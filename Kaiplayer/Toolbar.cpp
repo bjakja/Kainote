@@ -421,6 +421,17 @@ bool KaiToolbar::SetFont(const wxFont &font)
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
 	thickness = toolbarSize = fh + 8;
+	int w, h;
+	GetClientSize(&w, &h);
+	bool vertical = alignment % 2 == 0;
+	float maxx = (vertical) ? h : w;
+	int toolbarrows = ((tools.size() * thickness) - 2) / maxx;
+
+	int wh = (toolbarrows + 1) * thickness;
+	int maxxwh = (vertical) ? w : h;
+	if (maxxwh != wh){
+		toolbarSize = wh;
+	}
 	//need test if onsize from kainoteframe make rest
 	return true;
 }

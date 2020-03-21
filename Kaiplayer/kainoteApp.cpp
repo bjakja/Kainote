@@ -81,13 +81,14 @@ bool kainoteApp::OnInit()
 				const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
 				if (!li)
 					KaiMessageBox(L"Cannot find language, language change failed");
-
-				if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
-					KaiMessageBox(L"wxLocale cannot initialize, language change failed");
-				}
-				locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
-				if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
-					KaiMessageBox(L"Cannot find translation, language change failed");
+				else{
+					if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
+						KaiMessageBox(L"wxLocale cannot initialize, language change failed");
+					}
+					locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
+					if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
+						KaiMessageBox(L"Cannot find translation, language change failed");
+					}
 				}
 			}
 			//locale numbers changes here cause of it is set with wxlocale, I have to change it back

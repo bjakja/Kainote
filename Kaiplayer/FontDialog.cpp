@@ -527,8 +527,11 @@ void FontDialog::OnUpdatePreview(wxCommandEvent& event)
 void FontDialog::UpdatePreview()
 {
 	Styles *style = GetFont();
-	wxFont tmpfont(style->GetFontSizeDouble(), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, style->Fontname);
-	style->SetFontSizeDouble(tmpfont.GetPixelSize().GetHeight());
+	if (pointToPixel){
+		wxFont tmpfont(style->GetFontSizeDouble(), wxFONTFAMILY_SWISS, 
+			wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, style->Fontname);
+		style->SetFontSizeDouble(tmpfont.GetPixelSize().GetHeight());
+	}
 	Preview->DrawPreview(style);
 	fontChangedTimer.Start(200, true);
 }

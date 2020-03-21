@@ -43,7 +43,7 @@ public:
 	SpellChecker();
 	~SpellChecker();
 	bool Initialize();
-	static void AvailableDics(wxArrayString &dics);
+	static void AvailableDics(wxArrayString &dics, wxArrayString &symbols);
 	void Cleaning();
 	bool CheckWord(wxString word);
 	bool AddWord(wxString word);

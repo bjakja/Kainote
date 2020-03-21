@@ -81,6 +81,8 @@ private:
 
 	unsigned char hkeymodif;
 	std::vector<bool> registeredExts;
+	std::vector<wxString> programLanguages;
+	wxArrayString dictionaryLanguagesSymbols;
 };
 
 enum{

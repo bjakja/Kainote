@@ -1814,10 +1814,11 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_SEEKWORDG, _("Szukaj zaznaczonej frazy w Google"))->Enable(Selend.x != Cursor.x);
 	menut.Append(TEXTM_SEEKWORDS, _("Szukaj synonimu na synonimy.net"))->Enable(Selend.x != Cursor.x);
 
+	wxArrayString dictionarySymbols;
 	int numOfLanguages = 0;
 	if (useSpellchecker){
 		wxArrayString dics;
-		SpellChecker::AvailableDics(dics);
+		SpellChecker::AvailableDics(dics, dictionarySymbols);
 		numOfLanguages = dics.size();
 		const wxString &language = Options.FindLanguage(Options.GetString(DictionaryLanguage));
 		Menu *languageMenu = new Menu();
@@ -1928,7 +1929,8 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		else{
 			MenuItem * item = menut.FindItem(id);
 			if (item){
-				Options.SetString(DictionaryLanguage, item->GetLabel());
+				//first element starts from MENU_SPELLCHECKER_ON + 1
+				Options.SetString(DictionaryLanguage, dictionarySymbols[id - MENU_SPELLCHECKER_ON - 1]);
 				SpellChecker::Destroy();
 				EB->ClearErrs();
 			}

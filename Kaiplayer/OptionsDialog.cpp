@@ -301,8 +301,10 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		if (kat.IsOpened()){
 			kat.GetAllFiles(localePath, &langs, L"*.mo", wxDIR_FILES);
 		}
+		programLanguages.push_back(L"pl");
 		for (size_t i = 0; i < langs.GetCount(); i++){
 			wxString fulllang = langs[i].AfterLast(L'\\').BeforeLast(L'.');
+			programLanguages.push_back(fulllang);
 			const wxString &fullName = Options.FindLanguage(fulllang);
 			langs[i] = fullName;
 		}
@@ -317,13 +319,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(lang, ProgramLanguage);
 		langSizer->Add(lang, 0, wxALL | wxEXPAND, 2);
 		MainSizer->Add(langSizer, 0, wxRIGHT | wxEXPAND, 5);
-
-		wxArrayString dics;
-		SpellChecker::AvailableDics(dics);
-		if (dics.size() == 0){ dics.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\"")); }
+		wxArrayString dictionaries;
+		SpellChecker::AvailableDics(dictionaries, dictionaryLanguagesSymbols);
+		if (dictionaries.size() == 0){ dictionaries.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\"")); }
 		KaiStaticBoxSizer *dicSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
 
-		KaiChoice *dic = new KaiChoice(Editor, 10001, wxDefaultPosition, wxDefaultSize, dics);
+		KaiChoice *dic = new KaiChoice(Editor, 10001, wxDefaultPosition, wxDefaultSize, dictionaries);
 
 		dic->SetSelection(dic->FindString(Options.FindLanguage(Options.GetString(DictionaryLanguage))));
 		ConOpt(dic, DictionaryLanguage);
@@ -1084,16 +1085,6 @@ void OptionsDialog::SetOptions(bool saveall)
 				Kai->DestroyDialogs();
 				Kai->SetFont(*Options.GetFont());
 				Kai->Layout();
-				//wxWindowList::compatibility_iterator node = wxTopLevelWindows.GetFirst();
-				//while (node)
-				//{
-				//	wxWindow* win = node->GetData();
-				//	// do something with "win"
-				//	win->SetFont(*Options.GetFont());
-				//	win->Layout();
-				//	node = node->GetNext();
-				//}
-				
 			}
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
@@ -1105,20 +1096,36 @@ void OptionsDialog::SetOptions(bool saveall)
 				}
 			}
 			else if (cbx->GetId() != 10000){
-				wxString color = cbx->GetString(cbx->GetSelection());
-				if (Options.GetString(OB.option) != color){
-					Options.SetString(OB.option, color);
-					if (cbx->GetId() == 10001){
-						SpellChecker::Destroy();
-						Kai->Tabs->GetTab()->Edit->ClearErrs();
+				//dictionary language
+				if (cbx->GetId() == 10001){
+					int sel = cbx->GetSelection();
+					if (sel >= 0 && sel < dictionaryLanguagesSymbols.GetCount()){
+						wxString language = dictionaryLanguagesSymbols[sel];
+						if (Options.GetString(OB.option) != language){
+							Options.SetString(OB.option, language);
+							SpellChecker::Destroy();
+							Kai->Tabs->GetTab()->Edit->ClearErrs();
+						}
 					}
-					else if (cbx->GetId() == 10002){
-						Options.ChangeVsfilter();
-						Notebook::RefreshVideo();
+				}//program language
+				else if (cbx->GetId() == 10005){
+					int sel = cbx->GetSelection();
+					if (sel >= 0 && sel < programLanguages.size()){
+						wxString language = programLanguages[sel];
+						if (Options.GetString(OB.option) != language)
+							Options.SetString(OB.option, language);
 					}
-					/*else if (cbx->GetId() == 10005){
-					nothing to do here
-					}*/
+				}
+				else{
+					wxString option = cbx->GetString(cbx->GetSelection());
+					if (Options.GetString(OB.option) != option){
+						Options.SetString(OB.option, option);
+						//vsfilter change
+						if (cbx->GetId() == 10002){
+							Options.ChangeVsfilter();
+							Notebook::RefreshVideo();
+						}
+					}
 				}
 			}
 			else{
