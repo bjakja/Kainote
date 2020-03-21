@@ -49,6 +49,7 @@ config::config()
 #endif
 	AudioOpts = false;
 	defaultColour = wxColour();
+	InitLanguagesTable();
 }
 
 
@@ -840,6 +841,15 @@ wxFont *config::GetFont(int offset)
 	return newFont;
 }
 
+const wxString &config::FindLanguage(const wxString & symbol)
+{
+	auto &it = Languages.find(symbol);
+	if (it != Languages.end())
+		return it->second;
+
+	return symbol;
+}
+
 wxString getfloat(float num, const wxString &format, bool Truncate)
 {
 	wxString strnum = wxString::Format(L"%" + format, num);
@@ -857,6 +867,7 @@ wxString getfloat(float num, const wxString &format, bool Truncate)
 	if (rmv){ strnum.RemoveLast(rmv); }
 	return strnum.Trim(false);
 }
+
 
 
 bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_name)

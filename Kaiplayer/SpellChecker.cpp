@@ -86,7 +86,9 @@ void SpellChecker::AvailableDics(wxArrayString &dics)
 
 	for (size_t i = 0; i < dic.size(); i++){
 		if (dic[i].BeforeLast(L'.') == aff[i].BeforeLast(L'.')){
-			dics.Add(dic[i].AfterLast(L'\\').BeforeFirst(L'.'));
+			wxString symbolName = dic[i].AfterLast(L'\\').BeforeFirst(L'.');
+			const wxString &fullName = Options.FindLanguage(symbolName);
+			dics.Add(fullName);
 		}
 	}
 }

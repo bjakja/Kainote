@@ -398,8 +398,10 @@ private:
 	wxColour colors[colorsSize];
 	bool isClosing = false;
 	std::map<int, wxFont*> programFonts;
+	std::map<wxString, wxString> Languages;
 	csri_rend *vsfilter = NULL;
 	wxColour defaultColour;
+	void InitLanguagesTable();
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -453,6 +455,8 @@ public:
 	void clearstyles();
 	void Sortstyles();
 	void SetHexColor(const wxString &nameAndColor);
+	//if failed returns symbol
+	const wxString & FindLanguage(const wxString & symbol);
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0);
 	void FontsClear();

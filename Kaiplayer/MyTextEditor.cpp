@@ -1819,7 +1819,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		wxArrayString dics;
 		SpellChecker::AvailableDics(dics);
 		numOfLanguages = dics.size();
-		const wxString &language = Options.GetString(DictionaryLanguage);
+		const wxString &language = Options.FindLanguage(Options.GetString(DictionaryLanguage));
 		Menu *languageMenu = new Menu();
 		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), L"", true, 
 			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));

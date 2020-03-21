@@ -383,6 +383,9 @@
     <ClCompile Include="KaiGauge.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="Languages.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">

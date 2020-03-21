@@ -301,15 +301,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		if (kat.IsOpened()){
 			kat.GetAllFiles(localePath, &langs, L"*.mo", wxDIR_FILES);
 		}
-		//wxString langopts[2] = { "Polski", "English" };
 		for (size_t i = 0; i < langs.GetCount(); i++){
-			wxString fulllang = langs[i].AfterLast(L'\\');
-			langs[i] = fulllang.BeforeLast(L'.');
+			wxString fulllang = langs[i].AfterLast(L'\\').BeforeLast(L'.');
+			const wxString &fullName = Options.FindLanguage(fulllang);
+			langs[i] = fullName;
 		}
-		langs.Insert(L"pl", 0);
+		langs.Insert(L"Polski", 0);
 		KaiStaticBoxSizer *langSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język (wymaga restartu programu)"));
 		KaiChoice *lang = new KaiChoice(Editor, 10005, wxDefaultPosition, wxDefaultSize, langs);
-		int sel = lang->FindString(Options.GetString(ProgramLanguage));
+		int sel = lang->FindString(Options.FindLanguage(Options.GetString(ProgramLanguage)));
 		if (sel < 0)
 			sel = 0;
 		lang->SetSelection(sel);
@@ -325,7 +325,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		KaiChoice *dic = new KaiChoice(Editor, 10001, wxDefaultPosition, wxDefaultSize, dics);
 
-		dic->SetSelection(dic->FindString(Options.GetString(DictionaryLanguage)));
+		dic->SetSelection(dic->FindString(Options.FindLanguage(Options.GetString(DictionaryLanguage))));
 		ConOpt(dic, DictionaryLanguage);
 		dicSizer->Add(dic, 0, wxALL | wxEXPAND, 2);
 		MainSizer->Add(dicSizer, 0, wxRIGHT | wxEXPAND, 5);
