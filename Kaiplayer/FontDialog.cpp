@@ -589,7 +589,6 @@ void FontPickerButton::OnClick(wxCommandEvent &evt)
 	mstyle->SetFontSizeDouble(font.GetPointSize());
 	FontDialog * FD = FontDialog::Get(this, mstyle, true);
 	if (FD->ShowModal() == wxID_OK){
-		//wxSize newSize = GetMinSize();
 		Styles *retstyle = FD->GetFont();
 		font.SetFaceName(retstyle->Fontname);
 		font.SetPointSize(MID(retstyle->GetFontSizeDouble(), 8, 20));

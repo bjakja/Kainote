@@ -125,9 +125,10 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	needImageUpdateWeak = true;
 	playingToEnd = false;
 	LastSize = wxSize(-1, -1);
-	verdana11 = wxFont(11, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Verdana");
-	tahoma13 = wxFont(13, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
-	tahoma8 = wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
+	int fontSize = Options.GetInt(PROGRAM_FONT_SIZE);
+	verdana11 = wxFont(fontSize + 1, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Verdana");
+	tahoma13 = wxFont(fontSize + 3, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
+	tahoma8 = *Options.GetFont(-1);
 	int fh;
 	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
 	timelineHeight = fh + 8;
@@ -2457,6 +2458,22 @@ void AudioDisplay::DrawKeyframes() {
 	d3dLine->End();
 }
 
+bool AudioDisplay::SetFont(const wxFont &font)
+{
+	int fontSize = Options.GetInt(PROGRAM_FONT_SIZE);
+	verdana11 = wxFont(fontSize + 1, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Verdana");
+	tahoma13 = wxFont(fontSize + 3, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD, false, L"Tahoma");
+	tahoma8 = *Options.GetFont(-1);
+	int fh;
+	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
+	timelineHeight = fh + 8;
+	UpdateTimer.SetOwner(this, Audio_Update_Timer);
+	GetClientSize(&w, &h);
+	h -= timelineHeight;
+	UpdateImage(true);
+	//test it!!!
+	return true;
+}
 ///////////////
 // Event table
 BEGIN_EVENT_TABLE(AudioDisplay, wxWindow)

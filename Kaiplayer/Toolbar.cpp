@@ -34,7 +34,7 @@ KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	alignment = Options.GetInt(ToolbarAlignment);
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
-	thickness = fh + 8;
+	thickness = toolbarSize = fh + 8;
 }
 
 KaiToolbar::~KaiToolbar()
@@ -247,7 +247,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 
 	for (int i = 0; i < toolsSize; i++)
 	{
-		if (pos + thickness/*tools[i]->size*/ > maxx){ pos1 += thickness; pos = 4; }
+		if (pos + thickness > maxx && pos1 + thickness < toolbarSize){ pos1 += thickness; pos = 4; }
 		bool toggled = tools[i]->toggled;
 		if (i == sel || toggled){
 			tdc.SetPen(wxPen((Clicked || toggled) ?
@@ -255,9 +255,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 			tdc.SetBrush(wxBrush((Clicked || toggled) ?
 				Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
 			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2,
-				(vertical) ? pos - 2 : (i >= toolsSize - 1) ?
-				pos1 + 2 /*+ (thickness - (tools[i]->size))*/ :
-				pos1 + 2, thickness - 4, (i >= toolsSize - 1) ? (thickness / 2) : thickness - 4, 1.1);
+				(vertical) ? pos - 2 : pos1 + 2, thickness - 4, 
+				(i >= toolsSize - 1) ? (thickness / 2) : thickness - 4, 1.1);
 		}
 		if (tools[i]->type < 3){
 			//wxImage img=tools[i]->GetBitmap().ConvertToImage();
@@ -277,10 +276,10 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	tdc.SetBrush(wxBrush(Options.GetColour(WindowText)));
 	wxPoint points[3];
 	if (vertical){
-		tdc.DrawLine(thickness - 12, pos - 11, thickness - 6, pos - 11);
-		points[0] = wxPoint(thickness - 12, pos - 8);
-		points[1] = wxPoint(thickness - 6, pos - 8);
-		points[2] = wxPoint(thickness - 9, pos - 4);
+		tdc.DrawLine(pos1 + thickness - 12, pos - 11, pos1 + thickness - 6, pos - 11);
+		points[0] = wxPoint(pos1 + thickness - 12, pos - 8);
+		points[1] = wxPoint(pos1 + thickness - 6, pos - 8);
+		points[2] = wxPoint(pos1 + thickness - 9, pos - 4);
 	}
 	else{
 		tdc.DrawLine(pos + (thickness / 2) - 16, pos1 + 5, pos + (thickness / 2) - 10, pos1 + 5);
@@ -307,7 +306,7 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	wh = (toolbarrows + 1) * thickness;
 	int maxxwh = (vertical) ? w : h;
 	if (maxxwh != wh){
-		thickness = wh;
+		toolbarSize = wh;
 		SetSize(wxSize(wh, -1));
 		KainoteFrame *Kai = (KainoteFrame*)GetParent();
 		//Kai->Layout();
@@ -413,7 +412,7 @@ bool KaiToolbar::SetFont(const wxFont &font)
 	//write rest when add custom size
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
-	thickness = fh + 8;
+	thickness = toolbarSize = fh + 8;
 	//need test if onsize from kainoteframe make rest
 	return true;
 }

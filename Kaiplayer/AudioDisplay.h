@@ -259,6 +259,7 @@ public:
 	void SetSelection(int start, int end);
 	int GetBoundarySnap(int x, int range, bool shiftHeld, bool start = true, bool keysnap = false);
 	void GetTextExtentPixel(const wxString &text, int *x, int *y);
+	bool SetFont(const wxFont &font);
 	DECLARE_EVENT_TABLE()
 };
 

@@ -408,16 +408,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		ConOpt(cmb, AutomationLoadingMethod);
 		alm->Add(cmb, 1, wxCENTER | wxEXPAND | wxALL, 2);
 
-		Main1Sizer->Add(MainSizer2, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer3, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer4, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer5, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer6, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer7, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer8, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer9, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(MainSizer10, 0, wxRIGHT | wxLEFT | wxEXPAND, 5);
-		Main1Sizer->Add(alm, 0, wxRIGHT | wxEXPAND, 4);
+		Main1Sizer->Add(MainSizer2, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer3, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer4, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer5, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer6, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer7, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer8, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer9, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(MainSizer10, 0, wxRIGHT | wxLEFT | wxTOP | wxEXPAND, 5);
+		Main1Sizer->Add(alm, 0, wxRIGHT | wxTOP | wxEXPAND, 4);
 
 		EditorAdvanced->SetSizerAndFit(Main1Sizer);
 	}
@@ -577,10 +577,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		filterMode->Add(filterList, 1, wxALL | wxEXPAND, 2);
 		HkeysSizer->Add(filterMode, 0, wxEXPAND);
+		wxString mesureText = _("Globalny") + L" " + _("Lista osób pomocnych przy tworzeniu programu");
+		wxString mesureText2 = L"Ctrl-Shift-Delete";
+		int fw, fww, fh;
+		GetTextExtent(mesureText, &fw, &fh);
+		GetTextExtent(mesureText2, &fww, &fh);
 
 		Shortcuts = new KaiListCtrl(Hotkeyss, 26667, wxDefaultPosition);
-		Shortcuts->InsertColumn(0, _("Funkcja"), TYPE_TEXT, 275);
-		Shortcuts->InsertColumn(1, _("Skrót"), TYPE_TEXT, 80);
+		Shortcuts->InsertColumn(0, _("Funkcja"), TYPE_TEXT, (fw < 275)? 275 : fw);
+		Shortcuts->InsertColumn(1, _("Skrót"), TYPE_TEXT, (fww < 80)? 80 : fww);
 		Connect(26667, LIST_ITEM_DOUBLECLICKED, (wxObjectEventFunction)&OptionsDialog::OnMapHkey);
 		//Connect(26667,LIST_ITEM_RIGHT_CLICK,(wxObjectEventFunction)&OptionsDialog::OnResetHkey);
 
@@ -606,7 +611,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 					if (curmhk->first.id == Quit)
 						continue;
 
-					wxString windowName = windowNames[lastType] + " ";
+					wxString windowName = windowNames[lastType] + L" ";
 					auto & it = hkeysNames.find(curmhk->first.id);
 					if (it != hkeysNames.end()){
 						name = it->second;
@@ -733,13 +738,13 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	{
 		const int numColors = 138;
 		wxString labels[numColors] = {
-			//okno
+			//window
 			_("Okno tło"), _("Okno nieaktywne tło"), _("Okno tekst"), _("Okno nieaktywny tekst"),
 			_("Okno obramowanie"), _("Okno obramowanie nieaktywne"), _("Okno tło obramowania"),
 			_("Okno tło obramowania nieaktywne"), _("Okno tekst nagłówka"), _("Okno tekst nagłówka nieaktywny"),
 			_("Okno najechany element nagłówka"), _("Okno wciśnięty element nagłówka"),
 			_("Okno najechane zamykanie"), _("Okno wciśnięte zamykanie"), _("Okno elementy ostrzegające"),
-			//napisy
+			//subtitles
 			_("Napisy tekst"), _("Napisy tło"), _("Napisy tło dialogów"), _("Napisy tło komentarzy"),
 			_("Napisy zaznaczenia (przezroczystość)"), _("Napisy linijki widoczne na wideo"),
 			_("Napisy kolidujące linie"), _("Napisy obramowanie linijki"), _("Napisy obramowanie aktywnej linijki"),
@@ -748,7 +753,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Napisy etykieta niepewnej linii"), _("Napisy tło błędów pisowni"), _("Napisy obramowanie porównania"),
 			_("Napisy tło porównania brak zgodności"), _("Napisy tło porównania zgodność"), 
 			_("Napisy tło komentarza por. brak zgodności"), _("Napisy tło komentarza por. zgodność"),
-			//edytor
+			//editor
 			_("Edytor tekst"), _("Edytor nazwy tagów"), _("Edytor wartości tagów"),
 			_("Edytor nawiasy klamrowe"), _("Edytor operatory tagów"), _("Edytor zmienne template"),
 			_("Edytor znaczniki kodu template"), _("Edytor funkcje template"), _("Edytor słowa kluczowe template"), 
@@ -762,7 +767,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Audio zaznaczenie po modyfikacji"), _("Audio tło nieaktywnych linijek"), _("Audio wykres falowy"),
 			_("Audio nieaktywny wykres falowy"), _("Audio zmodyfikowany wykres falowy"), _("Audio zaznaczony wykres falowy"),
 			_("Audio tło spektrum"), _("Audio echo spektrum"), _("Audio spektrum"),
-			//kontrolki
+			//controls
 			_("Pole tekstowe tło"), _("Pole tekstowe obramowanie"),
 			_("Pole tekstowe obramowanie aktywnego okna"), _("Pole tekstowe zaznaczenie"),
 			_("Pole tekstowe zaznaczenie w nieaktywnym oknie"),
@@ -776,25 +781,25 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Ramka z opisem obramowanie"), _("Lista statyczna obramowanie"), _("Lista statyczna tło"),
 			_("Lista statyczna zaznaczenie"), _("Lista statyczna tło nagłówka"), _("Lista statyczna tekst nagłówka"),
 			_("Pasek statusu obramowanie"),
-			//pasek menu
+			//menu bar
 			_("Pasek menu tło 1"), _("Pasek menu tło 2"), _("Pasek menu obramowanie zaznaczenia"), 
 			_("Pasek menu najechane tło zaznaczenia"), _("Pasek menu kliknięte tło zaznaczenia"), 
 			_("Menu tło"), _("Menu obramowanie zaznaczenia"), _("Menu tło zaznaczenia"),
-			//zakładki
+			//tab bar
 			_("Pasek zakładek tło 1"), _("Pasek zakładek tło 2"), _("Zakładki obramowanie aktywnej"),
 			_("Zakładki obramowanie nieaktywnej"), _("Zakładki tło aktywnej"), _("Zakładki tło nieaktywnej"),
 			_("Zakładki tło nieaktywnej po najechaniu"), _("Zakładki tło drugiej widocznej zakładki"),
 			_("Zakładki tekst aktywnej"), _("Zakładki tekst nieaktywnej"), _("Zakładki zamknięcie po najechaniu"),
 			_("Pasek zakładek strzałka"), _("Pasek zakładek strzałka tło"),
 			_("Pasek zakładek strzałka tło po najechaniu"),
-			//suwak
+			//slider
 			_("Suwak ścieżka tło"), _("Suwak ścieżka obramowanie"), _("Suwak obramowanie"),
 			_("Suwak obramowanie po najechaniu"), _("Suwak obramowanie po wciśnięciu"), _("Suwak tło"),
 			_("Suwak tło po najechaniu"), _("Suwak tło po wciśnięciu"),
 			//miscellanous
 			_("Linia zmiany rozdzielczości kropki"), _("Wynik szukania czcionka nazwy pliku"), _("Wynik szukania tło nazwy pliku"),
 			_("Wynik szukania czcionka znalezionej frazy"), _("Wynik szukania tło znalezionej frazy"),
-			//podgląd styli
+			//styles preview
 			_("Pierwszy kolor podglądu styli"), _("Drugi kolor podglądu styli")
 		};
 
@@ -834,9 +839,16 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		KaiStaticText *warning = new KaiStaticText(Themes, -1, _("UWAGA! Przezroczystość działa tylko na wykresie audio\ni zaznaczeniach w napisach."));
 		sizer->Add(warning, 0, wxALL | wxEXPAND, 2);
+
+		wxString mesureText = _("Pole tekstowe zaznaczenie w nieaktywnym oknie");
+		wxString mesureText2 = L"######FFFFFFFF";
+		int fw, fww, fh;
+		GetTextExtent(mesureText, &fw, &fh);
+		GetTextExtent(mesureText2, &fww, &fh);
+
 		KaiListCtrl *List = new KaiListCtrl(Themes, -1, wxDefaultPosition, wxSize(300, -1));
-		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, 240);
-		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, 150);
+		List->InsertColumn(0, _("Nazwa"), TYPE_TEXT, fw < 240 ? 240 : fw);
+		List->InsertColumn(1, _("Kolor"), TYPE_COLOR, fww < 150 ? 150 : fww);
 		for (int i = 0; i < numColors; i++)
 		{
 			int row = List->AppendItem(new ItemText(labels[i]));

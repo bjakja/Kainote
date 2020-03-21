@@ -74,7 +74,7 @@ public:
 	bool Updatetoolbar();
 	void InitToolbar();
 	void AddID(int id);
-	int GetThickness(){ return thickness; }
+	int GetThickness(){ return toolbarSize; }
 	//void ChangeOrientation(byte _alignment){ alignment = _alignment; }
 	bool SetFont(const wxFont &font);
 	wxArrayInt ids;
@@ -94,6 +94,7 @@ private:
 	int oldelem;
 	int sel;
 	int thickness = 24;
+	int toolbarSize = 24;
 	wxBitmap *bmp;
 	MenuBar *mb;
 
