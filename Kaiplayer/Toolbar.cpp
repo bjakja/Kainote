@@ -307,7 +307,11 @@ void KaiToolbar::OnSize(wxSizeEvent &evt)
 	int maxxwh = (vertical) ? w : h;
 	if (maxxwh != wh){
 		toolbarSize = wh;
-		SetSize(wxSize(wh, -1));
+		if (vertical)
+			SetSize(wxSize(wh, -1));
+		else
+			SetSize(wxSize(-1, wh));
+
 		KainoteFrame *Kai = (KainoteFrame*)GetParent();
 		//Kai->Layout();
 		wxSizeEvent evt;
@@ -325,15 +329,16 @@ wxPoint KaiToolbar::FindElem(wxPoint pos)
 	wxPoint res(-1, 0);
 	bool vertical = alignment % 2 == 0;
 	int maxx = (vertical) ? h : w;
-	int tmppos = 0;
+	int tmppos = 4;
 	int curpos = (vertical) ? pos.y : pos.x;
 	int curpos1 = (vertical) ? pos.x : pos.y;
 	curpos1 /= thickness;
-	//int wrap=0;
 	for (size_t i = 0; i < tools.size(); i++)
 	{
 		int toolsize = /*(vertical) ? tools[i]->size : */thickness;
-		if (tmppos + toolsize > maxx){ res.y++; tmppos = 0; }
+		if (tmppos + toolsize > maxx && (res.y + 1) * thickness < toolbarSize){ 
+			res.y++; tmppos = 0; 
+		}
 		if (curpos > tmppos && curpos <= tmppos + toolsize && res.y == curpos1)
 		{
 			res.x = i;
@@ -363,6 +368,7 @@ void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 {
 	wxPoint point = GetPosition();
 	point = GetParent()->ClientToScreen(point);
+	wxSize toolbarSize = GetClientSize();
 
 	int fw, fh, width = 0;
 
@@ -380,24 +386,26 @@ void KaiToolbar::OnToolbarOpts(wxCommandEvent &event)
 	switch (alignment){
 	case 0://left
 		point.y += 20;
-		point.x += GetSize().x;
+		point.x += toolbarSize.x;
 		break;
 	case 1://top
-		point.y += GetSize().y;
-		point.x += tools.size() * thickness - 175;
+		point.y += toolbarSize.y;
+		point.x += (tools.size() * thickness % toolbarSize.x) - (toolbarMenuSize.x / 2);
+		if (point.x < 0){ point.x = 0; }
 		break;
 	case 2://right
 		point.y += 20;
-		point.x -= /*GetSize().x + */toolbarMenuSize.x;
+		point.x -= toolbarMenuSize.x;
 		break;
 	case 3://bottom
 		point.y -= toolbarMenuSize.y;
 		if (point.y < 0){ point.y = 0; }
-		point.x += tools.size() * thickness - 175;
+		point.x += (tools.size() * thickness % toolbarSize.x) - (toolbarMenuSize.x / 2);
+		if (point.x < 0){ point.x = 0; }
 		break;
 	default:
 		point.y += 20;
-		point.x += GetSize().x;
+		point.x += toolbarSize.x;
 		break;
 	}
 
@@ -426,11 +434,11 @@ EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &size, int height)
-:wxDialog(_parent, -1, L"", pos, size, wxBORDER_NONE)
-, sel(-1)
-, scPos(0)
-, parent(_parent)
-, bmp(NULL)
+	: wxDialog(_parent, -1, L"", pos, size, wxBORDER_NONE)
+	, sel(-1)
+	, scPos(0)
+	, parent(_parent)
+	, bmp(NULL)
 {
 	fh = height;
 	SetFont(parent->GetFont());
@@ -505,7 +513,28 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			parent->tools.erase(parent->tools.begin() + result);
 
 		}
-		parent->Refresh(false);
+		bool vertical = parent->alignment % 2 == 0;
+		parent->GetClientSize(&w, &h);
+		float maxx = (vertical) ? h : w;
+		int toolbarrows = ((parent->tools.size() * parent->thickness) - 2) / maxx;
+
+		int wh = (toolbarrows + 1) * parent->thickness;
+		int maxxwh = (vertical) ? w : h;
+		if (maxxwh != wh){
+			parent->OnSize(wxSizeEvent());
+			wxPoint toolbarPos = GetPosition();
+			if (vertical){
+				toolbarPos.x += parent->alignment == 0 ? (wh - maxxwh) : (maxxwh - wh);
+				SetPosition(toolbarPos);
+			}
+			else{
+				toolbarPos.y += parent->alignment == 1 ? (wh - maxxwh) : (maxxwh - wh);
+				SetPosition(toolbarPos);
+			}
+		}
+		else{
+			parent->Refresh(false);
+		}
 		Refresh(false);
 	}
 }

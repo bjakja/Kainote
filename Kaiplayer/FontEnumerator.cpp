@@ -201,8 +201,6 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 			fontrealpath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
 		}
 		else{
-			//for now only checks if works, after disable for win7 and 8 and older 10
-			//KaiLog(_("Nie można pobrać ścieżki czcionek lokalnych.")); 
 			return 0;
 		}
 	}
@@ -211,7 +209,12 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
 	if (hDir == INVALID_HANDLE_VALUE){ 
-		KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek.")); 
+		if (threadNum == 0){
+			//do not inform on system older than Windows 10 1909 that 
+			//cannot create notification of folder that they do not have
+			//without checking of system version it's impossible to check when it should be shown
+			KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."));
+		}
 		return 0; 
 	}
 	HANDLE events_to_wait[] = {
