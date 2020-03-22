@@ -85,9 +85,11 @@ bool kainoteApp::OnInit()
 					if (!locale->Init(li->Language, wxLOCALE_DONT_LOAD_DEFAULT)){
 						KaiMessageBox(L"wxLocale cannot initialize, language change failed");
 					}
-					locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
-					if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
-						KaiMessageBox(L"Cannot find translation, language change failed");
+					else{
+						locale->AddCatalogLookupPathPrefix(Options.pathfull + L"\\Locale\\");
+						if (!locale->AddCatalog(lang, wxLANGUAGE_POLISH, L"UTF-8")){
+							KaiMessageBox(L"Cannot find translation, language change failed");
+						}
 					}
 				}
 			}
@@ -134,13 +136,24 @@ bool kainoteApp::OnInit()
 				timer.Start(500, true);
 			}
 #if _DEBUG
-			debugtimer.SetOwner(this, 2299);
-			debugtimer.Start(100, true);
-			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-				Frame->Tabs->LoadLastSession(Frame); 
-			}, 2299);
-			
+			bool loadSession = true;
+#else
+			int session = Options.GetInt(LAST_SESSION_CONFIG);
+			bool loadSession = (session == 2);
+			if (session == 1){
+				if (KaiMessageBox(_("Wczytać poprzednią sesję"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
+					loadSession = true;
+				}
+			}
 #endif
+			if (loadSession){
+				debugtimer.SetOwner(this, 2299);
+				debugtimer.Start(100, true);
+				Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
+					Frame->Tabs->LoadLastSession(Frame);
+				}, 2299);
+			}
+
 
 		}
 	}

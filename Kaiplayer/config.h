@@ -150,6 +150,7 @@
 	CG(InsertEndOffset,)\
 	CG(InsertStartOffset,)\
 	CG(KEYFRAMES_RECENT,)\
+	CG(LAST_SESSION_CONFIG,)\
 	CG(MoveTimesByTime,)\
 	CG(MoveTimesLoadSetTabOptions,)\
 	CG(MoveTimesCorrectEndTimes,)\

@@ -25,6 +25,7 @@
 #include "SubsFile.h"
 #include <regex>
 #include "GraphicsD2D.h"
+#include "Utils.h"
 
 #undef DrawText
 
@@ -975,11 +976,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				wxString text = mestext + parttext;
 				if (!text.empty())
 					gc->GetTextExtent(text, &fww, &fh);
-
-				//gc->SetPen(ctext);
-				//caret->Move(3, 3);
 				caret->Move(fww + 3, posY);
-				//gc->StrokeLine(fww + 3, posY, fww + 3, posY + fontHeight);
 				cursorWasSet = true;
 			}
 
@@ -1013,10 +1010,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if (mestext + parttext == L""){ fw = 0.0; }
 			else{ gc->GetTextExtent(mestext + parttext, &fw, &fh); }
-			//caret->Move(3, 3);
 			caret->Move(fw + 3, posY);
-			//gc->SetPen(ctext);
-			//gc->StrokeLine(fw + 3, posY, fw + 3, posY + fontHeight);
 			cursorWasSet = true;
 		}
 		if (hasFocus && (i == Brackets.x || i == Brackets.y)){
@@ -1024,7 +1018,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			wxColour col = bgbraces;
 			if (Brackets.x == -1 || Brackets.y == -1){ col = cspellerrors; }
 			gc->SetBrush(wxBrush(col));
-			//dc.SetPen(wxPen(col));
 			wxString text = MText.SubString(wraps[bry], i - 1);
 			text.Replace(L"\t", L"");
 			if (i > 0){ gc->GetTextExtent(text, &fw, &fh); }
@@ -1908,13 +1901,14 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 
 		word.Replace(L" ", L"+");
 		wxString url = page + word;
-		WinStruct<SHELLEXECUTEINFO> sei;
-		sei.lpFile = url.c_str();
-		sei.lpVerb = L"open";
-		sei.nShow = SW_RESTORE;
-		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		//WinStruct<SHELLEXECUTEINFO> sei;
+		//sei.lpFile = url.c_str();
+		//sei.lpVerb = L"open";
+		//sei.nShow = SW_RESTORE;
+		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
-		ShellExecuteEx(&sei);
+		//ShellExecuteEx(&sei);
+		OpenInBrowser(url);
 
 	}
 	else if (id >= MENU_SPELLCHECKER_ON && useSpellchecker && id <= (MENU_SPELLCHECKER_ON + numOfLanguages)){

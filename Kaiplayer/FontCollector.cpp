@@ -24,6 +24,7 @@
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include <ShlObj.h>
+#include "Utils.h"
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
@@ -217,20 +218,15 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 		EnableControls();
 	});
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent evt){
-		//wxWCharBuffer buf = (copypath.Right(4).MakeLower() == L".zip") ? copypath.BeforeLast(L'\\').c_str() : copypath.c_str();
-		//WinStruct<SHELLEXECUTEINFO> sei;
-		//sei.lpFile = buf;
-		//sei.lpVerb = wxT("explore");
-		//sei.nShow = SW_RESTORE;
-		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-		//if (!ShellExecuteEx(&sei)){ KaiLog(_("Nie można otworzyć folderu")); }
-		CoInitialize(0);
+		
+		/*CoInitialize(0);
 		ITEMIDLIST *pidl = ILCreateFromPathW(copypath.wc_str());
 		if (pidl) {
 			SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
 			ILFree(pidl);
 		}
-		CoUninitialize();
+		CoUninitialize();*/
+		SelectInFolder(copypath);
 	}, 9877);
 	Bind(EVT_ENABLE_OPEN_FOLDER, [=](wxThreadEvent evt){
 		bOpenFontFolder->Enable();

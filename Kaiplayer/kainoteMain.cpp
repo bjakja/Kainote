@@ -39,7 +39,7 @@
 #include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
-#include <ShlObj.h>
+#include "utils.h"
 
 #undef IsMaximized
 #if _DEBUG
@@ -127,6 +127,13 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	FileMenu = new Menu();
 	SubsRecMenu = new Menu();
+	Menu *lastSession = new Menu();
+	lastSession->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
+	int lastSessionConfig = Options.GetInt(LAST_SESSION_CONFIG);
+	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, _("Pytaj o wczytanie ostatniej sesji przy starcie programu"), NULL, _("Pyta czy wczytać ostatnio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
+	lastSession->Append(GLOBAL_LOAD_LAST_SESSION_ON_START, _("Wczytaj ostatnią sesję przy starcie programu"), NULL, _("Wczytuje poprzednio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 2);
+	
+
 	FileMenu->AppendTool(Toolbar, OpenSubs, _("&Otwórz napisy"), _("Otwórz plik napisów"), PTR_BITMAP_PNG(L"opensubs"));
 	FileMenu->AppendTool(Toolbar, SaveSubs, _("&Zapisz"), _("Zapisz aktualny plik"), PTR_BITMAP_PNG(L"save"), false);
 	FileMenu->AppendTool(Toolbar, SaveAllSubs, _("Zapisz &wszystko"), _("Zapisz wszystkie napisy"), PTR_BITMAP_PNG(L"saveall"));
@@ -137,7 +144,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->Append(SaveWithVideoName, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SubsAutonaming));
 	Toolbar->AddID(SaveWithVideoName);
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
-	FileMenu->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
+	FileMenu->Append(9990, _("Ostatnia sesja"), _("Opcje ostatniej sesji"), true, PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"), lastSession);
 	FileMenu->AppendTool(Toolbar, Settings, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG(L"SETTINGS"));
 	FileMenu->AppendTool(Toolbar, Quit, _("Wyjści&e\tAlt-F4"), _("Zakończ działanie programu"), PTR_BITMAP_PNG(L"exit"))->DisableMapping();
 	Menubar->Append(FileMenu, _("&Plik"));
@@ -252,9 +259,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(ID_CLOSEPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
 	Connect(NextTab, PreviousTab, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//Here add new ids
-	Connect(SaveSubs, History, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
-	Connect(GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
-	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, SaveSubs, History);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SHIFT_TIMES);
 	Connect(OpenSubs, ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Connect(SelectFromVideo, PlayActualLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Connect(Plus5SecondG, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnP5Sec);
@@ -273,6 +280,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(SnapWithStart, SnapWithEnd, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnAudioSnap);
 	Tabs->SetDropTarget(new DragnDrop(this));
 	Bind(wxEVT_SIZE, &KainoteFrame::OnSize, this);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, 
+		GLOBAL_ASK_FOR_LOAD_LAST_SESSION, GLOBAL_LOAD_LAST_SESSION_ON_START);
 
 	auto focusFunction = [=](wxFocusEvent &event) -> void {
 		TabPanel *tab = GetTab();
@@ -634,6 +643,20 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == GLOBAL_LOAD_LAST_SESSION){
 		Tabs->LoadLastSession(this);
 	}
+	else if (id == GLOBAL_LOAD_LAST_SESSION_ON_START){
+		// 0 nothing 1 ask for load 2 load on start
+		int config = (int)item->IsChecked() * 2;
+		Options.SetInt(LAST_SESSION_CONFIG, config);
+		MenuItem *item = Menubar->FindItem(GLOBAL_ASK_FOR_LOAD_LAST_SESSION);
+		if (item && config) { item->Check(false); }
+	}
+	else if (id == GLOBAL_ASK_FOR_LOAD_LAST_SESSION){
+		// 0 nothing 1 ask for load 2 load on start
+		int config = (int)item->IsChecked();
+		Options.SetInt(LAST_SESSION_CONFIG, config);
+		MenuItem *item = Menubar->FindItem(GLOBAL_LOAD_LAST_SESSION_ON_START);
+		if (item && config) { item->Check(false); }
+	}
 	else if (id == GLOBAL_SHIFT_TIMES){
 		tab->ShiftTimes->OnOKClick(event);
 	}
@@ -743,8 +766,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others.\n"\
 			L"Boost - Copyright © Joe Coder 2004 - 2006.",
 			_("O Kainote"));
-		//L"FreeType - Copyright ©  David Turner, Robert Wilhelm, and Werner Lemberg;\n"\
-						//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
+			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == Helpers){
 		wxString Testers = L"Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
@@ -771,13 +793,14 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 	}
 	else if (id == Help || id == ANSI){
-		WinStruct<SHELLEXECUTEINFO> sei;
+		//WinStruct<SHELLEXECUTEINFO> sei;
 		wxString url = (id == Help) ? L"https://bjakja.github.io/index.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
-		sei.lpFile = url.c_str();
-		sei.lpVerb = wxT("open");
-		sei.nShow = SW_RESTORE;
-		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-		ShellExecuteEx(&sei);
+		//sei.lpFile = url.c_str();
+		//sei.lpVerb = wxT("open");
+		//sei.nShow = SW_RESTORE;
+		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		//ShellExecuteEx(&sei);
+		OpenInBrowser(url);
 	}
 
 }
@@ -1285,25 +1308,14 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 	}
 
 	if (Modif == wxMOD_CONTROL){
-		//wxWCharBuffer buf = filename.BeforeLast(L'\\').c_str();
-		//WinStruct<SHELLEXECUTEINFO> sei;
-		//sei.lpFile = buf;
-		//sei.lpVerb = wxT("explore");
-		//sei.nShow = SW_RESTORE;
-		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-
-
-		//if (!ShellExecuteEx(&sei)){ KaiLog(_("Nie można otworzyć folderu")); }
-
-		//wxString path = L"/n,/select,\"" + filename.BeforeLast(L'\\') + L"\"";
-		//const wchar_t * wcharPath = path.wc_str();.BeforeLast(L'\\')
-		CoInitialize(0);
+		/*CoInitialize(0);
 		ITEMIDLIST *pidl = ILCreateFromPathW(filename.wc_str());
 		if (pidl) {
 			SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
 			ILFree(pidl);
 		}
-		CoUninitialize();
+		CoUninitialize();*/
+		SelectInFolder(filename);
 		return;
 	}
 	if (id < 30040){

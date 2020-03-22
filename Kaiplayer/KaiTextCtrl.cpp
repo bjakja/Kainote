@@ -16,7 +16,7 @@
 #include "KaiTextCtrl.h"
 #include "Menu.h"
 #include <wx/clipbrd.h>
-#include <wx/msw/private.h>
+#include "Utils.h"
 #include "GraphicsD2D.h"
 
 
@@ -1405,14 +1405,14 @@ void KaiTextCtrl::ContextMenu(wxPoint mpos)
 
 		word.Replace(L" ", L"+");
 		wxString url = page + word;
-		WinStruct<SHELLEXECUTEINFO> sei;
-		sei.lpFile = url.c_str();
-		sei.lpVerb = L"open";
-		sei.nShow = SW_RESTORE;
-		sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+		//WinStruct<SHELLEXECUTEINFO> sei;
+		//sei.lpFile = url.c_str();
+		//sei.lpVerb = L"open";
+		//sei.nShow = SW_RESTORE;
+		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 
-		ShellExecuteEx(&sei);
-
+		//ShellExecuteEx(&sei);
+		OpenInBrowser(url);
 
 	}
 
@@ -1652,10 +1652,9 @@ void KaiTextCtrl::SetMaxLength(int maxLen){
 
 bool KaiTextCtrl::SetFont(const wxFont &_font)
 {
-	//wxWindow::SetFont(font);
 	font = _font;
 	int fw, fh;
-	GetTextExtent((style & wxTE_MULTILINE != 0) ? L"#TWFfGH" : KText.empty()? L"T" : KText, &fw, &fh);
+	GetTextExtent((style & wxTE_MULTILINE) != 0 ? L"#TWFfGH" : KText.empty()? L"T" : KText, &fw, &fh);
 	Fheight = fh;
 	wxSize minSize = GetMinSize();
 	minSize.y = fh + 10;

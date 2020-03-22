@@ -51,9 +51,7 @@ public:
 	bool IsBusy();
 	KainoteFrame* Frame;
 	wxTimer timer;
-#if _DEBUG
 	wxTimer debugtimer;
-#endif
 	wxArrayString paths;
 private:
 	wxSingleInstanceChecker* m_checker;

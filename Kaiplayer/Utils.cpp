@@ -15,14 +15,27 @@
 
 
 #include "Utils.h"
+#include <ShlObj.h>
+#include <wx/msw/private.h>
 
-inline wxColour GetColorWithAlpha(const wxColour &colorWithAlpha, const wxColour &background)
+
+void SelectInFolder(const wxString & filename)
 {
-	int r2 = colorWithAlpha.Red(), g2 = colorWithAlpha.Green(), b2 = colorWithAlpha.Blue();
-	int r = background.Red(), g = background.Green(), b = background.Blue();
-	int inv_a = 0xFF - colorWithAlpha.Alpha();
-	int fr = (r2* inv_a / 0xFF) + (r - inv_a * r / 0xFF);
-	int fg = (g2* inv_a / 0xFF) + (g - inv_a * g / 0xFF);
-	int fb = (b2* inv_a / 0xFF) + (b - inv_a * b / 0xFF);
-	return wxColour(fr, fg, fb);
+	CoInitialize(0);
+	ITEMIDLIST *pidl = ILCreateFromPathW(filename.wc_str());
+	if (pidl) {
+		SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
+		ILFree(pidl);
+	}
+	CoUninitialize();
+}
+
+void OpenInBrowser(const wxString &adress)
+{
+	WinStruct<SHELLEXECUTEINFO> sei;
+	sei.lpFile = adress.c_str();
+	sei.lpVerb = wxT("open");
+	sei.nShow = SW_RESTORE;
+	sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
+	ShellExecuteEx(&sei);
 }

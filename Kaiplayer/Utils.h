@@ -1,4 +1,4 @@
-//  Copyright (c) 2017, Marcin Drob
+//  Copyright (c) 2017 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -45,3 +45,6 @@ inline wxString GetTruncateText(const wxString &textToTruncate, int width, wxWin
 	return textToTruncate;
 }
 
+void SelectInFolder(const wxString & filename);
+
+void OpenInBrowser(const wxString &adress);

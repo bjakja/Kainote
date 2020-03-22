@@ -386,6 +386,9 @@
     <ClCompile Include="Languages.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
