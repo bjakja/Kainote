@@ -575,7 +575,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 
 void VideoRenderer::RecreateSurface()
 {
-	int all = vheight*pitch;
+	int all = vheight * pitch;
 	char *cpy = new char[all];
 	byte *cpy1 = (byte*)cpy;
 	byte *data1 = (byte*)datas;

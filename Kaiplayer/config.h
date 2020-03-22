@@ -403,6 +403,7 @@ private:
 	csri_rend *vsfilter = NULL;
 	wxColour defaultColour;
 	void InitLanguagesTable();
+	bool hasCrashed = false;
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -450,7 +451,7 @@ public:
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void SaveAudioOpts();
-	void SaveOptions(bool cfg = true, bool style = true);
+	void SaveOptions(bool cfg = true, bool style = true, bool crashed = false);
 	void SaveColors(const wxString &path = L"");
 	void LoadStyles(const wxString &katalog);
 	void clearstyles();
@@ -467,6 +468,7 @@ public:
 	csri_rend *GetVSFilter();
 	void ChangeVsfilter();
 	void GetVSFiltersList(wxArrayString &filters);
+	bool HasCrashed(){ return hasCrashed; }
 	config();
 	~config();
 };

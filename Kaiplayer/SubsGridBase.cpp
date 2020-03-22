@@ -322,7 +322,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 	if (subsFormat < SRT){
 		//if (cstat){
 			//AddSInfo(L"Last Style Storage", Options.actualStyleDir, false);
-			AddSInfo(L"Active Line", std::to_string(currentLine), false);
+			AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
 			TabPanel *tab = (TabPanel*)GetParent();
 			wxString subsPath = tab->SubsPath.BeforeLast(L'\\');
 			if (Edit->ABox){

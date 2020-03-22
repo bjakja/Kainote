@@ -36,7 +36,6 @@
 #include <wx/sysopt.h>
 #include "KaiTextCtrl.h"
 #include "KaiMessageBox.h"
-#include "FontEnumerator.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include "utils.h"
@@ -50,27 +49,6 @@
 #define INSTRUCTIONS L""
 #endif
 
-void EnableCrashingOnCrashes()
-{
-	typedef BOOL(WINAPI *tGetPolicy)(LPDWORD lpFlags);
-	typedef BOOL(WINAPI *tSetPolicy)(DWORD dwFlags);
-	const DWORD EXCEPTION_SWALLOWING = 0x1;
-
-	HMODULE kernel32 = LoadLibraryA("kernel32.dll");
-	tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32,
-		"GetProcessUserModeExceptionPolicy");
-	tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32,
-		"SetProcessUserModeExceptionPolicy");
-	if (pGetPolicy && pSetPolicy)
-	{
-		DWORD dwFlags;
-		if (pGetPolicy(&dwFlags))
-		{
-			// Turn off the filter
-			pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
-		}
-	}
-}
 
 KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	: KaiFrame(0, -1, _("Bez nazwy - ") + Options.progname + L" " + wxString(INSTRUCTIONS), 
@@ -273,7 +251,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Connect(PlayActualLine, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		LogHandler::ShowLogWindow();
+		//LogHandler::ShowLogWindow();
+		byte * crashtest = NULL;
+		crashtest[2] = 0;
 	}, 9989);
 
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
@@ -300,14 +280,10 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	if (im){ Maximize(Options.GetBool(WindowMaximized)); }
 
 	if (!Options.GetBool(EditorOn)){ HideEditor(false); }
-	std::set_new_handler(OnOutofMemory);
-	FontEnum.StartListening(this);
+	
 	SetSubsResolution(false);
 	Auto = new Auto::Automation();
-
-	EnableCrashingOnCrashes();
 	sendFocus.SetOwner(this, 6789);
-
 
 	Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
@@ -662,7 +638,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 
 }
-//Stałe elementy menu które nie ulegają wyłączaniu
+//elements of menu all time enabled
 void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 {
 	int id = event.GetId();
@@ -2117,31 +2093,6 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	}
 }
 
-
-void KainoteFrame::OnOutofMemory()
-{
-	TabPanel *tab = Notebook::GetTab();
-
-	if (tab->Grid->file->maxx()>3){
-		tab->Grid->file->RemoveFirst(2);
-		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
-		return;
-	}
-	else if (Notebook::GetTabs()->Size() > 1){
-		for (size_t i = 0; i < Notebook::GetTabs()->Size(); i++)
-		{
-			if (i != Notebook::GetTabs()->GetSelection()){
-				if (Notebook::GetTabs()->Page(i)->Grid->file->maxx()>3){
-					Notebook::GetTabs()->Page(i)->Grid->file->RemoveFirst(2);
-					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
-					return;
-				}
-			}
-		}
-	}
-
-	std::exit(1);
-}
 
 void KainoteFrame::OnRunScript(wxCommandEvent& event)
 {

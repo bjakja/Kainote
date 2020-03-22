@@ -1124,12 +1124,18 @@ void Notebook::SaveLastSession(bool beforeClose)
 	if (beforeClose)
 		result << L"[Close session]\r\n";
 	int numtab = 0;
+	wxString recoveryPath = Options.pathfull + L"\\Recovery\\";
+	
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << 
 			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDshow <<
 			L"\r\nSubtitles: " << tab->SubsPath << L"\r\nActive: " << tab->Grid->currentLine <<
 			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
+		if (!beforeClose){
+			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
+			tab->Grid->SaveFile(recoveryPath + tab->SubsName.BeforeLast(L'.') + L"." + ext);
+		}
 		numtab++;
 	}
 	OpenWrite op;

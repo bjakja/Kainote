@@ -39,7 +39,6 @@ public:
 	void ContextMenuTree(const wxPoint &pos, int treeLine);
 	bool SwapAssProperties(); 
 	void RefreshSubsOnVideo(int newActiveLine, bool scroll = true);
-	
 protected:
 
 	wxArrayInt selections;

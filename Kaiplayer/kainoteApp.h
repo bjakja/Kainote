@@ -56,6 +56,7 @@ public:
 private:
 	wxSingleInstanceChecker* m_checker;
 	wxLocale *locale;
+	static void OnOutofMemory();
 };
 
 

@@ -319,12 +319,15 @@ void config::DelStyle(int i)
 	assstore.erase(assstore.begin() + i);
 }
 
-void config::SaveOptions(bool cfg, bool style)
+void config::SaveOptions(bool cfg, bool style, bool crashed)
 {
 	OpenWrite ow;
 	if (cfg){
 		wxString textfile;
 		GetRawOptions(textfile);
+		if (crashed)
+			textfile << L"___Program Crashed___";
+
 		wxString path;
 		path << configPath << L"\\Config.txt";
 		ow.FileWrite(path, textfile);
@@ -545,6 +548,9 @@ int config::LoadOptions()
 	}
 	else{
 		wxString ver = txt.BeforeFirst(L']').Mid(1);
+		if (txt.EndsWith(L"___Program Crashed___", &txt)){
+			hasCrashed = true;
+		}
 		if (ver != progname){ LoadDefaultConfig(); diffVersions = true; }
 		isgood = SetRawOptions(txt.AfterFirst(L'\n'));
 	}
