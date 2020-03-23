@@ -1128,14 +1128,23 @@ void Notebook::SaveLastSession(bool beforeClose)
 	
 	for (std::vector<TabPanel*>::iterator it = sthis->Pages.begin(); it != sthis->Pages.end(); it++){
 		TabPanel *tab = *it;
-		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath << 
+		//put path to recovery on crash
+		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath <<
 			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDshow <<
-			L"\r\nSubtitles: " << tab->SubsPath << L"\r\nActive: " << tab->Grid->currentLine <<
-			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
+			L"\r\nSubtitles: ";
 		if (!beforeClose){
 			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
-			tab->Grid->SaveFile(recoveryPath + tab->SubsName.BeforeLast(L'.') + L"." + ext);
+			wxString fullPath = recoveryPath + tab->SubsName.BeforeLast(L'.') + L"." + ext;
+			tab->Grid->SaveFile(fullPath);
+			//recovery path for crash close
+			result << fullPath;
 		}
+		else{
+			//normal path for end close
+			result << tab->SubsPath;
+		}
+		result << L"\r\nActive: " << tab->Grid->currentLine <<
+			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
 		numtab++;
 	}
 	OpenWrite op;

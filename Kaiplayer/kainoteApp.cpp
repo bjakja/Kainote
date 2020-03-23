@@ -62,19 +62,15 @@ void seg_handler(int sig)
 
 	OpenWrite ow;
 	ow.FileWrite(Options.pathfull + "\\CrashInfo.txt", result);
-	Options.SaveOptions(true, false);
-	//StackWalker sw;
-	//sw.ShowCallstack(GetCurrentThread());
+	Options.SaveOptions(true, false, true);
 	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
 	Notebook::SaveLastSession(false);
-	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.") +
-		_("Napisy zostały zapisane do folderu \"Recovery\".") +
-		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.") +
-		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".") +
-		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.") + 
-		_("Podesłanie go na adres mailowy (bjakja7@gmail.com), ") + 
-		_("udostępnienie go w temacie Kainote na animesub.info ") + 
-		_("bądź na discordzie może pomóc rozwiązać ten problem");
+	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
+		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
+		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n") +
+		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n") +
+		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n") + 
+		_("Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem.");
 	KaiMessageBox(Info, L"Crash", wxOK, Kai);
 	exit(1);
 }
@@ -242,7 +238,7 @@ bool kainoteApp::OnInit()
 		bool loadSession = true;
 #else
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
-		bool loadSession = (session == 2);
+		bool loadSession = (session == 2) || Options.HasCrashed();
 		if (session == 1){
 			if (KaiMessageBox(_("Wczytać poprzednią sesję"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
@@ -251,7 +247,13 @@ bool kainoteApp::OnInit()
 #endif
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
+#if _DEBUG
+			//on debug crashes vsfilter when load via direct show
+			//like there was no mutex in csri
+			debugtimer.Start(400, true);
+#else
 			debugtimer.Start(100, true);
+#endif
 			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 				Frame->Tabs->LoadLastSession(Frame);
 			}, 2299);
