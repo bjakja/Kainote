@@ -933,8 +933,10 @@ void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 
 	gc->GetTextExtent(wxString::Format(L"%i", maxx), &fw, &fh);
 	GridWidth[0] = fw + 10;
-	if (!cell)
+	if (!cell){
+		delete gc;
 		return;
+	}
 
 	Dialogue *dial;
 	for (int i = 0; i < maxx; i++){

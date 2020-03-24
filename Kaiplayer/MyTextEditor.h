@@ -76,7 +76,7 @@ protected:
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc);
-	void DrawWordRectangles(int type, GraphicsContext *gc);
+	void DrawWordRectangles(int type, GraphicsContext *gc, int h);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
 
