@@ -737,6 +737,7 @@ bool ToggleButton::SetFont(const wxFont &font)
 	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
 		minSize.x = fw + 16;
 		minSize.y = textHeight + 10;
+		if (minSize.x < minSize.y){ minSize.x = minSize.y; }
 		SetMinSize(minSize);
 	}
 	Refresh(false);

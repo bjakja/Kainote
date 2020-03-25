@@ -61,7 +61,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 		if (setFocus){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxCANCEL){
-		btn = new MappedButton(this, 9010, _("Anuluj"), -1, wxDefaultPosition, wxSize(60, -1));
+		btn = new MappedButton(this, 9010, _("Anuluj"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxCANCEL);
 		}, 9010);
@@ -69,7 +69,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 		if (setFocus){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxHELP){
-		btn = new MappedButton(this, 9011, _("Pomoc"), -1, wxDefaultPosition, wxSize(60, -1));
+		btn = new MappedButton(this, 9011, _("Pomoc"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxHELP); }, 9011);
 		sizer1->Add(btn, 1, wxALL, 3);
 		if (setFocus){ btn->SetFocus(); setFocus = false; }

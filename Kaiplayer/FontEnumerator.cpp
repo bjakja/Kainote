@@ -152,7 +152,6 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 		// remove some .fon fonts but not all, modern, roman, script still there
 		// these fonts not working with Vobsub nor D2D
 		return true;
-	//KaiLog(wxString::Format(L"fn: %s fixed pitch: %i vector: %i device: %i, tt: %i, precision %i", lplf->lfFaceName, (int)(lptm->tmPitchAndFamily & TMPF_FIXED_PITCH), (int)(lptm->tmPitchAndFamily & TMPF_VECTOR), (int)(lptm->tmPitchAndFamily & TMPF_DEVICE), (int)(lptm->tmPitchAndFamily & TMPF_TRUETYPE), (int)lplf->lfOutPrecision));
 	}
 	if(Enum->FontsTmp->Index(lplf->lfFaceName, false) == wxNOT_FOUND){
 		Enum->FontsTmp->Add(lplf->lfFaceName);
@@ -185,12 +184,7 @@ void FontEnumerator::RefreshVideo()
 
 DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 {
-	/*FontEnumerator *fe = (FontEnumerator*)fontEnum;
-	if(!fontEnum){
-		KaiLog(_("Brak wskaźnika klasy magazynu stylów.")); 
-		return 0;
-	}*/
-
+	
 	FontEnum.eventKillSelf[*threadNum] = CreateEvent(0, FALSE, FALSE, 0);
 	wxString fontrealpath;
 	if (*threadNum == 0)
