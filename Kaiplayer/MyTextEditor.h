@@ -70,12 +70,13 @@ protected:
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
 	void CalcWrapsD2D(GraphicsContext *gc, int w, int h);
+	//void CalcWrapsGDI(int w, int h);
 	void FindWord(int pos, int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback = false);
 	void MakeCursorVisible();
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
-	void DrawWordRectangles(int type, wxDC &dc);
+	void DrawWordRectangles(int type, wxDC &dc, int h);
 	void DrawWordRectangles(int type, GraphicsContext *gc, int h);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();

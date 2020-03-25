@@ -147,7 +147,6 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		int w, h, fw = 0, fh = 0;
 		double gcfw = 0.f, gcfh = 0.f;
 		GetClientSize(&w, &h);
-		//if (w < 30){ return; }
 		if (scroll->IsShown()){
 			int sw, sh;
 			scroll->GetSize(&sw, &sh);
@@ -159,15 +158,15 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
 		else{
-			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext *gc = renderer->CreateMeasuringContext();
+			//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+			GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				CalcWrapsD2D(gc, w, h);
 				delete gc;
 			}
 			else{
-
+				//CalcWrapsGDI(w, h);
 				int podz = 0;
 				wxString wrapchars = L" \\,;:}{()";
 
@@ -185,13 +184,8 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 					while (1)
 					{
 						wxString wrap = MText.SubString(podz, i);
-						/*if (gc){
-							gc->GetTextExtent(wrap, &gcfw, &gcfh);
-							}
-							else{*/
 						GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
-						//gcfw = fh;
-						//}
+						
 						allwrap = i;
 						if (fw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
 							int j = i + 1;
@@ -229,8 +223,6 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 						}
 					}
 				}
-				//if (gc)
-				//delete gc;
 			}
 		}
 	}
@@ -271,6 +263,39 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
 	if (wraps[wraps.size() - 1] != textLen)
 		wraps.push_back(textLen);
 }
+
+//void TextEditor::CalcWrapsGDI(int w, int h)
+//{
+//	//wxString wrapchars = L" \\,;:}{()";
+//	int gfw, gfh;
+//	size_t i = 0;
+//	size_t textLen = MText.length();
+//	int widthCount = 0;
+//	while (i < textLen)
+//	{
+//		const wxUniChar &ch = MText[i];
+//		auto &it = fontSizes.find(ch);
+//		if (it != fontSizes.end()){
+//			widthCount += it->second;
+//		}
+//		else{
+//			GetTextExtent(ch, &gfw, &gfh);
+//			if (ch == L'a' || ch == L' ')
+//				gfw++;
+//
+//			fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
+//			widthCount += gfw;
+//		}
+//		if (widthCount > w - 16){
+//			wraps.push_back(i - 1);
+//			widthCount = 0;
+//			i--;
+//		}
+//		i++;
+//	}
+//	if (wraps[wraps.size() - 1] != textLen)
+//		wraps.push_back(textLen);
+//}
 
 void TextEditor::OnCharPress(wxKeyEvent& event)
 {
@@ -324,8 +349,8 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					pos.x = 3;
 					int wrap = wraps[Cursor.y];
 					if (wrap < Cursor.x){
-						GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-						GraphicsContext *gc = renderer->CreateMeasuringContext();
+						//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+						GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
 						if (gc){
 							gc->SetFont(font, L"#FFFFFF");
@@ -829,8 +854,8 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	wxMemoryDC bmpDC;
 	bmpDC.SelectObject(*bmp);
 
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(bmpDC);
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = NULL;//renderer->CreateContext(bmpDC);
 
 	if (!gc){
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
@@ -957,12 +982,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				stext.Replace(L"\t", L"");
 				gc->GetTextExtent(stext, &fww, &fh);
 			}
-			/*else if (j == scd.y){
-				fw = 0.0;
-				wxString stext = MText.SubString(startWrap, scd.x - 1);
-				stext.Replace(L"\t", L"");
-				gc->GetTextExtent(stext, &fww, &fh);
-			}*/
 			else{
 				fw = 0.0;
 				wxString stext = MText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
@@ -1018,7 +1037,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				gc->DrawTextU(parttext, fw + 3, posY);
 			}
 
-			//posX=4;
 			posY += fontHeight;
 			wline++;
 			wchar++;
@@ -1238,7 +1256,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	posY = 2;
 	posY -= scrollPositionV;
 	bool isfirst = true;
-	int wline = 0;
+	int wline = 1;
 	int wchar = 0;
 	bool hasFocus = HasFocus();
 
@@ -1273,11 +1291,11 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	//rysowanie spellcheckera
 	if (SpellCheckerOnOff){
 		dc.SetBrush(cspellerrors);
-		DrawWordRectangles(0, dc);
+		DrawWordRectangles(0, dc, h);
 	}
 	if (selectionWords.size()){
 		dc.SetBrush(cphrasesearch);
-		DrawWordRectangles(1, dc);
+		DrawWordRectangles(1, dc, h);
 	}
 	else if (Cursor.x != Selend.x || Cursor.y != Selend.y){
 		Brackets.x = -1; Brackets.y = -1;
@@ -1287,44 +1305,65 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 		dc.SetBrush(wxBrush(wxColour(hasFocus ? cselection : cselnofocus)));
 		fww = 0;
-		//rysowanie zaznaczenia
+		//skip unnided selection drawing
+		int lineStart = (scrollPositionV - 2) / fontHeight;
+		int charStart = wraps[lineStart];
+		int lineEnd = ((scrollPositionV - 2 + h) / fontHeight) + 1;
+		int charEnd = (lineEnd < wraps.size()) ? wraps[lineEnd] : MText.length();
+		//drawing selection
 		for (int j = fst.y; j <= scd.y; j++){
+			int endWrap = wraps[j + 1];
+			if (endWrap < charStart)
+				continue;
+
+			int startWrap = wraps[j];
+			if (startWrap > charEnd)
+				break;
 
 			if (j == fst.y){
-				wxString ftext = MText.SubString(wraps[j], fst.x - 1);
+				wxString ftext = MText.SubString(startWrap, fst.x - 1);
 				ftext.Replace(L"\t", L"");
-				if (wraps[j] > fst.x - 1){ fw = 0; }
+				if (startWrap > fst.x - 1){ fw = 0; }
 				else{ GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font); }
-				wxString stext = MText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
-				stext.Replace(L"\t", L"");
-				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
-			}
-			else if (j == scd.y){
-				fw = 0;
-				wxString stext = MText.SubString(wraps[j], scd.x - 1);
+				wxString stext = MText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", L"");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
 			else{
 				fw = 0;
-				wxString stext = MText.SubString(wraps[j], wraps[j + 1] - 1);
+				wxString stext = MText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", L"");
 				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
 			}
-			dc.DrawRectangle(fw + 3, ((j*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
-			//if(j==scd.y)break;
+			dc.DrawRectangle(fw + 3, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 		}
 	}
+	//skip unneeded lines, start one line before to avoid not colored values on start
+	int lineStart = ((scrollPositionV - 2) / fontHeight) - 1;
+	int charStart = 0;
+	if (lineStart > 0){
+		charStart = wraps[lineStart];
+
+		wxString seekingPart = MText.Mid(0, charStart);
+		size_t endBracket = seekingPart.Find(L'}', true);
+		size_t startBracket = seekingPart.Find(L'{', true);
+		if (endBracket == -1 || startBracket > endBracket)
+			tags = true;
+
+		wline = lineStart + 1;
+		posY += (lineStart * fontHeight);
+		wchar = charStart + lineStart;
+	}
 	bool cursorWasSet = false;
-	//rysowanie liter
-	for (int i = 0; i < len; i++){
+	//Drawing text
+	for (int i = charStart; i < len; i++){
 		if (posY > h)
 			break;
 
 		const wxUniChar &ch = alltext[i];
 
 
-		if (i == wraps[wline + 1]){
+		if (i == wraps[wline]){
 			if (Cursor.x + Cursor.y == wchar){
 				int fww = 0;
 				GetTextExtent(mestext + parttext, &fww, &fh, NULL, NULL, &font);
@@ -1342,22 +1381,12 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				dc.DrawText(parttext, fw + 3, posY);
 			}
 
-			//posX=4;
 			posY += fontHeight;
 			wline++;
 			wchar++;
 			parttext.clear();
 			mestext.clear();
 		}
-		/*if (posY + Fheight<0){
-			if (ch == L'{')
-			tagi = true;
-			else if (ch == L'}')
-			tagi = false;
-
-			wchar++;
-			continue;
-			}*/
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
 			if (mestext + parttext == L""){ fw = 0; }
@@ -1555,8 +1584,8 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = MText.length();
 	int fww = 0;
 	double gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateMeasuringContext();
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -2032,8 +2061,8 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 	//if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{ 
-		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext *gc = renderer->CreateMeasuringContext();
+		//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gcfw, gcfh;
@@ -2176,33 +2205,45 @@ void TextEditor::SeekSelected(const wxString &word)
 	std::sort(selectionWords.begin(), selectionWords.end());
 }
 
-void TextEditor::DrawWordRectangles(int type, wxDC &dc)
+void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 {
 	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
 	size_t len = words.size();
 	int fw = 0, fh = 0, fww = 0, fwww = 0;
+	int lineStart = (scrollPositionV - 2) / fontHeight;
+	int charStart = wraps[lineStart];
+	int lineEnd = ((scrollPositionV - 2 + h) / fontHeight) + 1;
+	int charEnd = (lineEnd < wraps.size()) ? wraps[lineEnd] : MText.length();
 
 	for (size_t g = 0; g < len; g += 2)
 	{
-		int fsty = FindY(words[g]);
-		if (wraps[fsty] >= words[g]){ fw = 0; }
+		int endWord = words[g + 1];
+		if (endWord < charStart)
+			continue;
+
+		int startWord = words[g];
+		if (startWord > charEnd)
+			break;
+
+		int fsty = FindY(startWord);
+		if (wraps[fsty] >= startWord){ fw = 0; }
 		else{
-			wxString ftext = MText.SubString(wraps[fsty], words[g] - 1);
+			wxString ftext = MText.SubString(wraps[fsty], startWord - 1);
 			ftext.Replace(L"\t", L"");
 			GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
 		}
-		int scndy = FindY(words[g + 1]);
-		wxString etext = MText.SubString(words[g], (fsty == scndy) ? words[g + 1] : wraps[fsty + 1]);
+		int scndy = FindY(endWord);
+		wxString etext = MText.SubString(startWord, (fsty == scndy) ? endWord : wraps[fsty + 1] - 1);
 		etext.Replace(L"\t", L"");
 		GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
 		for (int q = fsty + 1; q <= scndy; q++){
-			int rest = (q == scndy) ? words[g + 1] : wraps[q + 1];
+			int rest = (q == scndy) ? endWord : wraps[q + 1];
 			wxString btext = MText.SubString(wraps[q], rest);
 			btext.Replace(L"\t", L"");
 			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
-			dc.DrawRectangle(3, ((q*fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
+			dc.DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
-		dc.DrawRectangle(fw + 3, ((fsty*fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+		dc.DrawRectangle(fw + 3, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 	}
 }
 
@@ -2234,7 +2275,7 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h)
 			gc->GetTextExtent(ftext, &fw, &fh);
 		}
 		int scndy = FindY(endWord);
-		wxString etext = MText.SubString(words[g], (fsty == scndy) ? endWord : wraps[fsty + 1]);
+		wxString etext = MText.SubString(words[g], (fsty == scndy) ? endWord : wraps[fsty + 1] - 1);
 		etext.Replace(L"\t", L"");
 		gc->GetTextExtent(etext, &fww, &fh);
 		for (int q = fsty + 1; q <= scndy; q++){
