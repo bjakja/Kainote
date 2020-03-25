@@ -158,8 +158,8 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
 		else{
-			//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+			GraphicsContext *gc = renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				CalcWrapsD2D(gc, w, h);
@@ -349,8 +349,8 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					pos.x = 3;
 					int wrap = wraps[Cursor.y];
 					if (wrap < Cursor.x){
-						//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-						GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+						GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+						GraphicsContext *gc = renderer->CreateMeasuringContext();
 						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
 						if (gc){
 							gc->SetFont(font, L"#FFFFFF");
@@ -854,8 +854,8 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	wxMemoryDC bmpDC;
 	bmpDC.SelectObject(*bmp);
 
-	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = NULL;//renderer->CreateContext(bmpDC);
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateContext(bmpDC);
 
 	if (!gc){
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
@@ -1584,8 +1584,8 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = MText.length();
 	int fww = 0;
 	double gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
-	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -2057,12 +2057,10 @@ int TextEditor::FindError(wxPoint mpos, bool mouse)
 wxPoint TextEditor::PosFromCursor(wxPoint cur)
 {
 	int fw, fh;
-	//if(wraps[cur.y]==cur.x){fw=0;}
-	//if(cur.x<=0||cur.y<0){return wxPoint(-scPos+2, (Fheight-scPos));}
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{ 
-		//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext *gc = renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gcfw, gcfh;

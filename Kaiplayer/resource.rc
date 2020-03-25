@@ -226,7 +226,7 @@ BEGIN
             VALUE "FileDescription", "Kainote edytor napisów"
             VALUE "FileVersion", VersionKainote
             VALUE "InternalName", "Kainote"
-            VALUE "LegalCopyright", "Copyright Marcin Drob (C) 2012-2018"
+            VALUE "LegalCopyright", "Copyright Marcin Drob (C) 2012-2020"
             VALUE "OriginalFilename", "KaiNote.EXE"
             VALUE "ProductName", "Kainote edytor napisów"
             VALUE "ProductVersion", VersionKainote
