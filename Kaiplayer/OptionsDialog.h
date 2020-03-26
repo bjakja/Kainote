@@ -76,6 +76,8 @@ private:
 	//void OnKeyPress(wxKeyEvent& event);
 	void ChangeColors();
 	void OnChangeCatalog(wxCommandEvent& event);
+	void OnResetDefault(wxCommandEvent& event);
+	void ResetDefault();
 
 	KainoteFrame *Kai;
 
@@ -86,7 +88,8 @@ private:
 };
 
 enum{
-	ID_BCOMMIT = 12233
+	ID_BCOMMIT = 12233,
+	ID_RESET_DEFAULTS
 };
 
 

@@ -445,11 +445,16 @@ public:
 	bool SetRawOptions(const wxString &textconfig);
 	int LoadOptions();
 	void LoadColors(const wxString &themeName = L"");
-	void LoadDefaultConfig();
+	//if you want to use defaultOptions alocate table for configSize
+	//use with AudioConfig
+	void LoadDefaultConfig(wxString * defaultOptions = NULL);
 	void LoadDefaultColors(bool dark = true, wxColour *table = NULL);
-	void LoadDefaultAudioConfig();
+	//if you want to use defaultOptions alocate table for configSize
+	//use with AudioConfig
+	void LoadDefaultAudioConfig(wxString * defaultOptions = NULL);
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
+	void ResetDefault();
 	void SaveAudioOpts();
 	void SaveOptions(bool cfg = true, bool style = true, bool crashed = false);
 	void SaveColors(const wxString &path = L"");

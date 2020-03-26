@@ -344,46 +344,47 @@ void config::SaveOptions(bool cfg, bool style, bool crashed)
 	}
 }
 
-void config::LoadDefaultConfig()
+void config::LoadDefaultConfig(wxString * defaultOptions)
 {
-	stringConfig[MoveTimesTime] = L"2000";
-	stringConfig[MoveTimesWhichLines] = L"0";
-	stringConfig[ConvertResolutionWidth] = L"1280";
-	stringConfig[ConvertResolutionHeight] = L"720";
-	stringConfig[ConvertFPS] = L"23.976";
-	stringConfig[ConvertStyle] = L"Default";
-	stringConfig[ConvertStyleCatalog] = L"Default";
-	stringConfig[DictionaryLanguage] = L"pl";
-	stringConfig[SpellcheckerOn] = L"true";
-	stringConfig[StyleEditFilterText] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
-	stringConfig[FFMS2VideoSeeking] = L"2";
-	stringConfig[MoveTimesByTime] = L"false";
-	stringConfig[GridFontName] = L"Tahoma";
-	stringConfig[GridFontSize] = L"10";
-	stringConfig[PROGRAM_FONT] = L"Tahoma";
-	stringConfig[PROGRAM_FONT_SIZE] = L"10";
-	stringConfig[GridSaveAfterCharacterCount] = L"1";
-	stringConfig[GridTagsSwapChar] = L"☀";
-	stringConfig[MoveTimesForward] = L"true";
-	stringConfig[ConvertNewEndTimes] = L"false";
-	stringConfig[InsertStartOffset] = L"0";
-	stringConfig[InsertEndOffset] = L"0";
-	stringConfig[PlayAfterSelection] = L"0";
-	stringConfig[PreviewText] = L"Podgląd";
-	stringConfig[ProgramTheme] = L"DarkSentro";
-	stringConfig[EditorOn] = L"true";
-	stringConfig[ConvertShowSettings] = L"false";
-	stringConfig[MoveTimesOn] = L"true";
-	stringConfig[MoveTimesWhichTimes] = L"0";
-	stringConfig[MoveTimesStyles] = L"";
-	stringConfig[ConvertTimePerLetter] = L"110";
-	stringConfig[VideoIndex] = L"true";
-	stringConfig[VideoProgressBar] = L"true";
-	stringConfig[VideoWindowSize] = L"500,350";
-	stringConfig[WindowSize] = L"800,600";
-	stringConfig[AutomationTraceLevel] = L"3";
-	stringConfig[AutoSaveMaxFiles] = L"3";
-	stringConfig[GridChangeActiveOnSelection] = L"true";
+	wxString * configTable = (defaultOptions) ? defaultOptions : stringConfig;
+	configTable[MoveTimesTime] = L"2000";
+	configTable[MoveTimesWhichLines] = L"0";
+	configTable[ConvertResolutionWidth] = L"1280";
+	configTable[ConvertResolutionHeight] = L"720";
+	configTable[ConvertFPS] = L"23.976";
+	configTable[ConvertStyle] = L"Default";
+	configTable[ConvertStyleCatalog] = L"Default";
+	configTable[DictionaryLanguage] = L"pl";
+	configTable[SpellcheckerOn] = L"true";
+	configTable[StyleEditFilterText] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
+	configTable[FFMS2VideoSeeking] = L"2";
+	configTable[MoveTimesByTime] = L"false";
+	configTable[GridFontName] = L"Tahoma";
+	configTable[GridFontSize] = L"10";
+	configTable[PROGRAM_FONT] = L"Tahoma";
+	configTable[PROGRAM_FONT_SIZE] = L"10";
+	configTable[GridSaveAfterCharacterCount] = L"1";
+	configTable[GridTagsSwapChar] = L"☀";
+	configTable[MoveTimesForward] = L"true";
+	configTable[ConvertNewEndTimes] = L"false";
+	configTable[InsertStartOffset] = L"0";
+	configTable[InsertEndOffset] = L"0";
+	configTable[PlayAfterSelection] = L"0";
+	configTable[PreviewText] = L"Podgląd";
+	configTable[ProgramTheme] = L"DarkSentro";
+	configTable[EditorOn] = L"true";
+	configTable[ConvertShowSettings] = L"false";
+	configTable[MoveTimesOn] = L"true";
+	configTable[MoveTimesWhichTimes] = L"0";
+	configTable[MoveTimesStyles] = L"";
+	configTable[ConvertTimePerLetter] = L"110";
+	configTable[VideoIndex] = L"true";
+	configTable[VideoProgressBar] = L"true";
+	configTable[VideoWindowSize] = L"500,350";
+	configTable[WindowSize] = L"800,600";
+	configTable[AutomationTraceLevel] = L"3";
+	configTable[AutoSaveMaxFiles] = L"3";
+	configTable[GridChangeActiveOnSelection] = L"true";
 }
 
 //remember, create table[colorsSize] without this size it will crash
@@ -729,40 +730,51 @@ void config::Sortstyles()
 	std::sort(assstore.begin(), assstore.end(), sortfunc);
 }
 
-void config::LoadDefaultAudioConfig()
+void config::LoadDefaultAudioConfig(wxString * defaultOptions)
 {
-	stringConfig[AudioAutoCommit] = L"true";
-	stringConfig[AudioAutoFocus] = L"true";
-	stringConfig[AudioAutoScroll] = L"true";
-	stringConfig[AudioBoxHeight] = L"169";
-	stringConfig[AUDIO_CACHE_FILES_LIMIT] = L"10";
-	stringConfig[AudioDelay] = L"0";
-	stringConfig[AudioDrawTimeCursor] = L"true";
-	stringConfig[AudioDrawKeyframes] = L"true";
-	stringConfig[AudioDrawSecondaryLines] = L"true";
-	stringConfig[AudioDrawSelectionBackground] = L"true";
-	stringConfig[AudioDrawVideoPosition] = L"true";
-	stringConfig[AudioGrabTimesOnSelect] = L"true";
-	stringConfig[AudioHorizontalZoom] = L"50";
-	stringConfig[AudioInactiveLinesDisplayMode] = L"1";
-	stringConfig[AudioKaraoke] = L"false";
-	stringConfig[AudioKaraokeSplitMode] = L"true";
-	stringConfig[AudioLeadIn] = L"200";
-	stringConfig[AudioLeadOut] = L"300";
-	stringConfig[AudioLineBoundariesThickness] = L"2";
-	stringConfig[AudioLink] = L"false";
-	stringConfig[AudioLockScrollOnCursor] = L"false";
-	stringConfig[AudioMarkPlayTime] = L"1000";
-	stringConfig[AudioNextLineOnCommit] = L"true";
-	stringConfig[AudioRAMCache] = L"false";
-	stringConfig[AudioSnapToKeyframes] = L"false";
-	stringConfig[AudioSnapToOtherLines] = L"false";
-	stringConfig[AudioSpectrumOn] = L"false";
-	stringConfig[AudioStartDragSensitivity] = L"6";
-	stringConfig[AudioVerticalZoom] = L"50";
-	stringConfig[AudioVolume] = L"50";
-	stringConfig[AudioWheelDefaultToZoom] = L"false";
+	wxString * configTable = (defaultOptions) ? defaultOptions : stringConfig;
+	configTable[AudioAutoCommit] = L"true";
+	configTable[AudioAutoFocus] = L"true";
+	configTable[AudioAutoScroll] = L"true";
+	configTable[AudioBoxHeight] = L"169";
+	configTable[AUDIO_CACHE_FILES_LIMIT] = L"10";
+	configTable[AudioDelay] = L"0";
+	configTable[AudioDrawTimeCursor] = L"true";
+	configTable[AudioDrawKeyframes] = L"true";
+	configTable[AudioDrawSecondaryLines] = L"true";
+	configTable[AudioDrawSelectionBackground] = L"true";
+	configTable[AudioDrawVideoPosition] = L"true";
+	configTable[AudioGrabTimesOnSelect] = L"true";
+	configTable[AudioHorizontalZoom] = L"50";
+	configTable[AudioInactiveLinesDisplayMode] = L"1";
+	configTable[AudioKaraoke] = L"false";
+	configTable[AudioKaraokeSplitMode] = L"true";
+	configTable[AudioLeadIn] = L"200";
+	configTable[AudioLeadOut] = L"300";
+	configTable[AudioLineBoundariesThickness] = L"2";
+	configTable[AudioLink] = L"false";
+	configTable[AudioLockScrollOnCursor] = L"false";
+	configTable[AudioMarkPlayTime] = L"1000";
+	configTable[AudioNextLineOnCommit] = L"true";
+	configTable[AudioRAMCache] = L"false";
+	configTable[AudioSnapToKeyframes] = L"false";
+	configTable[AudioSnapToOtherLines] = L"false";
+	configTable[AudioSpectrumOn] = L"false";
+	configTable[AudioStartDragSensitivity] = L"6";
+	configTable[AudioVerticalZoom] = L"50";
+	configTable[AudioVolume] = L"50";
+	configTable[AudioWheelDefaultToZoom] = L"false";
 
+}
+
+void config::ResetDefault()
+{
+	wxString options[configSize];
+	Options.LoadDefaultAudioConfig(options);
+	Options.LoadDefaultConfig(options);
+	for (size_t i = 0; i < configSize; i++){
+		stringConfig[i] = options[i];
+	}
 }
 
 bool config::LoadAudioOpts()

@@ -996,10 +996,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	okok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton *oknow = new MappedButton(this, ID_BCOMMIT, _("Zastosuj"));
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton *resetDefaults = new MappedButton(this, ID_RESET_DEFAULTS, _("Ustaw Domyślne"));
 
 	ButtonsSizer->Add(okok, 1, wxRIGHT, 2);
 	ButtonsSizer->Add(oknow, 1, wxRIGHT, 2);
 	ButtonsSizer->Add(cancel, 1, wxRIGHT, 2);
+	ButtonsSizer->Add(resetDefaults, 1, wxRIGHT, 2);
 
 	DialogSizer *TreeSizer = new DialogSizer(wxVERTICAL);
 	TreeSizer->Add(OptionsTree, 0, wxALL, 2);
@@ -1010,7 +1012,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	Connect(wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnSaveClick);
 	Connect(ID_BCOMMIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&OptionsDialog::OnSaveClick);
-
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OptionsDialog::OnResetDefault, this, ID_RESET_DEFAULTS);
 }
 
 OptionsDialog::~OptionsDialog()
@@ -1291,7 +1293,52 @@ void OptionsDialog::ChangeColors(){
 		node = node->GetNext();
 	}
 
-	//if(StyleStore::Get()->IsShown())
 	StyleStore::Get()->cc->UpdatePreview();
 }
 
+void OptionsDialog::ResetDefault()
+{
+	Options.ResetDefault();
+	for (size_t i = 0; i < handles.size(); i++)
+	{
+		const OptionsBind &OB = handles[i];
+		if (OB.ctrl->IsKindOf(CLASSINFO(KaiCheckBox))){
+			KaiCheckBox *cb = (KaiCheckBox*)OB.ctrl;
+			cb->SetValue(Options.GetBool(OB.option));
+		}
+		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiChoice))){
+			KaiChoice *cbx = (KaiChoice*)OB.ctrl;
+			if (cbx->GetWindowStyle() & KAI_COMBO_BOX){
+				cbx->SetValue(Options.GetString(OB.option));
+			}
+			else if (cbx->GetId() != 10000){
+				cbx->SetSelection(Options.GetInt(OB.option));
+			}//dictionary language            vobsub                   program language dont change that
+			else if (cbx->GetId() != 10001 || cbx->GetId() != 10002 || cbx->GetId() != 10005){
+				cbx->SetSelection(cbx->FindString(Options.GetString(OB.option)));
+			}
+		}
+		else if (OB.ctrl->IsKindOf(CLASSINFO(FontPickerButton))){
+			FontPickerButton *fpc = (FontPickerButton*)OB.ctrl;
+			wxFont font(Options.GetInt(OB.option == PROGRAM_FONT ? PROGRAM_FONT_SIZE : GridFontSize), 
+				wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(OB.option));
+			fpc->ChangeFont(font);
+		}
+		else if (OB.ctrl->IsKindOf(CLASSINFO(KaiTextCtrl))){
+			if (OB.ctrl->GetId() != 20000){
+				KaiTextCtrl *sc = (KaiTextCtrl*)OB.ctrl;
+				sc->SetValue(Options.GetString(OB.option));
+			}
+			else{
+				NumCtrl *sc = (NumCtrl*)OB.ctrl;
+				sc->SetInt(Options.GetInt(OB.option));
+			}
+		}
+	}
+	
+}
+
+void OptionsDialog::OnResetDefault(wxCommandEvent& event)
+{
+	ResetDefault();
+}

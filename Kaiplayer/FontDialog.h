@@ -106,8 +106,8 @@ public:
 	virtual ~FontPickerButton(){};
 	wxFont GetSelectedFont();
 	void OnClick(wxCommandEvent &evt);
-private:
 	void ChangeFont(const wxFont &font);
+private:
 	wxDECLARE_ABSTRACT_CLASS(FontPickerButton);
 };
 
