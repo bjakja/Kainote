@@ -35,7 +35,7 @@ namespace Auto {
 		char *buff;
 		char *cpybuff;
 		int size;
-		bool compatybility = Options.GetBool(AutomationOldScriptsCompatybility);
+		bool compatybility = Options.GetBool(AUTOMATION_OLD_SCRIPTS_COMPATIBILITY);
 		if (compatybility){
 			OpenWrite ow;
 			if (!ow.FileOpen(filename, &script)){ return false; }

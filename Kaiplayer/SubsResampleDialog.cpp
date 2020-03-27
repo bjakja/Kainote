@@ -192,7 +192,7 @@ SubsMismatchResolutionDialog::SubsMismatchResolutionDialog(wxWindow *parent, con
 	buttonSizer->Add(Cancel, 0, wxALL, 2);
 	buttonSizer->Add(TurnOff, 0, wxALL, 2);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		Options.SetBool(DontAskForBadResolution, true);
+		Options.SetBool(DONT_ASK_FOR_BAD_RESOLUTION, true);
 		Options.SaveOptions(true, false);
 		EndModal(0);
 	}, 26549);

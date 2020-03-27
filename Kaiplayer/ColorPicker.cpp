@@ -649,7 +649,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	// Fill the controls
 	updating_controls = false;
 	SetColor(initial_color, colorNum);
-	recent_box->LoadFromString(Options.GetString(ColorpickerRecent));
+	recent_box->LoadFromString(Options.GetString(COLORPICKER_RECENT_COLORS));
 
 	// The mouse event handler for the Dropper control must be manually assigned
 	// The EVT_MOUSE_EVENTS macro can't take a control id
@@ -711,7 +711,7 @@ void DialogColorPicker::SetColor(AssColor new_color, int numColor /*= 0*/, bool 
 AssColor DialogColorPicker::GetColor()
 {
 	recent_box->AddColor(cur_color);
-	Options.SetString(ColorpickerRecent, recent_box->StoreToString());
+	Options.SetString(COLORPICKER_RECENT_COLORS, recent_box->StoreToString());
 	return cur_color;
 }
 
@@ -729,10 +729,10 @@ void DialogColorPicker::AddRecent(const AssColor &color)
 {
 	if (DCP){
 		DCP->recent_box->AddColor(color.GetWX());
-		Options.SetString(ColorpickerRecent, DCP->recent_box->StoreToString());
+		Options.SetString(COLORPICKER_RECENT_COLORS, DCP->recent_box->StoreToString());
 	}
 	else{
-		wxString recentString = Options.GetString(ColorpickerRecent);
+		wxString recentString = Options.GetString(COLORPICKER_RECENT_COLORS);
 		wxString stringColor = color.GetAss(true);
 		size_t reps = recentString.Replace(stringColor, L"");
 		if (reps){
@@ -742,7 +742,7 @@ void DialogColorPicker::AddRecent(const AssColor &color)
 		while (recentString.Freq(L' ') > 31){
 			recentString = recentString.BeforeLast(L' ');
 		}
-		Options.SetString(ColorpickerRecent, recentString);
+		Options.SetString(COLORPICKER_RECENT_COLORS, recentString);
 	}
 }
 

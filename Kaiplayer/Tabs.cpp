@@ -143,7 +143,7 @@ void Notebook::AddPage(bool refresh)
 	Pages[iter]->SetSize(olditer != iter ? Pages[olditer]->GetSize() : wxSize(w, h - TabHeight));
 	CalcSizes(true);
 	if (refresh){
-		if (!Options.GetBool(EditorOn)){ 
+		if (!Options.GetBool(EDITOR_ON)){ 
 			KainoteFrame *kai = (KainoteFrame *)GetParent(); 
 			kai->HideEditor(false); 
 		}

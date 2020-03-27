@@ -63,7 +63,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	Options.GetTable(SubsRecent, subsrec);
 	Options.GetTable(VideoRecent, videorec);
-	Options.GetTable(AudioRecent, audsrec);
+	Options.GetTable(AUDIO_RECENT_FILES, audsrec);
 	Options.GetTable(KEYFRAMES_RECENT, keyframesRecent);
 
 	SetFont(*Options.GetFont());
@@ -277,7 +277,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	bool im = Options.GetBool(WindowMaximized);
 	if (im){ Maximize(Options.GetBool(WindowMaximized)); }
 
-	if (!Options.GetBool(EditorOn)){ HideEditor(false); }
+	if (!Options.GetBool(EDITOR_ON)){ HideEditor(false); }
 	
 	SetSubsResolution(false);
 	Auto = new Auto::Automation();
@@ -311,10 +311,10 @@ KainoteFrame::~KainoteFrame()
 
 	Toolbar->Destroy();
 	Options.SetBool(WindowMaximized, im);
-	Options.SetBool(EditorOn, GetTab()->editor);
+	Options.SetBool(EDITOR_ON, GetTab()->editor);
 	Options.SetTable(SubsRecent, subsrec);
 	Options.SetTable(VideoRecent, videorec);
-	Options.SetTable(AudioRecent, audsrec);
+	Options.SetTable(AUDIO_RECENT_FILES, audsrec);
 	Options.SetInt(VideoVolume, GetTab()->Video->volslider->GetValue());
 	Notebook::SaveLastSession(true);
 	//Tabs->Destroy();
@@ -552,11 +552,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
-			Options.GetString(AutomationRecent),
+			Options.GetString(AUTOMATION_RECENT_FILES),
 			L"", _("Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"), wxFD_OPEN);
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file = FileDialog1->GetPath();
-			Options.SetString(AutomationRecent, file.AfterLast(L'\\'));
+			Options.SetString(AUTOMATION_RECENT_FILES, file.AfterLast(L'\\'));
 			//if(Auto->Add(file)){Auto->BuildMenu(&AutoMenu);}
 			Auto->Add(file);
 		}
@@ -1082,7 +1082,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		SetRecent();
 		//set texts on window title and tab
 		Label();
-		SetSubsResolution(!Options.GetBool(DontAskForBadResolution));
+		SetSubsResolution(!Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 		//turn on editor
 		if (!tab->editor && !fulls && !tab->Video->isFullscreen){ HideEditor(); }
 		//set color space
@@ -1204,7 +1204,7 @@ void KainoteFrame::SetRecent(short what/*=0*/, int numtab /*= -1*/)
 	if (recs.size() > 20){ recs.pop_back(); }
 	if (what == 0){ Options.SetTable(SubsRecent, recs); }
 	else if (what == 1){ Options.SetTable(VideoRecent, recs); }
-	else if (what == 2){ Options.SetTable(AudioRecent, recs); }
+	else if (what == 2){ Options.SetTable(AUDIO_RECENT_FILES, recs); }
 	else{ Options.SetTable(KEYFRAMES_RECENT, recs); }
 }
 
@@ -1248,7 +1248,7 @@ void KainoteFrame::AppendRecent(short what, Menu *_Menu)
 	if (changedRecent){
 		if (what == 0){ Options.SetTable(SubsRecent, recs); }
 		else if (what == 1){ Options.SetTable(VideoRecent, recs); }
-		else if (what == 2){ Options.SetTable(AudioRecent, recs); }
+		else if (what == 2){ Options.SetTable(AUDIO_RECENT_FILES, recs); }
 		else{ Options.SetTable(KEYFRAMES_RECENT, recs); }
 	}
 }
@@ -1503,7 +1503,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		videos.Clear(); subs.Clear(); files.Clear();
 		return;
 	}
-	bool askForRes = !Options.GetBool(DontAskForBadResolution);
+	bool askForRes = !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION);
 	Freeze();
 	GetTab()->Hide();
 	size_t subsSize = subs.size();
@@ -1652,7 +1652,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 			cur->ShiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->ShiftTimes);
 		}
 
-		if (Options.GetBool(AutoSelectLinesFromLastTab)){
+		if (Options.GetBool(AUTO_SELECT_LINES_FROM_LAST_TAB)){
 			SubsGrid *old = Tabs->Page(Tabs->GetOldSelection())->Grid;
 			if (old->FirstSelection() > -1){
 				cur->Grid->SelVideoLine(old->GetDialogue(old->FirstSelection())->Start.mstime);
@@ -1746,7 +1746,7 @@ void KainoteFrame::HideEditor(bool save)
 			StyleStore::Get()->Show(false);
 	}
 	UpdateToolbar();
-	if (save){ Options.SetBool(EditorOn, cur->editor); Options.SaveOptions(true, false); }
+	if (save){ Options.SetBool(EDITOR_ON, cur->editor); Options.SaveOptions(true, false); }
 }
 
 void KainoteFrame::OnPageAdd(wxCommandEvent& event)
@@ -2013,7 +2013,7 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	bool snapStartTime = (id == SnapWithStart);
 	int time = (snapStartTime) ? tab->Edit->line->Start.mstime : tab->Edit->line->End.mstime;
 	int time2 = (snapStartTime) ? tab->Edit->line->End.mstime : tab->Edit->line->Start.mstime;
-	int snaptime = time;// tab->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool(AudioSnapToKeyframes),(id==SnapWithStart),true);
+	int snaptime = time;// tab->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool(AUDIO_SNAP_TO_KEYFRAMES),(id==SnapWithStart),true);
 	wxArrayInt &KeyFrames = tab->Video->VFF->KeyFrames;
 	int lastDifferents = MAXINT;
 	//wxArrayInt boundaries;
@@ -2034,7 +2034,7 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 		}
 	}
 
-	int inactiveType = Options.GetInt(AudioInactiveLinesDisplayMode);
+	int inactiveType = Options.GetInt(AUDIO_INACTIVE_LINES_DISPLAY_MODE);
 	if (inactiveType > 0) {
 		Dialogue *shade;
 		int shadeFrom, shadeTo;

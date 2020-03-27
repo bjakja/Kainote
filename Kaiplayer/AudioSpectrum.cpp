@@ -139,7 +139,7 @@ AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
 	ChangeColours();
 	minband = 0;//Options.GetInt(_T("Audio Spectrum Cutoff"));
 	maxband = line_length/* - minband * 2/3*/; // TODO: make this customisable?
-	nonlinear = Options.GetBool(AudioSpectrumNonLinearOn);
+	nonlinear = Options.GetBool(AUDIO_SPECTRUM_NON_LINEAR_ON);
 }
 
 

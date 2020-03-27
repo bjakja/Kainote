@@ -249,7 +249,7 @@ void config::GetRawOptions(wxString &options, bool Audio/*=false*/)
 {
 	options = L"[" + progname + L"]\r\n";
 	for (size_t i = 1; i < configSize; i++) {
-		if ((!Audio && i <= AudioWheelDefaultToZoom) || (Audio && i > AudioWheelDefaultToZoom) ||
+		if ((!Audio && i <= AUDIO_WHEEL_DEFAULT_TO_ZOOM) || (Audio && i > AUDIO_WHEEL_DEFAULT_TO_ZOOM) ||
 			stringConfig[i].empty()) {
 			continue;
 		}
@@ -349,12 +349,12 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	wxString * configTable = (defaultOptions) ? defaultOptions : stringConfig;
 	configTable[MoveTimesTime] = L"2000";
 	configTable[MoveTimesWhichLines] = L"0";
-	configTable[ConvertResolutionWidth] = L"1280";
-	configTable[ConvertResolutionHeight] = L"720";
-	configTable[ConvertFPS] = L"23.976";
-	configTable[ConvertStyle] = L"Default";
-	configTable[ConvertStyleCatalog] = L"Default";
-	configTable[DictionaryLanguage] = L"pl";
+	configTable[CONVERT_RESOLUTION_WIDTH] = L"1280";
+	configTable[CONVERT_RESOLUTION_HEIGHT] = L"720";
+	configTable[CONVERT_FPS] = L"23.976";
+	configTable[CONVERT_STYLE] = L"Default";
+	configTable[CONVERT_STYLE_CATALOG] = L"Default";
+	configTable[DICTIONARY_LANGUAGE] = L"pl";
 	configTable[SpellcheckerOn] = L"true";
 	configTable[StyleEditFilterText] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
 	configTable[FFMS2VideoSeeking] = L"2";
@@ -366,24 +366,24 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[GridSaveAfterCharacterCount] = L"1";
 	configTable[GridTagsSwapChar] = L"☀";
 	configTable[MoveTimesForward] = L"true";
-	configTable[ConvertNewEndTimes] = L"false";
+	configTable[CONVERT_NEW_END_TIMES] = L"false";
 	configTable[InsertStartOffset] = L"0";
 	configTable[InsertEndOffset] = L"0";
 	configTable[PlayAfterSelection] = L"0";
 	configTable[PreviewText] = L"Podgląd";
 	configTable[ProgramTheme] = L"DarkSentro";
-	configTable[EditorOn] = L"true";
-	configTable[ConvertShowSettings] = L"false";
+	configTable[EDITOR_ON] = L"true";
+	configTable[CONVERT_SHOW_SETTINGS] = L"false";
 	configTable[MoveTimesOn] = L"true";
 	configTable[MoveTimesWhichTimes] = L"0";
 	configTable[MoveTimesStyles] = L"";
-	configTable[ConvertTimePerLetter] = L"110";
+	configTable[CONVERT_TIME_PER_CHARACTER] = L"110";
 	configTable[VideoIndex] = L"true";
 	configTable[VideoProgressBar] = L"true";
 	configTable[VideoWindowSize] = L"500,350";
 	configTable[WindowSize] = L"800,600";
-	configTable[AutomationTraceLevel] = L"3";
-	configTable[AutoSaveMaxFiles] = L"3";
+	configTable[AUTOMATION_TRACE_LEVEL] = L"3";
+	configTable[AUTOSAVE_MAX_FILES] = L"3";
 	configTable[GridChangeActiveOnSelection] = L"true";
 }
 
@@ -733,37 +733,37 @@ void config::Sortstyles()
 void config::LoadDefaultAudioConfig(wxString * defaultOptions)
 {
 	wxString * configTable = (defaultOptions) ? defaultOptions : stringConfig;
-	configTable[AudioAutoCommit] = L"true";
-	configTable[AudioAutoFocus] = L"true";
-	configTable[AudioAutoScroll] = L"true";
-	configTable[AudioBoxHeight] = L"169";
+	configTable[AUDIO_AUTO_COMMIT] = L"true";
+	configTable[AUDIO_AUTO_FOCUS] = L"true";
+	configTable[AUDIO_AUTO_SCROLL] = L"true";
+	configTable[AUDIO_BOX_HEIGHT] = L"169";
 	configTable[AUDIO_CACHE_FILES_LIMIT] = L"10";
-	configTable[AudioDelay] = L"0";
-	configTable[AudioDrawTimeCursor] = L"true";
-	configTable[AudioDrawKeyframes] = L"true";
-	configTable[AudioDrawSecondaryLines] = L"true";
-	configTable[AudioDrawSelectionBackground] = L"true";
-	configTable[AudioDrawVideoPosition] = L"true";
-	configTable[AudioGrabTimesOnSelect] = L"true";
-	configTable[AudioHorizontalZoom] = L"50";
-	configTable[AudioInactiveLinesDisplayMode] = L"1";
-	configTable[AudioKaraoke] = L"false";
-	configTable[AudioKaraokeSplitMode] = L"true";
-	configTable[AudioLeadIn] = L"200";
-	configTable[AudioLeadOut] = L"300";
-	configTable[AudioLineBoundariesThickness] = L"2";
-	configTable[AudioLink] = L"false";
-	configTable[AudioLockScrollOnCursor] = L"false";
-	configTable[AudioMarkPlayTime] = L"1000";
-	configTable[AudioNextLineOnCommit] = L"true";
-	configTable[AudioRAMCache] = L"false";
-	configTable[AudioSnapToKeyframes] = L"false";
-	configTable[AudioSnapToOtherLines] = L"false";
-	configTable[AudioSpectrumOn] = L"false";
-	configTable[AudioStartDragSensitivity] = L"6";
-	configTable[AudioVerticalZoom] = L"50";
-	configTable[AudioVolume] = L"50";
-	configTable[AudioWheelDefaultToZoom] = L"false";
+	configTable[AUDIO_DELAY] = L"0";
+	configTable[AUDIO_DRAW_TIME_CURSOR] = L"true";
+	configTable[AUDIO_DRAW_KEYFRAMES] = L"true";
+	configTable[AUDIO_DRAW_SECONDARY_LINES] = L"true";
+	configTable[AUDIO_DRAW_SELECTION_BACKGROUND] = L"true";
+	configTable[AUDIO_DRAW_VIDEO_POSITION] = L"true";
+	configTable[AUDIO_GRAB_TIMES_ON_SELECT] = L"true";
+	configTable[AUDIO_HORIZONTAL_ZOOM] = L"50";
+	configTable[AUDIO_INACTIVE_LINES_DISPLAY_MODE] = L"1";
+	configTable[AUDIO_KARAOKE] = L"false";
+	configTable[AUDIO_KARAOKE_SPLIT_MODE] = L"true";
+	configTable[AUDIO_LEAD_IN_VALUE] = L"200";
+	configTable[AUDIO_LEAD_OUT_VALUE] = L"300";
+	configTable[AUDIO_LINE_BOUNDARIES_THICKNESS] = L"2";
+	configTable[AUDIO_LINK] = L"false";
+	configTable[AUDIO_LOCK_SCROLL_ON_CURSOR] = L"false";
+	configTable[AUDIO_MARK_PLAY_TIME] = L"1000";
+	configTable[AUDIO_NEXT_LINE_ON_COMMIT] = L"true";
+	configTable[AUDIO_RAM_CACHE] = L"false";
+	configTable[AUDIO_SNAP_TO_KEYFRAMES] = L"false";
+	configTable[AUDIO_SNAP_TO_OTHER_LINES] = L"false";
+	configTable[AUDIO_SPECTRUM_ON] = L"false";
+	configTable[AUDIO_START_DRAG_SENSITIVITY] = L"6";
+	configTable[AUDIO_VERTICAL_ZOOM] = L"50";
+	configTable[AUDIO_VOLUME] = L"50";
+	configTable[AUDIO_WHEEL_DEFAULT_TO_ZOOM] = L"false";
 
 }
 

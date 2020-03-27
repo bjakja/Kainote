@@ -196,21 +196,21 @@ void SubsGridBase::ChangeCell(long cells, size_t wline, Dialogue *what)
 
 void SubsGridBase::Convert(char type)
 {
-	if (Options.GetBool(ConvertShowSettings)){
+	if (Options.GetBool(CONVERT_SHOW_SETTINGS)){
 		OptionsDialog od(Kai, Kai);
 		od.OptionsTree->ChangeSelection(2);
 		od.okok->SetFocus();
 		if (od.ShowModal() == wxID_CANCEL){ return; }
 	}
-	if (Options.GetBool(ConvertFPSFromVideo) && Kai->GetTab()->VideoPath != L""){
-		Options.SetString(ConvertFPS, Kai->GetStatusText(4).BeforeFirst(L' '));
+	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && Kai->GetTab()->VideoPath != L""){
+		Options.SetString(CONVERT_FPS, Kai->GetStatusText(4).BeforeFirst(L' '));
 	}
-	if (Options.GetFloat(ConvertFPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
+	if (Options.GetFloat(CONVERT_FPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
 
-	bool newendtimes = Options.GetBool(ConvertNewEndTimes);
-	const wxString & stname = Options.GetString(ConvertStyle);
-	int endt = Options.GetInt(ConvertTimePerLetter);
-	const wxString & prefix = Options.GetString(ConvertASSTagsOnLineStart);
+	bool newendtimes = Options.GetBool(CONVERT_NEW_END_TIMES);
+	const wxString & stname = Options.GetString(CONVERT_STYLE);
+	int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
+	const wxString & prefix = Options.GetString(CONVERT_ASS_TAGS_TO_INSERT_IN_LINE);
 
 	size_t i = 0;
 	Dialogue *lastDialc = NULL;
@@ -243,14 +243,14 @@ void SubsGridBase::Convert(char type)
 
 	if (type == ASS){
 		LoadDefault(false, true, false);
-		wxString resx = Options.GetString(ConvertResolutionWidth);
-		wxString resy = Options.GetString(ConvertResolutionHeight);
+		wxString resx = Options.GetString(CONVERT_RESOLUTION_WIDTH);
+		wxString resy = Options.GetString(CONVERT_RESOLUTION_HEIGHT);
 		if (resx == L""){ resx = L"1280"; }
 		if (resy == L""){ resx = L"720"; }
 		AddSInfo(L"PlayResX", resx, false);
 		AddSInfo(L"PlayResY", resy, false);
 		AddSInfo(L"YCbCr Matrix", L"TV.601", false);
-		const wxString & catalog = Options.GetString(ConvertStyleCatalog);
+		const wxString & catalog = Options.GetString(CONVERT_STYLE_CATALOG);
 
 		if (Options.dirs.Index(catalog) != -1){ Options.LoadStyles(catalog); }
 		int stind = Options.FindStyle(stname);
@@ -620,7 +620,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 			if (correctEndTimes > 0 || PostprocessorOptions > 16){
 				/*if (correctEndTimes > 1){
-					int endt = Options.GetInt(ConvertTimePerLetter);
+					int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
 					int newend = (endt*dialc->Text.length());
 					if (newend < 1000){ newend = 1000; }
 					newend += dialc->Start.mstime;
@@ -646,7 +646,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	if (correctEndTimes > 0 || PostprocessorOptions > 19){
 		bool hasend = false;
 		int newstarttime = -1;
-		int endt = Options.GetInt(ConvertTimePerLetter);
+		int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
 		bool isPreviousEndGreater = false;
 		bool isEndGreater = false;
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
@@ -1204,7 +1204,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 
 	if (subsFormat == MDVD || subsFormat == MPL2){
-		int endt = Options.GetInt(ConvertTimePerLetter);
+		int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
 		for (size_t i = 0; i < GetCount(); i++){
 			Dialogue *dial = GetDialogue(i);
 
@@ -1573,7 +1573,7 @@ void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 		<< L"_" << Notebook::GetTabs()->FindPanel(pan) << L"_" << numsave << L"." << ext;
 
 	SaveFile(path, false);
-	int maxFiles = Options.GetInt(AutoSaveMaxFiles);
+	int maxFiles = Options.GetInt(AUTOSAVE_MAX_FILES);
 	if (maxFiles > 1 && numsave >= maxFiles){ numsave = 0; }
 	numsave++;
 	makebackup = true;

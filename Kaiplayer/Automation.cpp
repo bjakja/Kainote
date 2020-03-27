@@ -917,7 +917,7 @@ namespace Auto{
 		initialized = false;
 		AutoloadPath = Options.pathfull + L"\\Automation\\automation\\Autoload";
 		if (loadSubsScripts){ return; }
-		int loadMethod = Options.GetInt(AutomationLoadingMethod);
+		int loadMethod = Options.GetInt(AUTOMATION_LOADING_METHOD);
 		if (loadMethod < 2){
 			initialized = true;
 			if (loadMethod == 0 && !loadNow){
@@ -1088,12 +1088,12 @@ namespace Auto{
 
 	void Automation::OnEdit(wxString &Filename)
 	{
-		wxString editor = Options.GetString(AutomationScriptEditor);
+		wxString editor = Options.GetString(AUTOMATION_SCRIPT_EDITOR);
 		if (editor == L"" || wxGetKeyState(WXK_SHIFT)){
 			editor = wxFileSelector(_("Wybierz edytor skryptów"), L"",
 				L"C:\\Windows\\Notepad.exe", L"exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 			if (!wxFileExists(editor)){ return; }
-			Options.SetString(AutomationScriptEditor, editor);
+			Options.SetString(AUTOMATION_SCRIPT_EDITOR, editor);
 			Options.SaveOptions();
 		}
 
@@ -1131,7 +1131,7 @@ namespace Auto{
 			(*bar)->Delete(j);
 		}
 		if (!initialized){
-			int loadMethod = Options.GetInt(AutomationLoadingMethod);
+			int loadMethod = Options.GetInt(AUTOMATION_LOADING_METHOD);
 			if (loadMethod % 2 == 0){
 				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
 				CreateTimerQueueTimer(&handle, NULL, callbackfunc, this, 5, 0, 0);

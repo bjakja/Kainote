@@ -52,7 +52,7 @@ namespace Auto{
 		ps = this;
 		_parent = parent;
 		// Init trace level
-		trace_level = Options.GetInt(AutomationTraceLevel);
+		trace_level = Options.GetInt(AUTOMATION_TRACE_LEVEL);
 
 		//LuaProgressSink **ud = (LuaProgressSink**)lua_newuserdata(L, sizeof(LuaProgressSink*));
 

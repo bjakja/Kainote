@@ -29,10 +29,10 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	//wxFlexGridSizer *GridSizer=new wxFlexGridSizer(3,5,5);
 	const int numFields = 6;
 	wxString fieldNames[numFields] = { _("Tytuł"), _("Autor"), _("Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja") };
-	CONFIG fieldValues[numFields] = { ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation,
-		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate };
-	CONFIG fieldOnValues[numFields] = { ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn,
-		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn };
+	CONFIG fieldValues[numFields] = { ASS_PROPERTIES_TITLE, ASS_PROPERTIES_SCRIPT, ASS_PROPERTIES_TRANSLATION,
+		ASS_PROPERTIES_EDITING, ASS_PROPERTIES_TIMING, ASS_PROPERTIES_UPDATE };
+	CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
+		ASS_PROPERTIES_EDITING_ON, ASS_PROPERTIES_TIMING_ON, ASS_PROPERTIES_UPDATE_ON };
 
 	for (int i = 0; i < numFields; i++){
 		KaiTextCtrl *field = new KaiTextCtrl(this, -1, Options.GetString(fieldValues[i]), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
@@ -52,9 +52,9 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	const int numCheckbox = 3;
 
 	KaiCheckBox *option = new KaiCheckBox(this, -1, _("Zawsze pytaj o zmianę informacji o napisach"), wxDefaultPosition, wxSize(18, -1));
-	option->SetValue(Options.GetBool(ASSPropertiesAskForChange));
+	option->SetValue(Options.GetBool(ASS_PROPERTIES_ASK_FOR_CHANGE));
 	main->Add(option, 0, wxEXPAND | wxALL, 5);
-	optionsDialog->ConOpt(option, ASSPropertiesAskForChange);
+	optionsDialog->ConOpt(option, ASS_PROPERTIES_ASK_FOR_CHANGE);
 
 	SetSizerAndFit(main);
 }

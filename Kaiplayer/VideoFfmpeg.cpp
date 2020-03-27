@@ -51,7 +51,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool
 	, isBusy(false)
 {
 	if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); }
-	disccache = !Options.GetBool(AudioRAMCache);
+	disccache = !Options.GetBool(AUDIO_RAM_CACHE);
 
 	success = false;
 	fname = filename;
@@ -252,7 +252,7 @@ int VideoFfmpeg::Init()
 				}
 				if (hasMoreAudioTracks){
 					wxArrayString enabled;
-					Options.GetTable(AcceptedAudioStream, enabled, L";");
+					Options.GetTable(ACCEPTED_AUDIO_STREAM, enabled, L";");
 					int enabledSize = enabled.GetCount();
 					int lowestIndex = enabledSize;
 					for (size_t j = 0; j < audiotable.GetCount(); j++){
@@ -504,7 +504,7 @@ audio:
 		const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
 
 		SampleRate = audioprops->SampleRate;
-		Delay = (Options.GetInt(AudioDelay) / 1000);
+		Delay = (Options.GetInt(AUDIO_DELAY) / 1000);
 		NumSamples = audioprops->NumSamples;
 
 		if (abs(Delay) >= (SampleRate * NumSamples * BytesPerSample)){

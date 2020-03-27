@@ -229,8 +229,8 @@ int Hotkeys::LoadHkeys(bool Audio)
 	OpenWrite ow;
 	wxString hkpath = (Audio) ? L"\\AudioHotkeys.txt" : L"\\Hotkeys.txt";
 	wxString acctxt;
-	//failedowało z tak błachego powodu jak brak ścieżki
-	//trzeba uważać na kolejność, opcje mają zdecydowane pierwszeństwo
+	//it failed when there was lack of path
+	//need to put everything in right order, options are first
 	if (!ow.FileOpen(Options.configPath + hkpath, &acctxt, true)){ LoadDefault(hkeys, Audio); return 1; }
 
 	wxStringTokenizer hk(acctxt, L"\n", wxTOKEN_STRTOK);
@@ -317,8 +317,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 	ow.FileWrite(Options.configPath + hkpath, Texthk);
 
 }
-
-//itype jest wymagany, data nie wymaga dodatkowego szukania
+//itype is needed, data to avoid additional seeking
 wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 {
 
@@ -384,7 +383,8 @@ void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
 {
 	idAndType tmpitype = (itype) ? *itype : idAndType(id, type);
 	std::map<idAndType, hdata> tmphkeys;
-	LoadDefault(tmphkeys); LoadDefault(tmphkeys, true);
+	LoadDefault(tmphkeys); 
+	LoadDefault(tmphkeys, true);
 	auto it = tmphkeys.find(tmpitype);
 	if (it != tmphkeys.end())
 	{
@@ -406,7 +406,7 @@ wxString Hotkeys::GetDefaultKey(const idAndType &itype)
 	}
 	return L"";
 }
-//return -2 anulowano zmianę skrótów, -1 nowy skrót, 1+ id do zmiany skrótu.
+
 void Hotkeys::OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow /*= GLOBAL_HOTKEY*/, bool showWindowSelection/*=true*/)
 {
 	//sanity check
@@ -555,8 +555,16 @@ const std::map<int, wxString> & Hotkeys::GetNamesTable()
 	return hotkeysNaming->GetNamesTable();
 }
 
-//Okno dialogowe przechwytujące skróty klawiszowe
-//blokujące przy okazji dostęp do opcji
+void Hotkeys::ResetDefaults()
+{
+	std::map<idAndType, hdata> defaultHotkeys;
+	LoadDefault(defaultHotkeys);
+	LoadDefault(defaultHotkeys, true);
+	hkeys = defaultHotkeys;
+}
+
+//Dialog window catching keyboard shortcuts
+//blocking also access to options
 HkeysDialog::HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)
 	: KaiDialog(parent, -1, _("Mapowanie przycisków"), wxDefaultPosition, wxDefaultSize, wxCAPTION | wxWANTS_CHARS | wxCLOSE_BOX)
 {
@@ -626,6 +634,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		EndModal(wxID_OK);
 	}
 }
+
 
 
 

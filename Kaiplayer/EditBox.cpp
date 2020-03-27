@@ -340,7 +340,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Connect(SplitLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnSplit);
 	Connect(StartDifference, EndDifference, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnPasteDifferents);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&EditBox::OnSize);
-	if (!Options.GetBool(DisableLiveVideoEditing)){
+	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){
 		Connect(16668, NUMBER_CHANGED, (wxObjectEventFunction)&EditBox::OnEdit);
 		Connect(16667, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
 	}
@@ -1100,7 +1100,7 @@ void EditBox::SetTlMode(bool tl, bool dummyTlMode /*= false*/)
 	Bhide->Show(tl);
 	DoubtfulTL->Show(tl);
 	AutoMoveTags->Show(tl);
-	AutoMoveTags->SetValue(Options.GetBool(AutoMoveTagsFromOriginal));
+	AutoMoveTags->SetValue(Options.GetBool(AUTO_MOVE_TAGS_FROM_ORIGINAL));
 	BoxSizer1->Layout();
 	if (!dummyTlMode){
 		if (TlMode->GetValue() != tl){ TlMode->SetValue(tl); }
@@ -1278,7 +1278,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 		int minEBSize = (TextEditOrig->IsShown()) ? 200 : 150;
 		if ((h - aboxSize.y) < minEBSize){
 			ABox->SetMinSize(wxSize(-1, h - minEBSize));
-			Options.SetInt(AudioBoxHeight, h - minEBSize);
+			Options.SetInt(AUDIO_BOX_HEIGHT, h - minEBSize);
 		}
 	}
 
@@ -1844,7 +1844,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 {
 	SetTextWithTags(true);
-	Options.SetBool(AutoMoveTagsFromOriginal, AutoMoveTags->GetValue());
+	Options.SetBool(AUTO_MOVE_TAGS_FROM_ORIGINAL, AutoMoveTags->GetValue());
 	Options.SaveOptions();
 }
 
@@ -2166,7 +2166,7 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 				BoxSizer1->Layout();
 				TextEdit->Refresh(false);
 				TlMode->Refresh(false);
-				Options.SetInt(AudioBoxHeight, newpos);
+				Options.SetInt(AUDIO_BOX_HEIGHT, newpos);
 				Options.SaveAudioOpts();
 			});
 			BoxSizer1->Prepend(windowResizer, 0, wxEXPAND);

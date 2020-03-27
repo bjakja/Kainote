@@ -97,6 +97,16 @@
 	XX( EDITBOX_TAG_BUTTON8,)\
 	XX( EDITBOX_TAG_BUTTON9,)\
 	XX( EDITBOX_TAG_BUTTON10,)\
+	XX( EDITBOX_TAG_BUTTON11,)\
+	XX( EDITBOX_TAG_BUTTON12,)\
+	XX( EDITBOX_TAG_BUTTON13,)\
+	XX( EDITBOX_TAG_BUTTON14,)\
+	XX( EDITBOX_TAG_BUTTON15,)\
+	XX( EDITBOX_TAG_BUTTON16,)\
+	XX( EDITBOX_TAG_BUTTON17,)\
+	XX( EDITBOX_TAG_BUTTON18,)\
+	XX( EDITBOX_TAG_BUTTON19,)\
+	XX( EDITBOX_TAG_BUTTON20,)\
 	XX( GRID_HIDE_LAYER,=5001 ) \
 	XX( GRID_HIDE_START, ) \
 	XX( GRID_HIDE_END,=5004 ) \
@@ -334,6 +344,7 @@ public:
 	int GetType(int id);
 	const std::map<idAndType, hdata> &GetHotkeysMap(){ return hkeys; }
 	void SetHotkeysMap(const std::map<idAndType, hdata> &hotkeys){ hkeys = std::map<idAndType, hdata>(hotkeys); }
+	void ResetDefaults();
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	int lastScriptId;

@@ -496,7 +496,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 	End.ChangeFormat(type);
 	if (type < SRT){
 		Layer = 0;
-		Style = Options.GetString(ConvertStyle);
+		Style = Options.GetString(CONVERT_STYLE);
 		Actor = L"";
 		MarginL = 0;
 		MarginR = 0;

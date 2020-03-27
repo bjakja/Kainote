@@ -24,7 +24,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	, FR(_FR)
 {
 	//SetMinSize(wxSize(850, 400));
-	int options = Options.GetInt(FindReplaceOptions);
+	int options = Options.GetInt(FIND_REPLACE_OPTIONS);
 
 	wxBoxSizer* mainfrbsizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer* mainfrbsizer1 = new wxBoxSizer(wxVERTICAL);
@@ -282,7 +282,7 @@ void TabWindow::SaveValues()
 {
 	int options = 0;
 	if (!AllLines){
-		options = Options.GetInt(FindReplaceOptions);
+		options = Options.GetInt(FIND_REPLACE_OPTIONS);
 		options = options >> 9;
 		options = options << 9;
 	}
@@ -322,7 +322,7 @@ void TabWindow::SaveValues()
 	if (OnlyTags->GetValue())
 		options |= SEEK_ONLY_IN_TAGS;
 
-	Options.SetInt(FindReplaceOptions, options);
+	Options.SetInt(FIND_REPLACE_OPTIONS, options);
 
 	FR->actualFind = FindText->GetString(0);
 	if (ReplaceText){
@@ -339,7 +339,7 @@ void TabWindow::SaveValues()
 
 void TabWindow::SetValues()
 {
-	int options = Options.GetInt(FindReplaceOptions);
+	int options = Options.GetInt(FIND_REPLACE_OPTIONS);
 	MatchCase->SetValue((options & CASE_SENSITIVE) > 0);
 	RegEx->SetValue((options & REG_EX) > 0);
 	StartLine->SetValue((options & START_OF_TEXT) > 0);

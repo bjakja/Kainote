@@ -299,7 +299,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	if (isFullscreen){
 		UpdateVideoWindow();
 		wxSize size = GetVideoSize();
-		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DontAskForBadResolution));
+		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
 	//block = false;
 	if (IsDshow){
@@ -757,7 +757,7 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 {
 	wxSize size = GetVideoSize();
 	if (setstatus){
-		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DontAskForBadResolution));
+		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
 	if (wwidth == 0){
 		GetClientSize(&wwidth, &wheight);
@@ -1013,7 +1013,7 @@ void VideoCtrl::OpenEditor(bool esc)
 		//bool isgood=false;
 		//if(fn!=""){bool isgood=Kai->OpenFile(fn);}
 		//}
-		Options.SetBool(EditorOn, true);
+		Options.SetBool(EDITOR_ON, true);
 		if (Kai->GetTab()->SubsPath != L""){
 			Kai->GetTab()->Grid->SelVideoLine();
 		}
@@ -1366,7 +1366,7 @@ void VideoCtrl::ChangeStream()
 {
 	if (!IsDshow){ return; }
 	wxArrayString enabled;
-	Options.GetTable(AcceptedAudioStream, enabled, L";");
+	Options.GetTable(ACCEPTED_AUDIO_STREAM, enabled, L";");
 	if (enabled.size() < 1){ return; }
 	wxArrayString streams = GetStreams();
 	//int firstSubsStream = -1;

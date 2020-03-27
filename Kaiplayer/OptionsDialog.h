@@ -78,6 +78,7 @@ private:
 	void OnChangeCatalog(wxCommandEvent& event);
 	void OnResetDefault(wxCommandEvent& event);
 	void ResetDefault();
+	void AddHotkeysOnList();
 
 	KainoteFrame *Kai;
 

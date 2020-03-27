@@ -41,7 +41,7 @@ void Karaoke::Split()
 {
 	Clearing();
 	bool Auto = AD->karaAuto;
-	bool Everyn = Options.GetBool(AudioMergeEveryNWithSyllable);
+	bool Everyn = Options.GetBool(AUDIO_MERGE_EVERY_N_WITH_SYLLABLE);
 	bool block = false;
 	Dialogue *dial = AD->dialogue;
 	wxString Text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;

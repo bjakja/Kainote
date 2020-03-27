@@ -627,7 +627,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		dclickCurPos = mousePosition;
 		time = timeGetTime();
 		int errn = FindError(mousePosition);
-		if (Options.GetBool(EditboxSugestionsOnDoubleClick) && errn >= 0){
+		if (Options.GetBool(EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK) && errn >= 0){
 			wxString err = misspels[errn];
 
 			wxArrayString suggs;
@@ -1861,7 +1861,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		wxArrayString dics;
 		SpellChecker::AvailableDics(dics, dictionarySymbols);
 		numOfLanguages = dics.size();
-		const wxString &language = Options.FindLanguage(Options.GetString(DictionaryLanguage));
+		const wxString &language = Options.FindLanguage(Options.GetString(DICTIONARY_LANGUAGE));
 		Menu *languageMenu = new Menu();
 		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), L"", true, 
 			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));
@@ -1972,7 +1972,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			MenuItem * item = menut.FindItem(id);
 			if (item){
 				//first element starts from MENU_SPELLCHECKER_ON + 1
-				Options.SetString(DictionaryLanguage, dictionarySymbols[id - MENU_SPELLCHECKER_ON - 1]);
+				Options.SetString(DICTIONARY_LANGUAGE, dictionarySymbols[id - MENU_SPELLCHECKER_ON - 1]);
 				SpellChecker::Destroy();
 				EB->ClearErrs();
 			}

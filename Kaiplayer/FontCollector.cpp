@@ -154,9 +154,9 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	excludes.Add(L"|");
 	valid.SetExcludes(excludes);
 	path = new KaiTextCtrl(this, -1, Options.GetString(FontCollectorDirectory), wxDefaultPosition, wxSize(150, -1), 0, valid);
-	path->Enable(Options.GetInt(FontCollectorAction) != 0);
+	path->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
 	choosepath = new MappedButton(this, 8799, _("Wybierz folder"));
-	choosepath->Enable(Options.GetInt(FontCollectorAction) != 0);
+	choosepath->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
 	Connect(8799, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonPath);
 
 	Pathc->Add(path, 1, wxEXPAND | wxALL, 3);
@@ -168,12 +168,12 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	choices.Add(_("Spakuj zipem"));
 	//choices.Add(_("Wmuxuj napisy w wideo (wymagany MKVToolnix)"));
 	opts = new KaiRadioBox(this, 9987, _("Opcje"), wxDefaultPosition, wxDefaultSize, choices, 0, wxRA_SPECIFY_ROWS);
-	opts->SetSelection(Options.GetInt(FontCollectorAction));
+	opts->SetSelection(Options.GetInt(FONT_COLLECTOR_ACTION));
 	Connect(9987, wxEVT_COMMAND_RADIOBOX_SELECTED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 
 	subsdir = new KaiCheckBox(this, 7998, _("Zapisuj do folderu z napisami / wideo."));
 	subsdir->SetToolTip(_("Zapisuje do folderu z wideo\nprzy wyciąganiu czcionek z pliku MKV."));
-	subsdir->Enable(Options.GetInt(FontCollectorAction) != 0);
+	subsdir->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
 	subsdir->SetValue(Options.GetBool(FontCollectorUseSubsDirectory));
 
 
@@ -545,7 +545,7 @@ void FontCollectorDialog::OnChangeOpt(wxCommandEvent &event)
 	subsdir->Enable(opts->GetSelection() != 0);
 
 	fromMKV->Enable(opts->GetSelection() != 0 && Notebook::GetTab()->VideoPath.Lower().EndsWith(L".mkv"));
-	Options.SetInt(FontCollectorAction, opts->GetSelection());
+	Options.SetInt(FONT_COLLECTOR_ACTION, opts->GetSelection());
 	Options.SetBool(FontCollectorUseSubsDirectory, subsdir->GetValue());
 	Options.SaveOptions(true, false);
 }

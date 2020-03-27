@@ -159,7 +159,7 @@ bool kainoteApp::OnInit()
 		if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
 			//what a lame language system, I need to change it.
 			Options.SetString(ProgramLanguage, L"en");
-			Options.SetString(DictionaryLanguage, L"en_US");
+			Options.SetString(DICTIONARY_LANGUAGE, L"en_US");
 		}
 			
 		locale = NULL;

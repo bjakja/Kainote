@@ -99,7 +99,7 @@ bool SpellChecker::Initialize()
 	Cleaning();
 
 	//wxString pathhh = Options.pathfull + L"\\Dictionary\\";
-	wxString name = Options.GetString(DictionaryLanguage);
+	wxString name = Options.GetString(DICTIONARY_LANGUAGE);
 	if (name == L""){ name = L"pl"; }
 	wxString dic = dictionaryPath + name + L".dic";
 	wxString aff = dictionaryPath + name + L".aff";

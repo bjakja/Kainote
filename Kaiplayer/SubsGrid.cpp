@@ -522,7 +522,7 @@ void SubsGrid::CopyRows(int id)
 			_("Margines pionowy"), _("Efekt"), _("Tekst"), _("Tekst bez tagów") };
 		int vals[] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
 		Stylelistbox slx(this, false, 11, arr);
-		int PasteCollumnsSelections = Options.GetInt(CopyCollumnsSelection);
+		int PasteCollumnsSelections = Options.GetInt(COPY_COLLUMS_SELECTIONS);
 		for (int j = 0; j < 11; j++){
 			if (PasteCollumnsSelections & vals[j]){
 				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
@@ -539,7 +539,7 @@ void SubsGrid::CopyRows(int id)
 					cols |= vals[v];
 				}
 			}
-			Options.SetInt(CopyCollumnsSelection, cols);
+			Options.SetInt(COPY_COLLUMS_SELECTIONS, cols);
 			Options.SaveOptions();
 		}
 		else{ return; }
@@ -949,7 +949,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		RefreshColumns();
 		Edit->HideControls();
 		if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
-		Kai->SetSubsResolution(!Options.GetBool(DontAskForBadResolution));
+		Kai->SetSubsResolution(!Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
 
 }
@@ -1230,8 +1230,8 @@ public:
 		DialogSizer *main = new DialogSizer(wxVERTICAL);
 		const int numFields = 6;
 		wxString fieldNames[numFields] = { _("Tytuł"), _("Autor"), _("Tłumaczenie"), _("Korekta"), _("Timing"), _("Edycja") };
-		CONFIG fieldOnValues[numFields] = { ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn,
-			ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn };
+		CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
+			ASS_PROPERTIES_EDITING_ON, ASS_PROPERTIES_TIMING_ON, ASS_PROPERTIES_UPDATE_ON };
 		for (int i = 0; i < numFields; i++){
 			fields[i] = new KaiCheckBox(this, -1, fieldNames[i]);
 			fields[i]->SetValue(Options.GetBool(fieldOnValues[i]));
@@ -1242,7 +1242,7 @@ public:
 		MappedButton *Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		MappedButton *TurnOf = new MappedButton(this, 19921, _("Wyłącz potwierdzenie"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-			Options.SetBool(ASSPropertiesAskForChange, false);
+			Options.SetBool(ASS_PROPERTIES_ASK_FOR_CHANGE, false);
 			Options.SaveOptions(true, false);
 			EndModal(19921);
 		}, 19921);
@@ -1256,8 +1256,8 @@ public:
 	virtual ~SwapPropertiesDialog(){};
 	void SaveValues(){
 		const int numFields = 6;
-		CONFIG fieldOnValues[numFields] = { ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn,
-			ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn };
+		CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
+			ASS_PROPERTIES_EDITING_ON, ASS_PROPERTIES_TIMING_ON, ASS_PROPERTIES_UPDATE_ON };
 		for (int i = 0; i < numFields; i++){
 			Options.SetBool(fieldOnValues[i], fields[i]->GetValue());
 		}
@@ -1269,13 +1269,13 @@ private:
 bool SubsGrid::SwapAssProperties()
 {
 	const int numFields = 6;
-	CONFIG fieldOnValues[numFields] = { ASSPropertiesTitleOn, ASSPropertiesScriptOn, ASSPropertiesTranslationOn,
-		ASSPropertiesEditingOn, ASSPropertiesTimingOn, ASSPropertiesUpdateOn };
-	CONFIG fieldValues[numFields] = { ASSPropertiesTitle, ASSPropertiesScript, ASSPropertiesTranslation,
-		ASSPropertiesEditing, ASSPropertiesTiming, ASSPropertiesUpdate };
+	CONFIG fieldOnValues[numFields] = { ASS_PROPERTIES_TITLE_ON, ASS_PROPERTIES_SCRIPT_ON, ASS_PROPERTIES_TRANSLATION_ON,
+		ASS_PROPERTIES_EDITING_ON, ASS_PROPERTIES_TIMING_ON, ASS_PROPERTIES_UPDATE_ON };
+	CONFIG fieldValues[numFields] = { ASS_PROPERTIES_TITLE, ASS_PROPERTIES_SCRIPT, ASS_PROPERTIES_TRANSLATION,
+		ASS_PROPERTIES_EDITING, ASS_PROPERTIES_TIMING, ASS_PROPERTIES_UPDATE };
 	wxString fieldNames[numFields] = { L"Title", L"Original Script", L"Original Translation",
 		L"Original Editing", L"Original Timing", L"Script Updated By" };
-	if (Options.GetBool(ASSPropertiesAskForChange)){
+	if (Options.GetBool(ASS_PROPERTIES_ASK_FOR_CHANGE)){
 		bool hasSomethingToChange = false;
 		for (int i = 0; i < numFields; i++){
 			if (Options.GetBool(fieldOnValues[i])){

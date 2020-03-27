@@ -33,7 +33,7 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	fnext = blockTextChange = false;
 	fromstart = true;
 
-	Options.GetTable(FindRecent, findRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_RECENT_FINDS, findRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
 	if (findRecent.size() > 20){ findRecent.RemoveAt(20, findRecent.size() - 20); }
 	if (findRecent.size())
 		actualFind = findRecent[0];
@@ -1151,7 +1151,7 @@ void FindReplace::AddRecent(TabWindow *window)
 		findRecent.RemoveAt(20, findSize - 20);
 	}
 
-	Options.SetTable(FindRecent, findRecent, L"\f");
+	Options.SetTable(FIND_RECENT_FINDS, findRecent, L"\f");
 	if (window->windowType != WINDOW_FIND){
 		wxString text = window->ReplaceText->GetValue();
 

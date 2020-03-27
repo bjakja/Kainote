@@ -153,12 +153,12 @@ void STime::ChangeFormat(char format, float fps)
 		return;
 	if (format == ASS){ mstime = ZEROIT(mstime); }
 	if (form == MDVD && format != FRAME){
-		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
+		float fpsa = (fps) ? fps : Options.GetFloat(CONVERT_FPS);
 		if (fpsa < 1){ fpsa = 23.976f; }
 		mstime = (orgframe / fpsa) * (1000);
 	}
 	else if (format == MDVD && form != FRAME){
-		float fpsa = (fps) ? fps : Options.GetFloat(ConvertFPS);
+		float fpsa = (fps) ? fps : Options.GetFloat(CONVERT_FPS);
 		if (fpsa<1){ fpsa = 23.976f; }
 		orgframe = ceil(mstime * (fpsa / 1000));
 	}
