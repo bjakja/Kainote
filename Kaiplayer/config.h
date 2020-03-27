@@ -129,119 +129,119 @@
 	CG(FIND_RECENT_FINDS,)\
 	CG(FIND_REPLACE_OPTIONS,)\
 	CG(FONT_COLLECTOR_ACTION,)\
-	CG(FontCollectorDirectory,)\
-	CG(FontCollectorFromMKV,)\
-	CG(FontCollectorUseSubsDirectory,)\
-	CG(FFMS2VideoSeeking,)\
-	CG(GridChangeActiveOnSelection,)\
-	CG(GridFontName,)\
-	CG(GridFontSize,)\
-	CG(GridAddToFilter,)\
-	CG(GridFilterAfterLoad,)\
-	CG(GridFilterBy,)\
-	CG(GridFilterInverted,)\
-	CG(GridFilterStyles,)\
-	CG(GridHideCollums,)\
-	CG(GridHideTags,)\
-	CG(GridIgnoreFiltering,)\
-	CG(GridLoadSortedSubs,)\
-	CG(GridSaveAfterCharacterCount,)\
-	CG(GridTagsSwapChar,)\
-	CG(InsertEndOffset,)\
-	CG(InsertStartOffset,)\
+	CG(FONT_COLLECTOR_DIRECTORY,)\
+	CG(FONT_COLLECTOR_FROM_MKV,)\
+	CG(FONT_COLLECTOR_USE_SUBS_DIRECTORY,)\
+	CG(FFMS2_VIDEO_SEEKING,)\
+	CG(GRID_CHANGE_ACTIVE_ON_SELECTION,)\
+	CG(GRID_FONT,)\
+	CG(GRID_FONT_SIZE,)\
+	CG(GRID_ADD_TO_FILTER,)\
+	CG(GRID_FILTER_AFTER_LOAD,)\
+	CG(GRID_FILTER_BY,)\
+	CG(GRID_FILTER_INVERTED,)\
+	CG(GRID_FILTER_STYLES,)\
+	CG(GRID_HIDE_COLUMNS,)\
+	CG(GRID_HIDE_TAGS,)\
+	CG(GRID_IGNORE_FILTERING,)\
+	CG(GRID_LOAD_SORTED_SUBS,)\
+	CG(GRID_SAVE_AFTER_CHARACTER_COUNT,)\
+	CG(GRID_TAGS_SWAP_CHARACTER,)\
+	CG(GRID_INSERT_END_OFFSET,)\
+	CG(GRID_INSERT_START_OFFSET,)\
 	CG(KEYFRAMES_RECENT,)\
 	CG(LAST_SESSION_CONFIG,)\
-	CG(MoveTimesByTime,)\
-	CG(MoveTimesLoadSetTabOptions,)\
-	CG(MoveTimesCorrectEndTimes,)\
-	CG(MoveTimesForward,)\
-	CG(MoveTimesFrames,)\
-	CG(MoveTimesOn,)\
-	CG(MoveTimesOptions,)\
-	CG(MoveTimesWhichLines,)\
-	CG(MoveTimesWhichTimes,)\
-	CG(MoveTimesStyles,)\
-	CG(MoveTimesTime,)\
-	CG(MoveVideoToActiveLine,)\
-	CG(NoNewLineAfterTimesEdition,)\
-	CG(OpenSubsInNewCard,)\
-	CG(OpenVideoAtActiveLine,)\
-	CG(PasteCollumnsSelection,)\
-	CG(PlayAfterSelection,)\
-	CG(PostprocessorEnabling,)\
-	CG(PostprocessorKeyframeBeforeStart,)\
-	CG(PostprocessorKeyframeAfterStart,)\
-	CG(PostprocessorKeyframeBeforeEnd,)\
-	CG(PostprocessorKeyframeAfterEnd,)\
-	CG(PostprocessorLeadIn,)\
-	CG(PostprocessorLeadOut,)\
-	CG(PostprocessorThresholdStart,)\
-	CG(PostprocessorThresholdEnd,)\
-	CG(PreviewText,)\
+	CG(SHIFT_TIMES_BY_TIME,)\
+	CG(SHIFT_TIMES_CHANGE_VALUES_WITH_TAB,)\
+	CG(SHIFT_TIMES_CORRECT_END_TIMES,)\
+	CG(SHIFT_TIMES_MOVE_FORWARD,)\
+	CG(SHIFT_TIMES_DISPLAY_FRAMES,)\
+	CG(SHIFT_TIMES_ON,)\
+	CG(SHIFT_TIMES_OPTIONS,)\
+	CG(SHIFT_TIMES_WHICH_LINES,)\
+	CG(SHIFT_TIMES_WHICH_TIMES,)\
+	CG(SHIFT_TIMES_STYLES,)\
+	CG(SHIFT_TIMES_TIME,)\
+	CG(MOVE_VIDEO_TO_ACTIVE_LINE,)\
+	CG(EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT,)\
+	CG(OPEN_SUBS_IN_NEW_TAB,)\
+	CG(OPEN_VIDEO_AT_ACTIVE_LINE,)\
+	CG(PASTE_COLUMNS_SELECTION,)\
+	CG(VIDEO_PLAY_AFTER_SELECTION,)\
+	CG(POSTPROCESSOR_ON,)\
+	CG(POSTPROCESSOR_KEYFRAME_BEFORE_START,)\
+	CG(POSTPROCESSOR_KEYFRAME_AFTER_START,)\
+	CG(POSTPROCESSOR_KEYFRAME_BEFORE_END,)\
+	CG(POSTPROCESSOR_KEYFRAME_AFTER_END,)\
+	CG(POSTPROCESSOR_LEAD_IN,)\
+	CG(POSTPROCESSOR_LEAD_OUT,)\
+	CG(POSTPROCESSOR_THRESHOLD_START,)\
+	CG(POSTPROCESSOR_THRESHOLD_END,)\
+	CG(STYLE_PREVIEW_TEXT,)\
 	CG(PROGRAM_FONT,)\
 	CG(PROGRAM_FONT_SIZE,)\
-	CG(ProgramLanguage,)\
-	CG(ProgramTheme,)\
-	CG(ReplaceRecent,)\
-	CG(SelectionsRecent,)\
-	CG(SelectionsOptions,)\
-	CG(SelectVisibleLineAfterFullscreen,)\
+	CG(PROGRAM_LANGUAGE,)\
+	CG(PROGRAM_THEME,)\
+	CG(REPLACE_RECENT_REPLACEMENTS,)\
+	CG(SELECT_LINES_RECENT_SELECTIONS,)\
+	CG(SELECT_LINES_OPTIONS,)\
+	CG(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN,)\
 	CG(SHIFT_TIMES_PROFILES,)\
-	CG(SpellcheckerOn,)\
-	CG(StyleEditFilterText,)\
-	CG(StyleFilterTextOn,)\
-	CG(StyleManagerPosition,)\
-	CG(StyleManagerDetachEditor,)\
-	CG(SubsAutonaming,)\
-	CG(SubsComparisonType,)\
-	CG(SubsComparisonStyles,)\
-	CG(SubsRecent,)\
+	CG(SPELLCHECKER_ON,)\
+	CG(STYLE_EDIT_FILTER_TEXT,)\
+	CG(STYLE_EDIT_FILTER_TEXT_ON,)\
+	CG(STYLE_MANAGER_POSITION,)\
+	CG(STYLE_MANAGER_DETACH_EDIT_WINDOW,)\
+	CG(SUBS_AUTONAMING,)\
+	CG(SUBS_COMPARISON_TYPE,)\
+	CG(SUBS_COMPARISON_STYLES,)\
+	CG(SUBS_RECENT_FILES,)\
 	CG(TAB_TEXT_MAX_CHARS,)\
 	CG(TEXT_EDITOR_HIDE_STATUS_BAR,)\
 	CG(TEXT_EDITOR_CHANGE_QUOTES,)\
 	CG(TEXT_EDITOR_TAG_LIST_OPTIONS,)\
-	CG(TextFieldAllowNumpadHotkeys,)\
-	CG(TlModeShowOriginal,)\
+	CG(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS,)\
+	CG(TL_MODE_SHOW_ORIGINAL,)\
 	CG(TL_MODE_HIDE_ORIGINAL_ON_VIDEO,)\
-	CG(ToolbarIDs,)\
-	CG(ToolbarAlignment,)\
-	CG(UpdaterCheckIntensity,)\
-	CG(UpdaterCheckOptions,)\
-	CG(UpdaterCheckForStable,)\
-	CG(UpdaterLastCheck,)\
-	CG(VideoFullskreenOnStart,)\
-	CG(VideoIndex,)\
-	CG(VideoPauseOnClick,)\
-	CG(VideoProgressBar,)\
-	CG(VideoRecent,)\
-	CG(VideoVolume,)\
-	CG(VideoWindowSize,)\
-	CG(VisualWarningsOff,)\
+	CG(TOOLBAR_IDS,)\
+	CG(TOOLBAR_ALIGNMENT,)\
+	CG(UPDATER_CHECK_INTENSITY,)\
+	CG(UPDATER_CHECK_OPTIONS,)\
+	CG(UPDATER_CHECK_FOR_STABLE,)\
+	CG(UPDATER_LAST_CHECK,)\
+	CG(VIDEO_FULL_SCREEN_ON_START,)\
+	CG(VIDEO_INDEX,)\
+	CG(VIDEO_PAUSE_ON_CLICK,)\
+	CG(VIDEO_PROGRESS_BAR,)\
+	CG(VIDEO_RECENT_FILES,)\
+	CG(VIDEO_VOLUME,)\
+	CG(VIDEO_WINDOW_SIZE,)\
+	CG(VIDEO_VISUAL_WARNINGS_OFF,)\
 	CG(VSFILTER_INSTANCE,)\
-	CG(WindowMaximized,)\
-	CG(WindowPosition,)\
-	CG(WindowSize,)\
-	CG(EditboxTagButtons,)\
-	CG(EditboxTagButton1,)\
-	CG(EditboxTagButton2,)\
-	CG(EditboxTagButton3,)\
-	CG(EditboxTagButton4,)\
-	CG(EditboxTagButton5,)\
-	CG(EditboxTagButton6,)\
-	CG(EditboxTagButton7,)\
-	CG(EditboxTagButton8,)\
-	CG(EditboxTagButton9,)\
-	CG(EditboxTagButton10,)\
-	CG(EditboxTagButton11,)\
-	CG(EditboxTagButton12,)\
-	CG(EditboxTagButton13,)\
-	CG(EditboxTagButton14,)\
-	CG(EditboxTagButton15,)\
-	CG(EditboxTagButton16,)\
-	CG(EditboxTagButton17,)\
-	CG(EditboxTagButton18,)\
-	CG(EditboxTagButton19,)\
-	CG(EditboxTagButton20,)\
+	CG(WINDOW_MAXIMIZED,)\
+	CG(WINDOW_POSITION,)\
+	CG(WINDOW_SIZE,)\
+	CG(EDITBOX_TAG_BUTTONS,)\
+	CG(EDITBOX_TAG_BUTTON1,)\
+	CG(EDITBOX_TAG_BUTTON2,)\
+	CG(EDITBOX_TAG_BUTTON3,)\
+	CG(EDITBOX_TAG_BUTTON4,)\
+	CG(EDITBOX_TAG_BUTTON5,)\
+	CG(EDITBOX_TAG_BUTTON6,)\
+	CG(EDITBOX_TAG_BUTTON7,)\
+	CG(EDITBOX_TAG_BUTTON8,)\
+	CG(EDITBOX_TAG_BUTTON9,)\
+	CG(EDITBOX_TAG_BUTTON10,)\
+	CG(EDITBOX_TAG_BUTTON11,)\
+	CG(EDITBOX_TAG_BUTTON12,)\
+	CG(EDITBOX_TAG_BUTTON13,)\
+	CG(EDITBOX_TAG_BUTTON14,)\
+	CG(EDITBOX_TAG_BUTTON15,)\
+	CG(EDITBOX_TAG_BUTTON16,)\
+	CG(EDITBOX_TAG_BUTTON17,)\
+	CG(EDITBOX_TAG_BUTTON18,)\
+	CG(EDITBOX_TAG_BUTTON19,)\
+	CG(EDITBOX_TAG_BUTTON20,)\
 	//if you write here a new enum then change configSize below after colors
 
 DECLARE_ENUM(CONFIG, CFG)
@@ -393,7 +393,7 @@ typedef void csri_rend;
 class config
 {
 private:
-	static const unsigned int configSize = EditboxTagButton20 + 1;
+	static const unsigned int configSize = EDITBOX_TAG_BUTTON20 + 1;
 	wxString stringConfig[configSize];
 	static const unsigned int colorsSize = StylePreviewColor2 + 1;
 	wxColour colors[colorsSize];

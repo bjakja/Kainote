@@ -306,7 +306,7 @@ void Visuals::Draw(int time)
 
 void Visuals::DrawWarning(bool comment)
 {
-	if (Options.GetBool(VisualWarningsOff))
+	if (Options.GetBool(VIDEO_VISUAL_WARNINGS_OFF))
 		return;
 
 	LPD3DXFONT warningFont;

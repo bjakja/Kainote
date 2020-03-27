@@ -159,7 +159,7 @@ void StylePreview::SubsText(wxString *text)
 		<< L"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<< L"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
 		<< previewStyle->GetRaw() << L"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," 
-		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(PreviewText) << L"\r\n"
+		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) << L"\r\n"
 		/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
 
 	//previewStyle->Alignment = "5";
@@ -167,7 +167,7 @@ void StylePreview::SubsText(wxString *text)
 	//*text << wxString(bom);
 	//*text << "[Script Info]\r\nPlayResX: " << width << "\r\nPlayResY: " << height << "\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 	//	<< "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-	//	<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(PreviewText) <<
+	//	<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) <<
 	//	"\r\n"/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
 }
 
@@ -175,7 +175,7 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 {
 	if (event.LeftDown()){
 		if (PrevText){
-			Options.SetString(PreviewText, PrevText->GetValue());
+			Options.SetString(STYLE_PREVIEW_TEXT, PrevText->GetValue());
 			DrawPreview();
 			Options.SaveOptions();
 			PrevText->Destroy();
@@ -183,7 +183,7 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 		}
 		else{
 			wxSize siz = GetClientSize();
-			PrevText = new KaiTextCtrl(this, -1, Options.GetString(PreviewText), wxPoint(0, 0), wxSize(siz.x, -1));
+			PrevText = new KaiTextCtrl(this, -1, Options.GetString(STYLE_PREVIEW_TEXT), wxPoint(0, 0), wxSize(siz.x, -1));
 			PrevText->Show();
 		}
 

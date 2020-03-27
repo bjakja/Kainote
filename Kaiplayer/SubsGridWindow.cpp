@@ -28,8 +28,8 @@
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridBase(parent, id, pos, size, style)
 {
-	visibleColumns = Options.GetInt(GridHideCollums);
-	hideOverrideTags = Options.GetBool(GridHideTags);
+	visibleColumns = Options.GetInt(GRID_HIDE_COLUMNS);
+	hideOverrideTags = Options.GetBool(GRID_HIDE_TAGS);
 	bmp = NULL;
 	SetStyle();
 	AdjustWidths();
@@ -60,12 +60,12 @@ SubsGridWindow::~SubsGridWindow()
 
 void SubsGridWindow::SetStyle()
 {
-	const wxString & fontname = Options.GetString(GridFontName);
+	const wxString & fontname = Options.GetString(GRID_FONT);
 	font.SetFaceName(fontname);
 	if (!font.IsOk())
 		font.SetFamily(wxFONTFAMILY_SWISS);
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
-	font.SetPointSize(Options.GetInt(GridFontSize));
+	font.SetPointSize(Options.GetInt(GRID_FONT_SIZE));
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	GridHeight = fh + 2;
@@ -148,9 +148,9 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
 		const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
 		const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
-		const wxString &chtag = Options.GetString(GridTagsSwapChar);
+		const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
 		const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
-		bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
+		bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 		tdc.SetFont(font);
 		tdc.SetPen(*wxTRANSPARENT_PEN);
@@ -533,9 +533,9 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
 	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
-	const wxString &chtag = Options.GetString(GridTagsSwapChar);
+	const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
-	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
+	bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 	//gc->SetFont(font);
 	gc->SetPen(*wxTRANSPARENT_PEN);
@@ -1453,7 +1453,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	}
 	TabPanel *pan = (TabPanel*)GetParent();
 	VideoCtrl *video = pan->Video;
-	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
+	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!outOfPosition) {
@@ -1874,7 +1874,7 @@ void SubsGridWindow::ChangeTimeDisplay(bool frame)
 void SubsGridWindow::HideOverrideTags()
 {
 	hideOverrideTags = !hideOverrideTags;
-	Options.SetBool(GridHideTags, hideOverrideTags);
+	Options.SetBool(GRID_HIDE_TAGS, hideOverrideTags);
 	SpellErrors.clear();
 	Refresh(false);
 }

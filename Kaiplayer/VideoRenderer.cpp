@@ -1097,7 +1097,7 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 		hwnd = Video->TD->GetHWND();
 		rt = Video->TD->GetClientRect();
 		if (panelOnFullscreen){ rt.height -= Video->TD->panelsize; }
-		pbar = Options.GetBool(VideoProgressBar);
+		pbar = Options.GetBool(VIDEO_PROGRESS_BAR);
 		cross = false;
 	}
 	else{

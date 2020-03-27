@@ -56,7 +56,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		StopPlayback, _("Zatrzymaj"), wxPoint(110, toolBarHeight - 6), wxSize(26, 26));
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"), 
 		NextVideo, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
-	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
+	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
 	showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, toolBarHeight - 4), wxSize(-1, -1));
 	showToolbar->SetValue(!vc->IsDshow);
 	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);

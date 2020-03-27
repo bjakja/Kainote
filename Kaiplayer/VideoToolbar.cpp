@@ -86,21 +86,21 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	wxString playopts[4] = { _("Nic"), _("Audio do końca linii"), _("Wideo do końca linii"),
 		_("Wideo do początku następnej linii") };
 	videoSeekAfter = new KaiChoice(this, ID_SEEK_AFTER, wxPoint(2, 1), wxDefaultSize, 6, movopts);
-	videoSeekAfter->SetSelection(Options.GetInt(MoveVideoToActiveLine));
+	videoSeekAfter->SetSelection(Options.GetInt(MOVE_VIDEO_TO_ACTIVE_LINE));
 	videoSeekAfter->SetToolTip(_("Przesuwaj wideo do aktualnej linii po:"));
 	wxSize seekMinSize = videoSeekAfter->GetMinSize();
 	videoPlayAfter = new KaiChoice(this, ID_PLAY_AFTER, wxPoint(seekMinSize.GetWidth() + 2, 1), wxDefaultSize, 4, playopts);
-	videoPlayAfter->SetSelection(Options.GetInt(PlayAfterSelection));
+	videoPlayAfter->SetSelection(Options.GetInt(VIDEO_PLAY_AFTER_SELECTION));
 	videoPlayAfter->SetToolTip(_("Odtwarzaj po zmianie linii:"));
 	//wxSize playMinSize = videoPlayAfter->GetMinSize();
 	//SetMinSize(wxSize(100, seekMinSize.GetHeight() + 2));
 
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
-		Options.SetInt(MoveVideoToActiveLine, videoSeekAfter->GetSelection());
+		Options.SetInt(MOVE_VIDEO_TO_ACTIVE_LINE, videoSeekAfter->GetSelection());
 		Options.SaveOptions(true, false);
 	}, ID_SEEK_AFTER);
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
-		Options.SetInt(PlayAfterSelection, videoPlayAfter->GetSelection());
+		Options.SetInt(VIDEO_PLAY_AFTER_SELECTION, videoPlayAfter->GetSelection());
 		Options.SaveOptions(true, false);
 	}, ID_PLAY_AFTER);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});

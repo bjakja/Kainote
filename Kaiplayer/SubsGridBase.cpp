@@ -306,7 +306,7 @@ void SubsGridBase::Convert(char type)
 
 void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
 {
-	int saveAfterCharacterCount = Options.GetInt(GridSaveAfterCharacterCount);
+	int saveAfterCharacterCount = Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT);
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
 	if (dummyEditboxChanges || saveAfterCharacterCount > 1){
@@ -485,32 +485,32 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (byFrame && !vb->VFF){ wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
-	int moveTimeOptions = Options.GetInt(MoveTimesOptions);
+	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
 
 	//Time to move
-	int time = (!byFrame) ? Options.GetInt(MoveTimesTime) : 0;
-	int frame = (byFrame) ? Options.GetInt(MoveTimesFrames) : 0;
-	int whichLines = MAX(0, Options.GetInt(MoveTimesWhichLines));
-	int whichTimes = MAX(0, Options.GetInt(MoveTimesWhichTimes));
-	int correctEndTimes = Options.GetInt(MoveTimesCorrectEndTimes);
+	int time = (!byFrame) ? Options.GetInt(SHIFT_TIMES_TIME) : 0;
+	int frame = (byFrame) ? Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES) : 0;
+	int whichLines = MAX(0, Options.GetInt(SHIFT_TIMES_WHICH_LINES));
+	int whichTimes = MAX(0, Options.GetInt(SHIFT_TIMES_WHICH_TIMES));
+	int correctEndTimes = Options.GetInt(SHIFT_TIMES_CORRECT_END_TIMES);
 	//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
-	int PostprocessorOptions = Options.GetInt(PostprocessorEnabling);
+	int PostprocessorOptions = Options.GetInt(POSTPROCESSOR_ON);
 	int LeadIn = 0, LeadOut = 0, ThresholdStart = 0, ThresholdEnd = 0,
 		KeyframeBeforeStart = 0, KeyframeAfterStart = 0, KeyframeBeforeEnd = 0, KeyframeAfterEnd = 0;
 
 	if (PostprocessorOptions){
 		if (subsFormat == TMP || PostprocessorOptions < 16){ PostprocessorOptions = 0; }
 		else if (PostprocessorOptions & 8 && !vb->VFF){ PostprocessorOptions ^= 8; }
-		LeadIn = Options.GetInt(PostprocessorLeadIn);
-		LeadOut = Options.GetInt(PostprocessorLeadOut);
-		ThresholdStart = Options.GetInt(PostprocessorThresholdStart);
-		ThresholdEnd = Options.GetInt(PostprocessorThresholdEnd);
-		KeyframeBeforeStart = Options.GetInt(PostprocessorKeyframeBeforeStart);
-		KeyframeAfterStart = Options.GetInt(PostprocessorKeyframeAfterStart);
-		KeyframeBeforeEnd = Options.GetInt(PostprocessorKeyframeBeforeEnd);
-		KeyframeAfterEnd = Options.GetInt(PostprocessorKeyframeAfterEnd);
+		LeadIn = Options.GetInt(POSTPROCESSOR_LEAD_IN);
+		LeadOut = Options.GetInt(POSTPROCESSOR_LEAD_OUT);
+		ThresholdStart = Options.GetInt(POSTPROCESSOR_THRESHOLD_START);
+		ThresholdEnd = Options.GetInt(POSTPROCESSOR_THRESHOLD_END);
+		KeyframeBeforeStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START);
+		KeyframeAfterStart = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_START);
+		KeyframeBeforeEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END);
+		KeyframeAfterEnd = Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_END);
 	}
-	wxString styles = Options.GetString(MoveTimesStyles);
+	wxString styles = Options.GetString(SHIFT_TIMES_STYLES);
 	if (styles.empty() && whichLines == 5){
 		KaiMessageBox(_("Nie wybrano stylów do przesunięcia"), _("Uwaga"));
 		return;
@@ -974,7 +974,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 	const wxString &newtlmode = GetSInfo(L"TLMode");
 	if (newtlmode != tlmode){
 		hasTLMode = (newtlmode == L"Yes");
-		showOriginal = (GetSInfo(L"TLMode Showtl") == L"Yes" || (hasTLMode && Options.GetBool(TlModeShowOriginal) != 0));
+		showOriginal = (GetSInfo(L"TLMode Showtl") == L"Yes" || (hasTLMode && Options.GetBool(TL_MODE_SHOW_ORIGINAL) != 0));
 		Edit->SetTlMode(hasTLMode);
 	}
 	if (Comparison){
@@ -1200,7 +1200,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		Edit->SetTlMode(hasTLMode);
 		Kai->Menubar->Enable(SaveTranslation, hasTLMode);
 	}
-	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TlModeShowOriginal))){ showOriginal = true; }
+	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ showOriginal = true; }
 
 
 	if (subsFormat == MDVD || subsFormat == MPL2){
@@ -1224,7 +1224,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	else if (subsFormat == ASS){
 		if (ext != L"ass"){ originalFormat = 0; if (StylesSize() < 1){ AddStyle(new Styles()); } }
 		Edit->TlMode->Enable(true); Edit->RefreshStyle();
-		if (Options.GetBool(GridLoadSortedSubs)){
+		if (Options.GetBool(GRID_LOAD_SORTED_SUBS)){
 			file->SortAll(sortstart);
 		}
 		active = wxAtoi(GetSInfo(L"Active Line"));
@@ -1248,7 +1248,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 	if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
 	if (subsFormat == ASS){
-		if (Options.GetBool(GridFilterAfterLoad)){
+		if (Options.GetBool(GRID_FILTER_AFTER_LOAD)){
 			isFiltered = true;
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
@@ -1313,7 +1313,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		}
 		AddSInfo(L"TLMode", L"Yes");
 		hasTLMode = true;
-		if (Options.GetBool(TlModeShowOriginal)){ showOriginal = true; }
+		if (Options.GetBool(TL_MODE_SHOW_ORIGINAL)){ showOriginal = true; }
 		Kai->Menubar->Enable(SaveTranslation, true);
 
 		//Refresh(false);
@@ -1630,7 +1630,7 @@ void SubsGridBase::GetCommonStyles(SubsGridBase *_grid, wxArrayString &styleTabl
 
 void SubsGridBase::SubsComparison()
 {
-	int comparisonType = Options.GetInt(SubsComparisonType);
+	int comparisonType = Options.GetInt(SUBS_COMPARISON_TYPE);
 	if (!comparisonType && compareStyles.size() < 1){ return; }
 	bool compareByVisible = (comparisonType & COMPARE_BY_VISIBLE) != 0;
 	bool compareByTimes = (comparisonType & COMPARE_BY_TIMES) != 0;

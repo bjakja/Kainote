@@ -29,9 +29,9 @@ SubsGridFiltering::~SubsGridFiltering()
 
 void SubsGridFiltering::Filter(bool autoFiltering)
 {
-	Invert = Options.GetBool(GridFilterInverted);
-	filterBy = Options.GetInt(GridFilterBy);
-	bool addToFilter = Options.GetBool(GridAddToFilter);
+	Invert = Options.GetBool(GRID_FILTER_INVERTED);
+	filterBy = Options.GetInt(GRID_FILTER_BY);
+	bool addToFilter = Options.GetBool(GRID_ADD_TO_FILTER);
 	if (!filterBy){
 		if (grid->isFiltered){
 			TurnOffFiltering();
@@ -41,7 +41,7 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		return;
 	}
 	if (filterBy & FILTER_BY_STYLES){
-		Options.GetTable(GridFilterStyles, styles, L",");
+		Options.GetTable(GRID_FILTER_STYLES, styles, L",");
 
 		size_t i = 0;
 		while (i < styles.size()){

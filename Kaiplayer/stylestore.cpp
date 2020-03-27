@@ -34,7 +34,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	: KaiDialog(parent, -1, _("Menedżer stylów"), pos, wxSize(400, -1), wxDEFAULT_DIALOG_STYLE)
 	, stayOnTop(false)
 {
-	bool isDetached = detachedEtit = Options.GetBool(StyleManagerDetachEditor);
+	bool isDetached = detachedEtit = Options.GetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW);
 	wxIcon icn;
 	icn.CopyFromBitmap(wxBITMAP_PNG(L"styles"));
 	SetIcon(icn);
@@ -860,7 +860,7 @@ void StyleStore::OnClose(wxCommandEvent& event)
 	Options.SaveOptions(false);
 	int ww, hh;
 	GetPosition(&ww, &hh);
-	Options.SetCoords(StyleManagerPosition, ww, hh);
+	Options.SetCoords(STYLE_MANAGER_POSITION, ww, hh);
 	Hide();
 	if (detachedEtit){ cc->Show(false); }
 }
@@ -910,7 +910,7 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 
 void StyleStore::ReloadFonts()
 {
-	wxArrayString *fontList = (!Options.GetBool(StyleFilterTextOn)) ?
+	wxArrayString *fontList = (!Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON)) ?
 		FontEnum.GetFonts(0, [](){}) :
 		FontEnum.GetFilteredFonts(0, [](){}, cc->fontFilter->GetValue());
 	cc->styleFont->PutArray(fontList);
@@ -960,7 +960,7 @@ void StyleStore::OnDetachEdit(wxCommandEvent& event)
 		detachedEtit = true;
 	}
 	Mainall->Fit(this);
-	Options.SetBool(StyleManagerDetachEditor, detach);
+	Options.SetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW, detach);
 }
 
 StyleStore *StyleStore::SS = NULL;
@@ -968,7 +968,7 @@ StyleStore *StyleStore::SS = NULL;
 void StyleStore::ShowStore()
 {
 	StyleStore *SS = Get();
-	bool detach = Options.GetBool(StyleManagerDetachEditor);
+	bool detach = Options.GetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW);
 	/*if(SS->stayOnTop){
 		TabPanel* pan=Notebook::GetTab();
 		SS->Reparent(pan);
@@ -1017,7 +1017,7 @@ StyleStore *StyleStore::Get()
 {
 	if (!SS){
 		int ww, hh;
-		Options.GetCoords(StyleManagerPosition, &ww, &hh);
+		Options.GetCoords(STYLE_MANAGER_POSITION, &ww, &hh);
 		SS = new StyleStore(Notebook::GetTabs()->GetParent(), wxPoint(ww, hh));
 	}
 	return SS;

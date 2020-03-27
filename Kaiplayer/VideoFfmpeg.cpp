@@ -374,7 +374,7 @@ done:
 				videotrack,
 				index,
 				sysinfo.dwNumberOfProcessors * 2,
-				Options.GetInt(FFMS2VideoSeeking),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
+				Options.GetInt(FFMS2_VIDEO_SEEKING),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
 				&errinfo);
 		}
 		catch (...){}

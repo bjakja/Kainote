@@ -347,44 +347,44 @@ void config::SaveOptions(bool cfg, bool style, bool crashed)
 void config::LoadDefaultConfig(wxString * defaultOptions)
 {
 	wxString * configTable = (defaultOptions) ? defaultOptions : stringConfig;
-	configTable[MoveTimesTime] = L"2000";
-	configTable[MoveTimesWhichLines] = L"0";
+	configTable[SHIFT_TIMES_TIME] = L"2000";
+	configTable[SHIFT_TIMES_WHICH_LINES] = L"0";
 	configTable[CONVERT_RESOLUTION_WIDTH] = L"1280";
 	configTable[CONVERT_RESOLUTION_HEIGHT] = L"720";
 	configTable[CONVERT_FPS] = L"23.976";
 	configTable[CONVERT_STYLE] = L"Default";
 	configTable[CONVERT_STYLE_CATALOG] = L"Default";
 	configTable[DICTIONARY_LANGUAGE] = L"pl";
-	configTable[SpellcheckerOn] = L"true";
-	configTable[StyleEditFilterText] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
-	configTable[FFMS2VideoSeeking] = L"2";
-	configTable[MoveTimesByTime] = L"false";
-	configTable[GridFontName] = L"Tahoma";
-	configTable[GridFontSize] = L"10";
+	configTable[SPELLCHECKER_ON] = L"true";
+	configTable[STYLE_EDIT_FILTER_TEXT] = L"ĄĆĘŁŃÓŚŹŻąćęłńóśźż";
+	configTable[FFMS2_VIDEO_SEEKING] = L"2";
+	configTable[SHIFT_TIMES_BY_TIME] = L"false";
+	configTable[GRID_FONT] = L"Tahoma";
+	configTable[GRID_FONT_SIZE] = L"10";
 	configTable[PROGRAM_FONT] = L"Tahoma";
 	configTable[PROGRAM_FONT_SIZE] = L"10";
-	configTable[GridSaveAfterCharacterCount] = L"1";
-	configTable[GridTagsSwapChar] = L"☀";
-	configTable[MoveTimesForward] = L"true";
+	configTable[GRID_SAVE_AFTER_CHARACTER_COUNT] = L"1";
+	configTable[GRID_TAGS_SWAP_CHARACTER] = L"☀";
+	configTable[SHIFT_TIMES_MOVE_FORWARD] = L"true";
 	configTable[CONVERT_NEW_END_TIMES] = L"false";
-	configTable[InsertStartOffset] = L"0";
-	configTable[InsertEndOffset] = L"0";
-	configTable[PlayAfterSelection] = L"0";
-	configTable[PreviewText] = L"Podgląd";
-	configTable[ProgramTheme] = L"DarkSentro";
+	configTable[GRID_INSERT_START_OFFSET] = L"0";
+	configTable[GRID_INSERT_END_OFFSET] = L"0";
+	configTable[VIDEO_PLAY_AFTER_SELECTION] = L"0";
+	configTable[STYLE_PREVIEW_TEXT] = L"Podgląd";
+	configTable[PROGRAM_THEME] = L"DarkSentro";
 	configTable[EDITOR_ON] = L"true";
 	configTable[CONVERT_SHOW_SETTINGS] = L"false";
-	configTable[MoveTimesOn] = L"true";
-	configTable[MoveTimesWhichTimes] = L"0";
-	configTable[MoveTimesStyles] = L"";
+	configTable[SHIFT_TIMES_ON] = L"true";
+	configTable[SHIFT_TIMES_WHICH_TIMES] = L"0";
+	configTable[SHIFT_TIMES_STYLES] = L"";
 	configTable[CONVERT_TIME_PER_CHARACTER] = L"110";
-	configTable[VideoIndex] = L"true";
-	configTable[VideoProgressBar] = L"true";
-	configTable[VideoWindowSize] = L"500,350";
-	configTable[WindowSize] = L"800,600";
+	configTable[VIDEO_INDEX] = L"true";
+	configTable[VIDEO_PROGRESS_BAR] = L"true";
+	configTable[VIDEO_WINDOW_SIZE] = L"500,350";
+	configTable[WINDOW_SIZE] = L"800,600";
 	configTable[AUTOMATION_TRACE_LEVEL] = L"3";
 	configTable[AUTOSAVE_MAX_FILES] = L"3";
-	configTable[GridChangeActiveOnSelection] = L"true";
+	configTable[GRID_CHANGE_ACTIVE_ON_SELECTION] = L"true";
 }
 
 //remember, create table[colorsSize] without this size it will crash
@@ -580,11 +580,11 @@ int config::LoadOptions()
 void config::LoadColors(const wxString &_themeName){
 	wxString themeName;
 	if (_themeName.IsEmpty()){
-		themeName = Options.GetString(ProgramTheme);
+		themeName = Options.GetString(PROGRAM_THEME);
 	}
 	else{
 		themeName = _themeName;
-		Options.SetString(ProgramTheme, _themeName);
+		Options.SetString(PROGRAM_THEME, _themeName);
 	}
 	bool failed = false;
 	if (themeName != L"DarkSentro" && themeName != L"LightSentro"){
@@ -613,7 +613,7 @@ void config::LoadColors(const wxString &_themeName){
 	}
 	LoadDefaultColors(themeName != L"LightSentro");
 	if (failed){
-		Options.SetString(ProgramTheme, L"DarkSentro");
+		Options.SetString(PROGRAM_THEME, L"DarkSentro");
 		KaiMessageBox(_("Nie można zaczytać motywu, zostanie przywrócony domyśny"));
 	}
 }
@@ -831,7 +831,7 @@ wxString config::GetStringColor(size_t optionName)
 void config::SaveColors(const wxString &path){
 	wxString finalpath = path;
 	if (path.IsEmpty()){
-		finalpath = pathfull + L"\\Themes\\" + GetString(ProgramTheme) + L".txt";
+		finalpath = pathfull + L"\\Themes\\" + GetString(PROGRAM_THEME) + L".txt";
 	}
 	OpenWrite ow(finalpath, true);
 	for (size_t i = 1; i < colorsSize; i++){

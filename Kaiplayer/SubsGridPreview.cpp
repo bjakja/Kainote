@@ -168,9 +168,9 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
 	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
-	const wxString &chtag = Options.GetString(GridTagsSwapChar);
+	const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
 	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
-	bool SpellCheckerOn = Options.GetBool(SpellcheckerOn);
+	bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(wxBrush(linesCol));
@@ -702,7 +702,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	VideoCtrl *video = tabp->Video;
-	bool changeActive = Options.GetBool(GridChangeActiveOnSelection);
+	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
 	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {

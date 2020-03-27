@@ -37,7 +37,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	:wxWindow(parent, id, pos, size, style)
 {
 	useSpellchecker = _spell;
-	SpellCheckerOnOff = (_spell)? Options.GetBool(SpellcheckerOn) : false;
+	SpellCheckerOnOff = (_spell)? Options.GetBool(SPELLCHECKER_ON) : false;
 	MText = L"";
 	bmp = NULL;
 	fsize = 10;
@@ -70,7 +70,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	// but it's not a ideal fix, after change enter it will still work in this field
 	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
 	int numEntries = 22;
-	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
+	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
 		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
 		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
@@ -1864,7 +1864,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		const wxString &language = Options.FindLanguage(Options.GetString(DICTIONARY_LANGUAGE));
 		Menu *languageMenu = new Menu();
 		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), L"", true, 
-			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SpellcheckerOn));
+			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SPELLCHECKER_ON));
 		for (int k = 0; k < numOfLanguages; k++){
 			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], L"", true, 
 				NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
@@ -1964,7 +1964,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			MenuItem * item = menut.FindItem(id);
 			if (item){
 				SpellCheckerOnOff = item->IsChecked();
-				Options.SetBool(SpellcheckerOn, SpellCheckerOnOff);
+				Options.SetBool(SPELLCHECKER_ON, SpellCheckerOnOff);
 				EB->ClearErrs(true, SpellCheckerOnOff);
 			}
 		}
@@ -2356,7 +2356,7 @@ void TextEditor::SetState(int _state, bool refresh){
 
 	state = _state;
 	//if (refresh){
-		SpellCheckerOnOff = (!state) ? Options.GetBool(SpellcheckerOn) : false;
+		SpellCheckerOnOff = (!state) ? Options.GetBool(SPELLCHECKER_ON) : false;
 		if (SpellCheckerOnOff)
 			CheckText();
 		EB->UpdateChars();

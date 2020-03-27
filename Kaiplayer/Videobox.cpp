@@ -135,7 +135,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
 		NextVideo, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
 
-	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VideoVolume), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
+	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
 	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, toolBarHeight - 6), wxSize(360, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
@@ -286,13 +286,13 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 		}
 		else{
 			int kw, kh;
-			Options.GetCoords(VideoWindowSize, &kw, &kh);
+			Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
 			if (ischanged || !shown){
 				SetMinSize(wxSize(sx, sy + panelHeight));
 				tab->BoxSizer1->Layout();
 			}
-			Options.SetCoords(VideoWindowSize, sx, sy + panelHeight);
+			Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + panelHeight);
 		}
 
 	}
@@ -319,7 +319,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 
 	RefreshTime();
 	if (IsDshow){
-		int pos = Options.GetInt(VideoVolume);
+		int pos = Options.GetInt(VIDEO_VOLUME);
 		SetVolume(-(pos*pos));
 	}
 	//SetFocus();
@@ -338,7 +338,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	Kai->SetRecent(1);
 
 	if (tab->editor && (!isFullscreen || IsShown()) &&
-		tab->SubsPath != L"" && Options.GetBool(OpenVideoAtActiveLine)){
+		tab->SubsPath != L"" && Options.GetBool(OPEN_VIDEO_AT_ACTIVE_LINE)){
 		Seek(tab->Edit->line->Start.mstime);
 	}
 	if (Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH)){
@@ -465,7 +465,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 	if (event.LeftDClick() && event.GetModifiers() == 0){
 		SetFullscreen();
-		if (!isFullscreen && tab->SubsPath != L"" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
+		if (!isFullscreen && tab->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
 			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
 			tab->Grid->SelVideoLine();
 		}
@@ -519,7 +519,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 
-	if (Options.GetBool(VideoPauseOnClick) && event.LeftUp() && !event.ControlDown()){
+	if (Options.GetBool(VIDEO_PAUSE_ON_CLICK) && event.LeftUp() && !event.ControlDown()){
 		Pause();
 	}
 
@@ -580,7 +580,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 		SetFullscreen();
 		//if(Kai->GetTab()->SubsPath!=L""){
 		//Kai->GetTab()->Grid->SelVideoLine();}
-		if (Kai->GetTab()->SubsPath != L"" && Options.GetBool(SelectVisibleLineAfterFullscreen)){
+		if (Kai->GetTab()->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
 			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
 			Kai->GetTab()->Grid->SelVideoLine();
 		}
@@ -693,12 +693,12 @@ void VideoCtrl::SetFullscreen(int monitor)
 			}
 		}
 		else{
-			Options.GetCoords(VideoWindowSize, &sizex, &sizey);
+			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
 			SetMinSize(wxSize(sx, sy + panelHeight));
 			Kai->GetTab()->BoxSizer1->Layout();
 		}
-		volslider->SetValue(Options.GetInt(VideoVolume));
+		volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
 
 		if (!IsShown()){
 			isOnAnotherMonitor = false;
@@ -728,7 +728,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 			TD->SetSize(rt.GetSize());
 		}
 		TD->OnSize();
-		TD->volslider->SetValue(Options.GetInt(VideoVolume));
+		TD->volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
 		TD->vToolbar->Synchronize(vToolbar);
 		if (!panelOnFullscreen){ TD->panel->Hide(); }
 		TD->Show();
@@ -821,7 +821,7 @@ void VideoCtrl::OnNext()
 void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
 	int pos = event.GetPosition();
-	Options.SetInt(VideoVolume, pos);
+	Options.SetInt(VIDEO_VOLUME, pos);
 	SetVolume(-(pos*pos));
 }
 
@@ -961,8 +961,8 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 
 void VideoCtrl::OnHidePB()
 {
-	bool pb = !Options.GetBool(VideoProgressBar);
-	Options.SetBool(VideoProgressBar, pb);
+	bool pb = !Options.GetBool(VIDEO_PROGRESS_BAR);
+	Options.SetBool(VIDEO_PROGRESS_BAR, pb);
 	if (pb){ pbar = true; RefreshTime(); }
 	else{ pbar = false; }
 	if (GetState() == Paused){ Render(false); }
@@ -1113,7 +1113,7 @@ void VideoCtrl::OnSMinus()
 			SetVolume(-(pos*pos));
 			volslider->SetValue(pos);
 			if (TD){ TD->volslider->SetValue(pos); }
-			Options.SetInt(VideoVolume, pos);
+			Options.SetInt(VIDEO_VOLUME, pos);
 		}
 	}
 	else{
@@ -1136,7 +1136,7 @@ void VideoCtrl::OnSPlus()
 			SetVolume(-(pos*pos));
 			volslider->SetValue(pos);
 			if (TD){ TD->volslider->SetValue(pos); }
-			Options.SetInt(VideoVolume, pos);
+			Options.SetInt(VIDEO_VOLUME, pos);
 		}
 	}
 	else{

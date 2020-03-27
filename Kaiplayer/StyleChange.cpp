@@ -71,8 +71,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *fntsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *filtersizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
-	const wxString & fontFilterText = Options.GetString(StyleEditFilterText);
-	bool fontFilterOn = Options.GetBool(StyleFilterTextOn);
+	const wxString & fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
+	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
 	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString());
 	if (fontFilterText.IsEmpty() || !fontFilterOn){
 		styleFont->PutArray(FontEnum.GetFonts(this, [=](){
@@ -103,8 +103,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 				SS->ReloadFonts();
 			}, filter));
 		}
-		Options.SetString(StyleEditFilterText, filter);
-		Options.SetBool(StyleFilterTextOn, filterOn);
+		Options.SetString(STYLE_EDIT_FILTER_TEXT, filter);
+		Options.SetBool(STYLE_EDIT_FILTER_TEXT_ON, filterOn);
 	}, 21342);
 
 	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"));

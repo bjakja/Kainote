@@ -111,7 +111,7 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxW
 
 	wxAcceleratorTable ctaccel(1, ctentries);
 	SetAcceleratorTable(ctaccel);
-	CreateControls(Options.GetInt(PostprocessorEnabling) < 16);
+	CreateControls(Options.GetInt(POSTPROCESSOR_ON) < 16);
 	RefVals();
 
 }
@@ -201,38 +201,38 @@ void ShiftTimesWindow::SaveOptions()
 {
 	if (!LeadIn){
 		if (TimeText->HasShownFrames()){
-			Options.SetInt(MoveTimesFrames, TimeText->GetTime().orgframe);
+			Options.SetInt(SHIFT_TIMES_DISPLAY_FRAMES, TimeText->GetTime().orgframe);
 		}
 		else{
-			Options.SetInt(MoveTimesTime, TimeText->GetTime().mstime);
+			Options.SetInt(SHIFT_TIMES_TIME, TimeText->GetTime().mstime);
 		}
 
 		//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 
 		//8 Move to audio time 16 display times / frames 32 move tag times;
-		Options.SetInt(MoveTimesOptions, (int)Forward->GetValue() | ((int)StartVAtime->GetValue() << 1) |
+		Options.SetInt(SHIFT_TIMES_OPTIONS, (int)Forward->GetValue() | ((int)StartVAtime->GetValue() << 1) |
 			((int)MoveToVideoTime->GetValue() << 2) | ((int)(MoveToAudioTime->GetValue()) << 3) |
 			((int)DisplayFrames->GetValue() << 4) | ((int)MoveTagTimes->GetValue() << 5));
 
-		Options.SetInt(MoveTimesWhichTimes, WhichTimes->GetSelection());
-		Options.SetInt(MoveTimesCorrectEndTimes, EndTimeCorrection->GetSelection());
+		Options.SetInt(SHIFT_TIMES_WHICH_TIMES, WhichTimes->GetSelection());
+		Options.SetInt(SHIFT_TIMES_CORRECT_END_TIMES, EndTimeCorrection->GetSelection());
 	}
-	Options.SetInt(MoveTimesWhichLines, WhichLines->GetSelection());
+	Options.SetInt(SHIFT_TIMES_WHICH_LINES, WhichLines->GetSelection());
 	if (form == ASS){
 		wxString sstyles = Stylestext->GetValue();
-		Options.SetString(MoveTimesStyles, sstyles);
+		Options.SetString(SHIFT_TIMES_STYLES, sstyles);
 	}
 	if (LeadIn){
-		Options.SetInt(PostprocessorLeadIn, LITime->GetInt());
-		Options.SetInt(PostprocessorLeadOut, LOTime->GetInt());
-		Options.SetInt(PostprocessorThresholdStart, ThresStart->GetInt());
-		Options.SetInt(PostprocessorThresholdEnd, ThresEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeStart, BeforeStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterStart, AfterStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeEnd, BeforeEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterEnd, AfterEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_LEAD_IN, LITime->GetInt());
+		Options.SetInt(POSTPROCESSOR_LEAD_OUT, LOTime->GetInt());
+		Options.SetInt(POSTPROCESSOR_THRESHOLD_START, ThresStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_THRESHOLD_END, ThresEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START, BeforeStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_START, AfterStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END, BeforeEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_END, AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt(PostprocessorEnabling, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8) + 16);
+		Options.SetInt(POSTPROCESSOR_ON, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8) + 16);
 	}
 }
 
@@ -363,7 +363,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &ShiftTimesWindow::OnEdition, this, 22891);
 	}
 	else{
-		int pe = Options.GetInt(PostprocessorEnabling);
+		int pe = Options.GetInt(POSTPROCESSOR_ON);
 		liosizer = new KaiStaticBoxSizer(wxVERTICAL, panel, _("Wstęp i zakończenie"));
 		MoveTime = new MappedButton(panel, GLOBAL_SHIFT_TIMES, _("Uruchom postprocessor"), _("Uruchom postprocessor"), wxDefaultPosition, wxDefaultSize, GLOBAL_HOTKEY);
 		Main->Add(MoveTime, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 6);
@@ -371,10 +371,10 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		wxBoxSizer *leadoutSizer = new wxBoxSizer(wxHORIZONTAL);
 		LeadIn = new KaiCheckBox(panel, -1, _("Wstęp"), wxDefaultPosition, wxSize(-1, -1));
 		LeadIn->SetValue((pe & 1) > 0);
-		LITime = new NumCtrl(panel, -1, Options.GetString(PostprocessorLeadIn), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		LITime = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_LEAD_IN), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 		LeadOut = new KaiCheckBox(panel, -1, _("Zakończenie"), wxDefaultPosition, wxSize(-1, -1));
 		LeadOut->SetValue((pe & 2) > 0);
-		LOTime = new NumCtrl(panel, -1, Options.GetString(PostprocessorLeadOut), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		LOTime = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_LEAD_OUT), -10000, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
 		leadinSizer->Add(LeadIn, 1, wxEXPAND, 0);
 		leadinSizer->Add(LITime, 0);
@@ -392,8 +392,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 
 		wxBoxSizer *ThresStartSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *ThresEndSizer = new wxBoxSizer(wxHORIZONTAL);
-		ThresStart = new NumCtrl(panel, -1, Options.GetString(PostprocessorThresholdStart), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
-		ThresEnd = new NumCtrl(panel, -1, Options.GetString(PostprocessorThresholdEnd), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		ThresStart = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_THRESHOLD_START), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		ThresEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_THRESHOLD_END), 0, 10000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
 		ThresStartSizer->Add(new KaiStaticText(panel, -1, _("Próg czasu początku"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		ThresStartSizer->Add(ThresStart, 0);
@@ -413,10 +413,10 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		wxBoxSizer *AfterStartSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *BeforeEndSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *AfterEndSizer = new wxBoxSizer(wxHORIZONTAL);
-		BeforeStart = new NumCtrl(panel, -1, Options.GetString(PostprocessorKeyframeBeforeStart), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
-		AfterStart = new NumCtrl(panel, -1, Options.GetString(PostprocessorKeyframeAfterStart), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
-		BeforeEnd = new NumCtrl(panel, -1, Options.GetString(PostprocessorKeyframeBeforeEnd), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
-		AfterEnd = new NumCtrl(panel, -1, Options.GetString(PostprocessorKeyframeAfterEnd), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		BeforeStart = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_BEFORE_START), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		AfterStart = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_AFTER_START), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		BeforeEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_BEFORE_END), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
+		AfterEnd = new NumCtrl(panel, -1, Options.GetString(POSTPROCESSOR_KEYFRAME_AFTER_END), 0, 1000, true, wxDefaultPosition, wxSize(40, -1), SCROLL_ON_FOCUS);
 
 		BeforeStartSizer->Add(new KaiStaticText(panel, -1, _("Przed czasem początku"), wxDefaultPosition, wxSize(-1, -1)), 1, wxEXPAND | wxLEFT, 4);
 		BeforeStartSizer->Add(BeforeStart, 0);
@@ -560,11 +560,11 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		CollapsePane(evt);
 		Contents();
 	}
-	int mto = Options.GetInt(MoveTimesOptions);
+	int mto = Options.GetInt(SHIFT_TIMES_OPTIONS);
 
 	if (!LeadIn){
 
-		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(MoveTimesTime), Options.GetInt(MoveTimesFrames));
+		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(SHIFT_TIMES_TIME), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES));
 		bool dispTimes = DisplayFrames->GetValue();
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		TabPanel *tab = ((TabPanel*)GetParent());
@@ -591,34 +591,34 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		MoveTagTimes->SetValue((secondWindow) ? secondWindow->MoveTagTimes->GetValue() : (mto & 32) > 0);
 	}
-	Stylestext->SetValue((secondWindow) ? secondWindow->Stylestext->GetValue() : Options.GetString(MoveTimesStyles));
+	Stylestext->SetValue((secondWindow) ? secondWindow->Stylestext->GetValue() : Options.GetString(SHIFT_TIMES_STYLES));
 
-	int cm = (secondWindow) ? secondWindow->WhichLines->GetSelection() : Options.GetInt(MoveTimesWhichLines);
+	int cm = (secondWindow) ? secondWindow->WhichLines->GetSelection() : Options.GetInt(SHIFT_TIMES_WHICH_LINES);
 	if (cm > (int)WhichLines->GetCount()){ cm = 0; }
 	WhichLines->SetSelection(cm);
 	if (!LeadIn){
-		WhichTimes->SetSelection((secondWindow) ? secondWindow->WhichTimes->GetSelection() : Options.GetInt(MoveTimesWhichTimes));
+		WhichTimes->SetSelection((secondWindow) ? secondWindow->WhichTimes->GetSelection() : Options.GetInt(SHIFT_TIMES_WHICH_TIMES));
 
 		if ((secondWindow) ? secondWindow->StartVAtime->GetValue() : (mto & 2) > 0){ StartVAtime->SetValue(true); }
 		else{ EndVAtime->SetValue(true); }
 
-		EndTimeCorrection->SetSelection((secondWindow) ? secondWindow->EndTimeCorrection->GetSelection() : Options.GetInt(MoveTimesCorrectEndTimes));
+		EndTimeCorrection->SetSelection((secondWindow) ? secondWindow->EndTimeCorrection->GetSelection() : Options.GetInt(SHIFT_TIMES_CORRECT_END_TIMES));
 	}
-	int enables = Options.GetInt(PostprocessorEnabling);
+	int enables = Options.GetInt(POSTPROCESSOR_ON);
 
 	if (LeadIn && secondWindow && secondWindow->LeadIn){
 		LeadIn->SetValue((secondWindow) ? secondWindow->LeadIn->GetValue() : (enables & 1) > 0);
 		LeadOut->SetValue((secondWindow) ? secondWindow->LeadOut->GetValue() : (enables & 2) > 0);
 		Continous->SetValue((secondWindow) ? secondWindow->Continous->GetValue() : (enables & 4) > 0);
 		SnapKF->SetValue((secondWindow) ? secondWindow->SnapKF->GetValue() : (enables & 8) > 0);
-		LITime->SetInt((secondWindow) ? secondWindow->LITime->GetInt() : Options.GetInt(PostprocessorLeadIn));
-		LOTime->SetInt((secondWindow) ? secondWindow->LOTime->GetInt() : Options.GetInt(PostprocessorLeadOut));
-		ThresStart->SetInt((secondWindow) ? secondWindow->ThresStart->GetInt() : Options.GetInt(PostprocessorThresholdStart));
-		ThresEnd->SetInt((secondWindow) ? secondWindow->ThresEnd->GetInt() : Options.GetInt(PostprocessorThresholdEnd));
-		BeforeStart->SetInt((secondWindow) ? secondWindow->BeforeStart->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeStart));
-		AfterStart->SetInt((secondWindow) ? secondWindow->AfterStart->GetInt() : Options.GetInt(PostprocessorKeyframeAfterStart));
-		BeforeEnd->SetInt((secondWindow) ? secondWindow->BeforeEnd->GetInt() : Options.GetInt(PostprocessorKeyframeBeforeEnd));
-		AfterEnd->SetInt((secondWindow) ? secondWindow->AfterEnd->GetInt() : Options.GetInt(PostprocessorKeyframeAfterEnd));
+		LITime->SetInt((secondWindow) ? secondWindow->LITime->GetInt() : Options.GetInt(POSTPROCESSOR_LEAD_IN));
+		LOTime->SetInt((secondWindow) ? secondWindow->LOTime->GetInt() : Options.GetInt(POSTPROCESSOR_LEAD_OUT));
+		ThresStart->SetInt((secondWindow) ? secondWindow->ThresStart->GetInt() : Options.GetInt(POSTPROCESSOR_THRESHOLD_START));
+		ThresEnd->SetInt((secondWindow) ? secondWindow->ThresEnd->GetInt() : Options.GetInt(POSTPROCESSOR_THRESHOLD_END));
+		BeforeStart->SetInt((secondWindow) ? secondWindow->BeforeStart->GetInt() : Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START));
+		AfterStart->SetInt((secondWindow) ? secondWindow->AfterStart->GetInt() : Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_START));
+		BeforeEnd->SetInt((secondWindow) ? secondWindow->BeforeEnd->GetInt() : Options.GetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END));
+		AfterEnd->SetInt((secondWindow) ? secondWindow->AfterEnd->GetInt() : Options.GetInt(POSTPROCESSOR_KEYFRAME_AFTER_END));
 	}
 
 }
@@ -626,20 +626,20 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 {
 	bool collapsed = (LeadIn == NULL);
-	int pe = Options.GetInt(PostprocessorEnabling);
-	Options.SetInt(PostprocessorEnabling, pe ^ 16);
+	int pe = Options.GetInt(POSTPROCESSOR_ON);
+	Options.SetInt(POSTPROCESSOR_ON, pe ^ 16);
 	if (!collapsed){
-		Options.SetInt(PostprocessorLeadIn, LITime->GetInt());
-		Options.SetInt(PostprocessorLeadOut, LOTime->GetInt());
-		Options.SetInt(PostprocessorThresholdStart, ThresStart->GetInt());
-		Options.SetInt(PostprocessorThresholdEnd, ThresEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeStart, BeforeStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterStart, AfterStart->GetInt());
-		Options.SetInt(PostprocessorKeyframeBeforeEnd, BeforeEnd->GetInt());
-		Options.SetInt(PostprocessorKeyframeAfterEnd, AfterEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_LEAD_IN, LITime->GetInt());
+		Options.SetInt(POSTPROCESSOR_LEAD_OUT, LOTime->GetInt());
+		Options.SetInt(POSTPROCESSOR_THRESHOLD_START, ThresStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_THRESHOLD_END, ThresEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START, BeforeStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_START, AfterStart->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END, BeforeEnd->GetInt());
+		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_END, AfterEnd->GetInt());
 		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
 		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt(PostprocessorEnabling, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8));
+		Options.SetInt(POSTPROCESSOR_ON, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8));
 	}
 	Freeze();
 	panel->Destroy();
@@ -725,12 +725,12 @@ void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 	STime ct = TimeText->GetTime();
 	if (times){
 		TimeText->ShowFrames(false);
-		ct.mstime = Options.GetInt(MoveTimesTime);
+		ct.mstime = Options.GetInt(SHIFT_TIMES_TIME);
 		TimeText->SetTime(ct);
 	}
 	else{
 		TimeText->ShowFrames(true);
-		ct.orgframe = Options.GetInt(MoveTimesFrames);
+		ct.orgframe = Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES);
 		TimeText->SetTime(ct);
 	}
 }
@@ -801,7 +801,7 @@ void ShiftTimesWindow::SetProfile(const wxString &name)
 	tokenizer.GetNextToken();
 	//time
 	if (tokenizer.HasMoreTokens()){
-		TimeText->SetTime(STime(wxAtoi(tokenizer.GetNextToken()), Options.GetInt(MoveTimesFrames)));
+		TimeText->SetTime(STime(wxAtoi(tokenizer.GetNextToken()), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES)));
 		tokenizer.GetNextToken();
 	}
 	//forward backward

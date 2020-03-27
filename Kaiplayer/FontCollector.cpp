@@ -153,7 +153,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	excludes.Add(L">");
 	excludes.Add(L"|");
 	valid.SetExcludes(excludes);
-	path = new KaiTextCtrl(this, -1, Options.GetString(FontCollectorDirectory), wxDefaultPosition, wxSize(150, -1), 0, valid);
+	path = new KaiTextCtrl(this, -1, Options.GetString(FONT_COLLECTOR_DIRECTORY), wxDefaultPosition, wxSize(150, -1), 0, valid);
 	path->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
 	choosepath = new MappedButton(this, 8799, _("Wybierz folder"));
 	choosepath->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
@@ -174,12 +174,12 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	subsdir = new KaiCheckBox(this, 7998, _("Zapisuj do folderu z napisami / wideo."));
 	subsdir->SetToolTip(_("Zapisuje do folderu z wideo\nprzy wyciąganiu czcionek z pliku MKV."));
 	subsdir->Enable(Options.GetInt(FONT_COLLECTOR_ACTION) != 0);
-	subsdir->SetValue(Options.GetBool(FontCollectorUseSubsDirectory));
+	subsdir->SetValue(Options.GetBool(FONT_COLLECTOR_USE_SUBS_DIRECTORY));
 
 
 	fromMKV = new KaiCheckBox(this, 7991, _("Wyciągnij czcionki z wczytanego pliku MKV"));
 	fromMKV->Enable(Notebook::GetTab()->VideoPath.Lower().EndsWith(L".mkv"));
-	fromMKV->SetValue(Options.GetBool(FontCollectorFromMKV));
+	fromMKV->SetValue(Options.GetBool(FONT_COLLECTOR_FROM_MKV));
 
 	Connect(7998, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 	console = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(500, 400), wxTE_MULTILINE | wxTE_READONLY);
@@ -424,7 +424,7 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast(L'\\') : L"",
 			L"zip", _("Pliki archiwum (*.zip)|*.zip"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 	}
-	Options.SetString(FontCollectorDirectory, destdir);
+	Options.SetString(FONT_COLLECTOR_DIRECTORY, destdir);
 	Options.SaveOptions(true, false);
 	path->SetValue(destdir);
 }
@@ -449,7 +449,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 
 		bool subsfromMkv = fromMKV->GetValue();
 		bool subsDirectory = subsdir->GetValue();
-		Options.SetString(FontCollectorDirectory, path->GetValue());
+		Options.SetString(FONT_COLLECTOR_DIRECTORY, path->GetValue());
 		if (opts->GetSelection() == 3 && (Notebook::GetTab()->VideoPath == L"" || Notebook::GetTab()->SubsPath == L"")){
 			KaiMessageBox(_("Brak wczytanego wideo lub napisów"), L"", 4L, this);
 			EnableControls();
@@ -546,7 +546,7 @@ void FontCollectorDialog::OnChangeOpt(wxCommandEvent &event)
 
 	fromMKV->Enable(opts->GetSelection() != 0 && Notebook::GetTab()->VideoPath.Lower().EndsWith(L".mkv"));
 	Options.SetInt(FONT_COLLECTOR_ACTION, opts->GetSelection());
-	Options.SetBool(FontCollectorUseSubsDirectory, subsdir->GetValue());
+	Options.SetBool(FONT_COLLECTOR_USE_SUBS_DIRECTORY, subsdir->GetValue());
 	Options.SaveOptions(true, false);
 }
 

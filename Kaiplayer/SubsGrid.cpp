@@ -36,9 +36,9 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	:SubsGridWindow(parent, id, pos, size, style)
 {
 	Kai = kfparent;
-	ignoreFiltered = Options.GetBool(GridIgnoreFiltering);
+	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
 	//jak już wszystko będzie działało to można wywalić albo dać if(!autofilter)
-	//Options.SetInt(GridFilterBy, 0);
+	//Options.SetInt(GRID_FILTER_BY, 0);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
@@ -47,14 +47,14 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			if (visibleColumns & id5000){ visibleColumns ^= id5000; }
 			else{ visibleColumns |= id5000; }
 			SpellErrors.clear();
-			Options.SetInt(GridHideCollums, visibleColumns);
+			Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);
 			RefreshColumns();
 		}
 		else if (id == GRID_FILTER_INVERTED){
-			Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
+			Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		}
 		else if (id >= FilterByStyles && id <= FilterByUntranslated){
-			int filterBy = Options.GetInt(GridFilterBy);
+			int filterBy = Options.GetInt(GRID_FILTER_BY);
 			int addToFilterBy = pow(2, (id - FilterByStyles));
 			if (item->check){
 				filterBy |= addToFilterBy;
@@ -62,10 +62,10 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			else{
 				filterBy ^= addToFilterBy;
 			}
-			Options.SetInt(GridFilterBy, filterBy);
+			Options.SetInt(GRID_FILTER_BY, filterBy);
 		}//styles checking
 		else if (id == 4448){
-			int filterBy = Options.GetInt(GridFilterBy);
+			int filterBy = Options.GetInt(GRID_FILTER_BY);
 			if (!filterStyles.size() && (filterBy & FILTER_BY_STYLES))
 				filterBy ^= FILTER_BY_STYLES;
 
@@ -78,9 +78,9 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 			if (!found && item->check){ filterStyles.Add(name); }
-			Options.SetTable(GridFilterStyles, filterStyles, L",");
+			Options.SetTable(GRID_FILTER_STYLES, filterStyles, L",");
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
-				Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
+				Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
 				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
 				if (parentItem){
@@ -90,7 +90,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 			else if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
-				Options.SetInt(GridFilterBy, filterBy ^ FILTER_BY_STYLES);
+				Options.SetInt(GRID_FILTER_BY, filterBy ^ FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
 				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
 				if (parentItem){
@@ -101,13 +101,13 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			}
 		}
 		else if (id == GRID_FILTER_DO_NOT_RESET){
-			Options.SetBool(GridAddToFilter, item->check);
+			Options.SetBool(GRID_ADD_TO_FILTER, item->check);
 		}
 		else if (id == GRID_FILTER_AFTER_SUBS_LOAD){
-			Options.SetBool(GridFilterAfterLoad, item->check);
+			Options.SetBool(GRID_FILTER_AFTER_LOAD, item->check);
 		}
 		else if (id == GRID_FILTER_IGNORE_IN_ACTIONS){
-			Options.SetBool(GridIgnoreFiltering, item->check);
+			Options.SetBool(GRID_IGNORE_FILTERING, item->check);
 			ignoreFiltered = item->check;
 		}
 	}, ID_CHECK_EVENT);
@@ -143,18 +143,18 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Menu *stylesMenu = new Menu();
 	std::vector<Styles*> *styles = file->GetStyleTable();
 	wxArrayString optionsFilterStyles;
-	Options.GetTable(GridFilterStyles, optionsFilterStyles, L",");
+	Options.GetTable(GRID_FILTER_STYLES, optionsFilterStyles, L",");
 	filterStyles.clear();
 	for (size_t i = 0; i < StylesSize(); i++){
 		MenuItem * styleItem = stylesMenu->Append(4448, (*styles)[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index((*styles)[i]->Name) != -1){ styleItem->Check(); filterStyles.Add((*styles)[i]->Name); }
 	}
 	//filter submenu
-	int filterBy = Options.GetInt(GridFilterBy);
+	int filterBy = Options.GetInt(GRID_FILTER_BY);
 	bool isASS = subsFormat == ASS;
-	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GridFilterAfterLoad));
-	filterMenu->SetAccMenu(GRID_FILTER_INVERTED, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GridFilterInverted));
-	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GridAddToFilter));
+	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
+	filterMenu->SetAccMenu(GRID_FILTER_INVERTED, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
+	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
 	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
 	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
@@ -417,7 +417,7 @@ void SubsGrid::OnPaste(int id)
 			_("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
 		int vals[11] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
 		Stylelistbox slx(this, false, numCollumns, arr);
-		int PasteCollumnsSelections = Options.GetInt(PasteCollumnsSelection);
+		int PasteCollumnsSelections = Options.GetInt(PASTE_COLUMNS_SELECTION);
 		for (int j = 0; j < numCollumns; j++){
 			if (PasteCollumnsSelections & vals[j]){
 				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
@@ -433,7 +433,7 @@ void SubsGrid::OnPaste(int id)
 					collumns |= vals[v];
 				}
 			}
-			Options.SetInt(PasteCollumnsSelection, collumns);
+			Options.SetInt(PASTE_COLUMNS_SELECTION, collumns);
 			Options.SaveOptions();
 		}
 		else{ return; }
@@ -659,12 +659,12 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		int id5000 = (id - 5000);
 		visibleColumns ^= id5000;
 		SpellErrors.clear();
-		Options.SetInt(GridHideCollums, visibleColumns);
+		Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);
 		RefreshColumns();
 		break;
 	}
 	case GRID_FILTER_INVERTED:
-		Options.SetBool(GridFilterInverted, !Options.GetBool(GridFilterInverted));
+		Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		break;
 	case FilterByStyles:
 	case FilterBySelections:
@@ -672,21 +672,21 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case FilterByDoubtful:
 	case FilterByUntranslated:
 	{
-		int filterBy = Options.GetInt(GridFilterBy);
+		int filterBy = Options.GetInt(GRID_FILTER_BY);
 		int addToFilterBy = pow(2, (id - FilterByStyles));
 		filterBy ^= addToFilterBy;
-		Options.SetInt(GridFilterBy, filterBy);
+		Options.SetInt(GRID_FILTER_BY, filterBy);
 		break;
 	}//styles checking
 	case GRID_FILTER_DO_NOT_RESET:
-		Options.SetBool(GridAddToFilter, !Options.GetBool(GridAddToFilter));
+		Options.SetBool(GRID_ADD_TO_FILTER, !Options.GetBool(GRID_ADD_TO_FILTER));
 		break;
 	case GRID_FILTER_AFTER_SUBS_LOAD:
-		Options.SetBool(GridFilterAfterLoad, !Options.GetBool(GridFilterAfterLoad));
+		Options.SetBool(GRID_FILTER_AFTER_LOAD, !Options.GetBool(GRID_FILTER_AFTER_LOAD));
 		break;
 	case GRID_FILTER_IGNORE_IN_ACTIONS:
-		ignoreFiltered = !Options.GetBool(GridIgnoreFiltering);
-		Options.SetBool(GridIgnoreFiltering, ignoreFiltered);
+		ignoreFiltered = !Options.GetBool(GRID_IGNORE_FILTERING);
+		Options.SetBool(GRID_IGNORE_FILTERING, ignoreFiltered);
 		break;
 	default:
 		break;
@@ -1310,13 +1310,13 @@ bool SubsGrid::SwapAssProperties()
 void SubsGrid::Filter(int id)
 {
 	SubsGridFiltering filter((SubsGrid*)this, currentLine);
-	const wxString & styles = Options.GetString(GridFilterStyles);
+	const wxString & styles = Options.GetString(GRID_FILTER_STYLES);
 	if (!styles.empty()){
-		int filterBy = Options.GetInt(GridFilterBy);
-		Options.SetInt(GridFilterBy, filterBy | FILTER_BY_STYLES);
+		int filterBy = Options.GetInt(GRID_FILTER_BY);
+		Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 	}
 	if (id != FilterByNothing){ isFiltered = true; }
-	else{ Options.SetInt(GridFilterBy, 0); }
+	else{ Options.SetInt(GRID_FILTER_BY, 0); }
 	filter.Filter();
 }
 
@@ -1454,7 +1454,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	}
 	file->InsertSelection(newActiveLine);
 	Edit->SetLine(newActiveLine);
-	if (Comparison && (Options.GetInt(SubsComparisonType) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
+	if (Comparison && (Options.GetInt(SUBS_COMPARISON_TYPE) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());

@@ -29,7 +29,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	SetBackgroundColour(Options.GetColour(WindowBackground));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	int vw, vh;
-	Options.GetCoords(VideoWindowSize, &vw, &vh);
+	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 	if (vw < 200){ vw = 550; vh = 400; }
 	Video = new VideoCtrl(this, kai, wxSize(vw, vh));
 	Video->Hide();
@@ -44,7 +44,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 
 	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
 	ShiftTimes = new ShiftTimesWindow(this, kai, -1);
-	ShiftTimes->Show(Options.GetBool(MoveTimesOn));
+	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	BoxSizer3->Add(Grid, 1, wxEXPAND, 0);
 	BoxSizer3->Add(ShiftTimes, 0, wxEXPAND, 0);
 	BoxSizer2->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
@@ -91,7 +91,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	eentries[0].Set(wxACCEL_CTRL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT);
 	eentries[1].Set(wxACCEL_NORMAL, WXK_NUMPAD_ENTER, EDITBOX_COMMIT_GO_NEXT_LINE);
 	std::vector<wxAcceleratorEntry> ventries;
-	int numTagButtons = Options.GetInt(EditboxTagButtons);
+	int numTagButtons = Options.GetInt(EDITBOX_TAG_BUTTONS);
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 
 	// if onlygridaudio than it can pud everything it tables but not need to set this accelerators
@@ -166,11 +166,11 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 	Notebook *nb = Notebook::GetTabs();
 
 	if (Video->GetState() != None && Video->IsShown()){
-		//Options.GetCoords(VideoWindowSize, &w, &h);
+		//Options.GetCoords(VIDEO_WINDOW_SIZE, &w, &h);
 		int ww, hh;
 		Video->CalcSize(&ww, &hh, w, h, false, true);
 		Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
-		Options.SetCoords(VideoWindowSize, ww, hh + Video->panelHeight);
+		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + Video->panelHeight);
 	}
 	Edit->SetMinSize(wxSize(-1, h));
 	BoxSizer1->Layout();

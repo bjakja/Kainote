@@ -69,7 +69,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	entries[25].Set(wxACCEL_NORMAL, WXK_PAGEUP, ID_TPUP);
 	entries[26].Set(wxACCEL_SHIFT | wxACCEL_CTRL, WXK_END, ID_TCSEND);
 	int numEntries = 27;
-	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
+	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
 		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
 		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);

@@ -158,17 +158,17 @@ bool kainoteApp::OnInit()
 		//0x0415 	Polish (pl) 	0x15 	LANG_POLISH 	Poland (PL) 	0x01 	SUBLANG_POLISH_POLAND
 		if (isGood == 2 && GetSystemDefaultUILanguage() != 0x415){
 			//what a lame language system, I need to change it.
-			Options.SetString(ProgramLanguage, L"en");
+			Options.SetString(PROGRAM_LANGUAGE, L"en");
 			Options.SetString(DICTIONARY_LANGUAGE, L"en_US");
 		}
 			
 		locale = NULL;
-		wxString lang = Options.GetString(ProgramLanguage);
+		wxString lang = Options.GetString(PROGRAM_LANGUAGE);
 		if (lang == L"0"){
-			lang = L""; Options.SetString(ProgramLanguage, lang);
+			lang = L""; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
 		if (lang == L"1"){
-			lang = L"en"; Options.SetString(ProgramLanguage, lang);
+			lang = L"en"; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
 		if (lang != L"" && lang != L"pl"){
 			locale = new wxLocale();
@@ -198,8 +198,8 @@ bool kainoteApp::OnInit()
 		for (int i = 1; i < argc; i++) { paths.Add(argv[i]); }
 
 		int posx, posy, sizex, sizey;
-		Options.GetCoords(WindowPosition, &posx, &posy);
-		Options.GetCoords(WindowSize, &sizex, &sizey);
+		Options.GetCoords(WINDOW_POSITION, &posx, &posy);
+		Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
 		if (sizex < 500 || sizey < 350){
 			sizex = 800; sizey = 650;
 		}
@@ -216,7 +216,7 @@ bool kainoteApp::OnInit()
 
 		bool opevent = false;
 		if (paths.GetCount() > 0){
-			if (Options.GetBool(VideoFullskreenOnStart)){
+			if (Options.GetBool(VIDEO_FULL_SCREEN_ON_START)){
 				Frame->OpenFiles(paths, false, true);
 				Frame->GetTab()->Video->Layout();
 			}

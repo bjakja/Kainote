@@ -371,7 +371,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode){
 		SetTlMode(grid->hasTLMode, true);
 	}
-	if (Options.GetInt(GridSaveAfterCharacterCount) > 1 && rowChanged && save){
+	if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
 	if (currentLine < grid->GetCount()){
@@ -996,7 +996,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 void EditBox::OnNewline(wxCommandEvent& event)
 {
 	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){ TextEdit->SetModified(); TextEditOrig->SetModified(); }
-	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(NoNewLineAfterTimesEdition);
+	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT);
 	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	if (Visual == CHANGEPOS){
@@ -1614,7 +1614,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		UpdateChars();
 	}
 
-	int saveAfter = Options.GetInt(GridSaveAfterCharacterCount);
+	int saveAfter = Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT);
 	if (saveAfter && EditCounter >= saveAfter){
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		if (hasPreviewGrid){
@@ -1702,7 +1702,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EditboxTagButton1)).BeforeFirst(L'\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON1)).BeforeFirst(L'\f', &type);
 	if (tag.IsEmpty()){ wxBell(); return; }
 	type = type.BeforeFirst(L'\f');
 
@@ -1788,7 +1788,7 @@ public:
 	{
 		DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 		wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
-		numTagButtons = new NumCtrl(this, -1, Options.GetString(EditboxTagButtons), 0, 20, true);
+		numTagButtons = new NumCtrl(this, -1, Options.GetString(EDITBOX_TAG_BUTTONS), 0, 20, true);
 		MappedButton *ok = new MappedButton(this, wxID_OK, L"OK");
 		MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 		buttonSizer->Add(ok, 1, wxEXPAND | wxALL, 4);
@@ -1809,7 +1809,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 	if (id == 16000){
 		NumTagButtons ntb(this);
 		if (ntb.ShowModal() == wxID_CANCEL){ return; }
-		Options.SetInt(EditboxTagButtons, ntb.numTagButtons->GetInt());
+		Options.SetInt(EDITBOX_TAG_BUTTONS, ntb.numTagButtons->GetInt());
 		SetTagButtons();
 		return;
 	}
@@ -1833,7 +1833,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EditboxTagButton1), 
+		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON1), 
 			svtag << L"\f" << tb->type << L"\f" << tb->name);
 		Options.SaveOptions(true, false);
 		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
@@ -2051,13 +2051,13 @@ void EditBox::SetTagButtons()
 {
 	//dziesięć przycisków + nasz ostatni ze strzałką
 	int numofButtons = BoxSizer4->GetItemCount() - 11;
-	int numTagButtons = Options.GetInt(EditboxTagButtons);
+	int numTagButtons = Options.GetInt(EDITBOX_TAG_BUTTONS);
 	if (numTagButtons > numofButtons){
 		Menu *menu = new Menu();
 		for (int i = 0; i < numTagButtons; i++)
 		{
 			wxArrayString tagOption;
-			Options.GetTable((CONFIG)(i + EditboxTagButton1), tagOption, L"\f", wxTOKEN_RET_EMPTY_ALL);
+			Options.GetTable((CONFIG)(i + EDITBOX_TAG_BUTTON1), tagOption, L"\f", wxTOKEN_RET_EMPTY_ALL);
 			wxString name;
 			wxString tag;
 			int type = 0;

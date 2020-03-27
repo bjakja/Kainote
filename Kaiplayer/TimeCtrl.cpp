@@ -136,7 +136,7 @@ TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, con
 		//w Aegi shit happens wiêc olejê.
 	}, ID_TDEL);
 
-	bool setNumpadAccels = !Options.GetBool(TextFieldAllowNumpadHotkeys);
+	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
 		Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 			int key = evt.GetId() - 10276;

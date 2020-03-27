@@ -35,13 +35,13 @@ using namespace std;
 UpdateChecker::UpdateChecker()
 {
 	//0 on every launch, 1 after two days, 2 after three days, 3 after week, 4 after two weeks, 5 after month, 6 never
-	checkIntensity = Options.GetInt(UpdaterCheckIntensity);
+	checkIntensity = Options.GetInt(UPDATER_CHECK_INTENSITY);
 	if (checkIntensity > 5){ return; }
 	//0 on start, 1 on close, 2 on close without asking
-	int checkOptions = Options.GetInt(UpdaterCheckOptions);
+	int checkOptions = Options.GetInt(UPDATER_CHECK_OPTIONS);
 	dontAskForUpdate = checkOptions == 2;
 	checkOnClose = checkOptions > 0;
-	updateStable = Options.GetBool(UpdaterCheckForStable);
+	updateStable = Options.GetBool(UPDATER_CHECK_FOR_STABLE);
 }
 
 UpdateChecker::~UpdateChecker()
@@ -132,7 +132,7 @@ int UpdateChecker::CheckAsynchronously(UpdateChecker *checker, bool closeProgram
 			checker->updateOnClose = true;
 		}
 		else if (result == wxHELP){
-			Options.SetInt(UpdaterCheckIntensity, 6);
+			Options.SetInt(UPDATER_CHECK_INTENSITY, 6);
 		}
 	}
 	SAFE_DELETE(checker->thread);
@@ -265,12 +265,12 @@ void UpdateChecker::Update(bool closeProgram /*= true*/)
 bool UpdateChecker::CheckForUpdate()
 {
 	if (checkIntensity < 6){
-		int lastCheck = Options.GetInt(UpdaterLastCheck);
+		int lastCheck = Options.GetInt(UPDATER_LAST_CHECK);
 		if (!lastCheck){
 			SYSTEMTIME st;
 			GetSystemTime(&st);
 			lastCheck = st.wDay + (st.wMonth * 31) + (st.wYear * 365);
-			Options.SetInt(UpdaterLastCheck, lastCheck);
+			Options.SetInt(UPDATER_LAST_CHECK, lastCheck);
 			Options.SaveOptions(true, false);
 			return false;
 		}
@@ -283,7 +283,7 @@ bool UpdateChecker::CheckForUpdate()
 			return false;
 
 		lastCheck = today;
-		Options.SetInt(UpdaterLastCheck, lastCheck);
+		Options.SetInt(UPDATER_LAST_CHECK, lastCheck);
 		Options.SaveOptions(true, false);
 	}
 	thread = new std::thread(UpdateChecker::CheckAsynchronously, this, true);

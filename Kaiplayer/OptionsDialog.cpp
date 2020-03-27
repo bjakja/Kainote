@@ -289,11 +289,11 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Wyłącz ostrzerzenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote") };
-		CONFIG opts[optsSize] = { GridLoadSortedSubs, SpellcheckerOn, AUTO_SELECT_LINES_FROM_LAST_TAB,
-			EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK, OpenSubsInNewCard, NoNewLineAfterTimesEdition,
-			DISABLE_LIVE_VIDEO_EDITING, SelectVisibleLineAfterFullscreen, MoveTimesLoadSetTabOptions,
-			GridChangeActiveOnSelection, TlModeShowOriginal, TL_MODE_HIDE_ORIGINAL_ON_VIDEO,
-			TextFieldAllowNumpadHotkeys, VisualWarningsOff,
+		CONFIG opts[optsSize] = { GRID_LOAD_SORTED_SUBS, SPELLCHECKER_ON, AUTO_SELECT_LINES_FROM_LAST_TAB,
+			EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK, OPEN_SUBS_IN_NEW_TAB, EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT,
+			DISABLE_LIVE_VIDEO_EDITING, GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN, SHIFT_TIMES_CHANGE_VALUES_WITH_TAB,
+			GRID_CHANGE_ACTIVE_ON_SELECTION, TL_MODE_SHOW_ORIGINAL, TL_MODE_HIDE_ORIGINAL_ON_VIDEO,
+			TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS, VIDEO_VISUAL_WARNINGS_OFF,
 			DONT_ASK_FOR_BAD_RESOLUTION, AUTOMATION_OLD_SCRIPTS_COMPATIBILITY };
 		wxString localePath = Options.pathfull + L"\\Locale";
 		wxDir kat(localePath);
@@ -311,12 +311,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		langs.Insert(L"Polski", 0);
 		KaiStaticBoxSizer *langSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język (wymaga restartu programu)"));
 		KaiChoice *lang = new KaiChoice(Editor, 10005, wxDefaultPosition, wxDefaultSize, langs);
-		int sel = lang->FindString(Options.FindLanguage(Options.GetString(ProgramLanguage)));
+		int sel = lang->FindString(Options.FindLanguage(Options.GetString(PROGRAM_LANGUAGE)));
 		if (sel < 0)
 			sel = 0;
 		lang->SetSelection(sel);
 		lang->SetFocus();
-		ConOpt(lang, ProgramLanguage);
+		ConOpt(lang, PROGRAM_LANGUAGE);
 		langSizer->Add(lang, 0, wxALL | wxEXPAND, 2);
 		MainSizer->Add(langSizer, 0, wxRIGHT | wxEXPAND, 5);
 		wxArrayString dictionaries;
@@ -343,7 +343,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
-		NumCtrl *gridSaveAfter = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GridSaveAfterCharacterCount), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
+		NumCtrl *gridSaveAfter = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GRID_SAVE_AFTER_CHARACTER_COUNT), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy edycji"));
 		NumCtrl *autoSaveMax = new NumCtrl(EditorAdvanced, 20000, Options.GetString(AUTOSAVE_MAX_FILES), 2, 1000000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));
@@ -353,17 +353,17 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		NumCtrl *maxTabChars = new NumCtrl(EditorAdvanced, 20000, std::to_wstring(numMaxChars), 20, 150, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		maxTabChars->SetToolTip(_("Liczbę znaków widocznych na zakładce można ustawić od 20 do 150"));
 		NumCtrl *ltl = new NumCtrl(EditorAdvanced, 20000, Options.GetString(AUTOMATION_TRACE_LEVEL), 0, 5, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertStartOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		NumCtrl *sc1 = new NumCtrl(EditorAdvanced, 20000, Options.GetString(InsertEndOffset), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		KaiTextCtrl *sc2 = new KaiTextCtrl(EditorAdvanced, 22001, Options.GetString(GridTagsSwapChar), wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GRID_INSERT_START_OFFSET), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
+		NumCtrl *sc1 = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GRID_INSERT_END_OFFSET), -100000, 100000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
+		KaiTextCtrl *sc2 = new KaiTextCtrl(EditorAdvanced, 22001, Options.GetString(GRID_TAGS_SWAP_CHARACTER), wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		
-		ConOpt(gridSaveAfter, GridSaveAfterCharacterCount);
+		ConOpt(gridSaveAfter, GRID_SAVE_AFTER_CHARACTER_COUNT);
 		ConOpt(autoSaveMax, AUTOSAVE_MAX_FILES);
 		ConOpt(ltl, AUTOMATION_TRACE_LEVEL);
 		ConOpt(maxTabChars, TAB_TEXT_MAX_CHARS);
-		ConOpt(sc, InsertStartOffset);
-		ConOpt(sc1, InsertEndOffset);
-		ConOpt(sc2, GridTagsSwapChar);
+		ConOpt(sc, GRID_INSERT_START_OFFSET);
+		ConOpt(sc1, GRID_INSERT_END_OFFSET);
+		ConOpt(sc2, GRID_TAGS_SWAP_CHARACTER);
 		wxBoxSizer *MainSizer2 = new wxBoxSizer(wxHORIZONTAL);
 		MainSizer2->Add(new KaiStaticText(EditorAdvanced, -1, _("Ilość edycji do zapisu")/*, wxDefaultPosition, wxSize(256, -1)*/), 5, wxALIGN_CENTRE_VERTICAL | wxEXPAND);
 		MainSizer2->Add(gridSaveAfter, 0, wxEXPAND);
@@ -388,8 +388,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		//MainSizer->Add(MainSizer2,0,wxLEFT|wxTOP,2);
 
-		FontPickerButton *optf = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(GridFontSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(GridFontName)));
-		ConOpt(optf, GridFontName);
+		FontPickerButton *optf = new FontPickerButton(EditorAdvanced, -1, wxFont(Options.GetInt(GRID_FONT_SIZE), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(GRID_FONT)));
+		ConOpt(optf, GRID_FONT);
 		optf->SetMinSize(ltl->GetMinSize());
 		wxBoxSizer *MainSizer9 = new wxBoxSizer(wxHORIZONTAL);
 		MainSizer9->Add(new KaiStaticText(EditorAdvanced, -1, _("Czcionka pola napisów:")), 5, wxRIGHT | /*wxALIGN_CENTRE_VERTICAL | */wxEXPAND, 10);
@@ -524,8 +524,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxString voptspl[] = { _("Otwórz wideo z menu kontekstowego na pełnym ekranie"), _("Lewy przycisk myszy pauzuje wideo"),
 			_("Otwieraj wideo z czasem aktywnej linii"), _("Preferowane ścieżki audio (oddzielone średnikiem)"),
 			_("Sposób szukania wideo w FFMS2 (wymaga ponownego wczytania)"), _("Filtr wyświetlania napisów") };
-		CONFIG vopts[] = { VideoFullskreenOnStart, VideoPauseOnClick, OpenVideoAtActiveLine,
-			ACCEPTED_AUDIO_STREAM, FFMS2VideoSeeking, VSFILTER_INSTANCE };
+		CONFIG vopts[] = { VIDEO_FULL_SCREEN_ON_START, VIDEO_PAUSE_ON_CLICK, OPEN_VIDEO_AT_ACTIVE_LINE,
+			ACCEPTED_AUDIO_STREAM, FFMS2_VIDEO_SEEKING, VSFILTER_INSTANCE };
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		for (int i = 0; i < 3; i++)
 		{
@@ -765,7 +765,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxArrayString choices;
 		wxArrayString files;
 		wxString pathwn = Options.pathfull + L"\\Themes\\";
-		const wxString & programTheme = Options.GetString(ProgramTheme);
+		const wxString & programTheme = Options.GetString(PROGRAM_THEME);
 		wxDir kat(pathwn);
 		if (kat.IsOpened()){
 			kat.GetAllFiles(pathwn, &files, L"*.txt", wxDIR_FILES);
@@ -831,7 +831,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 				wxString originalPath = dir + originalName + L".txt";
 				wxCopyFile(originalPath, copyPath, false);
 			}
-			Options.SetString(ProgramTheme, themeName);
+			Options.SetString(PROGRAM_THEME, themeName);
 			if (!List->IsEnabled()){ List->Enable(false); }
 			newTheme->SetValue(L"");
 			int size = themeList->Append(themeName);
@@ -1018,7 +1018,7 @@ void OptionsDialog::SetOptions(bool saveall)
 			if (Options.GetBool(OB.option) != value){
 				Options.SetBool(OB.option, value);
 				if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM){ audio = true; }
-				if (OB.option == SpellcheckerOn){
+				if (OB.option == SPELLCHECKER_ON){
 					Kai->Tabs->GetTab()->Edit->ClearErrs(true, value);
 				}
 			}
@@ -1032,7 +1032,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetString(OB.option, fontname); 
 				fontmod = true;
 			}
-			CONFIG fontSizeOption = (OB.option == GridFontName) ? GridFontSize : PROGRAM_FONT_SIZE;
+			CONFIG fontSizeOption = (OB.option == GRID_FONT) ? GRID_FONT_SIZE : PROGRAM_FONT_SIZE;
 			if (Options.GetInt(fontSizeOption) != fontsize){
 				Options.SetInt(fontSizeOption, fontsize); 
 				fontmod = true;
@@ -1099,7 +1099,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				wxString str = sc->GetValue();
 				if (Options.GetString(OB.option) != str){
 					Options.SetString(OB.option, str);
-					if (OB.option == GridTagsSwapChar){
+					if (OB.option == GRID_TAGS_SWAP_CHARACTER){
 						for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 							TabPanel *tab = Kai->Tabs->Page(i);
 							tab->Grid->SpellErrors.clear();
@@ -1274,7 +1274,7 @@ void OptionsDialog::ResetDefault()
 		}
 		else if (OB.ctrl->IsKindOf(CLASSINFO(FontPickerButton))){
 			FontPickerButton *fpc = (FontPickerButton*)OB.ctrl;
-			wxFont font(Options.GetInt(OB.option == PROGRAM_FONT ? PROGRAM_FONT_SIZE : GridFontSize), 
+			wxFont font(Options.GetInt(OB.option == PROGRAM_FONT ? PROGRAM_FONT_SIZE : GRID_FONT_SIZE), 
 				wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, Options.GetString(OB.option));
 			fpc->ChangeFont(font);
 		}

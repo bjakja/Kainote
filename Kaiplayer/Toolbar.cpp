@@ -31,7 +31,7 @@ KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	, sel(-1)
 	, mb(mainm)
 {
-	alignment = Options.GetInt(ToolbarAlignment);
+	alignment = Options.GetInt(TOOLBAR_ALIGNMENT);
 	int fw, fh;
 	GetTextExtent(L"TEX{}", &fw, &fh);
 	thickness = toolbarSize = fh + 8;
@@ -47,14 +47,14 @@ KaiToolbar::~KaiToolbar()
 		delete (*i);
 	}
 	tools.clear();
-	Options.SetTable(ToolbarIDs, names);
+	Options.SetTable(TOOLBAR_IDS, names);
 	ids.clear();
 }
 
 void KaiToolbar::InitToolbar()
 {
 	wxArrayInt IDS;
-	const wxString & idnames = Options.GetString(ToolbarIDs);
+	const wxString & idnames = Options.GetString(TOOLBAR_IDS);
 
 	if (idnames != L""){
 		wxStringTokenizer cfgtable(idnames, L"|", wxTOKEN_STRTOK);
@@ -463,7 +463,7 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &s
 	alignments->SetToolTip(_("Pozycja paska narzędzi"));
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
 		parent->alignment = alignments->GetSelection();
-		Options.SetInt(ToolbarAlignment, parent->alignment);
+		Options.SetInt(TOOLBAR_ALIGNMENT, parent->alignment);
 		KainoteFrame *win = (KainoteFrame*)parent->GetParent();
 		if (win){
 			wxSizeEvent evt;
