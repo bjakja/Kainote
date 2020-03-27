@@ -77,8 +77,8 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	if (!gc){*/
 		tdc.SetFont(GetFont());
 		bool enabled = IsThisEnabled();
-		const wxColour & wbg = Options.GetColour(WindowBackground);
-		const wxColour & wfg = Options.GetColour(WindowText);
+		const wxColour & wbg = Options.GetColour(WINDOW_BACKGROUND);
+		const wxColour & wfg = Options.GetColour(WINDOW_TEXT);
 		const wxColour & border = Options.GetColour(StatusBarBorder);
 		tdc.SetBrush(wxBrush(wbg));
 		tdc.SetPen(wxPen(border));
@@ -110,8 +110,8 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	//else{
 	//	
 	//	bool enabled = IsThisEnabled();
-	//	const wxColour & wbg = Options.GetColour(WindowBackground);
-	//	const wxColour & wfg = Options.GetColour(WindowText);
+	//	const wxColour & wbg = Options.GetColour(WINDOW_BACKGROUND);
+	//	const wxColour & wfg = Options.GetColour(WINDOW_TEXT);
 	//	const wxColour & border = Options.GetColour(StatusBarBorder);
 	//	gc->SetBrush(wxBrush(wbg));
 	//	gc->SetPen(wxPen(border));

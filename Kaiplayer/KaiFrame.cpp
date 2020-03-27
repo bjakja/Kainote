@@ -72,8 +72,8 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	DwmExtendFrameIntoClientArea(m_hWnd, &borderless);
 	wxWindow::SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 
 	Bind(wxEVT_PAINT, &KaiFrame::OnPaint, this);
 	Bind(wxEVT_LEFT_DOWN, &KaiFrame::OnMouseEvent, this);
@@ -101,11 +101,11 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	GraphicsContext *gc = renderer->CreateContext(mdc);
 	if (!gc){
 		mdc.SetFont(GetFont());
-		wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+		wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
 		mdc.SetBrush(bg);
-		mdc.SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+		mdc.SetPen((isActive) ? Options.GetColour(WINDOW_BORDER) : Options.GetColour(WINDOW_BORDER_INACTIVE));
 		mdc.DrawRectangle(0, 0, w, h);
-		wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
+		wxColour text = (isActive) ? Options.GetColour(WINDOW_HEADER_TEXT) : Options.GetColour(WINDOW_HEADER_TEXT_INACTIVE);
 		mdc.SetTextForeground(text);
 		int maximizeDiff = (IsMaximized()) ? 3 : 0;
 		wxIconBundle icons = GetIcons();
@@ -130,22 +130,22 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 		buttonScale = (buttonScale < 18) ? 18 : buttonScale;
 
 		if (enterClose || pushedClose){
-			wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WindowHoverCloseButton) :
-				Options.GetColour(WindowPushedCloseButton);
+			wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WINDOW_HOVER_CLOSE_BUTTON) :
+				Options.GetColour(WINDOW_PUSHED_CLOSE_BUTTON);
 			mdc.SetBrush(buttonxbg);
 			mdc.SetPen(buttonxbg);
 			mdc.DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 		}
 		else if (enterMaximize || pushedMaximize){
-			wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
-				Options.GetColour(WindowPushedHeaderElement);
+			wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
+				Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
 			mdc.SetBrush(buttonxbg);
 			mdc.SetPen(buttonxbg);
 			mdc.DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
 		}
 		else if (enterMinimize || pushedMinimize){
-			wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
-				Options.GetColour(WindowPushedHeaderElement);
+			wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
+				Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
 			mdc.SetBrush(buttonxbg);
 			mdc.SetPen(buttonxbg);
 			mdc.DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale, buttonScale);
@@ -192,11 +192,11 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 
 void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
 {
-	wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
+	wxColour text = (isActive) ? Options.GetColour(WINDOW_HEADER_TEXT) : Options.GetColour(WINDOW_HEADER_TEXT_INACTIVE);
 	gc->SetFont(GetFont(), text);
-	wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+	wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
 	gc->SetBrush(bg);
-	gc->SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+	gc->SetPen((isActive) ? Options.GetColour(WINDOW_BORDER) : Options.GetColour(WINDOW_BORDER_INACTIVE));
 	gc->DrawRectangle(0, 0, w - 1, h - 1);
 	
 	int maximizeDiff = (IsMaximized()) ? 3 : 0;
@@ -222,22 +222,22 @@ void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
 	buttonScale = (buttonScale < 18) ? 18 : buttonScale;
 
 	if (enterClose || pushedClose){
-		wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WindowHoverCloseButton) :
-			Options.GetColour(WindowPushedCloseButton);
+		wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WINDOW_HOVER_CLOSE_BUTTON) :
+			Options.GetColour(WINDOW_PUSHED_CLOSE_BUTTON);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
 		gc->DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
 	}
 	else if (enterMaximize || pushedMaximize){
-		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WindowHoverHeaderElement) :
-			Options.GetColour(WindowPushedHeaderElement);
+		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
+			Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
 		gc->DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
 	}
 	else if (enterMinimize || pushedMinimize){
-		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WindowHoverHeaderElement) :
-			Options.GetColour(WindowPushedHeaderElement);
+		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
+			Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
 		gc->SetBrush(buttonxbg);
 		gc->SetPen(buttonxbg);
 		gc->DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);

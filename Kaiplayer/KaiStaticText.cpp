@@ -22,7 +22,7 @@
 KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, const wxPoint &pos, const wxSize &size, int style)
 	: wxWindow(parent, id, pos, size, style)
 	, text(_text)
-	, textColour(WindowText)
+	, textColour(WINDOW_TEXT)
 	, textHeight(0)
 	, textScroll(NULL)
 	, scPos(0)
@@ -191,7 +191,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc){*/
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(Options.GetColour(WindowBackground));
+	tdc.SetBrush(Options.GetColour(WINDOW_BACKGROUND));
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.SetTextForeground(Options.GetColour(textColour));
@@ -200,7 +200,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	//}
 	//	else{
 	//		gc->SetFont(GetFont(), Options.GetColour(textColour));
-	//		gc->SetBrush(Options.GetColour(WindowBackground));
+	//		gc->SetBrush(Options.GetColour(WINDOW_BACKGROUND));
 	//		gc->SetPen(*wxTRANSPARENT_PEN);
 	//		gc->DrawRectangle(0, 0, w, h);
 	//		int center = (textHeight < h) ? (h - textHeight) / 2 : 0;

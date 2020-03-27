@@ -97,8 +97,8 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxW
 	Kai = kfparent;
 	form = ASS;
 	panel = new wxWindow(this, -1);
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	scroll = new KaiScrollbar(this, 5558, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
 	scroll->Hide();
 	scroll->SetScrollRate(30);
@@ -123,15 +123,15 @@ ShiftTimesWindow::~ShiftTimesWindow()
 
 bool ShiftTimesWindow::SetBackgroundColour(const wxColour &col)
 {
-	wxWindow::SetBackgroundColour(Options.GetColour(WindowBackground));
-	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
+	wxWindow::SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
+	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	return true;
 }
 
 bool ShiftTimesWindow::SetForegroundColour(const wxColour &col)
 {
-	wxWindow::SetForegroundColour(Options.GetColour(WindowText));
-	panel->SetForegroundColour(Options.GetColour(WindowText));
+	wxWindow::SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	return true;
 }
 
@@ -240,8 +240,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 {
 	//wxFont thisFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	panel->SetFont(*Options.GetFont(-2)/*thisFont*/);
-	panel->SetForegroundColour(Options.GetColour(WindowText));
-	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
+	panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	Main = new wxBoxSizer(wxVERTICAL);
 
 	coll = new MappedButton(panel, 22999, (normal) ? _("Post processor") : _("Przesuwanie czasów"));
@@ -314,11 +314,11 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		SE->Add(EndVAtime, 1, wxEXPAND | wxRIGHT, 2);
 
 		MoveToVideoTime = new KaiCheckBox(panel, ID_VIDEO, _("Przesuń znacznik\ndo czasu wideo"));
-		MoveToVideoTime->SetForegroundColour(WindowWarningElements);
+		MoveToVideoTime->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		MoveToVideoTime->Enable(false);
 
 		MoveToAudioTime = new KaiCheckBox(panel, ID_AUDIO, _("Przesuń znacznik\ndo czasu audio"));
-		MoveToAudioTime->SetForegroundColour(WindowWarningElements);
+		MoveToAudioTime->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		MoveToAudioTime->Enable(false);
 
 		Connect(ID_VIDEO, ID_AUDIO, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&ShiftTimesWindow::AudioVideoTime);

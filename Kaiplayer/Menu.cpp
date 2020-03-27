@@ -639,13 +639,13 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	wxBitmap separator = wxBITMAP_PNG(L"separator");
 	wxBitmap arrow = wxBITMAP_PNG(L"arrow");
 	const wxColour & highlight = Options.GetColour(MenuBorderSelection);
-	const wxColour & text = Options.GetColour(WindowText);
-	const wxColour & graytext = Options.GetColour(WindowTextInactive);
+	const wxColour & text = Options.GetColour(WINDOW_TEXT);
+	const wxColour & graytext = Options.GetColour(WINDOW_TEXT_INACTIVE);
 	const wxColour & background = Options.GetColour(MenuBackground);
 	const wxColour & menuhighlight = Options.GetColour(MenuBackgroundSelection);
 	tdc.SetFont(MenuBar::font);
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
+	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	tdc.SetTextForeground(text);
 	wxSize mnbefsize;
@@ -972,7 +972,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 	tdc.GradientFillLinear(wxRect(0, 0, w, h),
 		Options.GetColour(MenuBarBackground2),
 		Options.GetColour(MenuBarBackground1), wxTOP);
-	tdc.SetTextForeground(Options.GetColour(WindowText));
+	tdc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	int posX = halfIndent;
 	wxSize mnbefsize;
 	wxSize linesize;
@@ -1002,7 +1002,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		}
 		tdc.DrawText(desc, posX, (h - te.y) / 2);
 		if (hasMnemonics){
-			tdc.SetPen(wxPen(Options.GetColour(WindowText)));
+			tdc.SetPen(wxPen(Options.GetColour(WINDOW_TEXT)));
 			tdc.DrawLine(posX + mnbefsize.x, h - 4, posX + mnbefsize.x + linesize.x, h - 4);
 		}
 		posX += te.x + menuIndent;

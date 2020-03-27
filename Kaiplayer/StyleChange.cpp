@@ -35,8 +35,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	: SCD(NULL)
 	, SS((StyleStore*)parent)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	DialogSizer *ds = NULL;
 	wxBoxSizer *Main1 = NULL;
 	wxBoxSizer *Main2 = NULL;

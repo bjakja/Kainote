@@ -36,13 +36,13 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 {
 	wxSize ex = dc->GetTextExtent(accel);
 
-	if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(accel, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 }
 
 void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
@@ -1216,8 +1216,8 @@ void OptionsDialog::OnChangeCatalog(wxCommandEvent& event)
 
 void OptionsDialog::ChangeColors(){
 
-	const wxColour & windowColor = Options.GetColour(WindowBackground);
-	const wxColour & textColor = Options.GetColour(WindowText);
+	const wxColour & windowColor = Options.GetColour(WINDOW_BACKGROUND);
+	const wxColour & textColor = Options.GetColour(WINDOW_TEXT);
 	Notebook *nb = Notebook::GetTabs();
 	//tabs colors		
 	for (size_t i = 0; i < nb->Size(); i++){

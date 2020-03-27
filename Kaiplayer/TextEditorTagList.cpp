@@ -189,11 +189,11 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
-	const wxColour & text = Options.GetColour(WindowText);
+	const wxColour & text = Options.GetColour(WINDOW_TEXT);
 
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
-	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
+	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	int keyPosition = FindItemById(scrollPositionV);
 	//it should not return -1 here, but sanity checks needed

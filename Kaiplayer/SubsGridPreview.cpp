@@ -150,26 +150,26 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 	tdc.SetFont(previewGrid->font);
 
-	const wxColour &header = Options.GetColour(GridHeader);
-	const wxColour &headerText = Options.GetColour(GridHeaderText);
-	const wxColour &labelBkCol = Options.GetColour(GridLabelSaved);
-	const wxColour &labelBkColN = Options.GetColour(GridLabelNormal);
-	const wxColour &labelBkColM = Options.GetColour(GridLabelModified);
-	const wxColour &labelBkColD = Options.GetColour(GridLabelDoubtful);
-	const wxColour &linesCol = Options.GetColour(GridLines);
-	const wxColour &subsBkCol = Options.GetColour(GridDialogue);
-	const wxColour &comm = Options.GetColour(GridComment);
-	const wxColour &seldial = Options.GetColour(GridSelection);
-	const wxColour &textcol = Options.GetColour(GridText);
-	const wxColour &collcol = Options.GetColour(GridCollisions);
-	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
-	const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
-	const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
-	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
-	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
-	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
+	const wxColour &header = Options.GetColour(GRID_HEADER);
+	const wxColour &headerText = Options.GetColour(GRID_HEADER_TEXT);
+	const wxColour &labelBkCol = Options.GetColour(GRID_LABEL_SAVED);
+	const wxColour &labelBkColN = Options.GetColour(GRID_LABEL_NORMAL);
+	const wxColour &labelBkColM = Options.GetColour(GRID_LABEL_MODIFIED);
+	const wxColour &labelBkColD = Options.GetColour(GRID_LABEL_DOUBTFUL);
+	const wxColour &linesCol = Options.GetColour(GRID_LINES);
+	const wxColour &subsBkCol = Options.GetColour(GRID_DIALOGUE);
+	const wxColour &comm = Options.GetColour(GRID_COMMENT);
+	const wxColour &seldial = Options.GetColour(GRID_SELECTION);
+	const wxColour &textcol = Options.GetColour(GRID_TEXT);
+	const wxColour &collcol = Options.GetColour(GRID_COLLISIONS);
+	const wxColour &SpelcheckerCol = Options.GetColour(GRID_SPELLCHECKER);
+	const wxColour &ComparisonCol = Options.GetColour(GRID_COMPARISON_OUTLINE);
+	const wxColour &ComparisonBG = Options.GetColour(GRID_COMPARISON_BACKGROUND_NOT_MATCH);
+	const wxColour &ComparisonBGMatch = Options.GetColour(GRID_COMPARISON_BACKGROUND_MATCH);
+	const wxColour &ComparisonBGCmnt = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_NOT_MATCH);
+	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_MATCH);
 	const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
-	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
+	const wxColour &visibleOnVideo = Options.GetColour(GRID_LINE_VISIBLE_ON_VIDEO);
 	bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
@@ -263,20 +263,20 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		strings.clear();
 
 		if (isHeadline){
-			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
+			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 			tdc.DrawRectangle(0, posY, w + scHor, previewGrid->GridHeight);
 			GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
 			int center = ((w - fw) / 2) + scHor;
-			tdc.SetTextForeground(Options.GetColour(WindowHeaderText));
+			tdc.SetTextForeground(Options.GetColour(WINDOW_HEADER_TEXT));
 			tdc.DrawText(tab->SubsName, center, 1);
 			int xHeight = previewGrid->GridHeight - 6;
 			int wPos = w + scHor - 21;
 			if (onX || pushedX){
-				tdc.SetBrush(Options.GetColour(pushedX ? WindowPushedCloseButton : WindowHoverCloseButton));
+				tdc.SetBrush(Options.GetColour(pushedX ? WINDOW_PUSHED_CLOSE_BUTTON : WINDOW_HOVER_CLOSE_BUTTON));
 				tdc.DrawRectangle(wPos, 3, xHeight + 2, xHeight + 2);
 			}
-			tdc.SetPen(wxPen(Options.GetColour(WindowHeaderText), 2));
+			tdc.SetPen(wxPen(Options.GetColour(WINDOW_HEADER_TEXT), 2));
 			tdc.DrawLine(wPos + 2, 5, wPos + xHeight - 2, xHeight + 1);
 			tdc.DrawLine(wPos + xHeight - 2, 5, wPos + 2, xHeight + 1);
 
@@ -484,31 +484,31 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	posX = (previewGrid->isFiltered) ? 15 : 4;
 	if (bg){
 		tdc.SetPen(*wxTRANSPARENT_PEN);
-		tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
+		tdc.SetBrush(wxBrush(Options.GetColour(GRID_BACKGROUND)));
 		tdc.DrawRectangle(posX, posY, w + scHor - 8, h);
 	}
 	if (size > 0){
 		if (idmarkerPos != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
+			tdc.SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE), 3));
 			tdc.DrawRectangle(posX + 1, ((idmarkerPos - previewGrid->scrollPositionId + 1) *
 				(previewGrid->GridHeight + 1)) - 1, (previewGrid->GridWidth[0] - 1), previewGrid->GridHeight + 2);
 		}
 
 		if (idcurrentLine != -1){
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-			tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
+			tdc.SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE)));
 			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1) *
 				(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
 		}
 	}
-	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WindowBorderBackground : WindowBorderBackgroundInactive)));
+	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.DrawRectangle(0, h - 4, w + scHor, 4);
 	tdc.DrawRectangle(0, 0, 4, h);
 	tdc.DrawRectangle(w + scHor - 4, 0, 4, h);
 	tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-	tdc.SetPen(wxPen(Options.GetColour(hasFocus ? WindowBorder : WindowBorderInactive)));
+	tdc.SetPen(wxPen(Options.GetColour(hasFocus ? WINDOW_BORDER : WINDOW_BORDER_INACTIVE)));
 	tdc.DrawRectangle(0, 0, w + scHor, h);
 
 	wxPaintDC dc(this);

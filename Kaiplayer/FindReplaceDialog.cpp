@@ -418,8 +418,8 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource(L"SEARCH"));
 	SetIcon(icn);
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 
 	DialogSizer *mainfrbsizer = new DialogSizer(wxVERTICAL);
 

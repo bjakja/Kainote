@@ -23,8 +23,8 @@
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,
 	const wxSize& size, long _style, const wxValidator & validator, const wxString & name)
 	:KaiScrolledWindow(parent, id, pos, size, _style | wxWANTS_CHARS, name)
-	, background(WindowBackground)
-	, foreground(WindowText)
+	, background(WINDOW_BACKGROUND)
+	, foreground(WINDOW_TEXT)
 {
 	KText = text;
 
@@ -830,12 +830,12 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 	int fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
 	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() :
-		(enabled) ? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+		(enabled) ? Options.GetColour(background) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE);
 	wxColour fg = (foreground) ? Options.GetColour(foreground) : wxWindowBase::GetForegroundColour();
 	wxColour border = (style & wxBORDER_NONE) ? bg :
 		(HasFocus()) ? Options.GetColour(TextFieldBorderOnFocus) :
 		(enabled) ? Options.GetColour(TextFieldBorder) :
-		Options.GetColour((style & wxBORDER_NONE) ? WindowBackgroundInactive : ButtonBorderInactive);
+		Options.GetColour((style & wxBORDER_NONE) ? WINDOW_BACKGROUND_INACTIVE : ButtonBorderInactive);
 	dc.SetFont(font);
 	dc.SetBrush(wxBrush(bg));
 	dc.SetPen(wxPen(border));
@@ -843,7 +843,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 	if (wraps.size() < 2 || positioning.size() < 2){ return; }
 	const wxColour &cselection = (HasFocus()) ? Options.GetColour(TextFieldSelection) :
 		Options.GetColour(TextFieldSelectionNoFocus);
-	const wxColour &textInactive = Options.GetColour(WindowTextInactive);
+	const wxColour &textInactive = Options.GetColour(WINDOW_TEXT_INACTIVE);
 
 	//Contsel=false;
 	//posY=2;
@@ -1027,19 +1027,19 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 	double fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
 	wxColour bg = (enabled && UseBgCol()) ? wxWindowBase::GetBackgroundColour() :
-		(enabled) ? Options.GetColour(background) : Options.GetColour(WindowBackgroundInactive);
+		(enabled) ? Options.GetColour(background) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE);
 	wxColour fg = (foreground) ? Options.GetColour(foreground) : wxWindowBase::GetForegroundColour();
 	wxColour border = (style & wxBORDER_NONE) ? bg :
 		(HasFocus()) ? Options.GetColour(TextFieldBorderOnFocus) :
 		(enabled) ? Options.GetColour(TextFieldBorder) :
-		Options.GetColour((style & wxBORDER_NONE) ? WindowBackgroundInactive : ButtonBorderInactive);
+		Options.GetColour((style & wxBORDER_NONE) ? WINDOW_BACKGROUND_INACTIVE : ButtonBorderInactive);
 	gc->SetBrush(wxBrush(bg));
 	gc->SetPen(wxPen(border));
 	gc->DrawRectangle(0, 0, w - 1, h - 1);
 	if (wraps.size() < 2 || positioning.size() < 2){ return; }
 	const wxColour &cselection = (HasFocus()) ? Options.GetColour(TextFieldSelection) :
 		Options.GetColour(TextFieldSelectionNoFocus);
-	const wxColour &textInactive = Options.GetColour(WindowTextInactive);
+	const wxColour &textInactive = Options.GetColour(WINDOW_TEXT_INACTIVE);
 
 	//Contsel=false;
 	//posY=2;

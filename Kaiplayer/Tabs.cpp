@@ -793,7 +793,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		cdc.SetPen(*wxTRANSPARENT_PEN);
 		cdc.SetBrush(Options.GetColour(TabsBarBackground1));
 		cdc.DrawRectangle(splitline - 2, 0, 4, h - TabHeight);
-		cdc.SetPen(wxPen(Options.GetColour(WindowBackground)));
+		cdc.SetPen(wxPen(Options.GetColour(WINDOW_BACKGROUND)));
 		bool aciter = (Pages[iter]->GetPosition().x == 1);
 		int heightplus = TabHeight + 1;
 		if (aciter){

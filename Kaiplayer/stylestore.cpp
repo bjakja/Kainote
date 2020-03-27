@@ -42,8 +42,8 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	cc = new StyleChange(this, !isDetached);
 	cc->Hide();
 
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 
 	wxBitmap arrowDown = wxBITMAP_PNG(L"arrow_list");
 	wxBitmap arrowDownDouble = wxBITMAP_PNG(L"ARROW_LIST_DOUBLE");

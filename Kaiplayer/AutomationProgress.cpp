@@ -317,8 +317,8 @@ namespace Auto{
 		, closedialog(false)
 		, L(_L)
 	{
-		SetForegroundColour(Options.GetColour(WindowText));
-		SetBackgroundColour(Options.GetColour(WindowBackground));
+		SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+		SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 		progress_display = new KaiGauge(this, -1, wxDefaultPosition, wxSize(600, 20));
 		title_display = new KaiStaticText(this, -1, L"");
 		task_display = new KaiStaticText(this, -1, L"");

@@ -114,10 +114,10 @@ void StyleList::OnPaint(wxPaintEvent& event)
 			bdc.SetBrush(wxBrush(background));
 		}
 		if (fonts->Index(stylenames->at(i)->Fontname, false) == -1){
-			bdc.SetTextForeground(Options.GetColour(WindowWarningElements));
+			bdc.SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS));
 		}
 		else{
-			bdc.SetTextForeground(Options.GetColour(WindowText));
+			bdc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 		}
 
 

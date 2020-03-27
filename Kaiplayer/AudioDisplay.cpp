@@ -1378,9 +1378,9 @@ void AudioDisplay::ChangeOptions()
 	waveformInactive = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformInactive));
 	boundaryInactiveLine = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryInactiveLine));
 	inactiveLinesBackground = D3DCOLOR_FROM_WX(Options.GetColour(AudioInactiveLinesBackground));
-	timescaleBackground = D3DCOLOR_FROM_WX(Options.GetColour(WindowBackground));
+	timescaleBackground = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_BACKGROUND));
 	//timescale3dLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
-	timescaleText = D3DCOLOR_FROM_WX(Options.GetColour(WindowText));
+	timescaleText = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_TEXT));
 	waveform = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveform));
 	waveformModified = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformModified));
 	waveformSelected = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformSelected));

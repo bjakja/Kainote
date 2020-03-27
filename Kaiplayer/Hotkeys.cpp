@@ -568,8 +568,8 @@ void Hotkeys::ResetDefaults()
 HkeysDialog::HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow, bool showWindowSelection)
 	: KaiDialog(parent, -1, _("Mapowanie przycisków"), wxDefaultPosition, wxDefaultSize, wxCAPTION | wxWANTS_CHARS | wxCLOSE_BOX)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	global = NULL;
 	const int elems = 5;
 	wxString windows[elems] = { _("Skrót globalny"), _("Skrót pola napisów"), 

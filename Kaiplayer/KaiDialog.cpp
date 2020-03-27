@@ -79,8 +79,8 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	if ( !m_hasFont )
 		SetFont(*Options.GetFont());
 	
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
 	if (!(_style & wxWANTS_CHARS)){ Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this); }
@@ -213,11 +213,11 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w, h));
 	mdc.SetFont(GetFont());
-	wxColour bg = (isActive) ? Options.GetColour(WindowBorderBackground) : Options.GetColour(WindowBorderBackgroundInactive);
+	wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
 	mdc.SetBrush(bg);
-	mdc.SetPen((isActive) ? Options.GetColour(WindowBorder) : Options.GetColour(WindowBorderInactive));
+	mdc.SetPen((isActive) ? Options.GetColour(WINDOW_BORDER) : Options.GetColour(WINDOW_BORDER_INACTIVE));
 	mdc.DrawRectangle(0, 0, w, h);
-	wxColour text = (isActive) ? Options.GetColour(WindowHeaderText) : Options.GetColour(WindowHeaderTextInactive);
+	wxColour text = (isActive) ? Options.GetColour(WINDOW_HEADER_TEXT) : Options.GetColour(WINDOW_HEADER_TEXT_INACTIVE);
 	mdc.SetTextForeground(text);
 	wxIconBundle icon = GetIcons();
 	if (icon.GetIconCount()){
@@ -239,8 +239,8 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		mdc.DrawText(title, start, 4);
 	}
 	if (enter || pushed){
-		wxColour buttonxbg = (enter && !pushed) ? Options.GetColour(WindowHoverCloseButton) :
-			Options.GetColour(WindowPushedCloseButton);
+		wxColour buttonxbg = (enter && !pushed) ? Options.GetColour(WINDOW_HOVER_CLOSE_BUTTON) :
+			Options.GetColour(WINDOW_PUSHED_CLOSE_BUTTON);
 		mdc.SetBrush(buttonxbg);
 		mdc.SetPen(buttonxbg);
 		//mdc.DrawRectangle(w - 25, 3, 18, 18);

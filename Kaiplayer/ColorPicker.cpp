@@ -113,7 +113,7 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 
 	wxPen invpen(*wxWHITE, 3);
 	invpen.SetCap(wxCAP_BUTT);
-	wxPen blkpen(Options.GetColour(WindowText), 1);
+	wxPen blkpen(Options.GetColour(WINDOW_TEXT), 1);
 	blkpen.SetCap(wxCAP_BUTT);
 
 	wxPoint arrow[3];
@@ -139,9 +139,9 @@ void ColorPickerSpectrum::OnPaint(wxPaintEvent &evt)
 		arrow[1] = wxPoint(background->GetWidth() + 2 + spectrum_horz_vert_arrow_size, y + 1 - spectrum_horz_vert_arrow_size);
 		arrow[2] = wxPoint(background->GetWidth() + 2 + spectrum_horz_vert_arrow_size, y + 1 + spectrum_horz_vert_arrow_size);
 		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.SetBrush(wxBrush(Options.GetColour(WindowBackground)));
+		dc.SetBrush(wxBrush(Options.GetColour(WINDOW_BACKGROUND)));
 		dc.DrawRectangle(background->GetWidth() + 2, 0, siz.x - (background->GetWidth() + 2), siz.y);
-		dc.SetBrush(Options.GetColour(WindowText));
+		dc.SetBrush(Options.GetColour(WINDOW_TEXT));
 		dc.DrawPolygon(3, arrow);
 	}
 
@@ -454,8 +454,8 @@ wxDEFINE_EVENT(COLOR_CHANGED, ColorEvent);
 DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, int colorNum)
 	: KaiDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
 {
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxAcceleratorEntry centries[2];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	centries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);

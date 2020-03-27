@@ -26,7 +26,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	, editor(true)
 	, holding(false)
 {
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	int vw, vh;
 	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);

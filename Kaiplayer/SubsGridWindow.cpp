@@ -130,26 +130,26 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	else
 	{
 
-		const wxColour &header = Options.GetColour(GridHeader);
-		const wxColour &headerText = Options.GetColour(GridHeaderText);
-		const wxColour &labelBkCol = Options.GetColour(GridLabelSaved);
-		const wxColour &labelBkColN = Options.GetColour(GridLabelNormal);
-		const wxColour &labelBkColM = Options.GetColour(GridLabelModified);
-		const wxColour &labelBkColD = Options.GetColour(GridLabelDoubtful);
-		const wxColour &linesCol = Options.GetColour(GridLines);
-		const wxColour &subsBkCol = Options.GetColour(GridDialogue);
-		const wxColour &comm = Options.GetColour(GridComment);
-		const wxColour &seldial = Options.GetColour(GridSelection);
-		const wxColour &textcol = Options.GetColour(GridText);
-		const wxColour &collcol = Options.GetColour(GridCollisions);
-		const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
-		const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
-		const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
-		const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
-		const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
-		const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
+		const wxColour &header = Options.GetColour(GRID_HEADER);
+		const wxColour &headerText = Options.GetColour(GRID_HEADER_TEXT);
+		const wxColour &labelBkCol = Options.GetColour(GRID_LABEL_SAVED);
+		const wxColour &labelBkColN = Options.GetColour(GRID_LABEL_NORMAL);
+		const wxColour &labelBkColM = Options.GetColour(GRID_LABEL_MODIFIED);
+		const wxColour &labelBkColD = Options.GetColour(GRID_LABEL_DOUBTFUL);
+		const wxColour &linesCol = Options.GetColour(GRID_LINES);
+		const wxColour &subsBkCol = Options.GetColour(GRID_DIALOGUE);
+		const wxColour &comm = Options.GetColour(GRID_COMMENT);
+		const wxColour &seldial = Options.GetColour(GRID_SELECTION);
+		const wxColour &textcol = Options.GetColour(GRID_TEXT);
+		const wxColour &collcol = Options.GetColour(GRID_COLLISIONS);
+		const wxColour &SpelcheckerCol = Options.GetColour(GRID_SPELLCHECKER);
+		const wxColour &ComparisonCol = Options.GetColour(GRID_COMPARISON_OUTLINE);
+		const wxColour &ComparisonBG = Options.GetColour(GRID_COMPARISON_BACKGROUND_NOT_MATCH);
+		const wxColour &ComparisonBGMatch = Options.GetColour(GRID_COMPARISON_BACKGROUND_MATCH);
+		const wxColour &ComparisonBGCmnt = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_NOT_MATCH);
+		const wxColour &ComparisonBGCmntMatch = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_MATCH);
 		const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
-		const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
+		const wxColour &visibleOnVideo = Options.GetColour(GRID_LINE_VISIBLE_ON_VIDEO);
 		bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 		tdc.SetFont(font);
@@ -486,13 +486,13 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		posX = (isFiltered) ? 11 : 0;
 		if (bg){
 			tdc.SetPen(*wxTRANSPARENT_PEN);
-			tdc.SetBrush(wxBrush(Options.GetColour(GridBackground)));
+			tdc.SetBrush(wxBrush(Options.GetColour(GRID_BACKGROUND)));
 			tdc.DrawRectangle(posX, posY, w + scHor, h);
 		}
 		if (size > 0){
 			if (idmarkerPos != -1){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-				tdc.SetPen(wxPen(Options.GetColour(GridActiveLine), 3));
+				tdc.SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE), 3));
 				int ypos = ((idmarkerPos - scrollPositionId + 1) * (GridHeight + 1));
 				if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 				tdc.DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 2);
@@ -500,7 +500,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 			if (idcurrentLine != -1){
 				tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-				tdc.SetPen(wxPen(Options.GetColour(GridActiveLine)));
+				tdc.SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE)));
 				int ypos = ((idcurrentLine - scrollPositionId + 1) * (GridHeight + 1));
 				if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 				tdc.DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 2);
@@ -515,26 +515,26 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
-	const wxColour &header = Options.GetColour(GridHeader);
-	const wxColour &headerText = Options.GetColour(GridHeaderText);
-	const wxColour &labelBkCol = Options.GetColour(GridLabelSaved);
-	const wxColour &labelBkColN = Options.GetColour(GridLabelNormal);
-	const wxColour &labelBkColM = Options.GetColour(GridLabelModified);
-	const wxColour &labelBkColD = Options.GetColour(GridLabelDoubtful);
-	const wxColour &linesCol = Options.GetColour(GridLines);
-	const wxColour &subsBkCol = Options.GetColour(GridDialogue);
-	const wxColour &comm = Options.GetColour(GridComment);
-	const wxColour &seldial = Options.GetColour(GridSelection);
-	const wxColour &textcol = Options.GetColour(GridText);
-	const wxColour &collcol = Options.GetColour(GridCollisions);
-	const wxColour &SpelcheckerCol = Options.GetColour(GridSpellchecker);
-	const wxColour &ComparisonCol = Options.GetColour(GridComparisonOutline);
-	const wxColour &ComparisonBG = Options.GetColour(GridComparisonBackgroundNotMatch);
-	const wxColour &ComparisonBGMatch = Options.GetColour(GridComparisonBackgroundMatch);
-	const wxColour &ComparisonBGCmnt = Options.GetColour(GridComparisonCommentBackgroundNotMatch);
-	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GridComparisonCommentBackgroundMatch);
+	const wxColour &header = Options.GetColour(GRID_HEADER);
+	const wxColour &headerText = Options.GetColour(GRID_HEADER_TEXT);
+	const wxColour &labelBkCol = Options.GetColour(GRID_LABEL_SAVED);
+	const wxColour &labelBkColN = Options.GetColour(GRID_LABEL_NORMAL);
+	const wxColour &labelBkColM = Options.GetColour(GRID_LABEL_MODIFIED);
+	const wxColour &labelBkColD = Options.GetColour(GRID_LABEL_DOUBTFUL);
+	const wxColour &linesCol = Options.GetColour(GRID_LINES);
+	const wxColour &subsBkCol = Options.GetColour(GRID_DIALOGUE);
+	const wxColour &comm = Options.GetColour(GRID_COMMENT);
+	const wxColour &seldial = Options.GetColour(GRID_SELECTION);
+	const wxColour &textcol = Options.GetColour(GRID_TEXT);
+	const wxColour &collcol = Options.GetColour(GRID_COLLISIONS);
+	const wxColour &SpelcheckerCol = Options.GetColour(GRID_SPELLCHECKER);
+	const wxColour &ComparisonCol = Options.GetColour(GRID_COMPARISON_OUTLINE);
+	const wxColour &ComparisonBG = Options.GetColour(GRID_COMPARISON_BACKGROUND_NOT_MATCH);
+	const wxColour &ComparisonBGMatch = Options.GetColour(GRID_COMPARISON_BACKGROUND_MATCH);
+	const wxColour &ComparisonBGCmnt = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_NOT_MATCH);
+	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_MATCH);
 	const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
-	const wxColour &visibleOnVideo = Options.GetColour(GridVisibleOnVideo);
+	const wxColour &visibleOnVideo = Options.GetColour(GRID_LINE_VISIBLE_ON_VIDEO);
 	bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
 	//gc->SetFont(font);
@@ -893,13 +893,13 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	posX = (isFiltered) ? 11 : 0;
 	if (bg){
 		gc->SetPen(*wxTRANSPARENT_PEN);
-		gc->SetBrush(wxBrush(Options.GetColour(GridBackground)));
+		gc->SetBrush(wxBrush(Options.GetColour(GRID_BACKGROUND)));
 		gc->DrawRectangle(posX, posY, w + scHor, h);
 	}
 	if (size > 0){
 		if (idmarkerPos != -1){
 			gc->SetBrush(*wxTRANSPARENT_BRUSH);
-			gc->SetPen(wxPen(Options.GetColour(GridActiveLine)), 3.);
+			gc->SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE)), 3.);
 			int ypos = ((idmarkerPos - scrollPositionId + 1) * (GridHeight + 1));
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 			gc->DrawRectangle(posX + 1, ypos - 1, (GridWidth[0] - 1), GridHeight + 1);
@@ -907,7 +907,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 
 		if (idcurrentLine != -1){
 			gc->SetBrush(*wxTRANSPARENT_BRUSH);
-			gc->SetPen(wxPen(Options.GetColour(GridActiveLine)));
+			gc->SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE)));
 			int ypos = ((idcurrentLine - scrollPositionId + 1) * (GridHeight + 1));
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 			gc->DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 1);

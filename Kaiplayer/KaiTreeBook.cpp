@@ -88,7 +88,7 @@ void KaiTreebook::Fit()
 		}
 	}
 	SetMinSize(wxSize(width + treeWidth + 10, height));
-	SetColours(Options.GetColour(WindowBackground), Options.GetColour(WindowText));
+	SetColours(Options.GetColour(WINDOW_BACKGROUND), Options.GetColour(WINDOW_TEXT));
 	Pages[selection]->page->Show();
 }
 
@@ -184,7 +184,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
 	const wxColour & wbg = Options.GetColour(StaticListBackground);
-	const wxColour & wfg = Options.GetColour(WindowText);
+	const wxColour & wfg = Options.GetColour(WINDOW_TEXT);
 	const wxColour & selColor = Options.GetColour(StaticListSelection);
 	tdc.SetBrush(wxBrush(wbg));
 	tdc.SetPen(wxPen(wbg));

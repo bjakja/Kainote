@@ -115,7 +115,7 @@ void KaiTabBar::Fit()
 		tabs[i]->tab->SetPosition(wxPoint(0, tabHeader));
 	}
 	SetMinSize(wxSize(width, height + tabHeader));
-	SetColours(Options.GetColour(WindowBackground), Options.GetColour(WindowText));
+	SetColours(Options.GetColour(WINDOW_BACKGROUND), Options.GetColour(WINDOW_TEXT));
 	tabs[currentTab]->tab->Show();
 }
 
@@ -147,7 +147,7 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	const wxColour & tabsBarBackgroundActive = Options.GetColour(TabsBackgroundActive);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
-	tdc.SetBrush(Options.GetColour(WindowBackground));
+	tdc.SetBrush(Options.GetColour(WINDOW_BACKGROUND));
 	tdc.DrawRectangle(0, 0, w, tabHeader);
 	tdc.SetTextForeground(inactiveText);
 	tdc.SetPen(tabsBarBorderInactive);

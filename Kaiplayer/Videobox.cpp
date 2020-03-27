@@ -120,7 +120,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	panelHeight = 30 + (toolBarHeight * 2) - 8;
 
 	panel = new wxWindow(this, -1, wxPoint(0, size.y - panelHeight), wxSize(size.x, panelHeight));
-	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
+	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = this;
@@ -139,7 +139,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, toolBarHeight - 6), wxSize(360, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
-	mstimes->SetBackgroundColour(WindowBackground);
+	mstimes->SetBackgroundColour(WINDOW_BACKGROUND);
 
 	vToolbar = new VideoToolbar(panel, wxPoint(0, panelHeight - toolBarHeight), wxSize(-1, toolBarHeight));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
@@ -1241,11 +1241,11 @@ void VideoCtrl::RefreshTime()
 				if (VFF){
 					if (VFF->KeyFrames.Index(time) != -1){
 						shownKeyframe = true;
-						TD->mstimes->SetForegroundColour(WindowWarningElements);
+						TD->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 					}
 					else if (shownKeyframe){
 						shownKeyframe = false;
-						TD->mstimes->SetForegroundColour(WindowText);
+						TD->mstimes->SetForegroundColour(WINDOW_TEXT);
 					}
 				}
 			}
@@ -1275,11 +1275,11 @@ void VideoCtrl::RefreshTime()
 			if (VFF){
 				if (VFF->KeyFrames.Index(time) != -1){
 					shownKeyframe = true;
-					mstimes->SetForegroundColour(WindowWarningElements);
+					mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				}
 				else if (shownKeyframe){
 					shownKeyframe = false;
-					mstimes->SetForegroundColour(WindowText);
+					mstimes->SetForegroundColour(WINDOW_TEXT);
 				}
 			}
 		}

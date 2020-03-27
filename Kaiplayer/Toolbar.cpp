@@ -236,7 +236,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
 	bool vertical = alignment % 2 == 0;
-	const wxColour & background = Options.GetColour(WindowBackground);
+	const wxColour & background = Options.GetColour(WINDOW_BACKGROUND);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
@@ -272,8 +272,8 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		//}
 		pos += (i >= toolsSize - 1) ? (thickness / 2) : thickness;
 	}
-	tdc.SetPen(wxPen(Options.GetColour(WindowText)));
-	tdc.SetBrush(wxBrush(Options.GetColour(WindowText)));
+	tdc.SetPen(wxPen(Options.GetColour(WINDOW_TEXT)));
+	tdc.SetBrush(wxBrush(Options.GetColour(WINDOW_TEXT)));
 	wxPoint points[3];
 	if (vertical){
 		tdc.DrawLine(pos1 + thickness - 12, pos - 11, pos1 + thickness - 6, pos - 11);
@@ -568,9 +568,9 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	wxBitmap checkbmp = wxBITMAP_PNG(L"check");
 	tdc.SetFont(GetFont());
 	const wxColour & background = Options.GetColour(MenuBackground);
-	const wxColour & txt = Options.GetColour(WindowText);
+	const wxColour & txt = Options.GetColour(WINDOW_TEXT);
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
+	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	int visible = (h - fh + 8) / fh;
 	int idssize = parent->ids.size();

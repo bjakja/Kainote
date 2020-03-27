@@ -288,7 +288,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 	//		(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
 	//		(enabled) ? Options.GetColour(ButtonBackground) :
-	//		Options.GetColour(WindowBackgroundInactive)));
+	//		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 
 	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
 	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
@@ -299,8 +299,8 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	//	gc->DrawRectangle(0.0, 0.0, w-1, h-1);
 	//	if (w > 10){
 	//		gc->SetFont(GetFont(), (enabled && changedForeground) ? GetForegroundColour() :
-	//			(enabled) ? Options.GetColour(WindowText) :
-	//			Options.GetColour(WindowTextInactive));
+	//			(enabled) ? Options.GetColour(WINDOW_TEXT) :
+	//			Options.GetColour(WINDOW_TEXT_INACTIVE));
 
 	//		double fw, fh, iw = 0;
 	//		gc->GetTextExtent(name, &fw, &fh);
@@ -352,7 +352,7 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 		(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
 		(enabled) ? Options.GetColour(ButtonBackground) :
-		Options.GetColour(WindowBackgroundInactive)));
+		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
 		(clicked) ? Options.GetColour(ButtonBorderPushed) :
 		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
@@ -379,8 +379,8 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 			tdc.DrawRectangle(4, 4, w - 8, h - 8);
 		}
 		tdc.SetTextForeground((enabled && changedForeground) ? GetForegroundColour() :
-			(enabled) ? Options.GetColour(WindowText) :
-			Options.GetColour(WindowTextInactive));
+			(enabled) ? Options.GetColour(WINDOW_TEXT) :
+			Options.GetColour(WINDOW_TEXT_INACTIVE));
 		if (name != L""){
 			if (iw){
 				tdc.DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
@@ -587,7 +587,7 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
 	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 	//		(enabled) ? Options.GetColour(ButtonBackground) :
-	//		Options.GetColour(WindowBackgroundInactive)));
+	//		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
 	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
 	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
@@ -605,8 +605,8 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	//		}
 	//		else{
 	//			gc->SetFont(GetFont(), (enabled && changedForeground) ? GetForegroundColour() :
-	//				(enabled) ? Options.GetColour(WindowText) :
-	//				Options.GetColour(WindowTextInactive));
+	//				(enabled) ? Options.GetColour(WINDOW_TEXT) :
+	//				Options.GetColour(WINDOW_TEXT_INACTIVE));
 
 	//			gc->GetTextExtent(name, &fw, &fh);
 	//			wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
@@ -635,7 +635,7 @@ void ToggleButton::PaintGDI(wxDC &tdc, int w, int h){
 		(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
 		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 		(enabled) ? Options.GetColour(ButtonBackground) :
-		Options.GetColour(WindowBackgroundInactive)));
+		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
 		(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
 		(clicked) ? Options.GetColour(ButtonBorderPushed) :
@@ -654,8 +654,8 @@ void ToggleButton::PaintGDI(wxDC &tdc, int w, int h){
 		}
 		else{
 			tdc.SetTextForeground((enabled && changedForeground) ? GetForegroundColour() :
-				(enabled) ? Options.GetColour(WindowText) :
-				Options.GetColour(WindowTextInactive));
+				(enabled) ? Options.GetColour(WINDOW_TEXT) :
+				Options.GetColour(WINDOW_TEXT_INACTIVE));
 			//tdc.GetTextExtent(name, &fw, &fh);
 			wxRect cur(5, (h - textHeight) / 2, w - 10, textHeight);
 			tdc.SetClippingRegion(cur);

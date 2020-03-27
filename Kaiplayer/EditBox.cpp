@@ -35,12 +35,12 @@ DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxS
 void DescTxtCtrl::ChangeValue(const wxString &val)
 {
 	if (val == L"" && !choiceText->HasFocus()){
-		SetForegroundColour(WindowTextInactive);
+		SetForegroundColour(WINDOW_TEXT_INACTIVE);
 		SetValue(description);
 		Refresh(false);
 	}
 	else{
-		SetForegroundColour(WindowText);
+		SetForegroundColour(WINDOW_TEXT);
 		SetValue(val);
 		Refresh(false);
 	}
@@ -48,16 +48,16 @@ void DescTxtCtrl::ChangeValue(const wxString &val)
 
 void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 {
-	if (choiceText->GetForegroundColour() == WindowTextInactive){
+	if (choiceText->GetForegroundColour() == WINDOW_TEXT_INACTIVE){
 		SetValue(L"");
-		SetForegroundColour(WindowText);
+		SetForegroundColour(WINDOW_TEXT);
 	}
 	evt.Skip();
 }
 void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 {
 	if (GetValue() == L""){
-		SetForegroundColour(WindowTextInactive);
+		SetForegroundColour(WINDOW_TEXT_INACTIVE);
 		SetValue(description);
 	}
 	evt.Skip();
@@ -141,8 +141,8 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	, TagButtonManager(NULL)
 {
 
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxWindow::SetFont(*Options.GetFont(-1)/*wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma")*/);
 	currentLine = 0;
 	grid = grid1;
@@ -382,13 +382,13 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		}
 	}
 	if (StartEdit->changedBackGround){
-		StartEdit->SetForegroundColour(WindowText);
+		StartEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	if (EndEdit->changedBackGround){
-		EndEdit->SetForegroundColour(WindowText);
+		EndEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	if (DurEdit->changedBackGround){
-		DurEdit->SetForegroundColour(WindowText);
+		DurEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	currentLine = Row;
 	grid->markedLine = Row;
@@ -487,11 +487,11 @@ void EditBox::UpdateChars()
 		TextEditor * Editor = GetEditor();
 		int ilzn = grid->CalcChars(Editor->GetValue(), &result, &isbad);
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
-		Chars->SetForegroundColour((isbad) ? WindowWarningElements : WindowText);
+		Chars->SetForegroundColour((isbad) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
 		if (chtime < 0 || chtime>999){ chtime = 999; }
 		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
-		Chtime->SetForegroundColour((chtime > 15) ? WindowWarningElements : WindowText);
+		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}
 	BoxSizer5->Layout();
 	Frames->Refresh(false);
@@ -508,13 +508,13 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 {
 	long cellm = 0;
 	if (!dummy && !visualdummy && StartEdit->changedBackGround){
-		StartEdit->SetForegroundColour(WindowText);//StartEdit->Refresh(false);
+		StartEdit->SetForegroundColour(WINDOW_TEXT);//StartEdit->Refresh(false);
 	}
 	if (!dummy && !visualdummy && EndEdit->changedBackGround){
-		EndEdit->SetForegroundColour(WindowText);//EndEdit->Refresh(false);
+		EndEdit->SetForegroundColour(WINDOW_TEXT);//EndEdit->Refresh(false);
 	}
 	if (!dummy && !visualdummy && DurEdit->changedBackGround){
-		DurEdit->SetForegroundColour(WindowText);//DurEdit->Refresh(false);
+		DurEdit->SetForegroundColour(WINDOW_TEXT);//DurEdit->Refresh(false);
 	}
 	if (line->IsComment != Comment->GetValue()){
 		line->IsComment = !line->IsComment;
@@ -1585,19 +1585,19 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		line->Start = StartEdit->GetTime(1);
 		if (line->Start > line->End){
 			if (StartEdit->HasFocus()){
-				StartEdit->SetForegroundColour(WindowWarningElements);
+				StartEdit->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				StartEdit->changedBackGround = true;
 			}
 			else{
-				EndEdit->SetForegroundColour(WindowWarningElements);
+				EndEdit->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				EndEdit->changedBackGround = true;
 			}
 		}
 		else if (StartEdit->changedBackGround){
-			StartEdit->SetForegroundColour(WindowText);
+			StartEdit->SetForegroundColour(WINDOW_TEXT);
 		}
 		else if (EndEdit->changedBackGround){
-			EndEdit->SetForegroundColour(WindowText);
+			EndEdit->SetForegroundColour(WINDOW_TEXT);
 		}
 
 		STime durTime = line->End - line->Start;

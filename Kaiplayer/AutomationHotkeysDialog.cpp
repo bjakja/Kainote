@@ -48,13 +48,13 @@ public:
 	{
 		wxSize ex = dc->GetTextExtent(accelerator);
 
-		if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+		if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
 		needTooltip = ex.x > width - 8;
 		wxRect cur(x, y, width - 8, height);
 		dc->SetClippingRegion(cur);
 		dc->DrawLabel(accelerator, cur, wxALIGN_CENTER_VERTICAL);
 		dc->DestroyClippingRegion();
-		if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
+		if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 	}
 	wxString accelerator;
 	int id;

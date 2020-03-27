@@ -92,7 +92,7 @@ void FontList::DrawFld(wxDC &dc, int w, int h)
 
 	dc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
 	dc.SetBrush(wxBrush(Options.GetColour(StaticListBackground)));
-	dc.SetTextForeground(Options.GetColour(WindowText));
+	dc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	dc.DrawRectangle(0, 0, w, h);
 
 
@@ -334,8 +334,8 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	, pointToPixel(changePointToPixel)
 {
 	editedStyle = acst;
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_RETURN, wxID_OK);
 	entries[1].Set(wxACCEL_NORMAL, WXK_ESCAPE, wxID_CANCEL);

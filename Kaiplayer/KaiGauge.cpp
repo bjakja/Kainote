@@ -58,11 +58,11 @@ void KaiGauge::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC dc;
 	dc.SelectObject(wxBitmap(w, h));
 
-	dc.SetPen(wxPen(Options.GetColour(WindowBorder)));
-	dc.SetBrush(wxBrush(Options.GetColour(WindowBackground)));
+	dc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
+	dc.SetBrush(wxBrush(Options.GetColour(WINDOW_BACKGROUND)));
 	dc.DrawRectangle(0, 0, w, h);
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxBrush(Options.GetColour(WindowText)));
+	dc.SetBrush(wxBrush(Options.GetColour(WINDOW_TEXT)));
 	dc.DrawRectangle(1, 1, progressLength, h - 2);
 
 	wxPaintDC pdc(this);

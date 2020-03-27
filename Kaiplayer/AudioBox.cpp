@@ -622,7 +622,7 @@ void AudioBox::OnLeadOut(wxCommandEvent &event) {
 //		holding = true;
 //		CaptureMouse();
 //		sline = new wxDialog(this, -1, "", wxPoint(0, event.GetY()), wxSize(GetSize().GetWidth() + 4, 2), wxSTAY_ON_TOP | wxBORDER_NONE);
-//		sline->SetBackgroundColour(Options.GetColour(WindowText));
+//		sline->SetBackgroundColour(Options.GetColour(WINDOW_TEXT));
 //		int px = -5, py = event.GetY();
 //		ClientToScreen(&px, &py);
 //		sline->SetPosition(wxPoint(px, py));

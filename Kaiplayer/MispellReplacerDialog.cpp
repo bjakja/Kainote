@@ -69,7 +69,7 @@ void ReplacerResultsHeader::OnPaint(wxMemoryDC *dc, int x, int y, int width, int
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
+	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE));
 	dc->SetBackgroundMode(wxTRANSPARENT);
 }
 
@@ -157,7 +157,7 @@ void ReplacerSeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int h
 	dc->DrawRectangle(x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2), exFoundText.x, height);
 	dc->DrawText(foundText, x + exOfFound.x + 18, y + ((height - exOfFound.y) / 2));
 
-	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive));
+	dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE));
 }
 
 wxSize ReplacerSeekResults::GetTextExtents(KaiListCtrl *theList){

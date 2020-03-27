@@ -67,7 +67,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	, clicked(false)
 	, focusSet(false)
 	, choice(-1)
-	, foreground(WindowText)
+	, foreground(WINDOW_TEXT)
 {
 	list = new wxArrayString(n, choices);
 	disabled = new std::map<int, bool>();
@@ -99,7 +99,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	, clicked(false)
 	, focusSet(false)
 	, choice(-1)
-	, foreground(WindowText)
+	, foreground(WINDOW_TEXT)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -132,7 +132,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	, clicked(false)
 	, focusSet(false)
 	, choice(-1)
-	, foreground(WindowText)
+	, foreground(WINDOW_TEXT)
 {
 	list = new wxArrayString(choices);
 	disabled = new std::map<int, bool>();
@@ -266,7 +266,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
 		(enabled) ? Options.GetColour((GetWindowStyle() &KAI_COMBO_BOX) ? TextFieldBackground :
 		(HasFocus()) ? ButtonBackgroundOnFocus : ButtonBackground) :
-		Options.GetColour(WindowBackgroundInactive)));
+		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
 		(clicked) ? Options.GetColour(ButtonBorderPushed) :
 		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
@@ -295,7 +295,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			}
 			if (!choiceText){
 				tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) :
-					Options.GetColour(WindowTextInactive));
+					Options.GetColour(WINDOW_TEXT_INACTIVE));
 				//tdc.DrawText(txt, 4, (h-fh));
 				wxRect cur(5, (h - fh) / 2, w - 19, fh);
 				tdc.SetClippingRegion(cur);
@@ -818,12 +818,12 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
-	const wxColour & text = Options.GetColour(WindowText);
-	const wxColour & graytext = Options.GetColour(WindowTextInactive);
+	const wxColour & text = Options.GetColour(WINDOW_TEXT);
+	const wxColour & graytext = Options.GetColour(WINDOW_TEXT_INACTIVE);
 
 	tdc.SetFont(GetFont());
 	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
-	tdc.SetPen(wxPen(Options.GetColour(WindowBorder)));
+	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
 	for (int i = 0; i < maxsize; i++)

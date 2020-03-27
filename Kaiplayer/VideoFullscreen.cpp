@@ -38,8 +38,8 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		panelsize = buttonSection = 30 + toolBarHeight - 8;
 	}
 	panel = new wxPanel(this, -1, wxPoint(0, size.y - panelsize), wxSize(size.x, panelsize));
-	panel->SetForegroundColour(Options.GetColour(WindowText));
-	panel->SetBackgroundColour(Options.GetColour(WindowBackground));
+	panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = vc;
 	vslider->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
@@ -62,7 +62,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
-	mstimes->SetBackgroundColour(WindowBackground);
+	mstimes->SetBackgroundColour(WINDOW_BACKGROUND);
 	Videolabel = new KaiStaticText(panel, -1, L"", wxPoint(644, toolBarHeight - 6), wxSize(1200, 26));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
@@ -92,8 +92,8 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
 	//Connect(wxEVT_SIZE, (wxObjectEventFunction)&Fullscreen::OnSize);
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
-		panel->SetForegroundColour(Options.GetColour(WindowText));
-		panel->SetBackgroundColour(Options.GetColour(WindowBackground));
+		panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+		panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	});
 	this->SetEventHandler(parent);
 	//sprawdzić jeszcze co się dzieje z focusem gdy klikamy w wideo a później w slider albo w static text

@@ -28,8 +28,8 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	: wxDialog(_parent, 31555, L"", pos, size, style)
 {
 	RegisterWindowMessage(L"TaskbarButtonCreated");
-	SetForegroundColour(Options.GetColour(WindowText));
-	SetBackgroundColour(Options.GetColour(WindowBackground));
+	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	SetFont(*Options.GetFont());
 	taskbar = NULL;
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);

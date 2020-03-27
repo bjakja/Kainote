@@ -51,13 +51,13 @@ void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiL
 {
 	wxSize ex = dc->GetTextExtent(name);
 
-	if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 }
 
 void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -87,19 +87,19 @@ void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Kai
 		}
 	}
 	dc->SetBrush(wxBrush(col.a ? *wxTRANSPARENT_BRUSH : col.GetWX()));
-	dc->SetPen(wxPen(Options.GetColour(WindowTextInactive)));
+	dc->SetPen(wxPen(Options.GetColour(WINDOW_TEXT_INACTIVE)));
 	dc->DrawRectangle(x + 1, y + 1, height - 3, height - 3);
 
 	int fw, fh;
 	wxString hextext = col.GetHex(true);
 	dc->GetTextExtent(hextext, &fw, &fh);
 
-	if (modified){ dc->SetTextForeground(Options.GetColour(WindowWarningElements)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
 	wxRect cur(x + height + 2, y, width - (height + 8), height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(hextext, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WindowText : WindowTextInactive)); }
+	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 }
 
 void ItemColor::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
@@ -474,18 +474,18 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	wxMemoryDC fdc;
 	bool enabled = IsThisEnabled();
 	const wxColour & highlight = Options.GetColour(StaticListSelection);
-	const wxColour & txt = Options.GetColour(WindowText);
-	const wxColour & inactivetxt = Options.GetColour(WindowTextInactive);
+	const wxColour & txt = Options.GetColour(WINDOW_TEXT);
+	const wxColour & inactivetxt = Options.GetColour(WINDOW_TEXT_INACTIVE);
 	const wxColour & border = Options.GetColour(StaticListBorder);
 
 	tdc.SetPen(wxPen(border));
-	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
+	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.SetTextForeground(enabled ? txt : inactivetxt);
 	tdc.SetFont(GetFont());
 	if (isFiltered){
 		fdc.SelectObject(wxBitmap(13, h));
-		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WindowBackgroundInactive)));
+		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 		fdc.SetPen(wxPen(border));
 		fdc.DrawRectangle(0, 0, 13, h);
 	}

@@ -1122,7 +1122,7 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 {
 	TabPanel *cur = GetTab();
 	if (cur->Grid->subsFormat != ASS){
-		StatusBar->SetLabelTextColour(5, WindowText);
+		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
 		SetStatusText(L"", 7);
 		return;
 	}
@@ -1137,8 +1137,8 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 		wxString vres;
 		vres << vsize.x << L" x " << vsize.y;
 		if (vres != resolution){
-			StatusBar->SetLabelTextColour(5, WindowWarningElements);
-			StatusBar->SetLabelTextColour(7, WindowWarningElements);
+			StatusBar->SetLabelTextColour(5, WINDOW_WARNING_ELEMENTS);
+			StatusBar->SetLabelTextColour(7, WINDOW_WARNING_ELEMENTS);
 			badResolution = true;
 			if (showDialog){
 				ShowBadResolutionDialog(vsize, wxSize(x, y));
@@ -1147,8 +1147,8 @@ void KainoteFrame::SetSubsResolution(bool showDialog)
 		}
 	}
 	if (badResolution){
-		StatusBar->SetLabelTextColour(5, WindowText);
-		StatusBar->SetLabelTextColour(7, WindowText);
+		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
+		StatusBar->SetLabelTextColour(7, WINDOW_TEXT);
 		badResolution = false;
 	}
 
@@ -1164,16 +1164,16 @@ void KainoteFrame::SetVideoResolution(int w, int h, bool showDialog)
 	cur->Grid->GetASSRes(&x, &y);
 	wxString sres = std::to_string(x) + L" x " + std::to_string(y);
 	if (resolution != sres && sres.Len() > 3 && cur->editor){
-		StatusBar->SetLabelTextColour(5, WindowWarningElements);
-		StatusBar->SetLabelTextColour(7, WindowWarningElements);
+		StatusBar->SetLabelTextColour(5, WINDOW_WARNING_ELEMENTS);
+		StatusBar->SetLabelTextColour(7, WINDOW_WARNING_ELEMENTS);
 		badResolution = true;
 		if (showDialog && cur->Grid->subsFormat == ASS && !cur->SubsPath.empty()){
 			ShowBadResolutionDialog(wxSize(w, h), wxSize(x, y));
 		}
 	}
 	else if (badResolution){
-		StatusBar->SetLabelTextColour(5, WindowText);
-		StatusBar->SetLabelTextColour(7, WindowText);
+		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
+		StatusBar->SetLabelTextColour(7, WINDOW_TEXT);
 		badResolution = false;
 	}
 }
@@ -1733,7 +1733,7 @@ void KainoteFrame::HideEditor(bool save)
 		if (cur->VideoName != L""){ Label(0, true); }
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		//cur->Video->vToolbar->Enable(false);
-		StatusBar->SetLabelTextColour(5, WindowText);
+		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
 		SetStatusText(L"", 7);
 		if (cur->Video->isFullscreen)
 			cur->Video->TD->HideToolbar(true);

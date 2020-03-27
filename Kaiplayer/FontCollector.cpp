@@ -134,8 +134,8 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	: KaiDialog(parent, -1, _("Kolekcjoner czcionek"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, fc(_fc)
 {
-	warning = Options.GetColour(WindowWarningElements);
-	normal = Options.GetColour(WindowText);
+	warning = Options.GetColour(WINDOW_WARNING_ELEMENTS);
+	normal = Options.GetColour(WINDOW_TEXT);
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *Pathc = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *Buttons = new wxBoxSizer(wxHORIZONTAL);
@@ -184,7 +184,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	Connect(7998, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
 	console = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(500, 400), wxTE_MULTILINE | wxTE_READONLY);
 	console->Bind(wxEVT_LEFT_DCLICK, &FontCollectorDialog::OnConsoleDoubleClick, this);
-	//console->SetBackgroundColour(Options.GetColour(WindowBackground));
+	//console->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	bok = new MappedButton(this, 9879, _("Rozpocznij"));
 	bok->SetFocus();
 	bStartOnAllTabs = new MappedButton(this, 9880, _("Rozpocznij na zakładkach"));

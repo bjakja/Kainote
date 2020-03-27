@@ -40,8 +40,8 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	, clicked(false)
 	, value(false)
 	, isCheckBox(true)
-	, foreground(WindowText)
-	, background(WindowBackground)
+	, foreground(WINDOW_TEXT)
+	, background(WINDOW_BACKGROUND)
 	, fontHeight(0)
 {
 	label = _label;
@@ -110,7 +110,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
 
 	if (w > 18){
-		tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
+		tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) : Options.GetColour(WINDOW_TEXT_INACTIVE));
 		tdc.DrawText(label, 18, (h - fontHeight) / 2);
 	}
 	/*}
@@ -122,7 +122,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	gc->DrawBitmap(checkboxBmp, 1, (h - 13) / 2, checkboxBmp.GetWidth(), checkboxBmp.GetHeight());
 
 	if (w > 18){
-	gc->SetFont(GetFont(), (enabled) ? Options.GetColour(foreground) : Options.GetColour(WindowTextInactive));
+	gc->SetFont(GetFont(), (enabled) ? Options.GetColour(foreground) : Options.GetColour(WINDOW_TEXT_INACTIVE));
 	gc->DrawTextU(label, 18, (h - fontHeight) / 2);
 	}
 	delete gc;

@@ -241,7 +241,7 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 
 	SetValue(mTime.raw(canShowFrames || (showFrames && !vb) ? FRAME : form), stillModified);
 	if (stillModified){
-		SetForegroundColour(WindowWarningElements);
+		SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		changedBackGround = true;
 	}
 }
