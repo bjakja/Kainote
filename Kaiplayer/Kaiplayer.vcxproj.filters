@@ -389,6 +389,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="ConfigConverter.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -720,6 +723,9 @@
     </ClInclude>
     <ClInclude Include="TLDialog.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigConverter.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -30,19 +30,19 @@ enum{
 	EDITBOX_MULTILINE_EDITION,
 	EDITBOX_SPELL_CHECKER,
 	GRID_DUPLICATE,
-	GRID_JOIN_LINES,
+	GRID_JOIN,
 	GRID_JOIN_WITH_PREVIOUS,
 	GRID_JOIN_WITH_NEXT,
 	GRID_JOIN_TO_FIRST,
 	GRID_JOIN_TO_LAST,
-	GRID_PASTE,
-	GRID_PASTE_COLLUMNS,
-	GRID_PASTE_TRANSLATION,
+	GRID_PASTE_LINES,
+	GRID_PASTE_DIALOGUE_COLUMNS,
+	GRID_PASTE_TRANSLATION_TO_SUBS,
 	GRID_TRANSLATION_TEXT_MOVE,
 	GRID_MAKE_LINES_CONTINUES,
 	GRID_SET_VIDEO_FPS,
 	GRID_SET_CUSTOM_FPS,
-	GRID_SWAP_LINES,
+	GRID_SWAP,
 	GRID_CONVERT,
 	GRID_SORT_LINES,
 	GRID_DELETE_LINES,
@@ -141,7 +141,7 @@ public:
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save);
 	void SwapRows(int frst, int scnd);
 	void SortAll(bool func(Dialogue *i, Dialogue *j));
-	void GLOBAL_SORT_SELECTED_LINES(bool func(Dialogue *i, Dialogue *j));
+	void SortSelected(bool func(Dialogue *i, Dialogue *j));
 	Styles *CopyStyle(size_t i, bool push = true);
 	SInfo *CopySinfo(size_t i, bool push = true);
 	void AddStyle(Styles *nstyl);

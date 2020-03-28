@@ -602,7 +602,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 			}
 		}
 	}
-	else if (selline){ grid->GLOBAL_NEXT_LINE(); }
+	else if (selline){ grid->NextLine(); }
 }
 
 
@@ -1702,7 +1702,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
 	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON1)).BeforeFirst(L'\f', &type);
+	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1)).BeforeFirst(L'\f', &type);
 	if (tag.IsEmpty()){ wxBell(); return; }
 	type = type.BeforeFirst(L'\f');
 
@@ -1833,7 +1833,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 			}
 		}
 		wxString svtag = tb->tag;
-		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON1), 
+		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1),
 			svtag << L"\f" << tb->type << L"\f" << tb->name);
 		Options.SaveOptions(true, false);
 		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
@@ -1996,7 +1996,7 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 		dial->ChangeState(4);
 	}
 	if (event.GetId() == EDITBOX_SET_DOUBTFUL){
-		grid->GLOBAL_NEXT_LINE();
+		grid->NextLine();
 	}
 	else{
 		grid->Refresh(false);
@@ -2057,7 +2057,7 @@ void EditBox::SetTagButtons()
 		for (int i = 0; i < numTagButtons; i++)
 		{
 			wxArrayString tagOption;
-			Options.GetTable((CONFIG)(i + EDITBOX_TAG_BUTTON1), tagOption, L"\f", wxTOKEN_RET_EMPTY_ALL);
+			Options.GetTable((CONFIG)(i + EDITBOX_TAG_BUTTON_VALUE1), tagOption, L"\f", wxTOKEN_RET_EMPTY_ALL);
 			wxString name;
 			wxString tag;
 			int type = 0;
@@ -2190,7 +2190,7 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 	return true;
 }
 
-void EditBox::GLOBAL_CLOSE_AUDIO()
+void EditBox::CloseAudio()
 {
 	if (!windowResizer || !ABox)
 		return;

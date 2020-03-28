@@ -238,7 +238,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//Here add new ids
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SAVE_SUBS, GLOBAL_HISTORY);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, 
+		GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SHIFT_TIMES);
 	Connect(GLOBAL_OPEN_SUBS, GLOBAL_ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Connect(GLOBAL_SELECT_FROM_VIDEO, GLOBAL_PLAY_ACTUAL_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
@@ -341,7 +342,7 @@ void KainoteFrame::DestroyDialogs(){
 };
 
 
-//elementy menu które ulegają wyłączaniu
+//elements of menu that can be disabled
 void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 {
 	int id = event.GetId();
@@ -424,11 +425,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (tab->Video->GetState() != None){
 			if (id == GLOBAL_SET_START_TIME){
 				int time = tab->Video->GetFrameTime() + Options.GetInt(GRID_INSERT_START_OFFSET);
-				tab->Grid->GLOBAL_SET_START_TIME(ZEROIT(time));
+				tab->Grid->SetStartTime(ZEROIT(time));
 			}
 			else{
 				int time = tab->Video->GetFrameTime(false) + Options.GetInt(GRID_INSERT_END_OFFSET);
-				tab->Grid->GLOBAL_SET_END_TIME(ZEROIT(time));
+				tab->Grid->SetEndTime(ZEROIT(time));
 			}
 		}
 	}
@@ -598,7 +599,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->RefreshTime();
 	}
 	else if (id == GLOBAL_GO_TO_NEXT_KEYFRAME){
-		tab->Video->GLOBAL_GO_TO_NEXT_KEYFRAME();
+		tab->Video->GoToNextKeyframe();
 		tab->Video->RefreshTime();
 	}
 	else if (id == GLOBAL_SET_VIDEO_AT_START_TIME){
@@ -1816,7 +1817,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 
 	if (id == GLOBAL_CLOSE_AUDIO && tab->Edit->ABox){
 		tab->Video->player = NULL;
-		tab->Edit->GLOBAL_CLOSE_AUDIO();
+		tab->Edit->CloseAudio();
 		tab->AudioPath.clear();
 	}
 	else{
@@ -1957,7 +1958,7 @@ void KainoteFrame::OnChangeLine(wxCommandEvent& event)
 
 	int idd = event.GetId();
 	if (idd < GLOBAL_JOIN_WITH_PREVIOUS){//zmiana linijki
-		GetTab()->Grid->GLOBAL_NEXT_LINE((idd == GLOBAL_PREVIOUS_LINE) ? -1 : 1);
+		GetTab()->Grid->NextLine((idd == GLOBAL_PREVIOUS_LINE) ? -1 : 1);
 	}
 	else{//scalanie dwóch linijek
 		GetTab()->Grid->OnJoin(event);

@@ -19,10 +19,12 @@
 #include "KainoteMain.h"
 #include "Config.h"
 #include "KaiMessageBox.h"
+#include "ConfigConverter.h"
 #include <wx/regex.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <algorithm>
+
 
 bool operator < (const idAndType match, const idAndType match1){
 	if (match.Type != match1.Type){ return match.Type < match1.Type; }
@@ -247,6 +249,11 @@ int Hotkeys::LoadHkeys(bool Audio)
 			wxString ver = token.Mid(first + 5).BeforeFirst(L' ');
 			int version = wxAtoi(ver);
 			checkVer = (version > 487);
+			if (version < 1136){
+				acctxt = acctxt.AfterFirst(L'\n');
+				ConfigConverter::Get()->ConvertHotkeys(&acctxt);
+				ow.FileWrite(Options.configPath + hkpath, acctxt);
+			}
 		}
 	}
 	if (!checkVer){
@@ -539,7 +546,7 @@ int Hotkeys::GetType(int id)
 		return AUDIO_HOTKEY;
 	else if (id < EDITBOX_CHANGE_FONT)
 		return VIDEO_HOTKEY;
-	else if (id < GRID_HIDE_LAYER || (id >= EDITBOX_TAG_BUTTON1 && id <= EDITBOX_TAG_BUTTON10))
+	else if (id < GRID_HIDE_LAYER || (id >= EDITBOX_TAG_BUTTON1 && id <= EDITBOX_TAG_BUTTON20))
 		return EDITBOX_HOTKEY;
 	else if (id < GLOBAL_SAVE_SUBS)
 		return GRID_HOTKEY;
@@ -613,7 +620,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 
 		if (hotkey == L"" && (type == GLOBAL_HOTKEY || type == EDITBOX_HOTKEY) && (key > 30 && key < 127 /*|| key>313 && key<318*/))
 		{
-			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (np. Shift, Ctrl, Alt).")); return;
+			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt).")); return;
 		}
 		else if (event.GetModifiers() == wxMOD_CONTROL && (key == L'V' || key == L'C' || key == L'X' || key == L'Z')){
 			KaiMessageBox(_("Nie można używać skrótów do kopiowania, wycinania i wklejania.")); return;
@@ -634,10 +641,6 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		EndModal(wxID_OK);
 	}
 }
-
-
-
-
 
 Hotkeys Hkeys;
 

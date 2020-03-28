@@ -29,6 +29,7 @@
 #include "Tabs.h"//<windows.h>
 #include "gitparams.h"
 #include <windows.h>
+#include "ConfigConverter.h"
 
 
 
@@ -143,7 +144,7 @@ bool config::SetRawOptions(const wxString &textconfig)
 		wxString token = cfg.NextToken();
 		token.Trim(false);
 		token.Trim(true);
-		if (token.Len() > 0){ CatchValsLabs(token); g++; }
+		if (token.length() > 0){ CatchValsLabs(token); g++; }
 	}
 	if (g > 10){ return true; };
 	return false;
@@ -553,7 +554,12 @@ int config::LoadOptions()
 			hasCrashed = true;
 		}
 		if (ver != progname){ LoadDefaultConfig(); diffVersions = true; }
-		isgood = SetRawOptions(txt.AfterFirst(L'\n'));
+		txt = txt.AfterFirst(L'\n');
+		if (ConfigNeedToConvert(ver)){
+			ConfigConverter::Get()->ConvertConfig(&txt);
+			ow.FileWrite(path, txt);
+		}
+		isgood = SetRawOptions(txt);
 	}
 
 	actualStyleDir = L"Default";
@@ -593,6 +599,12 @@ void config::LoadColors(const wxString &_themeName){
 		wxString txtColors;
 		if (ow.FileOpen(path, &txtColors, false)){
 			wxStringTokenizer cfg(txtColors, L"\n");
+			wxString ver = cfg.NextToken();
+			if (ConfigNeedToConvert(ver)){
+				txtColors = txtColors.AfterFirst(L'\n');
+				ConfigConverter::Get()->ConvertConfig(&txtColors, true);
+				ow.FileWrite(path, txtColors);
+			}
 			int g = 0;
 			while (cfg.HasMoreTokens())
 			{
@@ -711,7 +723,7 @@ void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split, int mode)
 void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split, int mode)
 {
 	wxString strtbl = stringConfig[opt];
-	if (strtbl != ""){
+	if (strtbl != L""){
 		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
 		while (cfgtable.HasMoreTokens()){
 			tbl.Add(wxAtoi(cfgtable.NextToken()));
@@ -777,6 +789,17 @@ void config::ResetDefault()
 	}
 }
 
+bool config::ConfigNeedToConvert(const wxString & fullVersion)
+{
+	int first = fullVersion.find(L".");//0.8.0.build
+	if (first > -1){
+		wxString ver = fullVersion.Mid(first + 5).BeforeFirst(L' ');
+		int version = wxAtoi(ver);
+		return (version < 1136);
+	}
+	return true;
+}
+
 bool config::LoadAudioOpts()
 {
 	OpenWrite ow;
@@ -787,9 +810,15 @@ bool config::LoadAudioOpts()
 	}
 	else{
 		wxString ver = txt.BeforeFirst(L']').Mid(1);
+		txt = txt.AfterFirst(L'\n');
 		if (ver != progname){ LoadDefaultAudioConfig(); }
+		
+		if (ConfigNeedToConvert(ver)){
+			ConfigConverter::Get()->ConvertConfig(&txt);
+			ow.FileWrite(configPath + L"\\AudioConfig.txt", txt);
+		}
 	}
-	return (AudioOpts = SetRawOptions(txt.AfterFirst(L'\n')));
+	return (AudioOpts = SetRawOptions(txt));
 }
 
 void config::SaveAudioOpts()

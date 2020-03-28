@@ -121,7 +121,7 @@ class VideoRenderer : public wxWindow
 		bool Stop();
 		void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true);
 		void SetFFMS2Position(int time, bool starttime);
-		void GLOBAL_GO_TO_NEXT_KEYFRAME();
+		void GoToNextKeyframe();
 		void GoToPrevKeyframe();
 		int GetCurrentPosition();
 		int GetCurrentFrame();

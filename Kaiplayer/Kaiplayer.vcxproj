@@ -511,6 +511,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="AutomationToFile.cpp" />
     <ClCompile Include="AutomationUtils.cpp" />
     <ClCompile Include="BitmapButton.cpp" />
+    <ClCompile Include="ConfigConverter.cpp" />
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="Languages.cpp" />
     <ClCompile Include="ShiftTimes.cpp" />
@@ -629,6 +630,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="AutomationToFile.h" />
     <ClInclude Include="AutomationUtils.h" />
     <ClInclude Include="BitmapButton.h" />
+    <ClInclude Include="ConfigConverter.h" />
     <ClInclude Include="KaiGauge.h" />
     <ClInclude Include="ShiftTimes.h" />
     <ClInclude Include="ColorSpace.h" />

@@ -1399,7 +1399,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		holding = false;
 		//Save swap lines after alt release 
 		if (event.AltDown() && file->IsNotSaved()){ 
-			SetModified(GRID_SWAP_LINES); 
+			SetModified(GRID_SWAP); 
 		}
 		ReleaseMouse();
 		if (oldX != -1){ return; }
@@ -1728,7 +1728,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 				SaveSelections();
 				if (MoveRows(dir)){
 					file->edited = true;
-					SetModified(GRID_SWAP_LINES);
+					SetModified(GRID_SWAP);
 				}
 			}
 			return;

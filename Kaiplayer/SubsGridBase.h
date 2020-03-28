@@ -93,14 +93,14 @@ public:
 	void SwapRows(int frst, int scnd, bool sav = false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
 	bool MoveRows(int step, bool keyStep = false);
-	void GLOBAL_SET_START_TIME(int stime);
-	void GLOBAL_SET_END_TIME(int etime);
+	void SetStartTime(int stime);
+	void SetEndTime(int etime);
 	bool SetTlMode(bool mode);
 	void LoadDefault(bool line = true, bool sav = true, bool endload = true);
 	void GetASSRes(int *x, int *y);
 	size_t SInfoSize();
 	size_t GetCount();
-	void GLOBAL_NEXT_LINE(int dir = 1);
+	void NextLine(int dir = 1);
 	void SaveSelections(bool clear = false);
 	// no checks, check if value is unsure
 	Dialogue *CopyDialogue(size_t i, bool push = true);

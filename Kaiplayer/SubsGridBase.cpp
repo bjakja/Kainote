@@ -145,7 +145,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t
 		AdjustWidths(cells);
 
 	if (selline)
-		GLOBAL_NEXT_LINE();
+		NextLine();
 	else{
 		Refresh(false);
 	}
@@ -763,7 +763,7 @@ void SubsGridBase::SortIt(short what, bool all)
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 	else{
-		file->GLOBAL_SORT_SELECTED_LINES((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+		file->SortSelected((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 
@@ -1186,7 +1186,7 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 		SpellErrors[scnd] = tmpspell;
 	}
 	Refresh(false);
-	if (sav){ SetModified(GRID_SWAP_LINES); }
+	if (sav){ SetModified(GRID_SWAP); }
 }
 
 void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
@@ -1258,7 +1258,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	((SubsGridWindow*)this)->ScrollTo(active, false, -4);
 }
 
-void SubsGridBase::GLOBAL_SET_START_TIME(int stime)
+void SubsGridBase::SetStartTime(int stime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1275,7 +1275,7 @@ void SubsGridBase::GLOBAL_SET_START_TIME(int stime)
 	}
 }
 
-void SubsGridBase::GLOBAL_SET_END_TIME(int etime)
+void SubsGridBase::SetEndTime(int etime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1365,7 +1365,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 	return false;
 }
 
-void SubsGridBase::GLOBAL_NEXT_LINE(int dir)
+void SubsGridBase::NextLine(int dir)
 {
 	if (Edit->ABox && Edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = GetCount();

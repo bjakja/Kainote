@@ -1777,7 +1777,7 @@ byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
 	return (dssubs || ffnsubs) ? cpy1 : (byte*)datas;
 }
 
-void VideoRenderer::GLOBAL_GO_TO_NEXT_KEYFRAME()
+void VideoRenderer::GoToNextKeyframe()
 {
 	if (!VFF){ return; }
 	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){

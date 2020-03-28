@@ -107,6 +107,16 @@ void HotkeysNaming::CreateNamesMap()
 	names[EDITBOX_TAG_BUTTON8] = _("Ósmy przycisk tagów");
 	names[EDITBOX_TAG_BUTTON9] = _("Dziewiąty przycisk tagów");
 	names[EDITBOX_TAG_BUTTON10] = _("Dziesiąty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON11] = _("Jedenasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON12] = _("Dwunasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON13] = _("Trzynasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON14] = _("Czternasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON15] = _("Piętnast przycisk tagów");
+	names[EDITBOX_TAG_BUTTON16] = _("Szesnasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON17] = _("Siedemnasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON18] = _("Osiemnasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON19] = _("Dziewiętnasty przycisk tagów");
+	names[EDITBOX_TAG_BUTTON20] = _("Dwudziesty przycisk tagów");
 	names[GLOBAL_EDITOR] = _("Włącz / Wyłącz edytor");
 	names[EDITBOX_END_DIFFERENCE] = _("Wstaw różnicę końcową");
 	names[GRID_FILTER_BY_DIALOGUES] = _("Ukryj komentarze");

@@ -50,7 +50,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);
 			RefreshColumns();
 		}
-		else if (id == GRID_FILTER_INVERTED){
+		else if (id == GRID_FILTER_INVERT){
 			Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		}
 		else if (id >= GRID_FILTER_BY_STYLES && id <= GRID_FILTER_BY_UNTRANSLATED){
@@ -153,7 +153,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	int filterBy = Options.GetInt(GRID_FILTER_BY);
 	bool isASS = subsFormat == ASS;
 	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
-	filterMenu->SetAccMenu(GRID_FILTER_INVERTED, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
+	filterMenu->SetAccMenu(GRID_FILTER_INVERT, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
 	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
 	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
@@ -376,7 +376,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	file->edited = true;
 	SpellErrors.clear();
 	SetModified((idd == GLOBAL_JOIN_WITH_PREVIOUS) ? GRID_JOIN_WITH_PREVIOUS :
-		(idd == GLOBAL_JOIN_WITH_NEXT) ? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
+		(idd == GLOBAL_JOIN_WITH_NEXT) ? GRID_JOIN_WITH_NEXT : GRID_JOIN);
 	RefreshColumns();
 	Edit->TextEditOrig->SetSelection(startOrg, endOrg);
 	Edit->TextEdit->SetSelection(startTl, endTl);
@@ -508,7 +508,7 @@ void SubsGrid::OnPaste(int id)
 		file->InsertSelections(startline, rws - 1);
 	}
 	scrollPosition += cttkns;
-	SetModified((id == GRID_PASTE) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());
+	SetModified((id == GRID_PASTE) ? GRID_PASTE_LINES : GRID_PASTE_DIALOGUE_COLUMNS, true, false, FirstSelection());
 	Thaw();
 	RefreshColumns();
 }
@@ -663,7 +663,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		RefreshColumns();
 		break;
 	}
-	case GRID_FILTER_INVERTED:
+	case GRID_FILTER_INVERT:
 		Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		break;
 	case GRID_FILTER_BY_STYLES:
@@ -789,7 +789,7 @@ void SubsGrid::OnPasteTextTl()
 		AddSInfo(L"TLMode Showtl", L"Yes");
 		showOriginal = true;
 		//Edit->SetIt(Edit->ebrow);
-		SetModified(GRID_PASTE_TRANSLATION);
+		SetModified(GRID_PASTE_TRANSLATION_TO_SUBS);
 		Refresh(false);
 	}
 	FileDialog1->Destroy();
