@@ -1364,26 +1364,26 @@ void AudioDisplay::ChangeOptions()
 	drawBoundaryLines = Options.GetBool(AUDIO_DRAW_SECONDARY_LINES);
 	drawKeyframes = Options.GetBool(AUDIO_DRAW_KEYFRAMES);
 
-	keyframe = D3DCOLOR_FROM_WX(Options.GetColour(AudioKeyframes));
-	background = D3DCOLOR_FROM_WX(Options.GetColour(AudioBackground));
-	selectionBackgroundModified = D3DCOLOR_FROM_WX(Options.GetColour(AudioSelectionBackgroundModified));
-	selectionBackground = D3DCOLOR_FROM_WX(Options.GetColour(AudioSelectionBackground));
-	secondBondariesColor = D3DCOLOR_FROM_WX(Options.GetColour(AudioSecondsBoundaries));
-	lineStartBondaryColor = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryStart));
-	lineEndBondaryColor = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryEnd));
-	syllableBondaresColor = D3DCOLOR_FROM_WX(Options.GetColour(AudioSyllableBoundaries));
-	syllableTextColor = D3DCOLOR_FROM_WX(Options.GetColour(AudioSyllableText));
-	lineBondaryMark = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryMark));
-	AudioCursor = D3DCOLOR_FROM_WX(Options.GetColour(AudioPlayCursor));
-	waveformInactive = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformInactive));
-	boundaryInactiveLine = D3DCOLOR_FROM_WX(Options.GetColour(AudioLineBoundaryInactiveLine));
-	inactiveLinesBackground = D3DCOLOR_FROM_WX(Options.GetColour(AudioInactiveLinesBackground));
+	keyframe = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_KEYFRAMES));
+	background = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_BACKGROUND));
+	selectionBackgroundModified = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_SELECTION_BACKGROUND_MODIFIED));
+	selectionBackground = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_SELECTION_BACKGROUND));
+	secondBondariesColor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_SECONDS_BOUNDARIES));
+	lineStartBondaryColor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_LINE_BOUNDARY_START));
+	lineEndBondaryColor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_LINE_BOUNDARY_END));
+	syllableBondaresColor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_SYLLABLE_BOUNDARIES));
+	syllableTextColor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_SYLLABLE_TEXT));
+	lineBondaryMark = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_LINE_BOUNDARY_MARK));
+	AudioCursor = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_PLAY_CURSOR));
+	waveformInactive = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_INACTIVE));
+	boundaryInactiveLine = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_LINE_BOUNDARY_INACTIVE_LINE));
+	inactiveLinesBackground = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_INACTIVE_LINES_BACKGROUND));
 	timescaleBackground = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_BACKGROUND));
 	//timescale3dLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
 	timescaleText = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_TEXT));
-	waveform = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveform));
-	waveformModified = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformModified));
-	waveformSelected = D3DCOLOR_FROM_WX(Options.GetColour(AudioWaveformSelected));
+	waveform = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM));
+	waveformModified = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_MODIFIED));
+	waveformSelected = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_SELECTED));
 }
 
 ////////

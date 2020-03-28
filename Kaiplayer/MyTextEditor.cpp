@@ -880,22 +880,22 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	bool templateCode = state == 3;
 	bool isTemplateLine = state > 1;
 
-	const wxColour & ctvariables = Options.GetColour(EditorTemplateVariables);
-	const wxColour & ctext = templateCode ? ctvariables : Options.GetColour(EditorText);
-	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
-	const wxColour & coperators = Options.GetColour(EditorTagOperators);
-	const wxColour & cnames = Options.GetColour(EditorTagNames);
-	const wxColour & cvalues = Options.GetColour(EditorTagValues);
-	const wxColour & bgbraces = Options.GetColour(EditorBracesBackground);
-	const wxColour & cbackground = Options.GetColour(EditorBackground);
-	const wxColour & cselection = Options.GetColour(EditorSelection);
-	const wxColour & cselnofocus = Options.GetColour(EditorSelectionNoFocus);
-	const wxColour & cspellerrors = Options.GetColour(EditorSpellchecker);
-	const wxColour & ctcodemarks = Options.GetColour(EditorTemplateCodeMarks);
-	const wxColour & ctfunctions = Options.GetColour(EditorTemplateFunctions);
-	const wxColour & ctkeywords = Options.GetColour(EditorTemplateKeywords);
-	const wxColour & ctstrings = Options.GetColour(EditorTemplateStrings);
-	const wxColour & cphrasesearch = Options.GetColour(EditorPhraseSearch);
+	const wxColour & ctvariables = Options.GetColour(EDITOR_TEMPLATE_VARIABLES);
+	const wxColour & ctext = templateCode ? ctvariables : Options.GetColour(EDITOR_TEXT);
+	const wxColour & ccurlybraces = Options.GetColour(EDITOR_CURLY_BRACES);
+	const wxColour & coperators = Options.GetColour(EDITOR_TAG_OPERATORS);
+	const wxColour & cnames = Options.GetColour(EDITOR_TAG_NAMES);
+	const wxColour & cvalues = Options.GetColour(EDITOR_TAG_VALUES);
+	const wxColour & bgbraces = Options.GetColour(EDITOR_BRACES_BACKGROUND);
+	const wxColour & cbackground = Options.GetColour(EDITOR_BACKGROUND);
+	const wxColour & cselection = Options.GetColour(EDITOR_SELECTION);
+	const wxColour & cselnofocus = Options.GetColour(EDITOR_SELECTION_NO_FOCUS);
+	const wxColour & cspellerrors = Options.GetColour(EDITOR_SPELLCHECKER);
+	const wxColour & ctcodemarks = Options.GetColour(EDITOR_TEMPLATE_CODE_MARKS);
+	const wxColour & ctfunctions = Options.GetColour(EDITOR_TEMPLATE_FUNCTIONS);
+	const wxColour & ctkeywords = Options.GetColour(EDITOR_TEMPLATE_KEYWORDS);
+	const wxColour & ctstrings = Options.GetColour(EDITOR_TEMPLATE_STRINGS);
+	const wxColour & cphrasesearch = Options.GetColour(EDITOR_PHRASE_SEARCH);
 
 	gc->SetBrush(cbackground);
 	gc->SetPen(*wxTRANSPARENT_PEN);
@@ -1190,7 +1190,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	if (!cursorWasSet){
 		caret->Move(0, -50);
 	}
-	const wxColour &border = Options.GetColour(hasFocus ? EditorBorderOnFocus : EditorBorder);
+	const wxColour &border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
 	//here we go our status bar
 	if (statusBarHeight > 0){
 		gc->SetBrush(cbackground);
@@ -1227,22 +1227,22 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	bool templateCode = state == 3;
 	bool isTemplateLine = state > 1;
 
-	const wxColour & ctvariables = Options.GetColour(EditorTemplateVariables);
-	const wxColour & ctext = templateCode ? ctvariables : Options.GetColour(EditorText);
-	const wxColour & ccurlybraces = Options.GetColour(EditorCurlyBraces);
-	const wxColour & coperators = Options.GetColour(EditorTagOperators);
-	const wxColour & cnames = Options.GetColour(EditorTagNames);
-	const wxColour & cvalues = Options.GetColour(EditorTagValues);
-	const wxColour & bgbraces = Options.GetColour(EditorBracesBackground);
-	const wxColour & cbackground = Options.GetColour(EditorBackground);
-	const wxColour & cselection = Options.GetColour(EditorSelection);
-	const wxColour & cselnofocus = Options.GetColour(EditorSelectionNoFocus);
-	const wxColour & cspellerrors = Options.GetColour(EditorSpellchecker);
-	const wxColour & ctcodemarks = Options.GetColour(EditorTemplateCodeMarks);
-	const wxColour & ctfunctions = Options.GetColour(EditorTemplateFunctions);
-	const wxColour & ctkeywords = Options.GetColour(EditorTemplateKeywords);
-	const wxColour & ctstrings = Options.GetColour(EditorTemplateStrings);
-	const wxColour & cphrasesearch = Options.GetColour(EditorPhraseSearch);
+	const wxColour & ctvariables = Options.GetColour(EDITOR_TEMPLATE_VARIABLES);
+	const wxColour & ctext = templateCode ? ctvariables : Options.GetColour(EDITOR_TEXT);
+	const wxColour & ccurlybraces = Options.GetColour(EDITOR_CURLY_BRACES);
+	const wxColour & coperators = Options.GetColour(EDITOR_TAG_OPERATORS);
+	const wxColour & cnames = Options.GetColour(EDITOR_TAG_NAMES);
+	const wxColour & cvalues = Options.GetColour(EDITOR_TAG_VALUES);
+	const wxColour & bgbraces = Options.GetColour(EDITOR_BRACES_BACKGROUND);
+	const wxColour & cbackground = Options.GetColour(EDITOR_BACKGROUND);
+	const wxColour & cselection = Options.GetColour(EDITOR_SELECTION);
+	const wxColour & cselnofocus = Options.GetColour(EDITOR_SELECTION_NO_FOCUS);
+	const wxColour & cspellerrors = Options.GetColour(EDITOR_SPELLCHECKER);
+	const wxColour & ctcodemarks = Options.GetColour(EDITOR_TEMPLATE_CODE_MARKS);
+	const wxColour & ctfunctions = Options.GetColour(EDITOR_TEMPLATE_FUNCTIONS);
+	const wxColour & ctkeywords = Options.GetColour(EDITOR_TEMPLATE_KEYWORDS);
+	const wxColour & ctstrings = Options.GetColour(EDITOR_TEMPLATE_STRINGS);
+	const wxColour & cphrasesearch = Options.GetColour(EDITOR_PHRASE_SEARCH);
 
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
@@ -1537,7 +1537,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	if (!cursorWasSet){
 		caret->Move(0, -50);
 	}
-	const wxColour &border = Options.GetColour(hasFocus ? EditorBorderOnFocus : EditorBorder);
+	const wxColour &border = Options.GetColour(hasFocus ? EDITOR_BORDER_ON_FOCUS : EDITOR_BORDER);
 	//here we go our status bar
 	if (statusBarHeight > 0){
 		dc.SetBrush(cbackground);

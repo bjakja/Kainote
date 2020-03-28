@@ -101,16 +101,16 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	tdc.SetBrush(Options.GetColour(WINDOW_BACKGROUND));
 	tdc.DrawRectangle(0, 0, w, h);
 	bool enabled = IsThisEnabled();
-	wxColour slider = (enter && !pushed) ? Options.GetColour(SliderBackgroundHover) :
-		(pushed) ? Options.GetColour(SliderBackgroundPushed) :
-		(enabled) ? Options.GetColour(SliderBackground) :
+	wxColour slider = (enter && !pushed) ? Options.GetColour(SLIDER_BACKGROUND_HOVER) :
+		(pushed) ? Options.GetColour(SLIDER_BACKGROUND_PUSHED) :
+		(enabled) ? Options.GetColour(SLIDER_BACKGROUND) :
 		Options.GetColour(WINDOW_BACKGROUND_INACTIVE);
-	wxColour sliderBorder = (enter && !pushed) ? Options.GetColour(SliderBorderHover) :
-		(pushed) ? Options.GetColour(SliderBorderPushed) :
-		(enabled) ? Options.GetColour(SliderBorder) :
-		Options.GetColour(ButtonBorderInactive);
-	tdc.SetPen(wxPen(Options.GetColour(SliderPathBorder)));
-	tdc.SetBrush(wxBrush(Options.GetColour(SliderPathBackground)));
+	wxColour sliderBorder = (enter && !pushed) ? Options.GetColour(SLIDER_BORDER_HOVER) :
+		(pushed) ? Options.GetColour(SLIDER_BORDER_PUSHED) :
+		(enabled) ? Options.GetColour(SLIDER_BORDER) :
+		Options.GetColour(BUTTON_BORDER_INACTIVE);
+	tdc.SetPen(wxPen(Options.GetColour(SLIDER_PATH_BORDER)));
+	tdc.SetBrush(wxBrush(Options.GetColour(SLIDER_PATH_BACKGROUND)));
 	if (style & wxVERTICAL){
 		int thumbMove = (style & wxSL_INVERSE) ? 2 : 1;
 		tdc.DrawRectangle((w / 2) - 2, thumbSize / 2, 4, h - thumbSize);

@@ -145,7 +145,7 @@ void SubsGridBase::ChangeLine(unsigned char editionType, Dialogue *line1, size_t
 		AdjustWidths(cells);
 
 	if (selline)
-		NextLine();
+		GLOBAL_NEXT_LINE();
 	else{
 		Refresh(false);
 	}
@@ -763,7 +763,7 @@ void SubsGridBase::SortIt(short what, bool all)
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 	else{
-		file->SortSelected((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
+		file->GLOBAL_SORT_SELECTED_LINES((what == 0) ? sortstart : (what == 1) ? sortend : (what == 2) ? sortstyle :
 			(what == 3) ? sortactor : (what == 4) ? sorteffect : sortlayer);
 	}
 
@@ -915,14 +915,14 @@ void SubsGridBase::UpdateUR(bool toolbar)
 {
 	bool undo = false, _redo = false;
 	file->GetURStatus(&undo, &_redo);
-	Kai->Menubar->Enable(Undo, undo);
-	Kai->Menubar->Enable(Redo, _redo);
-	Kai->Menubar->Enable(UndoToLastSave, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
-	Kai->Menubar->Enable(SaveSubs, true);
+	Kai->Menubar->Enable(GLOBAL_UNDO, undo);
+	Kai->Menubar->Enable(GLOBAL_REDO, _redo);
+	Kai->Menubar->Enable(GLOBAL_UNDO_TO_LAST_SAVE, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
+	Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 	if (toolbar){
-		Kai->Toolbar->UpdateId(Undo, undo);
-		Kai->Toolbar->UpdateId(Redo, _redo);
-		Kai->Toolbar->UpdateId(SaveSubs, true);
+		Kai->Toolbar->UpdateId(GLOBAL_UNDO, undo);
+		Kai->Toolbar->UpdateId(GLOBAL_REDO, _redo);
+		Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
 	}
 }
 
@@ -1124,8 +1124,8 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 {
 	if (file->IsNotSaved()){
 		if (!IsModified()){
-			Kai->Toolbar->UpdateId(SaveSubs, true);
-			Kai->Menubar->Enable(SaveSubs, true);
+			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
+			Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 		}
 		if (Comparison){
 			SubsComparison();
@@ -1198,7 +1198,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 	if (oldHasTlMode != hasTLMode){
 		Edit->SetTlMode(hasTLMode);
-		Kai->Menubar->Enable(SaveTranslation, hasTLMode);
+		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, hasTLMode);
 	}
 	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ showOriginal = true; }
 
@@ -1258,7 +1258,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	((SubsGridWindow*)this)->ScrollTo(active, false, -4);
 }
 
-void SubsGridBase::SetStartTime(int stime)
+void SubsGridBase::GLOBAL_SET_START_TIME(int stime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1275,7 +1275,7 @@ void SubsGridBase::SetStartTime(int stime)
 	}
 }
 
-void SubsGridBase::SetEndTime(int etime)
+void SubsGridBase::GLOBAL_SET_END_TIME(int etime)
 {
 	Edit->Send(EDITBOX_LINE_EDITION, false, false, true);
 	wxArrayInt sels;
@@ -1314,7 +1314,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		AddSInfo(L"TLMode", L"Yes");
 		hasTLMode = true;
 		if (Options.GetBool(TL_MODE_SHOW_ORIGINAL)){ showOriginal = true; }
-		Kai->Menubar->Enable(SaveTranslation, true);
+		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, true);
 
 		//Refresh(false);
 
@@ -1356,7 +1356,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 
 		hasTLMode = false;
 		showOriginal = false;
-		Kai->Menubar->Enable(SaveTranslation, false);
+		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, false);
 	}
 	Edit->RefreshStyle();
 	SpellErrors.clear();
@@ -1365,7 +1365,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 	return false;
 }
 
-void SubsGridBase::NextLine(int dir)
+void SubsGridBase::GLOBAL_NEXT_LINE(int dir)
 {
 	if (Edit->ABox && Edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = GetCount();

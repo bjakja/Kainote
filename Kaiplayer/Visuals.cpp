@@ -346,8 +346,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
-	TextEditor *Editor = edit->TextEdit;
-	if (grid->hasTLMode && txt == L""){ txt = edit->TextEditOrig->GetValue(); Editor = edit->TextEditOrig; }
+	TextEditor *GLOBAL_EDITOR = edit->TextEdit;
+	if (grid->hasTLMode && txt == L""){ txt = edit->TextEditOrig->GetValue(); GLOBAL_EDITOR = edit->TextEditOrig; }
 
 
 	Styles *acstyl = grid->GetStyle(0, edit->line->Style);
@@ -476,18 +476,18 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
-	//Editor
-	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
+	//GLOBAL_EDITOR
+	TextEditor *GLOBAL_EDITOR = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	if (clip == L""){
 
 		wxString tmp;
-		wxString txt = Editor->GetValue();
+		wxString txt = GLOBAL_EDITOR->GetValue();
 		if (edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1)){
 			ChangeText(&txt, L"", edit->InBracket, edit->Placed);
 			txt.Replace(L"{}", L"");
 			if (changeEditorText){
-				Editor->SetTextS(txt, false, true);
-				Editor->SetModified();
+				GLOBAL_EDITOR->SetTextS(txt, false, true);
+				GLOBAL_EDITOR->SetModified();
 				edit->Send(VISUAL_VECTOR_CLIP, false);
 			}
 			return;
@@ -505,7 +505,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			//vector clip
 			if (Visual == VECTORCLIP){
 				wxString tmp = L"clip(";
-				wxString txt = Editor->GetValue();
+				wxString txt = GLOBAL_EDITOR->GetValue();
 				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1);
 				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
 				wxString tclip = L"\\" + tmp + clip + L")";
@@ -526,8 +526,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				dumplaced.y = edit->Placed.y + textplaced.x;
 				delete maskDialogue;
 				if (changeEditorText){
-					Editor->SetTextS(txt, false, true);
-					Editor->SetModified();
+					GLOBAL_EDITOR->SetTextS(txt, false, true);
+					GLOBAL_EDITOR->SetModified();
 				}
 
 			}
@@ -536,7 +536,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				bool isf;
 				bool hasP1 = true;
 				size_t cliplen = clip.length();
-				wxString txt = Editor->GetValue();
+				wxString txt = GLOBAL_EDITOR->GetValue();
 				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, 1);
 				if (!isf){
 					ChangeText(&txt, L"\\p1", edit->InBracket, edit->Placed);
@@ -593,8 +593,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 				txt.replace(Mpos + edit->Placed.y, endClip, clip);
 
 				if (changeEditorText){
-					Editor->SetTextS(txt, false, true);
-					Editor->SetModified();
+					GLOBAL_EDITOR->SetTextS(txt, false, true);
+					GLOBAL_EDITOR->SetModified();
 				}
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
@@ -620,8 +620,8 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 			wxString txt = dummytext->Mid(textplaced.x, textplaced.y);
 			//put in text field
 			if (changeEditorText){
-				Editor->SetTextS(txt, false, true);
-				Editor->SetModified();
+				GLOBAL_EDITOR->SetTextS(txt, false, true);
+				GLOBAL_EDITOR->SetModified();
 			}
 		}
 
@@ -632,7 +632,7 @@ void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorT
 	}
 	else{
 
-		Editor->SetModified();
+		GLOBAL_EDITOR->SetModified();
 		edit->UpdateChars();
 		tab->Video->hasVisualEdition = true;
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
@@ -648,7 +648,7 @@ void Visuals::SetVisual(bool dummy, int type)
 
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
 	//Get editor
-	TextEditor *Editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
+	TextEditor *GLOBAL_EDITOR = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//two stages, stage first selected lines
 	if (edit->IsCursorOnStart()){
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
@@ -718,7 +718,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 	//put it on to editor
 	if (dummy){
-		wxString txt = Editor->GetValue();
+		wxString txt = GLOBAL_EDITOR->GetValue();
 		int mode = false;
 		if (Visual == MOVE){ mode = 1; }
 		else if (Visual == CLIPRECT){ mode = 2; }
@@ -746,16 +746,16 @@ void Visuals::SetVisual(bool dummy, int type)
 			dummytext = grid->GetVisible(&vis, &dumplaced);
 			if (!vis){ SAFE_DELETE(dummytext); return; }
 		}
-		Editor->SetTextS(txt, false, false);
-		Editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
+		GLOBAL_EDITOR->SetTextS(txt, false, false);
+		GLOBAL_EDITOR->SetSelection(edit->Placed.x, edit->Placed.x, true);
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
 		dumplaced.y = txt.length();
 		wxString *dtxt = new wxString(*dummytext);
 		RenderSubs(dtxt);
 	}
 	else{
-		//Editor->Refresh(false);
-		Editor->SetModified();
+		//GLOBAL_EDITOR->Refresh(false);
+		GLOBAL_EDITOR->SetModified();
 		tab->Video->hasVisualEdition = true;
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == MOVE) ? VISUAL_MOVE :

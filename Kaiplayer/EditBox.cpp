@@ -181,10 +181,10 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol4->SetBitmap(wxBITMAP_PNG(L"Kolor4"));
 	Bcol4->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bbold = new MappedButton(this, PutBold, L"", _("Pogrubienie"), 
+	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, L"", _("Pogrubienie"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
-	Bital = new MappedButton(this, PutItalic, L"", _("Pochylenie"), 
+	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, L"", _("Pochylenie"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
 	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"), 
@@ -319,8 +319,8 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Connect(ID_TLMODE, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&EditBox::OnTlMode); //16658
 	Connect(16658, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_STYLE, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
-	Connect(PutBold, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnBoldClick);
-	Connect(PutItalic, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnItalicClick);
+	Connect(EDITBOX_INSERT_BOLD, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnBoldClick);
+	Connect(EDITBOX_INSERT_ITALIC, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnItalicClick);
 	Connect(EDITBOX_CHANGE_UNDERLINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnUnderlineClick);
 	Connect(EDITBOX_CHANGE_STRIKEOUT, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnStrikeClick);
 	Connect(ID_AN, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&EditBox::OnAnChoice);
@@ -334,11 +334,11 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Connect(ID_AUTOMOVETAGS, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, (wxObjectEventFunction)&EditBox::OnAutoMoveTags);
 	Connect(EDITBOX_COMMIT, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(EDITBOX_COMMIT_GO_NEXT_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnNewline);
-	Connect(FindNextDoubtful, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::FindNextDoubtfulTl);
-	Connect(FindNextUntranslated, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::FindNextUnTranslated);
-	Connect(SetDoubtful, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnDoubtfulTl);
-	Connect(SplitLine, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnSplit);
-	Connect(StartDifference, EndDifference, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnPasteDifferents);
+	Connect(EDITBOX_FIND_NEXT_DOUBTFUL, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::FindNextDoubtfulTl);
+	Connect(EDITBOX_FIND_NEXT_UNTRANSLATED, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::FindNextUnTranslated);
+	Connect(EDITBOX_SET_DOUBTFUL, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnDoubtfulTl);
+	Connect(EDITBOX_SPLIT_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnSplit);
+	Connect(EDITBOX_START_DIFFERENCE, EDITBOX_END_DIFFERENCE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnPasteDifferents);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&EditBox::OnSize);
 	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){
 		Connect(16668, NUMBER_CHANGED, (wxObjectEventFunction)&EditBox::OnEdit);
@@ -484,8 +484,8 @@ void EditBox::UpdateChars()
 	else{
 		wxString result;
 		bool isbad = false;
-		TextEditor * Editor = GetEditor();
-		int ilzn = grid->CalcChars(Editor->GetValue(), &result, &isbad);
+		TextEditor * GLOBAL_EDITOR = GetEditor();
+		int ilzn = grid->CalcChars(GLOBAL_EDITOR->GetValue(), &result, &isbad);
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
@@ -602,7 +602,7 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 			}
 		}
 	}
-	else if (selline){ grid->NextLine(); }
+	else if (selline){ grid->GLOBAL_NEXT_LINE(); }
 }
 
 
@@ -612,10 +612,10 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 	if (oneline && !onlysel){
 		long whre;
 		wxString txt = TextEdit->GetValue();
-		TextEditor *Editor = TextEdit;
+		TextEditor *GLOBAL_EDITOR = TextEdit;
 		if (grid->hasTLMode && txt == L""){
 			txt = TextEditOrig->GetValue();
-			Editor = TextEditOrig;
+			GLOBAL_EDITOR = TextEditOrig;
 		}
 		if (!InBracket){
 			txt.insert(Placed.x, L"{" + text + L"}");
@@ -634,9 +634,9 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 			*texttoPutin = txt;
 			return;
 		}
-		Editor->SetTextS(txt, true);
-		if (focus){ Editor->SetFocus(); }
-		Editor->SetSelection(whre, whre);
+		GLOBAL_EDITOR->SetTextS(txt, true);
+		if (focus){ GLOBAL_EDITOR->SetFocus(); }
+		GLOBAL_EDITOR->SetSelection(whre, whre);
 	}
 	else{
 		wxString tmp;
@@ -790,9 +790,9 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
 	if (FD->ShowModal() == wxID_OK) {
 		wxString txt = TextEdit->GetValue();
-		TextEditor * Editor = TextEdit;
+		TextEditor * GLOBAL_EDITOR = TextEdit;
 		if (grid->hasTLMode && txt == L""){
-			Editor = TextEditOrig;
+			GLOBAL_EDITOR = TextEditOrig;
 			txt = TextEditOrig->GetValue();
 		}
 
@@ -800,8 +800,8 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 			int bracketPos = txt.find(L"}", Placed.x);
 			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 		}
-		Editor->SetSelection(Placed.x, Placed.x);
-		Editor->SetFocus();
+		GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
+		GLOBAL_EDITOR->SetFocus();
 	}
 	else{
 		grid->DummyUndo(tmpIter);
@@ -879,11 +879,11 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		leftClick = !leftClick;
 
 	wxString tmptext = TextEdit->GetValue();
-	TextEditor *Editor = TextEdit;
+	TextEditor *GLOBAL_EDITOR = TextEdit;
 	int tmpIter = grid->file->Iter();
 	if (grid->hasTLMode && tmptext == L""){
 		tmptext = TextEditOrig->GetValue();
-		Editor = TextEditOrig;
+		GLOBAL_EDITOR = TextEditOrig;
 	}
 
 	AssColor actualColor = AssColor(wxString(L"#FFFFFF"));
@@ -901,12 +901,12 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		if (ColourDialog->ShowModal() == wxID_OK) {
 			//wywołane tylko by dodać kolor do recent;
 			ColourDialog->GetColor();
-			wxString txt = Editor->GetValue();
+			wxString txt = GLOBAL_EDITOR->GetValue();
 			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
-			Editor->SetSelection(Placed.x, Placed.x);
+			GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
@@ -926,18 +926,18 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		AssColor ret;
 		if (scp.PickColor(&ret)){
 			scpd->AddRecent();
-			wxString txt = Editor->GetValue();
+			wxString txt = GLOBAL_EDITOR->GetValue();
 			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
-			Editor->SetSelection(Placed.x, Placed.x);
+			GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
 		}
 	}
-	Editor->SetFocus();
+	GLOBAL_EDITOR->SetFocus();
 }
 
 void EditBox::GetColor(AssColor *actualColor, int numColor)
@@ -1105,7 +1105,7 @@ void EditBox::SetTlMode(bool tl, bool dummyTlMode /*= false*/)
 	if (!dummyTlMode){
 		if (TlMode->GetValue() != tl){ TlMode->SetValue(tl); }
 		KainoteFrame *Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
-		Kai->Toolbar->UpdateId(SaveTranslation, tl);
+		Kai->Toolbar->UpdateId(GLOBAL_SAVE_TRANSLATION, tl);
 	}
 }
 
@@ -1342,7 +1342,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 {
 	wxString Splitchar = (grid->subsFormat <= SRT) ? L"\\N" : L"|";
 	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == L"" && !TextEdit->HasFocus());
-	//Editor
+	//GLOBAL_EDITOR
 	TextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
 	long strt, ennd;
@@ -1371,7 +1371,7 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 	int idd = event.GetId();
 	int vidtime = Notebook::GetTab()->Video->Tell();
 	if (vidtime < line->Start.mstime || vidtime > line->End.mstime){ wxBell(); return; }
-	int diff = (idd == StartDifference) ? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime));
+	int diff = (idd == EDITBOX_START_DIFFERENCE) ? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime));
 	long startPosition, endPosition;
 	TextEdit->GetSelection(&startPosition, &endPosition);
 	wxString diffAsString;
@@ -1400,8 +1400,8 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	else{ txt = text; }
 	if (txt == L""){ Placed.x = 0; Placed.y = 0; InBracket = false; cursorpos = 0; if (endsel){ *endsel = false; } return false; }
 	if (grid->file->SelectionsSize() < 2){
-		TextEditor *Editor = (fromOriginal) ? TextEditOrig : TextEdit;
-		if (mode != 1){ Editor->GetSelection(&from, &to); }
+		TextEditor *GLOBAL_EDITOR = (fromOriginal) ? TextEditOrig : TextEdit;
+		if (mode != 1){ GLOBAL_EDITOR->GetSelection(&from, &to); }
 		if (mode == 2){
 			wxPoint brackets = FindBrackets(txt, from);
 			if (brackets.x != 0){
@@ -1736,9 +1736,9 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 
 		long from, to;
 		wxString txt = TextEdit->GetValue();
-		TextEditor *Editor = TextEdit;
-		if (grid->hasTLMode && txt == L""){ txt = TextEditOrig->GetValue(); Editor = TextEditOrig; }
-		Editor->GetSelection(&from, &to);
+		TextEditor *GLOBAL_EDITOR = TextEdit;
+		if (grid->hasTLMode && txt == L""){ txt = TextEditOrig->GetValue(); GLOBAL_EDITOR = TextEditOrig; }
+		GLOBAL_EDITOR->GetSelection(&from, &to);
 		if (oneline){
 			if (from != to){
 				txt.erase(txt.begin() + from, txt.begin() + to);
@@ -1751,8 +1751,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 			}
 			txt.insert(from, tag);
 			from += tag.length();
-			Editor->SetTextS(txt, true);
-			Editor->SetSelection(from, from);
+			GLOBAL_EDITOR->SetTextS(txt, true);
+			GLOBAL_EDITOR->SetSelection(from, from);
 		}
 		else{
 			wxArrayInt sels;
@@ -1967,13 +1967,13 @@ bool EditBox::IsCursorOnStart()
 	if (grid->file->SelectionsSize() > 1){ return true; }
 	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
 	wxString txt=TextEdit->GetValue();
-	MTextEditor *Editor = TextEdit;
+	MTextEditor *GLOBAL_EDITOR = TextEdit;
 	if(grid->transl && txt=="" ){
 	txt = TextEditOrig->GetValue();
-	Editor = TextEditOrig;
+	GLOBAL_EDITOR = TextEditOrig;
 	}
 	long from=0, to=0;
-	Editor->GetSelection(&from, &to);
+	GLOBAL_EDITOR->GetSelection(&from, &to);
 	if(from == 0 || txt.StartsWith("{")){
 	txt.Replace("}{","");
 	int endBracket = txt.Find(L'}');
@@ -1995,8 +1995,8 @@ void EditBox::OnDoubtfulTl(wxCommandEvent& event)
 		Dialogue *dial = grid->file->CopyDialogue(sels[i]);
 		dial->ChangeState(4);
 	}
-	if (event.GetId() == SetDoubtful){
-		grid->NextLine();
+	if (event.GetId() == EDITBOX_SET_DOUBTFUL){
+		grid->GLOBAL_NEXT_LINE();
 	}
 	else{
 		grid->Refresh(false);
@@ -2190,7 +2190,7 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 	return true;
 }
 
-void EditBox::CloseAudio()
+void EditBox::GLOBAL_CLOSE_AUDIO()
 {
 	if (!windowResizer || !ABox)
 		return;

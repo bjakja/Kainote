@@ -676,7 +676,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 				Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 				player = tab->Edit->ABox->audioDisplay;
 			}
-			else if (player){ Kaia->Frame->OpenAudioInTab(tab, CloseAudio, L""); }
+			else if (player){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
 		}
 		if (!VFF || VFF->width < 0){
 			return false;
@@ -703,7 +703,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
 		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 		if (player){
-			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), CloseAudio, L"");
+			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), GLOBAL_CLOSE_AUDIO, L"");
 		}
 	}
 	diff = 0;
@@ -1777,7 +1777,7 @@ byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
 	return (dssubs || ffnsubs) ? cpy1 : (byte*)datas;
 }
 
-void VideoRenderer::GoToNextKeyframe()
+void VideoRenderer::GLOBAL_GO_TO_NEXT_KEYFRAME()
 {
 	if (!VFF){ return; }
 	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){

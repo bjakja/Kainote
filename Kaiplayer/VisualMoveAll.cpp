@@ -253,8 +253,8 @@ void MoveAll::ChangeInLines(bool all)
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	wxString tmp;
 	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()==L"");
-	//MTextEditor *Editor=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
-	//wxString origText=Editor->GetValue();
+	//MTextEditor *GLOBAL_EDITOR=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+	//wxString origText=GLOBAL_EDITOR->GetValue();
 	const wxString &tlModeStyle = tab->Grid->GetSInfo(L"TLMode Style");
 	int moveLength = 0;
 

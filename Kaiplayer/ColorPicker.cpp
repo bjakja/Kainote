@@ -958,8 +958,8 @@ wxBitmap *DialogColorPicker::MakeAlphaSlider()
 	unsigned char *ospec, *spec;
 
 	ospec = spec = (unsigned char *)malloc(10 * 256 * 3);
-	const wxColour & kol1 = Options.GetColour(StylePreviewColor1);
-	const wxColour & kol2 = Options.GetColour(StylePreviewColor2);
+	const wxColour & kol1 = Options.GetColour(STYLE_PREVIEW_COLOR1);
+	const wxColour & kol2 = Options.GetColour(STYLE_PREVIEW_COLOR2);
 	byte b3 = kol1.Blue();
 	byte g3 = kol1.Green();
 	byte r3 = kol1.Red();
@@ -1317,8 +1317,8 @@ void ButtonColorPicker::OnClick(wxCommandEvent &event)
 //	tdc.DrawRectangle(0, 0, w, h);
 //
 //	if (color.a){
-//		const wxColour & col1 = Options.GetColour(StylePreviewColor1);
-//		const wxColour & col2 = Options.GetColour(StylePreviewColor2);
+//		const wxColour & col1 = Options.GetColour(STYLE_PREVIEW_COLOR1);
+//		const wxColour & col2 = Options.GetColour(STYLE_PREVIEW_COLOR2);
 //		int r2 = color.r, g2 = color.g, b2 = color.b;
 //		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
 //		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();

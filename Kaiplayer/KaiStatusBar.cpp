@@ -79,7 +79,7 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 		bool enabled = IsThisEnabled();
 		const wxColour & wbg = Options.GetColour(WINDOW_BACKGROUND);
 		const wxColour & wfg = Options.GetColour(WINDOW_TEXT);
-		const wxColour & border = Options.GetColour(StatusBarBorder);
+		const wxColour & border = Options.GetColour(STATUSBAR_BORDER);
 		tdc.SetBrush(wxBrush(wbg));
 		tdc.SetPen(wxPen(border));
 		tdc.DrawRectangle(0, 0, w, h);
@@ -112,7 +112,7 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	//	bool enabled = IsThisEnabled();
 	//	const wxColour & wbg = Options.GetColour(WINDOW_BACKGROUND);
 	//	const wxColour & wfg = Options.GetColour(WINDOW_TEXT);
-	//	const wxColour & border = Options.GetColour(StatusBarBorder);
+	//	const wxColour & border = Options.GetColour(STATUSBAR_BORDER);
 	//	gc->SetBrush(wxBrush(wbg));
 	//	gc->SetPen(wxPen(border));
 	//	gc->DrawRectangle(0, 0, w - 1, h - 1);

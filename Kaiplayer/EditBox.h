@@ -142,7 +142,7 @@ public:
 	void SetActiveLineToDoubtful();
 	void SetGrid(SubsGrid *_grid, bool isPreview = false);
 	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
-	void CloseAudio();
+	void GLOBAL_CLOSE_AUDIO();
 	TextEditor *GetEditor();
 	bool SetFont(const wxFont &font);
 

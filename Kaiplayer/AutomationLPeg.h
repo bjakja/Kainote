@@ -26,7 +26,7 @@ typedef const char *(*PattFunc) (const char *s,  /* current position */
 ** function to create new patterns based on 'PattFunc' functions.
 ** This function is available at *registry[KEYNEWPATT]. (Notice
 ** the extra indirection; the userdata at the registry points to
-** a variable that points to the function. In ANSI C a void* cannot
+** a variable that points to the function. In GLOBAL_ANSI C a void* cannot
 ** point to a function.)
 */
 typedef void (*Newpf) (lua_State *L,

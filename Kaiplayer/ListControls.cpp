@@ -262,16 +262,16 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	if (choiceText && choiceText->IsThisEnabled() != enabled){
 		choiceText->Enable(enabled);
 	}
-	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-		(enabled) ? Options.GetColour((GetWindowStyle() &KAI_COMBO_BOX) ? TextFieldBackground :
-		(HasFocus()) ? ButtonBackgroundOnFocus : ButtonBackground) :
+	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(BUTTON_BACKGROUND_HOVER) :
+		(clicked) ? Options.GetColour(BUTTON_BACKGROUND_PUSHED) :
+		(enabled) ? Options.GetColour((GetWindowStyle() &KAI_COMBO_BOX) ? TEXT_FIELD_BACKGROUND :
+		(HasFocus()) ? BUTTON_BACKGROUND_ON_FOCUS : BUTTON_BACKGROUND) :
 		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
-	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-		(clicked) ? Options.GetColour(ButtonBorderPushed) :
-		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
-		(enabled) ? Options.GetColour(ButtonBorder) :
-		Options.GetColour(ButtonBorderInactive)));
+	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(BUTTON_BORDER_HOVER) :
+		(clicked) ? Options.GetColour(BUTTON_BORDER_PUSHED) :
+		(HasFocus()) ? Options.GetColour(BUTTON_BORDER_ON_FOCUS) :
+		(enabled) ? Options.GetColour(BUTTON_BORDER) :
+		Options.GetColour(BUTTON_BORDER_INACTIVE)));
 	tdc.DrawRectangle(0, 0, w, h);
 
 	if (w > 15){
@@ -822,7 +822,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	const wxColour & graytext = Options.GetColour(WINDOW_TEXT_INACTIVE);
 
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
+	tdc.SetBrush(wxBrush(Options.GetColour(MENUBAR_BACKGROUND)));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
@@ -831,8 +831,8 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		int scrollPos = i + scPos;
 
 		if (scrollPos == sel){
-			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
-			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
+			tdc.SetPen(wxPen(Options.GetColour(MENU_BORDER_SELECTION)));
+			tdc.SetBrush(wxBrush(Options.GetColour(MENU_BACKGROUND_SELECTION)));
 			tdc.DrawRectangle(2, (height*i) + 2, w - 4, height - 2);
 		}
 		wxString desc = (*itemsList)[scrollPos];

@@ -71,8 +71,8 @@ void StylePreview::DrawPreview(Styles *style)
 		KaiLog(_("Instancja VobSuba nie utworzyła się.")); return;
 	}
 
-	const wxColour & kol1 = Options.GetColour(StylePreviewColor1);
-	const wxColour & kol2 = Options.GetColour(StylePreviewColor2);
+	const wxColour & kol1 = Options.GetColour(STYLE_PREVIEW_COLOR1);
+	const wxColour & kol2 = Options.GetColour(STYLE_PREVIEW_COLOR2);
 	b = kol1.Blue();
 	g = kol1.Green();
 	r = kol1.Red();

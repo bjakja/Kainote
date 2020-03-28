@@ -832,8 +832,8 @@ void SubsGridPreview::OnAccelerator(wxCommandEvent &evt)
 
 	previewGrid->file->GetSelections(previewGrid->selections);
 	int sels = previewGrid->selections.size();
-	if (id == PREVIEW_COPY && sels > 0) previewGrid->CopyRows(Copy);
-	if (id == PREVIEW_PASTE && sels > 0){ previewGrid->OnPaste(Paste); MakeVisible(); }
+	if (id == PREVIEW_COPY && sels > 0) previewGrid->CopyRows(GRID_COPY);
+	if (id == PREVIEW_PASTE && sels > 0){ previewGrid->OnPaste(GRID_PASTE); MakeVisible(); }
 }
 
 void SubsGridPreview::SeekForOccurences()

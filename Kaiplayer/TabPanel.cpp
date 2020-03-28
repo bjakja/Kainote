@@ -74,7 +74,8 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 
 
 TabPanel::~TabPanel(){
-	if (Video->player){ Video->player->Stop(false); } //fix kraszów powodowanych przez niszczenie editboxa na samym końcu i próbując pobrać audio na play kraszuje.
+	//fix of crashes caused by destroying of editbox on the end
+	if (Video->player){ Video->player->Stop(false); }
 }
 
 
@@ -82,9 +83,9 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 {
 	std::vector<wxAcceleratorEntry> gentries;
 	gentries.resize(3);
-	gentries[0].Set(wxACCEL_CTRL, (int) L'X', Cut);
-	gentries[1].Set(wxACCEL_CTRL, (int) L'C', Copy);
-	gentries[2].Set(wxACCEL_CTRL, (int) L'V', Paste);
+	gentries[0].Set(wxACCEL_CTRL, (int) L'X', GRID_CUT);
+	gentries[1].Set(wxACCEL_CTRL, (int) L'C', GRID_COPY);
+	gentries[2].Set(wxACCEL_CTRL, (int) L'V', GRID_PASTE);
 
 	std::vector<wxAcceleratorEntry> eentries;
 	eentries.resize(2);
@@ -100,7 +101,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		int id = cur->first.id;
 		if (cur->second.Accel == L"" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ){/*||
 			(onlyGridAudio && ((cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY) || 
-			(id < PlayPause && id <= Minus5Second)))){*/
+			(id < VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD)))){*/
 			continue;
 		}
 		//editor
@@ -112,7 +113,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 
 		}
 		else if (cur->first.Type == GRID_HOTKEY || cur->first.Type == AUDIO_HOTKEY){//grid
-			if (id >= AudioCommit && id <= AudioNext)
+			if (id >= AUDIO_COMMIT && id <= AUDIO_NEXT)
 				continue;
 
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
@@ -127,7 +128,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		else if (cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if (id > 2000 && id < 3990){ Video->ConnectAcc(id); }
-			if (id >= PlayPause && id <= Minus5Second){
+			if (id >= VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				Grid->ConnectAcc(id);
 			}

@@ -454,7 +454,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 	CenterOnParent();
 
 	wxAcceleratorEntry entries[2];
-	entries[0] = Hkeys.GetHKey(idAndType(Search));
+	entries[0] = Hkeys.GetHKey(idAndType(GLOBAL_SEARCH));
 	entries[1] = Hkeys.GetHKey(idAndType(GLOBAL_FIND_REPLACE));
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
@@ -462,7 +462,7 @@ FindReplaceDialog::FindReplaceDialog(KainoteFrame *_Kai, int whichWindow)
 		TabWindow *currentTab = GetTab();
 		if (currentTab->windowType != WINDOW_FIND){ findReplaceTabs->SetTab(0); }
 		else{ Hide(); }
-	}, Search);
+	}, GLOBAL_SEARCH);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		TabWindow *currentTab = GetTab();
 		if (currentTab->windowType != WINDOW_REPLACE){ findReplaceTabs->SetTab(1); }

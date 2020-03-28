@@ -284,17 +284,17 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	//else{
 	//	bool enabled = IsThisEnabled();
 
-	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-	//		(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
-	//		(enabled) ? Options.GetColour(ButtonBackground) :
+	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(BUTTON_BACKGROUND_HOVER) :
+	//		(clicked) ? Options.GetColour(BUTTON_BACKGROUND_PUSHED) :
+	//		(HasFocus()) ? Options.GetColour(BUTTON_BACKGROUND_ON_FOCUS) :
+	//		(enabled) ? Options.GetColour(BUTTON_BACKGROUND) :
 	//		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 
-	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
-	//		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
-	//		(enabled) ? Options.GetColour(ButtonBorder) :
-	//		Options.GetColour(ButtonBorderInactive)));
+	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(BUTTON_BORDER_HOVER) :
+	//		(clicked) ? Options.GetColour(BUTTON_BORDER_PUSHED) :
+	//		(HasFocus()) ? Options.GetColour(BUTTON_BORDER_ON_FOCUS) :
+	//		(enabled) ? Options.GetColour(BUTTON_BORDER) :
+	//		Options.GetColour(BUTTON_BORDER_INACTIVE)));
 
 	//	gc->DrawRectangle(0.0, 0.0, w-1, h-1);
 	//	if (w > 10){
@@ -318,7 +318,7 @@ void MappedButton::OnPaint(wxPaintEvent& event)
 	//		}
 	//		else if (isColorButton){
 	//			gc->SetBrush(wxBrush(buttonColor));
-	//			gc->SetPen(wxPen(Options.GetColour(ButtonBorder)));
+	//			gc->SetPen(wxPen(Options.GetColour(BUTTON_BORDER)));
 	//			gc->DrawRectangle(4.0, 4.0, w - 8, h - 8);
 	//		}
 	//		
@@ -348,16 +348,16 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 
 	tdc.SetFont(GetFont());
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-		(HasFocus()) ? Options.GetColour(ButtonBackgroundOnFocus) :
-		(enabled) ? Options.GetColour(ButtonBackground) :
+	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(BUTTON_BACKGROUND_HOVER) :
+		(clicked) ? Options.GetColour(BUTTON_BACKGROUND_PUSHED) :
+		(HasFocus()) ? Options.GetColour(BUTTON_BACKGROUND_ON_FOCUS) :
+		(enabled) ? Options.GetColour(BUTTON_BACKGROUND) :
 		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
-	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-		(clicked) ? Options.GetColour(ButtonBorderPushed) :
-		(HasFocus()) ? Options.GetColour(ButtonBorderOnFocus) :
-		(enabled) ? Options.GetColour(ButtonBorder) :
-		Options.GetColour(ButtonBorderInactive)));
+	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(BUTTON_BORDER_HOVER) :
+		(clicked) ? Options.GetColour(BUTTON_BORDER_PUSHED) :
+		(HasFocus()) ? Options.GetColour(BUTTON_BORDER_ON_FOCUS) :
+		(enabled) ? Options.GetColour(BUTTON_BORDER) :
+		Options.GetColour(BUTTON_BORDER_INACTIVE)));
 	tdc.DrawRectangle(0, 0, w, h);
 
 	if (w > 10){
@@ -375,7 +375,7 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 		}
 		else if (isColorButton){
 			tdc.SetBrush(wxBrush(buttonColor));
-			tdc.SetPen(wxPen(Options.GetColour(ButtonBorder)));
+			tdc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER)));
 			tdc.DrawRectangle(4, 4, w - 8, h - 8);
 		}
 		tdc.SetTextForeground((enabled && changedForeground) ? GetForegroundColour() :
@@ -583,16 +583,16 @@ void ToggleButton::OnPaint(wxPaintEvent& event)
 	//	wxColour background = GetParent()->GetBackgroundColour();
 	//	bool enabled = IsThisEnabled();
 	//	
-	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
-	//		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-	//		(enabled) ? Options.GetColour(ButtonBackground) :
+	//	gc->SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(BUTTON_BACKGROUND_HOVER) :
+	//		(toggled && !clicked) ? Options.GetColour(TOGGLE_BUTTON_BACKGROUND_TOGGLED) :
+	//		(clicked) ? Options.GetColour(BUTTON_BACKGROUND_PUSHED) :
+	//		(enabled) ? Options.GetColour(BUTTON_BACKGROUND) :
 	//		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
-	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-	//		(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
-	//		(clicked) ? Options.GetColour(ButtonBorderPushed) :
-	//		(enabled) ? Options.GetColour(ButtonBorder) :
-	//		Options.GetColour(ButtonBorderInactive)));
+	//	gc->SetPen(wxPen((enter && !clicked) ? Options.GetColour(BUTTON_BORDER_HOVER) :
+	//		(toggled && !clicked) ? Options.GetColour(TOGGLE_BUTTON_BORDER_TOGGLED) :
+	//		(clicked) ? Options.GetColour(BUTTON_BORDER_PUSHED) :
+	//		(enabled) ? Options.GetColour(BUTTON_BORDER) :
+	//		Options.GetColour(BUTTON_BORDER_INACTIVE)));
 
 	//	gc->DrawRectangle(0.0, 0.0, w - 1, h - 1);
 
@@ -631,16 +631,16 @@ void ToggleButton::PaintGDI(wxDC &tdc, int w, int h){
 	tdc.SetFont(GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	bool enabled = IsThisEnabled();
-	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(ButtonBackgroundHover) :
-		(toggled && !clicked) ? Options.GetColour(TogglebuttonBackgroundToggled) :
-		(clicked) ? Options.GetColour(ButtonBackgroundPushed) :
-		(enabled) ? Options.GetColour(ButtonBackground) :
+	tdc.SetBrush(wxBrush((enter && !clicked) ? Options.GetColour(BUTTON_BACKGROUND_HOVER) :
+		(toggled && !clicked) ? Options.GetColour(TOGGLE_BUTTON_BACKGROUND_TOGGLED) :
+		(clicked) ? Options.GetColour(BUTTON_BACKGROUND_PUSHED) :
+		(enabled) ? Options.GetColour(BUTTON_BACKGROUND) :
 		Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
-	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(ButtonBorderHover) :
-		(toggled && !clicked) ? Options.GetColour(TogglebuttonBorderToggled) :
-		(clicked) ? Options.GetColour(ButtonBorderPushed) :
-		(enabled) ? Options.GetColour(ButtonBorder) :
-		Options.GetColour(ButtonBorderInactive)));
+	tdc.SetPen(wxPen((enter && !clicked) ? Options.GetColour(BUTTON_BORDER_HOVER) :
+		(toggled && !clicked) ? Options.GetColour(TOGGLE_BUTTON_BORDER_TOGGLED) :
+		(clicked) ? Options.GetColour(BUTTON_BORDER_PUSHED) :
+		(enabled) ? Options.GetColour(BUTTON_BORDER) :
+		Options.GetColour(BUTTON_BORDER_INACTIVE)));
 
 	tdc.DrawRectangle(0, 0, w, h);
 

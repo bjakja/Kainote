@@ -597,11 +597,11 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	//dc.SetPen(*wxTRANSPARENT_PEN);
 	//dc.SetBrush(wxBrush(Options.GetColour("Menu Bar Background 2")));
 	dc.GradientFillLinear(wxRect(0, 0, w, TabHeight),
-		Options.GetColour(TabsBarBackground2),
-		Options.GetColour(TabsBarBackground1), wxTOP);
-	const wxColour & activeLines = Options.GetColour(TabsBorderActive);
-	const wxColour & activeText = Options.GetColour(TabsTextActive);
-	const wxColour & inactiveText = Options.GetColour(TabsTextInactive);
+		Options.GetColour(TABSBAR_BACKGROUND2),
+		Options.GetColour(TABSBAR_BACKGROUND1), wxTOP);
+	const wxColour & activeLines = Options.GetColour(TABS_BORDER_ACTIVE);
+	const wxColour & activeText = Options.GetColour(TABS_TEXT_ACTIVE);
+	const wxColour & inactiveText = Options.GetColour(TABS_TEXT_INACTIVE);
 
 
 	start = (allTabsVisible) ? 2 : 20;
@@ -623,15 +623,15 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawLine(0, 0, start, 0);
 			dc.DrawLine(start + tabSize, 0, w, 0);
 			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(Options.GetColour(TabsBackgroundActive));
+			dc.SetBrush(Options.GetColour(TABS_BACKGROUND_ACTIVE));
 			dc.DrawRectangle(start + 1, 0, tabSize - 1, TabHeight - 2);
 
 
 			//najechany x na wybranej zakładce
 			if (onx){
-				dc.SetBrush(Options.GetColour(TabsCloseHover));
+				dc.SetBrush(Options.GetColour(TABS_CLOSE_HOVER));
 				dc.DrawRectangle(start + tabSize - xWidth, 4, xWidth - 2, TabHeight - 10);
-				dc.SetBrush(Options.GetColour(TabsBackgroundActive));
+				dc.SetBrush(Options.GetColour(TABS_BACKGROUND_ACTIVE));
 			}
 			dc.SetTextForeground(activeText);
 			dc.DrawText(L"X", start + tabSize - xWidth + 4, 4);
@@ -642,7 +642,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
-				TabsBackgroundInactiveHover : TabsBackgroundSecondWindow));
+				TABS_BACKGROUND_INACTIVE_HOVER : TABS_BACKGROUND_SECOND_WINDOW));
 			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 2);
 		}
 		else{
@@ -650,13 +650,13 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetTextForeground(inactiveText);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxBrush(Options.GetColour((i == (size_t)over && !rightArrowHover && !rightArrowClicked) ? 
-				TabsBackgroundInactiveHover : TabsBackgroundInactive)));
+				TABS_BACKGROUND_INACTIVE_HOVER : TABS_BACKGROUND_INACTIVE)));
 			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 3);
 		}
 
 		//rysowanie konturów zakładki
 		/*if (gc){
-			gc->SetPen(wxPen(Options.GetColour((i == iter) ? TabsBorderActive : TabsBorderInactive)));
+			gc->SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 			wxGraphicsPath path = gc->CreatePath();
 			path.MoveToPoint(start, 0.0);
@@ -670,7 +670,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			gc->StrokePath(path);
 		}
 		else{*/
-			dc.SetPen(wxPen(Options.GetColour((i == iter) ? TabsBorderActive : TabsBorderInactive)));
+			dc.SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
 			dc.DrawLine(start, 0, start, TabHeight - 4);
 			dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
 			dc.DrawLine(start + 2, TabHeight - 2, start + tabSize - 2, TabHeight - 2);
@@ -703,14 +703,14 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	}
 
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	const wxColour & background = Options.GetColour(TabsBarArrowBackground);
+	const wxColour & background = Options.GetColour(TABSBAR_ARROW_BACKGROUND);
 	dc.SetBrush(wxBrush(background));
 	//strzałki do przesuwania zakładek
 	if (!allTabsVisible){
-		const wxColour & backgroundHover = Options.GetColour(TabsBarArrowBackgroundHover);
+		const wxColour & backgroundHover = Options.GetColour(TABSBAR_ARROW_BACKGROUND_HOVER);
 		//make new color
-		const wxColour & backgroundClicked = Options.GetColour(ButtonBackgroundPushed);
-		const wxColour & arrow = Options.GetColour(TabsBarArrow);
+		const wxColour & backgroundClicked = Options.GetColour(BUTTON_BACKGROUND_PUSHED);
+		const wxColour & arrow = Options.GetColour(TABSBAR_ARROW);
 
 		dc.SetPen(wxPen(arrow, 2));
 		//left vertical line
@@ -754,7 +754,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 	//plus który jest zawsze widoczny
 
-	dc.SetBrush(wxBrush(Options.GetColour((newTabHover) ? TabsBackgroundInactiveHover : TabsBackgroundInactive)));
+	dc.SetBrush(wxBrush(Options.GetColour((newTabHover) ? TABS_BACKGROUND_INACTIVE_HOVER : TABS_BACKGROUND_INACTIVE)));
 	//if(plus){
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(start + 1, 1, TabHeight - 6, TabHeight - 3);
@@ -766,7 +766,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle(start + (TabHeight / 2) - 3, 7, 2, TabHeight - 16);
 
 	/*if (gc){
-		gc->SetPen(wxPen(Options.GetColour(TabsBorderInactive)));
+		gc->SetPen(wxPen(Options.GetColour(TABS_BORDER_INACTIVE)));
 		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
 		wxGraphicsPath path = gc->CreatePath();
 		path.MoveToPoint(start, 0.0);
@@ -779,7 +779,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		gc->StrokePath(path);
 	}
 	else{*/
-		dc.SetPen(wxPen(Options.GetColour(TabsBorderInactive)));
+		dc.SetPen(wxPen(Options.GetColour(TABS_BORDER_INACTIVE)));
 		dc.DrawLine(start, 0, start, TabHeight - 4);
 		dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
 		dc.DrawLine(start + 2, TabHeight - 2, start + TabHeight - 7, TabHeight - 2);
@@ -791,7 +791,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	cdc.Blit(0, h - TabHeight, w, TabHeight, &dc, 0, 0);
 	if (split){
 		cdc.SetPen(*wxTRANSPARENT_PEN);
-		cdc.SetBrush(Options.GetColour(TabsBarBackground1));
+		cdc.SetBrush(Options.GetColour(TABSBAR_BACKGROUND1));
 		cdc.DrawRectangle(splitline - 2, 0, 4, h - TabHeight);
 		cdc.SetPen(wxPen(Options.GetColour(WINDOW_BACKGROUND)));
 		bool aciter = (Pages[iter]->GetPosition().x == 1);

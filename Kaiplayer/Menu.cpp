@@ -638,11 +638,11 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	wxBitmap dot = wxBITMAP_PNG(L"dot");
 	wxBitmap separator = wxBITMAP_PNG(L"separator");
 	wxBitmap arrow = wxBITMAP_PNG(L"arrow");
-	const wxColour & highlight = Options.GetColour(MenuBorderSelection);
+	const wxColour & highlight = Options.GetColour(MENU_BORDER_SELECTION);
 	const wxColour & text = Options.GetColour(WINDOW_TEXT);
 	const wxColour & graytext = Options.GetColour(WINDOW_TEXT_INACTIVE);
-	const wxColour & background = Options.GetColour(MenuBackground);
-	const wxColour & menuhighlight = Options.GetColour(MenuBackgroundSelection);
+	const wxColour & background = Options.GetColour(MENUBAR_BACKGROUND);
+	const wxColour & menuhighlight = Options.GetColour(MENU_BACKGROUND_SELECTION);
 	tdc.SetFont(MenuBar::font);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
@@ -970,8 +970,8 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	tdc.SetFont(font);
 	tdc.GradientFillLinear(wxRect(0, 0, w, h),
-		Options.GetColour(MenuBarBackground2),
-		Options.GetColour(MenuBarBackground1), wxTOP);
+		Options.GetColour(MENUBAR_BACKGROUND2),
+		Options.GetColour(MENUBAR_BACKGROUND1), wxTOP);
 	tdc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	int posX = halfIndent;
 	wxSize mnbefsize;
@@ -996,8 +996,8 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		wxSize te = tdc.GetTextExtent(desc);
 
 		if (i == sel){
-			tdc.SetBrush(wxBrush(Options.GetColour(clicked ? MenuBarBackgroundSelection : MENU_BAR_BACKGROUND_HOVER)));
-			tdc.SetPen(wxPen(Options.GetColour(MenuBarBorderSelection)));
+			tdc.SetBrush(wxBrush(Options.GetColour(clicked ? MENUBAR_BACKGROUND_SELECTION : MENUBAR_BACKGROUND_HOVER)));
+			tdc.SetPen(wxPen(Options.GetColour(MENUBAR_BORDER_SELECTION)));
 			tdc.DrawRoundedRectangle(posX - 4, 1, te.x + 8, h - 3, 3.0);
 		}
 		tdc.DrawText(desc, posX, (h - te.y) / 2);

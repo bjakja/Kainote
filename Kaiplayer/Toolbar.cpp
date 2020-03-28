@@ -66,13 +66,13 @@ void KaiToolbar::InitToolbar()
 		}
 	}
 	if (IDS.size() < 1){
-		IDS.Add(OpenSubs); IDS.Add(RecentSubs); IDS.Add(OpenVideo); IDS.Add(RecentVideo);
-		IDS.Add(SaveSubs); IDS.Add(SaveSubsAs); IDS.Add(SaveAllSubs);
-		IDS.Add(RemoveSubs); IDS.Add(Editor); IDS.Add(GLOBAL_FIND_REPLACE);
-		IDS.Add(StyleManager); IDS.Add(ASSProperties); IDS.Add(ChangeTime);
-		IDS.Add(SetVideoAtStart); IDS.Add(SetVideoAtEnd); IDS.Add(SetStartTime); IDS.Add(SetEndTime);
-		IDS.Add(ConvertToASS); IDS.Add(ConvertToSRT); IDS.Add(VideoZoom);
-		IDS.Add(SubsResample); IDS.Add(HideTags); IDS.Add(Settings);
+		IDS.Add(GLOBAL_OPEN_SUBS); IDS.Add(GLOBAL_RECENT_SUBS); IDS.Add(OpenVideo); IDS.Add(GLOBAL_RECENT_VIDEO);
+		IDS.Add(GLOBAL_SAVE_SUBS); IDS.Add(GLOBAL_SAVE_SUBS_AS); IDS.Add(GLOBAL_SAVE_ALL_SUBS);
+		IDS.Add(GLOBAL_REMOVE_SUBS); IDS.Add(GLOBAL_EDITOR); IDS.Add(GLOBAL_FIND_REPLACE);
+		IDS.Add(GLOBAL_OPEN_STYLE_MANAGER); IDS.Add(GLOBAL_OPEN_ASS_PROPERTIES); IDS.Add(GLOBAL_SHOW_SHIFT_TIMES);
+		IDS.Add(GLOBAL_SET_VIDEO_AT_START_TIME); IDS.Add(GLOBAL_SET_VIDEO_AT_END_TIME); IDS.Add(GLOBAL_SET_START_TIME); IDS.Add(GLOBAL_SET_END_TIME);
+		IDS.Add(GLOBAL_CONVERT_TO_ASS); IDS.Add(GLOBAL_CONVERT_TO_SRT); IDS.Add(GLOBAL_VIDEO_ZOOM);
+		IDS.Add(GLOBAL_OPEN_SUBS_RESAMPLE); IDS.Add(GLOBAL_HIDE_TAGS); IDS.Add(GLOBAL_SETTINGS);
 	}
 	for (size_t i = 0; i < IDS.size(); i++)
 	{
@@ -197,7 +197,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 				MenuItem *item = mb->FindItem(tools[elem]->id);
 				Menu * smenu = item->GetSubMenu();
 				//Menu * shmenu;
-				if (tools[elem]->id != SortLines && tools[elem]->id != SortSelected){
+				if (tools[elem]->id != GLOBAL_SORT_LINES && tools[elem]->id != GLOBAL_SORT_SELECTED_LINES){
 					KainoteFrame *Kai = (KainoteFrame*)GetParent();
 					int what = (smenu == Kai->SubsRecMenu) ? 0 : (smenu == Kai->VidsRecMenu) ? 1 : 2;
 					Kai->AppendRecent(what, smenu);
@@ -251,9 +251,9 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 		bool toggled = tools[i]->toggled;
 		if (i == sel || toggled){
 			tdc.SetPen(wxPen((Clicked || toggled) ?
-				Options.GetColour(ButtonBorderPushed) : Options.GetColour(ButtonBorderHover)));
+				Options.GetColour(BUTTON_BORDER_PUSHED) : Options.GetColour(BUTTON_BORDER_HOVER)));
 			tdc.SetBrush(wxBrush((Clicked || toggled) ?
-				Options.GetColour(ButtonBackgroundPushed) : Options.GetColour(ButtonBackgroundHover)));
+				Options.GetColour(BUTTON_BACKGROUND_PUSHED) : Options.GetColour(BUTTON_BACKGROUND_HOVER)));
 			tdc.DrawRoundedRectangle((vertical) ? pos1 + 2 : pos - 2,
 				(vertical) ? pos - 2 : pos1 + 2, thickness - 4, 
 				(i >= toolsSize - 1) ? (thickness / 2) : thickness - 4, 1.1);
@@ -567,7 +567,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	wxBitmap checkbmp = wxBITMAP_PNG(L"check");
 	tdc.SetFont(GetFont());
-	const wxColour & background = Options.GetColour(MenuBackground);
+	const wxColour & background = Options.GetColour(MENUBAR_BACKGROUND);
 	const wxColour & txt = Options.GetColour(WINDOW_TEXT);
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
@@ -590,8 +590,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 			if (parent->tools[j]->id == parent->ids[i + scPos]){ check = true; break; }
 		}
 		if (i + scPos == sel){
-			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
-			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
+			tdc.SetPen(wxPen(Options.GetColour(MENU_BORDER_SELECTION)));
+			tdc.SetBrush(wxBrush(Options.GetColour(MENU_BACKGROUND_SELECTION)));
 			tdc.DrawRectangle(1, posY, w - 1, fh - 2);
 		}
 

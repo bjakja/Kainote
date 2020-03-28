@@ -30,19 +30,19 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTabBar::OnMouseEvent, this);
 	wxAcceleratorEntry entries[2];
 	
-	entries[0] = Hkeys.GetHKey(idAndType(NextTab));
-	entries[1] = Hkeys.GetHKey(idAndType(PreviousTab));
+	entries[0] = Hkeys.GetHKey(idAndType(GLOBAL_NEXT_TAB));
+	entries[1] = Hkeys.GetHKey(idAndType(GLOBAL_PREVIOUS_TAB));
 
 	wxAcceleratorTable accel(2, entries);
 	SetAcceleratorTable(accel);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		if (tabs.size() < 2){ return; }
-		int newTab = (evt.GetId() == NextTab) ? currentTab + 1 : currentTab - 1;
+		int newTab = (evt.GetId() == GLOBAL_NEXT_TAB) ? currentTab + 1 : currentTab - 1;
 		if (newTab < 0){ newTab = tabs.size() - 1; }
 		else if (newTab >= (int)tabs.size()){ newTab = 0; }
 		SetTab(newTab);
-	}, NextTab, PreviousTab);
+	}, GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB);
 
 	int x = 0, y = 0;
 	GetTextExtent(L"#TWFfGHj", &x, &y);
@@ -138,13 +138,13 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(wxBitmap(w, tabHeader));
 	tdc.SetFont(GetFont());
-	const wxColour & tabsBarBackground = Options.GetColour(TabsBackgroundInactive);
-	const wxColour & tabsBarBackgroundHover = Options.GetColour(TabsBackgroundInactiveHover);
-	const wxColour & activeLines = Options.GetColour(TabsBorderActive);
-	const wxColour & tabsBarBorderInactive = Options.GetColour(TabsBorderInactive); 
-	const wxColour & activeText = Options.GetColour(TabsTextActive);
-	const wxColour & inactiveText = Options.GetColour(TabsTextInactive);
-	const wxColour & tabsBarBackgroundActive = Options.GetColour(TabsBackgroundActive);
+	const wxColour & tabsBarBackground = Options.GetColour(TABS_BACKGROUND_INACTIVE);
+	const wxColour & tabsBarBackgroundHover = Options.GetColour(TABS_BACKGROUND_INACTIVE_HOVER);
+	const wxColour & activeLines = Options.GetColour(TABS_BORDER_ACTIVE);
+	const wxColour & tabsBarBorderInactive = Options.GetColour(TABS_BORDER_INACTIVE); 
+	const wxColour & activeText = Options.GetColour(TABS_TEXT_ACTIVE);
+	const wxColour & inactiveText = Options.GetColour(TABS_TEXT_INACTIVE);
+	const wxColour & tabsBarBackgroundActive = Options.GetColour(TABS_BACKGROUND_ACTIVE);
 
 	tdc.SetPen(*wxTRANSPARENT_PEN);
 	tdc.SetBrush(Options.GetColour(WINDOW_BACKGROUND));

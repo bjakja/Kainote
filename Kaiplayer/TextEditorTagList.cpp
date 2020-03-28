@@ -192,7 +192,7 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 	const wxColour & text = Options.GetColour(WINDOW_TEXT);
 
 	tdc.SetFont(GetFont());
-	tdc.SetBrush(wxBrush(Options.GetColour(MenuBackground)));
+	tdc.SetBrush(wxBrush(Options.GetColour(MENUBAR_BACKGROUND)));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
 	int keyPosition = FindItemById(scrollPositionV);
@@ -209,8 +209,8 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 			continue;
 		}
 		if ((k + scrollPositionV) == sel){
-			tdc.SetPen(wxPen(Options.GetColour(MenuBorderSelection)));
-			tdc.SetBrush(wxBrush(Options.GetColour(MenuBackgroundSelection)));
+			tdc.SetPen(wxPen(Options.GetColour(MENU_BORDER_SELECTION)));
+			tdc.SetBrush(wxBrush(Options.GetColour(MENU_BACKGROUND_SELECTION)));
 			tdc.DrawRectangle(2, (height * k) + 2, w - 4, height - 2);
 		}
 		wxString desc;

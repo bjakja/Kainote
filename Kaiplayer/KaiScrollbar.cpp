@@ -183,10 +183,10 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, oh); }
 	tdc.SelectObject(*bmp);
-	const wxColour & background = Options.GetColour(ScrollbarBackground);
-	wxColour scroll = (enter && !pushed) ? Options.GetColour(ScrollbarScrollHover) :
-		(pushed) ? Options.GetColour(ScrollbarScrollPushed) :
-		Options.GetColour(ScrollbarScroll);
+	const wxColour & background = Options.GetColour(SCROLLBAR_BACKGROUND);
+	wxColour scroll = (enter && !pushed) ? Options.GetColour(SCROLLBAR_THUMB_HOVER) :
+		(pushed) ? Options.GetColour(SCROLLBAR_THUMB_PUSHED) :
+		Options.GetColour(SCROLLBAR_THUMB);
 	tdc.SetPen(wxPen(background));
 	tdc.SetBrush(wxBrush(background));
 	tdc.DrawRectangle(0, 0, ow, oh);

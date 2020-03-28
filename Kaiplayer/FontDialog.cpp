@@ -90,8 +90,8 @@ void FontList::DrawFld(wxDC &dc, int w, int h)
 {
 	int fw = 0, fh = 0, posX = 1, posY = 1;
 
-	dc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
-	dc.SetBrush(wxBrush(Options.GetColour(StaticListBackground)));
+	dc.SetPen(wxPen(Options.GetColour(STATICLIST_BORDER)));
+	dc.SetBrush(wxBrush(Options.GetColour(STATICLIST_BACKGROUND)));
 	dc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	dc.DrawRectangle(0, 0, w, h);
 
@@ -120,7 +120,7 @@ void FontList::DrawFld(wxDC &dc, int w, int h)
 	for (int i = scPos; i < scrows; i++)
 	{
 		if (i == sel){
-			const wxColour & selection = Options.GetColour(StaticListSelection);
+			const wxColour & selection = Options.GetColour(STATICLIST_SELECTION);
 			dc.SetPen(wxPen(selection));
 			dc.SetBrush(wxBrush(selection));
 			dc.DrawRectangle(posX, posY, w - 2, Height);

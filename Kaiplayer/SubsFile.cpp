@@ -381,7 +381,7 @@ void SubsFile::SortAll(bool func(Dialogue *i, Dialogue *j))
 	std::sort(subs->dialogues.begin(), subs->dialogues.end(), func);
 }
 
-void SubsFile::SortSelected(bool func(Dialogue *i, Dialogue *j))
+void SubsFile::GLOBAL_SORT_SELECTED_LINES(bool func(Dialogue *i, Dialogue *j))
 {
 	std::vector<Dialogue*> selected;
 	for (auto cur = subs->Selections.begin(); cur != subs->Selections.end(); cur++){

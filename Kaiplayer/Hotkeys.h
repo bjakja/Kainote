@@ -21,52 +21,52 @@
 #include "KaiDialog.h"
 #include "EnumFactory.h"
 
-//Po zmianie PlayPause nale¿y go zmieniæ w dshowrenderer by pauzowanie po odtwarzaniu linii zadzia³a³o
+//Po zmianie VIDEO_PLAY_PAUSE nale¿y go zmieniæ w dshowrenderer by pauzowanie po odtwarzaniu linii zadzia³a³o
 #define IDS(XX) \
-	XX( AudioCommitAlt,=620 ) \
-	XX( AudioPlayAlt, ) \
-	XX( AudioPlayLineAlt, ) \
-	XX( AudioPreviousAlt, ) \
-	XX( AudioNextAlt, ) \
-	XX( AudioCommit,=1620 ) \
-	XX( AudioPlay, ) \
-	XX( AudioPlayLine, ) \
-	XX( AudioPrevious, ) \
-	XX( AudioNext, ) \
-	XX( AudioStop, ) \
-	XX( AudioPlayBeforeMark, ) \
-	XX( AudioPlayAfterMark, ) \
-	XX( AudioPlay500MSBefore, ) \
-	XX( AudioPlay500MSAfter, ) \
-	XX( AudioPlay500MSFirst, ) \
-	XX( AudioPlay500MSLast, ) \
-	XX( AudioPlayToEnd, ) \
-	XX( AudioScrollLeft, ) \
-	XX( AudioScrollRight, ) \
-	XX( AudioGoto, ) \
-	XX( AudioLeadin, ) \
-	XX( AudioLeadout, ) \
-	XX( PlayPause,=2021)\
-	XX( StopPlayback,) \
-	XX( Plus5Second,)\
-	XX( Minus5Second,)\
-	XX( MinusMinute, ) \
-	XX( PlusMinute, ) \
-	XX( VolumePlus, ) \
-	XX( VolumeMinus, ) \
-	XX( PreviousVideo, ) \
-	XX( NextVideo, ) \
-	XX( PreviousChapter, ) \
-	XX( NextChapter, ) \
-	XX( FullScreen, ) \
-	XX( HideProgressBar, ) \
-	XX( DeleteVideo, ) \
-	XX( AspectRatio, ) \
-	XX( CopyCoords, ) \
-	XX( FrameToPNG, ) \
-	XX( FrameToClipboard, ) \
-	XX( SubbedFrameToPNG, ) \
-	XX( SubbedFrameToClipboard, ) \
+	XX( AUDIO_COMMIT_ALT,=620 ) \
+	XX( AUDIO_PLAY_ALT, ) \
+	XX( AUDIO_PLAY_LINE_ALT, ) \
+	XX( AUDIO_PREVIOUS_ALT, ) \
+	XX( AUDIO_NEXT_ALT, ) \
+	XX( AUDIO_COMMIT,=1620 ) \
+	XX( AUDIO_PLAY, ) \
+	XX( AUDIO_PLAY_LINE, ) \
+	XX( AUDIO_PREVIOUS, ) \
+	XX( AUDIO_NEXT, ) \
+	XX( AUDIO_STOP, ) \
+	XX( AUDIO_PLAY_BEFORE_MARK, ) \
+	XX( AUDIO_PLAY_AFTER_MARK, ) \
+	XX( AUDIO_PLAY_500MS_BEFORE, ) \
+	XX( AUDIO_PLAY_500MS_AFTER, ) \
+	XX( AUDIO_PLAY_500MS_FIRST, ) \
+	XX( AUDIO_PLAY_500MS_LAST, ) \
+	XX( AUDIO_PLAY_TO_END, ) \
+	XX( AUDIO_SCROLL_LEFT, ) \
+	XX( AUDIO_SCROLL_RIGHT, ) \
+	XX( AUDIO_GOTO, ) \
+	XX( AUDIO_LEAD_IN, ) \
+	XX( AUDIO_LEAD_OUT, ) \
+	XX( VIDEO_PLAY_PAUSE,=2021)\
+	XX( VIDEO_STOP,) \
+	XX( VIDEO_5_SECONDS_FORWARD,)\
+	XX( VIDEO_5_SECONDS_BACKWARD,)\
+	XX( VIDEO_MINUTE_BACKWARD, ) \
+	XX( VIDEO_MINUTE_FORWARD, ) \
+	XX( VIDEO_VOLUME_PLUS, ) \
+	XX( VIDEO_VOLUME_MINUS, ) \
+	XX( VIDEO_PREVIOUS_FILE, ) \
+	XX( VIDEO_NEXT_FILE, ) \
+	XX( VIDEO_PREVIOUS_CHAPTER, ) \
+	XX( VIDEO_NEXT_CHAPTER, ) \
+	XX( VIDEO_FULL_SCREEN, ) \
+	XX( VIDEO_HIDE_PROGRESS_BAR, ) \
+	XX( VIDEO_DELETE_FILE, ) \
+	XX( VIDEO_ASPECT_RATIO, ) \
+	XX( VIDEO_COPY_COORDS, ) \
+	XX( VIDEO_SAVE_FRAME_TO_PNG, ) \
+	XX( VIDEO_COPY_FRAME_TO_CLIPBOARD, ) \
+	XX( VIDEO_SAVE_SUBBED_FRAME_TO_PNG, ) \
+	XX( VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD, ) \
 	XX( EDITBOX_CHANGE_FONT,=3991) \
 	XX( EDITBOX_CHANGE_UNDERLINE,) \
 	XX( EDITBOX_CHANGE_STRIKEOUT,) \
@@ -79,14 +79,14 @@
 	XX( EDITBOX_CHANGE_COLOR_SHADOW,) \
 	XX( EDITBOX_COMMIT,) \
 	XX( EDITBOX_COMMIT_GO_NEXT_LINE,) \
-	XX( PutBold,) \
-	XX( PutItalic, ) \
-	XX( SplitLine, ) \
-	XX( StartDifference, ) \
-	XX( EndDifference, ) \
-	XX( FindNextDoubtful, ) \
-	XX( FindNextUntranslated, ) \
-	XX( SetDoubtful, ) \
+	XX( EDITBOX_INSERT_BOLD,) \
+	XX( EDITBOX_INSERT_ITALIC, ) \
+	XX( EDITBOX_SPLIT_LINE, ) \
+	XX( EDITBOX_START_DIFFERENCE, ) \
+	XX( EDITBOX_END_DIFFERENCE, ) \
+	XX( EDITBOX_FIND_NEXT_DOUBTFUL, ) \
+	XX( EDITBOX_FIND_NEXT_UNTRANSLATED, ) \
+	XX( EDITBOX_SET_DOUBTFUL, ) \
 	XX( EDITBOX_TAG_BUTTON1,=4900)\
 	XX( EDITBOX_TAG_BUTTON2,)\
 	XX( EDITBOX_TAG_BUTTON3,)\
@@ -117,125 +117,125 @@
 	XX( GRID_HIDE_MARGINV,=5128 ) \
 	XX( GRID_HIDE_EFFECT,=5256 ) \
 	XX( GRID_HIDE_CPS,=5512 ) \
-	XX( InsertBefore,=5555 ) \
-	XX( InsertAfter, ) \
-	XX( InsertBeforeVideo, ) \
-	XX( InsertAfterVideo, ) \
-	XX( InsertBeforeWithVideoFrame, ) \
-	XX( InsertAfterWithVideoFrame, ) \
-	XX( Swap, ) \
-	XX( Duplicate, ) \
-	XX( Join, ) \
-	XX( JoinToFirst, ) \
-	XX( JoinToLast, ) \
-	XX( Copy, ) \
-	XX( Paste, ) \
-	XX( Cut, ) \
-	XX( ShowPreview, ) \
-	XX( HideSelected, ) \
-	XX( FilterByNothing, ) \
-	XX( FilterByStyles, ) \
-	XX( FilterBySelections, ) \
-	XX( FilterByDialogues, ) \
-	XX( FilterByDoubtful, ) \
-	XX( FilterByUntranslated, ) \
+	XX( GRID_INSERT_BEFORE,=5555 ) \
+	XX( GRID_INSERT_AFTER, ) \
+	XX( GRID_INSERT_BEFORE_VIDEO, ) \
+	XX( GRID_INSERT_AFTER_VIDEO, ) \
+	XX( GRID_INSERT_BEFORE_WITH_VIDEO_FRAME, ) \
+	XX( GRID_INSERT_AFTER_WITH_VIDEO_FRAME, ) \
+	XX( GRID_SWAP_LINES, ) \
+	XX( GRID_DUPLICATE_LINES, ) \
+	XX( GRID_JOIN_LINES, ) \
+	XX( GRID_JOIN_TO_FIRST_LINE, ) \
+	XX( GRID_JOIN_TO_LAST_LINE, ) \
+	XX( GRID_COPY, ) \
+	XX( GRID_PASTE, ) \
+	XX( GRID_CUT, ) \
+	XX( GRID_SHOW_PREVIEW, ) \
+	XX( GRID_HIDE_SELECTED, ) \
+	XX( GRID_FILTER_BY_NOTHING, ) \
+	XX( GRID_FILTER_BY_STYLES, ) \
+	XX( GRID_FILTER_BY_SELECTIONS, ) \
+	XX( GRID_FILTER_BY_DIALOGUES, ) \
+	XX( GRID_FILTER_BY_DOUBTFUL, ) \
+	XX( GRID_FILTER_BY_UNTRANSLATED, ) \
 	XX( GRID_FILTER, ) \
 	XX( GRID_FILTER_AFTER_SUBS_LOAD, ) \
 	XX( GRID_FILTER_INVERTED, ) \
 	XX( GRID_FILTER_DO_NOT_RESET, ) \
 	XX( GRID_FILTER_IGNORE_IN_ACTIONS, ) \
 	XX( GRID_TREE_MAKE, ) \
-	XX( PasteTranslation, ) \
-	XX( TranslationDialog, ) \
-	XX( SubsFromMKV, ) \
-	XX( ContinousPrevious, ) \
-	XX( ContinousNext, ) \
-	XX( PasteCollumns, ) \
-	XX( CopyCollumns, ) \
-	XX( FPSFromVideo, ) \
-	XX( NewFPS, ) \
-	XX( SaveSubs,=6677)\
-	XX( SaveAllSubs,)\
-	XX( SaveSubsAs,)\
-	XX( SaveTranslation,)\
-	XX( RemoveSubs,)\
-	XX( Search,)\
+	XX( GRID_PASTE_TRANSLATION, ) \
+	XX( GRID_TRANSLATION_DIALOG, ) \
+	XX( GRID_SUBS_FROM_MKV, ) \
+	XX( GRID_MAKE_CONTINOUS_PREVIOUS_LINE, ) \
+	XX( GRID_MAKE_CONTINOUS_NEXT_LINE, ) \
+	XX( GRID_PASTE_COLUMNS, ) \
+	XX( GRID_COPY_COLUMNS, ) \
+	XX( GRID_SET_FPS_FROM_VIDEO, ) \
+	XX( GRID_SET_NEW_FPS, ) \
+	XX( GLOBAL_SAVE_SUBS,=6677)\
+	XX( GLOBAL_SAVE_ALL_SUBS,)\
+	XX( GLOBAL_SAVE_SUBS_AS,)\
+	XX( GLOBAL_SAVE_TRANSLATION,)\
+	XX( GLOBAL_REMOVE_SUBS,)\
+	XX( GLOBAL_SEARCH,)\
 	XX( GLOBAL_FIND_REPLACE,)\
 	XX(	GLOBAL_MISSPELLS_REPLACER,)\
-	XX( SelectLinesDialog,)\
-	XX( SpellcheckerDialog,)\
-	XX( VideoIndexing,)\
-	XX( SaveWithVideoName,)\
-	XX( OpenAudio,)\
-	XX( AudioFromVideo,)\
-	XX( CloseAudio,)\
-	XX( ASSProperties,)\
-	XX( StyleManager,)\
-	XX( SubsResample,)\
-	XX( FontCollectorID,)\
-	XX( ConvertToASS,)\
-	XX( ConvertToSRT,)\
-	XX( ConvertToTMP,)\
-	XX( ConvertToMDVD,)\
-	XX( ConvertToMPL2,)\
-	XX( HideTags,)\
-	XX( ChangeTime,)\
-	XX( ViewAll,)\
-	XX( ViewAudio,)\
-	XX( ViewVideo,)\
+	XX( GLOBAL_OPEN_SELECT_LINES,)\
+	XX( GLOBAL_OPEN_SPELLCHECKER,)\
+	XX( GLOBAL_VIDEO_INDEXING,)\
+	XX( GLOBAL_SAVE_WITH_VIDEO_NAME,)\
+	XX( GLOBAL_OPEN_AUDIO,)\
+	XX( GLOBAL_AUDIO_FROM_VIDEO,)\
+	XX( GLOBAL_CLOSE_AUDIO,)\
+	XX( GLOBAL_OPEN_ASS_PROPERTIES,)\
+	XX( GLOBAL_OPEN_STYLE_MANAGER,)\
+	XX( GLOBAL_OPEN_SUBS_RESAMPLE,)\
+	XX( GLOBAL_OPEN_FONT_COLLECTOR,)\
+	XX( GLOBAL_CONVERT_TO_ASS,)\
+	XX( GLOBAL_CONVERT_TO_SRT,)\
+	XX( GLOBAL_CONVERT_TO_TMP,)\
+	XX( GLOBAL_CONVERT_TO_MDVD,)\
+	XX( GLOBAL_CONVERT_TO_MPL2,)\
+	XX( GLOBAL_HIDE_TAGS,)\
+	XX( GLOBAL_SHOW_SHIFT_TIMES,)\
+	XX( GLOBAL_VIEW_ALL,)\
+	XX( GLOBAL_VIEW_AUDIO,)\
+	XX( GLOBAL_VIEW_VIDEO,)\
 	XX( GLOBAL_VIEW_ONLY_VIDEO,)\
-	XX( ViewSubs,)\
-	XX( AutoLoadScript,)\
-	XX( AutoReloadAutoload,)\
-	XX( LoadLastScript,)\
-	XX( AUTOMATION_OPEN_HOTKEYS_WINDOW,)\
-	XX( PlayPauseG,)\
-	XX( PreviousFrame,)\
-	XX( NextFrame,)\
-	XX( VideoZoom,)\
-	XX( SetStartTime,)\
-	XX( SetEndTime,)\
-	XX( SetVideoAtStart,)\
-	XX( SetVideoAtEnd,)\
-	XX( GoToNextKeyframe,)\
-	XX( GoToPrewKeyframe,)\
-	XX( SetAudioFromVideo,)\
-	XX( SetAudioMarkFromVideo,)\
-	XX( Redo,)\
-	XX( Undo,)\
-	XX( UndoToLastSave,)\
+	XX( GLOBAL_VIEW_SUBS,)\
+	XX( GLOBAL_AUTOMATION_LOAD_SCRIPT,)\
+	XX( GLOBAL_AUTOMATION_RELOAD_AUTOLOAD,)\
+	XX( GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT,)\
+	XX( GLOBAL_AUTOMATION_OPEN_HOTKEYS_WINDOW,)\
+	XX( GLOBAL_PLAY_PAUSE,)\
+	XX( GLOBAL_PREVIOUS_FRAME,)\
+	XX( GLOBAL_NEXT_FRAME,)\
+	XX( GLOBAL_VIDEO_ZOOM,)\
+	XX( GLOBAL_SET_START_TIME,)\
+	XX( GLOBAL_SET_END_TIME,)\
+	XX( GLOBAL_SET_VIDEO_AT_START_TIME,)\
+	XX( GLOBAL_SET_VIDEO_AT_END_TIME,)\
+	XX( GLOBAL_GO_TO_NEXT_KEYFRAME,)\
+	XX( GLOBAL_GO_TO_PREVIOUS_KEYFRAME,)\
+	XX( GLOBAL_SET_AUDIO_FROM_VIDEO,)\
+	XX( GLOBAL_SET_AUDIO_MARK_FROM_VIDEO,)\
+	XX( GLOBAL_REDO,)\
+	XX( GLOBAL_UNDO,)\
+	XX( GLOBAL_UNDO_TO_LAST_SAVE,)\
 	XX( GLOBAL_LOAD_LAST_SESSION,)\
-	XX( History,)\
-	XX( OpenSubs,=6800)\
-	XX( OpenVideo,)\
-	XX( GLOBAL_KEYFRAMES_OPEN,)\
-	XX( Settings,)\
-	XX( Quit,)\
-	XX( Editor,)\
-	XX( About,)\
-	XX( Helpers,)\
-	XX( Help,)\
-	XX( ANSI,)\
-	XX( PreviousLine,=6850)\
-	XX( NextLine,)\
-	XX( JoinWithPrevious,)\
-	XX( JoinWithNext,)\
-	XX( NextTab,)\
-	XX( PreviousTab,)\
-	XX( Remove, ) \
-	XX( RemoveText, ) \
-	XX( SnapWithStart,)\
-	XX( SnapWithEnd,)\
-	XX( Plus5SecondG,)\
-	XX( Minus5SecondG,)\
-	XX( SortLines,)\
-	XX( SortSelected,)\
-	XX( RecentAudio,)\
-	XX( RecentVideo,)\
-	XX( RecentSubs,)\
-	XX( GLOBAL_KEYFRAMES_RECENT,)\
-	XX( SelectFromVideo,)\
-	XX( PlayActualLine,)\
+	XX( GLOBAL_HISTORY,)\
+	XX( GLOBAL_OPEN_SUBS,=6800)\
+	XX( GLOBAL_OPEN_VIDEO,)\
+	XX( GLOBAL_OPEN_KEYFRAMES,)\
+	XX( GLOBAL_SETTINGS,)\
+	XX( GLOBAL_QUIT,)\
+	XX( GLOBAL_EDITOR,)\
+	XX( GLOBAL_ABOUT,)\
+	XX( GLOBAL_HELPERS,)\
+	XX( GLOBAL_HELP,)\
+	XX( GLOBAL_ANSI,)\
+	XX( GLOBAL_PREVIOUS_LINE,=6850)\
+	XX( GLOBAL_NEXT_LINE,)\
+	XX( GLOBAL_JOIN_WITH_PREVIOUS,)\
+	XX( GLOBAL_JOIN_WITH_NEXT,)\
+	XX( GLOBAL_NEXT_TAB,)\
+	XX( GLOBAL_PREVIOUS_TAB,)\
+	XX( GLOBAL_REMOVE_LINES, ) \
+	XX( GLOBAL_REMOVE_TEXT, ) \
+	XX( GLOBAL_SNAP_WITH_START,)\
+	XX( GLOBAL_SNAP_WITH_END,)\
+	XX( GLOBAL_5_SECONDS_FORWARD,)\
+	XX( GLOBAL_5_SECONDS_BACKWARD,)\
+	XX( GLOBAL_SORT_LINES,)\
+	XX( GLOBAL_SORT_SELECTED_LINES,)\
+	XX( GLOBAL_RECENT_AUDIO,)\
+	XX( GLOBAL_RECENT_VIDEO,)\
+	XX( GLOBAL_RECENT_SUBS,)\
+	XX( GLOBAL_RECENT_KEYFRAMES,)\
+	XX( GLOBAL_SELECT_FROM_VIDEO,)\
+	XX( GLOBAL_PLAY_ACTUAL_LINE,)\
 	XX( GLOBAL_SORT_ALL_BY_START_TIMES,=7000)\
 	XX( GLOBAL_SORT_ALL_BY_END_TIMES,)\
 	XX( GLOBAL_SORT_ALL_BY_STYLE,)\

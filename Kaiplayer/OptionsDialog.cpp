@@ -77,8 +77,8 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			for (auto &idtype : idtypes){
 				if (idtype->first.Type == hkd.type ||
 					(idtype->first.Type >= VIDEO_HOTKEY && hkd.type >= VIDEO_HOTKEY) ||
-					((hotkeyId.id >= PlayPause && hotkeyId.id <= Minus5Second ||
-					idtype->first.id >= PlayPause && idtype->first.id <= Minus5Second) &&
+					((hotkeyId.id >= VIDEO_PLAY_PAUSE && hotkeyId.id <= VIDEO_5_SECONDS_BACKWARD ||
+					idtype->first.id >= VIDEO_PLAY_PAUSE && idtype->first.id <= VIDEO_5_SECONDS_BACKWARD) &&
 					(idtype->first.Type >= GRID_HOTKEY || hkd.type >= GRID_HOTKEY))){
 					doubledHotkey = true;
 					doubledHkName = Hkeys.GetName(idtype->first.id);
@@ -260,7 +260,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	icn.CopyFromBitmap(CreateBitmapFromPngResource(L"SETTINGS"));
 	SetIcon(icn);
 
-	wxWindow *Editor = new wxWindow(OptionsTree, -1);
+	wxWindow *GLOBAL_EDITOR = new wxWindow(OptionsTree, -1);
 	wxWindow *EditorAdvanced = new wxWindow(OptionsTree, -1);
 	wxWindow *ConvOpt = new wxWindow(OptionsTree, -1);
 	wxWindow *Hotkeyss = new wxWindow(OptionsTree, -1);
@@ -309,8 +309,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			langs[i] = fullName;
 		}
 		langs.Insert(L"Polski", 0);
-		KaiStaticBoxSizer *langSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język (wymaga restartu programu)"));
-		KaiChoice *lang = new KaiChoice(Editor, 10005, wxDefaultPosition, wxDefaultSize, langs);
+		KaiStaticBoxSizer *langSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _("Język (wymaga restartu programu)"));
+		KaiChoice *lang = new KaiChoice(GLOBAL_EDITOR, 10005, wxDefaultPosition, wxDefaultSize, langs);
 		int sel = lang->FindString(Options.FindLanguage(Options.GetString(PROGRAM_LANGUAGE)));
 		if (sel < 0)
 			sel = 0;
@@ -322,9 +322,9 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxArrayString dictionaries;
 		SpellChecker::AvailableDics(dictionaries, dictionaryLanguagesSymbols);
 		if (dictionaries.size() == 0){ dictionaries.Add(_("Umieść pliki .dic i .aff do folderu \"Dictionary\"")); }
-		KaiStaticBoxSizer *dicSizer = new KaiStaticBoxSizer(wxVERTICAL, Editor, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
+		KaiStaticBoxSizer *dicSizer = new KaiStaticBoxSizer(wxVERTICAL, GLOBAL_EDITOR, _("Język sprawdzania pisowni (folder \"Dictionary\")"));
 
-		KaiChoice *dic = new KaiChoice(Editor, 10001, wxDefaultPosition, wxDefaultSize, dictionaries);
+		KaiChoice *dic = new KaiChoice(GLOBAL_EDITOR, 10001, wxDefaultPosition, wxDefaultSize, dictionaries);
 
 		dic->SetSelection(dic->FindString(Options.FindLanguage(Options.GetString(DICTIONARY_LANGUAGE))));
 		ConOpt(dic, DICTIONARY_LANGUAGE);
@@ -333,12 +333,12 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		for (int i = 0; i < optsSize; i++)
 		{
-			KaiCheckBox *opt = new KaiCheckBox(Editor, -1, labels[i]);
+			KaiCheckBox *opt = new KaiCheckBox(GLOBAL_EDITOR, -1, labels[i]);
 			opt->SetValue(Options.GetBool(opts[i]));
 			ConOpt(opt, opts[i]);
 			MainSizer->Add(opt, 0, wxALL, 2);
 		}
-		Editor->SetSizerAndFit(MainSizer);
+		GLOBAL_EDITOR->SetSizerAndFit(MainSizer);
 
 		
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
@@ -933,7 +933,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	}
 
 	//Adding pages
-	OptionsTree->AddPage(Editor, _("Edytor"));
+	OptionsTree->AddPage(GLOBAL_EDITOR, _("Edytor"));
 	OptionsTree->AddSubPage(ConvOpt, _("Konwersja"));
 	OptionsTree->AddSubPage(EditorAdvanced, _("Zaawansowane"));
 	OptionsTree->AddPage(Video, _("Wideo"));
@@ -1316,7 +1316,7 @@ void OptionsDialog::AddHotkeysOnList()
 			for (auto curmhk = mappedhkeys.begin(); curmhk != mappedhkeys.end(); curmhk++) {
 				if (lastType != curmhk->first.Type)
 					break;
-				if (curmhk->first.id == Quit)
+				if (curmhk->first.id == GLOBAL_QUIT)
 					continue;
 
 				wxString windowName = windowNames[lastType] + L" ";

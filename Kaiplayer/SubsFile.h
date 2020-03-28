@@ -141,7 +141,7 @@ public:
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save);
 	void SwapRows(int frst, int scnd);
 	void SortAll(bool func(Dialogue *i, Dialogue *j));
-	void SortSelected(bool func(Dialogue *i, Dialogue *j));
+	void GLOBAL_SORT_SELECTED_LINES(bool func(Dialogue *i, Dialogue *j));
 	Styles *CopyStyle(size_t i, bool push = true);
 	SInfo *CopySinfo(size_t i, bool push = true);
 	void AddStyle(Styles *nstyl);

@@ -63,8 +63,8 @@ void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiL
 void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {
 	if (col.a){
-		const wxColour & col1 = Options.GetColour(StylePreviewColor1);
-		const wxColour & col2 = Options.GetColour(StylePreviewColor2);
+		const wxColour & col1 = Options.GetColour(STYLE_PREVIEW_COLOR1);
+		const wxColour & col2 = Options.GetColour(STYLE_PREVIEW_COLOR2);
 		int r2 = col.r, g2 = col.g, b2 = col.b;
 		int r = col1.Red(), g = col1.Green(), b = col1.Blue();
 		int r1 = col2.Red(), g1 = col2.Green(), b1 = col2.Blue();
@@ -473,19 +473,19 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	tdc.SelectObject(*bmp);
 	wxMemoryDC fdc;
 	bool enabled = IsThisEnabled();
-	const wxColour & highlight = Options.GetColour(StaticListSelection);
+	const wxColour & highlight = Options.GetColour(STATICLIST_SELECTION);
 	const wxColour & txt = Options.GetColour(WINDOW_TEXT);
 	const wxColour & inactivetxt = Options.GetColour(WINDOW_TEXT_INACTIVE);
-	const wxColour & border = Options.GetColour(StaticListBorder);
+	const wxColour & border = Options.GetColour(STATICLIST_BORDER);
 
 	tdc.SetPen(wxPen(border));
-	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
+	tdc.SetBrush(wxBrush(enabled ? Options.GetColour(STATICLIST_BACKGROUND) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.SetTextForeground(enabled ? txt : inactivetxt);
 	tdc.SetFont(GetFont());
 	if (isFiltered){
 		fdc.SelectObject(wxBitmap(13, h));
-		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(StaticListBackground) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
+		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(STATICLIST_BACKGROUND) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 		fdc.SetPen(wxPen(border));
 		fdc.DrawRectangle(0, 0, 13, h);
 	}
@@ -499,8 +499,8 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 
 	if (headerHeight > 4){
 		tdc.SetPen(wxPen(border));
-		tdc.SetTextForeground(enabled ? Options.GetColour(StaticListTextHeadline) : inactivetxt);
-		tdc.SetBrush(Options.GetColour(StaticListBackgroundHeadline));
+		tdc.SetTextForeground(enabled ? Options.GetColour(STATICLIST_TEXT_HEADLINE) : inactivetxt);
+		tdc.SetBrush(Options.GetColour(STATICLIST_BACKGROUND_HEADLINE));
 		tdc.DrawRectangle(0, 0, w, headerHeight - 2);
 		for (size_t j = 0; j < widths.size(); j++){
 			wxString headerTxt = ((ItemText*)header.row[j])->GetName();

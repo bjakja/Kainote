@@ -97,8 +97,8 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	int fw = 0, fh = 0, posX = 1, posY = 1;
 	bdc.Clear();
 	bdc.SetFont(font);
-	const wxColour & background = Options.GetColour(StaticListBackground);
-	bdc.SetPen(wxPen(Options.GetColour(StaticListBorder)));
+	const wxColour & background = Options.GetColour(STATICLIST_BACKGROUND);
+	bdc.SetPen(wxPen(Options.GetColour(STATICLIST_BORDER)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0, 0, w, h);
 	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});
@@ -107,7 +107,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	{
 		if (sels.Index(i) != -1){
 			bdc.SetPen(*wxTRANSPARENT_PEN);
-			bdc.SetBrush(wxBrush(Options.GetColour(StaticListSelection)));
+			bdc.SetBrush(wxBrush(Options.GetColour(STATICLIST_SELECTION)));
 			bdc.DrawRectangle(posX, posY, w - 2, Height);
 		}
 		else{

@@ -190,13 +190,13 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		if (icon->IsOk()){
 			bool toggled = i == Toggled;
 			if (i == sel){
-				tdc.SetBrush(wxBrush(Options.GetColour((toggled || clicked) ? ButtonBackgroundPushed : ButtonBackgroundHover)));
-				tdc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
+				tdc.SetBrush(wxBrush(Options.GetColour((toggled || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				tdc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				tdc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 			else if (toggled){
-				tdc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
-				tdc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
+				tdc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				tdc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				tdc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
@@ -314,13 +314,13 @@ void MoveAllItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 		if (icon->IsOk()){
 			bool toggled = MoveToggled[i];
 			if (i == selection){
-				dc.SetBrush(wxBrush(Options.GetColour((toggled || clicked) ? ButtonBackgroundPushed : ButtonBackgroundHover)));
-				dc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
+				dc.SetBrush(wxBrush(Options.GetColour((toggled || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((toggled || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 			else if (toggled){
-				dc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
-				dc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
@@ -383,13 +383,13 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 		wxBitmap *icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()){
 			if (i == selection){
-				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? ButtonBackgroundPushed : ButtonBackgroundHover)));
-				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
+				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 			else if (i == toggled){
-				dc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
-				dc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
@@ -452,13 +452,13 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 		wxBitmap *icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()){
 			if (i == selection){
-				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? ButtonBackgroundPushed : ButtonBackgroundHover)));
-				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? ButtonBorderPushed : ButtonBorderHover)));
+				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 			else if (i == toggled){
-				dc.SetBrush(wxBrush(Options.GetColour(ButtonBackgroundPushed)));
-				dc.SetPen(wxPen(Options.GetColour(ButtonBorderPushed)));
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 

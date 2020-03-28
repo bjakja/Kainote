@@ -53,9 +53,9 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 		else if (id == GRID_FILTER_INVERTED){
 			Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		}
-		else if (id >= FilterByStyles && id <= FilterByUntranslated){
+		else if (id >= GRID_FILTER_BY_STYLES && id <= GRID_FILTER_BY_UNTRANSLATED){
 			int filterBy = Options.GetInt(GRID_FILTER_BY);
-			int addToFilterBy = pow(2, (id - FilterByStyles));
+			int addToFilterBy = pow(2, (id - GRID_FILTER_BY_STYLES));
 			if (item->check){
 				filterBy |= addToFilterBy;
 			}
@@ -82,7 +82,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
-				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
+				MenuItem * parentItem = Menu::FindItemGlobally(GRID_FILTER_BY_STYLES, &parentMenu);
 				if (parentItem){
 					parentItem->Check(true);
 					if (parentMenu)
@@ -92,7 +92,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			else if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GRID_FILTER_BY, filterBy ^ FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
-				MenuItem * parentItem = Menu::FindItemGlobally(FilterByStyles, &parentMenu);
+				MenuItem * parentItem = Menu::FindItemGlobally(GRID_FILTER_BY_STYLES, &parentMenu);
 				if (parentItem){
 					parentItem->Check(false);
 					if (parentMenu)
@@ -155,62 +155,62 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
 	filterMenu->SetAccMenu(GRID_FILTER_INVERTED, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
 	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
-	MenuItem *Item = new MenuItem(FilterByStyles, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
+	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
-	filterMenu->SetAccMenu(FilterBySelections, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
-	filterMenu->SetAccMenu(FilterByDialogues, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
-	filterMenu->SetAccMenu(FilterByDoubtful, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
-	filterMenu->SetAccMenu(FilterByUntranslated, _("Pokaż nieprzetłumaczone"), _("Pokaż nieprzetłumaczone"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_SELECTIONS, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_DIALOGUES, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_DOUBTFUL, _("Pokaż niepewne"), _("Pokaż niepewne"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_DOUBTFUL && hasTLMode);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_UNTRANSLATED, _("Pokaż nieprzetłumaczone"), _("Pokaż nieprzetłumaczone"), hasTLMode, ITEM_CHECK)->Check(filterBy & FILTER_BY_UNTRANSLATED && hasTLMode);
 	filterMenu->SetAccMenu(GRID_FILTER, _("Filtruj"), _("Filtruj"));
-	filterMenu->SetAccMenu(FilterByNothing, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
+	filterMenu->SetAccMenu(GRID_FILTER_BY_NOTHING, _("Wyłącz filtrowanie"), _("Wyłącz filtrowanie"))->Enable(isFiltered);
 
 	bool isEnabled;
 	isEnabled = (sels > 0);
-	menu->SetAccMenu(InsertBefore, _("Wstaw &przed"))->Enable(isEnabled);
-	menu->SetAccMenu(InsertAfter, _("Wstaw p&o"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_BEFORE, _("Wstaw &przed"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_AFTER, _("Wstaw p&o"))->Enable(isEnabled);
 	isEnabled = (isEnabled && Kai->GetTab()->Video->GetState() != None);
-	menu->SetAccMenu(InsertBeforeVideo, _("Wstaw przed z &czasem wideo"))->Enable(isEnabled);
-	menu->SetAccMenu(InsertAfterVideo, _("Wstaw po z c&zasem wideo"))->Enable(isEnabled);
-	menu->SetAccMenu(InsertBeforeWithVideoFrame, _("Wstaw przed z czasem klatki wideo"))->Enable(isEnabled);
-	menu->SetAccMenu(InsertAfterWithVideoFrame, _("Wstaw po z czasem klatki wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_BEFORE_VIDEO, _("Wstaw przed z &czasem wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_AFTER_VIDEO, _("Wstaw po z c&zasem wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_BEFORE_WITH_VIDEO_FRAME, _("Wstaw przed z czasem klatki wideo"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_INSERT_AFTER_WITH_VIDEO_FRAME, _("Wstaw po z czasem klatki wideo"))->Enable(isEnabled);
 	isEnabled = (sels > 0);
-	menu->SetAccMenu(Duplicate, _("&Duplikuj linie"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_DUPLICATE_LINES, _("&Duplikuj linie"))->Enable(isEnabled);
 	isEnabled = (sels == 2);
-	menu->SetAccMenu(Swap, _("Za&mień"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_SWAP_LINES, _("Za&mień"))->Enable(isEnabled);
 	isEnabled = (sels >= 2 && sels <= 20);
-	menu->SetAccMenu(Join, _("Złącz &linijki"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_LINES, _("Złącz &linijki"))->Enable(isEnabled);
 	//maybe unblock it at all good to join lines of Aegisub Motion unneeded transitions
 	//there is nothing that can do mess in this case
 	isEnabled = (sels >= 2 && sels <= 500);
-	menu->SetAccMenu(JoinToFirst, _("Złącz linijki zostaw pierwszą"))->Enable(isEnabled);
-	menu->SetAccMenu(JoinToLast, _("Złącz linijki zostaw ostatnią"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_TO_FIRST_LINE, _("Złącz linijki zostaw pierwszą"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_JOIN_TO_LAST_LINE, _("Złącz linijki zostaw ostatnią"))->Enable(isEnabled);
 	isEnabled = (sels > 0);
-	menu->SetAccMenu(ContinousPrevious, _("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isEnabled);
-	menu->SetAccMenu(ContinousNext, _("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isEnabled);
-	menu->SetAccMenu(Copy, _("Kopiuj\tCtrl-C"))->Enable(isEnabled);
-	menu->SetAccMenu(Cut, _("Wytnij\tCtrl-X"))->Enable(isEnabled);
-	menu->SetAccMenu(Paste, _("Wklej\tCtrl-V"));
-	menu->SetAccMenu(CopyCollumns, _("Kopiuj kolumny"))->Enable(isEnabled);
-	menu->SetAccMenu(PasteCollumns, _("Wklej kolumny"));
+	menu->SetAccMenu(GRID_MAKE_CONTINOUS_PREVIOUS_LINE, _("Ustaw czasy jako ciągłe (poprzednia linijka)"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_MAKE_CONTINOUS_NEXT_LINE, _("Ustaw czasy jako ciągłe (następna linijka)"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_COPY, _("Kopiuj\tCtrl-C"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_CUT, _("Wytnij\tCtrl-X"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_PASTE, _("Wklej\tCtrl-V"));
+	menu->SetAccMenu(GRID_COPY_COLUMNS, _("Kopiuj kolumny"))->Enable(isEnabled);
+	menu->SetAccMenu(GRID_PASTE_COLUMNS, _("Wklej kolumny"));
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
-	menu->SetAccMenu(HideSelected, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
+	menu->SetAccMenu(GRID_HIDE_SELECTED, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
 	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), L"", true, ITEM_CHECK)->
 		Check(ignoreFiltered); 
 	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
-	menu->SetAccMenu(ShowPreview, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
-	menu->SetAccMenu(NewFPS, _("Ustaw nowy FPS"));
-	menu->SetAccMenu(FPSFromVideo, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
-	menu->SetAccMenu(PasteTranslation, _("Wklej tekst tłumaczenia"))->
+	menu->SetAccMenu(GRID_SHOW_PREVIEW, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
+	menu->SetAccMenu(GRID_SET_NEW_FPS, _("Ustaw nowy FPS"));
+	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
+	menu->SetAccMenu(GRID_PASTE_TRANSLATION, _("Wklej tekst tłumaczenia"))->
 		Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L"");
-	menu->SetAccMenu(TranslationDialog, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
+	menu->SetAccMenu(GRID_TRANSLATION_DIALOG, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
-	menu->SetAccMenu(RemoveText, _("Usuń tekst"))->Enable(isEnabled);
-	menu->SetAccMenu(Remove, _("Usuń"))->Enable(isEnabled);
+	menu->SetAccMenu(GLOBAL_REMOVE_TEXT, _("Usuń tekst"))->Enable(isEnabled);
+	menu->SetAccMenu(GLOBAL_REMOVE_LINES, _("Usuń"))->Enable(isEnabled);
 	menu->AppendSeparator();
-	menu->SetAccMenu(FontCollectorID, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
-	menu->SetAccMenu(SubsFromMKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(L".mkv"));
+	menu->SetAccMenu(GLOBAL_OPEN_FONT_COLLECTOR, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
+	menu->SetAccMenu(GRID_SUBS_FROM_MKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(L".mkv"));
 
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
@@ -334,7 +334,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	wxString ntltext;
 	wxString en1;
 	int idd = event.GetId();
-	if (idd == JoinWithPrevious){
+	if (idd == GLOBAL_JOIN_WITH_PREVIOUS){
 		size_t prevLine = GetKeyFromPosition(currentLine, -1);
 		if (currentLine <= prevLine){ return; }
 		selections.Clear();
@@ -342,7 +342,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		selections.Add(currentLine);
 		en1 = L" ";
 	}
-	else if (idd == JoinWithNext){
+	else if (idd == GLOBAL_JOIN_WITH_NEXT){
 		size_t nextLine = GetKeyFromPosition(currentLine, 1);
 		if (currentLine >= nextLine){ return; }
 		selections.Clear();
@@ -375,8 +375,8 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	dialc->TextTl = ntltext;
 	file->edited = true;
 	SpellErrors.clear();
-	SetModified((idd == JoinWithPrevious) ? GRID_JOIN_WITH_PREVIOUS :
-		(idd == JoinWithNext) ? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
+	SetModified((idd == GLOBAL_JOIN_WITH_PREVIOUS) ? GRID_JOIN_WITH_PREVIOUS :
+		(idd == GLOBAL_JOIN_WITH_NEXT) ? GRID_JOIN_WITH_NEXT : GRID_JOIN_LINES);
 	RefreshColumns();
 	Edit->TextEditOrig->SetSelection(startOrg, endOrg);
 	Edit->TextEdit->SetSelection(startTl, endTl);
@@ -389,7 +389,7 @@ void SubsGrid::OnJoinToFirst(int id)
 	Dialogue *ldial = GetDialogue(selections[selections.size() - 1]);
 	dialc->End = ldial->End;
 
-	if (id == JoinToLast){
+	if (id == GRID_JOIN_TO_LAST_LINE){
 		dialc->Text = ldial->Text;
 		dialc->TextTl = ldial->TextTl;
 	}
@@ -398,7 +398,7 @@ void SubsGrid::OnJoinToFirst(int id)
 
 	file->InsertSelection(selections[0]);
 	SpellErrors.clear();
-	SetModified((id == JoinToLast) ? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
+	SetModified((id == GRID_JOIN_TO_LAST_LINE) ? GRID_JOIN_TO_LAST : GRID_JOIN_TO_FIRST);
 	RefreshColumns();
 }
 
@@ -407,9 +407,9 @@ void SubsGrid::OnPaste(int id)
 {
 	size_t row = FirstSelection();
 	if (row == -1){ wxBell(); return; }
-	SaveSelections(id != PasteCollumns);
+	SaveSelections(id != GRID_PASTE_COLUMNS);
 	int collumns = 0;
-	if (id == PasteCollumns){
+	if (id == GRID_PASTE_COLUMNS){
 		int numCollumns = (hasTLMode) ? 11 : 10;
 		wxString pasteText = (hasTLMode) ? _("Tekst do oryginału") : _("Tekst");
 		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
@@ -454,7 +454,7 @@ void SubsGrid::OnPaste(int id)
 	}
 	wxStringTokenizer wpaste(whatpaste, L"\n", wxTOKEN_STRTOK);
 	int cttkns = wpaste.CountTokens();
-	int rws = (id == PasteCollumns) ? 0 : row;
+	int rws = (id == GRID_PASTE_COLUMNS) ? 0 : row;
 	std::vector<Dialogue*> tmpdial;
 	wxString token;
 	wxString tmptoken;
@@ -482,7 +482,7 @@ void SubsGrid::OnPaste(int id)
 		}
 		if (newdial->Format != subsFormat){ newdial->Convert(subsFormat); }
 		if (newdial->NonDialogue){ newdial->NonDialogue = false; newdial->IsComment = false; }
-		if (id == Paste){
+		if (id == GRID_PASTE){
 			if (newdial->treeState == TREE_DESCRIPTION)
 				hasTree = true;
 			else if (!hasTree && newdial->treeState > TREE_DESCRIPTION){
@@ -508,7 +508,7 @@ void SubsGrid::OnPaste(int id)
 		file->InsertSelections(startline, rws - 1);
 	}
 	scrollPosition += cttkns;
-	SetModified((id == Paste) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());
+	SetModified((id == GRID_PASTE) ? GRID_PASTE : GRID_PASTE_COLLUMNS, true, false, FirstSelection());
 	Thaw();
 	RefreshColumns();
 }
@@ -516,7 +516,7 @@ void SubsGrid::OnPaste(int id)
 void SubsGrid::CopyRows(int id)
 {
 	int cols = 0;
-	if (id == CopyCollumns){
+	if (id == GRID_COPY_COLUMNS){
 		wxString arr[] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
 			_("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), 
 			_("Margines pionowy"), _("Efekt"), _("Tekst"), _("Tekst bez tagów") };
@@ -548,7 +548,7 @@ void SubsGrid::CopyRows(int id)
 	wxString whatcopy;
 	for (size_t i = 0; i < selections.GetCount(); i++)
 	{
-		if (id != CopyCollumns){
+		if (id != GRID_COPY_COLUMNS){
 			//tłumaczenie ma pierwszeństwo w kopiowaniu
 			if (subsFormat == SRT)
 				whatcopy << (selections[i] + 1) << L"\r\n";
@@ -596,33 +596,33 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	int sels = selections.GetCount();
 	bool hasVideo = vb->GetState() != None;
 	switch (id){
-	case PlayPause: if (vb->IsShown()){ vb->Pause(); } break;
-	case Plus5Second: vb->Seek(vb->Tell() + 5000); break;
-	case Minus5Second: vb->Seek(vb->Tell() - 5000); break;
-	case InsertBeforeVideo:
-	case InsertBeforeWithVideoFrame:
-		if (sels > 0 && hasVideo) InsertWithVideoTime(true, id == InsertBeforeWithVideoFrame); break;
-	case InsertAfterVideo:
-	case InsertAfterWithVideoFrame:
-		if (sels > 0 && hasVideo) InsertWithVideoTime(false, id == InsertAfterWithVideoFrame); break;
-	case InsertBefore: if (sels > 0) OnInsertBefore(); break;
-	case InsertAfter: if (sels > 0) OnInsertAfter(); break;
-	case Duplicate: if (sels > 0) OnDuplicate(); break;
-	case Copy:
-	case CopyCollumns: if (sels > 0) CopyRows(id); break;
-	case Cut: if (sels > 0) CopyRows(id); DeleteRows(); break;
-	case Paste:
-	case PasteCollumns: if (sels > 0) OnPaste(id); break;
-	case Remove: if (sels > 0) DeleteRows(); break;
-	case RemoveText: if (sels > 0) DeleteText(); break;
-	case ContinousPrevious:
-	case ContinousNext: if (sels > 0) OnMakeContinous(id); break;
-	case Swap: if (sels == 2){ SwapRows(selections[0], selections[1], true); } break;
-	case FPSFromVideo: if (hasVideo && sels == 2){ OnSetFPSFromVideo(); } break;
-	case Join: if (sels > 1 && sels <= 20){ OnJoin(event); } break;
-	case JoinToFirst:
-	case JoinToLast: if (sels > 1 && sels <= 500){ OnJoinToFirst(id); } break;
-	case HideSelected:
+	case VIDEO_PLAY_PAUSE: if (vb->IsShown()){ vb->Pause(); } break;
+	case VIDEO_5_SECONDS_FORWARD: vb->Seek(vb->Tell() + 5000); break;
+	case VIDEO_5_SECONDS_BACKWARD: vb->Seek(vb->Tell() - 5000); break;
+	case GRID_INSERT_BEFORE_VIDEO:
+	case GRID_INSERT_BEFORE_WITH_VIDEO_FRAME:
+		if (sels > 0 && hasVideo) InsertWithVideoTime(true, id == GRID_INSERT_BEFORE_WITH_VIDEO_FRAME); break;
+	case GRID_INSERT_AFTER_VIDEO:
+	case GRID_INSERT_AFTER_WITH_VIDEO_FRAME:
+		if (sels > 0 && hasVideo) InsertWithVideoTime(false, id == GRID_INSERT_AFTER_WITH_VIDEO_FRAME); break;
+	case GRID_INSERT_BEFORE: if (sels > 0) OnInsertBefore(); break;
+	case GRID_INSERT_AFTER: if (sels > 0) OnInsertAfter(); break;
+	case GRID_DUPLICATE_LINES: if (sels > 0) OnDuplicate(); break;
+	case GRID_COPY:
+	case GRID_COPY_COLUMNS: if (sels > 0) CopyRows(id); break;
+	case GRID_CUT: if (sels > 0) CopyRows(id); DeleteRows(); break;
+	case GRID_PASTE:
+	case GRID_PASTE_COLUMNS: if (sels > 0) OnPaste(id); break;
+	case GLOBAL_REMOVE_LINES: if (sels > 0) DeleteRows(); break;
+	case GLOBAL_REMOVE_TEXT: if (sels > 0) DeleteText(); break;
+	case GRID_MAKE_CONTINOUS_PREVIOUS_LINE:
+	case GRID_MAKE_CONTINOUS_NEXT_LINE: if (sels > 0) OnMakeContinous(id); break;
+	case GRID_SWAP_LINES: if (sels == 2){ SwapRows(selections[0], selections[1], true); } break;
+	case GRID_SET_FPS_FROM_VIDEO: if (hasVideo && sels == 2){ OnSetFPSFromVideo(); } break;
+	case GRID_JOIN_LINES: if (sels > 1 && sels <= 20){ OnJoin(event); } break;
+	case GRID_JOIN_TO_FIRST_LINE:
+	case GRID_JOIN_TO_LAST_LINE: if (sels > 1 && sels <= 500){ OnJoinToFirst(id); } break;
+	case GRID_HIDE_SELECTED:
 	{
 		SubsGridFiltering filter(this, currentLine);
 		filter.HideSelections();
@@ -636,12 +636,12 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		break;
 	}
 	case GRID_FILTER:
-	case FilterByNothing:
+	case GRID_FILTER_BY_NOTHING:
 		Filter(id); break;
-	case PasteTranslation: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L""){ OnPasteTextTl(); } break;
-	case SubsFromMKV: if (Kai->GetTab()->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
-	case NewFPS: OnSetNewFPS(); break;
-	case ShowPreview:
+	case GRID_PASTE_TRANSLATION: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L""){ OnPasteTextTl(); } break;
+	case GRID_SUBS_FROM_MKV: if (Kai->GetTab()->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
+	case GRID_SET_NEW_FPS: OnSetNewFPS(); break;
+	case GRID_SHOW_PREVIEW:
 		if (Notebook::GetTabs()->Size()>1 && !preview)
 			OnShowPreview();
 		break;
@@ -666,14 +666,14 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_FILTER_INVERTED:
 		Options.SetBool(GRID_FILTER_INVERTED, !Options.GetBool(GRID_FILTER_INVERTED));
 		break;
-	case FilterByStyles:
-	case FilterBySelections:
-	case FilterByDialogues:
-	case FilterByDoubtful:
-	case FilterByUntranslated:
+	case GRID_FILTER_BY_STYLES:
+	case GRID_FILTER_BY_SELECTIONS:
+	case GRID_FILTER_BY_DIALOGUES:
+	case GRID_FILTER_BY_DOUBTFUL:
+	case GRID_FILTER_BY_UNTRANSLATED:
 	{
 		int filterBy = Options.GetInt(GRID_FILTER_BY);
-		int addToFilterBy = pow(2, (id - FilterByStyles));
+		int addToFilterBy = pow(2, (id - GRID_FILTER_BY_STYLES));
 		filterBy ^= addToFilterBy;
 		Options.SetInt(GRID_FILTER_BY, filterBy);
 		break;
@@ -692,7 +692,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		break;
 	}
 
-	if (id == TranslationDialog && GetSInfo(L"TLMode Showtl") == L"Yes"){
+	if (id == GRID_TRANSLATION_DIALOG && GetSInfo(L"TLMode Showtl") == L"Yes"){
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
 	}
@@ -905,7 +905,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		else if (wbutton == wxCANCEL){ return; }
 	}
 	TabPanel *tab = Kai->GetTab();
-	wxString mkvpath = (idd == SubsFromMKV) ? tab->VideoPath : event.GetString();
+	wxString mkvpath = (idd == GRID_SUBS_FROM_MKV) ? tab->VideoPath : event.GetString();
 
 	MatroskaWrapper mw;
 	if (!mw.Open(mkvpath, false)){ return; }
@@ -917,7 +917,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 			Edit->SetTlMode(false); 
 			hasTLMode = false; 
 			showOriginal = false; 
-			Kai->Menubar->Enable(SaveTranslation, false); 
+			Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, false); 
 		}
 		SetSubsFormat();
 		wxString ext = (subsFormat < SRT) ? L"ass" : L"srt";
@@ -1146,7 +1146,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 void SubsGrid::OnMakeContinous(int idd)
 {
 	if (selections.size() < 0){ wxBell(); return; }
-	if (idd == ContinousPrevious){
+	if (idd == GRID_MAKE_CONTINOUS_PREVIOUS_LINE){
 
 		/*int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;*/
 		for (size_t i = 0; i < selections.size(); i++)
@@ -1315,7 +1315,7 @@ void SubsGrid::Filter(int id)
 		int filterBy = Options.GetInt(GRID_FILTER_BY);
 		Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 	}
-	if (id != FilterByNothing){ isFiltered = true; }
+	if (id != GRID_FILTER_BY_NOTHING){ isFiltered = true; }
 	else{ Options.SetInt(GRID_FILTER_BY, 0); }
 	filter.Filter();
 }
@@ -1464,7 +1464,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 
 
 BEGIN_EVENT_TABLE(SubsGrid, SubsGridBase)
-EVT_MENU(Cut, SubsGrid::OnAccelerator)
-EVT_MENU(Copy, SubsGrid::OnAccelerator)
-EVT_MENU(Paste, SubsGrid::OnAccelerator)
+EVT_MENU(GRID_CUT, SubsGrid::OnAccelerator)
+EVT_MENU(GRID_COPY, SubsGrid::OnAccelerator)
+EVT_MENU(GRID_PASTE, SubsGrid::OnAccelerator)
 END_EVENT_TABLE()
