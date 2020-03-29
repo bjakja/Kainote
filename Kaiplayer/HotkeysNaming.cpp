@@ -151,7 +151,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GRID_FILTER_AFTER_SUBS_LOAD] = _("Filtruj po wczytaniu napisów");
 	names[GRID_FILTER_DO_NOT_RESET] = _("Nie resetuj wcześniejszego filtrowania");
 	names[GRID_FILTER_IGNORE_IN_ACTIONS] = _("Ignoruj filtrowanie przy akcjach");
-	names[GRID_FILTER_INVERTED] = _("Filtrowanie odwrócone");
+	names[GRID_FILTER_INVERT] = _("Filtrowanie odwrócone");
 	names[GRID_HIDE_ACTOR] = _("Ukryj aktora");
 	names[GRID_HIDE_CPS] = _("Ukryj znaki na sekundę");
 	names[GRID_HIDE_END] = _("Ukryj czas końcowy");

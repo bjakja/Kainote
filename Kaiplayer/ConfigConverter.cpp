@@ -559,10 +559,7 @@ bool ConfigConverter::ConvertHotkeys(wxString *rawHotkeys)
 
 ConfigConverter *ConfigConverter::Get()
 {
-	if (!ccthis)
-		ccthis = new ConfigConverter();
-
-	return ccthis;
+	return &ccthis;
 }
 
-ConfigConverter *ConfigConverter::ccthis = NULL;
+ConfigConverter ConfigConverter::ccthis;

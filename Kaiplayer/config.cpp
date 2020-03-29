@@ -139,9 +139,29 @@ bool config::SetRawOptions(const wxString &textconfig)
 {
 	wxStringTokenizer cfg(textconfig, L"\n");
 	int g = 0;
+	wxString token;
+	wxString textBlock;
+	bool block = false;
 	while (cfg.HasMoreTokens())
 	{
-		wxString token = cfg.NextToken();
+		token = cfg.NextToken();
+		if (token.EndsWith(L"=")){
+			block = true;
+			textBlock << token << L"\n";
+			continue;
+		}
+		else if (block && token.StartsWith(L"\t")){
+			textBlock << token << L"\n";
+			continue;
+		}
+		else if (block){
+			block = false;
+			textBlock.Trim(false);
+			textBlock.Trim(true);
+			CatchValsLabs(textBlock); 
+			g++; 
+			continue;
+		}
 		token.Trim(false);
 		token.Trim(true);
 		if (token.length() > 0){ CatchValsLabs(token); g++; }
@@ -599,19 +619,19 @@ void config::LoadColors(const wxString &_themeName){
 		wxString txtColors;
 		if (ow.FileOpen(path, &txtColors, false)){
 			wxStringTokenizer cfg(txtColors, L"\n");
-			wxString ver = cfg.NextToken();
-			if (ConfigNeedToConvert(ver)){
+			if (txtColors.BeforeFirst(L'\n').Find(L'_') == -1){
 				txtColors = txtColors.AfterFirst(L'\n');
 				ConfigConverter::Get()->ConvertConfig(&txtColors, true);
 				ow.FileWrite(path, txtColors);
 			}
+
 			int g = 0;
 			while (cfg.HasMoreTokens())
 			{
 				wxString token = cfg.NextToken();
 				token.Trim(false);
 				token.Trim(true);
-				if (token.Len() > 6){ SetHexColor(token); g++; }
+				if (token.length() > 6){ SetHexColor(token); g++; }
 			}
 			if (g > 10){
 				if (colors[0].IsOk() || g < STYLE_PREVIEW_COLOR2){
@@ -688,11 +708,11 @@ void config::GetCoords(CONFIG opt, int *coordx, int *coordy)
 void config::SetTable(CONFIG opt, wxArrayString &asopt, wxString split)
 {
 	wxString sresult;
-	wxString ES;
+	//wxString ES;
 	for (size_t i = 0; i < asopt.size(); i++)
 	{
-		wxString endchar = (i == asopt.size() - 1) ? ES : split;
-		sresult << asopt[i] << endchar;
+		//wxString endchar = (i == asopt.size() - 1) ? ES : split;
+		sresult << L"\t" << asopt[i] << L"\n";
 	}
 	stringConfig[opt] = sresult;
 }
@@ -700,11 +720,9 @@ void config::SetTable(CONFIG opt, wxArrayString &asopt, wxString split)
 void config::SetIntTable(CONFIG opt, wxArrayInt &asopt, wxString split)
 {
 	wxString sresult;
-	wxString ES;
 	for (size_t i = 0; i < asopt.size(); i++)
 	{
-		wxString endchar = (i == asopt.size() - 1) ? ES : split;
-		sresult << asopt[i] << endchar;
+		sresult << L"\t" << asopt[i] << L"\n";
 	}
 	stringConfig[opt] = sresult;
 }
@@ -713,9 +731,9 @@ void config::GetTable(CONFIG opt, wxArrayString &tbl, wxString split, int mode)
 {
 	wxString strtbl = stringConfig[opt];
 	if (strtbl != L""){
-		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
+		wxStringTokenizer cfgtable(strtbl, L"\n", (wxStringTokenizerMode)mode);
 		while (cfgtable.HasMoreTokens()){
-			tbl.Add(cfgtable.NextToken());
+			tbl.Add(cfgtable.NextToken().Mid(1));
 		}
 	}
 }
@@ -724,9 +742,9 @@ void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split, int mode)
 {
 	wxString strtbl = stringConfig[opt];
 	if (strtbl != L""){
-		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
+		wxStringTokenizer cfgtable(strtbl, L"\n", (wxStringTokenizerMode)mode);
 		while (cfgtable.HasMoreTokens()){
-			tbl.Add(wxAtoi(cfgtable.NextToken()));
+			tbl.Add(wxAtoi(cfgtable.NextToken().Mid(1)));
 		}
 	}
 }

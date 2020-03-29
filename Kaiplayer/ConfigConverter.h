@@ -26,10 +26,10 @@ public:
 	static ConfigConverter *Get();
 private:
 	ConfigConverter(){};
-	~ConfigConverter(){ delete ccthis; };
+	~ConfigConverter(){};
 	ConfigConverter(const ConfigConverter &copy) = delete;
 	std::map<wxString, wxString> convertColors;
 	std::map<wxString, wxString> convertConfig;
 	std::map<wxString, wxString> convertHotkeys;
-	static ConfigConverter *ccthis;
+	static ConfigConverter ccthis;
 };
