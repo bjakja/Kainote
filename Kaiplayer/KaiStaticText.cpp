@@ -151,8 +151,8 @@ void KaiStaticText::SetLabelText(const wxString &_text){
 			sizer->Layout();
 		}
 		//GetParent()->Layout();
-		//Refresh(false);
-		//Update();
+		Refresh(false);
+		Update();
 		return;
 	}
 

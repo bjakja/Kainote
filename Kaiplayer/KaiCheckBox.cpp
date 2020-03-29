@@ -179,6 +179,7 @@ void KaiCheckBox::OnKeyPress(wxKeyEvent &event)
 void KaiCheckBox::OnSize(wxSizeEvent& event)
 {
 	Refresh(false);
+	Update();
 }
 
 bool KaiCheckBox::Enable(bool enable)

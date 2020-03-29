@@ -1596,6 +1596,7 @@ void SubsGridWindow::OnSize(wxSizeEvent& event)
 		preview->SetSize(wxSize(size.x, -1));
 	}
 	Refresh(false);
+	Update();
 }
 
 void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool select /*= true*/, bool norefresh /*= false*/)

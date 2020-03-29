@@ -37,8 +37,6 @@
 //#include <vld.h> 
 #endif
 
-
-
 class kainoteApp : public wxApp
 {
 public:
