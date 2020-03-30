@@ -1000,9 +1000,9 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		wxString seekingPart = MText.Mid(0, charStart);
 		size_t endBracket = seekingPart.Find(L'}', true);
 		size_t startBracket = seekingPart.Find(L'{', true);
-		if (endBracket == -1 || startBracket > endBracket)
-			tags = true;
-
+		if (endBracket == -1 || startBracket > endBracket){
+			tags = slash = val = true;
+		}
 		wline = lineStart + 1;
 		posY += (lineStart * fontHeight);
 		wchar = charStart + lineStart;
@@ -1348,7 +1348,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		size_t endBracket = seekingPart.Find(L'}', true);
 		size_t startBracket = seekingPart.Find(L'{', true);
 		if (endBracket == -1 || startBracket > endBracket)
-			tags = true;
+			tags = slash = val = true;
 
 		wline = lineStart + 1;
 		posY += (lineStart * fontHeight);

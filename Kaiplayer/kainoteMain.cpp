@@ -1480,7 +1480,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	std::sort(files.begin(), files.end(), comp);
 	wxArrayString subs;
 	wxArrayString videos;
-	for (size_t i = 0; i < files.size(); i++){
+	size_t filesSize = files.size();
+	for (size_t i = 0; i < filesSize; i++){
 		wxString ext = files[i].AfterLast(L'.').Lower();
 		if (ext == L"ass" || ext == L"ssa" || ext == L"txt" || ext == L"srt" || ext == L"sub"){
 			subs.Add(files[i]);
@@ -1499,10 +1500,11 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 
 	if (files.size() == 1){
 		OpenFile(files[0], (videos.size() == 1 && Options.GetBool(VIDEO_FULL_SCREEN_ON_START)));
-		videos.Clear(); subs.Clear(); files.Clear();
+		videos.Clear(); subs.Clear(); files.RemoveAt(0);
 		return;
 	}
-	bool askForRes = !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION);
+	files.RemoveAt(0, filesSize);
+	bool askForRes = !Options.GetBool(DontAskForBadResolution);
 	Freeze();
 	GetTab()->Hide();
 	size_t subsSize = subs.size();
@@ -1576,7 +1578,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	GetTab()->Show();
 	UpdateToolbar();
 
-	files.Clear();
+	//files.Clear();
 	subs.Clear();
 	videos.Clear();
 	Tabs->GetTab()->Video->DeleteAudioCache();

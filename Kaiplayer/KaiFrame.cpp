@@ -368,6 +368,22 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 
 WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
+	if (uMsg == WM_COPYDATA){
+		PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT)lParam;
+		//wxArrayString paths;
+		wchar_t * _paths = (wchar_t*)pMyCDS->lpData;
+		wxStringTokenizer tkn(_paths, L"|");
+		kainoteApp *Kai = (kainoteApp *)wxTheApp;
+		if (Kai){
+			while (tkn.HasMoreTokens()){
+				Kai->paths.Add(tkn.NextToken());
+			}
+			//Kai->paths.insert(Kai->paths.end(), paths.begin(), paths.end());
+			Kai->timer.Start(400, true);
+		}
+		return true;
+	}
+
 	if (uMsg == WM_SIZE)
 	{
 		int w = LOWORD(lParam);
@@ -471,21 +487,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		return result;
 	}
-	if (uMsg == WM_COPYDATA){
-		PCOPYDATASTRUCT pMyCDS = (PCOPYDATASTRUCT)lParam;
-		wxArrayString paths;
-		wchar_t * _paths = (wchar_t*)pMyCDS->lpData;
-		wxStringTokenizer tkn(_paths, L"|");
-		while (tkn.HasMoreTokens()){
-			paths.Add(tkn.NextToken());
-		}
-		kainoteApp *Kai = (kainoteApp *)wxTheApp;
-		if (Kai){
-			Kai->paths.insert(Kai->paths.end(), paths.begin(), paths.end());
-			Kai->timer.Start(400, true);
-		}
-		return true;
-	}
+	
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }

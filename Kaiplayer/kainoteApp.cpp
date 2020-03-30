@@ -272,15 +272,30 @@ bool kainoteApp::OnInit()
 
 		delete m_checker; // OnExit() won't be called if we return false
 		m_checker = NULL;
+		if (subs.empty())
+			return false;
 		//damn wxwidgets, why class name is not customizable?    
-		HWND hWnd = FindWindow(L"Kainote_main_windowNR", 0);/**///wxWindow
-		if (hWnd && subs != L""){
-			const wchar_t *text = subs.wc_str();
-			COPYDATASTRUCT cds;
-			cds.cbData = (subs.length() + 1) * sizeof(wchar_t);
-			cds.lpData = (void *)text;
-			SendMessage(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
+		int count = 0;
+		HWND hWnd = NULL;
+		while (!hWnd){
+			//prevent to total dedlock, when main Kainote is crashed or closed
+			if (count > 100){
+				wxMessageBox(L"Cannot open: %s", subs);
+				return false;
+			}
+
+			hWnd = FindWindow(L"Kainote_main_windowNR", 0);
+			//wait to can find it next time
+			Sleep(40);
+			count++;
 		}
+		//hwnd here must exist
+		const wchar_t *text = subs.wc_str();
+		COPYDATASTRUCT cds;
+		cds.cbData = (subs.length() + 1) * sizeof(wchar_t);
+		cds.lpData = (void *)text;
+		SendMessage(hWnd, WM_COPYDATA, 0, (LPARAM)&cds);
+		
 		return false;
 	}
 
@@ -332,6 +347,10 @@ void kainoteApp::OnOpen(wxTimerEvent &evt)
 		if (Frame->IsIconized()){ Frame->Iconize(false); }
 		Frame->Raise();
 		Frame->OpenFiles(paths, false);
+		paths.Clear();
+	}
+	else{
+		timer.Start(100, true);
 	}
 }
 

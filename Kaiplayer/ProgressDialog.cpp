@@ -104,7 +104,6 @@ void ProgresDialog::Progress(int num)
 		STime progressTime;
 		progressTime.NewTime(newtime);
 		text1->SetLabelText(wxString::Format(_("Upłynęło %s sekund"), progressTime.raw()));
-
 	}
 	//bool main =wxThread::IsMain();
 	//if(!main){
