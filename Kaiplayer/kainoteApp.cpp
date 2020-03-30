@@ -275,13 +275,21 @@ bool kainoteApp::OnInit()
 		if (subs.empty())
 			return false;
 		//damn wxwidgets, why class name is not customizable?    
+		int count = 0;
 		HWND hWnd = NULL;
 		while (!hWnd){
+			//prevent to total dedlock, when main Kainote is crashed or closed
+			if (count > 100){
+				wxMessageBox(L"Cannot open: %s", subs);
+				return false;
+			}
+
 			hWnd = FindWindow(L"Kainote_main_windowNR", 0);
 			//wait to can find it next time
 			Sleep(40);
+			count++;
 		}
-		//hwnd here must exist or while get deadlock
+		//hwnd here must exist
 		const wchar_t *text = subs.wc_str();
 		COPYDATASTRUCT cds;
 		cds.cbData = (subs.length() + 1) * sizeof(wchar_t);
