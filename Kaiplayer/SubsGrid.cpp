@@ -1128,7 +1128,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 
 		if (marginChanged || textChanged){
 			if (textChanged){
-				if (SpellErrors.size() >= (size_t)i) 
+				if ((size_t)i < SpellErrors.size())
 					SpellErrors[i].clear();
 			}
 			file->SetDialogue(i, diall, true);
