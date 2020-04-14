@@ -1028,7 +1028,9 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 			
 			for (auto character = ch.begin(); character != ch.end(); character++)
 			{
-				text << (*character);
+				const auto &achar = (*character);
+				if (achar != 65279)
+					text << achar;
 			}
 			if (!FontEnum.CheckGlyphsExists(dc, text, missing))
 			{
