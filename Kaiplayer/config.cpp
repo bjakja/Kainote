@@ -749,9 +749,9 @@ void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split, int mode)
 	}
 }
 
-bool sortfunc(Styles *styl1, Styles *styl2){
-	wxString str1 = styl1->Name;
-	wxString str2 = styl2->Name;
+bool sortfunc(Styles *style1, Styles *style2){
+	wxString str1 = style1->Name;
+	wxString str2 = style2->Name;
 	return (str1.CmpNoCase(str2) < 0);
 }
 
