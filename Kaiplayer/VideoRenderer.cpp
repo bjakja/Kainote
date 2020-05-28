@@ -631,7 +631,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 
 	if (!Dshow){
 		bool success;
-		tmpvff = new VideoFfmpeg(fname, this, &success);
+		tmpvff = new VideoFfmpeg(fname, this, (isFullscreen) ? ((VideoCtrl*)this)->TD : (wxWindow *)Kaia->Frame, &success);
 		//this is safe mode, when new video not load, 
 		//the last opened will not be released
 		if (!success || !tmpvff){

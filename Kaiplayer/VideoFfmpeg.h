@@ -33,7 +33,7 @@ class VideoRenderer;
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool *success);
+	VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWindow *progressSinkWindow, bool *success);
 	~VideoFfmpeg();
 	void Render(bool wait=true);
 	void RenderFromWorker();

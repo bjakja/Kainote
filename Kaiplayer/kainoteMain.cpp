@@ -283,7 +283,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Auto = new Auto::Automation();
 	sendFocus.SetOwner(this, 6789);
 
-	Bind(wxEVT_SET_FOCUS, focusFunction);
+	//Bind(wxEVT_SET_FOCUS, focusFunction);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		//if it will crash on last focused window
 		//we need to remove last focused window
