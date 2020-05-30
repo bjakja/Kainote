@@ -1239,6 +1239,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			// Get provider
 			TabPanel *pan = ((TabPanel*)box->GetGrandParent());
 			VideoCtrl *vb = pan->Video;
+			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
 			if (vb->VFF && fromvideo){
 				provider = vb->VFF;
@@ -1246,7 +1247,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 				if (ownProvider){ vb->VFF = NULL; }
 			}
 			else{
-				provider = new VideoFfmpeg(file, 0, &success);
+				provider = new VideoFfmpeg(file, 0, Kaia->Frame, &success);
 				if (!success || provider->SampleRate < 0) {
 					delete provider; provider = 0;
 					loaded = false; return;

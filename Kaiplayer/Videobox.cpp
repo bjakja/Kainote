@@ -245,7 +245,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	bool byFFMS2;
 	if (customFFMS2 == -1){
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
-		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls && !isFullscreen;
+		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls/* && !isFullscreen*/;
 	}
 	else
 		byFFMS2 = customFFMS2 == 1;
@@ -759,7 +759,7 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 	if (setstatus){
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
-	if (wwidth == 0){
+	if (wheight == 0){//width can normally have 0 when editbox have 0
 		GetClientSize(&wwidth, &wheight);
 	}
 	float precy = size.y, precx = size.x;
@@ -782,8 +782,9 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 void VideoCtrl::OnPrew()
 {
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
-	if (index->IsChecked() && index->IsEnabled() && !isFullscreen){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO) return;
+	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
+		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), 
+			wxYES_NO, (isFullscreen) ? (wxWindow*)TD : Kai) == wxNO) return;
 	}
 	NextFile(false);
 }
@@ -792,8 +793,9 @@ void VideoCtrl::OnPrew()
 void VideoCtrl::OnNext()
 {
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
-	if (index->IsChecked() && index->IsEnabled() && !isFullscreen){
-		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), wxYES_NO) == wxNO) return;
+	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
+		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), 
+			wxYES_NO, (isFullscreen)? (wxWindow*)TD : Kai) == wxNO) return;
 	}
 	NextFile();
 }

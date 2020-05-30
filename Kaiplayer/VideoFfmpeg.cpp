@@ -30,7 +30,7 @@
 
 
 
-VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool *_success)
+VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWindow *progressSinkWindow, bool *_success)
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
 	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
@@ -55,8 +55,8 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, bool
 
 	success = false;
 	fname = filename;
-	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	progress = new ProgressSink(Kaia->Frame, _("Indeksowanie pliku wideo"));
+	//kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	progress = new ProgressSink(progressSinkWindow, _("Indeksowanie pliku wideo"));
 
 	if (renderer){
 		unsigned int threadid = 0;

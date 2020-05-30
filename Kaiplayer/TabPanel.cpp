@@ -167,7 +167,6 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 	Notebook *nb = Notebook::GetTabs();
 
 	if (Video->GetState() != None && Video->IsShown()){
-		//Options.GetCoords(VIDEO_WINDOW_SIZE, &w, &h);
 		int ww, hh;
 		Video->CalcSize(&ww, &hh, w, h, false, true);
 		Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
