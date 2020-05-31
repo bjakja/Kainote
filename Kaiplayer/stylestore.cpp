@@ -189,7 +189,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	Connect(ID_ADD_TO_ALL_ASS, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnAddToAssInAllTabs);
 	Connect(ID_CATALOG, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&StyleStore::OnChangeCatalog);
 	Connect(ID_NEWCAT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnNewCatalog);
-	Connect(ID_DELCAT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnDelCatalog);
+	Connect(ID_DELCAT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnDeleteCatalog);
 	Connect(ID_STORENEW, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnStoreNew);
 	Connect(ID_STORECOPY, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnStoreCopy);
 	Connect(ID_STOREEDIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleStore::OnStoreStyleChange);
@@ -260,10 +260,13 @@ void StyleStore::OnAddToStore(wxCommandEvent& event)
 		Styles *stylc = grid->GetStyle(sels[i])->Copy();
 		int found = Options.FindStyle(stylc->Name);
 		if (found != -1){
-			if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
+			if (prompt != wxYES_TO_ALL){
 				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
 					stylc->Name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
-				//if(prompt == wxID_CANCEL){return;}
+				if (prompt == wxCANCEL){ 
+					delete stylc;
+					break; 
+				}
 			}
 			if (prompt == wxYES || prompt == wxYES_TO_ALL){
 				Options.ChangeStyle(stylc, found); Store->SetSelection(found);
@@ -289,9 +292,13 @@ void StyleStore::OnAddToAss(wxCommandEvent& event)
 		Styles *stylc = Options.GetStyle(sels[i])->Copy();
 		int found = grid->FindStyle(stylc->Name);
 		if (found != -1){
-			if (prompt != wxYES_TO_ALL && prompt != wxCANCEL){
+			if (prompt != wxYES_TO_ALL){
 				prompt = KaiMessageBox(wxString::Format(_("Styl o nazwie \"%s\" istnieje, podmienić go?"),
 					stylc->Name), _("Potwierdzenie"), wxYES_TO_ALL | wxYES | wxNO | wxCANCEL, this);
+				if (prompt == wxCANCEL){
+					delete stylc;
+					break;
+				}
 			}
 			if (prompt == wxYES || prompt == wxYES_TO_ALL){
 				grid->ChangeStyle(stylc, found); ASSList->SetSelection(found);
@@ -527,12 +534,15 @@ void StyleStore::OnNewCatalog(wxCommandEvent& event)
 	}
 }
 
-void StyleStore::OnDelCatalog(wxCommandEvent& event)
+void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 {
 	int cat = catalogList->GetSelection();
 	if (cat == -1){ return; }
 	wxString Cat = catalogList->GetString(cat);
 	if (Cat == L"Default"){ wxBell(); return; }
+	if (KaiMessageBox(wxString::Format(("Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Pytanie"), wxYES_NO) == wxNO)
+		return;
+
 	catalogList->Delete(cat);
 	Options.dirs.RemoveAt(cat);
 	Options.actualStyleDir = Options.dirs[MAX(0, cat - 1)];

@@ -81,7 +81,7 @@ private:
 	void OnStoreStyleChange(wxCommandEvent& event);
 	void OnChangeCatalog(wxCommandEvent& event);
 	void OnNewCatalog(wxCommandEvent& event);
-	void OnDelCatalog(wxCommandEvent& event);
+	void OnDeleteCatalog(wxCommandEvent& event);
 	void OnStoreLoad(wxCommandEvent& event);
 	void OnStoreSort(wxCommandEvent& event);
 	void OnAssLoad(wxCommandEvent& event);

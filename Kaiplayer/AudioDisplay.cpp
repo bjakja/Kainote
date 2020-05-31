@@ -2340,7 +2340,6 @@ void AudioDisplay::Next(bool play) {
 		if (whichsyl >= (int)karaoke->syls.size()){ whichsyl = 0; ChangeLine(1); }
 	}
 	else{
-		//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
 		ChangeLine(1);
 	}
 
@@ -2358,7 +2357,7 @@ void AudioDisplay::Next(bool play) {
 // Previous
 void AudioDisplay::Prev(bool play) {
 	// Karaoke
-	if (hasKara&&play){
+	if (hasKara && play){
 		whichsyl--;
 		if (whichsyl < 0){ ChangeLine(-1); whichsyl = karaoke->syls.size() - 1; MakeDialogueVisible(); }
 

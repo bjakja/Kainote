@@ -622,18 +622,18 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	{
 		wxBoxSizer *audio = new wxBoxSizer(wxVERTICAL);
-
-		wxString names[] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"),
+		const int numOfElements = 13;
+		wxString names[numOfElements] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"),
 			_("Wyświetlaj pozycję wideo"), _("Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"),
 			_("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"), _("Przyklejaj do pozostałych linii"),
-			_("Scalaj wszystkie \"n\" z poprzednią sylabą"), _("Przenoś linie sylab po kliknięciu"),
-			_("Wczytuj audio do pamięci RAM") };
+			_("Nie odtarzaj audio po zmianie linijki"), _("Scalaj wszystkie \"n\" z poprzednią sylabą"), 
+			_("Przenoś linie sylab po kliknięciu"),_("Wczytuj audio do pamięci RAM") };
 
-		CONFIG opts[] = { AUDIO_DRAW_TIME_CURSOR, AUDIO_DRAW_SECONDARY_LINES, AUDIO_DRAW_SELECTION_BACKGROUND, AUDIO_DRAW_VIDEO_POSITION,
+		CONFIG opts[numOfElements] = { AUDIO_DRAW_TIME_CURSOR, AUDIO_DRAW_SECONDARY_LINES, AUDIO_DRAW_SELECTION_BACKGROUND, AUDIO_DRAW_VIDEO_POSITION,
 			AUDIO_DRAW_KEYFRAMES, AUDIO_LOCK_SCROLL_ON_CURSOR, AUDIO_AUTO_FOCUS, AUDIO_SNAP_TO_KEYFRAMES, AUDIO_SNAP_TO_OTHER_LINES,
-			AUDIO_MERGE_EVERY_N_WITH_SYLLABLE, AUDIO_KARAOKE_MOVE_ON_CLICK, AUDIO_RAM_CACHE };
+			AUDIO_DONT_PLAY_WHEN_LINE_CHANGES, AUDIO_MERGE_EVERY_N_WITH_SYLLABLE, AUDIO_KARAOKE_MOVE_ON_CLICK, AUDIO_RAM_CACHE };
 
-		for (int i = 0; i < 12; i++)
+		for (int i = 0; i < numOfElements; i++)
 		{
 			KaiCheckBox *opt = new KaiCheckBox(AudioMain, -1, names[i]);
 			opt->SetValue(Options.GetBool(opts[i]));

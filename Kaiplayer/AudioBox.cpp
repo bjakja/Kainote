@@ -375,7 +375,7 @@ void AudioBox::OnStop(wxCommandEvent &event) {
 // Next
 void AudioBox::OnNext(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
-	audioDisplay->Next();
+	audioDisplay->Next(!Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES));
 }
 
 
@@ -383,7 +383,7 @@ void AudioBox::OnNext(wxCommandEvent &event) {
 // Previous
 void AudioBox::OnPrev(wxCommandEvent &event) {
 	audioDisplay->SetFocus();
-	audioDisplay->Prev();
+	audioDisplay->Prev(!Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES));
 }
 
 void AudioBox::OnPlayBeforeMark(wxCommandEvent &event) {
@@ -695,8 +695,6 @@ int AudioBox::GetVolume()
 
 bool AudioBox::SetFont(const wxFont &font)
 {
-	//wxFont ebFont = font;
-	//ebFont.SetPointSize(font.GetPointSize() - 1);
 	const wxWindowList& siblings = GetChildren();
 
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
