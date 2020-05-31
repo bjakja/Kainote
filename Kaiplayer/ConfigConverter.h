@@ -17,11 +17,13 @@
 
 #include "Config.h"
 #include <map>
+#include <utility>
 
 class ConfigConverter{
 public:
 	void CreateTable();
-	bool ConvertConfig(wxString *rawConfig, bool colors = false);
+	bool ConvertConfig(wxString *rawConfig);
+	bool ConvertColors(wxString *rawColors);
 	bool ConvertHotkeys(wxString *rawHotkeys);
 	static ConfigConverter *Get();
 private:
@@ -29,7 +31,7 @@ private:
 	~ConfigConverter(){};
 	ConfigConverter(const ConfigConverter &copy) = delete;
 	std::map<wxString, wxString> convertColors;
-	std::map<wxString, wxString> convertConfig;
+	std::map<wxString, std::pair<wxString, wxString>> convertConfig;
 	std::map<wxString, wxString> convertHotkeys;
 	static ConfigConverter ccthis;
 };

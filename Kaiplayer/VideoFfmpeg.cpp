@@ -252,7 +252,7 @@ int VideoFfmpeg::Init()
 				}
 				if (hasMoreAudioTracks){
 					wxArrayString enabled;
-					Options.GetTable(ACCEPTED_AUDIO_STREAM, enabled, L";");
+					Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
 					int enabledSize = enabled.GetCount();
 					int lowestIndex = enabledSize;
 					for (size_t j = 0; j < audiotable.GetCount(); j++){

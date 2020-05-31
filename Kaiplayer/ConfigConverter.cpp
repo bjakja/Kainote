@@ -20,185 +20,188 @@
 void ConfigConverter::CreateTable()
 {
 	//config
-	convertConfig[L"AudioAutoCommit"] = L"AUDIO_AUTO_COMMIT";
-	convertConfig[L"AudioAutoFocus"] = L"AUDIO_AUTO_FOCUS";
-	convertConfig[L"AudioAutoScroll"] = L"AUDIO_AUTO_SCROLL";
-	convertConfig[L"AudioBoxHeight"] = L"AUDIO_BOX_HEIGHT";
-	convertConfig[L"AudioDelay"] = L"AUDIO_DELAY";
-	convertConfig[L"AudioDrawKeyframes"] = L"AUDIO_DRAW_KEYFRAMES";
-	convertConfig[L"AudioDrawSecondaryLines"] = L"AUDIO_DRAW_SECONDARY_LINES";
-	convertConfig[L"AudioDrawSelectionBackground"] = L"AUDIO_DRAW_SELECTION_BACKGROUND";
-	convertConfig[L"AudioDrawTimeCursor"] = L"AUDIO_DRAW_TIME_CURSOR";
-	convertConfig[L"AudioDrawVideoPosition"] = L"AUDIO_DRAW_VIDEO_POSITION";
-	convertConfig[L"AudioGrabTimesOnSelect"] = L"AUDIO_GRAB_TIMES_ON_SELECT";
-	convertConfig[L"AudioHorizontalZoom"] = L"AUDIO_HORIZONTAL_ZOOM";
-	convertConfig[L"AudioInactiveLinesDisplayMode"] = L"AUDIO_INACTIVE_LINES_DISPLAY_MODE";
-	convertConfig[L"AudioKaraoke"] = L"AUDIO_KARAOKE";
-	convertConfig[L"AudioKaraokeMoveOnClick"] = L"AUDIO_KARAOKE_MOVE_ON_CLICK";
-	convertConfig[L"AudioKaraokeSplitMode"] = L"AUDIO_KARAOKE_SPLIT_MODE";
-	convertConfig[L"AudioLeadIn"] = L"AUDIO_LEAD_IN_VALUE";
-	convertConfig[L"AudioLeadOut"] = L"AUDIO_LEAD_OUT_VALUE";
-	convertConfig[L"AudioLineBoundariesThickness"] = L"AUDIO_LINE_BOUNDARIES_THICKNESS";
-	convertConfig[L"AudioLink"] = L"AUDIO_LINK";
-	convertConfig[L"AudioLockScrollOnCursor"] = L"AUDIO_LOCK_SCROLL_ON_CURSOR";
-	convertConfig[L"AudioMarkPlayTime"] = L"AUDIO_MARK_PLAY_TIME";
-	convertConfig[L"AudioMergeEveryNWithSyllable"] = L"AUDIO_MERGE_EVERY_N_WITH_SYLLABLE";
-	convertConfig[L"AudioNextLineOnCommit"] = L"AUDIO_NEXT_LINE_ON_COMMIT";
-	convertConfig[L"AudioRAMCache"] = L"AUDIO_RAM_CACHE";
-	convertConfig[L"AudioSnapToKeyframes"] = L"AUDIO_SNAP_TO_KEYFRAMES";
-	convertConfig[L"AudioSnapToOtherLines"] = L"AUDIO_SNAP_TO_OTHER_LINES";
-	convertConfig[L"AudioSpectrumOn"] = L"AUDIO_SPECTRUM_ON";
-	convertConfig[L"AudioSpectrumNonLinearOn"] = L"AUDIO_SPECTRUM_NON_LINEAR_ON";
-	convertConfig[L"AudioStartDragSensitivity"] = L"AUDIO_START_DRAG_SENSITIVITY";
-	convertConfig[L"AudioVerticalZoom"] = L"AUDIO_VERTICAL_ZOOM";
-	convertConfig[L"AudioVolume"] = L"AUDIO_VOLUME";
-	convertConfig[L"AudioWheelDefaultToZoom"] = L"AUDIO_WHEEL_DEFAULT_TO_ZOOM";
-	convertConfig[L"AcceptedAudioStream"] = L"ACCEPTED_AUDIO_STREAM";
-	convertConfig[L"ASSPropertiesTitle"] = L"ASS_PROPERTIES_TITLE";
-	convertConfig[L"ASSPropertiesScript"] = L"ASS_PROPERTIES_SCRIPT";
-	convertConfig[L"ASSPropertiesTranslation"] = L"ASS_PROPERTIES_TRANSLATION";
-	convertConfig[L"ASSPropertiesEditing"] = L"ASS_PROPERTIES_EDITING";
-	convertConfig[L"ASSPropertiesTiming"] = L"ASS_PROPERTIES_TIMING";
-	convertConfig[L"ASSPropertiesUpdate"] = L"ASS_PROPERTIES_UPDATE";
-	convertConfig[L"ASSPropertiesTitleOn"] = L"ASS_PROPERTIES_TITLE_ON";
-	convertConfig[L"ASSPropertiesScriptOn"] = L"ASS_PROPERTIES_SCRIPT_ON";
-	convertConfig[L"ASSPropertiesTranslationOn"] = L"ASS_PROPERTIES_TRANSLATION_ON";
-	convertConfig[L"ASSPropertiesEditingOn"] = L"ASS_PROPERTIES_EDITING_ON";
-	convertConfig[L"ASSPropertiesTimingOn"] = L"ASS_PROPERTIES_TIMING_ON";
-	convertConfig[L"ASSPropertiesUpdateOn"] = L"ASS_PROPERTIES_UPDATE_ON";
-	convertConfig[L"ASSPropertiesAskForChange"] = L"ASS_PROPERTIES_ASK_FOR_CHANGE";
-	convertConfig[L"AudioRecent"] = L"AUDIO_RECENT_FILES";
-	convertConfig[L"AutomationLoadingMethod"] = L"AUTOMATION_LOADING_METHOD";
-	convertConfig[L"AutomationOldScriptsCompatybility"] = L"AUTOMATION_OLD_SCRIPTS_COMPATIBILITY";
-	convertConfig[L"AutomationRecent"] = L"AUTOMATION_RECENT_FILES";
-	convertConfig[L"AutomationScriptEditor"] = L"AUTOMATION_SCRIPT_EDITOR";
-	convertConfig[L"AutomationTraceLevel"] = L"AUTOMATION_TRACE_LEVEL";
-	convertConfig[L"AutoMoveTagsFromOriginal"] = L"AUTO_MOVE_TAGS_FROM_ORIGINAL";
-	convertConfig[L"AutoSaveMaxFiles"] = L"AUTOSAVE_MAX_FILES";
-	convertConfig[L"AutoSelectLinesFromLastTab"] = L"AUTO_SELECT_LINES_FROM_LAST_TAB";
-	convertConfig[L"ColorpickerRecent"] = L"COLORPICKER_RECENT_COLORS";
-	convertConfig[L"ConvertASSTagsOnLineStart"] = L"CONVERT_ASS_TAGS_TO_INSERT_IN_LINE";
-	convertConfig[L"ConvertFPS"] = L"CONVERT_FPS";
-	convertConfig[L"ConvertFPSFromVideo"] = L"CONVERT_FPS_FROM_VIDEO";
-	convertConfig[L"ConvertNewEndTimes"] = L"CONVERT_NEW_END_TIMES";
-	convertConfig[L"ConvertResolutionWidth"] = L"CONVERT_RESOLUTION_WIDTH";
-	convertConfig[L"ConvertResolutionHeight"] = L"CONVERT_RESOLUTION_HEIGHT";
-	convertConfig[L"ConvertShowSettings"] = L"CONVERT_SHOW_SETTINGS";
-	convertConfig[L"ConvertStyle"] = L"CONVERT_STYLE";
-	convertConfig[L"ConvertStyleCatalog"] = L"CONVERT_STYLE_CATALOG";
-	convertConfig[L"ConvertTimePerLetter"] = L"CONVERT_TIME_PER_CHARACTER";
-	convertConfig[L"CopyCollumnsSelection"] = L"COPY_COLLUMS_SELECTIONS";
-	convertConfig[L"DictionaryLanguage"] = L"DICTIONARY_LANGUAGE";
-	convertConfig[L"DisableLiveVideoEditing"] = L"DISABLE_LIVE_VIDEO_EDITING";
-	convertConfig[L"DontAskForBadResolution"] = L"DONT_ASK_FOR_BAD_RESOLUTION";
-	convertConfig[L"EditboxSugestionsOnDoubleClick"] = L"EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK";
-	convertConfig[L"EditorOn"] = L"EDITOR_ON";
-	convertConfig[L"FindRecent"] = L"FIND_RECENT_FINDS";
-	convertConfig[L"FindReplaceOptions"] = L"FIND_REPLACE_OPTIONS";
-	convertConfig[L"FontCollectorAction"] = L"FONT_COLLECTOR_ACTION";
-	convertConfig[L"FontCollectorDirectory"] = L"FONT_COLLECTOR_DIRECTORY";
-	convertConfig[L"FontCollectorFromMKV"] = L"FONT_COLLECTOR_FROM_MKV";
-	convertConfig[L"FontCollectorUseSubsDirectory"] = L"FONT_COLLECTOR_USE_SUBS_DIRECTORY";
-	convertConfig[L"FFMS2VideoSeeking"] = L"FFMS2_VIDEO_SEEKING";
-	convertConfig[L"GridChangeActiveOnSelection"] = L"GRID_CHANGE_ACTIVE_ON_SELECTION";
-	convertConfig[L"GridFontName"] = L"GRID_FONT";
-	convertConfig[L"GridFontSize"] = L"GRID_FONT_SIZE";
-	convertConfig[L"GridAddToFilter"] = L"GRID_ADD_TO_FILTER";
-	convertConfig[L"GridFilterAfterLoad"] = L"GRID_FILTER_AFTER_LOAD";
-	convertConfig[L"GridFilterBy"] = L"GRID_FILTER_BY";
-	convertConfig[L"GridFilterInverted"] = L"GRID_FILTER_INVERTED";
-	convertConfig[L"GridFilterStyles"] = L"GRID_FILTER_STYLES";
-	convertConfig[L"GridHideCollums"] = L"GRID_HIDE_COLUMNS";
-	convertConfig[L"GridHideTags"] = L"GRID_HIDE_TAGS";
-	convertConfig[L"GridIgnoreFiltering"] = L"GRID_IGNORE_FILTERING";
-	convertConfig[L"GridLoadSortedSubs"] = L"GRID_LOAD_SORTED_SUBS";
-	convertConfig[L"GridSaveAfterCharacterCount"] = L"GRID_SAVE_AFTER_CHARACTER_COUNT";
-	convertConfig[L"GridTagsSwapChar"] = L"GRID_TAGS_SWAP_CHARACTER";
-	convertConfig[L"InsertEndOffset"] = L"GRID_INSERT_END_OFFSET";
-	convertConfig[L"InsertStartOffset"] = L"GRID_INSERT_START_OFFSET";
-	convertConfig[L"KEYFRAMES_RECENT"] = L"KEYFRAMES_RECENT";
-	convertConfig[L"MoveTimesByTime"] = L"SHIFT_TIMES_BY_TIME";
-	convertConfig[L"MoveTimesLoadSetTabOptions"] = L"SHIFT_TIMES_CHANGE_VALUES_WITH_TAB";
-	convertConfig[L"MoveTimesCorrectEndTimes"] = L"SHIFT_TIMES_CORRECT_END_TIMES";
-	convertConfig[L"MoveTimesForward"] = L"SHIFT_TIMES_MOVE_FORWARD";
-	convertConfig[L"MoveTimesFrames"] = L"SHIFT_TIMES_DISPLAY_FRAMES";
-	convertConfig[L"MoveTimesOn"] = L"SHIFT_TIMES_ON";
-	convertConfig[L"MoveTimesOptions"] = L"SHIFT_TIMES_OPTIONS";
-	convertConfig[L"MoveTimesWhichLines"] = L"SHIFT_TIMES_WHICH_LINES";
-	convertConfig[L"MoveTimesWhichTimes"] = L"SHIFT_TIMES_WHICH_TIMES";
-	convertConfig[L"MoveTimesStyles"] = L"SHIFT_TIMES_STYLES";
-	convertConfig[L"MoveTimesTime"] = L"SHIFT_TIMES_TIME";
-	convertConfig[L"MoveVideoToActiveLine"] = L"MOVE_VIDEO_TO_ACTIVE_LINE";
-	convertConfig[L"NoNewLineAfterTimesEdition"] = L"EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT";
-	convertConfig[L"OpenSubsInNewCard"] = L"OPEN_SUBS_IN_NEW_TAB";
-	convertConfig[L"OpenVideoAtActiveLine"] = L"OPEN_VIDEO_AT_ACTIVE_LINE";
-	convertConfig[L"PasteCollumnsSelection"] = L"PASTE_COLUMNS_SELECTION";
-	convertConfig[L"PlayAfterSelection"] = L"VIDEO_PLAY_AFTER_SELECTION";
-	convertConfig[L"PostprocessorEnabling"] = L"POSTPROCESSOR_ON";
-	convertConfig[L"PostprocessorKeyframeBeforeStart"] = L"POSTPROCESSOR_KEYFRAME_BEFORE_START";
-	convertConfig[L"PostprocessorKeyframeAfterStart"] = L"POSTPROCESSOR_KEYFRAME_AFTER_START";
-	convertConfig[L"PostprocessorKeyframeBeforeEnd"] = L"POSTPROCESSOR_KEYFRAME_BEFORE_END";
-	convertConfig[L"PostprocessorKeyframeAfterEnd"] = L"POSTPROCESSOR_KEYFRAME_AFTER_END";
-	convertConfig[L"PostprocessorLeadIn"] = L"POSTPROCESSOR_LEAD_IN";
-	convertConfig[L"PostprocessorLeadOut"] = L"POSTPROCESSOR_LEAD_OUT";
-	convertConfig[L"PostprocessorThresholdStart"] = L"POSTPROCESSOR_THRESHOLD_START";
-	convertConfig[L"PostprocessorThresholdEnd"] = L"POSTPROCESSOR_THRESHOLD_END";
-	convertConfig[L"PreviewText"] = L"STYLE_PREVIEW_TEXT";
-	convertConfig[L"ProgramLanguage"] = L"PROGRAM_LANGUAGE";
-	convertConfig[L"ProgramTheme"] = L"PROGRAM_THEME";
-	convertConfig[L"ReplaceRecent"] = L"REPLACE_RECENT_REPLACEMENTS";
-	convertConfig[L"SelectionsRecent"] = L"SELECT_LINES_RECENT_SELECTIONS";
-	convertConfig[L"SelectionsOptions"] = L"SELECT_LINES_OPTIONS";
-	convertConfig[L"SelectVisibleLineAfterFullscreen"] = L"GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN";
-	convertConfig[L"SpellcheckerOn"] = L"SPELLCHECKER_ON";
-	convertConfig[L"StyleEditFilterText"] = L"STYLE_EDIT_FILTER_TEXT";
-	convertConfig[L"StyleFilterTextOn"] = L"STYLE_EDIT_FILTER_TEXT_ON";
-	convertConfig[L"StyleManagerPosition"] = L"STYLE_MANAGER_POSITION";
-	convertConfig[L"StyleManagerDetachEditor"] = L"STYLE_MANAGER_DETACH_EDIT_WINDOW";
-	convertConfig[L"SubsAutonaming"] = L"SUBS_AUTONAMING";
-	convertConfig[L"SubsComparisonType"] = L"SUBS_COMPARISON_TYPE";
-	convertConfig[L"SubsComparisonStyles"] = L"SUBS_COMPARISON_STYLES";
-	convertConfig[L"SubsRecent"] = L"SUBS_RECENT_FILES";
-	convertConfig[L"TextFieldAllowNumpadHotkeys"] = L"TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS";
-	convertConfig[L"TlModeShowOriginal"] = L"TL_MODE_SHOW_ORIGINAL";
-	convertConfig[L"ToolbarIDs"] = L"TOOLBAR_IDS";
-	convertConfig[L"ToolbarAlignment"] = L"TOOLBAR_ALIGNMENT";
-	convertConfig[L"UpdaterCheckIntensity"] = L"UPDATER_CHECK_INTENSITY";
-	convertConfig[L"UpdaterCheckOptions"] = L"UPDATER_CHECK_OPTIONS";
-	convertConfig[L"UpdaterCheckForStable"] = L"UPDATER_CHECK_FOR_STABLE";
-	convertConfig[L"UpdaterLastCheck"] = L"UPDATER_LAST_CHECK";
-	convertConfig[L"VideoFullskreenOnStart"] = L"VIDEO_FULL_SCREEN_ON_START";
-	convertConfig[L"VideoIndex"] = L"VIDEO_INDEX";
-	convertConfig[L"VideoPauseOnClick"] = L"VIDEO_PAUSE_ON_CLICK";
-	convertConfig[L"VideoProgressBar"] = L"VIDEO_PROGRESS_BAR";
-	convertConfig[L"VideoRecent"] = L"VIDEO_RECENT_FILES";
-	convertConfig[L"VideoVolume"] = L"VIDEO_VOLUME";
-	convertConfig[L"VideoWindowSize"] = L"VIDEO_WINDOW_SIZE";
-	convertConfig[L"VisualWarningsOff"] = L"VIDEO_VISUAL_WARNINGS_OFF";
-	convertConfig[L"WindowMaximized"] = L"WINDOW_MAXIMIZED";
-	convertConfig[L"WindowPosition"] = L"WINDOW_POSITION";
-	convertConfig[L"WindowSize"] = L"WINDOW_SIZE";
-	convertConfig[L"EditboxTagButtons"] = L"EDITBOX_TAG_BUTTONS";
-	convertConfig[L"EditboxTagButton1"] = L"EDITBOX_TAG_BUTTON_VALUE1";
-	convertConfig[L"EditboxTagButton2"] = L"EDITBOX_TAG_BUTTON_VALUE2";
-	convertConfig[L"EditboxTagButton3"] = L"EDITBOX_TAG_BUTTON_VALUE3";
-	convertConfig[L"EditboxTagButton4"] = L"EDITBOX_TAG_BUTTON_VALUE4";
-	convertConfig[L"EditboxTagButton5"] = L"EDITBOX_TAG_BUTTON_VALUE5";
-	convertConfig[L"EditboxTagButton6"] = L"EDITBOX_TAG_BUTTON_VALUE6";
-	convertConfig[L"EditboxTagButton7"] = L"EDITBOX_TAG_BUTTON_VALUE7";
-	convertConfig[L"EditboxTagButton8"] = L"EDITBOX_TAG_BUTTON_VALUE8";
-	convertConfig[L"EditboxTagButton9"] = L"EDITBOX_TAG_BUTTON_VALUE9";
-	convertConfig[L"EditboxTagButton10"] = L"EDITBOX_TAG_BUTTON_VALUE10";
-	convertConfig[L"EditboxTagButton11"] = L"EDITBOX_TAG_BUTTON_VALUE11";
-	convertConfig[L"EditboxTagButton12"] = L"EDITBOX_TAG_BUTTON_VALUE12";
-	convertConfig[L"EditboxTagButton13"] = L"EDITBOX_TAG_BUTTON_VALUE13";
-	convertConfig[L"EditboxTagButton14"] = L"EDITBOX_TAG_BUTTON_VALUE14";
-	convertConfig[L"EditboxTagButton15"] = L"EDITBOX_TAG_BUTTON_VALUE15";
-	convertConfig[L"EditboxTagButton16"] = L"EDITBOX_TAG_BUTTON_VALUE16";
-	convertConfig[L"EditboxTagButton17"] = L"EDITBOX_TAG_BUTTON_VALUE17";
-	convertConfig[L"EditboxTagButton18"] = L"EDITBOX_TAG_BUTTON_VALUE18";
-	convertConfig[L"EditboxTagButton19"] = L"EDITBOX_TAG_BUTTON_VALUE19";
-	convertConfig[L"EditboxTagButton20"] = L"EDITBOX_TAG_BUTTON_VALUE20";
+	convertConfig[L"AudioAutoCommit"] = std::pair<wxString, wxString>(L"AUDIO_AUTO_COMMIT", L"");
+	convertConfig[L"AudioAutoFocus"] = std::pair<wxString, wxString>(L"AUDIO_AUTO_FOCUS", L"");
+	convertConfig[L"AudioAutoScroll"] = std::pair<wxString, wxString>(L"AUDIO_AUTO_SCROLL", L"");
+	convertConfig[L"AudioBoxHeight"] = std::pair<wxString, wxString>(L"AUDIO_BOX_HEIGHT", L"");
+	convertConfig[L"AudioDelay"] = std::pair<wxString, wxString>(L"AUDIO_DELAY", L"");
+	convertConfig[L"AudioDrawKeyframes"] = std::pair<wxString, wxString>(L"AUDIO_DRAW_KEYFRAMES", L"");
+	convertConfig[L"AudioDrawSecondaryLines"] = std::pair<wxString, wxString>(L"AUDIO_DRAW_SECONDARY_LINES", L"");
+	convertConfig[L"AudioDrawSelectionBackground"] = std::pair<wxString, wxString>(L"AUDIO_DRAW_SELECTION_BACKGROUND", L"");
+	convertConfig[L"AudioDrawTimeCursor"] = std::pair<wxString, wxString>(L"AUDIO_DRAW_TIME_CURSOR", L"");
+	convertConfig[L"AudioDrawVideoPosition"] = std::pair<wxString, wxString>(L"AUDIO_DRAW_VIDEO_POSITION", L"");
+	convertConfig[L"AudioGrabTimesOnSelect"] = std::pair<wxString, wxString>(L"AUDIO_GRAB_TIMES_ON_SELECT", L"");
+	convertConfig[L"AudioHorizontalZoom"] = std::pair<wxString, wxString>(L"AUDIO_HORIZONTAL_ZOOM", L"");
+	convertConfig[L"AudioInactiveLinesDisplayMode"] = std::pair<wxString, wxString>(L"AUDIO_INACTIVE_LINES_DISPLAY_MODE", L"");
+	convertConfig[L"AudioKaraoke"] = std::pair<wxString, wxString>(L"AUDIO_KARAOKE", L"");
+	convertConfig[L"AudioKaraokeMoveOnClick"] = std::pair<wxString, wxString>(L"AUDIO_KARAOKE_MOVE_ON_CLICK", L"");
+	convertConfig[L"AudioKaraokeSplitMode"] = std::pair<wxString, wxString>(L"AUDIO_KARAOKE_SPLIT_MODE", L"");
+	convertConfig[L"AudioLeadIn"] = std::pair<wxString, wxString>(L"AUDIO_LEAD_IN_VALUE", L"");
+	convertConfig[L"AudioLeadOut"] = std::pair<wxString, wxString>(L"AUDIO_LEAD_OUT_VALUE", L"");
+	convertConfig[L"AudioLineBoundariesThickness"] = std::pair<wxString, wxString>(L"AUDIO_LINE_BOUNDARIES_THICKNESS", L"");
+	convertConfig[L"AudioLink"] = std::pair<wxString, wxString>(L"AUDIO_LINK", L"");
+	convertConfig[L"AudioLockScrollOnCursor"] = std::pair<wxString, wxString>(L"AUDIO_LOCK_SCROLL_ON_CURSOR", L"");
+	convertConfig[L"AudioMarkPlayTime"] = std::pair<wxString, wxString>(L"AUDIO_MARK_PLAY_TIME", L"");
+	convertConfig[L"AudioMergeEveryNWithSyllable"] = std::pair<wxString, wxString>(L"AUDIO_MERGE_EVERY_N_WITH_SYLLABLE", L"");
+	convertConfig[L"AudioNextLineOnCommit"] = std::pair<wxString, wxString>(L"AUDIO_NEXT_LINE_ON_COMMIT", L"");
+	convertConfig[L"AudioRAMCache"] = std::pair<wxString, wxString>(L"AUDIO_RAM_CACHE", L"");
+	convertConfig[L"AudioSnapToKeyframes"] = std::pair<wxString, wxString>(L"AUDIO_SNAP_TO_KEYFRAMES", L"");
+	convertConfig[L"AudioSnapToOtherLines"] = std::pair<wxString, wxString>(L"AUDIO_SNAP_TO_OTHER_LINES", L"");
+	convertConfig[L"AudioSpectrumOn"] = std::pair<wxString, wxString>(L"AUDIO_SPECTRUM_ON", L"");
+	convertConfig[L"AudioSpectrumNonLinearOn"] = std::pair<wxString, wxString>(L"AUDIO_SPECTRUM_NON_LINEAR_ON", L"");
+	convertConfig[L"AudioStartDragSensitivity"] = std::pair<wxString, wxString>(L"AUDIO_START_DRAG_SENSITIVITY", L"");
+	convertConfig[L"AudioVerticalZoom"] = std::pair<wxString, wxString>(L"AUDIO_VERTICAL_ZOOM", L"");
+	convertConfig[L"AudioVolume"] = std::pair<wxString, wxString>(L"AUDIO_VOLUME", L"");
+	convertConfig[L"AudioWheelDefaultToZoom"] = std::pair<wxString, wxString>(L"AUDIO_WHEEL_DEFAULT_TO_ZOOM", L"");
+	convertConfig[L"AcceptedAudioStream"] = std::pair<wxString, wxString>(L"ACCEPTED_AUDIO_STREAM", L"");
+	convertConfig[L"ASSPropertiesTitle"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TITLE", L"");
+	convertConfig[L"ASSPropertiesScript"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_SCRIPT", L"");
+	convertConfig[L"ASSPropertiesTranslation"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TRANSLATION", L"");
+	convertConfig[L"ASSPropertiesEditing"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_EDITING", L"");
+	convertConfig[L"ASSPropertiesTiming"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TIMING", L"");
+	convertConfig[L"ASSPropertiesUpdate"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_UPDATE", L"");
+	convertConfig[L"ASSPropertiesTitleOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TITLE_ON", L"");
+	convertConfig[L"ASSPropertiesScriptOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_SCRIPT_ON", L"");
+	convertConfig[L"ASSPropertiesTranslationOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TRANSLATION_ON", L"");
+	convertConfig[L"ASSPropertiesEditingOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_EDITING_ON", L"");
+	convertConfig[L"ASSPropertiesTimingOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_TIMING_ON", L"");
+	convertConfig[L"ASSPropertiesUpdateOn"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_UPDATE_ON", L"");
+	convertConfig[L"ASSPropertiesAskForChange"] = std::pair<wxString, wxString>(L"ASS_PROPERTIES_ASK_FOR_CHANGE", L"");
+	convertConfig[L"AudioRecent"] = std::pair<wxString, wxString>(L"AUDIO_RECENT_FILES", L"|");
+	convertConfig[L"AutomationLoadingMethod"] = std::pair<wxString, wxString>(L"AUTOMATION_LOADING_METHOD", L"");
+	convertConfig[L"AutomationOldScriptsCompatybility"] = std::pair<wxString, wxString>(L"AUTOMATION_OLD_SCRIPTS_COMPATIBILITY", L"");
+	convertConfig[L"AutomationRecent"] = std::pair<wxString, wxString>(L"AUTOMATION_RECENT_FILES", L"");
+	convertConfig[L"AutomationScriptEditor"] = std::pair<wxString, wxString>(L"AUTOMATION_SCRIPT_EDITOR", L"");
+	convertConfig[L"AutomationTraceLevel"] = std::pair<wxString, wxString>(L"AUTOMATION_TRACE_LEVEL", L"");
+	convertConfig[L"AutoMoveTagsFromOriginal"] = std::pair<wxString, wxString>(L"AUTO_MOVE_TAGS_FROM_ORIGINAL", L"");
+	convertConfig[L"AutoSaveMaxFiles"] = std::pair<wxString, wxString>(L"AUTOSAVE_MAX_FILES", L"");
+	convertConfig[L"AutoSelectLinesFromLastTab"] = std::pair<wxString, wxString>(L"AUTO_SELECT_LINES_FROM_LAST_TAB", L"");
+	convertConfig[L"ColorpickerRecent"] = std::pair<wxString, wxString>(L"COLORPICKER_RECENT_COLORS", L"");
+	convertConfig[L"ConvertASSTagsOnLineStart"] = std::pair<wxString, wxString>(L"CONVERT_ASS_TAGS_TO_INSERT_IN_LINE", L"");
+	convertConfig[L"ConvertFPS"] = std::pair<wxString, wxString>(L"CONVERT_FPS", L"");
+	convertConfig[L"ConvertFPSFromVideo"] = std::pair<wxString, wxString>(L"CONVERT_FPS_FROM_VIDEO", L"");
+	convertConfig[L"ConvertNewEndTimes"] = std::pair<wxString, wxString>(L"CONVERT_NEW_END_TIMES", L"");
+	convertConfig[L"ConvertResolutionWidth"] = std::pair<wxString, wxString>(L"CONVERT_RESOLUTION_WIDTH", L"");
+	convertConfig[L"ConvertResolutionHeight"] = std::pair<wxString, wxString>(L"CONVERT_RESOLUTION_HEIGHT", L"");
+	convertConfig[L"ConvertShowSettings"] = std::pair<wxString, wxString>(L"CONVERT_SHOW_SETTINGS", L"");
+	convertConfig[L"ConvertStyle"] = std::pair<wxString, wxString>(L"CONVERT_STYLE", L"");
+	convertConfig[L"ConvertStyleCatalog"] = std::pair<wxString, wxString>(L"CONVERT_STYLE_CATALOG", L"");
+	convertConfig[L"ConvertTimePerLetter"] = std::pair<wxString, wxString>(L"CONVERT_TIME_PER_CHARACTER", L"");
+	convertConfig[L"CopyCollumnsSelection"] = std::pair<wxString, wxString>(L"COPY_COLLUMS_SELECTIONS", L"");
+	convertConfig[L"DictionaryLanguage"] = std::pair<wxString, wxString>(L"DICTIONARY_LANGUAGE", L"");
+	convertConfig[L"DisableLiveVideoEditing"] = std::pair<wxString, wxString>(L"DISABLE_LIVE_VIDEO_EDITING", L"");
+	convertConfig[L"DontAskForBadResolution"] = std::pair<wxString, wxString>(L"DONT_ASK_FOR_BAD_RESOLUTION", L"");
+	convertConfig[L"EditboxSugestionsOnDoubleClick"] = std::pair<wxString, wxString>(L"EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK", L"");
+	convertConfig[L"EditorOn"] = std::pair<wxString, wxString>(L"EDITOR_ON", L"");
+	convertConfig[L"FIND_IN_SUBS_FILTERS_RECENT"] = std::pair<wxString, wxString>(L"FIND_IN_SUBS_FILTERS_RECENT", L"\f");
+	convertConfig[L"FIND_IN_SUBS_PATHS_RECENT"] = std::pair<wxString, wxString>(L"FIND_IN_SUBS_PATHS_RECENT", L"\f");
+	convertConfig[L"FindRecent"] = std::pair<wxString, wxString>(L"FIND_RECENT_FINDS", L"\f");
+	convertConfig[L"FindReplaceOptions"] = std::pair<wxString, wxString>(L"FIND_REPLACE_OPTIONS", L"");
+	convertConfig[L"FontCollectorAction"] = std::pair<wxString, wxString>(L"FONT_COLLECTOR_ACTION", L"");
+	convertConfig[L"FontCollectorDirectory"] = std::pair<wxString, wxString>(L"FONT_COLLECTOR_DIRECTORY", L"");
+	convertConfig[L"FontCollectorFromMKV"] = std::pair<wxString, wxString>(L"FONT_COLLECTOR_FROM_MKV", L"");
+	convertConfig[L"FontCollectorUseSubsDirectory"] = std::pair<wxString, wxString>(L"FONT_COLLECTOR_USE_SUBS_DIRECTORY", L"");
+	convertConfig[L"FFMS2VideoSeeking"] = std::pair<wxString, wxString>(L"FFMS2_VIDEO_SEEKING", L"");
+	convertConfig[L"GridChangeActiveOnSelection"] = std::pair<wxString, wxString>(L"GRID_CHANGE_ACTIVE_ON_SELECTION", L"");
+	convertConfig[L"GridFontName"] = std::pair<wxString, wxString>(L"GRID_FONT", L"");
+	convertConfig[L"GridFontSize"] = std::pair<wxString, wxString>(L"GRID_FONT_SIZE", L"");
+	convertConfig[L"GridAddToFilter"] = std::pair<wxString, wxString>(L"GRID_ADD_TO_FILTER", L"");
+	convertConfig[L"GridFilterAfterLoad"] = std::pair<wxString, wxString>(L"GRID_FILTER_AFTER_LOAD", L"");
+	convertConfig[L"GridFilterBy"] = std::pair<wxString, wxString>(L"GRID_FILTER_BY", L"");
+	convertConfig[L"GridFilterInverted"] = std::pair<wxString, wxString>(L"GRID_FILTER_INVERTED", L"");
+	convertConfig[L"GridFilterStyles"] = std::pair<wxString, wxString>(L"GRID_FILTER_STYLES", L",");
+	convertConfig[L"GridHideCollums"] = std::pair<wxString, wxString>(L"GRID_HIDE_COLUMNS", L"");
+	convertConfig[L"GridHideTags"] = std::pair<wxString, wxString>(L"GRID_HIDE_TAGS", L"");
+	convertConfig[L"GridIgnoreFiltering"] = std::pair<wxString, wxString>(L"GRID_IGNORE_FILTERING", L"");
+	convertConfig[L"GridLoadSortedSubs"] = std::pair<wxString, wxString>(L"GRID_LOAD_SORTED_SUBS", L"");
+	convertConfig[L"GridSaveAfterCharacterCount"] = std::pair<wxString, wxString>(L"GRID_SAVE_AFTER_CHARACTER_COUNT", L"");
+	convertConfig[L"GridTagsSwapChar"] = std::pair<wxString, wxString>(L"GRID_TAGS_SWAP_CHARACTER", L"");
+	convertConfig[L"InsertEndOffset"] = std::pair<wxString, wxString>(L"GRID_INSERT_END_OFFSET", L"");
+	convertConfig[L"InsertStartOffset"] = std::pair<wxString, wxString>(L"GRID_INSERT_START_OFFSET", L"");
+	convertConfig[L"KEYFRAMES_RECENT"] = std::pair<wxString, wxString>(L"KEYFRAMES_RECENT", L"|");
+	convertConfig[L"MoveTimesByTime"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_BY_TIME", L"");
+	convertConfig[L"MoveTimesLoadSetTabOptions"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_CHANGE_VALUES_WITH_TAB", L"");
+	convertConfig[L"MoveTimesCorrectEndTimes"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_CORRECT_END_TIMES", L"");
+	convertConfig[L"MoveTimesForward"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_MOVE_FORWARD", L"");
+	convertConfig[L"MoveTimesFrames"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_DISPLAY_FRAMES", L"");
+	convertConfig[L"MoveTimesOn"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_ON", L"");
+	convertConfig[L"MoveTimesOptions"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_OPTIONS", L"");
+	convertConfig[L"MoveTimesWhichLines"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_WHICH_LINES", L"");
+	convertConfig[L"MoveTimesWhichTimes"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_WHICH_TIMES", L"");
+	convertConfig[L"MoveTimesStyles"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_STYLES", L"");
+	convertConfig[L"MoveTimesTime"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_TIME", L"");
+	convertConfig[L"MoveVideoToActiveLine"] = std::pair<wxString, wxString>(L"MOVE_VIDEO_TO_ACTIVE_LINE", L"");
+	convertConfig[L"NoNewLineAfterTimesEdition"] = std::pair<wxString, wxString>(L"EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT", L"");
+	convertConfig[L"OpenSubsInNewCard"] = std::pair<wxString, wxString>(L"OPEN_SUBS_IN_NEW_TAB", L"");
+	convertConfig[L"OpenVideoAtActiveLine"] = std::pair<wxString, wxString>(L"OPEN_VIDEO_AT_ACTIVE_LINE", L"");
+	convertConfig[L"PasteCollumnsSelection"] = std::pair<wxString, wxString>(L"PASTE_COLUMNS_SELECTION", L"");
+	convertConfig[L"PlayAfterSelection"] = std::pair<wxString, wxString>(L"VIDEO_PLAY_AFTER_SELECTION", L"");
+	convertConfig[L"PostprocessorEnabling"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_ON", L"");
+	convertConfig[L"PostprocessorKeyframeBeforeStart"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_KEYFRAME_BEFORE_START", L"");
+	convertConfig[L"PostprocessorKeyframeAfterStart"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_KEYFRAME_AFTER_START", L"");
+	convertConfig[L"PostprocessorKeyframeBeforeEnd"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_KEYFRAME_BEFORE_END", L"");
+	convertConfig[L"PostprocessorKeyframeAfterEnd"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_KEYFRAME_AFTER_END", L"");
+	convertConfig[L"PostprocessorLeadIn"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_LEAD_IN", L"");
+	convertConfig[L"PostprocessorLeadOut"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_LEAD_OUT", L"");
+	convertConfig[L"PostprocessorThresholdStart"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_THRESHOLD_START", L"");
+	convertConfig[L"PostprocessorThresholdEnd"] = std::pair<wxString, wxString>(L"POSTPROCESSOR_THRESHOLD_END", L"");
+	convertConfig[L"PreviewText"] = std::pair<wxString, wxString>(L"STYLE_PREVIEW_TEXT", L"");
+	convertConfig[L"ProgramLanguage"] = std::pair<wxString, wxString>(L"PROGRAM_LANGUAGE", L"");
+	convertConfig[L"ProgramTheme"] = std::pair<wxString, wxString>(L"PROGRAM_THEME", L"");
+	convertConfig[L"ReplaceRecent"] = std::pair<wxString, wxString>(L"REPLACE_RECENT_REPLACEMENTS", L"\f");
+	convertConfig[L"SelectionsRecent"] = std::pair<wxString, wxString>(L"SELECT_LINES_RECENT_SELECTIONS", L"\f");
+	convertConfig[L"SelectionsOptions"] = std::pair<wxString, wxString>(L"SELECT_LINES_OPTIONS", L"");
+	convertConfig[L"SelectVisibleLineAfterFullscreen"] = std::pair<wxString, wxString>(L"GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN", L"");
+	convertConfig[L"SHIFT_TIMES_PROFILES"] = std::pair<wxString, wxString>(L"SHIFT_TIMES_PROFILES", L"\f");
+	convertConfig[L"SpellcheckerOn"] = std::pair<wxString, wxString>(L"SPELLCHECKER_ON", L"");
+	convertConfig[L"StyleEditFilterText"] = std::pair<wxString, wxString>(L"STYLE_EDIT_FILTER_TEXT", L"");
+	convertConfig[L"StyleFilterTextOn"] = std::pair<wxString, wxString>(L"STYLE_EDIT_FILTER_TEXT_ON", L"");
+	convertConfig[L"StyleManagerPosition"] = std::pair<wxString, wxString>(L"STYLE_MANAGER_POSITION", L"");
+	convertConfig[L"StyleManagerDetachEditor"] = std::pair<wxString, wxString>(L"STYLE_MANAGER_DETACH_EDIT_WINDOW", L"");
+	convertConfig[L"SubsAutonaming"] = std::pair<wxString, wxString>(L"SUBS_AUTONAMING", L"");
+	convertConfig[L"SubsComparisonType"] = std::pair<wxString, wxString>(L"SUBS_COMPARISON_TYPE", L"");
+	convertConfig[L"SubsComparisonStyles"] = std::pair<wxString, wxString>(L"SUBS_COMPARISON_STYLES", L"");
+	convertConfig[L"SubsRecent"] = std::pair<wxString, wxString>(L"SUBS_RECENT_FILES", L"|");
+	convertConfig[L"TextFieldAllowNumpadHotkeys"] = std::pair<wxString, wxString>(L"TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS", L"");
+	convertConfig[L"TlModeShowOriginal"] = std::pair<wxString, wxString>(L"TL_MODE_SHOW_ORIGINAL", L"");
+	convertConfig[L"ToolbarIDs"] = std::pair<wxString, wxString>(L"TOOLBAR_IDS", L"|");
+	convertConfig[L"ToolbarAlignment"] = std::pair<wxString, wxString>(L"TOOLBAR_ALIGNMENT", L"");
+	convertConfig[L"UpdaterCheckIntensity"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_INTENSITY", L"");
+	convertConfig[L"UpdaterCheckOptions"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_OPTIONS", L"");
+	convertConfig[L"UpdaterCheckForStable"] = std::pair<wxString, wxString>(L"UPDATER_CHECK_FOR_STABLE", L"");
+	convertConfig[L"UpdaterLastCheck"] = std::pair<wxString, wxString>(L"UPDATER_LAST_CHECK", L"");
+	convertConfig[L"VideoFullskreenOnStart"] = std::pair<wxString, wxString>(L"VIDEO_FULL_SCREEN_ON_START", L"");
+	convertConfig[L"VideoIndex"] = std::pair<wxString, wxString>(L"VIDEO_INDEX", L"");
+	convertConfig[L"VideoPauseOnClick"] = std::pair<wxString, wxString>(L"VIDEO_PAUSE_ON_CLICK", L"");
+	convertConfig[L"VideoProgressBar"] = std::pair<wxString, wxString>(L"VIDEO_PROGRESS_BAR", L"");
+	convertConfig[L"VideoRecent"] = std::pair<wxString, wxString>(L"VIDEO_RECENT_FILES", L"|");
+	convertConfig[L"VideoVolume"] = std::pair<wxString, wxString>(L"VIDEO_VOLUME", L"");
+	convertConfig[L"VideoWindowSize"] = std::pair<wxString, wxString>(L"VIDEO_WINDOW_SIZE", L"");
+	convertConfig[L"VisualWarningsOff"] = std::pair<wxString, wxString>(L"VIDEO_VISUAL_WARNINGS_OFF", L"");
+	convertConfig[L"WindowMaximized"] = std::pair<wxString, wxString>(L"WINDOW_MAXIMIZED", L"");
+	convertConfig[L"WindowPosition"] = std::pair<wxString, wxString>(L"WINDOW_POSITION", L"");
+	convertConfig[L"WindowSize"] = std::pair<wxString, wxString>(L"WINDOW_SIZE", L"");
+	convertConfig[L"EditboxTagButtons"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTONS", L"");
+	convertConfig[L"EditboxTagButton1"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE1", L"\f");
+	convertConfig[L"EditboxTagButton2"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE2", L"\f");
+	convertConfig[L"EditboxTagButton3"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE3", L"\f");
+	convertConfig[L"EditboxTagButton4"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE4", L"\f");
+	convertConfig[L"EditboxTagButton5"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE5", L"\f");
+	convertConfig[L"EditboxTagButton6"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE6", L"\f");
+	convertConfig[L"EditboxTagButton7"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE7", L"\f");
+	convertConfig[L"EditboxTagButton8"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE8", L"\f");
+	convertConfig[L"EditboxTagButton9"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE9", L"\f");
+	convertConfig[L"EditboxTagButton10"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE10", L"\f");
+	convertConfig[L"EditboxTagButton11"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE11", L"\f");
+	convertConfig[L"EditboxTagButton12"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE12", L"\f");
+	convertConfig[L"EditboxTagButton13"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE13", L"\f");
+	convertConfig[L"EditboxTagButton14"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE14", L"\f");
+	convertConfig[L"EditboxTagButton15"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE15", L"\f");
+	convertConfig[L"EditboxTagButton16"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE16", L"\f");
+	convertConfig[L"EditboxTagButton17"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE17", L"\f");
+	convertConfig[L"EditboxTagButton18"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE18", L"\f");
+	convertConfig[L"EditboxTagButton19"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE19", L"\f");
+	convertConfig[L"EditboxTagButton20"] = std::pair<wxString, wxString>(L"EDITBOX_TAG_BUTTON_VALUE20", L"\f");
 
 	//themes
 	convertColors[L"WindowBackground"] = L"WINDOW_BACKGROUND";
@@ -305,6 +308,7 @@ void ConfigConverter::CreateTable()
 	convertColors[L"MenuBarBackground1"] = L"MENUBAR_BACKGROUND1";
 	convertColors[L"MenuBarBackground2"] = L"MENUBAR_BACKGROUND2";
 	convertColors[L"MenuBarBorderSelection"] = L"MENUBAR_BORDER_SELECTION";
+	convertColors[L"MENU_BAR_BACKGROUND_HOVER"] = L"MENUBAR_BACKGROUND_HOVER";
 	convertColors[L"MenuBarBackgroundSelection"] = L"MENUBAR_BACKGROUND_SELECTION";
 	convertColors[L"MenuBackground"] = L"MENUBAR_BACKGROUND";
 	convertColors[L"MenuBorderSelection"] = L"MENU_BORDER_SELECTION";
@@ -499,12 +503,11 @@ void ConfigConverter::CreateTable()
 	convertHotkeys[L"PlayActualLine"] = L"GLOBAL_PLAY_ACTUAL_LINE";
 }
 
-bool ConfigConverter::ConvertConfig(wxString *rawConfig, bool colors)
+bool ConfigConverter::ConvertConfig(wxString *rawConfig)
 {
 	if (!convertConfig.size())
 		CreateTable();
 
-	const std::map<wxString, wxString> &converter = (colors) ? convertColors : convertConfig;
 	wxRegEx configrx(L"^([^=]*)", wxRE_ADVANCED);
 	int changed = 0;
 	wxString result = L"[" + Options.progname + L"]\r\n";
@@ -513,16 +516,66 @@ bool ConfigConverter::ConvertConfig(wxString *rawConfig, bool colors)
 		wxString token = tokenize.GetNextToken();
 		if (configrx.Matches(token)){
 			wxString match = configrx.GetMatch(token, 1);
-			auto &it = converter.find(match);
-			if (it != converter.end()){
+			auto &it = convertConfig.find(match);
+			if (it != convertConfig.end()){
+				if (token.StartsWith(L"ToolbarIDs")){
+					wxString vals = token.AfterFirst(L'=');
+					token = it->second.first + L"={\n";
+					wxStringTokenizer idsTokenizer(vals, L"|", wxTOKEN_STRTOK);
+					while (idsTokenizer.HasMoreTokens()){
+						wxString idToken = idsTokenizer.GetNextToken();
+						auto &itID = convertHotkeys.find(idToken);
+						if (itID != convertHotkeys.end()){
+							token += L"\t" + itID->second + L"\n";
+						}
+						else{
+							token += L"\t" + idToken + L"\n";
+						}
+					}
+					token += L"}";
+					result << token << L"\n";
+					changed++;
+					continue;
+				}
+				size_t reps = configrx.ReplaceFirst(&token, it->second.first);
+				if (reps)
+					changed++;
+				if (it->second.second != L""){
+					token.Replace(L"=", L"={\n\t", false);
+					token.Replace(it->second.second, L"\n\t");
+					token += L"\n}";
+				}
+			}
+		}
+		result << token << L"\n";
+	}
+	*rawConfig = result;
+	return changed > 10;
+}
+
+bool ConfigConverter::ConvertColors(wxString *rawColors)
+{
+	if (!convertColors.size())
+		CreateTable();
+
+	wxRegEx configrx(L"^([^=]*)", wxRE_ADVANCED);
+	int changed = 0;
+	wxString result;
+	wxStringTokenizer tokenize(*rawColors, L"\n", wxTOKEN_STRTOK);
+	while (tokenize.HasMoreTokens()){
+		wxString token = tokenize.GetNextToken();
+		if (configrx.Matches(token)){
+			wxString match = configrx.GetMatch(token, 1);
+			auto &it = convertColors.find(match);
+			if (it != convertColors.end()){
 				size_t reps = configrx.ReplaceFirst(&token, it->second);
 				if (reps)
 					changed++;
 			}
 		}
-		result << token << L"\r\n";
+		result << token << L"\n";
 	}
-	*rawConfig = result;
+	*rawColors = result;
 	return changed > 10;
 }
 
@@ -533,7 +586,7 @@ bool ConfigConverter::ConvertHotkeys(wxString *rawHotkeys)
 
 	wxRegEx configrx(L"^([^ ]*) (.)=", wxRE_ADVANCED);
 	int changed = 0;
-	wxString result = L"[" + Options.progname + L"]\r\n";
+	wxString result = L"[" + Options.progname + L"]\n";
 	wxStringTokenizer tokenize(*rawHotkeys, L"\n", wxTOKEN_STRTOK);
 	while (tokenize.HasMoreTokens()){
 		wxString token = tokenize.GetNextToken();
@@ -551,7 +604,7 @@ bool ConfigConverter::ConvertHotkeys(wxString *rawHotkeys)
 				
 			}
 		}
-		result << token << L"\r\n";
+		result << token << L"\n";
 	}
 	*rawHotkeys = result;
 	return changed > 10;

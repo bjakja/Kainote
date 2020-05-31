@@ -225,7 +225,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	sizer2->Add(stylean, 0, wxEXPAND | wxLEFT, 4);
 
 
-	encs.Add(_("0 - GLOBAL_ANSI"));
+	encs.Add(_("0 - ANSI"));
 	encs.Add(_("1 - Domyślny"));
 	encs.Add(_("2 - Symbol"));
 	encs.Add(_("77 - Mac"));

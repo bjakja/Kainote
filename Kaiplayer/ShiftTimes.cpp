@@ -738,7 +738,7 @@ void ShiftTimesWindow::ChangeDisplayUnits(bool times)
 void ShiftTimesWindow::GetProfilesNames(wxArrayString &list)
 {
 	wxArrayString fullProfiles;
-	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, wxTOKEN_STRTOK);
 	for (auto profile : fullProfiles){
 		wxString profileName = profile.BeforeFirst(L':');
 		list.Add(profileName);
@@ -754,7 +754,7 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 	wxString forward = (Forward->GetValue()) ? L"1" : L"0";
 	wxString frames = (DisplayFrames->GetValue()) ? L"1" : L"0";
 	wxString profile = Options.GetString(SHIFT_TIMES_PROFILES);
-	
+	profile = profile.Mid(2, profile.length() - 3);
 	wxString newProfile;
 	newProfile << name << L": Time: " << TimeText->GetTime().mstime <<
 		L" Forward: " << forward << L" Frames: " << frames <<
@@ -763,20 +763,20 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 		L" MoveToVideoTime: " << moveToAudioTime << L" WhichLines: " <<
 		WhichLines->GetSelection() << L" StylesText: " <<
 		Stylestext->GetValue() << L" WhichTimes: " << WhichTimes->GetSelection() <<
-		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection() << L"\f";
+		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection() << L"\n";
 
 	if (overwrite){
-		wxStringTokenizer tokenizer(profile, L"\f", wxTOKEN_STRTOK);
+		wxStringTokenizer tokenizer(profile, L"\n", wxTOKEN_STRTOK);
 		while (tokenizer.HasMoreTokens()){
 			wxString token = tokenizer.GetNextToken();
-			if (!token.StartsWith(name + L":")){
-				newProfile << token << L"\f";
+			if (!token.StartsWith(L"\t" + name + L":")){
+				newProfile << L"\t" << token << L"\n";
 			}
 		}
 		profile.Empty();
 	}
 
-	Options.SetString(SHIFT_TIMES_PROFILES, profile.Prepend(newProfile));
+	Options.SetString(SHIFT_TIMES_PROFILES, L"{\n" + profile.Prepend(newProfile) + L"\n}");
 	wxArrayString profilesList;
 	GetProfilesNames(profilesList);
 	ProfilesList->PutArray(&profilesList);
@@ -787,7 +787,7 @@ void ShiftTimesWindow::SetProfile(const wxString &name)
 {
 	wxArrayString fullProfiles;
 	wxString profileWithoutName;
-	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, wxTOKEN_STRTOK);
 	//get text profile by name
 	for (auto profile : fullProfiles){
 		wxString profileName = profile.BeforeFirst(L':');
@@ -923,7 +923,7 @@ void ShiftTimesWindow::OnRemoveProfile(wxCommandEvent& event)
 	}
 	
 	wxArrayString fullProfiles;
-	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, L"\f", wxTOKEN_STRTOK);
+	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, wxTOKEN_STRTOK);
 	wxString newProfiles;
 	//make a new profiles
 	for (auto profile : fullProfiles){

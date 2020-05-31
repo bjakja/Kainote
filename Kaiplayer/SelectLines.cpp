@@ -26,7 +26,7 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 	: KaiDialog((wxWindow*)kfparent, -1, _("Zaznacz"))
 {
 	Kai = kfparent;
-	Options.GetTable(SELECT_LINES_RECENT_SELECTIONS, selsRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(SELECT_LINES_RECENT_SELECTIONS, selsRecent, wxTOKEN_RET_EMPTY_ALL);
 	int options = Options.GetInt(SELECT_LINES_OPTIONS);
 	if (selsRecent.size() > 20){ selsRecent.RemoveAt(20, selsRecent.size() - 20); }
 
@@ -429,7 +429,7 @@ void SelectLines::AddRecent(){
 		FindText->Delete(20, selsSize - 20);
 		selsRecent.RemoveAt(20, selsSize - 20);
 	}
-	Options.SetTable(SELECT_LINES_RECENT_SELECTIONS, selsRecent, L"\f");
+	Options.SetTable(SELECT_LINES_RECENT_SELECTIONS, selsRecent);
 }
 
 void SelectLines::OnChooseStyles(wxCommandEvent& event)

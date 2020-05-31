@@ -249,7 +249,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 			wxString ver = token.Mid(first + 5).BeforeFirst(L' ');
 			int version = wxAtoi(ver);
 			checkVer = (version > 487);
-			if (version < 1136){
+			if (version < 1141){
 				acctxt = acctxt.AfterFirst(L'\n');
 				ConfigConverter::Get()->ConvertHotkeys(&acctxt);
 				ow.FileWrite(Options.configPath + hkpath, acctxt);
@@ -282,7 +282,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		}
 
 		wxString Values = token.AfterFirst(L' ').Trim(false).Trim(true);
-		int type = wxString(L"GNEWA").find(Values[0]);
+		int type = wxString(L"GSEVA").find(Values[0]);
 		Values = Values.Remove(0, 2);
 		wxString Labels = token.BeforeFirst(L' ').Trim(false).Trim(true);
 		if (Values != L""){
@@ -304,7 +304,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 
 void Hotkeys::SaveHkeys(bool Audio)
 {
-	wxString gnewa = L"GNEWA";
+	wxString gseva = L"GSEVA";
 	wxString Texthk = L"[" + Options.progname + L"]\r\n";
 	for (std::map<idAndType, hdata>::iterator cur = hkeys.begin(); cur != hkeys.end(); cur++) {
 		if ((!Audio && cur->first.Type == AUDIO_HOTKEY) ||
@@ -316,7 +316,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
 			if (idstring == L""){ idstring << cur->first.id; }
-			Texthk << idstring << L" " << gnewa[cur->first.Type] << L"=" << cur->second.Accel << L"\r\n";
+			Texthk << idstring << L" " << gseva[cur->first.Type] << L"=" << cur->second.Accel << L"\r\n";
 		}
 	}
 	OpenWrite ow;

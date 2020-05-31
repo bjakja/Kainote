@@ -53,18 +53,16 @@ KaiToolbar::~KaiToolbar()
 
 void KaiToolbar::InitToolbar()
 {
-	wxArrayInt IDS;
-	const wxString & idnames = Options.GetString(TOOLBAR_IDS);
-
-	if (idnames != L""){
-		wxStringTokenizer cfgtable(idnames, L"|", wxTOKEN_STRTOK);
-		while (cfgtable.HasMoreTokens()){
-			int val = GetIdValue(cfgtable.NextToken().data());
-			if (val > 0){
-				IDS.Add(val);
-			}
+	wxArrayInt IDS; 
+	wxArrayString stringIDs;
+	Options.GetTable(TOOLBAR_IDS, stringIDs);
+	for (const auto &stringID : stringIDs){
+		int val = GetIdValue(stringID);
+		if (val > 0){
+			IDS.Add(val);
 		}
 	}
+
 	if (IDS.size() < 1){
 		IDS.Add(GLOBAL_OPEN_SUBS); IDS.Add(GLOBAL_RECENT_SUBS); IDS.Add(GLOBAL_OPEN_VIDEO); IDS.Add(GLOBAL_RECENT_VIDEO);
 		IDS.Add(GLOBAL_SAVE_SUBS); IDS.Add(GLOBAL_SAVE_SUBS_AS); IDS.Add(GLOBAL_SAVE_ALL_SUBS);

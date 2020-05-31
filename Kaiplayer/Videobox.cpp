@@ -1368,7 +1368,7 @@ void VideoCtrl::ChangeStream()
 {
 	if (!IsDshow){ return; }
 	wxArrayString enabled;
-	Options.GetTable(ACCEPTED_AUDIO_STREAM, enabled, L";");
+	Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
 	if (enabled.size() < 1){ return; }
 	wxArrayString streams = GetStreams();
 	//int firstSubsStream = -1;

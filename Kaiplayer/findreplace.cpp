@@ -33,22 +33,22 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	fnext = blockTextChange = false;
 	fromstart = true;
 
-	Options.GetTable(FIND_RECENT_FINDS, findRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_RECENT_FINDS, findRecent, wxTOKEN_RET_EMPTY_ALL);
 	if (findRecent.size() > 20){ findRecent.RemoveAt(20, findRecent.size() - 20); }
 	if (findRecent.size())
 		actualFind = findRecent[0];
 
-	Options.GetTable(REPLACE_RECENT_REPLACEMENTS, replaceRecent, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(REPLACE_RECENT_REPLACEMENTS, replaceRecent, wxTOKEN_RET_EMPTY_ALL);
 	if (replaceRecent.size() > 20){ replaceRecent.RemoveAt(20, replaceRecent.size() - 20); }
 	if (replaceRecent.size())
 		actualReplace = replaceRecent[0];
 	
-	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingFilters.size() > 20){ subsFindingFilters.RemoveAt(20, subsFindingFilters.size() - 20); }
 	if (subsFindingFilters.size())
 		actualFilters = subsFindingFilters[0];
 
-	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, L"\f", wxTOKEN_RET_EMPTY_ALL);
+	Options.GetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, wxTOKEN_RET_EMPTY_ALL);
 	if (subsFindingPaths.size() > 20){ subsFindingPaths.RemoveAt(20, subsFindingPaths.size() - 20); }
 	if (subsFindingPaths.size())
 		actualPaths = subsFindingPaths[0];
@@ -1151,7 +1151,7 @@ void FindReplace::AddRecent(TabWindow *window)
 		findRecent.RemoveAt(20, findSize - 20);
 	}
 
-	Options.SetTable(FIND_RECENT_FINDS, findRecent, L"\f");
+	Options.SetTable(FIND_RECENT_FINDS, findRecent);
 	if (window->windowType != WINDOW_FIND){
 		wxString text = window->ReplaceText->GetValue();
 
@@ -1174,7 +1174,7 @@ void FindReplace::AddRecent(TabWindow *window)
 			replaceRecent.RemoveAt(20, replaceSize - 20);
 		}
 
-		Options.SetTable(REPLACE_RECENT_REPLACEMENTS, replaceRecent, L"\f");
+		Options.SetTable(REPLACE_RECENT_REPLACEMENTS, replaceRecent);
 	}
 	if (window->windowType == WINDOW_FIND_IN_SUBS){
 		wxString filter = window->FindInSubsPattern->GetValue();
@@ -1213,8 +1213,8 @@ void FindReplace::AddRecent(TabWindow *window)
 			subsFindingPaths.RemoveAt(20, pathsSize - 20);
 		}
 
-		Options.SetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters, L"\f");
-		Options.SetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths, L"\f");
+		Options.SetTable(FIND_IN_SUBS_FILTERS_RECENT, subsFindingFilters);
+		Options.SetTable(FIND_IN_SUBS_PATHS_RECENT, subsFindingPaths);
 	}
 }
 

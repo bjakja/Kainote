@@ -263,7 +263,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		if (absy >= absx){
 			if (absy >= 8){
 				double nval = (oldposy < posy) ? value - 1 : value + 1;
-				if (value < rfrom || value > rto){ return; }
+				if (nval < rfrom || nval > rto){ return; }
 				KaiTextCtrl::SetValue(getdouble(nval), true, false);
 				oldposy = posy;
 				//reset oldposx cause next time it will change it by 10 
@@ -276,7 +276,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		else{
 			if (absx >= 10){
 				double nval = (oldposx < posx) ? value - 10 : value + 10;
-				if (value == rfrom || value == rto){ return; }
+				if ((value == rfrom && nval < rfrom) || (value == rto && nval > rto)){ return; }
 				else if (nval < rfrom){ nval = rfrom; }
 				else if (nval > rto){ nval = rto; }
 				KaiTextCtrl::SetValue(getdouble(nval), true, false);
@@ -309,7 +309,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		if (style & SCROLL_ON_FOCUS && !HasFocus()){ event.Skip(); return; }
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		value += step;
-		if (value<rfrom || value>rto){ return; }
+		if (value < rfrom || value > rto){ return; }
 		KaiTextCtrl::SetValue(getdouble(value), true, false);//MarkDirty();
 		if (IsModified()){ wxCommandEvent evt2(NUMBER_CHANGED, GetId()); AddPendingEvent(evt2); }
 		return;

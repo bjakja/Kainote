@@ -422,8 +422,9 @@ public:
 	AssColor GetColor(COLOR opt);
 	int GetInt(CONFIG opt);
 	float GetFloat(CONFIG opt);
-	void GetTable(CONFIG opt, wxArrayString &tbl, wxString split = L"|", int mode = 4);
-	void GetIntTable(CONFIG opt, wxArrayInt &tbl, wxString split = L"|", int mode = 4);
+	void GetTable(CONFIG opt, wxArrayString &tbl, int mode = 4);
+	void GetIntTable(CONFIG opt, wxArrayInt &tbl, int mode = 4);
+	void GetTableFromString(CONFIG opt, wxArrayString &tbl, wxString split, int mode = 4);
 	void GetCoords(CONFIG opt, int* coordx, int* coordy);
 
 	void SetString(CONFIG opt, const wxString &sopt);
@@ -432,8 +433,9 @@ public:
 	void SetColor(COLOR opt, AssColor &copt);
 	void SetInt(CONFIG opt, int iopt);
 	void SetFloat(CONFIG opt, float fopt);
-	void SetTable(CONFIG opt, wxArrayString &iopt, wxString split = L"|");
-	void SetIntTable(CONFIG opt, wxArrayInt &iopt, wxString split = L"|");
+	void SetTable(CONFIG opt, wxArrayString &iopt);
+	void SetStringTable(CONFIG opt, wxArrayString &iopt, wxString split = L"|");
+	void SetIntTable(CONFIG opt, wxArrayInt &iopt);
 	void SetCoords(CONFIG opt, int coordx, int coordy);
 	void GetRawOptions(wxString &options, bool Audio = false);
 	void AddStyle(Styles *styl);

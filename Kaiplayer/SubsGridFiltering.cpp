@@ -41,7 +41,7 @@ void SubsGridFiltering::Filter(bool autoFiltering)
 		return;
 	}
 	if (filterBy & FILTER_BY_STYLES){
-		Options.GetTable(GRID_FILTER_STYLES, styles, L",");
+		Options.GetTable(GRID_FILTER_STYLES, styles);
 
 		size_t i = 0;
 		while (i < styles.size()){

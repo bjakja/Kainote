@@ -1504,7 +1504,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		return;
 	}
 	files.RemoveAt(0, filesSize);
-	bool askForRes = !Options.GetBool(DontAskForBadResolution);
+	bool askForRes = !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION);
 	Freeze();
 	GetTab()->Hide();
 	size_t subsSize = subs.size();

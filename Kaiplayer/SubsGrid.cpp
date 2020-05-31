@@ -78,7 +78,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 				}
 			}
 			if (!found && item->check){ filterStyles.Add(name); }
-			Options.SetTable(GRID_FILTER_STYLES, filterStyles, L",");
+			Options.SetTable(GRID_FILTER_STYLES, filterStyles);
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 				Menu *parentMenu = NULL;
@@ -143,7 +143,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Menu *stylesMenu = new Menu();
 	std::vector<Styles*> *styles = file->GetStyleTable();
 	wxArrayString optionsFilterStyles;
-	Options.GetTable(GRID_FILTER_STYLES, optionsFilterStyles, L",");
+	Options.GetTable(GRID_FILTER_STYLES, optionsFilterStyles);
 	filterStyles.clear();
 	for (size_t i = 0; i < StylesSize(); i++){
 		MenuItem * styleItem = stylesMenu->Append(4448, (*styles)[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
