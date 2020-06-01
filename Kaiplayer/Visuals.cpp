@@ -815,7 +815,9 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	int x, y;
 	tab->Grid->GetASSRes(&x, &y);
 	if (tmpan % 3 == 2){
-		result.x = (x / 2);
+		int marginL = (Dial->MarginL != 0) ? Dial->MarginL : wxAtoi(acstyl->MarginL);
+		int marginR = (Dial->MarginR != 0) ? Dial->MarginR : wxAtoi(acstyl->MarginR);
+		result.x = ((x + marginL - marginR) / 2);
 	}
 	else if (tmpan % 3 == 0){
 		result.x = (Dial->MarginR != 0) ? Dial->MarginR : wxAtoi(acstyl->MarginR);

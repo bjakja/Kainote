@@ -36,13 +36,17 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 {
 	wxSize ex = dc->GetTextExtent(accel);
 
-	if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
+	if (modified){ 
+		KaiLog(L"edited " + accel);
+		dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); 
+	}
+	else{ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(accel, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
+	//if (modified){ }
 }
 
 void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)

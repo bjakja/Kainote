@@ -19,7 +19,7 @@
 
 
 Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr, const wxPoint& pos, int style)
-	: KaiDialog(parent, -1, (styles) ? _("Wybór styli") : _("Wybór kolumn"))
+	: KaiDialog(parent, -1, (styles) ? _("Wybór styli") : _("Wybór kolumn"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles) ? _("Wybierz style") : _("Wybierz kolumny"));
@@ -67,7 +67,7 @@ wxString GetCheckedElements(wxWindow *parent)
 }
 
 CustomCheckListBox::CustomCheckListBox(wxWindow* parent, const wxArrayString &listElems, const wxString &title, const wxPoint& pos, int style)
-	: KaiDialog(parent, -1, title)
+	: KaiDialog(parent, -1, title, wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, title);

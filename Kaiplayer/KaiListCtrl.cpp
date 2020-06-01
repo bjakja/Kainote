@@ -52,12 +52,13 @@ void ItemText::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiL
 	wxSize ex = dc->GetTextExtent(name);
 
 	if (modified){ dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); }
+	else{ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 	needTooltip = ex.x > width - 8;
 	wxRect cur(x, y, width - 8, height);
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(name, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
+	//if (modified){ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
 }
 
 void ItemColor::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -416,26 +417,6 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	
-	int visibleSize = filteredList.size();//GetVisibleSize();
-	size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
-	size_t itemsize = visibleSize + 1;
-	if ((size_t)scPosV >= itemsize - maxVisible){
-		scPosV = itemsize - maxVisible;
-	}
-	if (scPosV < 0){ scPosV = 0; }
-	size_t maxsize = itemsize - 1;
-	if (itemsize > maxVisible){
-		maxsize = MIN(maxVisible + scPosV, itemsize - 1);
-		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
-			GetClientSize(&w, &h);
-		}
-	}
-	else{
-		scPosV = 0;
-		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
-			GetClientSize(&w, &h);
-		}
-	}
 	int maxWidth = GetMaxWidth();
 	if (isFiltered)
 		maxWidth += 12;
@@ -457,6 +438,27 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	if (SetScrollBar(wxHORIZONTAL, scPosH, w, maxWidth, w - 2)){
 		GetClientSize(&w, &h);
 		if (maxWidth <= w){ scPosH = 0; SetScrollPos(wxHORIZONTAL, 0); }
+	}
+
+	int visibleSize = filteredList.size();//GetVisibleSize();
+	size_t maxVisible = ((h - headerHeight) / lineHeight) + 1;
+	size_t itemsize = visibleSize + 1;
+	if ((size_t)scPosV >= itemsize - maxVisible){
+		scPosV = itemsize - maxVisible;
+	}
+	if (scPosV < 0){ scPosV = 0; }
+	size_t maxsize = itemsize - 1;
+	if (itemsize > maxVisible){
+		maxsize = MIN(maxVisible + scPosV, itemsize - 1);
+		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
+			GetClientSize(&w, &h);
+		}
+	}
+	else{
+		scPosV = 0;
+		if (SetScrollBar(wxVERTICAL, scPosV, maxVisible, itemsize, maxVisible - 2)){
+			GetClientSize(&w, &h);
+		}
 	}
 
 	//if (isFiltered)
