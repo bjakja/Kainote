@@ -374,15 +374,19 @@ void AudioBox::OnStop(wxCommandEvent &event) {
 ////////
 // Next
 void AudioBox::OnNext(wxCommandEvent &event) {
-	audioDisplay->SetFocus();
-	audioDisplay->Next(!Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES));
+	bool playAudio = !Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES);
+	if(playAudio)
+		audioDisplay->SetFocus();
+	audioDisplay->Next(playAudio);
 }
 
 
 ////////////
 // Previous
 void AudioBox::OnPrev(wxCommandEvent &event) {
-	audioDisplay->SetFocus();
+	bool playAudio = !Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES);
+	if (playAudio)
+		audioDisplay->SetFocus();
 	audioDisplay->Prev(!Options.GetBool(AUDIO_DONT_PLAY_WHEN_LINE_CHANGES));
 }
 

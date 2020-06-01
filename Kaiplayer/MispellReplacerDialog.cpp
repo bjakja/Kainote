@@ -175,7 +175,7 @@ FindResultDialog::FindResultDialog(wxWindow *parent, MisspellReplacer *_MR)
 	, MR(_MR)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
-	ResultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
+	ResultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxDefaultSize/*wxSize(700, 300)*/);
 	ResultsList->InsertColumn(0, L"", TYPE_TEXT, -1);
 	ResultsList->SetHeaderHeight(0);
 	main->Add(ResultsList, 1, wxEXPAND | wxALL, 2);

@@ -289,7 +289,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		//if it will crash on last focused window
 		//we need to remove last focused window
 		//it's not needed here
-		focusFunction(wxFocusEvent());
+		if (this->HasFocus() || this->Tabs->HasFocus())
+			focusFunction(wxFocusEvent());
+
 	}, 6789);
 }
 

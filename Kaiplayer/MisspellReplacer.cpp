@@ -23,7 +23,7 @@
 
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
-	: KaiDialog(parent, -1, _("Korekcja drobnych błędów"))
+	: KaiDialog(parent, -1, _("Korekcja drobnych błędów"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 	, resultDialog(NULL)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
@@ -142,8 +142,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	ButtonsSizer->Add(ReplaceRules, 0, withoutBottom | wxEXPAND, 4);
 	ButtonsSizer->Add(ReplaceRulesOnAllTabs, 0, withoutBottom | wxEXPAND, 4);
 
-	MainSizer->Add(ListSizer, 0, wxALL, 2);
-	MainSizer->Add(ButtonsSizer, 0, wxALL, 2);
+	MainSizer->Add(ListSizer, 1, wxALL | wxEXPAND, 2);
+	MainSizer->Add(ButtonsSizer, 0, wxALL | wxEXPAND, 2);
 
 	SetSizerAndFit(MainSizer);
 	CenterOnParent();
