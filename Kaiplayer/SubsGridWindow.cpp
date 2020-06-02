@@ -1763,6 +1763,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	bool repltags = hideOverrideTags && tagsReplacement.length() > 0;
 	text += L" ";
 	bool block = false;
+	bool isReplaceTag = false;
 	wxString word;
 	//bool bracket = false;
 	int lasti = 0;
@@ -1776,7 +1777,8 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	for (size_t i = 0; i < text.length(); i++)
 	{
 		const wxUniChar &ch = text[i];
-		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
+		bool isWordBoundary = iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT);
+		if ((isWordBoundary/*iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT)*/ && ch != L'\'' && !block) || isReplaceTag){
 			if (word.length() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -1785,7 +1787,14 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 				bool isgood = SpellChecker::Get()->CheckWord(word);
 				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
 			}
-			word = L""; firsti = i + 1;
+			word = L""; 
+			if (isReplaceTag){
+				firsti = i;
+				isReplaceTag = false;
+			}
+			else
+				firsti = i + 1;
+			
 		}
 		if (block){
 			if (ch == L'{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
@@ -1815,13 +1824,26 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket);
 			lastStartTBracket = -1;
 		}
-		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
+		if (ch == L'{'){ 
+			block = true; 
+			lastStartCBracket = i; 
+			continue; 
+		}
+		else if (ch == L'}'){ 
+			block = false; 
+			lastEndCBracket = i; 
+			firsti = i + 1; 
+			word = L""; 
+			continue; 
+		}
 		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.length()) == tagsReplacement){
-			firsti = i + tagsReplacement.length(); word = L""; continue;
+			//firsti = i + tagsReplacement.length(); /*word = L""; */
+			isReplaceTag = true;
+			continue;
 		}
 
-		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/ && 
+
+		if (!block && (!isWordBoundary/*iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT)*/ || ch == L'\'') /*notchar.Find(ch) == -1*/ &&
 			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";

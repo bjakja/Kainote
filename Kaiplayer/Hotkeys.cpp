@@ -581,7 +581,7 @@ HkeysDialog::HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow, boo
 	const int elems = 5;
 	wxString windows[elems] = { _("Skrót globalny"), _("Skrót pola napisów"), 
 		_("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio") };
-	if (showWindowSelection && hotkeyWindow == GLOBAL_HOTKEY){
+	if (showWindowSelection /*&& hotkeyWindow == GLOBAL_HOTKEY*/){
 		global = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, elems, windows, wxWANTS_CHARS);
 		global->SetSelection(hotkeyWindow);
 		global->Connect(wxEVT_KEY_DOWN, (wxObjectEventFunction)&HkeysDialog::OnKeyPress, 0, this);

@@ -95,7 +95,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	int numTagButtons = Options.GetInt(EDITBOX_TAG_BUTTONS);
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 
-	// if onlygridaudio than it can pud everything it tables but not need to set this accelerators
+	// if onlygridaudio than it can put everything it tables but not need to set this accelerators
 	// extended filtering has less performance
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		int id = cur->first.id;
@@ -107,7 +107,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		//editor
 		if (cur->first.Type == EDITBOX_HOTKEY){
 			//do not map hotkeys for hidden tag buttons
-			if (cur->first.id >= numTagButtons + EDITBOX_TAG_BUTTON1 && cur->first.id <= EDITBOX_TAG_BUTTON10)
+			if (cur->first.id >= numTagButtons + EDITBOX_TAG_BUTTON1 && cur->first.id <= EDITBOX_TAG_BUTTON20)
 				continue;
 			eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 

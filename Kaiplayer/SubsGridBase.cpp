@@ -527,7 +527,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	// video / audio move start or end
 	int VAS = moveTimeOptions & 2;
 
-	std::map<Dialogue *, int, compare> tmpmap;
+	std::multimap<Dialogue *, int, compare> tmpmap;
 
 	if (whichTimes != 0){
 		int answer = KaiMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"),
@@ -629,7 +629,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				if (PostprocessorOptions & 1){ dialc->Start.Change(-LeadIn); dialc->ChangeDialogueState(1); }
 				if (PostprocessorOptions & 2){ dialc->End.Change(LeadOut); dialc->ChangeDialogueState(1); }
 				if (correctEndTimes > 0 || PostprocessorOptions > 19){
-					tmpmap[dialc] = i;
+					tmpmap.insert(std::pair<Dialogue *, int>(dialc, i));
 
 				}
 			}
@@ -655,7 +655,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			it++;
 			if (!(it != tmpmap.end())){ it = cur; hasend = true; }
 			else{
-				isEndGreater = dialc->End > it->first->Start;
+				isEndGreater = dialc->End > it->first->Start || dialc->End == it->first->End;
 				if (correctEndTimes > 1){
 					if (isEndGreater)
 						goto postprocessor;
@@ -672,24 +672,9 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				}
 			}
 		postprocessor:
-			if (PostprocessorOptions & 4){
-				int cdiff = (ThresholdEnd + ThresholdStart);
-				int tdiff = it->first->Start.mstime - dialc->End.mstime;
-				if (newstarttime != -1){
-					dialc->Start.NewTime(newstarttime);
-					newstarttime = -1;
-					dialc->ChangeDialogueState(1);
-				}
-				if (tdiff <= cdiff && tdiff > 0){
-					int coeff = ((float)tdiff / (float)cdiff) * ThresholdEnd;
-					int newtime = ZEROIT(coeff);
-					dialc->End.Change(newtime);
-					newstarttime = dialc->End.mstime;
-					dialc->ChangeDialogueState(1);
-
-				}
-
-			}
+			bool foundStartKeyframe = false;
+			bool foundEndKeyframe = false;
+			auto itplus = it;
 			if (PostprocessorOptions & 8){
 				int startRange = dialc->Start.mstime - KeyframeBeforeStart;
 				int startRange1 = dialc->Start.mstime + KeyframeAfterStart;
@@ -721,12 +706,18 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				//and it makes mess here but changing only start should be enough
 				//startResult >= compareStart and endResult <= compareEnd should be changed or even remove
 				if (startResult != INT_MAX){
-					dialc->Start.NewTime(startResult);
-					dialc->ChangeDialogueState(1);
+					if (dialc->Start != startResult){
+						dialc->Start.NewTime(startResult);
+						dialc->ChangeDialogueState(1);
+					}
+					foundStartKeyframe = true;
 				}
 				if (endResult != -1){
-					dialc->End.NewTime(endResult);
-					dialc->ChangeDialogueState(1);
+					if (dialc->End != endResult){
+						dialc->End.NewTime(endResult);
+						dialc->ChangeDialogueState(1);
+					}
+					foundEndKeyframe = true;
 				}
 				//make sure that start is greater or even then end time of previous line
 				//and correct times but only when previous line end time was not greater than start time on start
@@ -734,8 +725,29 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime){
 					dialc->Start.NewTime(previousEnd);
 					dialc->ChangeDialogueState(1);
+					foundStartKeyframe = false;
 				}
 			}
+
+			if (PostprocessorOptions & 4){
+				int cdiff = (ThresholdEnd + ThresholdStart);
+				int tdiff = itplus->first->Start.mstime - dialc->End.mstime;
+				if (newstarttime != -1 && !foundStartKeyframe){
+					dialc->Start.NewTime(newstarttime);
+					newstarttime = -1;
+					dialc->ChangeDialogueState(1);
+				}
+				if (tdiff <= cdiff && tdiff > 0 && !foundEndKeyframe){
+					int coeff = ((float)tdiff / (float)cdiff) * ThresholdEnd;
+					int newtime = ZEROIT(coeff);
+					dialc->End.Change(newtime);
+					newstarttime = dialc->End.mstime;
+					dialc->ChangeDialogueState(1);
+
+				}
+
+			}
+
 			isPreviousEndGreater = isEndGreater;
 			dialc->ClearParse();
 		}
