@@ -1,9 +1,9 @@
 ﻿/***************************************************************
+* Copyright (c) 2012-2020, Marcin Drob
 * Name:      kainoteMain.cpp
 * Purpose:   Subtitles editor and player
 * Author:    Bjakja (bjakja@op.pl)
 * Created:   2012-04-23
-* Copyright: Marcin Drob aka Bjakja (http://animesub.info/forum/viewtopic.php?id=258715)
 * License:
 * Kainote is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1429,7 +1429,7 @@ void KainoteFrame::SetAccels(bool _all)
 		if (cur->first.Type != GLOBAL_HOTKEY){ continue; }
 		int id = cur->first.id;
 		bool emptyAccel = cur->second.Accel == L"";
-		if (id > 6000 && id < 6850){
+		if (id >= 5000 && id < 5150){
 			MenuItem *item = Menubar->FindItem(id);
 			if (!item){ /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
 			if (emptyAccel){
@@ -1444,7 +1444,7 @@ void KainoteFrame::SetAccels(bool _all)
 		}
 		else if (emptyAccel)
 			continue;
-		else if (id >= 6850){
+		else if (id >= 5150){
 			if (id >= 30100){
 				Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnRunScript, this, id);
 			}

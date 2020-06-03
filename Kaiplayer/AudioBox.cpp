@@ -1,5 +1,5 @@
 ﻿// Copyright (c) 2005, Rodrigo Braz Monteiro, Niels Martin Hansen
-// Copyright (c) 2016, Drob Marcin
+// Copyright (c) 2016-2020, Drob Marcin
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -203,7 +203,7 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 
 	SetAccels();
 	SetFocusIgnoringChildren();
-
+	TabPanel *tab = (TabPanel*)GetGrandParent();
 
 }
 
@@ -668,10 +668,21 @@ void AudioBox::SetAccels()
 	}
 	std::vector<wxAcceleratorEntry> entries;
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
+	TabPanel *tab = (TabPanel*)GetGrandParent();
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
+		//check if it's sorted from lower to higher if yes then change continue to break;
 		if (cur->first.Type != AUDIO_HOTKEY){ continue; }
 		idAndType itype = cur->first;
 		entries.push_back(Hkeys.GetHKey(itype));
+		if (itype.id < 2000){
+			//do nothing
+		}
+		else if (itype.id < 3000)
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->Video, itype.id);
+		else if (itype.id < 4000)
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, tab->Edit, itype.id);
+		else if (itype.id < 5000)
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, tab->Grid, itype.id);
 	}
 	wxAcceleratorTable accel(entries.size(), &entries[0]);
 	SetAcceleratorTable(accel);

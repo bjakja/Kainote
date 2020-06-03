@@ -1,4 +1,4 @@
-//  Copyright (c) 2012-2018, Marcin Drob
+//  Copyright (c) 2012-2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -20,5 +20,5 @@
 //StableReleaseLink: https://github.com/bjakja/Kainote/releases/download/v0.9.3.893/Kainote.x64.zip
 //VersionKainoteX86: 0.9.3.910
 
-#define VersionKainote "0.9.5.1145"
-#define NumVersionKainote 0,9,5,1145
+#define VersionKainote "0.9.6.1145"
+#define NumVersionKainote 0,9,6,1145

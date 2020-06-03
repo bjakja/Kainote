@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016, Marcin Drob
+﻿//  Copyright (c) 2016 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -99,10 +99,25 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	// extended filtering has less performance
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		int id = cur->first.id;
-		if (cur->second.Accel == L"" /*|| cur->first.Type == AUDIO_HOTKEY*/ || cur->first.Type == GLOBAL_HOTKEY ){/*||
-			(onlyGridAudio && ((cur->first.Type != GRID_HOTKEY && cur->first.Type != AUDIO_HOTKEY) || 
-			(id < VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD)))){*/
+		if (cur->second.Accel == L"" || cur->first.Type == GLOBAL_HOTKEY ){
 			continue;
+		}
+		auto itype = cur->first;
+		if (itype.Type != AUDIO_HOTKEY){
+			if (itype.id < 2000){}
+			//do nothing it must be created in audio
+			else if (itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
+				wxWindow *win = (itype.Type == GRID_HOTKEY) ? (wxWindow*)Grid : Edit;
+				Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+			}
+			else if (itype.id < 4000 && itype.Type != EDITBOX_HOTKEY){
+				wxWindow *win = (itype.Type == GRID_HOTKEY) ? (wxWindow*)Grid : Video;
+				Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+			}
+			else if (itype.id < 5000 && itype.Type != GRID_HOTKEY){
+				wxWindow *win = (itype.Type == VIDEO_HOTKEY) ? (wxWindow*)Video : Edit;
+				Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
+			}
 		}
 		//editor
 		if (cur->first.Type == EDITBOX_HOTKEY){
@@ -117,9 +132,9 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 				continue;
 
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if ((id > 5000 && id <= 6000) || (id < 1700 && id>600)){
-				Grid->ConnectAcc((id < 1000) ? id + 1000 : id);
-				if (id < 1700){
+			if ((id >= 4000 && id < 5000) || (id < 1999 && id >= 1000)){
+				Grid->ConnectAcc((id < 1010) ? id + 10 : id);
+				if (id < 1999){
 					audioHotkeysLoaded = true;
 				}
 			}
@@ -127,7 +142,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		}
 		else if (cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if (id > 2000 && id < 3990){ Video->ConnectAcc(id); }
+			if (id >= 2000 && id < 2999){ Video->ConnectAcc(id); }
 			if (id >= VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				Grid->ConnectAcc(id);

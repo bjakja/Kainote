@@ -2,7 +2,7 @@
  * csri: common subtitle renderer interface
  *****************************************************************************
  * Copyright (C) 2007  David Lamparter
- * Copyright (c) 2016, Marcin Drob
+ * Copyright (c) 2016 - 2020, Marcin Drob
  * All rights reserved.
  * 	
  * Redistribution and use in source and binary forms, with or without

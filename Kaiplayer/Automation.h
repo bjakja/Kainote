@@ -1,5 +1,5 @@
 // Copyright (c) 2006, Niels Martin Hansen
-// Copyright (c) 2016, Marcin Drob
+// Copyright (c) 2016 - 2020, Marcin Drob
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
