@@ -104,20 +104,40 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		}
 		auto itype = cur->first;
 		if (itype.Type != AUDIO_HOTKEY){
-			if (itype.id < 2000){}
-			//do nothing it must be created in audio
-			else if (itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
-				wxWindow *win = (itype.Type == GRID_HOTKEY) ? (wxWindow*)Grid : Edit;
-				Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+			if (itype.id >= 2000 && itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
+				if (itype.Type == GRID_HOTKEY){
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				else{
+					Edit->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+					eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				continue;
 			}
-			else if (itype.id < 4000 && itype.Type != EDITBOX_HOTKEY){
-				wxWindow *win = (itype.Type == GRID_HOTKEY) ? (wxWindow*)Grid : Video;
-				Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+			else if (itype.id >= 3000 && itype.id < 4000 && itype.Type != EDITBOX_HOTKEY){
+				if (itype.Type == GRID_HOTKEY){
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				else{
+					Video->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				continue;
 			}
-			else if (itype.id < 5000 && itype.Type != GRID_HOTKEY){
-				wxWindow *win = (itype.Type == VIDEO_HOTKEY) ? (wxWindow*)Video : Edit;
-				Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
+			else if (itype.id >= 4000 && itype.id < 5000 && itype.Type != GRID_HOTKEY){
+				if (itype.Type == VIDEO_HOTKEY){
+					Video->Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
+					ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				else if(itype.Type == GRID_HOTKEY){
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+				}
+				continue;
 			}
+			
 		}
 		//editor
 		if (cur->first.Type == EDITBOX_HOTKEY){

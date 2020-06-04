@@ -119,6 +119,7 @@ private:
 	void OnDelete(wxCommandEvent& event);
 	void OnClose1(wxCloseEvent& event);
 	void OnActivate(wxActivateEvent &evt);
+	void OnUseWindowHotkey(wxCommandEvent& event);
 	static void OnOutofMemory();
 	Menu* ConvMenu;
 	Menu* FileMenu;

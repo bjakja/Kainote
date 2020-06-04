@@ -588,10 +588,21 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 	InsertRows(newCurrentLine, 1, dialog, false, true);
 }
 
+//void SubsGrid::BindToAnotherWindow(int window, int id)
+//{
+//	TabPanel *tab = (TabPanel*)GetParent();
+//	if (window == EDITBOX_HOTKEY)
+//		Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+//	else if (window == VIDEO_HOTKEY)
+//		Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->Video, id);
+//	else if (window == AUDIO_HOTKEY && Edit->ABox)
+//		Bind(wxEVT_COMMAND_MENU_SELECTED, &AudioBox::OnAccelerator, Edit->ABox, id);
+//}
+
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id = event.GetId();
-	VideoCtrl *vb = Kai->GetTab()->Video;
+	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;//Kai->GetTab()->Video;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
 	bool hasVideo = vb->GetState() != None;

@@ -1777,7 +1777,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	for (size_t i = 0; i < text.length(); i++)
 	{
 		const wxUniChar &ch = text[i];
-		bool isWordBoundary = iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT);
+		int isWordBoundary = iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT);
 		if ((isWordBoundary/*iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT)*/ && ch != L'\'' && !block) || isReplaceTag){
 			if (word.length() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }

@@ -37,7 +37,6 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	wxSize ex = dc->GetTextExtent(accel);
 
 	if (modified){ 
-		KaiLog(L"edited " + accel);
 		dc->SetTextForeground(Options.GetColour(WINDOW_WARNING_ELEMENTS)); 
 	}
 	else{ dc->SetTextForeground(Options.GetColour(theList->IsThisEnabled() ? WINDOW_TEXT : WINDOW_TEXT_INACTIVE)); }
@@ -1311,19 +1310,28 @@ void OptionsDialog::AddHotkeysOnList()
 
 	int lastType = -1;
 
+	//to make names in right order enumerate names, 
+	//and remove hotkeys from mappedhkeys table,
+	//when type changes set hotkeys that are not from it's window or scripts
 	for (auto cur = hkeysNames.rbegin(); cur != hkeysNames.rend(); cur++) {
 		int htype = Hkeys.GetType(cur->first);
 		wxString name;
 		wxString accel;
-		if ((lastType != htype && lastType != -1) || !(cur != hkeysNames.rend())){
+		//copy to not change cur
+		auto copyCur = cur;
+		//here add skipped hotkeys to put it on end
+		if ((lastType != htype && lastType != -1) || !(++copyCur != hkeysNames.rend())){
 			int numdelete = 0;
 			for (auto curmhk = mappedhkeys.begin(); curmhk != mappedhkeys.end(); curmhk++) {
 				if (lastType != curmhk->first.Type)
 					break;
-				if (curmhk->first.id == GLOBAL_QUIT)
+				//skik quit
+				if (curmhk->first.id == GLOBAL_QUIT){
+					numdelete++;
 					continue;
+				}
 
-				wxString windowName = windowNames[lastType] + L" ";
+				wxString windowName = windowNames[curmhk->first.Type] + L" ";
 				auto & it = hkeysNames.find(curmhk->first.id);
 				if (it != hkeysNames.end()){
 					name = it->second;
@@ -1331,24 +1339,33 @@ void OptionsDialog::AddHotkeysOnList()
 				else{
 					name = curmhk->second.Name;
 				}
+				//add hotkey on list
 				long pos = Shortcuts->AppendItem(new ItemText(windowName + name));
 				Shortcuts->SetItem(pos, 1, new ItemHotkey(name, curmhk->second.Accel, curmhk->first));
 				numdelete++;
 			}
+			//remove from mappedhotkeys
 			for (int p = 0; p < numdelete; p++)
 				mappedhkeys.erase(mappedhkeys.begin());
 		}
+		//I have to end on last element
+		//and is added in above loop
+		if (mappedhkeys.size() == 0)
+			break;
+
 		name = windowNames[htype] + L" " + cur->second;
+		//seeking for mapped hotkey
 		auto & it = mappedhkeys.find(idAndType(cur->first, htype));
 		if (it != mappedhkeys.end()){
 			accel = it->second.Accel;
 			mappedhkeys.erase(it);
 		}
+		//set element on list
 		long pos = Shortcuts->AppendItem(new ItemText(name));
 		Shortcuts->SetItem(pos, 1, new ItemHotkey(cur->second, accel, idAndType(cur->first, htype)));
 		lastType = htype;
-		//ii++;
 	}
+	//setup shortcut list
 	Shortcuts->StartEdition();
 	Shortcuts->SetSelection(0);
 }

@@ -203,7 +203,6 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 
 	SetAccels();
 	SetFocusIgnoringChildren();
-	TabPanel *tab = (TabPanel*)GetGrandParent();
 
 }
 
@@ -673,16 +672,25 @@ void AudioBox::SetAccels()
 		//check if it's sorted from lower to higher if yes then change continue to break;
 		if (cur->first.Type != AUDIO_HOTKEY){ continue; }
 		idAndType itype = cur->first;
-		entries.push_back(Hkeys.GetHKey(itype));
 		if (itype.id < 2000){
 			//do nothing
 		}
-		else if (itype.id < 3000)
+		else if (itype.id < 3000){
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->Video, itype.id);
-		else if (itype.id < 4000)
+		}
+		else if (itype.id < 4000){
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, tab->Edit, itype.id);
-		else if (itype.id < 5000)
+		}
+		else if (itype.id < 5000){
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, tab->Grid, itype.id);
+		}
+		/*else{
+			Notebook *nt = Notebook::GetTabs();
+			KainoteFrame *Kai = (KainoteFrame *)nt->GetParent();
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, Kai, itype.id);
+		}*/
+		
+		entries.push_back(Hkeys.GetHKey(itype));
 	}
 	wxAcceleratorTable accel(entries.size(), &entries[0]);
 	SetAcceleratorTable(accel);
@@ -722,6 +730,32 @@ bool AudioBox::SetFont(const wxFont &font)
 
 	wxWindow::SetFont(font);
 	return true;
+}
+
+void AudioBox::OnAccelerator(wxCommandEvent &event)
+{
+	switch (event.GetId()){
+	case AUDIO_PLAY: OnPlaySelection(event); break;
+	case AUDIO_PLAY_LINE: OnPlaySelection(event); break;
+	case AUDIO_STOP: OnStop(event); break;
+	case AUDIO_NEXT: OnNext(event); break;
+	case AUDIO_PREVIOUS: OnPrev(event); break;
+	case AUDIO_PLAY_BEFORE_MARK: OnPlayBeforeMark(event); break;
+	case AUDIO_PLAY_AFTER_MARK: OnPlayAfterMark(event); break;
+	case AUDIO_PLAY_500MS_BEFORE: OnPlay500Before(event); break;
+	case AUDIO_PLAY_500MS_AFTER: OnPlay500After(event); break;
+	case AUDIO_PLAY_500MS_FIRST: OnPlay500First(event); break;
+	case AUDIO_PLAY_500MS_LAST: OnPlay500Last(event); break;
+	case AUDIO_PLAY_TO_END: OnPlayToEnd(event); break;
+	case AUDIO_COMMIT: OnCommit(event); break;
+	case AUDIO_GOTO: OnGoto(event); break;
+	case AUDIO_LEAD_IN: OnLeadIn(event); break;
+	case AUDIO_LEAD_OUT: OnLeadOut(event); break;
+	case AUDIO_SCROLL_LEFT: OnScrollSpectrum(event); break;
+	case AUDIO_SCROLL_RIGHT: OnScrollSpectrum(event); break;
+		default:
+			break;
+	}
 }
 ///////////////
 // Event table

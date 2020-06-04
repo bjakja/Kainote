@@ -1450,6 +1450,10 @@ void KainoteFrame::SetAccels(bool _all)
 			}
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}
+		else if(id < 5000){
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnUseWindowHotkey, this, id);
+			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+		}
 		if (!entries[entries.size() - 1].IsOk()){
 			entries.pop_back();
 		}
@@ -1463,6 +1467,20 @@ void KainoteFrame::SetAccels(bool _all)
 	{
 		Tabs->Page(i)->SetAccels();
 	}
+}
+
+void KainoteFrame::OnUseWindowHotkey(wxCommandEvent& event)
+{
+	int id = event.GetId();
+	TabPanel *tab = GetTab();
+	if (id < 2000 && tab->Edit->ABox)
+		tab->Edit->ABox->OnAccelerator(event);
+	else if (id < 3000)
+		tab->Video->OnAccelerator(event);
+	else if (id < 4000)
+		tab->Edit->OnAccelerator(event);
+	else if (id < 5000)
+		tab->Grid->OnAccelerator(event);
 }
 
 

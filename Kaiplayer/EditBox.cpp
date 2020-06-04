@@ -983,7 +983,9 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	}
 	Send(EDITBOX_LINE_EDITION, false, false, Visual != 0);
 	if (event.GetId() == ID_COMMENT){
-		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1, true);
+		TextEdit->SetState((!line->IsComment) ? 0 : 
+			(line->Effect->StartsWith(L"template")) ? 2 : 
+			(line->Effect->StartsWith(L"code")) ? 3 : 1, true);
 	}
 	if (Visual){
 		pan->Video->SetVisual(false, true);
@@ -1089,6 +1091,56 @@ void EditBox::OnTlMode(wxCommandEvent& event)
 	if (grid->SetTlMode(show)){ TlMode->SetValue(true); return; }
 	SetTlMode(show);
 	SetLine(currentLine);
+}
+
+void EditBox::OnAccelerator(wxCommandEvent& event)
+{
+	switch (event.GetId())
+	{
+	
+		case EDITBOX_CHANGE_FONT: OnFontClick(event); break;
+		case EDITBOX_CHANGE_UNDERLINE: OnUnderlineClick(event); break;
+		case EDITBOX_CHANGE_STRIKEOUT: OnStrikeClick(event); break;
+		case EDITBOX_PASTE_ALL_TO_TRANSLATION: OnCopyAll(event); break;
+		case EDITBOX_PASTE_SELECTION_TO_TRANSLATION: OnCopySelection(event); break;
+		case EDITBOX_HIDE_ORIGINAL: OnHideOriginal(event); break;
+		case EDITBOX_CHANGE_COLOR_PRIMARY: 
+		case EDITBOX_CHANGE_COLOR_SECONDARY: 
+		case EDITBOX_CHANGE_COLOR_OUTLINE: 
+		case EDITBOX_CHANGE_COLOR_SHADOW: OnColorClick(event); break;
+		case EDITBOX_COMMIT: OnCommit(event); break;
+		case EDITBOX_COMMIT_GO_NEXT_LINE: OnNewline(event); break;
+		case EDITBOX_INSERT_BOLD: OnBoldClick(event); break;
+		case EDITBOX_INSERT_ITALIC: OnItalicClick(event); break;
+		case EDITBOX_SPLIT_LINE: OnSplit(event); break;
+		case EDITBOX_START_DIFFERENCE: OnPasteDifferents(event); break;
+		case EDITBOX_END_DIFFERENCE: OnPasteDifferents(event); break;
+		case EDITBOX_FIND_NEXT_DOUBTFUL: FindNextDoubtfulTl(event); break;
+		case EDITBOX_FIND_NEXT_UNTRANSLATED: FindNextUnTranslated(event); break;
+		case EDITBOX_SET_DOUBTFUL: OnDoubtfulTl(event); break;
+		case EDITBOX_TAG_BUTTON1: 
+		case EDITBOX_TAG_BUTTON2: 
+		case EDITBOX_TAG_BUTTON3: 
+		case EDITBOX_TAG_BUTTON4: 
+		case EDITBOX_TAG_BUTTON5: 
+		case EDITBOX_TAG_BUTTON6: 
+		case EDITBOX_TAG_BUTTON7: 
+		case EDITBOX_TAG_BUTTON8: 
+		case EDITBOX_TAG_BUTTON9: 
+		case EDITBOX_TAG_BUTTON10: 
+		case EDITBOX_TAG_BUTTON11: 
+		case EDITBOX_TAG_BUTTON12: 
+		case EDITBOX_TAG_BUTTON13: 
+		case EDITBOX_TAG_BUTTON14: 
+		case EDITBOX_TAG_BUTTON15: 
+		case EDITBOX_TAG_BUTTON16: 
+		case EDITBOX_TAG_BUTTON17: 
+		case EDITBOX_TAG_BUTTON18: 
+		case EDITBOX_TAG_BUTTON19: 
+		case EDITBOX_TAG_BUTTON20: OnButtonTag(event); break;
+		default:
+			break;
+	}
 }
 
 //dummy tlmode is used on preview when 
@@ -1832,9 +1884,9 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 				item->label = newname;
 			}
 		}
-		wxString svtag = tb->tag;
+		wxString svtag = L"{" + tb->tag;
 		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1),
-			svtag << L"\f" << tb->type << L"\f" << tb->name);
+			svtag << L"\n" << tb->type << L"\n" << tb->name << L"}");
 		Options.SaveOptions(true, false);
 		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
 	}
