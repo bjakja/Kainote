@@ -39,7 +39,7 @@ public:
 
 	FindReplace(KainoteFrame* kfparent, FindReplaceDialog *FRD);
 	~FindReplace(){};
-	void ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos);
+	void ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos, const wxString & text);
 	void ReplaceChecked();
 	KainoteFrame *Kai;
 	int linePosition;

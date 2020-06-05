@@ -59,7 +59,7 @@ FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	CopyPath = Options.pathfull + L"\\ReplaceBackup\\";
 }
 
-void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos)
+void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, const wxPoint &pos, const wxString & text)
 {
 	if (tab){
 		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
@@ -72,7 +72,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 						tab->Edit->SetLine(keyLine);
 						tab->Grid->SelectRow(keyLine);
 						tab->Grid->ScrollTo(keyLine, true);
-						tab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
+						tab->Edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
 					}
 				}
 				break;
@@ -98,7 +98,7 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 			ntab->Edit->SetLine(keyLine);
 			ntab->Grid->SelectRow(keyLine);
 			ntab->Grid->ScrollTo(keyLine, true);
-			ntab->Edit->GetEditor()->SetSelection(pos.x, pos.x + pos.y);
+			ntab->Edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
 		}
 	}
 }

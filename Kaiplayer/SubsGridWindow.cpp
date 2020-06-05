@@ -1778,7 +1778,7 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 	{
 		const wxUniChar &ch = text[i];
 		int isWordBoundary = iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT);
-		if ((isWordBoundary/*iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT)*/ && ch != L'\'' && !block) || isReplaceTag){
+		if ((isWordBoundary && ch != L'\'' && !block) || isReplaceTag){
 			if (word.length() > 1){
 				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
 				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
@@ -1837,14 +1837,16 @@ void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &
 			continue; 
 		}
 		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.length()) == tagsReplacement){
-			//firsti = i + tagsReplacement.length(); /*word = L""; */
 			isReplaceTag = true;
 			continue;
 		}
 
 
-		if (!block && (!isWordBoundary/*iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT)*/ || ch == L'\'') /*notchar.Find(ch) == -1*/ &&
-			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ word << ch; lasti = i; }
+		if (!block && (!isWordBoundary || ch == L'\'') &&
+			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ 
+			word << ch; 
+			lasti = i; 
+		}
 		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
 			word = L"";
 			if (ch == L'N' || ch == L'n' || ch == L'h'){

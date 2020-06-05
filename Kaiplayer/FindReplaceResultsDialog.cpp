@@ -29,11 +29,11 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){
 		SeekResults *results = (SeekResults*)evt.GetClientData();
 		if (!results){
-			KaiLogDebug("chujnia, ktoś ukradł rezultat wyszukiwania");
+			KaiLogDebug("Ups, seek results disappeared");
 			return;
 		}
 
-		FR->ShowResult(results->tab, results->path, results->keyLine, results->findPosition);
+		FR->ShowResult(results->tab, results->path, results->keyLine, results->findPosition, results->name);
 	}, 23323);
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 

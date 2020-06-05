@@ -16,11 +16,7 @@
 
 #pragma once
 
-//#include <wx/textfile.h>
 #include <wx/tokenzr.h>
-//#include <wx/colour.h>
-//#include <wx/string.h>
-//#include <wx/image.h>
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -44,7 +40,6 @@
 #define MID(a,b,c) MAX((a),MIN((b),(c)))
 #endif
 
-//Pamiêtaj, zmiana ostatniej audio opcji wymaga te¿ zmiany przy szukaniu w zapisie
 //Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \
 	CG(AUDIO_AUTO_COMMIT,=1)\
@@ -150,6 +145,7 @@
 	CG(GRID_TAGS_SWAP_CHARACTER,)\
 	CG(GRID_INSERT_END_OFFSET,)\
 	CG(GRID_INSERT_START_OFFSET,)\
+	CG(GRID_DUPLICATION_DONT_CHANGE_SELECTION,)\
 	CG(KEYFRAMES_RECENT,)\
 	CG(LAST_SESSION_CONFIG,)\
 	CG(SHIFT_TIMES_BY_TIME,)\

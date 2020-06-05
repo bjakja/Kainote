@@ -318,7 +318,13 @@ void SubsGrid::OnDuplicate()
 		InsertRows(rw1, dupl);
 		dupl.clear();
 	}
-	file->InsertSelections(rw1, rw1 + i - 1, false, true);
+	if (!Options.GetBool(GRID_DUPLICATION_DONT_CHANGE_SELECTION))
+		file->InsertSelections(rw1, rw1 + i - 1, false, true);
+	else{
+		file->InsertSelections(rw, rw + i - 1, false, true);
+		rw1 = rw;
+	}
+	
 	SetModified(GRID_DUPLICATE, true, false, rw1);
 	Refresh(false);
 }
@@ -332,7 +338,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	Edit->TextEditOrig->GetSelection(&startOrg, &endOrg);
 	wxString ntext;
 	wxString ntltext;
-	wxString en1;
+	wxString en1 = L"\\N";
 	int idd = event.GetId();
 	if (idd == GLOBAL_JOIN_WITH_PREVIOUS){
 		size_t prevLine = GetKeyFromPosition(currentLine, -1);
@@ -340,7 +346,7 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		selections.Clear();
 		selections.Add(prevLine);
 		selections.Add(currentLine);
-		en1 = L" ";
+		//en1 = L" ";
 	}
 	else if (idd == GLOBAL_JOIN_WITH_NEXT){
 		size_t nextLine = GetKeyFromPosition(currentLine, 1);
@@ -348,9 +354,9 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 		selections.Clear();
 		selections.Add(currentLine);
 		selections.Add(nextLine);
-		en1 = L" ";
+		//en1 = L" ";
 	}
-	else{ en1 = L"\\N"; }
+	//else{ en1 = L"\\N"; }
 
 
 	Dialogue *dialc = file->CopyDialogue(selections[0]);

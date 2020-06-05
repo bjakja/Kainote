@@ -2257,9 +2257,15 @@ void EditBox::CloseAudio()
 	Layout();
 }
 
-TextEditor * EditBox::GetEditor()
+TextEditor * EditBox::GetEditor(const wxString &text)
 {
-	if (grid->hasTLMode && TextEdit->GetValue() == L"")
+	if (!text.empty()){
+		if (TextEditOrig->GetValue() == text)
+			return TextEditOrig;
+
+		return TextEdit;
+	}
+	else if (grid->hasTLMode && TextEdit->GetValue() == L"")
 		return TextEditOrig;
 
 	return TextEdit;
