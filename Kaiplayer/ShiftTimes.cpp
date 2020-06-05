@@ -274,7 +274,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		NewProfile->SetToolTip(_("Dodawanie i edycja profilów"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnAddProfile, this, 31229);
 		RemoveProfile = new MappedButton(panel, 31230, L"-", -1);
-		NewProfile->SetToolTip(_("Usuwanie profilów"));
+		RemoveProfile->SetToolTip(_("Usuwanie profilów"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnRemoveProfile, this, 31230);
 		wxArrayString profileList;
 		GetProfilesNames(profileList);
@@ -753,8 +753,10 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 	wxString moveTagTimes = (MoveTagTimes->GetValue()) ? L"1" : L"0";
 	wxString forward = (Forward->GetValue()) ? L"1" : L"0";
 	wxString frames = (DisplayFrames->GetValue()) ? L"1" : L"0";
-	wxString profile = Options.GetString(SHIFT_TIMES_PROFILES);
-	profile = profile.Mid(2, profile.length() - 3);
+	wxArrayString profiles;
+	wxArrayString changedProfiles;
+	Options.GetTable(SHIFT_TIMES_PROFILES, profiles);
+
 	wxString newProfile;
 	newProfile << name << L": Time: " << TimeText->GetTime().mstime <<
 		L" Forward: " << forward << L" Frames: " << frames <<
@@ -763,20 +765,16 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 		L" MoveToVideoTime: " << moveToAudioTime << L" WhichLines: " <<
 		WhichLines->GetSelection() << L" StylesText: " <<
 		Stylestext->GetValue() << L" WhichTimes: " << WhichTimes->GetSelection() <<
-		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection() << L"\n";
+		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection();
 
-	if (overwrite){
-		wxStringTokenizer tokenizer(profile, L"\n", wxTOKEN_STRTOK);
-		while (tokenizer.HasMoreTokens()){
-			wxString token = tokenizer.GetNextToken();
-			if (!token.StartsWith(L"\t" + name + L":")){
-				newProfile << L"\t" << token << L"\n";
-			}
+	changedProfiles.Add(newProfile);
+	for (auto Profile : profiles){
+		if (!Profile.StartsWith(name + L":")){
+			changedProfiles.Add(Profile);
 		}
-		profile.Empty();
 	}
 
-	Options.SetString(SHIFT_TIMES_PROFILES, L"{\n" + profile.Prepend(newProfile) + L"\n}");
+	Options.SetTable(SHIFT_TIMES_PROFILES, changedProfiles);
 	wxArrayString profilesList;
 	GetProfilesNames(profilesList);
 	ProfilesList->PutArray(&profilesList);

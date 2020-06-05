@@ -1753,10 +1753,11 @@ void EditBox::OnColorChange(ColorEvent& event)
 
 void EditBox::OnButtonTag(wxCommandEvent& event)
 {
-	wxString type;
-	wxString tag = Options.GetString((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1)).BeforeFirst(L'\f', &type);
-	if (tag.IsEmpty()){ wxBell(); return; }
-	type = type.BeforeFirst(L'\f');
+	wxArrayString tagOptions;
+	Options.GetTable((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1), tagOptions);
+	if (tagOptions.size() < 2){ wxBell(); return; }
+	wxString type = tagOptions[1];
+	wxString tag = tagOptions[2];
 
 	if (type != L"2"){
 		//if(type==L"1"){TextEdit->SetSelection(0,0);}
@@ -1884,9 +1885,9 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 				item->label = newname;
 			}
 		}
-		wxString svtag = L"{" + tb->tag;
+		wxString svtag = L"{\n\t" + tb->tag;
 		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1),
-			svtag << L"\n" << tb->type << L"\n" << tb->name << L"}");
+			svtag << L"\n\t" << tb->type << L"\n\t" << tb->name << L"\n}");
 		Options.SaveOptions(true, false);
 		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
 	}
