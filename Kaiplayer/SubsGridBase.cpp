@@ -1152,8 +1152,9 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			lastRow = newCurrentLine;
 			int w, h;
 			GetClientSize(&w, &h);
-			if (Scroll)
+			if (Scroll){
 				ScrollTo(newCurrentLine, true);
+			}
 			//MakeVisible(newCurrentLine);
 			Edit->SetLine(newCurrentLine);
 			file->InsertSelection(newCurrentLine);

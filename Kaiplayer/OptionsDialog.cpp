@@ -279,7 +279,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	//Main
 	{
-		const int optsSize = 17;
+		const int optsSize = 18;
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize] = { _("Wczytywanie posortowanych napisów"), _("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
@@ -289,14 +289,15 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"), _("Zmieniaj aktywną linię przy zaznaczaniu"),
 			_("Pokazuj oryginał w trybie tłumaczenia"), _("Ukryj oryginał na wideo w trybie tłumaczenia"),
-			_("Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
+			_("Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"), 
+			_("Nie wypośrodkowuj aktywnej linii w polu napisów"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Wyłącz ostrzeżenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote") };
 		CONFIG opts[optsSize] = { GRID_LOAD_SORTED_SUBS, SPELLCHECKER_ON, AUTO_SELECT_LINES_FROM_LAST_TAB,
 			EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK, OPEN_SUBS_IN_NEW_TAB, EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT,
 			DISABLE_LIVE_VIDEO_EDITING, GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN, SHIFT_TIMES_CHANGE_VALUES_WITH_TAB,
 			GRID_CHANGE_ACTIVE_ON_SELECTION, TL_MODE_SHOW_ORIGINAL, TL_MODE_HIDE_ORIGINAL_ON_VIDEO, 
-			GRID_DUPLICATION_DONT_CHANGE_SELECTION,
+			GRID_DUPLICATION_DONT_CHANGE_SELECTION, GRID_DONT_CENTER_ACTIVE_LINE,
 			TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS, VIDEO_VISUAL_WARNINGS_OFF,
 			DONT_ASK_FOR_BAD_RESOLUTION, AUTOMATION_OLD_SCRIPTS_COMPATIBILITY };
 		wxString localePath = Options.pathfull + L"\\Locale";

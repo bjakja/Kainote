@@ -233,8 +233,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 
 	Connect(ID_TABS, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChanged, 0, this);
-	Connect(ID_ADDPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageAdd);
-	Connect(ID_CLOSEPAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
+	Connect(GLOBAL_ADD_PAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageAdd);
+	Connect(GLOBAL_CLOSE_PAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
 	Connect(GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//Here add new ids
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SAVE_SUBS, GLOBAL_HISTORY);
@@ -1421,8 +1421,8 @@ void KainoteFrame::SetAccels(bool _all)
 {
 	std::vector<wxAcceleratorEntry> entries;
 	entries.resize(2);
-	entries[0].Set(wxACCEL_CTRL, (int)L'T', ID_ADDPAGE);
-	entries[1].Set(wxACCEL_CTRL, (int)L'W', ID_CLOSEPAGE);
+	//entries[0].Set(wxACCEL_CTRL, (int)L'T', GLOBAL_ADD_PAGE);
+	//entries[1].Set(wxACCEL_CTRL, (int)L'W', GLOBAL_CLOSE_PAGE);
 
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){

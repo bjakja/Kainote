@@ -254,5 +254,6 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_VIEW_ONLY_VIDEO] = _("Widok tylko wideo");
 	names[VIDEO_VOLUME_PLUS] = _("Dźwięk głośniej"); 
 	names[VIDEO_VOLUME_MINUS] = _("Dźwięk ciszej"); 
-	
+	names[GLOBAL_ADD_PAGE] = _("Otwórz nową zakładkę");
+	names[GLOBAL_CLOSE_PAGE] = _("Zamknij bieżącą zakładkę");
 }

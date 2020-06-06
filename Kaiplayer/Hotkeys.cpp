@@ -126,6 +126,8 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 {
 	if (!Audio){
 		_hkeys[idAndType(GLOBAL_QUIT, GLOBAL_HOTKEY)] = hdata(_("Wyjście"), L"Alt-F4");
+		_hkeys[idAndType(GLOBAL_ADD_PAGE, GLOBAL_HOTKEY)] = hdata(_("Otwórz nową zakładkę"), L"Ctrl-T");
+		_hkeys[idAndType(GLOBAL_CLOSE_PAGE, GLOBAL_HOTKEY)] = hdata(_("Zamknij bieżącą zakładkę"), L"Ctrl-W");
 		_hkeys[idAndType(GLOBAL_SHOW_SHIFT_TIMES, GLOBAL_HOTKEY)] = hdata(_("Okno zmiany czasów"), L"Ctrl-I");
 		_hkeys[idAndType(GLOBAL_CONVERT_TO_ASS, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do ASS"), L"F9");
 		_hkeys[idAndType(GLOBAL_CONVERT_TO_SRT, GLOBAL_HOTKEY)] = hdata(_("Konwertuj do SRT"), L"F8");
