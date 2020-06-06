@@ -1757,7 +1757,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 	Options.GetTable((CONFIG)(event.GetId() - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1), tagOptions);
 	if (tagOptions.size() < 2){ wxBell(); return; }
 	wxString type = tagOptions[1];
-	wxString tag = tagOptions[2];
+	wxString tag = tagOptions[0];
 
 	if (type != L"2"){
 		//if(type==L"1"){TextEdit->SetSelection(0,0);}

@@ -153,7 +153,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if ((id >= 4000 && id < 5000) || (id < 1999 && id >= 1000)){
-				Grid->ConnectAcc((id < 1010) ? id + 10 : id);
+				Grid->ConnectAcc((id < AUDIO_COMMIT) ? id + 10 : id);
 				if (id < 1999){
 					audioHotkeysLoaded = true;
 				}

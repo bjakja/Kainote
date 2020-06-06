@@ -491,14 +491,10 @@ audio:
 		FFMS_ResampleOptions *resopts = FFMS_CreateResampleOptions(audiosource);
 		resopts->ChannelLayout = FFMS_CH_FRONT_CENTER;
 		resopts->SampleFormat = FFMS_FMT_S16;
-
+		
 		if (FFMS_SetOutputFormatA(audiosource, resopts, &errinfo)){
 			KaiLog(wxString::Format(_("Wystąpił błąd konwertowania audio: %s"), errinfo.Buffer));
 			return 1;
-		}
-		else{
-			BytesPerSample = 2;
-			Channels = 1;
 		}
 		FFMS_DestroyResampleOptions(resopts);
 		const FFMS_AudioProperties *audioprops = FFMS_GetAudioProperties(audiosource);
@@ -506,6 +502,8 @@ audio:
 		SampleRate = audioprops->SampleRate;
 		Delay = (Options.GetInt(AUDIO_DELAY) / 1000);
 		NumSamples = audioprops->NumSamples;
+		BytesPerSample = 2;
+		Channels = 1;
 
 		if (abs(Delay) >= (SampleRate * NumSamples * BytesPerSample)){
 			KaiLog(_("Nie można ustawić opóźnienia, przekracza czas trwania audio"));
@@ -743,7 +741,7 @@ bool VideoFfmpeg::RAMCache()
 {
 	//progress->Title(_("Zapisywanie do pamięci RAM"));
 	audioProgress = 0;
-	int64_t end = NumSamples*BytesPerSample;
+	int64_t end = NumSamples * BytesPerSample;
 
 	int blsize = (1 << 22);
 	blnum = ((float)end / (float)blsize) + 1;
@@ -854,7 +852,7 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 	int block = 332768;
 	if (Delay > 0){
 
-		int size = (SampleRate*Delay*BytesPerSample);
+		int size = (SampleRate * Delay * BytesPerSample);
 		if (size % 2 == 1){ size++; }
 		char *silence = new char[size];
 		memset(silence, 0, size);
@@ -862,7 +860,7 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 		delete[] silence;
 	}
 	try {
-		char *data = new char[block*BytesPerSample];
+		char *data = new char[block * BytesPerSample];
 		int all = (NumSamples / block) + 1;
 		//int64_t pos=0;
 		int64_t pos = (Delay < 0) ? -(SampleRate * Delay * BytesPerSample) : 0;

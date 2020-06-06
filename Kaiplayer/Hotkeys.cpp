@@ -369,7 +369,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 	else if (key == 0){
 		KaiLog(wxString::Format(_("Skrót \"%s\" nie jest prawidłowy"), akey));
 	}
-	accelkey.Set(modif, key, (itype.id < 1000) ? itype.id + 1000 : itype.id);
+	accelkey.Set(modif, key, (itype.id < AUDIO_COMMIT) ? itype.id + 10 : itype.id);
 
 	return accelkey;
 }

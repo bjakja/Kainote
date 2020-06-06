@@ -236,7 +236,7 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 		idAndType itype(GetId(), Window);
 		wxString key = Hkeys.GetStringHotkey(itype, desc);
 		if (twoHotkeys){
-			idAndType itype(GetId() - 1000, Window);
+			idAndType itype(GetId() - 10, Window);
 			key += _(" lub ") + Hkeys.GetStringHotkey(itype);
 		}
 
@@ -410,11 +410,10 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		return;
 	}
 	if (Window >= 0 && event.LeftDown() && (event.ShiftDown() || (twoHotkeys && event.ControlDown()))){
-		//upewnij się, że da się zmienić idy na nazwy, 
-		//może i trochę spowolni operację ale skończy się ciągłe wywalanie hotkeysów
-		//może od razu funkcji onmaphotkey przekazać item by zrobiła co trzeba
+		//check if it's possible to change ids on names
+		//maybe it will be slower but, it prevents to remove hotkeys
 		int id = GetId();
-		if (event.ControlDown()){ id -= 1000; }
+		if (event.ControlDown()){ id -= 10; }
 		Hkeys.OnMapHkey(GetId(), L"", this, Window, false);
 		SetToolTip();
 		SetFocus();
