@@ -19,7 +19,7 @@
 
 
 Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr, const wxPoint& pos, int style)
-	: KaiDialog(parent, -1, (styles) ? _("Wybór styli") : _("Wybór kolumn"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	: KaiDialog(parent, -1, (styles) ? _("Wybór stylów") : _("Wybór kolumn"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer *Main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles) ? _("Wybierz style") : _("Wybierz kolumny"));

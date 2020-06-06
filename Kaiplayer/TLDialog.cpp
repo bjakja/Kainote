@@ -50,7 +50,7 @@ TLDialog::TLDialog(wxWindow *parent, SubsGrid *subsgrid)
 
 	sizer->Add(sizer2, 0, wxEXPAND | wxTOP, 5);
 	sizer->Add(sizer1, 0, wxEXPAND);
-	sizer->Add(new KaiStaticText(this, -1, _("Objaśnienie:\nOryginał - tekst napisów z właściwnym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")), 0, wxEXPAND | wxALL, 5);
+	sizer->Add(new KaiStaticText(this, -1, _("Objaśnienie:\nOryginał - tekst napisów z właściwym timingiem służy\ndo porównania wklejanych dialogów, później zostaje usunięty.\nTłumaczenie - tekst wklejony do napisów z poprawnym timingiem.")), 0, wxEXPAND | wxALL, 5);
 	SetSizerAndFit(sizer);
 	CenterOnParent();
 

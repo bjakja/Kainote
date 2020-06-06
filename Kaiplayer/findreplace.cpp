@@ -1082,7 +1082,7 @@ void FindReplace::ReplaceAll(TabWindow *window)
 void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 {
 	if (window->windowType != WINDOW_REPLACE){
-		KaiLogDebug(L"chujnia replace all we wszystkich otwartch subach wywołane nie z okna replace");
+		KaiLogDebug(L"Ups, replace all on subs called from window replace");
 		return;
 	}
 

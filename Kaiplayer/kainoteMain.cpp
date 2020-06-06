@@ -108,7 +108,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menu *lastSession = new Menu();
 	lastSession->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
 	int lastSessionConfig = Options.GetInt(LAST_SESSION_CONFIG);
-	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, _("Pytaj o wczytanie ostatniej sesji przy starcie programu"), NULL, _("Pyta czy wczytać ostatnio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
+	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, _("Pytaj o wczytanie ostatniej sesji przy starcie programu"), NULL, _("Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
 	lastSession->Append(GLOBAL_LOAD_LAST_SESSION_ON_START, _("Wczytaj ostatnią sesję przy starcie programu"), NULL, _("Wczytuje poprzednio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 2);
 	
 
@@ -139,7 +139,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		SortMenu[i] = new Menu();
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_START_TIMES + (6 * i), _("Czas początkowy"), _("Sortuj według czasu początkowego"));
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_END_TIMES + (6 * i), _("Czas końcowy"), _("Sortuj według czasu końcowego"));
-		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_STYLE + (6 * i), _("Style"), _("Sortuj według styli"));
+		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_STYLE + (6 * i), _("Style"), _("Sortuj według stylów"));
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_ACTOR + (6 * i), _("Aktor"), _("Sortuj według aktora"));
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_EFFECT + (6 * i), _("Efekt"), _("Sortuj według efektu"));
 		SortMenu[i]->Append(GLOBAL_SORT_ALL_BY_LAYER + (6 * i), _("Warstwa"), _("Sortuj według warstwy"));
@@ -194,14 +194,14 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	SubsMenu = new Menu();
 	SubsMenu->AppendTool(Toolbar, GLOBAL_EDITOR, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"));
-	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_ASS_PROPERTIES, _("Właściwości ASS"), _("Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_ASS_PROPERTIES, _("Właściwości pliku ASS"), _("Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_STYLE_MANAGER, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG(L"styles"));
 	ConvMenu = new Menu();
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_ASS, _("Konwertuj do ASS"), _("Konwertuje do formatu ASS"), PTR_BITMAP_PNG(L"convass"), false);
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_SRT, _("Konwertuj do SRT"), _("Konwertuje do formatu SRT"), PTR_BITMAP_PNG(L"convsrt"));
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_MDVD, _("Konwertuj do MDVD"), _("Konwertuje do formatu microDVD"), PTR_BITMAP_PNG(L"convmdvd"));
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_MPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"), PTR_BITMAP_PNG(L"convmpl2"));
-	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_TMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecene)"), PTR_BITMAP_PNG(L"convtmp"));
+	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_TMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecane)"), PTR_BITMAP_PNG(L"convtmp"));
 
 	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), true, PTR_BITMAP_PNG(L"convert"), ConvMenu);
 	SubsMenu->AppendTool(Toolbar, GLOBAL_SHOW_SHIFT_TIMES, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"), PTR_BITMAP_PNG(L"times"));
@@ -730,9 +730,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			Options.progname.AfterFirst(L'v'), Options.GetReleaseDate()) + " \n\n" +
 			_("Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
 			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum GLOBAL_ANSI, Githubie, bądź mailowo.\n\n") +
-			_("Kainote zawiera w sobie części następujących projeków:\n") +
+			_("Kainote zawiera w sobie części następujących projektów:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al.\n" +
-			_("Color picker, wymuxowywanie napsów z mkv, audiobox, audio player, automation\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
+			_("Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
 			L"Copyright © Rodrigo Braz Monteiro.\n"\
 			L"Hunspell - Copyright © Kevin Hendricks.\n"\
 			L"Matroska Parser - Copyright © Mike Matsnev.\n"\
@@ -762,8 +762,8 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n") +
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n") +/* i jar do Language Tool*/
-			_("- Senami (stworzył nowe motywy a także wyłapał parę błędów).\n") +
-			_("- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu kraszy).\n \n") +
+			_("- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n") +
+			_("- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu cruszy).\n \n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
 

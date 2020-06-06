@@ -71,7 +71,7 @@ txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxStr
 {
 	DialogSizer *siz = new DialogSizer(wxVERTICAL);
 	wxBoxSizer *siz1 = new wxBoxSizer(wxHORIZONTAL);
-	wxString types[3] = { _("Tag wstawiany w miejse kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst") };
+	wxString types[3] = { _("Tag wstawiany w miejsce kursora"), _("Tag wstawiany na początku tekstu"), _("Zwykły tekst") };
 	type = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, types);
 	type->SetSelection(_type);
 	name = new KaiTextCtrl(this, -1, _name, wxDefaultPosition, wxSize(150, 25), wxTE_PROCESS_ENTER);

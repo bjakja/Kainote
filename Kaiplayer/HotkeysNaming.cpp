@@ -45,7 +45,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_ABOUT] = _("O programie");
 	names[GLOBAL_ANSI] = _("Wątek programu na forum AnimeSub.info");
 	names[VIDEO_ASPECT_RATIO] = _("Zmień proporcje wideo");
-	names[GLOBAL_OPEN_ASS_PROPERTIES] = _("Właściwości ASS");
+	names[GLOBAL_OPEN_ASS_PROPERTIES] = _("Właściwości pliku ASS");
 	names[AUDIO_COMMIT] = _("Zatwierdź");
 	names[AUDIO_COMMIT_ALT] = _("Zatwierdź zastępcze");
 	names[GLOBAL_AUDIO_FROM_VIDEO] = _("Otwórz audio z wideo");

@@ -104,7 +104,7 @@ bool VideoRenderer::InitDX(bool reset)
 
 	if (!reset){
 		d3dobject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dobject, _("Nie można utworzyć objektu Direct3D"));
+		PTR(d3dobject, _("Nie można utworzyć obiektu Direct3D"));
 	}
 	else{
 		SAFE_RELEASE(MainStream);
@@ -247,7 +247,7 @@ bool VideoRenderer::InitDX(bool reset)
 		UINT count, count1;//, count2;
 		GUID* guids = NULL;
 
-		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie moźna pobrać GUIDów DXVA"));
+		HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie można pobrać GUIDów DXVA"));
 		D3DFORMAT* formats = NULL;
 		//D3DFORMAT* formats2 = NULL;
 		bool isgood = false;
@@ -951,7 +951,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ KaiLog(_("Instancja VobSuba nie utworzyła się.")); delete textsubs; return false; }
+	if (!instance){ KaiLog(_("Błąd, instancja VobSuba nie została utworzona.")); delete textsubs; return false; }
 
 	if (!format || csri_request_fmt(instance, format)){
 		KaiLog(_("CSRI nie obsługuje tego formatu."));

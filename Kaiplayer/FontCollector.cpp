@@ -740,7 +740,7 @@ void FontCollector::CheckOrCopyFonts()
 			}
 		}
 		STime processTime(sw.Time());
-		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
+		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
 	}
 	if (operation & AS_ZIP){
 		wxFFileOutputStream *out = new wxFFileOutputStream(fcd->copypath);
@@ -1086,7 +1086,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				}
 				int result = fread(&file_buffer[0], 1, size, fp);
 				if (result != size){
-					flc->AppendWarnings(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu fonts."), fn));
+					flc->AppendWarnings(wxString::Format(_("Nie można odczytać czcionki \"%s\" z folderu Fonts."), fn));
 				}
 				fclose(fp);
 				if (memcmp(&file_buffer[0], &buffer[0], size) == 0) {
@@ -1122,7 +1122,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 				}
 			}
 			if (!succeeded){
-				flc->AppendWarnings(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze fonts."), fn));
+				flc->AppendWarnings(wxString::Format(_("Nie można znaleźć czcionki \"%s\" w folderze Fonts."), fn));
 				(*notFound)++;
 				(*found)--;
 			}

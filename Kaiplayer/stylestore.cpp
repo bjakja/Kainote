@@ -834,8 +834,8 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 
 void StyleStore::DoTooltips()
 {
-	catalogList->SetToolTip(_("Katalog styli"));
-	newCatalog->SetToolTip(_("Nowy katalog styli"));
+	catalogList->SetToolTip(_("Katalog stylów"));
+	newCatalog->SetToolTip(_("Nowy katalog stylów"));
 	storeNew->SetToolTip(_("Utwórz nowy styl magazynu"));
 	storeEdit->SetToolTip(_("Edytuj zaznaczony styl magazynu"));
 	storeCopy->SetToolTip(_("Kopiuj styl magazynu"));

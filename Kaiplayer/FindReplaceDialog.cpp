@@ -58,7 +58,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		//find in subs filters and path
 		wxBoxSizer *SubsFilterStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, L"", wxDefaultPosition, wxSize(276, -1), FR->subsFindingFilters);
-		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania windows:"));
+		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania Windowsa:"));
 		FindInSubsPattern->SetMaxLength(1000);
 		FindInSubsPattern->SetSelection(0);
 		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:"), wxDefaultPosition,
@@ -163,7 +163,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		MappedButton *ButtonFindInAllOpenedSubs = new MappedButton(this, 
 			ID_BUTTON_FIND_IN_ALL_OPENED_SUBS, _("Znajdź we wszystkich\notwartych napisach"), -1);
 		MappedButton *ButtonFindAllInCurrentSubs = new MappedButton(this, 
-			ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("Znajdź wszystko\nw bierzących napisach"), -1);
+			ID_BUTTON_FIND_ALL_IN_CURRENT_SUBS, _("Znajdź wszystko\nw bieżących napisach"), -1);
 
 		frbsizer->Add(ButtonFindInAllOpenedSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
 		frbsizer->Add(ButtonFindAllInCurrentSubs, 0, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 4);
@@ -180,7 +180,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		MappedButton *ButtonReplaceNext = new MappedButton(this, ID_BUTTON_REPLACE, _("Zamień następne"), -1);
 		MappedButton *ButtonReplaceAll = new MappedButton(this, ID_BUTTON_REPLACE_ALL, _("Zamień wszystko"), -1);
 		MappedButton *ButtonReplaceOnAllTabs = new MappedButton(this, 
-			ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _("Zamień we wszystkich\notwartch napisach"));
+			ID_BUTTON_REPLACE_IN_ALL_OPENED_SUBS, _("Zamień we wszystkich\notwartych napisach"));
 
 		frbsizer->Add(ButtonReplaceNext, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);
 		frbsizer->Add(ButtonReplaceAll, 1, wxEXPAND | wxTOP | wxBOTTOM | wxRIGHT, 2);

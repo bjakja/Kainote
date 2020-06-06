@@ -355,7 +355,7 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"be", _("Rozmycie krawędzi"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"blur", _("Rozmycie"), TYPE_NORMAL, option));
 	itemsList.push_back(new TagListItem(L"bord", _("Grubość obwódki"), TYPE_NORMAL, option));
-	itemsList.push_back(new TagListItem(L"clip", _("Wyciknki wektorowe / prostokątne"), TYPE_TAG_USED_IN_VISUAL, option, true));
+	itemsList.push_back(new TagListItem(L"clip", _("Wycinki wektorowe / prostokątne"), TYPE_TAG_USED_IN_VISUAL, option, true));
 	itemsList.push_back(new TagListItem(L"distort", _("Deformacja czcionki"), TYPE_TAG_VSFILTER_MOD, option, true));
 	itemsList.push_back(new TagListItem(L"fad", _("Pojawianie / znikanie tekstu"), TYPE_NORMAL, option, true));
 	itemsList.push_back(new TagListItem(L"fade", _("Pojawianie / znikanie tekstu (zaawansowana wersja)"), TYPE_NORMAL, option, true));

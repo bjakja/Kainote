@@ -68,7 +68,7 @@ void StylePreview::DrawPreview(Styles *style)
 	int size = strlen(buffer);
 	instance = csri_open_mem(vobsub, buffer, size, NULL);
 	if (!instance){
-		KaiLog(_("Instancja VobSuba nie utworzyła się.")); return;
+		KaiLog(_("Błąd, instancja VobSuba nie została utworzona.")); return;
 	}
 
 	const wxColour & kol1 = Options.GetColour(STYLE_PREVIEW_COLOR1);

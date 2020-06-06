@@ -43,8 +43,8 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	PhraseToReplace = new KaiTextCtrl(this, ID_PHRASE_TO_REPLACE);
 	PhraseToReplace->SetMaxLength(MAXINT);
 	MatchCase = new KaiCheckBox(this, ID_MATCH_CASE, _("Rozróżniaj wielkość znaków"));
-	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst z małej litery"));
-	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst z dużej litery"));
+	ReplaceAsLower = new KaiCheckBox(this, ID_REPLACE_LOWER, _("Zmieniaj na tekst pisany małą literą"));
+	ReplaceAsUpper = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Zmieniaj na tekst pisany wielką literą"));
 	ReplaceWithUnchangedCase = new KaiCheckBox(this, ID_REPLACE_UPPER, _("Nie zmieniaj wielkości liter"));
 	ReplaceOnlyTags = new KaiCheckBox(this, ID_REPLACE_ONLY_TAGS, _("Zmieniaj tylko w tagach"));
 	ReplaceOnlyText = new KaiCheckBox(this, ID_REPLACE_ONLY_TEXT, _("Zmieniaj tylko w tekście"));

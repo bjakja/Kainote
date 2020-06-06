@@ -283,14 +283,14 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		wxString labels[optsSize] = { _("Wczytywanie posortowanych napisów"), _("Włącz sprawdzanie pisowni"),
 			_("Zaznaczaj linijkę z czasem aktywnej\nlinijki poprzedniej zakładki"),
-			_("Pokaż sugestie po dwukrotnym klininięciu na błąd"), _("Otwieraj napisy zawsze w nowej karcie"),
+			_("Pokaż sugestie po dwukrotnym kliknięciu błędu"), _("Otwieraj napisy zawsze w nowej karcie"),
 			_("Nie przechodź do następnej linii przy edycji czasów"),
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"), _("Zmieniaj aktywną linię przy zaznaczaniu"),
 			_("Pokazuj oryginał w trybie tłumaczenia"), _("Ukryj oryginał na wideo w trybie tłumaczenia"),
 			_("Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
-			_("Wyłącz ostrzerzenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
+			_("Wyłącz ostrzeżenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),
 			_("Kompatybilność ze starymi skryptami Kainote") };
 		CONFIG opts[optsSize] = { GRID_LOAD_SORTED_SUBS, SPELLCHECKER_ON, AUTO_SELECT_LINES_FROM_LAST_TAB,
 			EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK, OPEN_SUBS_IN_NEW_TAB, EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT,
@@ -348,7 +348,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxBoxSizer *Main1Sizer = new wxBoxSizer(wxVERTICAL);
 		//uwaga id 20000 ma tylko numctrl, pola tekstowe musza mieć inny id
 		NumCtrl *gridSaveAfter = new NumCtrl(EditorAdvanced, 20000, Options.GetString(GRID_SAVE_AFTER_CHARACTER_COUNT), 0, 10000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
-		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłacza zapis przy edycji"));
+		gridSaveAfter->SetToolTip(_("Zero całkowicie wyłącza zapis przy edycji"));
 		NumCtrl *autoSaveMax = new NumCtrl(EditorAdvanced, 20000, Options.GetString(AUTOSAVE_MAX_FILES), 2, 1000000, true, wxDefaultPosition, wxSize(120, -1), wxTE_PROCESS_ENTER);
 		autoSaveMax->SetToolTip(_("Liczbę plików autozapisu można ustawić od 2 do 1000000"));
 		int numMaxChars = Options.GetInt(TAB_TEXT_MAX_CHARS);
@@ -760,7 +760,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Linia zmiany rozdzielczości kropki"), _("Wynik szukania czcionka nazwy pliku"), _("Wynik szukania tło nazwy pliku"),
 			_("Wynik szukania czcionka znalezionej frazy"), _("Wynik szukania tło znalezionej frazy"),
 			//styles preview
-			_("Pierwszy kolor podglądu styli"), _("Drugi kolor podglądu styli")
+			_("Pierwszy kolor podglądu stylów"), _("Drugi kolor podglądu stylów")
 		};
 
 

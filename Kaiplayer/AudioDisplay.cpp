@@ -241,7 +241,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 
 	if (!d3dObject){
 		d3dObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(d3dObject, _("Nie można utworzyć objektu Direct3D"));
+		PTR(d3dObject, _("Nie można utworzyć obiektu Direct3D"));
 	}
 	else{
 		SAFE_RELEASE(spectrumSurface);

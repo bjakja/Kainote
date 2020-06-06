@@ -36,7 +36,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *listSizer = new wxBoxSizer(wxHORIZONTAL);
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
-	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj słowa całe pisane\nz duzej litery"));
+	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj słowa całe pisane\nwielką literą"));
 	//wxString misspellWord = FindNextMisspell();
 	misSpell = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	replaceWord = new KaiTextCtrl(this, -1);
