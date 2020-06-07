@@ -452,7 +452,7 @@ wxDEFINE_EVENT(COLOR_CHANGED, ColorEvent);
 
 // Constructor
 DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, int colorNum)
-	: KaiDialog(parent, 11111, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
+	: KaiDialog(parent, ID_COLOR_PICKER_DIALOG, _("Wybierz kolor"), wxDefaultPosition, wxDefaultSize)
 {
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));

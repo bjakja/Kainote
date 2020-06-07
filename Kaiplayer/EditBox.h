@@ -36,11 +36,11 @@
 class SubsGrid;
 
 
-class DescTxtCtrl : public KaiChoice
+class ComboBoxCtrl : public KaiChoice
 {
 public:
-	DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator = wxDefaultValidator);
-	virtual ~DescTxtCtrl(){};
+	ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator = wxDefaultValidator);
+	virtual ~ComboBoxCtrl(){};
 	void ChangeValue(const wxString &val);
 private:
 	void OnFocus(wxFocusEvent &evt);
@@ -49,14 +49,14 @@ private:
 
 };
 
-class txtdialog :public KaiDialog
+class TagButtonDialog :public KaiDialog
 {
 public:
 	KaiTextCtrl *txt;
 	KaiTextCtrl *name;
 	KaiChoice *type;
-	txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxString &_name, int type);
-	virtual ~txtdialog(){};
+	TagButtonDialog(wxWindow *parent, int id, const wxString &txtt, const wxString &_name, int type);
+	virtual ~TagButtonDialog(){};
 };
 
 class TagButton :public MappedButton
@@ -69,7 +69,7 @@ public:
 	int type;
 private:
 	void OnMouseEvent(wxMouseEvent& event);
-	txtdialog *tagtxt;
+	TagButtonDialog *tagtxt;
 	
 };
 
@@ -77,7 +77,7 @@ private:
 class EditBox : public wxWindow
 {
 public:
-	EditBox(wxWindow *parent, SubsGrid *grid, int idd);
+	EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd);
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio = true, bool save = true, bool nochangeline = false, bool autoPlay = false);
 	void SetTlMode(bool tl, bool dummyTlMode = false);
@@ -100,11 +100,11 @@ public:
 	TimeCtrl* EndEdit;
 	TimeCtrl* DurEdit;
 	KaiChoice* StyleChoice;
-	DescTxtCtrl* ActorEdit;
+	ComboBoxCtrl* ActorEdit;
 	NumCtrl* MarginLEdit;
 	NumCtrl* MarginREdit;
 	NumCtrl* MarginVEdit;
-	DescTxtCtrl* EffectEdit;
+	ComboBoxCtrl* EffectEdit;
 	KaiStaticText *LineNumber;
 	KaiStaticText *Chars;
 	KaiStaticText *Chtime;
@@ -214,13 +214,17 @@ private:
 
 //Warning cannot swap cause hotkeys from hotkeys.txt will stop working
 enum{
-	ID_COMMENT=3979,
+	ID_COMMENT = 3979,
 	ID_STYLE,
 	ID_AN,
 	ID_TLMODE,
 	ID_DOUBTFULTL,
 	ID_AUTOMOVETAGS,
 	ID_TIMES_FRAMES,
-	
+	ID_NUM_TAG_BUTTONS = 16000,
+	ID_NUM_CONTROL = 16668,
+	ID_TEXT_EDITOR = 16667,
+	ID_COMBO_BOX_CTRL = 16658,
+	ID_EDIT_STYLE = 19989
 };
 

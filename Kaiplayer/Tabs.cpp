@@ -31,7 +31,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 	block = split = onx = leftArrowHover = rightArrowHover = newTabHover = false;
 	allTabsVisible = arrow = true;
 	sline = NULL;
-	font = *Options.GetFont(-1);//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont(-1);
 	sthis = this;
 	int fx, fy;
 	GetTextExtent(L"X", &fx, &fy, 0, 0, &font);
@@ -316,7 +316,7 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	}
 	if (newHeight != TabHeight){
 		TabHeight = newHeight;
-		//on size w sumie ma wszystko co terzeba zrobić przy zmiany wielkości czcionki na pasku zakładek
+		//OnSize have all that needed after changing font size on tabs bar
 		OnSize(wxSizeEvent());
 	}
 }
@@ -333,9 +333,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int w, h, hh;
 	GetClientSize(&w, &h);
 	hh = h - TabHeight;
-	//if (event.ButtonDown()){ SetFocus(); }
-	//wyłączanie wszystkich aktywności przy wyjściu z zakładek
-
+	//Remove all activity after tabs exit
 
 	if (event.Leaving()){
 		if (over != -1 || onx || leftArrowHover || rightArrowHover || newTabHover){
@@ -408,7 +406,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	int num;
 	int i = FindTab(x, &num);
 
-	// klik, dwuklik i środkowy
+	//click, double click, middle button
 	if (click || dclick || middleDown){
 		oldI = i;
 
@@ -493,7 +491,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 
-	//ożywienie zakładek
+	//Change elements on tabs
 	if (event.Moving()){
 
 		if (x > start + TabHeight - 4 && HasToolTips()){ UnsetToolTip(); }
@@ -547,7 +545,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			RefreshRect(wxRect(num + Tabsizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}
 		else if (onx){
-			oldtab = -1;//trick aby po zejściu z x powrócił tip z nazwą napisów i wideo
+			//Trick to restore tip with name of subtitles and video after go from x
+			oldtab = -1;
 			onx = false;
 			RefreshRect(wxRect(num + Tabsizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}
@@ -618,7 +617,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		}
 		//choosen tab
 		if (i == iter){
-			//rysowanie linii po obu stronach aktywnej zakładki
+			//Drawing lines from both sides of active tab
 			dc.SetPen(wxPen(activeLines, 1));
 			dc.DrawLine(0, 0, start, 0);
 			dc.DrawLine(start + tabSize, 0, w, 0);
@@ -626,8 +625,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.SetBrush(Options.GetColour(TABS_BACKGROUND_ACTIVE));
 			dc.DrawRectangle(start + 1, 0, tabSize - 1, TabHeight - 2);
 
-
-			//najechany x na wybranej zakładce
+			//X over active tab
 			if (onx){
 				dc.SetBrush(Options.GetColour(TABS_CLOSE_HOVER));
 				dc.DrawRectangle(start + tabSize - xWidth, 4, xWidth - 2, TabHeight - 10);
@@ -653,8 +651,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 				TABS_BACKGROUND_INACTIVE_HOVER : TABS_BACKGROUND_INACTIVE)));
 			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 3);
 		}
-
-		//rysowanie konturów zakładki
+		//Drawing of contour of tab
 		/*if (gc){
 			gc->SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
 			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
@@ -705,7 +702,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	const wxColour & background = Options.GetColour(TABSBAR_ARROW_BACKGROUND);
 	dc.SetBrush(wxBrush(background));
-	//strzałki do przesuwania zakładek
+	//Arrows for moving tabs
 	if (!allTabsVisible){
 		const wxColour & backgroundHover = Options.GetColour(TABSBAR_ARROW_BACKGROUND_HOVER);
 		//make new color
@@ -752,13 +749,10 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		}
 	}
 
-	//plus który jest zawsze widoczny
-
+	//Plus is always visible
 	dc.SetBrush(wxBrush(Options.GetColour((newTabHover) ? TABS_BACKGROUND_INACTIVE_HOVER : TABS_BACKGROUND_INACTIVE)));
-	//if(plus){
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.DrawRectangle(start + 1, 1, TabHeight - 6, TabHeight - 3);
-	//}
 
 	//dc.SetPen(wxPen(inactiveText));
 	dc.SetBrush(wxBrush(inactiveText));
@@ -830,7 +824,6 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	{
 		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, L"", true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
-	//może to jednak przerobić na checki, tak by pokazywało nam jednak dwie wyświetlone zakładki
 	tabsMenu.AppendSeparator();
 	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
 	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
@@ -1166,10 +1159,10 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 
 		
 
-		wxString GoodSession = tokenizer.GetNextToken();
-		if (!GoodSession.StartsWith(L"[")){
+		//wxString GoodSession = tokenizer.GetNextToken();
+		//if (!GoodSession.StartsWith(L"[")){
 			//We can make some steps here to load subtitles from subs
-		}
+		//}
 		//else{
 
 		//}

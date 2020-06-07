@@ -27,7 +27,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	, holding(false)
 {
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
-	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
+	VideoEditboxSizer = new wxBoxSizer(wxHORIZONTAL);
 	int vw, vh;
 	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 	if (vw < 200){ vw = 550; vh = 400; }
@@ -42,13 +42,13 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	Edit->SetMinSize(wxSize(-1, 200));
 	Edit->SetLine(0);
 
-	BoxSizer3 = new wxBoxSizer(wxHORIZONTAL);
+	GridShiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
 	ShiftTimes = new ShiftTimesWindow(this, kai, -1);
 	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
-	BoxSizer3->Add(Grid, 1, wxEXPAND, 0);
-	BoxSizer3->Add(ShiftTimes, 0, wxEXPAND, 0);
-	BoxSizer2->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
-	BoxSizer2->Add(Edit, 1, wxEXPAND | wxALIGN_TOP, 0);
+	GridShiftTimesSizer->Add(Grid, 1, wxEXPAND, 0);
+	GridShiftTimesSizer->Add(ShiftTimes, 0, wxEXPAND, 0);
+	VideoEditboxSizer->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
+	VideoEditboxSizer->Add(Edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 
 	windowResizer = new KaiWindowResizer(this, [=](int newpos){
 		int mw, mh;
@@ -61,11 +61,11 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 		SetVideoWindowSizes(w, newpos, shiftDown);
 	});
 
-	BoxSizer1 = new wxBoxSizer(wxVERTICAL);
-	BoxSizer1->Add(BoxSizer2, 0, wxEXPAND | wxALIGN_TOP, 0);
-	BoxSizer1->Add(windowResizer, 0, wxEXPAND, 0);//AddSpacer(3);
-	BoxSizer1->Add(BoxSizer3, 1, wxEXPAND, 0);
-	SetSizerAndFit(BoxSizer1);
+	MainSizer = new wxBoxSizer(wxVERTICAL);
+	MainSizer->Add(VideoEditboxSizer, 0, wxEXPAND | wxALIGN_TOP, 0);
+	MainSizer->Add(windowResizer, 0, wxEXPAND, 0);//AddSpacer(3);
+	MainSizer->Add(GridShiftTimesSizer, 1, wxEXPAND, 0);
+	SetSizerAndFit(MainSizer);
 
 	SubsName = _("Bez tytułu");
 
@@ -208,7 +208,7 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + Video->panelHeight);
 	}
 	Edit->SetMinSize(wxSize(-1, h));
-	BoxSizer1->Layout();
+	MainSizer->Layout();
 	if (!allTabs)
 		return;
 
@@ -221,13 +221,13 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->panelHeight));
 		}
 		tab->Edit->SetMinSize(wxSize(-1, h));
-		tab->BoxSizer1->Layout();
+		tab->MainSizer->Layout();
 	}
 }
 
 bool TabPanel::Hide()
 {
-	//Todo zbadać czemu twierdzi, że grid to nie jest descendant of tabpanel
+	//Todo: check if grid is not descendant of tabpanel
 	wxWindow *win = FindFocus();
 	if (win && IsDescendant(win)){
 		lastFocusedWindow = win;

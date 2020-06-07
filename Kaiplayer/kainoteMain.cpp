@@ -508,7 +508,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		bool show = !tab->ShiftTimes->IsShown();
 		Options.SetBool(SHIFT_TIMES_ON, show);
 		tab->ShiftTimes->Show(show);
-		tab->BoxSizer3->Layout();
+		tab->GridShiftTimesSizer->Layout();
 	}
 	else if (id >= GLOBAL_SORT_ALL_BY_START_TIMES && id <= GLOBAL_SORT_SELECTED_BY_LAYER){
 		bool all = id < GLOBAL_SORT_SELECTED_BY_START_TIMES;
@@ -1420,9 +1420,6 @@ void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, 
 void KainoteFrame::SetAccels(bool _all)
 {
 	std::vector<wxAcceleratorEntry> entries;
-	entries.resize(2);
-	//entries[0].Set(wxACCEL_CTRL, (int)L'T', GLOBAL_ADD_PAGE);
-	//entries[1].Set(wxACCEL_CTRL, (int)L'W', GLOBAL_CLOSE_PAGE);
 
 	const std::map<idAndType, hdata> &hkeys = Hkeys.GetHotkeysMap();
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
@@ -1458,7 +1455,6 @@ void KainoteFrame::SetAccels(bool _all)
 			entries.pop_back();
 		}
 	}
-	//Menubar->SetAccelerators();
 	wxAcceleratorTable accel(entries.size(), &entries[0]);
 	Tabs->SetAcceleratorTable(accel);
 
@@ -1591,15 +1587,11 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	}
 
 	Thaw();
-	//taka kolejność naprawia błąd znikających zakładek
-	/*int w, h;
-	Tabs->GetClientSize(&w, &h);
-	Tabs->RefreshRect(wxRect(0, h - 25, w, 25), false);*/
+	//this order fixes bug of disappearing tabs bar
 	Tabs->RefreshBar();
 	GetTab()->Show();
 	UpdateToolbar();
 
-	//files.Clear();
 	subs.Clear();
 	videos.Clear();
 	Tabs->GetTab()->Video->DeleteAudioCache();
@@ -1662,9 +1654,10 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	cur->Grid->UpdateUR(false);
 
 	UpdateToolbar();
-	//blokada zmiany focusa przy przejściu na drugą widoczną zakładkę
+	//Saving last focused window on tab and restoring when showed
 	if (!event.GetInt()){
-		//Todo: zrobić jakiś bezpieczny sposób, bo wbrew pozorom element do którego ten wskaźnik należy może zniknąć
+		//Todo: make some safe way for it, 
+		//sometimes this pointer can be deleted
 		if (cur->lastFocusedWindow != NULL){
 			cur->lastFocusedWindow->SetFocus();
 		}
@@ -1695,10 +1688,10 @@ void KainoteFrame::HideEditor(bool save)
 	cur->Edit->Show(cur->editor);
 	cur->windowResizer->Show(cur->editor);
 
-	if (cur->editor){//Załączanie Edytora
+	if (cur->editor){//Turn on of editor
 
-		cur->BoxSizer1->Detach(cur->Video);
-		cur->BoxSizer2->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
+		cur->MainSizer->Detach(cur->Video);
+		cur->VideoEditboxSizer->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 
 		cur->Video->panelHeight = 66;
 		cur->Video->vToolbar->Show();
@@ -1713,30 +1706,28 @@ void KainoteFrame::HideEditor(bool save)
 		if (Options.GetBool(SHIFT_TIMES_ON)){
 			cur->ShiftTimes->Show();
 		}
-		cur->BoxSizer1->Layout();
+		cur->MainSizer->Layout();
 		Label();
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(); }
 		SetSubsResolution(false);
 		if (cur->Video->isFullscreen)
 			cur->Video->TD->HideToolbar(false);
 	}
-	else{//Wyłączanie edytora
+	else{//Turn off of editor
 		if (cur->Video->Visual){
 			cur->Video->SetVisual(true);
 		}
 		cur->Video->panelHeight = 44;
 		cur->ShiftTimes->Hide();
 
-		//cur->BoxSizer1->Remove(1);
-
 		if (!cur->Video->IsShown()){ cur->Video->Show(); }
 
-		cur->BoxSizer2->Detach(cur->Video);
+		cur->VideoEditboxSizer->Detach(cur->Video);
 
-		cur->BoxSizer1->Add(cur->Video, 1, wxEXPAND | wxALIGN_TOP, 0);
+		cur->MainSizer->Add(cur->Video, 1, wxEXPAND | wxALIGN_TOP, 0);
 
 		cur->Video->vToolbar->Hide();
-		//potencjalny krasz po wyłączaniu edytora
+		//can crush after turn on of editor
 		if (cur->Video->GetState() != None && !cur->Video->isFullscreen && !IsMaximized()){
 			int sx, sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);
@@ -1750,11 +1741,10 @@ void KainoteFrame::HideEditor(bool save)
 		}
 		cur->Video->SetFocus();
 
-		cur->BoxSizer1->Layout();
+		cur->MainSizer->Layout();
 
 		if (cur->VideoName != L""){ Label(0, true); }
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
-		//cur->Video->vToolbar->Enable(false);
 		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
 		SetStatusText(L"", 7);
 		if (cur->Video->isFullscreen)

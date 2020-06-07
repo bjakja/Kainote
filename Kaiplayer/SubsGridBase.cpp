@@ -1153,9 +1153,11 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			int w, h;
 			GetClientSize(&w, &h);
 			if (Scroll){
-				ScrollTo(newCurrentLine, true);
+				if (Options.GetBool(GRID_DONT_CENTER_ACTIVE_LINE))
+					MakeVisible(newCurrentLine);
+				else
+					ScrollTo(newCurrentLine, true);
 			}
-			//MakeVisible(newCurrentLine);
 			Edit->SetLine(newCurrentLine);
 			file->InsertSelection(newCurrentLine);
 		}
@@ -1378,13 +1380,15 @@ bool SubsGridBase::SetTlMode(bool mode)
 	return false;
 }
 
-void SubsGridBase::NextLine(int dir)
+//this method should have different name
+//it also can change line to previous
+void SubsGridBase::NextLine(int direction)
 {
 	if (Edit->ABox && Edit->ABox->audioDisplay->hold != 0){ return; }
 	int size = GetCount();
-	size_t nebrow = GetKeyFromPosition(currentLine, dir, false);
-	if (nebrow == -1){
-		if (dir < 0)
+	size_t newCurrentLine = GetKeyFromPosition(currentLine, direction, false);
+	if (newCurrentLine == -1){
+		if (direction < 0)
 			return;
 
 		size_t lastvisible = file->GetElementByKey(size - 1);
@@ -1397,20 +1401,23 @@ void SubsGridBase::NextLine(int dir)
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
 		AdjustWidths(subsFormat > TMP ? (START | END) : 0);
-		nebrow = GetCount() - 1;
+		newCurrentLine = GetCount() - 1;
 	}
 	int h, w;
 	GetClientSize(&w, &h);
-	//MakeVisible(nebrow);
-	ScrollTo(nebrow, true);
+	if (Options.GetBool(GRID_DONT_CENTER_ACTIVE_LINE))
+		MakeVisible(newCurrentLine);
+	else
+		ScrollTo(newCurrentLine, true);
+
 	file->ClearSelections();
-	file->InsertSelection(nebrow);
-	lastRow = nebrow;
+	file->InsertSelection(newCurrentLine);
+	lastRow = newCurrentLine;
 	//AdjustWidths(0);
 	Refresh(false);
-	Edit->SetLine(nebrow, true, true, false, true);
+	Edit->SetLine(newCurrentLine, true, true, false, true);
 	SubsGrid *grid = (SubsGrid*)this;
-	if (Comparison){ grid->ShowSecondComparedLine(nebrow); }
+	if (Comparison){ grid->ShowSecondComparedLine(newCurrentLine); }
 	else if (grid->preview){ grid->preview->NewSeeking(); }
 }
 

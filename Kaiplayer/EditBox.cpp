@@ -24,15 +24,15 @@
 #include "KaiMessageBox.h"
 
 
-DescTxtCtrl::DescTxtCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
+ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
 	:KaiChoice(parent, id, L"", wxDefaultPosition, size, wxArrayString(), 0, validator)
 {
 	description = desc;
-	choiceText->Bind(wxEVT_SET_FOCUS, &DescTxtCtrl::OnFocus, this);
-	choiceText->Bind(wxEVT_KILL_FOCUS, &DescTxtCtrl::OnKillFocus, this);
+	choiceText->Bind(wxEVT_SET_FOCUS, &ComboBoxCtrl::OnFocus, this);
+	choiceText->Bind(wxEVT_KILL_FOCUS, &ComboBoxCtrl::OnKillFocus, this);
 }
 
-void DescTxtCtrl::ChangeValue(const wxString &val)
+void ComboBoxCtrl::ChangeValue(const wxString &val)
 {
 	if (val == L"" && !choiceText->HasFocus()){
 		SetForegroundColour(WINDOW_TEXT_INACTIVE);
@@ -46,7 +46,7 @@ void DescTxtCtrl::ChangeValue(const wxString &val)
 	}
 }
 
-void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
+void ComboBoxCtrl::OnFocus(wxFocusEvent &evt)
 {
 	if (choiceText->GetForegroundColour() == WINDOW_TEXT_INACTIVE){
 		SetValue(L"");
@@ -54,7 +54,7 @@ void DescTxtCtrl::OnFocus(wxFocusEvent &evt)
 	}
 	evt.Skip();
 }
-void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
+void ComboBoxCtrl::OnKillFocus(wxFocusEvent &evt)
 {
 	if (GetValue() == L""){
 		SetForegroundColour(WINDOW_TEXT_INACTIVE);
@@ -66,7 +66,7 @@ void DescTxtCtrl::OnKillFocus(wxFocusEvent &evt)
 
 
 
-txtdialog::txtdialog(wxWindow *parent, int id, const wxString &txtt, const wxString &_name, int _type)
+TagButtonDialog::TagButtonDialog(wxWindow *parent, int id, const wxString &txtt, const wxString &_name, int _type)
 	:KaiDialog(parent, id, _("Wpisz tag ASS"))
 {
 	DialogSizer *siz = new DialogSizer(wxVERTICAL);
@@ -130,8 +130,8 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 
-EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
-	: wxWindow(parent, idd, wxDefaultPosition, wxDefaultSize/*, wxBORDER_SIMPLE*/)//|wxCLIP_CHILDREN
+EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
+	: wxWindow(parent, idd)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
 	, line(NULL)
@@ -143,9 +143,9 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
-	wxWindow::SetFont(*Options.GetFont(-1)/*wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma")*/);
+	wxWindow::SetFont(*Options.GetFont(-1));
 	currentLine = 0;
-	grid = grid1;
+	grid = subsGrid;
 	grid->Edit = this;
 	isdetached = splittedTags = false;
 	Visual = 0;
@@ -256,38 +256,36 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	BoxSizer6->Add(AutoMoveTags, 0, wxALIGN_CENTER | wxLEFT | wxTOP | wxBOTTOM, 2);
 
 
-	TextEdit = new TextEditor(this, 16667, true, wxDefaultPosition, wxSize(-1, 30));
+	TextEdit = new TextEditor(this, ID_TEXT_EDITOR, true, wxDefaultPosition, wxSize(-1, 30));
 	TextEdit->EB = this;
-	//TextEdit->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnNewline, this);
-
-	TextEditOrig = new TextEditor(this, 16667, false, wxDefaultPosition, wxSize(-1, 30));
+	
+	TextEditOrig = new TextEditor(this, ID_TEXT_EDITOR, false, wxDefaultPosition, wxSize(-1, 30));
 	TextEditOrig->EB = this;
-	//TextEditOrig->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnNewline, this);
-
+	
 	TextEditOrig->Hide();
 	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz")/*, wxDefaultPosition, wxSize(82, -1)*/);
 	Comment->SetValue(false);
-	LayerEdit = new NumCtrl(this, 16668, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
+	LayerEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
 	int fw, fh;
 	GetTextExtent(L"00:00:00,000", &fw, &fh);
 	fw += 6;
-	StartEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTER);
-	EndEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, 16668, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	StartEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTER);
+	EndEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
-	StyleEdit = new MappedButton(this, 19989, _("Edytuj"), EDITBOX_HOTKEY/*, wxDefaultPosition, wxSize(45, -1)*/);
+	StyleEdit = new MappedButton(this, ID_EDIT_STYLE, _("Edytuj"), EDITBOX_HOTKEY/*, wxDefaultPosition, wxSize(45, -1)*/);
 	//druga linia
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");
-	ActorEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Aktor"), valid);
+	ActorEdit = new ComboBoxCtrl(this, ID_COMBO_BOX_CTRL, wxSize(90, -1), _("Aktor"), valid);
 	GetTextExtent(L"0000", &fw, &fh);
 	fw += 10;
-	MarginLEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	MarginREdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	MarginVEdit = new NumCtrl(this, 16668, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	EffectEdit = new DescTxtCtrl(this, 16658, wxSize(90, -1), _("Efekt"), valid);
+	MarginLEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginREdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginVEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	EffectEdit = new ComboBoxCtrl(this, ID_COMBO_BOX_CTRL, wxSize(90, -1), _("Efekt"), valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
 	BoxSizer2->Add(Comment, 0, wxLEFT | wxALIGN_CENTER, 2);
@@ -316,8 +314,8 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	SetSizer(BoxSizer1);
 
 	Connect(ID_COMMENT, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&EditBox::OnCommit);
-	Connect(ID_TLMODE, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&EditBox::OnTlMode); //16658
-	Connect(16658, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
+	Connect(ID_TLMODE, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&EditBox::OnTlMode);
+	Connect(ID_COMBO_BOX_CTRL, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(ID_STYLE, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&EditBox::OnCommit);
 	Connect(EDITBOX_INSERT_BOLD, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnBoldClick);
 	Connect(EDITBOX_INSERT_ITALIC, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnItalicClick);
@@ -326,7 +324,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Connect(ID_AN, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&EditBox::OnAnChoice);
 	Connect(EDITBOX_CHANGE_FONT, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnFontClick);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnColorClick, this, EDITBOX_CHANGE_COLOR_PRIMARY, EDITBOX_CHANGE_COLOR_SHADOW);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnStyleEdit, this, 19989);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnStyleEdit, this, ID_EDIT_STYLE);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnCopyAll, this, EDITBOX_PASTE_ALL_TO_TRANSLATION);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnCopySelection, this, EDITBOX_PASTE_SELECTION_TO_TRANSLATION);
 	Connect(EDITBOX_HIDE_ORIGINAL, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnHideOriginal);
@@ -341,10 +339,10 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *grid1, int idd)
 	Connect(EDITBOX_START_DIFFERENCE, EDITBOX_END_DIFFERENCE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnPasteDifferents);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&EditBox::OnSize);
 	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){
-		Connect(16668, NUMBER_CHANGED, (wxObjectEventFunction)&EditBox::OnEdit);
-		Connect(16667, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
+		Connect(ID_NUM_CONTROL, NUMBER_CHANGED, (wxObjectEventFunction)&EditBox::OnEdit);
+		Connect(ID_TEXT_EDITOR, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
 	}
-	Connect(16667, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
+	Connect(ID_TEXT_EDITOR, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
 	DoTooltips();
 	if (asFrames){
 		grid->ChangeTimeDisplay(asFrames);
@@ -467,7 +465,7 @@ done:
 		tab->Video->SetVisual(false, true, true);
 	}
 
-	//ustawia czas i msy na polu tekstowym wideo
+	//Set time and differents in video text field
 	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
 		tab->Video->RefreshTime();
 	}
@@ -500,21 +498,21 @@ void EditBox::UpdateChars()
 	Times->Update();
 }
 
-//Pobieranie danych z kontrolek editboxa
-//selline przechodzi do następnej linii
-//dummy nie zapisuje linii do grida
-//visualdummy nie odświeża klatki wideo wykorzystywane przy visualu clipów
-void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool visualdummy)
+//Getting data from editbox controls
+//gotoNextLine go to next line or stays in actual active
+//dummy do not save dialogue to grid
+//visualdummy do not refresh video, using for visual clips
+void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, bool visualdummy)
 {
 	long cellm = 0;
 	if (!dummy && !visualdummy && StartEdit->changedBackGround){
-		StartEdit->SetForegroundColour(WINDOW_TEXT);//StartEdit->Refresh(false);
+		StartEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	if (!dummy && !visualdummy && EndEdit->changedBackGround){
-		EndEdit->SetForegroundColour(WINDOW_TEXT);//EndEdit->Refresh(false);
+		EndEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	if (!dummy && !visualdummy && DurEdit->changedBackGround){
-		DurEdit->SetForegroundColour(WINDOW_TEXT);//DurEdit->Refresh(false);
+		DurEdit->SetForegroundColour(WINDOW_TEXT);
 	}
 	if (line->IsComment != Comment->GetValue()){
 		line->IsComment = !line->IsComment;
@@ -529,19 +527,16 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 
 	if (StartEdit->IsModified() || StartEdit->HasFocus()){
 		line->Start = StartEdit->GetTime(1);
-		//if(!visualdummy && line->Start.mstime>line->End.mstime){line->End=line->Start; cellm |= END;}
 		cellm |= START;
 		StartEdit->SetModified(dummy);
 	}
 	if (EndEdit->IsModified() || EndEdit->HasFocus()){
 		line->End = EndEdit->GetTime(2);
-		//if(!visualdummy && line->Start.mstime>line->End.mstime){line->End=line->Start; cellm |= START;}
 		cellm |= END;
 		EndEdit->SetModified(dummy);
 	}
 	if (DurEdit->IsModified()){
 		line->End = EndEdit->GetTime();
-		//if(line->Start.mstime>line->End.mstime){line->End=line->Start;}
 		cellm |= END;
 		DurEdit->SetModified(dummy);
 	}
@@ -596,13 +591,13 @@ void EditBox::Send(unsigned char editionType, bool selline, bool dummy, bool vis
 
 	if (cellm){
 		if (currentLine < grid->GetCount() && !dummy){
-			grid->ChangeLine(editionType, line, currentLine, cellm, selline, visualdummy);
+			grid->ChangeLine(editionType, line, currentLine, cellm, gotoNextLine, visualdummy);
 			if (cellm & ACTOR || cellm & EFFECT){
 				RebuildActorEffectLists();
 			}
 		}
 	}
-	else if (selline){ grid->NextLine(); }
+	else if (gotoNextLine){ grid->NextLine(); }
 }
 
 
@@ -674,7 +669,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 	TextEdit->GetSelection(&from, &to);
 	wxString txt = TextEdit->GetValue();
 	bool oneline = (grid->file->SelectionsSize() < 2);
-	if (oneline){//zmiany tylko w editboxie
+	if (oneline){//Changing only in editbox
 		if (grid->subsFormat == SRT){
 
 			wxRegEx srttag(L"\\</?" + text + L"\\>", wxRE_ADVANCED | wxRE_ICASE);
@@ -730,7 +725,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 		TextEdit->SetSelection(whre, whre);
 	}
 	else
-	{//zmiany wszystkich zaznaczonych linijek
+	{//Changes in all selected lines
 		wxString chars = (grid->subsFormat == SRT) ? L"<" : L"{";
 		wxString chare = (grid->subsFormat == SRT) ? L">" : L"}";
 		wxArrayInt sels;
@@ -739,7 +734,6 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 		{
 			Dialogue *dialc = grid->file->CopyDialogue(sels[i]);
 			wxString txt = dialc->Text;
-			//dialc->spells.Clear();
 			if (txt.StartsWith(chars))
 			{
 				wxRegEx rex(chars + tag + chare, wxRE_ADVANCED | wxRE_ICASE);
@@ -892,14 +886,14 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 	if (leftClick){
 		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, actualColor.GetWX(), numColor);
 		MoveToMousePosition(ColourDialog);
-		ColourDialog->Connect(11111, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
+		ColourDialog->Connect(ID_COLOR_PICKER_DIALOG, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
 		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
 			AssColor col;
 			GetColor(&col, evt.GetInt());
 			ColourDialog->SetColor(col, 0, false);
-		}, 11111);
+		}, ID_COLOR_PICKER_DIALOG);
 		if (ColourDialog->ShowModal() == wxID_OK) {
-			//wywołane tylko by dodać kolor do recent;
+			//Called only to add color to recent
 			ColourDialog->GetColor();
 			wxString txt = GLOBAL_EDITOR->GetValue();
 			if (txt[Placed.x] != L'}'){
@@ -947,8 +941,6 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 		colorNumber << numColor;
 		wxString retTag;
 		wxString tag = (numColor == 1) ? L"?c&(.*)" : L"c&(.*)";
-		/*wxString taga = (numColor == 1) ? L"?a&(.*)" : L"a&(.*)";
-		wxString tagal = L"alpha(.*)";*/
 		Styles *style = grid->GetStyle(0, line->Style);
 		*actualColor = (numColor == 1) ? style->PrimaryColour :
 			(numColor == 2) ? style->SecondaryColour :
@@ -959,9 +951,7 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 		}
 		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
 		if (FindValue(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
-		//else if (FindVal(tagal, &retTag)){ actualColor->SetAlphaString(retTag); return true; }
 	}
-	//return false;
 }
 
 void EditBox::OnColorClick(wxCommandEvent& event)
@@ -997,8 +987,12 @@ void EditBox::OnCommit(wxCommandEvent& event)
 
 void EditBox::OnNewline(wxCommandEvent& event)
 {
-	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){ TextEdit->SetModified(); TextEditOrig->SetModified(); }
-	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || DurEdit->HasFocus()) || !Options.GetBool(EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT);
+	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){ 
+		TextEdit->SetModified(); 
+		TextEditOrig->SetModified(); 
+	}
+	bool noNewLine = !(StartEdit->HasFocus() || EndEdit->HasFocus() || 
+		DurEdit->HasFocus()) || !Options.GetBool(EDITBOX_DONT_GO_TO_NEXT_LINE_ON_TIMES_EDIT);
 	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	if (Visual == CHANGEPOS){
@@ -1273,8 +1267,6 @@ wxPoint EditBox::FindBrackets(const wxString & text, long from)
 	}
 	// no end bracket after block ...}{...cursor}
 	// no need to correct it, end bracket without start is displayed as text
-	//if (haveStartBracket && k == -1 && startBrakcetPos > 0)
-		//startBrakcetPos = 0;
 	
 	// no first bracket after block {cursor...}{...
 	if (haveEndBracket && i >= len && endBrakcetPos + 1 < len)
@@ -1394,7 +1386,7 @@ void EditBox::OnSplit(wxCommandEvent& event)
 {
 	wxString Splitchar = (grid->subsFormat <= SRT) ? L"\\N" : L"|";
 	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == L"" && !TextEdit->HasFocus());
-	//GLOBAL_EDITOR
+	//text editor
 	TextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
 	long strt, ennd;
@@ -1760,7 +1752,6 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 	wxString tag = tagOptions[0];
 
 	if (type != L"2"){
-		//if(type==L"1"){TextEdit->SetSelection(0,0);}
 		if (!tag.StartsWith(L"\\")){ tag.Prepend(L"\\"); }
 		wxString delims = L"1234567890-&()[]";
 		bool found = false;
@@ -1859,7 +1850,7 @@ public:
 void EditBox::OnEditTag(wxCommandEvent &event)
 {
 	int id = event.GetId();
-	if (id == 16000){
+	if (id == ID_NUM_TAG_BUTTONS){
 		NumTagButtons ntb(this);
 		if (ntb.ShowModal() == wxID_CANCEL){ return; }
 		Options.SetInt(EDITBOX_TAG_BUTTONS, ntb.numTagButtons->GetInt());
@@ -1871,7 +1862,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 	TagButton *tb = (TagButton*)win;
 	if (!tb){ return; }
 
-	txtdialog tagtxt(tb, -1, tb->tag, tb->name, tb->type);
+	TagButtonDialog tagtxt(tb, -1, tb->tag, tb->name, tb->type);
 
 	if (tagtxt.ShowModal() == wxID_OK){
 		tb->tag = tagtxt.txt->GetValue();
@@ -2102,7 +2093,9 @@ SeekUntranslated:
 
 void EditBox::SetTagButtons()
 {
-	//dziesięć przycisków + nasz ostatni ze strzałką
+	//Twenty buttons + last with arrow
+	//11 is num of other elements then buttons
+	//there should be used const int for it
 	int numofButtons = BoxSizer4->GetItemCount() - 11;
 	int numTagButtons = Options.GetInt(EDITBOX_TAG_BUTTONS);
 	if (numTagButtons > numofButtons){
@@ -2134,11 +2127,11 @@ void EditBox::SetTagButtons()
 			}
 			menu->Append(EDITBOX_TAG_BUTTON1 + i, name);
 		}
-		menu->Append(16000, _("Zmień ilość przycisków"));
+		menu->Append(ID_NUM_TAG_BUTTONS, _("Zmień ilość przycisków"));
 		if (!TagButtonManager){
 			TagButtonManager = new MenuButton(this, -1, _("Zarządzaj przyciskami tagów"), wxDefaultPosition, wxDefaultSize);
 			BoxSizer4->Add(TagButtonManager, 0, wxALIGN_CENTER | wxALL, 2);
-			Connect(16000, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnEditTag);
+			Connect(ID_NUM_TAG_BUTTONS, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&EditBox::OnEditTag);
 		}
 		TagButtonManager->PutMenu(menu);
 		Layout();

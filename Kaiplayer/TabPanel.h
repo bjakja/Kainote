@@ -37,9 +37,9 @@ public:
 	VideoCtrl* Video;
 	ShiftTimesWindow* ShiftTimes;
 
-	wxBoxSizer* BoxSizer1;
-	wxBoxSizer* BoxSizer2;
-	wxBoxSizer* BoxSizer3;
+	wxBoxSizer* MainSizer;
+	wxBoxSizer* VideoEditboxSizer;
+	wxBoxSizer* GridShiftTimesSizer;
 
 	void SetAccels(bool onlyGridAudio = false);
 	void SetVideoWindowSizes(int w, int h, bool allTabs);

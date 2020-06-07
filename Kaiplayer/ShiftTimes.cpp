@@ -454,7 +454,7 @@ void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 	}
 	else if (acid == ID_CLOSE){
 		Hide();
-		tab->BoxSizer1->Layout();
+		tab->MainSizer->Layout();
 	}
 	tab->Grid->SetFocus();
 }
@@ -473,7 +473,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 	{
 		isscrollbar = true;
 		SetMinSize(wxSize(w + 17, h));
-		cur->BoxSizer3->Layout();
+		cur->GridShiftTimesSizer->Layout();
 		scroll->SetSize(w - 1, 0, 17, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
@@ -487,7 +487,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		SetMinSize(wxSize(w, h));
 		panel->SetPosition(wxPoint(0, scPos));
-		cur->BoxSizer3->Layout();
+		cur->GridShiftTimesSizer->Layout();
 	}
 	else if (scroll->IsShown()){
 		scroll->SetSize(ctw - 18, 0, 17, gh);
@@ -500,7 +500,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 	}
 	else if (!isscrollbar && ctw != w){
 		SetMinSize(wxSize(w, h));
-		cur->BoxSizer3->Layout();
+		cur->GridShiftTimesSizer->Layout();
 	}
 
 }
@@ -670,7 +670,7 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 		if (gh < h)//pojawianie scrollbara
 		{
 			SetMinSize(wxSize(w + 17, h));
-			cur->BoxSizer3->Layout();
+			cur->GridShiftTimesSizer->Layout();
 			scroll->SetSize(w, 0, 17, gh);
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 
@@ -681,7 +681,7 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 			scroll->Hide();
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 			SetMinSize(wxSize(w, h));
-			cur->BoxSizer3->Layout();
+			cur->GridShiftTimesSizer->Layout();
 		}
 
 		panel->SetPosition(wxPoint(0, -scPos));
@@ -985,7 +985,7 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	OnSize(evt);
 	RefVals();
 	TabPanel* cur = (TabPanel*)GetParent();
-	cur->BoxSizer3->Layout();
+	cur->GridShiftTimesSizer->Layout();
 	return true;
 }
 

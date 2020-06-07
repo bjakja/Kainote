@@ -279,7 +279,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 				}
 				else{
 					Kai->SetClientSize(sx, sy);
-					tab->BoxSizer1->Layout();
+					tab->MainSizer->Layout();
 				}
 			}
 			//załączony edytor
@@ -290,7 +290,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
 			if (ischanged || !shown){
 				SetMinSize(wxSize(sx, sy + panelHeight));
-				tab->BoxSizer1->Layout();
+				tab->MainSizer->Layout();
 			}
 			Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + panelHeight);
 		}
@@ -696,7 +696,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
 			SetMinSize(wxSize(sx, sy + panelHeight));
-			Kai->GetTab()->BoxSizer1->Layout();
+			Kai->GetTab()->MainSizer->Layout();
 		}
 		volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
 
@@ -1190,7 +1190,7 @@ void VideoCtrl::SetAspectRatio(float _AR)
 		int ww, hh;
 		CalcSize(&ww, &hh, 0, 0, false, true);
 		SetMinSize(wxSize(ww, hh + panelHeight));
-		tab->BoxSizer1->Layout();
+		tab->MainSizer->Layout();
 	}
 	UpdateVideoWindow();
 	if (GetState() == Paused){ Render(false); }
