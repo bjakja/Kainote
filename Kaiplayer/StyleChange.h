@@ -52,7 +52,6 @@ public:
 	NumCtrl* fontSize;
 	MappedButton* btnCommit;
 	MappedButton* btnCancel;
-	MappedButton* btnCommitOnStyles;
 	KaiChoice* styleFont;
 	KaiTextCtrl *fontFilter;
 	ToggleButton *Filter;
@@ -102,7 +101,6 @@ private:
 	void OnColor2RightClick(wxMouseEvent& event);
 	void OnColor3RightClick(wxMouseEvent& event);
 	void OnColor4RightClick(wxMouseEvent& event);
-	void OnChangeAllSelectedStyles(wxCommandEvent& event);
 	void OnCommit(wxCommandEvent& event);
 	void UpdateStyle();
 	void OnUpdatePreview(wxCommandEvent& event);
@@ -112,6 +110,8 @@ private:
 	void DoTooltips();
 	void GetColorControls(MappedButton** color, NumCtrl** alpha, int numColor);
 	void UpdateColor(const AssColor &color, int numColor);
+	void CommitChange(bool close);
+	void CloseWindow();
 
 	Styles *updateStyle;
 	Styles *CompareStyle = NULL;

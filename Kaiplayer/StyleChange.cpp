@@ -16,11 +16,12 @@
 
 #include <wx/wx.h>
 #include "StyleChange.h"
-#include <wx/settings.h>
+//#include <wx/settings.h>
 #include "FontEnumerator.h"
 #include "config.h" 
 #include "ColorPicker.h"
 #include "KaiStaticBoxSizer.h"
+#include "KaiMessageBox.h"
 
 
 wxColour Blackorwhite(wxColour kol)
@@ -256,12 +257,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *buttons = new wxBoxSizer(wxHORIZONTAL);
 	btnOk = new MappedButton(this, ID_BOK, L"Ok");
 	btnCommit = new MappedButton(this, ID_B_COMMIT, _("Zastosuj"));
-	btnCommitOnStyles = new MappedButton(this, ID_B_CHANGE_ALL_SELECTED_STYLES, _("Zastosuj na zaznaczonych"));
 	btnCancel = new MappedButton(this, ID_BCANCEL, _("Anuluj"));
 
 	buttons->Add(btnOk, 1, wxEXPAND | wxALL, 2);
 	buttons->Add(btnCommit, 1, wxEXPAND | wxALL, 2);
-	buttons->Add(btnCommitOnStyles, 0, wxEXPAND | wxALL, 2);
 	buttons->Add(btnCancel, 1, wxEXPAND | wxALL, 2);
 
 	//Main sizer
@@ -432,19 +431,36 @@ void StyleChange::OnColor4RightClick(wxMouseEvent& event)
 
 void StyleChange::OnOKClick(wxCommandEvent& event)
 {
-	UpdateStyle();
-	//copied style, to avoid memory leaks release after using. 
-	//double enter can crash it
-	if (updateStyle && SS->ChangeStyle(updateStyle->Copy())){
-		Hide();
-		if (SCD){ SCD->Hide(); }
-		wxDELETE(updateStyle);
-		SS->Mainall->Fit(SS);
-	}
-
+	CommitChange(true);
 }
 
 void StyleChange::OnCancelClick(wxCommandEvent& event)
+{
+	CloseWindow();
+}
+
+void StyleChange::CommitChange(bool close)
+{
+	UpdateStyle();
+	//copied style, to avoid memory leaks release after using. 
+	//double enter can crash it
+	if (!updateStyle)
+		return;
+
+	int changes = -1;
+	if (allowMultiEdition && CompareStyle && SS->HaveMultiEdition()){
+		changes = CompareStyle->Compare(updateStyle);
+		if (changes && KaiMessageBox(_("Zmienić wszystkie zaznaczone style?"), _("Pytanie"), wxYES_NO, this) == wxYES)
+		{/*nothing to do*/}
+		else
+			changes = -1;
+	}
+
+	if (SS->ChangeStyle(updateStyle->Copy(), changes) && close){
+		CloseWindow();
+	}
+}
+void StyleChange::CloseWindow()
 {
 	Hide();
 	if (SCD){ SCD->Hide(); }
@@ -513,9 +529,6 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 	}
 	if (choice == -1){ choice = 1; }
 	bool enableMultiEdition = (allowMultiEdit && enableNow);
-	if (btnCommitOnStyles->IsEnabled() != enableMultiEdition){
-		btnCommitOnStyles->Enable(enableMultiEdition);
-	}
 	allowMultiEdition = allowMultiEdit;
 	if (allowMultiEdition){
 		if (CompareStyle)
@@ -529,25 +542,9 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 	Show();
 }
 
-void StyleChange::OnChangeAllSelectedStyles(wxCommandEvent& event)
-{
-	if (!updateStyle || !allowMultiEdition || !CompareStyle){
-		KaiLog(L"Style was released or not allowed");
-		return;
-	}
-	UpdateStyle();
-	int changes = CompareStyle->Compare(updateStyle);
-	if (!changes)
-		changes = -1;
-	//tab stays not released cause dialog lose its style but is still visible
-	SS->ChangeStyle(updateStyle->Copy(), changes);
-}
-
 void StyleChange::OnCommit(wxCommandEvent& event)
 {
-	UpdateStyle();
-	//tab stays not released cause dialog lose its style but is still visible
-	SS->ChangeStyle(updateStyle->Copy());
+	CommitChange(false);
 }
 
 

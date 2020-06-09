@@ -755,7 +755,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n") +
 			_("- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n") +
 			_("i najbardziej narzekający na wszystko).\n") +
-			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumaczenia,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n") +
+			_("- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n") +
 			_("- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n") +
 			_("i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część ikon).\n") +
 			_("- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n") +
@@ -1943,7 +1943,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		//}
 		Menubar->Enable(i, editor && enable);
 	}
-	//specjalna poprawka do zapisywania w trybie tłumaczenia, jeśli jest tlmode, to zawsze ma działać.
+	//specjalna poprawka do zapisywania w trybie tłumacza, jeśli jest tlmode, to zawsze ma działać.
 	tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
 	//if(curMenu){Menubar->ShowMenu();}
 }

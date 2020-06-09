@@ -713,10 +713,10 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
 	}
-	else if (id > 6000){
+	else if (id >= 5000){
 		Kai->OnMenuSelected(event);
 	}
-	else if (id > 600 && id < 1700 && Edit->ABox){
+	else if (id >= 1000 && id < 1700 && Edit->ABox){
 		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
 	}
 }
@@ -843,7 +843,7 @@ void SubsGrid::MoveTextTL(char mode)
 			Dialogue *nextDial = GetDialogueWithOffset(i, 1);
 			Dialogue *lastDial = GetDialogueWithOffset(i, numSelected);
 			if (i < firstSelected + numSelected){
-				//tryb1 gdzie łączy wszystkie nachodzące linijki w jedną
+				//tryb gdzie łączy wszystkie nachodzące linijki w jedną
 				if (mode == 1){
 					if (nextDial){
 						wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && nextDial->TextTl != L"") ? L"\\N" : L"";

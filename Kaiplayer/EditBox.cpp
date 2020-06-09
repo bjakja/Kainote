@@ -210,7 +210,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 
 	SetTagButtons();
 
-	TlMode = new KaiCheckBox(this, ID_TLMODE, _("Tryb tłumaczenia"));
+	TlMode = new KaiCheckBox(this, ID_TLMODE, _("Tryb tłumacza"));
 	TlMode->SetValue(false);
 	TlMode->Enable(false);
 	LineNumber = new KaiStaticText(this, -1, _("Linia: 0"));
@@ -1201,10 +1201,10 @@ void EditBox::RefreshStyle(bool resetline)
 void EditBox::DoTooltips()
 {
 	Ban->SetToolTip(_("Położenie tekstu"));
-	TlMode->SetToolTip(_("Tryb tłumaczenia wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
+	TlMode->SetToolTip(_("Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
 	Bcpall->SetToolTip(_("Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"));
 	Bcpsel->SetToolTip(_("Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"));
-	//TextEdit->SetToolTip(_("Tekst linijki / tekst tłumaczenia, gdy tryb tłumaczenia jest włączony."));
+	//TextEdit->SetToolTip(_("Tekst linijki / tekst tłumaczenia, gdy tryb tłumacza jest włączony."));
 	//TextEditOrig->SetToolTip(_("tekst obcojęzyczny."));
 	Comment->SetToolTip(_("Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"));
 	LayerEdit->SetToolTip(_("Warstwa linijki, wyższe warstwy są na wierzchu"));

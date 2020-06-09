@@ -288,7 +288,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			_("Wyłącz pokazywanie edycji na wideo\n(wymaga ponownego otwarcia zakładek)"),
 			_("Włącz szukanie widocznej linii\npo wyjściu z pełnego ekranu"),
 			_("Włącz przenoszenie wartości pola przesuwania czasów"), _("Zmieniaj aktywną linię przy zaznaczaniu"),
-			_("Pokazuj oryginał w trybie tłumaczenia"), _("Ukryj oryginał na wideo w trybie tłumaczenia"),
+			_("Pokazuj oryginał w trybie tłumacza"), _("Ukryj oryginał na wideo w trybie tłumacza"),
 			_("Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"), 
 			_("Nie wypośrodkowuj aktywnej linii w polu napisów"), _("Używaj skróty klawiszowe numpada w polach tekstowych"),
 			_("Wyłącz ostrzeżenia w narzędziach edycji wizualnej"), _("Nie ostrzegaj o niezgodności rozdzielczości"),

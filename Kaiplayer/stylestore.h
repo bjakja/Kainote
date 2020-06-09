@@ -67,6 +67,7 @@ public:
 	bool SetForegroundColour(const wxColour &col);
 	bool SetBackgroundColour(const wxColour &col);
 	void OnCleanStyles(wxCommandEvent& event);
+	bool HaveMultiEdition();
 	static void ShowStore();
 	static void ShowStyleEdit(const wxString &styleName = L"");
 	static StyleStore *Get();
@@ -98,7 +99,7 @@ private:
 	void OnSwitchLines(wxCommandEvent& event);
 	void OnDetachEdit(wxCommandEvent& event);
 	void OnStyleMove(wxCommandEvent& event);
-	void OnSelectionChanged(wxCommandEvent& event);
+	//void OnSelectionChanged(wxCommandEvent& event);
 
 	bool ASSStyle;
 	bool dummy = false;

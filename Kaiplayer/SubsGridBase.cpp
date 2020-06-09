@@ -1335,7 +1335,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 
 	}
 	else{
-		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumaczenia?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), _("Potwierdzenie"), wxYES_NO) == wxNO)
+		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), _("Potwierdzenie"), wxYES_NO) == wxNO)
 		{
 			return true;
 		}
