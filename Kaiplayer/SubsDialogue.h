@@ -282,8 +282,8 @@ public:
 	void ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
-	void GetTextElement(int element, wxString *elementText);
-	void SetTextElement(int element, const wxString &elementText);
+	void GetTextElement(int element, wxString *elementText, bool appendTextTL = false);
+	void SetTextElement(int element, const wxString &elementText, bool appendTextTL = false);
 	const wxString & GetTextNoCopy();
 	//ref value after copy dialogue it can by modifiable
 	wxString & GetText();

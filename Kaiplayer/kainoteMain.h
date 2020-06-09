@@ -107,8 +107,6 @@ private:
 	void OnConversion(char form);
 	void OnAssProps();
 	void OnMenuOpened(MenuEvent& event);
-	void OnP5Sec(wxCommandEvent& event);
-	void OnM5Sec(wxCommandEvent& event);
 	void OnAudioSnap(wxCommandEvent& event);
 	void OnPageChanged(wxCommandEvent& event);
 	void OnPageChange(wxCommandEvent& event);

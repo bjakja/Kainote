@@ -97,7 +97,7 @@ public:
 	void FindInSubs(TabWindow *window);
 	void FindReplaceInSubs(TabWindow *window);
 	void FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel *tab, bool *isFirst, 
-		int linePos, int linePosId, const wxString &subsPath, int thread);
+		int linePos, int linePosId, const wxString &subsPath, int thread, bool hasTlMode);
 	static DWORD FindReplaceInFiles(void *data);
 	static DWORD FindAllInTab(void *data);
 	int ReplaceInSubsLine(wxString *onlyString);
@@ -115,7 +115,7 @@ private:
 	bool KeepFinding(const wxString &text, int textPos);
 	//when no only option it returns whole text without copying
 	bool GetNextBlock(wxString *text, wxString *block);
-	bool UpdateValues(TabWindow *window, bool hasTlMode);
+	bool UpdateValues(TabWindow *window);
 	int ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const wxString &copyPath);
 	int ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *replacementDiff);
 	FindReplaceDialog *FRD = NULL;

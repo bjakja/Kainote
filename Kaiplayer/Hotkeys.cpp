@@ -150,8 +150,6 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(GLOBAL_SET_START_TIME, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas początkowy z wideo"), L"Ctrl-Left");
 		_hkeys[idAndType(GLOBAL_SET_END_TIME, GLOBAL_HOTKEY)] = hdata(_("Wstaw czas końcowy z wideo"), L"Ctrl-Right");
 		_hkeys[idAndType(GLOBAL_PLAY_PAUSE, GLOBAL_HOTKEY)] = hdata(_("Odtwórz / Pauza"), L"Alt-Space");
-		_hkeys[idAndType(GLOBAL_5_SECONDS_BACKWARD, GLOBAL_HOTKEY)] = hdata(_("Wideo minus 5 sekund"), L"Alt-Left");//Lewo
-		_hkeys[idAndType(GLOBAL_5_SECONDS_FORWARD, GLOBAL_HOTKEY)] = hdata(_("Wideo plus 5 sekund"), L"Alt-Right");//prawo
 		_hkeys[idAndType(GLOBAL_PREVIOUS_FRAME, GLOBAL_HOTKEY)] = hdata(_("Klatka w tył"), L"Left");
 		_hkeys[idAndType(GLOBAL_NEXT_FRAME, GLOBAL_HOTKEY)] = hdata(_("Klatka w przód"), L"Right");
 		_hkeys[idAndType(GLOBAL_PREVIOUS_LINE, GLOBAL_HOTKEY)] = hdata(_("Poprzednia linijka"), L"Ctrl-Up");//góra

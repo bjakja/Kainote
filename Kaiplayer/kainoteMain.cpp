@@ -242,15 +242,12 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SHIFT_TIMES);
 	Connect(GLOBAL_OPEN_SUBS, GLOBAL_ANSI, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
-	Connect(GLOBAL_SELECT_FROM_VIDEO, GLOBAL_PLAY_ACTUAL_LINE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
-	Connect(GLOBAL_5_SECONDS_FORWARD, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnP5Sec);
-	Connect(GLOBAL_5_SECONDS_BACKWARD, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnM5Sec);
+	Connect(GLOBAL_SELECT_FROM_VIDEO, GLOBAL_STYLE_MANAGER_CLEAN_STYLE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Connect(GLOBAL_PREVIOUS_LINE, GLOBAL_JOIN_WITH_NEXT, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnChangeLine);
 	Connect(GLOBAL_REMOVE_LINES, GLOBAL_REMOVE_TEXT, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnDelete);
 	Menubar->Connect(EVT_MENU_OPENED, (wxObjectEventFunction)&KainoteFrame::OnMenuOpened, 0, this);
 	Connect(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&KainoteFrame::OnClose1);
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
-	Connect(GLOBAL_PLAY_ACTUAL_LINE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&KainoteFrame::OnMenuSelected1);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
 	}, 9989);
@@ -290,7 +287,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		//it's not needed here
 		//change focus only when main window was activated via frame bar
 		//or when tab changed
-		if (this->HasFocus() || this->Tabs->HasFocus())
+		if (this->HasFocus() || this->Tabs->HasFocus() || this->Menubar->HasFocus())
 			focusFunction(wxFocusEvent());
 
 	}, 6789);
@@ -722,6 +719,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		tab->Edit->TextEdit->SetFocus();
 		tab->Video->PlayLine(tab->Edit->line->Start.mstime, tab->Video->GetPlayEndTime(tab->Edit->line->End.mstime));
 	}
+	else if (id == GLOBAL_STYLE_MANAGER_CLEAN_STYLE){
+		StyleStore::Get()->OnCleanStyles(event);
+	}
 	else if (id == GLOBAL_QUIT){
 		Close();
 	}
@@ -769,13 +769,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 
 	}
 	else if (id == GLOBAL_HELP || id == GLOBAL_ANSI){
-		//WinStruct<SHELLEXECUTEINFO> sei;
 		wxString url = (id == GLOBAL_HELP) ? L"https://bjakja.github.io/index.html" : L"http://animesub.info/forum/viewtopic.php?id=258715";
-		//sei.lpFile = url.c_str();
-		//sei.lpVerb = wxT("open");
-		//sei.nShow = SW_RESTORE;
-		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-		//ShellExecuteEx(&sei);
 		OpenInBrowser(url);
 	}
 
@@ -1379,17 +1373,6 @@ bool KainoteFrame::FindFile(const wxString &fn, wxString &foundFile, bool video)
 	return false;
 }
 
-
-void KainoteFrame::OnP5Sec(wxCommandEvent& event)
-{
-	GetTab()->Video->Seek(GetTab()->Video->Tell() + 5000);
-}
-
-void KainoteFrame::OnM5Sec(wxCommandEvent& event)
-{
-	GetTab()->Video->Seek(GetTab()->Video->Tell() - 5000);
-
-}
 
 TabPanel* KainoteFrame::GetTab()
 {

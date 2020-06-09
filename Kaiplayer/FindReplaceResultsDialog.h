@@ -45,7 +45,8 @@ private:
 class SeekResults : public Item
 {
 public:
-	SeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path) : Item(TYPE_TEXT){
+	SeekResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, 
+		const wxString &_path, bool isTextTl = false) : Item(TYPE_TEXT){
 		name = text;
 		findPosition = pos;
 		tab = _tab;
@@ -53,12 +54,14 @@ public:
 		keyLine = _keyLine;
 		idLine = _idLine;
 		modified = true;
+		isTextTL = isTextTl;
 	}
 	virtual ~SeekResults(){};
 	TabPanel *tab = NULL;
 	wxString path;
 	int keyLine;
 	int idLine;
+	bool isTextTL;
 	wxPoint findPosition;
 	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
@@ -82,7 +85,8 @@ public:
 	FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool findInFiles = false);
 	virtual ~FindReplaceResultsDialog();
 	void SetHeader(const wxString &text, int thread);
-	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path, int thread);
+	void SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, 
+		int _idLine, int _keyLine, const wxString &_path, int thread, bool isTextTl = false);
 	void ClearList();
 	void FilterList();
 	//use before run multithreading

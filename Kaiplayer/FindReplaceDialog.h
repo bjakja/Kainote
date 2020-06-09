@@ -43,7 +43,6 @@ public:
 	KaiChoice* FindInSubsPattern = NULL;
 	KaiChoice* FindInSubsPath = NULL;
 	KaiRadioButton* CollumnText;
-	KaiRadioButton* CollumnTextOriginal;
 	KaiRadioButton* CollumnStyle;
 	KaiRadioButton* CollumnActor;
 	KaiRadioButton* CollumnEffect;

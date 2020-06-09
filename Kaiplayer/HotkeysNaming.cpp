@@ -183,7 +183,6 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_OPEN_KEYFRAMES] = _("Otwórz klatki kluczowe");
 	names[GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT] = _("Uruchom ostatnio zaczytany skrypt");
 	names[VIDEO_5_SECONDS_BACKWARD] = _("5 sekund do tyłu");
-	names[GLOBAL_5_SECONDS_BACKWARD] = _("Wideo minus 5 sekund");
 	names[VIDEO_MINUTE_BACKWARD] = _("Minuta do tyłu");
 	names[GRID_SET_NEW_FPS] = _("Ustaw nowy FPS");
 	names[VIDEO_NEXT_CHAPTER] = _("Następny rozdział");
@@ -199,7 +198,6 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_PLAY_ACTUAL_LINE] = _("Odtwórz aktywną linijkę");
 	names[VIDEO_PLAY_PAUSE] = _("Odtwórz / Pauza");
 	names[GLOBAL_PLAY_PAUSE] = _("Odtwórz / Pauza");
-	names[GLOBAL_5_SECONDS_FORWARD] = _("Wideo plus 5 sekund");
 	names[VIDEO_5_SECONDS_FORWARD] = _("5 sekund do przodu");
 	names[VIDEO_MINUTE_FORWARD] = _("Minuta do przodu");
 	names[VIDEO_PREVIOUS_CHAPTER] = _("Poprzedni rozdział");
@@ -254,6 +252,8 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_VIEW_ONLY_VIDEO] = _("Widok tylko wideo");
 	names[VIDEO_VOLUME_PLUS] = _("Dźwięk głośniej"); 
 	names[VIDEO_VOLUME_MINUS] = _("Dźwięk ciszej"); 
-	names[GLOBAL_ADD_PAGE] = _("Otwórz nową zakładkę");
+	names[GLOBAL_ADD_PAGE] = _("Otwórz nową zakładkę"); 
 	names[GLOBAL_CLOSE_PAGE] = _("Zamknij bieżącą zakładkę");
+	names[GLOBAL_STYLE_MANAGER_CLEAN_STYLE] = _("Oczyść style pliku ASS");
+	names[GLOBAL_MISSPELLS_REPLACER] = _("Popraw drobne błędy (eksperymentalne)");
 }

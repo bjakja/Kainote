@@ -307,12 +307,12 @@ bool VideoRenderer::InitDX(bool reset)
 
 	return true;
 }
-//w stosuj false tylko w przypadku gdy odświeżasz coś namalowanego na wideo, 
-//w reszcie przypadków ma być pełne odświeżanie klatki
+// Use false for bool redrawSubsOnFrame only when something is drawed on frame
+// else redrawSubsOnFrame must set to true
 
-void VideoRenderer::Render(bool Frame, bool wait)
+void VideoRenderer::Render(bool redrawSubsOnFrame, bool wait)
 {
-	if (Frame && !IsDshow && !devicelost){
+	if (redrawSubsOnFrame && !IsDshow && !devicelost){
 		VFF->Render(wait);
 		resized = false;
 		return;
@@ -327,7 +327,6 @@ void VideoRenderer::Render(bool Frame, bool wait)
 		{
 			if (D3DERR_DEVICELOST == hr ||
 				D3DERR_DRIVERINTERNALERROR == hr){
-				//wxLogMessage("cooperative level device lost");
 				return;
 			}
 
@@ -848,8 +847,6 @@ void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 			if (starttime){ time++; }
 			time *= frameDuration;
 		}
-		//albo to przypadek albo ustawianie pozycji przed ustawianiem clipów jest rozwiązaniem dość częstego krasza
-		//przy wielu plikach jednocześnie, był zawsze po seekingu
 		playend = 0;
 		seek = true;
 		vplayer->SetPosition(time);
@@ -1177,8 +1174,7 @@ void VideoRenderer::UpdateVideoWindow()
 {
 
 	wxCriticalSectionLocker lock(mutexRender);
-	/*block=true;*/
-	if (!UpdateRects()){/*block=false;*/return; }
+	if (!UpdateRects()){ return; }
 
 	if (!InitDX(true)){
 		//need tests, if lost device return any error when reseting or not
@@ -1201,9 +1197,9 @@ void VideoRenderer::UpdateVideoWindow()
 		hasVisualEdition = true;
 	}
 	SetScaleAndZoom();
-	/*block=false;*/
 }
-void VideoRenderer::SetZoom(){
+void VideoRenderer::SetZoom()
+{
 	if (vstate == None){ return; }
 	hasZoom = !hasZoom;
 	if (zoomRect.width < 1){ zoomRect = FloatRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom); }
@@ -1443,7 +1439,6 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 			}
 		}
 		else{
-			//wLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
 			if (grabbed == 2){
 				//if(zoomRect.width - zoomRect.x < 100 || (zoomRect.width - zoomRect.x == 100 && zoomRect.x < x - zoomDiff.x) ){return;}
 				float oldzw = zoomRect.width;
@@ -1458,7 +1453,6 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 			}
 
 		}
-		////wLogStatus("zoom1 %f %f %f %f", zoomRect.x, zoomRect.y, zoomRect.width, zoomRect.height);
 		if (zoomRect.width > s.x){
 			zoomRect.x -= zoomRect.width - s.x;
 			zoomRect.width = s.x;
@@ -1544,7 +1538,7 @@ void VideoRenderer::DrawLines(wxPoint point)
 
 void VideoRenderer::DrawProgBar()
 {
-	//pozycja zegara
+	//Full screen progress bar position
 	wxMutexLocker lock(mutexProgBar);
 	int w, h;
 	VideoCtrl *vb = (VideoCtrl*)this;
@@ -1553,7 +1547,7 @@ void VideoRenderer::DrawProgBar()
 	progressBarRect.bottom = 60;
 	progressBarRect.left = w - 167;
 	progressBarRect.right = w - 3;
-	//koordynaty czarnej ramki
+	//coordinates of black frame
 	vectors[4].x = w - 170;
 	vectors[4].y = 5;
 	vectors[5].x = w - 5;
@@ -1564,7 +1558,7 @@ void VideoRenderer::DrawProgBar()
 	vectors[7].y = 15;
 	vectors[8].x = w - 170;
 	vectors[8].y = 5;
-	//koordynaty białej ramki
+	//coordinates of white frame
 	vectors[9].x = w - 169;
 	vectors[9].y = 6;
 	vectors[10].x = w - 6;
@@ -1575,7 +1569,7 @@ void VideoRenderer::DrawProgBar()
 	vectors[12].y = 14;
 	vectors[13].x = w - 169;
 	vectors[13].y = 6;
-	//koordynaty paska postępu
+	//coordinates of progress bar
 	int rw = w - 168;
 	vectors[14].x = rw;
 	vectors[14].y = 10.5;

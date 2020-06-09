@@ -68,23 +68,19 @@ FindReplaceResultsDialog::~FindReplaceResultsDialog()
 
 void FindReplaceResultsDialog::SetHeader(const wxString &text, int thread)
 {
-	//resultsCounter++;
-	ResultsHeader *header = new ResultsHeader(text/*, resultsCounter*/);
-	//resultsList->AppendItemWithExtent(header);
+	ResultsHeader *header = new ResultsHeader(text);
 	multiThreadList[thread].push_back(header);
 }
 
-void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path, int thread)
+void FindReplaceResultsDialog::SetResults(const wxString &text, const wxPoint &pos, 
+	TabPanel *_tab, int _idLine, int _keyLine, const wxString &_path, int thread, bool isTextTl)
 {
-	//resultsCounter++;
-	SeekResults *results = new SeekResults(text, pos, _tab, _idLine, _keyLine, _path);
-	//resultsList->AppendItemWithExtent(results);
+	SeekResults *results = new SeekResults(text, pos, _tab, _idLine, _keyLine, _path, isTextTl);
 	multiThreadList[thread].push_back(results);
 }
 
 void FindReplaceResultsDialog::ClearList()
 {
-	//resultsCounter = 0;
 	resultsList->ClearList();
 	replaceChecked->Enable();
 }

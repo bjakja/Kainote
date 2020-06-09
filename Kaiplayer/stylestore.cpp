@@ -927,7 +927,6 @@ void StyleStore::ReloadFonts()
 	Store->Refresh(false);
 	ASSList->Refresh(false);
 	cc->UpdatePreview();
-	//wLogStatus(_("Czcionki zaczytane ponownie."));
 }
 
 bool StyleStore::SetForegroundColour(const wxColour &col)

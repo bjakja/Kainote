@@ -219,18 +219,28 @@ void Dialogue::SetText(const wxString &text)
 		Text = text;
 }
 
-void Dialogue::GetTextElement(int replaceColumn, wxString *elementText)
+void Dialogue::GetTextElement(int replaceColumn, wxString *elementText, bool appendTextTL)
 {
-	if (replaceColumn == TXT){ *elementText = Text; }
+	if (replaceColumn == TXT){ 
+		*elementText = Text; 
+		if (appendTextTL && !TextTl->empty())
+			*elementText << L"\n" << TextTl;
+	}
 	else if (replaceColumn == TXTTL){ *elementText = TextTl; }
 	else if (replaceColumn == STYLE){ *elementText = Style; }
 	else if (replaceColumn == ACTOR){ *elementText = Actor; }
 	else if (replaceColumn == EFFECT){ *elementText = Effect; }
 }
 
-void Dialogue::SetTextElement(int replaceColumn, const wxString &elementText)
+void Dialogue::SetTextElement(int replaceColumn, const wxString &elementText, bool appendTextTL)
 {
-	if (replaceColumn == TXT){ Text = elementText; }
+	if (replaceColumn == TXT){ 
+		if (appendTextTL && elementText.Find(L'\n') != -1){
+			wxString * txttl = TextTl.Copy();
+			Text = elementText.BeforeFirst(L'\n', txttl);
+		}else
+			Text = elementText; 
+	}
 	else if (replaceColumn == TXTTL){ TextTl = elementText; }
 	else if (replaceColumn == STYLE){ Style = elementText; }
 	else if (replaceColumn == ACTOR){ Actor = elementText; }

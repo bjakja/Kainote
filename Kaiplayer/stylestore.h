@@ -66,6 +66,7 @@ public:
 	void ReloadFonts();
 	bool SetForegroundColour(const wxColour &col);
 	bool SetBackgroundColour(const wxColour &col);
+	void OnCleanStyles(wxCommandEvent& event);
 	static void ShowStore();
 	static void ShowStyleEdit(const wxString &styleName = L"");
 	static StyleStore *Get();
@@ -95,7 +96,6 @@ private:
 	void OnConfirm(wxCommandEvent& event);
 	void OnClose(wxCommandEvent& event);
 	void OnSwitchLines(wxCommandEvent& event);
-	void OnCleanStyles(wxCommandEvent& event);
 	void OnDetachEdit(wxCommandEvent& event);
 	void OnStyleMove(wxCommandEvent& event);
 	void OnSelectionChanged(wxCommandEvent& event);

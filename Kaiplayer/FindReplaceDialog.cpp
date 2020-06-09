@@ -117,17 +117,14 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	CollumnText = new KaiRadioButton(this, -1, _("Tekst"), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
 	if (options & IN_FIELD_TEXT)
 		CollumnText->SetValue(true);
-	CollumnTextOriginal = new KaiRadioButton(this, -1, /*(tabNum == WINDOW_FIND_IN_SUBS) ? _("Zwykły tekst") : */_("Tekst oryginału"));
-	CollumnTextOriginal->Enable((tabNum == WINDOW_FIND_IN_SUBS) ? false : FR->Kai->GetTab()->Grid->hasTLMode);
-	if (options & IN_FIELD_TEXT_ORIGINAL && CollumnTextOriginal->IsEnabled())
-		CollumnTextOriginal->SetValue(true);
-	frbsizer2->Add(CollumnText, 1, wxALL, 1);
-	frbsizer2->Add(CollumnTextOriginal, 2, wxALL, 1);
+	frbsizer2->Add(CollumnText, 1, wxEXPAND | wxALL, 2);
 
-	wxBoxSizer* frbsizer3 = new wxBoxSizer(wxHORIZONTAL);
 	CollumnStyle = new KaiRadioButton(this, -1, _("Styl"));
 	if (options & IN_FIELD_STYLE)
 		CollumnStyle->SetValue(true);
+	frbsizer2->Add(CollumnStyle, 1, wxEXPAND | wxALL, 2);
+
+	wxBoxSizer* frbsizer3 = new wxBoxSizer(wxHORIZONTAL);
 	CollumnActor = new KaiRadioButton(this, -1, _("Aktor"));
 	if (options & IN_FIELD_ACTOR)
 		CollumnActor->SetValue(true);
@@ -135,9 +132,9 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (options & IN_FIELD_EFFECT)
 		CollumnEffect->SetValue(true);
 
-	frbsizer3->Add(CollumnStyle, 1, wxEXPAND | wxLEFT, 1);
-	frbsizer3->Add(CollumnActor, 1, wxEXPAND | wxLEFT, 1);
-	frbsizer3->Add(CollumnEffect, 1, wxEXPAND | wxLEFT, 1);
+	
+	frbsizer3->Add(CollumnActor, 1, wxEXPAND | wxALL, 2);
+	frbsizer3->Add(CollumnEffect, 1, wxEXPAND | wxALL, 2);
 
 	//static box sizer adding first and second row
 	frsbsizer2->Add(frbsizer2, 1, wxEXPAND | wxLEFT, 2);
@@ -297,8 +294,6 @@ void TabWindow::SaveValues()
 		options |= END_OF_TEXT;
 	if (CollumnText->GetValue())
 		options |= IN_FIELD_TEXT;
-	if (CollumnTextOriginal->GetValue())
-		options |= IN_FIELD_TEXT_ORIGINAL;
 	if (CollumnStyle->GetValue())
 		options |= IN_FIELD_STYLE;
 	if (CollumnActor->GetValue())
@@ -345,7 +340,6 @@ void TabWindow::SetValues()
 	StartLine->SetValue((options & START_OF_TEXT) > 0);
 	EndLine->SetValue((options & END_OF_TEXT) > 0);
 	CollumnText->SetValue((options & IN_FIELD_TEXT) > 0);
-	CollumnTextOriginal->SetValue((options & IN_FIELD_TEXT_ORIGINAL) > 0);
 	CollumnStyle->SetValue((options & IN_FIELD_STYLE) > 0);
 	CollumnActor->SetValue((options & IN_FIELD_ACTOR) > 0);
 	CollumnEffect->SetValue((options & IN_FIELD_EFFECT) > 0);
@@ -400,8 +394,6 @@ void TabWindow::Reset(wxCommandEvent& evt)
 {
 	FR->fromstart = true;
 	FR->fnext = false;
-	if (CollumnTextOriginal->GetValue()){ CollumnText->SetValue(true); }
-	CollumnTextOriginal->Enable(FR->Kai->GetTab()->Grid->hasTLMode);
 }
 
 void TabWindow::OnStylesChoose(wxCommandEvent& event)
@@ -528,9 +520,6 @@ void FindReplaceDialog::OnActivate(wxActivateEvent& event)
 		FR->textPosition = FR->linePosition = 0;
 	}
 	findOrReplace->SetFocus();
-	//check if is TlMode and change text oryginal enabling
-	if (currentTab->CollumnTextOriginal && tab->Grid->hasTLMode != currentTab->CollumnTextOriginal->IsEnabled())
-		currentTab->CollumnTextOriginal->Enable(tab->Grid->hasTLMode);
 
 	FR->findTextReset = false;
 }
@@ -577,8 +566,4 @@ void FindReplaceDialog::Reset()
 {
 	FR->fromstart = true;
 	FR->fnext = false;
-	TabWindow *tab = GetTab();
-	bool tlMode = Kai->GetTab()->Grid->hasTLMode;
-	tab->CollumnTextOriginal->Enable(tlMode);
-	if (!tlMode && tab->CollumnTextOriginal->GetValue()){ tab->CollumnText->SetValue(true); }
 }

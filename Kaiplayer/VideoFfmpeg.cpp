@@ -322,8 +322,8 @@ done:
 
 	if (wxFileExists(indexPath)){
 		index = FFMS_ReadIndex(indexPath.utf8_str(), &errinfo);
-
-		if (FFMS_IndexBelongsToFile(index, fname.utf8_str(), &errinfo))
+		if (!index){/*do nothing to skip*/}
+		else if (FFMS_IndexBelongsToFile(index, fname.utf8_str(), &errinfo))
 		{
 			FFMS_DestroyIndex(index);
 			index = NULL;
