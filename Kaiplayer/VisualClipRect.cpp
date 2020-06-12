@@ -144,7 +144,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		if (showClip ){
-			if (Corner[1].y == Corner[0].y || Corner[1].x < Corner[0].x)
+			if (Corner[1].y == Corner[0].y || Corner[1].x == Corner[0].x)
 				showClip = false;
 
 			if (Corner[1].y < Corner[0].y){
@@ -178,6 +178,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 		if (!setarrow && !hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 	}
 	if (click){
+		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }
 		grabbed = OUTSIDE;
 		int pointx = ((x / zoomScale.x) + zoomMove.x) *coeffW,
 			pointy = ((y / zoomScale.y) + zoomMove.y) *coeffH;

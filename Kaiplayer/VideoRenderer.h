@@ -108,7 +108,7 @@ struct csri_frame;
 
 class VideoRenderer : public wxWindow
 {
-	
+	friend class VideoCtrl;
 	public:
 		VideoRenderer(wxWindow *parent, const wxSize &size = wxDefaultSize);
 		virtual ~VideoRenderer();
@@ -150,8 +150,11 @@ class VideoRenderer : public wxWindow
 		void ChangePositionByFrame(int cpos);
 		void ChangeVobsub(bool vobsub = false);
 		wxArrayString GetStreams();
-		void SetVisual(bool remove = false, bool settext = false, bool noRefresh = false);
+		void SetVisual(bool settext = false, bool noRefresh = false);
 		void ResetVisual();
+		//it's safe to not exist visual
+		//returns true if removed
+		bool RemoveVisual(bool noRefresh = false);
 		byte *GetFramewithSubs(bool subs, bool *del);
 		bool UpdateRects(bool changeZoom = true);
 		void Zoom(const wxSize &size);
@@ -184,7 +187,7 @@ class VideoRenderer : public wxWindow
 		bool hasVisualEdition;
 		bool hasDummySubs = true;
 		bool cross;
-		bool pbar;
+		bool fullScreenProgressBar;
 		bool resized;
 		bool isFullscreen;
 		bool panelOnFullscreen;
@@ -198,7 +201,7 @@ class VideoRenderer : public wxWindow
 		int panelHeight;
 		long ax,ay;
 		float AR, fps;
-		char *datas;
+		char *frameBuffer;
 		byte vformat;
 		float frameDuration;
 		float zoomParcent;
@@ -212,8 +215,8 @@ class VideoRenderer : public wxWindow
 		wxMutex mutexLines;
 		wxMutex mutexProgBar;
 		wxMutex mutexOpenFile;
+		wxMutex mutexVisualChange;
 		PlaybackState vstate;
-		Visuals *Visual;
 		int playend;
 		size_t lasttime;
 		std::vector<chapter> chapters;
@@ -224,7 +227,6 @@ class VideoRenderer : public wxWindow
 		bool FilterConfig(wxString name, int idx, wxPoint pos);
 	protected:
 		virtual void SetScaleAndZoom(){}
-	private:
 		bool InitDX(bool reset = false);
 		
 		void Clear();
@@ -243,7 +245,6 @@ class VideoRenderer : public wxWindow
 		
 		HWND hwnd;
 		bool devicelost;
-		//bool playblock;
 		
 		int diff;
 		char grabbed;
@@ -264,7 +265,8 @@ class VideoRenderer : public wxWindow
 		
 		csri_frame *framee;
 		csri_fmt *format;
-		
+	private:
+		Visuals *Visual;
 };
 
 #ifndef DRAWOUTTEXT

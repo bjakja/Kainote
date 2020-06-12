@@ -74,12 +74,12 @@ VideoRenderer::VideoRenderer(wxWindow *_parent, const wxSize &size)
 	format = NULL;
 	lines = NULL;
 	Visual = NULL;
-	resized = seek = block = cross = pbar = hasVisualEdition = false;
+	resized = seek = block = cross = fullScreenProgressBar = hasVisualEdition = false;
 	IsDshow = true;
 	devicelost = false;
 	panelOnFullscreen = false;
 	MainStream = NULL;
-	datas = NULL;
+	frameBuffer = NULL;
 	player = NULL;
 	vplayer = NULL;
 	windowRect.bottom = 0;
@@ -448,7 +448,7 @@ void VideoRenderer::Render(bool redrawSubsOnFrame, bool wait)
 		hr = lines->End();
 	}
 
-	if (pbar){
+	if (fullScreenProgressBar){
 		DRAWOUTTEXT(m_font, pbtime, progressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
 			hr = lines->SetWidth(1);
 		hr = lines->Begin();
@@ -490,7 +490,7 @@ bool VideoRenderer::DrawTexture(byte *nframe, bool copy)
 	if (nframe){
 		fdata = nframe;
 		if (copy){
-			byte *cpy = (byte*)datas;
+			byte *cpy = (byte*)frameBuffer;
 			memcpy(cpy, fdata, vheight * pitch);
 		}
 	}
@@ -577,7 +577,7 @@ void VideoRenderer::RecreateSurface()
 	int all = vheight * pitch;
 	char *cpy = new char[all];
 	byte *cpy1 = (byte*)cpy;
-	byte *data1 = (byte*)datas;
+	byte *data1 = (byte*)frameBuffer;
 	memcpy(cpy1, data1, all);
 	DrawTexture(cpy1);
 	delete[] cpy;
@@ -597,7 +597,7 @@ VideoRenderer::~VideoRenderer()
 	SAFE_DELETE(format);
 	if (instance) { csri_close(instance); }
 
-	if (datas){ delete[] datas; datas = NULL; }
+	if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
 
 }
 
@@ -650,7 +650,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	SAFE_DELETE(VFF);
 
 	if (vstate != None){
-		resized = seek = cross = pbar = false;
+		resized = seek = cross = fullScreenProgressBar = false;
 		vstate = None;
 		Clear();
 	}
@@ -714,8 +714,8 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 	mainStreamRect.right = vwidth;
 	mainStreamRect.left = 0;
 	mainStreamRect.top = 0;
-	if (datas){ delete[] datas; datas = NULL; }
-	datas = new char[vheight*pitch];
+	if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
+	frameBuffer = new char[vheight*pitch];
 
 	if (!InitDX()){ return false; }
 	UpdateRects();
@@ -872,6 +872,7 @@ void VideoRenderer::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 	}
 }
 
+//is from video thread make safe any deletion
 void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
 	TabPanel* tab = (TabPanel*)GetParent();
 	bool playing = vstate == Playing;
@@ -885,6 +886,8 @@ void VideoRenderer::SetFFMS2Position(int _time, bool starttime){
 	playend = GetDuration();
 
 	if (hasVisualEdition){
+		//block removing or changing visual from main thread
+		wxMutexLocker lock(mutexVisualChange);
 		SAFE_DELETE(Visual->dummytext);
 		if (Visual->Visual == VECTORCLIP){
 			Visual->SetClip(Visual->GetVisual(), true, false, false);
@@ -918,7 +921,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	instance = NULL;
 
 	if (!textsubs) {
-		if (redraw && vstate != None && IsDshow && datas){
+		if (redraw && vstate != None && IsDshow && frameBuffer){
 			RecreateSurface();
 		}
 		hasDummySubs = true;
@@ -926,7 +929,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 	}
 
 	if (hasVisualEdition && Visual->Visual == VECTORCLIP && Visual->dummytext){
-		wxString toAppend = Visual->dummytext->Trim().AfterLast(L'\n');
+		wxString toAppend = Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
 		if (fromFile){
 			OpenWrite ow(*textsubs, false);
 			ow.PartFileWrite(toAppend);
@@ -936,7 +939,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 			(*textsubs) << toAppend;
 		}
 	}
-
+	
 	hasDummySubs = !fromFile;
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
@@ -957,7 +960,7 @@ bool VideoRenderer::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 		delete textsubs; return false;
 	}
 
-	if (redraw && vstate != None && IsDshow && datas){
+	if (redraw && vstate != None && IsDshow && frameBuffer){
 		RecreateSurface();
 	}
 
@@ -1094,14 +1097,14 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 		hwnd = Video->TD->GetHWND();
 		rt = Video->TD->GetClientRect();
 		if (panelOnFullscreen){ rt.height -= Video->TD->panelsize; }
-		pbar = Options.GetBool(VIDEO_PROGRESS_BAR);
+		fullScreenProgressBar = Options.GetBool(VIDEO_PROGRESS_BAR);
 		cross = false;
 	}
 	else{
 		hwnd = GetHWND();
 		rt = GetClientRect();
 		rt.height -= panelHeight;
-		pbar = false;
+		fullScreenProgressBar = false;
 	}
 	if (!rt.height || !rt.width){ return false; }
 
@@ -1184,7 +1187,7 @@ void VideoRenderer::UpdateVideoWindow()
 		}
 	}
 
-	if (IsDshow && datas){
+	if (IsDshow && frameBuffer){
 		RecreateSurface();
 	}
 
@@ -1662,12 +1665,11 @@ void VideoRenderer::EnableStream(long index)
 void VideoRenderer::ChangeVobsub(bool vobsub)
 {
 	if (!vplayer){ return; }
-	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
+	TabPanel* tab = (TabPanel*)GetParent();
 
 	int tmptime = time;
-	TabPanel *pan = Kaia->Frame->GetTab();
-	OpenSubs((vobsub) ? NULL : pan->Grid->SaveText(), true, true);
-	vplayer->OpenFile(pan->VideoPath, vobsub);
+	OpenSubs((vobsub) ? NULL : tab->Grid->SaveText(), true, true);
+	vplayer->OpenFile(tab->VideoPath, vobsub);
 	vformat = vplayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
 		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
@@ -1677,60 +1679,69 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 		int tmppitch = vwidth * vplayer->inf.bytes;
 		if (tmppitch != pitch){
 			pitch = tmppitch;
-			if (datas){ delete[] datas; datas = NULL; }
-			datas = new char[vheight * pitch];
+			if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
+			frameBuffer = new char[vheight * pitch];
 		}
 		UpdateVideoWindow();
 	}
 	SetPosition(tmptime);
 	if (vstate == Paused){ vplayer->Play(); vplayer->Pause(); }
 	else if (vstate == Playing){ vplayer->Play(); }
-	int pos = pan->Video->volslider->GetValue();
+	int pos = tab->Video->volslider->GetValue();
 	SetVolume(-(pos * pos));
-	pan->Video->ChangeStream();
+	tab->Video->ChangeStream();
 }
 
-void VideoRenderer::SetVisual(bool remove/*=false*/, bool settext/*=false*/, bool noRefresh /*= false*/)
+void VideoRenderer::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/)
 {
-	TabPanel* pan = (TabPanel*)GetParent();
+	wxMutexLocker lock(mutexVisualChange);
+	TabPanel* tab = (TabPanel*)GetParent();
 
-	if (remove){
-		SAFE_DELETE(Visual); pan->Edit->Visual = 0;
-		hasVisualEdition = false;
-		if (!noRefresh){
-			OpenSubs(pan->Grid->GetVisible());
-			Render();
-		}
+	hasVisualEdition = false;
+	int vis = tab->Edit->Visual;
+	if (!Visual){
+		Visual = Visuals::Get(vis, this);
 	}
-	else{
-
-		int vis = pan->Edit->Visual;
-		if (!Visual){
-			Visual = Visuals::Get(vis, this);
-		}
-		else if (Visual->Visual != vis){
-			bool vectorclip = Visual->Visual == VECTORCLIP;
-			delete Visual;
-			Visual = Visuals::Get(vis, this);
-			if (vectorclip && !settext){ OpenSubs(pan->Grid->GetVisible()); }
-		}
-		else{ SAFE_DELETE(Visual->dummytext); }
-		if (settext){ OpenSubs(pan->Grid->GetVisible()); }
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
-			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
-		SetVisualZoom();
-		Visual->SetVisual(pan->Edit->line->Start.mstime, pan->Edit->line->End.mstime,
-			pan->Edit->line->IsComment, noRefresh);
-		hasVisualEdition = true;
+	else if (Visual->Visual != vis){
+		bool vectorclip = Visual->Visual == VECTORCLIP;
+		delete Visual;
+		Visual = Visuals::Get(vis, this);
+		if (vectorclip && !settext){ OpenSubs(tab->Grid->GetVisible()); }
 	}
+	else{ SAFE_DELETE(Visual->dummytext); }
+	if (settext){ OpenSubs(tab->Grid->GetVisible()); }
+	Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
+		backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+	SetVisualZoom();
+	Visual->SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime,
+		tab->Edit->line->IsComment, noRefresh);
+	hasVisualEdition = true;
 }
 
 void VideoRenderer::ResetVisual()
 {
+	wxMutexLocker lock(mutexVisualChange);
+	hasVisualEdition = false;
 	SAFE_DELETE(Visual->dummytext);
 	Visual->SetCurVisual();
 	hasVisualEdition = true;
 	Render();
+}
+
+bool VideoRenderer::RemoveVisual(bool noRefresh)
+{
+	if (!Visual)
+		return false;
+	wxMutexLocker lock(mutexVisualChange);
+	hasVisualEdition = false;
+	SAFE_DELETE(Visual);
+	TabPanel* tab = (TabPanel*)GetParent();
+	tab->Edit->Visual = 0;
+	if (!noRefresh){
+		OpenSubs(tab->Grid->GetVisible());
+		Render();
+	}
+	return true;
 }
 
 bool VideoRenderer::EnumFilters(Menu *menu)
@@ -1762,13 +1773,13 @@ byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
 		VFF->GetFrame(time, cpy1);
 	}
 	else if (instance && dssubs){
-		byte *data1 = (byte*)datas;
+		byte *data1 = (byte*)frameBuffer;
 		memcpy(cpy1, data1, all);
 		framee->strides[0] = vwidth * bytes;
 		framee->planes[0] = cpy1;
 		csri_render(instance, framee, (time / 1000.0));
 	}
-	return (dssubs || ffnsubs) ? cpy1 : (byte*)datas;
+	return (dssubs || ffnsubs) ? cpy1 : (byte*)frameBuffer;
 }
 
 void VideoRenderer::GoToNextKeyframe()

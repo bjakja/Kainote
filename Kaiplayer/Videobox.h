@@ -28,6 +28,7 @@ class KainoteFrame;
 
 class VideoCtrl : public VideoRenderer
 {
+	friend class VideoRenderer;
 public:
 
 	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);

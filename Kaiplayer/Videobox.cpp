@@ -458,9 +458,13 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 	if (Visual){
-		Visual->OnMouseEvent(event); if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		Visual->OnMouseEvent(event); 
+		if (!hasArrow){ 
+			SetCursor(wxCURSOR_ARROW); 
+			hasArrow = true; 
+		}
 		return;
-	}//jak na razie 
+	}
 
 
 	if (event.LeftDClick() && event.GetModifiers() == 0){
@@ -479,19 +483,35 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if (isFullscreen){
-		if (eater && event.Moving() && !event.ButtonDown()){ Sleep(200); eater = false; return; }
+		if (eater && event.Moving() && !event.ButtonDown()){ 
+			Sleep(200); 
+			eater = false; 
+			return; 
+		}
 		if (!hasArrow){ TD->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 
 		int w, h;
 		TD->GetClientSize(&w, &h);
-		if (y >= h - panelHeight && !TD->panel->IsShown()){ vtime.Start(100); TD->panel->Show(); }
-		else if (y < h - panelHeight && TD->panel->IsShown() && !panelOnFullscreen){ vtime.Start(1000); TD->panel->Show(false); SetFocus(); }
-		if (!TD->panel->IsShown() && !ismenu){ idletime.Start(1000, true); }
+		if (y >= h - panelHeight && !TD->panel->IsShown()){ 
+			vtime.Start(100); 
+			TD->panel->Show(); 
+		}
+		else if (y < h - panelHeight && TD->panel->IsShown() && !panelOnFullscreen){ 
+			vtime.Start(1000); 
+			TD->panel->Show(false); 
+			SetFocus(); 
+		}
+		if (!TD->panel->IsShown() && !ismenu){ 
+			idletime.Start(1000, true); 
+		}
 	}
 	else if (tab->editor){
 		int w, h;
 		GetClientSize(&w, &h);
-		if (hasArrow && y < (h - panelHeight)){ SetCursor(wxCURSOR_BLANK); hasArrow = false; }
+		if (hasArrow && y < (h - panelHeight)){ 
+			SetCursor(wxCURSOR_BLANK); 
+			hasArrow = false; 
+		}
 
 		if (event.Leaving()){
 			if (cross){
@@ -515,7 +535,10 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		coords << posx << L", " << posy;
 		DrawLines(wxPoint(x, y));
 	}
-	else if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+	else if (!hasArrow){ 
+		SetCursor(wxCURSOR_ARROW); 
+		hasArrow = true; 
+	}
 
 
 
@@ -824,7 +847,7 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
 	int pos = event.GetPosition();
 	Options.SetInt(VIDEO_VOLUME, pos);
-	SetVolume(-(pos*pos));
+	SetVolume(-(pos * pos));
 }
 
 void VideoCtrl::ContextMenu(const wxPoint &pos)
@@ -965,8 +988,8 @@ void VideoCtrl::OnHidePB()
 {
 	bool pb = !Options.GetBool(VIDEO_PROGRESS_BAR);
 	Options.SetBool(VIDEO_PROGRESS_BAR, pb);
-	if (pb){ pbar = true; RefreshTime(); }
-	else{ pbar = false; }
+	if (pb){ fullScreenProgressBar = true; RefreshTime(); }
+	else{ fullScreenProgressBar = false; }
 	if (GetState() == Paused){ Render(false); }
 }
 
@@ -1260,7 +1283,7 @@ void VideoCtrl::RefreshTime()
 			TD->mstimes->SetValue(times);
 			TD->mstimes->Update();
 		}
-		if (!pbar){ return; }
+		if (!fullScreenProgressBar){ return; }
 		STime kkk1;
 		kkk1.mstime = dur;
 		pbtime = videoTime.raw(TMP) + L" / " + kkk1.raw(TMP);
@@ -1458,8 +1481,8 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 	VideoToolbar *vTB = (isFullscreen && TD) ? TD->vToolbar : vToolbar;
 
 	if (vis == eb->Visual){ return; }
-	if (Visual && vis == 0){
-		SetVisual(true);
+	if (vis == 0){
+		RemoveVisual();
 	}
 	else if (vis != eb->Visual){
 		if (hasZoom){ SetZoom(); }

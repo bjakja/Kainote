@@ -45,7 +45,7 @@ public:
 	void SetStyle();
 	void SetVideoLineTime(wxMouseEvent &evt, int mvtal);
 	void SetActive(int line);
-	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false);
+	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false, bool setViaScroll = false);
 	void RefreshPreview();
 	
 	SubsGridPreview *preview = NULL;

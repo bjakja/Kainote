@@ -869,6 +869,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		SubsGridBase::CG2 = Pages[i]->Grid;
 		SubsGridBase::SubsComparison();
 		SubsGridBase::hasCompare = true;
+		SubsGridBase::CG1->ShowSecondComparedLine(SubsGridBase::CG2->GetScrollPosition(), false, false, true);
 	}
 	else if (id == MENU_COMPARE - 1){
 		SubsGridBase::RemoveComparison();

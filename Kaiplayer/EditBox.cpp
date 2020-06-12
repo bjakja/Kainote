@@ -462,7 +462,7 @@ done:
 	}
 
 	if (Visual > CHANGEPOS && rowChanged/* && !nochangeline*/){
-		tab->Video->SetVisual(false, true, true);
+		tab->Video->SetVisual(true, true);
 	}
 
 	//Set time and differents in video text field
@@ -978,7 +978,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 			(line->Effect->StartsWith(L"code")) ? 3 : 1, true);
 	}
 	if (Visual){
-		pan->Video->SetVisual(false, true);
+		pan->Video->SetVisual(true);
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
 	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
@@ -997,7 +997,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	if (Visual == CHANGEPOS){
 		TabPanel *tab = (TabPanel *)GetParent();
-		tab->Video->SetVisual(false, true, true);
+		tab->Video->SetVisual(true, true);
 	}
 	splittedTags = false;
 }
@@ -1675,7 +1675,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 
 	if (Visual > 0){
-		panel->Video->SetVisual(false, true);
+		panel->Video->SetVisual(true);
 		return;
 	}
 
@@ -2185,8 +2185,8 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		RefreshStyle();
 		
 		TabPanel *tab = (TabPanel*)GetParent();
-		if (isPreview && tab->Video->Visual){
-			tab->Video->SetVisual(true);
+		if (isPreview){
+			tab->Video->RemoveVisual();
 		}
 		tab->Video->vToolbar->DisableVisuals(isPreview);
 	}

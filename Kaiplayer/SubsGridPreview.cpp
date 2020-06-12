@@ -595,7 +595,9 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			if (click){
 				int diff = previewGrid->file->OpenCloseTree(row);
 				previewGrid->RefreshColumns();
-				previewGrid->SpellErrors.erase(previewGrid->SpellErrors.begin() + (row + 1), previewGrid->SpellErrors.end());
+				if (previewGrid->SpellErrors.size() > row + 1)
+					previewGrid->SpellErrors.erase(previewGrid->SpellErrors.begin() + (row + 1), previewGrid->SpellErrors.end());
+
 				if (previewGrid->currentLine > row){
 					int firstSel = previewGrid->FirstSelection();
 					if (firstSel < 0){

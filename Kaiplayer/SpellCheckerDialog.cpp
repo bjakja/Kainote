@@ -229,7 +229,8 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
 			wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
 			TextToChange = lineText;
-			tab->Grid->SpellErrors[i].clear();
+			if(tab->Grid->SpellErrors.size() > i)
+				tab->Grid->SpellErrors[i].clear();
 		}
 	}
 

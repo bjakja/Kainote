@@ -58,7 +58,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	LogHandler::Create(this);
 	//when need log window on start uncomment this
 #ifdef _DEBUG
-	//LogHandler::ShowLogWindow();
+	LogHandler::ShowLogWindow();
 #endif
 
 	Options.GetTable(SUBS_RECENT_FILES, subsrec);
@@ -386,9 +386,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->Grid->RefreshColumns();
 
 			if (tab->Video->GetState() != None){
-				if (tab->Video->Visual)
-					tab->Video->SetVisual(true);
-				else{
+				if (!tab->Video->RemoveVisual()){
 					tab->Video->OpenSubs(NULL);
 					tab->Video->Render();
 				}
@@ -780,8 +778,8 @@ void KainoteFrame::OnConversion(char form)
 {
 	TabPanel *tab = GetTab();
 	if (tab->Grid->GetSInfo(L"TLMode") == L"Yes"){ return; }
-	if (form != ASS && tab->Edit->Visual){
-		tab->Video->SetVisual(true, false, true);
+	if (form != ASS){
+		tab->Video->RemoveVisual(true);
 	}
 	tab->Grid->Convert(form);
 	tab->ShiftTimes->Contents();
@@ -972,8 +970,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				return true;
 			}
 		}
-		if (tab->Video->Visual)
-			tab->Video->SetVisual(true, false, true);
+		tab->Video->RemoveVisual(true);
 
 		OpenWrite ow;
 		wxString s;
@@ -1518,10 +1515,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			Tabs->Page(Tabs->iter)->VideoPath != L"") && !intab){
 			InsertTab(false);
 		}
-		else if (GetTab()->Video->Visual){
-			GetTab()->Video->SetVisual(true);
-		}
 		TabPanel *tab = GetTab();
+		tab->Video->RemoveVisual();
 		if (i >= videosSize){
 			if (!OpenFile(subs[i], false, false))
 				break;
@@ -1697,9 +1692,7 @@ void KainoteFrame::HideEditor(bool save)
 			cur->Video->TD->HideToolbar(false);
 	}
 	else{//Turn off of editor
-		if (cur->Video->Visual){
-			cur->Video->SetVisual(true);
-		}
+		cur->Video->RemoveVisual();
 		cur->Video->panelHeight = 44;
 		cur->ShiftTimes->Hide();
 

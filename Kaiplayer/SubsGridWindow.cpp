@@ -1260,7 +1260,7 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 		tab->Video->Seek(MAX(0, vczas), isstart, true, false);
 		if (Edit->ABox){ Edit->ABox->audioDisplay->Update(getEndTime); }
 		if (Edit->Visual > CHANGEPOS){
-			tab->Video->SetVisual(false, true, true);
+			tab->Video->SetVisual(true, true);
 		}
 	}
 }
@@ -1324,6 +1324,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	if (event.GetWheelRotation() != 0) {
 		int step = 3 * event.GetWheelRotation() / event.GetWheelDelta();
 		ScrollTo(scrollPosition, false, -step, true);
+		if (Comparison)
+			ShowSecondComparedLine(scrollPosition, false, false, true);
 		return;
 	}
 
@@ -1375,7 +1377,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			tab->Video->Seek(MAX(0, vtime), isstart, true, false, true, false);
 			if (Edit->ABox){ Edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
 			if (Edit->Visual > CHANGEPOS){
-				tab->Video->SetVisual(false, true, true);
+				tab->Video->SetVisual(true, true);
 			}
 		}
 		return;
@@ -1485,8 +1487,6 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		// Normal click
 		if (!shift && !alt) {
 
-
-			//jakbym chciał znów dać zmianę edytowanej linii z ctrl to muszę dorobić mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				lastActiveLine = currentLine;
 				Edit->SetLine(row, true, true, true, !ctrl);
@@ -1570,7 +1570,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			lastsel = row;
 			Refresh(false);
 			if (Edit->Visual == CHANGEPOS){
-				video->SetVisual(false, false, true);
+				video->SetVisual(false, true);
 			}
 		}
 	}
@@ -1586,6 +1586,8 @@ void SubsGridWindow::OnScroll(wxScrollWinEvent& event)
 		scrollPosition = file->GetElementById(newPos);
 		Refresh(false);
 		Update();
+		if (Comparison)
+			ShowSecondComparedLine(scrollPosition, false, false, true);
 	}
 }
 
@@ -1623,7 +1625,7 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool sel
 	}
 	
 	if (Edit->Visual == CHANGEPOS){
-		Kai->GetTab()->Video->SetVisual(false, false, true);
+		Kai->GetTab()->Video->SetVisual(false, true);
 	}
 }
 
@@ -2009,7 +2011,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 }
 
-void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview)
+void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
 {
 	SubsGrid *thisgrid = (SubsGrid*)this;
 	SubsGrid *secondgrid = NULL;
@@ -2022,13 +2024,20 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 
 	bool hiddenSecondGrid = !secondgrid->IsShownOnScreen();
 	if (!(showPreview || preview) && hiddenSecondGrid){ return; }
-	//Line is id here we need convert it to key
+	
 	compareData & data = Comparison->at(Line);
 	int secondGridLine = data.secondComparedLine;
 	if (secondGridLine < 0){ return; }
+	if (setViaScroll){
+		secondgrid->scrollPosition = secondGridLine;
+		secondgrid->scrollPositionId = file->GetElementByKey(secondGridLine);
+		secondgrid->Refresh(false);
+		secondgrid->Update();
+		return;
+	}
 	int diffPosition = Line - scrollPosition;
 	secondgrid->scrollPosition = secondGridLine - diffPosition;
-	secondgrid->ChangeActiveLine(secondGridLine, fromPreview, fromPreview, !fromPreview);
+	secondgrid->ChangeActiveLine(secondGridLine, true, fromPreview, !fromPreview);
 	if (!fromPreview && hiddenSecondGrid){
 		if (!preview){
 			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
@@ -2038,9 +2047,6 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 			preview->Refresh(false);
 		}
 	}
-	//else{
-	//secondgrid->Refresh(false);
-	//}
 }
 
 void SubsGridWindow::RefreshPreview()

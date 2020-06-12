@@ -826,8 +826,8 @@ void SubsGrid::MoveTextTL(char mode)
 		numSelected = selections[1] - firstSelected;
 	}
 
-	if (mode < 3){// w górę ^
-		//tryb 2 gdzie dodaje puste linijki a tekst pl pozostaje bez zmian
+	if (mode < 3){// Up ^
+		//mode 2 where are added empty lines and text pl is unchanged
 		if (mode == 2){
 			Dialogue *insertDial = GetDialogue(firstSelected)->Copy();
 			insertDial->Text = L"";
@@ -843,7 +843,7 @@ void SubsGrid::MoveTextTL(char mode)
 			Dialogue *nextDial = GetDialogueWithOffset(i, 1);
 			Dialogue *lastDial = GetDialogueWithOffset(i, numSelected);
 			if (i < firstSelected + numSelected){
-				//tryb gdzie łączy wszystkie nachodzące linijki w jedną
+				//Mode wher it merge all collided lines in one line
 				if (mode == 1){
 					if (nextDial){
 						wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && nextDial->TextTl != L"") ? L"\\N" : L"";
@@ -980,7 +980,8 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	float valFscx = 1.f;
 	float vectorXScale = xnsize;
 	int resizeScale = 0;
-	if (ynsize != xnsize){
+	bool differentAspectRatio = ynsize != xnsize;
+	if (differentAspectRatio){
 		if (ynsize > xnsize){
 			resizeScale = (stretch) ? 1 : 0;
 			valFscx = (stretch) ? (ynsize / xnsize) : 1.f;
@@ -1016,16 +1017,20 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			resized->ScaleX = getfloat(fscx);
 		}
 		double fs = resized->GetFontSizeDouble();
-		//TODO: sprawdzić czy nie ma jakiegoś przypadku, gdzie ta wartość będzie musiała przyjąć val1
+		//TODO: czeck if there is not any possibility of val1 is needed
 		fs *= val/*1*/;
 		resized->SetFontSizeDouble(fs);
 		double ol = 0;
 		resized->Outline.ToCDouble(&ol);
-		ol *= val;
+		if (differentAspectRatio){
+			ol *= val1;
+		}
 		resized->Outline = getfloat(ol);
 		double sh = 0;
 		resized->Shadow.ToCDouble(&sh);
-		sh *= val;
+		if (differentAspectRatio){
+			sh *= val1;
+		}
 		resized->Shadow = getfloat(sh);
 		double fsp = 0;
 		resized->Spacing.ToCDouble(&fsp);
@@ -1060,7 +1065,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		int j = tagsSize - 1;
 		while (j >= 0){
 			TagData *tag = pdata->tags[j--];
-			size_t tagValueLen = tag->value.Len();
+			size_t tagValueLen = tag->value.length();
 			pos = tag->startTextPos;
 			double tagValue = 0.0;
 			int ii = 0;
@@ -1327,11 +1332,11 @@ bool SubsGrid::SwapAssProperties()
 void SubsGrid::Filter(int id)
 {
 	SubsGridFiltering filter((SubsGrid*)this, currentLine);
-	const wxString & styles = Options.GetString(GRID_FILTER_STYLES);
+	/*const wxString & styles = Options.GetString(GRID_FILTER_STYLES);
 	if (!styles.empty()){
 		int filterBy = Options.GetInt(GRID_FILTER_BY);
 		Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
-	}
+	}*/
 	if (id != GRID_FILTER_BY_NOTHING){ isFiltered = true; }
 	else{ Options.SetInt(GRID_FILTER_BY, 0); }
 	filter.Filter();

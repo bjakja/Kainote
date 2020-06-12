@@ -296,13 +296,11 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	Connect(ID_BCOLOR4, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnColor4Click);
 	Connect(ID_BOK, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnOKClick);
 	Connect(ID_BCANCEL, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnCancelClick);
-	Connect(ID_B_CHANGE_ALL_SELECTED_STYLES, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnChangeAllSelectedStyles);
 	Connect(ID_B_COMMIT, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&StyleChange::OnCommit);
 	Connect(ID_FONTNAME, wxEVT_COMMAND_COMBOBOX_SELECTED, (wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_TOUTLINE, NUMBER_CHANGED, (wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_CBOLD, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	Connect(ID_CENCODING, wxEVT_COMMAND_CHOICE_SELECTED, (wxObjectEventFunction)&StyleChange::OnUpdatePreview);
-	//Connect(ID_RAN1, ID_RAN9,wxEVT_COMMAND_RADIOBUTTON_SELECTED,(wxObjectEventFunction)&StyleChange::OnUpdatePreview);
 	DoTooltips();
 	if (ds){
 		ds->Add(this, 1, wxEXPAND);

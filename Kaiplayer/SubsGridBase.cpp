@@ -1031,10 +1031,10 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		}
 	}
 	else if (Edit->Visual == CHANGEPOS){
-		vb->SetVisual(false, true);
+		vb->SetVisual(true);
 	}
 	else {
-		vb->SetVisual(false, true, true);
+		vb->SetVisual(true, true);
 		if (vb->GetState() == Paused){ vb->Render(); }
 	}
 
@@ -1130,8 +1130,7 @@ void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 {
 	file->GetSInfos(textSinfo, tld);
 }
-
-//wszystkie set modified trzeba znaleźć i dodać editiontype.
+//Every SetModified have to find on list and add etitionType
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->IsNotSaved()){
@@ -1166,7 +1165,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		if (!dummy){
 			VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
 			if (Edit->Visual >= CHANGEPOS){
-				vb->SetVisual(false, true);
+				vb->SetVisual(true);
 			}
 			else{
 				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); }
@@ -1263,7 +1262,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 	if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
 	if (subsFormat == ASS){
-		if (Options.GetBool(GRID_FILTER_AFTER_LOAD)){
+		if (Options.GetBool(GRID_FILTER_AFTER_LOAD) && Options.GetInt(GRID_FILTER_BY) != FILTER_BY_SELECTIONS){
 			isFiltered = true;
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
@@ -1331,12 +1330,10 @@ bool SubsGridBase::SetTlMode(bool mode)
 		if (Options.GetBool(TL_MODE_SHOW_ORIGINAL)){ showOriginal = true; }
 		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, true);
 
-		//Refresh(false);
-
 	}
 	else{
-		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), _("Potwierdzenie"), wxYES_NO) == wxNO)
-		{
+		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), 
+			_("Potwierdzenie"), wxYES_NO) == wxNO){
 			return true;
 		}
 

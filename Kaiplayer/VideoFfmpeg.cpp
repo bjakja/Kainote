@@ -108,7 +108,7 @@ void VideoFfmpeg::Processing()
 
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
-			byte *buff = (byte*)rend->datas;
+			byte *buff = (byte*)rend->frameBuffer;
 			int acttime;
 			//isBusy = false;
 			while (1){
@@ -167,7 +167,7 @@ void VideoFfmpeg::Processing()
 			}
 		}
 		else if (wait_result == WAIT_OBJECT_0 + 1){
-			byte *buff = (byte*)rend->datas;
+			byte *buff = (byte*)rend->frameBuffer;
 			if (rend->numframe != lastframe){
 				//if (lockGetFrame)
 					GetFFMSFrame();
@@ -953,15 +953,7 @@ void VideoFfmpeg::DeleteOldAudioCache()
 }
 
 void VideoFfmpeg::Render(bool wait){
-	/*if (isBusy) {
-		renderAgain = true;
-		return;
-		}
-		isBusy = true;*/
-	//ResetEvent(eventComplete);
-	//isBusy = true;
-	//SetEvent(eventRefresh);
-	byte *buff = (byte*)rend->datas;
+	byte *buff = (byte*)rend->frameBuffer;
 	if (rend->numframe != lastframe){
 		GetFFMSFrame();
 		lastframe = rend->numframe;
