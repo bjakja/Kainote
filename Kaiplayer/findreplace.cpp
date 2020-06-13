@@ -733,12 +733,22 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 	//program will not check if it is valid
 	wxString filters = window->FindInSubsPattern->GetValue();
 	if (filters.empty())
-		filters = L"*.ass;*.srt;*.sub;*.txt";
+		filters = L"*.ass;*.srt;*.sub;*.txt;*.mpl2";
 	if (onlyAss)
 		filters = L"*.ass";
 
 	GetFolderFiles(path, filters, &paths,
 		window->SeekInSubFolders->GetValue(), window->SeekInHiddenFolders->GetValue());
+
+	int i = 0;
+	while (i < paths.size()){
+		wxString ext = paths[i].AfterLast(L'.').Lower();
+		if (ext != L"ass" && ext != L"srt" && ext != L"sub" && ext != L"txt" && ext != L"mpl2"){
+			paths.RemoveAt(i);
+		}
+		else
+			i++;
+	}
 
 	if (!paths.size())
 		return;
@@ -1265,7 +1275,10 @@ void FindReplace::GetFolderFiles(const wxString &path, const wxString &filters, 
 		flags |= wxDIR_HIDDEN;
 
 	if (subsDir.IsOpened()){
-		subsDir.GetAllFiles(path, paths, filters, flags);
+		wxStringTokenizer tokenizer(filters, L";");
+		while (tokenizer.HasMoreTokens()){
+			subsDir.GetAllFiles(path, paths, tokenizer.NextToken(), flags);
+		}
 	}
 	else{
 		KaiMessageBox(_("Ścieżka szukania jest nieprawidłowa"));

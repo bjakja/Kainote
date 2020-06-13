@@ -58,7 +58,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 		//find in subs filters and path
 		wxBoxSizer *SubsFilterStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, L"", wxDefaultPosition, wxSize(276, -1), FR->subsFindingFilters);
-		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania Windowsa:"));
+		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\nZe względu na duże pliku wideo szukanie\nwszystkiego \"*.*\" zostaje zmieniane na *.ass"));
 		FindInSubsPattern->SetMaxLength(1000);
 		FindInSubsPattern->SetSelection(0);
 		SubsFilterStaticSizer->Add(new KaiStaticText(this, -1, _("Filtry:"), wxDefaultPosition,
