@@ -40,7 +40,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	SpellCheckerOnOff = (_spell)? Options.GetBool(SPELLCHECKER_ON) : false;
 	MText = L"";
 	bmp = NULL;
-	fsize = 10;
+	fontSize = 10;
 	posY = 0;
 	scrollPositionV = 0;
 	SetCursor(wxCURSOR_IBEAM);
@@ -99,8 +99,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	Cursor.x = Cursor.y = Selend.x = Selend.y = oldstart = oldend = 0;
 
 	holding = dholding = firstdhold = modified = wasDoubleClick = false;
-	//font = wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, "Verdana");
-	font = *Options.GetFont();//wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont();
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
@@ -172,7 +171,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 
 				int nwrap = -1;
 				int allwrap = 0;
-				int approxSize = w / fsize;
+				int approxSize = w / fontSize;
 				while (i < textLen)
 				{
 					i = podz + approxSize;
@@ -709,14 +708,22 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		tmpstart = start; tmpend = end;
 
 		if (start < oldstart){
-			if (end == oldstart){ Selend.x = oldend; Selend.y = FindY(oldend); }
+			if (end == oldend){
+				Selend.x = oldend; 
+				Selend.y = FindY(oldend); 
+			}
 			Cursor.x = start;
 			Cursor.y = FindY(start);
+			selectionWords.clear();
 		}
 		else{
-			if (oldstart == start){ Selend.x = oldstart; Selend.y = FindY(oldstart); }
+			if (oldstart == start){ 
+				Selend.x = oldstart; 
+				Selend.y = FindY(oldstart); 
+			}
 			Cursor.x = end;
 			Cursor.y = FindY(end);
+			selectionWords.clear();
 		}
 		MakeCursorVisible();
 	}
@@ -766,9 +773,9 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 	if (mouseWheel) {
 		if (event.ControlDown()){
-			fsize += event.GetWheelRotation() / event.GetWheelDelta();
-			if (fsize < 7 || fsize > 70){ fsize = MID(7, fsize, 70); return; }
-			font.SetPointSize(fsize);
+			fontSize += event.GetWheelRotation() / event.GetWheelDelta();
+			if (fontSize < 7 || fontSize > 70){ fontSize = MID(7, fontSize, 70); return; }
+			font.SetPointSize(fontSize);
 			int fw, fh;
 			GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 			fontHeight = fh;

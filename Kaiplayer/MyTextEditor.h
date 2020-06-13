@@ -112,7 +112,7 @@ protected:
 	int time;
 	int fontHeight;
 	int scrollPositionV;
-	int fsize;
+	int fontSize;
 	int tmpstart, tmpend;
 	int statusBarHeight;
 	std::map<wxUniChar, double> fontSizes;

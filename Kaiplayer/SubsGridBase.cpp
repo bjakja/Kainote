@@ -761,7 +761,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	if (subsFormat > TMP){ RefreshColumns(START | END); }
 	else{ Refresh(false); }
 #if _DEBUG
-	wxBell();
+	//wxBell();
 #endif
 }
 
