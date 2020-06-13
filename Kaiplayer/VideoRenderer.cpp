@@ -1205,7 +1205,8 @@ void VideoRenderer::SetZoom()
 {
 	if (vstate == None){ return; }
 	hasZoom = !hasZoom;
-	if (zoomRect.width < 1){ zoomRect = FloatRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom); }
+	if (zoomRect.width < 1){ 
+		zoomRect = FloatRect(backBufferRect.left, backBufferRect.top, backBufferRect.right, backBufferRect.bottom); }
 	Render();
 }
 

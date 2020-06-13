@@ -392,6 +392,15 @@
     <ClCompile Include="ConfigConverter.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="RendererFFMS2.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererDirectShow.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererVideo.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -726,6 +735,15 @@
     </ClInclude>
     <ClInclude Include="ConfigConverter.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFFMS2.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererDirectShow.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererVideo.h">
+      <Filter>Source Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
