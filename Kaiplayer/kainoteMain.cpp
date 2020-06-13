@@ -357,6 +357,13 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	if (item && !item->enabled)
 		return;
 
+	//it should not be blocked, frames should go as fast as possible
+	if ((id == GLOBAL_PREVIOUS_FRAME || id == GLOBAL_NEXT_FRAME)){
+		tab->Video->ChangePositionByFrame((id == GLOBAL_PREVIOUS_FRAME) ? -1 : 1);
+	}
+
+	if (Options.CheckLastKeyEvent(id))
+		return;
 
 	if (id == GLOBAL_SAVE_SUBS){
 		Save(false);
@@ -415,9 +422,6 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_PLAY_PAUSE){
 		tab->Video->Pause();
-	}
-	else if ((id == GLOBAL_PREVIOUS_FRAME || id == GLOBAL_NEXT_FRAME)){
-		tab->Video->ChangePositionByFrame((id == GLOBAL_PREVIOUS_FRAME) ? -1 : 1);
 	}
 	else if (id == GLOBAL_SET_START_TIME || id == GLOBAL_SET_END_TIME){
 		if (tab->Video->GetState() != None){
@@ -510,7 +514,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		int difid = (all) ? GLOBAL_SORT_ALL_BY_START_TIMES : GLOBAL_SORT_SELECTED_BY_START_TIMES;
 		tab->Grid->SortIt(id - difid, all);
 	}
-	else if (id >= GLOBAL_VIEW_ALL&&id <= GLOBAL_VIEW_SUBS){
+	else if (id >= GLOBAL_VIEW_ALL && id <= GLOBAL_VIEW_SUBS){
 		bool vidshow = (id == GLOBAL_VIEW_ALL || id == GLOBAL_VIEW_VIDEO || id == GLOBAL_VIEW_ONLY_VIDEO) && tab->Video->GetState() != None;
 		bool vidvis = tab->Video->IsShown();
 		if (!vidshow && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
@@ -633,7 +637,6 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	else if (id == GLOBAL_SHIFT_TIMES){
 		tab->ShiftTimes->OnOKClick(event);
 	}
-
 }
 //elements of menu all time enabled
 void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
@@ -646,6 +649,10 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		Hkeys.OnMapHkey(id, L"", this, GLOBAL_HOTKEY);
 		return;
 	}
+
+	if (Options.CheckLastKeyEvent(id))
+		return;
+
 	if (id == GLOBAL_OPEN_SUBS){
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),

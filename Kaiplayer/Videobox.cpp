@@ -1056,6 +1056,9 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 {
 
 	id = event.GetId();
+	if (Options.CheckLastKeyEvent(id, 50))
+		return;
+
 	if (id == VIDEO_PLAY_PAUSE){ Pause(); }
 	else if (id == VIDEO_5_SECONDS_BACKWARD){ Seek(Tell() - 5000); }
 	else if (id == VIDEO_5_SECONDS_FORWARD){ Seek(Tell() + 5000); }

@@ -942,6 +942,20 @@ const wxString &config::FindLanguage(const wxString & symbol)
 	return symbol;
 }
 
+bool config::CheckLastKeyEvent(int id, int timeInterval)
+{
+	DWORD nowTime = timeGetTime();
+	if (nowTime < lastCheckedTime && lastCheckedTime != 0)
+		lastCheckedTime = nowTime;
+	else if (id == lastCheckedId && nowTime < lastCheckedTime + timeInterval){
+		return true;
+	}
+
+	lastCheckedTime = nowTime;
+	lastCheckedId = id;
+	return false;
+}
+
 wxString getfloat(float num, const wxString &format, bool Truncate)
 {
 	wxString strnum = wxString::Format(L"%" + format, num);

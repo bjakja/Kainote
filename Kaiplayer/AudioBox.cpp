@@ -734,7 +734,11 @@ bool AudioBox::SetFont(const wxFont &font)
 
 void AudioBox::OnAccelerator(wxCommandEvent &event)
 {
-	switch (event.GetId()){
+	int id = event.GetId();
+	if (Options.CheckLastKeyEvent(id))
+		return;
+
+	switch (id){
 	case AUDIO_PLAY: OnPlaySelection(event); break;
 	case AUDIO_PLAY_LINE: OnPlaySelection(event); break;
 	case AUDIO_STOP: OnStop(event); break;

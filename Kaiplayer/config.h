@@ -403,6 +403,8 @@ private:
 	void InitLanguagesTable();
 	bool hasCrashed = false;
 	bool ConfigNeedToConvert(const wxString & fullVersion);
+	int lastCheckedId = -1;
+	DWORD lastCheckedTime = 0;
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -475,6 +477,8 @@ public:
 	void ChangeVsfilter();
 	void GetVSFiltersList(wxArrayString &filters);
 	bool HasCrashed(){ return hasCrashed; }
+	//returns true when time is too short
+	bool CheckLastKeyEvent(int id, int timeInterval = 100);
 	config();
 	~config();
 };

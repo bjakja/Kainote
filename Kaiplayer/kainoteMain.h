@@ -129,7 +129,6 @@ private:
 	Menu* ViewMenu;
 	Menu* AutoMenu;
 
-	//wxLogWindow *mylog;
 	bool badResolution;
 
 	wxMutex blockOpen;

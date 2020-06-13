@@ -608,6 +608,9 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id = event.GetId();
+	if (Options.CheckLastKeyEvent(id))
+		return;
+
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;//Kai->GetTab()->Video;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
