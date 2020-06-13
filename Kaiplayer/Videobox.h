@@ -19,16 +19,16 @@
 #include <wx/wx.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
-#include "VideoRenderer.h"
+#include "RendererVideo.h"
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"
 #include "KaiTextCtrl.h"
 
 class KainoteFrame;
+class TabPanel;
 
-class VideoCtrl : public VideoRenderer
+class VideoCtrl : public wxWindow
 {
-	friend class VideoRenderer;
 public:
 
 	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
@@ -95,6 +95,8 @@ public:
 	wxString oldpath;
 	std::vector<RECT> MonRects;
 	bool isOnAnotherMonitor;
+	bool isFullscreen;
+
 private:
 
 	BitmapButton* bprev;
@@ -104,6 +106,7 @@ private:
 	BitmapButton* bpline;
 
 	KainoteFrame *Kai;
+	TabPanel *tab;
 	int actualFile;
 	int id;
 	int prevchap;
@@ -112,6 +115,7 @@ private:
 	int toolBarHeight = 22;
 	wxArrayString files;
 	bool ismenu;
+	RendererVideo *renderer;
 
 	void OnSize(wxSizeEvent& event);
 	void OnKeyPress(wxKeyEvent& event);

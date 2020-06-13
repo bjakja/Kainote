@@ -18,14 +18,14 @@
 #include "RendererVideo.h"
 #include "VideoFfmpeg.h"
 
-class RendererFFMS2 : public RendererVideo, VideoFfmpeg
+class RendererFFMS2 : public RendererVideo
 {
 	friend class RendererVideo;
 public:
-	RendererFFMS2(VideoCtrl *control, const wxString &filename, wxWindow *progressSinkWindow, bool *success);
+	RendererFFMS2(VideoCtrl *control);
 	~RendererFFMS2();
 
-	bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio = true);
+	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
 	bool Play(int end = -1);
 	bool PlayLine(int start, int end);
@@ -86,4 +86,5 @@ public:
 	}
 	void OpenKeyframes(const wxString &filename);
 	//bool InitRendererDX(bool reset = false)
+	VideoFfmpeg *VFF;
 };

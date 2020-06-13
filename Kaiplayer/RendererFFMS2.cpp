@@ -14,16 +14,19 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RendererFFMS2.h"
+#include "kainoteApp.h"
+#include "CsriMod.h"
+#include "OpennWrite.h"
 
-RendererFFMS2::RendererFFMS2(VideoCtrl *control, const wxString &filename, wxWindow *progressSinkWindow, bool *success)
+RendererFFMS2::RendererFFMS2(VideoCtrl *control)
 	: RendererVideo(control)
-	, VideoFfmpeg(filename, this, progressSinkWindow, success)
+	, VFF(NULL)
 {
 	
 }
 RendererFFMS2::~RendererFFMS2()
 {
-
+	SAFE_DELETE(VFF);
 }
 
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
@@ -134,33 +137,31 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 }
 
-bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
+bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(mutexOpenFile);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	TabPanel *tab = ((TabPanel*)GetParent());
 	VideoFfmpeg *tmpvff = NULL;
-	if (vstate == Playing){ ((VideoCtrl*)this)->Stop(); }
+	if (vstate == Playing){ videoControl->Stop(); }
 
-	if (!Dshow){
-		bool success;
-		tmpvff = new VideoFfmpeg(fname, this, (isFullscreen) ? ((VideoCtrl*)this)->TD : (wxWindow *)Kaia->Frame, &success);
-		//this is safe mode, when new video not load, 
-		//the last opened will not be released
-		if (!success || !tmpvff){
-			SAFE_DELETE(tmpvff);
-			return false;
-		}
-		//when loading only audio do not remove video
-		if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
-			VideoFfmpeg *tmp = VFF;
-			VFF = tmpvff;
-			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-			player = tab->Edit->ABox->audioDisplay;
-			VFF = tmp;
-			return false;
-		}
+	bool success;
+	tmpvff = new VideoFfmpeg(fname, this, (videoControl->isFullscreen) ? videoControl->TD : (wxWindow *)Kaia->Frame, &success);
+	//this is safe mode, when new video not load, 
+	//the last opened will not be released
+	if (!success || !tmpvff){
+		SAFE_DELETE(tmpvff);
+		return false;
 	}
+	//when loading only audio do not remove video
+	if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
+		VideoFfmpeg *tmp = VFF;
+		VFF = tmpvff;
+		Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
+		player = tab->Edit->ABox->audioDisplay;
+		VFF = tmp;
+		return false;
+	}
+
 	SAFE_DELETE(VFF);
 
 	if (vstate != None){
@@ -168,57 +169,31 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		vstate = None;
 		Clear();
 	}
-	IsDshow = Dshow;
+
 	time = 0;
 	numframe = 0;
 
-	if (!Dshow){
-		SAFE_DELETE(vplayer);
-		VFF = tmpvff;
-		d3dformat = D3DFMT_X8R8G8B8;
-		vformat = RGB32;
-		vwidth = VFF->width;
-		vheight = VFF->height;
-		fps = VFF->fps;
-		ax = VFF->arwidth;
-		ay = VFF->arheight;
-		if (vwidth % 2 != 0){ vwidth++; }
-		pitch = vwidth * 4;
-		if (changeAudio){
-			if (VFF->GetSampleRate() > 0){
-				Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-				player = tab->Edit->ABox->audioDisplay;
-			}
-			else if (player){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
+	VFF = tmpvff;
+	d3dformat = D3DFMT_X8R8G8B8;
+	vformat = RGB32;
+	vwidth = VFF->width;
+	vheight = VFF->height;
+	fps = VFF->fps;
+	ax = VFF->arwidth;
+	ay = VFF->arheight;
+	if (vwidth % 2 != 0){ vwidth++; }
+	pitch = vwidth * 4;
+	if (changeAudio){
+		if (VFF->GetSampleRate() > 0){
+			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
+			player = tab->Edit->ABox->audioDisplay;
 		}
-		if (!VFF || VFF->width < 0){
-			return false;
-		}
+		else if (player){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
 	}
-	else{
-
-		if (!vplayer){ vplayer = new DShowPlayer(this); }
-
-		if (!vplayer->OpenFile(fname, vobsub)){
-			return false;
-		}
-		wxSize videoSize = vplayer->GetVideoSize();
-		vwidth = videoSize.x; vheight = videoSize.y;
-		if (vwidth % 2 != 0){ vwidth++; }
-
-		pitch = vwidth * vplayer->inf.bytes;
-		fps = vplayer->inf.fps;
-		vformat = vplayer->inf.CT;
-		ax = vplayer->inf.ARatioX;
-		ay = vplayer->inf.ARatioY;
-		d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
-			(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
-		//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
-		swapFrame = (vformat == 0 && !vplayer->HasVobsub());
-		if (player){
-			Kaia->Frame->OpenAudioInTab(((TabPanel*)GetParent()), GLOBAL_CLOSE_AUDIO, L"");
-		}
+	if (!VFF || VFF->width < 0){
+		return false;
 	}
+	
 	diff = 0;
 	frameDuration = (1000.0f / fps);
 	if (ay == 0 || ax == 0){ AR = 0.0f; }
@@ -256,14 +231,357 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 		OpenSubs(0, false);
 	}
 	vstate = Stopped;
-	if (IsDshow && vplayer)
-		vplayer->GetChapters(&chapters);
-	else if (!IsDshow)
-		VFF->GetChapters(&chapters);
+	VFF->GetChapters(&chapters);
 
 	if (Visual){
 		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
 			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 	}
 	return true;
+}
+
+bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
+{
+	wxCriticalSectionLocker lock(mutexRender);
+	if (instance) csri_close(instance);
+	instance = NULL;
+
+	if (!textsubs) {
+		if (redraw && vstate != None && frameBuffer){
+			RecreateSurface();
+		}
+		hasDummySubs = true;
+		return true;
+	}
+
+	if (hasVisualEdition && Visual->Visual == VECTORCLIP && Visual->dummytext){
+		wxString toAppend = Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
+		if (fromFile){
+			OpenWrite ow(*textsubs, false);
+			ow.PartFileWrite(toAppend);
+			ow.CloseFile();
+		}
+		else{
+			(*textsubs) << toAppend;
+		}
+	}
+
+	hasDummySubs = !fromFile;
+
+	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
+	int size = strlen(buffer);
+
+
+	// Select renderer
+	csri_rend *vobsub = Options.GetVSFilter();
+	if (!vobsub){ KaiLog(_("CSRI odmówi³o pos³uszeñstwa.")); delete textsubs; return false; }
+
+	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
+	if (!instance){ KaiLog(_("B³¹d, instancja VobSuba nie zosta³a utworzona.")); delete textsubs; return false; }
+
+	if (!format || csri_request_fmt(instance, format)){
+		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		csri_close(instance);
+		instance = NULL;
+		delete textsubs; return false;
+	}
+
+	if (redraw && vstate != None && frameBuffer){
+		RecreateSurface();
+	}
+
+	delete textsubs;
+	return true;
+}
+
+bool RendererFFMS2::Play(int end)
+{
+	if (time >= GetDuration()){ return false; }
+	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+	if (!(videoControl->IsShown() || (videoControl->TD && videoControl->TD->IsShown()))){ return false; }
+	if (hasVisualEdition){
+		wxString *txt = tab->Grid->SaveText();
+		OpenSubs(txt, false, true);
+		SAFE_DELETE(Visual->dummytext);
+		hasVisualEdition = false;
+	}
+	else if (hasDummySubs && tab->editor){
+		OpenSubs(tab->Grid->SaveText(), false, true);
+	}
+
+	if (end > 0){ playend = end; }
+	playend = GetDuration();
+
+	vstate = Playing;
+
+	time = VFF->Timecodes[numframe];
+	lasttime = timeGetTime() - time;
+	if (player){ player->Play(time, -1, false); }
+	VFF->Play();
+
+	return true;
+}
+
+
+bool RendererFFMS2::Pause()
+{
+	if (vstate == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		vstate = Paused;
+		if (player){ player->Stop(false); }
+	}
+	else if (vstate != None){
+		Play();
+	}
+	else{ return false; }
+	return true;
+}
+
+bool RendererFFMS2::Stop()
+{
+	if (vstate == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		vstate = Stopped;
+		if (player){
+			player->Stop();
+			playend = GetDuration();
+		}
+		time = 0;
+		return true;
+	}
+	return false;
+}
+
+void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
+{
+	if (vstate == Playing || !async)
+		SetFFMS2Position(_time, starttime);
+	else
+		VFF->SetPosition(_time, starttime);
+}
+
+//is from video thread make safe any deletion
+void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
+	bool playing = vstate == Playing;
+	numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
+	if (!starttime){
+		numframe--;
+		if (VFF->Timecodes[numframe] >= _time){ numframe--; }
+	}
+	time = VFF->Timecodes[numframe];
+	lasttime = timeGetTime() - time;
+	playend = GetDuration();
+
+	if (hasVisualEdition){
+		//block removing or changing visual from main thread
+		wxMutexLocker lock(mutexVisualChange);
+		SAFE_DELETE(Visual->dummytext);
+		if (Visual->Visual == VECTORCLIP){
+			Visual->SetClip(Visual->GetVisual(), true, false, false);
+		}
+		else{
+			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+			if (playing){ hasVisualEdition = false; }
+		}
+	}
+	else if (hasDummySubs){
+		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+	}
+	if (playing){
+		if (player){
+			player->player->SetCurrentPosition(player->GetSampleAtMS(time));
+		}
+	}
+	else{
+		//rebuild spectrum cause position can be changed
+		//and it causes random bugs
+		if (player){ player->UpdateImage(false, true); }
+		VFF->Render();
+		videoControl->RefreshTime();
+	}
+}
+
+int RendererFFMS2::GetDuration()
+{
+	return VFF->Duration * 1000.0;
+}
+
+int RendererFFMS2::GetFrameTime(bool start)
+{
+	if (start){
+		int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
+		return time + ((prevFrameTime - time) / 2);
+	}
+	else{
+		if (numframe + 1 >= VFF->NumFrames){
+			int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
+			return time + ((time - prevFrameTime) / 2);
+		}
+		else{
+			int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
+			return time + ((nextFrameTime - time) / 2);
+		}
+	}
+}
+
+void RendererFFMS2::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+{
+	if (!retStart || !retEnd){ return; }
+	
+	int frameStartTime = VFF->GetFramefromMS(startTime);
+	int frameEndTime = VFF->GetFramefromMS(endTime, frameStartTime);
+	*retStart = VFF->GetMSfromFrame(frameStartTime) - startTime;
+	*retEnd = VFF->GetMSfromFrame(frameEndTime) - endTime;
+}
+
+int RendererFFMS2::GetFrameTimeFromTime(int _time, bool start)
+{
+	if (start){
+		int frameFromTime = VFF->GetFramefromMS(_time);
+		int prevFrameTime = VFF->GetMSfromFrame(frameFromTime - 1);
+		int frameTime = VFF->GetMSfromFrame(frameFromTime);
+		return frameTime + ((prevFrameTime - frameTime) / 2);
+	}
+	else{
+		int frameFromTime = VFF->GetFramefromMS(_time);
+		int nextFrameTime = VFF->GetMSfromFrame(frameFromTime + 1);
+		int frameTime = VFF->GetMSfromFrame(frameFromTime);
+		return frameTime + ((nextFrameTime - frameTime) / 2);
+	}
+}
+
+int RendererFFMS2::GetFrameTimeFromFrame(int frame, bool start)
+{
+	if (start){
+		int prevFrameTime = VFF->GetMSfromFrame(frame - 1);
+		int frameTime = VFF->GetMSfromFrame(frame);
+		return frameTime + ((prevFrameTime - frameTime) / 2);
+	}
+	else{
+		int nextFrameTime = VFF->GetMSfromFrame(frame + 1);
+		int frameTime = VFF->GetMSfromFrame(frame);
+		return frameTime + ((nextFrameTime - frameTime) / 2);
+	}
+}
+
+int RendererFFMS2::GetPlayEndTime(int _time)
+{
+	int frameFromTime = VFF->GetFramefromMS(_time);
+	int prevFrameTime = VFF->GetMSfromFrame(frameFromTime - 1);
+	return prevFrameTime;
+}
+
+void RendererFFMS2::OpenKeyframes(const wxString &filename)
+{
+	VFF->OpenKeyframes(filename);
+}
+
+void RendererFFMS2::GetFpsnRatio(float *fps, long *arx, long *ary)
+{
+	*fps = VFF->fps;
+	*arx = VFF->arwidth;
+	*ary = VFF->arheight;
+}
+
+void RendererFFMS2::GetVideoSize(int *width, int *height)
+{
+	*width = VFF->width;
+	*height = VFF->height;
+}
+
+wxSize RendererFFMS2::GetVideoSize()
+{
+	wxSize sz;
+	sz.x = VFF->width;
+	sz.y = VFF->height;
+	return sz;
+}
+
+void RendererFFMS2::SetVolume(int vol)
+{
+	if (vstate == None || !player){ return; }
+	
+	vol = 7600 + vol;
+	double dvol = vol / 7600.0;
+	int sliderValue = (dvol * 99) + 1;
+	if (tab->Edit->ABox){
+		tab->Edit->ABox->SetVolume(sliderValue);
+	}
+}
+
+int RendererFFMS2::GetVolume()
+{
+	if (vstate == None || !player){ return 0; }
+	double dvol = player->player->GetVolume();
+	dvol = sqrt(dvol);
+	dvol *= 8100.0;
+	dvol -= 8100.0;
+	return dvol;
+}
+
+void RendererFFMS2::ChangePositionByFrame(int step)
+{
+	if (vstate == Playing || vstate == None){ return; }
+	
+		numframe = MID(0, numframe + step, VFF->NumFrames - 1);
+		time = VFF->Timecodes[numframe];
+		if (hasVisualEdition || hasDummySubs){
+			OpenSubs(tab->Grid->SaveText(), false, true);
+			hasVisualEdition = false;
+		}
+		if (player){ player->UpdateImage(true, true); }
+		Render(true, false);
+	
+	
+	videoControl->RefreshTime();
+
+}
+
+//bool VideoRenderer::EnumFilters(Menu *menu)
+//{
+//	if (vplayer){ return vplayer->EnumFilters(menu); }
+//	return false;
+//}
+//
+//bool VideoRenderer::FilterConfig(wxString name, int idx, wxPoint pos)
+//{
+//	if (vplayer){ return vplayer->FilterConfig(name, idx, pos); }
+//	return false;
+//}
+
+byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
+{
+	bool ffnsubs = (!subs);
+	byte *cpy1;
+	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
+	int all = vheight * pitch;
+	if (ffnsubs){
+		*del = true;
+		char *cpy = new char[all];
+		cpy1 = (byte*)cpy;
+		VFF->GetFrame(time, cpy1);
+	}
+	else{ *del = false; }
+	return (ffnsubs) ? cpy1 : (byte*)frameBuffer;
+}
+
+void RendererFFMS2::GoToNextKeyframe()
+{
+	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){
+		if (VFF->KeyFrames[i] > time){
+			SetPosition(VFF->KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(VFF->KeyFrames[0]);
+}
+void RendererFFMS2::GoToPrevKeyframe()
+{
+	for (int i = VFF->KeyFrames.size() - 1; i >= 0; i--){
+		if (VFF->KeyFrames[i] < time){
+			SetPosition(VFF->KeyFrames[i]);
+			return;
+		}
+	}
+	SetPosition(VFF->KeyFrames[VFF->KeyFrames.size() - 1]);
 }

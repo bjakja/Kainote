@@ -18,14 +18,14 @@
 #include "RendererVideo.h"
 #include <dxva2api.h>
 
-class RendererDirectShow : public RendererVideo, DShowPlayer
+class RendererDirectShow : public RendererVideo
 {
 	friend class RendererVideo;
 public:
 	RendererDirectShow(VideoCtrl *control);
 	virtual ~RendererDirectShow();
 
-	bool OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio = true);
+	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
 	bool Play(int end = -1);
 	bool PlayLine(int start, int end);
@@ -79,4 +79,7 @@ public:
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	bool InitRendererDX();
+	void OpenKeyframes(const wxString &filename);
+
+	DShowPlayer *vplayer;
 };

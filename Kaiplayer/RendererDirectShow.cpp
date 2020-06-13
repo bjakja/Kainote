@@ -23,14 +23,14 @@ const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0x
 
 RendererDirectShow::RendererDirectShow(VideoCtrl *control)
 	: RendererVideo(control)
-	, DShowPlayer(control)
+	, vplayer(NULL)
 {
 
 }
 
 RendererDirectShow::~RendererDirectShow()
 {
-
+	SAFE_DELETE(vplayer);
 }
 
 bool RendererDirectShow::InitRendererDX()
@@ -99,6 +99,7 @@ bool RendererDirectShow::InitRendererDX()
 	CoTaskMemFree(guids);
 	PTR(isgood, L"Nie ma ¿adnych guidów");
 
+	return true;
 }
 
 void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
@@ -264,12 +265,10 @@ void RendererDirectShow::RecreateSurface()
 	delete[] cpy;
 }
 
-bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, bool Dshow, bool vobsub, bool changeAudio)
+bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(mutexOpenFile);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	TabPanel *tab = ((TabPanel*)videoControl->GetParent());
-	VideoFfmpeg *tmpvff = NULL;
 	if (vstate == Playing){ videoControl->Stop(); }
 
 	if (vstate != None){
@@ -297,10 +296,10 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	ay = vplayer->inf.ARatioY;
 	d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
 		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
-	//KaiLog(wxString::Format(L"vformat %i", (int)vformat));
+
 	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
 	if (player){
-		Kaia->Frame->OpenAudioInTab(((TabPanel*)videoControl->GetParent()), GLOBAL_CLOSE_AUDIO, L"");
+		Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
 	}
 
 	diff = 0;
@@ -347,4 +346,263 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
 	}
 	return true;
+}
+
+bool RendererDirectShow::Play(int end)
+{
+	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
+	if (!(videoControl->IsShown() || (videoControl->TD && videoControl->TD->IsShown()))){ return false; }
+	if (hasVisualEdition){
+		wxString *txt = tab->Grid->SaveText();
+		OpenSubs(txt, false, true);
+		SAFE_DELETE(Visual->dummytext);
+		hasVisualEdition = false;
+	}
+	else if (hasDummySubs && tab->editor){
+		OpenSubs(tab->Grid->SaveText(), false, true);
+	}
+
+	if (end > 0){ playend = end; }
+	playend = 0;
+	if (time < GetDuration() - frameDuration) 
+		vplayer->Play(); 
+
+	vstate = Playing;
+	return true;
+}
+
+
+bool RendererDirectShow::Pause()
+{
+	if (vstate == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		vstate = Paused;
+		vplayer->Pause();
+		
+	}
+	else if (vstate != None){
+		Play();
+	}
+	else{ return false; }
+	return true;
+}
+
+bool RendererDirectShow::Stop()
+{
+	if (vstate == Playing){
+		SetThreadExecutionState(ES_CONTINUOUS);
+		vstate = Stopped;
+		vplayer->Stop();
+		playend = 0;
+		time = 0;
+		return true;
+	}
+	return false;
+}
+
+void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
+{
+
+	bool playing = vstate == Playing;
+	time = MID(0, _time, GetDuration());
+	if (corect){
+		time /= frameDuration;
+		if (starttime){ time++; }
+		time *= frameDuration;
+	}
+	playend = 0;
+	seek = true;
+	vplayer->SetPosition(time);
+	if (hasVisualEdition){
+		SAFE_DELETE(Visual->dummytext);
+		if (Visual->Visual == VECTORCLIP){
+			Visual->SetClip(Visual->GetVisual(), true, false, false);
+		}
+		else{
+			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+			if (vstate == Playing){ hasVisualEdition = false; }
+		}
+	}
+	else if (hasDummySubs && tab->editor){
+		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+	}
+	
+}
+
+int VideoRenderer::GetDuration()
+{
+	return vplayer->GetDuration();
+}
+
+int RendererDirectShow::GetFrameTime(bool start)
+{
+	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
+	return time + halfFrame;
+}
+
+void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+{
+	if (!retStart || !retEnd){ return; }
+	
+	int frameStartTime = (((float)startTime / 1000.f) * fps);
+	int frameEndTime = (((float)endTime / 1000.f) * fps);
+	frameStartTime++;
+	frameEndTime++;
+	*retStart = (((frameStartTime * 1000) / fps) + 0.5f) - startTime;
+	*retEnd = (((frameEndTime * 1000) / fps) + 0.5f) - endTime;
+
+}
+
+int RendererDirectShow::GetFrameTimeFromTime(int _time, bool start)
+{
+	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
+	return _time + halfFrame;
+}
+
+int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool start)
+{
+	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
+	return (frame * (1000.f / fps)) + halfFrame;
+}
+
+int RendererDirectShow::GetPlayEndTime(int _time)
+{
+	int newTime = _time;
+	newTime /= frameDuration;
+	newTime = (newTime * frameDuration) + 1.f;
+	if (_time == newTime && newTime % 10 == 0){ newTime -= 5; }
+	return newTime;
+}
+
+void RendererDirectShow::OpenKeyframes(const wxString &filename)
+{
+	AudioBox * audio = tab->Edit->ABox;
+	if (audio){
+		// skip return when audio do not have own provider or file didn't have video for take timecodes.
+		if (audio->OpenKeyframes(filename)){
+			return;
+		}
+	}
+	//if there is no FFMS2 or audiobox we store keyframes path;
+	keyframesFileName = filename;
+}
+
+void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)
+{
+	vplayer->GetFpsnRatio(fps, arx, ary);
+}
+
+void RendererDirectShow::GetVideoSize(int *width, int *height)
+{
+	wxSize sz = vplayer->GetVideoSize();
+	*width = sz.x;
+	*height = sz.y;
+}
+
+wxSize RendererDirectShow::GetVideoSize()
+{
+	wxSize sz;
+	sz = vplayer->GetVideoSize(); 
+	return sz; 
+}
+
+void RendererDirectShow::SetVolume(int vol)
+{
+	if (vstate == None){ return; }
+	vplayer->SetVolume(vol);
+}
+
+int RendererDirectShow::GetVolume()
+{
+	if (vstate == None){ return 0; }
+	return vplayer->GetVolume();
+}
+
+void RendererDirectShow::ChangePositionByFrame(int step)
+{
+	if (vstate == Playing || vstate == None){ return; }
+	
+	time += (frameDuration * step);
+	SetPosition(time, true, false);
+	videoControl->RefreshTime();
+
+}
+
+
+wxArrayString RendererDirectShow::GetStreams()
+{
+	return vplayer->GetStreams();
+}
+
+void RendererDirectShow::EnableStream(long index)
+{
+	if (vplayer->stream){
+		seek = true;
+		auto hr = vplayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
+		if (FAILED(hr)){
+			KaiLog(L"Cannot change stream");
+		}
+	}
+}
+
+
+
+void RendererDirectShow::ChangeVobsub(bool vobsub)
+{
+	if (!vplayer){ return; }
+	int tmptime = time;
+	OpenSubs((vobsub) ? NULL : tab->Grid->SaveText(), true, true);
+	vplayer->OpenFile(tab->VideoPath, vobsub);
+	vformat = vplayer->inf.CT;
+	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
+		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
+	if (tmpd3dformat != d3dformat){
+		d3dformat = tmpd3dformat;
+		int tmppitch = vwidth * vplayer->inf.bytes;
+		if (tmppitch != pitch){
+			pitch = tmppitch;
+			if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
+			frameBuffer = new char[vheight * pitch];
+		}
+		UpdateVideoWindow();
+	}
+	SetPosition(tmptime);
+	if (vstate == Paused){ vplayer->Play(); vplayer->Pause(); }
+	else if (vstate == Playing){ vplayer->Play(); }
+	int pos = tab->Video->volslider->GetValue();
+	SetVolume(-(pos * pos));
+	tab->Video->ChangeStream();
+}
+
+bool RendererDirectShow::EnumFilters(Menu *menu)
+{
+	return vplayer->EnumFilters(menu); 
+}
+
+bool VideoRenderer::FilterConfig(wxString name, int idx, wxPoint pos)
+{
+	return vplayer->FilterConfig(name, idx, pos);
+}
+
+byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
+{
+	bool dssubs = (IsDshow && subs && Notebook::GetTab()->editor);
+	byte *cpy1;
+	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
+	int all = vheight*pitch;
+	if (dssubs){
+		*del = true;
+		char *cpy = new char[all];
+		cpy1 = (byte*)cpy;
+	}
+	else{ *del = false; }
+	if (instance && dssubs){
+		byte *data1 = (byte*)frameBuffer;
+		memcpy(cpy1, data1, all);
+		framee->strides[0] = vwidth * bytes;
+		framee->planes[0] = cpy1;
+		csri_render(instance, framee, (time / 1000.0));
+	}
+	return (dssubs) ? cpy1 : (byte*)frameBuffer;
 }

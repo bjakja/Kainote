@@ -38,10 +38,10 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	: panelHeight(44)
 	, AR(0.0)
 	, fps(0.0)
-	, isFullscreen(false)
 	, hasZoom(false)
 	, videoControl(control)
 {
+	tab = (TabPanel*)videoControl->GetParent();
 	hwnd = videoControl->GetHWND();
 
 	//---------------------------- format
@@ -54,7 +54,6 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	d3dobject = NULL;
 	d3device = NULL;
 	bars = NULL;
-	VFF = NULL;
 	instance = NULL;
 	//vobsub = NULL;
 	framee = NULL;
@@ -68,7 +67,6 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	MainStream = NULL;
 	frameBuffer = NULL;
 	player = NULL;
-	vplayer = NULL;
 	windowRect.bottom = 0;
 	windowRect.right = 0;
 	windowRect.left = 0;
@@ -91,11 +89,8 @@ RendererVideo::~RendererVideo()
 	Stop();
 
 	vstate = None;
-
-	SAFE_DELETE(VFF);
 	Clear();
 	SAFE_DELETE(Visual);
-	SAFE_DELETE(vplayer);
 	SAFE_DELETE(framee);
 	SAFE_DELETE(format);
 	if (instance) { csri_close(instance); }
@@ -109,8 +104,7 @@ bool RendererVideo::UpdateRects(bool changeZoom)
 {
 
 	wxRect rt;
-	TabPanel* tab = (TabPanel*)videoControl->GetParent();
-	if (isFullscreen){
+	if (videoControl->isFullscreen){
 		hwnd = videoControl->TD->GetHWND();
 		rt = videoControl->TD->GetClientRect();
 		if (panelOnFullscreen){ rt.height -= videoControl->TD->panelsize; }
@@ -328,7 +322,8 @@ bool RendererVideo::InitDX(bool reset)
 	vertex->Unlock();
 #endif
 
-	InitRendererDX();
+	if (!InitRendererDX())
+		return false;
 
 #ifndef byvertices
 		HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie mo¿na stworzyæ powierzchni"));
@@ -485,8 +480,7 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 	float ar = (float)s1.x / (float)s1.y;
 
 	FloatRect tmp = zoomRect;
-	//wxWindow *window = (isFullscreen)? (wxWindow*)((VideoCtrl*)this)->TD : this; 
-
+	
 	bool rotation = evt.GetWheelRotation() != 0;
 
 	if (evt.ButtonUp()){
@@ -718,8 +712,7 @@ void RendererVideo::DrawProgBar()
 void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/)
 {
 	wxMutexLocker lock(mutexVisualChange);
-	TabPanel* tab = (TabPanel*)videoControl->GetParent();
-
+	
 	hasVisualEdition = false;
 	int vis = tab->Edit->Visual;
 	if (!Visual){
@@ -758,7 +751,6 @@ bool RendererVideo::RemoveVisual(bool noRefresh)
 	wxMutexLocker lock(mutexVisualChange);
 	hasVisualEdition = false;
 	SAFE_DELETE(Visual);
-	TabPanel* tab = (TabPanel*)videoControl->GetParent();
 	tab->Edit->Visual = 0;
 	if (!noRefresh){
 		OpenSubs(tab->Grid->GetVisible());
@@ -862,4 +854,15 @@ bool RendererVideo::DrawTexture(byte *nframe, bool copy)
 	MainStream->UnlockRect();
 
 	return true;
+}
+
+
+int RendererVideo::GetCurrentPosition()
+{
+	return time;
+}
+
+int RendererVideo::GetCurrentFrame()
+{
+	return numframe;
 }
