@@ -393,9 +393,8 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->Grid->RefreshColumns();
 
 			if (tab->Video->GetState() != None){
-				if (!tab->Video->RemoveVisual()){
-					tab->Video->OpenSubs(NULL);
-					tab->Video->Render();
+				if (tab->Video->RemoveVisual()){
+					tab->Video->OpenSubs(NULL, true, false, true);
 				}
 			}
 			SetSubsResolution(false);
@@ -567,12 +566,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 	}
 	else if (id == GLOBAL_AUTOMATION_RELOAD_AUTOLOAD){
-		/*if (!Auto){ Auto = new Auto::Automation(); }
-		else{ */Auto->ReloadScripts(); //}
-	//Auto->BuildMenu(&AutoMenu);
+		Auto->ReloadScripts();
 	}
 	else if (id == GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT){
-		//if (!Auto){ Auto = new Auto::Automation(true); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		int size = Auto->ASSScripts.size();
@@ -792,7 +788,7 @@ void KainoteFrame::OnConversion(char form)
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
-	tab->Video->m_VideoToolbar->DisableVisuals(form != ASS);
+	tab->Video->DisableVisuals(form != ASS);
 }
 
 
@@ -883,8 +879,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 		wxString name = path.BeforeLast(L'.');
 		path = path.BeforeLast(L'\\');
 
-		wxWindow *_parent = (atab->Video->m_IsFullscreen) ? (wxWindow*)atab->Video->m_FullScreenWindow : this;
-		wxFileDialog saveFileDialog(_parent, _("Zapisz plik napisów"),
+		wxFileDialog saveFileDialog(atab->Video->GetMessageWindowParent(), _("Zapisz plik napisów"),
 			path, name, extens, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
 		if (saveFileDialog.ShowModal() == wxID_OK){
@@ -947,7 +942,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		&& !(!issubs && tab->SubsPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))){*/
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
-		if (!issubs && found && !fulls && !tab->Video->m_IsFullscreen){
+		if (!issubs && found && !fulls && !tab->Video->IsFullScreen()){
 			if (tab->SubsPath == secondFileName || KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast(L'\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
@@ -959,7 +954,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	}
 
 	if (Options.GetBool(OPEN_SUBS_IN_NEW_TAB) && tab->SubsPath != L"" &&
-		!tab->Video->m_IsFullscreen && issubs){
+		!tab->Video->IsFullScreen() && issubs){
 		Tabs->AddPage(true);
 		tab = Tabs->Page(Tabs->Size() - 1);
 		nonewtab = false;
@@ -997,7 +992,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 
 		//seek for video / audio and (rest writed in future)
-		if (issubs && !fulls && !tab->Video->m_IsFullscreen){
+		if (issubs && !fulls && !tab->Video->IsFullScreen()){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 			wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
@@ -1077,17 +1072,18 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
-			tab->Video->m_VideoToolbar->DisableVisuals(ext != L"ass");
+			tab->Video->DisableVisuals(ext != L"ass");
 		}
 		SetRecent();
 		//set texts on window title and tab
 		Label();
 		SetSubsResolution(!Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 		//turn on editor
-		if (!tab->editor && !fulls && !tab->Video->m_IsFullscreen){ HideEditor(); }
+		if (!tab->editor && !fulls && !tab->Video->IsFullScreen()){ HideEditor(); }
 		//set color space
 		if (!found){
-			if (tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
+			//rest of checks is in function
+			if (tab->Grid->subsFormat == ASS){
 				tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
 			}
 			goto done;
@@ -1101,8 +1097,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			tab->Thaw();
 		return false;
 	}
-	tab->Edit->Frames->Enable(!tab->Video->m_IsDirectShow);
-	tab->Edit->Times->Enable(!tab->Video->m_IsDirectShow);
+	tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
+	tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
 
 	//fix to not delete audiocache when using from OpenFiles
 	if (freeze)
@@ -1555,7 +1551,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 
 			Label();
 			SetSubsResolution(askForRes);
-			tab->Video->m_VideoToolbar->DisableVisuals(ext != L"ass");
+			tab->Video->DisableVisuals(ext != L"ass");
 		}
 		if (i < videosSize){
 			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
@@ -1563,8 +1559,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			if (!isload){
 				break;
 			}
-			tab->Edit->Frames->Enable(!tab->Video->m_IsDirectShow);
-			tab->Edit->Times->Enable(!tab->Video->m_IsDirectShow);
+			tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
+			tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
 
 		}
 		tab->ShiftTimes->Contents();
@@ -1783,13 +1779,12 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 		wxString subsPath = (ext != subsExt && !(ext == L"txt" && subsExt == L"sub")) ?
 			subsName + L"." + ext : atab->SubsName;
 
-		wxWindow *_parent = (atab->Video->m_IsFullscreen) ? (wxWindow*)atab->Video->m_FullScreenWindow : this;
 		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"),
 			subsPath, (mode == 0) ? _("zamknięciem programu") :
 			(mode == 1) ? _("zamknięciem zakładki") :
 			(mode == 2) ? _("wczytaniem nowych napisów") :
 			_("usunięciem napisów")),
-			_("Potwierdzenie"), wxYES_NO | wxCANCEL, _parent);
+			_("Potwierdzenie"), wxYES_NO | wxCANCEL, atab->Video->GetMessageWindowParent());
 		if (answer == wxCANCEL){ return true; }
 		if (answer == wxYES){
 			Save(false, wtab);

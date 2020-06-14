@@ -83,8 +83,26 @@ public:
 	wxSize GetVideoSize();
 	void GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY);
 	int GetDuration();
+
 	bool OpenSubs(wxString *textsubs, bool recreateFrame = true, bool fromFile = false, bool refresh = false);
 	void Render(bool recreateFrame = true);
+	void ChangePositionByFrame(int cpos);
+	bool RemoveVisual(bool noRefresh = false);
+	int GetFrameTime(bool start = true);
+	void SetZoom();
+	void GoToNextKeyframe();
+	void GoToPrevKeyframe();
+	void OpenKeyframes(const wxString &filename);
+	void SetColorSpace(const wxString& matrix, bool render = true);
+	int GetPlayEndTime(int time);
+	void DisableVisuals(bool disable);
+	void DeleteAudioCache();
+	wxWindow *GetMessageWindowParent();
+	bool IsFullScreen();
+	bool IsDirectShow();
+	void GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter);
+	void SetVisual(bool settext = false, bool noRefresh = false);
+	void ResetVisual();
 private:
 
 	BitmapButton* m_ButtonPreviousFile;

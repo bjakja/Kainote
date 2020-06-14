@@ -432,10 +432,10 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 done:
 	VideoCtrl *vb = tab->Video;
-	int pas = vb->m_VideoToolbar->videoPlayAfter->GetSelection();
-	int vsa = vb->m_VideoToolbar->videoSeekAfter->GetSelection();
+	int playAfter = 0, seekAfter = 0;
+	tab->Video->GetVideoListsOptions(&playAfter, &seekAfter);
 
-	if (vsa == 1 && pas < 2 && !nochangeline && rowChanged){
+	if (seekAfter == 1 && playAfter < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
 			if (vb->GetState() == Playing){ vb->Pause(); }
 			vb->Seek(line->Start.mstime);
@@ -443,8 +443,8 @@ done:
 		//return;
 	}
 
-	if (pas > 0 && autoPlay){
-		if (pas == 1){
+	if (playAfter > 0 && autoPlay){
+		if (playAfter == 1){
 			if (ABox){
 				wxWindow *focused = wxWindow::FindFocus();
 				wxCommandEvent evt; ABox->OnPlaySelection(evt);
@@ -452,10 +452,10 @@ done:
 			}
 		}
 		else{
-			if (tab->Video->IsShown() || tab->Video->m_IsFullscreen){
+			if (tab->Video->IsShown() || tab->Video->IsFullScreen()){
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
-				int playend = (nst > ed && pas > 2) ? nst : ed;
+				int playend = (nst > ed && playAfter > 2) ? nst : ed;
 				tab->Video->PlayLine(line->Start.mstime, tab->Video->GetPlayEndTime(playend));
 			}
 		}
@@ -466,7 +466,7 @@ done:
 	}
 
 	//Set time and differents in video text field
-	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
+	if (tab->Video->IsShown() && tab->Video->GetState() != None && seekAfter == 0){
 		tab->Video->RefreshTime();
 	}
 
@@ -1694,7 +1694,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		}
 	}
 
-	if (visible && (panel->Video->IsShown() || panel->Video->m_IsFullscreen)){
+	if (visible && (panel->Video->IsShown() || panel->Video->IsFullScreen())){
 		panel->Video->OpenSubs(text);
 		if (Visual > 0){ panel->Video->ResetVisual(); }
 		else if (panel->Video->GetState() == Paused){ panel->Video->Render(); }
@@ -2188,7 +2188,7 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		if (isPreview){
 			tab->Video->RemoveVisual();
 		}
-		tab->Video->m_VideoToolbar->DisableVisuals(isPreview);
+		tab->Video->DisableVisuals(isPreview);
 	}
 }
 

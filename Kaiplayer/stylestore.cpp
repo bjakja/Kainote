@@ -1079,19 +1079,6 @@ void StyleStore::OnStyleMove(wxCommandEvent& event)
 	else{ Store->SetSelections(sels); }
 }
 
-//void StyleStore::OnSelectionChanged(wxCommandEvent& event)
-//{
-//	if (cc && cc->IsShown()){
-//		int id = event.GetId();
-//		bool enableCommitOnSelected = event.GetInt() > 1 && cc->allowMultiEdition;
-//		if ((id == ID_ASSSTYLES && ASSStyle) || (id == ID_STORESTYLES && !ASSStyle)){
-//			bool commitOnSelectedEnabled = cc->btnCommitOnStyles->IsEnabled();
-//			if ((commitOnSelectedEnabled && !enableCommitOnSelected) || (!commitOnSelectedEnabled && enableCommitOnSelected))
-//				cc->btnCommitOnStyles->Enable(enableCommitOnSelected);
-//		}
-//	}
-//}
-
 bool StyleStore::HaveMultiEdition()
 {
 	if (ASSStyle){

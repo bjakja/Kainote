@@ -206,29 +206,6 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 	if (m_Visual){ m_Visual->Draw(m_Time); }
 
-	if (cross){
-		DRAWOUTTEXT(m_D3DFont, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF)
-			hr = m_D3DLine->SetWidth(3);
-		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&vectors[0], 2, 0xFF000000);
-		hr = m_D3DLine->Draw(&vectors[2], 2, 0xFF000000);
-		hr = m_D3DLine->End();
-		hr = m_D3DLine->SetWidth(1);
-		D3DXVECTOR2 v1[4];
-		v1[0] = vectors[0];
-		v1[0].x += 0.5f;
-		v1[1] = vectors[1];
-		v1[1].x += 0.5f;
-		v1[2] = vectors[2];
-		v1[2].y += 0.5f;
-		v1[3] = vectors[3];
-		v1[3].y += 0.5f;
-		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&v1[0], 2, 0xFFFFFFFF);
-		hr = m_D3DLine->Draw(&v1[2], 2, 0xFFFFFFFF);
-		hr = m_D3DLine->End();
-	}
-
 	if (videoControl->m_FullScreenProgressBar){
 		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
 			hr = m_D3DLine->SetWidth(1);
@@ -552,13 +529,6 @@ void RendererDirectShow::GetVideoSize(int *width, int *height)
 	wxSize sz = vplayer->GetVideoSize();
 	*width = sz.x;
 	*height = sz.y;
-}
-
-wxSize RendererDirectShow::GetVideoSize()
-{
-	wxSize sz;
-	sz = vplayer->GetVideoSize(); 
-	return sz; 
 }
 
 void RendererDirectShow::SetVolume(int vol)

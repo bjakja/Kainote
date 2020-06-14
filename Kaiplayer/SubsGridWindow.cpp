@@ -175,7 +175,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		Dialogue *acdial = /*(size > 0) ? */GetDialogue(MID(0, currentLine, size - 1));/* : NULL;*/
 		Dialogue *Dial = NULL;
 		TabPanel *tab = (TabPanel*)GetParent();
-		int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
+		int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 		int fw, fh, bfw, bfh;
 		wxColour kol;
@@ -560,7 +560,7 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 	Dialogue *acdial = /*(size > 0) ? */GetDialogue(MID(0, currentLine, size - 1));/* : NULL;*/
 	Dialogue *Dial = NULL;
 	TabPanel *tab = (TabPanel*)GetParent();
-	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
+	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 	double fw, fh, bfw, bfh;
 	wxColour col;
@@ -1456,8 +1456,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	TabPanel *pan = (TabPanel*)GetParent();
 	VideoCtrl *video = pan->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
-	int mvtal = video->m_VideoToolbar->videoSeekAfter->GetSelection();
-	int pas = video->m_VideoToolbar->videoPlayAfter->GetSelection();
+	int seekAfter = 0, playAfter = 0;
+	video->GetVideoListsOptions(&seekAfter, &seekAfter);
 	if (!outOfPosition) {
 		if (holding && alt)
 		{
@@ -1506,8 +1506,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			//2-left click and edition on pause
 			//3-left click and edition on pause and play
 
-			if (dclick || (click && lastActiveLine != row && (changeActive || !ctrl) && mvtal < 4 && mvtal > 0) && pas < 2){
-				SetVideoLineTime(event, mvtal);
+			if (dclick || (click && lastActiveLine != row && (changeActive || !ctrl) && seekAfter < 4 && seekAfter > 0) && playAfter < 2){
+				SetVideoLineTime(event, seekAfter);
 			}
 
 			if (click || dclick || left_up)

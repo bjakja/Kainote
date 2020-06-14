@@ -1509,6 +1509,101 @@ int VideoCtrl::GetDuration()
 	}
 }
 
+bool VideoCtrl::OpenSubs(wxString *textsubs, bool recreateFrame, bool fromFile, bool refresh)
+{
+	if (renderer){
+		return renderer->OpenSubs(textsubs, recreateFrame, fromFile);
+		if (refresh){
+			Render();
+		}
+	}
+}
+void VideoCtrl::Render(bool recreateFrame)
+{
+	if (renderer)
+		renderer->ChangePositionByFrame(recreateFrame);
+}
+void VideoCtrl::ChangePositionByFrame(int cpos)
+{
+	if (renderer)
+		renderer->ChangePositionByFrame(cpos);
+}
+bool VideoCtrl::RemoveVisual(bool noRefresh)
+{
+	if (renderer)
+		return renderer->RemoveVisual(noRefresh);
+}
+int VideoCtrl::GetFrameTime(bool start)
+{
+	if (renderer)
+		return renderer->GetFrameTime(start);
+}
+void VideoCtrl::SetZoom()
+{
+	if (renderer)
+		renderer->SetZoom();
+}
+void VideoCtrl::GoToNextKeyframe()
+{
+	if (renderer)
+		renderer->GoToNextKeyframe();
+}
+void VideoCtrl::GoToPrevKeyframe()
+{
+	if (renderer)
+		renderer->GoToPrevKeyframe();
+}
+void VideoCtrl::OpenKeyframes(const wxString &filename)
+{
+	if (renderer)
+		renderer->OpenKeyframes(filename);
+}
+void VideoCtrl::SetColorSpace(const wxString& matrix, bool render)
+{
+	if (renderer)
+		renderer->SetColorSpace(matrix, render);
+}
+int VideoCtrl::GetPlayEndTime(int time)
+{
+	if (renderer)
+		return renderer->GetPlayEndTime(time);
+}
+void VideoCtrl::DisableVisuals(bool disable)
+{
+	
+}
+void VideoCtrl::DeleteAudioCache()
+{
+	if (renderer)
+		renderer->DeleteAudioCache();
+}
+wxWindow *VideoCtrl::GetMessageWindowParent()
+{
+	return (m_IsFullscreen && m_FullScreenWindow) ? (wxWindow*)m_FullScreenWindow : Kai;
+}
+bool VideoCtrl::IsFullScreen()
+{
+	return m_IsFullscreen;
+}
+bool VideoCtrl::IsDirectShow()
+{
+	return m_IsDirectShow;
+}
+void VideoCtrl::GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter)
+{
+
+}
+void VideoCtrl::SetVisual(bool settext, bool noRefresh)
+{
+	if (renderer)
+		renderer->SetVisual(settext, noRefresh);
+}
+void VideoCtrl::ResetVisual()
+{
+	if (renderer)
+		renderer->ResetVisual();
+}
+
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)

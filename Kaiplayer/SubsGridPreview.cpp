@@ -199,7 +199,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	Dialogue *acdial = /*(size > 0) ? */previewGrid->GetDialogue(previewGrid->currentLine)/* : NULL*/;
 	Dialogue *Dial = NULL;
 
-	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
+	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 	int fw, fh, bfw, bfh;
 	wxColour kol;
@@ -705,8 +705,6 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	VideoCtrl *video = tabp->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
-	int mvtal = video->m_VideoToolbar->videoSeekAfter->GetSelection();
-	int pas = video->m_VideoToolbar->videoPlayAfter->GetSelection();
 	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {
 
 
