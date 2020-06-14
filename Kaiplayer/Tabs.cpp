@@ -1044,7 +1044,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	tab->SubsPath = path;
 	if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + L".ass"; }
 	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
-	tab->Video->vToolbar->DisableVisuals(ext != L"ass");
+	tab->Video->m_VideoToolbar->DisableVisuals(ext != L"ass");
 	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
 		tab->Grid->SetActive(active);
 	}
@@ -1080,8 +1080,8 @@ bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & pat
 		tab->KeyframesPath = keyframespath;
 	}
 
-	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
-	tab->Edit->Times->Enable(!tab->Video->IsDshow);
+	tab->Edit->Frames->Enable(!tab->Video->m_IsDirectShow);
+	tab->Edit->Times->Enable(!tab->Video->m_IsDirectShow);
 	if (position != -1)
 		tab->Video->Seek(position);
 
@@ -1124,7 +1124,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 		TabPanel *tab = *it;
 		//put path to recovery on crash
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath <<
-			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDshow <<
+			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->m_IsDirectShow <<
 			L"\r\nSubtitles: ";
 		if (!beforeClose){
 			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";

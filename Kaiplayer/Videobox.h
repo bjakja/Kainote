@@ -29,6 +29,9 @@ class TabPanel;
 
 class VideoCtrl : public wxWindow
 {
+	friend class RendererVideo;
+	friend class RendererDirectShow;
+	friend class RendererFFMS2;
 public:
 
 	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
@@ -50,17 +53,6 @@ public:
 	void SetAspectRatio(float AR);
 	void SetScaleAndZoom();
 	void ChangeOnScreenResolution(TabPanel *tab);
-	VideoSlider* vslider;
-	wxWindow* panel;
-	bool eater;
-	//bool fullarrow;
-	bool blockpaint;
-	wxMutex vbmutex;
-	wxMutex nextmutex;
-	wxTimer vtime;
-	KaiTextCtrl* mstimes;
-	VolSlider* volslider;
-	VideoToolbar *vToolbar;
 	void OpenEditor(bool esc = true);
 	void OnEndFile(wxCommandEvent& event);
 	void OnPrew();
@@ -78,44 +70,64 @@ public:
 	wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
-	void CaptureMouse(){ if (isFullscreen && TD){ TD->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
-	void ReleaseMouse(){ if (isFullscreen && TD){ TD->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
-	bool HasCapture(){ if (isFullscreen && TD){ return TD->HasCapture(); } else{ return wxWindow::HasCapture(); } }
+	void CaptureMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
+	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
+	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
 	bool SetCursor(const wxCursor &cursor){ 
-		if (isFullscreen && TD){ return TD->SetCursor(cursor); } 
+		if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->SetCursor(cursor); } 
 		else{ return wxWindow::SetCursor(cursor); } 
 	};
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetFont(const wxFont &font);
-	float coeffX, coeffY;
-	wxSize lastSize;
-	Fullscreen *TD;
-	bool hasArrow;
-	bool shownKeyframe;
-	wxString oldpath;
-	std::vector<RECT> MonRects;
-	bool isOnAnotherMonitor;
-	bool isFullscreen;
-
+	void GetVideoSize(int *width, int *height);
+	wxSize GetVideoSize();
+	void GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY);
+	int GetDuration();
+	bool OpenSubs(wxString *textsubs, bool recreateFrame = true, bool fromFile = false, bool refresh = false);
+	void Render(bool recreateFrame = true);
 private:
 
-	BitmapButton* bprev;
-	BitmapButton* bpause;
-	BitmapButton* bstop;
-	BitmapButton* bnext;
-	BitmapButton* bpline;
+	BitmapButton* m_ButtonPreviousFile;
+	BitmapButton* m_ButtonPause;
+	BitmapButton* m_ButtonStop;
+	BitmapButton* m_ButtonNextFile;
+	BitmapButton* m_ButtonPlayLine;
 
 	KainoteFrame *Kai;
 	TabPanel *tab;
+	VideoSlider* m_SeekingSlider;
+	wxWindow* m_VideoPanel;
+	bool eater;
+	bool m_blockRender;
+	wxMutex vbmutex;
+	wxMutex nextmutex;
+	wxTimer m_VideoTimeTimer;
+	KaiTextCtrl* m_TimesTextField;
+	VolSlider* m_VolumeSlider;
+	VideoToolbar *m_VideoToolbar;
 	int actualFile;
 	int id;
 	int prevchap;
-	int x;
-	int y;
-	int toolBarHeight = 22;
+	int m_X;
+	int m_Y;
+	int m_ToolBarHeight = 22;
 	wxArrayString files;
-	bool ismenu;
-	RendererVideo *renderer;
+	bool m_IsMenuShown;
+	RendererVideo *renderer = NULL;
+	wxSize m_VideoWindowLastSize;
+	Fullscreen *m_FullScreenWindow;
+	bool m_HasArrow;
+	bool m_ShownKeyframe;
+	wxString oldpath;
+	std::vector<RECT> MonRects;
+	bool m_IsOnAnotherMonitor = false;
+	bool m_IsFullscreen = false;
+	bool m_FullScreenProgressBar = false;
+	bool m_PanelOnFullscreen = false;
+	int m_PanelHeight = 44;
+	long m_AspectRatioX, m_AspectRatioY;
+	float m_AspectRatio = 0.f, m_FPS = 0.f;
+	bool m_IsDirectShow = false;
 
 	void OnSize(wxSizeEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
@@ -152,4 +164,19 @@ enum
 	MENU_CHAPTERS = 12000,
 	MENU_MONITORS = 15000,
 };
+
+#ifndef DRAWOUTTEXT
+#define DRAWOUTTEXT(font,text,rect,align,color)\
+	RECT tmpr=rect;\
+	tmpr.top--;tmpr.bottom--;\
+	tmpr.left--;tmpr.right--;\
+	for(int i=0; i<9; i++)\
+			{\
+		if(i%3==0 && i>0){tmpr.left=rect.left-1; tmpr.right=rect.right-1; tmpr.top++;tmpr.bottom++;}\
+		if(i!=4){font->DrawTextW(NULL, text.wchar_str(), -1, &tmpr, align, 0xFF000000 );}\
+		tmpr.left++;tmpr.right++;\
+			}\
+	font->DrawTextW(NULL, text.wchar_str(), -1, &rect, align, color );
+#endif
+
 

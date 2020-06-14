@@ -1456,8 +1456,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	TabPanel *pan = (TabPanel*)GetParent();
 	VideoCtrl *video = pan->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
-	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
-	int pas = video->vToolbar->videoPlayAfter->GetSelection();
+	int mvtal = video->m_VideoToolbar->videoSeekAfter->GetSelection();
+	int pas = video->m_VideoToolbar->videoPlayAfter->GetSelection();
 	if (!outOfPosition) {
 		if (holding && alt)
 		{

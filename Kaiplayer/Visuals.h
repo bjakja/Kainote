@@ -24,7 +24,8 @@
 
 
 enum{
-	CHANGEPOS = 1,//in case of changing change in SubsGrid selectrow
+	CROSS = 0,
+	CHANGEPOS,//in case of changing change in SubsGrid selectrow
 	MOVE,
 	SCALE,
 	ROTATEZ,
@@ -145,6 +146,22 @@ public:
 	bool putinBracket;
 	int numpos;
 	Dialogue *dial;
+};
+
+class Cross : public Visuals{
+public:
+	Cross();
+	void OnMouseEvent(wxMouseEvent &event);
+	void Draw(int time);
+	void DrawLines(wxPoint point);
+
+private:
+	D3DXVECTOR2 vectors[4];
+	RECT crossRect;
+	wxString coords;
+	bool cross;
+	wxMutex m_MutexCrossLines;
+	float coeffX, coeffY;
 };
 
 class Position : public Visuals

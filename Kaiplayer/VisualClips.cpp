@@ -514,11 +514,11 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		tool -= step;
 		VideoCtrl *vc = tab->Video;
-		if (vc->isFullscreen && vc->TD){
-			vc->TD->vToolbar->SetItemToggled(&tool);
+		if (vc->m_IsFullscreen && vc->m_FullScreenWindow){
+			vc->m_FullScreenWindow->vToolbar->SetItemToggled(&tool);
 		}
 		else{
-			vc->vToolbar->SetItemToggled(&tool);
+			vc->m_VideoToolbar->SetItemToggled(&tool);
 		}
 		return;
 	}
@@ -712,7 +712,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			SetClip(GetVisual(), true);
 			//grabbed= psize-1;
 			tool = 1;
-			tab->Video->vToolbar->SetItemToggled(&tool);
+			tab->Video->m_VideoToolbar->SetItemToggled(&tool);
 		}
 		else if (grabbed == -1){
 			tab->Video->CaptureMouse();

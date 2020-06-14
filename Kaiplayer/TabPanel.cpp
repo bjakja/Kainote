@@ -204,8 +204,8 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 	if (Video->GetState() != None && Video->IsShown()){
 		int ww, hh;
 		Video->CalcSize(&ww, &hh, w, h, false, true);
-		Video->SetMinSize(wxSize(ww, hh + Video->panelHeight));
-		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + Video->panelHeight);
+		Video->SetMinSize(wxSize(ww, hh + Video->m_PanelHeight));
+		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + Video->m_PanelHeight);
 	}
 	Edit->SetMinSize(wxSize(-1, h));
 	MainSizer->Layout();
@@ -218,7 +218,7 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		if (tab->Video->GetState() != None){
 			int ww, hh;
 			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
-			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->panelHeight));
+			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->m_PanelHeight));
 		}
 		tab->Edit->SetMinSize(wxSize(-1, h));
 		tab->MainSizer->Layout();

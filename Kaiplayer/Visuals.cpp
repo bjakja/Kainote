@@ -26,6 +26,9 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 	Visuals *visual;
 	switch (Visual)
 	{
+	case CROSS:
+		visual = new Cross();
+		break;
 	case CHANGEPOS:
 		visual = new Position();
 		break;
@@ -376,8 +379,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	if (tbl && tbl[6] < 4){
 		VideoCtrl *video = tab->Video;
-		float fps = video->fps;
-		bool dshow = video->IsDshow;
+		float fps = video->m_FPS;
+		bool dshow = video->m_IsDirectShow;
 		int startTime = ZEROIT(edit->line->Start.mstime);
 		int endTime = ZEROIT(edit->line->End.mstime);
 		int framestart = (dshow) ? (((float)startTime / 1000.f) * fps) + 1 : video->VFF->GetFramefromMS(startTime);

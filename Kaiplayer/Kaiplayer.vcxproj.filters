@@ -221,9 +221,6 @@
     <ClCompile Include="VideoFullscreen.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="VideoRenderer.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="VideoSlider.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -399,6 +396,9 @@
       <Filter>Source Files\Video</Filter>
     </ClCompile>
     <ClCompile Include="RendererVideo.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualCross.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
   </ItemGroup>
@@ -659,9 +659,6 @@
       <Filter>Source Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoFullscreen.h">
-      <Filter>Source Files\Video</Filter>
-    </ClInclude>
-    <ClInclude Include="VideoRenderer.h">
       <Filter>Source Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoSlider.h">

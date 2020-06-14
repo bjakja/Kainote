@@ -569,6 +569,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="TextEditorTagList.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
+    <ClCompile Include="VisualCross.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
     <ClCompile Include="StyleChange.cpp" />
@@ -607,7 +608,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Videobox.cpp" />
     <ClCompile Include="VideoFfmpeg.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
-    <ClCompile Include="VideoRenderer.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
     <ClCompile Include="VisualMove.cpp" />
@@ -729,7 +729,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Videobox.h" />
     <ClInclude Include="VideoFfmpeg.h" />
     <ClInclude Include="VideoFullscreen.h" />
-    <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="Visuals.h" />

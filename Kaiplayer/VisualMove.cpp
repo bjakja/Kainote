@@ -218,8 +218,8 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
 		VideoCtrl *video = tab->Video;
-		float fps = video->fps;
-		bool dshow = video->IsDshow;
+		float fps = video->m_FPS;
+		bool dshow = video->m_IsDirectShow;
 		int startTime = ZEROIT(_dial->Start.mstime);
 		int endTime = ZEROIT(_dial->End.mstime);
 		int framestart = (dshow) ? (((float)startTime / 1000.f) * fps) + 1 : video->VFF->GetFramefromMS(startTime);

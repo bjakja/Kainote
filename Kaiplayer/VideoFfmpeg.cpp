@@ -30,7 +30,7 @@
 
 
 
-VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWindow *progressSinkWindow, bool *_success)
+VideoFfmpeg::VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *_success)
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
 	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))

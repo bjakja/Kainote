@@ -970,7 +970,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 		tab->Edit->HideControls();
 		Kai->UpdateToolbar();
 		if (oldformat == ASS || subsFormat == ASS){
-			tab->Video->vToolbar->DisableVisuals(subsFormat != ASS);
+			tab->Video->m_VideoToolbar->DisableVisuals(subsFormat != ASS);
 		}
 	}
 
@@ -1019,8 +1019,8 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 	if (Edit->Visual < CHANGEPOS){
 
-		if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); }
-		int opt = vb->vToolbar->videoSeekAfter->GetSelection();
+		if (vb->IsShown() || vb->m_IsFullscreen){ vb->OpenSubs(GetVisible()); }
+		int opt = vb->m_VideoToolbar->videoSeekAfter->GetSelection();
 		if (opt > 1){
 			if (vb->GetState() == Paused || (vb->GetState() == Playing && (opt == 3 || opt == 5))){
 				vb->Seek(Edit->line->Start.mstime);
@@ -1168,9 +1168,9 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 				vb->SetVisual(true);
 			}
 			else{
-				if (vb->IsShown() || vb->isFullscreen){ vb->OpenSubs(GetVisible()); }
+				if (vb->IsShown() || vb->m_IsFullscreen){ vb->OpenSubs(GetVisible()); }
 
-				int opt = vb->vToolbar->videoSeekAfter->GetSelection();
+				int opt = vb->m_VideoToolbar->videoSeekAfter->GetSelection();
 				if (opt > 1){
 					if (vb->GetState() == Paused || (vb->GetState() == Playing && (opt == 3 || opt == 5))){
 						vb->Seek(Edit->line->Start.mstime);

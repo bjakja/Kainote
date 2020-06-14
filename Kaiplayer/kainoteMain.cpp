@@ -316,7 +316,7 @@ KainoteFrame::~KainoteFrame()
 	Options.SetTable(SUBS_RECENT_FILES, subsrec);
 	Options.SetTable(VIDEO_RECENT_FILES, videorec);
 	Options.SetTable(AUDIO_RECENT_FILES, audsrec);
-	Options.SetInt(VIDEO_VOLUME, GetTab()->Video->volslider->GetValue());
+	Options.SetInt(VIDEO_VOLUME, GetTab()->Video->m_VolumeSlider->GetValue());
 	Notebook::SaveLastSession(true);
 	//Tabs->Destroy();
 	//Tabs = NULL;
@@ -792,7 +792,7 @@ void KainoteFrame::OnConversion(char form)
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
-	tab->Video->vToolbar->DisableVisuals(form != ASS);
+	tab->Video->m_VideoToolbar->DisableVisuals(form != ASS);
 }
 
 
@@ -883,7 +883,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 		wxString name = path.BeforeLast(L'.');
 		path = path.BeforeLast(L'\\');
 
-		wxWindow *_parent = (atab->Video->isFullscreen) ? (wxWindow*)atab->Video->TD : this;
+		wxWindow *_parent = (atab->Video->m_IsFullscreen) ? (wxWindow*)atab->Video->m_FullScreenWindow : this;
 		wxFileDialog saveFileDialog(_parent, _("Zapisz plik napisów"),
 			path, name, extens, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
@@ -947,7 +947,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		&& !(!issubs && tab->SubsPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))){*/
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
-		if (!issubs && found && !fulls && !tab->Video->isFullscreen){
+		if (!issubs && found && !fulls && !tab->Video->m_IsFullscreen){
 			if (tab->SubsPath == secondFileName || KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast(L'\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
@@ -959,7 +959,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	}
 
 	if (Options.GetBool(OPEN_SUBS_IN_NEW_TAB) && tab->SubsPath != L"" &&
-		!tab->Video->isFullscreen && issubs){
+		!tab->Video->m_IsFullscreen && issubs){
 		Tabs->AddPage(true);
 		tab = Tabs->Page(Tabs->Size() - 1);
 		nonewtab = false;
@@ -997,7 +997,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
 
 		//seek for video / audio and (rest writed in future)
-		if (issubs && !fulls && !tab->Video->isFullscreen){
+		if (issubs && !fulls && !tab->Video->m_IsFullscreen){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
 			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
 			wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
@@ -1077,14 +1077,14 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
-			tab->Video->vToolbar->DisableVisuals(ext != L"ass");
+			tab->Video->m_VideoToolbar->DisableVisuals(ext != L"ass");
 		}
 		SetRecent();
 		//set texts on window title and tab
 		Label();
 		SetSubsResolution(!Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 		//turn on editor
-		if (!tab->editor && !fulls && !tab->Video->isFullscreen){ HideEditor(); }
+		if (!tab->editor && !fulls && !tab->Video->m_IsFullscreen){ HideEditor(); }
 		//set color space
 		if (!found){
 			if (tab->Video->VFF && tab->Video->vstate != None && tab->Grid->subsFormat == ASS){
@@ -1101,8 +1101,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 			tab->Thaw();
 		return false;
 	}
-	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
-	tab->Edit->Times->Enable(!tab->Video->IsDshow);
+	tab->Edit->Frames->Enable(!tab->Video->m_IsDirectShow);
+	tab->Edit->Times->Enable(!tab->Video->m_IsDirectShow);
 
 	//fix to not delete audiocache when using from OpenFiles
 	if (freeze)
@@ -1555,7 +1555,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 
 			Label();
 			SetSubsResolution(askForRes);
-			tab->Video->vToolbar->DisableVisuals(ext != L"ass");
+			tab->Video->m_VideoToolbar->DisableVisuals(ext != L"ass");
 		}
 		if (i < videosSize){
 			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
@@ -1563,8 +1563,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			if (!isload){
 				break;
 			}
-			tab->Edit->Frames->Enable(!tab->Video->IsDshow);
-			tab->Edit->Times->Enable(!tab->Video->IsDshow);
+			tab->Edit->Frames->Enable(!tab->Video->m_IsDirectShow);
+			tab->Edit->Times->Enable(!tab->Video->m_IsDirectShow);
 
 		}
 		tab->ShiftTimes->Contents();
@@ -1605,9 +1605,12 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	wxString name = (!cur->editor) ? cur->VideoName : cur->SubsName;
 	SetLabel(whiter + name + L" - " + Options.progname + L" " + wxString(INSTRUCTIONS));
 	if (cur->Video->GetState() != None){
-		SetStatusText(getfloat(cur->Video->fps) + L" FPS", 4);
+		float FPS, AspectRatio;
+		int AspectRatiox, AspectRatioY;
+		cur->Video->GetFPSAndAspectRatio(&FPS, &AspectRatio, &AspectRatiox, &AspectRatioY);
+		SetStatusText(getfloat(FPS) + L" FPS", 4);
 		wxString tar;
-		tar << cur->Video->ax << L" : " << cur->Video->ay;
+		tar << AspectRatiox << L" : " << AspectRatioY;
 		SetStatusText(tar, 6);
 		int x, y;
 		cur->Video->GetVideoSize(&x, &y);
@@ -1678,14 +1681,14 @@ void KainoteFrame::HideEditor(bool save)
 		cur->MainSizer->Detach(cur->Video);
 		cur->VideoEditboxSizer->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->panelHeight = 66;
-		cur->Video->vToolbar->Show();
-		if (cur->Video->GetState() != None && !cur->Video->isFullscreen){
+		cur->Video->m_PanelHeight = 66;
+		cur->Video->m_VideoToolbar->Show();
+		if (cur->Video->GetState() != None && !cur->Video->m_IsFullscreen){
 			int sx, sy, vw, vh;
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 			if (vh < 350){ vh = 350, vw = 500; }
 			cur->Video->CalcSize(&sx, &sy, vw, vh);
-			cur->Video->SetMinSize(wxSize(sx, sy + cur->Video->panelHeight));
+			cur->Video->SetMinSize(wxSize(sx, sy + cur->Video->m_PanelHeight));
 		}
 		else{ cur->Video->Hide(); }
 		if (Options.GetBool(SHIFT_TIMES_ON)){
@@ -1695,12 +1698,12 @@ void KainoteFrame::HideEditor(bool save)
 		Label();
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(); }
 		SetSubsResolution(false);
-		if (cur->Video->isFullscreen)
-			cur->Video->TD->HideToolbar(false);
+		if (cur->Video->m_IsFullscreen)
+			cur->Video->m_FullScreenWindow->HideToolbar(false);
 	}
 	else{//Turn off of editor
 		cur->Video->RemoveVisual();
-		cur->Video->panelHeight = 44;
+		cur->Video->m_PanelHeight = 44;
 		cur->ShiftTimes->Hide();
 
 		if (!cur->Video->IsShown()){ cur->Video->Show(); }
@@ -1709,17 +1712,17 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->MainSizer->Add(cur->Video, 1, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->vToolbar->Hide();
+		cur->Video->m_VideoToolbar->Hide();
 		//can crush after turn on of editor
-		if (cur->Video->GetState() != None && !cur->Video->isFullscreen && !IsMaximized()){
+		if (cur->Video->GetState() != None && !cur->Video->m_IsFullscreen && !IsMaximized()){
 			int sx, sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);
 			sizex -= borders.left + borders.right;
-			sizey -= (cur->Video->panelHeight + borders.bottom + borders.top);
+			sizey -= (cur->Video->m_PanelHeight + borders.bottom + borders.top);
 
 			cur->Video->CalcSize(&sx, &sy, sizex, sizey, false, true);
 
-			SetClientSize(sx + borders.left + borders.right, sy + cur->Video->panelHeight + borders.bottom + borders.top);
+			SetClientSize(sx + borders.left + borders.right, sy + cur->Video->m_PanelHeight + borders.bottom + borders.top);
 
 		}
 		cur->Video->SetFocus();
@@ -1730,8 +1733,8 @@ void KainoteFrame::HideEditor(bool save)
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
 		SetStatusText(L"", 7);
-		if (cur->Video->isFullscreen)
-			cur->Video->TD->HideToolbar(true);
+		if (cur->Video->m_IsFullscreen)
+			cur->Video->m_FullScreenWindow->HideToolbar(true);
 
 		if (FR && FR->IsShown())
 			FR->Show(false);
@@ -1780,7 +1783,7 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 		wxString subsPath = (ext != subsExt && !(ext == L"txt" && subsExt == L"sub")) ?
 			subsName + L"." + ext : atab->SubsName;
 
-		wxWindow *_parent = (atab->Video->isFullscreen) ? (wxWindow*)atab->Video->TD : this;
+		wxWindow *_parent = (atab->Video->m_IsFullscreen) ? (wxWindow*)atab->Video->m_FullScreenWindow : this;
 		int answer = KaiMessageBox(wxString::Format(_("Zapisać napisy o nazwie \"%s\" przed %s?"),
 			subsPath, (mode == 0) ? _("zamknięciem programu") :
 			(mode == 1) ? _("zamknięciem zakładki") :
@@ -1934,7 +1937,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		else if (i == GLOBAL_VIEW_AUDIO || i == GLOBAL_CLOSE_AUDIO){ enable = tab->Edit->ABox != 0; }
 		else if ((i == GLOBAL_VIEW_VIDEO || i == GLOBAL_VIEW_ALL) || i == GLOBAL_AUDIO_FROM_VIDEO || i == GLOBAL_VIEW_ONLY_VIDEO){
 			enable = tab->Video->GetState() != None;
-			if (i != GLOBAL_AUDIO_FROM_VIDEO){ enable = (enable && !tab->Video->isOnAnotherMonitor); }
+			if (i != GLOBAL_AUDIO_FROM_VIDEO){ enable = (enable && !tab->Video->m_IsOnAnotherMonitor); }
 		}
 		else if (i == GLOBAL_SAVE_TRANSLATION){ enable = tlmode; }
 		else if (i == GLOBAL_SAVE_SUBS){ if (!tab->Grid->IsModified()){ enable = false; } }

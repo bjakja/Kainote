@@ -17,6 +17,7 @@
 #include "RendererDirectShow.h"
 #include "kainoteApp.h"
 #include "CsriMod.h"
+#include "OpennWrite.h"
 
 #pragma comment(lib, "Dxva2.lib")
 const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02 } };
@@ -35,12 +36,12 @@ RendererDirectShow::~RendererDirectShow()
 
 bool RendererDirectShow::InitRendererDX()
 {
-	HR(d3device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &bars), _("Nie mo¿na stworzyæ powierzchni"));
-	HR(DXVA2CreateVideoService(d3device, IID_IDirectXVideoProcessorService, (VOID**)&dxvaService),
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie mo¿na stworzyæ powierzchni"));
+	HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
 		_("Nie mo¿na stworzyæ DXVA processor service"));
 	DXVA2_VideoDesc videoDesc;
-	videoDesc.SampleWidth = vwidth;
-	videoDesc.SampleHeight = vheight;
+	videoDesc.SampleWidth = m_Width;
+	videoDesc.SampleHeight = m_Height;
 	videoDesc.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
 	videoDesc.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
 	videoDesc.SampleFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;//EX_COLOR_INFO[g_ExColorInfo][0];
@@ -57,7 +58,7 @@ bool RendererDirectShow::InitRendererDX()
 	UINT count, count1;//, count2;
 	GUID* guids = NULL;
 
-	HR(dxvaService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie mo¿na pobraæ GUIDów DXVA"));
+	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie mo¿na pobraæ GUIDów DXVA"));
 	D3DFORMAT* formats = NULL;
 	//D3DFORMAT* formats2 = NULL;
 	bool isgood = false;
@@ -65,7 +66,7 @@ bool RendererDirectShow::InitRendererDX()
 	DXVA2_VideoProcessorCaps DXVAcaps;
 	HRESULT hr;
 	for (UINT i = 0; i < count; i++){
-		hr = dxvaService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
+		hr = m_DXVAService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
 		if (FAILED(hr)){ KaiLog(_("Nie mo¿na uzyskaæ formatów DXVA")); continue; }
 		for (UINT j = 0; j < count1; j++)
 		{
@@ -80,18 +81,18 @@ bool RendererDirectShow::InitRendererDX()
 		if (!isgood){ KaiLog(_("Ten format nie jest obs³ugiwany przez DXVA")); continue; }
 		isgood = false;
 
-		hr = dxvaService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
+		hr = m_DXVAService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
 		if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiod³o")); continue; }
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0){
 			continue;
 		}
 
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
-		hr = dxvaService->CreateSurface(vwidth, vheight, 0, d3dformat, D3DPOOL_DEFAULT, 0,
-			DXVA2_VideoSoftwareRenderTarget, &MainStream, NULL);
+		hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
+			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, NULL);
 		if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie mo¿na stworzyæ powierzchni DXVA %i"), (int)i)); continue; }
 
-		hr = dxvaService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &dxvaProcessor);
+		hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &m_DXVAProcessor);
 		if (FAILED(hr)){ KaiLog(_("Nie mo¿na stworzyæ processora DXVA")); continue; }
 		dxvaGuid = guids[i]; isgood = true;
 		break;
@@ -104,13 +105,13 @@ bool RendererDirectShow::InitRendererDX()
 
 void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 {
-	wxCriticalSectionLocker lock(mutexRender);
-	resized = false;
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	m_VideoResized = false;
 	HRESULT hr = S_OK;
 
-	if (devicelost)
+	if (m_DeviceLost)
 	{
-		if (FAILED(hr = d3device->TestCooperativeLevel()))
+		if (FAILED(hr = m_D3DDevice->TestCooperativeLevel()))
 		{
 			if (D3DERR_DEVICELOST == hr ||
 				D3DERR_DRIVERINTERNALERROR == hr){
@@ -122,31 +123,31 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 				Clear();
 				InitDX();
 				RecreateSurface();
-				if (Visual){
-					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
-						backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+				if (m_Visual){
+					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
+						m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 				}
-				devicelost = false;
+				m_DeviceLost = false;
 				Render(true, false);
 				return;
 			}
 			return;
 		}
-		devicelost = false;
+		m_DeviceLost = false;
 	}
 
-	hr = d3device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	DXVA2_VideoProcessBltParams blt = { 0 };
 	DXVA2_VideoSample samples = { 0 };
-	LONGLONG start_100ns = time * 10000;
+	LONGLONG start_100ns = m_Time * 10000;
 	LONGLONG end_100ns = start_100ns + 170000;
 	blt.TargetFrame = start_100ns;
-	blt.TargetRect = windowRect;
+	blt.TargetRect = m_WindowRect;
 
 	// DXVA2_VideoProcess_Constriction
-	blt.ConstrictionSize.cx = windowRect.right - windowRect.left;
-	blt.ConstrictionSize.cy = windowRect.bottom - windowRect.top;
+	blt.ConstrictionSize.cx = m_WindowRect.right - m_WindowRect.left;
+	blt.ConstrictionSize.cy = m_WindowRect.bottom - m_WindowRect.top;
 	DXVA2_AYUVSample16 color;
 
 	color.Cr = 0x8000;
@@ -179,40 +180,40 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 	samples.SampleFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
 
-	samples.SrcSurface = MainStream;
+	samples.SrcSurface = m_MainSurface;
 
-	samples.SrcRect = mainStreamRect;
+	samples.SrcRect = m_MainStreamRect;
 
-	samples.DstRect = backBufferRect;
+	samples.DstRect = m_BackBufferRect;
 
 	// DXVA2_VideoProcess_PlanarAlpha
 	samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 
-	hr = dxvaProcessor->VideoProcessBlt(bars, &blt, &samples, 1, NULL);
+	hr = m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &samples, 1, NULL);
 	
-	hr = d3device->BeginScene();
+	hr = m_D3DDevice->BeginScene();
 
 #if byvertices
 
 
 	// Render the vertex buffer contents
-	hr = d3device->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
-	hr = d3device->SetVertexShader(NULL);
-	hr = d3device->SetFVF(D3DFVF_CUSTOMVERTEX);
-	hr = d3device->SetTexture(0, texture);
-	hr = d3device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
+	hr = m_D3DDevice->SetVertexShader(NULL);
+	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+	hr = m_D3DDevice->SetTexture(0, texture);
+	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
 #endif
 
-	if (Visual){ Visual->Draw(time); }
+	if (m_Visual){ m_Visual->Draw(m_Time); }
 
 	if (cross){
-		DRAWOUTTEXT(m_font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF)
-			hr = lines->SetWidth(3);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[0], 2, 0xFF000000);
-		hr = lines->Draw(&vectors[2], 2, 0xFF000000);
-		hr = lines->End();
-		hr = lines->SetWidth(1);
+		DRAWOUTTEXT(m_D3DFont, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF)
+			hr = m_D3DLine->SetWidth(3);
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&vectors[0], 2, 0xFF000000);
+		hr = m_D3DLine->Draw(&vectors[2], 2, 0xFF000000);
+		hr = m_D3DLine->End();
+		hr = m_D3DLine->SetWidth(1);
 		D3DXVECTOR2 v1[4];
 		v1[0] = vectors[0];
 		v1[0].x += 0.5f;
@@ -222,32 +223,32 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 		v1[2].y += 0.5f;
 		v1[3] = vectors[3];
 		v1[3].y += 0.5f;
-		hr = lines->Begin();
-		hr = lines->Draw(&v1[0], 2, 0xFFFFFFFF);
-		hr = lines->Draw(&v1[2], 2, 0xFFFFFFFF);
-		hr = lines->End();
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&v1[0], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->Draw(&v1[2], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->End();
 	}
 
-	if (fullScreenProgressBar){
-		DRAWOUTTEXT(m_font, pbtime, progressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
-			hr = lines->SetWidth(1);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[4], 5, 0xFF000000);
-		hr = lines->Draw(&vectors[9], 5, 0xFFFFFFFF);
-		hr = lines->End();
-		hr = lines->SetWidth(7);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[14], 2, 0xFFFFFFFF);
-		hr = lines->End();
+	if (videoControl->m_FullScreenProgressBar){
+		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
+			hr = m_D3DLine->SetWidth(1);
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&vectors[4], 5, 0xFF000000);
+		hr = m_D3DLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+		hr = m_D3DLine->End();
+		hr = m_D3DLine->SetWidth(7);
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->End();
 	}
-	if (hasZoom){ DrawZoom(); }
+	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
-	hr = d3device->EndScene();
-	hr = d3device->Present(NULL, &windowRect, NULL, NULL);
+	hr = m_D3DDevice->EndScene();
+	hr = m_D3DDevice->Present(NULL, &m_WindowRect, NULL, NULL);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
-		if (!devicelost){
-			devicelost = true;
+		if (!m_DeviceLost){
+			m_DeviceLost = true;
 		}
 		Render(true, false);
 	}
@@ -256,10 +257,10 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 void RendererDirectShow::RecreateSurface()
 {
-	int all = vheight * pitch;
+	int all = m_Height * m_Pitch;
 	char *cpy = new char[all];
 	byte *cpy1 = (byte*)cpy;
-	byte *data1 = (byte*)frameBuffer;
+	byte *data1 = (byte*)m_FrameBuffer;
 	memcpy(cpy1, data1, all);
 	DrawTexture(cpy1);
 	delete[] cpy;
@@ -267,17 +268,17 @@ void RendererDirectShow::RecreateSurface()
 
 bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
 {
-	wxMutexLocker lock(mutexOpenFile);
+	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	if (vstate == Playing){ videoControl->Stop(); }
+	if (m_State == Playing){ videoControl->Stop(); }
 
-	if (vstate != None){
-		resized = seek = cross = fullScreenProgressBar = false;
-		vstate = None;
+	if (m_State != None){
+		m_VideoResized = seek = videoControl->m_FullScreenProgressBar = false;
+		m_State = None;
 		Clear();
 	}
-	time = 0;
-	numframe = 0;
+	m_Time = 0;
+	m_Frame = 0;
 
 
 	if (!vplayer){ vplayer = new DShowPlayer(videoControl); }
@@ -286,33 +287,33 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 		return false;
 	}
 	wxSize videoSize = vplayer->GetVideoSize();
-	vwidth = videoSize.x; vheight = videoSize.y;
-	if (vwidth % 2 != 0){ vwidth++; }
+	m_Width = videoSize.x; m_Height = videoSize.y;
+	if (m_Width % 2 != 0){ m_Width++; }
 
-	pitch = vwidth * vplayer->inf.bytes;
-	fps = vplayer->inf.fps;
-	vformat = vplayer->inf.CT;
-	ax = vplayer->inf.ARatioX;
-	ay = vplayer->inf.ARatioY;
-	d3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
-		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	m_Pitch = m_Width * vplayer->inf.bytes;
+	videoControl->m_FPS = vplayer->inf.fps;
+	m_Format = vplayer->inf.CT;
+	videoControl->m_AspectRatioX = vplayer->inf.ARatioX;
+	videoControl->m_AspectRatioY = vplayer->inf.ARatioY;
+	m_D3DFormat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
+		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 
-	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
-	if (player){
+	m_SwapFrame = (m_Format == 0 && !vplayer->HasVobsub());
+	if (m_AudioPlayer){
 		Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
 	}
 
 	diff = 0;
-	frameDuration = (1000.0f / fps);
-	if (ay == 0 || ax == 0){ AR = 0.0f; }
-	else{ AR = (float)ay / (float)ax; }
+	m_FrameDuration = (1000.0f / videoControl->m_FPS);
+	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0){ videoControl->m_AspectRatio = 0.0f; }
+	else{ videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
 
-	mainStreamRect.bottom = vheight;
-	mainStreamRect.right = vwidth;
-	mainStreamRect.left = 0;
-	mainStreamRect.top = 0;
-	if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
-	frameBuffer = new char[vheight*pitch];
+	m_MainStreamRect.bottom = m_Height;
+	m_MainStreamRect.right = m_Width;
+	m_MainStreamRect.left = 0;
+	m_MainStreamRect.top = 0;
+	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	m_FrameBuffer = new char[m_Height*m_Pitch];
 
 	if (!InitDX()){ return false; }
 	UpdateRects();
@@ -324,11 +325,11 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 		framee->strides[i] = NULL;
 	}
 
-	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 :
-		(vformat == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+	framee->pixfmt = (m_Format == 5) ? CSRI_F_YV12A : (m_Format == 3) ? CSRI_F_YV12 :
+		(m_Format == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
 
-	format->width = vwidth;
-	format->height = vheight;
+	format->width = m_Width;
+	format->height = m_Height;
 	format->pixfmt = framee->pixfmt;
 
 	if (!vobsub){
@@ -338,49 +339,103 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 		SAFE_DELETE(textsubs);
 		OpenSubs(0, false);
 	}
-	vstate = Stopped;
-	vplayer->GetChapters(&videoControl->chapters);
+	m_State = Stopped;
+	vplayer->GetChapters(&m_Chapters);
 
-	if (Visual){
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
-			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+	if (m_Visual){
+		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
+			m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	}
+	return true;
+}
+
+bool RendererDirectShow::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
+{
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (instance) csri_close(instance);
+	instance = NULL;
+
+	if (!textsubs) {
+		if (redraw && m_State != None && m_FrameBuffer){
+			RecreateSurface();
+		}
+		m_HasDummySubs = true;
+		return true;
+	}
+
+	if (m_HasVisualEdition && m_Visual->Visual == VECTORCLIP && m_Visual->dummytext){
+		wxString toAppend = m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
+		if (fromFile){
+			OpenWrite ow(*textsubs, false);
+			ow.PartFileWrite(toAppend);
+			ow.CloseFile();
+		}
+		else{
+			(*textsubs) << toAppend;
+		}
+	}
+
+	m_HasDummySubs = !fromFile;
+
+	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
+	int size = strlen(buffer);
+
+
+	// Select renderer
+	csri_rend *vobsub = Options.GetVSFilter();
+	if (!vobsub){ KaiLog(_("CSRI odmówi³o pos³uszeñstwa.")); delete textsubs; return false; }
+
+	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
+	if (!instance){ KaiLog(_("B³¹d, instancja VobSuba nie zosta³a utworzona.")); delete textsubs; return false; }
+
+	if (!format || csri_request_fmt(instance, format)){
+		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		csri_close(instance);
+		instance = NULL;
+		delete textsubs; return false;
+	}
+
+	if (redraw && m_State != None && m_FrameBuffer){
+		RecreateSurface();
+	}
+
+	delete textsubs;
 	return true;
 }
 
 bool RendererDirectShow::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || (videoControl->TD && videoControl->TD->IsShown()))){ return false; }
-	if (hasVisualEdition){
+	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
+	if (m_HasVisualEdition){
 		wxString *txt = tab->Grid->SaveText();
 		OpenSubs(txt, false, true);
-		SAFE_DELETE(Visual->dummytext);
-		hasVisualEdition = false;
+		SAFE_DELETE(m_Visual->dummytext);
+		m_HasVisualEdition = false;
 	}
-	else if (hasDummySubs && tab->editor){
+	else if (m_HasDummySubs && tab->editor){
 		OpenSubs(tab->Grid->SaveText(), false, true);
 	}
 
-	if (end > 0){ playend = end; }
-	playend = 0;
-	if (time < GetDuration() - frameDuration) 
+	if (end > 0){ m_PlayEndTime = end; }
+	m_PlayEndTime = 0;
+	if (m_Time < GetDuration() - m_FrameDuration) 
 		vplayer->Play(); 
 
-	vstate = Playing;
+	m_State = Playing;
 	return true;
 }
 
 
 bool RendererDirectShow::Pause()
 {
-	if (vstate == Playing){
+	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
-		vstate = Paused;
+		m_State = Paused;
 		vplayer->Pause();
 		
 	}
-	else if (vstate != None){
+	else if (m_State != None){
 		Play();
 	}
 	else{ return false; }
@@ -389,12 +444,12 @@ bool RendererDirectShow::Pause()
 
 bool RendererDirectShow::Stop()
 {
-	if (vstate == Playing){
+	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
-		vstate = Stopped;
+		m_State = Stopped;
 		vplayer->Stop();
-		playend = 0;
-		time = 0;
+		m_PlayEndTime = 0;
+		m_Time = 0;
 		return true;
 	}
 	return false;
@@ -403,27 +458,27 @@ bool RendererDirectShow::Stop()
 void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
 {
 
-	bool playing = vstate == Playing;
-	time = MID(0, _time, GetDuration());
+	bool playing = m_State == Playing;
+	m_Time = MID(0, _time, GetDuration());
 	if (corect){
-		time /= frameDuration;
-		if (starttime){ time++; }
-		time *= frameDuration;
+		m_Time /= m_FrameDuration;
+		if (starttime){ m_Time++; }
+		m_Time *= m_FrameDuration;
 	}
-	playend = 0;
+	m_PlayEndTime = 0;
 	seek = true;
-	vplayer->SetPosition(time);
-	if (hasVisualEdition){
-		SAFE_DELETE(Visual->dummytext);
-		if (Visual->Visual == VECTORCLIP){
-			Visual->SetClip(Visual->GetVisual(), true, false, false);
+	vplayer->SetPosition(m_Time);
+	if (m_HasVisualEdition){
+		SAFE_DELETE(m_Visual->dummytext);
+		if (m_Visual->Visual == VECTORCLIP){
+			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
 		}
 		else{
 			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-			if (vstate == Playing){ hasVisualEdition = false; }
+			if (m_State == Playing){ m_HasVisualEdition = false; }
 		}
 	}
-	else if (hasDummySubs && tab->editor){
+	else if (m_HasDummySubs && tab->editor){
 		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
 	}
 	
@@ -436,40 +491,40 @@ int VideoRenderer::GetDuration()
 
 int RendererDirectShow::GetFrameTime(bool start)
 {
-	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
-	return time + halfFrame;
+	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
+	return m_Time + halfFrame;
 }
 
 void RendererDirectShow::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
 {
 	if (!retStart || !retEnd){ return; }
 	
-	int frameStartTime = (((float)startTime / 1000.f) * fps);
-	int frameEndTime = (((float)endTime / 1000.f) * fps);
+	int frameStartTime = (((float)startTime / 1000.f) * videoControl->m_FPS);
+	int frameEndTime = (((float)endTime / 1000.f) * videoControl->m_FPS);
 	frameStartTime++;
 	frameEndTime++;
-	*retStart = (((frameStartTime * 1000) / fps) + 0.5f) - startTime;
-	*retEnd = (((frameEndTime * 1000) / fps) + 0.5f) - endTime;
+	*retStart = (((frameStartTime * 1000) / videoControl->m_FPS) + 0.5f) - startTime;
+	*retEnd = (((frameEndTime * 1000) / videoControl->m_FPS) + 0.5f) - endTime;
 
 }
 
 int RendererDirectShow::GetFrameTimeFromTime(int _time, bool start)
 {
-	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
+	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
 	return _time + halfFrame;
 }
 
 int RendererDirectShow::GetFrameTimeFromFrame(int frame, bool start)
 {
-	int halfFrame = (start) ? -(frameDuration / 2.0f) : (frameDuration / 2.0f) + 1;
-	return (frame * (1000.f / fps)) + halfFrame;
+	int halfFrame = (start) ? -(m_FrameDuration / 2.0f) : (m_FrameDuration / 2.0f) + 1;
+	return (frame * (1000.f / videoControl->m_FPS)) + halfFrame;
 }
 
 int RendererDirectShow::GetPlayEndTime(int _time)
 {
 	int newTime = _time;
-	newTime /= frameDuration;
-	newTime = (newTime * frameDuration) + 1.f;
+	newTime /= m_FrameDuration;
+	newTime = (newTime * m_FrameDuration) + 1.f;
 	if (_time == newTime && newTime % 10 == 0){ newTime -= 5; }
 	return newTime;
 }
@@ -484,7 +539,7 @@ void RendererDirectShow::OpenKeyframes(const wxString &filename)
 		}
 	}
 	//if there is no FFMS2 or audiobox we store keyframes path;
-	keyframesFileName = filename;
+	m_KeyframesFileName = filename;
 }
 
 void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)
@@ -508,22 +563,22 @@ wxSize RendererDirectShow::GetVideoSize()
 
 void RendererDirectShow::SetVolume(int vol)
 {
-	if (vstate == None){ return; }
+	if (m_State == None){ return; }
 	vplayer->SetVolume(vol);
 }
 
 int RendererDirectShow::GetVolume()
 {
-	if (vstate == None){ return 0; }
+	if (m_State == None){ return 0; }
 	return vplayer->GetVolume();
 }
 
 void RendererDirectShow::ChangePositionByFrame(int step)
 {
-	if (vstate == Playing || vstate == None){ return; }
+	if (m_State == Playing || m_State == None){ return; }
 	
-	time += (frameDuration * step);
-	SetPosition(time, true, false);
+	m_Time += (m_FrameDuration * step);
+	SetPosition(m_Time, true, false);
 	videoControl->RefreshTime();
 
 }
@@ -550,27 +605,27 @@ void RendererDirectShow::EnableStream(long index)
 void RendererDirectShow::ChangeVobsub(bool vobsub)
 {
 	if (!vplayer){ return; }
-	int tmptime = time;
+	int tmptime = m_Time;
 	OpenSubs((vobsub) ? NULL : tab->Grid->SaveText(), true, true);
 	vplayer->OpenFile(tab->VideoPath, vobsub);
-	vformat = vplayer->inf.CT;
-	D3DFORMAT tmpd3dformat = (vformat == 5) ? D3DFORMAT('21VN') : (vformat == 3) ? D3DFORMAT('21VY') :
-		(vformat == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
-	swapFrame = (vformat == 0 && !vplayer->HasVobsub());
-	if (tmpd3dformat != d3dformat){
-		d3dformat = tmpd3dformat;
-		int tmppitch = vwidth * vplayer->inf.bytes;
-		if (tmppitch != pitch){
-			pitch = tmppitch;
-			if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
-			frameBuffer = new char[vheight * pitch];
+	m_Format = vplayer->inf.CT;
+	D3DFORMAT tmpd3dformat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
+		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	m_SwapFrame = (m_Format == 0 && !vplayer->HasVobsub());
+	if (tmpd3dformat != m_D3DFormat){
+		m_D3DFormat = tmpd3dformat;
+		int tmppitch = m_Width * vplayer->inf.bytes;
+		if (tmppitch != m_Pitch){
+			m_Pitch = tmppitch;
+			if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+			m_FrameBuffer = new char[m_Height * m_Pitch];
 		}
 		UpdateVideoWindow();
 	}
 	SetPosition(tmptime);
-	if (vstate == Paused){ vplayer->Play(); vplayer->Pause(); }
-	else if (vstate == Playing){ vplayer->Play(); }
-	int pos = tab->Video->volslider->GetValue();
+	if (m_State == Paused){ vplayer->Play(); vplayer->Pause(); }
+	else if (m_State == Playing){ vplayer->Play(); }
+	int pos = tab->Video->m_VolumeSlider->GetValue();
 	SetVolume(-(pos * pos));
 	tab->Video->ChangeStream();
 }

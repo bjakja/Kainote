@@ -21,6 +21,7 @@
 class RendererDirectShow : public RendererVideo
 {
 	friend class RendererVideo;
+	friend class VideoCtrl;
 public:
 	RendererDirectShow(VideoCtrl *control);
 	virtual ~RendererDirectShow();
@@ -48,7 +49,6 @@ public:
 	int GetDuration();
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
-	wxSize GetVideoSize();
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void UpdateVideoWindow();
 	void SetVolume(int vol);

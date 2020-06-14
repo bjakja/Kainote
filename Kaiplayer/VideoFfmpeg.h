@@ -28,12 +28,12 @@ struct chapter
 	int time;
 };
 
-class VideoRenderer;
+class RendererVideo;
 
 class VideoFfmpeg
 {
 public:
-	VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWindow *progressSinkWindow, bool *success);
+	VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *success);
 	~VideoFfmpeg();
 	void Render(bool wait=true);
 	void RenderFromWorker();
@@ -111,7 +111,6 @@ public:
 	wxString RealColorSpace;
 	wxString fname;
 	wxString indexPath;
-	VideoRenderer *rend;
 	//wxFile file_cache;
 	FILE *fp = NULL;
 	wxArrayInt KeyFrames;
@@ -134,5 +133,6 @@ private:
 	//int playingLastTime;
 	wxCriticalSection blockaudio;
 	wxCriticalSection blockframe;
+	RendererVideo *rend;
 };
 

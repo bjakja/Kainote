@@ -120,7 +120,7 @@ SubsGrid::~SubsGrid()
 void SubsGrid::ContextMenu(const wxPoint &pos)
 {
 	VideoCtrl *VB = ((TabPanel*)GetParent())->Video;
-	VB->blockpaint = true;
+	VB->m_blockRender = true;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
 	Menu *menu = new Menu(GRID_HOTKEY);
@@ -225,7 +225,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, id));
 done:
 	delete menu;
-	VB->blockpaint = false;
+	VB->m_blockRender = false;
 }
 
 
@@ -960,10 +960,10 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 				tab->Video->Pause();//Render(); 
 			}
 			tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
-			tab->Video->vToolbar->DisableVisuals(subsFormat == SRT);
+			tab->Video->m_VideoToolbar->DisableVisuals(subsFormat == SRT);
 		}
 
-		if (!tab->editor && !tab->Video->isFullscreen){ Kai->HideEditor(); }
+		if (!tab->editor && !tab->Video->m_IsFullscreen){ Kai->HideEditor(); }
 		tab->ShiftTimes->Contents();
 		file->InsertSelection(currentLine);
 		RefreshColumns();

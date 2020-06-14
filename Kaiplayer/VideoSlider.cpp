@@ -179,7 +179,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (holding && isOnSlider || (holding && block)){
 			block = true;
 			position = MID(0, curX - 15 + positionDiff, w - 30);
-			if (!VB->IsDshow){ SendTime(msTimePosition); }
+			if (!VB->m_IsDirectShow){ SendTime(msTimePosition); }
 			//Refresh(false);
 		}
 		//move thumb by clicking on slider

@@ -133,7 +133,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int frame = (tab->Video->IsDshow) ? ((float)ms / 1000.f) * tab->Video->fps :
+			int frame = (tab->Video->m_IsDirectShow) ? ((float)ms / 1000.f) * tab->Video->m_FPS :
 				tab->Video->VFF->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
@@ -150,7 +150,7 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int ms = (tab->Video->IsDshow) ? ((frame * 1000) / tab->Video->fps) :
+			int ms = (tab->Video->m_IsDirectShow) ? ((frame * 1000) / tab->Video->m_FPS) :
 				tab->Video->VFF->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
@@ -165,7 +165,7 @@ namespace Auto{
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
 			wxSize sz = tab->Video->GetVideoSize();
-			float AR = (float)tab->Video->ax / tab->Video->ay;
+			float AR = (float)tab->Video->m_AspectRatioX / tab->Video->ay;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);

@@ -432,8 +432,8 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 done:
 	VideoCtrl *vb = tab->Video;
-	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
-	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
+	int pas = vb->m_VideoToolbar->videoPlayAfter->GetSelection();
+	int vsa = vb->m_VideoToolbar->videoSeekAfter->GetSelection();
 
 	if (vsa == 1 && pas < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
@@ -452,7 +452,7 @@ done:
 			}
 		}
 		else{
-			if (tab->Video->IsShown() || tab->Video->isFullscreen){
+			if (tab->Video->IsShown() || tab->Video->m_IsFullscreen){
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && pas > 2) ? nst : ed;
@@ -967,7 +967,7 @@ void EditBox::OnColorRightClick(wxMouseEvent& event)
 void EditBox::OnCommit(wxCommandEvent& event)
 {
 	TabPanel* pan = (TabPanel*)GetParent();
-	pan->Video->blockpaint = true;
+	pan->Video->m_blockRender = true;
 	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){
 		TextEdit->SetModified(); TextEditOrig->SetModified(); splittedTags = false;
 	}
@@ -982,7 +982,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
 	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-	pan->Video->blockpaint = false;
+	pan->Video->m_blockRender = false;
 }
 
 void EditBox::OnNewline(wxCommandEvent& event)
@@ -1694,7 +1694,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		}
 	}
 
-	if (visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
+	if (visible && (panel->Video->IsShown() || panel->Video->m_IsFullscreen)){
 		panel->Video->OpenSubs(text);
 		if (Visual > 0){ panel->Video->ResetVisual(); }
 		else if (panel->Video->GetState() == Paused){ panel->Video->Render(); }
@@ -2188,7 +2188,7 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		if (isPreview){
 			tab->Video->RemoveVisual();
 		}
-		tab->Video->vToolbar->DisableVisuals(isPreview);
+		tab->Video->m_VideoToolbar->DisableVisuals(isPreview);
 	}
 }
 

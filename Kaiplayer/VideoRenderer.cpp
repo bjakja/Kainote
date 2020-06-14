@@ -630,7 +630,7 @@ bool VideoRenderer::OpenFile(const wxString &fname, wxString *textsubs, bool Dsh
 
 	if (!Dshow){
 		bool success;
-		tmpvff = new VideoFfmpeg(fname, this, (isFullscreen) ? ((VideoCtrl*)this)->TD : (wxWindow *)Kaia->Frame, &success);
+		tmpvff = new VideoFfmpeg(fname, this, (isFullscreen) ? ((VideoCtrl*)this)->m_FullScreenWindow : (wxWindow *)Kaia->Frame, &success);
 		//this is safe mode, when new video not load, 
 		//the last opened will not be released
 		if (!success || !tmpvff){
@@ -758,7 +758,7 @@ bool VideoRenderer::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 	VideoCtrl *vb = ((VideoCtrl*)this);
-	if (!(IsShown() || (vb->TD && vb->TD->IsShown()))){ return false; }
+	if (!(IsShown() || (vb->m_FullScreenWindow && vb->m_FullScreenWindow->IsShown()))){ return false; }
 	TabPanel* pan = (TabPanel*)GetParent();
 	if (hasVisualEdition){
 		wxString *txt = pan->Grid->SaveText();
@@ -1094,9 +1094,9 @@ bool VideoRenderer::UpdateRects(bool changeZoom)
 	wxRect rt;
 	TabPanel* tab = (TabPanel*)Video->GetParent();
 	if (isFullscreen){
-		hwnd = Video->TD->GetHWND();
-		rt = Video->TD->GetClientRect();
-		if (panelOnFullscreen){ rt.height -= Video->TD->panelsize; }
+		hwnd = Video->m_FullScreenWindow->GetHWND();
+		rt = Video->m_FullScreenWindow->GetClientRect();
+		if (panelOnFullscreen){ rt.height -= Video->m_FullScreenWindow->panelsize; }
 		fullScreenProgressBar = Options.GetBool(VIDEO_PROGRESS_BAR);
 		cross = false;
 	}
@@ -1337,7 +1337,7 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (HasCapture()){ ReleaseMouse(); }
-		if (!vb->hasArrow){ SetCursor(wxCURSOR_ARROW); vb->hasArrow = true; }
+		if (!vb->m_HasArrow){ SetCursor(wxCURSOR_ARROW); vb->m_HasArrow = true; }
 	}
 
 
@@ -1347,25 +1347,25 @@ void VideoRenderer::ZoomMouseHandle(wxMouseEvent &evt)
 		if (abs(x - zoomRect.x) < 5){
 			setarrow = true;
 			SetCursor(wxCURSOR_SIZEWE);
-			vb->hasArrow = false;
+			vb->m_HasArrow = false;
 		}
 		if (abs(y - zoomRect.y) < 5){
 			setarrow = true;
 			SetCursor(wxCURSOR_SIZENS);
-			vb->hasArrow = false;
+			vb->m_HasArrow = false;
 		}
 		if (abs(x - zoomRect.width) < 5){
 			setarrow = true;
 			SetCursor(wxCURSOR_SIZEWE);
-			vb->hasArrow = false;
+			vb->m_HasArrow = false;
 		}
 		if (abs(y - zoomRect.height) < 5){
 			setarrow = true;
 			SetCursor(wxCURSOR_SIZENS);
-			vb->hasArrow = false;
+			vb->m_HasArrow = false;
 		}
 
-		if (!setarrow && !vb->hasArrow){ SetCursor(wxCURSOR_ARROW); vb->hasArrow = true; }
+		if (!setarrow && !vb->m_HasArrow){ SetCursor(wxCURSOR_ARROW); vb->m_HasArrow = true; }
 	}
 	if (evt.LeftDown()){
 		if (!HasCapture()){ CaptureMouse(); }
@@ -1546,7 +1546,7 @@ void VideoRenderer::DrawProgBar()
 	wxMutexLocker lock(mutexProgBar);
 	int w, h;
 	VideoCtrl *vb = (VideoCtrl*)this;
-	vb->TD->GetClientSize(&w, &h);
+	vb->m_FullScreenWindow->GetClientSize(&w, &h);
 	progressBarRect.top = 16;
 	progressBarRect.bottom = 60;
 	progressBarRect.left = w - 167;
@@ -1688,7 +1688,7 @@ void VideoRenderer::ChangeVobsub(bool vobsub)
 	SetPosition(tmptime);
 	if (vstate == Paused){ vplayer->Play(); vplayer->Pause(); }
 	else if (vstate == Playing){ vplayer->Play(); }
-	int pos = tab->Video->volslider->GetValue();
+	int pos = tab->Video->m_VolumeSlider->GetValue();
 	SetVolume(-(pos * pos));
 	tab->Video->ChangeStream();
 }

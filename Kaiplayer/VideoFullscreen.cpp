@@ -29,10 +29,10 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
 	toolBarHeight += 8;
-	if (!vc->IsDshow){ 
+	if (!vc->m_IsDirectShow){ 
 		buttonSection = 30 + toolBarHeight - 8;
 		panelsize = buttonSection + toolBarHeight;
-		vc->panelOnFullscreen = true; 
+		vc->m_PanelOnFullscreen = true; 
 	}
 	else{ 
 		panelsize = buttonSection = 30 + toolBarHeight - 8;
@@ -58,7 +58,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		VIDEO_NEXT_FILE, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
 	showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, toolBarHeight - 4), wxSize(-1, -1));
-	showToolbar->SetValue(!vc->IsDshow);
+	showToolbar->SetValue(!vc->m_IsDirectShow);
 	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
@@ -70,17 +70,17 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	});
 	vToolbar = new VideoToolbar(panel, wxPoint(0, buttonSection), wxSize(-1, -1));
 	vToolbar->SetSize(wxSize(size.x, toolBarHeight));
-	vToolbar->Show(!vc->IsDshow);
+	vToolbar->Show(!vc->m_IsDirectShow);
 	showToolbar->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent &evt){
 		bool show = showToolbar->GetValue();
 		vToolbar->Show(show);
 		if (show){ 
 			panelsize = buttonSection + toolBarHeight;
-			vc->panelOnFullscreen = true; 
+			vc->m_PanelOnFullscreen = true; 
 		}
 		else{ 
 			panelsize = buttonSection;
-			vc->panelOnFullscreen = false; 
+			vc->m_PanelOnFullscreen = false; 
 		}
 		OnSize();
 		vc->UpdateVideoWindow();
@@ -112,7 +112,7 @@ void Fullscreen::OnSize()
 	wxSize asize = GetClientSize();
 	VideoCtrl *vc = (VideoCtrl*)vb;
 	//if(vc->lastSize == asize){return;}
-	vc->lastSize = asize;
+	vc->m_VideoWindowLastSize = asize;
 	int fw;
 	int oldPanelSize = panelsize;
 	bool toolbarShown = panelsize > buttonSection;
@@ -149,7 +149,7 @@ void Fullscreen::OnSize()
 	}
 	
 	vslider->SetSize(wxSize(asize.x, 14));
-	if(vc->IsDshow){
+	if(vc->m_IsDirectShow){
 		volslider->Show(); 
 		volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));
 	}

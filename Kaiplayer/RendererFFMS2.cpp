@@ -31,18 +31,18 @@ RendererFFMS2::~RendererFFMS2()
 
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 {
-	if (redrawSubsOnFrame && !devicelost){
+	if (redrawSubsOnFrame && !m_DeviceLost){
 		VFF->Render(wait);
-		resized = false;
+		m_VideoResized = false;
 		return;
 	}
-	wxCriticalSectionLocker lock(mutexRender);
-	resized = false;
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	m_VideoResized = false;
 	HRESULT hr = S_OK;
 
-	if (devicelost)
+	if (m_DeviceLost)
 	{
-		if (FAILED(hr = d3device->TestCooperativeLevel()))
+		if (FAILED(hr = m_D3DDevice->TestCooperativeLevel()))
 		{
 			if (D3DERR_DEVICELOST == hr ||
 				D3DERR_DRIVERINTERNALERROR == hr){
@@ -53,84 +53,61 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 			{
 				Clear();
 				InitDX();
-				if (Visual){
-					Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
-						backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+				if (m_Visual){
+					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
+						m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 				}
-				devicelost = false;
+				m_DeviceLost = false;
 				Render(true, false);
 				return;
 			}
 			return;
 		}
-		devicelost = false;
+		m_DeviceLost = false;
 	}
 
-	hr = d3device->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	
-	hr = d3device->StretchRect(MainStream, &mainStreamRect, bars, &backBufferRect, D3DTEXF_LINEAR);
+	hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
 	if (FAILED(hr)){ KaiLog(_("Nie mo¿na na³o¿yæ powierzchni na siebie")); }
 
 
-	hr = d3device->BeginScene();
+	hr = m_D3DDevice->BeginScene();
 
 #if byvertices
 
 
 	// Render the vertex buffer contents
-	hr = d3device->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
-	hr = d3device->SetVertexShader(NULL);
-	hr = d3device->SetFVF(D3DFVF_CUSTOMVERTEX);
-	hr = d3device->SetTexture(0, texture);
-	hr = d3device->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
+	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
+	hr = m_D3DDevice->SetVertexShader(NULL);
+	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+	hr = m_D3DDevice->SetTexture(0, texture);
+	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
 #endif
 
-	if (Visual){ Visual->Draw(time); }
+	if (m_Visual){ m_Visual->Draw(m_Time); }
 
-	if (cross){
-		DRAWOUTTEXT(m_font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF)
-			hr = lines->SetWidth(3);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[0], 2, 0xFF000000);
-		hr = lines->Draw(&vectors[2], 2, 0xFF000000);
-		hr = lines->End();
-		hr = lines->SetWidth(1);
-		D3DXVECTOR2 v1[4];
-		v1[0] = vectors[0];
-		v1[0].x += 0.5f;
-		v1[1] = vectors[1];
-		v1[1].x += 0.5f;
-		v1[2] = vectors[2];
-		v1[2].y += 0.5f;
-		v1[3] = vectors[3];
-		v1[3].y += 0.5f;
-		hr = lines->Begin();
-		hr = lines->Draw(&v1[0], 2, 0xFFFFFFFF);
-		hr = lines->Draw(&v1[2], 2, 0xFFFFFFFF);
-		hr = lines->End();
+	if (videoControl->m_FullScreenProgressBar){
+		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
+			hr = m_D3DLine->SetWidth(1);
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&vectors[4], 5, 0xFF000000);
+		hr = m_D3DLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+		hr = m_D3DLine->End();
+		hr = m_D3DLine->SetWidth(7);
+		hr = m_D3DLine->Begin();
+		hr = m_D3DLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->End();
 	}
-
-	if (fullScreenProgressBar){
-		DRAWOUTTEXT(m_font, pbtime, progressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
-			hr = lines->SetWidth(1);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[4], 5, 0xFF000000);
-		hr = lines->Draw(&vectors[9], 5, 0xFFFFFFFF);
-		hr = lines->End();
-		hr = lines->SetWidth(7);
-		hr = lines->Begin();
-		hr = lines->Draw(&vectors[14], 2, 0xFFFFFFFF);
-		hr = lines->End();
-	}
-	if (hasZoom){ DrawZoom(); }
+	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
-	hr = d3device->EndScene();
-	hr = d3device->Present(NULL, &windowRect, NULL, NULL);
+	hr = m_D3DDevice->EndScene();
+	hr = m_D3DDevice->Present(NULL, &m_WindowRect, NULL, NULL);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
-		if (!devicelost){
-			devicelost = true;
+		if (!m_DeviceLost){
+			m_DeviceLost = true;
 		}
 		Render(true, false);
 	}
@@ -139,13 +116,13 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
 {
-	wxMutexLocker lock(mutexOpenFile);
+	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 	VideoFfmpeg *tmpvff = NULL;
-	if (vstate == Playing){ videoControl->Stop(); }
+	if (m_State == Playing){ videoControl->Stop(); }
 
 	bool success;
-	tmpvff = new VideoFfmpeg(fname, this, (videoControl->isFullscreen) ? videoControl->TD : (wxWindow *)Kaia->Frame, &success);
+	tmpvff = new VideoFfmpeg(fname, this, (videoControl->m_IsFullscreen) ? videoControl->m_FullScreenWindow : (wxWindow *)Kaia->Frame, &success);
 	//this is safe mode, when new video not load, 
 	//the last opened will not be released
 	if (!success || !tmpvff){
@@ -157,54 +134,54 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 		VideoFfmpeg *tmp = VFF;
 		VFF = tmpvff;
 		Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-		player = tab->Edit->ABox->audioDisplay;
+		m_AudioPlayer = tab->Edit->ABox->audioDisplay;
 		VFF = tmp;
 		return false;
 	}
 
 	SAFE_DELETE(VFF);
 
-	if (vstate != None){
-		resized = seek = cross = fullScreenProgressBar = false;
-		vstate = None;
+	if (m_State != None){
+		m_VideoResized = seek = videoControl->m_FullScreenProgressBar = false;
+		m_State = None;
 		Clear();
 	}
 
-	time = 0;
-	numframe = 0;
+	m_Time = 0;
+	m_Frame = 0;
 
 	VFF = tmpvff;
-	d3dformat = D3DFMT_X8R8G8B8;
-	vformat = RGB32;
-	vwidth = VFF->width;
-	vheight = VFF->height;
-	fps = VFF->fps;
-	ax = VFF->arwidth;
-	ay = VFF->arheight;
-	if (vwidth % 2 != 0){ vwidth++; }
-	pitch = vwidth * 4;
+	m_D3DFormat = D3DFMT_X8R8G8B8;
+	m_Format = RGB32;
+	m_Width = VFF->width;
+	m_Height = VFF->height;
+	videoControl->m_FPS = VFF->fps;
+	videoControl->m_AspectRatioX = VFF->arwidth;
+	videoControl->m_AspectRatioY = VFF->arheight;
+	if (m_Width % 2 != 0){ m_Width++; }
+	m_Pitch = m_Width * 4;
 	if (changeAudio){
 		if (VFF->GetSampleRate() > 0){
 			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-			player = tab->Edit->ABox->audioDisplay;
+			m_AudioPlayer = tab->Edit->ABox->audioDisplay;
 		}
-		else if (player){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
+		else if (m_AudioPlayer){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
 	}
 	if (!VFF || VFF->width < 0){
 		return false;
 	}
 	
 	diff = 0;
-	frameDuration = (1000.0f / fps);
-	if (ay == 0 || ax == 0){ AR = 0.0f; }
-	else{ AR = (float)ay / (float)ax; }
+	m_FrameDuration = (1000.0f / videoControl->m_FPS);
+	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0){ videoControl->m_AspectRatio = 0.0f; }
+	else{ videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
 
-	mainStreamRect.bottom = vheight;
-	mainStreamRect.right = vwidth;
-	mainStreamRect.left = 0;
-	mainStreamRect.top = 0;
-	if (frameBuffer){ delete[] frameBuffer; frameBuffer = NULL; }
-	frameBuffer = new char[vheight*pitch];
+	m_MainStreamRect.bottom = m_Height;
+	m_MainStreamRect.right = m_Width;
+	m_MainStreamRect.left = 0;
+	m_MainStreamRect.top = 0;
+	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	m_FrameBuffer = new char[m_Height*m_Pitch];
 
 	if (!InitDX()){ return false; }
 	UpdateRects();
@@ -216,11 +193,11 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 		framee->strides[i] = NULL;
 	}
 
-	framee->pixfmt = (vformat == 5) ? CSRI_F_YV12A : (vformat == 3) ? CSRI_F_YV12 :
-		(vformat == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+	framee->pixfmt = (m_Format == 5) ? CSRI_F_YV12A : (m_Format == 3) ? CSRI_F_YV12 :
+		(m_Format == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
 
-	format->width = vwidth;
-	format->height = vheight;
+	format->width = m_Width;
+	format->height = m_Height;
 	format->pixfmt = framee->pixfmt;
 
 	if (!vobsub){
@@ -230,32 +207,29 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 		SAFE_DELETE(textsubs);
 		OpenSubs(0, false);
 	}
-	vstate = Stopped;
-	VFF->GetChapters(&chapters);
+	m_State = Stopped;
+	VFF->GetChapters(&m_Chapters);
 
-	if (Visual){
-		Visual->SizeChanged(wxRect(backBufferRect.left, backBufferRect.top,
-			backBufferRect.right, backBufferRect.bottom), lines, m_font, d3device);
+	if (m_Visual){
+		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
+			m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	}
 	return true;
 }
 
 bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 {
-	wxCriticalSectionLocker lock(mutexRender);
+	wxCriticalSectionLocker lock(m_MutexRendering);
 	if (instance) csri_close(instance);
 	instance = NULL;
 
 	if (!textsubs) {
-		if (redraw && vstate != None && frameBuffer){
-			RecreateSurface();
-		}
-		hasDummySubs = true;
+		m_HasDummySubs = true;
 		return true;
 	}
 
-	if (hasVisualEdition && Visual->Visual == VECTORCLIP && Visual->dummytext){
-		wxString toAppend = Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
+	if (m_HasVisualEdition && m_Visual->Visual == VECTORCLIP && m_Visual->dummytext){
+		wxString toAppend = m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
 		if (fromFile){
 			OpenWrite ow(*textsubs, false);
 			ow.PartFileWrite(toAppend);
@@ -266,7 +240,7 @@ bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 		}
 	}
 
-	hasDummySubs = !fromFile;
+	m_HasDummySubs = !fromFile;
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
@@ -286,37 +260,33 @@ bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 		delete textsubs; return false;
 	}
 
-	if (redraw && vstate != None && frameBuffer){
-		RecreateSurface();
-	}
-
 	delete textsubs;
 	return true;
 }
 
 bool RendererFFMS2::Play(int end)
 {
-	if (time >= GetDuration()){ return false; }
+	if (m_Time >= GetDuration()){ return false; }
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || (videoControl->TD && videoControl->TD->IsShown()))){ return false; }
-	if (hasVisualEdition){
+	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
+	if (m_HasVisualEdition){
 		wxString *txt = tab->Grid->SaveText();
 		OpenSubs(txt, false, true);
-		SAFE_DELETE(Visual->dummytext);
-		hasVisualEdition = false;
+		SAFE_DELETE(m_Visual->dummytext);
+		m_HasVisualEdition = false;
 	}
-	else if (hasDummySubs && tab->editor){
+	else if (m_HasDummySubs && tab->editor){
 		OpenSubs(tab->Grid->SaveText(), false, true);
 	}
 
-	if (end > 0){ playend = end; }
-	playend = GetDuration();
+	if (end > 0){ m_PlayEndTime = end; }
+	m_PlayEndTime = GetDuration();
 
-	vstate = Playing;
+	m_State = Playing;
 
-	time = VFF->Timecodes[numframe];
-	lasttime = timeGetTime() - time;
-	if (player){ player->Play(time, -1, false); }
+	m_Time = VFF->Timecodes[m_Frame];
+	m_LastTime = timeGetTime() - m_Time;
+	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
 	VFF->Play();
 
 	return true;
@@ -325,12 +295,12 @@ bool RendererFFMS2::Play(int end)
 
 bool RendererFFMS2::Pause()
 {
-	if (vstate == Playing){
+	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
-		vstate = Paused;
-		if (player){ player->Stop(false); }
+		m_State = Paused;
+		if (m_AudioPlayer){ m_AudioPlayer->Stop(false); }
 	}
-	else if (vstate != None){
+	else if (m_State != None){
 		Play();
 	}
 	else{ return false; }
@@ -339,14 +309,14 @@ bool RendererFFMS2::Pause()
 
 bool RendererFFMS2::Stop()
 {
-	if (vstate == Playing){
+	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
-		vstate = Stopped;
-		if (player){
-			player->Stop();
-			playend = GetDuration();
+		m_State = Stopped;
+		if (m_AudioPlayer){
+			m_AudioPlayer->Stop();
+			m_PlayEndTime = GetDuration();
 		}
-		time = 0;
+		m_Time = 0;
 		return true;
 	}
 	return false;
@@ -354,7 +324,7 @@ bool RendererFFMS2::Stop()
 
 void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/*=true*/, bool async /*= true*/)
 {
-	if (vstate == Playing || !async)
+	if (m_State == Playing || !async)
 		SetFFMS2Position(_time, starttime);
 	else
 		VFF->SetPosition(_time, starttime);
@@ -362,40 +332,40 @@ void RendererFFMS2::SetPosition(int _time, bool starttime/*=true*/, bool corect/
 
 //is from video thread make safe any deletion
 void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
-	bool playing = vstate == Playing;
-	numframe = VFF->GetFramefromMS(_time, (time > _time) ? 0 : numframe);
+	bool playing = m_State == Playing;
+	m_Frame = VFF->GetFramefromMS(_time, (m_Time > _time) ? 0 : m_Frame);
 	if (!starttime){
-		numframe--;
-		if (VFF->Timecodes[numframe] >= _time){ numframe--; }
+		m_Frame--;
+		if (VFF->Timecodes[m_Frame] >= _time){ m_Frame--; }
 	}
-	time = VFF->Timecodes[numframe];
-	lasttime = timeGetTime() - time;
-	playend = GetDuration();
+	m_Time = VFF->Timecodes[m_Frame];
+	m_LastTime = timeGetTime() - m_Time;
+	m_PlayEndTime = GetDuration();
 
-	if (hasVisualEdition){
+	if (m_HasVisualEdition){
 		//block removing or changing visual from main thread
-		wxMutexLocker lock(mutexVisualChange);
-		SAFE_DELETE(Visual->dummytext);
-		if (Visual->Visual == VECTORCLIP){
-			Visual->SetClip(Visual->GetVisual(), true, false, false);
+		wxMutexLocker lock(m_MutexVisualChange);
+		SAFE_DELETE(m_Visual->dummytext);
+		if (m_Visual->Visual == VECTORCLIP){
+			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
 		}
 		else{
 			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
-			if (playing){ hasVisualEdition = false; }
+			if (playing){ m_HasVisualEdition = false; }
 		}
 	}
-	else if (hasDummySubs){
+	else if (m_HasDummySubs){
 		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
 	}
 	if (playing){
-		if (player){
-			player->player->SetCurrentPosition(player->GetSampleAtMS(time));
+		if (m_AudioPlayer){
+			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
 		}
 	}
 	else{
 		//rebuild spectrum cause position can be changed
 		//and it causes random bugs
-		if (player){ player->UpdateImage(false, true); }
+		if (m_AudioPlayer){ m_AudioPlayer->UpdateImage(false, true); }
 		VFF->Render();
 		videoControl->RefreshTime();
 	}
@@ -409,17 +379,17 @@ int RendererFFMS2::GetDuration()
 int RendererFFMS2::GetFrameTime(bool start)
 {
 	if (start){
-		int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
-		return time + ((prevFrameTime - time) / 2);
+		int prevFrameTime = VFF->GetMSfromFrame(m_Frame - 1);
+		return m_Time + ((prevFrameTime - m_Time) / 2);
 	}
 	else{
-		if (numframe + 1 >= VFF->NumFrames){
-			int prevFrameTime = VFF->GetMSfromFrame(numframe - 1);
-			return time + ((time - prevFrameTime) / 2);
+		if (m_Frame + 1 >= VFF->NumFrames){
+			int prevFrameTime = VFF->GetMSfromFrame(m_Frame - 1);
+			return m_Time + ((m_Time - prevFrameTime) / 2);
 		}
 		else{
-			int nextFrameTime = VFF->GetMSfromFrame(numframe + 1);
-			return time + ((nextFrameTime - time) / 2);
+			int nextFrameTime = VFF->GetMSfromFrame(m_Frame + 1);
+			return m_Time + ((nextFrameTime - m_Time) / 2);
 		}
 	}
 }
@@ -489,17 +459,9 @@ void RendererFFMS2::GetVideoSize(int *width, int *height)
 	*height = VFF->height;
 }
 
-wxSize RendererFFMS2::GetVideoSize()
-{
-	wxSize sz;
-	sz.x = VFF->width;
-	sz.y = VFF->height;
-	return sz;
-}
-
 void RendererFFMS2::SetVolume(int vol)
 {
-	if (vstate == None || !player){ return; }
+	if (m_State == None || !m_AudioPlayer){ return; }
 	
 	vol = 7600 + vol;
 	double dvol = vol / 7600.0;
@@ -511,8 +473,8 @@ void RendererFFMS2::SetVolume(int vol)
 
 int RendererFFMS2::GetVolume()
 {
-	if (vstate == None || !player){ return 0; }
-	double dvol = player->player->GetVolume();
+	if (m_State == None || !m_AudioPlayer){ return 0; }
+	double dvol = m_AudioPlayer->player->GetVolume();
 	dvol = sqrt(dvol);
 	dvol *= 8100.0;
 	dvol -= 8100.0;
@@ -521,15 +483,15 @@ int RendererFFMS2::GetVolume()
 
 void RendererFFMS2::ChangePositionByFrame(int step)
 {
-	if (vstate == Playing || vstate == None){ return; }
+	if (m_State == Playing || m_State == None){ return; }
 	
-		numframe = MID(0, numframe + step, VFF->NumFrames - 1);
-		time = VFF->Timecodes[numframe];
-		if (hasVisualEdition || hasDummySubs){
+		m_Frame = MID(0, m_Frame + step, VFF->NumFrames - 1);
+		m_Time = VFF->Timecodes[m_Frame];
+		if (m_HasVisualEdition || m_HasDummySubs){
 			OpenSubs(tab->Grid->SaveText(), false, true);
-			hasVisualEdition = false;
+			m_HasVisualEdition = false;
 		}
-		if (player){ player->UpdateImage(true, true); }
+		if (m_AudioPlayer){ m_AudioPlayer->UpdateImage(true, true); }
 		Render(true, false);
 	
 	
@@ -553,22 +515,22 @@ byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
 {
 	bool ffnsubs = (!subs);
 	byte *cpy1;
-	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
-	int all = vheight * pitch;
+	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+	int all = m_Height * m_Pitch;
 	if (ffnsubs){
 		*del = true;
 		char *cpy = new char[all];
 		cpy1 = (byte*)cpy;
-		VFF->GetFrame(time, cpy1);
+		VFF->GetFrame(m_Time, cpy1);
 	}
 	else{ *del = false; }
-	return (ffnsubs) ? cpy1 : (byte*)frameBuffer;
+	return (ffnsubs) ? cpy1 : (byte*)m_FrameBuffer;
 }
 
 void RendererFFMS2::GoToNextKeyframe()
 {
 	for (size_t i = 0; i < VFF->KeyFrames.size(); i++){
-		if (VFF->KeyFrames[i] > time){
+		if (VFF->KeyFrames[i] > m_Time){
 			SetPosition(VFF->KeyFrames[i]);
 			return;
 		}
@@ -578,10 +540,20 @@ void RendererFFMS2::GoToNextKeyframe()
 void RendererFFMS2::GoToPrevKeyframe()
 {
 	for (int i = VFF->KeyFrames.size() - 1; i >= 0; i--){
-		if (VFF->KeyFrames[i] < time){
+		if (VFF->KeyFrames[i] < m_Time){
 			SetPosition(VFF->KeyFrames[i]);
 			return;
 		}
 	}
 	SetPosition(VFF->KeyFrames[VFF->KeyFrames.size() - 1]);
+}
+
+bool RendererFFMS2::HasFFMS2()
+{
+	return VFF != NULL;
+}
+
+VideoFfmpeg * RendererFFMS2::GetFFMS2()
+{
+	return VFF;
 }

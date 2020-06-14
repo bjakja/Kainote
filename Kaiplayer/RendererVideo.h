@@ -20,6 +20,7 @@
 #include "Videobox.h"
 #include "DshowRenderer.h"
 #include "dshowplayer.h"
+#include "Visuals.h"
 
 #undef DrawText
 
@@ -98,6 +99,7 @@ class RendererVideo
 {
 	friend class RendererDirectShow;
 	friend class RendererFFMS2;
+	friend class VideoCtrl;
 public:
 	RendererVideo(VideoCtrl *control){};
 	~RendererVideo(){};
@@ -122,7 +124,6 @@ public:
 	virtual int GetDuration(){ return 0; };
 	virtual int GetVolume(){ return 0; };
 	virtual void GetVideoSize(int *width, int *height){};
-	virtual wxSize GetVideoSize(){ return wxSize(); };
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
@@ -137,50 +138,42 @@ public:
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
 	virtual void OpenKeyframes(const wxString &filename){};
 	
-	LPDIRECT3DSURFACE9 MainStream;
-	LPDIRECT3DDEVICE9 d3device;
-	D3DFORMAT d3dformat;
-	volatile bool block;
+	LPDIRECT3DSURFACE9 m_MainSurface;
+	LPDIRECT3DDEVICE9 m_D3DDevice;
+	D3DFORMAT m_D3DFormat;
+	volatile bool m_BlockResize;
 	bool seek;
-	bool hasVisualEdition;
-	bool hasDummySubs = true;
-	bool cross;
-	bool fullScreenProgressBar;
-	bool resized;
-	bool panelOnFullscreen;
-	bool hasZoom;
-	bool swapFrame = false;
-	int vwidth;
-	int vheight;
-	int pitch;
-	int time;
-	int numframe;
-	int panelHeight;
-	long ax, ay;
-	float AR, fps;
-	char *frameBuffer;
-	byte vformat;
-	float frameDuration;
-	float zoomParcent;
-	wxString coords;
-	wxString pbtime;
-	ID3DXLine *lines;
-	LPD3DXFONT m_font;
-	wxCriticalSection mutexRender;
-	wxMutex mutexLines;
-	wxMutex mutexProgBar;
-	wxMutex mutexOpenFile;
-	wxMutex mutexVisualChange;
-	PlaybackState vstate;
-	int playend;
-	size_t lasttime;
-	std::vector<chapter> chapters;
-	FloatRect zoomRect;
-	wxString keyframesFileName;
-	IDirectXVideoProcessorService *dxvaService;
-	IDirectXVideoProcessor *dxvaProcessor;
-	LPDIRECT3D9 d3dobject;
-	LPDIRECT3DSURFACE9 bars;
+	bool m_HasVisualEdition;
+	bool m_HasDummySubs = true;
+	bool m_VideoResized;
+	bool m_HasZoom;
+	bool m_SwapFrame = false;
+	int m_Width;
+	int m_Height;
+	int m_Pitch;
+	int m_Time;
+	int m_Frame;
+	char *m_FrameBuffer;
+	byte m_Format;
+	float m_FrameDuration;
+	float m_ZoomParcent;
+	wxString m_ProgressBarTime;
+	ID3DXLine *m_D3DLine;
+	LPD3DXFONT m_D3DFont;
+	wxCriticalSection m_MutexRendering;
+	wxMutex m_MutexProgressBar;
+	wxMutex m_MutexOpen;
+	wxMutex m_MutexVisualChange;
+	PlaybackState m_State;
+	int m_PlayEndTime;
+	size_t m_LastTime;
+	FloatRect m_ZoomRect;
+	std::vector<chapter> m_Chapters;
+	wxString m_KeyframesFileName;
+	IDirectXVideoProcessorService *m_DXVAService;
+	IDirectXVideoProcessor *m_DXVAProcessor;
+	LPDIRECT3D9 m_D3DObject;
+	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
@@ -189,9 +182,9 @@ public:
 
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
-
+	virtual bool HasFFMS2(){ return false; };
+	virtual VideoFfmpeg * GetFFMS2(){ return NULL; };
 	// Non virtual functions
-	void DrawLines(wxPoint point);
 	void DrawProgBar();
 	bool DrawTexture(byte *nframe = NULL, bool copy = false);
 	void Zoom(const wxSize &size);
@@ -210,36 +203,35 @@ public:
 	bool PlayLine(int start, int end);
 	void UpdateVideoWindow();
 	bool UpdateRects(bool changeZoom = true);
-
-protected:
-	virtual void SetScaleAndZoom(){}
+	void VisualChangeTool(int tool);
+	bool HasVisual();
+	Visuals *GetVisual();
+	
 private:
 
 	bool InitDX(bool reset = false);
 	virtual bool InitRendererDX(){ return false; };
 	void Clear(bool clearObject = false);
 
-	HWND hwnd;
-	bool devicelost;
+	HWND m_HWND;
+	bool m_DeviceLost;
 
 	int diff;
-	char grabbed;
+	char m_Grabbed;
 
 	csri_inst *instance;
-	RECT crossRect;
-	RECT progressBarRect;
-	RECT windowRect;
-	RECT backBufferRect;
-	RECT mainStreamRect;
-	wxPoint zoomDiff;
+	RECT m_ProgressBarRect;
+	RECT m_WindowRect;
+	RECT m_BackBufferRect;
+	RECT m_MainStreamRect;
+	wxPoint m_ZoomDiff;
 
-	int avframetime;
-
-	D3DXVECTOR2 vectors[16];
-	AudioDisplay *player;
+	int m_AverangeFrameTime;
+	D3DXVECTOR2 vectors[12];
+	AudioDisplay *m_AudioPlayer;
 	csri_frame *framee;
 	csri_fmt *format;
-	Visuals *Visual;
+	Visuals *m_Visual;
 	VideoCtrl *videoControl;
 	TabPanel* tab;
 };

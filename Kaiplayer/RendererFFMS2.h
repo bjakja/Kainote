@@ -21,6 +21,7 @@
 class RendererFFMS2 : public RendererVideo
 {
 	friend class RendererVideo;
+	friend class VideoCtrl;
 public:
 	RendererFFMS2(VideoCtrl *control);
 	~RendererFFMS2();
@@ -48,7 +49,6 @@ public:
 	int GetDuration();
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
-	wxSize GetVideoSize();
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void UpdateVideoWindow();
 	void SetVolume(int vol);
@@ -80,11 +80,13 @@ public:
 	void SetColorSpace(const wxString& matrix, bool render = true){
 		if (VFF){
 			VFF->SetColorSpace(matrix);
-			if (vstate == Paused)
+			if (m_State == Paused)
 				Render();
 		}
 	}
 	void OpenKeyframes(const wxString &filename);
+	bool HasFFMS2();
+	VideoFfmpeg * GetFFMS2();
 	//bool InitRendererDX(bool reset = false)
 	VideoFfmpeg *VFF;
 };
