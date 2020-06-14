@@ -608,9 +608,16 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id = event.GetId();
+	
+	if (id >= 5000){
+		Kai->OnMenuSelected(event);
+	}
+	else if (id >= 1000 && id < 1700 && Edit->ABox){
+		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
+	}
+
 	if (Options.CheckLastKeyEvent(id))
 		return;
-
 	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;//Kai->GetTab()->Video;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
@@ -715,12 +722,6 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	if (id == GRID_TRANSLATION_DIALOG && GetSInfo(L"TLMode Showtl") == L"Yes"){
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
-	}
-	else if (id >= 5000){
-		Kai->OnMenuSelected(event);
-	}
-	else if (id >= 1000 && id < 1700 && Edit->ABox){
-		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
 	}
 }
 
