@@ -217,18 +217,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	wxString tagBefore = putinbracket ? L"" : txt->SubString(tagPos.x, tagPos.y);
 	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
-		VideoCtrl *video = tab->Video;
-		float fps = video->m_FPS;
-		bool dshow = video->m_IsDirectShow;
-		int startTime = ZEROIT(_dial->Start.mstime);
-		int endTime = ZEROIT(_dial->End.mstime);
-		int framestart = (dshow) ? (((float)startTime / 1000.f) * fps) + 1 : video->VFF->GetFramefromMS(startTime);
-		int frameend = (dshow) ? (((float)endTime / 1000.f) * fps) : video->VFF->GetFramefromMS(endTime) - 1;
-		int msstart = (dshow) ? ((framestart * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
-		int msend = (dshow) ? ((frameend * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
-		int diff = endTime - startTime;
-		moveStartTime = abs(msstart - startTime);
-		moveEndTime = (diff - abs(endTime - msend));
+		GetMoveTimes(&moveStartTime, &moveEndTime);
 	}
 	else{
 		wxString t2 = values[5];

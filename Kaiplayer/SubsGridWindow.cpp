@@ -174,7 +174,6 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		Dialogue *acdial = /*(size > 0) ? */GetDialogue(MID(0, currentLine, size - 1));/* : NULL;*/
 		Dialogue *Dial = NULL;
-		TabPanel *tab = (TabPanel*)GetParent();
 		int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 		int fw, fh, bfw, bfh;
@@ -235,15 +234,15 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (subsFormat < SRT){
 					strings.push_back(wxString::Format(L"%i", Dial->Layer));
 				}
-
-				if (showFrames && tab->Video->VFF){
-					VideoFfmpeg *VFF = tab->Video->VFF;
+				
+				if (showFrames && tab->Video->HasFFMS2()){
+					VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
 					wxString frame;
-					frame << VFF->GetFramefromMS(Dial->Start.mstime);
+					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 					strings.push_back(frame);
 					if (subsFormat != TMP){
 						frame = L"";
-						frame << VFF->GetFramefromMS(Dial->End.mstime) - 1;
+						frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 						strings.push_back(frame);
 					}
 				}
@@ -559,7 +558,6 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 
 	Dialogue *acdial = /*(size > 0) ? */GetDialogue(MID(0, currentLine, size - 1));/* : NULL;*/
 	Dialogue *Dial = NULL;
-	TabPanel *tab = (TabPanel*)GetParent();
 	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 	double fw, fh, bfw, bfh;
@@ -622,15 +620,14 @@ void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, i
 			if (subsFormat < SRT){
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
-
-			if (showFrames && tab->Video->VFF){
-				VideoFfmpeg *VFF = tab->Video->VFF;
+			if (showFrames && tab->Video->HasFFMS2()){
+				VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
 				wxString frame;
-				frame << VFF->GetFramefromMS(Dial->Start.mstime);
+				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (subsFormat != TMP){
 					frame = L"";
-					frame << VFF->GetFramefromMS(Dial->End.mstime) - 1;
+					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
 			}
@@ -984,9 +981,9 @@ void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			if (VFF)
-				start.orgframe = VFF->GetFramefromMS(start.mstime);
+			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			if (FFMS2)
+				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -997,9 +994,9 @@ void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			if (VFF)
-				end.orgframe = VFF->GetFramefromMS(end.mstime);
+			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			if (FFMS2)
+				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1142,9 +1139,9 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			if (VFF)
-				start.orgframe = VFF->GetFramefromMS(start.mstime);
+			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			if (FFMS2)
+				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1155,9 +1152,9 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *VFF = ((TabPanel*)GetParent())->Video->VFF;
-			if (VFF)
-				end.orgframe = VFF->GetFramefromMS(end.mstime);
+			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			if (FFMS2)
+				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else
 				canShowFrames = false;
 		}
@@ -1235,7 +1232,6 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 {
-	TabPanel *tab = (TabPanel*)GetParent();
 	if (tab->Video->GetState() != None){
 		if (tab->Video->GetState() != Paused){
 			if (tab->Video->GetState() == Stopped){ tab->Video->Play(); tab->Video->Pause(); }
@@ -1359,7 +1355,6 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	// Seeking video by click on numeration column
 	if ((click || dclick) && isNumerizeColumn){
-		TabPanel *tab = (TabPanel*)GetParent();
 		if (tab->Video->GetState() != None && !outOfPosition){
 			if (tab->Video->GetState() != Paused){
 				if (tab->Video->GetState() == Stopped){ tab->Video->Play(); }
@@ -1453,8 +1448,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		Refresh(false);
 		return;
 	}
-	TabPanel *pan = (TabPanel*)GetParent();
-	VideoCtrl *video = pan->Video;
+	VideoCtrl *video = tab->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int seekAfter = 0, playAfter = 0;
 	video->GetVideoListsOptions(&seekAfter, &seekAfter);
@@ -1625,7 +1619,7 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool sel
 	}
 	
 	if (Edit->Visual == CHANGEPOS){
-		Kai->GetTab()->Video->SetVisual(false, true);
+		tab->Video->SetVisual(false, true);
 	}
 }
 
@@ -1970,11 +1964,11 @@ void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*
 
 void SubsGridWindow::SelVideoLine(int curtime)
 {
-	if (Kai->GetTab()->Video->GetState() == None && curtime < 0){ return; }
+	if (tab->Video->GetState() == None && curtime < 0){ return; }
 
-	int time = (curtime < 0) ? Kai->GetTab()->Video->Tell() : curtime;
+	int time = (curtime < 0) ? tab->Video->Tell() : curtime;
 	int prevtime = 0;
-	int durtime = (curtime < 0) ? Kai->GetTab()->Video->GetDuration() : 36000000;
+	int durtime = (curtime < 0) ? tab->Video->GetDuration() : 36000000;
 	int idr = 0, ip = 0;
 
 	for (size_t i = 0; i < GetCount(); i++)

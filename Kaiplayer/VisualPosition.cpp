@@ -232,10 +232,7 @@ void Position::ChangeMultiline(bool all)
 	}
 
 	if (all){
-		tab->Video->hasVisualEdition = true;
-		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-		tab->Grid->SetModified(VISUAL_POSITION, true);
-		tab->Grid->Refresh();
+		SetModified(VISUAL_POSITION);
 	}
 	else{
 		RenderSubs(dtxt);

@@ -761,10 +761,7 @@ void ScaleRotation::ChangeInLines(bool dummy)
 		RenderSubs(dtxt);
 	}
 	else{
-		tab->Video->hasVisualEdition = true;
-		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-		tab->Grid->SetModified(VISUAL_SCALE_ROTATION_SHIFTER, true);
-		tab->Grid->Refresh();
+		SetModified(VISUAL_SCALE_ROTATION_SHIFTER);
 	}
 }
 

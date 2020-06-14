@@ -34,6 +34,7 @@
 
 
 class SubsGrid;
+class TabPanel;
 
 
 class ComboBoxCtrl : public KaiChoice
@@ -209,6 +210,7 @@ private:
 	int CurrentUntranslated;
 	int currentLine;
 	SubsGrid *grid;
+	TabPanel *tab;
 };
 
 

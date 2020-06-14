@@ -174,7 +174,7 @@ protected:
 	wxTimer timer;
 	wxTimer nullifyTimer;
 	void OnBackupTimer(wxTimerEvent &event);
-
+	TabPanel *tab;
 };
 
 bool sortstart(Dialogue *i, Dialogue *j);

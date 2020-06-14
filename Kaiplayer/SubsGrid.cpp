@@ -35,6 +35,7 @@
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
 {
+	tab = (TabPanel*)GetParent();
 	Kai = kfparent;
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
 	//jak już wszystko będzie działało to można wywalić albo dać if(!autofilter)
@@ -119,7 +120,7 @@ SubsGrid::~SubsGrid()
 
 void SubsGrid::ContextMenu(const wxPoint &pos)
 {
-	VideoCtrl *VB = ((TabPanel*)GetParent())->Video;
+	VideoCtrl *VB = tab->Video;
 	VB->m_blockRender = true;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
@@ -168,7 +169,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	isEnabled = (sels > 0);
 	menu->SetAccMenu(GRID_INSERT_BEFORE, _("Wstaw &przed"))->Enable(isEnabled);
 	menu->SetAccMenu(GRID_INSERT_AFTER, _("Wstaw p&o"))->Enable(isEnabled);
-	isEnabled = (isEnabled && Kai->GetTab()->Video->GetState() != None);
+	isEnabled = (isEnabled && tab->Video->GetState() != None);
 	menu->SetAccMenu(GRID_INSERT_BEFORE_VIDEO, _("Wstaw przed z &czasem wideo"))->Enable(isEnabled);
 	menu->SetAccMenu(GRID_INSERT_AFTER_VIDEO, _("Wstaw po z c&zasem wideo"))->Enable(isEnabled);
 	menu->SetAccMenu(GRID_INSERT_BEFORE_WITH_VIDEO_FRAME, _("Wstaw przed z czasem klatki wideo"))->Enable(isEnabled);
@@ -200,9 +201,9 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
 	menu->SetAccMenu(GRID_SHOW_PREVIEW, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(GRID_SET_NEW_FPS, _("Ustaw nowy FPS"));
-	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Ustaw FPS z wideo"))->Enable(Notebook::GetTab()->Video->GetState() != None && sels == 2);
+	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Ustaw FPS z wideo"))->Enable(tab->Video->GetState() != None && sels == 2);
 	menu->SetAccMenu(GRID_PASTE_TRANSLATION, _("Wklej tekst tłumaczenia"))->
-		Enable(subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L"");
+		Enable(subsFormat < SRT && tab->SubsPath != L"");
 	menu->SetAccMenu(GRID_TRANSLATION_DIALOG, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
@@ -210,7 +211,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(GLOBAL_REMOVE_LINES, _("Usuń"))->Enable(isEnabled);
 	menu->AppendSeparator();
 	menu->SetAccMenu(GLOBAL_OPEN_FONT_COLLECTOR, _("Kolekcjoner czcionek"))->Enable(subsFormat < SRT);
-	menu->SetAccMenu(GRID_SUBS_FROM_MKV, _("Wczytaj napisy z pliku MKV"))->Enable(Kai->GetTab()->VideoName.EndsWith(L".mkv"));
+	menu->SetAccMenu(GRID_SUBS_FROM_MKV, _("Wczytaj napisy z pliku MKV"))->Enable(tab->VideoName.EndsWith(L".mkv"));
 
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
@@ -585,25 +586,14 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 		dialog->Text = L"";
 		dialog->TextTl = L"";
 	}
-	int time = Kai->GetTab()->Video->GetFrameTime();
+	int time = tab->Video->GetFrameTime();
 	dialog->Start.NewTime(ZEROIT(time));
-	int endtime = frameTime ? Kai->GetTab()->Video->GetFrameTime(false) : time + 4000;
+	int endtime = frameTime ? tab->Video->GetFrameTime(false) : time + 4000;
 	dialog->End.NewTime(ZEROIT(endtime));
 	int newCurrentLine = (before) ? rw : rw + 1;
 	markedLine = currentLine = newCurrentLine;
 	InsertRows(newCurrentLine, 1, dialog, false, true);
 }
-
-//void SubsGrid::BindToAnotherWindow(int window, int id)
-//{
-//	TabPanel *tab = (TabPanel*)GetParent();
-//	if (window == EDITBOX_HOTKEY)
-//		Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
-//	else if (window == VIDEO_HOTKEY)
-//		Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->Video, id);
-//	else if (window == AUDIO_HOTKEY && Edit->ABox)
-//		Bind(wxEVT_COMMAND_MENU_SELECTED, &AudioBox::OnAccelerator, Edit->ABox, id);
-//}
 
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
@@ -611,7 +601,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	if (Options.CheckLastKeyEvent(id))
 		return;
 
-	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;//Kai->GetTab()->Video;
+	VideoCtrl *vb = tab->Video;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
 	bool hasVideo = vb->GetState() != None;
@@ -658,11 +648,11 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_FILTER:
 	case GRID_FILTER_BY_NOTHING:
 		Filter(id); break;
-	case GRID_PASTE_TRANSLATION: if (subsFormat < SRT && ((TabPanel*)GetParent())->SubsPath != L""){ OnPasteTextTl(); } break;
-	case GRID_SUBS_FROM_MKV: if (Kai->GetTab()->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
+	case GRID_PASTE_TRANSLATION: if (subsFormat < SRT && tab->SubsPath != L""){ OnPasteTextTl(); } break;
+	case GRID_SUBS_FROM_MKV: if (tab->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
 	case GRID_SET_NEW_FPS: OnSetNewFPS(); break;
 	case GRID_SHOW_PREVIEW:
-		if (Notebook::GetTabs()->Size()>1 && !preview)
+		if (Notebook::GetTabs()->Size() > 1 && !preview)
 			OnShowPreview();
 		break;
 	case GRID_HIDE_LAYER:
@@ -728,7 +718,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 void SubsGrid::OnPasteTextTl()
 {
 	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
-		Kai->GetTab()->SubsPath.BeforeLast(L'\\'), L"", 
+		tab->SubsPath.BeforeLast(L'\\'), L"", 
 		_("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), 
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog1->ShowModal() == wxID_OK){
@@ -924,7 +914,6 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		if (wbutton == wxYES){ Kai->Save(false); }
 		else if (wbutton == wxCANCEL){ return; }
 	}
-	TabPanel *tab = Kai->GetTab();
 	wxString mkvpath = (idd == GRID_SUBS_FROM_MKV) ? tab->VideoPath : event.GetString();
 
 	MatroskaWrapper mw;
@@ -1215,7 +1204,7 @@ void SubsGrid::OnSetFPSFromVideo()
 	Dialogue *second = GetDialogue(selections[1]);
 	int firstTime = first->Start.mstime;
 	int secondTime = second->Start.mstime;
-	int videoTime = Notebook::GetTab()->Video->Tell();
+	int videoTime = tab->Video->Tell();
 	float diffVideo = (videoTime - secondTime);
 	float diffLines = (secondTime - firstTime);
 
@@ -1480,7 +1469,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	file->InsertSelection(newActiveLine);
 	Edit->SetLine(newActiveLine);
 	if (Comparison && (Options.GetInt(SUBS_COMPARISON_TYPE) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
-	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+	VideoCtrl *vb = tab->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
 		vb->Render();

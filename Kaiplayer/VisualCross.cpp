@@ -30,7 +30,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		if (cross){
 			cross = false;
 			if (!tab->Video->m_HasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); tab->Video->m_HasArrow = true; }
-			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ renderer->Render(false); }
+			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ Render(false); }
 		}
 		return;
 	}
@@ -50,7 +50,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	DrawLines(wxPoint(x, y));
 
 	if (event.MiddleDown() || (event.LeftDown() && event.ControlDown())){
-		if (!m_IsFullscreen)
+		if (!tab->Video->IsFullScreen())
 		{
 			Dialogue *aline = tab->Edit->line;
 			bool istl = (tab->Grid->hasTLMode && aline->TextTl != L"");
@@ -122,7 +122,7 @@ void Cross::DrawLines(wxPoint point)
 	vectors[3].x = m_BackBufferRect.right;
 	vectors[3].y = point.y;
 	cross = true;
-	if (m_State == Paused && !m_BlockResize){
+	if (tab->Video->GetState() == Paused && !m_BlockResize){
 		tab->Video->Render(m_VideoResized);
 	}
 }

@@ -69,11 +69,11 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 
 }
 
-class bars1 : public KaiDialog
+class AspectRatioDialog : public KaiDialog
 {
 public:
-	bars1(VideoCtrl *parent);
-	virtual ~bars1(){};
+	AspectRatioDialog(VideoCtrl *parent, float AspectRatio);
+	virtual ~AspectRatioDialog(){};
 
 	KaiSlider *slider;
 	KaiStaticText *actual;
@@ -81,24 +81,25 @@ public:
 	VideoCtrl *_parent;
 };
 
-bars1::bars1(VideoCtrl *parent)
-	: KaiDialog((parent->m_IsFullscreen) ? (wxWindow*)parent->m_FullScreenWindow : parent, -1, L"", wxDefaultPosition, wxDefaultSize)
+AspectRatioDialog::AspectRatioDialog(VideoCtrl *parent, float AspectRatio)
+	: KaiDialog(parent->GetMessageWindowParent(), -1, L"", wxDefaultPosition, wxDefaultSize)
 {
 	_parent = parent;
 	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
-	actual = new KaiStaticText(this, -1, wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / parent->m_AspectRatio));
-	slider = new KaiSlider(this, 7767, parent->m_AspectRatio * 700000, 100000, 1000000, wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
-	Connect(7767, wxEVT_SCROLL_THUMBTRACK, (wxObjectEventFunction)&bars1::OnSlider);
+	actual = new KaiStaticText(this, -1, wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / AspectRatio));
+	slider = new KaiSlider(this, 7767, AspectRatio * 700000, 100000, 1000000, wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
+	Connect(7767, wxEVT_SCROLL_THUMBTRACK, (wxObjectEventFunction)&AspectRatioDialog::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
 	sizer->Add(slider, 1, wxEXPAND | wxALL, 3);
 	SetSizerAndFit(sizer);
 	MoveToMousePosition(this);
 }
 
-void bars1::OnSlider(wxCommandEvent &event)
+void AspectRatioDialog::OnSlider(wxCommandEvent &event)
 {
-	_parent->SetAspectRatio(slider->GetValue() / 700000.0f);
-	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / _parent->m_AspectRatio));
+	float AspectRatio = slider->GetValue() / 700000.0f;
+	_parent->SetAspectRatio(AspectRatio);
+	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / AspectRatio));
 }
 
 
@@ -111,8 +112,6 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	, eater(false)
 	, actualFile(0)
 	, prevchap(-1)
-	, coeffX(0.0f)
-	, coeffY(0.0f)
 	, m_FullScreenWindow(NULL)
 	, m_blockRender(false)
 	, m_IsOnAnotherMonitor(false)
@@ -1031,7 +1030,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	else if (id == GLOBAL_OPEN_SUBS){ OnOpSubs(); }
 	else if (id == VIDEO_HIDE_PROGRESS_BAR){ OnHidePB(); }
 	else if (id == VIDEO_ASPECT_RATIO){
-		bars1 changear(this);
+		AspectRatioDialog changear(this, m_AspectRatio);
 		changear.ShowModal();
 	}
 	else if (id == VIDEO_DELETE_FILE){ OnDeleteVideo(); }
@@ -1370,18 +1369,18 @@ void VideoCtrl::ChangeStream()
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
-	VideoCtrl *vb = (VideoCtrl *)dwData;
+	std::vector<RECT> * MonRects = (std::vector<RECT>*)dwData;
 	WinStruct<MONITORINFO> monitorinfo;
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
 		KaiLog(_("Nie można pobrać informacji o monitorze"));
 		return TRUE;
 	}
-	//podstawowy monitor ma być pierwszy w tablicy
+	// Main monitor have to be put as first
 	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
-		vb->MonRects.insert(vb->MonRects.begin(), monitorinfo.rcMonitor);
+		MonRects->insert(MonRects->begin(), monitorinfo.rcMonitor);
 		return TRUE;
 	}
-	vb->MonRects.push_back(monitorinfo.rcMonitor);
+	MonRects->push_back(monitorinfo.rcMonitor);
 	return TRUE;
 }
 
@@ -1570,7 +1569,7 @@ int VideoCtrl::GetPlayEndTime(int time)
 }
 void VideoCtrl::DisableVisuals(bool disable)
 {
-	
+	m_VideoToolbar->DisableVisuals(disable);
 }
 void VideoCtrl::DeleteAudioCache()
 {
@@ -1591,7 +1590,10 @@ bool VideoCtrl::IsDirectShow()
 }
 void VideoCtrl::GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter)
 {
-
+	if (videoPlayAfter)
+		*videoPlayAfter = m_VideoToolbar->videoPlayAfter->GetSelection();
+	if (videoSeekAfter)
+		*videoSeekAfter = m_VideoToolbar->videoSeekAfter->GetSelection();
 }
 void VideoCtrl::SetVisual(bool settext, bool noRefresh)
 {
@@ -1602,6 +1604,24 @@ void VideoCtrl::ResetVisual()
 {
 	if (renderer)
 		renderer->ResetVisual();
+}
+
+bool VideoCtrl::HasFFMS2()
+{
+	return renderer && renderer->HasFFMS2();
+}
+VideoFfmpeg *VideoCtrl::GetFFMS2()
+{
+	if (renderer)
+		return renderer->GetFFMS2();
+
+	return NULL;
+}
+
+void VideoCtrl::SetVisualEdition(bool value)
+{
+	if(renderer)
+		renderer->m_HasVisualEdition = value;
 }
 
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)

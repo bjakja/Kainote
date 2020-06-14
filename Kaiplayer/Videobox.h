@@ -103,6 +103,9 @@ public:
 	void GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter);
 	void SetVisual(bool settext = false, bool noRefresh = false);
 	void ResetVisual();
+	bool HasFFMS2();
+	VideoFfmpeg *GetFFMS2();
+	void SetVisualEdition(bool value);
 private:
 
 	BitmapButton* m_ButtonPreviousFile;

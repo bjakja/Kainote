@@ -1910,7 +1910,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	{
 		Menubar->Enable(i, (i < GLOBAL_SET_START_TIME) ? enable : enable && editor);
 	}
-	enable = (tab->Video->VFF != NULL);
+	enable = (tab->Video->HasFFMS2());
 	Menubar->Enable(GLOBAL_GO_TO_PREVIOUS_KEYFRAME, enable);
 	Menubar->Enable(GLOBAL_GO_TO_NEXT_KEYFRAME, enable);
 	enable = (tab->Edit->ABox != NULL);
@@ -1951,10 +1951,10 @@ void KainoteFrame::OnChangeLine(wxCommandEvent& event)
 {
 
 	int idd = event.GetId();
-	if (idd < GLOBAL_JOIN_WITH_PREVIOUS){//zmiana linijki
+	if (idd < GLOBAL_JOIN_WITH_PREVIOUS){//change of line
 		GetTab()->Grid->NextLine((idd == GLOBAL_PREVIOUS_LINE) ? -1 : 1);
 	}
-	else{//scalanie dwóch linijek
+	else{//merge two lines
 		GetTab()->Grid->OnJoin(event);
 	}
 }
@@ -2001,21 +2001,22 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 {
 	TabPanel *tab = GetTab();
-	if (!tab->Edit->ABox){ return; }
+	if (!tab->Edit->ABox || !tab->Video->HasFFMS2()){ return; }
 	int id = event.GetId();
 	bool snapStartTime = (id == GLOBAL_SNAP_WITH_START);
 	int time = (snapStartTime) ? tab->Edit->line->Start.mstime : tab->Edit->line->End.mstime;
 	int time2 = (snapStartTime) ? tab->Edit->line->End.mstime : tab->Edit->line->Start.mstime;
-	int snaptime = time;// tab->Edit->ABox->audioDisplay->GetBoundarySnap(time,1000,!Options.GetBool(AUDIO_SNAP_TO_KEYFRAMES),(id==GLOBAL_SNAP_WITH_START),true);
-	wxArrayInt &KeyFrames = tab->Video->VFF->KeyFrames;
+	int snaptime = time;
+	VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+	wxArrayInt &KeyFrames = FFMS2->KeyFrames;
 	int lastDifferents = MAXINT;
 	//wxArrayInt boundaries;
 	for (unsigned int i = 0; i < KeyFrames.Count(); i++) {
 		int keyMS = KeyFrames[i];
 		if (keyMS >= time - 5000 && keyMS < time + 5000) {
 			int frameTime = 0;
-			int frame = tab->Video->VFF->GetFramefromMS(keyMS);
-			int prevFrameTime = tab->Video->VFF->GetMSfromFrame(frame - 1);
+			int frame = FFMS2->GetFramefromMS(keyMS);
+			int prevFrameTime = FFMS2->GetMSfromFrame(frame - 1);
 			frameTime = keyMS + ((prevFrameTime - keyMS) / 2);
 			frameTime = ZEROIT(frameTime);
 			int actualDiff = abs(time - frameTime);

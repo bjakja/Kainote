@@ -94,6 +94,9 @@ public:
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
 	};
+
+	void GetMoveTimes(int *start, int *end);
+	void SetModified(int action);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);

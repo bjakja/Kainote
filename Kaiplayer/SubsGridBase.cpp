@@ -202,7 +202,7 @@ void SubsGridBase::Convert(char type)
 		od.okok->SetFocus();
 		if (od.ShowModal() == wxID_CANCEL){ return; }
 	}
-	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && Kai->GetTab()->VideoPath != L""){
+	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && tab->VideoPath != L""){
 		Options.SetString(CONVERT_FPS, Kai->GetStatusText(4).BeforeFirst(L' '));
 	}
 	if (Options.GetFloat(CONVERT_FPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
@@ -323,7 +323,6 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 		//if (cstat){
 			//AddSInfo(L"Last Style Storage", Options.actualStyleDir, false);
 			AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
-			TabPanel *tab = (TabPanel*)GetParent();
 			wxString subsPath = tab->SubsPath.BeforeLast(L'\\');
 			if (Edit->ABox){
 				wxString path = (Edit->ABox->audioName.StartsWith(subsPath)) ?
@@ -482,8 +481,8 @@ public:
 
 void SubsGridBase::ChangeTimes(bool byFrame)
 {
-	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
-	if (byFrame && !vb->VFF){ wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return; }
+	VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+	if (byFrame && !FFMS2){ wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
 
@@ -500,7 +499,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	if (PostprocessorOptions){
 		if (subsFormat == TMP || PostprocessorOptions < 16){ PostprocessorOptions = 0; }
-		else if (PostprocessorOptions & 8 && !vb->VFF){ PostprocessorOptions ^= 8; }
+		else if (PostprocessorOptions & 8 && !FFMS2){ PostprocessorOptions ^= 8; }
 		LeadIn = Options.GetInt(POSTPROCESSOR_LEAD_IN);
 		LeadOut = Options.GetInt(POSTPROCESSOR_LEAD_OUT);
 		ThresholdStart = Options.GetInt(POSTPROCESSOR_THRESHOLD_START);
@@ -546,12 +545,12 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	int difftime = (VAS) ? file->GetDialogue(markedLine)->Start.mstime : file->GetDialogue(markedLine)->End.mstime;
 
-	if ((moveTimeOptions & 4) && vb->GetState() != None){
+	if ((moveTimeOptions & 4) && tab->Video->GetState() != None){
 		if (byFrame){
-			frame += vb->GetCurrentFrame() - vb->VFF->GetFramefromMS(difftime);
+			frame += tab->Video->GetCurrentFrame() - FFMS2->GetFramefromMS(difftime);
 		}
 		else{
-			int addedTimes = vb->GetFrameTime(VAS != 0) - difftime;
+			int addedTimes = tab->Video->GetFrameTime(VAS != 0) - difftime;
 			if (addedTimes < 0){ addedTimes -= 10; }
 			time += ZEROIT(addedTimes);
 		}
@@ -559,7 +558,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	}
 	else if ((moveTimeOptions & 8) && Edit->ABox && Edit->ABox->audioDisplay->hasMark){
 		if (byFrame){
-			frame += vb->VFF->GetFramefromMS(Edit->ABox->audioDisplay->curMarkMS - difftime);
+			frame += FFMS2->GetFramefromMS(Edit->ABox->audioDisplay->curMarkMS - difftime);
 		}
 		else{
 			int addedTimes = Edit->ABox->audioDisplay->curMarkMS - difftime;
@@ -590,7 +589,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			dialc = file->CopyDialogue(i, true, true);
 			int startTrimed = 0, endTrimed = 0, duration = 0;
 			if (changeTagTimes){
-				vb->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &startTrimed, &endTrimed);
+				tab->Video->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &startTrimed, &endTrimed);
 			}
 			if (time != 0){
 				if (whichTimes != 2){ dialc->Start.Change(time); }
@@ -602,30 +601,23 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					duration = dialc->End.mstime - dialc->Start.mstime;
 				}
 				if (whichTimes != 2){
-					int startFrame = vb->VFF->GetFramefromMS(dialc->Start.mstime) + frame;
-					dialc->Start.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(startFrame)));
+					int startFrame = FFMS2->GetFramefromMS(dialc->Start.mstime) + frame;
+					dialc->Start.NewTime(ZEROIT(tab->Video->GetFrameTimeFromFrame(startFrame)));
 				}
 				if (whichTimes != 1){
-					int endFrame = vb->VFF->GetFramefromMS(dialc->End.mstime) + frame;
-					dialc->End.NewTime(ZEROIT(vb->GetFrameTimeFromFrame(endFrame)));
+					int endFrame = FFMS2->GetFramefromMS(dialc->End.mstime) + frame;
+					dialc->End.NewTime(ZEROIT(tab->Video->GetFrameTimeFromFrame(endFrame)));
 				}
 				dialc->ChangeDialogueState(1);
 			}
 			if (changeTagTimes){
 				int newStartTrimed = 0, newEndTrimed = 0;
-				vb->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &newStartTrimed, &newEndTrimed);
+				tab->Video->GetStartEndDelay(dialc->Start.mstime, dialc->End.mstime, &newStartTrimed, &newEndTrimed);
 				if (byFrame){ newEndTrimed += ((dialc->End.mstime - dialc->Start.mstime) - duration); }
 				dialc->ChangeTimes(newStartTrimed - startTrimed, (newEndTrimed - endTrimed));
 			}
 
 			if (correctEndTimes > 0 || PostprocessorOptions > 16){
-				/*if (correctEndTimes > 1){
-					int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
-					int newend = (endt*dialc->Text.length());
-					if (newend < 1000){ newend = 1000; }
-					newend += dialc->Start.mstime;
-					dialc->End.NewTime(newend);
-					}*/
 				if (PostprocessorOptions & 1){ dialc->Start.Change(-LeadIn); dialc->ChangeDialogueState(1); }
 				if (PostprocessorOptions & 2){ dialc->End.Change(LeadOut); dialc->ChangeDialogueState(1); }
 				if (correctEndTimes > 0 || PostprocessorOptions > 19){
@@ -691,14 +683,14 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				int keyMS = 0;
 				int startResult = INT_MAX;
 				int endResult = -1;
-				for (size_t g = 0; g < vb->VFF->KeyFrames.Count(); g++) {
-					keyMS = vb->VFF->KeyFrames[g];
+				for (size_t g = 0; g < FFMS2->KeyFrames.Count(); g++) {
+					keyMS = FFMS2->KeyFrames[g];
 					if (keyMS > startRange && keyMS < startRange1) {
-						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
+						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
 						if (startResult > keyMS && keyMS != dialc->Start.mstime){ startResult = keyMS; }
 					}
 					if (keyMS > endRange && keyMS < endRange1) {
-						keyMS = ZEROIT(vb->GetFrameTimeFromTime(keyMS));
+						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
 						if (endResult < keyMS && keyMS > dialc->Start.mstime){ endResult = keyMS; }
 					}
 				}
@@ -945,7 +937,6 @@ bool SubsGridBase::IsModified()
 
 void SubsGridBase::GetUndo(bool redo, int iter)
 {
-	TabPanel *tab = (TabPanel*)GetParent();
 	Freeze();
 	const wxString &resolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
 	const wxString &matrix = GetSInfo(L"YCbCr Matrix");
@@ -1060,7 +1051,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	RefreshColumns();
 	UpdateUR();
 	Kai->Label(file->GetActualHistoryIter());
-	VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+	VideoCtrl *vb = tab->Video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(GetVisible());
 		vb->Render();
@@ -1162,18 +1153,19 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 			file->InsertSelection(newCurrentLine);
 		}
 		file->SaveUndo(editionType, currentLine, markedLine);
-		Kai->Label(file->GetActualHistoryIter(), false, Kai->Tabs->FindPanel((TabPanel*)GetParent()));
+		Kai->Label(file->GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
 		if (!dummy){
-			VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+			VideoCtrl *vb = tab->Video;
 			if (Edit->Visual >= CHANGEPOS){
 				vb->SetVisual(true);
 			}
 			else{
-				if (vb->IsShown() || vb->m_IsFullscreen){ vb->OpenSubs(GetVisible()); }
+				if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(GetVisible()); }
 
-				int opt = vb->m_VideoToolbar->videoSeekAfter->GetSelection();
-				if (opt > 1){
-					if (vb->GetState() == Paused || (vb->GetState() == Playing && (opt == 3 || opt == 5))){
+				int seekAfter;
+				vb->GetVideoListsOptions(NULL, &seekAfter);
+				if (seekAfter > 1){
+					if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
 						vb->Seek(Edit->line->Start.mstime);
 					}
 				}
@@ -1491,7 +1483,6 @@ wxString *SubsGridBase::SaveText()
 {
 	wxString *path = new wxString();
 
-	TabPanel *tab = (TabPanel*)GetParent();
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
 	(*path) << Options.pathfull << L"\\Subs\\DummySubs_" << Notebook::GetTabs()->FindPanel(tab) << L"." << ext;
@@ -1505,9 +1496,8 @@ wxString *SubsGridBase::SaveText()
 wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected)
 {
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
-	TabPanel *pan = (TabPanel*)GetParent();
-	int _time = pan->Video->Tell();
-	bool toEnd = pan->Video->GetState() == Playing;
+	int _time = tab->Video->Tell();
+	bool toEnd = tab->Video->GetState() == Playing;
 	wxString *txt = new wxString();
 	wchar_t bom = 0xFEFF;
 	*txt << wxString(bom);
@@ -1582,13 +1572,12 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 
 void SubsGridBase::OnBackupTimer(wxTimerEvent &event)
 {
-	TabPanel *pan = (TabPanel*)GetParent();
 	Kai->SetStatusText(_("Autozapis"), 0);
 	wxString path;
 	wxString ext = (subsFormat < SRT) ? L"ass" : (subsFormat == SRT) ? L"srt" : L"txt";
 
-	path << Options.pathfull << L"\\Subs\\" << pan->SubsName.BeforeLast(L'.')
-		<< L"_" << Notebook::GetTabs()->FindPanel(pan) << L"_" << numsave << L"." << ext;
+	path << Options.pathfull << L"\\Subs\\" << tab->SubsName.BeforeLast(L'.')
+		<< L"_" << Notebook::GetTabs()->FindPanel(tab) << L"_" << numsave << L"." << ext;
 
 	SaveFile(path, false);
 	int maxFiles = Options.GetInt(AUTOSAVE_MAX_FILES);

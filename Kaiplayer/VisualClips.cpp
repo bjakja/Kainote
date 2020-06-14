@@ -514,7 +514,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		tool -= step;
 		VideoCtrl *vc = tab->Video;
-		if (vc->m_IsFullscreen && vc->m_FullScreenWindow){
+		if (vc->IsFullScreen() && vc->m_FullScreenWindow){
 			vc->m_FullScreenWindow->vToolbar->SetItemToggled(&tool);
 		}
 		else{
