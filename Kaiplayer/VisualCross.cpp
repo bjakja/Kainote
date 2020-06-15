@@ -30,7 +30,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		if (cross){
 			cross = false;
 			if (!tab->Video->m_HasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); tab->Video->m_HasArrow = true; }
-			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ Render(false); }
+			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ tab->Video->Render(false); }
 		}
 		return;
 	}
@@ -38,6 +38,8 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	if (event.Entering()){
 		cross = true;
 		int nx = 0, ny = 0;
+		int w = 0, h = 0;
+		tab->Video->GetClientSize(&w, &h);
 		tab->Grid->GetASSRes(&nx, &ny);
 		coeffX = (float)nx / (float)(w - 1);
 		coeffY = (float)ny / (float)(h - m_PanelHeight - 1);

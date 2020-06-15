@@ -17,7 +17,7 @@
 
 typedef wchar_t* PTCHAR;
 
-#include "VideoRenderer.h"
+#include "RendererVideo.h"
 #include <Dvdmedia.h>
 #include <streams.h>
 
@@ -51,7 +51,7 @@ class CD2DVideoRender : public CBaseVideoRenderer
 {
 public:
 
-	CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr);
+	CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
 	HRESULT Render(IMediaSample *pMediaSample);
@@ -65,7 +65,7 @@ public:
 	HRESULT GetVidInfo(VideoInf &vi);
 
 private:
-	VideoRenderer *Vrend;
+	RendererVideo *Vrend;
 	VideoInf Vinfo;
 	int time;
 	bool norender;

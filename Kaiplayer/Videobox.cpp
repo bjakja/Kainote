@@ -1624,6 +1624,20 @@ void VideoCtrl::SetVisualEdition(bool value)
 		renderer->m_HasVisualEdition = value;
 }
 
+RendererVideo *VideoCtrl::GetRenderer()
+{
+	return renderer;
+}
+
+Fullscreen *VideoCtrl::GetFullScreenWindow()
+{
+	return m_FullScreenWindow;
+}
+VideoToolbar *VideoCtrl::GetVideoToolbar()
+{
+	return m_VideoToolbar;
+}
+
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)

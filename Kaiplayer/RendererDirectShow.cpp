@@ -250,7 +250,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	if (m_State == Playing){ videoControl->Stop(); }
 
 	if (m_State != None){
-		m_VideoResized = seek = videoControl->m_FullScreenProgressBar = false;
+		m_VideoResized = m_DirectShowSeeking = videoControl->m_FullScreenProgressBar = false;
 		m_State = None;
 		Clear();
 	}
@@ -443,7 +443,7 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 		m_Time *= m_FrameDuration;
 	}
 	m_PlayEndTime = 0;
-	seek = true;
+	m_DirectShowSeeking = true;
 	vplayer->SetPosition(m_Time);
 	if (m_HasVisualEdition){
 		SAFE_DELETE(m_Visual->dummytext);
@@ -562,7 +562,7 @@ wxArrayString RendererDirectShow::GetStreams()
 void RendererDirectShow::EnableStream(long index)
 {
 	if (vplayer->stream){
-		seek = true;
+		m_DirectShowSeeking = true;
 		auto hr = vplayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
 		if (FAILED(hr)){
 			KaiLog(L"Cannot change stream");

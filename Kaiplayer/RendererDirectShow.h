@@ -82,4 +82,5 @@ public:
 	void OpenKeyframes(const wxString &filename);
 
 	DShowPlayer *vplayer;
+	
 };

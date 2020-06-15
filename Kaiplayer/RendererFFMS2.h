@@ -76,10 +76,10 @@ public:
 	void ResetZoom();
 	void SetVisualZoom();
 	//int GetPreciseTime(bool start = true);
-	void DeleteAudioCache(){ if (VFF){ VFF->DeleteOldAudioCache(); } }
+	void DeleteAudioCache(){ if (m_FFMS2){ m_FFMS2->DeleteOldAudioCache(); } }
 	void SetColorSpace(const wxString& matrix, bool render = true){
-		if (VFF){
-			VFF->SetColorSpace(matrix);
+		if (m_FFMS2){
+			m_FFMS2->SetColorSpace(matrix);
 			if (m_State == Paused)
 				Render();
 		}
@@ -88,5 +88,5 @@ public:
 	bool HasFFMS2();
 	VideoFfmpeg * GetFFMS2();
 	//bool InitRendererDX(bool reset = false)
-	VideoFfmpeg *VFF;
+	VideoFfmpeg *m_FFMS2;
 };

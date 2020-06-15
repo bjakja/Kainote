@@ -57,7 +57,7 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	format = NULL;
 	m_D3DLine = NULL;
 	m_Visual = NULL;
-	m_VideoResized = seek = m_BlockResize = cross = m_HasVisualEdition = false;
+	m_VideoResized = m_DirectShowSeeking = m_BlockResize = cross = m_HasVisualEdition = false;
 	//IsDshow = true;
 	m_DeviceLost = false;
 	m_MainSurface = NULL;

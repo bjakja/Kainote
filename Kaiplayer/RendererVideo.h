@@ -141,8 +141,8 @@ public:
 	LPDIRECT3DSURFACE9 m_MainSurface;
 	LPDIRECT3DDEVICE9 m_D3DDevice;
 	D3DFORMAT m_D3DFormat;
+	bool m_DirectShowSeeking;
 	volatile bool m_BlockResize;
-	bool seek;
 	bool m_HasVisualEdition;
 	bool m_HasDummySubs = true;
 	bool m_VideoResized;
@@ -174,7 +174,7 @@ public:
 	IDirectXVideoProcessor *m_DXVAProcessor;
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
-
+	VideoCtrl *videoControl;
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
 	LPDIRECT3DTEXTURE9 texture;
@@ -232,6 +232,5 @@ private:
 	csri_frame *framee;
 	csri_fmt *format;
 	Visuals *m_Visual;
-	VideoCtrl *videoControl;
 	TabPanel* tab;
 };

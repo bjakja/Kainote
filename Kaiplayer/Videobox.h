@@ -104,8 +104,14 @@ public:
 	void SetVisual(bool settext = false, bool noRefresh = false);
 	void ResetVisual();
 	bool HasFFMS2();
+	//can return null
 	VideoFfmpeg *GetFFMS2();
 	void SetVisualEdition(bool value);
+	//can return null
+	RendererVideo *GetRenderer();
+	//can return null
+	Fullscreen *GetFullScreenWindow();
+	VideoToolbar *GetVideoToolbar();
 private:
 
 	BitmapButton* m_ButtonPreviousFile;
