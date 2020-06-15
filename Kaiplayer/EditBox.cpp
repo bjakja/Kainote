@@ -965,7 +965,8 @@ void EditBox::OnColorRightClick(wxMouseEvent& event)
 
 void EditBox::OnCommit(wxCommandEvent& event)
 {
-	tab->Video->m_blockRender = true;
+	///test it too if it's needed
+	//tab->Video->m_blockRender = true;
 	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){
 		TextEdit->SetModified(); TextEditOrig->SetModified(); splittedTags = false;
 	}
@@ -980,7 +981,7 @@ void EditBox::OnCommit(wxCommandEvent& event)
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
 	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-	tab->Video->m_blockRender = false;
+	//tab->Video->m_blockRender = false;
 }
 
 void EditBox::OnNewline(wxCommandEvent& event)

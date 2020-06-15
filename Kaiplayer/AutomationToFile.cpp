@@ -980,15 +980,15 @@ namespace Auto{
 			return 0;
 		}
 		TabPanel *tab = Notebook::GetTab();
-		VideoFfmpeg* VFF = tab->Video->VFF;
-		if (!VFF){
+		VideoFfmpeg* FFMS2 = tab->Video->GetFFMS2();
+		if (!FFMS2){
 			if (!tab->Edit->ABox){
 				lua_pushstring(L, "GetFreqencyReach needs loaded audio by FFMS2");
 				lua_error(L);
 				return 0;
 			}
-			VFF = tab->Edit->ABox->audioDisplay->provider;
-			if (!VFF){
+			FFMS2 = tab->Edit->ABox->audioDisplay->provider;
+			if (!FFMS2){
 				lua_pushstring(L, "GetFreqencyReach cannot get audio provider");
 				lua_error(L);
 				return 0;
@@ -1015,7 +1015,7 @@ namespace Auto{
 
 
 		if (!laf->spectrum)
-			laf->spectrum = new AudioSpectrum(VFF);
+			laf->spectrum = new AudioSpectrum(FFMS2);
 
 		laf->spectrum->CreateRange(output, intensities, start, end, wxPoint(freqstart, freqend), peek);
 		push_value(L, output);

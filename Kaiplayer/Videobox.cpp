@@ -159,13 +159,13 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	}, ID_SCALE_ROTATE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
-	}, 23334);
-
+	}, ID_REFRESH_TIME);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);
 	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
 
-	m_VideoTimeTimer.SetOwner(this, idvtime);
+	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
 	idletime.SetOwner(this, ID_IDLE);
 
 }
@@ -1643,9 +1643,9 @@ EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)
 EVT_KEY_DOWN(VideoCtrl::OnKeyPress)
 EVT_PAINT(VideoCtrl::OnPaint)
-EVT_TIMER(idvtime, VideoCtrl::OnPlaytime)
+EVT_TIMER(ID_VIDEO_TIME, VideoCtrl::OnPlaytime)
 EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
 EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
-EVT_BUTTON(23333, VideoCtrl::OnEndFile)
+EVT_BUTTON(ID_END_OF_STREAM, VideoCtrl::OnEndFile)
 EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
 END_EVENT_TABLE()

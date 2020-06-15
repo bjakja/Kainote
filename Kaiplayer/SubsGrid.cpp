@@ -120,8 +120,10 @@ SubsGrid::~SubsGrid()
 
 void SubsGrid::ContextMenu(const wxPoint &pos)
 {
-	VideoCtrl *VB = tab->Video;
-	VB->m_blockRender = true;
+	//test if this blocking is needed
+	// it's dshow blocking
+	//VideoCtrl *VB = tab->Video;
+	//VB->m_blockRender = true;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
 	Menu *menu = new Menu(GRID_HOTKEY);
@@ -226,7 +228,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, id));
 done:
 	delete menu;
-	VB->m_blockRender = false;
+	//VB->m_blockRender = false;
 }
 
 
@@ -598,6 +600,13 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id = event.GetId();
+
+	if (id >= 5000){
+		Kai->OnMenuSelected(event);
+	}
+	else if (id >= 1000 && id < 1700 && Edit->ABox){
+		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
+	}
 	if (Options.CheckLastKeyEvent(id))
 		return;
 
@@ -705,12 +714,6 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	if (id == GRID_TRANSLATION_DIALOG && GetSInfo(L"TLMode Showtl") == L"Yes"){
 		static TLDialog *tld = new TLDialog(this, this);
 		tld->Show();
-	}
-	else if (id >= 5000){
-		Kai->OnMenuSelected(event);
-	}
-	else if (id >= 1000 && id < 1700 && Edit->ABox){
-		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
 	}
 }
 

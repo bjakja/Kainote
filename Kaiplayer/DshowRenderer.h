@@ -17,7 +17,6 @@
 
 typedef wchar_t* PTCHAR;
 
-#include "RendererVideo.h"
 #include <Dvdmedia.h>
 #include <streams.h>
 
@@ -45,7 +44,7 @@ struct VideoInf{
 //#ifndef SRELEASE
 //#define SRELEASE(x) if (x != NULL) { x->Release(); x = NULL; }
 //#endif
-
+class RendererVideo;
 
 class CD2DVideoRender : public CBaseVideoRenderer
 {

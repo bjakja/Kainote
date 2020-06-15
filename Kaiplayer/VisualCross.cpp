@@ -29,8 +29,13 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	if (event.Leaving()){
 		if (cross){
 			cross = false;
-			if (!tab->Video->m_HasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); tab->Video->m_HasArrow = true; }
-			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ tab->Video->Render(false); }
+			if (!tab->Video->m_HasArrow){ 
+				tab->Video->SetCursor(wxCURSOR_ARROW); 
+				tab->Video->m_HasArrow = true; 
+			}
+			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ 
+				tab->Video->Render(false); 
+			}
 		}
 		return;
 	}

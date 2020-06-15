@@ -133,8 +133,10 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int frame = (tab->Video->m_IsDirectShow) ? ((float)ms / 1000.f) * tab->Video->m_FPS :
-				tab->Video->VFF->GetFramefromMS(ms, 0, false);
+			float FPS;
+			tab->Video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
+			int frame = (tab->Video->IsDirectShow()) ? ((float)ms / 1000.f) * FPS :
+				tab->Video->GetFFMS2()->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
 		else {
@@ -150,8 +152,10 @@ namespace Auto{
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
-			int ms = (tab->Video->m_IsDirectShow) ? ((frame * 1000) / tab->Video->m_FPS) :
-				tab->Video->VFF->GetMSfromFrame(frame);
+			float FPS;
+			tab->Video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
+			int ms = (tab->Video->IsDirectShow()) ? ((frame * 1000) / FPS) :
+				tab->Video->GetFFMS2()->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
 		else {
@@ -165,7 +169,9 @@ namespace Auto{
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
 			wxSize sz = tab->Video->GetVideoSize();
-			float AR = (float)tab->Video->m_AspectRatioX / tab->Video->ay;
+			int AspectRatioX, AspectRatioY;
+			tab->Video->GetFPSAndAspectRatio(NULL, NULL, &AspectRatioX, &AspectRatioY);
+			float AR = (float)AspectRatioX / AspectRatioY;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
 			lua_pushnumber(L, AR);
@@ -182,8 +188,8 @@ namespace Auto{
 	int get_keyframes(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab->Video->GetState() != None && tab->Video->VFF){
-			wxArrayInt & value = tab->Video->VFF->KeyFrames;
+		if (tab->Video->GetState() != None && tab->Video->HasFFMS2()){
+			wxArrayInt & value = tab->Video->GetFFMS2()->KeyFrames;
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);
@@ -329,7 +335,8 @@ namespace Auto{
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			set_field(L, "video_position", (c->Video->VFF) ? c->Video->VFF->GetFramefromMS(c->Video->Tell()) : NULL);
+			set_field(L, "video_position", (c->Video->HasFFMS2()) ? 
+				c->Video->GetFFMS2()->GetFramefromMS(c->Video->Tell()) : NULL);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->VideoPath);
 			set_field(L, "video_file", c->VideoPath);

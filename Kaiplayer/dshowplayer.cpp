@@ -78,7 +78,6 @@ DShowPlayer::~DShowPlayer()
 
 bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
-	//MessageBeep(MB_ICONERROR);
 	PTR(InitializeGraph(), _("Błąd inicjalizacji Direct Show"));
 	VideoCtrl *Video = (VideoCtrl*)parent;
 
@@ -96,8 +95,8 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV Video Decoder"), L"Nie można dodać LAV Video Decodera");
 	}else{wLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
 	*/
-	HRESULT hr;
-	CD2DVideoRender *renderer = new CD2DVideoRender(Video, &hr);
+	HRESULT hr;//renderer here have to be created
+	CD2DVideoRender *renderer = new CD2DVideoRender(Video->GetRenderer(), &hr);
 	renderer->QueryInterface(IID_IBaseFilter, (void**)&frend.obj);
 	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), _("Nie można dodać renderera wideo"));
 	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
