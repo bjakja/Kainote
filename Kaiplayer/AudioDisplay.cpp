@@ -53,7 +53,7 @@
 #include "Hotkeys.h"
 #include "SubsGrid.h"
 #include "kainoteApp.h"
-#include "VideoRenderer.h"
+#include "RendererVideo.h"
 #include <math.h>
 //#undef DrawText
 
@@ -1239,12 +1239,13 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 			// Get provider
 			TabPanel *pan = ((TabPanel*)box->GetGrandParent());
 			VideoCtrl *vb = pan->Video;
+			VideoFfmpeg *FFMS2 = vb->GetFFMS2();
 			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
-			if (vb->VFF && fromvideo){
-				provider = vb->VFF;
+			if (FFMS2 && fromvideo){
+				provider = FFMS2;
 				ownProvider = (provider->videosource == NULL);
-				if (ownProvider){ vb->VFF = NULL; }
+				if (ownProvider){ FFMS2 = NULL; }
 			}
 			else{
 				provider = new VideoFfmpeg(file, 0, Kaia->Frame, &success);
@@ -1252,14 +1253,17 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 					delete provider; provider = 0;
 					loaded = false; return;
 				}
-				//kopiujemy keyframes by nie robić specjalnie warunków czy jest wideo czy nie
-				if (vb->VFF){
-					provider->KeyFrames = vb->VFF->KeyFrames;
-					provider->Timecodes = vb->VFF->Timecodes;
-					provider->NumFrames = vb->VFF->NumFrames;
-					provider->fps = vb->VFF->fps;
+				//copy keyframes to not check if video is loaded
+
+				if (FFMS2){
+					provider->KeyFrames = FFMS2->KeyFrames;
+					provider->Timecodes = FFMS2->Timecodes;
+					provider->NumFrames = FFMS2->NumFrames;
+					provider->fps = FFMS2->fps;
 				}
-				vb->player = this; ownProvider = true;
+				RendererVideo* renderer = vb->GetRenderer();
+				ownProvider = true;
+				renderer->SetAudioPlayer(this);
 			}
 
 
@@ -1550,7 +1554,7 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 		Edit->Send(AUDIO_CHANGE_TIME, nextLine);
 		if (!nextLine){ Edit->UpdateChars(); }
 		VideoCtrl *vb = ((TabPanel *)Edit->GetParent())->Video;
-		if (vb && vb->vstate != None)
+		if (vb && vb->GetState() != None)
 			vb->RefreshTime();
 	}
 	blockUpdate = false;

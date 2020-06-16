@@ -29,10 +29,9 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	if (event.Leaving()){
 		if (cross){
 			cross = false;
-			if (!tab->Video->m_HasArrow){ 
-				tab->Video->SetCursor(wxCURSOR_ARROW); 
-				tab->Video->m_HasArrow = true; 
-			}
+			RendererVideo *renderer = tab->Video->GetRenderer();
+			tab->Video->SetCursor(wxCURSOR_ARROW); 
+				
 			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ 
 				tab->Video->Render(false); 
 			}
@@ -41,14 +40,14 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	if (event.Entering()){
+		tab->Video->SetCursor(wxCURSOR_BLANK);
 		cross = true;
 		int nx = 0, ny = 0;
 		int w = 0, h = 0;
 		tab->Video->GetClientSize(&w, &h);
 		tab->Grid->GetASSRes(&nx, &ny);
 		coeffX = (float)nx / (float)(w - 1);
-		coeffY = (float)ny / (float)(h - m_PanelHeight - 1);
-
+		coeffY = (float)ny / (float)(h - tab->Video->GetPanelHeight() - 1);
 	}
 	int posx = (float)x * coeffX;
 	int posy = (float)y * coeffY;
@@ -86,32 +85,40 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 
 void Cross::Draw(int time)
 {
-	HRESULT hr;
-	DRAWOUTTEXT(font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF);
-	hr = line->SetWidth(3);
-	hr = line->Begin();
-	hr = line->Draw(&vectors[0], 2, 0xFF000000);
-	hr = line->Draw(&vectors[2], 2, 0xFF000000);
-	hr = line->End();
-	hr = line->SetWidth(1);
-	D3DXVECTOR2 v1[4];
-	v1[0] = vectors[0];
-	v1[0].x += 0.5f;
-	v1[1] = vectors[1];
-	v1[1].x += 0.5f;
-	v1[2] = vectors[2];
-	v1[2].y += 0.5f;
-	v1[3] = vectors[3];
-	v1[3].y += 0.5f;
-	hr = line->Begin();
-	hr = line->Draw(&v1[0], 2, 0xFFFFFFFF);
-	hr = line->Draw(&v1[2], 2, 0xFFFFFFFF);
-	hr = line->End();
+	if (cross){
+		HRESULT hr;
+		DRAWOUTTEXT(font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF);
+		hr = line->SetWidth(3);
+		hr = line->Begin();
+		hr = line->Draw(&vectors[0], 2, 0xFF000000);
+		hr = line->Draw(&vectors[2], 2, 0xFF000000);
+		hr = line->End();
+		hr = line->SetWidth(1);
+		D3DXVECTOR2 v1[4];
+		v1[0] = vectors[0];
+		v1[0].x += 0.5f;
+		v1[1] = vectors[1];
+		v1[1].x += 0.5f;
+		v1[2] = vectors[2];
+		v1[2].y += 0.5f;
+		v1[3] = vectors[3];
+		v1[3].y += 0.5f;
+		hr = line->Begin();
+		hr = line->Draw(&v1[0], 2, 0xFFFFFFFF);
+		hr = line->Draw(&v1[2], 2, 0xFFFFFFFF);
+		hr = line->End();
+	}
 }
 
 void Cross::DrawLines(wxPoint point)
 {
+	RendererVideo *renderer = tab->Video->GetRenderer();
+	if (!renderer)
+		return;
+
 	wxMutexLocker lock(m_MutexCrossLines);
+	
+
 	int w, h;
 	tab->Video->GetClientSize(&w, &h);
 	w /= 2; h /= 2;
@@ -123,14 +130,14 @@ void Cross::DrawLines(wxPoint point)
 	vectors[0].x = point.x;
 	vectors[0].y = 0;
 	vectors[1].x = point.x;
-	vectors[1].y = m_BackBufferRect.bottom;
+	vectors[1].y = renderer->m_BackBufferRect.bottom;
 	vectors[2].x = 0;
 	vectors[2].y = point.y;
-	vectors[3].x = m_BackBufferRect.right;
+	vectors[3].x = renderer->m_BackBufferRect.right;
 	vectors[3].y = point.y;
 	cross = true;
-	if (tab->Video->GetState() == Paused && !m_BlockResize){
-		tab->Video->Render(m_VideoResized);
+	if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){
+		tab->Video->Render(renderer->m_VideoResized);
 	}
 }
 

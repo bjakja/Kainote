@@ -1686,7 +1686,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
-			tab->Video->hasDummySubs = true;
+			tab->Video->GetRenderer()->m_HasDummySubs = true;
 		}
 	}
 

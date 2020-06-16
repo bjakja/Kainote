@@ -17,6 +17,7 @@
 #include "Videobox.h"
 #include "SubsTime.h"
 #include "Config.h"
+#include "VideoFfmpeg.h"
 
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent, id, pos, size, style, name)

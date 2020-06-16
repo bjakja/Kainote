@@ -17,52 +17,31 @@
 
 #include <d3d9.h>
 #include <d3dx9.h>
-#include "Videobox.h"
-#include "DshowRenderer.h"
-#include "dshowplayer.h"
+//#include "Videobox.h"
+//#include "dshowplayer.h"
 #include "Visuals.h"
+#include <dxva2api.h>
+#include <vector>
+#include "Menu.h"
 
 #undef DrawText
-
-#ifndef SAFE_DELETE
-#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
-#endif
-
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(x) if (x != NULL) { x->Release(){}; x = NULL; } 
-#endif
-
-
-
-#ifndef PTR
-#define PTR(what,err) if(!what) {KaiLog(err){}; return false;}
-#endif
-
-#ifndef PTR1
-#define PTR1(what,err) if(!what) {KaiLog(err){}; return;}
-#endif
-
-#ifndef HR
-#define HR(what,err) if(FAILED(what)) {KaiLog(err){}; return false;}
-#endif
-
-#ifndef HRN
-#define HRN(what,err) if(FAILED(what)) {KaiLog(err){}; return;}
-#endif
-
-
 
 typedef void csri_inst;
 //typedef void csri_rend;
 
-//enum PlaybackState
-//{
-//	Playing,
-//	Paused,
-//	Stopped,
-//	None
-//};
+enum PlaybackState
+{
+	Playing,
+	Paused,
+	Stopped,
+	None
+};
 
+struct chapter
+{
+	wxString name;
+	int time;
+};
 
 struct VERTEX
 {
@@ -85,15 +64,16 @@ public:
 	float height;
 };
 
-void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f){};
+void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
 
 class AudioDisplay;
 class DShowPlayer;
 struct csri_fmt;
 struct csri_frame;
-//class RendererDirectShow;
-
+class Menu;
+class VideoFfmpeg;
+class VideoCtrl;
 
 class RendererVideo
 {
@@ -101,10 +81,12 @@ class RendererVideo
 	friend class RendererFFMS2;
 	friend class VideoCtrl;
 public:
-	RendererVideo(VideoCtrl *control){};
-	~RendererVideo(){};
+	RendererVideo(VideoCtrl *control);
+	~RendererVideo();
 
-	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ return false; };
+	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ 
+		return false; 
+	};
 	virtual bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false){ return false; };
 	virtual bool Play(int end = -1){ return false; };
 	virtual bool Pause(){ return false; };
@@ -154,6 +136,7 @@ public:
 	int m_Time;
 	int m_Frame;
 	char *m_FrameBuffer;
+	RECT m_BackBufferRect;
 	byte m_Format;
 	float m_FrameDuration;
 	float m_ZoomParcent;
@@ -206,11 +189,12 @@ public:
 	void VisualChangeTool(int tool);
 	bool HasVisual();
 	Visuals *GetVisual();
+	void SetAudioPlayer(AudioDisplay *player);
 	
 private:
 
 	bool InitDX(bool reset = false);
-	virtual bool InitRendererDX(){ return false; };
+	virtual bool InitRendererDX(){ return true; };
 	void Clear(bool clearObject = false);
 
 	HWND m_HWND;
@@ -222,7 +206,6 @@ private:
 	csri_inst *instance;
 	RECT m_ProgressBarRect;
 	RECT m_WindowRect;
-	RECT m_BackBufferRect;
 	RECT m_MainStreamRect;
 	wxPoint m_ZoomDiff;
 

@@ -513,5 +513,32 @@ enum{
 	FRAME = 10
 };
 
+
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
+#endif
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(x) if (x != NULL) { x->Release(); x = NULL; } 
+#endif
+
+
+
+#ifndef PTR
+#define PTR(what,err) if(!what) {KaiLog(err); return false;}
+#endif
+
+#ifndef PTR1
+#define PTR1(what,err) if(!what) {KaiLog(err); return;}
+#endif
+
+#ifndef HR
+#define HR(what,err) if(FAILED(what)) {KaiLog(err); return false;}
+#endif
+
+#ifndef HRN
+#define HRN(what,err) if(FAILED(what)) {KaiLog(err); return;}
+#endif
+
 extern config Options;
 

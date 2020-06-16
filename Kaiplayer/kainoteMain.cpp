@@ -316,7 +316,7 @@ KainoteFrame::~KainoteFrame()
 	Options.SetTable(SUBS_RECENT_FILES, subsrec);
 	Options.SetTable(VIDEO_RECENT_FILES, videorec);
 	Options.SetTable(AUDIO_RECENT_FILES, audsrec);
-	Options.SetInt(VIDEO_VOLUME, GetTab()->Video->m_VolumeSlider->GetValue());
+	GetTab()->Video->SaveVolume();
 	Notebook::SaveLastSession(true);
 	//Tabs->Destroy();
 	//Tabs = NULL;
@@ -1677,14 +1677,15 @@ void KainoteFrame::HideEditor(bool save)
 		cur->MainSizer->Detach(cur->Video);
 		cur->VideoEditboxSizer->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->m_PanelHeight = 66;
-		cur->Video->m_VideoToolbar->Show();
-		if (cur->Video->GetState() != None && !cur->Video->m_IsFullscreen){
+		cur->Video->SetPanelHeight(66);
+		cur->Video->GetVideoToolbar()->Show();
+		int panelHeight = cur->Video->GetPanelHeight();
+		if (cur->Video->GetState() != None && !cur->Video->IsFullScreen()){
 			int sx, sy, vw, vh;
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 			if (vh < 350){ vh = 350, vw = 500; }
 			cur->Video->CalcSize(&sx, &sy, vw, vh);
-			cur->Video->SetMinSize(wxSize(sx, sy + cur->Video->m_PanelHeight));
+			cur->Video->SetMinSize(wxSize(sx, sy + panelHeight));
 		}
 		else{ cur->Video->Hide(); }
 		if (Options.GetBool(SHIFT_TIMES_ON)){
@@ -1694,12 +1695,12 @@ void KainoteFrame::HideEditor(bool save)
 		Label();
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(); }
 		SetSubsResolution(false);
-		if (cur->Video->m_IsFullscreen)
-			cur->Video->m_FullScreenWindow->HideToolbar(false);
+		if (cur->Video->IsFullScreen())
+			cur->Video->GetFullScreenWindow()->HideToolbar(false);
 	}
 	else{//Turn off of editor
 		cur->Video->RemoveVisual();
-		cur->Video->m_PanelHeight = 44;
+		cur->Video->SetPanelHeight(44);
 		cur->ShiftTimes->Hide();
 
 		if (!cur->Video->IsShown()){ cur->Video->Show(); }
@@ -1708,17 +1709,19 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->MainSizer->Add(cur->Video, 1, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->m_VideoToolbar->Hide();
+		cur->Video->GetVideoToolbar()->Hide();
+
+		int panelHeight = cur->Video->GetPanelHeight();
 		//can crush after turn on of editor
-		if (cur->Video->GetState() != None && !cur->Video->m_IsFullscreen && !IsMaximized()){
+		if (cur->Video->GetState() != None && !cur->Video->IsFullScreen() && !IsMaximized()){
 			int sx, sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);
 			sizex -= borders.left + borders.right;
-			sizey -= (cur->Video->m_PanelHeight + borders.bottom + borders.top);
+			sizey -= (panelHeight + borders.bottom + borders.top);
 
 			cur->Video->CalcSize(&sx, &sy, sizex, sizey, false, true);
 
-			SetClientSize(sx + borders.left + borders.right, sy + cur->Video->m_PanelHeight + borders.bottom + borders.top);
+			SetClientSize(sx + borders.left + borders.right, sy + panelHeight + borders.bottom + borders.top);
 
 		}
 		cur->Video->SetFocus();
@@ -1729,8 +1732,8 @@ void KainoteFrame::HideEditor(bool save)
 		if (cur->Video->GetState() != None){ cur->Video->ChangeVobsub(true); }
 		StatusBar->SetLabelTextColour(5, WINDOW_TEXT);
 		SetStatusText(L"", 7);
-		if (cur->Video->m_IsFullscreen)
-			cur->Video->m_FullScreenWindow->HideToolbar(true);
+		if (cur->Video->IsFullScreen())
+			cur->Video->GetFullScreenWindow()->HideToolbar(true);
 
 		if (FR && FR->IsShown())
 			FR->Show(false);
@@ -1810,7 +1813,10 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 {
 
 	if (id == GLOBAL_CLOSE_AUDIO && tab->Edit->ABox){
-		tab->Video->player = NULL;
+		RendererVideo *renderer = tab->Video->GetRenderer();
+		if (renderer)
+			renderer->SetAudioPlayer(NULL);
+
 		tab->Edit->CloseAudio();
 		tab->AudioPath.clear();
 	}
@@ -1922,17 +1928,17 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	for (int i = GLOBAL_SAVE_SUBS; i <= GLOBAL_VIEW_SUBS; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatnim jest Automation
 		enable = true;
 
-		if (i >= GLOBAL_OPEN_ASS_PROPERTIES && i < GLOBAL_CONVERT_TO_ASS){ enable = form < SRT; }//menager stylów i sinfo
-		else if (i == GLOBAL_CONVERT_TO_ASS){ enable = form > ASS; }//konwersja na ass
-		else if (i == GLOBAL_CONVERT_TO_SRT){ enable = form != SRT; }//konwersja na srt
-		else if (i == GLOBAL_CONVERT_TO_MDVD){ enable = form != MDVD; }//konwersja na mdvd
-		else if (i == GLOBAL_CONVERT_TO_MPL2){ enable = form != MPL2; }//konwersja na mpl2
-		else if (i == GLOBAL_CONVERT_TO_TMP){ enable = form != TMP; }//konwersja na tmp
+		if (i >= GLOBAL_OPEN_ASS_PROPERTIES && i < GLOBAL_CONVERT_TO_ASS){ enable = form < SRT; }//Style manager and sinfo
+		else if (i == GLOBAL_CONVERT_TO_ASS){ enable = form > ASS; }//conversion to ASS
+		else if (i == GLOBAL_CONVERT_TO_SRT){ enable = form != SRT; }//conversion to SRT
+		else if (i == GLOBAL_CONVERT_TO_MDVD){ enable = form != MDVD; }//conversion to MDVD
+		else if (i == GLOBAL_CONVERT_TO_MPL2){ enable = form != MPL2; }//conversion to MPL2
+		else if (i == GLOBAL_CONVERT_TO_TMP){ enable = form != TMP; }//conversion to TMP
 		if ((i >= GLOBAL_CONVERT_TO_ASS && i <= GLOBAL_CONVERT_TO_MPL2) && tlmode){ enable = false; }
 		else if (i == GLOBAL_VIEW_AUDIO || i == GLOBAL_CLOSE_AUDIO){ enable = tab->Edit->ABox != 0; }
 		else if ((i == GLOBAL_VIEW_VIDEO || i == GLOBAL_VIEW_ALL) || i == GLOBAL_AUDIO_FROM_VIDEO || i == GLOBAL_VIEW_ONLY_VIDEO){
 			enable = tab->Video->GetState() != None;
-			if (i != GLOBAL_AUDIO_FROM_VIDEO){ enable = (enable && !tab->Video->m_IsOnAnotherMonitor); }
+			if (i != GLOBAL_AUDIO_FROM_VIDEO){ enable = (enable && !tab->Video->IsOnAnotherMonitor()); }
 		}
 		else if (i == GLOBAL_SAVE_TRANSLATION){ enable = tlmode; }
 		else if (i == GLOBAL_SAVE_SUBS){ if (!tab->Grid->IsModified()){ enable = false; } }

@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include "VideoRenderer.h"
+#include "RendererVideo.h"
+#include "Menu.h"
 
 #include <wx/wx.h>
 #include <dshow.h>
@@ -30,7 +31,7 @@ public:
 
 	DShowPlayer(wxWindow*_parent);
 	~DShowPlayer();
-	bool OpenFile(wxString fname, bool vobsub=false);
+	bool OpenFile(wxString fname, bool vobsub = false);
 	void Play();
 	void Pause();
 	void Stop();

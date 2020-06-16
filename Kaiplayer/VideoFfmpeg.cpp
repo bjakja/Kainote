@@ -131,8 +131,8 @@ void VideoFfmpeg::Processing()
 				rend->Render(false);
 
 				if (rend->m_Time >= rend->m_PlayEndTime || rend->m_Frame >= NumFrames - 1){
-					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, 23333);
-					wxQueueEvent(rend, evt);
+					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+					wxQueueEvent(rend->videoControl, evt);
 					break;
 				}
 				else if (rend->m_State != Playing){
@@ -422,7 +422,7 @@ done:
 		}
 
 		if (rend){
-			SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
+			SubsGrid *grid = ((TabPanel*)rend->videoControl->GetParent())->Grid;
 			const wxString &colormatrix = grid->GetSInfo(L"YCbCr Matrix");
 			bool changeMatrix = false;
 			if (CS == FFMS_CS_UNSPECIFIED){
@@ -1006,7 +1006,7 @@ void VideoFfmpeg::OpenKeyframes(const wxString & filename)
 	KeyframeLoader kfl(filename, &keyframes, this);
 	if (keyframes.size()){
 		KeyFrames = keyframes;
-		TabPanel *tab = (rend) ? (TabPanel*)rend->GetParent() : Notebook::GetTab();
+		TabPanel *tab = (rend) ? (TabPanel*)rend->videoControl->GetParent() : Notebook::GetTab();
 		if (tab->Edit->ABox){
 			tab->Edit->ABox->SetKeyframes(keyframes);
 		}

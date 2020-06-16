@@ -15,6 +15,8 @@
 
 
 #include "RendererDirectShow.h"
+#include "DShowPlayer.h"
+#include "DshowRenderer.h"
 #include "kainoteApp.h"
 #include "CsriMod.h"
 #include "OpennWrite.h"
@@ -461,7 +463,7 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 	
 }
 
-int VideoRenderer::GetDuration()
+int RendererDirectShow::GetDuration()
 {
 	return vplayer->GetDuration();
 }
@@ -605,17 +607,17 @@ bool RendererDirectShow::EnumFilters(Menu *menu)
 	return vplayer->EnumFilters(menu); 
 }
 
-bool VideoRenderer::FilterConfig(wxString name, int idx, wxPoint pos)
+bool RendererDirectShow::FilterConfig(wxString name, int idx, wxPoint pos)
 {
 	return vplayer->FilterConfig(name, idx, pos);
 }
 
-byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
+byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 {
-	bool dssubs = (IsDshow && subs && Notebook::GetTab()->editor);
+	bool dssubs = (videoControl->m_IsDirectShow && subs && Notebook::GetTab()->editor);
 	byte *cpy1;
-	byte bytes = (vformat == RGB32) ? 4 : (vformat == YUY2) ? 2 : 1;
-	int all = vheight*pitch;
+	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+	int all = m_Height * m_Pitch;
 	if (dssubs){
 		*del = true;
 		char *cpy = new char[all];
@@ -623,11 +625,11 @@ byte *VideoRenderer::GetFramewithSubs(bool subs, bool *del)
 	}
 	else{ *del = false; }
 	if (instance && dssubs){
-		byte *data1 = (byte*)frameBuffer;
+		byte *data1 = (byte*)m_FrameBuffer;
 		memcpy(cpy1, data1, all);
-		framee->strides[0] = vwidth * bytes;
+		framee->strides[0] = m_Width * bytes;
 		framee->planes[0] = cpy1;
-		csri_render(instance, framee, (time / 1000.0));
+		csri_render(instance, framee, (m_Time / 1000.0));
 	}
-	return (dssubs) ? cpy1 : (byte*)frameBuffer;
+	return (dssubs) ? cpy1 : (byte*)m_FrameBuffer;
 }

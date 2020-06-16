@@ -16,6 +16,7 @@
 #include "RendererVideo.h"
 #include "kainoteMain.h"
 #include "CsriMod.h"
+#include "DshowRenderer.h"
 
 #if byvertices
 struct CUSTOMVERTEX
@@ -56,8 +57,8 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	framee = NULL;
 	format = NULL;
 	m_D3DLine = NULL;
-	m_Visual = NULL;
-	m_VideoResized = m_DirectShowSeeking = m_BlockResize = cross = m_HasVisualEdition = false;
+	m_Visual = Visuals::Get(CROSS, videoControl);
+	m_VideoResized = m_DirectShowSeeking = m_BlockResize = m_HasVisualEdition = false;
 	//IsDshow = true;
 	m_DeviceLost = false;
 	m_MainSurface = NULL;
@@ -105,7 +106,6 @@ bool RendererVideo::UpdateRects(bool changeZoom)
 		rt = videoControl->m_FullScreenWindow->GetClientRect();
 		if (videoControl->m_PanelOnFullscreen){ rt.height -= videoControl->m_FullScreenWindow->panelsize; }
 		videoControl->m_FullScreenProgressBar = Options.GetBool(VIDEO_PROGRESS_BAR);
-		cross = false;
 	}
 	else{
 		m_HWND = videoControl->GetHWND();
@@ -719,7 +719,8 @@ bool RendererVideo::RemoveVisual(bool noRefresh)
 {
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
-	SAFE_DELETE(m_Visual);
+	SAFE_DELETE(m_Visual->dummytext);
+	m_Visual = Visuals::Get(CROSS, videoControl);
 	tab->Edit->Visual = 0;
 	if (!noRefresh){
 		OpenSubs(tab->Grid->GetVisible());
@@ -852,3 +853,7 @@ Visuals *RendererVideo::GetVisual()
 	return m_Visual;
 }
 
+void RendererVideo::SetAudioPlayer(AudioDisplay *player)
+{
+	m_AudioPlayer = player;
+}

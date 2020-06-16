@@ -26,7 +26,7 @@
 #include "KaiStaticBoxSizer.h"
 
 class KainoteFrame;
-
+class TabPanel;
 
 
 class ShiftTimesWindow: public wxWindow
@@ -91,6 +91,7 @@ private:
 	bool isscrollbar;
 	int scPos;
 	MappedButton *coll;
+	TabPanel *tab;
 
 	void OnAddStyles(wxCommandEvent& event);
 	void OnChangeDisplayUnits(wxCommandEvent& event);

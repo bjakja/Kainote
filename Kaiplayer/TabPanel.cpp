@@ -75,7 +75,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 
 TabPanel::~TabPanel(){
 	//fix of crashes caused by destroying of editbox on the end
-	if (Video->player){ Video->player->Stop(false); }
+	if (Edit->ABox){ Edit->ABox->audioDisplay->Stop(false); }
 }
 
 
@@ -203,9 +203,10 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 
 	if (Video->GetState() != None && Video->IsShown()){
 		int ww, hh;
+		int panelHeight = Video->GetPanelHeight();
 		Video->CalcSize(&ww, &hh, w, h, false, true);
-		Video->SetMinSize(wxSize(ww, hh + Video->m_PanelHeight));
-		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + Video->m_PanelHeight);
+		Video->SetMinSize(wxSize(ww, hh + panelHeight));
+		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + panelHeight);
 	}
 	Edit->SetMinSize(wxSize(-1, h));
 	MainSizer->Layout();
@@ -218,7 +219,7 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		if (tab->Video->GetState() != None){
 			int ww, hh;
 			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
-			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->m_PanelHeight));
+			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->GetPanelHeight()));
 		}
 		tab->Edit->SetMinSize(wxSize(-1, h));
 		tab->MainSizer->Layout();

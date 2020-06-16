@@ -26,6 +26,7 @@
 
 class KainoteFrame;
 class TabPanel;
+class VideoFfmpeg;
 
 class VideoCtrl : public wxWindow
 {
@@ -73,9 +74,28 @@ public:
 	void CaptureMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
 	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
-	bool SetCursor(const wxCursor &cursor){ 
-		if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->SetCursor(cursor); } 
-		else{ return wxWindow::SetCursor(cursor); } 
+	bool SetCursor(int cursorId){ 
+		if (m_IsFullscreen && m_FullScreenWindow){ 
+			if (cursorId == wxCURSOR_ARROW && !m_FullScreenHasArrow)
+				m_FullScreenHasArrow = true;
+			else if (m_FullScreenHasArrow)
+				m_FullScreenHasArrow = false;
+			else
+				return false;
+
+			return m_FullScreenWindow->SetCursor(cursorId);
+
+		} 
+		else{ 
+			if (cursorId == wxCURSOR_ARROW && !m_HasArrow)
+				m_HasArrow = true;
+			else if (m_HasArrow)
+				m_HasArrow = false;
+			else
+				return false;
+
+			return wxWindow::SetCursor(cursorId);
+		} 
 	};
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetFont(const wxFont &font);
@@ -89,6 +109,9 @@ public:
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false);
 	int GetFrameTime(bool start = true);
+	int GetFrameTimeFromTime(int time, bool start = true);
+	int GetFrameTimeFromFrame(int frame, bool start = true);
+	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 	void SetZoom();
 	void GoToNextKeyframe();
 	void GoToPrevKeyframe();
@@ -112,6 +135,15 @@ public:
 	//can return null
 	Fullscreen *GetFullScreenWindow();
 	VideoToolbar *GetVideoToolbar();
+	int GetPanelHeight();
+	void SetPanelHeight(int panelHeight);
+	void UpdateVideoWindow();
+	int GetCurrentFrame();
+	void ChangeVobsub(bool vobsub = false);
+	void SetPanelOnFullScreen(bool value);
+	void SetVideoWindowLastSize(const wxSize & size);
+	bool IsOnAnotherMonitor();
+	void SaveVolume();
 private:
 
 	BitmapButton* m_ButtonPreviousFile;
@@ -144,6 +176,7 @@ private:
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
 	bool m_HasArrow;
+	bool m_FullScreenHasArrow;
 	bool m_ShownKeyframe;
 	wxString oldpath;
 	std::vector<RECT> MonRects;

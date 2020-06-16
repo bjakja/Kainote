@@ -16,7 +16,8 @@
 #pragma once
 
 typedef wchar_t* PTCHAR;
-
+#include <d3d9.h>
+#include <dxva2api.h>
 #include <Dvdmedia.h>
 #include <streams.h>
 

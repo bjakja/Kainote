@@ -24,7 +24,7 @@ class RendererFFMS2 : public RendererVideo
 	friend class VideoCtrl;
 public:
 	RendererFFMS2(VideoCtrl *control);
-	~RendererFFMS2();
+	virtual ~RendererFFMS2();
 
 	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true);
 	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
@@ -50,27 +50,27 @@ public:
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
-	void UpdateVideoWindow();
+	//void UpdateVideoWindow();
 	void SetVolume(int vol);
 
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void DrawLines(wxPoint point);
 	void DrawProgBar();
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+	//bool DrawTexture(byte *nframe = NULL, bool copy = false);
 	//void RecreateSurface();
-	void EnableStream(long index);
+	//void EnableStream(long index);
 	void ChangePositionByFrame(int cpos);
-	void ChangeVobsub(bool vobsub = false);
-	wxArrayString GetStreams();
+	//void ChangeVobsub(bool vobsub = false);
+	//wxArrayString GetStreams();
 	void SetVisual(bool settext = false, bool noRefresh = false);
 	void ResetVisual();
 	//it's safe to not exist visual
 	//returns true if removed
 	bool RemoveVisual(bool noRefresh = false);
 	byte *GetFramewithSubs(bool subs, bool *del);
-	bool UpdateRects(bool changeZoom = true);
+	//bool UpdateRects(bool changeZoom = true);
 	void Zoom(const wxSize &size);
-	void DrawZoom();
+	//void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
 	void SetZoom();
 	void ResetZoom();

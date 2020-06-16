@@ -21,12 +21,8 @@
 #include <thread>
 #include "include\ffms.h"
 #include "ProgressDialog.h"
+#include "RendererVideo.h"
 
-struct chapter
-{
-	wxString name;
-	int time;
-};
 
 class RendererVideo;
 

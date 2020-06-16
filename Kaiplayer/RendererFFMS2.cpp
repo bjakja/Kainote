@@ -17,6 +17,7 @@
 #include "kainoteApp.h"
 #include "CsriMod.h"
 #include "OpennWrite.h"
+#include "DshowRenderer.h"
 
 RendererFFMS2::RendererFFMS2(VideoCtrl *control)
 	: RendererVideo(control)
@@ -122,7 +123,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 	if (m_State == Playing){ videoControl->Stop(); }
 
 	bool success;
-	tmpvff = new VideoFfmpeg(fname, this, (videoControl->m_IsFullscreen) ? videoControl->m_FullScreenWindow : (wxWindow *)Kaia->Frame, &success);
+	tmpvff = new VideoFfmpeg(fname, this, videoControl->GetMessageWindowParent(), &success);
 	//this is safe mode, when new video not load, 
 	//the last opened will not be released
 	if (!success || !tmpvff){
@@ -183,7 +184,9 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
 	m_FrameBuffer = new char[m_Height*m_Pitch];
 
-	if (!InitDX()){ return false; }
+	if (!InitDX()){ 
+		return false; 
+	}
 	UpdateRects();
 
 	if (!framee){ framee = new csri_frame; }

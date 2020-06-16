@@ -29,6 +29,7 @@ class EditBox;
 class KainoteFrame;
 class SubsGrid;
 class SubsGridPreview;
+class TabPanel;
 
 class compareData{
 public:

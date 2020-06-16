@@ -173,9 +173,8 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 			tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 				(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 				(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
-			hasArrow = false;
 		}
-		if (!setarrow && !hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!setarrow ){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click){
 		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }

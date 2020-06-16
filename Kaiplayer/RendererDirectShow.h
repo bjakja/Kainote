@@ -16,7 +16,7 @@
 #pragma once
 
 #include "RendererVideo.h"
-#include <dxva2api.h>
+
 
 class RendererDirectShow : public RendererVideo
 {
@@ -33,9 +33,9 @@ public:
 	bool Pause();
 	bool Stop();
 	void SetPosition(int _time, bool starttime = true, bool corect = true, bool async = true);
-	void SetFFMS2Position(int time, bool starttime);
-	void GoToNextKeyframe();
-	void GoToPrevKeyframe();
+	//void SetFFMS2Position(int time, bool starttime);
+	//void GoToNextKeyframe();
+	//void GoToPrevKeyframe();
 	int GetCurrentPosition();
 	int GetCurrentFrame();
 	int GetFrameTime(bool start = true);
@@ -50,13 +50,13 @@ public:
 	int GetVolume();
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
-	void UpdateVideoWindow();
+	//void UpdateVideoWindow();
 	void SetVolume(int vol);
 
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void DrawLines(wxPoint point);
 	void DrawProgBar();
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+	//bool DrawTexture(byte *nframe = NULL, bool copy = false);
 	void RecreateSurface();
 	void EnableStream(long index);
 	void ChangePositionByFrame(int cpos);
@@ -68,9 +68,9 @@ public:
 	//returns true if removed
 	bool RemoveVisual(bool noRefresh = false);
 	byte *GetFramewithSubs(bool subs, bool *del);
-	bool UpdateRects(bool changeZoom = true);
+	//bool UpdateRects(bool changeZoom = true);
 	void Zoom(const wxSize &size);
-	void DrawZoom();
+	//void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
 	void SetZoom();
 	void ResetZoom();

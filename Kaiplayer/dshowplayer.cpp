@@ -17,6 +17,7 @@
 
 #include "DShowPlayer.h"
 #include "Videobox.h"
+#include "Menu.h"
 
 #include <Dvdmedia.h>
 
