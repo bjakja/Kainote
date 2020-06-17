@@ -487,10 +487,12 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	if (renderer->HasVisual()){
 		Visuals *visual = renderer->GetVisual();
 		visual->OnMouseEvent(event);
-		if (visual->Visual != CROSS)
-			SetCursor(wxCURSOR_ARROW); 
-
-		return;
+		//only cross let for another click events
+		//it's only uses moving
+		if (visual->Visual != CROSS){
+			SetCursor(wxCURSOR_ARROW);
+			return;
+		}
 	}
 
 
@@ -553,6 +555,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 	if (event.RightUp()) {
 		ContextMenu(event.GetPosition());
+		//SetCursor(wxCURSOR_ARROW);
 		return;
 	}
 
@@ -1559,7 +1562,7 @@ bool VideoCtrl::OpenSubs(wxString *textsubs, bool recreateFrame, bool fromFile, 
 void VideoCtrl::Render(bool recreateFrame)
 {
 	if (renderer)
-		renderer->ChangePositionByFrame(recreateFrame);
+		renderer->Render(recreateFrame);
 }
 void VideoCtrl::UpdateVideoWindow()
 {
@@ -1747,6 +1750,10 @@ void VideoCtrl::SaveVolume()
 	Options.SetInt(VIDEO_VOLUME, m_VolumeSlider->GetValue());
 }
 
+bool VideoCtrl::IsMenuShown()
+{
+	return m_IsMenuShown;
+}
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)

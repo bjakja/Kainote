@@ -397,7 +397,8 @@ bool RendererDirectShow::Play(int end)
 	}
 
 	if (end > 0){ m_PlayEndTime = end; }
-	m_PlayEndTime = 0;
+	else
+		m_PlayEndTime = 0;
 	if (m_Time < GetDuration() - m_FrameDuration) 
 		vplayer->Play(); 
 

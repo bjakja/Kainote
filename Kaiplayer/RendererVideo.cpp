@@ -643,8 +643,7 @@ void RendererVideo::DrawProgBar()
 	//Full screen progress bar position
 	wxMutexLocker lock(m_MutexProgressBar);
 	int w, h;
-	VideoCtrl *vb = (VideoCtrl*)this;
-	vb->m_FullScreenWindow->GetClientSize(&w, &h);
+	videoControl->m_FullScreenWindow->GetClientSize(&w, &h);
 	m_ProgressBarRect.top = 16;
 	m_ProgressBarRect.bottom = 60;
 	m_ProgressBarRect.left = w - 167;
@@ -719,13 +718,8 @@ bool RendererVideo::RemoveVisual(bool noRefresh)
 {
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
-	SAFE_DELETE(m_Visual->dummytext);
-	m_Visual = Visuals::Get(CROSS, videoControl);
 	tab->Edit->Visual = 0;
-	if (!noRefresh){
-		OpenSubs(tab->Grid->GetVisible());
-		Render();
-	}
+	SetVisual();
 	return true;
 }
 

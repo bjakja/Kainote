@@ -23,6 +23,13 @@ Cross::Cross()
 
 void Cross::OnMouseEvent(wxMouseEvent &event)
 {
+	if (tab->Video->IsFullScreen() || event.RightUp() || tab->Video->IsMenuShown()){
+		if (cross){
+			cross = false;
+		}
+		return;
+	}
+	
 	int x = event.GetX();
 	int y = event.GetY();
 
@@ -56,30 +63,27 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	DrawLines(wxPoint(x, y));
 
 	if (event.MiddleDown() || (event.LeftDown() && event.ControlDown())){
-		if (!tab->Video->IsFullScreen())
-		{
-			Dialogue *aline = tab->Edit->line;
-			bool istl = (tab->Grid->hasTLMode && aline->TextTl != L"");
-			wxString ltext = (istl) ? aline->TextTl : aline->Text;
-			wxRegEx posmov(L"\\\\(pos|move)([^\\\\}]+)", wxRE_ADVANCED);
-			posmov.ReplaceAll(&ltext, L"");
+		Dialogue *aline = tab->Edit->line;
+		bool istl = (tab->Grid->hasTLMode && aline->TextTl != L"");
+		wxString ltext = (istl) ? aline->TextTl : aline->Text;
+		wxRegEx posmov(L"\\\\(pos|move)([^\\\\}]+)", wxRE_ADVANCED);
+		posmov.ReplaceAll(&ltext, L"");
 
-			wxString postxt;
-			float posx = (float)x * coeffX;
-			float posy = (float)y * coeffY;
-			postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
-			if (ltext.StartsWith(L"{")){
-				ltext.insert(1, postxt);
-			}
-			else{
-				ltext = L"{" + postxt + L"}" + ltext;
-			}
-			if (istl){ aline->TextTl = ltext; }
-			else{ aline->Text = ltext; }
-			tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Grid->currentLine, aline);
-			tab->Grid->Refresh(false);
-			tab->Grid->SetModified(VISUAL_POSITION);
+		wxString postxt;
+		float posx = (float)x * coeffX;
+		float posy = (float)y * coeffY;
+		postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
+		if (ltext.StartsWith(L"{")){
+			ltext.insert(1, postxt);
 		}
+		else{
+			ltext = L"{" + postxt + L"}" + ltext;
+		}
+		if (istl){ aline->TextTl = ltext; }
+		else{ aline->Text = ltext; }
+		tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Grid->currentLine, aline);
+		tab->Grid->Refresh(false);
+		tab->Grid->SetModified(VISUAL_POSITION);
 	}
 }
 

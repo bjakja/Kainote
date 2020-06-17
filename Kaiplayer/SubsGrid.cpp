@@ -43,10 +43,11 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
-		if (id > 5000 && id < 5555){
-			int id5000 = (id - 5000);
-			if (visibleColumns & id5000){ visibleColumns ^= id5000; }
-			else{ visibleColumns |= id5000; }
+		//it here changes only one hook that's why there is no bit opetations
+		if (id >= GRID_HIDE_LAYER && id < GRID_INSERT_BEFORE){
+			int id4000 = (id - GRID_HIDE_LAYER + 1);
+			if (visibleColumns & id4000){ visibleColumns ^= id4000; }
+			else{ visibleColumns |= id4000; }
 			SpellErrors.clear();
 			Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);
 			RefreshColumns();
@@ -221,7 +222,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	if (id < 0){ goto done; }
 
 	if (Modifiers == wxMOD_SHIFT){
-		if (id <= 5000){ goto done; }
+		if (id < 4000){ goto done; }
 		Hkeys.OnMapHkey(id, L"", this, GRID_HOTKEY);
 		goto done;
 	}
@@ -675,8 +676,8 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_HIDE_EFFECT:
 	case GRID_HIDE_CPS:
 	{
-		int id5000 = (id - 5000);
-		visibleColumns ^= id5000;
+		int id4000 = (id - GRID_HIDE_LAYER + 1);
+		visibleColumns ^= id4000;
 		SpellErrors.clear();
 		Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);
 		RefreshColumns();

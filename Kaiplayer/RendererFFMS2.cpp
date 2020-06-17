@@ -25,6 +25,7 @@ RendererFFMS2::RendererFFMS2(VideoCtrl *control)
 {
 	
 }
+
 RendererFFMS2::~RendererFFMS2()
 {
 	SAFE_DELETE(m_FFMS2);
@@ -93,12 +94,12 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
 			hr = m_D3DLine->SetWidth(1);
 		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&vectors[4], 5, 0xFF000000);
-		hr = m_D3DLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+		hr = m_D3DLine->Draw(&vectors[0], 5, 0xFF000000);
+		hr = m_D3DLine->Draw(&vectors[5], 5, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
 		hr = m_D3DLine->SetWidth(7);
 		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->Draw(&vectors[10], 2, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
 	}
 	if (m_HasZoom){ DrawZoom(); }
@@ -283,7 +284,8 @@ bool RendererFFMS2::Play(int end)
 	}
 
 	if (end > 0){ m_PlayEndTime = end; }
-	m_PlayEndTime = GetDuration();
+	else
+		m_PlayEndTime = GetDuration();
 
 	m_State = Playing;
 

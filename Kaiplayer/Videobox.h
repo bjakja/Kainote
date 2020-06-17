@@ -144,6 +144,7 @@ public:
 	void SetVideoWindowLastSize(const wxSize & size);
 	bool IsOnAnotherMonitor();
 	void SaveVolume();
+	bool IsMenuShown();
 private:
 
 	BitmapButton* m_ButtonPreviousFile;

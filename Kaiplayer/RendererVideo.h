@@ -82,7 +82,7 @@ class RendererVideo
 	friend class VideoCtrl;
 public:
 	RendererVideo(VideoCtrl *control);
-	~RendererVideo();
+	virtual ~RendererVideo();
 
 	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ 
 		return false; 
