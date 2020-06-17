@@ -562,3 +562,15 @@ VideoFfmpeg * RendererFFMS2::GetFFMS2()
 {
 	return m_FFMS2;
 }
+
+bool RendererFFMS2::InitRendererDX()
+{
+#ifndef byvertices
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie mo¿na stworzyæ powierzchni"));
+
+	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
+		_("Nie mo¿na stworzyæ plain surface"));//D3DPOOL_DEFAULT
+
+	return true;
+#endif
+}

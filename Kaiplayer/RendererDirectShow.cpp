@@ -212,12 +212,12 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)
 			hr = m_D3DLine->SetWidth(1);
 		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&vectors[4], 5, 0xFF000000);
-		hr = m_D3DLine->Draw(&vectors[9], 5, 0xFFFFFFFF);
+		hr = m_D3DLine->Draw(&vectors[0], 5, 0xFF000000);
+		hr = m_D3DLine->Draw(&vectors[5], 5, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
 		hr = m_D3DLine->SetWidth(7);
 		hr = m_D3DLine->Begin();
-		hr = m_D3DLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
+		hr = m_D3DLine->Draw(&vectors[10], 2, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
 	}
 	if (m_HasZoom){ DrawZoom(); }

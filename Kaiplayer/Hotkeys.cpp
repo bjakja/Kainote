@@ -233,7 +233,10 @@ int Hotkeys::LoadHkeys(bool Audio)
 	wxString acctxt;
 	//it failed when there was lack of path
 	//need to put everything in right order, options are first
-	if (!ow.FileOpen(Options.configPath + hkpath, &acctxt, true)){ LoadDefault(hkeys, Audio); return 1; }
+	if (!ow.FileOpen(Options.configPath + hkpath, &acctxt, true)){ 
+		LoadDefault(hkeys, Audio); 
+		return 1; 
+	}
 
 	wxStringTokenizer hk(acctxt, L"\n", wxTOKEN_STRTOK);
 
@@ -241,9 +244,9 @@ int Hotkeys::LoadHkeys(bool Audio)
 	if (acctxt.StartsWith(L"[")){
 		wxString token = hk.NextToken();
 		wxString ver = token.BeforeFirst(L']').Mid(1);
-		if (ver != Options.progname){
+		/*if (ver != Options.progname){
 			LoadDefault(hkeys, Audio);
-		}
+		}*/
 		int first = token.find(L".");//0.8.0.build
 		if (first > -1){
 			wxString ver = token.Mid(first + 5).BeforeFirst(L' ');
@@ -295,7 +298,10 @@ int Hotkeys::LoadHkeys(bool Audio)
 			g++;
 		}
 	}
-	if (g > 10){ if (Audio){ AudioKeys = true; }return 1; }
+	if (g > 10){ 
+		if (Audio){ AudioKeys = true; }
+		return 1; 
+	}
 	LoadDefault(hkeys, Audio);
 	if (hkeys.size() > 10){ return 1; }
 	return 0;

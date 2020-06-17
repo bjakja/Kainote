@@ -75,25 +75,17 @@ public:
 	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
 	bool SetCursor(int cursorId){ 
+		if (cursorId == wxCURSOR_ARROW && !m_HasArrow)
+			m_HasArrow = true;
+		else if (m_HasArrow && cursorId != wxCURSOR_ARROW)
+			m_HasArrow = false;
+		else
+			return false;
+
 		if (m_IsFullscreen && m_FullScreenWindow){ 
-			if (cursorId == wxCURSOR_ARROW && !m_FullScreenHasArrow)
-				m_FullScreenHasArrow = true;
-			else if (m_FullScreenHasArrow)
-				m_FullScreenHasArrow = false;
-			else
-				return false;
-
 			return m_FullScreenWindow->SetCursor(cursorId);
-
 		} 
 		else{ 
-			if (cursorId == wxCURSOR_ARROW && !m_HasArrow)
-				m_HasArrow = true;
-			else if (m_HasArrow)
-				m_HasArrow = false;
-			else
-				return false;
-
 			return wxWindow::SetCursor(cursorId);
 		} 
 	};
@@ -157,7 +149,7 @@ private:
 	TabPanel *tab;
 	VideoSlider* m_SeekingSlider;
 	wxWindow* m_VideoPanel;
-	bool eater;
+	bool m_ArrowEater;
 	bool m_blockRender;
 	wxMutex vbmutex;
 	wxMutex nextmutex;
@@ -177,7 +169,7 @@ private:
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
 	bool m_HasArrow;
-	bool m_FullScreenHasArrow;
+	//bool m_FullScreenHasArrow;
 	bool m_ShownKeyframe;
 	wxString oldpath;
 	std::vector<RECT> MonRects;

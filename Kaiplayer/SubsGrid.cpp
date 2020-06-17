@@ -38,7 +38,6 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	tab = (TabPanel*)GetParent();
 	Kai = kfparent;
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
-	//jak już wszystko będzie działało to można wywalić albo dać if(!autofilter)
 	//Options.SetInt(GRID_FILTER_BY, 0);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
@@ -602,11 +601,13 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 {
 	int id = event.GetId();
 
-	if (id >= 5000){
+	if (id >= 5000 && id != GLOBAL_REMOVE_LINES && id != GLOBAL_REMOVE_TEXT){
 		Kai->OnMenuSelected(event);
+		return;
 	}
 	else if (id >= 1000 && id < 1700 && Edit->ABox){
 		Edit->ABox->GetEventHandler()->AddPendingEvent(event);
+		return;
 	}
 	if (Options.CheckLastKeyEvent(id))
 		return;

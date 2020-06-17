@@ -321,13 +321,6 @@ bool RendererVideo::InitDX(bool reset)
 	if (!InitRendererDX())
 		return false;
 
-#ifndef byvertices
-		HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie mo¿na stworzyæ powierzchni"));
-
-		HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
-			_("Nie mo¿na stworzyæ plain surface"));//D3DPOOL_DEFAULT
-#endif
-
 	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie mo¿na stworzyæ linii D3DX"));
 	HR(D3DXCreateFont(m_D3DDevice, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie mo¿na stworzyæ czcionki D3DX"));

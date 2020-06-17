@@ -109,7 +109,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	, tab((TabPanel*)parent)
 	, m_HasArrow(true)
 	, m_IsMenuShown(false)
-	, eater(false)
+	, m_ArrowEater(false)
 	, actualFile(0)
 	, prevchap(-1)
 	, m_FullScreenWindow(NULL)
@@ -280,11 +280,12 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 		SAFE_DELETE(renderer)
 		return false;
 	}
+	m_IsDirectShow = !byFFMS2;
 	if (!(IsShown() || (m_FullScreenWindow && m_FullScreenWindow->IsShown()))){
 		shown = false; Show();
 	}
 
-	eater = m_IsDirectShow;
+	m_ArrowEater = m_IsDirectShow;
 
 	if (!m_IsFullscreen && !fulls){
 		int sx, sy;
@@ -439,10 +440,12 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 {
 
-	if (event.ButtonDown())
+	if (event.ButtonUp())
 	{
 		SetFocus();
-		if (m_IsMenuShown){ m_IsMenuShown = false; }
+		if (m_IsMenuShown){ 
+			m_IsMenuShown = false; 
+		}
 	}
 	if (renderer->m_State == None){ return; }
 	if (renderer->m_HasZoom){
@@ -451,17 +454,20 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 	m_X = event.GetX();
 	m_Y = event.GetY();
+	int w, h;
+	GetClientSize(&w, &h);
+	bool onVideo = m_Y < h - m_PanelHeight;
+
 	if (event.GetWheelRotation() != 0) {
 
 		if (event.ControlDown() && !m_IsFullscreen){
 			int step = event.GetWheelRotation() / event.GetWheelDelta();
 
-			int w, h, mw, mh;
-			GetClientSize(&w, &h);
+			int mw, mh;
 			GetParent()->GetClientSize(&mw, &mh);
 			int newHeight = h + (step * 20);
 			if (newHeight >= mh){ newHeight = mh - 3; }
-			if (m_Y < h - m_PanelHeight){
+			if (onVideo){
 				if (h <= 350 && step < 0 || h == newHeight){ return; }
 				tab->SetVideoWindowSizes(w, newHeight, event.ShiftDown());
 			}
@@ -495,6 +501,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 	}
 
+	if (event.RightUp()) {
+		ContextMenu(event.GetPosition());
+		SetCursor(wxCURSOR_ARROW);
+		return;
+	}
 
 	if (event.LeftDClick() && event.GetModifiers() == 0){
 		SetFullscreen();
@@ -502,30 +513,36 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
 			tab->Grid->SelVideoLine();
 		}
-		int w, h;
-		GetClientSize(&w, &h);
+		
 
-		if (m_Y >= h - m_PanelHeight){
+		if (!onVideo){
 			SetCursor(wxCURSOR_ARROW);
 		}
 		return;
 	}
 
 	if (m_IsFullscreen){
-		if (eater && event.Moving() && !event.ButtonDown()){ 
+		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){ 
 			Sleep(200); 
-			eater = false; 
+			m_ArrowEater = false; 
 			return; 
 		}
-		if (!m_FullScreenHasArrow){ m_FullScreenWindow->SetCursor(wxCURSOR_ARROW); m_FullScreenHasArrow = true; }
-
-		int w, h;
 		m_FullScreenWindow->GetClientSize(&w, &h);
-		if (m_Y >= h - m_PanelHeight && !m_FullScreenWindow->panel->IsShown()){ 
+		bool onFullVideo = m_Y < h - m_PanelHeight;
+		if (!m_HasArrow && !m_FullScreenWindow->showToolbar->GetValue()){ 
+			m_FullScreenWindow->SetCursor(wxCURSOR_ARROW); 
+			m_HasArrow = true; 
+		}
+		else if (m_HasArrow && !m_IsMenuShown && m_FullScreenWindow->showToolbar->GetValue() && onFullVideo){
+			m_FullScreenWindow->SetCursor(wxCURSOR_BLANK);
+			m_HasArrow = false;
+		}
+
+		if (!onFullVideo && !m_FullScreenWindow->panel->IsShown()){
 			m_VideoTimeTimer.Start(100); 
 			m_FullScreenWindow->panel->Show(); 
 		}
-		else if (m_Y < h - m_PanelHeight && m_FullScreenWindow->panel->IsShown() && !m_PanelOnFullscreen){ 
+		else if (onFullVideo && m_FullScreenWindow->panel->IsShown() && !m_PanelOnFullscreen){
 			m_VideoTimeTimer.Start(1000); 
 			m_FullScreenWindow->panel->Show(false); 
 			SetFocus(); 
@@ -535,14 +552,13 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 	}
 	else if (tab->editor){
-		int w, h;
-		GetClientSize(&w, &h);
-		if (m_Y < (h - m_PanelHeight)){ 
+		if (onVideo && !m_IsMenuShown && m_HasArrow){
+			//KaiLog(wxString::Format(L"Vb blank %i", (int)m_IsMenuShown));
 			SetCursor(wxCURSOR_BLANK);  
 		}
 
 	}
-	else{ 
+	else if (!m_HasArrow){
 		SetCursor(wxCURSOR_ARROW);  
 	}
 
@@ -553,11 +569,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 
-	if (event.RightUp()) {
-		ContextMenu(event.GetPosition());
-		//SetCursor(wxCURSOR_ARROW);
-		return;
-	}
+	
 
 
 }
@@ -610,8 +622,8 @@ void VideoCtrl::OnIdle(wxTimerEvent& event)
 {
 	if (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){
 		m_FullScreenWindow->SetCursor(wxCURSOR_BLANK);
-		eater = m_IsDirectShow;
-		m_FullScreenHasArrow = false;
+		m_ArrowEater = m_IsDirectShow;
+		m_HasArrow = false;
 	}
 }
 

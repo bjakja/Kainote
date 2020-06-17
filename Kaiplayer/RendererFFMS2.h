@@ -86,6 +86,7 @@ public:
 	}
 	void OpenKeyframes(const wxString &filename);
 	bool HasFFMS2();
+	bool InitRendererDX();
 	VideoFfmpeg * GetFFMS2();
 	//bool InitRendererDX(bool reset = false)
 	VideoFfmpeg *m_FFMS2;

@@ -23,9 +23,12 @@ Cross::Cross()
 
 void Cross::OnMouseEvent(wxMouseEvent &event)
 {
-	if (tab->Video->IsFullScreen() || event.RightUp() || tab->Video->IsMenuShown()){
+	if ((tab->Video->IsFullScreen() && tab->Video->GetFullScreenWindow() &&
+		!tab->Video->GetFullScreenWindow()->showToolbar->GetValue()) || event.RightUp() || tab->Video->IsMenuShown()){
 		if (cross){
+			tab->Video->SetCursor(wxCURSOR_ARROW);
 			cross = false;
+			tab->Video->Render(false);
 		}
 		return;
 	}
@@ -48,16 +51,30 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 
 	if (event.Entering()){
 		tab->Video->SetCursor(wxCURSOR_BLANK);
+		//KaiLog(L"Cross blank");
 		cross = true;
 		int nx = 0, ny = 0;
 		int w = 0, h = 0;
-		tab->Video->GetClientSize(&w, &h);
+		if (tab->Video->IsFullScreen()){
+			RendererVideo *renderer = tab->Video->GetRenderer();
+			if (!renderer)
+				return;
+			diffX = renderer->m_BackBufferRect.left;
+			diffY = renderer->m_BackBufferRect.top;
+			w = renderer->m_BackBufferRect.right - diffX;
+			h = renderer->m_BackBufferRect.bottom - diffY;
+		}
+		else{
+			tab->Video->GetClientSize(&w, &h);
+			diffX = diffY = 0;
+			h -= tab->Video->GetPanelHeight();
+		}
 		tab->Grid->GetASSRes(&nx, &ny);
 		coeffX = (float)nx / (float)(w - 1);
-		coeffY = (float)ny / (float)(h - tab->Video->GetPanelHeight() - 1);
+		coeffY = (float)ny / (float)(h - 1);
 	}
-	int posx = (float)x * coeffX;
-	int posy = (float)y * coeffY;
+	int posx = (float)x * coeffX - diffX;
+	int posy = (float)y * coeffY - diffY;
 	coords = L"";
 	coords << posx << L", " << posy;
 	DrawLines(wxPoint(x, y));
@@ -70,8 +87,8 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		posmov.ReplaceAll(&ltext, L"");
 
 		wxString postxt;
-		float posx = (float)x * coeffX;
-		float posy = (float)y * coeffY;
+		float posx = (float)x * coeffX - diffX;
+		float posy = (float)y * coeffY - diffY;
 		postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
 		if (ltext.StartsWith(L"{")){
 			ltext.insert(1, postxt);
@@ -145,3 +162,35 @@ void Cross::DrawLines(wxPoint point)
 	}
 }
 
+void Cross::SetCurVisual()
+{
+	if ((tab->Video->IsFullScreen() && tab->Video->GetFullScreenWindow() && 
+		!tab->Video->GetFullScreenWindow()->showToolbar->GetValue()) || tab->Video->IsMenuShown()){
+		if (cross){
+			tab->Video->SetCursor(wxCURSOR_ARROW);
+			cross = false;
+			tab->Video->Render(false);
+		}
+		return;
+	}
+
+	int nx = 0, ny = 0;
+	int w = 0, h = 0;
+	if (tab->Video->IsFullScreen()){
+		RendererVideo *renderer = tab->Video->GetRenderer();
+		if (!renderer)
+			return;
+		diffX = renderer->m_BackBufferRect.left;
+		diffY = renderer->m_BackBufferRect.top;
+		w = renderer->m_BackBufferRect.right - diffX;
+		h = renderer->m_BackBufferRect.bottom - diffY;
+	}
+	else{
+		tab->Video->GetClientSize(&w, &h);
+		h -= tab->Video->GetPanelHeight();
+		diffX = diffY = 0;
+	}
+	tab->Grid->GetASSRes(&nx, &ny);
+	coeffX = (float)nx / (float)(w - 1);
+	coeffY = (float)ny / (float)(h - 1);
+}

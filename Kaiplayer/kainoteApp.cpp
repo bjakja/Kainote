@@ -235,7 +235,7 @@ bool kainoteApp::OnInit()
 			timer.Start(500, true);
 		}
 #if _DEBUG
-		bool loadSession = true;
+		bool loadSession = false;//true;
 #else
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
 		bool loadSession = (session == 2) || Options.HasCrashed();

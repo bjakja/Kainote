@@ -157,7 +157,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	void Draw(int time);
 	void DrawLines(wxPoint point);
-
+	void SetCurVisual();
 private:
 	D3DXVECTOR2 vectors[4];
 	RECT crossRect;
@@ -165,6 +165,7 @@ private:
 	bool cross;
 	wxMutex m_MutexCrossLines;
 	float coeffX, coeffY;
+	int diffX = 0, diffY = 0;
 };
 
 class Position : public Visuals
