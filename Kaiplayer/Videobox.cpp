@@ -107,7 +107,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	: wxWindow(parent, -1, wxDefaultPosition, size)
 	, Kai(kfpar)
 	, tab((TabPanel*)parent)
-	, m_HasArrow(true)
+	//, m_HasArrow(true)
 	, m_IsMenuShown(false)
 	, m_ArrowEater(false)
 	, actualFile(0)
@@ -518,6 +518,9 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		if (!onVideo){
 			SetCursor(wxCURSOR_ARROW);
 		}
+		else{
+			SetCursor(wxCURSOR_BLANK);
+		}
 		return;
 	}
 
@@ -529,13 +532,11 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		m_FullScreenWindow->GetClientSize(&w, &h);
 		bool onFullVideo = m_Y < h - m_PanelHeight;
-		if (!m_HasArrow && !m_FullScreenWindow->showToolbar->GetValue()){ 
-			m_FullScreenWindow->SetCursor(wxCURSOR_ARROW); 
-			m_HasArrow = true; 
+		if (!HasArrow() && !m_FullScreenWindow->showToolbar->GetValue()){ 
+			SetCursor(wxCURSOR_ARROW); 
 		}
-		else if (m_HasArrow && !m_IsMenuShown && m_FullScreenWindow->showToolbar->GetValue() && onFullVideo){
-			m_FullScreenWindow->SetCursor(wxCURSOR_BLANK);
-			m_HasArrow = false;
+		else if (HasArrow() && !m_IsMenuShown && m_FullScreenWindow->showToolbar->GetValue() && onFullVideo){
+			SetCursor(wxCURSOR_BLANK);
 		}
 
 		if (!onFullVideo && !m_FullScreenWindow->panel->IsShown()){
@@ -552,13 +553,13 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 	}
 	else if (tab->editor){
-		if (onVideo && !m_IsMenuShown && m_HasArrow){
+		if (onVideo && !m_IsMenuShown && HasArrow()){
 			//KaiLog(wxString::Format(L"Vb blank %i", (int)m_IsMenuShown));
 			SetCursor(wxCURSOR_BLANK);  
 		}
 
 	}
-	else if (!m_HasArrow){
+	else if (!HasArrow()){
 		SetCursor(wxCURSOR_ARROW);  
 	}
 
@@ -621,9 +622,8 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 void VideoCtrl::OnIdle(wxTimerEvent& event)
 {
 	if (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){
-		m_FullScreenWindow->SetCursor(wxCURSOR_BLANK);
+		SetCursor(wxCURSOR_BLANK);
 		m_ArrowEater = m_IsDirectShow;
-		m_HasArrow = false;
 	}
 }
 
@@ -1473,7 +1473,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		renderer->SetVisual();
 		if (vis >= VECTORCLIP){ 
 			renderer->VisualChangeTool(vTB->GetItemToggled()); }
-		if (!m_HasArrow){ SetCursor(wxCURSOR_ARROW); }
+		if (!HasArrow()){ SetCursor(wxCURSOR_ARROW); }
 		SetFocus();
 	}
 

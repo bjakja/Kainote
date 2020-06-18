@@ -26,14 +26,14 @@ const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0x
 
 RendererDirectShow::RendererDirectShow(VideoCtrl *control)
 	: RendererVideo(control)
-	, vplayer(NULL)
+	, m_DirectShowPlayer(NULL)
 {
 
 }
 
 RendererDirectShow::~RendererDirectShow()
 {
-	SAFE_DELETE(vplayer);
+	SAFE_DELETE(m_DirectShowPlayer);
 }
 
 bool RendererDirectShow::InitRendererDX()
@@ -260,27 +260,25 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	m_Frame = 0;
 
 
-	if (!vplayer){ vplayer = new DShowPlayer(videoControl); }
+	if (!m_DirectShowPlayer){ m_DirectShowPlayer = new DShowPlayer(videoControl); }
 
-	if (!vplayer->OpenFile(fname, vobsub)){
+	if (!m_DirectShowPlayer->OpenFile(fname, vobsub)){
 		return false;
 	}
-	wxSize videoSize = vplayer->GetVideoSize();
+	wxSize videoSize = m_DirectShowPlayer->GetVideoSize();
 	m_Width = videoSize.x; m_Height = videoSize.y;
 	if (m_Width % 2 != 0){ m_Width++; }
 
-	m_Pitch = m_Width * vplayer->inf.bytes;
-	videoControl->m_FPS = vplayer->inf.fps;
-	m_Format = vplayer->inf.CT;
-	videoControl->m_AspectRatioX = vplayer->inf.ARatioX;
-	videoControl->m_AspectRatioY = vplayer->inf.ARatioY;
+	m_Pitch = m_Width * m_DirectShowPlayer->inf.bytes;
+	videoControl->m_FPS = m_DirectShowPlayer->inf.fps;
+	m_Format = m_DirectShowPlayer->inf.CT;
+	videoControl->m_AspectRatioX = m_DirectShowPlayer->inf.ARatioX;
+	videoControl->m_AspectRatioY = m_DirectShowPlayer->inf.ARatioY;
 	m_D3DFormat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
 		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 
-	m_SwapFrame = (m_Format == 0 && !vplayer->HasVobsub());
-	if (m_AudioPlayer){
-		Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
-	}
+	m_SwapFrame = (m_Format == 0 && !m_DirectShowPlayer->HasVobsub());
+	Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
 
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);
@@ -292,10 +290,12 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
-	m_FrameBuffer = new char[m_Height*m_Pitch];
+	m_FrameBuffer = new char[m_Height * m_Pitch];
+
+	UpdateRects();
 
 	if (!InitDX()){ return false; }
-	UpdateRects();
+	
 
 	if (!framee){ framee = new csri_frame; }
 	if (!format){ format = new csri_fmt; }
@@ -319,7 +319,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 		OpenSubs(0, false);
 	}
 	m_State = Stopped;
-	vplayer->GetChapters(&m_Chapters);
+	m_DirectShowPlayer->GetChapters(&m_Chapters);
 
 	if (m_Visual){
 		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
@@ -400,7 +400,7 @@ bool RendererDirectShow::Play(int end)
 	else
 		m_PlayEndTime = 0;
 	if (m_Time < GetDuration() - m_FrameDuration) 
-		vplayer->Play(); 
+		m_DirectShowPlayer->Play(); 
 
 	m_State = Playing;
 	return true;
@@ -412,7 +412,7 @@ bool RendererDirectShow::Pause()
 	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Paused;
-		vplayer->Pause();
+		m_DirectShowPlayer->Pause();
 		
 	}
 	else if (m_State != None){
@@ -427,7 +427,7 @@ bool RendererDirectShow::Stop()
 	if (m_State == Playing){
 		SetThreadExecutionState(ES_CONTINUOUS);
 		m_State = Stopped;
-		vplayer->Stop();
+		m_DirectShowPlayer->Stop();
 		m_PlayEndTime = 0;
 		m_Time = 0;
 		return true;
@@ -447,7 +447,7 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 	}
 	m_PlayEndTime = 0;
 	m_DirectShowSeeking = true;
-	vplayer->SetPosition(m_Time);
+	m_DirectShowPlayer->SetPosition(m_Time);
 	if (m_HasVisualEdition){
 		SAFE_DELETE(m_Visual->dummytext);
 		if (m_Visual->Visual == VECTORCLIP){
@@ -466,7 +466,7 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 
 int RendererDirectShow::GetDuration()
 {
-	return vplayer->GetDuration();
+	return m_DirectShowPlayer->GetDuration();
 }
 
 int RendererDirectShow::GetFrameTime(bool start)
@@ -524,12 +524,12 @@ void RendererDirectShow::OpenKeyframes(const wxString &filename)
 
 void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)
 {
-	vplayer->GetFpsnRatio(fps, arx, ary);
+	m_DirectShowPlayer->GetFpsnRatio(fps, arx, ary);
 }
 
 void RendererDirectShow::GetVideoSize(int *width, int *height)
 {
-	wxSize sz = vplayer->GetVideoSize();
+	wxSize sz = m_DirectShowPlayer->GetVideoSize();
 	*width = sz.x;
 	*height = sz.y;
 }
@@ -537,13 +537,13 @@ void RendererDirectShow::GetVideoSize(int *width, int *height)
 void RendererDirectShow::SetVolume(int vol)
 {
 	if (m_State == None){ return; }
-	vplayer->SetVolume(vol);
+	m_DirectShowPlayer->SetVolume(vol);
 }
 
 int RendererDirectShow::GetVolume()
 {
 	if (m_State == None){ return 0; }
-	return vplayer->GetVolume();
+	return m_DirectShowPlayer->GetVolume();
 }
 
 void RendererDirectShow::ChangePositionByFrame(int step)
@@ -559,14 +559,14 @@ void RendererDirectShow::ChangePositionByFrame(int step)
 
 wxArrayString RendererDirectShow::GetStreams()
 {
-	return vplayer->GetStreams();
+	return m_DirectShowPlayer->GetStreams();
 }
 
 void RendererDirectShow::EnableStream(long index)
 {
-	if (vplayer->stream){
+	if (m_DirectShowPlayer->stream){
 		m_DirectShowSeeking = true;
-		auto hr = vplayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
+		auto hr = m_DirectShowPlayer->stream->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
 		if (FAILED(hr)){
 			KaiLog(L"Cannot change stream");
 		}
@@ -577,17 +577,17 @@ void RendererDirectShow::EnableStream(long index)
 
 void RendererDirectShow::ChangeVobsub(bool vobsub)
 {
-	if (!vplayer){ return; }
+	if (!m_DirectShowPlayer){ return; }
 	int tmptime = m_Time;
 	OpenSubs((vobsub) ? NULL : tab->Grid->SaveText(), true, true);
-	vplayer->OpenFile(tab->VideoPath, vobsub);
-	m_Format = vplayer->inf.CT;
+	m_DirectShowPlayer->OpenFile(tab->VideoPath, vobsub);
+	m_Format = m_DirectShowPlayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
 		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
-	m_SwapFrame = (m_Format == 0 && !vplayer->HasVobsub());
+	m_SwapFrame = (m_Format == 0 && !m_DirectShowPlayer->HasVobsub());
 	if (tmpd3dformat != m_D3DFormat){
 		m_D3DFormat = tmpd3dformat;
-		int tmppitch = m_Width * vplayer->inf.bytes;
+		int tmppitch = m_Width * m_DirectShowPlayer->inf.bytes;
 		if (tmppitch != m_Pitch){
 			m_Pitch = tmppitch;
 			if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
@@ -596,8 +596,8 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 		UpdateVideoWindow();
 	}
 	SetPosition(tmptime);
-	if (m_State == Paused){ vplayer->Play(); vplayer->Pause(); }
-	else if (m_State == Playing){ vplayer->Play(); }
+	if (m_State == Paused){ m_DirectShowPlayer->Play(); m_DirectShowPlayer->Pause(); }
+	else if (m_State == Playing){ m_DirectShowPlayer->Play(); }
 	int pos = tab->Video->m_VolumeSlider->GetValue();
 	SetVolume(-(pos * pos));
 	tab->Video->ChangeStream();
@@ -605,12 +605,12 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 
 bool RendererDirectShow::EnumFilters(Menu *menu)
 {
-	return vplayer->EnumFilters(menu); 
+	return m_DirectShowPlayer->EnumFilters(menu); 
 }
 
 bool RendererDirectShow::FilterConfig(wxString name, int idx, wxPoint pos)
 {
-	return vplayer->FilterConfig(name, idx, pos);
+	return m_DirectShowPlayer->FilterConfig(name, idx, pos);
 }
 
 byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)

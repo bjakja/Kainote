@@ -1812,13 +1812,15 @@ void KainoteFrame::OnOpenAudio(wxCommandEvent& event)
 void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 {
 
-	if (id == GLOBAL_CLOSE_AUDIO && tab->Edit->ABox){
-		RendererVideo *renderer = tab->Video->GetRenderer();
-		if (renderer)
-			renderer->SetAudioPlayer(NULL);
+	if (id == GLOBAL_CLOSE_AUDIO){
+		if (tab->Edit->ABox){
+			RendererVideo *renderer = tab->Video->GetRenderer();
+			if (renderer)
+				renderer->SetAudioPlayer(NULL);
 
-		tab->Edit->CloseAudio();
-		tab->AudioPath.clear();
+			tab->Edit->CloseAudio();
+			tab->AudioPath.clear();
+		}
 	}
 	else{
 

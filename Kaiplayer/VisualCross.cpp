@@ -50,7 +50,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	}
 
 	if (event.Entering()){
-		tab->Video->SetCursor(wxCURSOR_BLANK);
+		//tab->Video->SetCursor(wxCURSOR_BLANK);
 		//KaiLog(L"Cross blank");
 		cross = true;
 		int nx = 0, ny = 0;
@@ -157,7 +157,8 @@ void Cross::DrawLines(wxPoint point)
 	vectors[3].x = renderer->m_BackBufferRect.right;
 	vectors[3].y = point.y;
 	cross = true;
-	if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){
+	//play and pause
+	if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){
 		tab->Video->Render(renderer->m_VideoResized);
 	}
 }

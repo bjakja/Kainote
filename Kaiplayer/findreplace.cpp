@@ -147,6 +147,7 @@ void FindReplace::ReplaceChecked()
 			
 			if (oldPath != path){
 				numChanges += ReplaceCheckedInSubs(results, copyPath);
+				results.clear();
 			}
 
 			results.push_back(SeekResult);
@@ -178,6 +179,7 @@ void FindReplace::ReplaceChecked()
 			if (tab != oldtab){
 				skipTab = Kai->Tabs->FindPanel(tab, false) == -1;
 				oldKeyLine = -1;
+				lastIsTextTl = false;
 			}
 			//skip lines when are out of table range and not existed tab
 			if (skipTab || SeekResult->keyLine >= tab->Grid->file->GetCount())
@@ -1567,6 +1569,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 		if (dialtxt != SeekResult->name){
 			KaiLog(wxString::Format(_("Linia %i nie może być zamieniona,\nbo została zedytowana."),
 				SeekResult->idLine));
+			continue;
 		}
 		while (SeekResult->keyLine == lineNum){
 			int numOfReps = ReplaceCheckedLine(&dialtxt, SeekResult->findPosition, &replacementDiff);

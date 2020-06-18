@@ -474,9 +474,8 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (videoControl->HasCapture()){ videoControl->ReleaseMouse(); }
-		if (!videoControl->m_HasArrow){ 
+		if (!videoControl->HasArrow()){ 
 			videoControl->SetCursor(wxCURSOR_ARROW); 
-			videoControl->m_HasArrow = true; 
 		}
 	}
 
@@ -487,27 +486,22 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 		if (abs(x - m_ZoomRect.x) < 5){
 			setarrow = true;
 			videoControl->SetCursor(wxCURSOR_SIZEWE);
-			videoControl->m_HasArrow = false;
 		}
 		if (abs(y - m_ZoomRect.y) < 5){
 			setarrow = true;
 			videoControl->SetCursor(wxCURSOR_SIZENS);
-			videoControl->m_HasArrow = false;
 		}
 		if (abs(x - m_ZoomRect.width) < 5){
 			setarrow = true;
 			videoControl->SetCursor(wxCURSOR_SIZEWE);
-			videoControl->m_HasArrow = false;
 		}
 		if (abs(y - m_ZoomRect.height) < 5){
 			setarrow = true;
 			videoControl->SetCursor(wxCURSOR_SIZENS);
-			videoControl->m_HasArrow = false;
 		}
 
-		if (!setarrow && !videoControl->m_HasArrow){ 
+		if (!setarrow && !videoControl->HasArrow()){ 
 			videoControl->SetCursor(wxCURSOR_ARROW); 
-			videoControl->m_HasArrow = true;
 		}
 	}
 	if (evt.LeftDown()){

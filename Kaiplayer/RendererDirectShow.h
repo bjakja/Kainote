@@ -81,6 +81,6 @@ public:
 	bool InitRendererDX();
 	void OpenKeyframes(const wxString &filename);
 
-	DShowPlayer *vplayer;
+	DShowPlayer *m_DirectShowPlayer;
 	
 };

@@ -183,12 +183,14 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
-	m_FrameBuffer = new char[m_Height*m_Pitch];
+	m_FrameBuffer = new char[m_Height * m_Pitch];
+
+	UpdateRects();
 
 	if (!InitDX()){ 
 		return false; 
 	}
-	UpdateRects();
+	
 
 	if (!framee){ framee = new csri_frame; }
 	if (!format){ format = new csri_fmt; }
@@ -571,6 +573,6 @@ bool RendererFFMS2::InitRendererDX()
 	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
 		_("Nie mo¿na stworzyæ plain surface"));//D3DPOOL_DEFAULT
 
-	return true;
 #endif
+	return true;
 }

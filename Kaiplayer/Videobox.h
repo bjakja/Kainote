@@ -75,20 +75,23 @@ public:
 	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
 	bool SetCursor(int cursorId){ 
-		if (cursorId == wxCURSOR_ARROW && !m_HasArrow)
-			m_HasArrow = true;
-		else if (m_HasArrow && cursorId != wxCURSOR_ARROW)
-			m_HasArrow = false;
-		else
-			return false;
+		
 
-		if (m_IsFullscreen && m_FullScreenWindow){ 
+		if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId){
+			m_LastFullScreenCursor = cursorId;
 			return m_FullScreenWindow->SetCursor(cursorId);
 		} 
-		else{ 
+		else if(m_LastCursor != cursorId){
+			m_LastCursor = cursorId;
 			return wxWindow::SetCursor(cursorId);
 		} 
 	};
+	bool HasArrow(){
+		if (m_IsFullscreen){
+			return m_LastFullScreenCursor == wxCURSOR_ARROW;
+		}else
+			return m_LastCursor == wxCURSOR_ARROW;
+	}
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetFont(const wxFont &font);
 	void GetVideoSize(int *width, int *height);
@@ -168,8 +171,9 @@ private:
 	RendererVideo *renderer = NULL;
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
-	bool m_HasArrow;
-	//bool m_FullScreenHasArrow;
+	//bool m_HasArrow;
+	int m_LastCursor = wxCURSOR_ARROW;
+	int m_LastFullScreenCursor = wxCURSOR_ARROW;
 	bool m_ShownKeyframe;
 	wxString oldpath;
 	std::vector<RECT> MonRects;
