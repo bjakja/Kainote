@@ -401,6 +401,15 @@
     <ClCompile Include="VisualCross.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="SubtitlesVSFilter.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesLibass.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesProviderManager.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -740,6 +749,12 @@
       <Filter>Source Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="RendererVideo.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProvider.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProviderManager.h">
       <Filter>Source Files\Video</Filter>
     </ClInclude>
   </ItemGroup>

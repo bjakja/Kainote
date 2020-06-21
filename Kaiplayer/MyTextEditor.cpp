@@ -708,7 +708,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		tmpstart = start; tmpend = end;
 
 		if (start < oldstart){
-			if (end == oldend){
+			if (end == oldstart){
 				Selend.x = oldend; 
 				Selend.y = FindY(oldend); 
 			}

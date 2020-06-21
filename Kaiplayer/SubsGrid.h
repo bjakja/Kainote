@@ -68,4 +68,6 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-
+enum {
+	ID_FILTERING_STYLES = 8005
+};

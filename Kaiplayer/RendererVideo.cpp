@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -213,7 +213,7 @@ bool RendererVideo::InitDX(bool reset)
 
 	if (!reset){
 		m_D3DObject = Direct3DCreate9(D3D_SDK_VERSION);
-		PTR(m_D3DObject, _("Nie mo¿na utworzyæ obiektu Direct3D"));
+		PTR(m_D3DObject, _("Nie moÅ¼na utworzyÄ‡ obiektu Direct3D"));
 	}
 	else{
 		Clear(false);
@@ -236,7 +236,7 @@ bool RendererVideo::InitDX(bool reset)
 	if (reset){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
-			KaiLog(_("Nie mo¿na zresetowaæ Direct3D"));
+			KaiLog(_("Nie moÅ¼na zresetowaÄ‡ Direct3D"));
 			return false;
 		}
 	}
@@ -246,7 +246,7 @@ bool RendererVideo::InitDX(bool reset)
 		if (FAILED(hr)){
 			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &m_D3DDevice),
-				_("Nie mo¿na utworzyæ urz¹dzenia D3D9"));
+				_("Nie moÅ¼na utworzyÄ‡ urzÄ…dzenia D3D9"));
 		}
 	}
 
@@ -269,7 +269,7 @@ bool RendererVideo::InitDX(bool reset)
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-	HR(hr, _("Zawiod³o któreœ z ustawieñ DirectX"));
+	HR(hr, _("ZawiodÅ‚o ktÃ³reÅ› z ustawieÅ„ DirectX"));
 
 	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
@@ -277,9 +277,9 @@ bool RendererVideo::InitDX(bool reset)
 	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, m_WindowRect.right, m_WindowRect.bottom, 0, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
-	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie mo¿na ustawiæ macierzy projekcji"));
-	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie mo¿na ustawiæ macierzy œwiata"));
-	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie mo¿na ustawiæ macierzy widoku"));
+	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie moÅ¼na ustawiÄ‡ macierzy projekcji"));
+	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie moÅ¼na ustawiÄ‡ macierzy Å›wiata"));
+	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie moÅ¼na ustawiÄ‡ macierzy widoku"));
 
 #if byvertices
 	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
@@ -288,19 +288,19 @@ bool RendererVideo::InitDX(bool reset)
 	// Add filtering
 	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
 	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	HR(hr, _("Zawiod³o któreœ z ustawieñ DirectX vertices"));
+	HR(hr, _("ZawiodÅ‚o ktÃ³reÅ› z ustawieÅ„ DirectX vertices"));
 	HR(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, D3DUSAGE_RENDERTARGET,
-		D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL), "Nie mo¿na utworzyæ tekstury");
+		D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL), "Nie moÅ¼na utworzyÄ‡ tekstury");
 
-	HR(texture->GetSurfaceLevel(0, &m_BlackBarsSurface), "nie mo¿na utworzyæ powierzchni");
+	HR(texture->GetSurfaceLevel(0, &m_BlackBarsSurface), "nie moÅ¼na utworzyÄ‡ powierzchni");
 
-	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0), "Nie mo¿na utworzyæ powierzchni");
+	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0), "Nie moÅ¼na utworzyÄ‡ powierzchni");
 
 	HR(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &vertex, NULL),
-		"Nie mo¿na utworzyæ bufora wertex")
+		"Nie moÅ¼na utworzyÄ‡ bufora wertex")
 
 		CUSTOMVERTEX* pVertices;
-	HR(hr = vertex->Lock(0, 0, (void**)&pVertices, 0), "nie mo¿na zablokowaæ bufora vertex");
+	HR(hr = vertex->Lock(0, 0, (void**)&pVertices, 0), "nie moÅ¼na zablokowaÄ‡ bufora vertex");
 
 	pVertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVertices[0].tu = 0.0f;
@@ -321,9 +321,9 @@ bool RendererVideo::InitDX(bool reset)
 	if (!InitRendererDX())
 		return false;
 
-	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie mo¿na stworzyæ linii D3DX"));
+	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie moÅ¼na stworzyÄ‡ linii D3DX"));
 	HR(D3DXCreateFont(m_D3DDevice, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie mo¿na stworzyæ czcionki D3DX"));
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie moÅ¼na stworzyÄ‡ czcionki D3DX"));
 
 	return true;
 }
@@ -743,9 +743,9 @@ bool RendererVideo::DrawTexture(byte *nframe, bool copy)
 
 
 #ifdef byvertices
-	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie mo¿na zablokowaæ bufora tekstury"));//D3DLOCK_NOSYSLOCK
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie moÅ¼na zablokowaÄ‡ bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
-	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie mo¿na zablokowaæ bufora tekstury"));
+	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie moÅ¼na zablokowaÄ‡ bufora tekstury"));
 #endif
 	texbuf = static_cast<byte *>(d3dlr.pBits);
 

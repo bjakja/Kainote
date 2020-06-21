@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -38,9 +38,9 @@ RendererDirectShow::~RendererDirectShow()
 
 bool RendererDirectShow::InitRendererDX()
 {
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie mo¿na stworzyæ powierzchni"));
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie moÅ¼na stworzyÄ‡ powierzchni"));
 	HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
-		_("Nie mo¿na stworzyæ DXVA processor service"));
+		_("Nie moÅ¼na stworzyÄ‡ DXVA processor service"));
 	DXVA2_VideoDesc videoDesc;
 	videoDesc.SampleWidth = m_Width;
 	videoDesc.SampleHeight = m_Height;
@@ -60,7 +60,7 @@ bool RendererDirectShow::InitRendererDX()
 	UINT count, count1;//, count2;
 	GUID* guids = NULL;
 
-	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie mo¿na pobraæ GUIDów DXVA"));
+	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie moÅ¼na pobraÄ‡ GUIDÃ³w DXVA"));
 	D3DFORMAT* formats = NULL;
 	//D3DFORMAT* formats2 = NULL;
 	bool isgood = false;
@@ -69,7 +69,7 @@ bool RendererDirectShow::InitRendererDX()
 	HRESULT hr;
 	for (UINT i = 0; i < count; i++){
 		hr = m_DXVAService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-		if (FAILED(hr)){ KaiLog(_("Nie mo¿na uzyskaæ formatów DXVA")); continue; }
+		if (FAILED(hr)){ KaiLog(_("Nie moÅ¼na uzyskaÄ‡ formatÃ³w DXVA")); continue; }
 		for (UINT j = 0; j < count1; j++)
 		{
 			if (formats[j] == D3DFMT_X8R8G8B8)
@@ -80,11 +80,11 @@ bool RendererDirectShow::InitRendererDX()
 		}
 
 		CoTaskMemFree(formats);
-		if (!isgood){ KaiLog(_("Ten format nie jest obs³ugiwany przez DXVA")); continue; }
+		if (!isgood){ KaiLog(_("Ten format nie jest obsÅ‚ugiwany przez DXVA")); continue; }
 		isgood = false;
 
 		hr = m_DXVAService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-		if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiod³o")); continue; }
+		if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiodÅ‚o")); continue; }
 		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0){
 			continue;
 		}
@@ -92,15 +92,15 @@ bool RendererDirectShow::InitRendererDX()
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 		hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
 			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, NULL);
-		if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie mo¿na stworzyæ powierzchni DXVA %i"), (int)i)); continue; }
+		if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie moÅ¼na stworzyÄ‡ powierzchni DXVA %i"), (int)i)); continue; }
 
 		hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &m_DXVAProcessor);
-		if (FAILED(hr)){ KaiLog(_("Nie mo¿na stworzyæ processora DXVA")); continue; }
+		if (FAILED(hr)){ KaiLog(_("Nie moÅ¼na stworzyÄ‡ processora DXVA")); continue; }
 		dxvaGuid = guids[i]; isgood = true;
 		break;
 	}
 	CoTaskMemFree(guids);
-	PTR(isgood, L"Nie ma ¿adnych guidów");
+	PTR(isgood, L"Nie ma Å¼adnych guidÃ³w");
 
 	return true;
 }
@@ -362,13 +362,13 @@ bool RendererDirectShow::OpenSubs(wxString *textsubs, bool redraw, bool fromFile
 
 	// Select renderer
 	csri_rend *vobsub = Options.GetVSFilter();
-	if (!vobsub){ KaiLog(_("CSRI odmówi³o pos³uszeñstwa.")); delete textsubs; return false; }
+	if (!vobsub){ KaiLog(_("CSRI odmÃ³wiÅ‚o posÅ‚uszeÅ„stwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ KaiLog(_("B³¹d, instancja VobSuba nie zosta³a utworzona.")); delete textsubs; return false; }
+	if (!instance){ KaiLog(_("BÅ‚Ä…d, instancja VobSuba nie zostaÅ‚a utworzona.")); delete textsubs; return false; }
 
 	if (!format || csri_request_fmt(instance, format)){
-		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		KaiLog(_("CSRI nie obsÅ‚uguje tego formatu."));
 		csri_close(instance);
 		instance = NULL;
 		delete textsubs; return false;

@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 	
 	hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
-	if (FAILED(hr)){ KaiLog(_("Nie mo¿na na³o¿yæ powierzchni na siebie")); }
+	if (FAILED(hr)){ KaiLog(_("Nie moÅ¼na naÅ‚oÅ¼yÄ‡ powierzchni na siebie")); }
 
 
 	hr = m_D3DDevice->BeginScene();
@@ -254,13 +254,13 @@ bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
 
 	// Select renderer
 	csri_rend *vobsub = Options.GetVSFilter();
-	if (!vobsub){ KaiLog(_("CSRI odmówi³o pos³uszeñstwa.")); delete textsubs; return false; }
+	if (!vobsub){ KaiLog(_("CSRI odmÃ³wiÅ‚o posÅ‚uszeÅ„stwa.")); delete textsubs; return false; }
 
 	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ KaiLog(_("B³¹d, instancja VobSuba nie zosta³a utworzona.")); delete textsubs; return false; }
+	if (!instance){ KaiLog(_("BÅ‚Ä…d, instancja VobSuba nie zostaÅ‚a utworzona.")); delete textsubs; return false; }
 
 	if (!format || csri_request_fmt(instance, format)){
-		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		KaiLog(_("CSRI nie obsÅ‚uguje tego formatu."));
 		csri_close(instance);
 		instance = NULL;
 		delete textsubs; return false;
@@ -568,10 +568,10 @@ VideoFfmpeg * RendererFFMS2::GetFFMS2()
 bool RendererFFMS2::InitRendererDX()
 {
 #ifndef byvertices
-	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie mo¿na stworzyæ powierzchni"));
+	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie moÅ¼na stworzyÄ‡ powierzchni"));
 
 	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
-		_("Nie mo¿na stworzyæ plain surface"));//D3DPOOL_DEFAULT
+		_("Nie moÅ¼na stworzyÄ‡ plain surface"));//D3DPOOL_DEFAULT
 
 #endif
 	return true;

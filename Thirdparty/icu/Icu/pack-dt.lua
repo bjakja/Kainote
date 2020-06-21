@@ -14,7 +14,7 @@
 --
 -- Aegisub Project http://www.aegisub.org/
 
-local ICU_VERSION = 'icudt53'
+local ICU_VERSION = 'icudt60'
 
 local function try_open(filename, mode)
   local file, err = io.open(filename, mode)

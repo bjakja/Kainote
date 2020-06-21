@@ -158,6 +158,7 @@ public:
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 	VideoCtrl *videoControl;
+	Visuals *m_Visual;
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
 	LPDIRECT3DTEXTURE9 texture;
@@ -214,6 +215,5 @@ private:
 	AudioDisplay *m_AudioPlayer;
 	csri_frame *framee;
 	csri_fmt *format;
-	Visuals *m_Visual;
 	TabPanel* tab;
 };

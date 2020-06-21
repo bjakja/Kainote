@@ -85,6 +85,7 @@ public:
 			m_LastCursor = cursorId;
 			return wxWindow::SetCursor(cursorId);
 		} 
+		return false;
 	};
 	bool HasArrow(){
 		if (m_IsFullscreen){

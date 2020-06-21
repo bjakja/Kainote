@@ -1,46 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|Win32">
-      <Configuration>Rel_AVX2</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Rel_AVX2|x64">
-      <Configuration>Rel_AVX2</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup>
     <MiniLuaCommand>$(SolutionDir)thirdparty\luajit\minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
     <PackCommand>$(MSBuildThisFileDirectory)pack-dt.lua</PackCommand>
-    <IcuDt>icudt53l</IcuDt>
+    <IcuDt>icudt60l</IcuDt>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Target Name="PackDataTables" BeforeTargets="ClCompile" Inputs="..\source\data\in\$(IcuDt).dat;pack-dt.lua" Outputs="$(IcuDt).c">
     <Exec Command="$(MiniLuaCommand) $(PackCommand) &quot;..\source&quot; &quot;$(IcuDt).c&quot;" />
   </Target>
   <ItemGroup>
-    <ClCompile Include="$(MSBuildThisFileDirectory)icudt53l.c" />
     <ClCompile Include="..\source\common\appendable.cpp" />
     <ClCompile Include="..\source\common\bmpset.cpp" />
     <ClCompile Include="..\source\common\brkeng.cpp" />
     <ClCompile Include="..\source\common\brkiter.cpp" />
+    <ClCompile Include="..\source\common\bytesinkutil.cpp" />
     <ClCompile Include="..\source\common\bytestream.cpp" />
     <ClCompile Include="..\source\common\bytestrie.cpp" />
     <ClCompile Include="..\source\common\bytestriebuilder.cpp" />
@@ -48,23 +40,28 @@
     <ClCompile Include="..\source\common\caniter.cpp" />
     <ClCompile Include="..\source\common\chariter.cpp" />
     <ClCompile Include="..\source\common\charstr.cpp" />
-    <ClCompile Include="..\source\common\cmemory.c" />
-    <ClCompile Include="..\source\common\cstring.c" />
-    <ClCompile Include="..\source\common\cwchar.c" />
+    <ClCompile Include="..\source\common\cmemory.cpp" />
+    <ClCompile Include="..\source\common\cstr.cpp" />
+    <ClCompile Include="..\source\common\cstring.cpp" />
+    <ClCompile Include="..\source\common\cwchar.cpp" />
     <ClCompile Include="..\source\common\dictbe.cpp" />
     <ClCompile Include="..\source\common\dictionarydata.cpp" />
     <ClCompile Include="..\source\common\dtintrv.cpp" />
+    <ClCompile Include="..\source\common\edits.cpp" />
     <ClCompile Include="..\source\common\errorcode.cpp" />
+    <ClCompile Include="..\source\common\filteredbrk.cpp" />
     <ClCompile Include="..\source\common\filterednormalizer2.cpp" />
-    <ClCompile Include="..\source\common\icudataver.c" />
-    <ClCompile Include="..\source\common\icuplug.c" />
+    <ClCompile Include="..\source\common\icudataver.cpp" />
+    <ClCompile Include="..\source\common\icuplug.cpp" />
     <ClCompile Include="..\source\common\listformatter.cpp" />
+    <ClCompile Include="..\source\common\loadednormalizer2impl.cpp" />
     <ClCompile Include="..\source\common\locavailable.cpp" />
     <ClCompile Include="..\source\common\locbased.cpp" />
     <ClCompile Include="..\source\common\locdispnames.cpp" />
+    <ClCompile Include="..\source\common\locdspnm.cpp" />
     <ClCompile Include="..\source\common\locid.cpp" />
     <ClCompile Include="..\source\common\loclikely.cpp" />
-    <ClCompile Include="..\source\common\locmap.c" />
+    <ClCompile Include="..\source\common\locmap.cpp" />
     <ClCompile Include="..\source\common\locresdata.cpp" />
     <ClCompile Include="..\source\common\locutil.cpp" />
     <ClCompile Include="..\source\common\messagepattern.cpp" />
@@ -73,8 +70,9 @@
     <ClCompile Include="..\source\common\normlzr.cpp" />
     <ClCompile Include="..\source\common\parsepos.cpp" />
     <ClCompile Include="..\source\common\patternprops.cpp" />
+    <ClCompile Include="..\source\common\pluralmap.cpp" />
     <ClCompile Include="..\source\common\propname.cpp" />
-    <ClCompile Include="..\source\common\propsvec.c" />
+    <ClCompile Include="..\source\common\propsvec.cpp" />
     <ClCompile Include="..\source\common\punycode.cpp" />
     <ClCompile Include="..\source\common\putil.cpp" />
     <ClCompile Include="..\source\common\rbbi.cpp" />
@@ -85,8 +83,10 @@
     <ClCompile Include="..\source\common\rbbisetb.cpp" />
     <ClCompile Include="..\source\common\rbbistbl.cpp" />
     <ClCompile Include="..\source\common\rbbitblb.cpp" />
+    <ClCompile Include="..\source\common\rbbi_cache.cpp" />
     <ClCompile Include="..\source\common\resbund.cpp" />
     <ClCompile Include="..\source\common\resbund_cnv.cpp" />
+    <ClCompile Include="..\source\common\resource.cpp" />
     <ClCompile Include="..\source\common\ruleiter.cpp" />
     <ClCompile Include="..\source\common\schriter.cpp" />
     <ClCompile Include="..\source\common\serv.cpp" />
@@ -97,66 +97,72 @@
     <ClCompile Include="..\source\common\servrbf.cpp" />
     <ClCompile Include="..\source\common\servslkf.cpp" />
     <ClCompile Include="..\source\common\sharedobject.cpp" />
+    <ClCompile Include="..\source\common\simpleformatter.cpp" />
     <ClCompile Include="..\source\common\stringpiece.cpp" />
     <ClCompile Include="..\source\common\stringtriebuilder.cpp" />
-    <ClCompile Include="..\source\common\uarrsort.c" />
-    <ClCompile Include="..\source\common\ubidi.c" />
-    <ClCompile Include="..\source\common\ubidiln.c" />
-    <ClCompile Include="..\source\common\ubidiwrt.c" />
-    <ClCompile Include="..\source\common\ubidi_props.c" />
+    <ClCompile Include="..\source\common\uarrsort.cpp" />
+    <ClCompile Include="..\source\common\ubidi.cpp" />
+    <ClCompile Include="..\source\common\ubidiln.cpp" />
+    <ClCompile Include="..\source\common\ubiditransform.cpp" />
+    <ClCompile Include="..\source\common\ubidiwrt.cpp" />
+    <ClCompile Include="..\source\common\ubidi_props.cpp" />
     <ClCompile Include="..\source\common\ubrk.cpp" />
     <ClCompile Include="..\source\common\ucase.cpp" />
     <ClCompile Include="..\source\common\ucasemap.cpp" />
     <ClCompile Include="..\source\common\ucasemap_titlecase_brkiter.cpp" />
-    <ClCompile Include="..\source\common\ucat.c" />
-    <ClCompile Include="..\source\common\uchar.c" />
+    <ClCompile Include="..\source\common\ucat.cpp" />
+    <ClCompile Include="..\source\common\uchar.cpp" />
     <ClCompile Include="..\source\common\ucharstrie.cpp" />
     <ClCompile Include="..\source\common\ucharstriebuilder.cpp" />
     <ClCompile Include="..\source\common\ucharstrieiterator.cpp" />
     <ClCompile Include="..\source\common\uchriter.cpp" />
-    <ClCompile Include="..\source\common\ucln_cmn.c" />
-    <ClCompile Include="..\source\common\ucmndata.c" />
-    <ClCompile Include="..\source\common\ucnv.c" />
+    <ClCompile Include="..\source\common\ucln_cmn.cpp" />
+    <ClCompile Include="..\source\common\ucmndata.cpp" />
+    <ClCompile Include="..\source\common\ucnv.cpp" />
     <ClCompile Include="..\source\common\ucnv2022.cpp" />
     <ClCompile Include="..\source\common\ucnvbocu.cpp" />
-    <ClCompile Include="..\source\common\ucnvdisp.c" />
-    <ClCompile Include="..\source\common\ucnvhz.c" />
-    <ClCompile Include="..\source\common\ucnvisci.c" />
-    <ClCompile Include="..\source\common\ucnvlat1.c" />
-    <ClCompile Include="..\source\common\ucnvmbcs.c" />
-    <ClCompile Include="..\source\common\ucnvscsu.c" />
+    <ClCompile Include="..\source\common\ucnvdisp.cpp" />
+    <ClCompile Include="..\source\common\ucnvhz.cpp" />
+    <ClCompile Include="..\source\common\ucnvisci.cpp" />
+    <ClCompile Include="..\source\common\ucnvlat1.cpp" />
+    <ClCompile Include="..\source\common\ucnvmbcs.cpp" />
+    <ClCompile Include="..\source\common\ucnvscsu.cpp" />
     <ClCompile Include="..\source\common\ucnvsel.cpp" />
     <ClCompile Include="..\source\common\ucnv_bld.cpp" />
-    <ClCompile Include="..\source\common\ucnv_cb.c" />
-    <ClCompile Include="..\source\common\ucnv_cnv.c" />
-    <ClCompile Include="..\source\common\ucnv_ct.c" />
-    <ClCompile Include="..\source\common\ucnv_err.c" />
+    <ClCompile Include="..\source\common\ucnv_cb.cpp" />
+    <ClCompile Include="..\source\common\ucnv_cnv.cpp" />
+    <ClCompile Include="..\source\common\ucnv_ct.cpp" />
+    <ClCompile Include="..\source\common\ucnv_err.cpp" />
     <ClCompile Include="..\source\common\ucnv_ext.cpp" />
     <ClCompile Include="..\source\common\ucnv_io.cpp" />
-    <ClCompile Include="..\source\common\ucnv_lmb.c" />
-    <ClCompile Include="..\source\common\ucnv_set.c" />
-    <ClCompile Include="..\source\common\ucnv_u16.c" />
-    <ClCompile Include="..\source\common\ucnv_u32.c" />
-    <ClCompile Include="..\source\common\ucnv_u7.c" />
-    <ClCompile Include="..\source\common\ucnv_u8.c" />
+    <ClCompile Include="..\source\common\ucnv_lmb.cpp" />
+    <ClCompile Include="..\source\common\ucnv_set.cpp" />
+    <ClCompile Include="..\source\common\ucnv_u16.cpp" />
+    <ClCompile Include="..\source\common\ucnv_u32.cpp" />
+    <ClCompile Include="..\source\common\ucnv_u7.cpp" />
+    <ClCompile Include="..\source\common\ucnv_u8.cpp" />
     <ClCompile Include="..\source\common\ucol_swp.cpp" />
+    <ClCompile Include="..\source\common\ucurr.cpp" />
     <ClCompile Include="..\source\common\udata.cpp" />
-    <ClCompile Include="..\source\common\udatamem.c" />
-    <ClCompile Include="..\source\common\udataswp.c" />
-    <ClCompile Include="..\source\common\uenum.c" />
-    <ClCompile Include="..\source\common\uhash.c" />
+    <ClCompile Include="..\source\common\udatamem.cpp" />
+    <ClCompile Include="..\source\common\udataswp.cpp" />
+    <ClCompile Include="..\source\common\uenum.cpp" />
+    <ClCompile Include="..\source\common\uhash.cpp" />
     <ClCompile Include="..\source\common\uhash_us.cpp" />
     <ClCompile Include="..\source\common\uidna.cpp" />
     <ClCompile Include="..\source\common\uinit.cpp" />
-    <ClCompile Include="..\source\common\uinvchar.c" />
+    <ClCompile Include="..\source\common\uinvchar.cpp" />
     <ClCompile Include="..\source\common\uiter.cpp" />
-    <ClCompile Include="..\source\common\ulist.c" />
+    <ClCompile Include="..\source\common\ulist.cpp" />
+    <ClCompile Include="..\source\common\ulistformatter.cpp" />
     <ClCompile Include="..\source\common\uloc.cpp" />
-    <ClCompile Include="..\source\common\uloc_tag.c" />
-    <ClCompile Include="..\source\common\umapfile.c" />
-    <ClCompile Include="..\source\common\umath.c" />
+    <ClCompile Include="..\source\common\uloc_keytype.cpp" />
+    <ClCompile Include="..\source\common\uloc_tag.cpp" />
+    <ClCompile Include="..\source\common\umapfile.cpp" />
+    <ClCompile Include="..\source\common\umath.cpp" />
     <ClCompile Include="..\source\common\umutex.cpp" />
     <ClCompile Include="..\source\common\unames.cpp" />
+    <ClCompile Include="..\source\common\unifiedcache.cpp" />
     <ClCompile Include="..\source\common\unifilt.cpp" />
     <ClCompile Include="..\source\common\unifunct.cpp" />
     <ClCompile Include="..\source\common\uniset.cpp" />
@@ -174,11 +180,11 @@
     <ClCompile Include="..\source\common\uobject.cpp" />
     <ClCompile Include="..\source\common\uprops.cpp" />
     <ClCompile Include="..\source\common\uresbund.cpp" />
-    <ClCompile Include="..\source\common\uresdata.c" />
-    <ClCompile Include="..\source\common\ures_cnv.c" />
-    <ClCompile Include="..\source\common\uscript.c" />
+    <ClCompile Include="..\source\common\uresdata.cpp" />
+    <ClCompile Include="..\source\common\ures_cnv.cpp" />
+    <ClCompile Include="..\source\common\uscript.cpp" />
     <ClCompile Include="..\source\common\uscript_props.cpp" />
-    <ClCompile Include="..\source\common\usc_impl.c" />
+    <ClCompile Include="..\source\common\usc_impl.cpp" />
     <ClCompile Include="..\source\common\uset.cpp" />
     <ClCompile Include="..\source\common\usetiter.cpp" />
     <ClCompile Include="..\source\common\uset_props.cpp" />
@@ -188,26 +194,27 @@
     <ClCompile Include="..\source\common\ustrcase.cpp" />
     <ClCompile Include="..\source\common\ustrcase_locale.cpp" />
     <ClCompile Include="..\source\common\ustrenum.cpp" />
-    <ClCompile Include="..\source\common\ustrfmt.c" />
+    <ClCompile Include="..\source\common\ustrfmt.cpp" />
     <ClCompile Include="..\source\common\ustring.cpp" />
     <ClCompile Include="..\source\common\ustrtrns.cpp" />
-    <ClCompile Include="..\source\common\ustr_cnv.c" />
+    <ClCompile Include="..\source\common\ustr_cnv.cpp" />
     <ClCompile Include="..\source\common\ustr_titlecase_brkiter.cpp" />
     <ClCompile Include="..\source\common\ustr_wcs.cpp" />
     <ClCompile Include="..\source\common\utext.cpp" />
-    <ClCompile Include="..\source\common\utf_impl.c" />
+    <ClCompile Include="..\source\common\utf_impl.cpp" />
     <ClCompile Include="..\source\common\util.cpp" />
     <ClCompile Include="..\source\common\util_props.cpp" />
-    <ClCompile Include="..\source\common\utrace.c" />
+    <ClCompile Include="..\source\common\utrace.cpp" />
     <ClCompile Include="..\source\common\utrie.cpp" />
     <ClCompile Include="..\source\common\utrie2.cpp" />
     <ClCompile Include="..\source\common\utrie2_builder.cpp" />
     <ClCompile Include="..\source\common\uts46.cpp" />
-    <ClCompile Include="..\source\common\utypes.c" />
+    <ClCompile Include="..\source\common\utypes.cpp" />
     <ClCompile Include="..\source\common\uvector.cpp" />
     <ClCompile Include="..\source\common\uvectr32.cpp" />
     <ClCompile Include="..\source\common\uvectr64.cpp" />
-    <ClCompile Include="..\source\common\wintz.c" />
+    <ClCompile Include="..\source\common\wintz.cpp" />
+    <ClCompile Include="..\source\i18n\affixpatternparser.cpp" />
     <ClCompile Include="..\source\i18n\alphaindex.cpp" />
     <ClCompile Include="..\source\i18n\anytrans.cpp" />
     <ClCompile Include="..\source\i18n\astro.cpp" />
@@ -258,12 +265,19 @@
     <ClCompile Include="..\source\i18n\currunit.cpp" />
     <ClCompile Include="..\source\i18n\dangical.cpp" />
     <ClCompile Include="..\source\i18n\datefmt.cpp" />
+    <ClCompile Include="..\source\i18n\dayperiodrules.cpp" />
     <ClCompile Include="..\source\i18n\dcfmtsym.cpp" />
-    <ClCompile Include="..\source\i18n\decContext.c" />
+    <ClCompile Include="..\source\i18n\decContext.cpp" />
     <ClCompile Include="..\source\i18n\decfmtst.cpp" />
     <ClCompile Include="..\source\i18n\decimalformatpattern.cpp" />
     <ClCompile Include="..\source\i18n\decimfmt.cpp" />
-    <ClCompile Include="..\source\i18n\decNumber.c" />
+    <ClCompile Include="..\source\i18n\decimfmtimpl.cpp" />
+    <ClCompile Include="..\source\i18n\decNumber.cpp" />
+    <ClCompile Include="..\source\i18n\digitaffix.cpp" />
+    <ClCompile Include="..\source\i18n\digitaffixesandpadding.cpp" />
+    <ClCompile Include="..\source\i18n\digitformatter.cpp" />
+    <ClCompile Include="..\source\i18n\digitgrouping.cpp" />
+    <ClCompile Include="..\source\i18n\digitinterval.cpp" />
     <ClCompile Include="..\source\i18n\digitlst.cpp" />
     <ClCompile Include="..\source\i18n\dtfmtsym.cpp" />
     <ClCompile Include="..\source\i18n\dtitvfmt.cpp" />
@@ -282,7 +296,6 @@
     <ClCompile Include="..\source\i18n\gregocal.cpp" />
     <ClCompile Include="..\source\i18n\gregoimp.cpp" />
     <ClCompile Include="..\source\i18n\hebrwcal.cpp" />
-    <ClCompile Include="..\source\i18n\identifier_info.cpp" />
     <ClCompile Include="..\source\i18n\indiancal.cpp" />
     <ClCompile Include="..\source\i18n\inputext.cpp" />
     <ClCompile Include="..\source\i18n\islamcal.cpp" />
@@ -296,13 +309,33 @@
     <ClCompile Include="..\source\i18n\nfrule.cpp" />
     <ClCompile Include="..\source\i18n\nfsubs.cpp" />
     <ClCompile Include="..\source\i18n\nortrans.cpp" />
+    <ClCompile Include="..\source\i18n\nounit.cpp" />
     <ClCompile Include="..\source\i18n\nultrans.cpp" />
+    <ClCompile Include="..\source\i18n\number_affixutils.cpp" />
+    <ClCompile Include="..\source\i18n\number_compact.cpp" />
+    <ClCompile Include="..\source\i18n\number_decimalquantity.cpp" />
+    <ClCompile Include="..\source\i18n\number_decimfmtprops.cpp" />
+    <ClCompile Include="..\source\i18n\number_fluent.cpp" />
+    <ClCompile Include="..\source\i18n\number_formatimpl.cpp" />
+    <ClCompile Include="..\source\i18n\number_grouping.cpp" />
+    <ClCompile Include="..\source\i18n\number_integerwidth.cpp" />
+    <ClCompile Include="..\source\i18n\number_longnames.cpp" />
+    <ClCompile Include="..\source\i18n\number_modifiers.cpp" />
+    <ClCompile Include="..\source\i18n\number_notation.cpp" />
+    <ClCompile Include="..\source\i18n\number_padding.cpp" />
+    <ClCompile Include="..\source\i18n\number_patternmodifier.cpp" />
+    <ClCompile Include="..\source\i18n\number_patternstring.cpp" />
+    <ClCompile Include="..\source\i18n\number_rounding.cpp" />
+    <ClCompile Include="..\source\i18n\number_scientific.cpp" />
+    <ClCompile Include="..\source\i18n\number_stringbuilder.cpp" />
     <ClCompile Include="..\source\i18n\numfmt.cpp" />
     <ClCompile Include="..\source\i18n\numsys.cpp" />
     <ClCompile Include="..\source\i18n\olsontz.cpp" />
     <ClCompile Include="..\source\i18n\persncal.cpp" />
+    <ClCompile Include="..\source\i18n\pluralaffix.cpp" />
     <ClCompile Include="..\source\i18n\plurfmt.cpp" />
     <ClCompile Include="..\source\i18n\plurrule.cpp" />
+    <ClCompile Include="..\source\i18n\precision.cpp" />
     <ClCompile Include="..\source\i18n\quant.cpp" />
     <ClCompile Include="..\source\i18n\quantityformatter.cpp" />
     <ClCompile Include="..\source\i18n\rbnf.cpp" />
@@ -323,13 +356,17 @@
     <ClCompile Include="..\source\i18n\remtrans.cpp" />
     <ClCompile Include="..\source\i18n\repattrn.cpp" />
     <ClCompile Include="..\source\i18n\rulebasedcollator.cpp" />
+    <ClCompile Include="..\source\i18n\scientificnumberformatter.cpp" />
     <ClCompile Include="..\source\i18n\scriptset.cpp" />
     <ClCompile Include="..\source\i18n\search.cpp" />
     <ClCompile Include="..\source\i18n\selfmt.cpp" />
+    <ClCompile Include="..\source\i18n\sharedbreakiterator.cpp" />
     <ClCompile Include="..\source\i18n\simpletz.cpp" />
+    <ClCompile Include="..\source\i18n\smallintformatter.cpp" />
     <ClCompile Include="..\source\i18n\smpdtfmt.cpp" />
     <ClCompile Include="..\source\i18n\smpdtfst.cpp" />
     <ClCompile Include="..\source\i18n\sortkey.cpp" />
+    <ClCompile Include="..\source\i18n\standardplural.cpp" />
     <ClCompile Include="..\source\i18n\strmatch.cpp" />
     <ClCompile Include="..\source\i18n\strrepl.cpp" />
     <ClCompile Include="..\source\i18n\stsearch.cpp" />
@@ -351,7 +388,7 @@
     <ClCompile Include="..\source\i18n\tzrule.cpp" />
     <ClCompile Include="..\source\i18n\tztrans.cpp" />
     <ClCompile Include="..\source\i18n\ucal.cpp" />
-    <ClCompile Include="..\source\i18n\ucln_in.c" />
+    <ClCompile Include="..\source\i18n\ucln_in.cpp" />
     <ClCompile Include="..\source\i18n\ucol.cpp" />
     <ClCompile Include="..\source\i18n\ucoleitr.cpp" />
     <ClCompile Include="..\source\i18n\ucol_res.cpp" />
@@ -360,8 +397,9 @@
     <ClCompile Include="..\source\i18n\udat.cpp" />
     <ClCompile Include="..\source\i18n\udateintervalformat.cpp" />
     <ClCompile Include="..\source\i18n\udatpg.cpp" />
+    <ClCompile Include="..\source\i18n\ufieldpositer.cpp" />
     <ClCompile Include="..\source\i18n\uitercollationiterator.cpp" />
-    <ClCompile Include="..\source\i18n\ulocdata.c" />
+    <ClCompile Include="..\source\i18n\ulocdata.cpp" />
     <ClCompile Include="..\source\i18n\umsg.cpp" />
     <ClCompile Include="..\source\i18n\unesctrn.cpp" />
     <ClCompile Include="..\source\i18n\uni2name.cpp" />
@@ -376,11 +414,12 @@
     <ClCompile Include="..\source\i18n\uspoof_build.cpp" />
     <ClCompile Include="..\source\i18n\uspoof_conf.cpp" />
     <ClCompile Include="..\source\i18n\uspoof_impl.cpp" />
-    <ClCompile Include="..\source\i18n\uspoof_wsconf.cpp" />
     <ClCompile Include="..\source\i18n\utf16collationiterator.cpp" />
     <ClCompile Include="..\source\i18n\utf8collationiterator.cpp" />
-    <ClCompile Include="..\source\i18n\utmscale.c" />
+    <ClCompile Include="..\source\i18n\utmscale.cpp" />
     <ClCompile Include="..\source\i18n\utrans.cpp" />
+    <ClCompile Include="..\source\i18n\valueformatter.cpp" />
+    <ClCompile Include="..\source\i18n\visibledigits.cpp" />
     <ClCompile Include="..\source\i18n\vtzone.cpp" />
     <ClCompile Include="..\source\i18n\vzone.cpp" />
     <ClCompile Include="..\source\i18n\windtfmt.cpp" />
@@ -389,10 +428,12 @@
     <ClCompile Include="..\source\i18n\zonemeta.cpp" />
     <ClCompile Include="..\source\i18n\zrule.cpp" />
     <ClCompile Include="..\source\i18n\ztrans.cpp" />
+    <ClCompile Include="icudt60l.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\common\bmpset.h" />
     <ClInclude Include="..\source\common\brkeng.h" />
+    <ClInclude Include="..\source\common\bytesinkutil.h" />
     <ClInclude Include="..\source\common\charstr.h" />
     <ClInclude Include="..\source\common\cmemory.h" />
     <ClInclude Include="..\source\common\cpputils.h" />
@@ -427,6 +468,7 @@
     <ClInclude Include="..\source\common\rbbiscan.h" />
     <ClInclude Include="..\source\common\rbbisetb.h" />
     <ClInclude Include="..\source\common\rbbitblb.h" />
+    <ClInclude Include="..\source\common\rbbi_cache.h" />
     <ClInclude Include="..\source\common\resource.h" />
     <ClInclude Include="..\source\common\ruleiter.h" />
     <ClInclude Include="..\source\common\serv.h" />
@@ -441,6 +483,7 @@
     <ClInclude Include="..\source\common\ubidi_props_data.h" />
     <ClInclude Include="..\source\common\ubrkimpl.h" />
     <ClInclude Include="..\source\common\ucase.h" />
+    <ClInclude Include="..\source\common\ucasemap_imp.h" />
     <ClInclude Include="..\source\common\ucase_props_data.h" />
     <ClInclude Include="..\source\common\uchar_props_data.h" />
     <ClInclude Include="..\source\common\ucln.h" />
@@ -466,97 +509,6 @@
     <ClInclude Include="..\source\common\ulocimp.h" />
     <ClInclude Include="..\source\common\umapfile.h" />
     <ClInclude Include="..\source\common\umutex.h" />
-    <ClInclude Include="..\source\common\unicode\appendable.h" />
-    <ClInclude Include="..\source\common\unicode\brkiter.h" />
-    <ClInclude Include="..\source\common\unicode\bytestream.h" />
-    <ClInclude Include="..\source\common\unicode\bytestrie.h" />
-    <ClInclude Include="..\source\common\unicode\bytestriebuilder.h" />
-    <ClInclude Include="..\source\common\unicode\caniter.h" />
-    <ClInclude Include="..\source\common\unicode\chariter.h" />
-    <ClInclude Include="..\source\common\unicode\dbbi.h" />
-    <ClInclude Include="..\source\common\unicode\docmain.h" />
-    <ClInclude Include="..\source\common\unicode\dtintrv.h" />
-    <ClInclude Include="..\source\common\unicode\enumset.h" />
-    <ClInclude Include="..\source\common\unicode\errorcode.h" />
-    <ClInclude Include="..\source\common\unicode\filteredbrk.h" />
-    <ClInclude Include="..\source\common\unicode\icudataver.h" />
-    <ClInclude Include="..\source\common\unicode\icuplug.h" />
-    <ClInclude Include="..\source\common\unicode\idna.h" />
-    <ClInclude Include="..\source\common\unicode\listformatter.h" />
-    <ClInclude Include="..\source\common\unicode\localpointer.h" />
-    <ClInclude Include="..\source\common\unicode\locdspnm.h" />
-    <ClInclude Include="..\source\common\unicode\locid.h" />
-    <ClInclude Include="..\source\common\unicode\messagepattern.h" />
-    <ClInclude Include="..\source\common\unicode\normalizer2.h" />
-    <ClInclude Include="..\source\common\unicode\normlzr.h" />
-    <ClInclude Include="..\source\common\unicode\parseerr.h" />
-    <ClInclude Include="..\source\common\unicode\parsepos.h" />
-    <ClInclude Include="..\source\common\unicode\platform.h" />
-    <ClInclude Include="..\source\common\unicode\ptypes.h" />
-    <ClInclude Include="..\source\common\unicode\putil.h" />
-    <ClInclude Include="..\source\common\unicode\rbbi.h" />
-    <ClInclude Include="..\source\common\unicode\rep.h" />
-    <ClInclude Include="..\source\common\unicode\resbund.h" />
-    <ClInclude Include="..\source\common\unicode\schriter.h" />
-    <ClInclude Include="..\source\common\unicode\simpleformatter.h" />
-    <ClInclude Include="..\source\common\unicode\std_string.h" />
-    <ClInclude Include="..\source\common\unicode\strenum.h" />
-    <ClInclude Include="..\source\common\unicode\stringpiece.h" />
-    <ClInclude Include="..\source\common\unicode\stringtriebuilder.h" />
-    <ClInclude Include="..\source\common\unicode\symtable.h" />
-    <ClInclude Include="..\source\common\unicode\ubidi.h" />
-    <ClInclude Include="..\source\common\unicode\ubrk.h" />
-    <ClInclude Include="..\source\common\unicode\ucasemap.h" />
-    <ClInclude Include="..\source\common\unicode\ucat.h" />
-    <ClInclude Include="..\source\common\unicode\uchar.h" />
-    <ClInclude Include="..\source\common\unicode\ucharstrie.h" />
-    <ClInclude Include="..\source\common\unicode\ucharstriebuilder.h" />
-    <ClInclude Include="..\source\common\unicode\uchriter.h" />
-    <ClInclude Include="..\source\common\unicode\uclean.h" />
-    <ClInclude Include="..\source\common\unicode\ucnv.h" />
-    <ClInclude Include="..\source\common\unicode\ucnvsel.h" />
-    <ClInclude Include="..\source\common\unicode\ucnv_cb.h" />
-    <ClInclude Include="..\source\common\unicode\ucnv_err.h" />
-    <ClInclude Include="..\source\common\unicode\uconfig.h" />
-    <ClInclude Include="..\source\common\unicode\ucurr.h" />
-    <ClInclude Include="..\source\common\unicode\udata.h" />
-    <ClInclude Include="..\source\common\unicode\udisplaycontext.h" />
-    <ClInclude Include="..\source\common\unicode\uenum.h" />
-    <ClInclude Include="..\source\common\unicode\uidna.h" />
-    <ClInclude Include="..\source\common\unicode\uiter.h" />
-    <ClInclude Include="..\source\common\unicode\uldnames.h" />
-    <ClInclude Include="..\source\common\unicode\ulistformatter.h" />
-    <ClInclude Include="..\source\common\unicode\uloc.h" />
-    <ClInclude Include="..\source\common\unicode\umachine.h" />
-    <ClInclude Include="..\source\common\unicode\umisc.h" />
-    <ClInclude Include="..\source\common\unicode\unifilt.h" />
-    <ClInclude Include="..\source\common\unicode\unifunct.h" />
-    <ClInclude Include="..\source\common\unicode\unimatch.h" />
-    <ClInclude Include="..\source\common\unicode\uniset.h" />
-    <ClInclude Include="..\source\common\unicode\unistr.h" />
-    <ClInclude Include="..\source\common\unicode\unorm.h" />
-    <ClInclude Include="..\source\common\unicode\unorm2.h" />
-    <ClInclude Include="..\source\common\unicode\uobject.h" />
-    <ClInclude Include="..\source\common\unicode\urename.h" />
-    <ClInclude Include="..\source\common\unicode\urep.h" />
-    <ClInclude Include="..\source\common\unicode\ures.h" />
-    <ClInclude Include="..\source\common\unicode\uscript.h" />
-    <ClInclude Include="..\source\common\unicode\uset.h" />
-    <ClInclude Include="..\source\common\unicode\usetiter.h" />
-    <ClInclude Include="..\source\common\unicode\ushape.h" />
-    <ClInclude Include="..\source\common\unicode\usprep.h" />
-    <ClInclude Include="..\source\common\unicode\ustring.h" />
-    <ClInclude Include="..\source\common\unicode\ustringtrie.h" />
-    <ClInclude Include="..\source\common\unicode\utext.h" />
-    <ClInclude Include="..\source\common\unicode\utf.h" />
-    <ClInclude Include="..\source\common\unicode\utf16.h" />
-    <ClInclude Include="..\source\common\unicode\utf32.h" />
-    <ClInclude Include="..\source\common\unicode\utf8.h" />
-    <ClInclude Include="..\source\common\unicode\utf_old.h" />
-    <ClInclude Include="..\source\common\unicode\utrace.h" />
-    <ClInclude Include="..\source\common\unicode\utypes.h" />
-    <ClInclude Include="..\source\common\unicode\uvernum.h" />
-    <ClInclude Include="..\source\common\unicode\uversion.h" />
     <ClInclude Include="..\source\common\unifiedcache.h" />
     <ClInclude Include="..\source\common\unisetspan.h" />
     <ClInclude Include="..\source\common\unistrappender.h" />
@@ -640,6 +592,7 @@
     <ClInclude Include="..\source\i18n\digitlst.h" />
     <ClInclude Include="..\source\i18n\dtitv_impl.h" />
     <ClInclude Include="..\source\i18n\dtptngen_impl.h" />
+    <ClInclude Include="..\source\i18n\dt_impl.h" />
     <ClInclude Include="..\source\i18n\esctrn.h" />
     <ClInclude Include="..\source\i18n\ethpccal.h" />
     <ClInclude Include="..\source\i18n\fmtableimp.h" />
@@ -647,7 +600,6 @@
     <ClInclude Include="..\source\i18n\funcrepl.h" />
     <ClInclude Include="..\source\i18n\gregoimp.h" />
     <ClInclude Include="..\source\i18n\hebrwcal.h" />
-    <ClInclude Include="..\source\i18n\identifier_info.h" />
     <ClInclude Include="..\source\i18n\indiancal.h" />
     <ClInclude Include="..\source\i18n\inputext.h" />
     <ClInclude Include="..\source\i18n\islamcal.h" />
@@ -660,6 +612,20 @@
     <ClInclude Include="..\source\i18n\nfsubs.h" />
     <ClInclude Include="..\source\i18n\nortrans.h" />
     <ClInclude Include="..\source\i18n\nultrans.h" />
+    <ClInclude Include="..\source\i18n\number_affixutils.h" />
+    <ClInclude Include="..\source\i18n\number_compact.h" />
+    <ClInclude Include="..\source\i18n\number_decimalquantity.h" />
+    <ClInclude Include="..\source\i18n\number_decimfmtprops.h" />
+    <ClInclude Include="..\source\i18n\number_formatimpl.h" />
+    <ClInclude Include="..\source\i18n\number_longnames.h" />
+    <ClInclude Include="..\source\i18n\number_modifiers.h" />
+    <ClInclude Include="..\source\i18n\number_patternmodifier.h" />
+    <ClInclude Include="..\source\i18n\number_patternstring.h" />
+    <ClInclude Include="..\source\i18n\number_roundingutils.h" />
+    <ClInclude Include="..\source\i18n\number_scientific.h" />
+    <ClInclude Include="..\source\i18n\number_stringbuilder.h" />
+    <ClInclude Include="..\source\i18n\number_types.h" />
+    <ClInclude Include="..\source\i18n\number_utils.h" />
     <ClInclude Include="..\source\i18n\numsys_impl.h" />
     <ClInclude Include="..\source\i18n\olsontz.h" />
     <ClInclude Include="..\source\i18n\persncal.h" />
@@ -708,87 +674,8 @@
     <ClInclude Include="..\source\i18n\umsg_imp.h" />
     <ClInclude Include="..\source\i18n\unesctrn.h" />
     <ClInclude Include="..\source\i18n\uni2name.h" />
-    <ClInclude Include="..\source\i18n\unicode\alphaindex.h" />
-    <ClInclude Include="..\source\i18n\unicode\basictz.h" />
-    <ClInclude Include="..\source\i18n\unicode\calendar.h" />
-    <ClInclude Include="..\source\i18n\unicode\choicfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\coleitr.h" />
-    <ClInclude Include="..\source\i18n\unicode\coll.h" />
-    <ClInclude Include="..\source\i18n\unicode\compactdecimalformat.h" />
-    <ClInclude Include="..\source\i18n\unicode\curramt.h" />
-    <ClInclude Include="..\source\i18n\unicode\currpinf.h" />
-    <ClInclude Include="..\source\i18n\unicode\currunit.h" />
-    <ClInclude Include="..\source\i18n\unicode\datefmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\dcfmtsym.h" />
-    <ClInclude Include="..\source\i18n\unicode\decimfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\dtfmtsym.h" />
-    <ClInclude Include="..\source\i18n\unicode\dtitvfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\dtitvinf.h" />
-    <ClInclude Include="..\source\i18n\unicode\dtptngen.h" />
-    <ClInclude Include="..\source\i18n\unicode\dtrule.h" />
-    <ClInclude Include="..\source\i18n\unicode\fieldpos.h" />
-    <ClInclude Include="..\source\i18n\unicode\fmtable.h" />
-    <ClInclude Include="..\source\i18n\unicode\format.h" />
-    <ClInclude Include="..\source\i18n\unicode\fpositer.h" />
-    <ClInclude Include="..\source\i18n\unicode\gender.h" />
-    <ClInclude Include="..\source\i18n\unicode\gregocal.h" />
-    <ClInclude Include="..\source\i18n\unicode\measfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\measunit.h" />
-    <ClInclude Include="..\source\i18n\unicode\measure.h" />
-    <ClInclude Include="..\source\i18n\unicode\msgfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\numfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\numsys.h" />
-    <ClInclude Include="..\source\i18n\unicode\plurfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\plurrule.h" />
-    <ClInclude Include="..\source\i18n\unicode\rbnf.h" />
-    <ClInclude Include="..\source\i18n\unicode\rbtz.h" />
-    <ClInclude Include="..\source\i18n\unicode\regex.h" />
-    <ClInclude Include="..\source\i18n\unicode\region.h" />
-    <ClInclude Include="..\source\i18n\unicode\reldatefmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\scientificnumberformatter.h" />
-    <ClInclude Include="..\source\i18n\unicode\search.h" />
-    <ClInclude Include="..\source\i18n\unicode\selfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\simpletz.h" />
-    <ClInclude Include="..\source\i18n\unicode\smpdtfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\sortkey.h" />
-    <ClInclude Include="..\source\i18n\unicode\stsearch.h" />
-    <ClInclude Include="..\source\i18n\unicode\tblcoll.h" />
-    <ClInclude Include="..\source\i18n\unicode\timezone.h" />
-    <ClInclude Include="..\source\i18n\unicode\tmunit.h" />
-    <ClInclude Include="..\source\i18n\unicode\tmutamt.h" />
-    <ClInclude Include="..\source\i18n\unicode\tmutfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\translit.h" />
-    <ClInclude Include="..\source\i18n\unicode\tzfmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\tznames.h" />
-    <ClInclude Include="..\source\i18n\unicode\tzrule.h" />
-    <ClInclude Include="..\source\i18n\unicode\tztrans.h" />
-    <ClInclude Include="..\source\i18n\unicode\ucal.h" />
-    <ClInclude Include="..\source\i18n\unicode\ucol.h" />
-    <ClInclude Include="..\source\i18n\unicode\ucoleitr.h" />
-    <ClInclude Include="..\source\i18n\unicode\ucsdet.h" />
-    <ClInclude Include="..\source\i18n\unicode\udat.h" />
-    <ClInclude Include="..\source\i18n\unicode\udateintervalformat.h" />
-    <ClInclude Include="..\source\i18n\unicode\udatpg.h" />
-    <ClInclude Include="..\source\i18n\unicode\ufieldpositer.h" />
-    <ClInclude Include="..\source\i18n\unicode\uformattable.h" />
-    <ClInclude Include="..\source\i18n\unicode\ugender.h" />
-    <ClInclude Include="..\source\i18n\unicode\ulocdata.h" />
-    <ClInclude Include="..\source\i18n\unicode\umsg.h" />
-    <ClInclude Include="..\source\i18n\unicode\unirepl.h" />
-    <ClInclude Include="..\source\i18n\unicode\unum.h" />
-    <ClInclude Include="..\source\i18n\unicode\unumsys.h" />
-    <ClInclude Include="..\source\i18n\unicode\upluralrules.h" />
-    <ClInclude Include="..\source\i18n\unicode\uregex.h" />
-    <ClInclude Include="..\source\i18n\unicode\uregion.h" />
-    <ClInclude Include="..\source\i18n\unicode\ureldatefmt.h" />
-    <ClInclude Include="..\source\i18n\unicode\usearch.h" />
-    <ClInclude Include="..\source\i18n\unicode\uspoof.h" />
-    <ClInclude Include="..\source\i18n\unicode\utmscale.h" />
-    <ClInclude Include="..\source\i18n\unicode\utrans.h" />
-    <ClInclude Include="..\source\i18n\unicode\vtzone.h" />
     <ClInclude Include="..\source\i18n\uspoof_conf.h" />
     <ClInclude Include="..\source\i18n\uspoof_impl.h" />
-    <ClInclude Include="..\source\i18n\uspoof_wsconf.h" />
     <ClInclude Include="..\source\i18n\usrchimp.h" />
     <ClInclude Include="..\source\i18n\utf16collationiterator.h" />
     <ClInclude Include="..\source\i18n\utf8collationiterator.h" />
@@ -802,216 +689,109 @@
     <ClInclude Include="..\source\i18n\zrule.h" />
     <ClInclude Include="..\source\i18n\ztrans.h" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\luajit\Minilua\Minilua.vcxproj">
-      <Project>{325d093d-826b-4a7d-83c7-1cad22911b9f}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{875E0BB7-06E8-4570-8E3C-AE9EF88F38BB}</ProjectGuid>
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{E0F14C76-4D63-4A46-8ADD-68C112018BB3}</ProjectGuid>
     <RootNamespace>Icu</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+<PropertyGroup>
+  <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+</PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
-    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
-    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir_71A)lib</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib;</ExcludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <TargetName>$(ProjectName)</TargetName>
-    <TargetExt>.lib</TargetExt>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
-    <EnableManagedIncrementalBuild>false</EnableManagedIncrementalBuild>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <ExecutablePath>$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir_71A)lib\x64;</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ExcludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
-    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir_71A)lib</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib;</ExcludePath>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <TargetName>$(ProjectName)</TargetName>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.lib</TargetExt>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
-    <ExecutablePath>$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\SysWow64;$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir_71A)lib</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib;$(VCInstallDir)lib;</ExcludePath>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <TargetName>$(ProjectName)</TargetName>
     <TargetExt>.lib</TargetExt>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <ExecutablePath>$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir_71A)lib\x64;</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ExcludePath>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <TargetName>$(ProjectName)</TargetName>
-    <TargetExt>.lib</TargetExt>
-    <ExtensionsToDeleteOnClean>*.cdf;*.cache;*.obj;*.ilk;*.resources;*.tlb;*.tli;*.tlh;*.tmp;*.rsp;*.pgc;*.pgd;*.meta;*.tlog;*.manifest;*.res;*.pch;*.exp;*.idb;*.rep;*.xdc;*.pdb;*_manifest.rc;*.bsc;*.sbr;*.xml;*.metagen;*.bi</ExtensionsToDeleteOnClean>
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <ExecutablePath>$(VCInstallDir)bin\x86_amd64;$(VCInstallDir)bin;$(WindowsSdkDir_71A)bin;$(WindowsSDK_ExecutablePath_x86);$(VSInstallDir)Common7\Tools\bin;$(VSInstallDir)Common7\tools;$(VSInstallDir)Common7\ide;$(ProgramFiles)\HTML Help Workshop;$(MSBuildToolsPath32);$(FxCopDir);$(PATH);</ExecutablePath>
-    <IncludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir_71A)include;$(FrameworkSDKDir_71A)include</IncludePath>
-    <ReferencePath>$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ReferencePath>
-    <LibraryPath>$(VCInstallDir)lib\amd64;$(VCInstallDir)atlmfc\lib\amd64;$(WindowsSdkDir_71A)lib\x64;</LibraryPath>
-    <SourcePath>$(VCInstallDir)atlmfc\src\mfc;$(VCInstallDir)atlmfc\src\mfcm;$(VCInstallDir)atlmfc\src\atl;$(VCInstallDir)crt\src;</SourcePath>
-    <ExcludePath>$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSDK_IncludePath);$(MSBuildToolsPath);$(MSBuildToolsPath32);$(VCInstallDir)atlmfc\lib\amd64;$(VCInstallDir)lib\amd64;</ExcludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_ALL_NO_LIB;
-BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-WIN32;
-_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-    </Lib>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-_WINDOWS;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <FloatingPointModel>Precise</FloatingPointModel>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\source\i18n;..\source\i18n\unicode;..\source\common;..\source\common\unicode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
     </Link>
-    <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
-    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\source\i18n;..\source\i18n\unicode;..\source\common;..\source\common\unicode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -1020,55 +800,14 @@ _WINDOWS;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_ALL_NO_LIB;
-BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-WIN32;
-_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\source\i18n;..\source\i18n\unicode;..\source\common;..\source\common\unicode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_ALL_NO_LIB;
-BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-WIN32;
-_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
@@ -1080,53 +819,15 @@ _WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-_WINDOWS;WIN64;NDEBUG;
-;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>..\source\i18n;..\source\i18n\unicode;..\source\common;..\source\common\unicode;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>U_STATIC_IMPLEMENTATION;U_ENABLE_DYLOAD=0;
-        U_CHECK_DYLOAD=0;
-        UCONFIG_NO_FILE_IO=1;
-        UCONFIG_NO_LEGACY_CONVERSION=1;
-        U_CHARSET_IS_UTF8=1;
-        UCONFIG_NO_IDNA=1;
-        UCONFIG_NO_FORMATTING=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;
-        U_COMMON_IMPLEMENTATION;
-        U_I18N_IMPLEMENTATION;BOOST_HAS_ICU;
-BOOST_SYSTEM_NO_DEPRECATED;
-BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
-_WINDOWS;WIN64;NDEBUG;
-;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
