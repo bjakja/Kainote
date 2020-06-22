@@ -331,6 +331,7 @@ KainoteFrame::~KainoteFrame()
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 	LogHandler::Destroy();
+	SubtitlesProviderManager::DestroySubsProvider();
 }
 
 void KainoteFrame::DestroyDialogs(){
@@ -394,7 +395,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 
 			if (tab->Video->GetState() != None){
 				if (tab->Video->RemoveVisual()){
-					tab->Video->OpenSubs(NULL, true, false, true);
+					tab->Video->OpenSubs(CLOSE_SUBTITLES, true, true);
 				}
 			}
 			SetSubsResolution(false);
@@ -519,7 +520,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (!vidshow && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 		tab->Video->Show(vidshow);
 		if (vidshow && !vidvis){
-			tab->Video->OpenSubs(tab->Grid->GetVisible());
+			tab->Video->OpenSubs(OPEN_DUMMY);
 		}
 		if (tab->Edit->ABox){
 			tab->Edit->ABox->Show((id == GLOBAL_VIEW_ALL || id == GLOBAL_VIEW_AUDIO));
@@ -1068,7 +1069,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		//open subs and disable visuals when needed
 		if (tab->Video->GetState() != None){
 			if (!found){
-				bool isgood = tab->Video->OpenSubs((tab->editor) ? tab->Grid->GetVisible() : 0);
+				bool isgood = tab->Video->OpenSubs((tab->editor) ? OPEN_DUMMY : CLOSE_SUBTITLES);
 				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
@@ -1091,7 +1092,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	}
 
 	const wxString &fnname = (found && issubs) ? secondFileName : filename;
-	bool isload = tab->Video->LoadVideo(fnname, tab->Grid->GetVisible(), fulls, changeAudio);
+	bool isload = tab->Video->LoadVideo(fnname, OPEN_DUMMY, fulls, changeAudio);
 	if (!isload){
 		if (freeze)
 			tab->Thaw();
@@ -1554,7 +1555,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			tab->Video->DisableVisuals(ext != L"ass");
 		}
 		if (i < videosSize){
-			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? tab->Grid->GetVisible() : 0);
+			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? OPEN_DUMMY : 0);
 
 			if (!isload){
 				break;

@@ -1010,7 +1010,7 @@ void SubsGridBase::GetUndo(bool redo, int iter)
 
 	if (Edit->Visual < CHANGEPOS){
 
-		if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(GetVisible()); }
+		if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
 		int seekAfter = 0;
 		vb->GetVideoListsOptions(NULL, &seekAfter);
 		if (seekAfter > 1){
@@ -1053,7 +1053,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	Kai->Label(file->GetActualHistoryIter());
 	VideoCtrl *vb = tab->Video;
 	if (vb->GetState() != None){
-		vb->OpenSubs(GetVisible());
+		vb->OpenSubs(OPEN_DUMMY);
 		vb->Render();
 	}
 }
@@ -1160,7 +1160,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 				vb->SetVisual(true);
 			}
 			else{
-				if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(GetVisible()); }
+				if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
 
 				int seekAfter;
 				vb->GetVideoListsOptions(NULL, &seekAfter);
@@ -1493,7 +1493,7 @@ wxString *SubsGridBase::SaveText()
 }
 
 
-wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected)
+wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
 {
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	int _time = tab->Video->Tell();
@@ -1531,14 +1531,14 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 			selected->Add(txt->length());
 			continue;
 		}
-		if ((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime)){
+		if ((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime) || allSubs){
 			if (isTlmode && dial->TextTl != L""){
 				if (showOriginalOnVideo)
 					dial->GetRaw(txt, false, tlStyle);
 
 				dial->GetRaw(txt, true);
 			}
-			else{
+			else if(dial->Text != L""){
 				if (subsFormat == SRT){
 					(*txt) << j << L"\r\n";
 					j++;
@@ -1546,7 +1546,8 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 				dial->GetRaw(txt);
 			}
 			if (point && i == currentLine){
-				int all = txt->Len(); point->x = all - 2;
+				int all = txt->length(); 
+				point->x = all - 2;
 				int len = (isTlmode && dial->TextTl != L"") ?
 					dial->TextTl.Len() : dial->Text.Len();
 				point->y = len;
@@ -1567,6 +1568,13 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 	}
 
 	return txt;
+}
+
+bool SubsGridBase::IsLineVisible()
+{
+	int _time = tab->Video->Tell();
+	bool toEnd = tab->Video->GetState() == Playing;
+	return ((_time >= Edit->line->Start.mstime || toEnd) && _time < Edit->line->End.mstime);
 }
 
 

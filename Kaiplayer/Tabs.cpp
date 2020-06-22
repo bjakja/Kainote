@@ -1056,7 +1056,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 
 bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position /*= -1*/, bool isFFMS2)
 {
-	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0, false, true, (position != -1)? isFFMS2 : -1);
+	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? OPEN_DUMMY : 0, false, true, (position != -1)? isFFMS2 : -1);
 
 	if (!isload){
 		return false;
@@ -1349,8 +1349,7 @@ void Notebook::RefreshVideo()
 	for (int i = 0; i < sthis->Size(); i++){
 		TabPanel *tab = sthis->Page(i);
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(tab->Grid->GetVisible());
-			tab->Video->Render();
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
 		}
 	}
 

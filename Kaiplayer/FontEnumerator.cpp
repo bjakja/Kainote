@@ -175,8 +175,7 @@ void FontEnumerator::RefreshVideo()
 	for (int i = 0; i < parent->Tabs->Size(); i++){
 		TabPanel *tab = parent->Tabs->Page(i);
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(tab->Grid->GetVisible());
-			tab->Video->Render();
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
 		}
 	}
 	

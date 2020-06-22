@@ -41,6 +41,7 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	, videoControl(control)
 {
 	tab = (TabPanel*)videoControl->GetParent();
+	m_SubsProvider = new SubtitlesProviderManager();
 	m_HWND = videoControl->GetHWND();
 
 	//---------------------------- format
@@ -53,10 +54,6 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	m_D3DObject = NULL;
 	m_D3DDevice = NULL;
 	m_BlackBarsSurface = NULL;
-	instance = NULL;
-	//vobsub = NULL;
-	framee = NULL;
-	format = NULL;
 	m_D3DLine = NULL;
 	m_Visual = Visuals::Get(CROSS, videoControl);
 	m_VideoResized = m_DirectShowSeeking = m_BlockResize = m_HasVisualEdition = false;
@@ -87,9 +84,7 @@ RendererVideo::~RendererVideo()
 
 	Clear();
 	SAFE_DELETE(m_Visual);
-	SAFE_DELETE(framee);
-	SAFE_DELETE(format);
-	if (instance) { csri_close(instance); }
+	SAFE_DELETE(m_SubsProvider);
 
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
 
@@ -678,10 +673,10 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 		bool vectorclip = m_Visual->Visual == VECTORCLIP;
 		delete m_Visual;
 		m_Visual = Visuals::Get(vis, videoControl);
-		if (vectorclip && !settext){ OpenSubs(tab->Grid->GetVisible()); }
+		if (vectorclip && !settext){ OpenSubs(OPEN_DUMMY); }
 	}
 	else{ SAFE_DELETE(m_Visual->dummytext); }
-	if (settext){ OpenSubs(tab->Grid->GetVisible()); }
+	if (settext){ OpenSubs(OPEN_DUMMY); }
 	m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 		m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	SetVisualZoom();
@@ -733,12 +728,7 @@ bool RendererVideo::DrawTexture(byte *nframe, bool copy)
 	}
 
 
-	if (instance){
-		//for swap -pitch and buffer set to last element - pitch
-		framee->strides[0] = (m_SwapFrame) ? -(m_Width * bytes) : m_Width * bytes;
-		framee->planes[0] = (m_SwapFrame) ? fdata + (m_Width * (m_Height - 1) * bytes) : fdata;
-		csri_render(instance, framee, (m_Time / 1000.0));
-	}
+	m_SubsProvider->Draw(fdata, m_Time);
 
 
 #ifdef byvertices

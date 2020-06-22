@@ -205,7 +205,7 @@
   </ItemDefinitionGroup>
   <!-- Build buildvm_arch.h -->
   <PropertyGroup>
-    <MiniLuaCommand>$(SolutionDir)ThirdParty\luajit\Minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
+    <MiniLuaCommand>$(SolutionDir)ThirdParty\build\Minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
     <MiniLuaPlat Condition="'$(Platform)'=='x64'">-D P64</MiniLuaPlat>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

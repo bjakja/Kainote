@@ -13,13 +13,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "SubtitlesProvider.h"
 #ifdef subsProvider
 
-#include "SubtitlesProvider.h"
+
 #include "RendererVideo.h"
 #include "OpennWrite.h"
 #include "kainoteMain.h"
-#include <boost/gil/gil_all.hpp>
+#include <boost/gil/algorithm.hpp>
 #include <process.h>
 
 
@@ -33,8 +34,8 @@ void MessageCallback(int level, const char *fmt, va_list args, void *) {
 
 	if (level < 2) // warning/error
 		KaiLog(L"Libass: " + wxString(buf, 1024));
-	else // verbose
-		KaiLogDebug(L"Libass: " + wxString(buf, 1024));
+	//else // verbose
+		//KaiLogDebug(L"Libass: " + wxString(buf, 1024));
 }
 
 unsigned int __stdcall  ProcessLibassCache(void *data)
@@ -123,7 +124,7 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 	}
 }
 
-bool SubtitlesLibass::Open(TabPanel *tab, int flag)
+bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 {
 	if (!m_IsReady)
 		return false;
@@ -133,29 +134,31 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag)
 		m_AssTrack = NULL;
 	}
 
-	wxString *textsubs = NULL;
+	RendererVideo* renderer = tab->Video->GetRenderer();
+	if (!renderer)
+		return false;
+
+	wxString *textsubs = text;
 	switch (flag){
 	case OPEN_DUMMY:
 		textsubs = tab->Grid->GetVisible();
+		renderer->m_HasDummySubs = true;
 		break;
-	case OPEN_TO_END:
 	case OPEN_WHOLE_SUBTITLES:
 		//make here some function to buffor
 		//or even add olny here a bool
-		textsubs = tab->Grid->SaveText();
+		textsubs = tab->Grid->GetVisible(NULL, NULL, NULL, true);
+		renderer->m_HasDummySubs = false;
 		break;
 	case CLOSE_SUBTITLES:
+	case OPEN_HAS_OWN_TEXT:
 		break;
 	default:
 		break;
 	}
 
-	RendererVideo* renderer = tab->Video->GetRenderer();
-	if (!renderer)
-		return false;
 
 	if (!textsubs) {
-		renderer->m_HasDummySubs = true;
 		return true;
 	}
 
@@ -164,13 +167,13 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag)
 		(*textsubs) << toAppend;
 	}
 
-	renderer->m_HasDummySubs = true;
-
 	m_VideoSize = wxSize(renderer->m_Width, renderer->m_Height);
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, NULL);
+	delete textsubs;
+
 	if (!m_AssTrack){
 		KaiLog(L"Nie mo¿na otworzyæ napisów w Libass");
 		return false;
@@ -196,6 +199,14 @@ bool SubtitlesLibass::OpenString(wxString *text)
 		return false;
 	}
 	return true;
+}
+
+void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
+{
+	m_VideoSize = size;
+	m_IsSwapped = isSwapped;
+	m_Format = format;
+	m_HasParameters = true;
 }
 
 #endif

@@ -136,7 +136,9 @@ int Visuals::GetDialoguePosition()
 
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 {
-	if (!tab->Video->OpenSubs(subs)){ KaiLog(_("Nie można otworzyć napisów")); }
+	//visual, renderer should exist
+	RendererVideo *renderer = tab->Video->GetRenderer();
+	if (renderer && !renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Nie można otworzyć napisów")); }
 	tab->Video->SetVisualEdition(true);
 	if (redraw){ tab->Video->Render(); }
 }

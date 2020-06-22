@@ -13,9 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "SubtitlesProvider.h"
 #ifdef subsProvider
 
-#include "SubtitlesProvider.h"
 #include "Config.h"
 
 SubtitlesProvider *SubtitlesProviderManager::SP = NULL;
@@ -65,9 +65,9 @@ void SubtitlesProviderManager::Draw(unsigned char* buffer, int time)
 	GetProvider()->Draw(buffer, time);
 }
 
-bool SubtitlesProviderManager::Open(TabPanel *tab, int flag)
+bool SubtitlesProviderManager::Open(TabPanel *tab, int flag, wxString *text)
 {
-	return GetProvider()->Open(tab, flag);
+	return GetProvider()->Open(tab, flag, text);
 }
 //for styles preview
 bool SubtitlesProviderManager::OpenString(wxString *text)

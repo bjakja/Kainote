@@ -26,8 +26,8 @@ public:
 	RendererFFMS2(VideoCtrl *control);
 	virtual ~RendererFFMS2();
 
-	bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true);
-	bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false);
+	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
+	bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL);
 	bool Play(int end = -1);
 	bool Pause();
 	bool Stop();

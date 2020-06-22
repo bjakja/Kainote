@@ -161,7 +161,7 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\icu\Icu\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>icu.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -198,7 +198,7 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\icu\Icu\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>icu.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -238,6 +238,12 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
       <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
+    <Lib>
+      <AdditionalDependencies>Icu.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\Win32\Release;C:\Program Files (x86)\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
     <ClCompile>
@@ -316,7 +322,7 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
     </Link>
     <Lib>
       <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\icu\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
@@ -359,7 +365,7 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
     </Link>
     <Lib>
       <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\icu\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -432,8 +438,8 @@ U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
     <None Include="..\..\Boost\libs\locale\src\encoding\wconv_codepage.ipp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\icu\Icu\Icu.vcxproj">
-      <Project>{875e0bb7-06e8-4570-8e3c-ae9ef88f38bb}</Project>
+    <ProjectReference Include="..\Icu\Icu.vcxproj">
+      <Project>{e0f14c76-4d63-4a46-8add-68c112018bb3}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

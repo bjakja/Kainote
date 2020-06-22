@@ -947,7 +947,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		Kai->Label();
 		//LoadStyleCatalog();
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(SaveText(), true, true);
+			tab->Video->OpenSubs(OPEN_WHOLE_SUBTITLES, true);
 			if (!isgood){ KaiMessageBox(_("Otwieranie napisów nie powiodło się"), _("Uwaga")); }
 			//pause when changing matrix to avoid crash on slow computers
 			if (tab->Video->GetState() == Playing){ 
@@ -1476,8 +1476,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	if (Comparison && (Options.GetInt(SUBS_COMPARISON_TYPE) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
 	VideoCtrl *vb = tab->Video;
 	if (vb->GetState() != None){
-		vb->OpenSubs(GetVisible());
-		vb->Render();
+		vb->OpenSubs(OPEN_DUMMY, true);
 	}
 }
 

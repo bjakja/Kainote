@@ -17,24 +17,18 @@
 #include "StylePreview.h"
 #include "config.h"
 
-#include "CsriMod.h"
-
 
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size)
 {
-	bmpframe = NULL;
-	instance = NULL;
-	PrevText = NULL;
-	//vobsub = NULL;
 	previewStyle = NULL;
+	m_SubtitlesProvider = new SubtitlesProviderManager();
 	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){ DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 }
 StylePreview::~StylePreview()
 {
-	if (instance) csri_close(instance);
-
+	SAFE_DELETE(m_SubtitlesProvider);
 	wxDELETE(previewStyle);
 	wxDELETE(bmpframe);
 }
@@ -49,27 +43,15 @@ void StylePreview::DrawPreview(Styles *style)
 	else if (!previewStyle){
 		return;
 	}
-	if (instance) csri_close(instance);
-	instance = NULL;
-
+	
 	wxDELETE(bmpframe);
-
-	// Select renderer
-	//if(!vobsub){
-	csri_rend *vobsub = Options.GetVSFilter();
-	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); return; }
-	//}
 
 	GetClientSize(&width, &height);
 	pitch = width * 4;
-	wxString dat;
-	SubsText(&dat);
-	wxScopedCharBuffer buffer = dat.mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-	instance = csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){
-		KaiLog(_("Błąd, instancja VobSuba nie została utworzona.")); return;
-	}
+	wxString *dat = new wxString();
+	SubsText(dat);
+	m_SubtitlesProvider->SetVideoParameters(wxSize(width, height), 4, false);
+	m_SubtitlesProvider->OpenString(dat);
 
 	const wxColour & kol1 = Options.GetColour(STYLE_PREVIEW_COLOR1);
 	const wxColour & kol2 = Options.GetColour(STYLE_PREVIEW_COLOR2);
@@ -102,24 +84,7 @@ void StylePreview::DrawPreview(Styles *style)
 
 	}
 
-	csri_frame frame;
-	frame.planes[0] = data;
-	frame.strides[0] = pitch;
-	for (int i = 1; i < 4; i++){
-		frame.planes[i] = NULL;
-		frame.strides[i] = NULL;
-	}
-	frame.pixfmt = CSRI_F_BGR_;
-
-	csri_fmt format;
-	format.width = width;
-	format.height = height;
-	format.pixfmt = frame.pixfmt;
-	int error = csri_request_fmt(instance, &format);
-	if (error) { KaiLog(_("CSRI nie obsługuje tego formatu.")); return; }
-
-	// Render
-	csri_render(instance, &frame, 0);
+	m_SubtitlesProvider->Draw(data, 1000);
 
 	wxImage preview(width, height, true);
 	unsigned char *data1 = (unsigned char *)malloc(width * height * 3);

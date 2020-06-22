@@ -42,7 +42,7 @@ public:
 	bool Pause(bool burstbl = true);
 	bool Stop();
 	//custom FFMS2 -1 turn off, 0 Direct Show, 1 FFMS2
-	bool LoadVideo(const wxString& fileName, wxString *subsName, bool fullscreen = false, bool changeAudio = true, int customFFMS2 = -1);
+	bool LoadVideo(const wxString& fileName, int subsFlag, bool fullscreen = false, bool changeAudio = true, int customFFMS2 = -1);
 	PlaybackState GetState();
 
 	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true);
@@ -100,7 +100,7 @@ public:
 	void GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY);
 	int GetDuration();
 
-	bool OpenSubs(wxString *textsubs, bool recreateFrame = true, bool fromFile = false, bool refresh = false);
+	bool OpenSubs(int flag, bool recreateFrame = true, bool refresh = false);
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false);

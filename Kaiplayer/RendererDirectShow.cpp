@@ -248,7 +248,7 @@ void RendererDirectShow::RecreateSurface()
 	delete[] cpy;
 }
 
-bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
+bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
@@ -277,10 +277,10 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	m_Format = m_DirectShowPlayer->inf.CT;
 	videoControl->m_AspectRatioX = m_DirectShowPlayer->inf.ARatioX;
 	videoControl->m_AspectRatioY = m_DirectShowPlayer->inf.ARatioY;
-	m_D3DFormat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
-		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+	m_D3DFormat = (m_Format == NV12) ? D3DFORMAT('21VN') : (m_Format == YV12) ? D3DFORMAT('21VY') :
+		(m_Format == YUY2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 
-	m_SwapFrame = (m_Format == 0 && !m_DirectShowPlayer->HasVobsub());
+	m_SwapFrame = (m_Format == RGB32 && !m_DirectShowPlayer->HasVobsub());
 	Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
 
 	diff = 0;
@@ -299,28 +299,13 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 
 	if (!InitDX()){ return false; }
 	
+	m_SubsProvider->SetVideoParameters(videoSize, m_Format, m_SwapFrame);
 
-	if (!framee){ framee = new csri_frame; }
-	if (!format){ format = new csri_fmt; }
-	for (int i = 1; i < 4; i++){
-		framee->planes[i] = NULL;
-		framee->strides[i] = NULL;
-	}
+	if (vobsub)
+		subsFlag = CLOSE_SUBTITLES;
 
-	framee->pixfmt = (m_Format == 5) ? CSRI_F_YV12A : (m_Format == 3) ? CSRI_F_YV12 :
-		(m_Format == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+	OpenSubs(subsFlag, false);
 
-	format->width = m_Width;
-	format->height = m_Height;
-	format->pixfmt = framee->pixfmt;
-
-	if (!vobsub){
-		OpenSubs(textsubs, false);
-	}
-	else{
-		SAFE_DELETE(textsubs);
-		OpenSubs(0, false);
-	}
 	m_State = Stopped;
 	m_DirectShowPlayer->GetChapters(&m_Chapters);
 
@@ -331,72 +316,30 @@ bool RendererDirectShow::OpenFile(const wxString &fname, wxString *textsubs, boo
 	return true;
 }
 
-bool RendererDirectShow::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
+bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
-	if (instance) csri_close(instance);
-	instance = NULL;
-
-	if (!textsubs) {
-		if (redraw && m_State != None && m_FrameBuffer){
-			RecreateSurface();
-		}
-		m_HasDummySubs = true;
-		return true;
-	}
-
-	if (m_HasVisualEdition && m_Visual->Visual == VECTORCLIP && m_Visual->dummytext){
-		wxString toAppend = m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
-		if (fromFile){
-			OpenWrite ow(*textsubs, false);
-			ow.PartFileWrite(toAppend);
-			ow.CloseFile();
-		}
-		else{
-			(*textsubs) << toAppend;
-		}
-	}
-
-	m_HasDummySubs = !fromFile;
-
-	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-
-
-	// Select renderer
-	csri_rend *vobsub = Options.GetVSFilter();
-	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
-
-	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ KaiLog(_("Błąd, instancja VobSuba nie została utworzona.")); delete textsubs; return false; }
-
-	if (!format || csri_request_fmt(instance, format)){
-		KaiLog(_("CSRI nie obsługuje tego formatu."));
-		csri_close(instance);
-		instance = NULL;
-		delete textsubs; return false;
-	}
+	bool result = m_SubsProvider->Open(tab, flag, text);
 
 	if (redraw && m_State != None && m_FrameBuffer){
 		RecreateSurface();
 	}
 
-	delete textsubs;
-	return true;
+	return result;
 }
+
 
 bool RendererDirectShow::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
 	if (m_HasVisualEdition){
-		wxString *txt = tab->Grid->SaveText();
-		OpenSubs(txt, false, true);
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 		SAFE_DELETE(m_Visual->dummytext);
 		m_HasVisualEdition = false;
 	}
 	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(tab->Grid->SaveText(), false, true);
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 	}
 
 	if (end > 0){ m_PlayEndTime = end; }
@@ -457,12 +400,12 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
 		}
 		else{
-			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 			if (m_State == Playing){ m_HasVisualEdition = false; }
 		}
 	}
 	else if (m_HasDummySubs && tab->editor){
-		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 	}
 	
 }
@@ -582,7 +525,7 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 {
 	if (!m_DirectShowPlayer){ return; }
 	int tmptime = m_Time;
-	OpenSubs((vobsub) ? NULL : tab->Grid->SaveText(), true, true);
+	OpenSubs((vobsub) ? CLOSE_SUBTITLES : OPEN_WHOLE_SUBTITLES, true);
 	m_DirectShowPlayer->OpenFile(tab->VideoPath, vobsub);
 	m_Format = m_DirectShowPlayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
@@ -628,12 +571,10 @@ byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 		cpy1 = (byte*)cpy;
 	}
 	else{ *del = false; }
-	if (instance && dssubs){
+	if (dssubs){
 		byte *data1 = (byte*)m_FrameBuffer;
 		memcpy(cpy1, data1, all);
-		framee->strides[0] = m_Width * bytes;
-		framee->planes[0] = cpy1;
-		csri_render(instance, framee, (m_Time / 1000.0));
+		m_SubsProvider->Draw(cpy1, m_Time);
 	}
 	return (dssubs) ? cpy1 : (byte*)m_FrameBuffer;
 }

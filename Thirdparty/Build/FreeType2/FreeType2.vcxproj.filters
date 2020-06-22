@@ -149,5 +149,8 @@
     <ClCompile Include="..\..\FreeType2\src\lzw\ftlzw.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\freetype2\builds\windows\ftdebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

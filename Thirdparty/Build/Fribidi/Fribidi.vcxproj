@@ -105,7 +105,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\fribidi\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\Build\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>FRIBIDI_ENTRY=;
 _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -121,7 +121,7 @@ _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\fribidi\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\Build\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>FRIBIDI_ENTRY=;
 _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -135,7 +135,7 @@ _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\fribidi\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\Build\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>FRIBIDI_ENTRY=;
 _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -151,7 +151,7 @@ _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\fribidi\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\fribidi\lib;$(SolutionDir)\Thirdparty\Build\Fribidi;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>FRIBIDI_ENTRY=;
 _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>

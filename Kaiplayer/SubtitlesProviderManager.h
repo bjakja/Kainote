@@ -23,10 +23,11 @@
 
 enum
 {
+	//set close subtitles to 0 to work with NULL
+	CLOSE_SUBTITLES,
 	OPEN_DUMMY,
-	OPEN_TO_END,
 	OPEN_WHOLE_SUBTITLES,
-	CLOSE_SUBTITLES
+	OPEN_HAS_OWN_TEXT
 };
 
 class TabPanel;
@@ -37,9 +38,12 @@ class SubtitlesProviderManager
 public:
 	~SubtitlesProviderManager();
 	SubtitlesProviderManager();
+	//set parameters first
 	void Draw(unsigned char* buffer, int time);
-	bool Open(TabPanel *tab, int flag);
-	//for styles preview
+	//set parameters first
+	bool Open(TabPanel *tab, int flag, wxString *text);
+	//set parameters first
+	//for styles preview and visuals
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, char bytesPerColor, bool isSwapped);
 	static void GetProviders(wxArrayString *providerList);

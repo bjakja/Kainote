@@ -391,14 +391,14 @@ typedef void csri_rend;
 class config
 {
 private:
-	static const unsigned int configSize = EDITBOX_TAG_BUTTON_VALUE20 + 1;
+	//int to silence warnings
+	static const int configSize = EDITBOX_TAG_BUTTON_VALUE20 + 1;
 	wxString stringConfig[configSize];
-	static const unsigned int colorsSize = STYLE_PREVIEW_COLOR2 + 1;
+	static const int colorsSize = STYLE_PREVIEW_COLOR2 + 1;
 	wxColour colors[colorsSize];
 	bool isClosing = false;
 	std::map<int, wxFont*> programFonts;
 	std::map<wxString, wxString> Languages;
-	csri_rend *vsfilter = NULL;
 	wxColour defaultColour;
 	void InitLanguagesTable();
 	bool hasCrashed = false;
@@ -473,9 +473,6 @@ public:
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
-	csri_rend *GetVSFilter();
-	void ChangeVsfilter();
-	void GetVSFiltersList(wxArrayString &filters);
 	bool HasCrashed(){ return hasCrashed; }
 	//returns true when time is too short
 	bool CheckLastKeyEvent(int id, int timeInterval = 100);
@@ -499,9 +496,9 @@ static const wxString emptyString;
 bool IsNumber(const wxString &txt);
 
 #ifdef _M_IX86
-void SetThreadName(DWORD id, const char *name);
+void SetThreadName(DWORD id, LPCSTR szThreadName);
 #else
-void SetThreadName(size_t id, const char *name);
+void SetThreadName(size_t id, LPCSTR szThreadName);
 #endif
 
 enum{

@@ -23,11 +23,10 @@
 #include <dxva2api.h>
 #include <vector>
 #include "Menu.h"
+#include "SubtitlesProviderManager.h"
 
 #undef DrawText
 
-typedef void csri_inst;
-//typedef void csri_rend;
 
 enum PlaybackState
 {
@@ -69,8 +68,6 @@ void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 
 class AudioDisplay;
 class DShowPlayer;
-struct csri_fmt;
-struct csri_frame;
 class Menu;
 class VideoFfmpeg;
 class VideoCtrl;
@@ -84,10 +81,10 @@ public:
 	RendererVideo(VideoCtrl *control);
 	virtual ~RendererVideo();
 
-	virtual bool OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio = true){ 
+	virtual bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true){
 		return false; 
 	};
-	virtual bool OpenSubs(wxString *textsubs, bool redraw = true, bool fromFile = false){ return false; };
+	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL){ return false; };
 	virtual bool Play(int end = -1){ return false; };
 	virtual bool Pause(){ return false; };
 	virtual bool Stop(){ return false; };
@@ -205,7 +202,6 @@ private:
 	int diff;
 	char m_Grabbed;
 
-	csri_inst *instance;
 	RECT m_ProgressBarRect;
 	RECT m_WindowRect;
 	RECT m_MainStreamRect;
@@ -214,7 +210,7 @@ private:
 	int m_AverangeFrameTime;
 	D3DXVECTOR2 vectors[12];
 	AudioDisplay *m_AudioPlayer;
-	csri_frame *framee;
-	csri_fmt *format;
 	TabPanel* tab;
+	SubtitlesProviderManager *m_SubsProvider = NULL;
+
 };

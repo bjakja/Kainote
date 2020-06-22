@@ -13,31 +13,27 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#include "SubtitlesProvider.h"
 #ifdef subsProvider
 
-#include "SubtitlesProvider.h"
+
 #include "RendererVideo.h"
 #include "OpennWrite.h"
 #include "kainoteMain.h"
+#include "DshowRenderer.h"
 
 
 csri_rend *SubtitlesProvider::m_CsriRenderer = NULL;
 ASS_Renderer *SubtitlesProvider::m_Libass = NULL;
 ASS_Library *SubtitlesProvider::m_Library = NULL;
 
-void SubtitlesProvider::SetVideoParameters(const wxSize& size, char bytesPerColor, bool isSwapped)
-{
-	m_VideoSize = size;
-	m_IsSwapped = isSwapped;
-	m_BytesPerColor = bytesPerColor;
-	m_HasParameters = true;
-}
 
 void SubtitlesProvider::DestroySubtitlesProvider()
 {
 	if (m_Libass)
 		ass_renderer_done(m_Libass);
+	if (m_Library)
+		ass_library_done(m_Library);
 
 	if (m_CsriRenderer)
 		csri_close_renderer(m_CsriRenderer);
@@ -72,23 +68,23 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 	}
 };
 
-bool SubtitlesVSFilter::Open(TabPanel *tab, int flag)
+bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 {
 	if (m_CsriInstance) csri_close(m_CsriInstance);
 	m_CsriInstance = NULL;
 
-	wxString *textsubs = NULL;
+	wxString *textsubs = text;
 	bool fromFile = false;
 	switch (flag){
 	case OPEN_DUMMY:
 		textsubs = tab->Grid->GetVisible();
 		break;
-	case OPEN_TO_END:
 	case OPEN_WHOLE_SUBTITLES:
 		textsubs = tab->Grid->SaveText();
 		fromFile = true;
 		break;
 	case CLOSE_SUBTITLES:
+	case OPEN_HAS_OWN_TEXT:
 		break;
 	default:
 		break;
@@ -189,23 +185,6 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		return false; 
 	}
 
-	if (!m_CsriFrame){
-		m_CsriFrame = new csri_frame;
-		//we only uses first planes and strides rest can be reset just once
-		for (int i = 1; i < 4; i++){
-			m_CsriFrame->planes[i] = NULL;
-			m_CsriFrame->strides[i] = NULL;
-		}
-	}
-	if (!m_CsriFormat){ m_CsriFormat = new csri_fmt; }
-
-
-	m_CsriFrame->pixfmt = CSRI_F_BGR_;
-
-	m_CsriFormat->width = m_VideoSize.GetWidth();
-	m_CsriFormat->height = m_VideoSize.GetHeight();
-	m_CsriFormat->pixfmt = m_CsriFrame->pixfmt;
-
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
 		KaiLog(_("CSRI nie obs³uguje tego formatu."));
 		csri_close(m_CsriInstance);
@@ -257,6 +236,33 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 	//if yes than just set NULL to renderer
 	//without destroying it it makes memory leaks
 	//m_CsriRenderer = NULL;
+}
+
+void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
+{
+	m_VideoSize = size;
+	m_IsSwapped = isSwapped;
+	m_Format = format;
+	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+	m_BytesPerColor = bytes;
+	m_HasParameters = true;
+
+	if (!m_CsriFrame) {
+		m_CsriFrame = new csri_frame;
+		//we only uses first planes and strides rest can be reset just once
+		for (int i = 1; i < 4; i++) {
+			m_CsriFrame->planes[i] = NULL;
+			m_CsriFrame->strides[i] = NULL;
+		}
+	}
+	if (!m_CsriFormat) { m_CsriFormat = new csri_fmt; }
+		
+	m_CsriFrame->pixfmt = (m_Format == NV12) ? CSRI_F_YV12A : (m_Format == YV12) ? CSRI_F_YV12 :
+		(m_Format == YUY2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+
+	m_CsriFormat->width = size.GetWidth();
+	m_CsriFormat->height = size.GetHeight();
+	m_CsriFormat->pixfmt = m_CsriFrame->pixfmt;
 }
 
 #endif

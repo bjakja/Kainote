@@ -94,7 +94,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>inline=__inline;
         FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,6 +106,12 @@
     <Yasm>
       <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1</Config>
     </Yasm>
+    <Lib>
+      <AdditionalDependencies>FreeType2.lib;Fribidi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);C:\Program Files (x86)\Visual Leak Detector\lib\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -115,7 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>inline=__inline;
         FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +131,12 @@
     <Yasm>
       <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
     </Yasm>
+    <Lib>
+      <AdditionalDependencies>FreeType2.lib;Fribidi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);C:\Program Files (x86)\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -134,7 +146,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>inline=__inline;
         FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,6 +156,12 @@
     <Yasm>
       <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1</Config>
     </Yasm>
+    <Lib>
+      <AdditionalDependencies>FreeType2.lib;Fribidi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);C:\Program Files (x86)\Visual Leak Detector\lib\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -155,7 +173,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PreprocessorDefinitions>inline=__inline;
         FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -167,6 +185,12 @@
     <Yasm>
       <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
     </Yasm>
+    <Lib>
+      <AdditionalDependencies>FreeType2.lib;Fribidi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);C:\Program Files (x86)\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Yasm Include="..\..\libass\libass\x86\be_blur.asm">

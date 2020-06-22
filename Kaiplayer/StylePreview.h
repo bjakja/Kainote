@@ -20,9 +20,8 @@
 #include "Styles.h"
 #include "KaiTextCtrl.h"
 #include <vector>
-typedef void csri_inst;
-//typedef void csri_rend;
-//class VobsubApi;
+#include "SubtitlesProviderManager.h"
+
 
 class StylePreview : public wxWindow
 	{
@@ -31,13 +30,11 @@ class StylePreview : public wxWindow
 		StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size);
 		virtual ~StylePreview();
 
-		void DrawPreview(Styles *styl=NULL);
+		void DrawPreview(Styles *styl = NULL);
 
 
 
 	private:
-		csri_inst *instance;
-		//csri_rend *vobsub;
 		wxMutex mutex;
 		int pitch, width, height, b, g, r, b1, g1, r1;
 		
@@ -51,5 +48,7 @@ class StylePreview : public wxWindow
 		void OnMouseEvent(wxMouseEvent& event);
 
 		DECLARE_EVENT_TABLE()
+
+		SubtitlesProviderManager *m_SubtitlesProvider = NULL;
 	};
 

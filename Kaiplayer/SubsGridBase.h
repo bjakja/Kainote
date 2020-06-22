@@ -112,7 +112,8 @@ public:
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *GetDialogueWithOffset(size_t i, int offset);
 	// returns visible lines as string for Vsfilter
-	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
+	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL, bool allSubs = false);
+	bool IsLineVisible();
 	//Get line key from scrollPosition.
 	//Every value will be stored as key.
 	//Simple function to convert key to id from scroll position

@@ -124,7 +124,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 }
 
-bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vobsub, bool changeAudio)
+bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio)
 {
 	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
@@ -199,28 +199,10 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 		return false; 
 	}
 	
+	m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), RGB32, false);
 
-	if (!framee){ framee = new csri_frame; }
-	if (!format){ format = new csri_fmt; }
-	for (int i = 1; i < 4; i++){
-		framee->planes[i] = NULL;
-		framee->strides[i] = NULL;
-	}
-
-	framee->pixfmt = (m_Format == 5) ? CSRI_F_YV12A : (m_Format == 3) ? CSRI_F_YV12 :
-		(m_Format == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
-
-	format->width = m_Width;
-	format->height = m_Height;
-	format->pixfmt = framee->pixfmt;
-
-	if (!vobsub){
-		OpenSubs(textsubs, false);
-	}
-	else{
-		SAFE_DELETE(textsubs);
-		OpenSubs(0, false);
-	}
+	OpenSubs(subsFlag, false);
+	
 	m_State = Stopped;
 	m_FFMS2->GetChapters(&m_Chapters);
 
@@ -231,51 +213,10 @@ bool RendererFFMS2::OpenFile(const wxString &fname, wxString *textsubs, bool vob
 	return true;
 }
 
-bool RendererFFMS2::OpenSubs(wxString *textsubs, bool redraw, bool fromFile)
+bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
-	if (instance) csri_close(instance);
-	instance = NULL;
-
-	if (!textsubs) {
-		m_HasDummySubs = true;
-		return true;
-	}
-
-	if (m_HasVisualEdition && m_Visual->Visual == VECTORCLIP && m_Visual->dummytext){
-		wxString toAppend = m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
-		if (fromFile){
-			OpenWrite ow(*textsubs, false);
-			ow.PartFileWrite(toAppend);
-			ow.CloseFile();
-		}
-		else{
-			(*textsubs) << toAppend;
-		}
-	}
-
-	m_HasDummySubs = !fromFile;
-
-	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
-	int size = strlen(buffer);
-
-
-	// Select renderer
-	csri_rend *vobsub = Options.GetVSFilter();
-	if (!vobsub){ KaiLog(_("CSRI odmówiło posłuszeństwa.")); delete textsubs; return false; }
-
-	instance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!instance){ KaiLog(_("Błąd, instancja VobSuba nie została utworzona.")); delete textsubs; return false; }
-
-	if (!format || csri_request_fmt(instance, format)){
-		KaiLog(_("CSRI nie obsługuje tego formatu."));
-		csri_close(instance);
-		instance = NULL;
-		delete textsubs; return false;
-	}
-
-	delete textsubs;
-	return true;
+	return m_SubsProvider->Open(tab, flag, text);
 }
 
 bool RendererFFMS2::Play(int end)
@@ -284,13 +225,12 @@ bool RendererFFMS2::Play(int end)
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
 	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
 	if (m_HasVisualEdition){
-		wxString *txt = tab->Grid->SaveText();
-		OpenSubs(txt, false, true);
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 		SAFE_DELETE(m_Visual->dummytext);
 		m_HasVisualEdition = false;
 	}
 	else if (m_HasDummySubs && tab->editor){
-		OpenSubs(tab->Grid->SaveText(), false, true);
+		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 	}
 
 	if (end > 0){ m_PlayEndTime = end; }
@@ -365,12 +305,12 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
 		}
 		else{
-			OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 			if (playing){ m_HasVisualEdition = false; }
 		}
 	}
 	else if (m_HasDummySubs){
-		OpenSubs((playing) ? tab->Grid->SaveText() : tab->Grid->GetVisible(), true, playing);
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 	}
 	if (playing){
 		if (m_AudioPlayer){
@@ -503,7 +443,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 		m_Frame = MID(0, m_Frame + step, m_FFMS2->NumFrames - 1);
 		m_Time = m_FFMS2->Timecodes[m_Frame];
 		if (m_HasVisualEdition || m_HasDummySubs){
-			OpenSubs(tab->Grid->SaveText(), false, true);
+			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
 		}
 		if (m_AudioPlayer){ m_AudioPlayer->UpdateImage(true, true); }

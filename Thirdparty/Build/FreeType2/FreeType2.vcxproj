@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\FreeType2\include\ft2build.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\freetype2\builds\windows\ftdebug.c" />
     <ClCompile Include="..\..\FreeType2\src\autofit\autofit.c" />
     <ClCompile Include="..\..\FreeType2\src\base\ftbase.c" />
     <ClCompile Include="..\..\FreeType2\src\base\ftbbox.c" />

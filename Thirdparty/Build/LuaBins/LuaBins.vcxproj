@@ -46,7 +46,7 @@
     <ClInclude Include="..\..\Luabins\src\write.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\luajit\LuaJit\LuaJit.vcxproj">
+    <ProjectReference Include="..\LuaJit\LuaJit.vcxproj">
       <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
     </ProjectReference>
   </ItemGroup>

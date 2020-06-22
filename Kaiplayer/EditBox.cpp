@@ -1675,10 +1675,10 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 	}
 
-	wxString *text = NULL;
+	int openFlag = CLOSE_SUBTITLES;
 	if (tab->Video->GetState() != None){
 		//visible=true;
-		text = grid->GetVisible(&visible);
+		visible = grid->IsLineVisible();
 		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ 
 			visible = true; 
 			lastVisible = false; 
@@ -1688,14 +1688,16 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		if (!visible){
 			tab->Video->GetRenderer()->m_HasDummySubs = true;
 		}
+		else {
+			openFlag = OPEN_DUMMY;
+		}
 	}
 
 	if (visible && (tab->Video->IsShown() || tab->Video->IsFullScreen())){
-		tab->Video->OpenSubs(text);
+		tab->Video->OpenSubs(openFlag);
 		if (Visual > 0){ tab->Video->ResetVisual(); }
 		else if (tab->Video->GetState() == Paused){ tab->Video->Render(); }
 	}
-	else if (text){ delete text; }
 
 }
 
@@ -1949,7 +1951,7 @@ done:
 	if (RefreshVideo){
 		VideoCtrl *vb = tab->Video;
 		if (vb->GetState() != None){
-			vb->OpenSubs(grid->GetVisible());
+			vb->OpenSubs(OPEN_DUMMY);
 			vb->Render();
 		}
 	}

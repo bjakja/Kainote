@@ -15,12 +15,12 @@
 
 #pragma  once
 
+#include "SubtitlesProviderManager.h"
 #ifdef subsProvider
 
 #include <wx/wx.h>
 #include <wx/arrstr.h>
 #include <atomic>
-#include "SubtitlesProviderManager.h"
 #include "CsriMod.h"
 extern "C" {
 #include <libass/ass.h>
@@ -34,10 +34,10 @@ public:
 	virtual ~SubtitlesProvider(){};
 	SubtitlesProvider(){};
 	virtual void Draw(unsigned char* buffer, int time){};
-	virtual bool Open(TabPanel *tab, int flag){ return false; };
+	virtual bool Open(TabPanel *tab, int flag, wxString *text){ return false; };
 	//for styles preview
 	virtual bool OpenString(wxString *text){ return false; };
-	void SetVideoParameters(const wxSize& size, char bytesPerColor, bool isSwapped);
+	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
 	static void DestroySubtitlesProvider();
 	static ASS_Renderer *m_Libass;
 	static ASS_Library *m_Library;
@@ -46,9 +46,10 @@ private:
 protected:
 	TabPanel *m_Tab;
 	wxSize m_VideoSize;
-	char m_BytesPerColor;
+	unsigned char m_Format;
 	bool m_IsSwapped;
 	bool m_HasParameters = false;
+	char m_BytesPerColor = 4;
 	static csri_rend *m_CsriRenderer;
 };
 
@@ -59,9 +60,10 @@ public:
 	SubtitlesVSFilter();
 	virtual ~SubtitlesVSFilter();
 	void Draw(unsigned char* buffer, int time);
-	bool Open(TabPanel *tab, int flag);
+	bool Open(TabPanel *tab, int flag, wxString *text);
 	bool OpenString(wxString *text);
 	static void GetProviders(wxArrayString *providerList);
+	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 private:
 	csri_frame *m_CsriFrame = NULL;
 	csri_fmt *m_CsriFormat = NULL;
@@ -75,8 +77,9 @@ public:
 	SubtitlesLibass();
 	virtual ~SubtitlesLibass();
 	void Draw(unsigned char* buffer, int time);
-	bool Open(TabPanel *tab, int flag);
+	bool Open(TabPanel *tab, int flag, wxString *text);
 	bool OpenString(wxString *text);
+	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	ASS_Track *m_AssTrack = NULL;
 	std::atomic<bool> m_IsReady{ false };
 	HANDLE thread = NULL;

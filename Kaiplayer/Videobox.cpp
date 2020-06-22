@@ -213,7 +213,7 @@ bool VideoCtrl::Pause(bool skipWhenOnEnd)
 			}
 			return false;
 		}
-		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], NULL);
+		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], CLOSE_SUBTITLES);
 		return true;
 	}
 	if (renderer->m_Time >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
@@ -247,7 +247,7 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
+bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
 {
 	//todo: tutaj trzeba napisać tworzenie renderera
 	prevchap = -1;
@@ -274,8 +274,8 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 
 	bool shown = true;
 	renderer->m_BlockResize = true;
-	if (!renderer->OpenFile(fileName, subsName, !tab->editor, changeAudio)){
-		delete subsName; renderer->m_BlockResize = false;
+	if (!renderer->OpenFile(fileName, subsFlag, !tab->editor, changeAudio)){
+		renderer->m_BlockResize = false;
 		if (!byFFMS2){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
 		SAFE_DELETE(renderer)
 		return false;
@@ -1561,10 +1561,10 @@ int VideoCtrl::GetDuration()
 	return false;
 }
 
-bool VideoCtrl::OpenSubs(wxString *textsubs, bool recreateFrame, bool fromFile, bool refresh)
+bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh)
 {
 	if (renderer){
-		return renderer->OpenSubs(textsubs, recreateFrame, fromFile);
+		return renderer->OpenSubs(flag, recreateFrame);
 		if (refresh){
 			Render();
 		}
