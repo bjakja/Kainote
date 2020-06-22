@@ -516,7 +516,7 @@ VideoFfmpeg::~VideoFfmpeg()
 {
 	if (thread){
 		SetEvent(eventKillSelf);
-		WaitForSingleObject(thread, 2000);
+		WaitForSingleObject(thread, 20000);
 		CloseHandle(thread);
 		CloseHandle(eventStartPlayback);
 		CloseHandle(eventRefresh);

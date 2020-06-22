@@ -28,7 +28,15 @@ RendererFFMS2::RendererFFMS2(VideoCtrl *control)
 
 RendererFFMS2::~RendererFFMS2()
 {
+	Stop();
+
+	m_State = None;
 	SAFE_DELETE(m_FFMS2);
+}
+//made function to destroy it before FFMS2
+void RendererFFMS2::DestroyFFMS2()
+{
+	//SAFE_DELETE(m_FFMS2);
 }
 
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
@@ -506,18 +514,6 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 
 }
 
-//bool VideoRenderer::EnumFilters(Menu *menu)
-//{
-//	if (vplayer){ return vplayer->EnumFilters(menu); }
-//	return false;
-//}
-//
-//bool VideoRenderer::FilterConfig(wxString name, int idx, wxPoint pos)
-//{
-//	if (vplayer){ return vplayer->FilterConfig(name, idx, pos); }
-//	return false;
-//}
-
 byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
 {
 	bool ffnsubs = (!subs);
@@ -564,6 +560,7 @@ VideoFfmpeg * RendererFFMS2::GetFFMS2()
 {
 	return m_FFMS2;
 }
+
 
 bool RendererFFMS2::InitRendererDX()
 {

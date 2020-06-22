@@ -15,13 +15,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KaiNote", "Kaiplayer\Kaipla
 		{E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA} = {E8A3F6FA-AE1C-4C8E-A0B6-9C8480324EAA}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaBins", "Thirdparty\luabins\LuaBins\LuaBins.vcxproj", "{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaBins", "Thirdparty\Build\LuaBins\LuaBins.vcxproj", "{AF5CD8A9-C5DC-4780-BA28-5ED5EF9A3536}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJit", "Thirdparty\LuaJIT\LuaJit\LuaJit.vcxproj", "{BA804678-E98B-4026-8D33-A8C5263C669E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJit", "Thirdparty\Build\LuaJit\LuaJit.vcxproj", "{BA804678-E98B-4026-8D33-A8C5263C669E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJitBuild", "Thirdparty\LuaJIT\LuaJitBuild\LuaJitBuild.vcxproj", "{F6C48ACA-C78D-450F-8059-010BBBA12137}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LuaJitBuild", "Thirdparty\Build\LuaJitBuild\LuaJitBuild.vcxproj", "{F6C48ACA-C78D-450F-8059-010BBBA12137}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\LuaJIT\Minilua\Minilua.vcxproj", "{325D093D-826B-4A7D-83C7-1CAD22911B9F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\Build\Minilua\Minilua.vcxproj", "{325D093D-826B-4A7D-83C7-1CAD22911B9F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BaseClasses", "BaseClasses", "{5872C1C0-820F-41D7-A0A0-BD4C49790A37}"
 EndProject
@@ -83,15 +83,15 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "stc", "Thirdparty\wxWidgets
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gl", "Thirdparty\wxWidgets\Build\msw\wx_vc9_gl.vcxproj", "{DA8B15EF-6750-5928-BC0E-C748213CF9B2}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Icu", "Thirdparty\Icu\Icu\Icu.vcxproj", "{E0F14C76-4D63-4A46-8ADD-68C112018BB3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Icu", "Thirdparty\Build\Icu\Icu.vcxproj", "{E0F14C76-4D63-4A46-8ADD-68C112018BB3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boost", "Thirdparty\Boost\BoostBuild\Boost.vcxproj", "{C91E1D87-614C-47E8-9587-393568D41738}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Boost", "Thirdparty\Build\Boost\Boost.vcxproj", "{C91E1D87-614C-47E8-9587-393568D41738}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeType2", "Thirdparty\FreeType2\FreeType2\FreeType2.vcxproj", "{9F3CC443-D4EB-43E6-8263-8448F731489F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeType2", "Thirdparty\Build\FreeType2\FreeType2.vcxproj", "{9F3CC443-D4EB-43E6-8263-8448F731489F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fribidi", "Thirdparty\Fribidi\Fribidi\Fribidi.vcxproj", "{BC147FEB-91CB-4626-80FE-E310273F3346}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fribidi", "Thirdparty\Build\Fribidi\Fribidi.vcxproj", "{BC147FEB-91CB-4626-80FE-E310273F3346}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Libass", "Thirdparty\Libass\LibassBuild\Libass.vcxproj", "{DD6C83B0-C8E0-4C46-BFCE-C758B31904B1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Libass", "Thirdparty\Build\Libass\Libass.vcxproj", "{DD6C83B0-C8E0-4C46-BFCE-C758B31904B1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

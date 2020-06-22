@@ -1648,6 +1648,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	bool buttonDown = leftDown || rightDown;
 	bool buttonUP = event.LeftUp() || event.RightUp();
 	bool middleDown = event.MiddleDown();
+	bool leftIsDown = event.LeftIsDown();
 	bool updated = false;
 	syll = -1;
 	// Click type
@@ -1817,7 +1818,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 
 			}
-			// litery sylab
+			// Characters of syllables
 			else if (hasKara && karaoke->GetLetterAtX(x, &syll, &letter))
 			{
 				if (leftDown){
@@ -1924,14 +1925,13 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					updated = true;
 					NeedCommit = true;
 
-					if (leftDown && abs((long)(x - lastX)) > Options.GetInt(AUDIO_START_DRAG_SENSITIVITY)) {
+					if (leftIsDown && abs((long)(x - lastX)) > Options.GetInt(AUDIO_START_DRAG_SENSITIVITY)) {
 						selStart = lastX;
 						selEnd = x;
 						curStartMS = GetBoundarySnap(GetMSAtX(lastX), 16, event.ShiftDown(), true);
 						curEndMS = GetMSAtX(x);
 						hold = 2;
 					}
-
 				}
 
 				// Drag start

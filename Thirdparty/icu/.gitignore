@@ -1,6 +1,2 @@
-as_is/
-bin/
-include/
-lib/
-packaging/
-source/
+*
+!.gitignore

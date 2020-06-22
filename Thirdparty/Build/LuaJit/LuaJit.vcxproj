@@ -1,0 +1,350 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|Win32">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|x64">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{BA804678-E98B-4026-8D33-A8C5263C669E}</ProjectGuid>
+    <RootNamespace>LuaJit</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
+        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <!-- BuildVM stuff -->
+  <PropertyGroup>
+    <BuildVMCommand>$(SolutionDir)ThirdParty\luajit\LuaJitBuild\$(Platform)\$(Configuration)\LuaJitBuild</BuildVMCommand>
+    <BuildCompileTargets>
+      BuildVM;
+      ComputeLibDefNames;
+      BuildLibDefs;
+      $(BuildCompileTargets)
+    </BuildCompileTargets>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\Release</OutDir>
+  </PropertyGroup>
+  <Target Name="BuildVM" Inputs="..\..\LuaJIT\src\host\buildvm.c;..\..\LuaJIT\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Platform)\$(Configuration)\lj_folddef.h">
+    <Message Text="luajit-buildvm peobj" Importance="High" />
+    <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
+    <Message Text="luajit-buildvm folddef" Importance="High" />
+    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
+    <ItemGroup>
+      <Lib Include="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj" />
+    </ItemGroup>
+  </Target>
+  <Target Name="ComputeLibDefNames">
+    <!-- To avoid having any top-level itemgroups not naming real files -->
+    <ItemGroup>
+      <LuajitLibDefname Include="bcdef;ffdef;libdef;recdef" />
+    </ItemGroup>
+  </Target>
+  <Target Name="BuildLibDefs" Inputs="@(LuajitLibSource)" Outputs="@(LuajitLibDefname -> '..\..\LuaJIT\src\lj_%(Identity).h')">
+    <Message Text="luajit-buildvm %(LuajitLibDefname.Identity)" Importance="High" Condition="'%(LuajitLibDefname.Identity)' != ''" />
+    <Exec Command="$(BuildVMCommand) -m %(LuajitLibDefname.Identity) -o lj_%(LuajitLibDefname.Identity).h @(LuajitLibSource->'$(SolutionDir)ThirdParty\luajit\src\%(filename)%(extension)',' ')" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" Condition="'%(LuajitLibDefname.Identity)' != ''" />
+  </Target>
+  <!-- Source files -->
+  <ItemGroup>
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_base.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_math.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_bit.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_string.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_table.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_io.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_os.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_package.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_debug.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_jit.c" />
+    <LuajitLibSource Include="..\..\LuaJIT\src\lib_ffi.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LuaJIT\src\ljamalg.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\LuaJIT\src\lj_alloc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_arch.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_asm.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_asm_arm.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_asm_mips.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_asm_ppc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_asm_x86.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_bc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_bcdump.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_carith.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ccall.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ccallback.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_cconv.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_cdata.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_char.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_clib.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_cparse.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_crecord.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ctype.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_debug.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_def.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_dispatch.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_emit_arm.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_emit_mips.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_emit_ppc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_emit_x86.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_err.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_errmsg.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ff.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ffdef.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ffrecord.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_frame.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_func.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_gc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_gdbjit.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ir.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_ircall.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_iropt.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_jit.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_lex.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_lib.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_libdef.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_mcode.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_meta.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_obj.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_parse.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_record.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_snap.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_state.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_str.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_strscan.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_tab.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_target.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_target_arm.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_target_mips.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_target_ppc.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_target_x86.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_trace.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_traceerr.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_udata.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_vm.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_vmevent.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\LuaJIT\src\jit\bc.lua" />
+    <None Include="..\..\LuaJIT\src\jit\bcsave.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_arm.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mipsel.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_ppc.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_x64.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_x86.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dump.lua" />
+    <None Include="..\..\LuaJIT\src\jit\v.lua" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LuaJitBuild\LuaJitBuild.vcxproj">
+      <Project>{f6c48aca-c78d-450f-8059-010bbba12137}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

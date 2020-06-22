@@ -15,6 +15,8 @@
 
 #pragma  once
 
+#define subsProvider 0
+
 #ifdef subsProvider
 #include "wx/arrstr.h"
 #include "wx/window.h"

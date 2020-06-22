@@ -33,6 +33,9 @@ RendererDirectShow::RendererDirectShow(VideoCtrl *control)
 
 RendererDirectShow::~RendererDirectShow()
 {
+	Stop();
+
+	m_State = None;
 	SAFE_DELETE(m_DirectShowPlayer);
 }
 

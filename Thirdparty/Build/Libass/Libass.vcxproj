@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{DD6C83B0-C8E0-4C46-BFCE-C758B31904B1}</ProjectGuid>
+    <RootNamespace>Libass</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <ImportGroup Label="Targets">
+    <Import Project="$(ProjectDir)yasm.targets" />
+  </ImportGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>inline=__inline;
+        FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Yasm>
+      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1</Config>
+    </Yasm>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>inline=__inline;
+        FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Yasm>
+      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
+    </Yasm>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>inline=__inline;
+        FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Yasm>
+      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1</Config>
+    </Yasm>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <PreprocessorDefinitions>inline=__inline;
+        FRIBIDI_ENTRY=;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)\Thirdparty\fribidi\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Yasm>
+      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
+    </Yasm>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Yasm Include="..\..\libass\libass\x86\be_blur.asm">
+      <ExcludeFromBuild Condition="'$(Platform)'!='x64'">true</ExcludeFromBuild>
+    </Yasm>
+    <Yasm Include="..\..\libass\libass\x86\blend_bitmaps.asm" />
+    <Yasm Include="..\..\libass\libass\x86\blur.asm" />
+    <Yasm Include="..\..\libass\libass\x86\cpuid.asm" />
+    <Yasm Include="..\..\libass\libass\x86\rasterizer.asm" />
+    <None Include="..\..\libass\libass\x86\x86inc.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\libass\libass\ass.h" />
+    <ClInclude Include="..\..\libass\libass\ass_bitmap.h" />
+    <ClInclude Include="..\..\libass\libass\ass_cache.h" />
+    <ClInclude Include="..\..\libass\libass\ass_cache_template.h" />
+    <ClInclude Include="..\..\libass\libass\ass_drawing.h" />
+    <ClInclude Include="..\..\libass\libass\ass_font.h" />
+    <ClInclude Include="..\..\libass\libass\ass_library.h" />
+    <ClInclude Include="..\..\libass\libass\ass_parse.h" />
+    <ClInclude Include="..\..\libass\libass\ass_render.h" />
+    <ClInclude Include="..\..\libass\libass\ass_shaper.h" />
+    <ClInclude Include="..\..\libass\libass\ass_types.h" />
+    <ClInclude Include="..\..\libass\libass\ass_utils.h" />
+    <ClInclude Include="..\..\libass\libass\x86\cpuid.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="dirent.h" />
+    <ClInclude Include="strings.h" />
+    <ClInclude Include="unistd.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\libass\libass\ass.c" />
+    <ClCompile Include="..\..\libass\libass\ass_bitmap.c" />
+    <ClCompile Include="..\..\libass\libass\ass_blur.c" />
+    <ClCompile Include="..\..\libass\libass\ass_cache.c" />
+    <ClCompile Include="..\..\libass\libass\ass_drawing.c" />
+    <ClCompile Include="..\..\libass\libass\ass_font.c" />
+    <ClCompile Include="..\..\libass\libass\ass_fontselect.c" />
+    <ClCompile Include="..\..\libass\libass\ass_library.c" />
+    <ClCompile Include="..\..\libass\libass\ass_parse.c" />
+    <ClCompile Include="..\..\libass\libass\ass_rasterizer.c" />
+    <ClCompile Include="..\..\libass\libass\ass_rasterizer_c.c" />
+    <ClCompile Include="..\..\libass\libass\ass_render.c" />
+    <ClCompile Include="..\..\libass\libass\ass_render_api.c" />
+    <ClCompile Include="..\..\libass\libass\ass_shaper.c" />
+    <ClCompile Include="..\..\libass\libass\ass_string.c" />
+    <ClCompile Include="..\..\libass\libass\ass_strtod.c" />
+    <ClCompile Include="..\..\libass\libass\ass_utils.c" />
+    <ClCompile Include="libass_gdi_fontselect.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\FreeType2\FreeType2\FreeType2.vcxproj">
+      <Project>{9f3cc443-d4eb-43e6-8263-8448f731489f}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\fribidi\Fribidi\Fribidi.vcxproj">
+      <Project>{bc147feb-91cb-4626-80fe-e310273f3346}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

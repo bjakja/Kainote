@@ -202,8 +202,8 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Locale\\en.mo\0");
 	filenames.push_back(L"\\Locale\\zh_CN.mo\0");
 	filenames.push_back(L"\\Locale\\th_TH.mo\0");
-	filenames.push_back(L"\\msvcp120.dll\0");
-	filenames.push_back(L"\\msvcr120.dll\0");
+	filenames.push_back(L"\\msvcp140.dll\0");
+	filenames.push_back(L"\\vcruntime140.dll\0");
 	filenames.push_back(L"\\Themes\\DeepDark.txt\0");
 	filenames.push_back(L"\\Themes\\DeepLight.txt\0");
 	filenames.push_back(L"\\Themes\\MyDeepDark.txt\0");

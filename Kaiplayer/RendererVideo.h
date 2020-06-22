@@ -197,6 +197,7 @@ private:
 	bool InitDX(bool reset = false);
 	virtual bool InitRendererDX(){ return true; };
 	void Clear(bool clearObject = false);
+	virtual void DestroyFFMS2() {};
 
 	HWND m_HWND;
 	bool m_DeviceLost;

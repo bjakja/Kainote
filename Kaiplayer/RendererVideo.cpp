@@ -17,6 +17,7 @@
 #include "kainoteMain.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
+#include "RendererFFMS2.h"
 
 #if byvertices
 struct CUSTOMVERTEX
@@ -83,9 +84,7 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 
 RendererVideo::~RendererVideo()
 {
-	Stop();
 
-	m_State = None;
 	Clear();
 	SAFE_DELETE(m_Visual);
 	SAFE_DELETE(framee);

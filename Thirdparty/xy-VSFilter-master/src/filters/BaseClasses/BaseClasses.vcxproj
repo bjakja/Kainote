@@ -22,7 +22,7 @@
     <ProjectName>BaseClasses</ProjectName>
     <ProjectGuid>{F558E2B6-62CF-4D1D-A6EA-448D159E5675}</ProjectGuid>
     <RootNamespace>$(ProjectName)</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\..\configuration.props" />
@@ -35,16 +35,16 @@
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -67,6 +67,10 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>streams.h</PrecompiledHeaderFile>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>strmiids.lib</AdditionalDependencies>
