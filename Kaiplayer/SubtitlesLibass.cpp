@@ -20,6 +20,7 @@
 #include "RendererVideo.h"
 #include "OpennWrite.h"
 #include "kainoteMain.h"
+#include "DshowRenderer.h"
 #include <boost/gil/algorithm.hpp>
 #include <process.h>
 
@@ -34,8 +35,8 @@ void MessageCallback(int level, const char *fmt, va_list args, void *) {
 
 	if (level < 2) // warning/error
 		KaiLog(L"Libass: " + wxString(buf, 1024));
-	//else // verbose
-		//KaiLogDebug(L"Libass: " + wxString(buf, 1024));
+	else // verbose
+		KaiLogDebug(L"Libass: " + wxString(buf, 1024));
 }
 
 unsigned int __stdcall  ProcessLibassCache(void *data)
@@ -126,8 +127,10 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 
 bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 {
-	if (!m_IsReady)
+	if (!m_IsReady) {
+		SAFE_DELETE(text);
 		return false;
+	}
 
 	if (m_AssTrack){
 		ass_free_track(m_AssTrack);
@@ -135,8 +138,10 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	}
 
 	RendererVideo* renderer = tab->Video->GetRenderer();
-	if (!renderer)
+	if (!renderer) {
+		SAFE_DELETE(text);
 		return false;
+	}
 
 	wxString *textsubs = text;
 	switch (flag){
@@ -183,8 +188,10 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 
 bool SubtitlesLibass::OpenString(wxString *text)
 {
-	if (!m_IsReady)
+	if (!m_IsReady) {
+		SAFE_DELETE(text);
 		return false;
+	}
 
 	if (m_AssTrack){
 		ass_free_track(m_AssTrack);
@@ -194,6 +201,9 @@ bool SubtitlesLibass::OpenString(wxString *text)
 	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, NULL);
+
+	delete text;
+
 	if (!m_AssTrack){
 		KaiLog(L"Nie mo¿na otworzyæ napisów w Libass");
 		return false;
@@ -206,7 +216,7 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_VideoSize = size;
 	m_IsSwapped = isSwapped;
 	m_Format = format;
-	m_HasParameters = true;
+	m_HasParameters = format == RGB32;
 }
 
 #endif

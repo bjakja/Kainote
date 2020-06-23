@@ -40,6 +40,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	panel = new wxPanel(this, -1, wxPoint(0, size.y - panelsize), wxSize(size.x, panelsize));
 	panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
+	panel->SetCursor(wxCURSOR_ARROW);
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = vc;
 	vslider->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){

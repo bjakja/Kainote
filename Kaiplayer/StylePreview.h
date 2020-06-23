@@ -39,7 +39,7 @@ class StylePreview : public wxWindow
 		int pitch, width, height, b, g, r, b1, g1, r1;
 		
 
-		wxBitmap *bmpframe;
+		wxBitmap *bmpframe = NULL;
 		KaiTextCtrl *PrevText;
 		Styles *previewStyle;
 

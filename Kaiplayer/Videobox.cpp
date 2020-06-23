@@ -125,6 +125,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 
 	m_VideoPanel = new wxWindow(this, -1, wxPoint(0, size.y - m_PanelHeight), wxSize(size.x, m_PanelHeight));
 	m_VideoPanel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
+	m_VideoPanel->SetCursor(wxCURSOR_ARROW);
 
 	m_SeekingSlider = new VideoSlider(m_VideoPanel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, m_ToolBarHeight - 8));
 	m_SeekingSlider->VB = this;
@@ -553,7 +554,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 	}
 	else if (tab->editor){
-		if (onVideo && !m_IsMenuShown && HasArrow()){
+		if (/*onVideo && */!m_IsMenuShown && HasArrow()){
 			//KaiLog(wxString::Format(L"Vb blank %i", (int)m_IsMenuShown));
 			SetCursor(wxCURSOR_BLANK);  
 		}
