@@ -1344,12 +1344,12 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 		return iter;
 }
 
-void Notebook::RefreshVideo()
+void Notebook::RefreshVideo(bool resetParameters /*= false*/)
 {
 	for (int i = 0; i < sthis->Size(); i++){
 		TabPanel *tab = sthis->Page(i);
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
 		}
 	}
 

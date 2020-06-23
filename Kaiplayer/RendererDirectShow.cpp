@@ -316,9 +316,12 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	return true;
 }
 
-bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text)
+bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool resetParameters)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (resetParameters)
+		m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
+
 	bool result = m_SubsProvider->Open(tab, flag, text);
 
 	if (redraw && m_State != None && m_FrameBuffer){

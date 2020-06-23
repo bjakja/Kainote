@@ -20,6 +20,7 @@
 #ifdef subsProvider
 #include "wx/arrstr.h"
 #include "wx/window.h"
+#include <vector>
 
 enum
 {
@@ -36,8 +37,8 @@ class SubtitlesProvider;
 class SubtitlesProviderManager
 {
 public:
-	~SubtitlesProviderManager();
-	SubtitlesProviderManager();
+	static SubtitlesProviderManager *Get();
+	void Release();
 	//set parameters first
 	void Draw(unsigned char* buffer, int time);
 	//set parameters first
@@ -45,14 +46,17 @@ public:
 	//set parameters first
 	//for styles preview and visuals
 	bool OpenString(wxString *text);
-	void SetVideoParameters(const wxSize& size, char bytesPerColor, bool isSwapped);
+	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	static void GetProviders(wxArrayString *providerList);
-	static void SetProvider(const wxString &provider);
+	static void DestroyProviders();
 	static void DestroySubsProvider();
 private:
+	~SubtitlesProviderManager();
+	SubtitlesProviderManager() {};
 	SubtitlesProviderManager(const SubtitlesProviderManager &copy) = delete;
-	static SubtitlesProvider *SP;
+	SubtitlesProvider *SP = NULL;
 	SubtitlesProvider *GetProvider();
+	static std::vector< SubtitlesProviderManager*> gs_Base;
 };
 
 #endif

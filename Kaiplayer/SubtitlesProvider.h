@@ -44,7 +44,6 @@ public:
 private:
 	SubtitlesProvider(const SubtitlesProvider &copy) = delete;
 protected:
-	TabPanel *m_Tab;
 	wxSize m_VideoSize;
 	unsigned char m_Format;
 	bool m_IsSwapped;
@@ -84,6 +83,7 @@ public:
 	std::atomic<bool> m_IsReady{ false };
 	HANDLE thread = NULL;
 	wxSize m_VideoSize;
+	volatile bool m_SubsSkipped = false;
 };
 
 #endif

@@ -28,24 +28,31 @@
 
 
 void MessageCallback(int level, const char *fmt, va_list args, void *) {
-	if (level >= 7) return;
+	if (level >= 4) return;
 	char buf[1024];
 
 	vsprintf_s(buf, sizeof(buf), fmt, args);
 
 	if (level < 2) // warning/error
-		KaiLog(L"Libass: " + wxString(buf, 1024));
+		KaiLog(L"Libass: " + wxString(buf, wxConvUTF8));
 	else // verbose
-		KaiLogDebug(L"Libass: " + wxString(buf, 1024));
+		KaiLogDebug(L"Libass: " + wxString(buf, wxConvUTF8));
 }
 
 unsigned int __stdcall  ProcessLibassCache(void *data)
 {
 	SubtitlesLibass * libass = (SubtitlesLibass*)data;
-	libass->m_Libass = ass_renderer_init(libass->m_Library);
-	if (libass->m_Libass) {
-		ass_set_font_scale(libass->m_Libass, 1.);
-		ass_set_fonts(libass->m_Libass, NULL, "Sans", 1, NULL, true);
+	if (!libass->m_Libass) {
+		libass->m_Libass = ass_renderer_init(libass->m_Library);
+		if (libass->m_Libass) {
+			ass_set_font_scale(libass->m_Libass, 1.);
+			ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
+		}
+	}
+	if (libass->m_SubsSkipped) {
+		TabPanel * tab = Notebook::GetTab();
+		if(tab->Video->GetState() != None)
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
 	}
 	libass->m_IsReady.store(true);
 
@@ -54,8 +61,10 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 
 SubtitlesLibass::SubtitlesLibass()
 {
-	m_Library = ass_library_init();
-	ass_set_message_cb(m_Library, MessageCallback, NULL);
+	if (!m_Library) {
+		m_Library = ass_library_init();
+		ass_set_message_cb(m_Library, MessageCallback, NULL);
+	}
 	unsigned int threadid = 0;
 	thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
 	//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
@@ -127,8 +136,13 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 
 bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 {
-	if (!m_IsReady) {
+	if (!m_IsReady || !m_HasParameters) {
 		SAFE_DELETE(text);
+		if (!m_HasParameters)
+			KaiLog("Libass only works with with FFMS2");
+		else
+			m_SubsSkipped = true;
+
 		return false;
 	}
 
@@ -172,15 +186,13 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		(*textsubs) << toAppend;
 	}
 
-	m_VideoSize = wxSize(renderer->m_Width, renderer->m_Height);
-
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
 	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, NULL);
 	delete textsubs;
 
 	if (!m_AssTrack){
-		KaiLog(L"Nie mo¿na otworzyæ napisów w Libass");
+		KaiLog("Libass only works with ASS and SSA subtiltes");
 		return false;
 	}
 	return true;

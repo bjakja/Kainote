@@ -22,13 +22,13 @@ StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const w
 	: wxWindow(parent, id, pos, size)
 {
 	previewStyle = NULL;
-	m_SubtitlesProvider = new SubtitlesProviderManager();
+	m_SubtitlesProvider = SubtitlesProviderManager::Get();
 	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){ DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
 }
 StylePreview::~StylePreview()
 {
-	SAFE_DELETE(m_SubtitlesProvider);
+	SAFE_RELEASE(m_SubtitlesProvider);
 	wxDELETE(previewStyle);
 	wxDELETE(bmpframe);
 }

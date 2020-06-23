@@ -66,6 +66,9 @@
     <ClInclude Include="unistd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_fontselect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libass\libass\ass.c">

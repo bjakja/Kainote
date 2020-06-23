@@ -1085,8 +1085,8 @@ void OptionsDialog::SetOptions(bool saveall)
 						Options.SetString(OB.option, option);
 						//vsfilter change
 						if (cbx->GetId() == ID_VSFILTER_PROVIDER){
-							SubtitlesProviderManager::SetProvider(option);
-							Notebook::RefreshVideo();
+							SubtitlesProviderManager::DestroyProviders();
+							Notebook::RefreshVideo(true);
 						}
 					}
 				}

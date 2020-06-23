@@ -100,7 +100,7 @@ public:
 	void GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY);
 	int GetDuration();
 
-	bool OpenSubs(int flag, bool recreateFrame = true, bool refresh = false);
+	bool OpenSubs(int flag, bool recreateFrame = true, bool refresh = false, bool resetParameters = false);
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
 	bool RemoveVisual(bool noRefresh = false);

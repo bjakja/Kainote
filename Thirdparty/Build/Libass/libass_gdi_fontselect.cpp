@@ -55,37 +55,87 @@ public:
 
 size_t GdiFont::GetData(unsigned char *data, size_t offset, size_t len) {
 	if (!font_data) {
-		SelectObject(dc.get(), font);
+		HDC DC = dc.get();
+		if (!DC && g_lib) {
+			ass_msg(g_lib, 2, "Libass font: no dc\0");
+		}
+		if (font && g_lib) {
+			ass_msg(g_lib, 2, "Libass font: no HFONT\0");
+		}
+		auto obj = SelectObject(DC, font);
+		if (obj && g_lib) {
+			ass_msg(g_lib, 2, "Libass font: no Object\0");
+		}
 		DWORD ttcf = 0x66637474;
-		size = GetFontData(dc.get(), ttcf, 0, 0, 0);
+		size = GetFontData(DC, ttcf, 0, 0, 0);
 		if (size == GDI_ERROR) {
 			ttcf = 0;
-			size = GetFontData(dc.get(), 0, 0, 0, 0);
+			size = GetFontData(DC, 0, 0, 0, 0);
 		}
 		if (size == GDI_ERROR) {
 			if (g_lib) {
-				ass_msg(g_lib, 1, "Libass font: cannot get font size");
+				ass_msg(g_lib, 2, "Libass font: cannot get font size\0");
 			}
 			return 0;
 		}
 		font_data.reset(new char[size]);
-		GetFontData(dc.get(), ttcf, 0, font_data.get(), size);
+		DWORD obtainedSize = GetFontData(DC, ttcf, 0, font_data.get(), size);
+		if (g_lib && size != obtainedSize)
+			ass_msg(g_lib, 2, "Libass font: sizes mismatch\0");
 	}
 
 	if (!data) {
-		if(g_lib)
-			ass_msg(g_lib, 1, "Libass font: cannot get font binary");
 		return size;
 	}
 	memcpy(data, font_data.get() + offset, len);
 	return len;
 }
+bool hasFont = false;
+
+char *get_fallback(void *provider, const char *search_family, uint32_t code)
+{
+	std::shared_ptr<HDC__> dc(CreateCompatibleDC(nullptr), [](HDC dc) { DeleteDC(dc); });
+	if (!g_lib)
+	ass_msg(g_lib, 2, "Libass match font: fallback name %s\0", search_family);
+	hasFont = false;
+
+	LOGFONTW lf{};
+	lf.lfCharSet = DEFAULT_CHARSET;
+	MultiByteToWideChar(CP_UTF8, 0, search_family, -1, lf.lfFaceName, LF_FACESIZE);
+	
+	EnumFontFamiliesEx(dc.get(), &lf, [](const LOGFONT *lf, const TEXTMETRIC *, DWORD, LPARAM lParam) -> int {
+		hasFont = true;
+		return 1;
+	}, (LPARAM)&hasFont, 0);
+
+	if (!hasFont) {
+		if(g_lib)
+			ass_msg(g_lib, 2, "Libass font: has no font %s\0", search_family);
+		return NULL;
+	}
+	char *fontName = static_cast<char *>(malloc(LF_FACESIZE * 4));
+	auto len = wcsnlen(lf.lfFaceName, LF_FACESIZE);
+	auto written = WideCharToMultiByte(CP_UTF8, 0, lf.lfFaceName, len,
+		fontName, LF_FACESIZE * 4, nullptr, nullptr);
+	if (!written) {
+		if(g_lib)
+			ass_msg(g_lib, 2, "Libass font: fallback cannot convert font name %s\0", search_family);
+		return NULL;
+	}
+	fontName[written] = 0;
+	return fontName;
+}
+
+
 
 void match_fonts(ASS_Library *lib, ASS_FontProvider *provider, char *name) {
 	std::shared_ptr<HDC__> dc(CreateCompatibleDC(nullptr), [](HDC dc) { DeleteDC(dc); });
 	if (!g_lib)
 		g_lib = lib;
 
+	ass_msg(lib, 2, "Libass match font: font name \"%s\"\0", name);
+	hasFont = false;
+	
 	LOGFONTW lf{};
 	lf.lfCharSet = DEFAULT_CHARSET;
 	MultiByteToWideChar(CP_UTF8, 0, name, -1, lf.lfFaceName, LF_FACESIZE);
@@ -107,10 +157,10 @@ void match_fonts(ASS_Library *lib, ASS_FontProvider *provider, char *name) {
 
 		auto hfont = CreateFontIndirectW(&lf);
 		if(!hfont)
-			ass_msg(lib, 1, "Libass font: no hfont");
+			ass_msg(lib, 2, "Libass font: no hfont\0");
 
 		ass_font_provider_add_font(provider, &meta, nullptr, 0, new GdiFont(hfont, dc));
-
+		hasFont = true;
 		if (name)
 			free(name);
 		if (meta.families)
@@ -121,7 +171,17 @@ void match_fonts(ASS_Library *lib, ASS_FontProvider *provider, char *name) {
 		(*reinterpret_cast<type*>(lParam))(*lf);
 		return 1;
 	}, (LPARAM)&cb, 0);
+
+	if (!hasFont) {
+		ass_msg(lib, 2, "Libass font: has no font %s\0", name);
+	}
+
+
+	
+
 }
+
+
 
 template <typename T, T> struct wrapper;
 template <typename T, typename R, typename... Args, R (T::*method)(Args...)>
@@ -147,7 +207,7 @@ ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
 		nullptr, // destroy_provider
 		&match_fonts,
 		nullptr, // get_substitution
-		nullptr, // get_fallback
+		&get_fallback,
 	};
 	return ass_font_provider_new(selector, &callbacks, nullptr);
 }

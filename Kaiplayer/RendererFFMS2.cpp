@@ -213,9 +213,12 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	return true;
 }
 
-bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text)
+bool RendererFFMS2::OpenSubs(int flag, bool redraw, wxString *text, bool resetParameters)
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (resetParameters)
+		m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
+
 	return m_SubsProvider->Open(tab, flag, text);
 }
 

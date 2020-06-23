@@ -84,7 +84,7 @@ public:
 	virtual bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true){
 		return false; 
 	};
-	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL){ return false; };
+	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL, bool resetParameters = false){ return false; };
 	virtual bool Play(int end = -1){ return false; };
 	virtual bool Pause(){ return false; };
 	virtual bool Stop(){ return false; };

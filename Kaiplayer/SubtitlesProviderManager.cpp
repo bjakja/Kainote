@@ -18,7 +18,7 @@
 
 #include "Config.h"
 
-SubtitlesProvider *SubtitlesProviderManager::SP = NULL;
+std::vector< SubtitlesProviderManager*> SubtitlesProviderManager::gs_Base;
 
 SubtitlesProviderManager::~SubtitlesProviderManager()
 {
@@ -44,20 +44,44 @@ void SubtitlesProviderManager::GetProviders(wxArrayString *providerList)
 	providerList->Add(L"libass");
 }
 
-void SubtitlesProviderManager::SetProvider(const wxString &provider)
+void SubtitlesProviderManager::DestroyProviders()
 {
-	Options.SetString(VSFILTER_INSTANCE, provider);
-	SAFE_DELETE(SP);
+	for (auto *spm : gs_Base) {
+		SAFE_DELETE(spm->SP)
+	}
 }
 
-SubtitlesProviderManager::SubtitlesProviderManager()
-{
-
-}
 
 void SubtitlesProviderManager::DestroySubsProvider()
 {
 	SubtitlesProvider::DestroySubtitlesProvider();
+	//if there is some providers I may destroy it here
+	for (auto *spm : gs_Base) {
+		SAFE_DELETE(spm)
+	}
+	gs_Base.clear();
+}
+
+SubtitlesProviderManager *SubtitlesProviderManager::Get()
+{
+	auto * spm = new SubtitlesProviderManager();
+	gs_Base.push_back(spm);
+	return spm;
+}
+
+void SubtitlesProviderManager::Release()
+{
+
+	for (size_t i = 0; i < gs_Base.size(); i++) {
+		auto *spm = gs_Base[i];
+		if (spm == this) {
+			delete spm;
+			gs_Base.erase(gs_Base.begin() + i);
+			return;
+		}
+	}
+	//if it goes here it means that some alocation was outside base = memory leaks
+	return;
 }
 
 void SubtitlesProviderManager::Draw(unsigned char* buffer, int time)
@@ -75,9 +99,9 @@ bool SubtitlesProviderManager::OpenString(wxString *text)
 	return GetProvider()->OpenString(text);
 }
 
-void SubtitlesProviderManager::SetVideoParameters(const wxSize& size, char bytesPerColor, bool isSwapped)
+void SubtitlesProviderManager::SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped)
 {
-	GetProvider()->SetVideoParameters(size, bytesPerColor, isSwapped);
+	GetProvider()->SetVideoParameters(size, format, isSwapped);
 }
 
 #endif

@@ -41,7 +41,7 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	, videoControl(control)
 {
 	tab = (TabPanel*)videoControl->GetParent();
-	m_SubsProvider = new SubtitlesProviderManager();
+	m_SubsProvider = SubtitlesProviderManager::Get();
 	m_HWND = videoControl->GetHWND();
 
 	//---------------------------- format
@@ -84,7 +84,7 @@ RendererVideo::~RendererVideo()
 
 	Clear();
 	SAFE_DELETE(m_Visual);
-	SAFE_DELETE(m_SubsProvider);
+	SAFE_RELEASE(m_SubsProvider);
 
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
 

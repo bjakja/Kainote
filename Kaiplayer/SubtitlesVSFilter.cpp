@@ -127,23 +127,6 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	m_CsriInstance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
 	if (!m_CsriInstance){ KaiLog(_("Nie mo¿na utworzyæ instancji CSRI.")); delete textsubs; return false; }
 
-	if (!m_CsriFrame){ 
-		m_CsriFrame = new csri_frame; 
-		//we only uses first planes and strides rest can be reset just once
-		for (int i = 1; i < 4; i++){
-			m_CsriFrame->planes[i] = NULL;
-			m_CsriFrame->strides[i] = NULL;
-		}
-	}
-	if (!m_CsriFormat){ m_CsriFormat = new csri_fmt; }
-	
-
-	m_CsriFrame->pixfmt = (renderer->m_Format == 5) ? CSRI_F_YV12A : (renderer->m_Format == 3) ? CSRI_F_YV12 :
-		(renderer->m_Format == 2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
-
-	m_CsriFormat->width = renderer->m_Width;
-	m_CsriFormat->height = renderer->m_Height;
-	m_CsriFormat->pixfmt = m_CsriFrame->pixfmt;
 
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
 		KaiLog(_("CSRI nie obs³uguje tego formatu."));
@@ -235,7 +218,8 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 	//test if current renderer is removed
 	//if yes than just set NULL to renderer
 	//without destroying it it makes memory leaks
-	//m_CsriRenderer = NULL;
+	csri_close_renderer(m_CsriRenderer);
+	m_CsriRenderer = NULL;
 }
 
 void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
