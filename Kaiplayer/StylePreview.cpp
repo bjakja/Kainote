@@ -49,8 +49,8 @@ void StylePreview::DrawPreview(Styles *style)
 	GetClientSize(&width, &height);
 	pitch = width * 4;
 	wxString *dat = new wxString();
-	SubsText(dat);
-	m_SubtitlesProvider->SetVideoParameters(wxSize(width, height), 4, false);
+	SubsText(dat);												//rgb32
+	m_SubtitlesProvider->SetVideoParameters(wxSize(width, height), 0, false);
 	m_SubtitlesProvider->OpenString(dat);
 
 	const wxColour & kol1 = Options.GetColour(STYLE_PREVIEW_COLOR1);

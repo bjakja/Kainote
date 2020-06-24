@@ -975,6 +975,7 @@ void FontCollector::EnumerateFonts()
 		fc->logFonts.push_back(*lf);
 		return 1;
 	}, (LPARAM)this, 0);
+	::DeleteDC(dc);
 }
 
 bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied)

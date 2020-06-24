@@ -80,10 +80,11 @@ public:
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	ASS_Track *m_AssTrack = NULL;
-	std::atomic<bool> m_IsReady{ false };
+	static std::atomic<bool> m_IsReady;
 	HANDLE thread = NULL;
 	wxSize m_VideoSize;
 	volatile bool m_SubsSkipped = false;
+	static wxMutex openMutex;
 };
 
 #endif

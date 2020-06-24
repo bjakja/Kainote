@@ -37,7 +37,7 @@ public:
 	static void Create(wxWindow *parent);
 	static LogHandler *Get(){ return sthis; }
 	static void Destroy();
-	void LogMessage(const wxString &format);
+	void LogMessage(const wxString &format, bool showMessage = true);
 	static void ShowLogWindow();
 	//void LogMessage1(const wxString &format, ...);
 };
@@ -46,6 +46,12 @@ static void KaiLog(const wxString &text){
 	LogHandler * handler = LogHandler::Get();
 	if (handler)
 		handler->LogMessage(text);
+}
+
+static void KaiLogSilent(const wxString &text) {
+	LogHandler * handler = LogHandler::Get();
+	if (handler)
+		handler->LogMessage(text, false);
 }
 
 static void KaiLogDebug(const wxString &text){

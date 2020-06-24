@@ -1565,10 +1565,11 @@ int VideoCtrl::GetDuration()
 bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetParameters)
 {
 	if (renderer){
-		return renderer->OpenSubs(flag, recreateFrame, NULL, resetParameters);
+		bool success = renderer->OpenSubs(flag, recreateFrame, NULL, resetParameters);
 		if (refresh){
 			Render();
 		}
+		return success;
 	}
 	return false;
 }

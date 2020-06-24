@@ -25,7 +25,8 @@
 #include <process.h>
 
 
-
+std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
+wxMutex SubtitlesLibass::openMutex;
 
 void MessageCallback(int level, const char *fmt, va_list args, void *) {
 	if (level >= 4) return;
@@ -34,27 +35,34 @@ void MessageCallback(int level, const char *fmt, va_list args, void *) {
 	vsprintf_s(buf, sizeof(buf), fmt, args);
 
 	if (level < 2) // warning/error
-		KaiLog(L"Libass: " + wxString(buf, wxConvUTF8));
+#if _DEBUG
+		KaiLogDebug(L"Libass: " + wxString(buf, wxConvUTF8));
+#else
+		KaiLogSilent(L"Libass: " + wxString(buf, wxConvUTF8));
+#endif
+#if _DEBUG
 	else // verbose
 		KaiLogDebug(L"Libass: " + wxString(buf, wxConvUTF8));
+#endif
 }
 
 unsigned int __stdcall  ProcessLibassCache(void *data)
 {
 	SubtitlesLibass * libass = (SubtitlesLibass*)data;
-	if (!libass->m_Libass) {
-		libass->m_Libass = ass_renderer_init(libass->m_Library);
-		if (libass->m_Libass) {
-			ass_set_font_scale(libass->m_Libass, 1.);
-			ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
-		}
+	
+	libass->m_Libass = ass_renderer_init(libass->m_Library);
+	if (libass->m_Libass) {
+		ass_set_font_scale(libass->m_Libass, 1.);
+		ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
 	}
+
 	if (libass->m_SubsSkipped) {
 		TabPanel * tab = Notebook::GetTab();
-		if(tab->Video->GetState() != None)
-			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
+		if (tab->Video->GetState() != None) {
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
+		}
 	}
-	libass->m_IsReady.store(true);
+	libass->m_IsReady.store(libass->m_Libass != NULL);
 
 	return 0;
 }
@@ -64,11 +72,15 @@ SubtitlesLibass::SubtitlesLibass()
 	if (!m_Library) {
 		m_Library = ass_library_init();
 		ass_set_message_cb(m_Library, MessageCallback, NULL);
+		if (!m_Libass) {
+			unsigned int threadid = 0;
+			thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
+			//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
+			SetThreadName(threadid, "LibassCache");
+		}
 	}
-	unsigned int threadid = 0;
-	thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
-	//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
-	SetThreadName(threadid, "LibassCache");
+
+	
 
 }
 	
@@ -91,6 +103,7 @@ SubtitlesLibass::~SubtitlesLibass()
 
 void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 {
+	wxMutexLocker lock(openMutex);
 	if (m_IsReady.load() && m_AssTrack){
 		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
 
@@ -136,6 +149,7 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 
 bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 {
+	wxMutexLocker lock(openMutex);
 	if (!m_IsReady || !m_HasParameters) {
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
@@ -200,6 +214,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 
 bool SubtitlesLibass::OpenString(wxString *text)
 {
+	wxMutexLocker lock(openMutex);
 	if (!m_IsReady) {
 		SAFE_DELETE(text);
 		return false;
