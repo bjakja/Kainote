@@ -124,7 +124,6 @@ public:
 	wxSize SubsSize;
 	wxRect VideoSize;
 	TabPanel *tab;
-	bool hasArrow;
 	bool blockevents;
 	bool notDialogue;
 	wxString *dummytext;

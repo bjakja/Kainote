@@ -540,13 +540,11 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		int pos = CheckPos(xy);
 		if (pos != -1/* && hasArrow*//* && !ctrl*/){
 			acpoint = Points[pos];
-			hasArrow = false;
 			lastpos = pos;
 			tab->Video->Render(false);
 			
 		}
-		else if (pos == -1 && !hasArrow/* && !ctrl*/){
-			hasArrow = true;
+		else if (pos == -1 && !tab->Video->HasArrow()){
 			if (lastpos >= 0 && lastpos < (int)psize){
 				lastpos = -1;
 				tab->Video->Render(false);

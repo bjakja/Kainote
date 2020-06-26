@@ -497,7 +497,6 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		//only cross let for another click events
 		//it's only uses moving
 		if (visual->Visual != CROSS){
-			SetCursor(wxCURSOR_ARROW);
 			return;
 		}
 	}

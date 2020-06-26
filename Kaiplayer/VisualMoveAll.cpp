@@ -66,7 +66,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 			tab->Video->ReleaseMouse();
 		}
 		if (numElem >= 0){ ChangeInLines(true); }
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
 		numElem = -1;
 	}
 

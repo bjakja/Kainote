@@ -359,6 +359,7 @@ EditBox::~EditBox()
 
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
+	wxMutexLocker lock(grid->GetMutex());
 	bool rowChanged = currentLine != Row;
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
@@ -368,6 +369,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode){
 		SetTlMode(grid->hasTLMode, true);
 	}
+
 	if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}

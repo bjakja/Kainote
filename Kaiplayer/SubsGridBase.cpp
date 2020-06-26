@@ -306,6 +306,8 @@ void SubsGridBase::Convert(char type)
 
 void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
 {
+	wxMutexLocker lock(editionMutex);
+
 	int saveAfterCharacterCount = Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT);
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	bool dummyEditboxChanges = (loadFromEditbox && !saveAfterCharacterCount);
@@ -446,8 +448,7 @@ std::vector<Styles*> *SubsGridBase::GetStyleTable()
 {
 	return file->GetStyleTable();
 }
-
-//multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
+//multiplication have to be set to zero, then gets number of multiplication
 int SubsGridBase::FindStyle(const wxString &name, int *multip)
 {
 	return file->FindStyle(name, multip);
@@ -1112,9 +1113,10 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 	}
 }
 
-
+//need to guard
 void SubsGridBase::AddSInfo(const wxString &SI, wxString val, bool save)
 {
+	//wxMutexLocker lock(editionMutex);
 	file->AddSInfo(SI, val, save);
 }
 
@@ -1122,6 +1124,8 @@ void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 {
 	file->GetSInfos(textSinfo, tld);
 }
+
+//dont guard cause most of functions that it uses have own gauard
 //Every SetModified have to find on list and add etitionType
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
@@ -1186,6 +1190,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 
 void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 {
+	//wxMutexLocker lock(editionMutex);
 	file->SwapRows(frst, scnd);
 	if (SpellErrors.size() > frst && SpellErrors.size() > scnd){
 		wxArrayInt tmpspell = SpellErrors[frst];
@@ -1221,7 +1226,7 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 				newend += dial->Start.mstime;
 				dial->End.NewTime(newend);
 				if (i<GetCount() - 1){
-					if (dial->End>file->GetDialogue(i + 1)->Start){
+					if (dial->End > file->GetDialogue(i + 1)->Start){
 						dial->End = file->GetDialogue(i + 1)->Start;
 					}
 				}
@@ -1303,8 +1308,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 {
 	if (mode){
 		if (GetSInfo(L"TLMode") == L""){
-			//for(int i=0;i<GetCount();i++){file->GetDialogue(i)->spells.clear();}
-
+			
 			int ssize = file->StylesSize();
 			if (ssize > 0){
 				Styles *tlstyl = GetStyle(0, L"Default")->Copy();
@@ -1492,9 +1496,11 @@ wxString *SubsGridBase::SaveText()
 	return path;
 }
 
-
+//this function is called from another thread
+//need to guard every change in dialogues, styles, sinfos, and editbox->line
 wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *selected, bool allSubs)
 {
+	wxMutexLocker lock(editionMutex);
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	int _time = tab->Video->Tell();
 	bool toEnd = tab->Video->GetState() == Playing;

@@ -337,7 +337,7 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 		else if (selectedTool == 2)
 			oldAngle = angle;
 
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		if (isOrg)
 			isOrg = false;
 		else
@@ -345,16 +345,15 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if (selectedTool == 0 && !holding){
 		if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8 && (tagXFound || tagYFound)){
-			if (hasArrow){ 
+			if (tab->Video->HasArrow()){ 
 				tab->Video->SetCursor((tagXFound && tagYFound) ? wxCURSOR_SIZING : tagYFound ? wxCURSOR_SIZENS : wxCURSOR_SIZEWE);
-				hasArrow = false; 
 			}
 		}
 		else if (abs(lastmove.x - x) < 8 && abs(from.y - y) < 8 && tagXFound){
-			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } }
+			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZEWE); } }
 		else if (abs(lastmove.y - y) < 8 && abs(from.x - x) < 8 && tagYFound){
-			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } }
-		else if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZENS); } }
+		else if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click){
 		tab->Video->CaptureMouse();
@@ -379,7 +378,6 @@ void ScaleRotation::OnClickRotationZ(int x, int y)
 {
 	if (tagXFound){
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 	}
 	if (abs(org.x - x) < 8 && abs(org.y - y) < 8 && hasOrg){
 		isOrg = true;
@@ -410,7 +408,6 @@ void ScaleRotation::OnClickRotationXY(int x, int y, bool leftClick, bool rightCl
 		diffs.y = org.y - y;
 	}
 	firstmove = D3DXVECTOR2(x, y);
-	hasArrow = false;
 	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 	if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 	if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
@@ -434,7 +431,6 @@ void ScaleRotation::OnClickScaling(int x, int y, bool leftClick, bool rightClick
 	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 	if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 	if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
-	hasArrow = false;
 	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
 	if (leftClick && shiftDown){
 		type = 2;

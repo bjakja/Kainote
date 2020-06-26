@@ -72,7 +72,7 @@ private:
 
 	AudioSpectrum *spectrumRenderer;
 	wxSize LastSize;
-	float curpos;
+	volatile float curpos;
 
 	int64_t PositionSample;
 	float scale;
@@ -110,7 +110,8 @@ private:
 	int *peak;
 	int *min;
 
-	wxMutex mutex;
+	wxCriticalSection mutex;
+	wxCriticalSection mutexUpdate;
 	int whichsyl;
 	int letter;
 	int syll;
@@ -162,8 +163,9 @@ private:
 	void OnPaint(wxPaintEvent &event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnSize(wxSizeEvent &event);
-	void OnUpdateTimer(wxTimerEvent &event);
-	//static VOID CALLBACK OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired);
+	//void OnUpdateTimer(wxTimerEvent &event);
+	static unsigned int _stdcall OnUpdateTimer(PVOID pointer);
+	void UpdateTimer();
 	void OnGetFocus(wxFocusEvent &event);
 	void OnLoseFocus(wxFocusEvent &event);
 	void OnEraseBackground(wxEraseEvent &event){};
@@ -181,7 +183,7 @@ private:
 	void DrawSpectrum(bool weak);
 	void DrawProgress();
 	void GetDialoguePos(int64_t &start, int64_t &end, bool cap);
-	void GetKaraokePos(int64_t &start, int64_t &end, bool cap);
+	//void GetKaraokePos(int64_t &start, int64_t &end, bool cap);
 	void UpdatePosition(int pos, bool IsSample = false);
 
 	void DoUpdateImage();
@@ -199,16 +201,18 @@ public:
 	bool loaded;
 	bool hasMark;
 	bool isHidden = false;
+	volatile bool stopPlayThread = false;
 	int curMarkMS;
 	int Grabbed;
 	int hold;
 
 	int w, h;
+	wxRect screenRect;
 	AudioBox *box;
 	KaiScrollbar *ScrollBar;
-	wxTimer UpdateTimer;
+	//wxTimer UpdateTimer;
 	wxTimer ProgressTimer;
-	//HANDLE UpdateTimerHandle;
+	HANDLE UpdateTimerHandle = NULL;
 	float lastProgress = -1.f;
 	bool cursorPaint;
 
@@ -235,7 +239,7 @@ public:
 	void AddLead(bool in, bool out);
 
 	void SetFile(wxString file, bool fromvideo);
-	void Reload();
+	//void Reload();
 
 	void Play(int start, int end, bool pause = true);
 	void Stop(bool stopVideo = true);

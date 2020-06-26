@@ -90,20 +90,20 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		SetVisual(false, type);
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
 
 	if (!holding){
 		if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ 
-			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZING); hasArrow = false; } 
+			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZING); } 
 		}
 		else if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ 
-			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZEWE); hasArrow = false; } 
+			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZEWE); } 
 		}
 		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ 
-			if (hasArrow){ tab->Video->SetCursor(wxCURSOR_SIZENS); hasArrow = false; } 
+			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZENS); } 
 		}
-		else if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		else if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click){
 		if (leftc){ type = 0; }
@@ -117,7 +117,6 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 		if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 		if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
-		hasArrow = false;
 		if (leftc && evt.ShiftDown()){
 			type = 2;
 			diffs.x = x;

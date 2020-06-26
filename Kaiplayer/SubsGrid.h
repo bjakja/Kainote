@@ -50,7 +50,7 @@ private:
 	void OnInsertBefore();
 	void OnInsertAfter();
 	void OnDuplicate();
-	void OnJoinF(int id);
+	//void OnJoinF(int id);
 	void OnPaste(int id);
 	void OnPasteTextTl();
 	void OnJoinToFirst(int id);

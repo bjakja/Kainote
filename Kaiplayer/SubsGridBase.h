@@ -151,6 +151,7 @@ public:
 	static void RemoveComparison();
 	static wxArrayString compareStyles;
 	static bool hasCompare;
+	wxMutex &GetMutex() { return editionMutex; }
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
@@ -177,6 +178,7 @@ protected:
 	wxTimer nullifyTimer;
 	void OnBackupTimer(wxTimerEvent &event);
 	TabPanel *tab;
+	wxMutex editionMutex;
 };
 
 bool sortstart(Dialogue *i, Dialogue *j);

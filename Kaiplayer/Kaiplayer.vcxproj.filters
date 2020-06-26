@@ -36,6 +36,9 @@
     <Filter Include="Source Files\Video">
       <UniqueIdentifier>{8ba4449e-7f5d-4750-a60d-35678ae8751b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Video\Visuals">
+      <UniqueIdentifier>{030b31e5-8731-43d9-934f-2623a961ec52}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AudioBox.cpp">
@@ -227,33 +230,6 @@
     <ClCompile Include="VideoToolbar.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="VisualClipRect.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualClips.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualMove.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualMoveAll.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualPosition.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualRotationXY.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualRotationZ.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="Visuals.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VisualScale.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="DShowPlayer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -353,9 +329,6 @@
     <ClCompile Include="LogHandler.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
-    <ClCompile Include="VisualScaleRotation.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="KaiWindowResizer.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
@@ -398,9 +371,6 @@
     <ClCompile Include="RendererVideo.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="VisualCross.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="SubtitlesVSFilter.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -409,6 +379,39 @@
     </ClCompile>
     <ClCompile Include="SubtitlesProviderManager.cpp">
       <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClipRect.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClips.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualCross.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMove.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMoveAll.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualPosition.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationXY.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationZ.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="Visuals.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualScale.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualScaleRotation.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -676,9 +679,6 @@
     <ClInclude Include="VideoToolbar.h">
       <Filter>Source Files\Video</Filter>
     </ClInclude>
-    <ClInclude Include="Visuals.h">
-      <Filter>Source Files\Video</Filter>
-    </ClInclude>
     <ClInclude Include="ColorPicker.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
@@ -756,6 +756,9 @@
     </ClInclude>
     <ClInclude Include="SubtitlesProviderManager.h">
       <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Visuals.h">
+      <Filter>Source Files\Video\Visuals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

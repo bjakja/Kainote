@@ -94,7 +94,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		SetVisual(false, type);
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		grabbed = -1;
 		moveDistance = to - from;
 		movingHelperLine = false;
@@ -113,7 +113,6 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
 

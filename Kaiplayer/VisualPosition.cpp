@@ -97,7 +97,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 		for (size_t i = 0; i < data.size(); i++){
 			data[i].lastpos = data[i].pos;
 		}
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
 		movingHelperLine = false;
 	}
 	if (movingHelperLine){
@@ -113,7 +113,6 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 		wxArrayInt sels;
 		tab->Grid->file->GetSelections(sels);
 		if (sels.size() != data.size()){ SetCurVisual(); tab->Video->Render(); }

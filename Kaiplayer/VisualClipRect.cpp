@@ -161,7 +161,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 		if (showClip)
 			SetVisual(false, 0);
 
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
 
 	if (!holding && showClip){

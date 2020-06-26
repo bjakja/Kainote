@@ -55,7 +55,11 @@
 #include "kainoteApp.h"
 #include "RendererVideo.h"
 #include <math.h>
+#include <process.h>
 //#undef DrawText
+
+wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
+
 
 inline D3DCOLOR D3DCOLOR_FROM_WX(const wxColour &col){
 	return (D3DCOLOR)((((col.Alpha()) & 0xff) << 24) | (((col.Red()) & 0xff) << 16) | (((col.Green()) & 0xff) << 8) | ((col.Blue()) & 0xff));
@@ -132,7 +136,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	int fh;
 	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
 	timelineHeight = fh + 8;
-	UpdateTimer.SetOwner(this, Audio_Update_Timer);
+	//UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
 	ProgressTimer.SetOwner(this, 7654);
@@ -145,6 +149,9 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 		}
 	}, 7654);
 	ChangeOptions();
+	Bind(EVENT_UPDATE_SCROLLBAR, [=](wxThreadEvent &evt) {
+		UpdateScrollbar();
+	});
 	// Set cursor
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
@@ -335,7 +342,7 @@ void AudioDisplay::DoUpdateImage() {
 	if (w < 1 || displayH < 1 || isHidden) return;
 	// Loaded?
 	if (!loaded || !provider) return;
-	wxMutexLocker lock(mutex);
+	wxCriticalSectionLocker lock(mutex);
 	// Needs updating?
 	//if (!needImageUpdate) return;
 	bool weak = needImageUpdateWeak;
@@ -967,8 +974,8 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 		spectrumSurface->UnlockRect();
 
 	}
-	wxRect crc = GetClientRect();
-	RECT rc = { crc.x, crc.y, crc.width - crc.x, crc.height - crc.y };
+	
+	RECT rc = { screenRect.x, screenRect.y, screenRect.width - screenRect.x, screenRect.height - screenRect.y };
 	if (FAILED(d3dDevice->StretchRect(spectrumSurface, &rc, backBuffer, &rc, D3DTEXF_LINEAR))){
 		KaiLog(_("Nie można nałożyć powierzchni spectrum na siebie"));
 	}
@@ -1133,7 +1140,13 @@ void AudioDisplay::UpdatePosition(int pos, bool IsSample) {
 	// Set
 	Position = pos;
 	PositionSample = pos*samples;
-	UpdateScrollbar();
+	if(wxThread::IsMain())
+		UpdateScrollbar();
+	else {
+		wxThreadEvent *evt = new wxThreadEvent(EVENT_UPDATE_SCROLLBAR);
+		wxQueueEvent(this, evt);
+	}
+
 }
 
 
@@ -1168,6 +1181,8 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 //////////////////
 // Update samples
 void AudioDisplay::UpdateSamples() {
+
+	wxCriticalSectionLocker lock(mutex);
 	// Set samples
 	if (!provider) return;
 	if (w) {
@@ -1178,7 +1193,7 @@ void AudioDisplay::UpdateSamples() {
 		int min = 8;
 		if (total < min) total = min;
 		int range = total - min;
-		samples = int(range*pow(samplesPercent / 100.0, 3) + min);
+		samples = int(range * pow(samplesPercent / 100.0, 3) + min);
 
 		// Set position
 		int length = w * samples;
@@ -1421,8 +1436,13 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 
 	// Call play
 	player->Play(start, end - start);
-	if (!UpdateTimer.IsRunning()) UpdateTimer.Start(10);
-	//CreateTimerQueueTimer(&UpdateTimerHandle, 0, WAITORTIMERCALLBACK(OnUpdateTimer), this, 1, 16, WT_EXECUTELONGFUNCTION);
+	//if (!UpdateTimer.IsRunning()) UpdateTimer.Start(10);
+	if (!UpdateTimerHandle) {
+		unsigned int threadid = 0;
+		UpdateTimerHandle = (HANDLE)_beginthreadex(0, 0, OnUpdateTimer, this, 0, &threadid);
+		SetThreadName(threadid, "AudioUpdate");
+	}
+		
 }
 
 
@@ -1432,8 +1452,15 @@ void AudioDisplay::Stop(bool stopVideo) {
 	if (stopVideo && Notebook::GetTab()->Video->GetState() == Playing){ Notebook::GetTab()->Video->Pause(); }
 	else if (player) {
 		player->Stop();
-		if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
-		//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
+		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+		if (UpdateTimerHandle) {
+			//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
+			////DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
+			stopPlayThread = true;
+			WaitForSingleObject(UpdateTimerHandle, 10000);
+			CloseHandle(UpdateTimerHandle);
+			UpdateTimerHandle = NULL;
+		}
 		cursorPaint = false;
 		Refresh(false);
 	}
@@ -2079,10 +2106,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			}
 
 			// Draw cursor
-			//needImageUpdateWeak = true;
-			//needImageUpdate=true;
 			curpos = x;
-			//Refresh(false);
 			UpdateImage(true);
 		}
 
@@ -2202,6 +2226,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 	LastSize = wxSize(w, h);
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
+	screenRect = GetClientRect();
 	if (LastSize.x == w && LastSize.y == h)
 		return;
 
@@ -2219,11 +2244,28 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 
 ///////////////
 // Timer event
-void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
-	//VOID CALLBACK AudioDisplay::OnUpdateTimer(PVOID pointer, BOOLEAN timerOrWaitFaired){
+//void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 
-	//wxMutexLocker lock(mutex);
-	//AudioDisplay * ad = (AudioDisplay *)pointer;
+unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
+{
+	AudioDisplay * ad = (AudioDisplay *)pointer;
+	while (true) {
+		if (ad->stopPlayThread) {
+			ad->stopPlayThread = false;
+			break;
+		}
+
+		ad->UpdateTimer();
+		Sleep(10);
+	}
+	return 0;
+}
+
+void AudioDisplay::UpdateTimer()
+{
+
+	wxCriticalSectionLocker lock(mutexUpdate);
+	
 
 	// Draw cursor
 	curpos = -1;
@@ -2235,7 +2277,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
 			// Scroll if needed
 			int posX = GetXAtSample(curPos);
-			bool fullDraw = false;
+			//bool fullDraw = false;
 			bool centerLock = false;
 			bool scrollToCursor = Options.GetBool(AUDIO_LOCK_SCROLL_ON_CURSOR);
 			if (centerLock) {
@@ -2243,17 +2285,20 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 				if (goTo >= 0) {
 					UpdatePosition(goTo, true);
 					UpdateImage(false, true);
-					fullDraw = true;
 				}
 			}
 			else {
 				if (scrollToCursor) {
-					if (posX < 80 || posX > w - 80) {
-						int goTo = MAX(0, curPos - 80 * samples);
+					if (posX < 50 || posX > w - 50) {
+						int goTo = MAX(0, curPos - 50 * samples);
 						if (goTo >= 0) {
 							UpdatePosition(goTo, true);
-							UpdateImage(false, true);
-							fullDraw = true;
+							curpos = GetXAtSample(curPos);
+							needImageUpdateWeak = false;
+							DoUpdateImage();
+							needImageUpdateWeak = true;
+							Sleep(10);
+							return;
 						}
 					}
 				}
@@ -2261,30 +2306,27 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 
 			// Draw cursor
 			curpos = GetXAtSample(curPos);
-			if (curpos >= 0.f && curpos < GetClientSize().GetWidth()) {
+			if (curpos >= 0.f && curpos < w/*GetClientSize().GetWidth()*/) {
 
-				//Refresh(false);
-				//UpdateImage(false, true);
 				DoUpdateImage();
 			}
 			else if (cursorPaint){
 				cursorPaint = false;
-				//Refresh(false);
-				//UpdateImage(false, true);
 				DoUpdateImage();
 			}
 		}
 		else {
 
 			cursorPaint = false;
-			//Refresh(false);
-			//UpdateImage(false, true);
 			DoUpdateImage();
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
-				if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
-				//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
-				//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
+				//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
+				//if (UpdateTimerHandle) {
+				//	DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
+				//	//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
+				//	UpdateTimerHandle = NULL;
+				//}
 			}
 		}
 
@@ -2302,6 +2344,7 @@ void AudioDisplay::OnUpdateTimer(wxTimerEvent &event) {
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;
+	Sleep(10);
 }
 
 
@@ -2471,7 +2514,7 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	int fh;
 	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
 	timelineHeight = fh + 8;
-	UpdateTimer.SetOwner(this, Audio_Update_Timer);
+	//UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
 	UpdateImage(true);
@@ -2484,7 +2527,7 @@ BEGIN_EVENT_TABLE(AudioDisplay, wxWindow)
 EVT_MOUSE_EVENTS(AudioDisplay::OnMouseEvent)
 EVT_PAINT(AudioDisplay::OnPaint)
 EVT_SIZE(AudioDisplay::OnSize)
-EVT_TIMER(Audio_Update_Timer, AudioDisplay::OnUpdateTimer)
+//EVT_TIMER(Audio_Update_Timer, AudioDisplay::OnUpdateTimer)
 EVT_SET_FOCUS(AudioDisplay::OnGetFocus)
 EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
 EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)

@@ -126,7 +126,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (gc)
-		PaintGDIPlus(gc, w, h, size, scrows, previewpos, previewsize, bg);
+		PaintD2D(gc, w, h, size, scrows, previewpos, previewsize, bg);
 	else
 	{
 
@@ -511,7 +511,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	dc.Blit(firstCol + posX, 0, w + scHor, h, &tdc, scHor + firstCol + posX, 0);
 }
 
-void SubsGridWindow::PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
+void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg)
 {
 	
 	const wxColour &header = Options.GetColour(GRID_HEADER);
