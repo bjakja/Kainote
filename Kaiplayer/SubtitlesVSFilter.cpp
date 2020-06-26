@@ -185,7 +185,7 @@ csri_rend *SubtitlesVSFilter::GetVSFilter()
 	if (!m_CsriRenderer){
 		m_CsriRenderer = csri_renderer_default();
 		csri_info *info = csri_renderer_info(m_CsriRenderer);
-		wxString name = GetString(VSFILTER_INSTANCE);
+		wxString name = Options.GetString(VSFILTER_INSTANCE);
 		if (!name.empty()){
 			while (info->name != name){
 				m_CsriRenderer = csri_renderer_next(m_CsriRenderer);

@@ -185,7 +185,7 @@ public:
 	void UpdateVideoWindow();
 	bool UpdateRects(bool changeZoom = true);
 	void VisualChangeTool(int tool);
-	bool HasVisual();
+	bool HasVisual(bool hasDefault = false);
 	Visuals *GetVisual();
 	void SetAudioPlayer(AudioDisplay *player);
 	

@@ -813,9 +813,12 @@ void RendererVideo::VisualChangeTool(int tool)
 		m_Visual->ChangeTool(tool);
 }
 
-bool RendererVideo::HasVisual()
+bool RendererVideo::HasVisual(bool hasDefault)
 {
-	return m_Visual != NULL;
+	if (hasDefault)
+		return m_Visual && m_Visual->Visual != CROSS;
+	else
+		return m_Visual;
 }
 
 Visuals *RendererVideo::GetVisual()

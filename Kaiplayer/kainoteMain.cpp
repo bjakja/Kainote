@@ -331,7 +331,6 @@ KainoteFrame::~KainoteFrame()
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 	LogHandler::Destroy();
-	SubtitlesProviderManager::DestroySubsProvider();
 }
 
 void KainoteFrame::DestroyDialogs(){

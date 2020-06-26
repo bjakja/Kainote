@@ -474,7 +474,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			}
 			return;
 		}
-		else if (!renderer->HasVisual()){
+		else if (!renderer->HasVisual(true)){
 			if (!m_IsDirectShow){
 				AudioBox *box = tab->Edit->ABox;
 				if (box){

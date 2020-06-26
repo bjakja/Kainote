@@ -51,6 +51,7 @@
 #include "KaiScrollbar.h"
 #include <d3d9.h>
 #include <d3dx9.h>
+#include <atomic>
 
 //////////////
 // Prototypes
@@ -201,7 +202,7 @@ public:
 	bool loaded;
 	bool hasMark;
 	bool isHidden = false;
-	volatile bool stopPlayThread = false;
+	std::atomic<bool> stopPlayThread{ true };
 	int curMarkMS;
 	int Grabbed;
 	int hold;
@@ -213,6 +214,8 @@ public:
 	//wxTimer UpdateTimer;
 	wxTimer ProgressTimer;
 	HANDLE UpdateTimerHandle = NULL;
+	HANDLE PlayEvent;
+	HANDLE DestroyEvent;
 	float lastProgress = -1.f;
 	bool cursorPaint;
 

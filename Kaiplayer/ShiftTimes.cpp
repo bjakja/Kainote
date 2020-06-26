@@ -94,6 +94,7 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	: wxWindow(parent, id, pos, size, style | wxVERTICAL)
 {
+	Kai = kfparent;
 	tab = (TabPanel *)parent;
 	form = ASS;
 	panel = new wxWindow(this, -1);

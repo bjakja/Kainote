@@ -30,7 +30,7 @@
 #include "gitparams.h"
 #include <windows.h>
 #include "ConfigConverter.h"
-
+#include "SubtitlesProviderManager.h"
 
 
 #define ADD_QUOTES_HELPER(s) #s
@@ -63,6 +63,7 @@ config::~config()
 	assstore.clear();
 
 	FontsClear();
+	SubtitlesProviderManager::DestroySubsProvider();
 }
 
 void config::FontsClear()

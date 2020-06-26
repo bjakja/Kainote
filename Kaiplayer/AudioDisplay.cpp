@@ -88,6 +88,8 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	, d3dFontTahoma8(NULL)
 	, d3dFontVerdana11(NULL)
 	, backBuffer(NULL)
+	, PlayEvent(CreateEvent(0, FALSE, FALSE, 0))
+	, DestroyEvent(CreateEvent(0, FALSE, FALSE, 0))
 {
 	// Set variables
 	deviceLost = false;
@@ -155,13 +157,26 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	// Set cursor
 	//wxCursor cursor(wxCURSOR_BLANK);
 	//SetCursor(cursor);
-
+	unsigned int threadid = 0;
+	UpdateTimerHandle = (HANDLE)_beginthreadex(0, 0, OnUpdateTimer, this, 0, &threadid);
+	SetThreadName(threadid, "AudioUpdate");
 }
 
 
 //////////////
 // Destructor
 AudioDisplay::~AudioDisplay() {
+	if (UpdateTimerHandle) {
+		
+		stopPlayThread = true;
+		SetEvent(DestroyEvent);
+		WaitForSingleObject(UpdateTimerHandle, 10000);
+		CloseHandle(UpdateTimerHandle);
+		CloseHandle(PlayEvent);
+		CloseHandle(DestroyEvent);
+		UpdateTimerHandle = NULL;
+		
+	}
 	if (player) { player->CloseStream(); delete player; }
 	if (ownProvider && provider) { delete provider; provider = NULL; }
 	ClearDX();
@@ -1437,11 +1452,8 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 	// Call play
 	player->Play(start, end - start);
 	//if (!UpdateTimer.IsRunning()) UpdateTimer.Start(10);
-	if (!UpdateTimerHandle) {
-		unsigned int threadid = 0;
-		UpdateTimerHandle = (HANDLE)_beginthreadex(0, 0, OnUpdateTimer, this, 0, &threadid);
-		SetThreadName(threadid, "AudioUpdate");
-	}
+	if(stopPlayThread)
+		SetEvent(PlayEvent);
 		
 }
 
@@ -1453,14 +1465,7 @@ void AudioDisplay::Stop(bool stopVideo) {
 	else if (player) {
 		player->Stop();
 		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
-		if (UpdateTimerHandle) {
-			//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
-			////DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
-			stopPlayThread = true;
-			WaitForSingleObject(UpdateTimerHandle, 10000);
-			CloseHandle(UpdateTimerHandle);
-			UpdateTimerHandle = NULL;
-		}
+		stopPlayThread = true;	
 		cursorPaint = false;
 		Refresh(false);
 	}
@@ -2112,6 +2117,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 
 	}
+	
 }
 
 
@@ -2249,14 +2255,20 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
 {
 	AudioDisplay * ad = (AudioDisplay *)pointer;
+	HANDLE eventsToWait[] = { ad->PlayEvent , ad->DestroyEvent };
 	while (true) {
-		if (ad->stopPlayThread) {
+		DWORD waitResult = WaitForMultipleObjects(sizeof(eventsToWait) / sizeof(HANDLE), eventsToWait, FALSE, INFINITE);
+		if (waitResult == WAIT_OBJECT_0) {
 			ad->stopPlayThread = false;
+			while (!ad->stopPlayThread) {
+				ad->UpdateTimer();
+				Sleep(10);
+			}
+		}
+		else
+		{
 			break;
 		}
-
-		ad->UpdateTimer();
-		Sleep(10);
 	}
 	return 0;
 }
@@ -2322,11 +2334,8 @@ void AudioDisplay::UpdateTimer()
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
 				//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
-				//if (UpdateTimerHandle) {
-				//	DeleteTimerQueueTimer(NULL, UpdateTimerHandle, INVALID_HANDLE_VALUE);
-				//	//DeleteTimerQueueTimer(NULL, UpdateTimerHandle, NULL);
-				//	UpdateTimerHandle = NULL;
-				//}
+
+				stopPlayThread = true;
 			}
 		}
 
@@ -2335,12 +2344,7 @@ void AudioDisplay::UpdateTimer()
 	// Restore background
 	else {
 		cursorPaint = false;
-		//needImageUpdate=true;
-		//cursorPaint=false;
-		//Refresh(false);
-		//KaiLog("Uuu update timer was not stopped");
-		//if (UpdateTimer.IsRunning()) 
-		//UpdateTimer.Stop();
+		//stopPlayThread = true;
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;
