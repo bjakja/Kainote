@@ -682,7 +682,7 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 	SetVisualZoom();
 	m_Visual->SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime,
 		tab->Edit->line->IsComment, noRefresh);
-	m_HasVisualEdition = true;
+	m_HasVisualEdition = vis > 0;
 }
 
 void RendererVideo::ResetVisual()

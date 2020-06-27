@@ -544,7 +544,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			tab->Video->Render(false);
 			
 		}
-		else if (pos == -1 && !tab->Video->HasArrow()){
+		else if (pos == -1 /*&& !tab->Video->HasArrow()*/){
 			if (lastpos >= 0 && lastpos < (int)psize){
 				lastpos = -1;
 				tab->Video->Render(false);
@@ -671,8 +671,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				diffs.x = pointx - zx;
 				diffs.y = pointy - zy;
 				tab->Video->CaptureMouse();
-				//snapYminus = false; snapYplus = false; snapXminus = false; snapXplus = false;
-				//KaiLog(wxString::Format(L"left down on point %i %i", grabbed, (int)drawSelection));
 				firstmove = D3DXVECTOR2(zx, zy);
 				break;
 			}
@@ -680,7 +678,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if (tool >= 1 && tool <= 3 && (grabbed == -1 || right))
 		{
-			//KaiLog(wxString::Format(L"tool apply %i", tool));
 			if (Points.empty()){ AddMove(xy, 0); SetClip(GetVisual(), true); return; }
 			int pos = CheckPos(xy, true);
 			switch (tool){
@@ -901,11 +898,48 @@ ClipPoint DrawingAndClip::FindSnapPoint(const ClipPoint &pos, size_t pointToSkip
 
 void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)
 {
-
-	if (evt.ControlDown() && evt.GetKeyCode() == L'A'){
+	int keyCode = evt.GetKeyCode();
+	if (evt.ControlDown() && keyCode == L'A'){
 		ChangeSelection(true);
 		tab->Video->Render(false);
 	}
-	//if strzałki then
+	else if(keyCode == L'W' || keyCode == L'S' || keyCode == L'A' || keyCode == L'D'){
+		int x = 0; int y = 0;
+		float increase = (evt.ShiftDown() && Visual == VECTORDRAW)? 0.1f : 1.f;
+		switch (keyCode)
+		{
+		case L'A':
+			x = -increase; break;
+		case L'D':
+			x = increase; break;
+		case L'S':
+			y = increase; break;
+		case L'W':
+			y = -increase; break;
 
+		default:
+			break;
+		}
+
+		OnMoveSelected(x, y);
+	}
+
+}
+
+void DrawingAndClip::OnMoveSelected(int x, int y)
+{
+	size_t psize = Points.size();
+	bool modified = false;
+	for (size_t i = 0; i < psize; i++)
+	{
+		if (Points[i].isSelected)
+		{
+			Points[i].x += x;
+			Points[i].y += y;
+			modified = true;
+		}
+	}
+	if (modified) {
+		SetClip(GetVisual(), true);
+	}
 }

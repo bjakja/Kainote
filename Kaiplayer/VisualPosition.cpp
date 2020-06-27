@@ -75,8 +75,8 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			if (data[i].numpos == tab->Grid->currentLine){
 				data[i].pos.x = x;
 				data[i].pos.y = y;
-				data[i].lastpos = data[i].pos;
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
+				data[i].lastpos = data[i].pos;
 
 				for (size_t j = 0; j < data.size(); j++){
 					if (j == i){ continue; }

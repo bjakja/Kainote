@@ -347,6 +347,7 @@ public:
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);
+	void OnMoveSelected(int x, int y);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

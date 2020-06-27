@@ -55,14 +55,14 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 		ass_set_font_scale(libass->m_Libass, 1.);
 		ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
 	}
-
+	libass->m_IsReady.store(libass->m_Libass != NULL);
 	if (libass->m_SubsSkipped) {
 		TabPanel * tab = Notebook::GetTab();
 		if (tab->Video->GetState() != None) {
 			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
 		}
 	}
-	libass->m_IsReady.store(libass->m_Libass != NULL);
+	
 
 	return 0;
 }
@@ -195,9 +195,16 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		return true;
 	}
 
-	if (renderer->m_HasVisualEdition && renderer->m_Visual->Visual == VECTORCLIP && renderer->m_Visual->dummytext){
-		wxString toAppend = renderer->m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
-		(*textsubs) << toAppend;
+	//sometimes it crashes on CROSS just like it visual was released and
+	//it steel gives mi right values and violate memory on 0x266 adress
+	//m_HasVisualEdition == true cause it's should be set on false
+	if (renderer->m_HasVisualEdition){
+		if (renderer->m_Visual->Visual == VECTORCLIP) {
+			if (renderer->m_Visual->dummytext) {
+				wxString toAppend = renderer->m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
+				(*textsubs) << toAppend;
+			}
+		}
 	}
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
