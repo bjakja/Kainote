@@ -1904,14 +1904,14 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					selEnd = MAX(0, selEnd);
 					int nn = grid->currentLine;
 					//automatic setting times of previous or next line(right alt + left click or drag)
-					if (hold == 2 && /*event.ControlDown() && */event.AltDown()){
+					if (hold == 2 && event.AltDown()){
 						Dialogue *dialc = grid->CopyDialogueWithOffset(nn, 1);
 						if (dialc){
 							dialc->Start.NewTime(curEndMS);
 							if (dialc->End < dialc->Start){ dialc->End.NewTime(curEndMS + 5000); }
 						}
 					}
-					else if (hold == 1 && /*event.ControlDown() && */event.AltDown()){
+					else if ((hold == 1 || hold == 3) && event.AltDown()){
 						Dialogue *dialc = grid->CopyDialogueWithOffset(nn, -1);
 						if (dialc){
 							dialc->End.NewTime(curStartMS);
