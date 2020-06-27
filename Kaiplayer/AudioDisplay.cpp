@@ -112,8 +112,8 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	holding = false;
 	draggingScale = false;
 	inside = ownProvider = false;
-	whichsyl = 0;
-	letter = -1;
+	currentSyllable = 0;
+	currentCharacter = -1;
 	Grabbed = -1;
 	Position = 0;
 	PositionSample = 0;
@@ -571,13 +571,13 @@ void AudioDisplay::DoUpdateImage() {
 						d3dLine->SetWidth(1);
 						RECT rect = { center + karstart, 0, center + karstart + fw, fh };
 						d3dFontVerdana11->DrawTextW(NULL, acsyl.wchar_str(), -1, &rect, DT_LEFT, syllableTextColor);
-						//obramowanie aktywynej sylaby
-						if (letter >= 0 && syll >= 0 && syll == j){
+						//border of active syllable
+						if (currentCharacter >= 0 && syllableHover >= 0 && syllableHover == j){
 							int start, end;
 							int fwl, fhl;
-							if (letter == 0){ fwl = 0; }
+							if (currentCharacter == 0){ fwl = 0; }
 							else{
-								GetTextExtentPixel(acsyl.Mid(0, letter), &fwl, &fhl);
+								GetTextExtentPixel(acsyl.Mid(0, currentCharacter), &fwl, &fhl);
 							}
 
 							karaoke->GetSylTimes(j, start, end);
@@ -592,7 +592,7 @@ void AudioDisplay::DoUpdateImage() {
 							d3dLine->End();
 						}
 					}
-					if (j == whichsyl){
+					if (j == currentSyllable){
 						D3DXVECTOR2 v5[5] = { D3DXVECTOR2(karstart + 2, 1), D3DXVECTOR2(karstart + 2, h - 2), D3DXVECTOR2(XX - 2, h - 2), D3DXVECTOR2(XX - 2, 1), D3DXVECTOR2(karstart + 2, 1) };
 						d3dLine->Begin();
 						d3dLine->Draw(v5, 5, syllableTextColor);
@@ -1495,11 +1495,11 @@ void AudioDisplay::GetTimesDialogue(int &start, int &end) {
 // Get samples of selection
 void AudioDisplay::GetTimesSelection(int &start, int &end, bool rangeEnd /*= false*/, bool ignoreKara /*= false*/) {
 	if (hasKara && !ignoreKara){
-		whichsyl = MID(0, whichsyl, (int)karaoke->syls.size() - 1);
+		currentSyllable = MID(0, currentSyllable, (int)karaoke->syls.size() - 1);
 		if (rangeEnd)
-			karaoke->GetSylVisibleTimes(whichsyl, start, end);
+			karaoke->GetSylVisibleTimes(currentSyllable, start, end);
 		else
-			karaoke->GetSylTimes(whichsyl, start, end);
+			karaoke->GetSylTimes(currentSyllable, start, end);
 	}
 	else{
 		start = curStartMS;
@@ -1527,7 +1527,7 @@ void AudioDisplay::SetDialogue(Dialogue *diag, int n, bool moveToEnd) {
 	//dialog jest tylko odczytywany, jest on własnością editboxa, usuwać go nie można.
 	dialogue = diag;
 	NeedCommit = false;
-	whichsyl = 0;
+	currentSyllable = 0;
 	// Set flags
 	// Set times
 	if (Options.GetBool(AUDIO_GRAB_TIMES_ON_SELECT)) {
@@ -1681,8 +1681,9 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	bool buttonUP = event.LeftUp() || event.RightUp();
 	bool middleDown = event.MiddleDown();
 	bool leftIsDown = event.LeftIsDown();
+	bool altIsDown = event.AltDown();
 	bool updated = false;
-	syll = -1;
+	syllableHover = -1;
 	// Click type
 
 	if (buttonUP && holding) {
@@ -1776,7 +1777,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	// Timing
 	if (hasSel && !(event.ControlDown() && !event.AltDown() && hold == 0)) {
 
-		letter = -1;
+		currentCharacter = -1;
 		// znacznik
 		if (hold == 0) {
 			if (hasMark && abs64(x - selMark) < 6) {
@@ -1802,20 +1803,19 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				}
 			}
 
-
-			//żółte linie karaoke
+			//yellow lines of karaoke
 			else if (hasKara && y > 20)
 			{
 				if (!karaoke->CheckIfOver(x, &Grabbed)){
 					int tmpsyl = -1;
 					bool hasSyl = karaoke->GetSylAtX(x, &tmpsyl);
 					if (Options.GetBool(AUDIO_KARAOKE_MOVE_ON_CLICK) && hasSyl &&
-						!(tmpsyl<whichsyl - 1 || tmpsyl>whichsyl + 1) && (leftDown || rightDown)){
-						Grabbed = (tmpsyl < whichsyl) ? whichsyl - 1 : whichsyl;
+						!(tmpsyl<currentSyllable - 1 || tmpsyl>currentSyllable + 1) && (leftDown || rightDown)){
+						Grabbed = (tmpsyl < currentSyllable) ? currentSyllable - 1 : currentSyllable;
 						hold = 5;
 					}
 					else if (leftDown && tmpsyl >= 0){
-						whichsyl = tmpsyl;
+						currentSyllable = tmpsyl;
 						updated = true;
 					}
 					else if (abs64(x - selEnd) < 6){
@@ -1826,7 +1826,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 							hold = 2;
 						}
 						else if (rightDown){
-							Grabbed = whichsyl = karaoke->syltimes.size() - 1;
+							Grabbed = currentSyllable = karaoke->syltimes.size() - 1;
 							hold = 5;
 						}
 						return;
@@ -1851,11 +1851,11 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 			}
 			// Characters of syllables
-			else if (hasKara && karaoke->GetLetterAtX(x, &syll, &letter))
+			else if (hasKara && karaoke->GetLetterAtX(x, &syllableHover, &currentCharacter))
 			{
 				if (leftDown){
-					if (karaoke->SplitSyl(syll, letter)){
-						whichsyl = syll;
+					if (karaoke->SplitSyl(syllableHover, currentCharacter)){
+						currentSyllable = syllableHover;
 						Commit();
 					}
 				}
@@ -1927,7 +1927,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					int prev = (Grabbed == 0) ? curStartMS : karaoke->syltimes[Grabbed - 1];
 					int next = (Grabbed == (int)karaoke->syls.size() - 1) ? curEndMS : karaoke->syltimes[Grabbed + 1];
 					karaoke->syltimes[Grabbed] = MID(prev, newpos, next);
-					whichsyl = Grabbed;
+					currentSyllable = Grabbed;
 				}
 				if (hold != 4){
 					Commit(hold == 2);
@@ -1950,7 +1950,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				if (hold == 3) {
 
 					if (leftDown)
-						curStartMS = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true);
+						curStartMS = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true, false, !altIsDown);
 					else if (rightDown)
 						curEndMS = GetMSAtX(x);
 
@@ -1960,7 +1960,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 					if (leftIsDown && abs((long)(x - lastX)) > Options.GetInt(AUDIO_START_DRAG_SENSITIVITY)) {
 						selStart = lastX;
 						selEnd = x;
-						curStartMS = GetBoundarySnap(GetMSAtX(lastX), 16, event.ShiftDown(), true);
+						curStartMS = GetBoundarySnap(GetMSAtX(lastX), 16, event.ShiftDown(), true, false, !altIsDown);
 						curEndMS = GetMSAtX(x);
 						hold = 2;
 					}
@@ -1970,7 +1970,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				if (hold == 1) {
 					// Set new value
 					if (x != selStart) {
-						int snapped = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true);
+						int snapped = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), true, false, !altIsDown);
 						selStart = GetXAtMS(snapped);
 						/*if (selStart > selEnd) {
 						int temp = selStart;
@@ -2004,7 +2004,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 				if (hold == 2) {
 					// Set new value
 					if (x != selEnd) {
-						int snapped = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), false);
+						int snapped = GetBoundarySnap(GetMSAtX(x), 16, event.ShiftDown(), false, false, !altIsDown);
 						selEnd = GetXAtMS(snapped);
 
 						curEndMS = snapped;
@@ -2081,7 +2081,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 			int start, end;
 			karaoke->GetSylTimes(syl, start, end);
 			Play(start, end);
-			whichsyl = syl;
+			currentSyllable = syl;
 		}
 
 	}
@@ -2098,7 +2098,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	if (player && !player->IsPlaying() && event.Moving()) {
 
 		if (inside){
-			if (hasKara && letter != -1){
+			if (hasKara && currentCharacter != -1){
 				cursorPaint = false;
 				//needImageUpdateWeak = true;
 				//needImageUpdate=true;
@@ -2123,15 +2123,13 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 
 ////////////////////////
 // Get snap to boundary
-int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start, bool keysnap) {
+int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start, bool keysnap, bool otherLines) {
 	// Range?
 	if (rangeX <= 0) return ms;
 
 	// Convert range into miliseconds
 	int rangeMS = rangeX * samples * 1000 / provider->GetSampleRate();
-	//int halfframe=Notebook::GetTab()->Video->avtpf/2;
-	//VideoCtrl *vb = (VideoCtrl*)box->GetGrandParent();
-	// Keyframe boundaries
+	
 	wxArrayInt boundaries;
 
 	bool snapKey = Options.GetBool(AUDIO_SNAP_TO_KEYFRAMES);
@@ -2162,6 +2160,9 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 	// Other subtitles' boundaries
 	bool snapLines = Options.GetBool(AUDIO_SNAP_TO_OTHER_LINES);
 	if (shiftHeld) snapLines = !snapLines;
+	if (!otherLines)
+		snapLines = false;
+
 	if (snapLines && (shadeType == 1 || shadeType == 2)) {
 		Dialogue *shade;
 		int shadeX1, shadeX2;
@@ -2387,8 +2388,8 @@ void AudioDisplay::SetMark(int time)
 void AudioDisplay::Next(bool play) {
 	// Karaoke
 	if (hasKara){
-		whichsyl++;
-		if (whichsyl >= (int)karaoke->syls.size()){ whichsyl = 0; ChangeLine(1); }
+		currentSyllable++;
+		if (currentSyllable >= (int)karaoke->syls.size()){ currentSyllable = 0; ChangeLine(1); }
 	}
 	else{
 		ChangeLine(1);
@@ -2409,8 +2410,8 @@ void AudioDisplay::Next(bool play) {
 void AudioDisplay::Prev(bool play) {
 	// Karaoke
 	if (hasKara && play){
-		whichsyl--;
-		if (whichsyl < 0){ ChangeLine(-1); whichsyl = karaoke->syls.size() - 1; MakeDialogueVisible(); }
+		currentSyllable--;
+		if (currentSyllable < 0){ ChangeLine(-1); currentSyllable = karaoke->syls.size() - 1; MakeDialogueVisible(); }
 
 	}
 	else{

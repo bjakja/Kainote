@@ -460,15 +460,7 @@ int RendererDirectShow::GetPlayEndTime(int _time)
 
 void RendererDirectShow::OpenKeyframes(const wxString &filename)
 {
-	AudioBox * audio = tab->Edit->ABox;
-	if (audio){
-		// skip return when audio do not have own provider or file didn't have video for take timecodes.
-		if (audio->OpenKeyframes(filename)){
-			return;
-		}
-	}
-	//if there is no FFMS2 or audiobox we store keyframes path;
-	m_KeyframesFileName = filename;
+	
 }
 
 void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)

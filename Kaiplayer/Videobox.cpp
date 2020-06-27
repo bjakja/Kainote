@@ -1636,8 +1636,20 @@ void VideoCtrl::GoToPrevKeyframe()
 }
 void VideoCtrl::OpenKeyframes(const wxString &filename)
 {
-	if (renderer)
-		renderer->OpenKeyframes(filename);
+	if (renderer && renderer->HasFFMS2()) {
+		renderer->GetFFMS2()->OpenKeyframes(filename);
+		m_KeyframesFileName.Empty();
+		return;
+	}
+	else if (tab->Edit->ABox) {
+		// skip return when audio do not have own provider or file didn't have video for take timecodes.
+		if (tab->Edit->ABox->OpenKeyframes(filename)) {
+			m_KeyframesFileName.Empty();
+			return;
+		}
+	}
+	//if there is no FFMS2 or audiobox we store keyframes path;
+	m_KeyframesFileName = filename;
 }
 void VideoCtrl::SetColorSpace(const wxString& matrix, bool render)
 {
@@ -1766,6 +1778,14 @@ void VideoCtrl::SaveVolume()
 bool VideoCtrl::IsMenuShown()
 {
 	return m_IsMenuShown;
+}
+const wxString & VideoCtrl::GetKeyFramesFileName()
+{
+	return m_KeyframesFileName;
+}
+void VideoCtrl::SetKeyFramesFileName(const wxString & fileName)
+{
+	m_KeyframesFileName = fileName;
 }
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)

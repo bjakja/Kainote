@@ -116,11 +116,7 @@ void VideoFfmpeg::Processing()
 					rend->m_Time = Timecodes[rend->m_Frame];
 					lastframe = rend->m_Frame;
 				}
-				//if (lockGetFrame)
-					GetFFMSFrame();
-				//else{
-					//fframe = FFMS_GetFrame(videosource, rend->numframe, &errinfo);
-				//}
+				GetFFMSFrame();
 
 				if (!fframe){
 					continue;
@@ -469,9 +465,9 @@ done:
 			Timecodes.push_back(Timestamp);
 
 		}
-		if (rend && !rend->m_KeyframesFileName.empty()){
-			OpenKeyframes(rend->m_KeyframesFileName);
-			rend->m_KeyframesFileName.clear();
+		if (rend && !rend->videoControl->GetKeyFramesFileName().empty()){
+			OpenKeyframes(rend->videoControl->GetKeyFramesFileName());
+			rend->videoControl->SetKeyFramesFileName(L"");
 		}
 	}
 audio:

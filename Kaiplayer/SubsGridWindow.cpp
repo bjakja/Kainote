@@ -1451,7 +1451,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	VideoCtrl *video = tab->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int seekAfter = 0, playAfter = 0;
-	video->GetVideoListsOptions(&seekAfter, &seekAfter);
+	video->GetVideoListsOptions(&playAfter, &seekAfter);
 	if (!outOfPosition) {
 		if (holding && alt)
 		{

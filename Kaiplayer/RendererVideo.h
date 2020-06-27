@@ -149,7 +149,6 @@ public:
 	size_t m_LastTime;
 	FloatRect m_ZoomRect;
 	std::vector<chapter> m_Chapters;
-	wxString m_KeyframesFileName;
 	IDirectXVideoProcessorService *m_DXVAService;
 	IDirectXVideoProcessor *m_DXVAProcessor;
 	LPDIRECT3D9 m_D3DObject;

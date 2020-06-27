@@ -139,6 +139,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 		SAFE_DELETE(tmpvff);
 		return false;
 	}
+	
 	//when loading only audio do not remove video
 	if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
 		VideoFfmpeg *tmp = m_FFMS2;

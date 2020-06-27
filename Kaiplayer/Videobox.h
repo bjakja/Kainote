@@ -141,6 +141,8 @@ public:
 	bool IsOnAnotherMonitor();
 	void SaveVolume();
 	bool IsMenuShown();
+	const wxString &GetKeyFramesFileName();
+	void SetKeyFramesFileName(const wxString &fileName);
 private:
 
 	BitmapButton* m_ButtonPreviousFile;
@@ -176,7 +178,8 @@ private:
 	int m_LastCursor = wxCURSOR_ARROW;
 	int m_LastFullScreenCursor = wxCURSOR_ARROW;
 	bool m_ShownKeyframe;
-	wxString oldpath;
+	//wxString oldpath;
+	wxString m_KeyframesFileName;
 	std::vector<RECT> MonRects;
 	bool m_IsOnAnotherMonitor = false;
 	bool m_IsFullscreen = false;

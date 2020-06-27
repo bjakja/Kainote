@@ -669,12 +669,15 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 			//we have to get only text
 			dial->GetTextElement(fr->dialogueColumn, &dialtxt);
 			if (dial->IsComment && fr->skipComments){
-				if (!isASS || !hasTlMode || !dial || dial->Style != TlModeStyle){
+				bool notTlStyle = dial->Style != TlModeStyle;
+				if (!isASS || !hasTlMode || !dial || notTlStyle){
 					tabLinePosition++;
 					positionId++;
 				}
-				delete dial;
-				continue;
+				if (notTlStyle) {
+					delete dial;
+					continue;
+				}
 			}
 
 

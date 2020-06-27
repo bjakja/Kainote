@@ -58,7 +58,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	LogHandler::Create(this);
 	//when need log window on start uncomment this
 #ifdef _DEBUG
-	LogHandler::ShowLogWindow();
+	//LogHandler::ShowLogWindow();
 #endif
 
 	Options.GetTable(SUBS_RECENT_FILES, subsrec);
@@ -924,7 +924,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	wxString ext = filename.AfterLast(L'.').Lower();
 	if (ext == L"exe" || ext == L"zip" || ext == L"rar" || ext == L"7z"){ return false; }
 	if (ext == L"lua" || ext == L"moon"){
-		//if (!Auto){ Auto = new Auto::Automation(false); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		Auto->Add(filename);
@@ -938,8 +937,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	wxString secondFileName;
 	bool issubs = (ext == L"ass" || ext == L"txt" || ext == L"sub" || ext == L"srt" || ext == L"ssa");
 
-	/*if (tab->editor && !(issubs && tab->VideoPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))
-		&& !(!issubs && tab->SubsPath.BeforeLast(L'.') == filename.BeforeLast(L'.'))){*/
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->Video->IsFullScreen()){

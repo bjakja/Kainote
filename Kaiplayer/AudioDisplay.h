@@ -113,9 +113,9 @@ private:
 
 	wxCriticalSection mutex;
 	wxCriticalSection mutexUpdate;
-	int whichsyl;
-	int letter;
-	int syll;
+	int currentSyllable;
+	int currentCharacter;
+	int syllableHover;
 	LPDIRECT3D9 d3dObject;
 	LPDIRECT3DDEVICE9 d3dDevice;
 	LPDIRECT3DSURFACE9 backBuffer;
@@ -264,7 +264,7 @@ public:
 	void GetTimesDialogue(int &start, int &end);
 	void GetTimesSelection(int &start, int &end, bool rangeEnd = false, bool ignoreKara = false);
 	void SetSelection(int start, int end);
-	int GetBoundarySnap(int x, int range, bool shiftHeld, bool start = true, bool keysnap = false);
+	int GetBoundarySnap(int x, int range, bool shiftHeld, bool start = true, bool keysnap = false, bool otherLines = true);
 	void GetTextExtentPixel(const wxString &text, int *x, int *y);
 	bool SetFont(const wxFont &font);
 	DECLARE_EVENT_TABLE()
