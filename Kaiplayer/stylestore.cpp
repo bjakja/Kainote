@@ -540,7 +540,8 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	if (cat == -1){ return; }
 	wxString Cat = catalogList->GetString(cat);
 	if (Cat == L"Default"){ wxBell(); return; }
-	if (KaiMessageBox(wxString::Format(("Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Pytanie"), wxYES_NO) == wxNO)
+	if (KaiMessageBox(wxString::Format(("Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Pytanie"), 
+		wxYES_NO, NULL, wxDefaultPosition, wxNO) == wxNO)
 		return;
 
 	catalogList->Delete(cat);

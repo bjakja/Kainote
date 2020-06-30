@@ -68,7 +68,7 @@ void SubsGridWindow::SetStyle()
 	font.SetPointSize(Options.GetInt(GRID_FONT_SIZE));
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
-	GridHeight = fh + 2;
+	GridHeight = ((fh + 3) * 2) / 2;
 	Refresh(false);
 }
 
@@ -861,7 +861,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				gc->DrawTextU(Dial->Text, posX + 23, posY + 1);
 				break;
 			}
-			cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
+			//cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			//gc->Clip(cur);
 			float centerPos = 0.f;
 			if (isCenter){

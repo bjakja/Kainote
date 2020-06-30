@@ -889,6 +889,10 @@ void Notebook::OnTabSel(int id)
 	}
 	else if (wtab < 0){
 		KainoteFrame *Kai = (KainoteFrame*)GetParent();
+		if (KaiMessageBox(_("Zostaną zamknięte wszystkie zakładki, kontynuować?"), _("Pytanie"), 
+			wxYES_NO, Kai, wxDefaultPosition, wxNO) == wxNO)
+			return;
+
 		int tmpiter = iter;
 		Pages[iter]->Hide();
 		for (int i = (int)Pages.size() - 1; i >= 0; i--)

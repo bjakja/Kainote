@@ -26,11 +26,11 @@
 #include "Tabs.h"
 #include <wx/tokenzr.h>
 #include <wx/event.h>
-#include <algorithm>
 #include <wx/regex.h>
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
 #include "SubsGridPreview.h"
+#include <algorithm>
 
 
 bool sortstart(Dialogue *i, Dialogue *j){
@@ -619,12 +619,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			}
 
 			if (correctEndTimes > 0 || PostprocessorOptions > 16){
-				if (PostprocessorOptions & 1){ dialc->Start.Change(-LeadIn); dialc->ChangeDialogueState(1); }
-				if (PostprocessorOptions & 2){ dialc->End.Change(LeadOut); dialc->ChangeDialogueState(1); }
-				if (correctEndTimes > 0 || PostprocessorOptions > 19){
-					tmpmap.insert(std::pair<Dialogue *, int>(dialc, i));
-
-				}
+				tmpmap.insert(std::pair<Dialogue *, int>(dialc, i));
 			}
 			else{
 				dialc->ClearParse();
@@ -636,19 +631,20 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	// tu jeszcze należy poprawić uwzględniając linijkę z czasem przed tablicą i czasem po niej
 	// a może to w ogóle nie jest potrzebne?
-	if (correctEndTimes > 0 || PostprocessorOptions > 19){
+	if (correctEndTimes > 0 || PostprocessorOptions > 16){
 		bool hasend = false;
 		int newstarttime = -1;
 		int endt = Options.GetInt(CONVERT_TIME_PER_CHARACTER);
 		bool isPreviousEndGreater = false;
 		bool isEndGreater = false;
+		bool previousIsKeyFrame = true;
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;
 			it++;
 			if (!(it != tmpmap.end())){ it = cur; hasend = true; }
 			else{
-				isEndGreater = dialc->End > it->first->Start || dialc->End == it->first->End;
+				isEndGreater = dialc->End > it->first->Start || dialc->End == it->first->End || cur == tmpmap.begin();
 				if (correctEndTimes > 1){
 					if (isEndGreater)
 						goto postprocessor;
@@ -667,19 +663,44 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		postprocessor:
 			bool foundStartKeyframe = false;
 			bool foundEndKeyframe = false;
+			int oldStart = dialc->Start.mstime;
+			int oldEnd = dialc->End.mstime;
+			int numOfStartModifications = 0;
+			int numOfEndModifications = 0;
+			int previousEnd = 0;
 			auto itplus = it;
+
+			if (cur != tmpmap.begin()) {
+				it--;
+				if (!hasend) { it--; }
+				previousEnd = it->first->End.mstime;
+			}
+			
+
+			if (PostprocessorOptions & 1) {
+				dialc->Start.Change(-LeadIn);
+				if (dialc->Start < it->first->End && cur != tmpmap.begin()) {
+					dialc->Start = it->first->End;
+				}
+				if (oldStart != dialc->Start.mstime)
+					numOfStartModifications++;
+			}
+			if (PostprocessorOptions & 2) {
+				dialc->End.Change(LeadOut);
+				if (dialc->End > itplus->first->Start) {
+					dialc->End = itplus->first->Start;
+				}
+				if (oldEnd != dialc->End.mstime)
+					numOfEndModifications++;
+			}
+
+			//Keyframes goes first and rest cannot apply when keyframe was set
 			if (PostprocessorOptions & 8){
 				int startRange = dialc->Start.mstime - KeyframeBeforeStart;
-				int startRange1 = dialc->Start.mstime + KeyframeAfterStart;
-				int endRange = dialc->End.mstime - KeyframeBeforeEnd;
+				int startRange1 = oldStart + KeyframeAfterStart;
+				int endRange = oldEnd - KeyframeBeforeEnd;
 				int endRange1 = dialc->End.mstime + KeyframeAfterEnd;
-				int previousEnd = 0;
-
-				if (cur != tmpmap.begin()){
-					it--;
-					if (!hasend){ it--; }
-					previousEnd = it->first->End.mstime;
-				}
+				
 
 				int keyMS = 0;
 				int startResult = INT_MAX;
@@ -688,10 +709,20 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 					keyMS = FFMS2->KeyFrames[g];
 					if (keyMS > startRange && keyMS < startRange1) {
 						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
-						if (startResult > keyMS && keyMS != dialc->Start.mstime){ startResult = keyMS; }
+						if (oldStart == keyMS) {
+							startRange = -1; startRange1 = -1; startResult = INT_MAX;
+							dialc->Start.NewTime(oldStart);
+							numOfStartModifications--;
+						}
+						if (startResult > keyMS/* && keyMS != dialc->Start.mstime*/){ startResult = keyMS; }
 					}
 					if (keyMS > endRange && keyMS < endRange1) {
 						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
+						if (oldEnd == keyMS) {
+							endRange = -1; endRange1 = -1; endResult = -1;
+							dialc->End.NewTime(oldEnd);
+							numOfEndModifications--;
+						}
 						if (endResult < keyMS && keyMS > dialc->Start.mstime){ endResult = keyMS; }
 					}
 				}
@@ -701,14 +732,14 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				if (startResult != INT_MAX){
 					if (dialc->Start != startResult){
 						dialc->Start.NewTime(startResult);
-						dialc->ChangeDialogueState(1);
+						numOfStartModifications++;
 					}
 					foundStartKeyframe = true;
 				}
 				if (endResult != -1){
 					if (dialc->End != endResult){
 						dialc->End.NewTime(endResult);
-						dialc->ChangeDialogueState(1);
+						numOfEndModifications++;
 					}
 					foundEndKeyframe = true;
 				}
@@ -717,30 +748,36 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				//then discard correction.
 				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime){
 					dialc->Start.NewTime(previousEnd);
-					dialc->ChangeDialogueState(1);
+					numOfStartModifications--;
 					foundStartKeyframe = false;
 				}
 			}
+			
 
 			if (PostprocessorOptions & 4){
 				int cdiff = (ThresholdEnd + ThresholdStart);
-				int tdiff = itplus->first->Start.mstime - dialc->End.mstime;
-				if (newstarttime != -1 && !foundStartKeyframe){
-					dialc->Start.NewTime(newstarttime);
-					newstarttime = -1;
-					dialc->ChangeDialogueState(1);
-				}
-				if (tdiff <= cdiff && tdiff > 0 && !foundEndKeyframe){
+				int tdiff = dialc->Start.mstime - it->first->End.mstime;
+				newstarttime = -1;
+				if (tdiff <= cdiff && tdiff > 0 && !previousIsKeyFrame) {
 					int coeff = ((float)tdiff / (float)cdiff) * ThresholdEnd;
 					int newtime = ZEROIT(coeff);
-					dialc->End.Change(newtime);
-					newstarttime = dialc->End.mstime;
-					dialc->ChangeDialogueState(1);
+					it->first->End.Change(newtime);
+					newstarttime = it->first->End.mstime;
+					it->first->ChangeDialogueState(1);
 
 				}
+				if (!foundStartKeyframe && newstarttime != -1){
+					dialc->Start.NewTime(newstarttime);
+					newstarttime = -1;
+					numOfStartModifications++;
+				}
+				
 
 			}
+			if (numOfStartModifications > 0 || numOfEndModifications > 0)
+				dialc->ChangeDialogueState(1);
 
+			previousIsKeyFrame = foundEndKeyframe;
 			isPreviousEndGreater = isEndGreater;
 			dialc->ClearParse();
 		}
@@ -1330,7 +1367,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 	}
 	else{
 		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), 
-			_("Potwierdzenie"), wxYES_NO) == wxNO){
+			_("Potwierdzenie"), wxYES_NO, NULL, wxDefaultPosition, wxNO) == wxNO){
 			return true;
 		}
 

@@ -25,11 +25,13 @@
 #include <vector>
 #include <set>
 
+
 class EditBox;
 class KainoteFrame;
 class SubsGrid;
 class SubsGridPreview;
 class TabPanel;
+
 
 class compareData{
 public:
@@ -158,6 +160,7 @@ private:
 	virtual void MakeVisible(int row){};
 	//to add option to not center lines is need make visible
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
+	
 protected:
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;

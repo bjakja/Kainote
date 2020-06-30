@@ -1019,15 +1019,11 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		resized->SetFontSizeDouble(fs);
 		double ol = 0;
 		resized->Outline.ToCDouble(&ol);
-		if (differentAspectRatio){
-			ol *= val1;
-		}
+		ol *= val;
 		resized->Outline = getfloat(ol);
 		double sh = 0;
 		resized->Shadow.ToCDouble(&sh);
-		if (differentAspectRatio){
-			sh *= val1;
-		}
+		sh *= val;
 		resized->Shadow = getfloat(sh);
 		double fsp = 0;
 		resized->Spacing.ToCDouble(&fsp);
