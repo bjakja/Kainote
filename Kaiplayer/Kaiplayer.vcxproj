@@ -191,7 +191,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;libboost_locale-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;libboost_filesystem-vc120-mt-gd-1_61.lib;libboost_system-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.LIB;libboost_locale-vc141-mt-x32-1_73.lib;libboost_regex-vc141-mt-x32-1_73.lib;libboost_filesystem-vc141-mt-x32-1_73.lib;libboost_system-vc141-mt-x32-1_73.libs;</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -264,14 +264,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x32-1_73.lib;libboost_regex-vc141-mt-x32-1_73.lib;libboost_filesystem-vc141-mt-x32-1_73.lib;libboost_system-vc141-mt-x32-1_73.libs;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>

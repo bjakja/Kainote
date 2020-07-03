@@ -912,7 +912,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		timee.NewTime(renderer->m_Chapters[j].time);
 		int ntime = (j >= renderer->m_Chapters.size() - 1) ? INT_MAX : renderer->m_Chapters[(j + 1)].time;
 		menu->Append(MENU_CHAPTERS + j, renderer->m_Chapters[j].name + L"\t[" + timee.raw() + L"]",
-			L"", true, 0, 0, (ntime >= renderer->m_Time) ? ITEM_RADIO : ITEM_NORMAL);
+			L"", true, 0, 0, (ntime > renderer->m_Time) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;

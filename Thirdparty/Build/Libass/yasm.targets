@@ -61,7 +61,7 @@
         <Include>%(Include) -I%(RootDir)%(Directory)</Include>
         <OutputDir Condition="'%(OutputDir)' == '.\'"></OutputDir>
         <RelativeOutputDir>%(OutputDir)</RelativeOutputDir>
-        <OutputDir>$(AegisubObjectDir)%(OutputDir)</OutputDir>
+        <OutputDir>$(ProjectDir)%(OutputDir)$(Platform)\$(Configuration)\</OutputDir>
       </_Yasm>
     </ItemGroup>
   </Target>
