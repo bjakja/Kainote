@@ -1322,7 +1322,7 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
 	int ukey = event.GetUnicodeKey();
-	bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
+	//bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
 	VideoCtrl *vb = GetTab()->Video;
 	if (ukey == 179){ vb->Pause(); }
 	//else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
@@ -1330,8 +1330,8 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	else if (ukey == 176){ vb->NextChap(); }
 	//else if(ukey==175){vb->OnSPlus();return;}
 	//else if(ukey==174){vb->OnSMinus();return;}
-	else if (key == WXK_PAGEDOWN && nmodif && vb->HasFocus()){ vb->OnPrew(); return; }
-	else if (key == WXK_PAGEUP && nmodif && vb->HasFocus()){ vb->OnNext(); return; }
+	//else if (key == WXK_PAGEDOWN && nmodif && vb->HasFocus()){ vb->OnPrew(); return; }
+	//else if (key == WXK_PAGEUP && nmodif && vb->HasFocus()){ vb->OnNext(); return; }
 	event.Skip();
 }
 

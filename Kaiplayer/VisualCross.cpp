@@ -174,6 +174,9 @@ void Cross::SetCurVisual()
 		}
 		return;
 	}
+	else {
+		cross = false;
+	}
 
 	int nx = 0, ny = 0;
 	int w = 0, h = 0;

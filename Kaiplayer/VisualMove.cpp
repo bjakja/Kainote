@@ -82,8 +82,8 @@ wxString Move::GetVisual()
 void Move::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
-	bool click = evt.LeftDown();
-	bool holding = evt.LeftIsDown();
+	bool click = evt.LeftDown() || evt.RightDown();
+	bool holding = evt.LeftIsDown() || evt.RightIsDown();
 	bool leftc = evt.LeftDown();
 	bool rightc = evt.RightDown();
 	bool shift = evt.ShiftDown();

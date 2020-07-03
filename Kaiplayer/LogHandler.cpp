@@ -157,8 +157,10 @@ void LogHandler::ShowLogWindow()
 	if (sthis){
 		if (!sthis->lWindow){
 			sthis->lWindow = new LogWindow(sthis->parent, sthis);
-			sthis->lWindow->logText->AppendText(sthis->logToAppend);
 		}
+		if (!sthis->logToAppend.empty())
+			sthis->lWindow->logText->AppendText(sthis->logToAppend);
+
 		if (!sthis->lWindow->hiddenLastLog){
 			sthis->lWindow->logText->Show();
 			sthis->lWindow->lastLogText->Show(false);
