@@ -66,7 +66,7 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 	audioDisplay->box = this;
 	audioDisplay->Edit = (EditBox*)parent;
 	audioDisplay->grid = (SubsGrid*)Wgrid;
-
+	audioDisplay->tab = (TabPanel *)parent->GetParent();
 	// Zoom
 	int zoom = Options.GetInt(AUDIO_HORIZONTAL_ZOOM);
 	audioDisplay->SetSamplesPercent(zoom, false);

@@ -655,7 +655,7 @@ void AudioDisplay::DoUpdateImage() {
 		}
 		// Draw current frame
 		if (drawVideoPos) {
-			VideoCtrl *Video = Notebook::GetTab()->Video;
+			VideoCtrl *Video = tab->Video;
 			if (Video->GetState() == Paused) {
 				d3dLine->SetWidth(2);
 
@@ -1267,8 +1267,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	if (!file.IsEmpty()) {
 		try {
 			// Get provider
-			TabPanel *pan = ((TabPanel*)box->GetGrandParent());
-			VideoCtrl *vb = pan->Video;
+			VideoCtrl *vb = tab->Video;
 			VideoFfmpeg *FFMS2 = vb->GetFFMS2();
 			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
@@ -1425,7 +1424,7 @@ void AudioDisplay::ChangeOptions()
 // Play
 void AudioDisplay::Play(int start, int end, bool pause) {
 	//Stop();
-	if (pause && Notebook::GetTab()->Video->GetState() == Playing){ Notebook::GetTab()->Video->Pause(); }
+	if (pause && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 
 	// Check provider
 	if (!provider) {
@@ -1461,7 +1460,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 ////////
 // Stop
 void AudioDisplay::Stop(bool stopVideo) {
-	if (stopVideo && Notebook::GetTab()->Video->GetState() == Playing){ Notebook::GetTab()->Video->Pause(); }
+	if (stopVideo && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 	else if (player) {
 		player->Stop();
 		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
@@ -1695,7 +1694,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	if (((leftDown && event.GetModifiers() == wxMOD_CONTROL) || middleDown) && !onScale)
 	{
 		int pos = GetMSAtX(x);
-		Notebook::GetTab()->Video->Seek(pos);
+		tab->Video->Seek(pos);
 		UpdateImage(true);
 
 	}
@@ -2376,8 +2375,7 @@ void AudioDisplay::SetMark(int time)
 	curMarkMS = time;
 	if (!hasMark){
 		hasMark = true;
-		TabPanel *panel = (TabPanel*)grid->GetParent();
-		panel->ShiftTimes->Contents();
+		tab->ShiftTimes->Contents();
 	}
 	else
 		hasMark = true;
@@ -2415,7 +2413,7 @@ void AudioDisplay::Prev(bool play) {
 
 	}
 	else{
-		//if(Notebook::GetTab()->Video->GetState()==Playing){Notebook::GetTab()->Video->Pause();}
+		//if(tab->Video->GetState()==Playing){tab->Video->Pause();}
 		ChangeLine(-1);
 	}
 

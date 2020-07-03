@@ -59,6 +59,7 @@
 class SubsGrid;
 class AudioBox;
 class EditBox;
+class TabPanel;
 
 
 /////////////////
@@ -192,6 +193,7 @@ private:
 public:
 	SubsGrid *grid;
 	EditBox *Edit;
+	TabPanel *tab;
 	VideoFfmpeg *provider;
 	DirectSoundPlayer2 *player;
 	Karaoke *karaoke;
