@@ -230,10 +230,10 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 	timeUnchanged = true;
 	mTime = newtime;
 	form = mTime.GetFormat();
-	bool canShowFrames = showFrames && vb && vb->VFF;
+	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
 
 	if (canShowFrames && opt){
-		mTime.orgframe = vb->VFF->GetFramefromMS(mTime.mstime);
+		mTime.orgframe = vb->GetFFMS2()->GetFramefromMS(mTime.mstime);
 		//opt 2 = end frame
 		if (opt == 2) 
 			mTime.orgframe--; 
@@ -248,13 +248,13 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 //0 nothing, 1 -halframe (start), 2 +halfframe (end)
 STime TimeCtrl::GetTime(char opt)
 {
-	bool canShowFrames = showFrames && vb && vb->VFF;
+	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
 	mTime.SetRaw(GetValue(), canShowFrames || (showFrames && !vb)? FRAME : form);
 	if (canShowFrames && !timeUnchanged){
 		STime cpy = STime(mTime);
 		cpy.ChangeFormat(form);
-		int time = (!opt) ? vb->VFF->GetMSfromFrame(cpy.orgframe) :
-			vb->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
+		int time = (!opt) ? vb->GetFFMS2()->GetMSfromFrame(cpy.orgframe) :
+			vb->GetRenderer()->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);
 
 		cpy.mstime = ZEROIT(time);
 		return cpy;

@@ -130,23 +130,25 @@ void LogHandler::Destroy()
 	}
 }
 
-void LogHandler::LogMessage(const wxString &message)
+void LogHandler::LogMessage(const wxString &format, bool showMessage)
 {
 	wxMutexLocker lock(mutex);
 	//lastLog = wxString::Format(format).Trim();
-	lastLog = message;
+	lastLog = format;
 	SYSTEMTIME st;
 	GetSystemTime(&st);
 	logToAppend << wxString::Format(L"%02i:%02i:%02i ", st.wHour, st.wMinute, st.wSecond);
 	logToAppend << lastLog << L"\n";
-	if (!lWindow){
-		wxThreadEvent *evt = new wxThreadEvent(EVT_DO_CREATE_LOG_WINDOW, parent->GetId());
-		wxQueueEvent(parent, evt);
-		return;
-	}
-	if (lWindow->isReady){
-		wxThreadEvent *evt = new wxThreadEvent(EVT_DO_LOG, lWindow->GetId());
-		wxQueueEvent(lWindow, evt);
+	if (showMessage) {
+		if (!lWindow) {
+			wxThreadEvent *evt = new wxThreadEvent(EVT_DO_CREATE_LOG_WINDOW, parent->GetId());
+			wxQueueEvent(parent, evt);
+			return;
+		}
+		if (lWindow->isReady) {
+			wxThreadEvent *evt = new wxThreadEvent(EVT_DO_LOG, lWindow->GetId());
+			wxQueueEvent(lWindow, evt);
+		}
 	}
 }
 
@@ -156,6 +158,9 @@ void LogHandler::ShowLogWindow()
 		if (!sthis->lWindow){
 			sthis->lWindow = new LogWindow(sthis->parent, sthis);
 		}
+		if (!sthis->logToAppend.empty())
+			sthis->lWindow->logText->AppendText(sthis->logToAppend);
+
 		if (!sthis->lWindow->hiddenLastLog){
 			sthis->lWindow->logText->Show();
 			sthis->lWindow->lastLogText->Show(false);

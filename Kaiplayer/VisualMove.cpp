@@ -82,8 +82,8 @@ wxString Move::GetVisual()
 void Move::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
-	bool click = evt.LeftDown();
-	bool holding = evt.LeftIsDown();
+	bool click = evt.LeftDown() || evt.RightDown();
+	bool holding = evt.LeftIsDown() || evt.RightIsDown();
 	bool leftc = evt.LeftDown();
 	bool rightc = evt.RightDown();
 	bool shift = evt.ShiftDown();
@@ -94,7 +94,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		SetVisual(false, type);
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		grabbed = -1;
 		moveDistance = to - from;
 		movingHelperLine = false;
@@ -113,7 +113,6 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
 
@@ -217,18 +216,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	wxString tagBefore = putinbracket ? L"" : txt->SubString(tagPos.x, tagPos.y);
 	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
-		VideoCtrl *video = tab->Video;
-		float fps = video->fps;
-		bool dshow = video->IsDshow;
-		int startTime = ZEROIT(_dial->Start.mstime);
-		int endTime = ZEROIT(_dial->End.mstime);
-		int framestart = (dshow) ? (((float)startTime / 1000.f) * fps) + 1 : video->VFF->GetFramefromMS(startTime);
-		int frameend = (dshow) ? (((float)endTime / 1000.f) * fps) : video->VFF->GetFramefromMS(endTime) - 1;
-		int msstart = (dshow) ? ((framestart * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(framestart);
-		int msend = (dshow) ? ((frameend * 1000) / fps) + 0.5f : video->VFF->GetMSfromFrame(frameend);
-		int diff = endTime - startTime;
-		moveStartTime = abs(msstart - startTime);
-		moveEndTime = (diff - abs(endTime - msend));
+		GetMoveTimes(&moveStartTime, &moveEndTime);
 	}
 	else{
 		wxString t2 = values[5];

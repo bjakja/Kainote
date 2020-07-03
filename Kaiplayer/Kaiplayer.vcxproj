@@ -38,54 +38,55 @@
     <ProjectGuid>{180DEA91-88AF-4FEB-8B82-7F3716E118BB}</ProjectGuid>
     <RootNamespace>Kaiplayer</RootNamespace>
     <ProjectName>KaiNote</ProjectName>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <UseOfMfc>false</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -170,8 +171,8 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\zlib-1.2.8;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswud;..\Thirdparty\boost_1_61_0;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -185,8 +186,8 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\msvc\Win32\Debug\libhunspell;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Lib;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\msvc\Win32\Debug\libhunspell;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -208,14 +209,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost_1_61_0;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Precise</FloatingPointModel>
     </ClCompile>
     <ResourceCompile>
@@ -223,11 +224,11 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2_x64.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\Hunspell\msvc\x64\Debug\libhunspell;..\Thirdparty\BaseClasses\$(Platform)\$(Configuration);..\Thirdparty\BaseClasses\x64\Release;..\Thirdparty\wxWidgets\build\msw\x64\Debug;..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2_x64.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\Hunspell\msvc\x64\Debug\libhunspell;..\Thirdparty\BaseClasses\$(Platform)\$(Configuration);..\Thirdparty\BaseClasses\x64\Release;..\Thirdparty\wxWidgets\build\msw\x64\Debug;..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;libboost_locale-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;libboost_filesystem-vc120-mt-gd-1_61.lib;libboost_system-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;libboost_locale-vc141-mt-gd-x64-1_73.lib;libboost_regex-vc141-mt-gd-x64-1_73.lib;libboost_filesystem-vc141-mt-gd-x64-1_73.lib;libboost_system-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -246,8 +247,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HUNSPELL_STATIC;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;HUNSPELL_STATIC;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -262,8 +263,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -288,8 +289,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;HUNSPELL_STATIC;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;HUNSPELL_STATIC;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -304,8 +305,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Hunspell\msvc\Win32\Release\libhunspell;..\Thirdparty\luabins\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\luajit\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories);H:\Kainote\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -330,8 +331,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\zlib-1.2.8;..\Thirdparty\freetype-2.6\include;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -346,8 +347,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;Boost.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\lib\vc_lib;..\Thirdparty\Hunspell\src\msvc\Release\libhunspell;..\Thirdparty\luabins\LuaBins\Release;..\Thirdparty\luajit\LuaJit\Release;..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;wxmsw29u_core.lib;wxbase29u.lib;wxtiff.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregexu.lib;wxexpat.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2.lib;freetype26MT.lib;strmbase.lib;zlibwapi.lib;Boost.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;c:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Lib;..\Thirdparty\BaseClasses\Release;..\Thirdparty\wxWidgets\lib\vc_lib;..\Thirdparty\Hunspell\src\msvc\Release\libhunspell;..\Thirdparty\luabins\LuaBins\Release;..\Thirdparty\luajit\LuaJit\Release;..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories);H:\Kainote\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -373,8 +374,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -389,14 +390,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;..\Thirdparty\BaseClasses\x64\Release;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\luabins\LuaBins\x64\Release;..\Thirdparty\luajit\LuaJit\x64\Release;..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;..\Thirdparty\BaseClasses\x64\Release;M:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\Build\LuaBins\x64\Release;..\Thirdparty\Build\LuaJit\x64\Release;..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x64-1_73.lib;libboost_regex-vc141-mt-x64-1_73.lib;libboost_filesystem-vc141-mt-x64-1_73.lib;libboost_system-vc141-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -415,8 +416,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX2";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX2";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -431,14 +432,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\Thirdparty\BaseClasses\x64\Release;c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\luabins\LuaBins\x64\Release;..\Thirdparty\luajit\LuaJit\x64\$(Configuration);..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Thirdparty\BaseClasses\x64\Release;c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;M:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\Build\LuaBins\x64\Release;..\Thirdparty\Build\LuaJit\x64\Release;..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x64-1_73.lib;libboost_regex-vc141-mt-x64-1_73.lib;libboost_filesystem-vc141-mt-x64-1_73.lib;libboost_system-vc141-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -458,8 +459,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\include;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\luajit\include;..\Thirdparty\luabins\include;..\Thirdparty\icu\source\common;..\Thirdparty\icu\source\i18n;..\Thirdparty\boost_1_61_0;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;INSTRUCTIONS="AVX";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -474,14 +475,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)Thirdparty\BaseClasses\x64\Release;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;$(SolutionDir)Thirdparty\wxWidgets\build\msw\x64\Release;$(SolutionDir)Thirdparty\Hunspell\msvc\x64\Release\libhunspell;$(SolutionDir)Thirdparty\luabins\LuaBins\x64\Release;$(SolutionDir)Thirdparty\luajit\LuaJit\x64\Release;..\Thirdparty\boost_1_61_0\BoostBuild\$(Platform)\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(SolutionDir)Thirdparty\BaseClasses\x64\Release;M:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;$(SolutionDir)Thirdparty\wxWidgets\build\msw\x64\Release;$(SolutionDir)Thirdparty\Hunspell\msvc\x64\Release\libhunspell;$(SolutionDir)Thirdparty\Build\LuaBins\x64\Release;$(SolutionDir)Thirdparty\Build\LuaJit\x64\Release;..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;libboost_filesystem-vc120-mt-1_61.lib;libboost_system-vc120-mt-1_61.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x64-1_73.lib;libboost_regex-vc141-mt-x64-1_73.lib;libboost_filesystem-vc141-mt-x64-1_73.lib;libboost_system-vc141-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -514,6 +515,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ConfigConverter.cpp" />
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="Languages.cpp" />
+    <ClCompile Include="RendererDirectShow.cpp" />
+    <ClCompile Include="RendererFFMS2.cpp" />
+    <ClCompile Include="RendererVideo.cpp" />
     <ClCompile Include="ShiftTimes.cpp" />
     <ClCompile Include="ColorSpace.cpp" />
     <ClCompile Include="Config.cpp" />
@@ -563,9 +567,13 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsGridWindow.cpp" />
     <ClCompile Include="SubsLoader.cpp" />
     <ClCompile Include="SubsResampleDialog.cpp" />
+    <ClCompile Include="SubtitlesLibass.cpp" />
+    <ClCompile Include="SubtitlesProviderManager.cpp" />
+    <ClCompile Include="SubtitlesVSFilter.cpp" />
     <ClCompile Include="TextEditorTagList.cpp" />
     <ClCompile Include="Utils.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
+    <ClCompile Include="VisualCross.cpp" />
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
     <ClCompile Include="StyleChange.cpp" />
@@ -604,7 +612,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="Videobox.cpp" />
     <ClCompile Include="VideoFfmpeg.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
-    <ClCompile Include="VideoRenderer.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
     <ClCompile Include="VisualMove.cpp" />
@@ -632,6 +639,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="BitmapButton.h" />
     <ClInclude Include="ConfigConverter.h" />
     <ClInclude Include="KaiGauge.h" />
+    <ClInclude Include="RendererDirectShow.h" />
+    <ClInclude Include="RendererFFMS2.h" />
+    <ClInclude Include="RendererVideo.h" />
     <ClInclude Include="ShiftTimes.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
@@ -692,6 +702,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsGridWindow.h" />
     <ClInclude Include="SubsLoader.h" />
     <ClInclude Include="SubsResampleDialog.h" />
+    <ClInclude Include="SubtitlesProvider.h" />
+    <ClInclude Include="SubtitlesProviderManager.h" />
     <ClInclude Include="TextEditorTagList.h" />
     <ClInclude Include="Toolbar.h" />
     <ClInclude Include="Utils.h" />
@@ -723,7 +735,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Videobox.h" />
     <ClInclude Include="VideoFfmpeg.h" />
     <ClInclude Include="VideoFullscreen.h" />
-    <ClInclude Include="VideoRenderer.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="Visuals.h" />
@@ -740,26 +751,29 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\boost_1_61_0\BoostBuild\Boost.vcxproj">
+    <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
       <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\libhunspell.vcxproj">
-      <Project>{53609bb3-d874-465c-af7b-df626db0d89b}</Project>
+    <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
+      <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Icu\Icu\Icu.vcxproj">
-      <Project>{875e0bb7-06e8-4570-8e3c-ae9ef88f38bb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\luabins\LuaBins\LuaBins.vcxproj">
+    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
       <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\luajit\LuaJitBuild\LuaJitBuild.vcxproj">
-      <Project>{f6c48aca-c78d-450f-8059-010bbba12137}</Project>
+    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\hunspell.vcxproj">
+      <Project>{6a0453f4-b12a-4810-b9a2-8ab059316ed7}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\luajit\LuaJit\LuaJit.vcxproj">
-      <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_base.vcxproj">
+      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\luajit\Minilua\Minilua.vcxproj">
-      <Project>{325d093d-826b-4a7d-83c7-1cad22911b9f}</Project>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_core.vcxproj">
+      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxpng.vcxproj">
+      <Project>{8acc122a-ca6a-5aa6-9c97-9cdd2e533db0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxzlib.vcxproj">
+      <Project>{8b867186-a0b5-5479-b824-e176edd27c40}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

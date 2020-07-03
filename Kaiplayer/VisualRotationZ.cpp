@@ -143,14 +143,13 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			lastmove.x += lastmove.y;
 		}
 		tab->Video->Render();
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
 	}
 
 	if (click){
 		tab->Video->CaptureMouse();
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 		if (abs(org.x - x) < 8 && abs(org.y - y) < 8){
 			isOrg = true;
 			lastOrg = org;

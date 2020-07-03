@@ -95,6 +95,7 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxW
 	: wxWindow(parent, id, pos, size, style | wxVERTICAL)
 {
 	Kai = kfparent;
+	tab = (TabPanel *)parent;
 	form = ASS;
 	panel = new wxWindow(this, -1);
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
@@ -138,8 +139,9 @@ bool ShiftTimesWindow::SetForegroundColour(const wxColour &col)
 void ShiftTimesWindow::Contents(bool addopts)
 {
 	bool state;
-	form = Kai->GetTab()->Grid->subsFormat;
-	VideoCtrl *vb = Kai->GetTab()->Video;
+	form = tab->Grid->subsFormat;
+	VideoCtrl *vb = tab->Video;
+	VideoFfmpeg *FFMS2 = vb->GetFFMS2();
 	if (form < SRT){
 		state = true;
 		WhichLines->EnableItem(3);
@@ -154,14 +156,14 @@ void ShiftTimesWindow::Contents(bool addopts)
 	}
 	if (!LeadIn){
 		bool lastEnable = DisplayFrames->IsEnabled();
-		DisplayFrames->Enable(vb->VFF != NULL);
+		DisplayFrames->Enable(FFMS2 != NULL);
 		bool Enable = DisplayFrames->IsEnabled();
 		bool dispFrames = DisplayFrames->GetValue();
 		if (lastEnable != Enable){
-			if (!vb->VFF && (dispFrames || !Enable)){
+			if (!FFMS2 && (dispFrames || !Enable)){
 				ChangeDisplayUnits(true);
 			}
-			else if (vb->VFF && dispFrames){
+			else if (FFMS2 && dispFrames){
 				ChangeDisplayUnits(false);
 			}
 		}
@@ -174,7 +176,7 @@ void ShiftTimesWindow::Contents(bool addopts)
 		if (vb->GetState() != None){ state = true; }
 		else{ state = false; }
 		MoveToVideoTime->Enable(state);
-		state = (Kai->GetTab()->Edit->ABox && Kai->GetTab()->Edit->ABox->audioDisplay->hasMark);
+		state = (tab->Edit->ABox && tab->Edit->ABox->audioDisplay->hasMark);
 		MoveToAudioTime->Enable(state);
 	}
 	if (LeadIn){
@@ -182,7 +184,7 @@ void ShiftTimesWindow::Contents(bool addopts)
 		LeadIn->Enable(state);
 		LeadOut->Enable(state);
 		Continous->Enable(state);
-		SnapKF->Enable(state && vb->VFF);
+		SnapKF->Enable(state && FFMS2);
 	}
 	//if(addopts){RefVals();}
 
@@ -448,7 +450,6 @@ void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 {
 	SaveOptions();
 	int acid = event.GetId();
-	TabPanel *tab = Kai->GetTab();
 	if (acid == GLOBAL_SHIFT_TIMES){
 		tab->Grid->ChangeTimes((!LeadIn) ? TimeText->HasShownFrames() : false);
 	}
@@ -463,8 +464,7 @@ void ShiftTimesWindow::OnOKClick(wxCommandEvent& event)
 void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 {
 	int h, gw, gh;
-	TabPanel* cur = (TabPanel*)GetParent();
-	cur->Grid->GetClientSize(&gw, &gh);
+	tab->Grid->GetClientSize(&gw, &gh);
 	int w;
 	panel->GetBestSize(&w, &h);
 	int ctw, cth;
@@ -473,7 +473,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 	{
 		isscrollbar = true;
 		SetMinSize(wxSize(w + 17, h));
-		cur->GridShiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 		scroll->SetSize(w - 1, 0, 17, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
@@ -487,7 +487,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		SetMinSize(wxSize(w, h));
 		panel->SetPosition(wxPoint(0, scPos));
-		cur->GridShiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 	}
 	else if (scroll->IsShown()){
 		scroll->SetSize(ctw - 18, 0, 17, gh);
@@ -500,7 +500,7 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 	}
 	else if (!isscrollbar && ctw != w){
 		SetMinSize(wxSize(w, h));
-		cur->GridShiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 	}
 
 }
@@ -567,13 +567,12 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(SHIFT_TIMES_TIME), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES));
 		bool dispTimes = DisplayFrames->GetValue();
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
-		TabPanel *tab = ((TabPanel*)GetParent());
 		if (secondWindow && (secondWindow->DisplayFrames->GetValue() != dispTimes)){
 			//it uses times as true
 			ChangeDisplayUnits(!DisplayFrames->GetValue());
 			
 		}
-		else if (!tab->Video->VFF){
+		else if (!tab->Video->HasFFMS2()){
 			if (DisplayFrames->GetValue()){ ChangeDisplayUnits(true); }
 			DisplayFrames->Enable(false);
 		}
@@ -819,8 +818,7 @@ void ShiftTimesWindow::SetProfile(const wxString &name)
 		bool displayFrames = DisplayFrames->GetValue();
 		bool newDisplayFrames = token == L"1";
 		if (displayFrames != newDisplayFrames){
-			TabPanel *tab = (TabPanel *)GetParent();
-			if (tab->Video->VFF){
+			if (tab->Video->HasFFMS2()){
 				//there are times as true
 				ChangeDisplayUnits(!newDisplayFrames);
 			}

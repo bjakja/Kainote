@@ -66,7 +66,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 			tab->Video->ReleaseMouse();
 		}
 		if (numElem >= 0){ ChangeInLines(true); }
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
 		numElem = -1;
 	}
 
@@ -345,10 +345,7 @@ void MoveAll::ChangeInLines(bool all)
 		}
 	}
 	if (all){
-		tab->Video->hasVisualEdition = true;
-		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-		tab->Grid->SetModified(VISUAL_POSITION_SHIFTER, true);
-		tab->Grid->Refresh();
+		SetModified(VISUAL_POSITION_SHIFTER);
 	}
 	else{
 		RenderSubs(dtxt);

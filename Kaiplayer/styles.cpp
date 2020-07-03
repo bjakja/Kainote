@@ -128,9 +128,9 @@ Styles::Styles()
 {
 	Name = _T("Default");
 	Fontname = _T("Garamond");
-	Fontsize = L"30";
+	Fontsize = L"40";
 	PrimaryColour.SetAss(_T("&H00FFFFFF&"));
-	SecondaryColour.SetAss(_T("&H000000FF&"));
+	SecondaryColour.SetAss(_T("&H00000000&"));
 	OutlineColour.SetAss(_T("&H00FF0000&"));
 	BackColour.SetAss(_T("&H00000000&"));
 	Bold = false;

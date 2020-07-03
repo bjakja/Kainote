@@ -1,0 +1,448 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|Win32">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX2|x64">
+      <Configuration>Rel_AVX2</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C91E1D87-614C-47E8-9587-393568D41738}</ProjectGuid>
+    <RootNamespace>Boost</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>Boost</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>Boost</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>Boost</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>Boost</TargetName>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
+    <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>Boost</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <TargetName>Boost</TargetName>
+    <TargetExt>.lib</TargetExt>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>icu.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <FloatingPointModel>Precise</FloatingPointModel>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>icu.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Icu.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\Win32\Release;C:\Program Files (x86)\Visual Leak Detector\lib\Win32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;libboost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;boost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\icu\source\common\unicode;$(SolutionDir)\Thirdparty\icu\source\common;$(SolutionDir)\Thirdparty\icu\source\i18n\unicode;$(SolutionDir)\Thirdparty\icu\source\i18n;$(SolutionDir)\Thirdparty\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;
+        BOOST_LOCALE_NO_STD_BACKEND=1;
+        BOOST_LOCALE_NO_WINAPI_BACKEND=1;
+        BOOST_LOCALE_NO_POSIX_BACKEND=1;
+        BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;
+BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;
+U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;
+        UCONFIG_NO_FILE_IO=1;
+        UCONFIG_NO_LEGACY_CONVERSION=1;
+        U_CHARSET_IS_UTF8=1;
+        UCONFIG_NO_IDNA=1;
+        UCONFIG_NO_FORMATTING=1;
+        UCONFIG_NO_TRANSLITERATION=1;
+
+        U_ATTRIBUTE_DEPRECATED=;
+        _CRT_SECURE_NO_DEPRECATE;
+        U_COMMON_IMPLEMENTATION;
+        U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\icu\Icu\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-1_61.lib;boost_date_time-vc120-mt-1_61.lib;boost_chrono-vc120-mt-1_61.lib;boost_regex-vc120-mt-1_61.lib;boost_locale-vc120-mt-1_61.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>icu.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Boost\libs\date_time\src\gregorian\greg_month.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\codecvt_error_category.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\directory.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\exception.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\operations.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\path.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\path_traits.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\portability.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\unique_path.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\utf8_codecvt_facet.cpp" />
+    <ClCompile Include="..\..\Boost\libs\filesystem\src\windows_file_codecvt.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\encoding\codepage.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\icu\boundary.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\icu\codecvt.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\icu\collator.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\icu\conversion.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\icu\icu_backend.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\shared\generator.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\shared\ids.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\shared\localization_backend.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\util\codecvt_converter.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\util\default_locale.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\util\info.cpp" />
+    <ClCompile Include="..\..\Boost\libs\locale\src\util\locale_data.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\c_regex_traits.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\cpp_regex_traits.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\cregex.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\fileiter.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\icu.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\instances.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\posix_api.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\regex.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\regex_raw_buffer.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\regex_traits_defaults.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\static_mutex.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\usinstances.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\w32_regex_traits.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\wc_regex_traits.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\wide_posix_api.cpp" />
+    <ClCompile Include="..\..\Boost\libs\regex\src\winstances.cpp" />
+    <ClCompile Include="..\..\Boost\libs\system\src\error_code.cpp" />
+    <ClCompile Include="..\..\Boost\libs\thread\src\win32\thread.cpp" />
+    <ClCompile Include="..\..\Boost\libs\thread\src\win32\tss_dll.cpp" />
+    <ClCompile Include="locale_stubs.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Boost\libs\filesystem\src\windows_file_codecvt.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\encoding\conv.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\all_generator.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\cdata.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\codecvt.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\icu_backend.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\icu_util.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\predefined_formatters.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\icu\uconv.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\shared\ios_prop.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\shared\mo_hash.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\shared\mo_lambda.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\util\gregorian.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\util\locale_data.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\util\numeric.hpp" />
+    <ClInclude Include="..\..\Boost\libs\locale\src\util\timezone.hpp" />
+    <ClInclude Include="..\..\Boost\libs\regex\src\internals.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\Boost\libs\locale\src\encoding\uconv_codepage.ipp" />
+    <None Include="..\..\Boost\libs\locale\src\encoding\wconv_codepage.ipp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Icu\Icu.vcxproj">
+      <Project>{e0f14c76-4d63-4a46-8add-68c112018bb3}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

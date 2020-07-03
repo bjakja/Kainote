@@ -889,6 +889,10 @@ void Notebook::OnTabSel(int id)
 	}
 	else if (wtab < 0){
 		KainoteFrame *Kai = (KainoteFrame*)GetParent();
+		if (KaiMessageBox(_("Zostaną zamknięte wszystkie zakładki, kontynuować?"), _("Pytanie"), 
+			wxYES_NO, Kai, wxDefaultPosition, wxNO) == wxNO)
+			return;
+
 		int tmpiter = iter;
 		Pages[iter]->Hide();
 		for (int i = (int)Pages.size() - 1; i >= 0; i--)
@@ -1044,7 +1048,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	tab->SubsPath = path;
 	if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + L".ass"; }
 	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
-	tab->Video->vToolbar->DisableVisuals(ext != L"ass");
+	tab->Video->DisableVisuals(ext != L"ass");
 	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
 		tab->Grid->SetActive(active);
 	}
@@ -1056,7 +1060,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 
 bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position /*= -1*/, bool isFFMS2)
 {
-	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? tab->Grid->GetVisible() : 0, false, true, (position != -1)? isFFMS2 : -1);
+	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? OPEN_DUMMY : 0, false, true, (position != -1)? isFFMS2 : -1);
 
 	if (!isload){
 		return false;
@@ -1080,8 +1084,8 @@ bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & pat
 		tab->KeyframesPath = keyframespath;
 	}
 
-	tab->Edit->Frames->Enable(!tab->Video->IsDshow);
-	tab->Edit->Times->Enable(!tab->Video->IsDshow);
+	tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
+	tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
 	if (position != -1)
 		tab->Video->Seek(position);
 
@@ -1124,7 +1128,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 		TabPanel *tab = *it;
 		//put path to recovery on crash
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath <<
-			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDshow <<
+			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDirectShow() <<
 			L"\r\nSubtitles: ";
 		if (!beforeClose){
 			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
@@ -1268,7 +1272,7 @@ LRESULT CALLBACK Notebook::PauseOnMinimalize(int code, WPARAM wParam, LPARAM lPa
 {
 
 	if (code == HCBT_MINMAX){
-		if (lParam == 7 && sthis->GetTab()->Video->vstate == Playing){
+		if (lParam == 7 && sthis->GetTab()->Video->GetState() == Playing){
 			sthis->GetTab()->Video->Pause();
 		}
 	}
@@ -1318,7 +1322,7 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
 	int ukey = event.GetUnicodeKey();
-	bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
+	//bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
 	VideoCtrl *vb = GetTab()->Video;
 	if (ukey == 179){ vb->Pause(); }
 	//else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
@@ -1326,8 +1330,8 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	else if (ukey == 176){ vb->NextChap(); }
 	//else if(ukey==175){vb->OnSPlus();return;}
 	//else if(ukey==174){vb->OnSMinus();return;}
-	else if (key == WXK_PAGEDOWN && nmodif && vb->HasFocus()){ vb->OnPrew(); return; }
-	else if (key == WXK_PAGEUP && nmodif && vb->HasFocus()){ vb->OnNext(); return; }
+	//else if (key == WXK_PAGEDOWN && nmodif && vb->HasFocus()){ vb->OnPrew(); return; }
+	//else if (key == WXK_PAGEUP && nmodif && vb->HasFocus()){ vb->OnNext(); return; }
 	event.Skip();
 }
 
@@ -1344,13 +1348,12 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 		return iter;
 }
 
-void Notebook::RefreshVideo()
+void Notebook::RefreshVideo(bool resetParameters /*= false*/)
 {
 	for (int i = 0; i < sthis->Size(); i++){
 		TabPanel *tab = sthis->Page(i);
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(tab->Grid->GetVisible());
-			tab->Video->Render();
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
 		}
 	}
 

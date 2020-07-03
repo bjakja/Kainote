@@ -30,7 +30,7 @@
 
 
 
-VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWindow *progressSinkWindow, bool *_success)
+VideoFfmpeg::VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *_success)
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
 	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
@@ -55,7 +55,6 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, VideoRenderer *renderer, wxWi
 
 	success = false;
 	fname = filename;
-	//kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 	progress = new ProgressSink(progressSinkWindow, _("Indeksowanie pliku wideo"));
 
 	if (renderer){
@@ -108,20 +107,16 @@ void VideoFfmpeg::Processing()
 
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
-			byte *buff = (byte*)rend->frameBuffer;
+			byte *buff = (byte*)rend->m_FrameBuffer;
 			int acttime;
 			//isBusy = false;
 			while (1){
 
-				if (rend->numframe != lastframe){
-					rend->time = Timecodes[rend->numframe];
-					lastframe = rend->numframe;
+				if (rend->m_Frame != lastframe){
+					rend->m_Time = Timecodes[rend->m_Frame];
+					lastframe = rend->m_Frame;
 				}
-				//if (lockGetFrame)
-					GetFFMSFrame();
-				//else{
-					//fframe = FFMS_GetFrame(videosource, rend->numframe, &errinfo);
-				//}
+				GetFFMSFrame();
 
 				if (!fframe){
 					continue;
@@ -131,34 +126,34 @@ void VideoFfmpeg::Processing()
 				rend->DrawTexture(buff);
 				rend->Render(false);
 
-				if (rend->time >= rend->playend || rend->numframe >= NumFrames - 1){
-					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, 23333);
-					wxQueueEvent(rend, evt);
+				if (rend->m_Time >= rend->m_PlayEndTime || rend->m_Frame >= NumFrames - 1){
+					wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+					wxQueueEvent(rend->videoControl, evt);
 					break;
 				}
-				else if (rend->vstate != Playing){
+				else if (rend->m_State != Playing){
 					break;
 				}
-				acttime = timeGetTime() - rend->lasttime;
+				acttime = timeGetTime() - rend->m_LastTime;
 				
-				rend->numframe++;
-				rend->time = Timecodes[rend->numframe];
+				rend->m_Frame++;
+				rend->m_Time = Timecodes[rend->m_Frame];
 
-				tdiff = rend->time - acttime;
+				tdiff = rend->m_Time - acttime;
 
 				if (tdiff > 0){ Sleep(tdiff); }
 				else{
 					while (1){
-						int frameTime = Timecodes[rend->numframe];
-						if (frameTime >= acttime || frameTime >= rend->playend || rend->numframe >= NumFrames){
-							if (rend->numframe >= NumFrames){
-								rend->numframe = NumFrames - 1;
-								rend->time  = rend->playend; 
+						int frameTime = Timecodes[rend->m_Frame];
+						if (frameTime >= acttime || frameTime >= rend->m_PlayEndTime || rend->m_Frame >= NumFrames){
+							if (rend->m_Frame >= NumFrames){
+								rend->m_Frame = NumFrames - 1;
+								rend->m_Time = rend->m_PlayEndTime;
 							}
 							break;
 						}
 						else{
-							rend->numframe++;
+							rend->m_Frame++;
 						}
 					}
 
@@ -167,14 +162,10 @@ void VideoFfmpeg::Processing()
 			}
 		}
 		else if (wait_result == WAIT_OBJECT_0 + 1){
-			byte *buff = (byte*)rend->frameBuffer;
-			if (rend->numframe != lastframe){
-				//if (lockGetFrame)
-					GetFFMSFrame();
-				//else{
-					//fframe = FFMS_GetFrame(videosource, rend->numframe, &errinfo);
-				//}
-				lastframe = rend->numframe;
+			byte *buff = (byte*)rend->m_FrameBuffer;
+			if (rend->m_Frame != lastframe){
+				GetFFMSFrame();
+				lastframe = rend->m_Frame;
 			}
 			if (!fframe){
 				isBusy = false; 
@@ -427,7 +418,7 @@ done:
 		}
 
 		if (rend){
-			SubsGrid *grid = ((TabPanel*)rend->GetParent())->Grid;
+			SubsGrid *grid = ((TabPanel*)rend->videoControl->GetParent())->Grid;
 			const wxString &colormatrix = grid->GetSInfo(L"YCbCr Matrix");
 			bool changeMatrix = false;
 			if (CS == FFMS_CS_UNSPECIFIED){
@@ -474,9 +465,9 @@ done:
 			Timecodes.push_back(Timestamp);
 
 		}
-		if (rend && !rend->keyframesFileName.empty()){
-			OpenKeyframes(rend->keyframesFileName);
-			rend->keyframesFileName.clear();
+		if (rend && !rend->videoControl->GetKeyFramesFileName().empty()){
+			OpenKeyframes(rend->videoControl->GetKeyFramesFileName());
+			rend->videoControl->SetKeyFramesFileName(L"");
 		}
 	}
 audio:
@@ -521,7 +512,7 @@ VideoFfmpeg::~VideoFfmpeg()
 {
 	if (thread){
 		SetEvent(eventKillSelf);
-		WaitForSingleObject(thread, 2000);
+		WaitForSingleObject(thread, 20000);
 		CloseHandle(thread);
 		CloseHandle(eventStartPlayback);
 		CloseHandle(eventRefresh);
@@ -588,7 +579,7 @@ void VideoFfmpeg::GetFrame(int ttime, byte *buff)
 void VideoFfmpeg::GetFFMSFrame()
 {
 	wxCriticalSectionLocker lock(blockframe);
-	fframe = FFMS_GetFrame(videosource, rend->numframe, &errinfo);
+	fframe = FFMS_GetFrame(videosource, rend->m_Frame, &errinfo);
 	//memcpy(buff, fframe->Data[0], fplane);
 }
 
@@ -953,10 +944,10 @@ void VideoFfmpeg::DeleteOldAudioCache()
 }
 
 void VideoFfmpeg::Render(bool wait){
-	byte *buff = (byte*)rend->frameBuffer;
-	if (rend->numframe != lastframe){
+	byte *buff = (byte*)rend->m_FrameBuffer;
+	if (rend->m_Frame != lastframe){
 		GetFFMSFrame();
-		lastframe = rend->numframe;
+		lastframe = rend->m_Frame;
 	}
 	if (!fframe){
 		return;
@@ -1011,7 +1002,7 @@ void VideoFfmpeg::OpenKeyframes(const wxString & filename)
 	KeyframeLoader kfl(filename, &keyframes, this);
 	if (keyframes.size()){
 		KeyFrames = keyframes;
-		TabPanel *tab = (rend) ? (TabPanel*)rend->GetParent() : Notebook::GetTab();
+		TabPanel *tab = (rend) ? (TabPanel*)rend->videoControl->GetParent() : Notebook::GetTab();
 		if (tab->Edit->ABox){
 			tab->Edit->ABox->SetKeyframes(keyframes);
 		}

@@ -492,7 +492,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			FindWord(Cursor.x - 1, &Cursor.x, 0);
 		}
 		if (Cursor.x - 1 < wraps[Cursor.y] && Cursor.x != 0){ Cursor.y--; }
-		else if (ID != ID_CLEFT&&ID != ID_CSLEFT){ Cursor.x--; }
+		else if (ID != ID_CLEFT && ID != ID_CSLEFT){ Cursor.x--; }
 
 
 		if (ID<ID_SLEFT){ Selend = Cursor; }
@@ -708,7 +708,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		tmpstart = start; tmpend = end;
 
 		if (start < oldstart){
-			if (end == oldend){
+			if (end == oldstart){
 				Selend.x = oldend; 
 				Selend.y = FindY(oldend); 
 			}

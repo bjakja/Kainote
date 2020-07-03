@@ -205,7 +205,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		SetVisual(false, type);
 		oldAngle = angle;
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
 	}
 
@@ -224,7 +224,6 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 		if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 		if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
-		hasArrow = false;
 	}
 	else if (holding){
 		if (isOrg){

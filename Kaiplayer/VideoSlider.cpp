@@ -17,6 +17,7 @@
 #include "Videobox.h"
 #include "SubsTime.h"
 #include "Config.h"
+#include "VideoFfmpeg.h"
 
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent, id, pos, size, style, name)
@@ -55,22 +56,24 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 		tdc.SetPen(wxPen(L"#2EA6E2"));
 		int duration = VB->GetDuration();
 		float factor = (float)(w - 30) / (float)duration;
-		const std::vector<chapter> &chapters = VB->chapters;
-		isChapter = false;
-		for (auto & ch : chapters){
-			int chpos = (ch.time * factor) + 15;
-			if (abs(labelpos - chpos) < 3){
-				isChapter = true;
-				chapterTime = ch.time;
-				chapterPos = chpos - 15;
-				STime kkk;
-				kkk.mstime = chapterTime;
-				wxString time = kkk.raw(SRT);
-				time.Prepend(ch.name + L" ");
-				label = time;
-				tdc.SetPen(wxPen(L"#2583C8"));
+		RendererVideo *renderer = VB->GetRenderer();
+		if (renderer){
+			isChapter = false;
+			for (auto & ch : renderer->m_Chapters){
+				int chpos = (ch.time * factor) + 15;
+				if (abs(labelpos - chpos) < 3){
+					isChapter = true;
+					chapterTime = ch.time;
+					chapterPos = chpos - 15;
+					STime kkk;
+					kkk.mstime = chapterTime;
+					wxString time = kkk.raw(SRT);
+					time.Prepend(ch.name + L" ");
+					label = time;
+					tdc.SetPen(wxPen(L"#2583C8"));
+				}
+				tdc.DrawLine(chpos, 0, chpos, posY);
 			}
-			tdc.DrawLine(chpos, 0, chpos, posY);
 		}
 	}
 	wxBitmap start = prb.GetSubBitmap(wxRect(0, 0, 10, 5));
@@ -179,7 +182,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (holding && isOnSlider || (holding && block)){
 			block = true;
 			position = MID(0, curX - 15 + positionDiff, w - 30);
-			if (!VB->IsDshow){ SendTime(msTimePosition); }
+			if (!VB->IsDirectShow()){ SendTime(msTimePosition); }
 			//Refresh(false);
 		}
 		//move thumb by clicking on slider

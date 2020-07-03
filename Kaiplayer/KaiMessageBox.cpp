@@ -20,7 +20,8 @@
 #include "KaiStaticText.h"
 
 
-KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems, const wxPoint &pos)
+KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, 
+	const wxString &caption, long elems, const wxPoint &pos, long buttonWithFocus)
 	: KaiDialog(parent, -1, caption, pos)
 {
 	SetMinSize(wxSize(300, -1));
@@ -38,19 +39,21 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 			EndModal(wxOK);
 		}, 9009);
 		sizer1->Add(btn, 1, wxALL, 3);
-		btn->SetFocus(); setFocus = false;
+		if (buttonWithFocus < 0 || buttonWithFocus == wxOK) {
+			btn->SetFocus(); setFocus = false;
+		}
 	}
 	if (elems & wxYES_TO_ALL){
 		btn = new MappedButton(this, wxYES_TO_ALL, _("Tak dla wszystkich"));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxYES_TO_ALL); }, wxYES_TO_ALL);
 		sizer1->Add(btn, 0, wxALL, 3);
-		if (setFocus){ btn->SetFocus(); setFocus = false; }
+		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES_TO_ALL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxYES){
 		btn = new MappedButton(this, wxID_YES, _("Tak"), -1, wxDefaultPosition, wxSize(60, -1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxYES); }, wxID_YES);
 		sizer1->Add(btn, 1, wxALL, 3);
-		if (setFocus){ btn->SetFocus(); setFocus = false; }
+		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxNO){
 		btn = new MappedButton(this, wxID_NO, _("Nie"), -1, wxDefaultPosition, wxSize(60, -1));
@@ -58,7 +61,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 			EndModal(wxNO);
 		}, wxID_NO);
 		sizer1->Add(btn, 1, wxALL, 3);
-		if (setFocus){ btn->SetFocus(); setFocus = false; }
+		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxNO)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxCANCEL){
 		btn = new MappedButton(this, 9010, _("Anuluj"), -1);
@@ -66,13 +69,13 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg, const 
 			EndModal(wxCANCEL);
 		}, 9010);
 		sizer1->Add(btn, 1, wxALL, 3);
-		if (setFocus){ btn->SetFocus(); setFocus = false; }
+		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxCANCEL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxHELP){
 		btn = new MappedButton(this, 9011, _("Pomoc"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){EndModal(wxHELP); }, 9011);
 		sizer1->Add(btn, 1, wxALL, 3);
-		if (setFocus){ btn->SetFocus(); setFocus = false; }
+		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxHELP)){ btn->SetFocus(); setFocus = false; }
 	}
 	sizer2->Add(txt, 0, wxALL | wxALIGN_LEFT, 16);
 	sizer2->Add(sizer1, 0, wxALL | wxALIGN_RIGHT, 3);
@@ -122,8 +125,9 @@ void KaiMessageDialog::SetHelpLabel(const wxString &label)
 
 
 
-int KaiMessageBox(const wxString& msg, const wxString &caption, long elems, wxWindow *parent, const wxPoint &pos){
-	KaiMessageDialog dlgmsg(parent, msg, caption, elems, pos);
+int KaiMessageBox(const wxString& msg, const wxString &caption, 
+	long elems, wxWindow *parent, const wxPoint &pos, long buttonWithFocus){
+	KaiMessageDialog dlgmsg(parent, msg, caption, elems, pos, buttonWithFocus);
 	return dlgmsg.ShowModal();
 
 }

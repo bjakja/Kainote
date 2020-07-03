@@ -16,8 +16,8 @@
 #pragma once
 
 typedef wchar_t* PTCHAR;
-
-#include "VideoRenderer.h"
+#include <d3d9.h>
+#include <dxva2api.h>
 #include <Dvdmedia.h>
 #include <streams.h>
 
@@ -45,13 +45,13 @@ struct VideoInf{
 //#ifndef SRELEASE
 //#define SRELEASE(x) if (x != NULL) { x->Release(); x = NULL; }
 //#endif
-
+class RendererVideo;
 
 class CD2DVideoRender : public CBaseVideoRenderer
 {
 public:
 
-	CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr);
+	CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
 	HRESULT Render(IMediaSample *pMediaSample);
@@ -65,7 +65,7 @@ public:
 	HRESULT GetVidInfo(VideoInf &vi);
 
 private:
-	VideoRenderer *Vrend;
+	RendererVideo *Vrend;
 	VideoInf Vinfo;
 	int time;
 	bool norender;

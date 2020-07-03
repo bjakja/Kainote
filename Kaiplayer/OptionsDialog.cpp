@@ -30,6 +30,7 @@
 #include "OptionsPanels.h"
 #include "StyleChange.h"
 #include "Registry.h"
+#include "SubtitlesProviderManager.h"
 
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -558,7 +559,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[5]);
 		wxArrayString vsfilters;
-		Options.GetVSFiltersList(vsfilters);
+		SubtitlesProviderManager::GetProviders(&vsfilters);
 		KaiChoice *vsfiltersList = new KaiChoice(Video, ID_VSFILTER_PROVIDER, 
 			wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
 		wxString name = Options.GetString(vopts[5]);
@@ -1084,8 +1085,8 @@ void OptionsDialog::SetOptions(bool saveall)
 						Options.SetString(OB.option, option);
 						//vsfilter change
 						if (cbx->GetId() == ID_VSFILTER_PROVIDER){
-							Options.ChangeVsfilter();
-							Notebook::RefreshVideo();
+							SubtitlesProviderManager::DestroyProviders();
+							Notebook::RefreshVideo(true);
 						}
 					}
 				}

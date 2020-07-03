@@ -20,7 +20,7 @@
 class KaiMessageDialog : public KaiDialog
 {
 public:
-	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK, const wxPoint &pos = wxDefaultPosition);
+	KaiMessageDialog(wxWindow *parent, const wxString& msg, const wxString &caption, long elems = wxOK, const wxPoint &pos = wxDefaultPosition, long buttonWithFocus = -1);
 	virtual ~KaiMessageDialog(){}
 	void SetOkLabel(const wxString &label);
 	void SetYesLabel(const wxString &label);
@@ -30,6 +30,6 @@ public:
 };
 
 //position set 0 to center position -1 not works
-int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition);
+int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition, long buttonWithFocus = -1);
 
 #define wxYES_TO_ALL 64

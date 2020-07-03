@@ -24,7 +24,8 @@
 
 
 enum{
-	CHANGEPOS = 1,//in case of changing change in SubsGrid selectrow
+	CROSS = 0,
+	CHANGEPOS,//in case of changing change in SubsGrid selectrow
 	MOVE,
 	SCALE,
 	ROTATEZ,
@@ -93,6 +94,9 @@ public:
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
 	};
+
+	void GetMoveTimes(int *start, int *end);
+	void SetModified(int action);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -120,7 +124,6 @@ public:
 	wxSize SubsSize;
 	wxRect VideoSize;
 	TabPanel *tab;
-	bool hasArrow;
 	bool blockevents;
 	bool notDialogue;
 	wxString *dummytext;
@@ -145,6 +148,23 @@ public:
 	bool putinBracket;
 	int numpos;
 	Dialogue *dial;
+};
+
+class Cross : public Visuals{
+public:
+	Cross();
+	void OnMouseEvent(wxMouseEvent &event);
+	void Draw(int time);
+	void DrawLines(wxPoint point);
+	void SetCurVisual();
+private:
+	D3DXVECTOR2 vectors[4];
+	RECT crossRect;
+	wxString coords;
+	bool cross;
+	wxMutex m_MutexCrossLines;
+	float coeffX, coeffY;
+	int diffX = 0, diffY = 0;
 };
 
 class Position : public Visuals
@@ -327,6 +347,7 @@ public:
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);
+	void OnMoveSelected(int x, int y);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

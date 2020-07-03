@@ -25,10 +25,13 @@
 #include <vector>
 #include <set>
 
+
 class EditBox;
 class KainoteFrame;
 class SubsGrid;
 class SubsGridPreview;
+class TabPanel;
+
 
 class compareData{
 public:
@@ -111,7 +114,8 @@ public:
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *GetDialogueWithOffset(size_t i, int offset);
 	// returns visible lines as string for Vsfilter
-	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL);
+	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL, bool allSubs = false);
+	bool IsLineVisible();
 	//Get line key from scrollPosition.
 	//Every value will be stored as key.
 	//Simple function to convert key to id from scroll position
@@ -149,12 +153,14 @@ public:
 	static void RemoveComparison();
 	static wxArrayString compareStyles;
 	static bool hasCompare;
+	wxMutex &GetMutex() { return editionMutex; }
 private:
 	virtual void AdjustWidths(int cell = 8191){};
 	virtual void RefreshColumns(int cell = 8191){};
 	virtual void MakeVisible(int row){};
 	//to add option to not center lines is need make visible
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
+	
 protected:
 	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;
@@ -174,7 +180,8 @@ protected:
 	wxTimer timer;
 	wxTimer nullifyTimer;
 	void OnBackupTimer(wxTimerEvent &event);
-
+	TabPanel *tab;
+	wxMutex editionMutex;
 };
 
 bool sortstart(Dialogue *i, Dialogue *j);

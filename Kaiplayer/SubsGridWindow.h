@@ -47,33 +47,32 @@ public:
 	void SetActive(int line);
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false, bool setViaScroll = false);
 	void RefreshPreview();
-	
+
 	SubsGridPreview *preview = NULL;
-	
+
 protected:
 	void OnKeyPress(wxKeyEvent &event);
 	void OnMouseEvent(wxMouseEvent &event);
 	void OnPaint(wxPaintEvent& event);
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
+	void OnLostCapture(wxMouseCaptureLostEvent &evt) { if (HasCapture()) { ReleaseMouse(); } holding = false; };
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
-	void PaintGDIPlus(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg);
+	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg);
 	int GridWidth[13];
-	int posY=0;
-	int posX=0;
-	int row=0;
-	int extendRow=-1;
-	int lastsel=-1;
-	int oldX=-1;
-	bool holding=false;
+	int posY = 0;
+	int posX = 0;
+	int row = 0;
+	int extendRow = -1;
+	int lastsel = -1;
+	int oldX = -1;
+	bool holding = false;
 
 	wxBitmap* bmp;
 	wxFont font;
 	SubsGridPreview *thisPreview = NULL;
 private:
-	virtual void ContextMenu(const wxPoint &pos){};
-	virtual void ContextMenuTree(const wxPoint &pos, int treeLine){};
-	//DECLARE_EVENT_TABLE();
+	virtual void ContextMenu(const wxPoint &pos) {};
+	virtual void ContextMenuTree(const wxPoint &pos, int treeLine) {};
 };
 

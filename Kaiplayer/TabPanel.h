@@ -21,7 +21,7 @@
 #include "Videobox.h"
 #include "EditBox.h"
 #include "ShiftTimes.h"
-#include <wx/statline.h>
+//#include <wx/statline.h>
 #include "KaiWindowResizer.h"
 
 class TabPanel : public wxWindow

@@ -81,7 +81,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	wxWindow::SetFont(*Options.GetFont(-1));
 
 	wxString movopts[6] = { _("Dwukrotnym kliknięciu linii (zawsze włączone)"), _("Każdej zmianie linii"),
-		_("Kliknięciu linii lub edycji na pauzie"), _("Kliknięciu liniu lub edycji"),
+		_("Kliknięciu linii lub edycji na pauzie"), _("Kliknięciu linii lub edycji"),
 		_("Edycji na pauzie"), _("Edycji") };
 	wxString playopts[4] = { _("Nic"), _("Audio do końca linii"), _("Wideo do końca linii"),
 		_("Wideo do początku następnej linii") };

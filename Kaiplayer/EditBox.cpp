@@ -140,7 +140,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 	, CurrentUntranslated(0)
 	, TagButtonManager(NULL)
 {
-
+	tab = (TabPanel*)GetParent();
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxWindow::SetFont(*Options.GetFont(-1));
@@ -359,7 +359,7 @@ EditBox::~EditBox()
 
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
-	TabPanel* tab = (TabPanel*)GetParent();
+	wxMutexLocker lock(grid->GetMutex());
 	bool rowChanged = currentLine != Row;
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
@@ -369,6 +369,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode){
 		SetTlMode(grid->hasTLMode, true);
 	}
+
 	if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save){
 		Send(EDITBOX_LINE_EDITION, false);
 	}
@@ -432,10 +433,10 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 done:
 	VideoCtrl *vb = tab->Video;
-	int pas = vb->vToolbar->videoPlayAfter->GetSelection();
-	int vsa = vb->vToolbar->videoSeekAfter->GetSelection();
+	int playAfter = 0, seekAfter = 0;
+	tab->Video->GetVideoListsOptions(&playAfter, &seekAfter);
 
-	if (vsa == 1 && pas < 2 && !nochangeline && rowChanged){
+	if (seekAfter == 1 && playAfter < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
 			if (vb->GetState() == Playing){ vb->Pause(); }
 			vb->Seek(line->Start.mstime);
@@ -443,8 +444,8 @@ done:
 		//return;
 	}
 
-	if (pas > 0 && autoPlay){
-		if (pas == 1){
+	if (playAfter > 0 && autoPlay){
+		if (playAfter == 1){
 			if (ABox){
 				wxWindow *focused = wxWindow::FindFocus();
 				wxCommandEvent evt; ABox->OnPlaySelection(evt);
@@ -452,10 +453,10 @@ done:
 			}
 		}
 		else{
-			if (tab->Video->IsShown() || tab->Video->isFullscreen){
+			if (tab->Video->IsShown() || tab->Video->IsFullScreen()){
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
-				int playend = (nst > ed && pas > 2) ? nst : ed;
+				int playend = (nst > ed && playAfter > 2) ? nst : ed;
 				tab->Video->PlayLine(line->Start.mstime, tab->Video->GetPlayEndTime(playend));
 			}
 		}
@@ -466,7 +467,7 @@ done:
 	}
 
 	//Set time and differents in video text field
-	if (tab->Video->IsShown() && tab->Video->GetState() != None && vsa == 0){
+	if (tab->Video->IsShown() && tab->Video->GetState() != None && seekAfter == 0){
 		tab->Video->RefreshTime();
 	}
 
@@ -966,8 +967,8 @@ void EditBox::OnColorRightClick(wxMouseEvent& event)
 
 void EditBox::OnCommit(wxCommandEvent& event)
 {
-	TabPanel* pan = (TabPanel*)GetParent();
-	pan->Video->blockpaint = true;
+	///test it too if it's needed
+	//tab->Video->m_blockRender = true;
 	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){
 		TextEdit->SetModified(); TextEditOrig->SetModified(); splittedTags = false;
 	}
@@ -978,11 +979,11 @@ void EditBox::OnCommit(wxCommandEvent& event)
 			(line->Effect->StartsWith(L"code")) ? 3 : 1, true);
 	}
 	if (Visual){
-		pan->Video->SetVisual(true);
+		tab->Video->SetVisual(true);
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
 	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-	pan->Video->blockpaint = false;
+	//tab->Video->m_blockRender = false;
 }
 
 void EditBox::OnNewline(wxCommandEvent& event)
@@ -996,7 +997,6 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	if (Visual == CHANGEPOS){
-		TabPanel *tab = (TabPanel *)GetParent();
 		tab->Video->SetVisual(true, true);
 	}
 	splittedTags = false;
@@ -1411,9 +1411,9 @@ void EditBox::OnHideOriginal(wxCommandEvent& event)
 
 void EditBox::OnPasteDifferents(wxCommandEvent& event)
 {
-	if (Notebook::GetTab()->Video->GetState() == None){ wxBell(); return; }
+	if (tab->Video->GetState() == None){ wxBell(); return; }
 	int idd = event.GetId();
-	int vidtime = Notebook::GetTab()->Video->Tell();
+	int vidtime = tab->Video->Tell();
 	if (vidtime < line->Start.mstime || vidtime > line->End.mstime){ wxBell(); return; }
 	int diff = (idd == EDITBOX_START_DIFFERENCE) ? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime));
 	long startPosition, endPosition;
@@ -1619,7 +1619,6 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 void EditBox::OnEdit(wxCommandEvent& event)
 {
 	//subs preview will switch grid to preview grid that's why we need to change its video, we dont want to change subtitles
-	TabPanel* panel = (TabPanel*)grid->GetParent();
 	bool startEndFocus = StartEdit->HasFocus() || EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
 	
@@ -1662,8 +1661,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (saveAfter && EditCounter >= saveAfter){
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		if (hasPreviewGrid){
-			TabPanel* thisTab = (TabPanel*)GetParent();
-			thisTab->Grid->RefreshPreview();
+			tab->Grid->RefreshPreview();
 		}
 		EditCounter = 1;
 		if (ABox && ABox->audioDisplay->hasKara && event.GetId() > 0)
@@ -1675,14 +1673,14 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 
 	if (Visual > 0){
-		panel->Video->SetVisual(true);
+		tab->Video->SetVisual(true);
 		return;
 	}
 
-	wxString *text = NULL;
-	if (panel->Video->GetState() != None){
+	int openFlag = CLOSE_SUBTITLES;
+	if (tab->Video->GetState() != None){
 		//visible=true;
-		text = grid->GetVisible(&visible);
+		visible = grid->IsLineVisible();
 		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ 
 			visible = true; 
 			lastVisible = false; 
@@ -1690,16 +1688,18 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
-			panel->Video->hasDummySubs = true;
+			tab->Video->GetRenderer()->m_HasDummySubs = true;
+		}
+		else {
+			openFlag = OPEN_DUMMY;
 		}
 	}
 
-	if (visible && (panel->Video->IsShown() || panel->Video->isFullscreen)){
-		panel->Video->OpenSubs(text);
-		if (Visual > 0){ panel->Video->ResetVisual(); }
-		else if (panel->Video->GetState() == Paused){ panel->Video->Render(); }
+	if (visible && (tab->Video->IsShown() || tab->Video->IsFullScreen())){
+		tab->Video->OpenSubs(openFlag);
+		if (Visual > 0){ tab->Video->ResetVisual(); }
+		else if (tab->Video->GetState() == Paused){ tab->Video->Render(); }
 	}
-	else if (text){ delete text; }
 
 }
 
@@ -1951,9 +1951,9 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true); }
 done:
 	if (RefreshVideo){
-		VideoCtrl *vb = ((TabPanel*)GetParent())->Video;
+		VideoCtrl *vb = tab->Video;
 		if (vb->GetState() != None){
-			vb->OpenSubs(grid->GetVisible());
+			vb->OpenSubs(OPEN_DUMMY);
 			vb->Render();
 		}
 	}
@@ -1964,8 +1964,7 @@ void EditBox::OnCursorMoved(wxCommandEvent& event)
 	if (Visual == SCALE || Visual == ROTATEZ || Visual == ROTATEXY || Visual == CLIPRECT){
 		//here grid has nothing to do if someone would want to make effect by visual on this video, 
 		//he can without problems
-		TabPanel* pan = (TabPanel*)GetParent();
-		pan->Video->ResetVisual();
+		tab->Video->ResetVisual();
 	}
 }
 
@@ -2183,12 +2182,10 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		hasPreviewGrid = isPreview;
 		RebuildActorEffectLists();
 		RefreshStyle();
-		
-		TabPanel *tab = (TabPanel*)GetParent();
 		if (isPreview){
 			tab->Video->RemoveVisual();
 		}
-		tab->Video->vToolbar->DisableVisuals(isPreview);
+		tab->Video->DisableVisuals(isPreview);
 	}
 }
 
@@ -2218,7 +2215,7 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 			BoxSizer1->Prepend(windowResizer, 0, wxEXPAND);
 			BoxSizer1->Prepend(ABox, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
 
-			if (!((TabPanel*)GetParent())->Video->IsShown()){
+			if (!tab->Video->IsShown()){
 				SetMinSize(wxSize(500, 350));
 			}
 			Layout();

@@ -199,7 +199,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	Dialogue *acdial = /*(size > 0) ? */previewGrid->GetDialogue(previewGrid->currentLine)/* : NULL*/;
 	Dialogue *Dial = NULL;
 
-	int VideoPos = tab->Video->vstate != None ? tab->Video->Tell() : -1;
+	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 	int fw, fh, bfw, bfh;
 	wxColour kol;
@@ -301,14 +301,14 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
-			if (previewGrid->showFrames && tab->Video->VFF){
-				VideoFfmpeg *VFF = tab->Video->VFF;
+			if (previewGrid->showFrames && tab->Video->HasFFMS2()){
+				VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
 				wxString frame;
-				frame << VFF->GetFramefromMS(Dial->Start.mstime);
+				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (previewGrid->subsFormat != TMP){
 					frame = L"";
-					frame << VFF->GetFramefromMS(Dial->End.mstime) - 1;
+					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
 			}
@@ -705,8 +705,6 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	VideoCtrl *video = tabp->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
-	int mvtal = video->vToolbar->videoSeekAfter->GetSelection();
-	int pas = video->vToolbar->videoPlayAfter->GetSelection();
 	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {
 
 

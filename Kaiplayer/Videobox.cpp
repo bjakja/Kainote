@@ -27,6 +27,9 @@
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
+#include "RendererDirectShow.h"
+#include "RendererFFMS2.h"
+
 #pragma warning ( disable: 4482 )
 
 class CRecycleFile : public SHFILEOPSTRUCT {
@@ -66,11 +69,11 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 
 }
 
-class bars1 : public KaiDialog
+class AspectRatioDialog : public KaiDialog
 {
 public:
-	bars1(VideoCtrl *parent);
-	virtual ~bars1(){};
+	AspectRatioDialog(VideoCtrl *parent, float AspectRatio);
+	virtual ~AspectRatioDialog(){};
 
 	KaiSlider *slider;
 	KaiStaticText *actual;
@@ -78,119 +81,122 @@ public:
 	VideoCtrl *_parent;
 };
 
-bars1::bars1(VideoCtrl *parent)
-	: KaiDialog((parent->isFullscreen) ? (wxWindow*)parent->TD : parent, -1, L"", wxDefaultPosition, wxDefaultSize)
+AspectRatioDialog::AspectRatioDialog(VideoCtrl *parent, float AspectRatio)
+	: KaiDialog(parent->GetMessageWindowParent(), -1, L"", wxDefaultPosition, wxDefaultSize)
 {
 	_parent = parent;
 	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
-	actual = new KaiStaticText(this, -1, wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / parent->AR));
-	slider = new KaiSlider(this, 7767, parent->AR * 700000, 100000, 1000000, wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
-	Connect(7767, wxEVT_SCROLL_THUMBTRACK, (wxObjectEventFunction)&bars1::OnSlider);
+	actual = new KaiStaticText(this, -1, wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / AspectRatio));
+	slider = new KaiSlider(this, 7767, AspectRatio * 700000, 100000, 1000000, wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
+	Connect(7767, wxEVT_SCROLL_THUMBTRACK, (wxObjectEventFunction)&AspectRatioDialog::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
 	sizer->Add(slider, 1, wxEXPAND | wxALL, 3);
 	SetSizerAndFit(sizer);
 	MoveToMousePosition(this);
 }
 
-void bars1::OnSlider(wxCommandEvent &event)
+void AspectRatioDialog::OnSlider(wxCommandEvent &event)
 {
-	_parent->SetAspectRatio(slider->GetValue() / 700000.0f);
-	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / _parent->AR));
+	float AspectRatio = slider->GetValue() / 700000.0f;
+	_parent->SetAspectRatio(AspectRatio);
+	actual->SetLabelText(wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / AspectRatio));
 }
 
 
 VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
-	: VideoRenderer(parent, size)
+	: wxWindow(parent, -1, wxDefaultPosition, size)
 	, Kai(kfpar)
-	, hasArrow(true)
-	, ismenu(false)
-	, eater(false)
+	, tab((TabPanel*)parent)
+	//, m_HasArrow(true)
+	, m_IsMenuShown(false)
+	, m_ArrowEater(false)
 	, actualFile(0)
 	, prevchap(-1)
-	, coeffX(0.0f)
-	, coeffY(0.0f)
-	, TD(NULL)
-	, blockpaint(false)
-	, isOnAnotherMonitor(false)
-	, shownKeyframe(false)
+	, m_FullScreenWindow(NULL)
+	, m_blockRender(false)
+	, m_IsOnAnotherMonitor(false)
+	, m_ShownKeyframe(false)
+	, m_IsFullscreen(false)
 {
 	int fw;
-	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
-	toolBarHeight += 8;
-	panelHeight = 30 + (toolBarHeight * 2) - 8;
+	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
+	m_ToolBarHeight += 8;
+	m_PanelHeight = 30 + (m_ToolBarHeight * 2) - 8;
 
-	panel = new wxWindow(this, -1, wxPoint(0, size.y - panelHeight), wxSize(size.x, panelHeight));
-	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
+	m_VideoPanel = new wxWindow(this, -1, wxPoint(0, size.y - m_PanelHeight), wxSize(size.x, m_PanelHeight));
+	m_VideoPanel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
+	m_VideoPanel->SetCursor(wxCURSOR_ARROW);
 
-	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
-	vslider->VB = this;
-	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"),
-		VIDEO_PREVIOUS_FILE, _("Poprzedni plik"), wxPoint(5, toolBarHeight - 6), wxSize(26, 26));
-	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"),
-		VIDEO_PLAY_PAUSE, _("Odtwórz / Pauza"), wxPoint(40, toolBarHeight - 6), wxSize(26, 26));
-	bpline = new BitmapButton(panel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"),
-		GLOBAL_PLAY_ACTUAL_LINE, _("Odtwórz aktywną linię"), wxPoint(75, toolBarHeight - 6), wxSize(26, 26), GLOBAL_HOTKEY);
-	bstop = new BitmapButton(panel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"),
-		VIDEO_STOP, _("Zatrzymaj"), wxPoint(110, toolBarHeight - 6), wxSize(26, 26));
-	bnext = new BitmapButton(panel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
-		VIDEO_NEXT_FILE, _("Następny plik"), wxPoint(145, toolBarHeight - 6), wxSize(26, 26));
+	m_SeekingSlider = new VideoSlider(m_VideoPanel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, m_ToolBarHeight - 8));
+	m_SeekingSlider->VB = this;
+	m_ButtonPreviousFile = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"),
+		VIDEO_PREVIOUS_FILE, _("Poprzedni plik"), wxPoint(5, m_ToolBarHeight - 6), wxSize(26, 26));
+	m_ButtonPause = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"),
+		VIDEO_PLAY_PAUSE, _("Odtwórz / Pauza"), wxPoint(40, m_ToolBarHeight - 6), wxSize(26, 26));
+	m_ButtonPlayLine = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"playline"), CreateBitmapFromPngResource(L"playline1"),
+		GLOBAL_PLAY_ACTUAL_LINE, _("Odtwórz aktywną linię"), wxPoint(75, m_ToolBarHeight - 6), wxSize(26, 26), GLOBAL_HOTKEY);
+	m_ButtonStop = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"stop"), CreateBitmapFromPngResource(L"stop1"),
+		VIDEO_STOP, _("Zatrzymaj"), wxPoint(110, m_ToolBarHeight - 6), wxSize(26, 26));
+	m_ButtonNextFile = new BitmapButton(m_VideoPanel, CreateBitmapFromPngResource(L"forward"), CreateBitmapFromPngResource(L"forward1"),
+		VIDEO_NEXT_FILE, _("Następny plik"), wxPoint(145, m_ToolBarHeight - 6), wxSize(26, 26));
 
-	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
-	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(180, toolBarHeight - 6), wxSize(360, 26), wxTE_READONLY);
-	mstimes->SetWindowStyle(wxBORDER_NONE);
-	mstimes->SetCursor(wxCURSOR_ARROW);
-	mstimes->SetBackgroundColour(WINDOW_BACKGROUND);
+	m_VolumeSlider = new VolSlider(m_VideoPanel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, m_ToolBarHeight - 5), wxSize(110, 25));
+	m_TimesTextField = new KaiTextCtrl(m_VideoPanel, -1, L"", wxPoint(180, m_ToolBarHeight - 6), wxSize(360, 26), wxTE_READONLY);
+	m_TimesTextField->SetWindowStyle(wxBORDER_NONE);
+	m_TimesTextField->SetCursor(wxCURSOR_ARROW);
+	m_TimesTextField->SetBackgroundColour(WINDOW_BACKGROUND);
 
-	vToolbar = new VideoToolbar(panel, wxPoint(0, panelHeight - toolBarHeight), wxSize(-1, toolBarHeight));
+	m_VideoToolbar = new VideoToolbar(m_VideoPanel, wxPoint(0, m_PanelHeight - m_ToolBarHeight), wxSize(-1, m_ToolBarHeight));
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		if (Visual)
-			Visual->ChangeTool(evt.GetInt());
+		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_VECTOR_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		if (Visual)
-			Visual->ChangeTool(evt.GetInt());
+		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_MOVE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		if (Visual)
-			Visual->ChangeTool(evt.GetInt());
+		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_SCALE_ROTATE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
-	}, 23334);
-
+	}, ID_REFRESH_TIME);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);
 	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
 
-	vtime.SetOwner(this, idvtime);
+	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
 	idletime.SetOwner(this, ID_IDLE);
 
 }
 
 VideoCtrl::~VideoCtrl()
 {
+	SAFE_DELETE(renderer);
 }
 
 bool VideoCtrl::Play()
 {
+	if (!renderer)
+		return false;
+
 	wxMutexLocker lock(vbmutex);
-	if (time >= GetDuration()){ return false; }
-	if (!VideoRenderer::Play()){ return false; }
-	int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
-	vtime.Start(ms);
+	if (!renderer->Play()){ return false; }
+	int ms = (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown()) ? 1000 : 100;
+	m_VideoTimeTimer.Start(ms);
 	ChangeButtonBMP(false);
 	return true;
 }
 
 void VideoCtrl::PlayLine(int start, int end)
 {
+	if (!renderer)
+		return;
 	//wxMutexLocker lock(vbmutex);
-	if (!VideoRenderer::PlayLine(start, end)){ return; }
-	int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
-	vtime.Start(ms);
+	if (!renderer->PlayLine(start, end)){ return; }
+	int ms = (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown()) ? 1000 : 100;
+	m_VideoTimeTimer.Start(ms);
 	ChangeButtonBMP(false);
 }
 
@@ -198,27 +204,27 @@ bool VideoCtrl::Pause(bool skipWhenOnEnd)
 {
 	wxMutexLocker lock(vbmutex);
 
-	if (GetState() == None){
+	if (!renderer){
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		if (index->IsChecked() && index->IsEnabled()){
-			EditBox *eb = Kai->GetTab()->Edit;
+			EditBox *eb = tab->Edit;
 			if (eb->ABox){
 				eb->ABox->audioDisplay->Play(eb->line->Start.mstime, eb->line->End.mstime);
 				return true;
 			}
 			return false;
 		}
-		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], NULL);
+		LoadVideo(Kai->videorec[Kai->videorec.size() - 1], CLOSE_SUBTITLES);
 		return true;
 	}
-	if (time >= GetDuration() && skipWhenOnEnd){ return false; }
-	if (!VideoRenderer::Pause()){ return false; }
+	if (renderer->m_Time >= renderer->GetDuration() && skipWhenOnEnd){ return false; }
+	if (!renderer->Pause()){ return false; }
 	if (GetState() == Paused){
-		vtime.Stop(); RefreshTime();
+		m_VideoTimeTimer.Stop(); RefreshTime();
 	}
 	else if (GetState() == Playing){
-		int ms = (isFullscreen && !TD->panel->IsShown()) ? 1000 : 100;
-		vtime.Start(ms);
+		int ms = (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown()) ? 1000 : 100;
+		m_VideoTimeTimer.Start(ms);
 	}
 	ChangeButtonBMP(!(GetState() == Playing));
 
@@ -227,10 +233,13 @@ bool VideoCtrl::Pause(bool skipWhenOnEnd)
 
 bool VideoCtrl::Stop()
 {
+	if (!renderer)
+		return false;
+
 	wxMutexLocker lock(vbmutex);
 
-	if (!VideoRenderer::Stop()){ return false; }
-	vtime.Stop();
+	if (!renderer->Stop()){ return false; }
+	m_VideoTimeTimer.Stop();
 	Seek(0);
 	RefreshTime();
 
@@ -239,10 +248,11 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
+bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
 {
-	if (fulls){ SetFullscreen(); }
+	//todo: tutaj trzeba napisać tworzenie renderera
 	prevchap = -1;
+	bool curentFFMS2 = !m_IsDirectShow;
 	bool byFFMS2;
 	if (customFFMS2 == -1){
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
@@ -251,21 +261,34 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 	else
 		byFFMS2 = customFFMS2 == 1;
 
+	if (byFFMS2 != curentFFMS2){
+		SAFE_DELETE(renderer);
+	}
+	if (!renderer){
+		if (byFFMS2)
+			renderer = new RendererFFMS2(this);
+		else
+			renderer = new RendererDirectShow(this);
+	}
+
+	if (fulls){ SetFullscreen(); }
+
 	bool shown = true;
-	block = true;
-	if (!OpenFile(fileName, subsName, !byFFMS2, !Kai->GetTab()->editor, changeAudio)){
-		delete subsName; block = false;
+	renderer->m_BlockResize = true;
+	if (!renderer->OpenFile(fileName, subsFlag, !tab->editor, changeAudio)){
+		renderer->m_BlockResize = false;
 		if (!byFFMS2){ KaiMessageBox(_("Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\nbądź brakuje kodeków czy też splittera"), _("Uwaga")); }
+		SAFE_DELETE(renderer)
 		return false;
 	}
-	if (!(IsShown() || (TD && TD->IsShown()))){
+	m_IsDirectShow = !byFFMS2;
+	if (!(IsShown() || (m_FullScreenWindow && m_FullScreenWindow->IsShown()))){
 		shown = false; Show();
 	}
 
-	eater = IsDshow;
+	m_ArrowEater = m_IsDirectShow;
 
-	TabPanel *tab = (TabPanel*)GetParent();
-	if (!isFullscreen&&!fulls){
+	if (!m_IsFullscreen && !fulls){
 		int sx, sy;
 		//wyłączony edytor
 		if (!tab->editor){
@@ -274,9 +297,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 				Kai->GetSize(&sizex, &sizey);
 				CalcSize(&sx, &sy, 0, 0, true, true);
 				sx += Kai->borders.left + Kai->borders.right;
-				sy += (panelHeight + Kai->borders.bottom + Kai->borders.top);
+				sy += (m_PanelHeight + Kai->borders.bottom + Kai->borders.top);
 				if (sx == sizex && sy == sizey){
-					UpdateVideoWindow();
+					renderer->UpdateVideoWindow();
 				}
 				else{
 					Kai->SetClientSize(sx, sy);
@@ -290,55 +313,56 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
 			if (ischanged || !shown){
-				SetMinSize(wxSize(sx, sy + panelHeight));
+				SetMinSize(wxSize(sx, sy + m_PanelHeight));
 				tab->MainSizer->Layout();
 			}
-			Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + panelHeight);
+			Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + m_PanelHeight);
 		}
 
 	}
-	if (isFullscreen){
-		UpdateVideoWindow();
-		wxSize size = GetVideoSize();
+	if (m_IsFullscreen){
+		renderer->UpdateVideoWindow();
+		wxSize size; 
+		renderer->GetVideoSize(&size.x, &size.y);
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
 	//block = false;
-	if (IsDshow){
+	if (m_IsDirectShow){
 		Play();
-		if (tab->editor && !isFullscreen){ Pause(); }
-		if (!volslider->IsShown()){ volslider->Show(); mstimes->SetSize(lastSize.x - 290, -1); }
+		if (tab->editor && !m_IsFullscreen){ Pause(); }
+		if (!m_VolumeSlider->IsShown()){ m_VolumeSlider->Show(); m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 290, -1); }
 	}
 	else{
-		block = false;
-		if (volslider->IsShown()){
-			volslider->Show(false);
-			mstimes->SetSize(lastSize.x - 185, -1);
+		renderer->m_BlockResize = false;
+		if (m_VolumeSlider->IsShown()){
+			m_VolumeSlider->Show(false);
+			m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 185, -1);
 		}
-		vstate = Paused;
-		Render(true, false);
+		renderer->m_State = Paused;
+		renderer->Render(true, false);
 	}
 
 	RefreshTime();
-	if (IsDshow){
+	if (m_IsDirectShow){
 		int pos = Options.GetInt(VIDEO_VOLUME);
-		SetVolume(-(pos*pos));
+		renderer->SetVolume(-(pos * pos));
 	}
 	//SetFocus();
 	tab->VideoPath = fileName;
 	tab->VideoName = fileName.AfterLast(L'\\');
 	Kai->SetStatusText(tab->VideoName, 8);
-	if (TD){ TD->Videolabel->SetLabelText(tab->VideoName); }
+	if (m_FullScreenWindow){ m_FullScreenWindow->Videolabel->SetLabelText(tab->VideoName); }
 	if (!tab->editor){ Kai->Label(0, true); }
-	Kai->SetStatusText(getfloat(fps) + L" FPS", 4);
+	Kai->SetStatusText(getfloat(m_FPS) + L" FPS", 4);
 	wxString tar;
-	tar << ax << L" : " << ay;
+	tar << m_AspectRatioX << L" : " << m_AspectRatioY;
 	Kai->SetStatusText(tar, 6);
 	STime duration;
-	duration.mstime = GetDuration();
+	duration.mstime = renderer->GetDuration();
 	Kai->SetStatusText(duration.raw(SRT), 3);
 	Kai->SetRecent(1);
 
-	if (tab->editor && (!isFullscreen || IsShown()) &&
+	if (tab->editor && (!m_IsFullscreen || IsShown()) &&
 		tab->SubsPath != L"" && Options.GetBool(OPEN_VIDEO_AT_ACTIVE_LINE)){
 		Seek(tab->Edit->line->Start.mstime);
 	}
@@ -354,54 +378,59 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, wxString *subsName, bool ful
 
 PlaybackState VideoCtrl::GetState()
 {
-	return vstate;
+	if (!renderer)
+		return None;
+
+	return renderer->m_State;
 }
 
 bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/, bool asynchonize /*= true*/)
 {
 	wxMutexLocker lock(vbmutex);
-	if (GetState() == None){ return false; }
-	SetPosition(whre, starttime, correct, asynchonize);
-	//if (disp && !IsDshow){ RefreshTime(); }
+	if (!renderer){ return false; }
+	renderer->SetPosition(whre, starttime, correct, asynchonize);
 	return true;
 }
 
 int VideoCtrl::Tell()
 {
-	return GetCurrentPosition();
+	if (!renderer)
+		return 0;
+
+	return renderer->GetCurrentPosition();
 }
 
 
 void VideoCtrl::OnSize(wxSizeEvent& event)
 {
 	wxSize asize = GetClientSize();
-	if (lastSize == asize){ return; }
-	lastSize = asize;
-	int oldToolbarHeight = toolBarHeight;
+	if (m_VideoWindowLastSize == asize){ return; }
+	m_VideoWindowLastSize = asize;
+	int oldToolbarHeight = m_ToolBarHeight;
 	int fw;
-	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
-	toolBarHeight += 8;
-	panelHeight = 30 + (toolBarHeight * 2) - 8;
-	panel->SetSize(0, asize.y - panelHeight, asize.x, panelHeight);
-	int difSize = (volslider->IsShown()) ? 290 : 185;
-	if (oldToolbarHeight == toolBarHeight){
-		bprev->SetPosition(wxPoint(5, toolBarHeight - 6));
-		bpause->SetPosition(wxPoint(40, toolBarHeight - 6));
-		bpline->SetPosition(wxPoint(75, toolBarHeight - 6));
-		bstop->SetPosition(wxPoint(110, toolBarHeight - 6));
-		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
+	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
+	m_ToolBarHeight += 8;
+	m_PanelHeight = 30 + (m_ToolBarHeight * 2) - 8;
+	m_VideoPanel->SetSize(0, asize.y - m_PanelHeight, asize.x, m_PanelHeight);
+	int difSize = (m_VolumeSlider->IsShown()) ? 290 : 185;
+	if (oldToolbarHeight == m_ToolBarHeight){
+		m_ButtonPreviousFile->SetPosition(wxPoint(5, m_ToolBarHeight - 6));
+		m_ButtonPause->SetPosition(wxPoint(40, m_ToolBarHeight - 6));
+		m_ButtonPlayLine->SetPosition(wxPoint(75, m_ToolBarHeight - 6));
+		m_ButtonStop->SetPosition(wxPoint(110, m_ToolBarHeight - 6));
+		m_ButtonNextFile->SetPosition(wxPoint(145, m_ToolBarHeight - 6));
 
-		mstimes->SetSize(180, toolBarHeight - 6, asize.x - difSize, -1);
-		vToolbar->SetSize(0, panelHeight - toolBarHeight, asize.x, toolBarHeight);
+		m_TimesTextField->SetSize(180, m_ToolBarHeight - 6, asize.x - difSize, -1);
+		m_VideoToolbar->SetSize(0, m_PanelHeight - m_ToolBarHeight, asize.x, m_ToolBarHeight);
 	}
 	else{
-		mstimes->SetSize(asize.x - difSize, -1);
-		vToolbar->SetSize(asize.x, toolBarHeight);
+		m_TimesTextField->SetSize(asize.x - difSize, -1);
+		m_VideoToolbar->SetSize(asize.x, m_ToolBarHeight);
 	}
-	volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));
-	vslider->SetSize(wxSize(asize.x, toolBarHeight - 8));
-	if (vstate != None){
-		UpdateVideoWindow();
+	m_VolumeSlider->SetPosition(wxPoint(asize.x - 110, m_ToolBarHeight - 5));
+	m_SeekingSlider->SetSize(wxSize(asize.x, m_ToolBarHeight - 8));
+	if (renderer){
+		renderer->UpdateVideoWindow();
 	}
 	else{
 		Refresh(false);
@@ -412,37 +441,41 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 {
 
-	if (event.ButtonDown())
+	if (event.ButtonUp())
 	{
 		SetFocus();
-		if (ismenu){ ismenu = false; }
+		if (m_IsMenuShown){ 
+			m_IsMenuShown = false; 
+		}
 	}
-	if (vstate == None){ return; }
-	if (hasZoom){
-		ZoomMouseHandle(event);
+	if (renderer->m_State == None){ return; }
+	if (renderer->m_HasZoom){
+		renderer->ZoomMouseHandle(event);
 		return;
 	}
-	x = event.GetX();
-	y = event.GetY();
-	TabPanel *tab = Kai->GetTab();
+	m_X = event.GetX();
+	m_Y = event.GetY();
+	int w, h;
+	GetClientSize(&w, &h);
+	bool onVideo = m_Y < h - m_PanelHeight;
+
 	if (event.GetWheelRotation() != 0) {
 
-		if (event.ControlDown() && !isFullscreen){
+		if (event.ControlDown() && !m_IsFullscreen){
 			int step = event.GetWheelRotation() / event.GetWheelDelta();
 
-			int w, h, mw, mh;
-			GetClientSize(&w, &h);
+			int mw, mh;
 			GetParent()->GetClientSize(&mw, &mh);
 			int newHeight = h + (step * 20);
 			if (newHeight >= mh){ newHeight = mh - 3; }
-			if (y < h - panelHeight){
+			if (onVideo){
 				if (h <= 350 && step < 0 || h == newHeight){ return; }
 				tab->SetVideoWindowSizes(w, newHeight, event.ShiftDown());
 			}
 			return;
 		}
-		else if (!Visual){
-			if (!IsDshow){
+		else if (!renderer->HasVisual(true)){
+			if (!m_IsDirectShow){
 				AudioBox *box = tab->Edit->ABox;
 				if (box){
 					int vol = box->GetVolume();
@@ -451,94 +484,83 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 					box->SetVolume(vol);
 				}
 			}
-			else if (isFullscreen){ TD->volslider->OnMouseEvent(event); }
-			else{ volslider->OnMouseEvent(event); }
+			else if (m_IsFullscreen){ m_FullScreenWindow->volslider->OnMouseEvent(event); }
+			else{ m_VolumeSlider->OnMouseEvent(event); }
 			return;
 		}
 	}
 
 
-	if (Visual){
-		Visual->OnMouseEvent(event); 
-		if (!hasArrow){ 
-			SetCursor(wxCURSOR_ARROW); 
-			hasArrow = true; 
+	if (renderer->HasVisual()){
+		Visuals *visual = renderer->GetVisual();
+		visual->OnMouseEvent(event);
+		//only cross let for another click events
+		//it's only uses moving
+		if (visual->Visual != CROSS){
+			return;
 		}
-		return;
 	}
 
+	if (event.RightUp()) {
+		ContextMenu(event.GetPosition());
+		SetCursor(wxCURSOR_ARROW);
+		return;
+	}
 
 	if (event.LeftDClick() && event.GetModifiers() == 0){
 		SetFullscreen();
-		if (!isFullscreen && tab->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
+		if (!m_IsFullscreen && tab->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
 			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
 			tab->Grid->SelVideoLine();
 		}
-		int w, h;
-		GetClientSize(&w, &h);
+		
 
-		if (y >= h - panelHeight && !hasArrow){
-			SetCursor(wxCURSOR_ARROW); hasArrow = true;
+		if (!onVideo){
+			SetCursor(wxCURSOR_ARROW);
+		}
+		else{
+			SetCursor(wxCURSOR_BLANK);
 		}
 		return;
 	}
 
-	if (isFullscreen){
-		if (eater && event.Moving() && !event.ButtonDown()){ 
+	if (m_IsFullscreen){
+		if (m_ArrowEater && event.Moving() && !event.ButtonDown()){ 
 			Sleep(200); 
-			eater = false; 
+			m_ArrowEater = false; 
 			return; 
 		}
-		if (!hasArrow){ TD->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
-
-		int w, h;
-		TD->GetClientSize(&w, &h);
-		if (y >= h - panelHeight && !TD->panel->IsShown()){ 
-			vtime.Start(100); 
-			TD->panel->Show(); 
+		m_FullScreenWindow->GetClientSize(&w, &h);
+		bool onFullVideo = m_Y < h - m_PanelHeight;
+		if (!HasArrow() && !m_FullScreenWindow->showToolbar->GetValue()){ 
+			SetCursor(wxCURSOR_ARROW); 
 		}
-		else if (y < h - panelHeight && TD->panel->IsShown() && !panelOnFullscreen){ 
-			vtime.Start(1000); 
-			TD->panel->Show(false); 
+		else if (HasArrow() && !m_IsMenuShown && m_FullScreenWindow->showToolbar->GetValue() && onFullVideo){
+			SetCursor(wxCURSOR_BLANK);
+		}
+
+		if (!onFullVideo && !m_FullScreenWindow->panel->IsShown()){
+			m_VideoTimeTimer.Start(100); 
+			m_FullScreenWindow->panel->Show(); 
+		}
+		else if (onFullVideo && m_FullScreenWindow->panel->IsShown() && !m_PanelOnFullscreen){
+			m_VideoTimeTimer.Start(1000); 
+			m_FullScreenWindow->panel->Show(false); 
 			SetFocus(); 
 		}
-		if (!TD->panel->IsShown() && !ismenu){ 
+		if (!m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){ 
 			idletime.Start(1000, true); 
 		}
 	}
 	else if (tab->editor){
-		int w, h;
-		GetClientSize(&w, &h);
-		if (hasArrow && y < (h - panelHeight)){ 
-			SetCursor(wxCURSOR_BLANK); 
-			hasArrow = false; 
+		if (/*onVideo && */!m_IsMenuShown && HasArrow()){
+			//KaiLog(wxString::Format(L"Vb blank %i", (int)m_IsMenuShown));
+			SetCursor(wxCURSOR_BLANK);  
 		}
 
-		if (event.Leaving()){
-			if (cross){
-				cross = false;
-				if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
-				if (GetState() == Paused && !block){ Render(false); }
-			}
-			return;
-		}
-
-		if (event.Entering()){
-			int nx = 0, ny = 0;
-			tab->Grid->GetASSRes(&nx, &ny);
-			coeffX = (float)nx / (float)(w - 1);
-			coeffY = (float)ny / (float)(h - panelHeight - 1);
-
-		}
-		int posx = (float)x * coeffX;
-		int posy = (float)y * coeffY;
-		coords = L"";
-		coords << posx << L", " << posy;
-		DrawLines(wxPoint(x, y));
 	}
-	else if (!hasArrow){ 
-		SetCursor(wxCURSOR_ARROW); 
-		hasArrow = true; 
+	else if (!HasArrow()){
+		SetCursor(wxCURSOR_ARROW);  
 	}
 
 
@@ -548,38 +570,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	}
 
 
-	if (event.RightUp()) {
-		ContextMenu(event.GetPosition());
-		return;
-	}
-
-	if (event.MiddleDown() || (event.LeftDown() && event.ControlDown())){
-		//OpenEditor();
-		if (!isFullscreen)
-		{
-			Dialogue *aline = tab->Edit->line;
-			bool istl = (tab->Grid->hasTLMode && aline->TextTl != L"");
-			wxString ltext = (istl) ? aline->TextTl : aline->Text;
-			wxRegEx posmov(L"\\\\(pos|move)([^\\\\}]+)", wxRE_ADVANCED);
-			posmov.ReplaceAll(&ltext, L"");
-
-			wxString postxt;
-			float posx = (float)x * coeffX;
-			float posy = (float)y * coeffY;
-			postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
-			if (ltext.StartsWith(L"{")){
-				ltext.insert(1, postxt);
-			}
-			else{
-				ltext = L"{" + postxt + L"}" + ltext;
-			}
-			if (istl){ aline->TextTl = ltext; }
-			else{ aline->Text = ltext; }
-			tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Grid->currentLine, aline);
-			tab->Grid->Refresh(false);
-			tab->Grid->SetModified(VISUAL_POSITION);
-		}
-	}
+	
 
 
 }
@@ -596,17 +587,15 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	if (key == L'F'){ SetFullscreen(); }
 	else if (key == WXK_WINDOWS_MENU){
-		wxWindow *owner = (isFullscreen && TD) ? (wxWindow *)TD : this;
+		wxWindow *owner = (m_IsFullscreen && m_FullScreenWindow) ? (wxWindow *)m_FullScreenWindow : this;
 		wxPoint poss = owner->ScreenToClient(wxGetMousePosition());
 		ContextMenu(poss);
 	}
-	else if ((key == L'B' || key == WXK_ESCAPE) && isFullscreen){
+	else if ((key == L'B' || key == WXK_ESCAPE) && m_IsFullscreen){
 		SetFullscreen();
-		//if(Kai->GetTab()->SubsPath!=L""){
-		//Kai->GetTab()->Grid->SelVideoLine();}
-		if (Kai->GetTab()->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
-			Kai->GetTab()->Edit->Send(EDITBOX_LINE_EDITION, false);
-			Kai->GetTab()->Grid->SelVideoLine();
+		if (tab->SubsPath != L"" && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
+			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
+			tab->Grid->SelVideoLine();
 		}
 		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
@@ -615,24 +604,26 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	}
 	//probably made for fullscreen
 	else if (key == L'S' && event.m_controlDown){ Kai->Save(false); }
-	else if (key == WXK_RETURN && hasZoom){
-		SetZoom();
+	if (!renderer)
+		return;
+
+	if (key == WXK_RETURN && renderer->m_HasZoom){
+		renderer->SetZoom();
 	}
 	else if (key == L'Z' && event.ControlDown() && event.ShiftDown()){
-		ResetZoom();
+		renderer->ResetZoom();
 	}
-	else if (Visual){
-		Visual->OnKeyPress(event);
+	else if (renderer->HasVisual()){
+		renderer->GetVisual()->OnKeyPress(event);
 	}
 }
 
 
 void VideoCtrl::OnIdle(wxTimerEvent& event)
 {
-	if (isFullscreen && !TD->panel->IsShown() && !ismenu){
-		TD->SetCursor(wxCURSOR_BLANK);
-		eater = IsDshow;
-		hasArrow = false;
+	if (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){
+		SetCursor(wxCURSOR_BLANK);
+		m_ArrowEater = m_IsDirectShow;
 	}
 }
 
@@ -642,8 +633,8 @@ void VideoCtrl::NextFile(bool next)
 {
 	wxMutexLocker lock(nextmutex);
 	wxString path;
-	if (Kai->GetTab()->VideoPath != L""){
-		path = Kai->GetTab()->VideoPath;
+	if (tab->VideoPath != L""){
+		path = tab->VideoPath;
 	}
 	else{ path = Kai->videorec[Kai->videorec.size() - 1]; }
 	wxString pathwn = path.BeforeLast(L'\\');
@@ -682,10 +673,10 @@ void VideoCtrl::NextFile(bool next)
 			bool isload = Kai->OpenFile(files[k]);
 			if (isload){
 				actualFile = k;
-				if (isFullscreen){ SetFocus(); }
+				if (m_IsFullscreen){ SetFocus(); }
 				return;
 			}
-			else if (!IsDshow){ return; }
+			else if (!m_IsDirectShow){ return; }
 		}
 		if (next){ k++; }
 		else{ k--; }
@@ -696,21 +687,23 @@ void VideoCtrl::NextFile(bool next)
 
 void VideoCtrl::SetFullscreen(int monitor)
 {
+	if (!renderer)
+		return;
 	//wxMutexLocker lock(vbmutex);
-	isFullscreen = !isFullscreen;
+	m_IsFullscreen = !m_IsFullscreen;
 
 	//turn off full screen
-	if (!isFullscreen){
+	if (!m_IsFullscreen){
 
-		if (GetState() == Playing){ if (Kai->GetTab()->editor){ Pause(); } else{ vtime.Start(100); } }
-		if (TD->HasCapture()){ TD->ReleaseMouse(); }
+		if (GetState() == Playing){ if (tab->editor){ Pause(); } else{ m_VideoTimeTimer.Start(100); } }
+		if (m_FullScreenWindow->HasCapture()){ m_FullScreenWindow->ReleaseMouse(); }
 
 		int sx, sy, sizex, sizey;
 
-		if (!Kai->GetTab()->editor){
+		if (!tab->editor){
 			if (!Kai->IsMaximized()){
 				Kai->GetClientSize(&sizex, &sizey);
-				int yDiff = panelHeight + Kai->borders.bottom + Kai->borders.top;
+				int yDiff = m_PanelHeight + Kai->borders.bottom + Kai->borders.top;
 				int xDiff = Kai->borders.left + Kai->borders.right;
 				CalcSize(&sx, &sy, sizex - xDiff, sizey - yDiff);
 				Kai->SetClientSize(sx + xDiff, sy + yDiff);
@@ -719,54 +712,54 @@ void VideoCtrl::SetFullscreen(int monitor)
 		else{
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
-			SetMinSize(wxSize(sx, sy + panelHeight));
-			Kai->GetTab()->MainSizer->Layout();
+			SetMinSize(wxSize(sx, sy + m_PanelHeight));
+			tab->MainSizer->Layout();
 		}
-		volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
+		m_VolumeSlider->SetValue(Options.GetInt(VIDEO_VOLUME));
 
 		if (!IsShown()){
-			isOnAnotherMonitor = false;
-			Show(); GetParent()->Layout();
+			m_IsOnAnotherMonitor = false;
+			Show(); 
+			GetParent()->Layout();
 		}
-		UpdateVideoWindow();
-		block = true;
-		Render();
-		block = false;
+		renderer->UpdateVideoWindow();
+		renderer->m_BlockResize = true;
+		renderer->Render();
+		renderer->m_BlockResize = false;
 
-		vToolbar->Synchronize(TD->vToolbar);
+		m_VideoToolbar->Synchronize(m_FullScreenWindow->vToolbar);
 		RefreshTime();
-		TD->Hide();
+		m_FullScreenWindow->Hide();
 		SetCursor(wxCURSOR_ARROW);
-		hasArrow = true;
 	}
 	//turn on fullscreen
 	else{
 		if (wxWindow::HasCapture()){ wxWindow::ReleaseMouse(); }
 		wxRect rt = GetMonitorRect(monitor);
-		if (!TD){
-			TD = new Fullscreen(this, rt.GetPosition(), rt.GetSize());
-			TD->Videolabel->SetLabelText(Kai->GetTab()->VideoName);
+		if (!m_FullScreenWindow){
+			m_FullScreenWindow = new Fullscreen(this, rt.GetPosition(), rt.GetSize());
+			m_FullScreenWindow->Videolabel->SetLabelText(tab->VideoName);
 		}
 		else{
-			TD->SetPosition(rt.GetPosition());
-			TD->SetSize(rt.GetSize());
+			m_FullScreenWindow->SetPosition(rt.GetPosition());
+			m_FullScreenWindow->SetSize(rt.GetSize());
 		}
-		TD->OnSize();
-		TD->volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
-		TD->vToolbar->Synchronize(vToolbar);
-		if (!panelOnFullscreen){ TD->panel->Hide(); }
-		TD->Show();
-		block = true;
-		UpdateVideoWindow();
-		block = false;
+		m_FullScreenWindow->OnSize();
+		m_FullScreenWindow->volslider->SetValue(Options.GetInt(VIDEO_VOLUME));
+		m_FullScreenWindow->vToolbar->Synchronize(m_VideoToolbar);
+		if (!m_PanelOnFullscreen){ m_FullScreenWindow->panel->Hide(); }
+		m_FullScreenWindow->Show();
+		renderer->m_BlockResize = true;
+		renderer->UpdateVideoWindow();
+		renderer->m_BlockResize = false;
 		RefreshTime();
-		if (GetState() == Playing && !TD->panel->IsShown()){ vtime.Start(1000); }
-		if (!Kai->GetTab()->editor)
-			TD->HideToolbar(true);
-		if (monitor && Kai->GetTab()->editor){
+		if (GetState() == Playing && !m_FullScreenWindow->panel->IsShown()){ m_VideoTimeTimer.Start(1000); }
+		if (!tab->editor)
+			m_FullScreenWindow->HideToolbar(true);
+		if (monitor && tab->editor){
 			Hide();
 			GetParent()->Layout();
-			isOnAnotherMonitor = true;
+			m_IsOnAnotherMonitor = true;
 		}
 		else{
 			SetFocus();
@@ -779,7 +772,8 @@ void VideoCtrl::SetFullscreen(int monitor)
 
 bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool setstatus, bool calcH)
 {
-	wxSize size = GetVideoSize();
+	wxSize size;
+	renderer->GetVideoSize(&size.x, &size.y);
 	if (setstatus){
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
@@ -789,13 +783,13 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 	float precy = size.y, precx = size.x;
 	if (!calcH){
 		size.x = wwidth;
-		if (AR <= 0){ size.y *= (wwidth / precx); }
-		else{ size.y = size.x * AR; }
+		if (m_AspectRatio <= 0){ size.y *= (wwidth / precx); }
+		else{ size.y = size.x * m_AspectRatio; }
 	}
 	if (calcH || size.y > 700){
-		wheight -= panelHeight;
+		wheight -= m_PanelHeight;
 		size.y = wheight;
-		if (AR > 0){ size.x = size.y / AR; }
+		if (m_AspectRatio > 0){ size.x = size.y / m_AspectRatio; }
 		else{ size.x *= (wheight / precy); }
 	}
 	*width = size.x;
@@ -808,7 +802,7 @@ void VideoCtrl::OnPrew()
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
 		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), 
-			wxYES_NO, (isFullscreen) ? (wxWindow*)TD : Kai) == wxNO) return;
+			wxYES_NO, (m_IsFullscreen) ? (wxWindow*)m_FullScreenWindow : Kai) == wxNO) return;
 	}
 	NextFile(false);
 }
@@ -819,54 +813,34 @@ void VideoCtrl::OnNext()
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
 		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), 
-			wxYES_NO, (isFullscreen)? (wxWindow*)TD : Kai) == wxNO) return;
+			wxYES_NO, (m_IsFullscreen)? (wxWindow*)m_FullScreenWindow : Kai) == wxNO) return;
 	}
 	NextFile();
 }
-
-//void VideoCtrl::OnVButton(wxCommandEvent& event)
-//{
-//	int id=event.GetId();
-//	if(id==ID_BPAUSE){Pause();}
-//	else if(id==ID_BSTOP){
-//		if(!Kai->GetTab()->editor){Stop();}
-//		else{
-//			if(GetState()==Playing){Pause();}
-//			if(IsDshow){Seek(0);}
-//		}
-//	}
-//	else if(id==ID_BPREV){OnPrew();}
-//	else if(id==ID_BNEXT){OnNext();}
-//	else if(id==ID_BPLINE){
-//		EditBox *EB = Notebook::GetTab()->Edit;
-//		EB->TextEdit->SetFocus();
-//		PlayLine(EB->line->Start.mstime,EB->line->End.mstime - avtpf);
-//	}
-//}
 
 void VideoCtrl::OnVolume(wxScrollEvent& event)
 {
 	int pos = event.GetPosition();
 	Options.SetInt(VIDEO_VOLUME, pos);
-	SetVolume(-(pos * pos));
+	renderer->SetVolume(-(pos * pos));
 }
 
 void VideoCtrl::ContextMenu(const wxPoint &pos)
 {
-	ismenu = true;
+	m_IsMenuShown = true;
 	Menu* menu = new Menu();
-	bool editor = ((TabPanel*)GetParent())->editor;
+	bool editor = tab->editor;
 	wxString txt = L"\t" + Hkeys.GetStringHotkey(VIDEO_PLAY_PAUSE);
 	if (GetState() != Playing){ txt.Prepend(_("Odtwórz")); }
 	else if (GetState() == Playing){ txt.Prepend(_("Pauza")); }
-	if (!isFullscreen && editor)
+	if (!m_IsFullscreen && editor)
 	{
 		menu->SetAccMenu(VIDEO_COPY_COORDS, _("Kopiuj pozycję na wideo"));
 	}
 	menu->Append(VIDEO_PLAY_PAUSE, txt)->Enable(GetState() != None);
 	menu->SetAccMenu(VIDEO_STOP, _("Zatrzymaj"))->Enable(GetState() == Playing);
 	wxString txt1;
-	if (!isFullscreen){ txt1 = _("Pełny ekran\tF"); }
+	if (!m_IsFullscreen){ txt1 = _("Pełny ekran\tF"); }
 	else{ txt1 = _("Wyłącz pełny ekran\tEscape"); }
 	MenuItem *Item = menu->Append(VIDEO_FULL_SCREEN, txt1);
 	Item->Enable(GetState() != None);
@@ -875,12 +849,12 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	for (size_t i = 1; i < MonRects.size(); i++)
 	{
 		wxString txt2;
-		if (isFullscreen){ txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (int)(i + 1)); }
+		if (m_IsFullscreen){ txt2 = wxString::Format(_("Przełącz pełny ekran na %i monitor"), (int)(i + 1)); }
 		else{ txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (int)(i + 1)); }
 		menu->Append(MENU_MONITORS + i, txt2)->Enable(GetState() != None);
 	}
 
-	menu->SetAccMenu(GLOBAL_EDITOR, _("Otwórz edytor"))->Enable(isFullscreen);
+	menu->SetAccMenu(GLOBAL_EDITOR, _("Otwórz edytor"))->Enable(m_IsFullscreen);
 	Menu* menu1 = new Menu();
 	Menu* menu2 = new Menu();
 	for (size_t i = 0; i < 20; i++)
@@ -900,27 +874,27 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(GLOBAL_OPEN_VIDEO, _("Otwórz wideo"));
 
 	menu->SetAccMenu(GLOBAL_OPEN_SUBS, _("Otwórz napisy"));
-	menu->SetAccMenu(VIDEO_HIDE_PROGRESS_BAR, _("Ukryj / pokaż pasek postępu"))->Enable(isFullscreen);
+	menu->SetAccMenu(VIDEO_HIDE_PROGRESS_BAR, _("Ukryj / pokaż pasek postępu"))->Enable(m_IsFullscreen);
 	menu->SetAccMenu(VIDEO_ASPECT_RATIO, _("Zmień proporcje wideo"));
 	menu->SetAccMenu(VIDEO_SAVE_SUBBED_FRAME_TO_PNG, _("Zapisz klatkę z napisami jako PNG"))->Enable(GetState() == Paused);
 	menu->SetAccMenu(VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD, _("Kopiuj klatkę z napisami do schowka"))->Enable(GetState() == Paused);
-	menu->SetAccMenu(VIDEO_SAVE_FRAME_TO_PNG, _("Zapisz klatkę jako PNG"))->Enable(GetState() == Paused && ((TabPanel*)GetParent())->editor);
-	menu->SetAccMenu(VIDEO_COPY_FRAME_TO_CLIPBOARD, _("Kopiuj klatkę do schowka"))->Enable(GetState() == Paused && ((TabPanel*)GetParent())->editor);
+	menu->SetAccMenu(VIDEO_SAVE_FRAME_TO_PNG, _("Zapisz klatkę jako PNG"))->Enable(GetState() == Paused && tab->editor);
+	menu->SetAccMenu(VIDEO_COPY_FRAME_TO_CLIPBOARD, _("Kopiuj klatkę do schowka"))->Enable(GetState() == Paused && tab->editor);
 	menu->AppendSeparator();
 
 	menu->SetAccMenu(VIDEO_DELETE_FILE, _("Usuń plik wideo"))->Enable(GetState() != None);
 
 	Menu* menu3 = NULL;
 	int numfilters = 0;
-	if (GetState() != None && IsDshow){
+	if (GetState() != None && m_IsDirectShow){
 		menu3 = new Menu();
-		EnumFilters(menu3);
+		renderer->EnumFilters(menu3);
 		numfilters = menu3->GetMenuItemCount();
 		menu->Append(23456, _("Filtry"), menu3, _("Wyświetla użyte filtry"));
 	}
 
 
-	wxArrayString streams = GetStreams();
+	wxArrayString streams = renderer->GetStreams();
 	wxString prev;
 	wxString name, enable;
 	for (size_t i = 0; i < streams.size(); i++){
@@ -933,19 +907,19 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		prev = ident;
 	}
 	STime timee;
-	for (size_t j = 0; j < chapters.size(); j++){
+	for (size_t j = 0; j < renderer->m_Chapters.size(); j++){
 		if (j == 0){ menu->AppendSeparator(); }
-		timee.NewTime(chapters[j].time);
-		int ntime = (j >= chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
-		menu->Append(MENU_CHAPTERS + j, chapters[j].name + L"\t[" + timee.raw() + L"]", 
-			L"", true, 0, 0, (ntime >= time) ? ITEM_RADIO : ITEM_NORMAL);
+		timee.NewTime(renderer->m_Chapters[j].time);
+		int ntime = (j >= renderer->m_Chapters.size() - 1) ? INT_MAX : renderer->m_Chapters[(j + 1)].time;
+		menu->Append(MENU_CHAPTERS + j, renderer->m_Chapters[j].name + L"\t[" + timee.raw() + L"]",
+			L"", true, 0, 0, (ntime >= renderer->m_Time) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	id = 0;
 	int Modifiers = 0;
 	menu->SetMaxVisible(40);
 	//ismenu=true;
-	if (isFullscreen){
-		id = menu->GetPopupMenuSelection(pos, TD, &Modifiers, true);
+	if (m_IsFullscreen){
+		id = menu->GetPopupMenuSelection(pos, m_FullScreenWindow, &Modifiers, true);
 	}
 	else{
 		id = menu->GetPopupMenuSelection(pos, this, &Modifiers, true);
@@ -954,7 +928,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	if ((Modifiers == wxMOD_SHIFT) && id < 2100 && id >= 2000){
 		Hkeys.OnMapHkey(id, L"", this, VIDEO_HOTKEY);
 		delete menu;
-		ismenu = false;
+		m_IsMenuShown = false;
 		return;
 	}
 
@@ -967,37 +941,40 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	else if (id >= 30020 && id < 30040){ Kai->OpenFile(Kai->videorec[id - 30020]); }
 	else if (id >= MENU_STREAMS && id < MENU_STREAMS + (int)streams.size()){
 		int wstream = id - MENU_STREAMS;
-		EnableStream((long)wstream);
+		renderer->EnableStream((long)wstream);
 	}
-	else if (id >= MENU_CHAPTERS && id < MENU_CHAPTERS + (int)chapters.size()){
-		Seek(chapters[id - MENU_CHAPTERS].time);
+	else if (id >= MENU_CHAPTERS && id < MENU_CHAPTERS + (int)renderer->m_Chapters.size()){
+		Seek(renderer->m_Chapters[id - MENU_CHAPTERS].time);
 	}
 	else if (id >= 13000 && id < 13000 + numfilters && menu3){
 		MenuItem *item = menu3->FindItem(id);
-		FilterConfig(item->GetLabel(), id - 13000, pos);
+		renderer->FilterConfig(item->GetLabel(), id - 13000, pos);
 	}
 	else if (id > 15000 && id < 15000 + (int)MonRects.size()){
-		isFullscreen = false;
+		m_IsFullscreen = false;
 		SetFullscreen(id - 15000);
 	}
 	delete menu;
-	ismenu = false;
+	m_IsMenuShown = false;
 }
 
 
 void VideoCtrl::OnHidePB()
 {
+	if (!renderer)
+		return;
+
 	bool pb = !Options.GetBool(VIDEO_PROGRESS_BAR);
 	Options.SetBool(VIDEO_PROGRESS_BAR, pb);
-	if (pb){ fullScreenProgressBar = true; RefreshTime(); }
-	else{ fullScreenProgressBar = false; }
-	if (GetState() == Paused){ Render(false); }
+	if (pb){ m_FullScreenProgressBar = true; RefreshTime(); }
+	else{ m_FullScreenProgressBar = false; }
+	if (GetState() == Paused){ renderer->Render(false); }
 }
 
 void VideoCtrl::OnDeleteVideo()
 {
-	if (KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
-	wxString path = Kai->GetTab()->VideoPath;
+	wxString path = tab->VideoPath;
+	if (path == L"" && KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
 	NextFile();
 	CRecycleFile x;
 	x.Recycle(path.data());
@@ -1032,18 +1009,12 @@ void VideoCtrl::OnOpSubs()
 void VideoCtrl::OpenEditor(bool esc)
 {
 
-	if (isFullscreen){
+	if (m_IsFullscreen){
 		if (GetState() == Playing){ Pause(); }
-		//if(Kai->GetTab()->SubsPath.BeforeLast(L'.')!=Kai->GetTab()->VideoPath.BeforeLast(L'.'))
-		//{wxString fn=Kai->FindFile(Kai->GetTab()->VideoPath,false,false);
-		//bool isgood=false;
-		//if(fn!=""){bool isgood=Kai->OpenFile(fn);}
-		//}
 		Options.SetBool(EDITOR_ON, true);
-		if (Kai->GetTab()->SubsPath != L""){
-			Kai->GetTab()->Grid->SelVideoLine();
+		if (tab->SubsPath != L""){
+			tab->Grid->SelVideoLine();
 		}
-
 
 		SetFullscreen();
 
@@ -1073,12 +1044,12 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	else if (id == VIDEO_NEXT_CHAPTER){ NextChap(); }
 	else if (id == VIDEO_COPY_COORDS){ wxPoint pos = wxGetMousePosition(); pos = ScreenToClient(pos); OnCopyCoords(pos); }
 	else if (id == VIDEO_STOP){
-		if (!Kai->GetTab()->editor){ Stop(); }
+		if (!tab->editor){ Stop(); }
 		else{
 			if (GetState() == Playing){
 				Pause();
 			}
-			if (IsDshow){ Seek(0); }
+			if (m_IsDirectShow){ Seek(0); }
 		}
 	}
 	else if (id == VIDEO_FULL_SCREEN){ SetFullscreen(); }
@@ -1087,23 +1058,22 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	else if (id == GLOBAL_OPEN_SUBS){ OnOpSubs(); }
 	else if (id == VIDEO_HIDE_PROGRESS_BAR){ OnHidePB(); }
 	else if (id == VIDEO_ASPECT_RATIO){
-		bars1 changear(this);
+		AspectRatioDialog changear(this, m_AspectRatio);
 		changear.ShowModal();
 	}
 	else if (id == VIDEO_DELETE_FILE){ OnDeleteVideo(); }
 	else if (id >= VIDEO_SAVE_FRAME_TO_PNG && id <= VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD && GetState() == Paused){
-		CColorSpaceConverter conv(vformat, vwidth, vheight);
+		CColorSpaceConverter conv(renderer->m_Format, renderer->m_Width, renderer->m_Height);
 		bool del = false;
-		byte *framebuf = GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
+		byte *framebuf = renderer->GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
 		if (id == VIDEO_SAVE_FRAME_TO_PNG || id == VIDEO_SAVE_SUBBED_FRAME_TO_PNG){
-			TabPanel *pan = Notebook::GetTab();
 			wxString path;
 			int num = 1;
 			wxArrayString paths;
 			wxString filespec;
-			wxString dirpath = pan->VideoPath.BeforeLast(L'\\', &filespec);
+			wxString dirpath = tab->VideoPath.BeforeLast(L'\\', &filespec);
 			wxDir kat(dirpath);
-			path = pan->VideoPath;
+			path = tab->VideoPath;
 			if (kat.IsOpened()){
 				kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast(L'.') << L"_*_*.png", wxDIR_FILES);
 			}
@@ -1113,9 +1083,9 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 				}
 				num++;
 			}
-			path = pan->VideoPath.BeforeLast(L'.');
+			path = tab->VideoPath.BeforeLast(L'.');
 			STime currentTime;
-			currentTime.mstime = time;
+			currentTime.mstime = renderer->m_Time;
 			wxString timestring = currentTime.raw(SRT);
 			timestring.Replace(L":", L";");
 			//path.Replace(L",", L".");
@@ -1136,17 +1106,20 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 
 void VideoCtrl::OnSMinus()
 {
-	if (IsDshow){
-		int pos = volslider->GetValue() - 2;
+	if (!renderer)
+		return;
+
+	if (m_IsDirectShow){
+		int pos = m_VolumeSlider->GetValue() - 2;
 		if (pos > (-91)){
-			SetVolume(-(pos*pos));
-			volslider->SetValue(pos);
-			if (TD){ TD->volslider->SetValue(pos); }
+			renderer->SetVolume(-(pos * pos));
+			m_VolumeSlider->SetValue(pos);
+			if (m_FullScreenWindow){ m_FullScreenWindow->volslider->SetValue(pos); }
 			Options.SetInt(VIDEO_VOLUME, pos);
 		}
 	}
 	else{
-		AudioBox *box = Kai->GetTab()->Edit->ABox;
+		AudioBox *box = tab->Edit->ABox;
 		if (box){
 			int vol = box->GetVolume();
 			vol -= 2;
@@ -1159,18 +1132,21 @@ void VideoCtrl::OnSMinus()
 
 void VideoCtrl::OnSPlus()
 {
-	if (IsDshow){
-		int pos = volslider->GetValue() + 2;
+	if (!renderer)
+		return;
+
+	if (m_IsDirectShow){
+		int pos = m_VolumeSlider->GetValue() + 2;
 		if (pos < 1){
-			SetVolume(-(pos*pos));
-			volslider->SetValue(pos);
-			if (TD){ TD->volslider->SetValue(pos); }
+			renderer->SetVolume(-(pos * pos));
+			m_VolumeSlider->SetValue(pos);
+			if (m_FullScreenWindow){ m_FullScreenWindow->volslider->SetValue(pos); }
 			Options.SetInt(VIDEO_VOLUME, pos);
 		}
 	}
 	else{
 
-		AudioBox *box = Kai->GetTab()->Edit->ABox;
+		AudioBox *box = tab->Edit->ABox;
 		if (box){
 			int vol = box->GetVolume();
 			vol += 2;
@@ -1184,10 +1160,10 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if (!block && vstate == Paused){
-		Render(true, false);
+	if (!renderer->m_BlockResize && renderer->m_State == Paused){
+		renderer->Render(true, false);
 	}
-	else if (vstate == None){
+	else if (renderer->m_State == None){
 		int x, y;
 		GetClientSize(&x, &y);
 		wxPaintDC dc(this);
@@ -1198,129 +1174,129 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 		dc.SetFont(font1);
 		wxSize size = dc.GetTextExtent(L"KaiNote");
 		dc.SetTextForeground(L"#2EA6E2");
-		dc.DrawText(L"KaiNote", (x - size.x) / 2, (y - size.y - panelHeight) / 2);
+		dc.DrawText(L"KaiNote", (x - size.x) / 2, (y - size.y - m_PanelHeight) / 2);
 	}
 
 }
 
 void VideoCtrl::OnEndFile(wxCommandEvent &event)
 {
-	if ((!Kai->GetTab()->editor || isFullscreen) && IsDshow){ NextFile(); }
-	else{ if (vstate == Playing){ Pause(false); } }
+	if ((!tab->editor || m_IsFullscreen) && m_IsDirectShow){ NextFile(); }
+	else{ if (renderer->m_State == Playing){ Pause(false); } }
 }
 
 void VideoCtrl::SetAspectRatio(float _AR)
 {
-	AR = _AR;
-	TabPanel *tab = ((TabPanel*)GetParent());
-	if (tab->editor && !isFullscreen){
+	if (!renderer)
+		return;
+
+	m_AspectRatio = _AR;
+	if (tab->editor && !m_IsFullscreen){
 		int ww, hh;
 		CalcSize(&ww, &hh, 0, 0, false, true);
-		SetMinSize(wxSize(ww, hh + panelHeight));
+		SetMinSize(wxSize(ww, hh + m_PanelHeight));
 		tab->MainSizer->Layout();
 	}
-	UpdateVideoWindow();
-	if (GetState() == Paused){ Render(false); }
+	renderer->UpdateVideoWindow();
+	if (GetState() == Paused){ renderer->Render(false); }
 }
 
 void VideoCtrl::SetScaleAndZoom()
 {
+	if (!renderer)
+		return;
+
 	wxString scale;
 	wxSize wsize = GetSize();
-	scale << (int)((wsize.x / (float)vwidth) * 100) << L"%";
+	scale << (int)((wsize.x / (float)renderer->m_Width) * 100) << L"%";
 	Kai->SetStatusText(scale, 1);
 	wxString zoom;
-	zoom << (int)(zoomParcent * 100) << L"%";
+	zoom << (int)(renderer->m_ZoomParcent * 100) << L"%";
 	Kai->SetStatusText(zoom, 2);
 }
 
 void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 {
-	if (!cross)
+	if (renderer && renderer->HasVisual())
 		return;
 
-	int nx = 0, ny = 0;
-	tab->Grid->GetASSRes(&nx, &ny);
-	int w = 0, h = 0;
-	GetClientSize(&w, &h);
-	coeffX = (float)nx / (float)(w - 1);
-	coeffY = (float)ny / (float)(h - panelHeight - 1);
-	int posx = (float)x * coeffX;
-	int posy = (float)y * coeffY;
-	coords = L"";
-	coords << posx << L", " << posy;
-	DrawLines(wxPoint(x, y));
+	Visuals *visual = renderer->GetVisual();
+	if (visual->Visual != CROSS)
+		return;
+
+	visual->SetCurVisual();
 }
 
 void VideoCtrl::RefreshTime()
 {
+	if (!renderer)
+		return;
+
 	STime videoTime;
-	videoTime.mstime = time;
-	float dur = GetDuration();
+	videoTime.mstime = renderer->m_Time;
+	float dur = renderer->GetDuration();
 	float val = (dur > 0) ? videoTime.mstime / dur : 0.0;
 
-	if (isFullscreen){
-		TD->vslider->SetValue(val);
-		if (TD->panel->IsShown()){
+	if (m_IsFullscreen){
+		m_FullScreenWindow->vslider->SetValue(val);
+		if (m_FullScreenWindow->panel->IsShown()){
 			wxString times;
 			times << videoTime.raw(SRT) << L";  ";
-			TabPanel *pan = (TabPanel*)GetParent();
-			if (!IsDshow){
-				times << numframe << L";  ";
-				if (VFF){
-					if (VFF->KeyFrames.Index(time) != -1){
-						shownKeyframe = true;
-						TD->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
+			if (!m_IsDirectShow){
+				times << renderer->m_Frame << L";  ";
+				if (renderer->HasFFMS2()){
+					if (renderer->GetFFMS2()->KeyFrames.Index(renderer->m_Time) != -1){
+						m_ShownKeyframe = true;
+						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 					}
-					else if (shownKeyframe){
-						shownKeyframe = false;
-						TD->mstimes->SetForegroundColour(WINDOW_TEXT);
+					else if (m_ShownKeyframe){
+						m_ShownKeyframe = false;
+						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_TEXT);
 					}
 				}
 			}
-			if (pan->editor){
-				Dialogue *line = pan->Edit->line;
+			if (tab->editor){
+				Dialogue *line = tab->Edit->line;
 				int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
 				int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 				times << sdiff << L" ms, " << ediff << L" ms";
 			}
-			TD->mstimes->SetValue(times);
-			TD->mstimes->Update();
+			m_FullScreenWindow->mstimes->SetValue(times);
+			m_FullScreenWindow->mstimes->Update();
 		}
-		if (!fullScreenProgressBar){ return; }
+		if (!m_FullScreenProgressBar){ return; }
 		STime kkk1;
 		kkk1.mstime = dur;
-		pbtime = videoTime.raw(TMP) + L" / " + kkk1.raw(TMP);
-		DrawProgBar();
+		renderer->m_ProgressBarTime = videoTime.raw(TMP) + L" / " + kkk1.raw(TMP);
+		renderer->DrawProgBar();
 	}
 	else{
-		vslider->SetValue(val);
-		vslider->Update();
+		m_SeekingSlider->SetValue(val);
+		m_SeekingSlider->Update();
 		wxString times;
 		times << videoTime.raw(SRT) << L";  ";
-		TabPanel *pan = (TabPanel*)GetParent();
-		if (!IsDshow){
-			times << numframe << L";  ";
-			if (VFF){
-				if (VFF->KeyFrames.Index(time) != -1){
-					shownKeyframe = true;
-					mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
+		if (!m_IsDirectShow){
+			times << renderer->m_Frame << L";  ";
+			if (renderer->HasFFMS2()){
+				if (renderer->GetFFMS2()->KeyFrames.Index(renderer->m_Time) != -1){
+					m_ShownKeyframe = true;
+					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				}
-				else if (shownKeyframe){
-					shownKeyframe = false;
-					mstimes->SetForegroundColour(WINDOW_TEXT);
+				else if (m_ShownKeyframe){
+					m_ShownKeyframe = false;
+					m_TimesTextField->SetForegroundColour(WINDOW_TEXT);
 				}
 			}
 		}
-		if (pan->editor){
-			Dialogue *line = pan->Edit->line;
+		if (tab->editor){
+			Dialogue *line = tab->Edit->line;
 			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
 			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 			times << sdiff << L" ms, " << ediff << L" ms";
-			pan->Grid->RefreshIfVisible(videoTime.mstime);
+			tab->Grid->RefreshIfVisible(videoTime.mstime);
 		}
-		mstimes->SetValue(times);
-		mstimes->Update();
+		m_TimesTextField->SetValue(times);
+		m_TimesTextField->Update();
 
 	}
 
@@ -1331,11 +1307,11 @@ void VideoCtrl::OnCopyCoords(const wxPoint &pos)
 	int w, h;
 	GetClientSize(&w, &h);
 	int nx = 0, ny = 0;
-	Kai->GetTab()->Grid->GetASSRes(&nx, &ny);
-	coeffX = (float)nx / (float)(w - 1);
-	coeffY = (float)ny / (float)(h - panelHeight - 1);
-	int posx = (float)pos.x*coeffX;
-	int posy = (float)pos.y*coeffY;
+	tab->Grid->GetASSRes(&nx, &ny);
+	float coeffX = (float)nx / (float)(w - 1);
+	float coeffY = (float)ny / (float)(h - m_PanelHeight - 1);
+	int posx = (float)pos.x * coeffX;
+	int posy = (float)pos.y * coeffY;
 	wxString poss;
 	poss << posx << L", " << posy;
 	if (wxTheClipboard->Open())
@@ -1347,21 +1323,28 @@ void VideoCtrl::OnCopyCoords(const wxPoint &pos)
 
 void VideoCtrl::ChangeButtonBMP(bool play)
 {
-	if (isFullscreen){ TD->bpause->ChangeBitmap(play); }
-	else{ bpause->ChangeBitmap(play); }
+	if (m_IsFullscreen){ m_FullScreenWindow->bpause->ChangeBitmap(play); }
+	else{ m_ButtonPause->ChangeBitmap(play); }
 }
 
 void VideoCtrl::NextChap()
 {
+	if (!renderer)
+		return;
+
+	const auto &chapters = renderer->m_Chapters;
 	if (chapters.size() < 1){ return; }
 	int vrtime = Tell();
 	for (int j = 0; j < (int)chapters.size(); j++){
 
 		int ntime = (j >= (int)chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
-		if (ntime >= vrtime){
+		if (ntime > vrtime){
 
 			int jj = (j >= (int)chapters.size() - 1 || (j == 0 && chapters[0].time >= vrtime)) ? 0 : j + 1;
-			if (jj == prevchap){ if (jj >= (int)chapters.size() - 1){ jj = 0; } else{ jj++; } }
+			if (jj == prevchap/* && vrtime == chapters[jj].time*/){ 
+				if (jj >= (int)chapters.size() - 1){ jj = 0; } 
+				else{ jj++; } 
+			}
 			Seek(chapters[jj].time, true, true, true, false);
 
 			prevchap = jj;
@@ -1372,13 +1355,20 @@ void VideoCtrl::NextChap()
 
 void VideoCtrl::PrevChap()
 {
+	if (!renderer)
+		return;
+
+	const auto &chapters = renderer->m_Chapters;
 	if (chapters.size() < 1){ return; }
 	int vrtime = Tell();
 	for (int j = 0; j < (int)chapters.size(); j++){
 		int ntime = (j >= (int)chapters.size() - 1) ? INT_MAX : chapters[(j + 1)].time;
-		if (ntime >= vrtime){
-			int jj = (j < 1) ? 0 : j - 1;
-			if (jj == prevchap){ if (jj < 1){ jj = chapters.size() - 1; } else{ jj--; } }
+		if (ntime > vrtime){
+			int jj = (j < 1) ? 0 : j;
+			if (jj == prevchap){
+				if (jj < 1){ jj = chapters.size() - 1; } 
+				else{ jj--; } 
+			}
 			Seek(chapters[jj].time, true, true, true, false);
 			prevchap = jj;
 			break;
@@ -1393,11 +1383,11 @@ void VideoCtrl::ConnectAcc(int id)
 
 void VideoCtrl::ChangeStream()
 {
-	if (!IsDshow){ return; }
+	if (!m_IsDirectShow || !renderer){ return; }
 	wxArrayString enabled;
 	Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
 	if (enabled.size() < 1){ return; }
-	wxArrayString streams = GetStreams();
+	wxArrayString streams = renderer->GetStreams();
 	//int firstSubsStream = -1;
 	int numofastreams = 0;
 	for (int i = streams.size() - 1; i >= 0; i--){
@@ -1406,9 +1396,6 @@ void VideoCtrl::ChangeStream()
 			numofastreams++;
 			continue;
 		}
-		/*else if (firstSubsStream == -1 && streams[i][0] == L'S' || streams[i][0] == L's'){
-			firstSubsStream = i;
-			}*/
 		streams[i] = L"";
 	}
 	if (numofastreams > 1){
@@ -1428,38 +1415,33 @@ void VideoCtrl::ChangeStream()
 		}
 		if (lowestIndex < enabledSize){
 			if (streams[streamToChange].AfterLast(L' ') == L"0"){
-				EnableStream(streamToChange);
+				renderer->EnableStream(streamToChange);
 			}
 		}
 	}
-	/*if (firstSubsStream != -1){
-		TabPanel *tab = Kai->GetTab();
-		if (!tab->editor && Kai->FindFile(tab->VideoPath, false, false).empty()){
-		EnableStream((long)firstSubsStream);
-		}
-		}*/
+	
 }
 
 BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
-	VideoCtrl *vb = (VideoCtrl *)dwData;
+	std::vector<RECT> * MonRects = (std::vector<RECT>*)dwData;
 	WinStruct<MONITORINFO> monitorinfo;
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
 		KaiLog(_("Nie można pobrać informacji o monitorze"));
 		return TRUE;
 	}
-	//podstawowy monitor ma być pierwszy w tablicy
+	// Main monitor have to be put as first
 	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
-		vb->MonRects.insert(vb->MonRects.begin(), monitorinfo.rcMonitor);
+		MonRects->insert(MonRects->begin(), monitorinfo.rcMonitor);
 		return TRUE;
 	}
-	vb->MonRects.push_back(monitorinfo.rcMonitor);
+	MonRects->push_back(monitorinfo.rcMonitor);
 	return TRUE;
 }
 
 wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 	MonRects.clear();
-	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)this);
+	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&MonRects);
 	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
 	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
 	else if (wmonitor == 0){
@@ -1480,20 +1462,24 @@ wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 
 void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 {
-	EditBox *eb = Kai->GetTab()->Edit;
+	if (!renderer)
+		return;
+
+	EditBox *eb = tab->Edit;
 	int vis = evt.GetInt();
-	VideoToolbar *vTB = (isFullscreen && TD) ? TD->vToolbar : vToolbar;
+	VideoToolbar *vTB = (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
 
 	if (vis == eb->Visual){ return; }
 	if (vis == 0){
-		RemoveVisual();
+		renderer->RemoveVisual();
 	}
 	else if (vis != eb->Visual){
-		if (hasZoom){ SetZoom(); }
+		if (renderer->m_HasZoom){ renderer->SetZoom(); }
 		eb->Visual = vis;
-		SetVisual();
-		if (vis >= VECTORCLIP){ Visual->ChangeTool(vTB->GetItemToggled()); }
-		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		renderer->SetVisual();
+		if (vis >= VECTORCLIP){ 
+			renderer->VisualChangeTool(vTB->GetItemToggled()); }
+		if (!HasArrow()){ SetCursor(wxCURSOR_ARROW); }
 		SetFocus();
 	}
 
@@ -1501,7 +1487,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 {
-	panel->SetBackgroundColour(col);
+	m_VideoPanel->SetBackgroundColour(col);
 	return true;
 }
 
@@ -1509,46 +1495,312 @@ bool VideoCtrl::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
 	int fw;
-	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
-	toolBarHeight += 8;
+	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
+	m_ToolBarHeight += 8;
 	
-	int oldPanelHeight = panelHeight;
-	panelHeight = 30 + (toolBarHeight * 2) - 8;
-	wxSize size = panel->GetSize();
-	size.y = panelHeight;
-	panel->SetSize(size);
-	mstimes->SetFont(font);
-	vToolbar->SetFont(font);
-	vToolbar->SetHeight(toolBarHeight);
+	int oldPanelHeight = m_PanelHeight;
+	m_PanelHeight = 30 + (m_ToolBarHeight * 2) - 8;
+	wxSize size = m_VideoPanel->GetSize();
+	size.y = m_PanelHeight;
+	m_VideoPanel->SetSize(size);
+	m_TimesTextField->SetFont(font);
+	m_VideoToolbar->SetFont(font);
+	m_VideoToolbar->SetHeight(m_ToolBarHeight);
 	if (IsShown()){
 		wxSize windowSize = GetSize();
-		windowSize.y -= (oldPanelHeight - panelHeight);
-		TabPanel *tab = (TabPanel*)this->GetParent();
+		windowSize.y -= (oldPanelHeight - m_PanelHeight);
 		tab->SetVideoWindowSizes(windowSize.x, windowSize.y, false);
 	}
 
-	if (TD){
-		wxSize size1 = TD->panel->GetSize();
-		size1.y = panelHeight;
-		TD->panel->SetSize(size1);
-		TD->mstimes->SetFont(font);
-		TD->Videolabel->SetFont(font);
-		TD->showToolbar->SetFont(font);
-		TD->vToolbar->SetFont(font);
-		TD->vToolbar->SetHeight(toolBarHeight);
+	if (m_FullScreenWindow){
+		wxSize size1 = m_FullScreenWindow->panel->GetSize();
+		size1.y = m_PanelHeight;
+		m_FullScreenWindow->panel->SetSize(size1);
+		m_FullScreenWindow->mstimes->SetFont(font);
+		m_FullScreenWindow->Videolabel->SetFont(font);
+		m_FullScreenWindow->showToolbar->SetFont(font);
+		m_FullScreenWindow->vToolbar->SetFont(font);
+		m_FullScreenWindow->vToolbar->SetHeight(m_ToolBarHeight);
 	}
 	
 	return true;
 }
 
+void VideoCtrl::GetVideoSize(int *width, int *height)
+{
+	if (renderer){
+		renderer->GetVideoSize(width, height);
+	}
+	else{
+		*width = 0;
+		*height = 0;
+	}
+}
+wxSize VideoCtrl::GetVideoSize()
+{
+	wxSize size(0, 0);
+	if (renderer){
+		renderer->GetVideoSize(&size.x, &size.y);
+	}
+	return size;
+}
+
+void VideoCtrl::GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY)
+{
+	if (renderer){
+		if(FPS)
+			*FPS = m_FPS;
+		if (AspectRatio)
+			*AspectRatio = m_AspectRatio;
+		if (AspectRatioX)
+			*AspectRatioX = m_AspectRatioX;
+		if (AspectRatioX)
+			*AspectRatioY = m_AspectRatioY;
+	}
+}
+
+int VideoCtrl::GetDuration()
+{
+	if (renderer){
+		return renderer->GetDuration();
+	}
+	return false;
+}
+
+bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetParameters)
+{
+	if (renderer){
+		bool success = renderer->OpenSubs(flag, recreateFrame, NULL, resetParameters);
+		if (refresh){
+			Render();
+		}
+		return success;
+	}
+	return false;
+}
+void VideoCtrl::Render(bool recreateFrame)
+{
+	if (renderer)
+		renderer->Render(recreateFrame);
+}
+void VideoCtrl::UpdateVideoWindow()
+{
+	if (renderer)
+		renderer->UpdateVideoWindow();
+}
+void VideoCtrl::ChangePositionByFrame(int cpos)
+{
+	if (renderer)
+		renderer->ChangePositionByFrame(cpos);
+}
+bool VideoCtrl::RemoveVisual(bool noRefresh)
+{
+	if (renderer)
+		return renderer->RemoveVisual(noRefresh);
+
+	return false;
+}
+int VideoCtrl::GetFrameTime(bool start)
+{
+	if (renderer)
+		return renderer->GetFrameTime(start);
+
+	return 0;
+}
+int VideoCtrl::GetFrameTimeFromTime(int time, bool start)
+{
+	if (renderer)
+		return renderer->GetFrameTimeFromTime(time, start);
+
+	return 0;
+}
+void VideoCtrl::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+{
+	if (renderer)
+		renderer->GetStartEndDelay(startTime, endTime, retStart, retEnd);
+}
+int VideoCtrl::GetFrameTimeFromFrame(int frame, bool start)
+{
+	if (renderer)
+		return renderer->GetFrameTimeFromFrame(frame, start);
+	return 0;
+}
+void VideoCtrl::SetZoom()
+{
+	if (renderer)
+		renderer->SetZoom();
+}
+void VideoCtrl::GoToNextKeyframe()
+{
+	if (renderer)
+		renderer->GoToNextKeyframe();
+}
+void VideoCtrl::GoToPrevKeyframe()
+{
+	if (renderer)
+		renderer->GoToPrevKeyframe();
+}
+void VideoCtrl::OpenKeyframes(const wxString &filename)
+{
+	if (renderer && renderer->HasFFMS2()) {
+		renderer->GetFFMS2()->OpenKeyframes(filename);
+		m_KeyframesFileName.Empty();
+		return;
+	}
+	else if (tab->Edit->ABox) {
+		// skip return when audio do not have own provider or file didn't have video for take timecodes.
+		if (tab->Edit->ABox->OpenKeyframes(filename)) {
+			m_KeyframesFileName.Empty();
+			return;
+		}
+	}
+	//if there is no FFMS2 or audiobox we store keyframes path;
+	m_KeyframesFileName = filename;
+}
+void VideoCtrl::SetColorSpace(const wxString& matrix, bool render)
+{
+	if (renderer)
+		renderer->SetColorSpace(matrix, render);
+}
+int VideoCtrl::GetPlayEndTime(int time)
+{
+	if (renderer)
+		return renderer->GetPlayEndTime(time);
+	return 0;
+}
+void VideoCtrl::DisableVisuals(bool disable)
+{
+	m_VideoToolbar->DisableVisuals(disable);
+}
+void VideoCtrl::DeleteAudioCache()
+{
+	if (renderer)
+		renderer->DeleteAudioCache();
+}
+wxWindow *VideoCtrl::GetMessageWindowParent()
+{
+	return (m_IsFullscreen && m_FullScreenWindow) ? (wxWindow*)m_FullScreenWindow : Kai;
+}
+bool VideoCtrl::IsFullScreen()
+{
+	return m_IsFullscreen;
+}
+bool VideoCtrl::IsDirectShow()
+{
+	return m_IsDirectShow;
+}
+void VideoCtrl::GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter)
+{
+	if (videoPlayAfter)
+		*videoPlayAfter = m_VideoToolbar->videoPlayAfter->GetSelection();
+	if (videoSeekAfter)
+		*videoSeekAfter = m_VideoToolbar->videoSeekAfter->GetSelection();
+}
+void VideoCtrl::SetVisual(bool settext, bool noRefresh)
+{
+	if (renderer)
+		renderer->SetVisual(settext, noRefresh);
+}
+void VideoCtrl::ResetVisual()
+{
+	if (renderer)
+		renderer->ResetVisual();
+}
+
+bool VideoCtrl::HasFFMS2()
+{
+	return renderer && renderer->HasFFMS2();
+}
+VideoFfmpeg *VideoCtrl::GetFFMS2()
+{
+	if (renderer)
+		return renderer->GetFFMS2();
+
+	return NULL;
+}
+
+void VideoCtrl::SetVisualEdition(bool value)
+{
+	if(renderer)
+		renderer->m_HasVisualEdition = value;
+}
+
+RendererVideo *VideoCtrl::GetRenderer()
+{
+	return renderer;
+}
+
+Fullscreen *VideoCtrl::GetFullScreenWindow()
+{
+	return m_FullScreenWindow;
+}
+VideoToolbar *VideoCtrl::GetVideoToolbar()
+{
+	return m_VideoToolbar;
+}
+
+int VideoCtrl::GetPanelHeight()
+{
+	return m_PanelHeight;
+};
+
+void VideoCtrl::SetPanelHeight(int panelHeight)
+{
+	m_PanelHeight = panelHeight;
+}
+
+int VideoCtrl::GetCurrentFrame()
+{
+	if (renderer)
+		return renderer->GetCurrentFrame();
+	return 0;
+}
+
+void VideoCtrl::ChangeVobsub(bool vobsub)
+{
+	if (renderer)
+		renderer->ChangeVobsub(vobsub);
+}
+
+void VideoCtrl::SetPanelOnFullScreen(bool value)
+{
+	m_PanelOnFullscreen = value;
+}
+
+void VideoCtrl::SetVideoWindowLastSize(const wxSize & size)
+{
+	m_VideoWindowLastSize = size;
+}
+
+bool VideoCtrl::IsOnAnotherMonitor()
+{
+	return m_IsOnAnotherMonitor;
+}
+void VideoCtrl::SaveVolume()
+{
+	Options.SetInt(VIDEO_VOLUME, m_VolumeSlider->GetValue());
+}
+
+bool VideoCtrl::IsMenuShown()
+{
+	return m_IsMenuShown;
+}
+const wxString & VideoCtrl::GetKeyFramesFileName()
+{
+	return m_KeyframesFileName;
+}
+void VideoCtrl::SetKeyFramesFileName(const wxString & fileName)
+{
+	m_KeyframesFileName = fileName;
+}
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)
 EVT_KEY_DOWN(VideoCtrl::OnKeyPress)
 EVT_PAINT(VideoCtrl::OnPaint)
-EVT_TIMER(idvtime, VideoCtrl::OnPlaytime)
+EVT_TIMER(ID_VIDEO_TIME, VideoCtrl::OnPlaytime)
 EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
 EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
-EVT_BUTTON(23333, VideoCtrl::OnEndFile)
+EVT_BUTTON(ID_END_OF_STREAM, VideoCtrl::OnEndFile)
 EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
 END_EVENT_TABLE()

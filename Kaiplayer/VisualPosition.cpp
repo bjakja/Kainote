@@ -75,8 +75,8 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			if (data[i].numpos == tab->Grid->currentLine){
 				data[i].pos.x = x;
 				data[i].pos.y = y;
-				data[i].lastpos = data[i].pos;
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
+				data[i].lastpos = data[i].pos;
 
 				for (size_t j = 0; j < data.size(); j++){
 					if (j == i){ continue; }
@@ -97,7 +97,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 		for (size_t i = 0; i < data.size(); i++){
 			data[i].lastpos = data[i].pos;
 		}
-		if (!hasArrow){ tab->Video->SetCursor(wxCURSOR_ARROW); hasArrow = true; }
+		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
 		movingHelperLine = false;
 	}
 	if (movingHelperLine){
@@ -113,7 +113,6 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			return;
 		}
 		tab->Video->SetCursor(wxCURSOR_SIZING);
-		hasArrow = false;
 		wxArrayInt sels;
 		tab->Grid->file->GetSelections(sels);
 		if (sels.size() != data.size()){ SetCurVisual(); tab->Video->Render(); }
@@ -232,10 +231,7 @@ void Position::ChangeMultiline(bool all)
 	}
 
 	if (all){
-		tab->Video->hasVisualEdition = true;
-		if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-		tab->Grid->SetModified(VISUAL_POSITION, true);
-		tab->Grid->Refresh();
+		SetModified(VISUAL_POSITION);
 	}
 	else{
 		RenderSubs(dtxt);

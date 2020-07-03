@@ -15,13 +15,16 @@
 
 
 #include "DshowRenderer.h"
+#include "RendererVideo.h"
+#include "Videobox.h"
+#include "Hotkeys.h"
 #include <wmsdkidl.h>
 
 
 static const GUID CLSID_KVideoRenderer =
 { 0x269ba141, 0x1fde, 0x494b, { 0x91, 0x24, 0x45, 0x3a, 0x17, 0x83, 0x8b, 0x9f } };
 
-CD2DVideoRender::CD2DVideoRender(VideoRenderer *_Vrend, HRESULT* phr)
+CD2DVideoRender::CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr)
 	: CBaseVideoRenderer(CLSID_KVideoRenderer, L"Video Renderer", NULL, phr)
 {
 	Vrend = _Vrend;
@@ -41,7 +44,7 @@ CD2DVideoRender::~CD2DVideoRender()
 void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 {
 	//CAutoLock m_lock(this->m_pLock);
-	if (!pMediaSample || Vrend->vstate >= Stopped){ return; }
+	if (!pMediaSample || Vrend->m_State >= Stopped){ return; }
 
 	REFERENCE_TIME start = 0, end = 0;
 	pMediaSample->GetTime(&start, &end);
@@ -49,21 +52,19 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	BYTE* pBuffer = NULL;
 	pMediaSample->GetPointer(&pBuffer);
 
-	if (Vrend->seek){
-		time = Vrend->time;
-		Vrend->time = time + (start / 10000.0);
-		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, 23334);
-		wxQueueEvent(Vrend, evt);
+	if (Vrend->m_DirectShowSeeking){
+		time = Vrend->m_Time;
+		Vrend->m_Time = time + (start / 10000.0);
+		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_REFRESH_TIME);
+		wxQueueEvent(Vrend->videoControl, evt);
 	}
-	//po testach to przestawić
-	Vrend->seek = false;
-	if (Vrend->vstate == Playing || noRefresh){ noRefresh = false; return; }
+	Vrend->m_DirectShowSeeking = false;
+	if (Vrend->m_State == Playing || noRefresh){ noRefresh = false; return; }
 	norender = true;
-
 
 	Vrend->DrawTexture(pBuffer, true);
 	Vrend->Render();
-	if (Vrend->block){ Vrend->block = false; }
+	if (Vrend->m_BlockResize){ Vrend->m_BlockResize = false; }
 }
 
 HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
@@ -78,21 +79,18 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 
 	REFERENCE_TIME start = 0, end = 0;
 	pMediaSample->GetTime(&start, &end);
-	/*if(!Vrend->block){*/
-	bool endOfPlaying = Vrend->playend && time + (end / 10000.0) >= Vrend->playend;
+	bool endOfPlaying = Vrend->m_PlayEndTime && time + (end / 10000.0) >= Vrend->m_PlayEndTime;
 	if (endOfPlaying){
-		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, 2021);
-		wxQueueEvent(Vrend, evt);
-		wxCommandEvent *evtRefreshTime = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, 23334);
-		wxQueueEvent(Vrend, evtRefreshTime);
+		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, VIDEO_PLAY_PAUSE);
+		wxQueueEvent(Vrend->videoControl, evt);
+		wxCommandEvent *evtRefreshTime = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_REFRESH_TIME);
+		wxQueueEvent(Vrend->videoControl, evtRefreshTime);
 		noRefresh = true;
-		//return S_OK;
-		//Vrend->Pause();
 	}
-	Vrend->time = time + (start / 10000.0);
+	Vrend->m_Time = time + (start / 10000.0);
 	//On the end of playing need to copy frame cause edition get first frame
 	//stop streaming not working, first sample is blocked
-	Vrend->DrawTexture(pBuffer, endOfPlaying || Vrend->resized);
+	Vrend->DrawTexture(pBuffer, endOfPlaying || Vrend->m_VideoResized);
 	Vrend->Render();
 	/*}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}*/
 
@@ -141,7 +139,7 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 HRESULT CD2DVideoRender::StopStreaming()
 {
 	//CAutoLock m_lock(this->m_pLock);
-	if (m_pMediaSample && Vrend->vstate == Paused)
+	if (m_pMediaSample && Vrend->m_State == Paused)
 	{
 		BYTE* pBuffer = NULL;
 		m_pMediaSample->GetPointer(&pBuffer);
@@ -149,7 +147,7 @@ HRESULT CD2DVideoRender::StopStreaming()
 			Vrend->DrawTexture(pBuffer, true);
 			Vrend->Render();
 			norender = true;
-			if (Vrend->block){ Vrend->block = false; }
+			if (Vrend->m_BlockResize){ Vrend->m_BlockResize = false; }
 		}
 
 	}
@@ -233,8 +231,8 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 HRESULT CD2DVideoRender::EndOfStream()
 {
 	HRESULT hr = CBaseRenderer::EndOfStream();
-	wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, 23333);
-	wxQueueEvent(Vrend, evt);//EndofStream();
+	wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
+	wxQueueEvent(Vrend->videoControl, evt);//EndofStream();
 	return hr;
 }
 

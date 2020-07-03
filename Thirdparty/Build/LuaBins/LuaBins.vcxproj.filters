@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\Luabins\src\fwrite.c" />
+    <ClCompile Include="..\..\Luabins\src\load.c" />
+    <ClCompile Include="..\..\Luabins\src\luabins.c" />
+    <ClCompile Include="..\..\Luabins\src\luainternals.c" />
+    <ClCompile Include="..\..\Luabins\src\save.c" />
+    <ClCompile Include="..\..\Luabins\src\savebuffer.c" />
+    <ClCompile Include="..\..\Luabins\src\write.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Luabins\src\fwrite.h" />
+    <ClInclude Include="..\..\Luabins\src\luabins.h" />
+    <ClInclude Include="..\..\Luabins\src\luaheaders.h" />
+    <ClInclude Include="..\..\Luabins\src\luainternals.h" />
+    <ClInclude Include="..\..\Luabins\src\lualess.h" />
+    <ClInclude Include="..\..\Luabins\src\savebuffer.h" />
+    <ClInclude Include="..\..\Luabins\src\saveload.h" />
+    <ClInclude Include="..\..\Luabins\src\write.h" />
+  </ItemGroup>
+</Project>

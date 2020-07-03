@@ -30,7 +30,7 @@
 #include "gitparams.h"
 #include <windows.h>
 #include "ConfigConverter.h"
-
+#include "SubtitlesProviderManager.h"
 
 
 #define ADD_QUOTES_HELPER(s) #s
@@ -61,10 +61,9 @@ config::~config()
 		delete (*it);
 	}
 	assstore.clear();
-	if (vsfilter)
-		csri_close_renderer(vsfilter);
 
 	FontsClear();
+	SubtitlesProviderManager::DestroySubsProvider();
 }
 
 void config::FontsClear()
@@ -78,61 +77,6 @@ void config::FontsClear()
 wxString config::GetReleaseDate()
 {
 	return wxString(__DATE__) + L"  " + wxString(__TIME__);
-}
-
-
-csri_rend * config::GetVSFilter()
-{
-	if (!vsfilter){
-		vsfilter = csri_renderer_default();
-		csri_info *info = csri_renderer_info(vsfilter);
-		wxString name = GetString(VSFILTER_INSTANCE);
-		if (!name.empty()){
-			while (info->name != name){
-				vsfilter = csri_renderer_next(vsfilter);
-				if (!vsfilter)
-					break;
-				info = csri_renderer_info(vsfilter);
-			}
-			if (!vsfilter)
-				vsfilter = csri_renderer_default();
-		}
-	}
-	return vsfilter;
-}
-
-void config::ChangeVsfilter()
-{
-	vsfilter = csri_renderer_default();
-	csri_info *info = csri_renderer_info(vsfilter);
-	wxString name = GetString(VSFILTER_INSTANCE);
-	if (!name.empty()){
-		while (info->name != name){
-			vsfilter = csri_renderer_next(vsfilter);
-			if (!vsfilter)
-				break;
-			info = csri_renderer_info(vsfilter);
-		}
-		if (!vsfilter)
-			vsfilter = csri_renderer_default();
-	}
-}
-
-void config::GetVSFiltersList(wxArrayString &filtersList)
-{
-	csri_rend *filter = csri_renderer_default();
-	if (!filter)
-		return;
-	csri_info *info = csri_renderer_info(filter);
-	filtersList.Add(info->name);
-	while (1){
-		filter = csri_renderer_next(filter);
-		if (!filter)
-			break;
-		info = csri_renderer_info(filter);
-		filtersList.Add(info->name);
-	}
-	//csri_close_renderer(filter);
 }
 
 bool config::SetRawOptions(const wxString &textconfig)

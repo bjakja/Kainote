@@ -175,8 +175,7 @@ void FontEnumerator::RefreshVideo()
 	for (int i = 0; i < parent->Tabs->Size(); i++){
 		TabPanel *tab = parent->Tabs->Page(i);
 		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(tab->Grid->GetVisible());
-			tab->Video->Render();
+			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
 		}
 	}
 	
@@ -195,6 +194,8 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 			fontrealpath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
 		}
 		else{
+			//delete num threads to not make memory leaks
+			delete threadNum;
 			return 0;
 		}
 	}
@@ -203,12 +204,14 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
 	if (hDir == INVALID_HANDLE_VALUE){ 
-		if (threadNum == 0){
+		if (*threadNum == 0){
 			//do not inform on system older than Windows 10 1909 that 
 			//cannot create notification of folder that they do not have
 			//without checking of system version it's impossible to check when it should be shown
 			KaiLog(_("Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."));
 		}
+		//delete num threads to not make memory leaks
+		delete threadNum;
 		return 0; 
 	}
 	HANDLE events_to_wait[] = {
