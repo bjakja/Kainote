@@ -221,10 +221,12 @@ public:
 	void HideMenu(){ dialog->HideMenus(); }
 	void SelectOnStart(int numitem);
 	void RefreshMenu();
+	void SetWindow(char window) {
+		wnd = window;
+	}
 private:
 	void CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool clientPos);
 	void DestroyDialog();
-	//void GetAccelerators(std::vector <wxAcceleratorEntry> *entries);
 	std::vector< MenuItem* > items;
 	wxString title;
 	Menu *parentMenu;

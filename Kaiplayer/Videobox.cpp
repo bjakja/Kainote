@@ -602,8 +602,6 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE);
 		}
 	}
-	//probably made for fullscreen
-	else if (key == L'S' && event.m_controlDown){ Kai->Save(false); }
 	if (!renderer)
 		return;
 
@@ -828,7 +826,7 @@ void VideoCtrl::OnVolume(wxScrollEvent& event)
 void VideoCtrl::ContextMenu(const wxPoint &pos)
 {
 	m_IsMenuShown = true;
-	Menu* menu = new Menu();
+	Menu* menu = new Menu(VIDEO_HOTKEY);
 	bool editor = tab->editor;
 	wxString txt = L"\t" + Hkeys.GetStringHotkey(VIDEO_PLAY_PAUSE);
 	if (GetState() != Playing){ txt.Prepend(_("Odtwórz")); }
@@ -853,7 +851,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		else{ txt2 = wxString::Format(_("Włącz pełny ekran na %i monitorze"), (int)(i + 1)); }
 		menu->Append(MENU_MONITORS + i, txt2)->Enable(GetState() != None);
 	}
-
+	menu->SetWindow(GLOBAL_HOTKEY);
 	menu->SetAccMenu(GLOBAL_EDITOR, _("Otwórz edytor"))->Enable(m_IsFullscreen);
 	Menu* menu1 = new Menu();
 	Menu* menu2 = new Menu();
@@ -874,6 +872,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	menu->SetAccMenu(GLOBAL_OPEN_VIDEO, _("Otwórz wideo"));
 
 	menu->SetAccMenu(GLOBAL_OPEN_SUBS, _("Otwórz napisy"));
+	menu->SetWindow(VIDEO_HOTKEY);
 	menu->SetAccMenu(VIDEO_HIDE_PROGRESS_BAR, _("Ukryj / pokaż pasek postępu"))->Enable(m_IsFullscreen);
 	menu->SetAccMenu(VIDEO_ASPECT_RATIO, _("Zmień proporcje wideo"));
 	menu->SetAccMenu(VIDEO_SAVE_SUBBED_FRAME_TO_PNG, _("Zapisz klatkę z napisami jako PNG"))->Enable(GetState() == Paused);
