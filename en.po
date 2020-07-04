@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-07-04 16:10+0200\n"
-"PO-Revision-Date: 2020-07-04 16:16+0200\n"
-"Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
+"POT-Creation-Date: 2020-07-04 17:43+0200\n"
+"PO-Revision-Date: 2020-07-04 17:45+0200\n"
+"Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -6091,6 +6091,18 @@ msgstr "Don't change"
 #: SubsResampleDialog.cpp:179
 msgid "Wyłącz ostrzeżenie"
 msgstr "Turn-off warning"
+
+#: SubtitlesLibass.cpp:156
+msgid "Libass działa tylko z FFMS2"
+msgstr "Libass works only with FFMS2"
+
+#: SubtitlesLibass.cpp:216
+msgid "Libass otwiera tylko napisy ASS i SSA"
+msgstr "Libass only opens subtitles ASS and SSA"
+
+#: SubtitlesLibass.cpp:242
+msgid "Nie można otworzyć napisów w Libass"
+msgstr "Cannot open subtitles in Libass"
 
 #: SubtitlesVSFilter.cpp:125 SubtitlesVSFilter.cpp:159
 msgid "Nie można zinicjalizować CSRI."

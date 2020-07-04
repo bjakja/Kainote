@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	if (!m_IsReady || !m_HasParameters) {
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
-			KaiLog("Libass only works with with FFMS2");
+			KaiLog(_("Libass dziaÅ‚a tylko z FFMS2"));//Libass only works with with FFMS2
 		else
 			m_SubsSkipped = true;
 
@@ -213,7 +213,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	delete textsubs;
 
 	if (!m_AssTrack){
-		KaiLog("Libass only works with ASS and SSA subtiltes");
+		KaiLog(_("Libass otwiera tylko napisy ASS i SSA"));//Libass only works with ASS and SSA subtiltes
 		return false;
 	}
 	return true;
@@ -239,7 +239,7 @@ bool SubtitlesLibass::OpenString(wxString *text)
 	delete text;
 
 	if (!m_AssTrack){
-		KaiLog(L"Nie mo¿na otworzyæ napisów w Libass");
+		KaiLog(_("Nie moÅ¼na otworzyÄ‡ napisÃ³w w Libass"));
 		return false;
 	}
 	return true;
