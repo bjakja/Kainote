@@ -632,7 +632,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxString names[numOfElements] = { _("Wyświetlaj czas przy kursorze"), _("Wyświetlaj znaczniki sekund"), _("Wyświetlaj tło zaznaczenia"),
 			_("Wyświetlaj pozycję wideo"), _("Wyświetlaj klatki kluczowe"), _("Przewijaj wykres audio przy odtwarzaniu"),
 			_("Aktywuj okno audio po najechaniu"), _("Przyklejaj do klatek kluczowych"), _("Przyklejaj do pozostałych linii"),
-			_("Nie odtarzaj audio po zmianie linijki"), _("Scalaj wszystkie \"n\" z poprzednią sylabą"), 
+			_("Nie odtwarzaj audio po zmianie linijki"), _("Scalaj wszystkie \"n\" z poprzednią sylabą"), 
 			_("Przenoś linie sylab po kliknięciu"),_("Wczytuj audio do pamięci RAM") };
 
 		CONFIG opts[numOfElements] = { AUDIO_DRAW_TIME_CURSOR, AUDIO_DRAW_SECONDARY_LINES, AUDIO_DRAW_SELECTION_BACKGROUND, AUDIO_DRAW_VIDEO_POSITION,
@@ -948,7 +948,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	OptionsTree->AddPage(Themes, _("Motywy"));
 	OptionsTree->AddPage(Hotkeyss, _("Skróty klawiszowe"));
 	OptionsTree->AddPage(Assocs, _("Skojarzenia"));
-	OptionsTree->AddPage(SubsProps, _("Właściwości Napisów"));
+	OptionsTree->AddPage(SubsProps, _("Właściwości napisów"));
 	OptionsTree->Fit();
 
 	//adding buttons
@@ -957,7 +957,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	okok = new MappedButton(this, wxID_OK, L"OK");
 	MappedButton *oknow = new MappedButton(this, ID_BCOMMIT, _("Zastosuj"));
 	MappedButton *cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	MappedButton *resetDefaults = new MappedButton(this, ID_RESET_DEFAULTS, _("Ustaw Domyślne"));
+	MappedButton *resetDefaults = new MappedButton(this, ID_RESET_DEFAULTS, _("Ustaw domyślne"));
 
 	ButtonsSizer->Add(okok, 1, wxRIGHT, 2);
 	ButtonsSizer->Add(oknow, 1, wxRIGHT, 2);

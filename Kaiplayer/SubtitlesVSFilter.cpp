@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -122,14 +122,14 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
-	if (!vobsub){ KaiLog(_("Nie mo¿na zinicjalizowaæ CSRI.")); delete textsubs; return false; }
+	if (!vobsub){ KaiLog(_("Nie moÅ¼na zinicjalizowaÄ‡ CSRI.")); delete textsubs; return false; }
 
 	m_CsriInstance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
-	if (!m_CsriInstance){ KaiLog(_("Nie mo¿na utworzyæ instancji CSRI.")); delete textsubs; return false; }
+	if (!m_CsriInstance){ KaiLog(_("Nie moÅ¼na utworzyÄ‡ instancji CSRI.")); delete textsubs; return false; }
 
 
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
-		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		KaiLog(_("CSRI nie obsÅ‚uguje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;
 		delete textsubs; return false;
@@ -156,20 +156,20 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 	// Select renderer
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ 
-		KaiLog(_("Nie mo¿na zinicjalizowaæ CSRI.")); 
+		KaiLog(_("Nie moÅ¼na zinicjalizowaÄ‡ CSRI.")); 
 		delete text; 
 		return false; 
 	}
 
 	m_CsriInstance = csri_open_mem(vobsub, buffer, size, NULL);
 	if (!m_CsriInstance){ 
-		KaiLog(_("Nie mo¿na utworzyæ instancji CSRI.")); 
+		KaiLog(_("Nie moÅ¼na utworzyÄ‡ instancji CSRI.")); 
 		delete text; 
 		return false; 
 	}
 
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
-		KaiLog(_("CSRI nie obs³uguje tego formatu."));
+		KaiLog(_("CSRI nie obsÅ‚uguje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;
 		delete text; 

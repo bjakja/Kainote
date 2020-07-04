@@ -730,7 +730,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		KaiMessageBox(wxString::Format(_("Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\nwersja %s z dnia %s"),
 			Options.progname.AfterFirst(L'v'), Options.GetReleaseDate()) + " \n\n" +
 			_("Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n\n") +
-			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum GLOBAL_ANSI, Githubie, bądź mailowo.\n\n") +
+			_("Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\nmożesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n\n") +
 			_("Kainote zawiera w sobie części następujących projektów:\n") +
 			L"wxWidgets - Copyright © Julian Smart, Robert Roebling et al.\n" +
 			_("Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\ni kilka innych pojedynczych funkcji wzięte z Aegisuba -\n") +
@@ -741,12 +741,15 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			L"Vsfilter - Copyright © Gabest.\n"\
 			L"FFMPEGSource2 - Copyright © Fredrik Mellbin.\n"\
 			L"ICU - Copyright © 1995-2016 International Business Machines Corporation and others.\n"\
-			L"Boost - Copyright © Joe Coder 2004 - 2006.",
+			L"Boost - Copyright © Joe Coder 2004 - 2006."\
+			L"FreeType2 - Copyright © 2006-2019 David Turner, Robert Wilhelm, and Werner Lemberg."\
+			L"Fribidi - Copyright © 1991, 1999 Free Software Foundation, Inc."\
+			L"Libass - Copyright © 2006-2016 libass contributors.",
 			_("O Kainote"));
 			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == GLOBAL_HELPERS){
-		wxString Testers = L"Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
+		wxString Testers = L"SoheiMajin, Atalos, KamiTet, Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
 			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n") +
 			_("- Xandros (nowe przyciski do wideo).\n") +

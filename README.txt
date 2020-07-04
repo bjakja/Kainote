@@ -1,4 +1,4 @@
-Kainote: 
+ï»¿Kainote: 
 Subtitles editor that can play video using FFMS2 (for typesetting, 
 timing and more advanced edition) or DirectShow (for playback 
 or minor subtitles edition).
@@ -41,58 +41,68 @@ https://github.com/bjakja/Kainote/releases
 
 To build You need install:
 
-Visual Studio 2013 (it may works on 2015 but for me it gives out of memory
-error when building ICU) with update 4 or later.
+Visual Studio 2017 (it builds Icu with x64 compiler but uses of 16gb of RAM).
 
 DirectX SDK
 https://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-Windows SDK for windows7
-https://www.microsoft.com/en-us/download/details.aspx?id=3138
+Windows SDK 10 install it with Visual studio 2017 installer
 
-Put into Thirdparty folder:
+Put into Thirdparty folder that source not have main one folder:
 
 Boost
-https://sourceforge.net/projects/boost/files/boost/1.61.0/
+https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
 
 Icu
-http://download.icu-project.org/files/icu4c/53.1/icu4c-53_1-src.zip
+https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
 
-Change in project properties paths of installed windows SDK's
+FreeType2
+https://github.com/aseprite/freetype2/archive/master.zip
+
+Fribidi
+https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
+
+Libass
+https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
+
+Change in project properties paths of installed Windows SDK's 10
 and Direct X if are not installed on C disk.
-
-
+Sometimes Visual Studio 2017 will not find paths to Windows SDK's 10
+then you have to add it manually to projects
+c/c++ -> general -> additional include directories
+and Linker -> general -> additional include directories
+It's one of bug of Visual Studio 2017.
 
 --------------------- Polski - Polish --------------------------
 
 Kainote:
-Edytor napisów, który odtwrza wideo zarówno przez FFMS2 (dobre
-do typesettingu, timingu i inych zaawansowanych edycji) a tak¿e 
-DirectShow (przeznaczone do odtwarzania i prostej edycji napisów).
+Edytor napisÃ³w, ktÃ³ry odtwrza wideo zarÃ³wno przez FFMS2 (dobre
+do typesettingu, timingu i inych zaawansowanych edycji) a takÅ¼e 
+DirectShow (przeznaczone do odtwarzania i prostej edycji napisÃ³w).
 
 Funkcje:
 
-- Obs³uga formatów: ASS, SSA (wczytuje i konwertuje na ASS), SRT, 
+- ObsÅ‚uga formatÃ³w: ASS, SSA (wczytuje i konwertuje na ASS), SRT, 
 MPL2, MDVD, TMP.
 
-- Konwersja miêdzy tymi formatami.
+- Konwersja miÄ™dzy tymi formatami.
 
-- Tryb t³umaczenia: przechowuje tekst oryginalny tak d³ugo póki
-t³umaczenie nie zostanie ukoñczone.
+- Tryb tÅ‚umaczenia: przechowuje tekst oryginalny tak dÅ‚ugo pÃ³ki
+tÅ‚umaczenie nie zostanie ukoÅ„czone.
 
-- Szukanie niepewnych i nieprzet³umaczonych linijek.
+- Szukanie niepewnych i nieprzetÅ‚umaczonych linijek.
 
-- Przyciski umieszczaj¹ce tagi ASS w wielu linijkach równoczeœnie.
+- Przyciski umieszczajÄ…ce tagi ASS w wielu linijkach rÃ³wnoczeÅ›nie.
 
-- Narzêdzia wizualne wideo do podstawowych tagów i zmieniacz pozycji
-pozwalaj¹cy zmieniaæ równoczeœnie pozycje tagów: \pos, \move, \org, 
+- NarzÄ™dzia wizualne wideo do podstawowych tagÃ³w i zmieniacz pozycji
+pozwalajÄ…cy zmieniaÄ‡ rÃ³wnoczeÅ›nie pozycje tagÃ³w: \pos, \move, \org, 
 \clip, \iclip i \p (rysunki ASS).
 
-- Przesuwanie czasów umiejscowione za polem napisów pozwalaj¹cy na
-przesuwanie do czasów wideo / audio.
+- Przesuwanie czasÃ³w umiejscowione za polem napisÃ³w pozwalajÄ…cy na
+przesuwanie do czasÃ³w wideo / audio.
 
-- Spektrum / wykres falowy audio z narzêdziem do autopodzia³u karaoke
-dobrym do japoñskich tekstów piosenek.
+- Spektrum / wykres falowy audio z narzÄ™dziem do autopodziaÅ‚u karaoke
+dobrym do japoÅ„skich tekstÃ³w piosenek.
 
 - Automatyzacja 4 z Dependency Control.
 
@@ -105,25 +115,36 @@ Oficjalne wydania:
 
 https://github.com/bjakja/Kainote/releases
 
+By zbudowaÄ‡ program naleÅ¼y zainstalowaÄ‡:
 
-By zbudowaæ program nale¿y zainstalowaæ:
-
-Visual Studio 2013 (na 2015 te¿ mo¿e da siê zbudowaæ ale u mnie
-wywala b³¹d out of memory podczas buildu ICU) z update 4 b¹dŸ nowszym.
+Visual Studio 2017 (ktÃ³re builduje Icu po zmianie kompilatora na x64, 
+ale wymaga do tego 16gb ramu, moÅ¼na teÅ¼ ustawiÄ‡ plik stronicowania na duÅ¼e wartoÅ›ci)
 
 DirectX SDK
 https://www.microsoft.com/en-us/download/details.aspx?id=6812
 
-Windows SDK dla windows7
-https://www.microsoft.com/en-us/download/details.aspx?id=3138
+Windows SDK 10 naleÅ¼y zainstalowaÄ‡ uÅ¼ywajÄ…c instalatora Visual Studio 2017
 
-Wrzuciæ do folderu Thirdpardy:
+SkopiowaÄ‡ do folderÃ³w Thirdpardy, pomijajÄ…c folder zbiorczy:
 
-Boosta
-https://sourceforge.net/projects/boost/files/boost/1.61.0/
+Boost
+https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
 
 Icu
-http://download.icu-project.org/files/icu4c/53.1/icu4c-53_1-src.zip
+https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
 
-Zmieniæ w projekcie Kainote œcie¿ki do zainstalowanych windows SDK i Direct X, 
-jeœli nie s¹ zaintalowane na dysku C.
+FreeType2
+https://github.com/aseprite/freetype2/archive/master.zip
+
+Fribidi
+https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
+
+Libass
+https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
+
+ZmieniÄ‡ w projekcie Kainote Å›cieÅ¼ki do zainstalowanych windows SDK i Direct X, 
+jeÅ›li nie sÄ… zaintalowane na dysku C.
+Gdyby nie widziaÅ‚o Å›cieÅ¼ek do SDK 10 to niestety naleÅ¼y je dodaÄ‡ 
+c/c++ -> general -> additional include directories
+i Linker -> general -> additional include directories
+To wada Visual Sudio 2017, nie moja wina, raz je widzi raz nie.
