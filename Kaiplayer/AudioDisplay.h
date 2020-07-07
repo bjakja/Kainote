@@ -188,7 +188,7 @@ private:
 	//void GetKaraokePos(int64_t &start, int64_t &end, bool cap);
 	void UpdatePosition(int pos, bool IsSample = false);
 
-	void DoUpdateImage();
+	void DoUpdateImage(bool weak);
 
 public:
 	SubsGrid *grid;
@@ -205,6 +205,7 @@ public:
 	bool hasMark;
 	bool isHidden = false;
 	std::atomic<bool> stopPlayThread{ true };
+	std::atomic<bool> needUpdateOnPlay{ false };
 	int curMarkMS;
 	int Grabbed;
 	int hold;

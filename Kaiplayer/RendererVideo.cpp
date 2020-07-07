@@ -55,9 +55,8 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	m_D3DDevice = NULL;
 	m_BlackBarsSurface = NULL;
 	m_D3DLine = NULL;
-	m_Visual = Visuals::Get(CROSS, videoControl);
+	m_Visual = (tab->editor)? Visuals::Get(CROSS, videoControl) : NULL;
 	m_VideoResized = m_DirectShowSeeking = m_BlockResize = m_HasVisualEdition = false;
-	//IsDshow = true;
 	m_DeviceLost = false;
 	m_MainSurface = NULL;
 	m_FrameBuffer = NULL;
@@ -695,12 +694,18 @@ void RendererVideo::ResetVisual()
 	Render();
 }
 
-bool RendererVideo::RemoveVisual(bool noRefresh)
+bool RendererVideo::RemoveVisual(bool noRefresh, bool disable)
 {
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
-	tab->Edit->Visual = 0;
-	SetVisual();
+	if (disable) {
+		tab->Edit->Visual = -1;
+		SAFE_DELETE(m_Visual);
+	}
+	else {
+		tab->Edit->Visual = 0;
+		SetVisual();
+	}
 	return true;
 }
 

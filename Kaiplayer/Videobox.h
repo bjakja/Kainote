@@ -103,7 +103,7 @@ public:
 	bool OpenSubs(int flag, bool recreateFrame = true, bool refresh = false, bool resetParameters = false);
 	void Render(bool recreateFrame = true);
 	void ChangePositionByFrame(int cpos);
-	bool RemoveVisual(bool noRefresh = false);
+	bool RemoveVisual(bool noRefresh = false, bool disable = false);
 	int GetFrameTime(bool start = true);
 	int GetFrameTimeFromTime(int time, bool start = true);
 	int GetFrameTimeFromFrame(int frame, bool start = true);
@@ -131,8 +131,10 @@ public:
 	//can return null
 	Fullscreen *GetFullScreenWindow();
 	VideoToolbar *GetVideoToolbar();
+	void HideVideoToolbar();
+	void ShowVideoToolbar();
 	int GetPanelHeight();
-	void SetPanelHeight(int panelHeight);
+	//void SetPanelHeight(int panelHeight);
 	void UpdateVideoWindow();
 	int GetCurrentFrame();
 	void ChangeVobsub(bool vobsub = false);

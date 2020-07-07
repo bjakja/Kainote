@@ -785,7 +785,7 @@ void KainoteFrame::OnConversion(char form)
 	TabPanel *tab = GetTab();
 	if (tab->Grid->GetSInfo(L"TLMode") == L"Yes"){ return; }
 	if (form != ASS){
-		tab->Video->RemoveVisual(true);
+		tab->Video->RemoveVisual(true, true);
 	}
 	tab->Grid->Convert(form);
 	tab->ShiftTimes->Contents();
@@ -1343,7 +1343,7 @@ void KainoteFrame::OnSize(wxSizeEvent& event)
 	}
 	Tabs->SetSize(borders.left, borders.top, size.x - borders.left - borders.right, size.y - borders.top - borders.bottom);
 	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder, size.x - (fborder * 2), statusbarHeight);
-
+	borders.bottom += Tabs->GetHeight();
 	event.Skip();
 }
 
@@ -1677,8 +1677,8 @@ void KainoteFrame::HideEditor(bool save)
 		cur->MainSizer->Detach(cur->Video);
 		cur->VideoEditboxSizer->Prepend(cur->Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->SetPanelHeight(66);
-		cur->Video->GetVideoToolbar()->Show();
+		cur->Video->ShowVideoToolbar();
+		cur->Video->RemoveVisual(false);
 		int panelHeight = cur->Video->GetPanelHeight();
 		if (cur->Video->GetState() != None && !cur->Video->IsFullScreen()){
 			int sx, sy, vw, vh;
@@ -1699,8 +1699,7 @@ void KainoteFrame::HideEditor(bool save)
 			cur->Video->GetFullScreenWindow()->HideToolbar(false);
 	}
 	else{//Turn off of editor
-		cur->Video->RemoveVisual();
-		cur->Video->SetPanelHeight(44);
+		cur->Video->RemoveVisual(false, true);
 		cur->ShiftTimes->Hide();
 
 		if (!cur->Video->IsShown()){ cur->Video->Show(); }
@@ -1709,7 +1708,7 @@ void KainoteFrame::HideEditor(bool save)
 
 		cur->MainSizer->Add(cur->Video, 1, wxEXPAND | wxALIGN_TOP, 0);
 
-		cur->Video->GetVideoToolbar()->Hide();
+		cur->Video->HideVideoToolbar();
 
 		int panelHeight = cur->Video->GetPanelHeight();
 		//can crush after turn on of editor

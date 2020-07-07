@@ -216,7 +216,7 @@ void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
 		needImageUpdateWeak = false;
 	}
 	if (updateImmediately){
-		DoUpdateImage();
+		DoUpdateImage(weak);
 	}
 	else{
 		Refresh(false);
@@ -350,7 +350,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	return true;
 }
 
-void AudioDisplay::DoUpdateImage() {
+void AudioDisplay::DoUpdateImage(bool weak) {
 	// Prepare bitmap
 	int displayH = h + timelineHeight;
 	// Invalid dimensions
@@ -360,7 +360,7 @@ void AudioDisplay::DoUpdateImage() {
 	wxCriticalSectionLocker lock(mutex);
 	// Needs updating?
 	//if (!needImageUpdate) return;
-	bool weak = needImageUpdateWeak;
+	//bool weak = needImageUpdateWeak;
 
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
 		LastSize = wxSize(w, h);
@@ -1076,7 +1076,7 @@ void AudioDisplay::Update(bool moveToEnd) {
 		if (Options.GetBool(AUDIO_AUTO_SCROLL))
 			MakeDialogueVisible(false, moveToEnd);
 		else//it is possible to change position before without refresh and refresh it here without redrawing spectrum
-			UpdateImage(/*true*/);
+			UpdateImage(false, true);
 	}
 }
 
@@ -1423,7 +1423,7 @@ void AudioDisplay::ChangeOptions()
 ////////
 // Play
 void AudioDisplay::Play(int start, int end, bool pause) {
-	//Stop();
+	
 	if (pause && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 
 	// Check provider
@@ -1446,13 +1446,15 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 
 	// Redraw the image to avoid any junk left over from mouse movements etc
 	// See issue #598
-	UpdateImage(true);
-
+	//UpdateImage(false, true);
+	//KaiLogDebug(wxString::Format(L"curpos %llu", (unsigned long long)start));
 	// Call play
 	player->Play(start, end - start);
-	//if (!UpdateTimer.IsRunning()) UpdateTimer.Start(10);
-	if(stopPlayThread)
+
+	if (stopPlayThread)
 		SetEvent(PlayEvent);
+	else
+		needUpdateOnPlay = true;
 		
 }
 
@@ -1622,7 +1624,7 @@ void AudioDisplay::AddLead(bool in, bool out) {
 // Paint
 void AudioDisplay::OnPaint(wxPaintEvent& event) {
 	//if (w == 0 || h == 0) return;
-	DoUpdateImage();
+	DoUpdateImage(needImageUpdateWeak);
 }
 
 
@@ -2283,8 +2285,6 @@ void AudioDisplay::UpdateTimer()
 	curpos = -1;
 	if (player->IsPlaying()) {
 		cursorPaint = true;
-		needImageUpdateWeak = true;
-		needImageUpdate = true;
 		int64_t curPos = player->GetCurrentPosition();
 		if (curPos > player->GetStartPosition() && curPos < player->GetEndPosition()) {
 			// Scroll if needed
@@ -2296,7 +2296,7 @@ void AudioDisplay::UpdateTimer()
 				int goTo = MAX(0, curPos - w * samples / 2);
 				if (goTo >= 0) {
 					UpdatePosition(goTo, true);
-					UpdateImage(false, true);
+					DoUpdateImage(false);
 				}
 			}
 			else {
@@ -2304,11 +2304,10 @@ void AudioDisplay::UpdateTimer()
 					if (posX < 50 || posX > w - 50) {
 						int goTo = MAX(0, curPos - 50 * samples);
 						if (goTo >= 0) {
+							KaiLogDebug(wxString::Format(L"posX %i, w - 50 %i, curpos %llu", posX, w-50, (unsigned long long)curPos));
 							UpdatePosition(goTo, true);
-							curpos = GetXAtSample(curPos);
-							needImageUpdateWeak = false;
-							DoUpdateImage();
-							needImageUpdateWeak = true;
+							//curpos = GetXAtSample(curPos);
+							DoUpdateImage(false);
 							Sleep(10);
 							return;
 						}
@@ -2318,19 +2317,19 @@ void AudioDisplay::UpdateTimer()
 
 			// Draw cursor
 			curpos = GetXAtSample(curPos);
-			if (curpos >= 0.f && curpos < w/*GetClientSize().GetWidth()*/) {
+			if (curpos >= 0.f && curpos < w) {
 
-				DoUpdateImage();
+				DoUpdateImage(!needUpdateOnPlay);
 			}
 			else if (cursorPaint){
 				cursorPaint = false;
-				DoUpdateImage();
+				DoUpdateImage(!needUpdateOnPlay);
 			}
 		}
 		else {
 
 			cursorPaint = false;
-			DoUpdateImage();
+			DoUpdateImage(!needUpdateOnPlay);
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
 				//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
@@ -2338,7 +2337,7 @@ void AudioDisplay::UpdateTimer()
 				stopPlayThread = true;
 			}
 		}
-
+		needUpdateOnPlay = false;
 	}
 
 	// Restore background

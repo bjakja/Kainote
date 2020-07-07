@@ -28,10 +28,10 @@ public:
 	virtual ~KaiFrame();
 	void SetLabel(const wxString &text);
 	virtual void SetStatusText(const wxString &label, int field){};
-	void GetClientSize(int *w, int *h) const;
+	/*void GetClientSize(int *w, int *h) const;
 	wxSize GetClientSize() const;
 	void SetClientSize(const wxSize &size);
-	void SetClientSize(int x, int y);
+	void SetClientSize(int x, int y);*/
 	void GetBorders(int *borders, int *topBorder){
 		*borders = frameBorder;
 		*topBorder = frameTopBorder;
@@ -40,7 +40,7 @@ public:
 private:
 	void OnPaint(wxPaintEvent &evt);
 	void PaintD2D(GraphicsContext *gc, int w, int h);
-	void OnSize(wxSizeEvent &evt);
+	/*void OnSize(wxSizeEvent &evt);*/
 	void OnMouseEvent(wxMouseEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);
 	void OnEraseBackground(wxEraseEvent()){}

@@ -294,8 +294,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 		if (!tab->editor){
 			if (!Kai->IsMaximized()){
 				int sizex, sizey;
-				Kai->GetSize(&sizex, &sizey);
+				Kai->GetClientSize(&sizex, &sizey);
 				CalcSize(&sx, &sy, 0, 0, true, true);
+				wxSize panelsize = m_VideoPanel->GetSize();
 				sx += Kai->borders.left + Kai->borders.right;
 				sy += (m_PanelHeight + Kai->borders.bottom + Kai->borders.top);
 				if (sx == sizex && sy == sizey){
@@ -411,6 +412,9 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 	GetTextExtent(L"#TWFfGH", &fw, &m_ToolBarHeight);
 	m_ToolBarHeight += 8;
 	m_PanelHeight = 30 + (m_ToolBarHeight * 2) - 8;
+	if (!m_VideoToolbar->IsShown())
+		m_PanelHeight -= m_ToolBarHeight;
+
 	m_VideoPanel->SetSize(0, asize.y - m_PanelHeight, asize.x, m_PanelHeight);
 	int difSize = (m_VolumeSlider->IsShown()) ? 290 : 185;
 	if (oldToolbarHeight == m_ToolBarHeight){
@@ -448,7 +452,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 			m_IsMenuShown = false; 
 		}
 	}
-	if (renderer->m_State == None){ return; }
+	if (GetState() == None){ return; }
 	if (renderer->m_HasZoom){
 		renderer->ZoomMouseHandle(event);
 		return;
@@ -790,6 +794,7 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 		if (m_AspectRatio > 0){ size.x = size.y / m_AspectRatio; }
 		else{ size.x *= (wheight / precy); }
 	}
+
 	*width = size.x;
 	*height = size.y;
 	return !(size.x == wwidth && size.y == wheight);
@@ -1159,10 +1164,10 @@ void VideoCtrl::OnSPlus()
 
 void VideoCtrl::OnPaint(wxPaintEvent& event)
 {
-	if (!renderer->m_BlockResize && renderer->m_State == Paused){
+	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
 		renderer->Render(true, false);
 	}
-	else if (renderer->m_State == None){
+	else if (GetState() == None){
 		int x, y;
 		GetClientSize(&x, &y);
 		wxPaintDC dc(this);
@@ -1181,7 +1186,7 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 void VideoCtrl::OnEndFile(wxCommandEvent &event)
 {
 	if ((!tab->editor || m_IsFullscreen) && m_IsDirectShow){ NextFile(); }
-	else{ if (renderer->m_State == Playing){ Pause(false); } }
+	else{ if (GetState() == Playing){ Pause(false); } }
 }
 
 void VideoCtrl::SetAspectRatio(float _AR)
@@ -1592,10 +1597,10 @@ void VideoCtrl::ChangePositionByFrame(int cpos)
 	if (renderer)
 		renderer->ChangePositionByFrame(cpos);
 }
-bool VideoCtrl::RemoveVisual(bool noRefresh)
+bool VideoCtrl::RemoveVisual(bool noRefresh, bool disable)
 {
 	if (renderer)
-		return renderer->RemoveVisual(noRefresh);
+		return renderer->RemoveVisual(noRefresh, disable);
 
 	return false;
 }
@@ -1738,15 +1743,29 @@ VideoToolbar *VideoCtrl::GetVideoToolbar()
 	return m_VideoToolbar;
 }
 
+void VideoCtrl::HideVideoToolbar()
+{
+	wxSize toolbarSize = m_VideoToolbar->GetSize();
+	m_VideoToolbar->Hide();
+	m_PanelHeight -= toolbarSize.y;
+}
+
+void VideoCtrl::ShowVideoToolbar()
+{
+	m_VideoToolbar->Show();
+	wxSize toolbarSize = m_VideoToolbar->GetSize();
+	m_PanelHeight += toolbarSize.y;
+}
+
 int VideoCtrl::GetPanelHeight()
 {
 	return m_PanelHeight;
 };
 
-void VideoCtrl::SetPanelHeight(int panelHeight)
-{
-	m_PanelHeight = panelHeight;
-}
+//void VideoCtrl::SetPanelHeight(int panelHeight)
+//{
+//	m_PanelHeight = panelHeight;
+//}
 
 int VideoCtrl::GetCurrentFrame()
 {

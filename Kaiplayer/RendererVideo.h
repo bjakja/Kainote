@@ -154,7 +154,7 @@ public:
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 	VideoCtrl *videoControl;
-	Visuals *m_Visual;
+	Visuals *m_Visual/* = NULL*/;
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
 	LPDIRECT3DTEXTURE9 texture;
@@ -177,7 +177,7 @@ public:
 	void ResetVisual();
 	//it's safe to not exist visual
 	//returns true if removed
-	bool RemoveVisual(bool noRefresh = false);
+	bool RemoveVisual(bool noRefresh = false, bool disable = false);
 	int GetCurrentPosition();
 	int GetCurrentFrame();
 	bool PlayLine(int start, int end);
