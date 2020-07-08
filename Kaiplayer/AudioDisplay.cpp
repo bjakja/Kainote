@@ -127,7 +127,7 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	selMark = 0;
 	curMarkMS = 0;
 	hasFocus = (wxWindow::FindFocus() == this);
-	needImageUpdate = false;
+	//needImageUpdate = false;
 	needImageUpdateWeak = true;
 	playingToEnd = false;
 	LastSize = wxSize(-1, -1);
@@ -211,10 +211,8 @@ void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
 	UpdateSamples();
 
 	// Set image as needing to be redrawn
-	needImageUpdate = true;
-	if (weak == false) {// && needImageUpdateWeak == true
-		needImageUpdateWeak = false;
-	}
+	//needImageUpdate = true;
+	needImageUpdateWeak = weak;
 	if (updateImmediately){
 		DoUpdateImage(weak);
 	}
@@ -358,10 +356,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	// Loaded?
 	if (!loaded || !provider) return;
 	wxCriticalSectionLocker lock(mutex);
-	// Needs updating?
-	//if (!needImageUpdate) return;
-	//bool weak = needImageUpdateWeak;
-
+	
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
 		LastSize = wxSize(w, h);
 		if (!InitDX(wxSize(w, displayH))){
@@ -712,8 +707,8 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		UpdateImage(false, true);
 	}
 	// Done
-	needImageUpdate = false;
-	needImageUpdateWeak = true;
+	//needImageUpdate = false;
+	//needImageUpdateWeak = true;
 }
 
 
@@ -1453,8 +1448,8 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 
 	if (stopPlayThread)
 		SetEvent(PlayEvent);
-	else
-		needUpdateOnPlay = true;
+	//else
+		//needUpdateOnPlay = true;
 		
 }
 
@@ -2101,11 +2096,6 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 		if (inside){
 			if (hasKara && currentCharacter != -1){
 				cursorPaint = false;
-				//needImageUpdateWeak = true;
-				//needImageUpdate=true;
-				//curpos = x;
-				//Refresh(false);
-				//return;
 			}
 			else{
 				cursorPaint = true;
@@ -2243,7 +2233,7 @@ void AudioDisplay::OnSize(wxSizeEvent &event) {
 	if (samples) {
 		UpdatePosition(PositionSample / samples);
 	}
-	UpdateImage(false, true);
+	UpdateImage(false);
 
 	// Update scrollbar
 	UpdateScrollbar();
@@ -2304,7 +2294,6 @@ void AudioDisplay::UpdateTimer()
 					if (posX < 50 || posX > w - 50) {
 						int goTo = MAX(0, curPos - 50 * samples);
 						if (goTo >= 0) {
-							KaiLogDebug(wxString::Format(L"posX %i, w - 50 %i, curpos %llu", posX, w-50, (unsigned long long)curPos));
 							UpdatePosition(goTo, true);
 							//curpos = GetXAtSample(curPos);
 							DoUpdateImage(false);

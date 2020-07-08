@@ -88,7 +88,7 @@ private:
 	bool inside;
 	bool playingToEnd;
 	bool defCursor;
-	bool needImageUpdate;
+	//bool needImageUpdate;
 	bool needImageUpdateWeak;
 	bool hasSel;
 	bool diagUpdated;
