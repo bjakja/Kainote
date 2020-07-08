@@ -614,7 +614,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Grid->GetUndo(false, tab->Grid->file->GetLastSaveIter());
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION){
-		Tabs->LoadLastSession(this);
+		Tabs->LoadLastSession();
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION_ON_START){
 		// 0 nothing 1 ask for load 2 load on start
@@ -943,7 +943,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	if (tab->editor){
 		found = FindFile(filename, secondFileName, issubs);
 		if (!issubs && found && !fulls && !tab->Video->IsFullScreen()){
-			if (tab->SubsPath == secondFileName || KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast(L'\\')),
+			if (tab->SubsPath == secondFileName || 
+				KaiMessageBox(wxString::Format(_("Wczytać napisy o nazwie \"%s\"?"), secondFileName.AfterLast(L'\\')),
 				_("Potwierdzenie"), wxICON_QUESTION | wxYES_NO, this) == wxNO){
 				found = false;
 			}
@@ -974,9 +975,8 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		}
 		tab->Video->RemoveVisual(true);
 
-		OpenWrite ow;
-		wxString s;
-		if (!ow.FileOpen(fname, &s)){
+		
+		if (!Tabs->LoadSubtitles(tab, fname)){
 			if (freeze)
 				tab->Thaw();
 			return false;
@@ -985,12 +985,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		else if (nonewtab && tab->Grid->Comparison){
 			SubsGridBase::RemoveComparison();
 		}
-		tab->Grid->LoadSubtitles(s, ext);
-
-		if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = fname.BeforeLast(L'.') + L".ass"; }
-		else{ tab->SubsPath = fname; }
-		tab->SubsName = tab->SubsPath.AfterLast(L'\\');
-
+		
 		//seek for video / audio and (rest writed in future)
 		if (issubs && !fulls && !tab->Video->IsFullScreen()){
 			wxString videopath = tab->Grid->GetSInfo(L"Video File");
@@ -1072,7 +1067,6 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
 				else{ tab->Video->Render(); }
 			}
-			tab->Video->DisableVisuals(ext != L"ass");
 		}
 		SetRecent();
 		//set texts on window title and tab
@@ -1487,7 +1481,6 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			subs.Add(files[i]);
 		}
 		else if (ext == L"lua" || ext == L"moon"){
-			//if (!Auto){ Auto = new Auto::Automation(false); }
 			if (Auto->ASSScripts.size() < 1)
 				Auto->AddFromSubs();
 			Auto->Add(files[i]);
@@ -1533,35 +1526,19 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 			continue;
 		}
 		if (i < subsSize){
-			wxString ext = subs[i].AfterLast(L'.').Lower();
-			OpenWrite ow;
-			wxString s;
-			if (!ow.FileOpen(subs[i], &s)){
+			if (!Tabs->LoadSubtitles(tab, subs[i])){
 				break;
 			}
-			else{
-				tab->Grid->LoadSubtitles(s, ext);
-			}
-
-			if (ext == L"ssa"){ ext = L"ass"; subs[i] = subs[i].BeforeLast(L'.') + L".ass"; }
-			tab->SubsPath = subs[i];
-			tab->SubsName = tab->SubsPath.AfterLast(L'\\');
+			
 			if (!tab->editor){ HideEditor(); }
 			SetRecent();
-
 			Label();
 			SetSubsResolution(askForRes);
-			tab->Video->DisableVisuals(ext != L"ass");
 		}
 		if (i < videosSize){
-			bool isload = tab->Video->LoadVideo(videos[i], (tab->editor) ? OPEN_DUMMY : 0);
-
-			if (!isload){
+			if (!Tabs->LoadVideo(tab, videos[i], -1, false, true)){
 				break;
 			}
-			tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
-			tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
-
 		}
 		tab->ShiftTimes->Contents();
 
@@ -1572,9 +1549,6 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	Tabs->RefreshBar();
 	GetTab()->Show();
 	UpdateToolbar();
-
-	subs.Clear();
-	videos.Clear();
 	Tabs->GetTab()->Video->DeleteAudioCache();
 	Options.SaveOptions(true, false);
 }
@@ -1767,7 +1741,7 @@ void KainoteFrame::SaveAll()
 	}
 }
 
-//return anulowanie operacji
+//return cancel operation
 bool KainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
@@ -1795,9 +1769,9 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 	return false;
 }
 
-
+//Disabling items that not needed when editor is off
 void KainoteFrame::UpdateToolbar()
-{//disejblowanie rzeczy niepotrzebnych przy wyłączonym edytorze
+{
 	MenuEvent evt;
 	OnMenuOpened(evt);
 	Toolbar->Updatetoolbar();

@@ -42,7 +42,8 @@ public:
 	bool Pause(bool burstbl = true);
 	bool Stop();
 	//custom FFMS2 -1 turn off, 0 Direct Show, 1 FFMS2
-	bool LoadVideo(const wxString& fileName, int subsFlag, bool fullscreen = false, bool changeAudio = true, int customFFMS2 = -1);
+	bool LoadVideo(const wxString& fileName, int subsFlag, bool fullscreen = false, 
+		bool changeAudio = true, int customFFMS2 = -1, bool dontPlayOnStart = false);
 	PlaybackState GetState();
 
 	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true);

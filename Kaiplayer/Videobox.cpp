@@ -248,9 +248,9 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, bool changeAudio, int customFFMS2)
+bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, 
+	bool changeAudio, int customFFMS2, bool dontPlayOnStart)
 {
-	//todo: tutaj trzeba napisać tworzenie renderera
 	prevchap = -1;
 	bool curentFFMS2 = !m_IsDirectShow;
 	bool byFFMS2;
@@ -327,11 +327,14 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 		renderer->GetVideoSize(&size.x, &size.y);
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
-	//block = false;
+	//renderer->m_BlockResize = false;
 	if (m_IsDirectShow){
 		Play();
-		if (tab->editor && !m_IsFullscreen){ Pause(); }
-		if (!m_VolumeSlider->IsShown()){ m_VolumeSlider->Show(); m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 290, -1); }
+		if ((tab->editor && !m_IsFullscreen) || dontPlayOnStart){ Pause(); }
+		if (!m_VolumeSlider->IsShown()){ 
+			m_VolumeSlider->Show(); 
+			m_TimesTextField->SetSize(m_VideoWindowLastSize.x - 290, -1); 
+		}
 	}
 	else{
 		renderer->m_BlockResize = false;

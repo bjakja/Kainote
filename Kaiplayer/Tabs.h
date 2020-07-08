@@ -48,7 +48,8 @@ public:
 	void ChangeActive();
 	void RefreshBar(bool checkSizes = false);
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
-	bool LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position = -1, bool isFFMS2 = true);
+	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1, 
+		bool isFFMS2 = true, bool hasEditor = true, bool fullscreen = false, bool loadPrompt = false);
 	bool SetFont(const wxFont &font);
 
 	int iter;
@@ -59,7 +60,7 @@ public:
 	static TabPanel *GetTab();
 	static void RefreshVideo(bool resetParameters = false);
 	static void SaveLastSession(bool beforeClose = false);
-	static void LoadLastSession(KainoteFrame *main);
+	static void LoadLastSession();
 	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session
 	static int CheckLastSession();
 
@@ -102,6 +103,8 @@ private:
 	wxArrayInt Tabsizes;
 	wxArrayString Names;
 	HHOOK Hook;
+	KainoteFrame *Kai;
+
 	static LRESULT CALLBACK PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam);
 
 	DECLARE_EVENT_TABLE()

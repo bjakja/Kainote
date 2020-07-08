@@ -24,6 +24,7 @@
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)
+	, Kai((KainoteFrame*)parent)
 {
 	firstVisibleTab = olditer = iter = 0;
 	splitline = splititer = 0;
@@ -127,7 +128,7 @@ void Notebook::AddPage(bool refresh)
 	int w, h;
 	GetClientSize(&w, &h);
 	if(refresh){Freeze();}
-	Pages.push_back(new TabPanel(this, (KainoteFrame*)GetParent(), wxPoint(0, 0), wxSize(0, 0)));
+	Pages.push_back(new TabPanel(this, Kai, wxPoint(0, 0), wxSize(0, 0)));
 	olditer = iter;
 	iter = Size() - 1;
 	if (refresh){
@@ -144,8 +145,7 @@ void Notebook::AddPage(bool refresh)
 	CalcSizes(true);
 	if (refresh){
 		if (!Options.GetBool(EDITOR_ON)){ 
-			KainoteFrame *kai = (KainoteFrame *)GetParent(); 
-			kai->HideEditor(false); 
+			Kai->HideEditor(false); 
 		}
 		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		AddPendingEvent(evt2);
@@ -187,7 +187,6 @@ TabPanel *Notebook::Page(size_t i)
 void Notebook::DeletePage(int page)
 {
 	Freeze();
-	KainoteFrame *Kai = (KainoteFrame*)GetParent();
 	block = true;
 	if (Kai->SavePrompt(1, page)){
 		block = false;
@@ -888,7 +887,6 @@ void Notebook::OnTabSel(int id)
 		Split(wtab);
 	}
 	else if (wtab < 0){
-		KainoteFrame *Kai = (KainoteFrame*)GetParent();
 		if (KaiMessageBox(_("Zostaną zamknięte wszystkie zakładki, kontynuować?"), _("Pytanie"), 
 			wxYES_NO, Kai, wxDefaultPosition, wxNO) == wxNO)
 			return;
@@ -913,7 +911,7 @@ void Notebook::OnTabSel(int id)
 		firstVisibleTab = 0;
 		int w = -1, h = -1;
 		if (pagesSize < 1){
-			Pages.push_back(new TabPanel(this, (KainoteFrame*)GetParent()));
+			Pages.push_back(new TabPanel(this, Kai));
 			wxString name = Pages[0]->SubsName;
 			Names.Add(name);
 			GetClientSize(&w, &h);
@@ -1016,7 +1014,6 @@ void Notebook::ChangeActive()
 	splititer = tmp;
 	Tabsizes[iter] += xWidth;
 	Tabsizes[splititer] -= xWidth;
-	//kainoteFrame * Kai = ((kainoteFrame*)GetParent());
 	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 	evt2.SetInt(1);
 	AddPendingEvent(evt2);
@@ -1058,34 +1055,113 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	return true;
 }
 
-bool Notebook::LoadVideo(TabPanel *tab, KainoteFrame *main, const wxString & path, int position /*= -1*/, bool isFFMS2)
+bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, 
+	int position /*= -1*/, bool isFFMS2, bool hasEditor, bool fullscreen, bool loadPrompt)
 {
-	bool isload = tab->Video->LoadVideo(path, (tab->editor) ? OPEN_DUMMY : 0, false, true, (position != -1)? isFFMS2 : -1);
+	wxString videopath;
+	wxString audiopath;
+	wxString keyframespath;
+	bool hasVideoPath = false;
+	bool hasAudioPath = false;
+	bool hasKeyframePath = false;
+	bool found = false;
+
+	if (hasEditor) {
+		if (loadPrompt) {
+			videopath = tab->Grid->GetSInfo(L"Video File");
+			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
+				wxFileExists(videopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+		}
+		audiopath = tab->Grid->GetSInfo(L"Audio File");
+		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
+		if (audiopath.StartsWith(L"?")) { audiopath = L""; }
+		if (videopath.StartsWith(L"?dummy")) { videopath = L""; }
+		//fix for wxFileExists which working without path when program run from command line
+		
+		hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
+			wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+		hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
+			wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+
+		if (hasAudioPath && audiopath == videopath)
+			hasAudioPath = false;
+
+		if (loadPrompt) {
+			int flags = wxNO;
+			wxString prompt;
+			if (hasVideoPath || hasAudioPath || hasKeyframePath) {
+				if (hasVideoPath && tab->VideoPath != videopath) { prompt += _("Wideo: ") + videopath + L"\n"; }
+				else if (hasVideoPath) { hasVideoPath = false; }
+				if (hasAudioPath && tab->AudioPath != audiopath) { prompt += _("Audio: ") + audiopath + L"\n"; }
+				else if (hasAudioPath) { hasAudioPath = false; }
+				if (hasKeyframePath && tab->KeyframesPath != keyframespath) { prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
+				else if (hasKeyframePath) { hasKeyframePath = false; }
+				if (!prompt.empty()) { prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
+			}
+			if (!path.empty()) {
+				if (tab->VideoPath != path) {
+					if (!prompt.empty()) { prompt += L"\n"; }
+					prompt += _("Wideo z folderu:\n") + path.AfterLast(L'\\'); flags |= wxYES;
+				}
+				else
+					return true;
+			}
+			if (!prompt.empty()) {
+				KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
+				if (flags & wxYES && flags & wxOK) {
+					dlg.SetOkLabel(_("Wczytaj skojarzone"));
+					dlg.SetYesLabel(_("Wczytaj z folderu"));
+				}
+				else if (flags & wxOK) { dlg.SetOkLabel(_("Tak")); }
+				int result = dlg.ShowModal();
+				if (result == wxNO) {
+					return true;
+				}
+				else if (result == wxOK) {
+					if (!audiopath.empty()) {
+						if (hasAudioPath) {
+							audiopath.Replace(L"/", L"\\");
+						}
+						if (hasVideoPath) {
+							MenuItem *item = Kai->VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
+							if (item) item->Check();
+							toolitem *titem = Kai->Toolbar->FindItem(GLOBAL_VIDEO_INDEXING);
+							if (titem) {
+								titem->toggled = true;
+								Kai->Toolbar->Refresh(false);
+							}
+						}
+					}
+					if (hasVideoPath) {
+						videopath.Replace(L"/", L"\\");
+					}
+				}
+			}
+		}
+
+	}
+	bool isload = tab->Video->LoadVideo((hasVideoPath)? videopath : path, (tab->editor) ? OPEN_DUMMY : 0, 
+		fullscreen, !hasAudioPath, (position != -1)? isFFMS2 : -1, true);
 
 	if (!isload){
 		return false;
 	}
+	if (hasEditor) {
+		if (hasAudioPath) {
+			audiopath.Replace(L"/", L"\\");
+			Kai->OpenAudioInTab(tab, 30040, audiopath);
+		}
 
-	wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
-	wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
-	if (audiopath.StartsWith(L"?")){ audiopath = path; }
-	bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-		wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
-	bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-		wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+		if (hasKeyframePath) {
+			tab->Video->OpenKeyframes(keyframespath);
+			tab->KeyframesPath = keyframespath;
+		}
 
-	if (hasAudioPath && audiopath != path){
-		audiopath.Replace(L"/", L"\\");
-		main->OpenAudioInTab(tab, 30040, audiopath);
-	}
-
-	if (hasKeyframePath){
-		tab->Video->OpenKeyframes(keyframespath);
-		tab->KeyframesPath = keyframespath;
 	}
 
 	tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
 	tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
+	
 	if (position != -1)
 		tab->Video->Seek(position);
 
@@ -1142,7 +1218,8 @@ void Notebook::SaveLastSession(bool beforeClose)
 			result << tab->SubsPath;
 		}
 		result << L"\r\nActive: " << tab->Grid->currentLine <<
-			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << L"\r\n";
+			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << 
+			L"\r\nEditor: " << tab->editor << L"\r\n";
 		numtab++;
 	}
 	OpenWrite op;
@@ -1150,7 +1227,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 
 }
 
-void Notebook::LoadLastSession(KainoteFrame* main)
+void Notebook::LoadLastSession()
 {
 	wxString riddenSession;
 	OpenWrite op;
@@ -1186,6 +1263,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		int activeLine = 0;
 		int scrollPosition = 0;
 		bool isFFMS2 = true;
+		bool hasEditor = true;
 		wxString rest;
 		while (true)
 		{
@@ -1202,6 +1280,8 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 				scrollPosition = wxAtoi(rest);
 			else if (token.StartsWith(L"FFMS2: ", &rest))
 				isFFMS2 = !!wxAtoi(rest);
+			else if (token.StartsWith(L"Editor: ", &rest))
+				hasEditor = !!wxAtoi(rest);
 			// no else cause hasMoreTokens have to be checked everytime
 			bool hasnotMoreTokens = !tokenizer.HasMoreTokens();
 			if (token.StartsWith(L"Tab: ", &rest) || hasnotMoreTokens){
@@ -1211,12 +1291,15 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 					TabPanel *tab = sthis->Pages[lastTab];
 					if (!subtitles.empty()){
 						sthis->LoadSubtitles(tab, subtitles, activeLine, scrollPosition);
-						main->SetRecent();
+						sthis->Kai->SetRecent();
 					}
 					if (!video.empty()){
-						sthis->LoadVideo(tab, main, video, videoPosition, isFFMS2);
+						if (!hasEditor)
+							sthis->Kai->HideEditor();
+	
+						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor);
 					}
-					main->Label();
+					sthis->Kai->Label();
 					tab->ShiftTimes->Contents();
 					video = L"";
 					videoPosition = 0;
@@ -1224,6 +1307,7 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 					activeLine = 0;
 					scrollPosition = 0;
 					isFFMS2 = true;
+					hasEditor = true;
 				}
 			}
 			if (hasnotMoreTokens)
@@ -1236,8 +1320,8 @@ void Notebook::LoadLastSession(KainoteFrame* main)
 		TabPanel *tab = sthis->GetTab();
 		tab->Show();
 		tab->Video->DeleteAudioCache();
-		main->SetSubsResolution(false);
-		main->UpdateToolbar();
+		sthis->Kai->SetSubsResolution(false);
+		sthis->Kai->UpdateToolbar();
 		Options.SaveOptions(true, false);
 	}
 }
@@ -1256,12 +1340,12 @@ int Notebook::CheckLastSession()
 	return 0;
 }
 
-int Notebook::FindPanel(TabPanel* pan, bool safe /*= true*/)
+int Notebook::FindPanel(TabPanel* tab, bool safe /*= true*/)
 {
 	int i = 0;
 	for (std::vector<TabPanel*>::iterator it = Pages.begin(); it != Pages.end(); it++)
 	{
-		if ((*it) == pan){ return i; }
+		if ((*it) == tab){ return i; }
 		i++;
 	}
 	return safe? iter : -1;
