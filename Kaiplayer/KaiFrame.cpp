@@ -378,8 +378,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			while (tkn.HasMoreTokens()){
 				Kai->paths.Add(tkn.NextToken());
 			}
-			//Kai->paths.insert(Kai->paths.end(), paths.begin(), paths.end());
-			Kai->timer.Start(400, true);
+			Kai->openTimer.Start(400, true);
 		}
 		return true;
 	}

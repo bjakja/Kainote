@@ -20,7 +20,7 @@
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
-	: wxFrame(parent, -1, L"", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)//
+	: wxFrame(parent, -1, L"", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)
 {
 	SetFont(*Options.GetFont());
 	vb = parent;

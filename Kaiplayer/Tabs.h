@@ -48,9 +48,10 @@ public:
 	void ChangeActive();
 	void RefreshBar(bool checkSizes = false);
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
-	bool LoadVideo(TabPanel *tab, const wxString & path, int position = -1, 
+	int LoadVideo(TabPanel *tab, const wxString & path, int position = -1, 
 		bool isFFMS2 = true, bool hasEditor = true, bool fullscreen = false, bool loadPrompt = false);
 	bool SetFont(const wxFont &font);
+	void ResetPrompt() { promptResult = 0; }
 
 	int iter;
 	bool block;
@@ -97,6 +98,7 @@ private:
 	int oldtab;
 	int oldI;
 	int maxCharPerTab = 40;
+	int promptResult = 0;
 	wxDialog* sline;
 	wxFont font;
 	std::vector<TabPanel*> Pages;

@@ -961,8 +961,10 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		nonewtab = false;
 	}
 
-	if (freeze)
+	if (freeze) {
+		Tabs->ResetPrompt();
 		tab->Freeze();
+	}
 
 	if (issubs || found){
 		const wxString &fname = (found && !issubs) ? secondFileName : filename;
@@ -985,119 +987,38 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		else if (nonewtab && tab->Grid->Comparison){
 			SubsGridBase::RemoveComparison();
 		}
-		
-		//seek for video / audio and (rest writed in future)
-		if (issubs && !fulls && !tab->Video->IsFullScreen()){
-			wxString videopath = tab->Grid->GetSInfo(L"Video File");
-			wxString audiopath = tab->Grid->GetSInfo(L"Audio File");
-			wxString keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
-			if (audiopath.StartsWith(L"?")){ audiopath = videopath; }
-			if (videopath.StartsWith(L"?dummy")){ videopath = L""; }
-			//fix for wxFileExists which working without path when program run from command line
-			bool hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
-				wxFileExists(videopath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
-			bool hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-				wxFileExists(audiopath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
-			bool hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-				wxFileExists(keyframespath.Prepend(filename.BeforeLast(L'\\') + L"\\"))));
-			int flags = wxNO;
-			wxString prompt;
-			if (hasVideoPath || hasAudioPath || hasKeyframePath){
-				if (hasVideoPath && tab->VideoPath != videopath){ prompt += _("Wideo: ") + videopath + L"\n"; }
-				else if (hasVideoPath){ hasVideoPath = false; }
-				if (hasAudioPath && tab->AudioPath != audiopath){ prompt += _("Audio: ") + audiopath + L"\n"; }
-				else if (hasAudioPath){ hasAudioPath = false; }
-				if (hasKeyframePath && tab->KeyframesPath != keyframespath){ prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
-				else if (hasKeyframePath){ hasKeyframePath = false; }
-				if (!prompt.empty()){ prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
-			}
-			if (!secondFileName.empty()){
-				if (tab->VideoPath != secondFileName){
-					if (!prompt.empty()){ prompt += L"\n"; }
-					prompt += _("Wideo z folderu:\n") + secondFileName.AfterLast(L'\\'); flags |= wxYES;
-				}
-				else
-					found = false;
-			}
-			if (!prompt.empty()){
-				KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
-				if (flags & wxYES && flags & wxOK){
-					dlg.SetOkLabel(_("Wczytaj skojarzone"));
-					dlg.SetYesLabel(_("Wczytaj z folderu"));
-				}
-				else if (flags & wxOK){ dlg.SetOkLabel(_("Tak")); }
-				int result = dlg.ShowModal();
-				if (result == wxNO){
-					found = false;
-				}
-				else if (result == wxOK){
-					if (!audiopath.empty()){
-						if (hasAudioPath && audiopath != videopath){
-							audiopath.Replace(L"/", L"\\");
-							OpenAudioInTab(tab, 30040, audiopath);
-							found = changeAudio = false;
-						}
-						if (hasVideoPath){
-							MenuItem *item = VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
-							if (item) item->Check();
-							toolitem *titem = Toolbar->FindItem(GLOBAL_VIDEO_INDEXING);
-							if (titem){
-								titem->toggled = true;
-								Toolbar->Refresh(false);
-							}
-						}
-					}
-					if (hasVideoPath){
-						videopath.Replace(L"/", L"\\");
-						secondFileName = videopath;
-						found = true;
-					}
-					if (hasKeyframePath){
-						tab->Video->OpenKeyframes(keyframespath);
-						tab->KeyframesPath = keyframespath;
-					}
-				}
-			}
-		}
 
-		//open subs and disable visuals when needed
-		if (tab->Video->GetState() != None){
-			if (!found){
-				bool isgood = tab->Video->OpenSubs((tab->editor) ? OPEN_DUMMY : CLOSE_SUBTITLES);
-				if (!isgood){ KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
-				else{ tab->Video->Render(); }
-			}
-		}
 		SetRecent();
 		//set texts on window title and tab
 		Label();
 		SetSubsResolution(!Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 		//turn on editor
 		if (!tab->editor && !fulls && !tab->Video->IsFullScreen()){ HideEditor(); }
-		//set color space
-		if (!found){
-			//rest of checks is in function
-			if (tab->Grid->subsFormat == ASS){
-				tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
-			}
-			goto done;
-		}
 	}
 
-	const wxString &fnname = (found && issubs) ? secondFileName : filename;
-	bool isload = tab->Video->LoadVideo(fnname, OPEN_DUMMY, fulls, changeAudio);
+	//pass empty string for path to check if paths of subs are valid
+	const wxString &fnname = (found && issubs) ? secondFileName : (!issubs)? filename : L"";
+	int isload = Tabs->LoadVideo(tab, fnname, -1, true, true, fulls, issubs && !fulls && !tab->Video->IsFullScreen());
 	if (!isload){
 		if (freeze)
 			tab->Thaw();
 		return false;
 	}
-	tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
-	tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
 
+	if (isload == -1 && tab->Video->GetState() != None) {
+		//open subs and disable visuals when needed
+		bool isgood = tab->Video->OpenSubs((tab->editor) ? OPEN_DUMMY : CLOSE_SUBTITLES, true, true);
+		if (!isgood) { KaiMessageBox(_("Nie można otworzyć napisów"), _("Uwaga")); }
+		//set color space	
+		if (tab->Grid->subsFormat == ASS) {
+			tab->Video->SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"));
+		}
+	}
+	
 	//fix to not delete audiocache when using from OpenFiles
-	if (freeze)
+	else if (freeze)
 		Tabs->GetTab()->Video->DeleteAudioCache();
-done:
+//done:
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	if (freeze){
@@ -1490,6 +1411,8 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 		}
 
 	}
+
+	Tabs->ResetPrompt();
 
 	if (files.size() == 1){
 		OpenFile(files[0], (videos.size() == 1 && Options.GetBool(VIDEO_FULL_SCREEN_ON_START)));

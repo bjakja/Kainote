@@ -16,6 +16,7 @@
 #pragma once
 
 #include "KaiDialog.h"
+#include "KaiCheckBox.h"
 
 class KaiMessageDialog : public KaiDialog
 {
@@ -26,6 +27,7 @@ public:
 	void SetYesLabel(const wxString &label);
 	void SetNoLabel(const wxString &label);
 	void SetHelpLabel(const wxString &label);
+	KaiCheckBox *kcb = NULL;
 
 };
 
@@ -33,3 +35,4 @@ public:
 int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition, long buttonWithFocus = -1);
 
 #define wxYES_TO_ALL 64
+#define ASK_ONCE 0x40000000

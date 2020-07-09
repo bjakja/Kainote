@@ -271,7 +271,6 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 			renderer = new RendererDirectShow(this);
 	}
 
-	if (fulls){ SetFullscreen(); }
 
 	bool shown = true;
 	renderer->m_BlockResize = true;
@@ -282,6 +281,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 		return false;
 	}
 	m_IsDirectShow = !byFFMS2;
+	if (fulls) { SetFullscreen(); }
 	if (!(IsShown() || (m_FullScreenWindow && m_FullScreenWindow->IsShown()))){
 		shown = false; Show();
 	}

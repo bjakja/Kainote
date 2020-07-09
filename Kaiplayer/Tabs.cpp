@@ -103,6 +103,7 @@ Notebook::Notebook(wxWindow *parent, int id)
 		}
 		Options.SetInt(SUBS_COMPARISON_TYPE, compareBy);
 	}, ID_CHECK_EVENT);
+
 }
 
 
@@ -1055,7 +1056,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	return true;
 }
 
-bool Notebook::LoadVideo(TabPanel *tab, const wxString & path, 
+int Notebook::LoadVideo(TabPanel *tab, const wxString & path, 
 	int position /*= -1*/, bool isFFMS2, bool hasEditor, bool fullscreen, bool loadPrompt)
 {
 	wxString videopath;
@@ -1064,7 +1065,7 @@ bool Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	bool hasVideoPath = false;
 	bool hasAudioPath = false;
 	bool hasKeyframePath = false;
-	bool found = false;
+	bool found = !path.empty();
 
 	if (hasEditor) {
 		if (loadPrompt) {
@@ -1083,68 +1084,81 @@ bool Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
 			wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
 
-		if (hasAudioPath && audiopath == videopath)
-			hasAudioPath = false;
+		bool sameAudioPath = audiopath == videopath;
 
 		if (loadPrompt) {
-			int flags = wxNO;
-			wxString prompt;
-			if (hasVideoPath || hasAudioPath || hasKeyframePath) {
-				if (hasVideoPath && tab->VideoPath != videopath) { prompt += _("Wideo: ") + videopath + L"\n"; }
-				else if (hasVideoPath) { hasVideoPath = false; }
-				if (hasAudioPath && tab->AudioPath != audiopath) { prompt += _("Audio: ") + audiopath + L"\n"; }
-				else if (hasAudioPath) { hasAudioPath = false; }
-				if (hasKeyframePath && tab->KeyframesPath != keyframespath) { prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
-				else if (hasKeyframePath) { hasKeyframePath = false; }
-				if (!prompt.empty()) { prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
-			}
-			if (!path.empty()) {
-				if (tab->VideoPath != path) {
-					if (!prompt.empty()) { prompt += L"\n"; }
-					prompt += _("Wideo z folderu:\n") + path.AfterLast(L'\\'); flags |= wxYES;
+			int result = promptResult;
+			if (!promptResult) {
+				int flags = wxNO | ASK_ONCE;
+				wxString prompt;
+				if (hasVideoPath || hasAudioPath || hasKeyframePath) {
+					if (hasVideoPath && tab->VideoPath != videopath) { prompt += _("Wideo: ") + videopath + L"\n"; }
+					else if (hasVideoPath) { hasVideoPath = false; }
+					if (hasAudioPath && tab->AudioPath != audiopath) { prompt += _("Audio: ") + audiopath + L"\n"; }
+					else if (hasAudioPath) { hasAudioPath = false; }
+					if (hasKeyframePath && tab->KeyframesPath != keyframespath) { prompt += _("Klatki kluczowe: ") + keyframespath + L"\n"; }
+					else if (hasKeyframePath) { hasKeyframePath = false; }
+					if (!prompt.empty()) { prompt.Prepend(_("Skojarzone pliki:\n")); flags |= wxOK; }
+				}
+				if (!path.empty()) {
+					if (tab->VideoPath != path) {
+						if (!prompt.empty()) { prompt += L"\n"; }
+						prompt += _("Wideo z folderu:\n") + path.AfterLast(L'\\'); flags |= wxYES;
+					}
+					else
+						return -1;
+				}
+				if (!prompt.empty()) {
+					KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
+					if (flags & wxYES && flags & wxOK) {
+						dlg.SetOkLabel(_("Wczytaj skojarzone"));
+						dlg.SetYesLabel(_("Wczytaj z folderu"));
+					}
+					else if (flags & wxOK) { dlg.SetOkLabel(_("Tak")); }
+					result = dlg.ShowModal();
+					if (result & ASK_ONCE)
+						promptResult = result;
 				}
 				else
-					return true;
+					result = wxNO;
 			}
-			if (!prompt.empty()) {
-				KaiMessageDialog dlg(this, prompt, _("Potwierdzenie"), flags);
-				if (flags & wxYES && flags & wxOK) {
-					dlg.SetOkLabel(_("Wczytaj skojarzone"));
-					dlg.SetYesLabel(_("Wczytaj z folderu"));
-				}
-				else if (flags & wxOK) { dlg.SetOkLabel(_("Tak")); }
-				int result = dlg.ShowModal();
-				if (result == wxNO) {
-					return true;
-				}
-				else if (result == wxOK) {
-					if (!audiopath.empty()) {
-						if (hasAudioPath) {
-							audiopath.Replace(L"/", L"\\");
-						}
-						if (hasVideoPath) {
-							MenuItem *item = Kai->VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
-							if (item) item->Check();
-							toolitem *titem = Kai->Toolbar->FindItem(GLOBAL_VIDEO_INDEXING);
-							if (titem) {
-								titem->toggled = true;
-								Kai->Toolbar->Refresh(false);
-							}
-						}
+			if (result & wxNO) {
+				return -1;
+			}
+			else if (result & wxOK) {
+				if (!audiopath.empty()) {
+					if (hasAudioPath && !sameAudioPath) {
+						audiopath.Replace(L"/", L"\\");
 					}
 					if (hasVideoPath) {
-						videopath.Replace(L"/", L"\\");
+						MenuItem *item = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
+						if (item) item->Check();
+						toolitem *titem = Kai->Toolbar->FindItem(GLOBAL_VIDEO_INDEXING);
+						if (titem) {
+							titem->toggled = true;
+							Kai->Toolbar->Refresh(false);
+						}
 					}
 				}
+				if (hasVideoPath) {
+					videopath.Replace(L"/", L"\\");
+					found = true;
+				}
 			}
+			else
+				hasVideoPath = hasAudioPath = hasKeyframePath = false;
+
 		}
+		
 
+		if (sameAudioPath)
+			hasAudioPath = false;
 	}
-	bool isload = tab->Video->LoadVideo((hasVideoPath)? videopath : path, (tab->editor) ? OPEN_DUMMY : 0, 
-		fullscreen, !hasAudioPath, (position != -1)? isFFMS2 : -1, true);
-
-	if (!isload){
-		return false;
+	if (found) {
+		if (!tab->Video->LoadVideo((hasVideoPath) ? videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
+			fullscreen, !hasAudioPath, (position != -1) ? isFFMS2 : -1, (position != -1))) {
+			return 0;
+		}
 	}
 	if (hasEditor) {
 		if (hasAudioPath) {
@@ -1165,7 +1179,7 @@ bool Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	if (position != -1)
 		tab->Video->Seek(position);
 
-	return true;
+	return 1;
 }
 
 void Notebook::OnSave(int id)

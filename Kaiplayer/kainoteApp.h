@@ -48,7 +48,7 @@ public:
 	void OnOpen(wxTimerEvent &evt);
 	bool IsBusy();
 	KainoteFrame* Frame;
-	wxTimer timer;
+	wxTimer openTimer;
 	wxTimer debugtimer;
 	wxArrayString paths;
 private:

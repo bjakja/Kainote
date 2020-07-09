@@ -139,8 +139,8 @@ bool kainoteApp::OnInit()
 	if (!m_checker->IsAnotherRunning())
 	{
 
-		signal(SIGSEGV, seg_handler);
-		std::set_terminate(std_handler);
+		//signal(SIGSEGV, seg_handler);
+		//std::set_terminate(std_handler);
 		//on x64 it makes not working unicode toupper tolower conversion
 		//setlocale(LC_CTYPE, "C");
 
@@ -229,10 +229,10 @@ bool kainoteApp::OnInit()
 
 		Frame->Show();
 		SetTopWindow(Frame);
-		timer.SetOwner(this, 1199);
+		openTimer.SetOwner(this, 1199);
 		Connect(1199, wxEVT_TIMER, (wxObjectEventFunction)&kainoteApp::OnOpen);
 		if (opevent){
-			timer.Start(500, true);
+			openTimer.Start(500, true);
 		}
 #if _DEBUG
 		bool loadSession = true;
@@ -245,17 +245,18 @@ bool kainoteApp::OnInit()
 			}
 		}
 #endif
+		/*if (opevent)
+			loadSession = false;*/
+
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
 #if _DEBUG
-			//on debug crashes vsfilter when load via direct show
-			//like there was no mutex in csri
 			debugtimer.Start(400, true);
 #else
 			debugtimer.Start(100, true);
 #endif
 			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-				Frame->Tabs->LoadLastSession(Frame);
+				Frame->Tabs->LoadLastSession();
 			}, 2299);
 		}
 
@@ -339,7 +340,7 @@ void kainoteApp::OnFatalException()
 	//op.FileWrite(Options.pathfull+"\\recover.txt",recover);
 	//Options.SaveOptions();
 
-	KaiMessageBox(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
+	//KaiMessageBox(_T("Ups, Kainote się skraszował w przyszłości będzie można wznowić sesję po tym kraszu"), "Krasz", wxOK | wxICON_ERROR);
 }
 void kainoteApp::OnOpen(wxTimerEvent &evt)
 {
@@ -350,7 +351,7 @@ void kainoteApp::OnOpen(wxTimerEvent &evt)
 		paths.Clear();
 	}
 	else{
-		timer.Start(100, true);
+		openTimer.Start(100, true);
 	}
 }
 
