@@ -181,6 +181,7 @@ public:
 	
 	size_t GetKeyFromPos(size_t position, size_t numOfLines);
 	bool CheckIfIsTree(size_t i);
+	int FindEndOfTree(size_t i);
 	int OpenCloseTree(size_t i);
 	void GetURStatus(bool *_undo, bool *_redo);
 	bool IsNotSaved();

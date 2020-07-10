@@ -64,6 +64,7 @@ private:
 	void TreeCopy(int treeLine);
 	void TreeChangeName(int treeLine);
 	void TreeRemove(int treeLine);
+	void TreeSelect(int treeLine);
 
 	DECLARE_EVENT_TABLE()
 };

@@ -38,7 +38,6 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	tab = (TabPanel*)GetParent();
 	Kai = kfparent;
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
-	//Options.SetInt(GRID_FILTER_BY, 0);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
@@ -236,10 +235,11 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 {
 	int sels = file->SelectionsSize();
 	Menu *menu = new Menu();
-	menu->SetAccMenu(6789, _("Dodaj linie"))->Enable(sels > 0);
-	menu->SetAccMenu(6790, _("Kopiuj drzewko"));
-	menu->SetAccMenu(6791, _("Zmień opis"));
-	menu->SetAccMenu(6792, _("Usuń"));
+	menu->Append(6789, _("Dodaj linie"))->Enable(sels > 0);
+	menu->Append(6790, _("Kopiuj drzewko"));
+	menu->Append(6791, _("Zmień opis"));
+	menu->Append(6793, _("Zaznacz linie drzewka"));
+	menu->Append(6792, _("Usuń"));
 	int id = menu->GetPopupMenuSelection(pos, this);
 	switch (id)
 	{
@@ -254,6 +254,9 @@ void SubsGrid::ContextMenuTree(const wxPoint &pos, int treeLine)
 		break;
 	case 6792:
 		TreeRemove(treeLine);
+		break;
+	case 6793:
+		TreeSelect(treeLine);
 		break;
 
 	default:
@@ -1331,8 +1334,8 @@ void SubsGrid::Filter(int id)
 		Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
 	}*/
 	if (id != GRID_FILTER_BY_NOTHING){ isFiltered = true; }
-	else{ Options.SetInt(GRID_FILTER_BY, 0); }
-	filter.Filter();
+	//else{ Options.SetInt(GRID_FILTER_BY, 0); }
+	filter.Filter(false, id == GRID_FILTER_BY_NOTHING);
 }
 
 void SubsGrid::TreeAddLines(int treeLine)
@@ -1450,6 +1453,25 @@ void SubsGrid::TreeRemove(int treeLine)
 	}
 	DeleteRow(treeLine, 1);
 	SetModified(TREE_REMOVE);
+	Refresh(false);
+}
+
+void SubsGrid::TreeSelect(int treeLine)
+{
+	int keystart = treeLine + 1;
+	file->ClearSelections();
+	//only select lines, no changes
+	for (size_t i = keystart; i < file->GetCount(); i++) {
+		Dialogue *dial = file->GetDialogue(i);
+		if (dial->treeState <= TREE_DESCRIPTION) {
+			break;
+		}
+		if (dial->treeState == TREE_CLOSED) {
+			dial->isVisible = VISIBLE;
+			dial->treeState = TREE_OPENED;
+		}
+		file->InsertSelection(i);
+	}
 	Refresh(false);
 }
 

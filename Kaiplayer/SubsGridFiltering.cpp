@@ -27,12 +27,16 @@ SubsGridFiltering::~SubsGridFiltering()
 {
 }
 
-void SubsGridFiltering::Filter(bool autoFiltering)
+void SubsGridFiltering::Filter(bool autoFiltering, bool removeFiltering)
 {
 	Invert = Options.GetBool(GRID_FILTER_INVERTED);
 	filterBy = Options.GetInt(GRID_FILTER_BY);
 	bool addToFilter = Options.GetBool(GRID_ADD_TO_FILTER);
-	if (!filterBy){
+	if (!filterBy) {
+		KaiLog("Filtering bug filterBy == 0");
+		return;
+	}
+	else if (removeFiltering){
 		if (grid->isFiltered){
 			TurnOffFiltering();
 			FilteringFinalize();
@@ -192,13 +196,11 @@ void SubsGridFiltering::RemoveFiltering()
 void SubsGridFiltering::TurnOffFiltering()
 {
 	int keyActiveLine = activeLine;
-	int i = 0;
 	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
 		if (dial->isVisible != VISIBLE && !dial->NonDialogue){
 			dial->isVisible = VISIBLE;
 		}
-		i++;
 	}
 }
 

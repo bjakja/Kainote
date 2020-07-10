@@ -139,8 +139,8 @@ bool kainoteApp::OnInit()
 	if (!m_checker->IsAnotherRunning())
 	{
 
-		//signal(SIGSEGV, seg_handler);
-		//std::set_terminate(std_handler);
+		signal(SIGSEGV, seg_handler);
+		std::set_terminate(std_handler);
 		//on x64 it makes not working unicode toupper tolower conversion
 		//setlocale(LC_CTYPE, "C");
 

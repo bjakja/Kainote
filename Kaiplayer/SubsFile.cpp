@@ -624,6 +624,19 @@ bool SubsFile::CheckIfIsTree(size_t i){
 	return dial->treeState == TREE_DESCRIPTION;
 }
 
+int SubsFile::FindEndOfTree(size_t i)
+{
+	size_t size = GetCount();
+	if (i >= size)
+		return size - 1;
+
+	for (size_t j = i + 1; j < size; j++) {
+		if(subs->dialogues[j]->treeState != TREE_OPENED)
+			return j - 1;
+	}
+	return size - 1;
+}
+
 int SubsFile::OpenCloseTree(size_t i){
 	size_t endOfTree = -1;
 	int visibility = NOT_VISIBLE;

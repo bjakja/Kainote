@@ -522,7 +522,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 	const wxColour &labelBkColD = Options.GetColour(GRID_LABEL_DOUBTFUL);
 	const wxColour &linesCol = Options.GetColour(GRID_LINES);
 	const wxColour &subsBkCol = Options.GetColour(GRID_DIALOGUE);
-	const wxColour &comm = Options.GetColour(GRID_COMMENT);
+	const wxColour &comment = Options.GetColour(GRID_COMMENT);
 	const wxColour &seldial = Options.GetColour(GRID_SELECTION);
 	const wxColour &textcol = Options.GetColour(GRID_TEXT);
 	const wxColour &collcol = Options.GetColour(GRID_COLLISIONS);
@@ -693,7 +693,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				(comparisonMatch) ? ComparisonBGMatch :
 				(visibleLine) ? visibleOnVideo :
 				subsBkCol;
-			if (isComment){ col = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comm; }
+			if (isComment){ col = (comparison) ? ComparisonBGCmnt : (comparisonMatch) ? ComparisonBGCmntMatch : comment; }
 			if (isSelected){
 				col = GetColorWithAlpha(seldial, col);
 			}
@@ -776,7 +776,6 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			gc->DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == ilcol - 1){
-				//KaiLog(wxString::Format(L"textgrid width %i font pixelsize %i", GridWidth[j], font.GetPixelSize().GetHeight()));
 				if (SpellErrors[key].size() > 2){
 					wxString & text = strings[j];
 					text.Replace(L"\t", L" ");
@@ -805,7 +804,6 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 					const wxString & text = strings[j];
 					int cellSize = GridWidth[j];
 					for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
-						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
 						wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);
 
 						if (cmp == L""){ continue; }
@@ -842,24 +840,41 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			gc->SetFont(font, (isHeadline) ? headerText : (collis) ? collcol : textcol);
 
 			int treeState = (Dial) ? Dial->treeState : 0;
-			if (j > 0 && treeState == TREE_DESCRIPTION){
-				gc->SetBrush(comm);
-				gc->SetPen(*wxTRANSPARENT_PEN);
-				gc->DrawRectangle(posX + 1, posY, w - 1, GridHeight);
-				// GetDialogueKey was made for loops no checks
-				Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
-				if (nextDial && nextDial->treeState == TREE_CLOSED){
-					wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
-					gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
+			if (j > 0 && (treeState == TREE_DESCRIPTION || treeState == TREE_OPENED)){
+				if (treeState == TREE_DESCRIPTION) {
+					gc->SetBrush(comment);
+					gc->SetPen(*wxTRANSPARENT_PEN);
+					gc->DrawRectangle(posX + 1, posY, w - 1, GridHeight);
+					// GetDialogueKey was made for loops no checks
+					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
+					if (nextDial && nextDial->treeState == TREE_CLOSED) {
+						wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
+						gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
+					}
+					else {
+						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
+						wxImage img = bmp.ConvertToImage();
+						img = img.Rotate180();
+						gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
+						gc->SetBrush(*wxTRANSPARENT_BRUSH);
+						gc->SetPen(textcol);
+						gc->StrokeLine(posX, posY + GridHeight, w - 1, posY + GridHeight);
+					}
+					gc->DrawTextU(Dial->Text, posX + 23, posY + 1);
+					break;
 				}
-				else{
-					wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
-					wxImage img = bmp.ConvertToImage();
-					img = img.Rotate180();
-					gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
+				else {
+					gc->SetBrush(*wxTRANSPARENT_BRUSH);
+					gc->SetPen(textcol);
+					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
+
+					gc->StrokeLine(posX, posY, posX, posY + GridHeight + 1);
+					gc->StrokeLine(w - 1, posY, w - 1, posY + GridHeight + 1);
+					if (!nextDial || nextDial->treeState < TREE_DESCRIPTION)
+						gc->StrokeLine(posX, posY + GridHeight, w - 1, posY + GridHeight);
+					
 				}
-				gc->DrawTextU(Dial->Text, posX + 23, posY + 1);
-				break;
+				
 			}
 			//cur = wxRect(posX + 3, posY, GridWidth[j] - 6, GridHeight);
 			//gc->Clip(cur);

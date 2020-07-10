@@ -307,6 +307,10 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 
 			if (tabsWidth > w - 22){
 				firstVisibleTab = i - 1;
+				if (firstVisibleTab < 0) {
+					//KaiLog(L"firstVisibleTab < 0");
+					firstVisibleTab = 0;
+				}
 				break;
 			}
 			if (i == iter)
@@ -1068,10 +1072,13 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	bool found = !path.empty();
 
 	if (hasEditor) {
+		wxString subsPath = (path.empty()) ?
+			tab->SubsPath.BeforeLast(L'\\') + L"\\" : path.BeforeLast(L'\\') + L"\\";
+
 		if (loadPrompt) {
 			videopath = tab->Grid->GetSInfo(L"Video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
-				wxFileExists(videopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+				wxFileExists(videopath.Prepend(subsPath))));
 		}
 		audiopath = tab->Grid->GetSInfo(L"Audio File");
 		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
@@ -1080,9 +1087,9 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		//fix for wxFileExists which working without path when program run from command line
 		
 		hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-			wxFileExists(audiopath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+			wxFileExists(audiopath.Prepend(subsPath))));
 		hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-			wxFileExists(keyframespath.Prepend(path.BeforeLast(L'\\') + L"\\"))));
+			wxFileExists(keyframespath.Prepend(subsPath))));
 
 		bool sameAudioPath = audiopath == videopath;
 
