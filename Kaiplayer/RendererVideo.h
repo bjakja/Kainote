@@ -105,6 +105,7 @@ public:
 	virtual void GetVideoSize(int *width, int *height){};
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
+	virtual bool DrawTexture(byte *nframe = NULL, bool copy = false) {};
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
@@ -166,7 +167,6 @@ public:
 	virtual VideoFfmpeg * GetFFMS2(){ return NULL; };
 	// Non virtual functions
 	void DrawProgBar();
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);

@@ -39,6 +39,70 @@ void RendererFFMS2::DestroyFFMS2()
 	//SAFE_DELETE(m_FFMS2);
 }
 
+bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
+{
+
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	byte *fdata = NULL;
+	byte *texbuf;
+	byte bytes = 4;
+
+	D3DLOCKED_RECT d3dlr;
+
+	if (nframe) {
+		fdata = nframe;
+		if (copy) {
+			byte *cpy = (byte*)m_FrameBuffer;
+			memcpy(cpy, fdata, m_Height * m_Pitch);
+		}
+	}
+	else {
+		KaiLog(_("Brak bufora klatki")); return false;
+	}
+
+
+	m_SubsProvider->Draw(fdata, m_Time);
+
+
+#ifdef byvertices
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+#else
+	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+#endif
+	texbuf = static_cast<byte *>(d3dlr.pBits);
+
+	diff = d3dlr.Pitch - (m_Width*bytes);
+	if (m_SwapFrame) {
+		int framePitch = m_Width * bytes;
+		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
+		for (int j = 0; j < m_Height; ++j) {
+			memcpy(texbuf, reversebyte, framePitch);
+			texbuf += framePitch + diff;
+			reversebyte -= framePitch;
+		}
+	}
+	else if (!diff) {
+		memcpy(texbuf, fdata, (m_Height * m_Pitch));
+	}
+	else if (diff > 0) {
+
+		int fwidth = m_Width * bytes;
+		for (int i = 0; i < m_Height; i++) {
+			memcpy(texbuf, fdata, fwidth);
+			texbuf += (fwidth + diff);
+			fdata += fwidth;
+		}
+
+	}
+	else {
+		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
+	}
+
+	m_MainSurface->UnlockRect();
+
+	return true;
+}
+
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 {
 	if (redrawSubsOnFrame && !m_DeviceLost){

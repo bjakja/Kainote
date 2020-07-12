@@ -205,7 +205,7 @@ public:
 	bool hasMark;
 	bool isHidden = false;
 	std::atomic<bool> stopPlayThread{ true };
-	std::atomic<bool> needUpdateOnPlay{ false };
+	//std::atomic<bool> needUpdateOnPlay{ false };
 	int curMarkMS;
 	int Grabbed;
 	int hold;

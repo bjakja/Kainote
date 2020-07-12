@@ -32,11 +32,7 @@ void SubsGridFiltering::Filter(bool autoFiltering, bool removeFiltering)
 	Invert = Options.GetBool(GRID_FILTER_INVERTED);
 	filterBy = Options.GetInt(GRID_FILTER_BY);
 	bool addToFilter = Options.GetBool(GRID_ADD_TO_FILTER);
-	if (!filterBy) {
-		KaiLog("Filtering bug filterBy == 0");
-		return;
-	}
-	else if (removeFiltering){
+	if (removeFiltering){
 		if (grid->isFiltered){
 			TurnOffFiltering();
 			FilteringFinalize();

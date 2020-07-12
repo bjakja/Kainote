@@ -32,7 +32,6 @@ public:
 	VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *success);
 	~VideoFfmpeg();
 	void Render(bool wait=true);
-	void RenderFromWorker();
 	void Play();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol = 1.0);
@@ -57,7 +56,7 @@ public:
 	ProgressSink *progress;
 	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void *ICPrivate);
 	static void AudioLoad(VideoFfmpeg *parent, bool newIndex, int audiotrack);
-	void Clearcache();
+	void ClearRAMCache();
 	FFMS_VideoSource *videosource;
 	FFMS_AudioSource *audiosource;
 	FFMS_ErrorInfo errinfo;
@@ -65,7 +64,7 @@ public:
 	const FFMS_Frame *fframe = NULL;
 	
 	bool DiskCache(bool newIndex);
-	void Cleardiskc();
+	void ClearDiskCache();
 	void DeleteOldAudioCache();
 	wxString ColorCatrixDescription(int cs, int cr);
 	void SetColorSpace(const wxString& matrix);

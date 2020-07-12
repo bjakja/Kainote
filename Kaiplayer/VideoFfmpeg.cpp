@@ -531,8 +531,8 @@ VideoFfmpeg::~VideoFfmpeg()
 		FFMS_DestroyVideoSource(videosource); videosource = NULL;
 	}
 
-	if (disccache){ Cleardiskc(); }
-	else{ Clearcache(); }
+	if (disccache){ ClearDiskCache(); }
+	else{ ClearRAMCache(); }
 	if (!stopLoadingAudio && disccache && diskCacheFilename.EndsWith(L".part")){
 		wxString discCacheNameWithGoodExt = diskCacheFilename;
 		discCacheNameWithGoodExt.RemoveLast(5);
@@ -773,7 +773,7 @@ bool VideoFfmpeg::RAMCache()
 
 
 
-void VideoFfmpeg::Clearcache()
+void VideoFfmpeg::ClearRAMCache()
 {
 	if (!Cache){ return; }
 	for (int i = 0; i < blnum; i++)
@@ -872,12 +872,12 @@ bool VideoFfmpeg::DiskCache(bool newIndex)
 		good = false;
 	}
 
-	if (!good){ Cleardiskc(); }
+	if (!good){ ClearDiskCache(); }
 	else{ audioProgress = 1.f; }
 	return good;
 }
 
-void VideoFfmpeg::Cleardiskc()
+void VideoFfmpeg::ClearDiskCache()
 {
 	if (fp){ fclose(fp); fp = NULL; }
 }

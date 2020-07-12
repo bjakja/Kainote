@@ -707,11 +707,11 @@ void VideoCtrl::SetFullscreen(int monitor)
 
 		if (!tab->editor){
 			if (!Kai->IsMaximized()){
-				Kai->GetClientSize(&sizex, &sizey);
+				Kai->GetSize(&sizex, &sizey);
 				int yDiff = m_PanelHeight + Kai->borders.bottom + Kai->borders.top;
 				int xDiff = Kai->borders.left + Kai->borders.right;
 				CalcSize(&sx, &sy, sizex - xDiff, sizey - yDiff);
-				Kai->SetClientSize(sx + xDiff, sy + yDiff);
+				Kai->SetSize(sx + xDiff, sy + yDiff);
 			}
 		}
 		else{

@@ -2295,7 +2295,6 @@ void AudioDisplay::UpdateTimer()
 						int goTo = MAX(0, curPos - 50 * samples);
 						if (goTo >= 0) {
 							UpdatePosition(goTo, true);
-							//curpos = GetXAtSample(curPos);
 							DoUpdateImage(false);
 							Sleep(10);
 							return;
@@ -2308,31 +2307,29 @@ void AudioDisplay::UpdateTimer()
 			curpos = GetXAtSample(curPos);
 			if (curpos >= 0.f && curpos < w) {
 
-				DoUpdateImage(!needUpdateOnPlay);
+				DoUpdateImage(true);
 			}
 			else if (cursorPaint){
 				cursorPaint = false;
-				DoUpdateImage(!needUpdateOnPlay);
+				DoUpdateImage(true);
 			}
 		}
 		else {
 
 			cursorPaint = false;
-			DoUpdateImage(!needUpdateOnPlay);
+			DoUpdateImage(true);
 			if (curPos > player->GetEndPosition() + 8192) {
 				player->Stop();
-				//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
-
+				
 				stopPlayThread = true;
 			}
 		}
-		needUpdateOnPlay = false;
+		
 	}
 
 	// Restore background
 	else {
 		cursorPaint = false;
-		//stopPlayThread = true;
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;

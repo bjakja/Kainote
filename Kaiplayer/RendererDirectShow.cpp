@@ -104,6 +104,106 @@ bool RendererDirectShow::InitRendererDX()
 	}
 	CoTaskMemFree(guids);
 	PTR(isgood, L"Nie ma żadnych guidów");
+	HR(m_D3DDevice->CreateTexture(m_Width, m_Height, 1,
+		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_SubtitlesTexture, NULL),
+		_("Nie można storzyć tekstury napisów"));
+
+	return true;
+}
+
+bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
+{
+
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	byte *fdata = NULL;
+	byte *texbuf;
+	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+
+	D3DLOCKED_RECT d3dlr;
+	D3DLOCKED_RECT d3dSubslr;
+
+	if (nframe) {
+		fdata = nframe;
+		/*if (copy) {
+			byte *cpy = (byte*)m_FrameBuffer;
+			memcpy(cpy, fdata, m_Height * m_Pitch);
+		}*/
+	}
+	else {
+		KaiLog(_("Brak bufora klatki")); return false;
+	}
+
+	int buffSize = m_Width * m_Height * 4;
+	memset(m_SubtitlesBuffer, 0, buffSize);
+
+	m_SubsProvider->Draw(m_SubtitlesBuffer, m_Time);
+
+	RECT dirty = { 0, 0, m_Width, m_Height };
+	HR(m_SubtitlesTexture->LockRect(1, &d3dSubslr, &dirty, NULL), _("Nie można zablokować bufora tekstury napisów"));
+	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, buffSize);
+	m_SubtitlesTexture->UnlockRect(1);
+
+#ifdef byvertices
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+#else
+	HR(m_MainSurface->LockRect(&d3dlr, &dirty, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+#endif
+	texbuf = static_cast<byte *>(d3dlr.pBits);
+
+	diff = d3dlr.Pitch - (m_Width*bytes);
+	if (m_SwapFrame) {
+		int framePitch = m_Width * bytes;
+		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
+		for (int j = 0; j < m_Height; ++j) {
+			memcpy(texbuf, reversebyte, framePitch);
+			texbuf += framePitch + diff;
+			reversebyte -= framePitch;
+		}
+	}
+	else if (!diff) {
+		memcpy(texbuf, fdata, (m_Height * m_Pitch));
+	}
+	else if (diff > 0) {
+
+		if (m_Format >= YV12) {
+			for (int i = 0; i < m_Height; ++i) {
+				memcpy(texbuf, fdata, m_Width);
+				texbuf += (m_Width + diff);
+				fdata += m_Width;
+			}
+			int hheight = m_Height / 2;
+			int fwidth = (m_Format == NV12) ? m_Width : m_Width / 2;
+			int fdiff = (m_Format == NV12) ? diff : diff / 2;
+
+			for (int i = 0; i < hheight; i++) {
+				memcpy(texbuf, fdata, fwidth);
+				texbuf += (fwidth + fdiff);
+				fdata += fwidth;
+			}
+			if (m_Format < NV12) {
+				for (int i = 0; i < hheight; ++i) {
+					memcpy(texbuf, fdata, fwidth);
+					texbuf += (fwidth + fdiff);
+					fdata += fwidth;
+				}
+			}
+		}
+		else
+		{
+			int fwidth = m_Width * bytes;
+			for (int i = 0; i < m_Height; i++) {
+				memcpy(texbuf, fdata, fwidth);
+				texbuf += (fwidth + diff);
+				fdata += fwidth;
+			}
+		}
+
+	}
+	else {
+		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
+	}
+
+	m_MainSurface->UnlockRect();
 
 	return true;
 }
@@ -198,6 +298,8 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	
 	hr = m_D3DDevice->BeginScene();
 
+
+	hr = m_D3DDevice->SetTexture(0, m_SubtitlesTexture);
 #if byvertices
 
 
@@ -292,9 +394,10 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	m_MainStreamRect.right = m_Width;
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
-	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	if (m_FrameBuffer ){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
 	m_FrameBuffer = new char[m_Height * m_Pitch];
-
+	if (m_SubtitlesBuffer) { delete[] m_SubtitlesBuffer; m_SubtitlesBuffer = NULL; }
+	m_SubtitlesBuffer = new unsigned char[m_Width * m_Height * 4];
 	UpdateRects();
 
 	if (!InitDX()){ return false; }
@@ -462,6 +565,7 @@ void RendererDirectShow::OpenKeyframes(const wxString &filename)
 {
 	
 }
+
 
 void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)
 {

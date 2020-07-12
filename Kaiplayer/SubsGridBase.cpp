@@ -1297,7 +1297,8 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 
 	if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
 	if (subsFormat == ASS){
-		if (Options.GetBool(GRID_FILTER_AFTER_LOAD) && Options.GetInt(GRID_FILTER_BY) != FILTER_BY_SELECTIONS){
+		int filterBy = Options.GetInt(GRID_FILTER_BY);
+		if (filterBy && Options.GetBool(GRID_FILTER_AFTER_LOAD) && filterBy != FILTER_BY_SELECTIONS){
 			isFiltered = true;
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);
