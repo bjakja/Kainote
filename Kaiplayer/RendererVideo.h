@@ -105,7 +105,7 @@ public:
 	virtual void GetVideoSize(int *width, int *height){};
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
-	virtual bool DrawTexture(byte *nframe = NULL, bool copy = false) {};
+	virtual bool DrawTexture(byte *nframe = NULL, bool copy = false) { return false; };
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
