@@ -48,7 +48,7 @@ public:
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void ChangePositionByFrame(int cpos);
 	//it's safe to not exist visual

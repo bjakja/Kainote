@@ -69,7 +69,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 	if (elems & wxNO){
 		btn = new MappedButton(this, wxID_NO, _("Nie"), -1, wxDefaultPosition, wxSize(60, -1));
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-			EndModal(wxNO | (kcb && kcb->GetValue()) ? ASK_ONCE : 0);
+			EndModal(wxNO | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, wxID_NO);
 		sizer1->Add(btn, 1, wxALL, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxNO)){ btn->SetFocus(); setFocus = false; }
@@ -77,7 +77,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 	if (elems & wxCANCEL){
 		btn = new MappedButton(this, 9010, _("Anuluj"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-			EndModal(wxCANCEL | (kcb && kcb->GetValue()) ? ASK_ONCE : 0);
+			EndModal(wxCANCEL | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9010);
 		sizer1->Add(btn, 1, wxALL, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxCANCEL)){ btn->SetFocus(); setFocus = false; }
@@ -85,7 +85,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 	if (elems & wxHELP){
 		btn = new MappedButton(this, 9011, _("Pomoc"), -1);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-			EndModal(wxHELP | (kcb && kcb->GetValue()) ? ASK_ONCE : 0);
+			EndModal(wxHELP | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9011);
 		sizer1->Add(btn, 1, wxALL, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxHELP)){ btn->SetFocus(); setFocus = false; }

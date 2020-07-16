@@ -148,3 +148,73 @@ Gdyby nie widziało ścieżek do SDK 10 to niestety należy je dodać
 c/c++ -> general -> additional include directories
 i Linker -> general -> additional include directories
 To wada Visual Sudio 2017, nie moja wina, raz je widzi raz nie.
+
+
+-Thai - ไทย-
+
+Kainote:
+เครื่องมือแก้ไขคำบรรยายที่สามารถเล่นวิดีโอโดยใช้ FFMS2 (สำหรับการเรียงพิมพ์,
+การจับเวลาและขั้นสูงอื่นๆ ) หรือ DirectShow (สำหรับการเล่น
+หรือรุ่นคำบรรยายย่อย)
+
+คุณสมบัติ:
+
+- รูปแบบที่รองรับ: ASS, SSA (โหลดและแปลงเป็น ASS), SRT,
+MPL2, MDVD, TMP
+
+- แปลงจากรูปแบบหนึ่งเป็นอีกรูปแบบหนึ่ง
+
+- โหมดผู้แปล: เก็บข้อความต้นฉบับในฟิลด์ข้อความที่สองจนกว่าจะสิ้นสุดการแปล
+
+- ค้นหาบรรทัดที่แปลหรือยังไม่ได้แปลโดยเฉพาะ
+
+- ปุ่มที่ใส่แท็ก ASS ในหลายบรรทัด
+
+- เครื่องมือแสดงภาพวิดีโอสำหรับแท็กพื้นฐานและตัวเปลี่ยนตำแหน่ง
+แท็กหลายตำแหน่งเช่น: \pos, \move, \org, \clip, \iclip และ \p (ภาพวาด ASS)
+
+- เลื่อนเวลาคำบรรยายตามเวลา วิดีโอหรือเสียง
+
+- สเปกตรัมเสียง / แผนผังคลื่นเสียง พร้อมเครื่องมือปรับพยางค์คาราโอเกะอัตโนมัติสำหรับเนื้อเพลงญี่ปุ่น
+
+- สคริปต์อัตโนมัติ 4 กับ Despendency control
+
+
+รับรุ่นเบต้าใหม่ล่าสุด:
+
+https://drive.google.com/uc?id=1ECqsrLo5d1jPoz-FKvJrS0279YeTKrmS&export=download
+
+รับรุ่นเผยแพร่อย่างเป็นทางการ:
+
+https://github.com/bjakja/Kainote/releases
+
+
+ในการบิวด์คุณต้องติดตั้ง:
+
+Visual Studio 2017 (บิวด์ Icu พร้อมคอมไพเลอร์ x64 และแรมขนาด 16gb)
+
+DirectX SDK
+https://www.microsoft.com/en-us/download/details.aspx?id=6812
+
+Windows SDK 10 พร้อมตัวติดตั้ง Visual studio 2017
+
+ใส่ลงในโฟลเดอร์ Thirdparty โดยไม่ต้องใส่โฟลเดอร์:
+
+Boost
+https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
+
+Icu
+https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
+
+FreeType2
+https://github.com/aseprite/freetype2/archive/master.zip
+
+Fribidi
+https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
+
+Libass
+https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
+
+เปลี่ยนเส้นทางคุณสมบัติโครงการของ Windows SDK 10 ที่ติดตั้ง และ Direct X หากไม่ได้ติดตั้งไว้ในดิสก์ C 
+บางครั้ง Visual Studio 2017 จะไม่พบเส้นทางไปยัง Windows SDK 10 จากนั้นคุณต้องเพิ่มมันเข้าไปในโครงการด้วยตนเอง c/c++ -> General -> ไดเร็กเทอรี่เพิ่มเติมและ Linker -> General -> ไดเร็กเทอรี่เพิ่มเติม 
+มันเป็นหนึ่งในข้อบกพร่องของ Visual Studio 2017

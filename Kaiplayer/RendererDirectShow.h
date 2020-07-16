@@ -42,7 +42,7 @@ public:
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void RecreateSurface();
 	void EnableStream(long index);
@@ -55,8 +55,7 @@ public:
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	bool InitRendererDX();
 	void OpenKeyframes(const wxString &filename);
-private:
+
 	DShowPlayer *m_DirectShowPlayer;
-	LPDIRECT3DTEXTURE9 m_SubtitlesTexture;
-	unsigned char * m_SubtitlesBuffer = NULL;
+	
 };

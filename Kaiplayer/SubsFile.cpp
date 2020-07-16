@@ -378,7 +378,7 @@ void SubsFile::DeleteSelectedDialogues()
 
 void SubsFile::SortAll(bool func(Dialogue *i, Dialogue *j))
 {
-	std::sort(subs->dialogues.begin(), subs->dialogues.end(), func);
+	std::stable_sort(subs->dialogues.begin(), subs->dialogues.end(), func);
 }
 
 void SubsFile::SortSelected(bool func(Dialogue *i, Dialogue *j))
@@ -389,7 +389,7 @@ void SubsFile::SortSelected(bool func(Dialogue *i, Dialogue *j))
 		dial->ChangeDialogueState(1);
 		selected.push_back(dial);
 	}
-	std::sort(selected.begin(), selected.end(), func);
+	std::stable_sort(selected.begin(), selected.end(), func);
 	int ii = 0;
 	for (auto cur = subs->Selections.begin(); cur != subs->Selections.end(); cur++){
 		subs->dialogues[*cur] = selected[ii++];

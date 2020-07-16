@@ -709,95 +709,97 @@ bool RendererVideo::RemoveVisual(bool noRefresh, bool disable)
 	return true;
 }
 
-//bool RendererVideo::DrawTexture(byte *nframe, bool copy)
-//{
-//
-//	wxCriticalSectionLocker lock(m_MutexRendering);
-//	byte *fdata = NULL;
-//	byte *texbuf;
-//	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
-//	
-//	D3DLOCKED_RECT d3dlr;
-//
-//	if (nframe){
-//		fdata = nframe;
-//		if (copy){
-//			byte *cpy = (byte*)m_FrameBuffer;
-//			memcpy(cpy, fdata, m_Height * m_Pitch);
-//		}
-//	}
-//	else{
-//		KaiLog(_("Brak bufora klatki")); return false;
-//	}
-//
-//
-//	m_SubsProvider->Draw(fdata, m_Time);
-//
-//
-//#ifdef byvertices
-//	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
-//#else
-//	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
-//#endif
-//	texbuf = static_cast<byte *>(d3dlr.pBits);
-//
-//	diff = d3dlr.Pitch - (m_Width*bytes);
-//	if (m_SwapFrame){
-//		int framePitch = m_Width * bytes;
-//		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
-//		for (int j = 0; j < m_Height; ++j){
-//			memcpy(texbuf, reversebyte, framePitch);
-//			texbuf += framePitch + diff;
-//			reversebyte -= framePitch;
-//		}
-//	}
-//	else if (!diff){
-//		memcpy(texbuf, fdata, (m_Height * m_Pitch));
-//	}
-//	else if (diff > 0){
-//
-//		if (m_Format >= YV12){
-//			for (int i = 0; i < m_Height; ++i){
-//				memcpy(texbuf, fdata, m_Width);
-//				texbuf += (m_Width + diff);
-//				fdata += m_Width;
-//			}
-//			int hheight = m_Height / 2;
-//			int fwidth = (m_Format == NV12) ? m_Width : m_Width / 2;
-//			int fdiff = (m_Format == NV12) ? diff : diff / 2;
-//
-//			for (int i = 0; i < hheight; i++){
-//				memcpy(texbuf, fdata, fwidth);
-//				texbuf += (fwidth + fdiff);
-//				fdata += fwidth;
-//			}
-//			if (m_Format < NV12){
-//				for (int i = 0; i < hheight; ++i){
-//					memcpy(texbuf, fdata, fwidth);
-//					texbuf += (fwidth + fdiff);
-//					fdata += fwidth;
-//				}
-//			}
-//		}
-//		else
-//		{
-//			int fwidth = m_Width * bytes;
-//			for (int i = 0; i < m_Height; i++){
-//				memcpy(texbuf, fdata, fwidth);
-//				texbuf += (fwidth + diff);
-//				fdata += fwidth;
-//			}
-//		}
-//
-//	}
-//	else{
-//		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
-//	}
-//
-//	m_MainSurface->UnlockRect();
-//
-//	return true;
-//}
+bool RendererVideo::DrawTexture(byte *nframe, bool copy)
+{
+
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	byte *fdata = NULL;
+	byte *texbuf;
+	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+	//DWORD black = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x10101010;
+	//DWORD blackuv = (vformat == RGB32) ? 0 : (vformat == YUY2) ? 0x80108010 : 0x8080;
+
+	D3DLOCKED_RECT d3dlr;
+
+	if (nframe){
+		fdata = nframe;
+		if (copy){
+			byte *cpy = (byte*)m_FrameBuffer;
+			memcpy(cpy, fdata, m_Height * m_Pitch);
+		}
+	}
+	else{
+		KaiLog(_("Brak bufora klatki")); return false;
+	}
+
+
+	m_SubsProvider->Draw(fdata, m_Time);
+
+
+#ifdef byvertices
+	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
+#else
+	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
+#endif
+	texbuf = static_cast<byte *>(d3dlr.pBits);
+
+	diff = d3dlr.Pitch - (m_Width*bytes);
+	if (m_SwapFrame){
+		int framePitch = m_Width * bytes;
+		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
+		for (int j = 0; j < m_Height; ++j){
+			memcpy(texbuf, reversebyte, framePitch);
+			texbuf += framePitch + diff;
+			reversebyte -= framePitch;
+		}
+	}
+	else if (!diff){
+		memcpy(texbuf, fdata, (m_Height * m_Pitch));
+	}
+	else if (diff > 0){
+
+		if (m_Format >= YV12){
+			for (int i = 0; i < m_Height; ++i){
+				memcpy(texbuf, fdata, m_Width);
+				texbuf += (m_Width + diff);
+				fdata += m_Width;
+			}
+			int hheight = m_Height / 2;
+			int fwidth = (m_Format == NV12) ? m_Width : m_Width / 2;
+			int fdiff = (m_Format == NV12) ? diff : diff / 2;
+
+			for (int i = 0; i < hheight; i++){
+				memcpy(texbuf, fdata, fwidth);
+				texbuf += (fwidth + fdiff);
+				fdata += fwidth;
+			}
+			if (m_Format < NV12){
+				for (int i = 0; i < hheight; ++i){
+					memcpy(texbuf, fdata, fwidth);
+					texbuf += (fwidth + fdiff);
+					fdata += fwidth;
+				}
+			}
+		}
+		else
+		{
+			int fwidth = m_Width * bytes;
+			for (int i = 0; i < m_Height; i++){
+				memcpy(texbuf, fdata, fwidth);
+				texbuf += (fwidth + diff);
+				fdata += fwidth;
+			}
+		}
+
+	}
+	else{
+		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
+	}
+
+	m_MainSurface->UnlockRect();
+
+	return true;
+}
 
 
 int RendererVideo::GetCurrentPosition()
