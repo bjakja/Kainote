@@ -52,7 +52,7 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 	if (nframe) {
 		fdata = nframe;
 		if (copy) {
-			byte *cpy = (byte*)m_FrameBuffer;
+			byte *cpy = m_FrameBuffer;
 			memcpy(cpy, fdata, m_Height * m_Pitch);
 		}
 	}
@@ -256,7 +256,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
 	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
-	m_FrameBuffer = new char[m_Height * m_Pitch];
+	m_FrameBuffer = new byte[m_Height * m_Pitch];
 
 	UpdateRects();
 
@@ -530,12 +530,12 @@ byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
 	int all = m_Height * m_Pitch;
 	if (ffnsubs){
 		*del = true;
-		char *cpy = new char[all];
-		cpy1 = (byte*)cpy;
+		byte *cpy = new byte[all];
+		cpy1 = cpy;
 		m_FFMS2->GetFrame(m_Time, cpy1);
 	}
 	else{ *del = false; }
-	return (ffnsubs) ? cpy1 : (byte*)m_FrameBuffer;
+	return (ffnsubs) ? cpy1 : m_FrameBuffer;
 }
 
 void RendererFFMS2::GoToNextKeyframe()

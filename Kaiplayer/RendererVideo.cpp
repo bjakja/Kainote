@@ -221,10 +221,12 @@ bool RendererVideo::InitDX(bool reset)
 	d3dpp.BackBufferWidth = m_WindowRect.right;
 	d3dpp.BackBufferHeight = m_WindowRect.bottom;
 	d3dpp.BackBufferCount = 1;
-	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
-	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//
+	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dpp.Flags = D3DPRESENTFLAG_VIDEO;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
+	d3dpp.EnableAutoDepthStencil = FALSE;
+	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
 
 	if (reset){
 		hr = m_D3DDevice->Reset(&d3dpp);
@@ -235,33 +237,41 @@ bool RendererVideo::InitDX(bool reset)
 	}
 	else{
 		hr = m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &m_D3DDevice);//| D3DCREATE_FPU_PRESERVE
+			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE | 
+			D3DCREATE_MULTITHREADED, &d3dpp, &m_D3DDevice);//| D3DCREATE_FPU_PRESERVE
 		if (FAILED(hr)){
 			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED, &d3dpp, &m_D3DDevice),
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_FPU_PRESERVE | 
+				D3DCREATE_MULTITHREADED, &d3dpp, &m_D3DDevice),
 				_("Nie można utworzyć urządzenia D3D9"));
 		}
 	}
 
-	hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-	hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 
-	hr = m_D3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	hr = m_D3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
-	hr = m_D3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-	hr = m_D3DDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
-
-	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	hr = m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	hr = m_D3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAREF, (DWORD)0x0);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
-	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+
+	//hr = m_D3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
+
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	
+
+	/*hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_SPECULAR);
 
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);*/
 	HR(hr, _("Zawiodło któreś z ustawień DirectX"));
 
 	D3DXMATRIX matOrtho;
@@ -333,12 +343,14 @@ void RendererVideo::Clear(bool clearObject)
 #endif
 	SAFE_RELEASE(m_DXVAProcessor);
 	SAFE_RELEASE(m_DXVAService);
+	ClearObject();
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);
 		SAFE_RELEASE(m_D3DObject);
 		m_HasZoom = false;
 	}
 }
+
 
 bool RendererVideo::PlayLine(int start, int eend)
 {

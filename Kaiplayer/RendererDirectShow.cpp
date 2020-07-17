@@ -37,75 +37,112 @@ RendererDirectShow::~RendererDirectShow()
 
 	m_State = None;
 	SAFE_DELETE(m_DirectShowPlayer);
+	if (m_SubtitlesBuffer)
+		delete[] m_SubtitlesBuffer;
 }
 
 bool RendererDirectShow::InitRendererDX()
 {
+	//HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie można stworzyć powierzchni"));
+	//HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
+	//	_("Nie można stworzyć DXVA processor service"));
+	//DXVA2_VideoDesc videoDesc;
+	//videoDesc.SampleWidth = m_Width;
+	//videoDesc.SampleHeight = m_Height;
+	//videoDesc.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
+	//videoDesc.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
+	//videoDesc.SampleFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;//EX_COLOR_INFO[g_ExColorInfo][0];
+	//videoDesc.SampleFormat.VideoLighting = DXVA2_VideoLighting_dim;
+	//videoDesc.SampleFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
+	//videoDesc.SampleFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
+	//videoDesc.SampleFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
+	//videoDesc.Format = D3DFMT_A8R8G8B8;
+	//videoDesc.InputSampleFreq.Numerator = 60;
+	//videoDesc.InputSampleFreq.Denominator = 1;
+	//videoDesc.OutputFrameFreq.Numerator = 60;
+	//videoDesc.OutputFrameFreq.Denominator = 1;
+
+	//UINT count, count1;//, count2;
+	//GUID* guids = NULL;
+
+	//HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie można pobrać GUIDów DXVA"));
+	//D3DFORMAT* formats = NULL;
+	////D3DFORMAT* formats2 = NULL;
+	//bool isgood = false;
+	//GUID dxvaGuid;
+	//DXVA2_VideoProcessorCaps DXVAcaps;
+	//HRESULT hr;
+	//for (UINT i = 0; i < count; i++){
+	//	hr = m_DXVAService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
+	//	if (FAILED(hr)){ KaiLog(_("Nie można uzyskać formatów DXVA")); continue; }
+	//	for (UINT j = 0; j < count1; j++)
+	//	{
+	//		if (formats[j] == D3DFMT_A8R8G8B8)
+	//		{
+	//			isgood = true; //break;
+	//		}
+
+	//	}
+
+	//	CoTaskMemFree(formats);
+	//	if (!isgood){ KaiLog(_("Ten format nie jest obsługiwany przez DXVA")); continue; }
+	//	isgood = false;
+
+	//	hr = m_DXVAService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_A8R8G8B8, &DXVAcaps);
+	//	if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiodło")); continue; }
+	//	if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0){
+	//		continue;
+	//	}
+
+	//	//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
+	//	hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
+	//		DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, NULL);
+	//	if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
+
+	//	hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_A8R8G8B8, 0, &m_DXVAProcessor);
+	//	if (FAILED(hr)){ KaiLog(_("Nie można stworzyć processora DXVA")); continue; }
+	//	dxvaGuid = guids[i]; isgood = true;
+	//	break;
+	//}
+	//CoTaskMemFree(guids);
+	//PTR(isgood, L"Nie ma żadnych guidów");
+
 	HR(m_D3DDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &m_BlackBarsSurface), _("Nie można stworzyć powierzchni"));
-	HR(DXVA2CreateVideoService(m_D3DDevice, IID_IDirectXVideoProcessorService, (VOID**)&m_DXVAService),
-		_("Nie można stworzyć DXVA processor service"));
-	DXVA2_VideoDesc videoDesc;
-	videoDesc.SampleWidth = m_Width;
-	videoDesc.SampleHeight = m_Height;
-	videoDesc.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
-	videoDesc.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
-	videoDesc.SampleFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;//EX_COLOR_INFO[g_ExColorInfo][0];
-	videoDesc.SampleFormat.VideoLighting = DXVA2_VideoLighting_dim;
-	videoDesc.SampleFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
-	videoDesc.SampleFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
-	videoDesc.SampleFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
-	videoDesc.Format = D3DFMT_X8R8G8B8;
-	videoDesc.InputSampleFreq.Numerator = 60;
-	videoDesc.InputSampleFreq.Denominator = 1;
-	videoDesc.OutputFrameFreq.Numerator = 60;
-	videoDesc.OutputFrameFreq.Denominator = 1;
 
-	UINT count, count1;//, count2;
-	GUID* guids = NULL;
+	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0),
+		_("Nie można stworzyć plain surface"));
 
-	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie można pobrać GUIDów DXVA"));
-	D3DFORMAT* formats = NULL;
-	//D3DFORMAT* formats2 = NULL;
-	bool isgood = false;
-	GUID dxvaGuid;
-	DXVA2_VideoProcessorCaps DXVAcaps;
-	HRESULT hr;
-	for (UINT i = 0; i < count; i++){
-		hr = m_DXVAService->GetVideoProcessorRenderTargets(guids[i], &videoDesc, &count1, &formats);
-		if (FAILED(hr)){ KaiLog(_("Nie można uzyskać formatów DXVA")); continue; }
-		for (UINT j = 0; j < count1; j++)
-		{
-			if (formats[j] == D3DFMT_X8R8G8B8)
-			{
-				isgood = true; //break;
-			}
+	m_WindowWidth = m_WindowRect.right - m_WindowRect.left;
+	m_WindowHeight = m_WindowRect.bottom - m_WindowRect.top;
 
-		}
-
-		CoTaskMemFree(formats);
-		if (!isgood){ KaiLog(_("Ten format nie jest obsługiwany przez DXVA")); continue; }
-		isgood = false;
-
-		hr = m_DXVAService->GetVideoProcessorCaps(guids[i], &videoDesc, D3DFMT_X8R8G8B8, &DXVAcaps);
-		if (FAILED(hr)){ KaiLog(_("GetVideoProcessorCaps zawiodło")); continue; }
-		if (DXVAcaps.NumForwardRefSamples > 0 || DXVAcaps.NumBackwardRefSamples > 0){
-			continue;
-		}
-
-		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
-		hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
-			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, NULL);
-		if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
-
-		hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &m_DXVAProcessor);
-		if (FAILED(hr)){ KaiLog(_("Nie można stworzyć processora DXVA")); continue; }
-		dxvaGuid = guids[i]; isgood = true;
-		break;
+	if (m_LastBufferSize < m_WindowWidth * m_WindowHeight * 4) {
+		m_LastBufferSize = m_WindowWidth * m_WindowHeight * 4;
+		if (m_SubtitlesBuffer)
+			delete[] m_SubtitlesBuffer;
+		m_SubtitlesBuffer = new unsigned char[m_LastBufferSize];
 	}
-	CoTaskMemFree(guids);
-	PTR(isgood, L"Nie ma żadnych guidów");
-	HR(m_D3DDevice->CreateTexture(m_Width, m_Height, 1,
-		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_SubtitlesTexture, NULL),
+
+
+	m_Vertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	m_Vertices[0].tu = 0.0f;
+	m_Vertices[0].tv = 0.0f;
+	m_Vertices[1].position = D3DXVECTOR3(m_WindowWidth, 0.0f, 0.0f);
+	m_Vertices[1].tu = 1.0f;
+	m_Vertices[1].tv = 0.0f;
+	m_Vertices[2].position = D3DXVECTOR3(m_WindowWidth, m_WindowHeight, 0.0f);
+	m_Vertices[2].tu = 1.0f;
+	m_Vertices[2].tv = 1.0f;
+	m_Vertices[3].position = D3DXVECTOR3(0.0f, m_WindowHeight, 0.0f);
+	m_Vertices[3].tu = 0.0f;
+	m_Vertices[3].tv = 1.0f;
+	
+	
+	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
+		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_SubtitlesTexture, NULL),
+		_("Nie można storzyć tekstury napisów"));
+
+	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
+		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_BlitTexture, NULL),
 		_("Nie można storzyć tekstury napisów"));
 
 	return true;
@@ -124,25 +161,27 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 
 	if (nframe) {
 		fdata = nframe;
-		/*if (copy) {
-			byte *cpy = (byte*)m_FrameBuffer;
+		if (copy) {
+			byte *cpy = m_FrameBuffer;
 			memcpy(cpy, fdata, m_Height * m_Pitch);
-		}*/
+		}
 	}
 	else {
 		KaiLog(_("Brak bufora klatki")); return false;
 	}
 
-	int buffSize = m_Width * m_Height * 4;
-	memset(m_SubtitlesBuffer, 0, buffSize);
+	memset(m_SubtitlesBuffer, 0, m_LastBufferSize);
 
 	m_SubsProvider->Draw(m_SubtitlesBuffer, m_Time);
 
-	RECT dirty = { 0, 0, m_Width, m_Height };
-	HR(m_SubtitlesTexture->LockRect(1, &d3dSubslr, &dirty, NULL), _("Nie można zablokować bufora tekstury napisów"));
-	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, buffSize);
-	m_SubtitlesTexture->UnlockRect(1);
+	RECT dirtySubs = { 0, 0, m_WindowWidth, m_WindowHeight };
+	HR(m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, NULL), _("Nie można zablokować bufora tekstury napisów"));
+	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, m_LastBufferSize);
+	m_SubtitlesTexture->UnlockRect(0);
 
+	m_D3DDevice->UpdateTexture(m_SubtitlesTexture, m_BlitTexture);
+
+	RECT dirty = { 0, 0, m_Width, m_Height };
 #ifdef byvertices
 	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
 #else
@@ -241,65 +280,72 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 		m_DeviceLost = false;
 	}
 
-	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, 0, 0, 0/*D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0*/);
 
-	DXVA2_VideoProcessBltParams blt = { 0 };
-	DXVA2_VideoSample samples = { 0 };
-	LONGLONG start_100ns = m_Time * 10000;
-	LONGLONG end_100ns = start_100ns + 170000;
-	blt.TargetFrame = start_100ns;
-	blt.TargetRect = m_WindowRect;
+	//DXVA2_VideoProcessBltParams blt = { 0 };
+	//DXVA2_VideoSample samples = { 0 };
+	//LONGLONG start_100ns = m_Time * 10000;
+	//LONGLONG end_100ns = start_100ns + 170000;
+	//blt.TargetFrame = start_100ns;
+	//blt.TargetRect = m_WindowRect;
 
-	// DXVA2_VideoProcess_Constriction
-	blt.ConstrictionSize.cx = m_WindowRect.right - m_WindowRect.left;
-	blt.ConstrictionSize.cy = m_WindowRect.bottom - m_WindowRect.top;
-	DXVA2_AYUVSample16 color;
+	//// DXVA2_VideoProcess_Constriction
+	//blt.ConstrictionSize.cx = m_WindowRect.right - m_WindowRect.left;
+	//blt.ConstrictionSize.cy = m_WindowRect.bottom - m_WindowRect.top;
+	//DXVA2_AYUVSample16 color;
 
-	color.Cr = 0x8000;
-	color.Cb = 0x8000;
-	color.Y = 0x0F00;
-	color.Alpha = 0xFFFF;
-	blt.BackgroundColor = color;
+	//color.Cr = 0x8000;
+	//color.Cb = 0x8000;
+	//color.Y = 0x0F00;
+	//color.Alpha = 0xFFFF;
+	//blt.BackgroundColor = color;
 
-	// DXVA2_VideoProcess_YUV2RGBExtended
-	blt.DestFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_Unknown;
-	blt.DestFormat.NominalRange = DXVA2_NominalRange_0_255;//EX_COLOR_INFO[g_ExColorInfo][1];
-	blt.DestFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;
-	blt.DestFormat.VideoLighting = DXVA2_VideoLighting_dim;
-	blt.DestFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
-	blt.DestFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
+	//// DXVA2_VideoProcess_YUV2RGBExtended
+	//blt.DestFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_Unknown;
+	//blt.DestFormat.NominalRange = DXVA2_NominalRange_0_255;//EX_COLOR_INFO[g_ExColorInfo][1];
+	//blt.DestFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;
+	//blt.DestFormat.VideoLighting = DXVA2_VideoLighting_dim;
+	//blt.DestFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
+	//blt.DestFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
 
-	blt.DestFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
-	// Initialize main stream video sample.
-	//
-	samples.Start = start_100ns;
-	samples.End = end_100ns;
+	//blt.DestFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
+	//// Initialize main stream video sample.
+	////
+	//samples.Start = start_100ns;
+	//samples.End = end_100ns;
 
-	// DXVA2_VideoProcess_YUV2RGBExtended
-	samples.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
-	samples.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
-	samples.SampleFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;//EX_COLOR_INFO[g_ExColorInfo][0];
-	samples.SampleFormat.VideoLighting = DXVA2_VideoLighting_dim;
-	samples.SampleFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
-	samples.SampleFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
+	//// DXVA2_VideoProcess_YUV2RGBExtended
+	//samples.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
+	//samples.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
+	//samples.SampleFormat.VideoTransferMatrix = DXVA2_VideoTransferMatrix_BT709;//EX_COLOR_INFO[g_ExColorInfo][0];
+	//samples.SampleFormat.VideoLighting = DXVA2_VideoLighting_dim;
+	//samples.SampleFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
+	//samples.SampleFormat.VideoTransferFunction = DXVA2_VideoTransFunc_709;
 
-	samples.SampleFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
+	//samples.SampleFormat.SampleFormat = DXVA2_SampleProgressiveFrame;
 
-	samples.SrcSurface = m_MainSurface;
+	//samples.SrcSurface = m_MainSurface;
 
-	samples.SrcRect = m_MainStreamRect;
+	//samples.SrcRect = m_MainStreamRect;
 
-	samples.DstRect = m_BackBufferRect;
+	//samples.DstRect = m_BackBufferRect;
 
-	// DXVA2_VideoProcess_PlanarAlpha
-	samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
+	//// DXVA2_VideoProcess_PlanarAlpha
+	//samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 
-	hr = m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &samples, 1, NULL);
+	//hr = m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &samples, 1, NULL);
+	hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
+	if (FAILED(hr)) { KaiLog(_("Nie można nałożyć powierzchni na siebie")); }
 	
 	hr = m_D3DDevice->BeginScene();
-
-
-	hr = m_D3DDevice->SetTexture(0, m_SubtitlesTexture);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+	hr = m_D3DDevice->SetTexture(0, m_BlitTexture);
+	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
+	hr = m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, m_Vertices, sizeof(CUSTOMVERTEX));
+	hr = m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+	//hr = m_D3DDevice->SetTexture(0, NULL);
 #if byvertices
 
 
@@ -342,9 +388,9 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 void RendererDirectShow::RecreateSurface()
 {
 	int all = m_Height * m_Pitch;
-	char *cpy = new char[all];
-	byte *cpy1 = (byte*)cpy;
-	byte *data1 = (byte*)m_FrameBuffer;
+	byte *cpy = new byte[all];
+	byte *cpy1 = cpy;
+	byte *data1 = m_FrameBuffer;
 	memcpy(cpy1, data1, all);
 	DrawTexture(cpy1);
 	delete[] cpy;
@@ -380,7 +426,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	videoControl->m_AspectRatioX = m_DirectShowPlayer->inf.ARatioX;
 	videoControl->m_AspectRatioY = m_DirectShowPlayer->inf.ARatioY;
 	m_D3DFormat = (m_Format == NV12) ? D3DFORMAT('21VN') : (m_Format == YV12) ? D3DFORMAT('21VY') :
-		(m_Format == YUY2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+		(m_Format == YUY2) ? D3DFMT_YUY2 : D3DFMT_A8R8G8B8;
 
 	m_SwapFrame = (m_Format == RGB32 && !m_DirectShowPlayer->HasVobsub());
 	Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
@@ -395,19 +441,16 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
 	if (m_FrameBuffer ){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
-	m_FrameBuffer = new char[m_Height * m_Pitch];
-	if (m_SubtitlesBuffer) { delete[] m_SubtitlesBuffer; m_SubtitlesBuffer = NULL; }
-	m_SubtitlesBuffer = new unsigned char[m_Width * m_Height * 4];
+	m_FrameBuffer = new byte[m_Height * m_Pitch];
+	
 	UpdateRects();
 
 	if (!InitDX()){ return false; }
 	
-	m_SubsProvider->SetVideoParameters(videoSize, m_Format, m_SwapFrame);
-
 	if (vobsub)
 		subsFlag = CLOSE_SUBTITLES;
 
-	OpenSubs(subsFlag, false);
+	OpenSubs(subsFlag, false, NULL, true);
 
 	m_State = Stopped;
 	m_DirectShowPlayer->GetChapters(&m_Chapters);
@@ -423,7 +466,7 @@ bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool re
 {
 	wxCriticalSectionLocker lock(m_MutexRendering);
 	if (resetParameters)
-		m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
+		m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), RGB32, m_SwapFrame);
 
 	bool result = m_SubsProvider->Open(tab, flag, text);
 
@@ -566,6 +609,12 @@ void RendererDirectShow::OpenKeyframes(const wxString &filename)
 	
 }
 
+void RendererDirectShow::ClearObject()
+{
+	SAFE_RELEASE(m_SubtitlesTexture);
+	SAFE_RELEASE(m_BlitTexture);
+}
+
 
 void RendererDirectShow::GetFpsnRatio(float *fps, long *arx, long *ary)
 {
@@ -628,7 +677,7 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 	m_DirectShowPlayer->OpenFile(tab->VideoPath, vobsub);
 	m_Format = m_DirectShowPlayer->inf.CT;
 	D3DFORMAT tmpd3dformat = (m_Format == 5) ? D3DFORMAT('21VN') : (m_Format == 3) ? D3DFORMAT('21VY') :
-		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
+		(m_Format == 2) ? D3DFMT_YUY2 : D3DFMT_A8R8G8B8;
 	m_SwapFrame = (m_Format == 0 && !m_DirectShowPlayer->HasVobsub());
 	if (tmpd3dformat != m_D3DFormat){
 		m_D3DFormat = tmpd3dformat;
@@ -636,7 +685,7 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 		if (tmppitch != m_Pitch){
 			m_Pitch = tmppitch;
 			if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
-			m_FrameBuffer = new char[m_Height * m_Pitch];
+			m_FrameBuffer = new byte[m_Height * m_Pitch];
 		}
 		UpdateVideoWindow();
 	}
@@ -666,14 +715,14 @@ byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 	int all = m_Height * m_Pitch;
 	if (dssubs){
 		*del = true;
-		char *cpy = new char[all];
-		cpy1 = (byte*)cpy;
+		byte *cpy = new byte[all];
+		cpy1 = cpy;
 	}
 	else{ *del = false; }
 	if (dssubs){
-		byte *data1 = (byte*)m_FrameBuffer;
+		byte *data1 = m_FrameBuffer;
 		memcpy(cpy1, data1, all);
 		m_SubsProvider->Draw(cpy1, m_Time);
 	}
-	return (dssubs) ? cpy1 : (byte*)m_FrameBuffer;
+	return (dssubs) ? cpy1 : m_FrameBuffer;
 }

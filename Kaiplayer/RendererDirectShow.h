@@ -17,6 +17,12 @@
 
 #include "RendererVideo.h"
 
+struct CUSTOMVERTEX
+{
+	D3DXVECTOR3 position; // The position
+	FLOAT       tu, tv;   // The texture coordinates
+};
+#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_TEX1)
 
 class RendererDirectShow : public RendererVideo
 {
@@ -55,8 +61,14 @@ public:
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
 	bool InitRendererDX();
 	void OpenKeyframes(const wxString &filename);
+	void ClearObject();
 private:
 	DShowPlayer *m_DirectShowPlayer;
-	LPDIRECT3DTEXTURE9 m_SubtitlesTexture;
+	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = NULL;
+	LPDIRECT3DTEXTURE9 m_BlitTexture = NULL;
 	unsigned char * m_SubtitlesBuffer = NULL;
+	CUSTOMVERTEX m_Vertices[4];
+	int m_WindowWidth = -1;
+	int m_WindowHeight = -1;
+	int m_LastBufferSize = -1;
 };

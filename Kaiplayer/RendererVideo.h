@@ -133,7 +133,7 @@ public:
 	int m_Pitch;
 	int m_Time;
 	int m_Frame;
-	char *m_FrameBuffer;
+	byte *m_FrameBuffer;
 	RECT m_BackBufferRect;
 	byte m_Format;
 	float m_FrameDuration;
@@ -193,6 +193,7 @@ private:
 	bool InitDX(bool reset = false);
 	virtual bool InitRendererDX(){ return true; };
 	void Clear(bool clearObject = false);
+	virtual void ClearObject() {};
 	virtual void DestroyFFMS2() {};
 
 	HWND m_HWND;
