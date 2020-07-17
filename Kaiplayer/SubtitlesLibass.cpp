@@ -119,11 +119,12 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 			dst = flipped_up_down_view(dst);
 
 		for (; img; img = img->next) {
-			unsigned int opacity = 255 - ((unsigned int)_a(img->color));
+			unsigned int a = ((unsigned int)_a(img->color));
+			unsigned int opacity = 255 - a;
 			unsigned int r = (unsigned int)_r(img->color);
 			unsigned int g = (unsigned int)_g(img->color);
 			unsigned int b = (unsigned int)_b(img->color);
-
+			
 			auto srcview = interleaved_view(img->w, img->h, (gray8_pixel_t*)img->bitmap, img->stride);
 			auto dstview = subimage_view(dst, img->dst_x, img->dst_y, img->w, img->h);
 
@@ -135,7 +136,7 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 				ret[0] = (k * b + ck * frame[0]) / 255;
 				ret[1] = (k * g + ck * frame[1]) / 255;
 				ret[2] = (k * r + ck * frame[2]) / 255;
-				ret[3] = 0;
+				ret[3] = (k * opacity + ck * frame[3]) / 255;
 				return ret;
 			});
 		}

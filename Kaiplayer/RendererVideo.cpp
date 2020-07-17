@@ -222,7 +222,7 @@ bool RendererVideo::InitDX(bool reset)
 	d3dpp.BackBufferHeight = m_WindowRect.bottom;
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//
-	d3dpp.BackBufferFormat = D3DFMT_A8R8G8B8;
+	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dpp.Flags = D3DPRESENTFLAG_VIDEO;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 	d3dpp.EnableAutoDepthStencil = FALSE;
@@ -247,31 +247,31 @@ bool RendererVideo::InitDX(bool reset)
 		}
 	}
 
-	//hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
-	//hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, TRUE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ANTIALIASEDLINEENABLE, TRUE);
 
 	hr = m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	hr = m_D3DDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
-	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAREF, (DWORD)0x0);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
+	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHAREF, (DWORD)0x0);
 	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
 
 
 	//hr = m_D3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	//hr = m_D3DDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_FALSE);
 	hr = m_D3DDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-	//hr = m_D3DDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
 
-	//hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+	hr = m_D3DDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	
 
-	/*hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
+	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_SPECULAR);
 
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
 	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);*/
+	hr = m_D3DDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
 	HR(hr, _("Zawiodło któreś z ustawień DirectX"));
 
 	D3DXMATRIX matOrtho;
