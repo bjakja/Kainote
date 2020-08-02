@@ -212,7 +212,9 @@ void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
 
 	// Set image as needing to be redrawn
 	//needImageUpdate = true;
-	needImageUpdateWeak = weak;
+	if(!weak)
+		needImageUpdateWeak = weak;
+
 	if (updateImmediately){
 		DoUpdateImage(weak);
 	}
@@ -708,7 +710,8 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	}
 	// Done
 	//needImageUpdate = false;
-	//needImageUpdateWeak = true;
+	if(!weak)
+		needImageUpdateWeak = true;
 }
 
 
@@ -994,7 +997,7 @@ void AudioDisplay::DrawSpectrum(bool weak) {
 
 void AudioDisplay::DrawProgress()
 {
-	//koordynaty czarnej ramki
+	//coordinates of black frame
 	D3DXVECTOR2 vectors[16];
 	float halfY = (h + 20) / 2;
 	vectors[4].x = 20;
@@ -1007,7 +1010,7 @@ void AudioDisplay::DrawProgress()
 	vectors[7].y = halfY + 20;
 	vectors[8].x = 20;
 	vectors[8].y = halfY - 20;
-	//koordynaty białej ramki
+	//coordinates of white frame
 	vectors[9].x = 21;
 	vectors[9].y = halfY - 19;
 	vectors[10].x = w - 21;
@@ -1018,7 +1021,7 @@ void AudioDisplay::DrawProgress()
 	vectors[12].y = halfY + 19;
 	vectors[13].x = 21;
 	vectors[13].y = halfY - 19;
-	//koordynaty paska postępu
+	//coordinates of progress bar
 	int rw = 22;
 	vectors[14].x = rw;
 	vectors[14].y = halfY;
@@ -1031,7 +1034,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
 	wxString txt = std::to_string((int)(provider->audioProgress * 100.f)) + L"%";
-	//try{
+	
 	d3dLine->SetWidth(1);
 	d3dLine->Begin();
 	d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
@@ -1043,7 +1046,6 @@ void AudioDisplay::DrawProgress()
 	d3dLine->End();
 
 	DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
-		//} catch (...){}
 }
 
 //////////////////////////
@@ -1071,21 +1073,20 @@ void AudioDisplay::Update(bool moveToEnd) {
 		if (Options.GetBool(AUDIO_AUTO_SCROLL))
 			MakeDialogueVisible(false, moveToEnd);
 		else//it is possible to change position before without refresh and refresh it here without redrawing spectrum
-			UpdateImage(false, true);
+			UpdateImage(/*false, true*/);
+		//don't redraw immediately here, it makes faileding of stretch surfaces
 	}
 }
 
 
 //////////////////////
 // Recreate the image
-void AudioDisplay::RecreateImage() {
-	LastSize = wxSize(w, h);
-	GetClientSize(&w, &h);
-	h -= timelineHeight;
-	//delete origImage;
-	//origImage = NULL;
-	UpdateImage(false);
-}
+//void AudioDisplay::RecreateImage() {
+//	LastSize = wxSize(w, h);
+//	GetClientSize(&w, &h);
+//	h -= timelineHeight;
+//	UpdateImage(false);
+//}
 
 
 /////////////////////////
@@ -1093,7 +1094,8 @@ void AudioDisplay::RecreateImage() {
 void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 	// Variables
 	int startShow = 0, endShow = 0;
-	// In karaoke mode the syllable and as much as possible towards the end of the line should be shown
+	// In karaoke mode the syllable and as much as possible 
+	//towards the end of the line should be shown
 
 	GetTimesSelection(startShow, endShow, true);
 
@@ -1110,11 +1112,13 @@ void AudioDisplay::MakeDialogueVisible(bool force, bool moveToEnd) {
 		if ((startX < 50) || (endX >= w - 50)) {
 
 			if (moveToEnd && (endX >= w - 50 || endX < 50)){
-				// Make sure the right edge of the selection is at least 50 pixels from the edge of the display
+				// Make sure the right edge of the selection is at least 50 pixels 
+				//from the edge of the display
 				UpdatePosition(endPos - ((w - 50) * samples), true);
 			}
 			else if (!moveToEnd){
-				// Make sure the left edge of the selection is at least 50 pixels from the edge of the display
+				// Make sure the left edge of the selection is at least 50 pixels 
+				// from the edge of the display
 				UpdatePosition(startPos - 50 * samples, true);
 			}
 		}
@@ -1408,7 +1412,6 @@ void AudioDisplay::ChangeOptions()
 	boundaryInactiveLine = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_LINE_BOUNDARY_INACTIVE_LINE));
 	inactiveLinesBackground = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_INACTIVE_LINES_BACKGROUND));
 	timescaleBackground = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_BACKGROUND));
-	//timescale3dLight = D3DCOLOR_FROM_WX(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
 	timescaleText = D3DCOLOR_FROM_WX(Options.GetColour(WINDOW_TEXT));
 	waveform = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM));
 	waveformModified = D3DCOLOR_FROM_WX(Options.GetColour(AUDIO_WAVEFORM_MODIFIED));
@@ -1441,16 +1444,14 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 
 	// Redraw the image to avoid any junk left over from mouse movements etc
 	// See issue #598
+	// On Direct X drawing it's not needed anymore cause of full window redraw
 	//UpdateImage(false, true);
-	//KaiLogDebug(wxString::Format(L"curpos %llu", (unsigned long long)start));
 	// Call play
 	player->Play(start, end - start);
 
 	if (stopPlayThread)
 		SetEvent(PlayEvent);
-	//else
-		//needUpdateOnPlay = true;
-		
+	
 }
 
 
@@ -1460,7 +1461,6 @@ void AudioDisplay::Stop(bool stopVideo) {
 	if (stopVideo && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
 	else if (player) {
 		player->Stop();
-		//if (UpdateTimer.IsRunning()) UpdateTimer.Stop();
 		stopPlayThread = true;	
 		cursorPaint = false;
 		Refresh(false);
@@ -2502,11 +2502,10 @@ bool AudioDisplay::SetFont(const wxFont &font)
 	int fh;
 	GetTextExtent(L"#TWFfGH", NULL, &fh, NULL, NULL, &tahoma8);
 	timelineHeight = fh + 8;
-	//UpdateTimer.SetOwner(this, Audio_Update_Timer);
 	GetClientSize(&w, &h);
 	h -= timelineHeight;
 	UpdateImage(true);
-	//test it!!!
+	
 	return true;
 }
 ///////////////

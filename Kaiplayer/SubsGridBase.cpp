@@ -529,7 +529,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	std::multimap<Dialogue *, int, compare> tmpmap;
 
-	if (whichTimes != 0){
+	if (whichTimes != 0 && !PostprocessorOptions){
 		int answer = KaiMessageBox(wxString::Format(_("Czy naprawdę chcesz przesuwać tylko czasy %s?"),
 			(whichTimes == 1) ? _("początkowe") : _("końcowe")), _("Potwierdzenie"), wxYES_NO);
 		if (answer == wxNO){ return; }

@@ -1749,10 +1749,19 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		// Shift-selection
 		else if (shift && !ctrl && !alt) {
 			// Find end
-			if (extendRow == -1) extendRow = currentLine;
-			extendRow = lastRow = GetKeyFromPosition(extendRow, dir);
-			// Set range
+			if (extendRow == -1) extendRow = lastRow = currentLine;
+			bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
+
 			int i1 = currentLine;
+
+			if (!changeActive) {
+				extendRow = lastRow = GetKeyFromPosition(extendRow, dir);
+			}
+			else {
+				i1 = GetKeyFromPosition(currentLine, dir);
+			}
+			
+			// Set range
 			int i2 = extendRow;
 			if (i2 < i1) {
 				int aux = i1;
@@ -1760,9 +1769,12 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 				i2 = aux;
 			}
 
-
 			file->InsertSelections(i1, i2, true);
-			MakeVisible(extendRow);
+			if (changeActive) {
+				lastActiveLine = currentLine;
+				Edit->SetLine(i2, true, true, false);
+			}
+			MakeVisible(changeActive? currentLine : extendRow);
 		}
 		if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
 	}
@@ -2113,5 +2125,8 @@ void SubsGridWindow::MakeVisible(int rowKey)
 
 	if (delta) {
 		ScrollTo(newPosition, false, delta);
+	}
+	else {//make sure to refresh, in some cases it causes bugs
+		Refresh(false);
 	}
 }

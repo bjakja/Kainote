@@ -567,7 +567,7 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(SHIFT_TIMES_TIME), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES));
 		bool dispTimes = DisplayFrames->GetValue();
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
-		if (secondWindow && (secondWindow->DisplayFrames->GetValue() != dispTimes)){
+		if (DisplayFrames->GetValue() != dispTimes){
 			//it uses times as true
 			ChangeDisplayUnits(!DisplayFrames->GetValue());
 			
@@ -587,7 +587,7 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		MoveToAudioTime->SetValue((secondWindow) ? secondWindow->MoveToAudioTime->GetValue() : (mto & 8) > 0);
 		Forward->SetValue((secondWindow) ? secondWindow->Forward->GetValue() : (mto & 1) > 0);
 		Backward->SetValue((secondWindow) ? secondWindow->Backward->GetValue() : (mto & 1) == 0);
-		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
+		//DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		MoveTagTimes->SetValue((secondWindow) ? secondWindow->MoveTagTimes->GetValue() : (mto & 32) > 0);
 	}
 	Stylestext->SetValue((secondWindow) ? secondWindow->Stylestext->GetValue() : Options.GetString(SHIFT_TIMES_STYLES));
@@ -625,21 +625,10 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 {
 	bool collapsed = (LeadIn == NULL);
+	SaveOptions();
 	int pe = Options.GetInt(POSTPROCESSOR_ON);
 	Options.SetInt(POSTPROCESSOR_ON, pe ^ 16);
-	if (!collapsed){
-		Options.SetInt(POSTPROCESSOR_LEAD_IN, LITime->GetInt());
-		Options.SetInt(POSTPROCESSOR_LEAD_OUT, LOTime->GetInt());
-		Options.SetInt(POSTPROCESSOR_THRESHOLD_START, ThresStart->GetInt());
-		Options.SetInt(POSTPROCESSOR_THRESHOLD_END, ThresEnd->GetInt());
-		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_START, BeforeStart->GetInt());
-		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_START, AfterStart->GetInt());
-		Options.SetInt(POSTPROCESSOR_KEYFRAME_BEFORE_END, BeforeEnd->GetInt());
-		Options.SetInt(POSTPROCESSOR_KEYFRAME_AFTER_END, AfterEnd->GetInt());
-		//1 Lead In, 2 Lead Out, 4 Make times continous, 8 Snap to keyframe;
-		//int peres= (LeadIn->GetValue())? 1 : 0
-		Options.SetInt(POSTPROCESSOR_ON, (int)LeadIn->GetValue() + ((int)LeadOut->GetValue() * 2) + ((int)Continous->GetValue() * 4) + ((int)SnapKF->GetValue() * 8));
-	}
+	
 	Freeze();
 	panel->Destroy();
 	LeadIn = NULL;

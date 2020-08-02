@@ -581,74 +581,6 @@ void AudioBox::OnLeadOut(wxCommandEvent &event) {
 	audioDisplay->AddLead(false, true);
 }
 
-//void AudioBox::OnMouseEvents(wxMouseEvent &event)
-//{
-//	bool click = event.LeftDown();
-//	bool left_up = event.LeftUp();
-//	int npos = event.GetY();
-//	int w = 0, h = 0;
-//	GetClientSize(&w, &h);
-//
-//	if (arrows && (event.Leaving() || npos <= (h - 4))){
-//		SetCursor(wxCURSOR_ARROW); arrows = false;
-//	}
-//	else if (!arrows && npos > h - 4){
-//		SetCursor(wxCURSOR_SIZENS); arrows = true;
-//	}
-//
-//	if (left_up && holding) {
-//		holding = false;
-//		int x = 3;
-//		if (sline){
-//			sline->GetPosition(&x, &npos);
-//			sline->Destroy();
-//		}
-//		//npos+=7;
-//		ScreenToClient(&x, &npos);
-//		if (npos<150){ npos = 150; }
-//		SetMinSize(wxSize(-1, npos));
-//		EditBox* EB = (EditBox*)GetParent();
-//		EB->BoxSizer1->Layout();
-//		EB->TextEdit->Refresh(false);
-//		EB->TlMode->Refresh(false);
-//		ReleaseMouse();
-//		Options.SetInt(AUDIO_BOX_HEIGHT, npos);
-//		Options.SaveAudioOpts();
-//
-//	}
-//
-//	if (left_up && !holding) {
-//		return;
-//	}
-//
-//	if (click && !holding && event.GetY()>h - 5) {
-//		holding = true;
-//		CaptureMouse();
-//		sline = new wxDialog(this, -1, "", wxPoint(0, event.GetY()), wxSize(GetSize().GetWidth() + 4, 2), wxSTAY_ON_TOP | wxBORDER_NONE);
-//		sline->SetBackgroundColour(Options.GetColour(WINDOW_TEXT));
-//		int px = -5, py = event.GetY();
-//		ClientToScreen(&px, &py);
-//		sline->SetPosition(wxPoint(px, py));
-//		sline->Show();
-//	}
-//
-//	if (holding){
-//
-//		int npos = event.GetY();
-//		EditBox* EB = (EditBox*)GetParent();
-//		wxSize ebSize = EB->GetClientSize();
-//		int minEBSize = (EB->TextEditOrig->IsShown()) ? 200 : 150;
-//		if (npos != oldy&& npos > 150 && ebSize.y - npos > minEBSize){
-//			int px = -5, py = npos;
-//			ClientToScreen(&px, &py);
-//			sline->SetPosition(wxPoint(px, py));
-//		}
-//		oldy = npos;
-//
-//	}
-//
-//}
-
 void AudioBox::OnScrollSpectrum(wxCommandEvent &event)
 {
 	int64_t pos = audioDisplay->Position;
@@ -796,6 +728,5 @@ EVT_TOGGLEBUTTON(Audio_Check_Spectrum, AudioBox::OnSpectrumMode)
 EVT_TOGGLEBUTTON(Audio_Check_Spectrum_Non_Linear, AudioBox::OnSpectrumNonLinear)
 EVT_TOGGLEBUTTON(Audio_Check_AutoCommit, AudioBox::OnAutoCommit)
 EVT_TOGGLEBUTTON(Audio_Check_NextCommit, AudioBox::OnNextLineCommit)
-//EVT_MOUSE_EVENTS(AudioBox::OnMouseEvents)
 END_EVENT_TABLE()
 

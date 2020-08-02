@@ -1079,11 +1079,12 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 			videopath = tab->Grid->GetSInfo(L"Video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
 				wxFileExists(videopath.Prepend(subsPath))));
+
+			if (videopath.StartsWith(L"?dummy")) { videopath = L""; }
 		}
 		audiopath = tab->Grid->GetSInfo(L"Audio File");
 		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
 		if (audiopath.StartsWith(L"?")) { audiopath = L""; }
-		if (videopath.StartsWith(L"?dummy")) { videopath = L""; }
 		//fix for wxFileExists which working without path when program run from command line
 		
 		hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
@@ -1091,7 +1092,8 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
 			wxFileExists(keyframespath.Prepend(subsPath))));
 
-		bool sameAudioPath = audiopath == videopath;
+		const wxString &videoPath = loadPrompt ? videopath : path;
+		bool sameAudioPath = audiopath == videoPath;
 
 		if (loadPrompt) {
 			int result = promptResult;

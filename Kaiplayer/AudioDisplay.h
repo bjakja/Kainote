@@ -205,7 +205,6 @@ public:
 	bool hasMark;
 	bool isHidden = false;
 	std::atomic<bool> stopPlayThread{ true };
-	//std::atomic<bool> needUpdateOnPlay{ false };
 	int curMarkMS;
 	int Grabbed;
 	int hold;
@@ -214,7 +213,6 @@ public:
 	wxRect screenRect;
 	AudioBox *box;
 	KaiScrollbar *ScrollBar;
-	//wxTimer UpdateTimer;
 	wxTimer ProgressTimer;
 	HANDLE UpdateTimerHandle = NULL;
 	HANDLE PlayEvent;
@@ -227,7 +225,7 @@ public:
 
 	void UpdateImage(bool weak = false, bool updateImmediately = false);
 	void Update(bool moveToEnd = false);
-	void RecreateImage();
+	//void RecreateImage();
 	void SetPosition(int pos);
 	void SetSamplesPercent(int percent, bool update = true, float pivot = 0.5);
 	void SetScale(float scale);
