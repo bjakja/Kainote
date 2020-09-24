@@ -35,7 +35,7 @@
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
 {
-	tab = (TabPanel*)GetParent();
+	tab = (TabPanel*)parent;
 	Kai = kfparent;
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){

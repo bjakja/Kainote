@@ -2224,7 +2224,9 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 		}
 		else{ ABox->Destroy(); ABox = NULL; }
 	}
-	if (!ABox->audioDisplay->loaded){
+	if (!ABox)
+		return false;
+	else if (!ABox->audioDisplay->loaded){
 		ABox->Destroy();
 		ABox = NULL;
 		return false;

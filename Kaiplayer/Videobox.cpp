@@ -1228,7 +1228,7 @@ void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 		return;
 
 	Visuals *visual = renderer->GetVisual();
-	if (visual->Visual != CROSS)
+	if (!visual || visual->Visual != CROSS)
 		return;
 
 	visual->SetCurVisual();
