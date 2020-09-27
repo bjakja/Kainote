@@ -46,11 +46,14 @@ Notebook::Notebook(wxWindow *parent, int id)
 	Pages.push_back(new TabPanel(this, (KainoteFrame*)parent));
 
 	wxString name = Pages[0]->SubsName;
-	Names.Add(name);
+	tabNames.Add(name);
 
 	CalcSizes();
 	Hook = NULL;
 	Hook = SetWindowsHookEx(WH_CBT, &PauseOnMinimalize, NULL, GetCurrentThreadId());//WH_MOUSE
+
+	tabsScroll.SetOwner(this, 6779);
+	Bind(wxEVT_TIMER, &Notebook::OnScrollTabs, this, 6779);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
 		int id = item->id;
@@ -113,8 +116,8 @@ Notebook::~Notebook(){
 		(*i)->Destroy();
 	}
 	Pages.clear();
-	Tabsizes.Clear();
-	Names.Clear();
+	tabSizes.Clear();
+	tabNames.Clear();
 	UnhookWindowsHookEx(Hook);
 }
 
@@ -139,7 +142,7 @@ void Notebook::AddPage(bool refresh)
 		Pages[iter]->Hide();
 	}
 	wxString name = Pages[iter]->SubsName;
-	Names.Add(name);
+	tabNames.Add(name);
 
 	Pages[iter]->SetPosition(Pages[olditer]->GetPosition());
 	Pages[iter]->SetSize(olditer != iter ? Pages[olditer]->GetSize() : wxSize(w, h - TabHeight));
@@ -148,8 +151,8 @@ void Notebook::AddPage(bool refresh)
 		if (!Options.GetBool(EDITOR_ON)){ 
 			Kai->HideEditor(false); 
 		}
-		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-		AddPendingEvent(evt2);
+		wxCommandEvent choiceSelectedEvent(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		AddPendingEvent(choiceSelectedEvent);
 		Thaw();
 		RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 	}
@@ -173,7 +176,7 @@ size_t Notebook::Size()
 
 void Notebook::SetPageText(int page, const wxString &label)
 {
-	Names[page] = label;
+	tabNames[page] = label;
 	CalcSizes(true);
 	int w, h;
 	GetClientSize(&w, &h);
@@ -228,8 +231,8 @@ void Notebook::DeletePage(int page)
 	}
 	Pages[page]->Destroy();
 	Pages.erase(Pages.begin() + page);
-	Names.RemoveAt(page);
-	Tabsizes.RemoveAt(page);
+	tabNames.RemoveAt(page);
+	tabSizes.RemoveAt(page);
 
 	if (split && Size() < 2){
 		split = false;
@@ -243,7 +246,7 @@ void Notebook::DeletePage(int page)
 	if (Size() < 1){
 		Pages.push_back(new TabPanel(this, Kai));
 		wxString name = Pages[0]->SubsName;
-		Names.Add(name);
+		tabNames.Add(name);
 		int w, h;
 		GetClientSize(&w, &h);
 		Pages[0]->SetPosition(wxPoint(0, 0));
@@ -261,7 +264,7 @@ void Notebook::DeletePage(int page)
 	//if (page < splititer){ splititer--; }
 	//else if (splititer > rsize){ splititer = rsize; }
 	//if(page>  rsize){page=rsize;}
-	if (firstVisibleTab > rsize){ firstVisibleTab = rsize; }
+	if (firstVisibleTab > rsize){ firstVisibleTab = tabScrollDestination = rsize; }
 
 	CalcSizes(true);
 	Thaw();
@@ -280,36 +283,36 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	int newHeight = 0;
 	for (size_t i = 0; i < Size(); i++){
 		int fw, fh;
-		wxString name = Names[i];
+		wxString name = tabNames[i];
 		if (name.length() > maxCharPerTab){
 			name = name.Mid(0, maxCharPerTab);
 		}
 
 		GetTextExtent(name, &fw, &fh, NULL, NULL, &font);
 		if (i == iter){ fw += xWidth; }
-		if (i < Tabsizes.size()){ Tabsizes[i] = fw + 10; }
-		else{ Tabsizes.Add(fw + 10); }
-		all += Tabsizes[i] + 2;
+		if (i < tabSizes.size()){ tabSizes[i] = fw + 10; }
+		else{ tabSizes.Add(fw + 10); }
+		all += tabSizes[i] + 2;
 		if (fh + 12 > newHeight){
 			newHeight = fh + 12;
 		}
 	}
 	allTabsVisible = (all < w - 22);
-	if (allTabsVisible){ firstVisibleTab = 0; }
+	if (allTabsVisible){ firstVisibleTab = tabScrollDestination = 0; }
 	if (makeActiveVisible && !allTabsVisible){
 		int tabsWidth = 0;
 		if (firstVisibleTab > iter)
-			firstVisibleTab = 0;
+			firstVisibleTab = tabScrollDestination = 0;
 
-		for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
+		for (size_t i = firstVisibleTab; i < tabSizes.size(); i++){
 
-			tabsWidth += Tabsizes[i];
+			tabsWidth += tabSizes[i];
 
 			if (tabsWidth > w - 22){
-				firstVisibleTab = i - 1;
+				firstVisibleTab = tabScrollDestination = i - 1;
 				if (firstVisibleTab < 0) {
 					//KaiLog(L"firstVisibleTab < 0");
-					firstVisibleTab = 0;
+					firstVisibleTab = tabScrollDestination = 0;
 				}
 				break;
 			}
@@ -328,9 +331,10 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 
 void Notebook::OnMouseEvent(wxMouseEvent& event)
 {
-	int x = event.GetX(), y = event.GetY();
-	bool click = event.LeftDown();
+	int y = event.GetY();
+	x = event.GetX();
 	bool dclick = event.LeftDClick();
+	bool click = event.LeftDown() || dclick;
 	bool middleDown = event.MiddleDown();
 
 
@@ -399,32 +403,37 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		SetCursor(wxCURSOR_ARROW); arrow = true;
 	}
 
+	int num;
+
 	if (!allTabsVisible && event.GetWheelRotation() != 0) {
 		int step = 1 * event.GetWheelRotation() / event.GetWheelDelta();
-		firstVisibleTab = MID(0, firstVisibleTab - step, ((int)Size() - 1));
-		over = -1;
-		RefreshBar();
+		tabScrollDestination = MID(0, tabScrollDestination - step, ((int)Size() - 1));
+		//RefreshBar();
+		//if(!tabsScroll.IsRunning())
+			tabsScroll.Start(10);
 		return;
 	}
-
-	int num;
+	
 	int i = FindTab(x, &num);
 
 	//click, double click, middle button
-	if (click || dclick || middleDown){
+	//click is eqaul also double click
+	if (click || middleDown){
 		oldI = i;
 
-		if (!allTabsVisible && (click || dclick) && x < 20){
+		if (!allTabsVisible && click && x < 20){
 			if (firstVisibleTab > 0){
 				firstVisibleTab--;
+				tabScrollDestination = firstVisibleTab;
 				leftArrowClicked = true;
 				RefreshRect(wxRect(0, hh, w, TabHeight), false);
 			}
 			return;
 		}
-		else if (!allTabsVisible && (click || dclick) && x > w - 17 && x <= w){
+		else if (!allTabsVisible && click && x > w - 17 && x <= w){
 			if (firstVisibleTab < Size() - 1){
 				firstVisibleTab++; 
+				tabScrollDestination = firstVisibleTab;
 				rightArrowClicked = true;
 				RefreshRect(wxRect(w - 17, hh, 17, TabHeight), false);
 			}
@@ -435,10 +444,10 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			return;
 		}
 
-		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		wxCommandEvent choiceSelectedEvent(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
 		if (i == -1){
 			if (dclick){
-				AddPendingEvent(evt2);
+				AddPendingEvent(choiceSelectedEvent);
 				AddPage(true);
 				return;
 			}
@@ -447,16 +456,15 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		else if (i != iter && click){
 			ChangePage(i);
 		}
-		else if (i == iter && click && (x > num + Tabsizes[i] - xWidth && x < num + Tabsizes[i] - 5)){
+		else if (i == iter && click && (x > num + tabSizes[i] - xWidth && x < num + tabSizes[i] - 5)){
 			DeletePage(i);
-			AddPendingEvent(evt2);
-			onx = false;
+			AddPendingEvent(choiceSelectedEvent);
 		}
 		else if (middleDown)
 		{
 			int tmpiter = iter;
 			DeletePage(i);
-			if (i == tmpiter){ AddPendingEvent(evt2); }
+			if (i == tmpiter){ AddPendingEvent(choiceSelectedEvent); }
 			int tabAfterClose = FindTab(x, &num);
 			if (tabAfterClose >= 0)
 				SetToolTip(Pages[tabAfterClose]->SubsName + L"\n" + Pages[tabAfterClose]->VideoName);
@@ -469,12 +477,12 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 
 	//swap tabs
 	if (event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
-		wxString tmpname = Names[i];
-		int tmpsize = Tabsizes[i];
-		Names[i] = Names[oldI];
-		Tabsizes[i] = Tabsizes[oldI];
-		Names[oldI] = tmpname;
-		Tabsizes[oldI] = tmpsize;
+		wxString tmpname = tabNames[i];
+		int tmpsize = tabSizes[i];
+		tabNames[i] = tabNames[oldI];
+		tabSizes[i] = tabSizes[oldI];
+		tabNames[oldI] = tmpname;
+		tabSizes[oldI] = tmpsize;
 		TabPanel *tmppage = Pages[i];
 		Pages[i] = Pages[oldI];
 		Pages[oldI] = tmppage;
@@ -496,7 +504,9 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	//Change elements on tabs
-	if (event.Moving()){
+	//click to change x when closing tabs
+	//can make other bugs
+	if (event.Moving() || click){
 
 		if (x > start + TabHeight - 4 && HasToolTips()){ UnsetToolTip(); }
 
@@ -543,18 +553,18 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			over = -1;
 			RefreshRect(wxRect(0, hh, w, TabHeight), false);
 		}
-		if (i == iter && (x > num + Tabsizes[i] - xWidth && x < num + Tabsizes[i] - 5)){
+		if (i == iter && (x > num + tabSizes[i] - xWidth && x < num + tabSizes[i] - 5)){
 			if (!onx){ SetToolTip(_("Zamknij")); }
 			onx = true;
-			RefreshRect(wxRect(num + Tabsizes[i] - xWidth, hh, xWidth, TabHeight), false);
+			RefreshRect(wxRect(num + tabSizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}
 		else if (onx){
 			//Trick to restore tip with name of subtitles and video after go from x
 			oldtab = -1;
 			onx = false;
-			RefreshRect(wxRect(num + Tabsizes[i] - xWidth, hh, xWidth, TabHeight), false);
+			RefreshRect(wxRect(num + tabSizes[i] - xWidth, hh, xWidth, TabHeight), false);
 		}
-		if (i != -1 && i != oldtab){ SetToolTip(Pages[i]->SubsName + L"\n" + Pages[i]->VideoName); oldtab = i; }
+		if (i != -1 && i != oldtab && i < Pages.size()){ SetToolTip(Pages[i]->SubsName + L"\n" + Pages[i]->VideoName); oldtab = i; }
 	}
 
 	//Context menu		
@@ -572,7 +582,6 @@ void Notebook::OnSize(wxSizeEvent& event)
 	h -= TabHeight;
 	bool alvistmp = allTabsVisible;
 	CalcSizes();
-	//RefreshRect(wxRect(w-20,h,w,TabHeight),false);
 	if (split){
 		bool aciter = (Pages[iter]->GetPosition().x == 1);
 		int tmpsplititer = (!aciter) ? iter : splititer;
@@ -608,14 +617,24 @@ void Notebook::OnPaint(wxPaintEvent& event)
 
 
 	start = (allTabsVisible) ? 2 : 20;
+	start -= tabOffset;
+	int scrollFirstTab = firstVisibleTab;
+	if (firstVisibleTab > tabScrollDestination)
+	{
+		scrollFirstTab = tabScrollDestination;
+		int newOffset = 0;
+		for (int i = tabScrollDestination; i < firstVisibleTab; i++) {
+			newOffset += tabSizes[i];
+		}
+		start -= newOffset;
+	}
 
-	//wxGraphicsContext *gc = NULL;//wxGraphicsContext::Create(dc);
 	//loop for tabs drawing
-	for (size_t i = firstVisibleTab; i < Tabsizes.GetCount(); i++){
+	for (size_t i = scrollFirstTab; i < tabSizes.GetCount(); i++){
 
-		int tabSize = Tabsizes[i];
-		wxString tabName = Names[i];
-		if (iter < firstVisibleTab){
+		int tabSize = tabSizes[i];
+		wxString tabName = tabNames[i];
+		if (iter < scrollFirstTab){
 			dc.SetPen(wxPen(activeLines, 1));
 			dc.DrawLine(0, 0, w, 0);
 		}
@@ -656,28 +675,13 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			dc.DrawRectangle(start + 1, 1, tabSize - 1, TabHeight - 3);
 		}
 		//Drawing of contour of tab
-		/*if (gc){
-			gc->SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
-			gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
-			wxGraphicsPath path = gc->CreatePath();
-			path.MoveToPoint(start, 0.0);
-			path.AddLineToPoint(start, TabHeight - 5);
-			double strt = start;
-			path.AddCurveToPoint(strt, TabHeight - 3.5, strt + 1.5, TabHeight - 2, strt + 3.0, TabHeight - 2);
-			strt += tabSize;
-			path.AddLineToPoint(strt - 3.0, TabHeight - 2);
-			path.AddCurveToPoint(strt - 1.5, TabHeight - 2, strt, TabHeight - 3.5, strt, TabHeight - 5);
-			path.AddLineToPoint(strt, 0);
-			gc->StrokePath(path);
-		}
-		else{*/
-			dc.SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
-			dc.DrawLine(start, 0, start, TabHeight - 4);
-			dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
-			dc.DrawLine(start + 2, TabHeight - 2, start + tabSize - 2, TabHeight - 2);
-			dc.DrawLine(start + tabSize - 2, TabHeight - 2, start + tabSize, TabHeight - 4);
-			dc.DrawLine(start + tabSize, TabHeight - 4, start + tabSize, 0);
-		//}
+		dc.SetPen(wxPen(Options.GetColour((i == iter) ? TABS_BORDER_ACTIVE : TABS_BORDER_INACTIVE)));
+		dc.DrawLine(start, 0, start, TabHeight - 4);
+		dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
+		dc.DrawLine(start + 2, TabHeight - 2, start + tabSize - 2, TabHeight - 2);
+		dc.DrawLine(start + tabSize - 2, TabHeight - 2, start + tabSize, TabHeight - 4);
+		dc.DrawLine(start + tabSize, TabHeight - 4, start + tabSize, 0);
+		
 
 		int tabsDiff = (tabName.length() < maxCharPerTab) ? 0 : (i == iter) ? 28 + xWidth : 28;
 		dc.SetClippingRegion(start, 0, tabSize - tabsDiff, TabHeight);
@@ -738,7 +742,7 @@ void Notebook::OnPaint(wxPaintEvent& event)
 		}
 
 		//right arrow
-		if (firstVisibleTab < Tabsizes.GetCount() - 1){
+		if (firstVisibleTab < tabSizes.GetCount() - 1){
 			dc.SetBrush(wxBrush((rightArrowClicked) ? backgroundClicked : (rightArrowHover) ? backgroundHover : background));
 			dc.DrawRectangle(w - 16, 0, 16, TabHeight);
 			dc.SetBrush(wxBrush(arrow));
@@ -763,27 +767,12 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	dc.DrawRectangle(start + 6, (TabHeight / 2) - 2, TabHeight - 16, 2);
 	dc.DrawRectangle(start + (TabHeight / 2) - 3, 7, 2, TabHeight - 16);
 
-	/*if (gc){
-		gc->SetPen(wxPen(Options.GetColour(TABS_BORDER_INACTIVE)));
-		gc->SetAntialiasMode(wxANTIALIAS_DEFAULT);
-		wxGraphicsPath path = gc->CreatePath();
-		path.MoveToPoint(start, 0.0);
-		path.AddLineToPoint(start, TabHeight - 5);
-		double strt = start;
-		path.AddCurveToPoint(strt, TabHeight - 3.5, strt + 1.5, TabHeight - 2, strt + 3.0, TabHeight - 2);
-		path.AddLineToPoint(strt + TabHeight - 8, TabHeight - 2);
-		path.AddCurveToPoint(strt + TabHeight - 6.5, TabHeight - 2, strt + TabHeight - 5, TabHeight - 3.5, strt + TabHeight - 5, TabHeight - 5);
-		path.AddLineToPoint(strt + TabHeight - 5, 0);
-		gc->StrokePath(path);
-	}
-	else{*/
-		dc.SetPen(wxPen(Options.GetColour(TABS_BORDER_INACTIVE)));
-		dc.DrawLine(start, 0, start, TabHeight - 4);
-		dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
-		dc.DrawLine(start + 2, TabHeight - 2, start + TabHeight - 7, TabHeight - 2);
-		dc.DrawLine(start + TabHeight - 7, TabHeight - 2, start + TabHeight - 5, TabHeight - 4);
-		dc.DrawLine(start + TabHeight - 5, TabHeight - 4, start + TabHeight - 5, 0);
-	//}
+	dc.SetPen(wxPen(Options.GetColour(TABS_BORDER_INACTIVE)));
+	dc.DrawLine(start, 0, start, TabHeight - 4);
+	dc.DrawLine(start, TabHeight - 4, start + 2, TabHeight - 2);
+	dc.DrawLine(start + 2, TabHeight - 2, start + TabHeight - 7, TabHeight - 2);
+	dc.DrawLine(start + TabHeight - 7, TabHeight - 2, start + TabHeight - 5, TabHeight - 4);
+	dc.DrawLine(start + TabHeight - 5, TabHeight - 4, start + TabHeight - 5, 0);
 
 
 	cdc.Blit(0, h - TabHeight, w, TabHeight, &dc, 0, 0);
@@ -815,8 +804,6 @@ void Notebook::OnPaint(wxPaintEvent& event)
 			cdc.DrawLine(splitline + 1, h - heightplus, w, h - heightplus);
 		}
 	}
-
-	//if (gc){ delete gc; }
 }
 
 
@@ -905,20 +892,20 @@ void Notebook::OnTabSel(int id)
 			SubsGridBase::RemoveComparison();
 			Pages[i]->Destroy();
 			Pages.pop_back();
-			Names.pop_back();
-			Tabsizes.pop_back();
+			tabNames.pop_back();
+			tabSizes.pop_back();
 		}
 		int pagesSize = Pages.size();
 		if (iter <= pagesSize || splititer <= pagesSize)
 			split = false;
 
 		if (olditer >= pagesSize){ olditer = 0; }
-		firstVisibleTab = 0;
+		firstVisibleTab = tabScrollDestination = 0;
 		int w = -1, h = -1;
 		if (pagesSize < 1){
 			Pages.push_back(new TabPanel(this, Kai));
 			wxString name = Pages[0]->SubsName;
-			Names.Add(name);
+			tabNames.Add(name);
 			GetClientSize(&w, &h);
 			Pages[0]->SetPosition(wxPoint(0, 0));
 			Pages[0]->SetSize(w, h - TabHeight);
@@ -927,8 +914,8 @@ void Notebook::OnTabSel(int id)
 		if (w < 1){ GetClientSize(&w, &h); }
 		RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 		Pages[iter]->Show();
-		wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-		AddPendingEvent(evt2);
+		wxCommandEvent choiceSelectedEvent(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		AddPendingEvent(choiceSelectedEvent);
 	}
 	else{
 		TabPanel *tmp = Page(firstVisibleTab);
@@ -936,14 +923,14 @@ void Notebook::OnTabSel(int id)
 		Pages[firstVisibleTab] = Pages[wtab];
 		Pages[firstVisibleTab]->Show();
 		Pages[wtab] = tmp;
-		wxString tmp1 = Names[firstVisibleTab];
-		Names[firstVisibleTab] = Names[wtab];
-		Names[wtab] = tmp1;
-		Tabsizes[iter] -= xWidth;
-		int tmp2 = Tabsizes[firstVisibleTab];
-		Tabsizes[firstVisibleTab] = Tabsizes[wtab];
-		Tabsizes[wtab] = tmp2;
-		Tabsizes[firstVisibleTab] += xWidth;
+		wxString tmp1 = tabNames[firstVisibleTab];
+		tabNames[firstVisibleTab] = tabNames[wtab];
+		tabNames[wtab] = tmp1;
+		tabSizes[iter] -= xWidth;
+		int tmp2 = tabSizes[firstVisibleTab];
+		tabSizes[firstVisibleTab] = tabSizes[wtab];
+		tabSizes[wtab] = tmp2;
+		tabSizes[firstVisibleTab] += xWidth;
 
 		olditer = iter;
 		iter = firstVisibleTab;
@@ -995,15 +982,16 @@ void Notebook::Split(size_t page)
 int Notebook::FindTab(int x, int *_num)
 {
 	int num = (allTabsVisible) ? 2 : 20;
+	num -= tabOffset;
 	*_num = num;
 	int restab = -1;
-	for (size_t i = firstVisibleTab; i < Tabsizes.size(); i++){
-		if (x > num && x < num + Tabsizes[i]){
+	for (size_t i = firstVisibleTab; i < tabSizes.size(); i++){
+		if (x > num && x < num + tabSizes[i]){
 			restab = i;
 			*_num = num;
 			break;
 		}
-		num += Tabsizes[i] + 2;
+		num += tabSizes[i] + 2;
 	}
 	return restab;
 }
@@ -1017,11 +1005,11 @@ void Notebook::ChangeActive()
 	int tmp = iter;
 	iter = splititer;
 	splititer = tmp;
-	Tabsizes[iter] += xWidth;
-	Tabsizes[splititer] -= xWidth;
-	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-	evt2.SetInt(1);
-	AddPendingEvent(evt2);
+	tabSizes[iter] += xWidth;
+	tabSizes[splititer] -= xWidth;
+	wxCommandEvent choiceSelectedEvent(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+	choiceSelectedEvent.SetInt(1);
+	AddPendingEvent(choiceSelectedEvent);
 	RefreshBar();
 }
 
@@ -1277,8 +1265,8 @@ void Notebook::LoadLastSession()
 			(*i)->Destroy();
 		}
 		sthis->Pages.clear();
-		sthis->Tabsizes.Clear();
-		sthis->Names.Clear();
+		sthis->tabSizes.Clear();
+		sthis->tabNames.Clear();
 		sthis->iter = 0;
 		wxString video;
 		int videoPosition = 0;
@@ -1407,9 +1395,9 @@ void Notebook::ChangePage(int page, bool makeActiveVisible /*= false*/)
 	}
 	Freeze();
 	Pages[iter]->Hide();
-	Tabsizes[iter] -= xWidth;
+	tabSizes[iter] -= xWidth;
 	Pages[page]->Show();
-	Tabsizes[page] += xWidth;
+	tabSizes[page] += xWidth;
 	Thaw();
 	iter = page;
 	over = -1;
@@ -1417,8 +1405,8 @@ void Notebook::ChangePage(int page, bool makeActiveVisible /*= false*/)
 		CalcSizes(true);
 
 	RefreshBar();
-	wxCommandEvent evt2(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
-	AddPendingEvent(evt2);
+	wxCommandEvent choiceSelectedEvent(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+	AddPendingEvent(choiceSelectedEvent);
 }
 
 void Notebook::OnEraseBackground(wxEraseEvent &event)
@@ -1440,6 +1428,48 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	//else if (key == WXK_PAGEDOWN && nmodif && vb->HasFocus()){ vb->OnPrew(); return; }
 	//else if (key == WXK_PAGEUP && nmodif && vb->HasFocus()){ vb->OnNext(); return; }
 	event.Skip();
+}
+
+void Notebook::OnScrollTabs(wxTimerEvent & event)
+{
+	if (firstVisibleTab == tabScrollDestination) {
+		tabOffset = 0;
+		return;
+	}
+	if (firstVisibleTab < tabScrollDestination) {
+		int firstVisibleTabSize = tabSizes[firstVisibleTab];
+		tabOffset += firstVisibleTabSize / 8;
+		if (tabOffset > firstVisibleTabSize) {
+			firstVisibleTab++;
+			//sanity check
+			if (firstVisibleTab >= tabSizes.GetCount() - 1 || firstVisibleTab == tabScrollDestination) {
+				tabOffset = 0;
+				tabsScroll.Stop();
+				RefreshBar();
+				return;
+			}
+			tabOffset -= firstVisibleTabSize;
+		}
+	}
+	else if(firstVisibleTab > 0){
+		int firstVisibleTabSize = tabSizes[firstVisibleTab - 1];
+		tabOffset -= firstVisibleTabSize / 8;
+		if (tabOffset < (-firstVisibleTabSize)) {
+			firstVisibleTab--;
+			//sanity check
+			if (firstVisibleTab < 0 || firstVisibleTab == tabScrollDestination) {
+				tabOffset = 0;
+				tabsScroll.Stop();
+				RefreshBar();
+				return;
+			}
+			tabOffset += firstVisibleTabSize;
+		}
+	}
+	int num;
+	over = FindTab(x, &num);
+	RefreshBar();
+	Update();
 }
 
 TabPanel *Notebook::GetSecondPage()

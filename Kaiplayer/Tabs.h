@@ -76,6 +76,7 @@ private:
 	void OnEraseBackground(wxEraseEvent &event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ splitLineHolding = false; if (HasCapture()){ ReleaseMouse(); } };
 	void OnCharHook(wxKeyEvent& event);
+	void OnScrollTabs(wxTimerEvent &event);
 	void CalcSizes(bool makeActiveVisible = false);
 	
 	int TabHeight;
@@ -99,11 +100,15 @@ private:
 	int oldI;
 	int maxCharPerTab = 40;
 	int promptResult = 0;
+	int tabOffset = 0;
+	int tabScrollDestination = 0;
+	int x = 0;
 	wxDialog* sline;
 	wxFont font;
 	std::vector<TabPanel*> Pages;
-	wxArrayInt Tabsizes;
-	wxArrayString Names;
+	wxArrayInt tabSizes;
+	wxArrayString tabNames;
+	wxTimer tabsScroll;
 	HHOOK Hook;
 	KainoteFrame *Kai;
 
