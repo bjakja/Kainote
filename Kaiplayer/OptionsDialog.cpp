@@ -892,8 +892,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	}
 	//associations
 	{
-		wxString extensions[] = { L"ass", L"ssa", L"srt", L"sub", L"txt", L"mkv", L"mp4", L"avi", L"ogm", 
-			L"wmv", L"asf", L"rmvb", L"rm", L"3gp", L"mpg", L"mpeg", L"ts", L"m2ts" };
+	wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi", L".ogm",
+			L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
 		wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"), 
 			_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
 			_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"), 
@@ -1144,8 +1144,8 @@ void OptionsDialog::SetOptions(bool saveall)
 					}
 				}
 				else{
-					wxString extensions[] = { L"ass", L"ssa", L"srt", L"sub", L"txt", L"mkv", L"mp4", L"avi", 
-						L"ogm", L"wmv", L"asf", L"rmvb", L"rm", L"3gp", L"mpg", L"mpeg", L"ts", L"m2ts" };
+					wxString extensions[] = { L".ass", L".ssa", L".srt", L".sub", L".txt", L".mkv", L".mp4", L".avi", 
+						L".ogm", L".wmv", L".asf", L".rmvb", L".rm", L".3gp", L".mpg", L".mpeg", L".ts", L".m2ts" };
 					wxString extensionsDesc[] = { _("Napisy ASS"), _("Napisy SSA"), _("Napisy SRT"), _("Napisy SUB"),
 						_("Napisy TXT"), _("Wideo MKV"), _("Wideo MP4"), _("Wideo AVI"), _("Wideo OGM"),
 						_("Wideo WMV"), _("Wideo ASF"), _("Wideo RMVB"), _("Wideo RM"), _("Wideo 3GP"),

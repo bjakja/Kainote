@@ -1457,7 +1457,7 @@ wxRect VideoCtrl::GetMonitorRect(int wmonitor){
 		int y = (rect.height / 2) + rect.y;
 		for (size_t i = 0; i < MonRects.size(); i++){
 			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
-				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
 			}
 		}
 	}

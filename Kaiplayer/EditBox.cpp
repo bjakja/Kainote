@@ -276,7 +276,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
 	StyleEdit = new MappedButton(this, ID_EDIT_STYLE, _("Edytuj"), EDITBOX_HOTKEY/*, wxDefaultPosition, wxSize(45, -1)*/);
-	//druga linia
+	//second line
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");
 	ActorEdit = new ComboBoxCtrl(this, ID_COMBO_BOX_CTRL, wxSize(90, -1), _("Aktor"), valid);
@@ -308,7 +308,7 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 	BoxSizer1->Add(BoxSizer6, 0, wxLEFT | wxRIGHT, 2);
 	BoxSizer1->Add(TextEdit, 3, wxEXPAND | wxLEFT | wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2, 0, wxEXPAND | wxALL, 2);
-	//BoxSizer1->Add(BoxSizer3,0,wxLEFT | wxRIGHT | wxBOTTOM,2);
+	
 	BoxSizer3 = NULL;
 
 	SetSizer(BoxSizer1);

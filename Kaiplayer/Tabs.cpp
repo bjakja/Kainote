@@ -185,11 +185,19 @@ void Notebook::SetPageText(int page, const wxString &label)
 
 TabPanel *Notebook::Page(size_t i)
 {
+	if (i < 0 || i >= Pages.size())
+		return NULL;
+
 	return Pages[i];
 }
 
 void Notebook::DeletePage(int page)
 {
+	if (page < 0 || page >= Pages.size()) {
+		KaiLog("You try to delete not existing tab");
+		return;
+	}
+
 	Freeze();
 	block = true;
 	if (Kai->SavePrompt(1, page)){
