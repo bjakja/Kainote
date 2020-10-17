@@ -1,6 +1,6 @@
 /*
 ** I/O library.
-** Copyright (C) 2005-2015 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2020 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Major portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2011 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -19,20 +19,12 @@
 #include "lj_obj.h"
 #include "lj_gc.h"
 #include "lj_err.h"
+#include "lj_buf.h"
 #include "lj_str.h"
 #include "lj_state.h"
+#include "lj_strfmt.h"
 #include "lj_ff.h"
 #include "lj_lib.h"
-
-#if LJ_TARGET_WINDOWS
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
-static int widen(const char *in, wchar_t *out)
-{
-  return MultiByteToWideChar(CP_UTF8, 0, in, -1, out, MAX_PATH);
-}
-#endif
 
 /* Userdata payload for I/O file. */
 typedef struct IOFileUD {
@@ -92,17 +84,9 @@ static IOFileUD *io_file_open(lua_State *L, const char *mode)
 {
   const char *fname = strdata(lj_lib_checkstr(L, 1));
   IOFileUD *iof = io_file_new(L);
-#if LJ_TARGET_WINDOWS
-  wchar_t wfname[MAX_PATH];
-  wchar_t wmode[MAX_PATH];
-  if (!widen(fname, wfname) || !widen(mode, wmode))
-    luaL_argerror(L, 1, lj_str_pushf(L, "%s: failed to convert path to utf-16", fname));
-  iof->fp = _wfopen(wfname, wmode);
-#else
   iof->fp = fopen(fname, mode);
-#endif
   if (iof->fp == NULL)
-    luaL_argerror(L, 1, lj_str_pushf(L, "%s: %s", fname, strerror(errno)));
+    luaL_argerror(L, 1, lj_strfmt_pushf(L, "%s: %s", fname, strerror(errno)));
   return iof;
 }
 
@@ -115,11 +99,8 @@ static int io_file_close(lua_State *L, IOFileUD *iof)
     int stat = -1;
 #if LJ_TARGET_POSIX
     stat = pclose(iof->fp);
-#elif LJ_TARGET_WINDOWS
+#elif LJ_TARGET_WINDOWS && !LJ_TARGET_XBOXONE && !LJ_TARGET_UWP
     stat = _pclose(iof->fp);
-#else
-    lua_assert(0);
-    return 0;
 #endif
 #if LJ_52
     iof->fp = NULL;
@@ -128,7 +109,8 @@ static int io_file_close(lua_State *L, IOFileUD *iof)
     ok = (stat != -1);
 #endif
   } else {
-    lua_assert((iof->type & IOFILE_TYPE_MASK) == IOFILE_TYPE_STDF);
+    lj_assertL((iof->type & IOFILE_TYPE_MASK) == IOFILE_TYPE_STDF,
+	       "close of unknown FILE* type");
     setnilV(L->top++);
     lua_pushliteral(L, "cannot close standard file");
     return 2;
@@ -163,7 +145,7 @@ static int io_file_readline(lua_State *L, FILE *fp, MSize chop)
   MSize m = LUAL_BUFFERSIZE, n = 0, ok = 0;
   char *buf;
   for (;;) {
-    buf = lj_str_needbuf(L, &G(L)->tmpbuf, m);
+    buf = lj_buf_tmp(L, m);
     if (fgets(buf+n, m-n, fp) == NULL) break;
     n += (MSize)strlen(buf+n);
     ok |= n;
@@ -179,7 +161,7 @@ static void io_file_readall(lua_State *L, FILE *fp)
 {
   MSize m, n;
   for (m = LUAL_BUFFERSIZE, n = 0; ; m += m) {
-    char *buf = lj_str_needbuf(L, &G(L)->tmpbuf, m);
+    char *buf = lj_buf_tmp(L, m);
     n += (MSize)fread(buf+n, 1, m-n, fp);
     if (n != m) {
       setstrV(L, L->top++, lj_str_new(L, buf, (size_t)n));
@@ -192,7 +174,7 @@ static void io_file_readall(lua_State *L, FILE *fp)
 static int io_file_readlen(lua_State *L, FILE *fp, MSize m)
 {
   if (m) {
-    char *buf = lj_str_needbuf(L, &G(L)->tmpbuf, m);
+    char *buf = lj_buf_tmp(L, m);
     MSize n = (MSize)fread(buf, 1, m, fp);
     setstrV(L, L->top++, lj_str_new(L, buf, (size_t)n));
     lj_gc_check(L);
@@ -219,13 +201,12 @@ static int io_file_read(lua_State *L, FILE *fp, int start)
     for (n = start; nargs-- && ok; n++) {
       if (tvisstr(L->base+n)) {
 	const char *p = strVdata(L->base+n);
-	if (p[0] != '*')
-	  lj_err_arg(L, n+1, LJ_ERR_INVOPT);
-	if (p[1] == 'n')
+	if (p[0] == '*') p++;
+	if (p[0] == 'n')
 	  ok = io_file_readnum(L, fp);
-	else if ((p[1] & ~0x20) == 'L')
-	  ok = io_file_readline(L, fp, (p[1] == 'l'));
-	else if (p[1] == 'a')
+	else if ((p[0] & ~0x20) == 'L')
+	  ok = io_file_readline(L, fp, (p[0] == 'l'));
+	else if (p[0] == 'a')
 	  io_file_readall(L, fp);
 	else
 	  lj_err_arg(L, n+1, LJ_ERR_INVFMT);
@@ -248,19 +229,11 @@ static int io_file_write(lua_State *L, FILE *fp, int start)
   cTValue *tv;
   int status = 1;
   for (tv = L->base+start; tv < L->top; tv++) {
-    if (tvisstr(tv)) {
-      MSize len = strV(tv)->len;
-      status = status && (fwrite(strVdata(tv), 1, len, fp) == len);
-    } else if (tvisint(tv)) {
-      char buf[LJ_STR_INTBUF];
-      char *p = lj_str_bufint(buf, intV(tv));
-      size_t len = (size_t)(buf+LJ_STR_INTBUF-p);
-      status = status && (fwrite(p, 1, len, fp) == len);
-    } else if (tvisnum(tv)) {
-      status = status && (fprintf(fp, LUA_NUMBER_FMT, numV(tv)) > 0);
-    } else {
+    MSize len;
+    const char *p = lj_strfmt_wstrnum(L, tv, &len);
+    if (!p)
       lj_err_argt(L, (int)(tv - L->base) + 1, LUA_TSTRING);
-    }
+    status = status && (fwrite(p, 1, len, fp) == len);
   }
   if (LJ_52 && status) {
     L->top = L->base+1;
@@ -296,6 +269,15 @@ static int io_file_iter(lua_State *L)
   return n;
 }
 
+static int io_file_lines(lua_State *L)
+{
+  int n = (int)(L->top - L->base);
+  if (n > LJ_MAX_UPVAL)
+    lj_err_caller(L, LJ_ERR_UNPACK);
+  lua_pushcclosure(L, io_file_iter, n);
+  return 1;
+}
+
 /* -- I/O file methods ---------------------------------------------------- */
 
 #define LJLIB_MODULE_io_method
@@ -321,6 +303,14 @@ LJLIB_CF(io_method_flush)		LJLIB_REC(io_flush 0)
 {
   return luaL_fileresult(L, fflush(io_tofile(L)->fp) == 0, NULL);
 }
+
+#if LJ_32 && defined(__ANDROID__) && __ANDROID_API__ < 24
+/* The Android NDK is such an unmatched marvel of engineering. */
+extern int fseeko32(FILE *, long int, int) __asm__("fseeko");
+extern long int ftello32(FILE *) __asm__("ftello");
+#define fseeko(fp, pos, whence)	(fseeko32((fp), (pos), (whence)))
+#define ftello(fp)		(ftello32((fp)))
+#endif
 
 LJLIB_CF(io_method_seek)
 {
@@ -379,8 +369,7 @@ LJLIB_CF(io_method_setvbuf)
 LJLIB_CF(io_method_lines)
 {
   io_tofile(L);
-  lua_pushcclosure(L, io_file_iter, (int)(L->top - L->base));
-  return 1;
+  return io_file_lines(L);
 }
 
 LJLIB_CF(io_method___gc)
@@ -417,23 +406,13 @@ LJLIB_CF(io_open)
   GCstr *s = lj_lib_optstr(L, 2);
   const char *mode = s ? strdata(s) : "r";
   IOFileUD *iof = io_file_new(L);
-#if LJ_TARGET_WINDOWS
-  wchar_t wfname[MAX_PATH];
-  wchar_t wmode[MAX_PATH];
-  if (widen(fname, wfname) && widen(mode, wmode))
-    iof->fp = _wfopen(wfname, wmode);
-#else
   iof->fp = fopen(fname, mode);
-#endif
   return iof->fp != NULL ? 1 : luaL_fileresult(L, 0, fname);
 }
 
-
 LJLIB_CF(io_popen)
 {
-wchar_t wfname[MAX_PATH];
-wchar_t wmode[MAX_PATH];
-#if LJ_TARGET_POSIX || LJ_TARGET_WINDOWS
+#if LJ_TARGET_POSIX || (LJ_TARGET_WINDOWS && !LJ_TARGET_XBOXONE && !LJ_TARGET_UWP)
   const char *fname = strdata(lj_lib_checkstr(L, 1));
   GCstr *s = lj_lib_optstr(L, 2);
   const char *mode = s ? strdata(s) : "r";
@@ -443,9 +422,7 @@ wchar_t wmode[MAX_PATH];
   fflush(NULL);
   iof->fp = popen(fname, mode);
 #else
-  
-  if (widen(fname, wfname) && widen(mode, wmode))
-    iof->fp = _wpopen(wfname, wmode);
+  iof->fp = _popen(fname, mode);
 #endif
   return iof->fp != NULL ? 1 : luaL_fileresult(L, 0, fname);
 #else
@@ -522,8 +499,7 @@ LJLIB_CF(io_lines)
   } else {  /* io.lines() iterates over stdin. */
     setudataV(L, L->base, IOSTDF_UD(L, GCROOT_IO_INPUT));
   }
-  lua_pushcclosure(L, io_file_iter, (int)(L->top - L->base));
-  return 1;
+  return io_file_lines(L);
 }
 
 LJLIB_CF(io_type)

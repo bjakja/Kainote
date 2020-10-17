@@ -133,7 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>

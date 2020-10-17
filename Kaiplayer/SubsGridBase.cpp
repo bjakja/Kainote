@@ -216,10 +216,12 @@ void SubsGridBase::Convert(char type)
 	Dialogue *lastDialc = NULL;
 	while (i < file->GetCount())
 	{
-		if ((type>ASS) && (subsFormat < SRT) && file->GetDialogue(i)->IsComment){
-			while (file->GetDialogue(i)->IsComment){
+		if ((type > ASS) && (subsFormat < SRT) && file->GetDialogue(i)->IsComment){
+			while (i < file->GetCount() && file->GetDialogue(i)->IsComment){
 				file->DeleteDialogues(i, i + 1);
 			}
+			if (i >= file->GetCount())
+				break;
 		}
 		Dialogue *dialc = file->CopyDialogue(i);
 		dialc->Convert(type, prefix);

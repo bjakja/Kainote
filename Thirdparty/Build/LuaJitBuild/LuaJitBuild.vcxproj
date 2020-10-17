@@ -42,7 +42,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -122,8 +122,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;
- LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -139,8 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;
- LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -175,8 +173,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;
- LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -204,9 +201,14 @@
     </Link>
   </ItemDefinitionGroup>
   <!-- Build buildvm_arch.h -->
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
     <MiniLuaCommand>$(SolutionDir)ThirdParty\build\Minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
-    <MiniLuaPlat Condition="'$(Platform)'=='x64'">-D P64</MiniLuaPlat>
+    <MiniLuaPlat>-D P64</MiniLuaPlat>
+    <MiniLuaVM>vm_x64.dasc</MiniLuaVM>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='Win32'">
+    <MiniLuaCommand>$(SolutionDir)ThirdParty\build\Minilua\$(Platform)\$(Configuration)\minilua</MiniLuaCommand>
+    <MiniLuaVM>vm_x86.dasc</MiniLuaVM>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
@@ -222,8 +224,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
-  <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="..\..\LuaJIT\src\dynasm\dynasm.lua" Outputs="..\..\LuaJIT\src\hostbuildvm_arch.h">
-    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI $(MiniLuaPlat) -o ..\..\LuaJIT\src\host\buildvm_arch.h vm_x86.dasc" WorkingDirectory="..\..\LuaJIT\src" />
+  <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="..\..\LuaJIT\src\dynasm\dynasm.lua" Outputs="..\..\LuaJIT\src\host\buildvm_arch.h">
+    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI -D P64 -o ..\..\LuaJIT\src\host\buildvm_arch.h vm_x86.dasc" WorkingDirectory="..\..\LuaJIT\src" />
   </Target>
   <ItemGroup>
     <ClCompile Include="..\..\LuaJIT\src\host\buildvm.c" />

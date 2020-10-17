@@ -7,6 +7,7 @@ extern "C" {
 
 #include <lua.h>
 #include <lauxlib.h>
+
 #if defined (__cplusplus) && !defined (LUABINS_LUABUILTASCPP)
 }
 #endif

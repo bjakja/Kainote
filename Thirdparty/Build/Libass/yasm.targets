@@ -88,7 +88,7 @@
       Text="%(_Yasm.RelativeOutputDir)%(_Yasm.Filename)%(_Yasm.Extension)"
       />
     <Exec
-      Command="&quot;M:\Program Files (x86)\Microsoft Visual Studio\2017\VC\Tools\MSVC\14.15.26726\bin\Hostx64\x64\yasm.exe&quot; -f win32 %(_Yasm.Config) %(_Yasm.Include) -o &quot;%(_Yasm.OutputDir)%(_Yasm.Filename).obj&quot; &quot;%(_Yasm.FullPath)&quot;"
+      Command="&quot;$(ProjectDir)vsyasm.exe&quot; -f win32 %(_Yasm.Config) %(_Yasm.Include) -o &quot;%(_Yasm.OutputDir)%(_Yasm.Filename).obj&quot; &quot;%(_Yasm.FullPath)&quot;"
       WorkingDirectory="%(_Yasm.OutputDir)"
       />
     <ItemGroup>

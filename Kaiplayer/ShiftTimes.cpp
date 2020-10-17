@@ -909,16 +909,16 @@ void ShiftTimesWindow::OnRemoveProfile(wxCommandEvent& event)
 	
 	wxArrayString fullProfiles;
 	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, wxTOKEN_STRTOK);
-	wxString newProfiles;
+	wxArrayString newProfiles;
 	//make a new profiles
 	for (auto profile : fullProfiles){
 		wxString profileName1 = profile.BeforeFirst(L':');
-		//add olny different profiles then removed
+		//add only different profiles then removed
 		if (profileName1 != profileName){
-			newProfiles << profile << L"\f";
+			newProfiles.Add(profile);
 		}
 	}
-	Options.SetString(SHIFT_TIMES_PROFILES, newProfiles);
+	Options.SetTable(SHIFT_TIMES_PROFILES, newProfiles);
 	wxArrayString profilesList;
 	GetProfilesNames(profilesList);
 	ProfilesList->PutArray(&profilesList);

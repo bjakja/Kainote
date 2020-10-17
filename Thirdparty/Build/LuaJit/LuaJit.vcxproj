@@ -42,7 +42,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -121,8 +121,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>      _CRT_SECURE_NO_WARNINGS;
-        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\build\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -175,8 +174,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\build\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>     _CRT_SECURE_NO_WARNINGS;
-        LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -261,9 +259,6 @@
     <LuajitLibSource Include="..\..\LuaJIT\src\lib_ffi.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\LuaJIT\src\ljamalg.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\LuaJIT\src\lj_alloc.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_arch.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_asm.h" />
@@ -293,7 +288,6 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_err.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_errmsg.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_ff.h" />
-    <ClInclude Include="..\..\LuaJIT\src\lj_ffdef.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_ffrecord.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_frame.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_func.h" />
@@ -305,7 +299,6 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_jit.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_lex.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_lib.h" />
-    <ClInclude Include="..\..\LuaJIT\src\lj_libdef.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_mcode.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_meta.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_obj.h" />
@@ -326,23 +319,36 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_udata.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vm.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vmevent.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_bcdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_ffdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_folddef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_libdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_recdef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LuaJIT\src\jit\bc.lua" />
     <None Include="..\..\LuaJIT\src\jit\bcsave.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_arm.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_mips.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64el.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64r6.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64r6el.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_mipsel.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_ppc.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_x64.lua" />
     <None Include="..\..\LuaJIT\src\jit\dis_x86.lua" />
     <None Include="..\..\LuaJIT\src\jit\dump.lua" />
     <None Include="..\..\LuaJIT\src\jit\v.lua" />
+    <None Include="..\..\LuaJIT\src\jit\zone.lua" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LuaJitBuild\LuaJitBuild.vcxproj">
       <Project>{f6c48aca-c78d-450f-8059-010bbba12137}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LuaJIT\src\ljamalg.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

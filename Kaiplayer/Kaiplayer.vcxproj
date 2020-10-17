@@ -130,15 +130,15 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">I:\Programy\Spell\src\hunspell;$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(IncludePath)</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">I:\Programy\Spell\src\win_api\Release_dll\libhunspell;$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(LibraryPath)</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(LibraryPath)</LibraryPath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IncludePath)</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(LibraryPath)</LibraryPath>
@@ -210,7 +210,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
@@ -224,7 +224,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2_x64.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib</AdditionalDependencies>
+      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2_x64.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\Hunspell\msvc\x64\Debug\libhunspell;..\Thirdparty\BaseClasses\$(Platform)\$(Configuration);..\Thirdparty\BaseClasses\x64\Release;..\Thirdparty\wxWidgets\build\msw\x64\Debug;..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
@@ -432,7 +432,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;lua51.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\Thirdparty\BaseClasses\x64\Release;c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;M:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\Build\LuaBins\x64\Release;..\Thirdparty\Build\LuaJit\x64\Release;..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
@@ -749,32 +749,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="Bitmaps\eyedropper.cur" />
     <None Include="bitmaps\rcdata1.bin" />
     <None Include="kai.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
-      <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
-      <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
-      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\hunspell.vcxproj">
-      <Project>{6a0453f4-b12a-4810-b9a2-8ab059316ed7}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_base.vcxproj">
-      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_core.vcxproj">
-      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxpng.vcxproj">
-      <Project>{8acc122a-ca6a-5aa6-9c97-9cdd2e533db0}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxzlib.vcxproj">
-      <Project>{8b867186-a0b5-5479-b824-e176edd27c40}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

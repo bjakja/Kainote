@@ -3,7 +3,7 @@
 * Luabins Lua module code
 * See copyright notice in luabins.h
 */
-
+#define LUA_LIB
 #include "luaheaders.h"
 
 #include "luabins.h"
@@ -54,7 +54,7 @@ static int l_load(lua_State * L)
 }
 
 /* luabins Lua module API */
-static const struct luaL_reg R[] =
+static const struct luaL_Reg R[] =
 {
   { "save", l_save },
   { "load", l_load },

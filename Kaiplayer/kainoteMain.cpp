@@ -749,7 +749,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			//L"Interfejs Avisynth - Copyright © Ben Rudiak-Gould et al.\n"
 	}
 	else if (id == GLOBAL_HELPERS){
-		wxString Testers = L"SoheiMajin, Atalos, KamiTet, Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
+		wxString Testers = L"SoheiMajin, KamiTet, Wtas, BadRequest, Ognisty321, Nyah2211, dark, Ksenoform, Zły Los.";
 		wxString Credits = _("Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n") +
 			_("- Kostek00 (przyciski do audio i narzędzi wizualnych).\n") +
 			_("- Xandros (nowe przyciski do wideo).\n") +
@@ -767,7 +767,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			_("- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu crashy).\n") +
 			_("- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n") +/* i jar do Language Tool*/
 			_("- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n") +
-			_("- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu cruszy).\n \n") +
+			_("- Atalos (zdebugował wiele crashy).\n \n") +
 			_("Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n");
 		KaiMessageBox(Credits + Testers, _("Lista osób pomocnych przy tworzeniu programu"));
 

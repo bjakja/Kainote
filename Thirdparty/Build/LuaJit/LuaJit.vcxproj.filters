@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="..\..\LuaJIT\src\ljamalg.c" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\LuaJIT\src\lj_alloc.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_arch.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_asm.h" />
@@ -64,8 +61,11 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_udata.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vm.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vmevent.h" />
-    <ClInclude Include="..\..\LuaJIT\src\lj_libdef.h" />
-    <ClInclude Include="..\..\LuaJIT\src\lj_ffdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_bcdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_libdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_recdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_ffdef.h" />
+    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_folddef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LuaJIT\src\jit\bc.lua" />
@@ -78,5 +78,13 @@
     <None Include="..\..\LuaJIT\src\jit\dis_x86.lua" />
     <None Include="..\..\LuaJIT\src\jit\dump.lua" />
     <None Include="..\..\LuaJIT\src\jit\v.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64el.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64r6.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64r6el.lua" />
+    <None Include="..\..\LuaJIT\src\jit\zone.lua" />
+    <None Include="..\..\LuaJIT\src\jit\dis_mips64.lua" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\LuaJIT\src\ljamalg.c" />
   </ItemGroup>
 </Project>
