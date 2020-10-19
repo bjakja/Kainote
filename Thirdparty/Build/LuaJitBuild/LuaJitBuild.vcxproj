@@ -62,8 +62,8 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -122,7 +122,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
@@ -173,7 +173,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\luajit\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_GC64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
@@ -225,7 +225,7 @@
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="..\..\LuaJIT\src\dynasm\dynasm.lua" Outputs="..\..\LuaJIT\src\host\buildvm_arch.h">
-    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI -D P64 -o ..\..\LuaJIT\src\host\buildvm_arch.h vm_x86.dasc" WorkingDirectory="..\..\LuaJIT\src" />
+    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI -D P64 -o ..\..\LuaJIT\src\host\buildvm_arch.h vm_x64.dasc" WorkingDirectory="..\..\LuaJIT\src" />
   </Target>
   <ItemGroup>
     <ClCompile Include="..\..\LuaJIT\src\host\buildvm.c" />

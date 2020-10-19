@@ -522,19 +522,19 @@ enum{
 
 
 #ifndef PTR
-#define PTR(what,err) if(!what) {KaiLog(err); return false;}
+#define PTR(what,err) if(!what) {KaiLogSilent(err); return false;}
 #endif
 
 #ifndef PTR1
-#define PTR1(what,err) if(!what) {KaiLog(err); return;}
+#define PTR1(what,err) if(!what) {KaiLogSilent(err); return;}
 #endif
 
 #ifndef HR
-#define HR(what,err) if(FAILED(what)) {KaiLog(err); return false;}
+#define HR(what,err) if(FAILED(what)) {KaiLogSilent(err); return false;}
 #endif
 
 #ifndef HRN
-#define HRN(what,err) if(FAILED(what)) {KaiLog(err); return;}
+#define HRN(what,err) if(FAILED(what)) {KaiLogSilent(err); return;}
 #endif
 
 extern config Options;

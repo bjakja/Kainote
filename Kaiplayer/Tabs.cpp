@@ -1477,7 +1477,7 @@ void Notebook::OnScrollTabs(wxTimerEvent & event)
 	int num;
 	over = FindTab(x, &num);
 	RefreshBar();
-	Update();
+	//Update();
 }
 
 TabPanel *Notebook::GetSecondPage()
