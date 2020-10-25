@@ -229,7 +229,7 @@ bool RendererVideo::InitDX(bool reset)
 	if (reset){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
-			KaiLog(_("Nie można zresetować Direct3D"));
+			KaiLogSilent(_("Nie można zresetować Direct3D"));
 			return false;
 		}
 	}

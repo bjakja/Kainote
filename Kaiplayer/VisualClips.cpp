@@ -940,6 +940,8 @@ void DrawingAndClip::OnMoveSelected(int x, int y)
 		}
 	}
 	if (modified) {
-		SetClip(GetVisual(), true);
+		wxString clip = GetVisual();
+		SetClip(clip, true);
+		SetClip(clip, false);
 	}
 }

@@ -738,7 +738,7 @@ void Visuals::SetVisual(bool dummy, int type)
 	if (dummy){
 		wxString txt = editor->GetValue();
 		int mode = false;
-		if (Visual == MOVE){ mode = 1; }
+		if (Visual == MOVE || type == 100){ mode = 1; }
 		else if (Visual == CLIPRECT){ mode = 2; }
 		wxString tmp;
 		wxString xytype = (type == 0) ? L"x" : L"y";
@@ -875,6 +875,10 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 			int append = ChangeText(txt, posTag, !PutinBrackets, strPos);
 			strPos.x += posTag.length() + append;
 			PutinBrackets = false;
+		}
+		else
+		{
+			strPos.y = 0;
 		}
 	}
 	strPos.y += strPos.x - 1;
