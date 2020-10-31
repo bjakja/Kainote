@@ -403,6 +403,7 @@ private:
 	bool isOrg = false;
 	bool hasOrg = false;
 	bool onlyFirst = false;
+	float addy = 100.f, addx = 100.f;
 	//with rotation xy angle.x = fry and angle.y = frx
 	D3DXVECTOR2 angle;
 	D3DXVECTOR2 oldAngle;

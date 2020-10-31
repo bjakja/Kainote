@@ -137,16 +137,25 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 			D3DXVECTOR2 copyto = to;
 			wxPoint copydiffs = diffs;
-			bool an3 = AN % 3 == 0;
-			if (AN > 3 && !an3)
-				to.x = to.x - move;
-			else
+			bool normalArrowX = arrowLengths.x > 0;
+			bool normalArrowY = arrowLengths.y > 0;
+			
+			//left top & right bottom with move arrow in x axis
+			if ((!normalArrowX && !normalArrowY || normalArrowX && normalArrowY) && diffy < diffx) {
+				to.y = to.y + move;
 				to.x = to.x + move;
-
-			to.y = to.y - move;
+			}//left bottom & right top
+			else if ((normalArrowX && !normalArrowY) || !normalArrowX && normalArrowY) {
+				to.y = to.y - move;
+				to.x = to.x + move;
+			}//left top & right bottom with move arrow in y axis
+			else {
+				to.y = to.y - move;
+				to.x = to.x - move;
+			}
 			diffs.x = x;
 			diffs.y = y;
-			if ((!an3 && (to.x - from.x) < 1 ) || (an3 && (to.x - from.x) > -1)){
+			if ((normalArrowX && (to.x - from.x) < 1 ) || (!normalArrowX && (to.x - from.x) > -1)){
 				diffs = copydiffs;
 				to = copyto;
 			}
@@ -173,7 +182,9 @@ void Scale::SetCurVisual()
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
-	arrowLengths.y = (AN > 3) ? 100.f : -100.f, arrowLengths.x = (AN % 3 == 0) ? -100.f : 100.f;
+	arrowLengths.y = (linepos.y > SubsSize.y / 2) ? -100.f : 100.f, 
+		arrowLengths.x = (linepos.x > SubsSize.x / 2) ? -100.f : 100.f;
+
 	to.x = from.x + (scale.x * arrowLengths.x);
 	to.y = from.y + (scale.y * arrowLengths.y);
 
@@ -216,17 +227,11 @@ void Scale::OnKeyPress(wxKeyEvent &evt)
 		float directionY = (up) ? -unity : (down) ? unity : 0;
 		type = (directionX) ? 0 : 1;
 		if (evt.ShiftDown()){
-			/*if (directionX)
-			directionY = directionX;
-			else if (directionY)
-			directionX = directionY;*/
+			
 			directionX /= 10.f;
 			directionY /= 10.f;
 		}
-		/*if (evt.ControlDown()){
-		directionX /= 10;
-		directionY /= 10;
-		}*/
+		
 		to.x += directionX;
 		to.y += directionY;
 		scale.x = abs((to.x - from.x) / arrowLengths.x);

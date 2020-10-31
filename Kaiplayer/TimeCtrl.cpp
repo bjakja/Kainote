@@ -310,7 +310,7 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 		else{
 			if (absx >= 10){
 				tmpgrad = grad * 10;
-				mstime = (oldposx < posx) ? mstime - tmpgrad : mstime + tmpgrad;
+				mstime = (oldposx > posx) ? mstime - tmpgrad : mstime + tmpgrad;
 				oldposx = posx;
 				//reset oldposx cause next time it will change it by 1
 				//even if it's still moved in one direction

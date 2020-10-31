@@ -742,7 +742,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			CaptureMouse();
 			return;
 		}
-		else if (!mouseWheel && (dclickCurPos.y < mousePosition.y + 5 && dclickCurPos.y > mousePosition.y - 5)){
+		else if (!mouseWheel && (dclickCurPos.y < mousePosition.y + 8 && dclickCurPos.y > mousePosition.y - 8) && (dclickCurPos.x < mousePosition.x + 10 && dclickCurPos.x > mousePosition.x - 10)){
 			return;
 		}
 		wxPoint CursorPos(numberChangingMousePos, -1);
@@ -758,7 +758,13 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 						step = -step;
 				}
 				else{
-					if(dclickCurPos.y < mousePosition.y)
+					if (abs(dclickCurPos.y - mousePosition.y) < abs(dclickCurPos.x - mousePosition.x)) {
+						if(dclickCurPos.x > mousePosition.x)
+							step = -(step * 10);
+						else
+							step = (step * 10);
+					}
+					else if (dclickCurPos.y < mousePosition.y)
 						step = -step;
 
 					dclickCurPos = mousePosition;

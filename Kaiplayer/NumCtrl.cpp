@@ -275,7 +275,7 @@ void NumCtrl::OnMouseEvent(wxMouseEvent &event)
 		}
 		else{
 			if (absx >= 10){
-				double nval = (oldposx < posx) ? value - 10 : value + 10;
+				double nval = (oldposx > posx) ? value - 10 : value + 10;
 				if ((value == rfrom && nval < rfrom) || (value == rto && nval > rto)){ return; }
 				else if (nval < rfrom){ nval = rfrom; }
 				else if (nval > rto){ nval = rto; }

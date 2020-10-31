@@ -40,7 +40,6 @@ void ScaleRotation::DrawVisual(int time)
 		from.x = ((from.x / coeffW) - zoomMove.x)*zoomScale.x;
 		from.y = ((from.y / coeffH) - zoomMove.y)*zoomScale.y;
 		if (selectedTool == 0){
-			int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
 			to.x = from.x + (scale.x*addx);
 			to.y = from.y + (scale.y*addy);
 		}
@@ -64,8 +63,7 @@ void ScaleRotation::DrawScale(int time)
 {
 
 	D3DXVECTOR2 v4[15];
-	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
-
+	
 	float movex = from.x + addx, movey = from.y + addy;
 
 	if (type != 1){ movex = to.x; }//strzałka w poziomie i część strzałki po skosie
@@ -431,7 +429,6 @@ void ScaleRotation::OnClickScaling(int x, int y, bool leftClick, bool rightClick
 	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 	if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
 	if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
-	int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
 	if (leftClick && shiftDown){
 		type = 2;
 		diffs.x = x;
@@ -495,16 +492,25 @@ void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 
 		D3DXVECTOR2 copyto = to;
 		wxPoint copydiffs = diffs;
-		bool an3 = AN % 3 == 0;
-		if (AN > 3 && !an3)
-			to.x = to.x - move;
-		else
-			to.x = to.x + move;
+		bool normalArrowX = addx > 0;
+		bool normalArrowY = addy > 0;
 
-		to.y = to.y - move;
+		//left top & right bottom with move arrow in x axis
+		if ((!normalArrowX && !normalArrowY || normalArrowX && normalArrowY) && diffy < diffx) {
+			to.y = to.y + move;
+			to.x = to.x + move;
+		}//left bottom & right top
+		else if ((normalArrowX && !normalArrowY) || !normalArrowX && normalArrowY) {
+			to.y = to.y - move;
+			to.x = to.x + move;
+		}//left top & right bottom with move arrow in y axis
+		else {
+			to.y = to.y - move;
+			to.x = to.x - move;
+		}
 		diffs.x = x;
 		diffs.y = y;
-		if ((!an3 && to.x - from.x < 1) || (an3 && to.x - from.x > -1)){
+		if ((normalArrowX && to.x - from.x < 1) || (!normalArrowX && to.x - from.x > -1)){
 			diffs = copydiffs;
 			to = copyto;
 		}
@@ -518,22 +524,21 @@ void ScaleRotation::OnHoldingScaling(int x, int y, bool hasShift)
 		}
 	}
 	if (to.x == from.x){ 
-		to.x = from.x + 60.f; 
+		to.x = from.x + 100.f; 
 	}
 	if (to.y == from.y){ 
-		to.y = from.y + 60.f; 
+		to.y = from.y + 100.f; 
 	}
 
 	if (type != 1){
-		float resx = (abs(to.x - from.x)) / 60.f;
+		float resx = (abs(to.x - from.x)) / 100;
 		afterMove.x = (resx * 100);
 		scale.x = resx;
 	}if (type > 0){
-		float resy = (abs(to.y - from.y)) / 60.f;
+		float resy = (abs(to.y - from.y)) / 100;
 		afterMove.y = (resy * 100);
 		scale.y = resy;
 	}
-
 	ChangeInLines();
 }
 
@@ -549,7 +554,8 @@ void ScaleRotation::SetCurVisual()
 	tagXFound = tagYFound = false;
 
 	if (selectedTool == 0){//scale
-		int addy = (AN > 3) ? 60 : -60, addx = (AN % 3 == 0) ? -60 : 60;
+		addy = (linepos.y > SubsSize.y / 2) ? -100.f : 100.f, 
+		addx = (linepos.x > SubsSize.x / 2) ? -100.f : 100.f;
 		if (SeekTags(lineText, L"fscx([0-9.-]+)", &foundTag))
 			tagXFound = true;
 		if (SeekTags(lineText, L"fscy([0-9.-]+)", &foundTag))
@@ -730,14 +736,14 @@ void ScaleRotation::ChangeInLines(bool dummy)
 
 				Cpy.GetRaw(&tlLines, true);
 				dtxt->insert(selPositions[i] + moveLength, tlLines);
-				moveLength += tlLines.Len();
+				moveLength += tlLines.length();
 			}
 			else{
 				Cpy.Text = txt;
 				wxString thisLine;
 				Cpy.GetRaw(&thisLine);
 				dtxt->insert(selPositions[i] + moveLength, thisLine);
-				moveLength += thisLine.Len();
+				moveLength += thisLine.length();
 			}
 			if (lineI == tab->Grid->currentLine){
 				if (hasTlMode && !istexttl){

@@ -306,7 +306,7 @@ void SubsGridBase::Convert(char type)
 	RefreshColumns();
 }
 
-void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromEditbox)
+void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool loadFromEditbox)
 {
 	wxMutexLocker lock(editionMutex);
 
@@ -329,17 +329,17 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			AddSInfo(L"Active Line", std::to_wstring(currentLine), false);
 			wxString subsPath = tab->SubsPath.BeforeLast(L'\\');
 			if (Edit->ABox){
-				wxString path = (Edit->ABox->audioName.StartsWith(subsPath)) ?
+				wxString path = (Edit->ABox->audioName.StartsWith(subsPath) && normalSave) ?
 					Edit->ABox->audioName.AfterLast(L'\\') : Edit->ABox->audioName;
 				AddSInfo(L"Audio File", path, false);
 			}
 			if (!tab->VideoPath.empty()){
-				wxString path = (tab->VideoPath.StartsWith(subsPath)) ?
+				wxString path = (tab->VideoPath.StartsWith(subsPath) && normalSave) ?
 					tab->VideoPath.AfterLast(L'\\') : tab->VideoPath;
 				AddSInfo(L"Video File", path, false);
 			}
 			if (!tab->KeyframesPath.empty()){
-				wxString path = (tab->KeyframesPath.StartsWith(subsPath)) ?
+				wxString path = (tab->KeyframesPath.StartsWith(subsPath) && normalSave) ?
 					tab->KeyframesPath.AfterLast(L'\\') : tab->KeyframesPath;
 				AddSInfo(L"Keyframes File", path, false);
 			}
@@ -414,13 +414,13 @@ void SubsGridBase::SaveFile(const wxString &filename, bool cstat, bool loadFromE
 			ow.PartFileWrite(raw);
 			raw.Empty();
 
-			if (cstat && dial->GetState() & 1){ dial->ChangeDialogueState(2); }
+			if (normalSave && dial->GetState() & 1){ dial->ChangeDialogueState(2); }
 
 		}
 	}
 
 	ow.CloseFile();
-	if (cstat){
+	if (normalSave){
 		file->SetLastSave();
 		Refresh(false);
 	}
