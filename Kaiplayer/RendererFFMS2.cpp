@@ -96,7 +96,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
 #endif
 
-	if (m_Visual){ m_Visual->Draw(m_Time); }
+	if (m_Visual && !m_HasZoom){ m_Visual->Draw(m_Time); }
 
 	if (videoControl->m_FullScreenProgressBar){
 		DRAWOUTTEXT(m_D3DFont, m_ProgressBarTime, m_ProgressBarRect, DT_LEFT | DT_TOP, 0xFFFFFFFF)

@@ -348,6 +348,7 @@ public:
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);
 	void OnMoveSelected(int x, int y);
+	int CheckCurve(int pos, bool checkSpline = true);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

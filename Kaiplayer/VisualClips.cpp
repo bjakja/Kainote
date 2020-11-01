@@ -41,7 +41,7 @@ ClipPoint::ClipPoint(float _x, float _y, wxString _type, bool isstart)
 
 bool ClipPoint::IsInPos(D3DXVECTOR2 pos, float diff)
 {
-	return (abs(pos.x - x) <= diff && abs(pos.y - y) <= diff);
+	return (abs(pos.x - x) < diff && abs(pos.y - y) < diff);
 }
 
 D3DXVECTOR2 ClipPoint::GetVector(DrawingAndClip *parent)
@@ -308,9 +308,12 @@ int DrawingAndClip::CheckPos(D3DXVECTOR2 pos, bool retlast, bool wsp)
 		pos.x = (pos.x * coeffW) - _x; 
 		pos.y = (pos.y * coeffH) - _y; 
 	}
+	float coeffPointArea = pointArea * coeffW;
 	for (size_t i = 0; i < Points.size(); i++)
 	{
-		if (Points[i].IsInPos(pos, pointArea)){ return (retlast && i == 0) ? Points.size() : i; }
+		if (Points[i].IsInPos(pos, coeffPointArea)){
+			return i; 
+		}
 	}
 	return (retlast) ? Points.size() : -1;
 }
@@ -327,11 +330,14 @@ void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 	pos.x = (pos.x * coeffW) - _x; 
 	pos.y = (pos.y * coeffH) - _y;
 	wxPoint oldpos;
+	int prevPoint = whereis - 1;
+	if (whereis == 0)
+		prevPoint = 0;
 	//where put in bezier in the middle needs to move point for 1
 	//cause it puts curve as previous line
 	if (whereis != Points.size()){ whereis++; }
-	oldpos.x = Points[whereis - 1].x;
-	oldpos.y = Points[whereis - 1].y;
+	oldpos.x = Points[prevPoint].x;
+	oldpos.y = Points[prevPoint].y;
 	int diffx = (pos.x - oldpos.x) / 3.0f;
 	int diffy = (pos.y - oldpos.y) / 3.0f;
 	Points.insert(Points.begin() + whereis, ClipPoint(pos.x - (diffx * 2), pos.y - (diffy * 2), type, true));
@@ -342,9 +348,16 @@ void DrawingAndClip::AddCurve(D3DXVECTOR2 pos, int whereis, wxString type)
 // pos in screen position
 void DrawingAndClip::AddCurvePoint(D3DXVECTOR2 pos, int whereis)
 {
-	if (Points[whereis - 1].type == L"s" || ((int)Points.size() > whereis && Points[whereis].type == L"s"))
+	bool isstart = false;
+	int isInRange = (int)Points.size() > whereis;
+	if (Points[(whereis == 0) ? 0 : whereis - 1].type == L"s" || (isInRange && Points[whereis].type == L"s"))
 	{
-		Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, L"s", false));
+		if (isInRange && Points[whereis].start) {
+			Points[whereis].start = false;
+			isstart = true;
+		}
+
+		Points.insert(Points.begin() + whereis, ClipPoint((pos.x*coeffW) - _x, (pos.y*coeffH) - _y, L"s", isstart));
 	}
 	else{ wxBell(); }
 }
@@ -396,8 +409,6 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	std::vector<D3DXVECTOR2> v4;
 
 	int pts = 3;
-	//ClipPoint tmp(0,0,"r",true);
-	//if(Points[i-1].type=="s"){tmp=Points[i-1];Points[i-1]=Points[i-2];}
 	if (bspline){
 
 		int acpos = i - 1;
@@ -413,7 +424,6 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 			Curve(acpos, &v4, true, bssize, k);
 		}
 		D3DXVECTOR2 *v2 = new D3DXVECTOR2[pts + 2];
-		//if(tmp.type=="s"){Points.insert(Points.begin()+i-1,tmp);}
 		for (int j = 0, g = i - 1; j < bssize; j++, g++)
 		{
 			v2[j] = Points[g].GetVector(this);
@@ -440,8 +450,8 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 			Points[i - 1] = Points[i - diff];
 		}
 		Curve(i - 1, &v4, false);
-		//if(tmp.type=="s"){Points[i-1]=tmp;}
-		D3DXVECTOR2 v2[4] = { Points[i - 1].GetVector(this), Points[i].GetVector(this), Points[i + 1].GetVector(this), Points[i + 2].GetVector(this) };
+		D3DXVECTOR2 v2[4] = { Points[i - 1].GetVector(this), Points[i].GetVector(this), 
+			Points[i + 1].GetVector(this), Points[i + 2].GetVector(this) };
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
 		Points[i - 1] = tmp;
@@ -462,10 +472,8 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 	for (int g = 0; g < 4; g++)
 	{
 		if (acpt > (spoints - 1)){ acpt = 0; }
-		//if(g==0 && Points[pos].type=="s" ){acpt--;}
 		x[g] = Points[pos + acpt].wx(this, true);
 		y[g] = Points[pos + acpt].wy(this, true);
-		//if(g==0 && Points[pos].type=="s" ){acpt++;}
 		acpt++;
 	}
 
@@ -501,7 +509,6 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 		p_x = a[0] + t*(a[1] + t*(a[2] + t*a[3]));
 		p_y = b[0] + t*(b[1] + t*(b[2] + t*b[3]));
 		table->push_back(D3DXVECTOR2(p_x, p_y));
-		//if(bspline && t==0){Visuals::DrawRect((*table)[table->size()-1]);}
 	}
 	p_x = a[0] + a[1] + a[2] + a[3];
 	p_y = b[0] + b[1] + b[2] + b[3];
@@ -681,9 +688,27 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			if (Points.empty()){ AddMove(xy, 0); SetClip(GetVisual(), true); return; }
 			int pos = CheckPos(xy, true);
 			switch (tool){
-			case 1: AddLine(xy, pos); break;
+			case 1: 
+				if (right && grabbed != -1) {
+					pos++;
+					pos = CheckCurve(pos);
+					if (pos < 0) {
+						wxBell();
+						return;
+					}
+				}
+				AddLine(xy, pos); 
+				break;
 			case 2: AddCurve(xy, pos); break;
 			case 3:
+				if (right && grabbed != -1) {
+					pos++;
+					pos = CheckCurve(pos, false);
+					if (pos < 0) {
+						wxBell();
+						return;
+					}
+				}
 				if (Points[(pos == (int)psize) ? psize - 1 : pos].type == L"s"){
 					AddCurvePoint(xy, pos); break;//bspline point
 				}
@@ -706,7 +731,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			}
 			AddMove(xy, pos);
 			SetClip(GetVisual(), true);
-			//grabbed= psize-1;
 			tool = 1;
 			tab->Video->GetVideoToolbar()->SetItemToggled(&tool);
 		}
@@ -944,4 +968,45 @@ void DrawingAndClip::OnMoveSelected(int x, int y)
 		SetClip(clip, true);
 		SetClip(clip, false);
 	}
+}
+
+int DrawingAndClip::CheckCurve(int pos, bool checkSpline)
+{
+	size_t pointsSize = Points.size();
+	if (pos < 0 || pos > pointsSize) {
+		return pointsSize;
+	}
+	else if (pos < 2 || pos >= pointsSize)
+		return pos;
+	else if (Points[pos].type == L"b") {
+		int start = 1;
+		int end = pointsSize - 1;
+		int result = -1;
+		for (int i = pos - 1; i >= 1; i--) {
+			if (Points[i].type != L"b") {
+				start = i + 1;
+				break;
+			}
+		}
+		for (int i = pos + 1; i < pointsSize; i++) {
+			if (Points[i].type != L"b") {
+				end = i;
+				break;
+			}
+		}
+
+		if (end - start > 4 || start == pos) {
+			for (int i = start; i <= end; i += 3) {
+				if (pos == i)
+					result = i;
+				else if (i > pos)
+					break;
+			}
+		}
+		return result;
+	}
+	else if (checkSpline && Points[pos].type == L"s")
+		return -1;
+
+	return pos;
 }
