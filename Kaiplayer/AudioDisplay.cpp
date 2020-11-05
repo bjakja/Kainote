@@ -285,7 +285,6 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	d3dpp.BackBufferCount = 1;
 	d3dpp.SwapEffect = D3DSWAPEFFECT_COPY;//D3DSWAPEFFECT_DISCARD;//D3DSWAPEFFECT_COPY;//
 	d3dpp.BackBufferFormat = D3DFMT_X8R8G8B8;
-	//d3dpp.Flags					 = D3DPRESENTFLAG_VIDEO;
 	d3dpp.Flags = 0;
 	d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;//D3DPRESENT_INTERVAL_DEFAULT;
 
@@ -1201,6 +1200,9 @@ void AudioDisplay::UpdateSamples() {
 	if (!provider) return;
 	if (w) {
 		int64_t totalSamples = provider->GetNumSamples();
+		//to make not scaling with window change
+		//w to constant number for example 500
+		//spectrum posiotion have to changed that number too
 		int total = totalSamples / w;
 		int max = 5760000 / w;	// 2 minutes at 48 kHz maximum
 		if (total > max) total = max;

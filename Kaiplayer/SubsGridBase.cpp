@@ -977,6 +977,7 @@ bool SubsGridBase::IsModified()
 
 void SubsGridBase::GetUndo(bool redo, int iter)
 {
+	wxMutexLocker lock(editionMutex);
 	Freeze();
 	const wxString &resolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
 	const wxString &matrix = GetSInfo(L"YCbCr Matrix");
@@ -1083,6 +1084,7 @@ void SubsGridBase::DummyUndo(int newIter)
 {
 	if (newIter >= file->Iter())
 		return;
+	wxMutexLocker lock(editionMutex);
 	file->DummyUndo(newIter);
 	if (SpellErrors.size() > currentLine)
 		SpellErrors[currentLine].clear();
@@ -1169,6 +1171,7 @@ void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->IsNotSaved()){
+		wxMutexLocker lock(editionMutex);
 		if (!IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
 			Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);

@@ -362,8 +362,8 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->ChangePositionByFrame((id == GLOBAL_PREVIOUS_FRAME) ? -1 : 1);
 	}
 
-	if (Options.CheckLastKeyEvent(id))
-		return;
+	//if (Options.CheckLastKeyEvent(id))
+		//return;
 
 	if (id == GLOBAL_SAVE_SUBS){
 		Save(false);
@@ -1668,6 +1668,12 @@ void KainoteFrame::SaveAll()
 bool KainoteFrame::SavePrompt(char mode, int wtab)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
+	if (!atab)
+		return false;
+	if (!atab->Grid)
+		return false;
+	if (!atab->Grid->file)
+		return false;
 	if (atab->Grid->IsModified()){
 		wxString ext = (atab->Grid->subsFormat == ASS) ? L"ass" : (atab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
 		wxString subsExt;

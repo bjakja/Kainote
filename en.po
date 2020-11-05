@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2020-07-19 09:09+0200\n"
-"PO-Revision-Date: 2020-07-19 09:10+0200\n"
+"POT-Creation-Date: 2020-11-05 09:25+0100\n"
+"PO-Revision-Date: 2020-11-05 09:33+0100\n"
 "Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
 "Language-Team: \n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.6\n"
+"X-Generator: Poedit 2.4.1\n"
 "X-Poedit-Basepath: Kaiplayer\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
@@ -152,73 +152,73 @@ msgstr "Invalid keyframes format"
 #: AudioBox.cpp:265 Automation.cpp:1188 Automation.cpp:1235
 #: OptionsDialog.cpp:279 OptionsDialog.cpp:600 VideoFfmpeg.cpp:53
 #: VideoFfmpeg.cpp:1011 kainoteMain.cpp:584 kainoteMain.cpp:588
-#: kainoteMain.cpp:1723 kainoteMain.cpp:1724 kainoteMain.cpp:1999
-#: kainoteMain.cpp:2025 kainoteMain.cpp:2029
+#: kainoteMain.cpp:1729 kainoteMain.cpp:1730 kainoteMain.cpp:2005
+#: kainoteMain.cpp:2031 kainoteMain.cpp:2035
 msgid "Błąd"
 msgstr "Error"
 
-#: AudioDisplay.cpp:264 RendererVideo.cpp:209
+#: AudioDisplay.cpp:266 RendererVideo.cpp:209
 msgid "Nie można utworzyć obiektu Direct3D"
 msgstr "Cannot create Direct 3D object"
 
-#: AudioDisplay.cpp:299 RendererVideo.cpp:242
+#: AudioDisplay.cpp:300 RendererVideo.cpp:242
 msgid "Nie można utworzyć urządzenia D3D9"
 msgstr "Cannot create D3D9 device"
 
-#: AudioDisplay.cpp:321 RendererVideo.cpp:265
+#: AudioDisplay.cpp:322 RendererVideo.cpp:265
 msgid "Zawiodło któreś z ustawień DirectX"
 msgstr "One of the DirectX settings failed"
 
-#: AudioDisplay.cpp:329
+#: AudioDisplay.cpp:330
 msgid "Nie można ustawić macierzy porojekcji"
 msgstr "Cannot set matrix projection"
 
 # Zły: nie rozumiem
-#: AudioDisplay.cpp:330 RendererVideo.cpp:274 VisualRotationXY.cpp:149
-#: VisualScaleRotation.cpp:292
+#: AudioDisplay.cpp:331 RendererVideo.cpp:274 VisualRotationXY.cpp:149
+#: VisualScaleRotation.cpp:290
 msgid "Nie można ustawić macierzy świata"
 msgstr "Cannot set matrix view"
 
 # Zły: nie rozumiem
-#: AudioDisplay.cpp:331 RendererVideo.cpp:275 VisualRotationXY.cpp:150
-#: VisualScaleRotation.cpp:293
+#: AudioDisplay.cpp:332 RendererVideo.cpp:275 VisualRotationXY.cpp:150
+#: VisualScaleRotation.cpp:291
 msgid "Nie można ustawić macierzy widoku"
 msgstr "Cannot set matrix world"
 
-#: AudioDisplay.cpp:332 RendererDirectShow.cpp:44 RendererFFMS2.cpp:512
+#: AudioDisplay.cpp:333 RendererDirectShow.cpp:44 RendererFFMS2.cpp:512
 msgid "Nie można stworzyć powierzchni"
 msgstr "Cannot create surface"
 
-#: AudioDisplay.cpp:335 RendererVideo.cpp:317
+#: AudioDisplay.cpp:336 RendererVideo.cpp:317
 msgid "Nie można stworzyć linii D3DX"
 msgstr "Cannot open D3DX line"
 
-#: AudioDisplay.cpp:339 AudioDisplay.cpp:340 AudioDisplay.cpp:341
+#: AudioDisplay.cpp:340 AudioDisplay.cpp:341 AudioDisplay.cpp:342
 #: RendererVideo.cpp:319 Visuals.cpp:318
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "Cannot create D3DX font"
 
-#: AudioDisplay.cpp:343 RendererFFMS2.cpp:515
+#: AudioDisplay.cpp:344 RendererFFMS2.cpp:515
 msgid "Nie można stworzyć plain surface"
 msgstr "Cannot create plain surface"
 
-#: AudioDisplay.cpp:365 RendererVideo.cpp:232
+#: AudioDisplay.cpp:366 RendererVideo.cpp:232
 msgid "Nie można zresetować Direct3D"
 msgstr "Cannot reset Direct3D"
 
-#: AudioDisplay.cpp:615
+#: AudioDisplay.cpp:616
 msgid "Zmodyfikowano"
 msgstr "Modified"
 
-#: AudioDisplay.cpp:619
+#: AudioDisplay.cpp:620
 msgid "Czas ujemny"
 msgstr "Negative time"
 
-#: AudioDisplay.cpp:974 RendererVideo.cpp:740 RendererVideo.cpp:742
+#: AudioDisplay.cpp:976 RendererVideo.cpp:740 RendererVideo.cpp:742
 msgid "Nie można zablokować bufora tekstury"
 msgstr "Cannot lock texture buffer"
 
-#: AudioDisplay.cpp:990
+#: AudioDisplay.cpp:992
 msgid "Nie można nałożyć powierzchni spectrum na siebie"
 msgstr "Cannot blit spectrum surfaces"
 
@@ -251,7 +251,7 @@ msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "An error occurred during the loading of the script Lua:\n"
 
 #: Automation.cpp:1041 Automation.cpp:1082 kainoteMain.cpp:588
-#: kainoteMain.cpp:2029
+#: kainoteMain.cpp:2035
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
@@ -390,8 +390,8 @@ msgstr ""
 #: AutomationHotkeysDialog.cpp:237 AutomationHotkeysDialog.cpp:246
 #: Hotkeys.cpp:480 Hotkeys.cpp:490 OptionsDialog.cpp:108 OptionsDialog.cpp:117
 #: OptionsDialog.cpp:465 SpellCheckerDialog.cpp:139 SubsGrid.cpp:954
-#: SubsGridBase.cpp:515 SubsGridBase.cpp:544 Videobox.cpp:279
-#: VisualClips.cpp:704 kainoteApp.cpp:157 kainoteApp.cpp:194
+#: SubsGridBase.cpp:517 SubsGridBase.cpp:546 Videobox.cpp:279
+#: VisualClips.cpp:729 kainoteApp.cpp:157 kainoteApp.cpp:194
 #: kainoteMain.cpp:892 kainoteMain.cpp:907 kainoteMain.cpp:1011
 msgid "Uwaga"
 msgstr "Warning"
@@ -424,7 +424,7 @@ msgstr "Set still"
 
 #: AutomationProgress.cpp:414 FindReplaceDialog.cpp:213 FontCollector.cpp:193
 #: LogHandler.cpp:50 SelectLines.cpp:135 SelectLines.cpp:230
-#: SelectLines.cpp:272 SpellCheckerDialog.cpp:58 Tabs.cpp:547
+#: SelectLines.cpp:272 SpellCheckerDialog.cpp:58 Tabs.cpp:565
 #: stylestore.cpp:158
 msgid "Zamknij"
 msgstr "Close"
@@ -555,116 +555,116 @@ msgstr "Cannot load theme, reset to default"
 msgid "Nie można pobrać informacji o monitorze"
 msgstr "Unable to retrieve information about the monitor"
 
-#: DshowPlayer.cpp:67
+#: DShowPlayer.cpp:67
 msgid "Nie można zainicjalizować COM"
 msgstr "Cannot initialize COM"
 
-#: DshowPlayer.cpp:82
+#: DShowPlayer.cpp:82
 msgid "Błąd inicjalizacji Direct Show"
 msgstr "Failed to initialize Direct Show"
 
-#: DshowPlayer.cpp:92
+#: DShowPlayer.cpp:92
 msgid "Filtr źródła nie został dodany"
 msgstr "Source filter not added"
 
-#: DshowPlayer.cpp:102
+#: DShowPlayer.cpp:102
 msgid "Nie można dodać renderera wideo"
 msgstr "Cannot add video renderer"
 
-#: DshowPlayer.cpp:103
+#: DShowPlayer.cpp:103
 msgid "Nie można utworzyć instancji renderera dźwięku"
 msgstr "Cannot create audio renderer instance"
 
-#: DshowPlayer.cpp:105
+#: DShowPlayer.cpp:105
 msgid "Nie można dodać renderera Direct Sound"
 msgstr "Cannot add Direct Sound renderer"
 
-#: DshowPlayer.cpp:118 DshowPlayer.cpp:139 DshowPlayer.cpp:159
-#: DshowPlayer.cpp:241
+#: DShowPlayer.cpp:118 DShowPlayer.cpp:139 DShowPlayer.cpp:159
+#: DShowPlayer.cpp:241
 msgid "Nie można wyliczyć pinów źródła"
 msgstr "Cannot enumerate source pins"
 
-#: DshowPlayer.cpp:160
+#: DShowPlayer.cpp:160
 msgid "Nie można wyliczyć pinów renderera"
 msgstr "Cannot enumerate renderer pins"
 
-#: DshowPlayer.cpp:161
+#: DShowPlayer.cpp:161
 msgid "Nie można wyliczyć pinów dsound"
 msgstr "Cannot enumerate Direct Sound pins"
 
-#: DshowPlayer.cpp:170
+#: DShowPlayer.cpp:170
 msgid "Nie można pobrać pinu renderera"
 msgstr "Cannot get renderer pin"
 
-#: DshowPlayer.cpp:171
+#: DShowPlayer.cpp:171
 msgid "Nie można pobrać pinu dsound"
 msgstr "Cannot get dsound pin"
 
-#: DshowPlayer.cpp:184 DshowPlayer.cpp:209
+#: DShowPlayer.cpp:184 DShowPlayer.cpp:209
 msgid "Brak IMediaTypes"
 msgstr "No IMediaTypes"
 
-#: DshowPlayer.cpp:185 DshowPlayer.cpp:210
+#: DShowPlayer.cpp:185 DShowPlayer.cpp:210
 msgid "Brak informacji o rodzaju ścieżki"
 msgstr "No track type info"
 
-#: DshowPlayer.cpp:189
+#: DShowPlayer.cpp:189
 msgid "Nie można połączyć pinu źródła z rendererem wideo"
 msgstr "Cannot connect source pin to video renderer"
 
-#: DshowPlayer.cpp:193
+#: DShowPlayer.cpp:193
 msgid "Nie można połączyć pinu źródła z rendererem audio"
 msgstr "Cannot connect source pin to audio renderer"
 
-#: DshowPlayer.cpp:197
+#: DShowPlayer.cpp:197
 msgid "Nie można połączyć pinu źródła z rendererem audio1"
 msgstr "Cannot connect source pin to audio1 renderer"
 
-#: DshowPlayer.cpp:199
+#: DShowPlayer.cpp:199
 msgid "Nie można znaleźć połączonego pinu źródła"
 msgstr "Cannot find connected source pin"
 
-#: DshowPlayer.cpp:201 DshowPlayer.cpp:245
+#: DShowPlayer.cpp:201 DShowPlayer.cpp:245
 msgid "Nie można pobrać informacji o pinie splittera"
 msgstr "Cannot get splitter pin info"
 
-#: DshowPlayer.cpp:204
+#: DShowPlayer.cpp:204
 msgid "Nie można wyliczyć pinów splittera"
 msgstr "Cannot enumerate splitter pins"
 
-#: DshowPlayer.cpp:212
+#: DShowPlayer.cpp:212
 msgid "Nie można połączyć pinu źródła z rendererem wideo2"
 msgstr "Cannot connect source pin to video2 renderer"
 
-#: DshowPlayer.cpp:242
+#: DShowPlayer.cpp:242
 msgid "Nie można pobrać pinu źródła"
 msgstr "Cannot get source pin"
 
-#: DshowPlayer.cpp:389
+#: DShowPlayer.cpp:389
 msgid "Nie można stworzyć interfejsu filtrów"
 msgstr "Cannot create filters interface"
 
-#: DshowPlayer.cpp:393
+#: DShowPlayer.cpp:393
 msgid "Nie można stworzyć kontrolera"
 msgstr "Cannot create controller"
 
-#: DshowPlayer.cpp:394
+#: DShowPlayer.cpp:394
 msgid "Nie można stworzyć interfejsu szukania"
 msgstr "Cannot create search interface"
 
-#: DshowPlayer.cpp:395
+#: DShowPlayer.cpp:395
 msgid "Nie można stworzyć interfejsu audio"
 msgstr "Cannot create audio interface"
 
-#: DshowPlayer.cpp:523 DshowPlayer.cpp:547
+#: DShowPlayer.cpp:523 DShowPlayer.cpp:547
 msgid "Nie można wyliczyć filtrów"
 msgstr "Cannot enumerate filters"
 
-#: DshowPlayer.cpp:527
+#: DShowPlayer.cpp:527
 msgid "Nie można pobrać nazwy filtra"
 msgstr "Cannot get filter name"
 
-#: DshowPlayer.cpp:550
+#: DShowPlayer.cpp:550
 msgid "Nie można pobrać konfiguracji filtra"
 msgstr "Cannot get filter configuration"
 
@@ -917,8 +917,8 @@ msgstr "Reached end. Search from the beginning?"
 
 #: FindReplace.cpp:395 FindReplace.cpp:402 FindReplace.cpp:1318
 #: FindReplace.cpp:1322 FontCollector.cpp:512 SubsGrid.cpp:921
-#: SubsGrid.cpp:1246 SubsGridBase.cpp:534 SubsGridBase.cpp:1371 Tabs.cpp:1119
-#: Videobox.cpp:810 Videobox.cpp:821 kainoteMain.cpp:948 kainoteMain.cpp:1686
+#: SubsGrid.cpp:1246 SubsGridBase.cpp:536 SubsGridBase.cpp:1376 Tabs.cpp:1117
+#: Videobox.cpp:810 Videobox.cpp:821 kainoteMain.cpp:948 kainoteMain.cpp:1692
 #: stylestore.cpp:265 stylestore.cpp:297 stylestore.cpp:336 stylestore.cpp:484
 #: stylestore.cpp:629
 msgid "Potwierdzenie"
@@ -945,7 +945,7 @@ msgstr ""
 "Do you want to replace in all subtitle files?\n"
 "After bad replacing backup files are in folder 'ReplaceBackup'"
 
-#: FindReplace.cpp:1171 ShiftTimes.cpp:79 ShiftTimes.cpp:911 ShiftTimes.cpp:916
+#: FindReplace.cpp:1171 ShiftTimes.cpp:79 ShiftTimes.cpp:900 ShiftTimes.cpp:905
 #: kainoteMain.cpp:575
 msgid "Informacja"
 msgstr "Info"
@@ -1532,7 +1532,7 @@ msgstr "Cannot create next notification handler for fonts folder."
 msgid "Wyjście"
 msgstr "Exit"
 
-#: Hotkeys.cpp:129 HotkeysNaming.cpp:255 Tabs.cpp:521
+#: Hotkeys.cpp:129 HotkeysNaming.cpp:255 Tabs.cpp:539
 msgid "Otwórz nową zakładkę"
 msgstr "Open new tab"
 
@@ -1598,7 +1598,7 @@ msgstr "History"
 msgid "Otwórz napisy"
 msgstr "Open subtitles"
 
-#: Hotkeys.cpp:146 HotkeysNaming.cpp:215 ScriptInfo.cpp:112 Tabs.cpp:832
+#: Hotkeys.cpp:146 HotkeysNaming.cpp:215 ScriptInfo.cpp:112 Tabs.cpp:827
 msgid "Zapisz"
 msgstr "Save"
 
@@ -2386,11 +2386,11 @@ msgstr "Clean styles of ASS file"
 msgid "Popraw drobne błędy (eksperymentalne)"
 msgstr "Multireplacer (experimental)"
 
-#: KaiListCtrl.cpp:110 KaiTextCtrl.cpp:1367 MyTextEditor.cpp:1855
+#: KaiListCtrl.cpp:110 KaiTextCtrl.cpp:1367 MyTextEditor.cpp:1861
 msgid "&Kopiuj"
 msgstr "Copy"
 
-#: KaiListCtrl.cpp:111 KaiTextCtrl.cpp:1369 MyTextEditor.cpp:1857
+#: KaiListCtrl.cpp:111 KaiTextCtrl.cpp:1369 MyTextEditor.cpp:1863
 msgid "&Wklej"
 msgstr "Paste"
 
@@ -2402,7 +2402,7 @@ msgstr "Apply to All"
 msgid "Tak dla wszystkich"
 msgstr "Yes to all"
 
-#: KaiMessageBox.cpp:61 MappedButton.cpp:39 Tabs.cpp:1124
+#: KaiMessageBox.cpp:61 MappedButton.cpp:39 Tabs.cpp:1122
 msgid "Tak"
 msgstr "Yes"
 
@@ -2414,15 +2414,15 @@ msgstr "No"
 msgid "Pomoc"
 msgstr "Help"
 
-#: KaiTextCtrl.cpp:1368 MyTextEditor.cpp:1856
+#: KaiTextCtrl.cpp:1368 MyTextEditor.cpp:1862
 msgid "Wy&tnij"
 msgstr "Cut"
 
-#: KaiTextCtrl.cpp:1374 MyTextEditor.cpp:1862
+#: KaiTextCtrl.cpp:1374 MyTextEditor.cpp:1868
 msgid "Szukaj zaznaczonej frazy w Google"
 msgstr "Seek selected phrase in Google"
 
-#: KaiTextCtrl.cpp:1376 MyTextEditor.cpp:1886
+#: KaiTextCtrl.cpp:1376 MyTextEditor.cpp:1892
 msgid "&Usuń"
 msgstr "Delete"
 
@@ -2650,40 +2650,40 @@ msgstr "Rule \"%s\" is not valid."
 msgid "Sugestie poprawy"
 msgstr "Fix suggestions"
 
-#: MyTextEditor.cpp:1860
+#: MyTextEditor.cpp:1866
 msgid "Szukaj tłumaczenia słowa na ling.pl"
 msgstr "Search word translation on ling.pl"
 
-#: MyTextEditor.cpp:1861
+#: MyTextEditor.cpp:1867
 msgid "Szukaj tłumaczenia słowa na pl.ba.bla"
 msgstr "Search word translation on pl.ba.bla"
 
-#: MyTextEditor.cpp:1863
+#: MyTextEditor.cpp:1869
 msgid "Szukaj synonimu na synonimy.net"
 msgstr "Search for synonyms on synonimy.net"
 
-#: MyTextEditor.cpp:1873 SpellCheckerDialog.cpp:27
+#: MyTextEditor.cpp:1879 SpellCheckerDialog.cpp:27
 msgid "Sprawdzanie pisowni"
 msgstr "Spellchecker"
 
-#: MyTextEditor.cpp:1879
+#: MyTextEditor.cpp:1885
 msgid "Zainstalowane języki"
 msgstr "Installed languages"
 
-#: MyTextEditor.cpp:1883
+#: MyTextEditor.cpp:1889
 #, c-format
 msgid "&Dodaj słowo \"%s\" do słownika"
 msgstr "Add word \"%s\" to dictionary"
 
-#: MyTextEditor.cpp:1887
+#: MyTextEditor.cpp:1893
 msgid "Pokaż pasek stanu"
 msgstr "Show status bar"
 
-#: MyTextEditor.cpp:1889
+#: MyTextEditor.cpp:1895
 msgid "Automatycznie zamieniaj cydzysłów"
 msgstr "Automatically change quotes"
 
-#: MyTextEditor.cpp:1945
+#: MyTextEditor.cpp:1951
 #, c-format
 msgid "Błąd, słowo \"%s\" nie zostało dodane."
 msgstr "Error. Word \"%s\" was not added."
@@ -2720,7 +2720,7 @@ msgstr "The file was not opened."
 msgid "Nie można zapisać do pliku."
 msgstr "Cannot save to file."
 
-#: OptionsDialog.cpp:279 VideoFfmpeg.cpp:53 kainoteMain.cpp:1724
+#: OptionsDialog.cpp:279 VideoFfmpeg.cpp:53 kainoteMain.cpp:1730
 msgid "Nie można wczytać opcji audio"
 msgstr "Cannot load audio configuration"
 
@@ -3022,7 +3022,7 @@ msgstr "Filtering mode:"
 msgid "Funkcja"
 msgstr "Function"
 
-#: OptionsDialog.cpp:600 kainoteMain.cpp:1723
+#: OptionsDialog.cpp:600 kainoteMain.cpp:1729
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "Cannot load audio hotkeys"
 
@@ -3920,7 +3920,7 @@ msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "Cannot overlay surfaces"
 
 # Zły: nie rozumiem
-#: RendererVideo.cpp:273 VisualRotationXY.cpp:148 VisualScaleRotation.cpp:291
+#: RendererVideo.cpp:273 VisualRotationXY.cpp:148 VisualScaleRotation.cpp:289
 msgid "Nie można ustawić macierzy projekcji"
 msgstr "Cannot set matrix projection"
 
@@ -4399,11 +4399,11 @@ msgstr ""
 "The maximum shift to a keyframe \n"
 "after the end time in milliseconds"
 
-#: ShiftTimes.cpp:910
+#: ShiftTimes.cpp:899
 msgid "Na liście nie wybrano profilu do usunięcia"
 msgstr "There is no selected profile to remove"
 
-#: ShiftTimes.cpp:915
+#: ShiftTimes.cpp:904
 #, c-format
 msgid "Na pewno chcesz usunąć profil o nazwie \"%s\""
 msgstr "Do you want to remove profile of name \"%s\""
@@ -4640,7 +4640,7 @@ msgstr "Style preview:"
 msgid "Zmienić wszystkie zaznaczone style?"
 msgstr "Change all selected styles?"
 
-#: StyleChange.cpp:451 Tabs.cpp:895 kainoteApp.cpp:243 stylestore.cpp:543
+#: StyleChange.cpp:451 Tabs.cpp:890 kainoteApp.cpp:243 stylestore.cpp:543
 msgid "Pytanie"
 msgstr "Prompt"
 
@@ -5116,32 +5116,32 @@ msgstr "Turn-off warning"
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
 msgstr "Invalid FPS. Correct it in options and try again."
 
-#: SubsGridBase.cpp:486
+#: SubsGridBase.cpp:488
 msgid "Wideo nie zostało wczytane przez FFMS2"
 msgstr "Video wasn't loaded using FFMS2"
 
-#: SubsGridBase.cpp:515
+#: SubsGridBase.cpp:517
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "Do not choose styles to shift time with"
 
-#: SubsGridBase.cpp:533
+#: SubsGridBase.cpp:535
 #, c-format
 msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
 msgstr "Do you really want to shift only %s times?"
 
-#: SubsGridBase.cpp:534
+#: SubsGridBase.cpp:536
 msgid "początkowe"
 msgstr "start"
 
-#: SubsGridBase.cpp:534
+#: SubsGridBase.cpp:536
 msgid "końcowe"
 msgstr "end"
 
-#: SubsGridBase.cpp:544
+#: SubsGridBase.cpp:546
 msgid "Nie zaznaczono linii do przesunięcia"
 msgstr "No lines selected for shifting"
 
-#: SubsGridBase.cpp:1370
+#: SubsGridBase.cpp:1375
 msgid ""
 "Czy na pewno chcesz wyłączyć tryb tłumacza?\n"
 "Obcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."
@@ -5149,7 +5149,7 @@ msgstr ""
 "Are you sure you want to turn off translation mode?\n"
 "Foreign language text will be deleted."
 
-#: SubsGridBase.cpp:1627
+#: SubsGridBase.cpp:1632
 msgid "Autozapis"
 msgstr "Autosave"
 
@@ -5221,7 +5221,7 @@ msgstr "Original text"
 msgid "Tekst tłumaczenia"
 msgstr "Translation"
 
-#: SubsGridWindow.cpp:2075
+#: SubsGridWindow.cpp:2087
 msgid ""
 "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "Cannot show preview cause grid height is too low"
@@ -5424,87 +5424,87 @@ msgstr ""
 msgid "Bez tytułu"
 msgstr "Untitled"
 
-#: Tabs.cpp:833
+#: Tabs.cpp:828
 msgid "Zapisz wszystko"
 msgstr "Save all"
 
-#: Tabs.cpp:834
+#: Tabs.cpp:829
 msgid "Zamknij wszystkie zakładki"
 msgstr "Close all tabs"
 
-#: Tabs.cpp:836
+#: Tabs.cpp:831
 msgid "Wyświetl jedną zakładkę"
 msgstr "Show one tab"
 
-#: Tabs.cpp:836
+#: Tabs.cpp:831
 msgid "Wyświetl dwie zakładki"
 msgstr "Show two tabs"
 
-#: Tabs.cpp:856
+#: Tabs.cpp:851
 msgid "Porównaj według czasów"
 msgstr "Compare by times"
 
-#: Tabs.cpp:857
+#: Tabs.cpp:852
 msgid "Porównaj według widocznych linijek"
 msgstr "Compare by visible lines"
 
-#: Tabs.cpp:858
+#: Tabs.cpp:853
 msgid "Porównaj według zaznaczeń"
 msgstr "Compare by selections"
 
-#: Tabs.cpp:859
+#: Tabs.cpp:854
 msgid "Porównaj według stylów"
 msgstr "Compare by styles"
 
-#: Tabs.cpp:860
+#: Tabs.cpp:855
 msgid "Porównaj według wybranych stylów"
 msgstr "Compare by chosen styles"
 
-#: Tabs.cpp:861
+#: Tabs.cpp:856
 msgid "Porównaj"
 msgstr "Compare"
 
-#: Tabs.cpp:862
+#: Tabs.cpp:857
 msgid "Wyłącz porównanie"
 msgstr "Turn off comparison"
 
-#: Tabs.cpp:863
+#: Tabs.cpp:858
 msgid "Porównanie napisów"
 msgstr "Subtitles comparison"
 
-#: Tabs.cpp:895
+#: Tabs.cpp:890
 msgid "Zostaną zamknięte wszystkie zakładki, kontynuować?"
 msgstr "All tabs will be closed, continue?"
 
-#: Tabs.cpp:1102
+#: Tabs.cpp:1100
 msgid "Wideo: "
 msgstr "Video: "
 
-#: Tabs.cpp:1104
+#: Tabs.cpp:1102
 msgid "Audio: "
 msgstr "Audio: "
 
-#: Tabs.cpp:1106
+#: Tabs.cpp:1104
 msgid "Klatki kluczowe: "
 msgstr "Keyframes: "
 
-#: Tabs.cpp:1108
+#: Tabs.cpp:1106
 msgid "Skojarzone pliki:\n"
 msgstr "Associated files:\n"
 
-#: Tabs.cpp:1113
+#: Tabs.cpp:1111
 msgid "Wideo z folderu:\n"
 msgstr "Video from directory:\n"
 
-#: Tabs.cpp:1121
+#: Tabs.cpp:1119
 msgid "Wczytaj skojarzone"
 msgstr "Load associated"
 
-#: Tabs.cpp:1122
+#: Tabs.cpp:1120
 msgid "Wczytaj z folderu"
 msgstr "Load from directory"
 
-#: Tabs.cpp:1259
+#: Tabs.cpp:1257
 msgid "Nieprawidłowy plik sesji"
 msgstr "Session file is corrupt"
 
@@ -6151,7 +6151,7 @@ msgstr ""
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
-#: VisualClips.cpp:703
+#: VisualClips.cpp:728
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
@@ -6355,11 +6355,11 @@ msgstr "Exit the program"
 msgid "&Plik"
 msgstr "&File"
 
-#: kainoteMain.cpp:131 kainoteMain.cpp:1794
+#: kainoteMain.cpp:131 kainoteMain.cpp:1800
 msgid "&Cofnij"
 msgstr "&Undo"
 
-#: kainoteMain.cpp:133 kainoteMain.cpp:1806
+#: kainoteMain.cpp:133 kainoteMain.cpp:1812
 msgid "&Ponów"
 msgstr "&Redo"
 
@@ -6661,7 +6661,7 @@ msgstr "Script files (*.lua),(*.moon)|*.lua;*.moon;"
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "This subtitles don't have any scripts added"
 
-#: kainoteMain.cpp:584 kainoteMain.cpp:2025
+#: kainoteMain.cpp:584 kainoteMain.cpp:2031
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "Validation Lua script '%s' failed"
@@ -6836,9 +6836,11 @@ msgstr "- Senami (made new themes and found some bugs).\n"
 
 #: kainoteMain.cpp:770
 msgid ""
-"- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu cruszy).\n"
+"- Atalos (zdebugował wiele crashy).\n"
 " \n"
-msgstr "- Wincenty271 (found some bugs, and helps debugging crashes).\n"
+msgstr ""
+"- Atalos (debugged many crashes).\n"
+"\n"
 
 #: kainoteMain.cpp:771
 msgid ""
@@ -6870,48 +6872,48 @@ msgstr "Do you want to load subtitles named %s?"
 msgid "Otwórz"
 msgstr "Open"
 
-#: kainoteMain.cpp:1681
+#: kainoteMain.cpp:1687
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "Do you want to save subtitles named \"%s\" before %s?"
 
-#: kainoteMain.cpp:1682
+#: kainoteMain.cpp:1688
 msgid "zamknięciem programu"
 msgstr "exiting program"
 
-#: kainoteMain.cpp:1683
+#: kainoteMain.cpp:1689
 msgid "zamknięciem zakładki"
 msgstr "closing tab"
 
-#: kainoteMain.cpp:1684
+#: kainoteMain.cpp:1690
 msgid "wczytaniem nowych napisów"
 msgstr "loading new subtitles"
 
-#: kainoteMain.cpp:1685
+#: kainoteMain.cpp:1691
 msgid "usunięciem napisów"
 msgstr "removing subtitles"
 
-#: kainoteMain.cpp:1728
+#: kainoteMain.cpp:1734
 msgid "Wybierz plik audio"
 msgstr "Choose audio file"
 
-#: kainoteMain.cpp:1731
+#: kainoteMain.cpp:1737
 msgid "Pliki audio i wideo"
 msgstr "Audio and video files"
 
-#: kainoteMain.cpp:1733
+#: kainoteMain.cpp:1739
 msgid "Wszystkie pliki"
 msgstr "All files"
 
-#: kainoteMain.cpp:1791
+#: kainoteMain.cpp:1797
 msgid "&Cofnij do "
 msgstr "Undo to "
 
-#: kainoteMain.cpp:1803
+#: kainoteMain.cpp:1809
 msgid "&Ponów do "
 msgstr "Redo to "
 
-#: kainoteMain.cpp:1999
+#: kainoteMain.cpp:2005
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr "Hotkey \"%s\" it's not script hotkey."
@@ -7092,6 +7094,12 @@ msgstr "Copy style from storage to ASS"
 #: stylestore.cpp:771
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "Delete unused ASS styles"
+
+#~ msgid ""
+#~ "- Wincenty271 (wyłapał trochę błędów, a także pomaga w debugowaniu "
+#~ "cruszy).\n"
+#~ " \n"
+#~ msgstr "- Wincenty271 (found some bugs, and helps debugging crashes).\n"
 
 #~ msgid "Właściwości Napisów"
 #~ msgstr "ASS subtitles properties"
