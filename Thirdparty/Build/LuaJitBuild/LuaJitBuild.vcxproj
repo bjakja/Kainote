@@ -225,7 +225,7 @@
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="..\..\LuaJIT\src\dynasm\dynasm.lua" Outputs="..\..\LuaJIT\src\host\buildvm_arch.h">
-    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI -D P64 -o ..\..\LuaJIT\src\host\buildvm_arch.h vm_x64.dasc" WorkingDirectory="..\..\LuaJIT\src" />
+    <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI $(MiniLuaPlat) -o ..\..\LuaJIT\src\host\buildvm_arch.h $(MiniLuaVM)" WorkingDirectory="..\..\LuaJIT\src" />
   </Target>
   <ItemGroup>
     <ClCompile Include="..\..\LuaJIT\src\host\buildvm.c" />

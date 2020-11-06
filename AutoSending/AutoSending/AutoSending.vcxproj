@@ -88,7 +88,7 @@
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderFile />
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\zlib-1.2.8;H:\Kainote\Thirdparty\wxWidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -107,7 +107,7 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\zlib-1.2.8;H:\Kainote\Thirdparty\wxWidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,7 +126,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\zlib-1.2.8;H:\Kainote\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,7 +147,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Include;H:\Kainote\Thirdparty\zlib-1.2.8;H:\Kainote\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Thirdparty\zlib-1.2.8;$(SolutionDir)..\Thirdparty\wxWidgets\include;C:\Program Files (x86)\Visual Leak Detector\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
