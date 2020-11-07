@@ -210,6 +210,7 @@ public:
 	int hold;
 
 	int w, h;
+	int w1 = 500;
 	wxRect screenRect;
 	AudioBox *box;
 	KaiScrollbar *ScrollBar;

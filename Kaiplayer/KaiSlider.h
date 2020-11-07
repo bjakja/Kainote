@@ -38,7 +38,7 @@ private:
 		holding = false;
 	};
 	void OnEraseBackground(wxEraseEvent& rEvent){};
-	void SendEvent();
+	void SendEvent(bool isWheel = false);
 	wxTimer pageLoop;
 	int value;
 	int minRange;

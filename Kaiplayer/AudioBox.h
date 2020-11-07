@@ -112,6 +112,7 @@ private:
 	bool arrows;
 	int oldy;
 	char lastHorizontalZoom = -1;
+	wxTimer sliderPositionSave;
 
 public:
 	AudioDisplay *audioDisplay;
@@ -160,7 +161,8 @@ enum {
 	Audio_Check_NextCommit,
 	Audio_Check_AutoGoto,
 	Audio_Check_Spectrum,
-	Audio_Check_Spectrum_Non_Linear
+	Audio_Check_Spectrum_Non_Linear,
+	AUDIO_TIMER
 };
 
 

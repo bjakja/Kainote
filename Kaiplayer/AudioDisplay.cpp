@@ -1178,7 +1178,7 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 		// Center scroll
 		int oldSamples = samples;
 		UpdateSamples();
-		PositionSample += int64_t((oldSamples - samples)*w*pivot);
+		PositionSample += int64_t((oldSamples - samples)*w1*pivot);
 		if (PositionSample < 0) PositionSample = 0;
 
 		// Update
@@ -1203,8 +1203,8 @@ void AudioDisplay::UpdateSamples() {
 		//to make not scaling with window change
 		//w to constant number for example 500
 		//spectrum posiotion have to changed that number too
-		int total = totalSamples / w;
-		int max = 5760000 / w;	// 2 minutes at 48 kHz maximum
+		int total = totalSamples / w1;
+		int max = 5760000 / w1;	// 2 minutes at 48 kHz maximum
 		if (total > max) total = max;
 		int min = 8;
 		if (total < min) total = min;
@@ -1212,7 +1212,7 @@ void AudioDisplay::UpdateSamples() {
 		samples = int(range * pow(samplesPercent / 100.0, 3) + min);
 
 		// Set position
-		int length = w * samples;
+		int length = w1 * samples;
 		if (PositionSample + length > totalSamples) {
 			PositionSample = totalSamples - length;
 			if (PositionSample < 0) PositionSample = 0;

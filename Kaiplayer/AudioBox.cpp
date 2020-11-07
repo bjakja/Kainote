@@ -203,18 +203,16 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 
 	SetAccels();
 	SetFocusIgnoringChildren();
-
+	sliderPositionSave.SetOwner(this, AUDIO_TIMER);
+	Bind(wxEVT_TIMER, [=](wxTimerEvent) {
+		Options.SaveAudioOpts();
+	}, AUDIO_TIMER);
 }
 
 
 //////////////
 // Destructor
 AudioBox::~AudioBox() {
-
-	//audioScroll->PopEventHandler(true);
-	//HorizontalZoom->PopEventHandler(true);
-	//VerticalZoom->PopEventHandler(true);
-	//VolumeBar->PopEventHandler(true);
 
 }
 
@@ -279,9 +277,10 @@ void AudioBox::OnScrollbar(wxScrollEvent &event) {
 void AudioBox::OnHorizontalZoom(wxScrollEvent &event) {
 	audioDisplay->SetSamplesPercent(event.GetPosition());
 	Options.SetInt(AUDIO_HORIZONTAL_ZOOM, event.GetPosition());
-	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE){
+	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE)
 		Options.SaveAudioOpts();
-	}
+	else if (event.GetEventType() == wxEVT_SCROLL_CHANGED)
+		sliderPositionSave.Start(1000, true);
 }
 
 
@@ -297,9 +296,10 @@ void AudioBox::OnVerticalZoom(wxScrollEvent &event) {
 		Options.SetInt(AUDIO_VOLUME, pos);
 	}
 	Options.SetInt(AUDIO_VERTICAL_ZOOM, pos);
-	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE){
+	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE)
 		Options.SaveAudioOpts();
-	}
+	else if (event.GetEventType() == wxEVT_SCROLL_CHANGED)
+		sliderPositionSave.Start(1000, true);
 }
 
 
@@ -310,9 +310,11 @@ void AudioBox::OnVolume(wxScrollEvent &event) {
 	float value = pow(float(pos) / 50.0f, 3);
 	audioDisplay->player->SetVolume(value);
 	Options.SetInt(AUDIO_VOLUME, pos);
-	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE){
+	if (event.GetEventType() == wxEVT_SCROLL_THUMBRELEASE)
 		Options.SaveAudioOpts();
-	}
+	else if (event.GetEventType() == wxEVT_SCROLL_CHANGED)
+		sliderPositionSave.Start(1000, true);
+
 	if (VerticalLink->GetValue()) {
 		VerticalZoom->SetThumbPosition(VolumeBar->GetThumbPosition());
 		audioDisplay->SetScale(value);

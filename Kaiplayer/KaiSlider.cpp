@@ -165,7 +165,7 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 			enter = true;
 		}
 		else if (enter){ enter = false; }
-		SendEvent();
+		SendEvent(true);
 		return;
 	}
 	if (evt.ButtonUp()){
@@ -267,13 +267,13 @@ void KaiSlider::SetThumbPosition(int position)
 	Update();
 }
 
-void KaiSlider::SendEvent()
+void KaiSlider::SendEvent(bool isWheel)
 {
 	value = (thumbPos / valueDivide) + 0.5f;
 	Refresh(false);
 	Update();
 	wxWindow::SetToolTip(std::to_wstring(GetValue()));
-	wxScrollEvent evt2(wxEVT_SCROLL_THUMBTRACK, GetId());
+	wxScrollEvent evt2(isWheel? wxEVT_SCROLL_CHANGED : wxEVT_SCROLL_THUMBTRACK, GetId());
 	evt2.SetPosition(GetValue());
 	AddPendingEvent(evt2);
 
