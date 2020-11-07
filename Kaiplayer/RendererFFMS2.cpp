@@ -305,13 +305,13 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 		//block removing or changing visual from main thread
 		wxMutexLocker lock(m_MutexVisualChange);
 		SAFE_DELETE(m_Visual->dummytext);
-		if (m_Visual->Visual == VECTORCLIP){
-			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
+		/*if (m_Visual->Visual == VECTORCLIP){
+			m_Visual->SetClip(true, false, false);
 		}
-		else{
+		else{*/
 			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 			if (playing){ m_HasVisualEdition = false; }
-		}
+		//}
 	}
 	else if (m_HasDummySubs){
 		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);

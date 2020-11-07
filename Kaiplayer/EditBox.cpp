@@ -463,7 +463,8 @@ done:
 	}
 
 	if (Visual > CHANGEPOS && rowChanged/* && !nochangeline*/){
-		tab->Video->SetVisual(true, true);
+		bool visualClip = Visual == VECTORCLIP;
+		tab->Video->SetVisual(false, !visualClip);
 	}
 
 	//Set time and differents in video text field

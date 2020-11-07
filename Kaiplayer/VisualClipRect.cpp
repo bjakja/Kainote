@@ -110,7 +110,7 @@ void ClipRect::DrawVisual(int time)
 	line->End();
 }
 
-wxString ClipRect::GetVisual()
+void ClipRect::GetVisual(wxString *visual)
 {
 	int x1, x2, y1, y2;
 	if (Corner[0].x < Corner[1].x){
@@ -129,7 +129,7 @@ wxString ClipRect::GetVisual()
 		y1 = Corner[1].y;
 		y2 = Corner[0].y;
 	}
-	return wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
+	*visual = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
 }
 
 void ClipRect::OnMouseEvent(wxMouseEvent &evt)

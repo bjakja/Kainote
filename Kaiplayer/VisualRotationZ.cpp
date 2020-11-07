@@ -111,18 +111,19 @@ void RotationZ::DrawVisual(int time)
 
 }
 
-wxString RotationZ::GetVisual()
+void RotationZ::GetVisual(wxString *visual)
 {
 	if (isOrg){
-		return L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		*visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+		return;
 	}
 
 	float angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 	angle = fmodf(angle + 360.f, 360.f);
 	lastmove.y = angle;
 
-	return L"\\frz" + getfloat(angle);
+	*visual = L"\\frz" + getfloat(angle);
 }
 
 void RotationZ::OnMouseEvent(wxMouseEvent &evt)

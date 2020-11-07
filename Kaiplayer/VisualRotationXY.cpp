@@ -165,28 +165,27 @@ void RotationXY::DrawVisual(int time)
 	line->End();
 }
 
-wxString RotationXY::GetVisual()
+void RotationXY::GetVisual(wxString *visual)
 {
 	if (isOrg){
-		return L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		*visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+		return;
 	}
 
-	wxString result;
 	if (type != 1){
 		angle.x = (to.x - firstmove.x) + oldAngle.x;
 		angle.x = fmodf(angle.x + 360.f, 360.f);
-		result += L"\\fry" + getfloat(angle.x);
+		*visual += L"\\fry" + getfloat(angle.x);
 
 	}
 	if (type != 0){
 		//swap plus to minus to not keep oldAngle and angle in minuses
 		float angy = (to.y - firstmove.y) - oldAngle.y;
 		angle.y = fmodf((-angy) + 360.f, 360.f);
-		result += L"\\frx" + getfloat(angle.y);
+		*visual += L"\\frx" + getfloat(angle.y);
 
 	}
-	return result;
 }
 
 void RotationXY::OnMouseEvent(wxMouseEvent &evt)

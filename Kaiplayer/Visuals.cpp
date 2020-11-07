@@ -157,11 +157,11 @@ void Visuals::SetVisual(int _start, int _end, bool notDial, bool noRefresh)
 	tab->Video->SetVisualEdition(true);
 
 	SetCurVisual();
-	if (Visual == VECTORCLIP){
-		SetClip(GetVisual(), true, true, false); 
-		return;
-	}
-	tab->Video->Render(!noRefresh);
+	//if (Visual == VECTORCLIP){
+	//	tab->Video->OpenSubs(OPEN_DUMMY);
+	//	//return;
+	//}
+	
 }
 
 void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
@@ -488,175 +488,6 @@ int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoin
 	return 0;
 }
 
-void Visuals::SetClip(wxString clip, bool dummy, bool redraw, bool changeEditorText)
-{
-
-	EditBox *edit = tab->Edit;
-	SubsGrid *grid = tab->Grid;
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
-	//GLOBAL_EDITOR
-	TextEditor *editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
-	if (clip == L""){
-
-		wxString tmp;
-		wxString txt = editor->GetValue();
-		if (edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1)){
-			ChangeText(&txt, L"", edit->InBracket, edit->Placed);
-			txt.Replace(L"{}", L"");
-			if (changeEditorText){
-				editor->SetTextS(txt, false, true);
-				editor->SetModified();
-				edit->Send(VISUAL_VECTOR_CLIP, false);
-			}
-			return;
-		}
-		tab->Video->SetVisualEdition(false);
-		RenderSubs(tab->Grid->GetVisible(), redraw);
-		return;
-	}
-	if (dummy){
-
-		if (!dummytext){
-			bool vis = false;
-			dummytext = grid->GetVisible(&vis, &textplaced);
-			if (!vis){ SAFE_DELETE(dummytext); return; }
-			//vector clip
-			if (Visual == VECTORCLIP){
-				wxString tmp = L"clip(";
-				wxString txt = editor->GetValue();
-				bool fv = edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, txt, 0, 1);
-				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
-				wxString tclip = L"\\" + tmp + clip + L")";
-				edit->Placed.x += tmp.length() + 1 + ChangeText(&txt, tclip, edit->InBracket, edit->Placed);
-				edit->Placed.y = edit->Placed.x + clip.length();
-
-				dummytext->replace(textplaced.x, textplaced.y, txt);
-				textplaced.y = txt.length();
-				int nx = 0, ny = 0;
-				grid->GetASSRes(&nx, &ny);
-				Dialogue *maskDialogue = edit->line->Copy();
-				wxString text;
-				text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
-					nx << L" 0 " << nx << L" " << ny << L" 0 " << ny;
-				maskDialogue->SetTextElement(TXT, text);
-				maskDialogue->GetRaw(dummytext);
-				dumplaced.x = edit->Placed.x + textplaced.x; 
-				dumplaced.y = edit->Placed.y + textplaced.x;
-				delete maskDialogue;
-				if (changeEditorText){
-					editor->SetTextS(txt, false, true);
-					editor->SetModified();
-				}
-
-			}
-			else{//vector drawings
-				wxString tmp = L"";
-				bool isf;
-				bool hasP1 = true;
-				size_t cliplen = clip.length();
-				wxString txt = editor->GetValue();
-				isf = edit->FindValue(L"p([0-9]+)", &tmp, txt, 0, 1);
-				if (!isf){
-					ChangeText(&txt, L"\\p1", edit->InBracket, edit->Placed);
-					hasP1 = false;
-				}
-				isf = edit->FindValue(L"pos\\(([,. 0-9-]+)\\)", &tmp, txt, 0, 1);
-				if (!isf){
-					DrawingAndClip *drawing = (DrawingAndClip*)this;
-					float xx = drawing->_x * drawing->scale.x;
-					float yy = drawing->_y * drawing->scale.y;
-					ChangeText(&txt, L"\\pos(" + getfloat(xx) + L"," + getfloat(yy) + L")", edit->InBracket, edit->Placed);
-				}
-				isf = edit->FindValue(L"an([0-9])", &tmp, txt, 0, 1);
-				if (!isf){
-					DrawingAndClip *drawing = (DrawingAndClip*)this;
-					ChangeText(&txt, L"\\an" + getfloat(drawing->alignment, L"1.0f"), edit->InBracket, edit->Placed);
-				}
-
-				int bracketPos = 0;
-				while (1){
-					bracketPos = txt.find(L"}", bracketPos);
-					if (bracketPos < 0 || bracketPos == txt.length() - 1){
-						break;
-					}
-					bracketPos++;
-					wxString mcheck = txt.Mid(bracketPos, 2);
-					if (!mcheck.StartsWith(L"m ") && !mcheck.StartsWith(L"{")){
-						txt.insert(bracketPos, L"{");
-						bracketPos++;
-						bracketPos = txt.find(L"{", bracketPos);
-						if (bracketPos < 0){
-							txt << L"}";
-							break;
-						}
-						txt.insert(bracketPos, L"}");
-					}
-				}
-				
-				wxString afterP1 = txt.Mid(edit->Placed.y);
-				int Mpos = -1;
-				//FIXME: removing first bracket
-				if (hasP1){ Mpos = afterP1.find(L"m "); }
-				if (Mpos == -1){ Mpos = afterP1.find(L"}") + 1; }
-				wxString startM = afterP1.Mid(Mpos);
-				int endClip = startM.find(L"{");
-				if (endClip == -1){
-					if (isf){ endClip = startM.length(); }
-					else{ endClip = 0; }
-					clip += L"{\\p0}";
-				}
-				else if (!hasP1){
-					clip += L"{\\p0}";
-				}
-				txt.replace(Mpos + edit->Placed.y, endClip, clip);
-
-				if (changeEditorText){
-					editor->SetTextS(txt, false, true);
-					editor->SetModified();
-				}
-
-				dummytext->replace(textplaced.x, textplaced.y, txt);
-				textplaced.y = txt.length();
-				dumplaced.x = edit->Placed.y + Mpos + textplaced.x; dumplaced.y = dumplaced.x + cliplen;
-
-			}
-		}
-		else{
-			//clip change
-			dummytext->replace(dumplaced.x, dumplaced.y - dumplaced.x, clip);
-			//new positions for new change
-			int oldy = dumplaced.y;
-			dumplaced.y = dumplaced.x + clip.length();
-			textplaced.y += (dumplaced.y - oldy);
-			if (Visual == VECTORCLIP){
-				//change mask clip
-				int endclip = dummytext->Find(L')', true);
-				int startclip = dummytext->Find(L'(', true);
-				dummytext->replace(startclip + 1, endclip - (startclip + 1), clip);
-			}
-			//get line text
-			wxString txt = dummytext->Mid(textplaced.x, textplaced.y);
-			//put in text field
-			if (changeEditorText){
-				editor->SetTextS(txt, false, true);
-				editor->SetModified();
-			}
-		}
-
-		tab->Video->SetVisualEdition(false);
-		wxString *dtxt = new wxString(*dummytext);
-		RenderSubs(dtxt, redraw);
-
-	}
-	else{
-
-		editor->SetModified();
-		edit->UpdateChars();
-		tab->Video->SetVisualEdition(true);
-		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
-		edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false, false, true);
-	}
-}
 
 //Put visuals in line text
 void Visuals::SetVisual(bool dummy, int type)
@@ -672,12 +503,12 @@ void Visuals::SetVisual(bool dummy, int type)
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 		wxString *dtxt;
 		wxArrayInt sels;
-		tab->Grid->file->GetSelections(sels);
+		grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
 		if (dummy && !dummytext){
 			bool visible = false;
 			selPositions.clear();
-			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
+			dummytext = grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
 				//KaiLog(L"Sizes mismatch");
 				return;
@@ -695,11 +526,11 @@ void Visuals::SetVisual(bool dummy, int type)
 			wxString txt = Dial->GetTextNoCopy();
 			ChangeVisual(&txt, Dial);
 			if (!dummy){
-				tab->Grid->CopyDialogue(sels[i])->SetText(txt);
+				grid->CopyDialogue(sels[i])->SetText(txt);
 			}
 			else{
 				Dialogue Cpy = Dialogue(*Dial);
-				if (Dial->TextTl != L"" && tab->Grid->hasTLMode) {
+				if (Dial->TextTl != L"" && grid->hasTLMode) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					if (showOriginalOnVideo)
@@ -723,11 +554,11 @@ void Visuals::SetVisual(bool dummy, int type)
 
 		if (!dummy){
 			tab->Video->SetVisualEdition(true);
-			if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-			tab->Grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
+			if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
+			grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
 				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
 				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, true);
-			tab->Grid->Refresh();
+			grid->Refresh();
 		}
 		else{
 			RenderSubs(dtxt);
@@ -757,8 +588,9 @@ void Visuals::SetVisual(bool dummy, int type)
 			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : (Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
 			edit->FindValue(tagpattern, &tmp, txt, 0, mode);
 		}
-
-		ChangeText(&txt, GetVisual(), edit->InBracket, edit->Placed);
+		wxString visualText;
+		GetVisual(&visualText);
+		ChangeText(&txt, visualText, edit->InBracket, edit->Placed);
 		if (!dummytext){
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &dumplaced);
@@ -772,7 +604,6 @@ void Visuals::SetVisual(bool dummy, int type)
 		RenderSubs(dtxt);
 	}
 	else{
-		//GLOBAL_EDITOR->Refresh(false);
 		editor->SetModified();
 		tab->Video->SetVisualEdition(true);
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }

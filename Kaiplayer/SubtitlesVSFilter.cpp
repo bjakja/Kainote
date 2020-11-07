@@ -102,15 +102,18 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 		return true;
 	}
 
-	if (renderer->m_HasVisualEdition && renderer->m_Visual->Visual == VECTORCLIP && renderer->m_Visual->dummytext){
-		wxString toAppend = renderer->m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
-		if (fromFile){
-			OpenWrite ow(*textsubs, false);
-			ow.PartFileWrite(toAppend);
-			ow.CloseFile();
-		}
-		else{
-			(*textsubs) << toAppend;
+	if (/*renderer->m_HasVisualEdition && */renderer->m_Visual->Visual == VECTORCLIP/* && renderer->m_Visual->dummytext*/){
+		wxString toAppend;
+		renderer->m_Visual->AppendClipMask(&toAppend);
+		if (!toAppend.empty()) {
+			if (fromFile) {
+				OpenWrite ow(*textsubs, false);
+				ow.PartFileWrite(toAppend);
+				ow.CloseFile();
+			}
+			else {
+				(*textsubs) << toAppend;
+			}
 		}
 	}
 

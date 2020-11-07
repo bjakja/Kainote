@@ -399,13 +399,13 @@ void RendererDirectShow::SetPosition(int _time, bool starttime/*=true*/, bool co
 	m_DirectShowPlayer->SetPosition(m_Time);
 	if (m_HasVisualEdition){
 		SAFE_DELETE(m_Visual->dummytext);
-		if (m_Visual->Visual == VECTORCLIP){
-			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
+		/*if (m_Visual->Visual == VECTORCLIP){
+			m_Visual->SetClip(true, false, false);
 		}
-		else{
+		else{*/
 			OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
 			if (m_State == Playing){ m_HasVisualEdition = false; }
-		}
+		//}
 	}
 	else if (m_HasDummySubs && tab->editor){
 		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);

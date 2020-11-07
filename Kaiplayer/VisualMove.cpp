@@ -68,10 +68,10 @@ void Move::DrawVisual(int time)
 
 }
 
-wxString Move::GetVisual()
+void Move::GetVisual(wxString *visual)
 {
 	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
-	return L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+	*visual = L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 		getfloat(((from.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
 		getfloat(((to.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 		getfloat(((to.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +

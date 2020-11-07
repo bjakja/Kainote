@@ -62,17 +62,12 @@ void Scale::DrawVisual(int time)
 
 }
 
-wxString Scale::GetVisual()
+void Scale::GetVisual(wxString *visual)
 {
-	wxString result;
-	
-	if (type != 1){
-		result += L"\\fscx" + getfloat(scale.x * 100);
-	}if (type != 0){
-		result += L"\\fscy" + getfloat(scale.y * 100);
-	}
-
-	return result;
+	if (type != 1)
+		*visual += L"\\fscx" + getfloat(scale.x * 100);
+	if (type != 0)
+		*visual += L"\\fscy" + getfloat(scale.y * 100);
 }
 
 void Scale::OnMouseEvent(wxMouseEvent &evt)

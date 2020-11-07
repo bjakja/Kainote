@@ -85,10 +85,11 @@ public:
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
-	virtual wxString GetVisual(){ return L""; };
+	virtual void GetVisual(wxString *visual){};
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
+	virtual void AppendClipMask(wxString *mask) {};
 	void DrawWarning(bool comment);
-	void SetClip(wxString clip, bool dummy, bool redraw = true, bool changeEditorText = true);
+	//virtual void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true) {};
 	void SetVisual(bool dummy, int type);
 	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
@@ -173,7 +174,7 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual(){ return L""; };
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
@@ -194,7 +195,7 @@ public:
 	Move();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
@@ -224,7 +225,7 @@ public:
 	MoveAll();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void SetCurVisual();
 	void ChangeInLines(bool all);
@@ -245,7 +246,7 @@ public:
 	Scale();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
@@ -265,7 +266,7 @@ public:
 	RotationZ();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
@@ -282,7 +283,7 @@ public:
 	RotationXY();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
@@ -303,7 +304,7 @@ public:
 	ClipRect();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
+	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
@@ -323,8 +324,9 @@ public:
 	~DrawingAndClip();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	wxString GetVisual();
-	void ChangeVisual(wxString *txt, int line){};
+	void GetVisual(wxString *visual);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, wxString *visualText);
+	void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true);
 	void SetCurVisual();
 	void SetPos(int x, int y);
 	int CheckPos(D3DXVECTOR2 pos, bool retlast = false, bool wsp = true);
@@ -349,6 +351,8 @@ public:
 	void OnKeyPress(wxKeyEvent &evt);
 	void OnMoveSelected(int x, int y);
 	int CheckCurve(int pos, bool checkSpline = true);
+	void AppendClipMask(wxString *mask);
+	void CreateClipMask(wxString *clip, wxString *clipTag = NULL);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
@@ -375,7 +379,7 @@ public:
 	// _x and _y points of move of drawings
 	float _x, _y;
 	D3DXVECTOR2 offsetxy;
-	wxString textwithclip;
+	wxString clipMask;
 };
 
 class ScaleRotation : public Visuals

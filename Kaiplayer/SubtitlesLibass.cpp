@@ -196,16 +196,15 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	}
 
 	//sometimes it crashes on CROSS just like it visual was released and
-	//it steel gives mi right values and violate memory on 0x266 adress
+	//it still gives mi right values and violate memory on 0x266 adress
 	//m_HasVisualEdition == true cause it's should be set on false
-	if (renderer->m_HasVisualEdition){
+	//if (renderer->m_HasVisualEdition){
 		if (renderer->m_Visual->Visual == VECTORCLIP) {
-			if (renderer->m_Visual->dummytext) {
-				wxString toAppend = renderer->m_Visual->dummytext->Trim().AfterLast(L'\n') + L"\r\n";
-				(*textsubs) << toAppend;
-			}
+			//if (renderer->m_Visual->dummytext) {
+				renderer->m_Visual->AppendClipMask(textsubs);
+			//}
 		}
-	}
+	//}
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);

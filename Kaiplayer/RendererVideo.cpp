@@ -669,18 +669,20 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 		m_Visual = Visuals::Get(vis, videoControl);
 	}
 	else if (m_Visual->Visual != vis){
-		bool vectorclip = m_Visual->Visual == VECTORCLIP;
+		if (m_Visual->Visual == VECTORCLIP)
+			settext = true;
 		delete m_Visual;
 		m_Visual = Visuals::Get(vis, videoControl);
-		if (vectorclip && !settext){ OpenSubs(OPEN_DUMMY); }
 	}
 	else{ SAFE_DELETE(m_Visual->dummytext); }
-	if (settext){ OpenSubs(OPEN_DUMMY); }
 	m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 		m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	SetVisualZoom();
 	m_Visual->SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime,
 		tab->Edit->line->IsComment, noRefresh);
+	bool vectorclip = m_Visual->Visual == VECTORCLIP;
+	if (vectorclip || settext) { OpenSubs(OPEN_DUMMY); }
+	Render(!noRefresh);
 	m_HasVisualEdition = vis > 0;
 }
 

@@ -223,11 +223,6 @@ void MoveAll::SetCurVisual()
 
 }
 
-wxString MoveAll::GetVisual()
-{
-	return L"";
-}
-
 void MoveAll::ChangeInLines(bool all)
 {
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
