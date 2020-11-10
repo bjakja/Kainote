@@ -56,8 +56,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	Preview = NULL;
 	updateStyle = NULL;
 	block = true;
-	//wxFont font(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
-	wxWindow::SetFont(*Options.GetFont(-2)/*font*/);
+	wxWindow::SetFont(*Options.GetFont(-2));
 
 	wxBoxSizer *Main = new wxBoxSizer(wxVERTICAL);
 

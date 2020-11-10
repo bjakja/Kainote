@@ -40,7 +40,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	SpellCheckerOnOff = (_spell)? Options.GetBool(SPELLCHECKER_ON) : false;
 	MText = L"";
 	bmp = NULL;
-	fontSize = 10;
+	//fontSize = 10;
 	posY = 0;
 	scrollPositionV = 0;
 	SetCursor(wxCURSOR_IBEAM);
@@ -100,6 +100,13 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 
 	holding = dholding = firstdhold = modified = wasDoubleClick = false;
 	font = *Options.GetFont();
+	fontSize = Options.GetInt(TEXT_EDITOR_FONT_SIZE);
+	if (fontSize > 6 && fontSize <= 70 && fontSize != font.GetPointSize()) {
+		font.SetPointSize(fontSize);
+	}
+	else
+		fontSize = 10;
+
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
@@ -789,6 +796,8 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			fontSizes.clear();
 			CalcWrap(false, false);
 			Refresh(false);
+			statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 8;
+			Options.SetInt(TEXT_EDITOR_FONT_SIZE, fontSize);
 		}
 		else if (event.GetModifiers() == 0){
 			int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();

@@ -387,7 +387,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			Label();
 
 			tab->Grid->Clearing();
-			tab->Grid->file = new SubsFile();
+			tab->Grid->file = new SubsFile(&tab->Grid->GetMutex());
 			tab->Grid->LoadDefault();
 			tab->Edit->RefreshStyle(true);
 			tab->Grid->RefreshColumns();

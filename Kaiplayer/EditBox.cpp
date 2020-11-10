@@ -359,70 +359,74 @@ EditBox::~EditBox()
 
 void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool autoPlay)
 {
-	wxMutexLocker lock(grid->GetMutex());
 	bool rowChanged = currentLine != Row;
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
 	if (nochangeline && !rowChanged && !tab->Grid->preview){ goto done; }
-	//showing / hiding tlmode controls when subs preview is on
-	//it must hide it after return to original grid
-	if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode){
-		SetTlMode(grid->hasTLMode, true);
-	}
-
-	if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save){
-		Send(EDITBOX_LINE_EDITION, false);
-	}
-	if (currentLine < grid->GetCount()){
-		Dialogue *prevDial = grid->GetDialogue(currentLine);
-		if (prevDial->Start.mstime > prevDial->End.mstime){
-			prevDial->End = prevDial->Start;
-			grid->Refresh(false);
+	// space for guard by mutex
+	// don't use editionMutex with OpenSubs opened later
+	{
+		wxMutexLocker lock(grid->GetMutex());
+		//showing / hiding tlmode controls when subs preview is on
+		//it must hide it after return to original grid
+		if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode) {
+			SetTlMode(grid->hasTLMode, true);
 		}
-	}
-	if (StartEdit->changedBackGround){
-		StartEdit->SetForegroundColour(WINDOW_TEXT);
-	}
-	if (EndEdit->changedBackGround){
-		EndEdit->SetForegroundColour(WINDOW_TEXT);
-	}
-	if (DurEdit->changedBackGround){
-		DurEdit->SetForegroundColour(WINDOW_TEXT);
-	}
-	currentLine = Row;
-	grid->markedLine = Row;
-	grid->currentLine = Row;
-	wxDELETE(line);
-	line = grid->GetDialogue(currentLine)->Copy();
-	LineNumber->SetLabelText(wxString::Format(_("Linia: %i"), (int)grid->file->GetElementByKey(currentLine) + 1));
-	Comment->SetValue(line->IsComment);
-	LayerEdit->SetInt(line->Layer);
-	StartEdit->SetTime(line->Start, false, 1);
-	EndEdit->SetTime(line->End, false, 2);
-	if (grid->showFrames){
-		STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
-		durationTime.orgframe++;
-		DurEdit->SetTime(durationTime);
-	}
-	else{
-		DurEdit->SetTime(line->End - line->Start);
-	}
-	StyleChoice->SetSelection(StyleChoice->FindString(line->Style, true));
-	ActorEdit->ChangeValue(line->Actor);
-	MarginLEdit->SetInt(line->MarginL);
-	MarginREdit->SetInt(line->MarginR);
-	MarginVEdit->SetInt(line->MarginV);
-	EffectEdit->ChangeValue(line->Effect);
-	TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1);
-	SetTextWithTags();
 
-	if (DoubtfulTL->IsShown()){
-		DoubtfulTL->SetValue(line->IsDoubtful());
-	}
+		if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save) {
+			Send(EDITBOX_LINE_EDITION, false);
+		}
+		if (currentLine < grid->GetCount()) {
+			Dialogue *prevDial = grid->GetDialogue(currentLine);
+			if (prevDial->Start.mstime > prevDial->End.mstime) {
+				prevDial->End = prevDial->Start;
+				grid->Refresh(false);
+			}
+		}
+		if (StartEdit->changedBackGround) {
+			StartEdit->SetForegroundColour(WINDOW_TEXT);
+		}
+		if (EndEdit->changedBackGround) {
+			EndEdit->SetForegroundColour(WINDOW_TEXT);
+		}
+		if (DurEdit->changedBackGround) {
+			DurEdit->SetForegroundColour(WINDOW_TEXT);
+		}
+		currentLine = Row;
+		grid->markedLine = Row;
+		grid->currentLine = Row;
+		wxDELETE(line);
+		line = grid->GetDialogue(currentLine)->Copy();
+		LineNumber->SetLabelText(wxString::Format(_("Linia: %i"), (int)grid->file->GetElementByKey(currentLine) + 1));
+		Comment->SetValue(line->IsComment);
+		LayerEdit->SetInt(line->Layer);
+		StartEdit->SetTime(line->Start, false, 1);
+		EndEdit->SetTime(line->End, false, 2);
+		if (grid->showFrames) {
+			STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
+			durationTime.orgframe++;
+			DurEdit->SetTime(durationTime);
+		}
+		else {
+			DurEdit->SetTime(line->End - line->Start);
+		}
+		StyleChoice->SetSelection(StyleChoice->FindString(line->Style, true));
+		ActorEdit->ChangeValue(line->Actor);
+		MarginLEdit->SetInt(line->MarginL);
+		MarginREdit->SetInt(line->MarginR);
+		MarginVEdit->SetInt(line->MarginV);
+		EffectEdit->ChangeValue(line->Effect);
+		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1);
+		SetTextWithTags();
 
-	
-	//set characters per seconds and wraps
-	UpdateChars();
+		if (DoubtfulTL->IsShown()) {
+			DoubtfulTL->SetValue(line->IsDoubtful());
+		}
+
+
+		//set characters per seconds and wraps
+		UpdateChars();
+	}
 
 	//block show audio and video when preview enabled
 	//and editbox shows line from preview grid != tab->Grid

@@ -113,7 +113,7 @@ private:
 	int lastSave = 0;
 
 public:
-	SubsFile();
+	SubsFile(wxMutex * editionGuard);
 	~SubsFile();
 	void SaveUndo(unsigned char editionType, int activeLine, int markerLine);
 	bool Redo();
@@ -198,7 +198,8 @@ public:
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool edited;
-	wxString *historyNames=NULL;
+	wxString *historyNames = NULL;
+	wxMutex *historyGuard = NULL;
 };
 
 class HistoryDialog : public KaiDialog

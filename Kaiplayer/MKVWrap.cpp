@@ -326,7 +326,7 @@ bool MatroskaWrapper::GetSubtitles(SubsGrid *target) {
 				return 0;
 
 			target->Clearing();
-			target->file = new SubsFile();
+			target->file = new SubsFile(&target->GetMutex());
 
 			// Read private data if it's ASS/SSA
 			if (codecType == 0) {

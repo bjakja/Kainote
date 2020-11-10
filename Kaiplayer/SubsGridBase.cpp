@@ -86,7 +86,7 @@ bool sortlayer(Dialogue *i, Dialogue *j){
 SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	: KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
 {
-	file = new SubsFile();
+	file = new SubsFile(&editionMutex);
 	makebackup = true;
 	ismenushown = false;
 	showFrames = false;
@@ -977,7 +977,7 @@ bool SubsGridBase::IsModified()
 
 void SubsGridBase::GetUndo(bool redo, int iter)
 {
-	wxMutexLocker lock(editionMutex);
+	//wxMutexLocker lock(editionMutex);
 	Freeze();
 	const wxString &resolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
 	const wxString &matrix = GetSInfo(L"YCbCr Matrix");
@@ -1084,7 +1084,7 @@ void SubsGridBase::DummyUndo(int newIter)
 {
 	if (newIter >= file->Iter())
 		return;
-	wxMutexLocker lock(editionMutex);
+	//wxMutexLocker lock(editionMutex);
 	file->DummyUndo(newIter);
 	if (SpellErrors.size() > currentLine)
 		SpellErrors[currentLine].clear();
@@ -1157,7 +1157,6 @@ void SubsGridBase::SetSubsFormat(wxString ext)
 //need to guard
 void SubsGridBase::AddSInfo(const wxString &SI, wxString val, bool save)
 {
-	//wxMutexLocker lock(editionMutex);
 	file->AddSInfo(SI, val, save);
 }
 
@@ -1171,7 +1170,7 @@ void SubsGridBase::GetSInfos(wxString &textSinfo, bool tld/*=false*/)
 void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy, int SetEditBoxLine, bool Scroll)
 {
 	if (file->IsNotSaved()){
-		wxMutexLocker lock(editionMutex);
+		//wxMutexLocker lock(editionMutex);
 		if (!IsModified()){
 			Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
 			Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
@@ -1232,7 +1231,6 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 
 void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 {
-	//wxMutexLocker lock(editionMutex);
 	file->SwapRows(frst, scnd);
 	if (SpellErrors.size() > frst && SpellErrors.size() > scnd){
 		wxArrayInt tmpspell = SpellErrors[frst];

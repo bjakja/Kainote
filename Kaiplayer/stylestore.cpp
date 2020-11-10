@@ -403,7 +403,7 @@ void StyleStore::StylesWindow(wxString newname)
 
 bool StyleStore::ChangeStyle(Styles *changedStyle, int cellsToChange /*= -1*/)
 {
-	Update();
+	//Update();
 	SubsGrid* grid = Notebook::GetTab()->Grid;
 	int multiplication = 0;
 	int foundStyle = (ASSStyle) ? grid->FindStyle(changedStyle->Name, &multiplication) : 

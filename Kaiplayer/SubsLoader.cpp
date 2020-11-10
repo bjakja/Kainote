@@ -21,7 +21,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 {
 	grid = _grid;
 	grid->Clearing();
-	grid->file = new SubsFile();
+	grid->file = new SubsFile(&grid->GetMutex());
 	grid->originalFormat = 0;
 	grid->hasTLMode = false;
 	bool succeeded = false;
@@ -55,13 +55,13 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		grid->SetSubsFormat();
 		if (grid->subsFormat == SRT){
 			grid->Clearing();
-			grid->file = new SubsFile();
+			grid->file = new SubsFile(&grid->GetMutex());
 			succeeded = LoadSRT(text);
 			if (succeeded) ext = L"srt";
 		}
 		else if (grid->subsFormat == ASS){
 			grid->Clearing();
-			grid->file = new SubsFile();
+			grid->file = new SubsFile(&grid->GetMutex());
 			succeeded = LoadASS(text);
 			ext = L"ass";
 			if (!succeeded){
@@ -74,7 +74,12 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 	}
 	//WARNING! table can not be empty
 	//text helper class will crash when gets NULL in = operator
-	if (!succeeded){ grid->LoadDefault(); KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); grid->subsFormat = ASS; ext = "ass"; }
+	if (!succeeded){ 
+		grid->LoadDefault(); 
+		KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); 
+		grid->subsFormat = ASS; 
+		ext = "ass"; 
+	}
 	else{
 		grid->SetSubsFormat();
 		if (validFormat)

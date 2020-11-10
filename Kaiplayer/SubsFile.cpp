@@ -107,7 +107,7 @@ File *File::Copy(bool copySelections)
 	return file;
 }
 
-SubsFile::SubsFile()
+SubsFile::SubsFile(wxMutex * editionGuard)
 {
 	historyNames = new wxString[AUTOMATION_SCRIPT + 1]{
 		//first element is not used but is to sacure from number 0
@@ -171,6 +171,7 @@ SubsFile::SubsFile()
 	iter = 0;
 	edited = false;
 	subs = new File();
+	historyGuard = editionGuard;
 }
 
 SubsFile::~SubsFile()
@@ -189,6 +190,7 @@ SubsFile::~SubsFile()
 
 void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLine)
 {
+	wxMutexLocker lock(*historyGuard);
 	if (iter != maxx()){
 		for (std::vector<File*>::iterator it = undo.begin() + iter + 1; it != undo.end(); it++)
 		{
@@ -211,6 +213,7 @@ void SubsFile::SaveUndo(unsigned char editionType, int activeLine, int markerLin
 bool SubsFile::Redo()
 {
 	if (iter < maxx()){
+		wxMutexLocker lock(*historyGuard);
 		iter++;
 		subs->Clear();
 		delete subs;
@@ -223,6 +226,7 @@ bool SubsFile::Redo()
 bool SubsFile::Undo()
 {
 	if (iter > 0){
+		wxMutexLocker lock(*historyGuard);
 		iter--;
 		subs->Clear();
 		delete subs;
@@ -235,6 +239,7 @@ bool SubsFile::Undo()
 bool SubsFile::SetHistory(int _iter)
 {
 	if (_iter < undo.size() && _iter >= 0){
+		wxMutexLocker lock(*historyGuard);
 		iter = _iter;
 		subs->Clear();
 		delete subs;
@@ -246,6 +251,7 @@ bool SubsFile::SetHistory(int _iter)
 
 void SubsFile::DummyUndo()
 {
+	wxMutexLocker lock(*historyGuard);
 	subs->Clear();
 	delete subs;
 	subs = undo[iter]->Copy();
@@ -254,6 +260,7 @@ void SubsFile::DummyUndo()
 void SubsFile::DummyUndo(int newIter)
 {
 	if (newIter < 0 || newIter >= undo.size()){ return; }
+	wxMutexLocker lock(*historyGuard);
 	subs->Clear();
 	delete subs;
 	subs = undo[newIter]->Copy();
