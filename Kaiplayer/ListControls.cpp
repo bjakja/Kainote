@@ -163,7 +163,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	}, 27789);
 	choiceText->Bind(wxEVT_LEFT_UP, [=](wxMouseEvent &evt){
 		if (focusSet){
-			choiceText->SetSelection(0, -1, true);
+			long sels, sele;
+			choiceText->GetSelection(&sels, &sele); 
+			if(sels == sele)
+				choiceText->SetSelection(0, -1, true);
 			focusSet = false;
 		}
 		evt.Skip();

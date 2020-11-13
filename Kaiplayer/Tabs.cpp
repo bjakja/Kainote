@@ -466,6 +466,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		}
 		else if (i == iter && click && (x > num + tabSizes[i] - xWidth && x < num + tabSizes[i] - 5)){
 			DeletePage(i);
+			//after delete tab find a new i
+			i = FindTab(x, &num);
 			AddPendingEvent(choiceSelectedEvent);
 		}
 		else if (middleDown)
@@ -565,8 +567,8 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			if (!onx){ SetToolTip(_("Zamknij")); }
 			onx = true;
 			RefreshRect(wxRect(num + tabSizes[i] - xWidth, hh, xWidth, TabHeight), false);
-		}
-		else if (onx){
+		}// it can crash here when i is equal tabSizes.GetCount() cause of no refresh of i
+		else if (onx && i < tabSizes.GetCount()){
 			//Trick to restore tip with name of subtitles and video after go from x
 			oldtab = -1;
 			onx = false;

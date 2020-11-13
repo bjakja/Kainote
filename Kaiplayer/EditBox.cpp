@@ -1465,13 +1465,22 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 	wxPoint brackets = FindBrackets(txt, from);
 	int bracketStart = brackets.x;
 	int bracketEnd = brackets.y;
-	if (bracketStart == -1 || (bracketStart > bracketEnd)){
+	// not in {} brackets
+	// if bracketStart == bracketEnd + 1 there is between brackets 
+	// and it should be treated as inbrackets, new brackets needs
+	// to be found
+	if (bracketStart == -1 || (bracketStart > bracketEnd + 1)){
 		InBracket = false;
 		inbrkt = false;
 		bracketEnd = from;
 		brkt = false;
-	}
+	}//in brackets
 	else{
+		if (bracketStart == bracketEnd + 1) {
+			wxPoint brackets = FindBrackets(txt, bracketStart + 1);
+			bracketStart = brackets.x;
+			bracketEnd = brackets.y;
+		}
 		InBracket = true;
 	}
 
