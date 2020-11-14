@@ -1,0 +1,683 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\harfbuzz\src\dump-indic-data.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\dump-khmer-data.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\dump-myanmar-data.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\dump-use-data.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\harfbuzz.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-aat-layout.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-aat-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-blob.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-buffer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-buffer-serialize.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-common.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-face.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-fallback-shape.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-font.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-gobject-structs.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-number.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff1-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff2-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-color.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-face.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-font.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-layout.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-map.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-math.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-meta.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-metrics.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-name.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-default.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-hangul.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-hebrew.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-thai.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-use.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-use-table.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-complex-vowel-constraints.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-fallback.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-shape-normalize.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-tag.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ot-var.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-set.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-shape.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-shape-plan.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-shaper.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-static.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-style.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff1.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff2.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff-common.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset-input.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-subset-plan.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-ucd.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\harfbuzz\src\hb-unicode.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\harfbuzz\src\hb.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-ankr-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-bsln-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-feat-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-just-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-kerx-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-morx-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-opbd-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-layout-trak-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-ltag-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-aat-map.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-algs.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-array.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-atomic.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-bimap.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-blob.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-blob.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-buffer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-buffer.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-buffer-deserialize-json.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-buffer-deserialize-text.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cache.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cff1-interp-cs.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cff2-interp-cs.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cff-interp-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cff-interp-cs-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-cff-interp-dict-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-common.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-config.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-debug.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-deprecated.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-dispatch.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-draw.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-draw.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-face.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-face.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-font.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-font.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-gobject.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-gobject-structs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-iter.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-kern.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-machinery.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-map.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-map.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-meta.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-mutex.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-null.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-number.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-number-parser.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-object.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-open-file.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-open-type.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff1-std-str.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff1-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff2-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-cff-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-cmap-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-cbdt-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-colr-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-cpal-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-sbix-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-color-svg-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-deprecated.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-face.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-face-table-list.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-font.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-gasp-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-glyf-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-hdmx-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-head-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-hhea-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-hmtx-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-kern-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-base-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-gdef-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-gpos-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-gsubgpos.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-gsub-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-layout-jstf-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-map.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-math.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-math-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-maxp-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-meta.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-meta-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-metrics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-metrics.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-name.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-name-language.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-name-language-static.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-name-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-os2-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-os2-unicode-ranges.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-post-macroman.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-post-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-fallback.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-joining-list.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-arabic-win1256.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-indic-machine.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-khmer-machine.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-myanmar-machine.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-use.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-use-machine.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-complex-vowel-constraints.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-fallback.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-shape-normalize.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-stat-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-tag-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var-avar-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var-fvar-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var-gvar-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var-hvar-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-var-mvar-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ot-vorg-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-pool.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-sanitize.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-serialize.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-set.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-set.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-set-digest.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shape.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shape-plan.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shape-plan.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shaper.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shaper-impl.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-shaper-list.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-string-array.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-style.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff1.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff2.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff-common.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset-input.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-subset-plan.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-ucd-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-unicode.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-unicode.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-unicode-emoji-table.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-utf.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-vector.hh">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\harfbuzz\src\hb-version.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

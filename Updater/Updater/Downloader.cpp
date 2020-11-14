@@ -30,7 +30,7 @@ int Downloader(const wchar_t *server, const wchar_t *page, const wchar_t *filena
 	if (!output && !writeToFile)
 		return 5;
 	
-	HANDLE hFile;
+	HANDLE hFile = INVALID_HANDLE_VALUE;
 	if (writeToFile){
 		hFile = CreateFileW(filename, GENERIC_WRITE, FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 		SetFilePointer(hFile, 0, NULL, FILE_BEGIN);

@@ -69,6 +69,9 @@
     <ClInclude Include="..\..\libass\libass\ass_fontselect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_outline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libass\libass\ass.c">
@@ -123,6 +126,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="libass_gdi_fontselect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libass\libass\ass_outline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

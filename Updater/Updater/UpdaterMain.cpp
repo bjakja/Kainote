@@ -18,7 +18,7 @@
 #include <iostream>
 #include "ZipHandler.h"
 
-#include <vld.h>
+//#include <vld.h>
 //#include <WinInet.h>
 
 //#pragma comment (lib, "Wininet.lib")
@@ -33,35 +33,36 @@ int main(int argc, char **argv)
 	//wchar_t filename[] = L"H:\Kainote\x64\Release\\Kainote x64.zip";
 	//wchar_t targetfilename[]=L"I:\\レジェンドオブ・デュオ";
 	//wchar_t targetfilename1[3000];
-	//wchar_t phrase[3000];
-	//wchar_t targetfilename[] = L"C:\\";
+	// phrase[3000];
+	wchar_t targetfilename1[] = L"J:\\Easeus 11 22_24\\Nowy(F)\\Lost Files\\#2 Lost Partition(NTFS)\\Anime";
 	//wchar_t targetfilename2[] = L"H:\\";
 	//wchar_t targetfilename3[] = L"F:\\";
-	wchar_t filesDir[] = L"H:\\Kainote\\x64\\Release";
-	wchar_t zipPatch[] = L"H:\\Kainote\\x64\\Release\\Kainote x64 b909.zip";
-	const wchar_t *excludes[] = { L"audiocache", L"indices", L"subs" };
-	//wcout << L"Podaj sciezke: ";
+	//wchar_t filesDir[] = L"H:\\Kainote\\x64\\Release";
+	//wchar_t zipPatch[] = L"H:\\Kainote\\x64\\Release\\Kainote x64 b909.zip";
+	//const wchar_t *excludes[] = { L"audiocache", L"indices", L"subs" };
+	wcout << L"Podaj sciezke for zero size seeking: ";
+	wcout << targetfilename1;
 	//wcin >> targetfilename1;
-	////while (wcslen(targetfilename1) == 0)
-	//	//wcin >> targetfilename1;
-	//wcout << L"Podaj fraze: ";
-	//wcin >> phrase;
-	////while (wcslen(phrase) == 0)
-	//	//wcin >> phrase;
-	//
+	//while (wcslen(targetfilename1) == 0)
+	//wcin >> targetfilename1;
+	/*wcout << L"Podaj fraze: ";
+	wcin >> phrase;
+	while (wcslen(phrase) == 0)
+	wcin >> phrase;*/
+	
 	ZipHandler zh;
-	zh.ZipFolder(filesDir, zipPatch, excludes, 3);
+	//zh.ZipFolder(filesDir, zipPatch, excludes, 3);
 	////zh.UnZipFile(zipPatch, targetfilename);
-	//size_t dirs=0;
-	//size_t files=0;
-	//zh.CheckFiles(targetfilename1, &dirs, &files, phrase);
-	//wcout << L"location: " << targetfilename1 << L"\n";
-	//cout << "dirs: " << dirs<<"\n";
-	//cout << "files: " << files << "\n";
-	//if (zh.found.size()){
-	//	wcout << L"found:\n";
-	//	wcout << zh.found;
-	//}
+	size_t dirs=0;
+	size_t files=0;
+	zh.CheckFiles(targetfilename1, &dirs, &files, NULL);
+	wcout << L"location: " << targetfilename1 << L"\n";
+	wcout << L"dirs: " << dirs<<L"\n";
+	wcout << L"files: " << files << L"\n";
+	if (zh.found.size()){
+		wcout << L"found:\n";
+		wcout << zh.found;
+	}
 	system("pause");
 	return 0;
 }

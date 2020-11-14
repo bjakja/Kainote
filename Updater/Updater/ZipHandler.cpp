@@ -128,7 +128,10 @@ bool ZipHandler::ZipFolder(const wchar_t *destinationDir, const wchar_t *pathOfZ
 
 void ZipHandler::CheckFiles(const wchar_t *destinationDir, size_t *dirs, size_t *files, const wchar_t *phrase)
 {
-	phraseSize = wcslen(phrase);
+	if (phrase)
+		phraseSize = wcslen(phrase);
+	else
+		phraseSize = 0;
 	CheckDirFiles(destinationDir, dirs, files, phrase);
 }
 
@@ -352,7 +355,7 @@ void ZipHandler::CheckDirFiles(const wchar_t *destinationDir, size_t *dirs, size
 		if (!wcscmp(data.cFileName, L".") || !wcscmp(data.cFileName, L".."))
 			continue;
 
-		if (FindPhrase(data.cFileName, phrase)){
+		if ((phrase && FindPhrase(data.cFileName, phrase)) || (data.nFileSizeLow == 0 && data.dwFileAttributes != FILE_ATTRIBUTE_DIRECTORY)){
 			found += destinationDir;
 			if (putBackSlash){
 				found += L"\\";

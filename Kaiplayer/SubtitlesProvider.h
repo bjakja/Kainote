@@ -38,6 +38,8 @@ public:
 	//for styles preview
 	virtual bool OpenString(wxString *text){ return false; };
 	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
+	virtual void ReloadLibraries(bool destroyExisted = false) {};
+	//implementation in subtitlesVsfilter
 	static void DestroySubtitlesProvider();
 	static ASS_Renderer *m_Libass;
 	static ASS_Library *m_Library;
@@ -79,6 +81,7 @@ public:
 	bool Open(TabPanel *tab, int flag, wxString *text);
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
+	void ReloadLibraries(bool destroyExisted = false);
 	ASS_Track *m_AssTrack = NULL;
 	static std::atomic<bool> m_IsReady;
 	HANDLE thread = NULL;

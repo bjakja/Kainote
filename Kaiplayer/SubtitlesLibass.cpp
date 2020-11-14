@@ -69,19 +69,7 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 
 SubtitlesLibass::SubtitlesLibass()
 {
-	if (!m_Library) {
-		m_Library = ass_library_init();
-		ass_set_message_cb(m_Library, MessageCallback, NULL);
-		if (!m_Libass) {
-			unsigned int threadid = 0;
-			thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
-			//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
-			SetThreadName(threadid, "LibassCache");
-		}
-	}
-
-	
-
+	ReloadLibraries();
 }
 	
 SubtitlesLibass::~SubtitlesLibass()
@@ -250,6 +238,31 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_IsSwapped = isSwapped;
 	m_Format = format;
 	m_HasParameters = format == RGB32;
+}
+
+void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
+{
+	wxMutexLocker lock(openMutex);
+	if (destroyExisted) {
+		if (m_Libass) {
+			ass_renderer_done(m_Libass);
+			m_Libass = NULL;
+		}
+		if (m_Library) {
+			ass_library_done(m_Library);
+			m_Library = NULL;
+		}
+	}
+	if (!m_Library) {
+		m_Library = ass_library_init();
+		ass_set_message_cb(m_Library, MessageCallback, NULL);
+		if (!m_Libass) {
+			unsigned int threadid = 0;
+			thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
+			//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
+			SetThreadName(threadid, "LibassCache");
+		}
+	}
 }
 
 #endif
