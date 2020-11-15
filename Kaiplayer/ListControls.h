@@ -54,6 +54,7 @@ protected:
 	wxWindow *Parent;
 	int orgY;
 	KaiScrollbar *scroll;
+	wxPoint originalPosition;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -140,6 +141,7 @@ private:
 
 enum{
 	KAI_COMBO_BOX = 1,
-	KAI_SCROLL_ON_FOCUS
+	KAI_SCROLL_ON_FOCUS,
+	KAI_FONT_LIST = 4
 };
 

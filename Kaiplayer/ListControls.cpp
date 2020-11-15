@@ -712,10 +712,10 @@ PopupList::~PopupList()
 void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem)
 {
 	SetSelection(selectedItem);
-	wxPoint npos = pos;//Parent->ClientToScreen(pos);
+	originalPosition = pos;//Parent->ClientToScreen(pos);
 	wxSize size;
-	CalcPosAndSize(&npos, &size, controlSize);
-	SetPosition(npos);
+	CalcPosAndSize(&originalPosition, &size, controlSize);
+	SetPosition(originalPosition);
 	SetSize(size);
 	orgY = size.y;
 	Show();
@@ -795,6 +795,8 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 
 void PopupList::OnPaint(wxPaintEvent &event)
 {
+	wxString previewText = L"Podgl¹d czcionki";
+	bool isFontList = (Parent->GetWindowStyle() & KAI_FONT_LIST) != 0;
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
@@ -823,12 +825,15 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	tdc.SelectObject(*bmp);
 	const wxColour & text = Options.GetColour(WINDOW_TEXT);
 	const wxColour & graytext = Options.GetColour(WINDOW_TEXT_INACTIVE);
-
-	tdc.SetFont(GetFont());
+	wxFont font = GetFont();
+	wxFont copyFont;
+	if (isFontList) {
+		copyFont = font;
+	}
+	tdc.SetFont(font);
 	tdc.SetBrush(wxBrush(Options.GetColour(MENUBAR_BACKGROUND)));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
-	//tdc.SetTextForeground(Options.GetColour("Menu Bar Border Selection"));
 	for (int i = 0; i < maxsize; i++)
 	{
 		int scrollPos = i + scPos;
@@ -839,10 +844,39 @@ void PopupList::OnPaint(wxPaintEvent &event)
 			tdc.DrawRectangle(2, (height*i) + 2, w - 4, height - 2);
 		}
 		wxString desc = (*itemsList)[scrollPos];
-		if (desc.length() > 1000)
-			desc = desc.Mid(0, 1000);
 
 		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end()) ? graytext : text);
+		if (isFontList) {
+			int textw, texth;
+			copyFont.SetFaceName(desc);
+			GetTextExtent(previewText, &textw, &texth, NULL, NULL, &copyFont);
+			if (height + 10 < texth) {
+				int pointSize = copyFont.GetPointSize() - 1;
+				while (texth > height + 10 && pointSize >= 1) {
+					copyFont.SetPointSize(pointSize);
+					GetTextExtent(previewText, &textw, &texth, NULL, NULL, &copyFont);
+					pointSize--;
+				}
+			}
+			int descw, desch;
+			GetTextExtent(desc, &descw, &desch, NULL, NULL, &font);
+			//the font name cannot have 1000+ chars that's why not check it 
+			if (descw + textw + 12 > w) {
+				SetSize(wxSize(descw + textw + 40, h));
+				wxPoint newPosition = Parent->ClientToScreen(originalPosition);
+				SetPosition(newPosition);
+				if (scroll) {
+					scroll->SetSize(descw + textw + 40 - 18, 1, 17, h - 2);
+				}
+				return;
+			}
+
+			tdc.SetFont(copyFont);
+			tdc.DrawText(previewText, w - 4 - textw, (height*i) + ((height - texth) / 2));
+			tdc.SetFont(font);
+		}
+		if (desc.length() > 1000)
+			desc = desc.Mid(0, 1000);
 		tdc.DrawText(desc, 4, (height*i) + 3);
 	}
 

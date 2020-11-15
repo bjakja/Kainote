@@ -56,15 +56,6 @@ https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
 Icu
 https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
 
-FreeType2
-https://github.com/aseprite/freetype2/archive/master.zip
-
-Fribidi
-https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
-
-Libass
-https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
-
 Change in project properties paths of installed Windows SDK's 10
 and Direct X if are not installed on C disk.
 Sometimes Visual Studio 2017 will not find paths to Windows SDK's 10
@@ -133,15 +124,6 @@ https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
 Icu
 https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
 
-FreeType2
-https://github.com/aseprite/freetype2/archive/master.zip
-
-Fribidi
-https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
-
-Libass
-https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
-
 Zmienić w projekcie Kainote ścieżki do zainstalowanych windows SDK i Direct X, 
 jeśli nie są zaintalowane na dysku C.
 Gdyby nie widziało ścieżek do SDK 10 to niestety należy je dodać 
@@ -205,15 +187,6 @@ https://dl.bintray.com/boostorg/release/1.73.0/source/boost_1_73_0.7z
 
 Icu
 https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
-
-FreeType2
-https://github.com/aseprite/freetype2/archive/master.zip
-
-Fribidi
-https://github.com/fribidi/fribidi/releases/download/0.19.6/fribidi-0.19.6.tar.bz2
-
-Libass
-https://github.com/libass/libass/releases/download/0.13.7/libass-0.13.7.tar.gz
 
 เปลี่ยนเส้นทางคุณสมบัติโครงการของ Windows SDK 10 ที่ติดตั้ง และ Direct X หากไม่ได้ติดตั้งไว้ในดิสก์ C 
 บางครั้ง Visual Studio 2017 จะไม่พบเส้นทางไปยัง Windows SDK 10 จากนั้นคุณต้องเพิ่มมันเข้าไปในโครงการด้วยตนเอง c/c++ -> General -> ไดเร็กเทอรี่เพิ่มเติมและ Linker -> General -> ไดเร็กเทอรี่เพิ่มเติม 

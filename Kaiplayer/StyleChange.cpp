@@ -73,7 +73,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
 	const wxString & fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
-	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString());
+	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString(), KAI_FONT_LIST);
 	if (fontFilterText.IsEmpty() || !fontFilterOn){
 		styleFont->PutArray(FontEnum.GetFonts(this, [=](){
 			SS->ReloadFonts();
