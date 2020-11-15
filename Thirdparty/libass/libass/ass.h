@@ -20,6 +20,10 @@
 #ifndef LIBASS_ASS_H
 #define LIBASS_ASS_H
 
+//#if _DEBUG
+//#include <vld.h>
+//#endif // _DEBUG
+
 #include <stdio.h>
 #include <stdarg.h>
 #include "ass_types.h"

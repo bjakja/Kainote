@@ -46,7 +46,6 @@ private:
 	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
 		DWORD WXUNUSED(dwStyle), LPARAM lParam);
 	static DWORD FontEnumerator::CheckFontsProc(int *threadNum);
-	void RefreshVideo();
 	wxArrayString *Fonts;
 	wxArrayString *FontsTmp;
 	wxArrayString *FilteredFonts;

@@ -170,16 +170,6 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 	return true;
 }
 
-void FontEnumerator::RefreshVideo()
-{
-	for (int i = 0; i < parent->Tabs->Size(); i++){
-		TabPanel *tab = parent->Tabs->Page(i);
-		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(OPEN_DUMMY, true, true);
-		}
-	}
-	
-}
 
 DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 {
@@ -226,7 +216,7 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 		if(wait_result == WAIT_OBJECT_0 + 0){
 			FontEnum.EnumerateFonts(true);
 			FontEnum.RefreshClientsFonts();
-			Notebook::RefreshVideo();
+			Notebook::RefreshVideo(true);
 			if(FindNextChangeNotification( hDir ) == 0){
 				KaiLog(_("Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."));
 				return 0;

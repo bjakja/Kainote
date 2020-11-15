@@ -795,8 +795,11 @@ void PopupList::OnMouseEvent(wxMouseEvent &evt)
 
 void PopupList::OnPaint(wxPaintEvent &event)
 {
-	wxString previewText = L"Podgl¹d czcionki";
+	wxString previewText;
 	bool isFontList = (Parent->GetWindowStyle() & KAI_FONT_LIST) != 0;
+	if(isFontList)
+		previewText = Options.GetString(STYLE_PREVIEW_TEXT);
+
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);

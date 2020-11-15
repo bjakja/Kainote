@@ -1086,7 +1086,7 @@ void OptionsDialog::SetOptions(bool saveall)
 						//vsfilter change
 						if (cbx->GetId() == ID_VSFILTER_PROVIDER){
 							SubtitlesProviderManager::DestroyProviders();
-							Notebook::RefreshVideo(true);
+							Notebook::RefreshVideo();
 						}
 					}
 				}

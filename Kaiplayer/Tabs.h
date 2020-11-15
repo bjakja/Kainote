@@ -59,7 +59,7 @@ public:
 	static Notebook *GetTabs();
 	static Notebook *sthis;
 	static TabPanel *GetTab();
-	static void RefreshVideo(bool resetParameters = false);
+	static void RefreshVideo(bool reloadLibass = false);
 	static void SaveLastSession(bool beforeClose = false);
 	static void LoadLastSession();
 	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session

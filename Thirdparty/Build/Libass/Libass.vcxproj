@@ -162,7 +162,7 @@
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\HarfBuzz\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);C:\Program Files (x86)\Visual Leak Detector\lib\Win64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\Build\HarfBuzz\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\FreeType2\$(Platform)\$(Configuration);$(SolutionDir)Thirdparty\Build\Fribidi\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
