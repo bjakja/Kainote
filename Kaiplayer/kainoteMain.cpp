@@ -1491,6 +1491,12 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 {
 	wxString whiter;
 	TabPanel *cur = Tabs->GetPage();
+	if (!cur)
+		return;
+	if (!cur->Grid)
+		return;
+	if (!cur->Grid->file)
+		return;
 	int iter = cur->Grid->file->Iter();
 	if (cur->Grid->IsModified()){
 		whiter << iter << L"*";

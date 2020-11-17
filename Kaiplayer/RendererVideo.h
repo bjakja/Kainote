@@ -105,6 +105,7 @@ public:
 	virtual void GetVideoSize(int *width, int *height){};
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
+	virtual bool DrawTexture(byte *nframe = NULL, bool copy = false) { return false; };
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
@@ -132,7 +133,7 @@ public:
 	int m_Pitch;
 	int m_Time;
 	int m_Frame;
-	char *m_FrameBuffer;
+	byte *m_FrameBuffer;
 	RECT m_BackBufferRect;
 	byte m_Format;
 	float m_FrameDuration;
@@ -166,7 +167,6 @@ public:
 	virtual VideoFfmpeg * GetFFMS2(){ return NULL; };
 	// Non virtual functions
 	void DrawProgBar();
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -193,6 +193,7 @@ private:
 	bool InitDX(bool reset = false);
 	virtual bool InitRendererDX(){ return true; };
 	void Clear(bool clearObject = false);
+	virtual void ClearObject() {};
 	virtual void DestroyFFMS2() {};
 
 	HWND m_HWND;

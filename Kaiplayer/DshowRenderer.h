@@ -28,6 +28,7 @@ enum {
 	YV12,
 	IYUV,
 	NV12,
+	ARGB32
 };
 
 struct VideoInf{

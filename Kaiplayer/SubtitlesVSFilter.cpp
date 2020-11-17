@@ -66,6 +66,15 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 			: buffer;
 		csri_render(m_CsriInstance, m_CsriFrame, double(time / 1000.0));
 	}
+	for (int i = 0; i < m_CsriFormat->width * m_CsriFormat->height * 4; i += 4) {
+		if (buffer[i + 3] != 255) {
+			int b = buffer[i];
+			int g = buffer[i+1];
+			int r = buffer[i+2];
+			int alpha = buffer[i+3];
+			bool hasA = true;
+		}
+	}
 };
 
 bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
@@ -170,12 +179,11 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		delete text; 
 		return false; 
 	}
-
-	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
+	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;
-		delete text; 
+		delete text;
 		return false;
 	}
 
@@ -230,7 +238,7 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 	m_VideoSize = size;
 	m_IsSwapped = isSwapped;
 	m_Format = format;
-	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
+	byte bytes = (m_Format == RGB32 || m_Format == ARGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
 	m_BytesPerColor = bytes;
 	m_HasParameters = true;
 
@@ -245,11 +253,16 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 	if (!m_CsriFormat) { m_CsriFormat = new csri_fmt; }
 		
 	m_CsriFrame->pixfmt = (m_Format == NV12) ? CSRI_F_YV12A : (m_Format == YV12) ? CSRI_F_YV12 :
-		(m_Format == YUY2) ? CSRI_F_YUY2 : CSRI_F_BGR_;
+		(m_Format == YUY2) ? CSRI_F_YUY2 : (m_Format == RGB32) ? CSRI_F_BGR_ : CSRI_F_BGRA;
 
 	m_CsriFormat->width = size.GetWidth();
 	m_CsriFormat->height = size.GetHeight();
 	m_CsriFormat->pixfmt = m_CsriFrame->pixfmt;
+	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
+		KaiLog(_("CSRI nie obsługuje tego formatu."));
+		csri_close(m_CsriInstance);
+		m_CsriInstance = NULL;
+	}
 }
 
 #endif

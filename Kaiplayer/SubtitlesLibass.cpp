@@ -107,7 +107,8 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 			dst = flipped_up_down_view(dst);
 
 		for (; img; img = img->next) {
-			unsigned int opacity = 255 - ((unsigned int)_a(img->color));
+			unsigned int a = ((unsigned int)_a(img->color));
+			unsigned int opacity = 255 - a;
 			unsigned int r = (unsigned int)_r(img->color);
 			unsigned int g = (unsigned int)_g(img->color);
 			unsigned int b = (unsigned int)_b(img->color);
@@ -123,7 +124,12 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 				ret[0] = (k * b + ck * frame[0]) / 255;
 				ret[1] = (k * g + ck * frame[1]) / 255;
 				ret[2] = (k * r + ck * frame[2]) / 255;
-				ret[3] = 0;
+				if (m_Format == RGB32) {
+					ret[3] = 0;
+				}
+				else {
+					ret[3] = (k * opacity + ck * frame[3]) / 255;
+				}
 				return ret;
 			});
 		}
@@ -237,7 +243,7 @@ void SubtitlesLibass::SetVideoParameters(const wxSize & size, unsigned char form
 	m_VideoSize = size;
 	m_IsSwapped = isSwapped;
 	m_Format = format;
-	m_HasParameters = format == RGB32;
+	m_HasParameters = format == RGB32 || format == ARGB32;
 }
 
 void SubtitlesLibass::ReloadLibraries(bool destroyExisted)

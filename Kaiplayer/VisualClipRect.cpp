@@ -92,7 +92,6 @@ void ClipRect::DrawVisual(int time)
 		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
 		CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
 
-		HRN(device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"fvf failed");
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"primitive failed");
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"primitive failed");
 	}
