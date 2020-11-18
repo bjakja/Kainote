@@ -66,15 +66,7 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 			: buffer;
 		csri_render(m_CsriInstance, m_CsriFrame, double(time / 1000.0));
 	}
-	for (int i = 0; i < m_CsriFormat->width * m_CsriFormat->height * 4; i += 4) {
-		if (buffer[i + 3] != 255) {
-			int b = buffer[i];
-			int g = buffer[i+1];
-			int r = buffer[i+2];
-			int alpha = buffer[i+3];
-			bool hasA = true;
-		}
-	}
+	
 };
 
 bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
@@ -141,6 +133,13 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 
 
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)){
+		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
+			m_CsriFrame->pixfmt = CSRI_F_BGR_;
+			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
+				delete text;
+				return true;
+			}
+		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;
@@ -180,6 +179,13 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		return false; 
 	}
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
+		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
+			m_CsriFrame->pixfmt = CSRI_F_BGR_;
+			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
+				delete text;
+				return true;
+			}
+		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;
@@ -259,6 +265,11 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 	m_CsriFormat->height = size.GetHeight();
 	m_CsriFormat->pixfmt = m_CsriFrame->pixfmt;
 	if (!m_CsriFormat || csri_request_fmt(m_CsriInstance, m_CsriFormat)) {
+		if (m_CsriFrame->pixfmt == CSRI_F_BGRA) {
+			m_CsriFrame->pixfmt = CSRI_F_BGR_;
+			if (!csri_request_fmt(m_CsriInstance, m_CsriFormat))
+				return;
+		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
 		m_CsriInstance = NULL;

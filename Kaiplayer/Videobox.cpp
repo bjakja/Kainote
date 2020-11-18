@@ -1072,7 +1072,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	else if (id >= VIDEO_SAVE_FRAME_TO_PNG && id <= VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD && GetState() == Paused){
 		CColorSpaceConverter conv(renderer->m_Format, renderer->m_Width, renderer->m_Height);
 		bool del = false;
-		byte *framebuf = renderer->GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
+		byte *framebuf = renderer->GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del, &conv);
 		if (id == VIDEO_SAVE_FRAME_TO_PNG || id == VIDEO_SAVE_SUBBED_FRAME_TO_PNG){
 			wxString path;
 			int num = 1;

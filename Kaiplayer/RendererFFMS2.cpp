@@ -522,7 +522,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 
 }
 
-byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
+byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del, void *converter)
 {
 	bool ffnsubs = (!subs);
 	byte *cpy1;

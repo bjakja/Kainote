@@ -39,6 +39,7 @@ public:
 	virtual bool OpenString(wxString *text){ return false; };
 	virtual void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped) {};
 	virtual void ReloadLibraries(bool destroyExisted = false) {};
+	virtual bool IsLibass() { return false; }
 	//implementation in subtitlesVsfilter
 	static void DestroySubtitlesProvider();
 	static ASS_Renderer *m_Libass;
@@ -82,6 +83,7 @@ public:
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	void ReloadLibraries(bool destroyExisted = false);
+	bool IsLibass() { return true; }
 	ASS_Track *m_AssTrack = NULL;
 	static std::atomic<bool> m_IsReady;
 	HANDLE thread = NULL;

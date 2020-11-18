@@ -87,9 +87,7 @@ CSRIAPI csri_inst *csri_open_mem(csri_rend *renderer, const void *data, size_t l
 	inst->cs = new CCritSec();
 	//if(!inst->cs){return 0;}
 	//CAutoLock cAutoLock(inst->cs);
-	inst->rts = new CRenderedTextSubtitle(inst->cs);//m_eYCbCrMatrix
-	//inst->rts->m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
-	//inst->rts->m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+	inst->rts = new CRenderedTextSubtitle(inst->cs);
 	inst->spp=NULL;
 	if (inst->rts->Open((BYTE*)data, (int)length, DEFAULT_CHARSET, _T("CSRI memory subtitles"))) {
 		inst->rts->AddRef();
@@ -138,7 +136,9 @@ CSRIAPI int csri_request_fmt(csri_inst *inst, const struct csri_fmt *fmt)
 		case CSRI_F_YV12A:
 			col=MSP_NV12;
 			break;
-
+		case CSRI_F_BGRA:
+			col = MSP_RGBA;
+			break;
 
 		default:
 			return -1;
@@ -168,7 +168,6 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 			spd.bpp = 32;
 			spd.bits = frame->planes[0];
 			spd.pitch = frame->strides[0];
-			//MessageBox(0,L"rgb",L"",0);
 			break;
 
 		case CSRI_F_BGR:
@@ -183,7 +182,6 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 			spd.bpp = 16;
 			spd.bits = frame->planes[0];
 			spd.pitch = frame->strides[0];
-			//MessageBox(0,L"yuy2",L"",0);
 			break;
 
 		case CSRI_F_YV12A:
@@ -191,7 +189,6 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 			spd.bpp = 8;
 			spd.bits = frame->planes[0];
 			spd.pitch = frame->strides[0];
-			//MessageBox(0,L"nv12",L"",0);
 			break;
 
 		case CSRI_F_YV12:
@@ -199,10 +196,15 @@ CSRIAPI void csri_render(csri_inst *inst, struct csri_frame *frame, double time)
 			spd.bpp = 8;
 			spd.bits = frame->planes[0];
 			spd.pitch = frame->strides[0];
-			//MessageBox(0,L"yv12",L"",0);
+			break;
+
+		case CSRI_F_BGRA:
+			spd.type = MSP_RGBA;
+			spd.bpp = 32;
+			spd.bits = frame->planes[0];
+			spd.pitch = frame->strides[0];
 			break;
 		default:
-			//MessageBox(0,L"Brak formatu",L"",0);
 			return;
 		break;
 	}

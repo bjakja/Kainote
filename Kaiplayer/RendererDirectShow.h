@@ -55,7 +55,7 @@ public:
 	void ChangePositionByFrame(int cpos);
 	void ChangeVobsub(bool vobsub = false);
 	wxArrayString GetStreams();
-	byte *GetFramewithSubs(bool subs, bool *del);
+	byte *GetFramewithSubs(bool subs, bool *del, void *converter);
 	
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);
@@ -67,8 +67,10 @@ private:
 	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = NULL;
 	LPDIRECT3DTEXTURE9 m_BlitTexture = NULL;
 	LPDIRECT3DVERTEXBUFFER9 m_D3DVertex = NULL;
+	LPDIRECT3DVERTEXBUFFER9 m_D3DFrameVertex = NULL;
+	LPDIRECT3DTEXTURE9 m_FrameTexture;
 	unsigned char * m_SubtitlesBuffer = NULL;
-	//CUSTOMVERTEX m_Vertices[4];
+
 	int m_WindowWidth = -1;
 	int m_WindowHeight = -1;
 	int m_LastBufferSize = -1;

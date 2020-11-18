@@ -74,8 +74,8 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	vertex = NULL;
 	texture = NULL;
 #endif
-	m_DXVAProcessor = NULL;
-	m_DXVAService = NULL;
+	//m_DXVAProcessor = NULL;
+	//m_DXVAService = NULL;
 }
 
 RendererVideo::~RendererVideo()
@@ -333,8 +333,8 @@ void RendererVideo::Clear(bool clearObject)
 	SAFE_RELEASE(vertex);
 	SAFE_RELEASE(texture);
 #endif
-	SAFE_RELEASE(m_DXVAProcessor);
-	SAFE_RELEASE(m_DXVAService);
+	//SAFE_RELEASE(m_DXVAProcessor);
+	//SAFE_RELEASE(m_DXVAService);
 	ClearObject();
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);

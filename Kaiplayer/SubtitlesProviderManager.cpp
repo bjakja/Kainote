@@ -104,6 +104,11 @@ void SubtitlesProviderManager::SetVideoParameters(const wxSize& size, unsigned c
 	GetProvider()->SetVideoParameters(size, format, isSwapped);
 }
 
+bool SubtitlesProviderManager::IsLibass()
+{
+	return GetProvider()->IsLibass();
+}
+
 void SubtitlesProviderManager::ReloadLibraries()
 {
 	wxString provider = Options.GetString(VSFILTER_INSTANCE);

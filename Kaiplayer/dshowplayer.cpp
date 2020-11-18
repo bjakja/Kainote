@@ -447,7 +447,7 @@ void DShowPlayer::SetVolume(long volume)
 	if (m_pBA)
 	{
 		hr = m_pBA->put_Volume(volume);
-		if (FAILED(hr)){ KaiLogSilent(L"volume dont working!"); }
+		if (FAILED(hr)){ KaiLogSilent(L"Set volume dont working!"); }
 	}
 
 }
@@ -459,7 +459,7 @@ long DShowPlayer::GetVolume()
 	if (m_pBA)
 	{
 		hr = m_pBA->get_Volume(&volume);
-		if (FAILED(hr)){ MessageBox(hwndVid, L"volume dont working!", L"Open file", MB_OK); }
+		if (FAILED(hr)){ KaiLogSilent(L"Get volume dont working!"); }
 	}
 	return volume;
 }

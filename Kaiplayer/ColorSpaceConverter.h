@@ -33,6 +33,7 @@ public:
 	virtual ~CColorSpaceConverter(void);
 
 	BYTE* convert_to_rgb24(BYTE* frameBuffer);
+	BYTE* convert_to_rgb32(BYTE* frameBuffer);
 	void SavePNG(wxString path, BYTE* frameBuffer);
 	void SavetoClipboard(BYTE* frameBuffer);
 

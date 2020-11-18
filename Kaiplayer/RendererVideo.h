@@ -20,7 +20,7 @@
 //#include "Videobox.h"
 //#include "dshowplayer.h"
 #include "Visuals.h"
-#include <dxva2api.h>
+//#include <dxva2api.h>
 #include <vector>
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
@@ -112,7 +112,7 @@ public:
 	virtual void ChangePositionByFrame(int cpos){};
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
-	virtual byte *GetFramewithSubs(bool subs, bool *del){ return NULL; };
+	virtual byte *GetFramewithSubs(bool subs, bool *del, void *converter){ return NULL; };
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
@@ -150,8 +150,8 @@ public:
 	size_t m_LastTime;
 	FloatRect m_ZoomRect;
 	std::vector<chapter> m_Chapters;
-	IDirectXVideoProcessorService *m_DXVAService;
-	IDirectXVideoProcessor *m_DXVAProcessor;
+	//IDirectXVideoProcessorService *m_DXVAService;
+	//IDirectXVideoProcessor *m_DXVAProcessor;
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 	VideoCtrl *videoControl;

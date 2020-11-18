@@ -47,6 +47,7 @@ public:
 	//for styles preview and visuals
 	bool OpenString(wxString *text);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
+	bool IsLibass();
 	static void ReloadLibraries();
 	static void GetProviders(wxArrayString *providerList);
 	static void DestroyProviders();
