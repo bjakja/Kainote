@@ -62,16 +62,29 @@ public:
 	bool InitRendererDX();
 	void OpenKeyframes(const wxString &filename);
 	void ClearObject();
+	void SetColorSpace(const wxString& matrix, bool render = true) {
+		if (matrix == L"TV.601")
+			m_VideoMatrix = DXVA2_VideoTransferMatrix_BT601;
+		else if(matrix == L"TV.709")
+			m_VideoMatrix = DXVA2_VideoTransferMatrix_BT709;
+		else
+			m_VideoMatrix = DXVA2_VideoTransferMatrix_BT601;
+		
+		if (m_State == Paused)
+			Render();
+	}
 private:
 	DShowPlayer *m_DirectShowPlayer;
 	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = NULL;
 	LPDIRECT3DTEXTURE9 m_BlitTexture = NULL;
 	LPDIRECT3DVERTEXBUFFER9 m_D3DVertex = NULL;
-	LPDIRECT3DVERTEXBUFFER9 m_D3DFrameVertex = NULL;
-	LPDIRECT3DTEXTURE9 m_FrameTexture;
+	//LPDIRECT3DVERTEXBUFFER9 m_D3DFrameVertex = NULL;
+	//LPDIRECT3DTEXTURE9 m_FrameTexture;
+	//LPDIRECT3DPIXELSHADER9 m_CompiledShader = NULL;
 	unsigned char * m_SubtitlesBuffer = NULL;
-
+	//CUSTOMVERTEX pVertices[4];
 	int m_WindowWidth = -1;
 	int m_WindowHeight = -1;
 	int m_LastBufferSize = -1;
+	DXVA2_VideoTransferMatrix m_VideoMatrix = DXVA2_VideoTransferMatrix_BT601;
 };

@@ -116,11 +116,11 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 		//*SubType != WMMEDIASUBTYPE_I420 &&
 		//*SubType != MEDIASUBTYPE_IYUV //&&
 		*SubType != MEDIASUBTYPE_NV12 &&
-		*SubType != MEDIASUBTYPE_YUY2
+		*SubType != MEDIASUBTYPE_YUY2 &&
 		/*SubType != MEDIASUBTYPE_RGB555 &&
 		*SubType != MEDIASUBTYPE_RGB565 &&*/
 		//*SubType != MEDIASUBTYPE_RGB24 &&
-		&& *SubType != MEDIASUBTYPE_RGB32
+		*SubType != MEDIASUBTYPE_RGB32
 		)
 	{
 		return E_FAIL;

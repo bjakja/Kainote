@@ -74,8 +74,8 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	vertex = NULL;
 	texture = NULL;
 #endif
-	//m_DXVAProcessor = NULL;
-	//m_DXVAService = NULL;
+	m_DXVAProcessor = NULL;
+	m_DXVAService = NULL;
 }
 
 RendererVideo::~RendererVideo()
@@ -237,10 +237,10 @@ bool RendererVideo::InitDX(bool reset)
 	}
 	else{
 		hr = m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE, &d3dpp, &m_D3DDevice);//| D3DCREATE_FPU_PRESERVE
+			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE | D3DCREATE_PUREDEVICE, &d3dpp, &m_D3DDevice);//| D3DCREATE_FPU_PRESERVE
 		if (FAILED(hr)){
 			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE, &d3dpp, &m_D3DDevice),
+				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE | D3DCREATE_PUREDEVICE, &d3dpp, &m_D3DDevice),
 				_("Nie można utworzyć urządzenia D3D9"));
 		}
 	}
@@ -268,8 +268,8 @@ bool RendererVideo::InitDX(bool reset)
 
 	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
-
-	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0, m_WindowRect.right, m_WindowRect.bottom, 0, 0.0f, 1.0f);
+	//fix to shitty subs on radeons texture is stretched and need filtering linear and looks blured or on filter point are pixelized
+	D3DXMatrixOrthoOffCenterLH(&matOrtho, 0.5f, m_WindowRect.right + 0.5f, m_WindowRect.bottom + 0.5f, 0.5f, 0.0f, 1.0f);
 	D3DXMatrixIdentity(&matIdentity);
 
 	HR(m_D3DDevice->SetTransform(D3DTS_PROJECTION, &matOrtho), _("Nie można ustawić macierzy projekcji"));
@@ -333,8 +333,8 @@ void RendererVideo::Clear(bool clearObject)
 	SAFE_RELEASE(vertex);
 	SAFE_RELEASE(texture);
 #endif
-	//SAFE_RELEASE(m_DXVAProcessor);
-	//SAFE_RELEASE(m_DXVAService);
+	SAFE_RELEASE(m_DXVAProcessor);
+	SAFE_RELEASE(m_DXVAService);
 	ClearObject();
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);

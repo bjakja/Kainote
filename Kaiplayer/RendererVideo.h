@@ -20,7 +20,7 @@
 //#include "Videobox.h"
 //#include "dshowplayer.h"
 #include "Visuals.h"
-//#include <dxva2api.h>
+#include <dxva2api.h>
 #include <vector>
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
@@ -150,8 +150,8 @@ public:
 	size_t m_LastTime;
 	FloatRect m_ZoomRect;
 	std::vector<chapter> m_Chapters;
-	//IDirectXVideoProcessorService *m_DXVAService;
-	//IDirectXVideoProcessor *m_DXVAProcessor;
+	IDirectXVideoProcessorService *m_DXVAService;
+	IDirectXVideoProcessor *m_DXVAProcessor;
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 	VideoCtrl *videoControl;

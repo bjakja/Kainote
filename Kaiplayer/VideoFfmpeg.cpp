@@ -432,6 +432,9 @@ done:
 			}
 			if (colormatrix == L"TV.601"){
 				ColorSpace = ColorCatrixDescription(FFMS_CS_BT470BG, CR);
+				if (FFMS_SetInputFormatV(videosource, FFMS_CS_BT470BG, CR, FFMS_GetPixFmt(""), &errinfo)) {
+					KaiLog(_("Nie można zmienić macierzy YCbCr"));
+				}
 			}
 			else if (colormatrix == L"TV.709"){
 				ColorSpace = ColorCatrixDescription(FFMS_CS_BT709, CR);
