@@ -464,7 +464,7 @@ void SubsGrid::OnPaste(int id)
 		wxTheClipboard->Close();
 		if (whatpaste == L""){ Thaw(); return; }
 	}
-	wxStringTokenizer wpaste(whatpaste, L"\n", wxTOKEN_STRTOK);
+	wxStringTokenizer wpaste(whatpaste, L"\n\r", wxTOKEN_STRTOK);
 	int cttkns = wpaste.CountTokens();
 	int rws = (id == GRID_PASTE_COLUMNS) ? 0 : row;
 	std::vector<Dialogue*> tmpdial;

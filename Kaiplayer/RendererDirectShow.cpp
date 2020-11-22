@@ -136,19 +136,19 @@ bool RendererDirectShow::InitRendererDX()
 	HR(hr = m_D3DVertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora vertex");
 	// looks like it places 1px border that's position is moved by 1
 
-	pVertices[0].position = D3DXVECTOR3(-0.5f, -0.5f, 0.0f);
+	pVertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVertices[0].tu = 0.0f;
 	pVertices[0].tv = 0.0f;
-	pVertices[1].position = D3DXVECTOR3(m_WindowWidth - 0.5f, -0.5f, 0.0f);
+	pVertices[1].position = D3DXVECTOR3(m_WindowWidth, 0.0f, 0.0f);
 	pVertices[1].tu = 1.0f;
 	pVertices[1].tv = 0.0f;
-	pVertices[2].position = D3DXVECTOR3(m_WindowWidth - 0.5f, m_WindowHeight - 0.5f, 0.0f);
+	pVertices[2].position = D3DXVECTOR3(m_WindowWidth, m_WindowHeight, 0.0f);
 	pVertices[2].tu = 1.0f;
 	pVertices[2].tv = 1.0f;
-	pVertices[3].position = D3DXVECTOR3(-0.5f, m_WindowHeight - 0.5f, 0.0f);
+	pVertices[3].position = D3DXVECTOR3(0.0f, m_WindowHeight, 0.0f);
 	pVertices[3].tu = 0.0f;
 	pVertices[3].tv = 1.0f;
-	pVertices[4].position = D3DXVECTOR3(-0.5f, -0.5f, 0.0f);
+	pVertices[4].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	pVertices[4].tu = 0.0f;
 	pVertices[4].tv = 0.0f;
 
