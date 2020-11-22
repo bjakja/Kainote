@@ -1037,7 +1037,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 	wxString tags[] = { L"pos", L"move", L"bord", L"shad", L"org", L"fsp", L"fscx", 
 		L"fs", L"clip", L"iclip", L"p", L"xbord", L"ybord", L"xshad", L"yshad" };
 	for (size_t i = 0; i < file->GetCount(); i++){
-		//zaczniemy od najłatwiejszego, marginesy
+		//first the easiest, margins
 
 		Dialogue *diall = file->GetDialogue(i);
 		if (diall->IsComment){ continue; }
@@ -1057,7 +1057,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		if (!pdata){ continue; }
 		size_t tagsSize = pdata->tags.size();
 		//if(tagsSize < 1){continue;}
-		//pętla tagów
+		//tags loop
 		int j = tagsSize - 1;
 		while (j >= 0){
 			TagData *tag = pdata->tags[j--];
@@ -1166,7 +1166,6 @@ void SubsGrid::OnMakeContinous(int idd)
 	if (selections.size() < 0){ wxBell(); return; }
 	if (idd == GRID_MAKE_CONTINOUS_PREVIOUS_LINE){
 
-		/*int diff=GetDial(fs)->End.mstime - GetDial(fs-1)->Start.mstime;*/
 		for (size_t i = 0; i < selections.size(); i++)
 		{
 			if (selections[i] < 1){ continue; }
