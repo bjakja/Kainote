@@ -92,8 +92,7 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 	//stop streaming not working, first sample is blocked
 	Vrend->DrawTexture(pBuffer, endOfPlaying || Vrend->m_VideoResized);
 	Vrend->Render();
-	/*}else{byte *cpy = (byte*) Vrend->datas; memcpy(cpy,pBuffer,pMediaSample->GetSize());}*/
-
+	
 	return S_OK;
 }
 
@@ -130,9 +129,7 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 	{
 		return E_FAIL;
 	}
-	/*OLECHAR bstrGuid[100];
-	StringFromGUID2(*SubType,bstrGuid,100);
-	wLogStatus(wxString(bstrGuid));*/
+	
 	return S_OK;
 }
 

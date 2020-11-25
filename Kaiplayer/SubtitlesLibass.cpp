@@ -56,13 +56,8 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 		ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
 	}
 	libass->m_IsReady.store(libass->m_Libass != NULL);
-	if (libass->m_SubsSkipped) {
-		TabPanel * tab = Notebook::GetTab();
-		if (tab->Video->GetState() != None) {
-			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
-		}
-	}
-	
+	//reload all tabs to shows subtitles
+	Notebook::RefreshVideo();
 
 	return 0;
 }
@@ -250,6 +245,7 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 {
 	wxMutexLocker lock(openMutex);
 	if (destroyExisted) {
+		m_IsReady.store(false);
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
 			m_Libass = NULL;
@@ -260,6 +256,7 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 		}
 	}
 	if (!m_Library) {
+		m_IsReady.store(false);
 		m_Library = ass_library_init();
 		ass_set_message_cb(m_Library, MessageCallback, NULL);
 		if (!m_Libass) {

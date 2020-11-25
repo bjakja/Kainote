@@ -193,6 +193,7 @@ TabPanel *Notebook::Page(size_t i)
 
 void Notebook::DeletePage(int page)
 {
+	wxMutexLocker lock(closeTabMutex);
 	if (page < 0 || page >= Pages.size()) {
 		KaiLog("You try to delete not existing tab");
 		return;
@@ -596,8 +597,8 @@ void Notebook::OnSize(wxSizeEvent& event)
 		bool aciter = (Pages[iter]->GetPosition().x == 1);
 		int tmpsplititer = (!aciter) ? iter : splititer;
 		int tmpiter = (aciter) ? iter : splititer;
-		Pages[tmpsplititer]->SetSize(w - (splitline + 2), h);
-		Pages[tmpiter]->SetSize((splitline - 2), h);
+		Pages[tmpsplititer]->SetSize(w - (splitline + 3), h - 2);
+		Pages[tmpiter]->SetSize((splitline - 3), h - 2);
 	}
 	else{
 		Pages[iter]->SetSize(w, h);
@@ -1497,17 +1498,21 @@ int Notebook::GetIterByPos(const wxPoint &pos){
 
 void Notebook::RefreshVideo(bool reloadLibass /*= false*/)
 {
-	//libass need to reload library adn renderer
+	//libass need to reload library and renderer
+	bool noReopenSubs = false;
+	//when libass is reloaded there is no need to reopen subs 
+	//cause it failed and it will reopen when libass load
 	if(reloadLibass)
-		SubtitlesProviderManager::ReloadLibraries();
-
-	for (int i = 0; i < sthis->Size(); i++){
-		TabPanel *tab = sthis->Page(i);
-		if (tab->Video->GetState() != None){
-			tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
+		noReopenSubs = SubtitlesProviderManager::ReloadLibraries();
+	
+	if (!noReopenSubs) {
+		for (int i = 0; i < sthis->Size(); i++) {
+			TabPanel *tab = sthis->Page(i);
+			if (tab->Video->GetState() != None) {
+				tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
+			}
 		}
 	}
-
 }
 
 bool Notebook::SetFont(const wxFont &_font)

@@ -413,6 +413,15 @@
     <ClCompile Include="VisualScaleRotation.cpp">
       <Filter>Source Files\Video\Visuals</Filter>
     </ClCompile>
+    <ClCompile Include="ContextDX9.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextVulkan.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Context.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -759,6 +768,15 @@
     </ClInclude>
     <ClInclude Include="Visuals.h">
       <Filter>Source Files\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextDX9.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextVulkan.h">
+      <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Context.h">
+      <Filter>Source Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

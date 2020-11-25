@@ -111,6 +111,7 @@ private:
 	wxTimer tabsScroll;
 	HHOOK Hook;
 	KainoteFrame *Kai;
+	wxMutex closeTabMutex;
 
 	static LRESULT CALLBACK PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam);
 

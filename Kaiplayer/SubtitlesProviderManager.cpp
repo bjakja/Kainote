@@ -109,13 +109,14 @@ bool SubtitlesProviderManager::IsLibass()
 	return GetProvider()->IsLibass();
 }
 
-void SubtitlesProviderManager::ReloadLibraries()
+bool SubtitlesProviderManager::ReloadLibraries()
 {
 	wxString provider = Options.GetString(VSFILTER_INSTANCE);
 	if (provider == L"libass") {
 		if (gs_Base.size() > 0) {
 			gs_Base[0]->GetProvider()->ReloadLibraries(true);
 		}
+		return true;
 	}
 }
 
