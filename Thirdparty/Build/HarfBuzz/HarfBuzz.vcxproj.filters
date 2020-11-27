@@ -11,21 +11,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\harfbuzz\src\dump-indic-data.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\dump-khmer-data.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\dump-myanmar-data.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\dump-use-data.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\harfbuzz.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-aat-layout.cc">
       <Filter>Source Files</Filter>
     </ClCompile>

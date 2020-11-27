@@ -38,9 +38,6 @@
     <ClCompile Include="..\..\FreeType2\src\autofit\autofit.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\FreeType2\src\base\ftfntfmt.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\FreeType2\src\base\ftgasp.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -51,9 +48,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\FreeType2\src\base\ftinit.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\FreeType2\src\base\ftlcdfil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\FreeType2\src\base\ftmm.c">

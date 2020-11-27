@@ -34,7 +34,7 @@ public:
 	void DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd, int diff = 0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000);
 	void DrawLines(D3DXVECTOR2 *vector, size_t vectorSize, unsigned int color);
-	int CreateFont(const wxFont &font) override;
+	int CreateFont(const wxString &fontName, int height, bool bold, bool italic) override;
 	void DrawOutlinedText(int fontIndex, const wxString &text, RECT textRect, unsigned int textAlign, unsigned int color);
 	void DrawNormalText(int fontIndex, const wxString &text, RECT textRect, unsigned int textAlign, unsigned int color);
 	void DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, unsigned int PrimitiveCount, const void* pVertexStreamZeroData, unsigned int VertexStreamZeroStride);

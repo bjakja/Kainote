@@ -55,24 +55,24 @@ void  ContextVulkan::DrawZoom()
 {
 
 }
-void  ContextVulkan::DrawRect(D3DXVECTOR2 position, bool sel = false, float size = 5.0f)
+void  ContextVulkan::DrawRect(D3DXVECTOR2 position, bool sel, float size)
 {
 
 }
-void  ContextVulkan::DrawCircle(D3DXVECTOR2 position, bool sel = false, float size = 6.0f)
+void  ContextVulkan::DrawCircle(D3DXVECTOR2 position, bool sel, float size)
 {
 
 }
-void  ContextVulkan::DrawCross(D3DXVECTOR2 position, unsigned int color = 0xFFFF0000, bool useBegin = true)
+void  ContextVulkan::DrawCross(D3DXVECTOR2 position, unsigned int color, bool useBegin)
 {
 
 }
 //positionEnd moves end line point to arrow start
-void  ContextVulkan::DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd, int diff = 0)
+void  ContextVulkan::DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd, int diff)
 {
 
 }
-void  ContextVulkan::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000)
+void  ContextVulkan::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen, unsigned int color)
 {
 
 }
@@ -80,7 +80,7 @@ void  ContextVulkan::DrawLines(D3DXVECTOR2 *vector, size_t vectorSize, unsigned 
 {
 
 }
-int ContextVulkan::CreateFont(const wxFont & font)
+int ContextVulkan::CreateFont(const wxString &fontName, int height, bool bold, bool italic)
 {
 	return 0;
 }

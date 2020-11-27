@@ -193,13 +193,13 @@ void KaiSlider::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (!holding){
-		if (!enter && coord >= thumbPos && coord <= thumbPos + thumbSize && coord2 >= 0 && coord2 <= size2){
-			enter = true;
+		if (!toolTipChanged && coord >= thumbPos && coord <= thumbPos + thumbSize && coord2 >= 0 && coord2 <= size2){
+			toolTipChanged = true;
 			wxWindow::SetToolTip(std::to_wstring(GetValue()));
 			Refresh(false);
 		}
-		else if (enter && (coord < thumbPos || coord > thumbPos + thumbSize || coord2 < 0 || coord2 > size2)){
-			enter = false;
+		else if (toolTipChanged && (coord < thumbPos || coord > thumbPos + thumbSize || coord2 < 0 || coord2 > size2)){
+			toolTipChanged = false;
 			wxWindow::SetToolTip(tip);
 			Refresh(false);
 		}

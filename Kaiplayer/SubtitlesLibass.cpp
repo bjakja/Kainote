@@ -133,6 +133,7 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 		//make an info of loading fonts to Libass
 		//best to draw it on video 
 		//make function for it in renderer and use it here;
+		//KaiLog("Libass not ready to render");
 	}
 }
 
@@ -143,8 +144,9 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
 			KaiLog(_("Libass działa tylko z FFMS2"));//Libass only works with with FFMS2
-		else
-			m_SubsSkipped = true;
+		//else
+			//KaiLog("Libass not ready to open");
+			//m_SubsSkipped = true;
 
 		return false;
 	}
@@ -245,6 +247,7 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 {
 	wxMutexLocker lock(openMutex);
 	if (destroyExisted) {
+		//KaiLog("Libass release");
 		m_IsReady.store(false);
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
@@ -256,6 +259,7 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 		}
 	}
 	if (!m_Library) {
+		//KaiLog("Libass create");
 		m_IsReady.store(false);
 		m_Library = ass_library_init();
 		ass_set_message_cb(m_Library, MessageCallback, NULL);

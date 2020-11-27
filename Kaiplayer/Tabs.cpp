@@ -487,7 +487,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	//swap tabs
-	if (event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI){
+	if (event.LeftIsDown() && i >= 0 && oldI >= 0 && i != oldI && oldI < tabNames.GetCount()){
 		wxString tmpname = tabNames[i];
 		int tmpsize = tabSizes[i];
 		tabNames[i] = tabNames[oldI];
@@ -1211,7 +1211,13 @@ Notebook *Notebook::GetTabs()
 //checking and return null when all tabs removed or iter is >= then size
 TabPanel *Notebook::GetTab()
 {
-	return (sthis->iter < sthis->Size())? sthis->Pages[sthis->iter] : NULL;
+	if(sthis->iter < sthis->Size())
+		return sthis->Pages[sthis->iter];
+	else {
+		KaiLog(wxString::Format("bad iter %i / %i sleep 5000 and crash", sthis->iter, (int)sthis->Size()));
+		Sleep(5000);
+		return NULL;
+	}
 }
 
 void Notebook::SaveLastSession(bool beforeClose)

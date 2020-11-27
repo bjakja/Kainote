@@ -51,6 +51,7 @@ private:
 	int diff;
 	bool isUpDirection;
 	bool enter;
+	bool toolTipChanged = false;
 	bool pushed;
 	bool holding;
 	wxBitmap *bmp;

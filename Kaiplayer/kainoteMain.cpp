@@ -1298,6 +1298,10 @@ TabPanel* KainoteFrame::GetTab()
 void KainoteFrame::Label(int iter/*=0*/, bool video/*=false*/, int wtab/*=-1*/, bool onlyTabs /*= false*/)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
+	if (!atab) {
+		KaiLog(wxString::Format(L"cannot get tab %i/%i, label not set", wtab, (int)Tabs->Size()));
+		return;
+	}
 	wxString whiter;
 	if (atab->Grid->IsModified()){ whiter << iter << L"*"; }
 
