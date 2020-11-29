@@ -422,6 +422,9 @@
     <ClCompile Include="Context.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="LineParse.cpp">
+      <Filter>Source Files\Subs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -777,6 +780,9 @@
     </ClInclude>
     <ClInclude Include="Context.h">
       <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="LineParse.h">
+      <Filter>Source Files\Subs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

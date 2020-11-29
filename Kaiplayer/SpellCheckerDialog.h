@@ -43,7 +43,6 @@ private:
 	void OnActive(wxActivateEvent &evt);
 	wxString GetRightCase(const wxString &replaceWord, const wxString &misspellWord);
 	bool IsAllUpperCase(const wxString &word);
-	void CheckText(wxString Text);
 	void LoadAddedMisspels(wxArrayString &addedMisspels);
 
 	KaiTextCtrl *misSpell;

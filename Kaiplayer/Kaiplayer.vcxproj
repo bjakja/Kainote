@@ -545,6 +545,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </ClCompile>
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="Languages.cpp" />
+    <ClCompile Include="LineParse.cpp" />
     <ClCompile Include="RendererDirectShow.cpp" />
     <ClCompile Include="RendererFFMS2.cpp" />
     <ClCompile Include="RendererVideo.cpp" />
@@ -699,6 +700,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="KaiGauge.h" />
+    <ClInclude Include="LineParse.h" />
     <ClInclude Include="RendererDirectShow.h" />
     <ClInclude Include="RendererFFMS2.h" />
     <ClInclude Include="RendererVideo.h" />

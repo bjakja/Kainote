@@ -488,12 +488,12 @@ void EditBox::UpdateChars()
 	else{
 		wxString result;
 		bool isbad = false;
-		TextEditor * GLOBAL_EDITOR = GetEditor();
-		int ilzn = grid->CalcChars(GLOBAL_EDITOR->GetValue(), &result, &isbad);
+		TextEditor * editor = GetEditor();
+		int ilzn = grid->CalcChars(editor->GetValue(), &result, &isbad);
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
-		if (chtime < 0 || chtime>999){ chtime = 999; }
+		if (chtime < 0 || chtime > 999){ chtime = 999; }
 		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}

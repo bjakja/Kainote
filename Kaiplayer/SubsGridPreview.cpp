@@ -359,7 +359,10 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != L"" || previewGrid->hasTLMode && txttl != L"")){
 				if (previewGrid->SpellErrors[key].size() < 2){
-					previewGrid->CheckText(strings[strings.size() - 1], previewGrid->SpellErrors[key], chtag);
+					SpellChecker::Get()->CheckTextAndBrackets(
+						strings[strings.size() - 1], 
+						&previewGrid->SpellErrors[key], NULL, 
+						previewGrid->hideOverrideTags? chtag : L"");
 				}
 			}
 			isSelected = previewGrid->file->IsSelected(key);

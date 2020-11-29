@@ -38,7 +38,12 @@
 #include "KaiMessageBox.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
+#include "SpellChecker.h"
 #include "utils.h"
+#include <boost/locale/boundary/index.hpp>
+#include <boost/locale/boundary/segment.hpp>
+#include <boost/locale/boundary/types.hpp>
+#include <boost/locale/generator.hpp>
 
 #undef IsMaximized
 #if _DEBUG
@@ -250,6 +255,60 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
+		using namespace boost::locale;
+		using namespace std;
+
+		generator gen;
+		// Make system default locale global
+		std::locale loc = gen("");
+		locale::global(loc);
+
+
+		wstring text = L"อย่าเพิ่งได้สิ้นหวังไปครับ เพราะทุกวิกฤตมีเกิดแล้วย่อมมีดับเป็นธรรมดา การแพร่ระบาดครั้งนี้ก็เช่นกัน คำถามสำคัญที่ตามมาคือ เมื่อวิกฤตครั้งนี้สิ้นสุดลงแล้ว โลกใบนี้จะเปลี่ยนแปลงไปอย่างไร บางขุนพรหมชวนคิดจึงขอชวนท่านผู้อ่านมองไปข้างหน้าและคิดตามกันในแง่มุมต่าง ๆ ดังต่อไปนี้ครับ";
+
+		KaiLog(text);
+
+		boundary::wssegment_index index(boundary::word, text.begin(), text.end());
+		boundary::wssegment_index::iterator p, e;
+		int counter1 = 0;
+		wxString cout1;
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			if (p->rule() & boundary::word_number)
+				counter1 += wxString(*p).length();
+			if (p->rule() & boundary::word_letters) {
+				if (!SpellChecker::Get()->CheckWord(wxString(*p)))
+					cout1 << L"misspelled word: " << wxString(*p) << L"\n";
+				else
+					cout1 << L"not misspelled word: " << wxString(*p) << L"\n";
+
+				counter1 += wxString(*p).length();
+			}
+				
+		}
+
+		
+		/*index.map(boundary::character, text.begin(), text.end());
+
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			cout1 << L"|" << wxString(*p);
+		}
+		cout1 << "|\n\n";
+
+		index.map(boundary::line, text.begin(), text.end());
+
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			cout1 << L"|" << wxString(*p);
+		}
+		cout1 << "|\n\n";
+
+		index.map(boundary::sentence, text.begin(), text.end());
+
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			cout1 << L"|" << wxString(*p);
+		}
+		cout1 << "|\n\n";*/
+		KaiLog(cout1);
+		KaiLog(wxString::Format(L"Counter %i", counter1));
 	}, 9989);
 
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
@@ -291,6 +350,11 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 			focusFunction(wxFocusEvent());
 
 	}, 6789);
+
+	boost::locale::generator gen;
+	// Make system default locale global
+	std::locale loc = gen("");
+	std::locale::global(loc);
 }
 
 KainoteFrame::~KainoteFrame()

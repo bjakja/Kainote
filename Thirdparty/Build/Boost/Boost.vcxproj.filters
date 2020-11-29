@@ -129,9 +129,6 @@
     <ClCompile Include="..\..\Boost\libs\thread\src\win32\thread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Boost\libs\thread\src\win32\tss_dll.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Boost\libs\date_time\src\gregorian\greg_month.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -145,6 +142,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Boost\libs\filesystem\src\directory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Boost\libs\thread\src\tss_null.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

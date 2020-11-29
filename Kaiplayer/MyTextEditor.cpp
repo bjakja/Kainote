@@ -1685,93 +1685,9 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 void TextEditor::CheckText()
 {
 	if (MText == L""){ return; }
-	wxString text = MText;
 	errors.clear();
 	misspels.Clear();
-	text += L" ";
-	bool block = false;
-	wxString word = L"";
-	int lasti = 0;
-	int firsti = 0;
-	int lastStartBracket = -1;
-	int lastEndBracket = -1;
-	int lastStartCBracket = -1;
-	int lastStartTBracket = -1;
-	int lastEndCBracket = -1;
-	for (size_t i = 0; i < text.length(); i++)
-	{
-		wxUniChar ch = text.GetChar(i);
-		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\'' && !block){
-			if (word.length() > 1){
-				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
-				word.Trim(false); word.Trim(true);
-				bool isgood = SpellChecker::Get()->CheckWord(word);
-				if (!isgood){ misspels.Add(word); errors.push_back(firsti); errors.push_back(lasti); }
-			}
-			word = L""; firsti = i + 1;
-		}
-		if (block){
-			if (ch == L'{'){ errors.push_back(lastStartCBracket); errors.push_back(lastStartCBracket); misspels.Add(L""); }
-			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errors.push_back(i); errors.push_back(i); misspels.Add(L""); }
-			if (ch == L'('){
-				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]){ lastStartTBracket = i; continue; }
-				if (lastStartBracket > lastEndBracket){
-					errors.push_back(lastStartBracket); errors.push_back(lastStartBracket); misspels.Add(L"");
-				}
-				lastStartBracket = i;
-			}
-			if (ch == L')'){
-				if (lastStartBracket < lastEndBracket || lastStartBracket < 0){
-					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
-						lastStartTBracket = -1; continue;
-					}
-					errors.push_back(i); errors.push_back(i); misspels.Add(L"");
-				}
-				lastEndBracket = i;
-			}
-		}
-		if (!block && ch == L'}'){
-			errors.push_back(i); errors.push_back(i); misspels.Add(L"");
-		}
-		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}'){
-			errors.push_back(lastStartTBracket); errors.push_back(lastStartTBracket); misspels.Add(L"");
-			lastStartTBracket = -1;
-		}
-		if (ch == L'{'){ block = true; lastStartCBracket = i; continue; }
-		else if (ch == L'}'){ block = false; lastEndCBracket = i; firsti = i + 1; word = L""; continue; }
-
-		if (!block && /*notchar.Find(ch)==-1*/ (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') &&
-			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){
-			word << ch; lasti = i;
-		}
-		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
-			word = L"";
-			if (ch == L'N' || ch == L'n' || ch == L'h'){
-				firsti = i + 1;
-			}
-			else{
-				firsti = i;
-				word << ch;
-			}
-		}
-	}
-
-	if (lastStartCBracket > lastEndCBracket){ 
-		errors.push_back(lastStartCBracket); 
-		errors.push_back(lastStartCBracket); 
-		misspels.Add(L""); 
-	}
-	if (lastStartBracket > lastEndBracket){ 
-		errors.push_back(lastStartBracket); 
-		errors.push_back(lastStartBracket); 
-		misspels.Add(L""); 
-	}
-	if (lastStartTBracket >= 0){ 
-		errors.push_back(lastStartTBracket); 
-		errors.push_back(lastStartTBracket); 
-		misspels.Add(L""); 
-	}
+	SpellChecker::Get()->CheckTextAndBrackets(MText, &errors, &misspels);
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1796,7 +1712,6 @@ void TextEditor::OnKillFocus(wxFocusEvent& event)
 
 void TextEditor::FindWord(int pos, int *start, int *end)
 {
-	//wxString wfind = " ]})({[-—'`\"\\;:,.><?!*~@#$%^&/+=";
 	int len = MText.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
 	bool fromend = (start != NULL);
@@ -1930,11 +1845,40 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	if (id >= 30200){
 		int from = errors[error * 2];
 		int to = errors[(error * 2) + 1];
-		MText.replace(from, to - from + 1, suggs[id - 30200]);
+		size_t errLen = err.length();
+		wxString sugestion = suggs[id - 30200];
+		size_t sugLen = sugestion.length();
+		int newto = from + sugLen;
+		int offset = 0;
+		if (to < errLen + from) {
+			int j = from, k = to, m = 0;
+			while (m <= errLen) {
+				int repLen = k - j + 1;
+				if (m + repLen >= sugLen)
+					offset = m + repLen - sugLen;
+				//Mid is safe when m >= size or repLen >= size
+				MText.replace(j, repLen, sugestion.Mid(m, repLen));
+				if (m >= errLen) {
+					newto = k;
+				}
+				
+
+				error++;
+				if (error * 2 >= errors.GetCount()) {
+					newto = k;
+					break;
+				}
+				j = errors[error * 2] - offset;
+				k = errors[(error * 2) + 1] - offset;
+				m += repLen;
+			}
+		}else
+			MText.replace(from, to - from + 1, sugestion);
+
 		modified = true;
 		CalcWrap();
 		if (SpellCheckerOnOff){ CheckText(); }
-		int newto = from + suggs[id - 30200].length();
+		
 		SetSelection(newto, newto);
 		EB->Send(EDITBOX_SPELL_CHECKER, false);
 		modified = false;

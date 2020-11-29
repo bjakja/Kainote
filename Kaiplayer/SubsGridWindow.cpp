@@ -24,6 +24,10 @@
 #include "SubsGridPreview.h"
 #include <wx/regex.h>
 #include "GraphicsD2D.h"
+#include <boost/locale/boundary/index.hpp>
+#include <boost/locale/boundary/segment.hpp>
+#include <boost/locale/boundary/types.hpp>
+
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridBase(parent, id, pos, size, style)
@@ -292,7 +296,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 				if (!isComment && SpellCheckerOn && (!hasTLMode && txt != L"" || hasTLMode && txttl != L"")){
 					if (SpellErrors[key].size() < 2){
-						CheckText((isTl) ? txttl : txt, SpellErrors[key], chtag);
+						SpellChecker::Get()->CheckTextAndBrackets(
+							(isTl) ? txttl : txt,
+							&SpellErrors[key],
+							NULL, hideOverrideTags ? chtag : L"");
 					}
 				}
 				if (txt.length() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
@@ -677,7 +684,10 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 
 			if (!isComment && SpellCheckerOn && (!hasTLMode && txt != L"" || hasTLMode && txttl != L"")){
 				if (SpellErrors[key].size() < 2){
-					CheckText((isTl) ? txttl : txt, SpellErrors[key], chtag);
+					SpellChecker::Get()->CheckTextAndBrackets(
+						(isTl) ? txttl : txt, 
+						&SpellErrors[key], 
+						NULL, hideOverrideTags? chtag : L"");
 				}
 			}
 			if (txt.length() > maxTextLength){ txt = txt.SubString(0, maxTextLength) + L"..."; }
@@ -1781,112 +1791,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 
 }
 
-void SubsGridWindow::CheckText(wxString text, wxArrayInt &errs, const wxString &tagsReplacement)
-{
-	bool repltags = hideOverrideTags && tagsReplacement.length() > 0;
-	text += L" ";
-	bool block = false;
-	bool isReplaceTag = false;
-	wxString word;
-	//bool bracket = false;
-	int lasti = 0;
-	int firsti = 0;
-	int lastStartBracket = -1;
-	int lastEndBracket = -1;
-	int lastStartTBracket = -1;
-	int lastStartCBracket = -1;
-	int lastEndCBracket = -1;
 
-	for (size_t i = 0; i < text.length(); i++)
-	{
-		const wxUniChar &ch = text[i];
-		int isWordBoundary = iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT);
-		if ((isWordBoundary && ch != L'\'' && !block) || isReplaceTag){
-			if (word.length() > 1){
-				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
-				word.Trim(false);
-				word.Trim(true);
-				bool isgood = SpellChecker::Get()->CheckWord(word);
-				if (!isgood){ errs.push_back(firsti); errs.push_back(lasti); }
-			}
-			word = L""; 
-			if (isReplaceTag){
-				firsti = i;
-				isReplaceTag = false;
-			}
-			else
-				firsti = i + 1;
-			
-		}
-		if (block){
-			if (ch == L'{'){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
-			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\'){ errs.push_back(i); errs.push_back(i); }
-			if (ch == L'('){
-				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]){ lastStartTBracket = i; continue; }
-				if (lastStartBracket > lastEndBracket){
-					errs.push_back(lastStartBracket); errs.push_back(lastStartBracket);
-				}
-				lastStartBracket = i;
-			}
-			if (ch == L')'){
-				if ((lastStartBracket < lastEndBracket || lastStartBracket < 0)){
-					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)){
-						lastStartTBracket = -1; continue;
-					}
-					errs.push_back(i); errs.push_back(i);
-				}
-
-				lastEndBracket = i;
-			}
-		}
-		if (!block && ch == L'}'){
-			errs.push_back(i); errs.push_back(i);
-		}
-		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}'){
-			errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket);
-			lastStartTBracket = -1;
-		}
-		if (ch == L'{'){ 
-			block = true; 
-			lastStartCBracket = i; 
-			continue; 
-		}
-		else if (ch == L'}'){ 
-			block = false; 
-			lastEndCBracket = i; 
-			firsti = i + 1; 
-			word = L""; 
-			continue; 
-		}
-		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacement.length()) == tagsReplacement){
-			isReplaceTag = true;
-			continue;
-		}
-
-
-		if (!block && (!isWordBoundary || ch == L'\'') &&
-			text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){ 
-			word << ch; 
-			lasti = i; 
-		}
-		else if (!block && text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
-			word = L"";
-			if (ch == L'N' || ch == L'n' || ch == L'h'){
-				firsti = i + 1;
-			}
-			else{
-				firsti = i;
-				word << ch;
-			}
-		}
-	}
-	if (lastStartCBracket > lastEndCBracket){ errs.push_back(lastStartCBracket); errs.push_back(lastStartCBracket); }
-	if (lastStartBracket > lastEndBracket){ errs.push_back(lastStartBracket); errs.push_back(lastStartBracket); }
-	if (lastStartTBracket >= 0){ errs.push_back(lastStartTBracket); errs.push_back(lastStartTBracket); }
-	if (errs.size() < 2){ errs.push_back(0); }
-
-}
 
 void SubsGridWindow::RefreshIfVisible(int time)
 {

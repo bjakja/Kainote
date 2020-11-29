@@ -32,7 +32,6 @@ public:
 	int CalcChars(const wxString &txt, wxString *lines = NULL, bool *bad = NULL);
 	void ChangeActiveLine(int newActiveLine, bool refresh = false, bool scroll = false, bool changeEditboxLine = true);
 	void ChangeTimeDisplay(bool frame);
-	void CheckText(wxString text, wxArrayInt &errs, const wxString &tagsReplacement);
 	void HideOverrideTags();
 	void RefreshColumns(int cell = 8191);
 	void RefreshIfVisible(int time);

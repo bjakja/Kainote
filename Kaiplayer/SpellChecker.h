@@ -49,6 +49,14 @@ public:
 	bool AddWord(wxString word);
 	bool RemoveWords(const wxArrayString &word);
 	void Suggestions(wxString word, wxArrayString &results);
+
+	//text for both
+	//errors table for both
+	//misspells table for MyTextEditor
+	//tags replacement for SubsGrid
+	void CheckTextAndBrackets(const wxString &text, wxArrayInt *errs, wxArrayString *misspells = NULL, const wxString &tagsReplacement = L"");
+	//for spellchecker window
+	void CheckText(const wxString &text, wxArrayInt *errs);
 	static SpellChecker *Get();
 	static void Destroy();
 

@@ -109,7 +109,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		if (Dial->IsComment && noComments){ continue; }
 		const wxString &Text = (tab->Grid->hasTLMode) ? Dial->TextTl : Dial->Text;
 		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
-		CheckText(Text);
+		SpellChecker::Get()->CheckText(Text, &errors);
 		if (i != lastLine){ lastMisspell = 0; }
 		while (errors.size() > 1 && lastMisspell < errors.size()){
 			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell + 1]);
@@ -312,61 +312,6 @@ bool SpellCheckerDialog::IsAllUpperCase(const wxString &word)
 			upperCase++;
 	}
 	return (upperCase == len);
-}
-
-void SpellCheckerDialog::CheckText(wxString Text)
-{
-	Text += L" ";
-	bool block = false;
-	wxString word;
-	int lasti = 0;
-	int firsti = 0;
-
-	for (size_t i = 0; i < Text.Len(); i++)
-	{
-		const wxUniChar &ch = Text[i];
-		if (iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) && ch != L'\''/*notchar.Find(ch) != -1*/ && !block){
-			if (word.Len() > 1){
-				if (word.StartsWith(L"'")){ word = word.Remove(0, 1); }
-				if (word.EndsWith(L"'")){ word = word.RemoveLast(1); }
-				word.Trim(false);
-				word.Trim(true);
-				bool isgood = SpellChecker::Get()->CheckWord(word);
-				if (!isgood){
-					errors.push_back(firsti);
-					errors.push_back(lasti);
-				}
-			}
-			word = L""; firsti = i + 1;
-		}
-
-		if (ch == L'{'){
-			block = true;
-			continue;
-		}
-		else if (ch == L'}'){
-			block = false;
-			firsti = i + 1;
-			word = L"";
-			continue;
-		}
-
-		if (!block && (!iswctype(wint_t(ch), _SPACE | _DIGIT | _PUNCT) || ch == L'\'') /*notchar.Find(ch) == -1*/
-			&& Text.GetChar((i == 0) ? 0 : i - 1) != L'\\'){
-			word << ch; lasti = i;
-		}
-		else if (!block && Text.GetChar((i == 0) ? 0 : i - 1) == L'\\'){
-			word = L"";
-			if (ch == L'N' || ch == L'n' || ch == L'h'){
-				firsti = i + 1;
-			}
-			else{
-				firsti = i;
-				word << ch;
-			}
-		}
-	}
-	if (errors.size() < 2){ errors.push_back(0); }
 }
 
 void SpellCheckerDialog::LoadAddedMisspels(wxArrayString &addedMisspels)
