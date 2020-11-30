@@ -169,6 +169,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	const wxColour &ComparisonBGCmnt = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_NOT_MATCH);
 	const wxColour &ComparisonBGCmntMatch = Options.GetColour(GRID_COMPARISON_COMMENT_BACKGROUND_MATCH);
 	const wxString &chtag = Options.GetString(GRID_TAGS_SWAP_CHARACTER);
+	int chtagLen = chtag.length();
 	const wxColour &visibleOnVideo = Options.GetColour(GRID_LINE_VISIBLE_ON_VIDEO);
 	bool SpellCheckerOn = Options.GetBool(SPELLCHECKER_ON);
 
@@ -176,14 +177,15 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	tdc.SetBrush(wxBrush(linesCol));
 	tdc.DrawRectangle(0, 0, w + scHor, h);
 
-	int ilcol;
+	int numColumns;
 	int posY = 0;
 	int posX = 4;
 
 	bool isComment = false;
-	bool unkstyle = false;
+	bool unknownStyle = false;
 	bool shorttime = false;
 	bool startBlock = false;
+	bool badWraps = false;
 	bool hasFocus = HasFocus();
 	int states = 0;
 	int startDrawPosYFromPlus = 0;
@@ -261,6 +263,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool comparison = false;
 		bool isSelected = false;
 		strings.clear();
+		TextData &Misspells = previewGrid->SpellErrors[key];
 
 		if (isHeadline){
 			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
@@ -318,8 +321,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->subsFormat < SRT){
-				if (previewGrid->FindStyle(Dial->Style) == -1){ unkstyle = true; }
-				else{ unkstyle = false; }
+				if (previewGrid->FindStyle(Dial->Style) == -1){ unknownStyle = true; }
+				else{ unknownStyle = false; }
 				strings.push_back(Dial->Style);
 				strings.push_back(Dial->Actor);
 				strings.push_back(wxString::Format(L"%i", Dial->MarginL));
@@ -329,23 +332,28 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
+			bool isTl = (previewGrid->hasTLMode && txttl != L"");
 
-			if (previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)){
-				int chtime;
-				if (previewGrid->SpellErrors[key].size() < 1){
-					chtime = previewGrid->CalcChars((previewGrid->hasTLMode && txttl != L"") ? txttl : txt) /
-						((Dial->End.mstime - Dial->Start.mstime) / 1000.0f);
-					if (chtime < 0 || chtime > 999){ chtime = 999; }
-					previewGrid->SpellErrors[key].push_back(chtime);
-
-				}
-				else{ chtime = previewGrid->SpellErrors[key][0]; }
-				strings.push_back(wxString::Format(L"%i", chtime));
-				shorttime = chtime > 15;
+			if (!isComment && (!previewGrid->hasTLMode && txt != L"" || isTl)) {
+				//here are generated misspells table, chars table, and wraps;
+				Misspells.Init((isTl) ? txttl : txt,
+					SpellCheckerOn, previewGrid->subsFormat, 
+					previewGrid->hideOverrideTags ? chtagLen : -1);
 			}
-			else{
-				if (previewGrid->subsFormat != TMP){ strings.push_back(L""); }
-				if (previewGrid->SpellErrors[key].size() == 0){ previewGrid->SpellErrors[key].push_back(0); }
+			if (!isComment) {
+				if (previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)) {
+					int chtime = Misspells.GetCPS(Dial);
+					strings.push_back(wxString::Format(L"%i", chtime));
+					shorttime = chtime > 15;
+				}
+				if (!(WRAPS & previewGrid->visibleColumns)) {
+					strings.push_back(Misspells.wraps);
+					badWraps = Misspells.badWraps;
+				}
+			}
+			else {
+				strings.push_back(L"");
+				shorttime = badWraps = false;
 			}
 
 			if (previewGrid->hideOverrideTags){
@@ -353,18 +361,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				reg.ReplaceAll(&txt, chtag);
 				if (previewGrid->showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}
-			if (txt.Len() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
-			strings.push_back((!previewGrid->showOriginal && previewGrid->hasTLMode && txttl != L"") ? txttl : txt);
+			if (txt.length() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
+			if (txttl.length() > 1000) { txttl = txttl.SubString(0, 1000) + L"..."; }
+			strings.push_back((!previewGrid->showOriginal && isTl) ? txttl : txt);
 			if (previewGrid->showOriginal){ strings.push_back(txttl); }
 
-			if (SpellCheckerOn && (!previewGrid->hasTLMode && txt != L"" || previewGrid->hasTLMode && txttl != L"")){
-				if (previewGrid->SpellErrors[key].size() < 2){
-					SpellChecker::Get()->CheckTextAndBrackets(
-						strings[strings.size() - 1], 
-						&previewGrid->SpellErrors[key], NULL, 
-						previewGrid->hideOverrideTags? chtag : L"");
-				}
-			}
 			isSelected = previewGrid->file->IsSelected(key);
 			comparison = (previewGrid->Comparison && previewGrid->Comparison->at(key).size() > 0);
 			bool comparisonMatch = (previewGrid->Comparison && !previewGrid->Comparison->at(key).differences);
@@ -380,7 +381,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		}
 
 
-		ilcol = strings.size();
+		numColumns = strings.size();
 
 
 		wxRect cur;
@@ -390,14 +391,14 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		if (key >= lastData.lineRangeStart && key < lastData.lineRangeStart + lastData.lineRangeLen){
 			label = GetColorWithAlpha(wxColour(0, 0, 255, 60), kol);
 		}
-		for (int j = 0; j < ilcol; j++){
-			if (previewGrid->showOriginal&&j == ilcol - 2){
+		for (int j = 0; j < numColumns; j++){
+			if (previewGrid->showOriginal && j == numColumns - 2){
 				int podz = (w + scHor - posX) / 2;
 				previewGrid->GridWidth[j] = podz;
 				previewGrid->GridWidth[j + 1] = podz;
 			}
 
-			if (!previewGrid->showOriginal&&j == ilcol - 1){ previewGrid->GridWidth[j] = w + scHor - posX; }
+			if (!previewGrid->showOriginal && j == numColumns - 1){ previewGrid->GridWidth[j] = w + scHor - posX; }
 
 
 			if (previewGrid->GridWidth[j] < 1){
@@ -406,22 +407,24 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 
 			tdc.SetBrush(wxBrush((j == 0 && !isHeadline) ? label : kol));
-			if (unkstyle && j == 4 || shorttime && (j == 10 || (j == 3 && previewGrid->subsFormat>ASS))){
+			if (unknownStyle && j == 4 ||
+				shorttime && (j == 10 || (j == 3 && previewGrid->subsFormat != ASS && previewGrid->subsFormat != TMP)) ||
+				badWraps && j == 11 || (j == 4 && previewGrid->subsFormat > ASS) || (j == 2 && previewGrid->subsFormat != TMP)) {
 				tdc.SetBrush(wxBrush(SpelcheckerCol));
 			}
 
 			tdc.DrawRectangle(posX, posY, previewGrid->GridWidth[j], previewGrid->GridHeight);
 
-			if (!isHeadline && j == ilcol - 1){
+			if (!isHeadline && j == numColumns - 1){
 
-				if (previewGrid->SpellErrors[key].size() > 2){
+				if (Misspells.size() > 1){
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					for (size_t s = 1; s < previewGrid->SpellErrors[key].size(); s += 2){
+					for (size_t s = 0; s < Misspells.size(); s += 2){
 
-						wxString err = strings[j].SubString(previewGrid->SpellErrors[key][s], previewGrid->SpellErrors[key][s + 1]);
+						wxString err = strings[j].SubString(Misspells[s], Misspells[s + 1]);
 						err.Trim();
-						if (previewGrid->SpellErrors[key][s]>0){
-							wxString berr = strings[j].Mid(0, previewGrid->SpellErrors[key][s]);
+						if (Misspells[s] > 0){
+							wxString berr = strings[j].Mid(0, Misspells[s]);
 							GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &previewGrid->font);
 						}
 						else{ bfw = 0; }
@@ -436,7 +439,6 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 					tdc.SetTextForeground(ComparisonCol);
 
 					for (size_t c = 1; c < previewGrid->Comparison->at(key).size(); c += 2){
-						//if(Comparison->at(i-1)[k]==Comparison->at(i-1)[k+1]){continue;}
 						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c],
 							previewGrid->Comparison->at(key)[c + 1]);
 
@@ -464,9 +466,9 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			bool collis = (!isHeadline && acdial && key != previewGrid->currentLine &&
 				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
-			if (previewGrid->subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j == 11 || j == 12); }
-			else if (previewGrid->subsFormat == TMP){ isCenter = !(j == 2); }
-			else{ isCenter = !(j == 4); }
+			if (previewGrid->subsFormat < SRT) { isCenter = !(j == 4 || j == 5 || j == 9 || j > 10); }
+			else if (previewGrid->subsFormat == TMP) { isCenter = (j == 1); }
+			else { isCenter = !(j == 4 || j == 5); }
 
 			tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
 			cur = wxRect(posX + 3, posY, previewGrid->GridWidth[j] - 6, previewGrid->GridHeight);

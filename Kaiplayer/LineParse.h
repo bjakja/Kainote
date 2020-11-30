@@ -16,13 +16,25 @@
 #pragma once
 
 #include <wx/wx.h>
-#include "SpellChecker.h"
 
+class Dialogue;
 
-class LineParse {
+class TextData {
 public:
-	LineParse();
-	~LineParse();
-	void Init();
-	void DrawMisspells(const wxDC &)
+	short chars = 0;
+	wxString wraps;
+	wxArrayInt errors;
+	bool isInit = false;
+	bool badWraps = false;
+	void clear() {
+		errors.Clear(); 
+		isInit = false;
+	};
+	size_t size() { return errors.GetCount(); }
+	//void insert(_wxArraywxArrayInt *it, size_t n, const _wxArraywxArrayInt &val) { errors.insert(it, n, val); }
+	void Add(int val) { errors.Add(val); };
+	_wxArraywxArrayInt & operator[](size_t i) const { return errors[i]; }
+	void Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen);
+	void Init2(const wxString &text, bool spellchecker, int subsFormat, wxArrayString *misspels);
+	int GetCPS(Dialogue *line) const;
 };

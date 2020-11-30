@@ -131,14 +131,12 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 	modified = modif;
 	MText = text;
 	CalcWrap(modif, (noevent) ? false : modif);
-	if (SpellCheckerOnOff){ CheckText(); }
 	if (resetsel){ SetSelection(0, 0); }
 	else{
 		if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
 		if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
 		Refresh(false);
 	}
-	//else{Refresh(false);}
 }
 
 void TextEditor::CalcWrap(bool updatechars, bool sendevent)
@@ -236,7 +234,12 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		wraps.push_back(MText.length());
 	}
 		
-	if (updatechars){ EB->UpdateChars(); }
+	if (updatechars){ 
+		if (useSpellchecker)
+			CheckText();
+
+		EB->UpdateChars(); 
+	}
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
 }
 
@@ -270,38 +273,6 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
 		wraps.push_back(textLen);
 }
 
-//void TextEditor::CalcWrapsGDI(int w, int h)
-//{
-//	//wxString wrapchars = L" \\,;:}{()";
-//	int gfw, gfh;
-//	size_t i = 0;
-//	size_t textLen = MText.length();
-//	int widthCount = 0;
-//	while (i < textLen)
-//	{
-//		const wxUniChar &ch = MText[i];
-//		auto &it = fontSizes.find(ch);
-//		if (it != fontSizes.end()){
-//			widthCount += it->second;
-//		}
-//		else{
-//			GetTextExtent(ch, &gfw, &gfh);
-//			if (ch == L'a' || ch == L' ')
-//				gfw++;
-//
-//			fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
-//			widthCount += gfw;
-//		}
-//		if (widthCount > w - 16){
-//			wraps.push_back(i - 1);
-//			widthCount = 0;
-//			i--;
-//		}
-//		i++;
-//	}
-//	if (wraps[wraps.size() - 1] != textLen)
-//		wraps.push_back(textLen);
-//}
 
 void TextEditor::OnCharPress(wxKeyEvent& event)
 {
@@ -326,7 +297,6 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		if (Cursor.x + 1 > wraps[Cursor.y + 1]){ Cursor.y++; }
 		Cursor.x++;
 		Selend = Cursor;
-		if (SpellCheckerOnOff){ CheckText();}
 		Refresh(false);
 		Update();
 		modified = true;
@@ -465,7 +435,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			MText.Remove(curx, selx - curx);
 			Selend = Cursor;
 			CalcWrap();
-			if (SpellCheckerOnOff){ CheckText(); }
 			SetSelection(curx, curx);
 		}
 		else
@@ -483,7 +452,6 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Selend = Cursor;
-		if (SpellCheckerOnOff){ CheckText(); }
 		Refresh(false);
 		Update();
 		modified = true;
@@ -648,7 +616,6 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 				MText.replace(from, to - from + 1, txt);
 				modified = true;
 				CalcWrap();
-				if (SpellCheckerOnOff){ CheckText(); }
 				int newto = from + txt.length();
 				SetSelection(newto, newto);
 				EB->Send(EDITBOX_SPELL_CHECKER, false);
@@ -1674,9 +1641,6 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 	modified = true;
 	MText.replace(start, end - start, rep);
 	CalcWrap();
-	if (SpellCheckerOnOff){ CheckText(); }
-	//Cursor.x = 0; Cursor.y = 0;
-	//Selend = Cursor;
 	if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
 	if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
 	Refresh(false);
@@ -1687,7 +1651,7 @@ void TextEditor::CheckText()
 	if (MText == L""){ return; }
 	errors.clear();
 	misspels.Clear();
-	SpellChecker::Get()->CheckTextAndBrackets(MText, &errors, &misspels);
+	errors.Init2(MText, SpellCheckerOnOff, EB->GetFormat(), &misspels);
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1864,7 +1828,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 				
 
 				error++;
-				if (error * 2 >= errors.GetCount()) {
+				if (error * 2 >= errors.size()) {
 					newto = k;
 					break;
 				}
@@ -1877,8 +1841,6 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 
 		modified = true;
 		CalcWrap();
-		if (SpellCheckerOnOff){ CheckText(); }
-		
 		SetSelection(newto, newto);
 		EB->Send(EDITBOX_SPELL_CHECKER, false);
 		modified = false;
@@ -1915,13 +1877,6 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 
 		word.Replace(L" ", L"+");
 		wxString url = page + word;
-		//WinStruct<SHELLEXECUTEINFO> sei;
-		//sei.lpFile = url.c_str();
-		//sei.lpVerb = L"open";
-		//sei.nShow = SW_RESTORE;
-		//sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
-
-		//ShellExecuteEx(&sei);
 		OpenInBrowser(url);
 
 	}
@@ -1964,7 +1919,6 @@ void TextEditor::Copy(bool cut)
 	if (cut){
 		MText.Remove(curx, selx - curx);
 		CalcWrap();
-		if (SpellCheckerOnOff){ CheckText(); }
 		SetSelection(curx, curx);
 		modified = true;
 	}
@@ -1992,7 +1946,6 @@ void TextEditor::Paste()
 			MText.insert(curx, whatpaste);
 			modified = true;
 			CalcWrap();
-			if (SpellCheckerOnOff){ CheckText(); }
 			int whre = curx + whatpaste.length();
 			SetSelection(whre, whre);
 
@@ -2083,7 +2036,7 @@ void TextEditor::ClearSpellcheckerTable()
 	if (SpellCheckerOnOff)
 		CheckText();
 	else
-		errors.Clear();
+		errors.clear();
 
 	Refresh(false);
 }
@@ -2171,7 +2124,7 @@ void TextEditor::SeekSelected(const wxString &word)
 
 void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 {
-	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
+	const wxArrayInt & words = (type == 0) ? errors.errors : selectionWords;
 	size_t len = words.size();
 	int fw = 0, fh = 0, fww = 0, fwww = 0;
 	int lineStart = (scrollPositionV - 2) / fontHeight;
@@ -2213,7 +2166,7 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 
 void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h)
 {
-	const wxArrayInt & words = (type == 0) ? errors : selectionWords;
+	const wxArrayInt & words = (type == 0) ? errors.errors : selectionWords;
 	size_t len = words.size();
 	double fw = 0.0, fh = 0.0, fww = 0.0, fwww = 0.0;
 	int lineStart = (scrollPositionV - 2) / fontHeight;
@@ -2323,7 +2276,7 @@ void TextEditor::SetState(int _state, bool refresh){
 	state = _state;
 	//if (refresh){
 		SpellCheckerOnOff = (!state) ? Options.GetBool(SPELLCHECKER_ON) : false;
-		if (SpellCheckerOnOff)
+		if (useSpellchecker)
 			CheckText();
 		EB->UpdateChars();
 		Refresh(false);
@@ -2341,6 +2294,12 @@ bool TextEditor::SetFont(const wxFont &_font)
 	Refresh(false);
 	return true;
 }
+
+const TextData &TextEditor::GetTextData() {
+	if (!useSpellchecker)
+		errors.Init2(MText, false, EB->GetFormat(), NULL);
+	return errors;
+};
 
 BEGIN_EVENT_TABLE(TextEditor, wxWindow)
 EVT_PAINT(TextEditor::OnPaint)

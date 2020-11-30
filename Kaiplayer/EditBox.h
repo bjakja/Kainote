@@ -147,6 +147,7 @@ public:
 	TextEditor *GetEditor(const wxString &text = L"");
 	bool SetFont(const wxFont &font);
 	void OnAccelerator(wxCommandEvent& event);
+	int GetFormat();
 
 	wxBoxSizer* BoxSizer1;
 

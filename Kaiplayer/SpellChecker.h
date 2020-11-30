@@ -33,8 +33,7 @@
 #include "Config.h"
 #include <hunspell.hxx>
 #include <wx/string.h>
-
-
+#include "LineParse.h"
 
 class SpellChecker
 {
@@ -54,7 +53,7 @@ public:
 	//errors table for both
 	//misspells table for MyTextEditor
 	//tags replacement for SubsGrid
-	void CheckTextAndBrackets(const wxString &text, wxArrayInt *errs, wxArrayString *misspells = NULL, const wxString &tagsReplacement = L"");
+	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, wxArrayString *misspells = NULL, int replaceTagsLen = -1);
 	//for spellchecker window
 	void CheckText(const wxString &text, wxArrayInt *errs);
 	static SpellChecker *Get();
@@ -66,6 +65,7 @@ private:
 	static SpellChecker *SC;
 	wxString dictionaryPath;
 	wxString userDictionaryPath;
+	inline void Check(const std::wstring &checkText, TextData *errs, wxArrayString *misspells, const std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
 };
 
 

@@ -1116,7 +1116,7 @@ void SubsGridBase::InsertRows(int Row,
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
 	if (SpellErrors.size() > Row){
-		wxArrayInt emptyarray;
+		TextData emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, RowsTable.size(), emptyarray);
 	}
 }
@@ -1130,7 +1130,7 @@ void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddTo
 	//spellErrors Array take all dialogues for compatybility
 	//but can be simply cleared
 	if (SpellErrors.size() > Row){
-		wxArrayInt emptyarray;
+		TextData emptyarray;
 		SpellErrors.insert(SpellErrors.begin() + Row, NumRows, emptyarray);
 	}
 	if (Save){
@@ -1233,7 +1233,7 @@ void SubsGridBase::SwapRows(int frst, int scnd, bool sav)
 {
 	file->SwapRows(frst, scnd);
 	if (SpellErrors.size() > frst && SpellErrors.size() > scnd){
-		wxArrayInt tmpspell = SpellErrors[frst];
+		TextData tmpspell = SpellErrors[frst];
 		SpellErrors[frst] = SpellErrors[scnd];
 		SpellErrors[scnd] = tmpspell;
 	}
@@ -1482,7 +1482,7 @@ void SubsGridBase::LoadDefault(bool line, bool sav, bool endload)
 
 Dialogue *SubsGridBase::CopyDialogue(size_t i, bool push)
 {
-	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].Clear(); }
+	if (push && (int)SpellErrors.size() > i){ SpellErrors[i].clear(); }
 	return file->CopyDialogue(i, push);
 }
 

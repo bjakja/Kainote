@@ -22,6 +22,7 @@
 #include "SubsFile.h"
 
 #include "KaiScrollbar.h"
+#include "LineParse.h"
 #include <vector>
 #include <set>
 
@@ -142,7 +143,7 @@ public:
 	bool savedSelections = false;
 	bool isFiltered = false;
 	bool ignoreFiltered = false;
-	std::vector<wxArrayInt> SpellErrors;
+	std::vector<TextData> SpellErrors;
 	std::vector<compareData> *Comparison;
 	SubsFile* file;
 	EditBox *Edit;

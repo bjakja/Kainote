@@ -12,3 +12,27 @@
 
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+#include "LineParse.h"
+#include "SpellChecker.h"
+#include "SubsDialogue.h"
+
+void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen) {
+	if (isInit)
+		return;
+
+	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, NULL, tagReplaceLen);
+	isInit = true;
+}
+
+void TextData::Init2(const wxString & text, bool spellchecker, int subsFormat, wxArrayString * misspels)
+{
+	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, misspels, -1);
+}
+
+int TextData::GetCPS(Dialogue *line) const
+{
+	int characterTime = chars / ((line->End.mstime - line->Start.mstime) / 1000.0f);
+	if (characterTime < 0 || characterTime > 999) { characterTime = 999; }
+	return characterTime;
+}

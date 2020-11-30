@@ -489,11 +489,11 @@ void EditBox::UpdateChars()
 		wxString result;
 		bool isbad = false;
 		TextEditor * editor = GetEditor();
-		int ilzn = grid->CalcChars(editor->GetValue(), &result, &isbad);
+		//int ilzn = grid->CalcChars(editor->GetValue(), &result, &isbad);
+		const TextData &td = editor->GetTextData();
 		Chars->SetLabelText(_("Łamania: ") + result + L"43");
 		Chars->SetForegroundColour((isbad) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
-		int chtime = ilzn / ((line->End.mstime - line->Start.mstime) / 1000.0f);
-		if (chtime < 0 || chtime > 999){ chtime = 999; }
+		int chtime = td.GetCPS(line);
 		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 	}
@@ -668,7 +668,7 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 
 void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 {
-	if (grid->subsFormat == TMP)return;
+	if (grid->subsFormat == TMP) return;
 	long from, to, whre;
 	size_t start = 0, len = 0;
 	bool match = false;
@@ -1140,6 +1140,11 @@ void EditBox::OnAccelerator(wxCommandEvent& event)
 		default:
 			break;
 	}
+}
+
+int EditBox::GetFormat()
+{
+	return grid->subsFormat;
 }
 
 //dummy tlmode is used on preview when 

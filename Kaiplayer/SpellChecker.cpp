@@ -224,86 +224,157 @@ bool SpellChecker::RemoveWords(const wxArrayString &words)
 	return succeded > 0;
 }
 
+inline void SpellChecker::Check(const std::wstring &checkText, TextData *errs, wxArrayString *misspells, const std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen) {
+	using namespace boost::locale;
+	boundary::wssegment_index index(boundary::word, checkText.begin(), checkText.end());
+	boundary::wssegment_index::iterator p, e;
+	int counter1 = 0;
+	int charCounter = 0;
+	if (checkText.size() == textOffset.size()) {
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			wxString word = wxString(*p);
+			size_t wordLen = word.length();
+			if (p->rule() & boundary::word_letters) {
+				if (!CheckWord(word)) {
+					size_t start = textOffset[counter1];
+					size_t end = textOffset[counter1 + wordLen - 1];
+					if (end - start > wordLen) {
+						size_t j = start, k = start, m = start;
+						while (j <= end) {
+							const wxUniChar & chr = text[j];
+							if (chr == L'{' || j >= end) {
+								errs->Add(repltags ? m : k);
+								errs->Add(j >= end ? j : j - 1);
+
+								if (misspells)
+									misspells->Add(word);
+								m = j - 1;
+							}
+							else if (chr == L'}') {
+								k = j + 1;
+								m += replaceTagsLen;
+							}
+
+							j++;
+						}
+					}
+					else {
+						errs->Add(start);
+						errs->Add(end);
+						if (misspells)
+							misspells->Add(word);
+					}
+
+				}
+				charCounter += wordLen;
+			}
+			else if (p->rule() & boundary::word_number) {
+				charCounter += wxString(*p).length();
+			}
+			counter1 += wordLen;
+		}
+	}
+	else {
+		KaiLog(L"text offset size != text size not spellchecking");
+	}
+	errs->chars += charCounter;
+	if(!errs->badWraps)
+		errs->badWraps = (charCounter > 43) || errs->wraps.Freq(L'/') > 1;
+	errs->wraps << charCounter << L"/";
+}
 //text for both
 //errors table for both
 //misspells table for MyTextEditor
 //tags replacement for SubsGrid
 
-void SpellChecker::CheckTextAndBrackets(const wxString &text, wxArrayInt *errs, wxArrayString *misspells, const wxString &tagsReplacement)
+void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, wxArrayString *misspells, int replaceTagsLen)
 {
-	using namespace boost::locale;
-	using namespace std;
-	size_t tagsReplacementLen = tagsReplacement.length();
-	bool repltags = tagsReplacementLen > 0;
+	bool repltags = replaceTagsLen >= 0;
 	bool block = false;
 	bool hasReplTags = false;
-	wstring checkText;
+	bool isSlash = false;
+	std::wstring checkText;
 	int lastStartBracket = -1;
 	int lastEndBracket = -1;
 	int lastStartTBracket = -1;
 	int lastStartCBracket = -1;
 	int lastEndCBracket = -1;
+	errs->chars = 0;
+	bool drawing = false;
+	wxUniChar split = (subsFormat > SRT) ? L'|' : L'\\';
+	wxUniChar bracketStart = (subsFormat == SRT) ? L'<' : L'{';
+	wxUniChar bracketEnd = (subsFormat == SRT) ? L'>' : L'}';
 	std::vector<size_t> textOffset;
 	size_t textLen = text.length();
 	size_t i = 0;
+	size_t tagReplaceI = 0;
 	while (i < textLen)
 	{
 		const wxUniChar &ch = text[i];
 		if (block) {
-			if (ch == L'{') { 
-				errs->Add(lastStartCBracket); 
-				errs->Add(lastStartCBracket);
-				if(misspells)
-					misspells->Add(L"");
+			if (text[i] == L'p' && text[i - 1] == L'\\' && (i + 1 < textLen && wxIsdigit(text[i + 1]))) {
+				if (text[i + 1] == L'0') { drawing = false; }
+				else { drawing = true; }
 			}
-			if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\') { 
-				errs->Add(i); 
-				errs->Add(i); 
-				if (misspells)
-					misspells->Add(L"");
-			}
-			if (ch == L'(') {
-				if (i > 1 && text[i - 2] == L'\\' && text[i - 1]) { 
-					lastStartTBracket = i; 
-					i++;
-					continue; 
-				}
-				if (lastStartBracket > lastEndBracket) {
-					errs->Add(lastStartBracket); 
-					errs->Add(lastStartBracket);
+			else if (!repltags){
+				if (ch == bracketStart) {
+					errs->Add(lastStartCBracket);
+					errs->Add(lastStartCBracket);
 					if (misspells)
 						misspells->Add(L"");
 				}
-				lastStartBracket = i;
-			}
-			if (ch == L')') {
-				if ((lastStartBracket < lastEndBracket || lastStartBracket < 0)) {
-					if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)) {
-						lastStartTBracket = -1; 
-						i++;
-						continue;
-					}
-					errs->Add(i); 
+				if (ch == L'\\' && text[(i == 0) ? 0 : i - 1] == L'\\') {
+					errs->Add(i);
 					errs->Add(i);
 					if (misspells)
 						misspells->Add(L"");
 				}
+				if (ch == L'(') {
+					if (i > 1 && text[i - 2] == L'\\' && text[i - 1]) {
+						lastStartTBracket = i;
+						i++;
+						continue;
+					}
+					if (lastStartBracket > lastEndBracket) {
+						errs->Add(lastStartBracket);
+						errs->Add(lastStartBracket);
+						if (misspells)
+							misspells->Add(L"");
+					}
+					lastStartBracket = i;
+				}
+				if (ch == L')') {
+					if ((lastStartBracket < lastEndBracket || lastStartBracket < 0)) {
+						if (lastStartTBracket > 0 && (lastStartTBracket < lastEndBracket || lastStartBracket < lastStartTBracket)) {
+							lastStartTBracket = -1;
+							i++;
+							continue;
+						}
+						errs->Add(i);
+						errs->Add(i);
+						if (misspells)
+							misspells->Add(L"");
+					}
 
-				lastEndBracket = i;
+					lastEndBracket = i;
+				}
 			}
 		}
-		if (lastStartTBracket >= 0 && ch == L'{' || ch == L'}') {
+		if (lastStartTBracket >= 0 && ch == bracketStart || ch == bracketEnd) {
 			errs->Add(lastStartTBracket); 
 			errs->Add(lastStartTBracket);
 			if (misspells)
 				misspells->Add(L"");
 			lastStartTBracket = -1;
 		}
-		if (ch == L'{') {
+		if (ch == bracketStart) {
+			if (repltags) {
+				tagReplaceI += replaceTagsLen;
+			}
 			block = true;
 			lastStartCBracket = i;
 		}
-		else if (ch == L'}') {
+		else if (ch == bracketStart) {
 			if (!block) {
 				errs->Add(i);
 				errs->Add(i);
@@ -317,80 +388,48 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, wxArrayInt *errs, 
 			i++;
 			continue;
 		}
-		else if (repltags && tagsReplacement[0] == ch && text.Mid(i, tagsReplacementLen) == tagsReplacement) {
-			i += tagsReplacementLen;
-			continue;
-		}
+		
 
+		if (!block) {
+			if (ch == split) {
+				if (subsFormat > SRT) {
+					checkText += L" ";
+					textOffset.push_back(repltags ? tagReplaceI : i);
+					Check(checkText, errs, misspells, textOffset, text, repltags, replaceTagsLen);
+				}
+				else{
+					//replace for \n
+					wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
+					bool splitSecond = nch == L'N' || nch == L'n';
+					if (splitSecond && nch == L'h')
+						checkText += L"  ";
+					else {
+						checkText += ch;
+						checkText += nch;
+					}
+					textOffset.push_back(repltags ? tagReplaceI : i);
+					textOffset.push_back(repltags ? tagReplaceI + 1 : i + 1);
 
-		if (!block && ch != L'\\') {
-			if (!(text.GetChar((i == 0) ? 0 : i - 1) == L'\\' && (ch == L'N' || ch == L'n' || ch == L'h'))) {
-				checkText += ch;
-				textOffset.push_back(i);
+					if (splitSecond && spellchecker)
+						Check(checkText, errs, misspells, textOffset, text, repltags, replaceTagsLen);
+
+					i++;
+					tagReplaceI++;
+				}
+
 			}
 			else {
-				//replace for \n
-				checkText += L"  ";
-				textOffset.push_back(i - 1);
-				textOffset.push_back(i);
+				checkText += ch;
+				textOffset.push_back(repltags? tagReplaceI : i);
 			}
-
+			tagReplaceI++;
 		}
 
 		i++;
 
 	}
-	boundary::wssegment_index index(boundary::word, checkText.begin(), checkText.end());
-	boundary::wssegment_index::iterator p, e;
-	int counter1 = 0;
-	if (checkText.size() == textOffset.size()) {
-		for (p = index.begin(), e = index.end(); p != e; ++p) {
-			wxString word = wxString(*p);
-			if (p->rule() & boundary::word_letters) {
-				if (!CheckWord(word)) {
-					size_t start = textOffset[counter1];
-					size_t end = textOffset[counter1 + word.length() - 1];
-					if (end - start > word.length()) {
-						size_t j = start, k = start;
-						while (j <= end) {
-							const wxUniChar & chr = text[j];
-							if (chr == L'{' || j >= end) {
-								errs->Add(k);
-								errs->Add(j >= end? j : j - 1);
-								if (misspells)
-									misspells->Add(word);
-							}
-							else if (chr == L'}') {
-								k = j + 1;
-							}
-							else if (repltags && tagsReplacement[0] == chr && text.Mid(j, tagsReplacementLen) == tagsReplacement) {
-								errs->Add(k);
-								errs->Add(j - 1);
-								if (misspells)
-									misspells->Add(word);
-								j += tagsReplacementLen - 1;
-								k = j + 1;
-							}
-							j++;
-						}
-					}
-					else {
-						errs->Add(start);
-						errs->Add(end);
-						if (misspells)
-							misspells->Add(word);
-					}
-					
-				}
-
-			}
-			counter1 += word.length();
-		}
-	}
-	else {
-		KaiLog(L"text offset size != text size not spellchecking");
-	}
-
+	if(spellchecker)
+		Check(checkText, errs, misspells, textOffset, text, repltags, replaceTagsLen);
 
 	if (lastStartCBracket > lastEndCBracket) { 
 		errs->Add(lastStartCBracket); 
@@ -410,9 +449,8 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, wxArrayInt *errs, 
 		if (misspells)
 			misspells->Add(L"");
 	}
-	//mytexteditor do not need this
-	if (errs->size() < 2 && !misspells) { errs->Add(0); }
-
+	
+	
 }
 
 //for spellchecker window
