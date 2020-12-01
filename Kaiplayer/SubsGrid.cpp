@@ -44,6 +44,8 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 		//it here changes only one hook that's why there is no bit opetations
 		if (id >= GRID_HIDE_LAYER && id < GRID_INSERT_BEFORE){
 			int id4000 = (id - GRID_HIDE_LAYER + 1);
+			if (id4000 > CPS)
+				id4000 = WRAPS;
 			if (visibleColumns & id4000){ visibleColumns ^= id4000; }
 			else{ visibleColumns |= id4000; }
 			SpellErrors.clear();
@@ -140,6 +142,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	hidemenu->SetAccMenu(GRID_HIDE_MARGINV, _("Ukryj pionowy margines"), _("Ukryj pionowy margines"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & MARGINV) != 0);
 	hidemenu->SetAccMenu(GRID_HIDE_EFFECT, _("Ukryj efekt"), _("Ukryj efekt"), subsFormat < SRT, ITEM_CHECK)->Check((visibleColumns & EFFECT) != 0);
 	hidemenu->SetAccMenu(GRID_HIDE_CPS, _("Ukryj znaki na sekundę"), _("Ukryj znaki na sekundę"), true, ITEM_CHECK)->Check((visibleColumns & CPS) != 0);
+	hidemenu->SetAccMenu(GRID_HIDE_WRAPS, _("Ukryj łamania linii"), _("Ukryj łamania linii"), true, ITEM_CHECK)->Check((visibleColumns & WRAPS) != 0);
 
 	//styles menu
 	Menu *stylesMenu = new Menu();
@@ -681,6 +684,9 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_HIDE_CPS:
 	{
 		int id4000 = (id - GRID_HIDE_LAYER + 1);
+		if (id4000 > CPS)
+			id4000 = WRAPS;
+
 		visibleColumns ^= id4000;
 		SpellErrors.clear();
 		Options.SetInt(GRID_HIDE_COLUMNS, visibleColumns);

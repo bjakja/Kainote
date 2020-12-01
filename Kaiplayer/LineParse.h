@@ -18,6 +18,7 @@
 #include <wx/wx.h>
 
 class Dialogue;
+class GraphicsContext;
 
 class TextData {
 public:
@@ -29,6 +30,9 @@ public:
 	void clear() {
 		errors.Clear(); 
 		isInit = false;
+		chars = 0;
+		wraps.clear();
+		badWraps = false;
 	};
 	size_t size() { return errors.GetCount(); }
 	//void insert(_wxArraywxArrayInt *it, size_t n, const _wxArraywxArrayInt &val) { errors.insert(it, n, val); }
@@ -36,5 +40,16 @@ public:
 	_wxArraywxArrayInt & operator[](size_t i) const { return errors[i]; }
 	void Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen);
 	void Init2(const wxString &text, bool spellchecker, int subsFormat, wxArrayString *misspels);
+	void SetEmpty() {
+		errors.Clear();
+		isInit = true;
+		chars = 0;
+		wraps = L"0/";
+		badWraps = false;
+	}
 	int GetCPS(Dialogue *line) const;
+	wxString GetStrippedWraps();
+	void DrawMisspells(wxString &text, const wxPoint &pos, GraphicsContext *gc, const wxColour &col, int gridHeight);
+	void DrawMisspells(wxString &text, const wxPoint &pos, wxWindow *grid, 
+		wxDC *dc, const wxColour &col, int gridHeight, const wxFont &font);
 };

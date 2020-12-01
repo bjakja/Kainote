@@ -130,7 +130,7 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 {
 	modified = modif;
 	MText = text;
-	CalcWrap(modif, (noevent) ? false : modif);
+	CalcWrap(true, (noevent) ? false : modif);
 	if (resetsel){ SetSelection(0, 0); }
 	else{
 		if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
@@ -234,7 +234,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		wraps.push_back(MText.length());
 	}
 		
-	if (updatechars){ 
+	if (updatechars){
 		if (useSpellchecker)
 			CheckText();
 
@@ -1648,7 +1648,7 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 
 void TextEditor::CheckText()
 {
-	if (MText == L""){ return; }
+	if (MText == L"") { errors.SetEmpty(); return; }
 	errors.clear();
 	misspels.Clear();
 	errors.Init2(MText, SpellCheckerOnOff, EB->GetFormat(), &misspels);

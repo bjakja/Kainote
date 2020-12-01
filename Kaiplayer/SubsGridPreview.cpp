@@ -263,7 +263,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		bool comparison = false;
 		bool isSelected = false;
 		strings.clear();
-		TextData &Misspells = previewGrid->SpellErrors[key];
+		
 
 		if (isHeadline){
 			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
@@ -290,7 +290,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		}
 		else{
 
-
+			TextData &Misspells = previewGrid->SpellErrors[key];
 			strings.push_back(wxString::Format(L"%i", id + 1));
 
 			isComment = Dial->IsComment;
@@ -340,20 +340,22 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 					SpellCheckerOn, previewGrid->subsFormat, 
 					previewGrid->hideOverrideTags ? chtagLen : -1);
 			}
-			if (!isComment) {
-				if (previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)) {
-					int chtime = Misspells.GetCPS(Dial);
-					strings.push_back(wxString::Format(L"%i", chtime));
-					shorttime = chtime > 15;
-				}
-				if (!(WRAPS & previewGrid->visibleColumns)) {
-					strings.push_back(Misspells.wraps);
-					badWraps = Misspells.badWraps;
-				}
+			if (!isComment && previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)) {
+				int chtime = Misspells.GetCPS(Dial);
+				strings.push_back(wxString::Format(L"%i", chtime));
+				shorttime = chtime > 15;
 			}
 			else {
 				strings.push_back(L"");
-				shorttime = badWraps = false;
+				shorttime = false;
+			}
+			if (!isComment && !(WRAPS & previewGrid->visibleColumns)) {
+				strings.push_back(Misspells.GetStrippedWraps());
+				badWraps = Misspells.badWraps;
+			}
+			else {
+				strings.push_back(L"");
+				badWraps = false;
 			}
 
 			if (previewGrid->hideOverrideTags){
@@ -409,31 +411,17 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetBrush(wxBrush((j == 0 && !isHeadline) ? label : kol));
 			if (unknownStyle && j == 4 ||
 				shorttime && (j == 10 || (j == 3 && previewGrid->subsFormat != ASS && previewGrid->subsFormat != TMP)) ||
-				badWraps && j == 11 || (j == 4 && previewGrid->subsFormat > ASS) || (j == 2 && previewGrid->subsFormat != TMP)) {
+				badWraps && (j == 11 || (j == 4 && previewGrid->subsFormat > ASS) || 
+				(j == 2 && previewGrid->subsFormat != TMP && previewGrid->subsFormat != ASS))) {
 				tdc.SetBrush(wxBrush(SpelcheckerCol));
 			}
 
 			tdc.DrawRectangle(posX, posY, previewGrid->GridWidth[j], previewGrid->GridHeight);
 
 			if (!isHeadline && j == numColumns - 1){
-
-				if (Misspells.size() > 1){
-					tdc.SetBrush(wxBrush(SpelcheckerCol));
-					for (size_t s = 0; s < Misspells.size(); s += 2){
-
-						wxString err = strings[j].SubString(Misspells[s], Misspells[s + 1]);
-						err.Trim();
-						if (Misspells[s] > 0){
-							wxString berr = strings[j].Mid(0, Misspells[s]);
-							GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &previewGrid->font);
-						}
-						else{ bfw = 0; }
-
-						GetTextExtent(err, &fw, &fh, NULL, NULL, &previewGrid->font);
-						tdc.DrawRectangle(posX + bfw + 3, posY, fw, previewGrid->GridHeight);
-					}
-				}
-
+				previewGrid->SpellErrors[key].DrawMisspells(strings[j], wxPoint(posX, posY), this, &tdc, 
+					SpelcheckerCol, previewGrid->GridHeight, previewGrid->font);
+				
 
 				if (comparison){
 					tdc.SetTextForeground(ComparisonCol);

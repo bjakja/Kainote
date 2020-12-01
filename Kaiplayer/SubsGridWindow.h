@@ -27,13 +27,12 @@ class SubsGridWindow : public SubsGridBase
 public:
 	SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style);
 	virtual ~SubsGridWindow();
-	void AdjustWidths(int cell = 8191);
-	void AdjustWidthsGDIPlus(GraphicsContext *gc, int cell);
-	int CalcChars(const wxString &txt, wxString *lines = NULL, bool *bad = NULL);
+	void AdjustWidths(int cell = 16383);
+	void AdjustWidthsD2D(GraphicsContext *gc, int cell);
 	void ChangeActiveLine(int newActiveLine, bool refresh = false, bool scroll = false, bool changeEditboxLine = true);
 	void ChangeTimeDisplay(bool frame);
 	void HideOverrideTags();
-	void RefreshColumns(int cell = 8191);
+	void RefreshColumns(int cell = 16383);
 	void RefreshIfVisible(int time);
 	void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false);
 	// default value -1 can cause problems with scrolling

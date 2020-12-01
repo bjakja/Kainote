@@ -200,7 +200,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			bool comparison = false;
 			bool isSelected = false;
 			strings.clear();
-			TextData &Misspells = SpellErrors[key];
+			
 			if (isHeadline){
 				strings.push_back(L"#");
 				if (subsFormat < SRT){
@@ -225,7 +225,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				kol = header;
 			}
 			else{
-
+				TextData &Misspells = SpellErrors[key];
 				strings.push_back(wxString::Format(L"%i", id + 1));
 
 				isComment = Dial->IsComment;
@@ -272,20 +272,22 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					//here are generated misspells table, chars table, and wraps;
 					Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn, subsFormat, hideOverrideTags ? chtagLen : -1);
 				}
-				if (!isComment) {
-					if (subsFormat != TMP && !(CPS & visibleColumns)) {
-						int chtime = Misspells.GetCPS(Dial);
-						strings.push_back(wxString::Format(L"%i", chtime));
-						shorttime = chtime > 15;
-					}
-					if (!(WRAPS & visibleColumns)) {
-						strings.push_back(Misspells.wraps);
-						badWraps = Misspells.badWraps;
-					}
+				if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)) {
+					int chtime = Misspells.GetCPS(Dial);
+					strings.push_back(wxString::Format(L"%i", chtime));
+					shorttime = chtime > 15;
 				}
 				else {
 					strings.push_back(L"");
-					shorttime = badWraps = false;
+					shorttime = false;
+				}
+				if (!isComment && !(WRAPS & visibleColumns)) {
+					strings.push_back(Misspells.GetStrippedWraps());
+					badWraps = Misspells.badWraps;
+				}
+				else {
+					strings.push_back(L"");
+					badWraps = false;
 				}
 				if (hideOverrideTags) {
 					wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
@@ -378,32 +380,14 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				tdc.SetBrush(wxBrush((j == 0 && !isHeadline) ? label : kol));
 				if (unknownStyle && j == 4 ||
 					shorttime && (j == 10 || (j == 3 && subsFormat != ASS && subsFormat != TMP)) ||
-					badWraps && j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP)) {
+					badWraps && (j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP && subsFormat != ASS))) {
 					gc->SetBrush(wxBrush(SpelcheckerCol));
 				}
 
 				tdc.DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 				if (!isHeadline && j == ilcol - 1){
-					if (Misspells.size() > 1){
-						wxString & text = strings[j];
-						text.Replace(L"\t", L" ");
-						tdc.SetBrush(wxBrush(SpelcheckerCol));
-						for (size_t s = 0; s < Misspells.size(); s += 2){
-							wxString err = text.SubString(Misspells[s], Misspells[s + 1]);
-							err.Trim();
-							if (Misspells[s] > 0){
-
-								wxString berr = text.Mid(0, Misspells[s]);
-								GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
-							}
-							else{ bfw = 0; }
-
-							GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
-							tdc.DrawRectangle(posX + bfw + 3, posY, fw, GridHeight);
-						}
-					}
-
+					SpellErrors[key].DrawMisspells(strings[j], wxPoint(posX, posY), this, &tdc, SpelcheckerCol, GridHeight, font);
 
 					if (comparison){
 						tdc.SetTextForeground(ComparisonCol);
@@ -584,7 +568,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 		bool comparison = false;
 		bool isSelected = false;
 		strings.clear();
-		TextData &Misspells = SpellErrors[key];
+		
 
 		if (isHeadline){
 			strings.push_back(L"#");
@@ -610,7 +594,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			col = header;
 		}
 		else{
-			
+			TextData &Misspells = SpellErrors[key];
 			strings.push_back(wxString::Format(L"%i", id + 1));
 
 			isComment = Dial->IsComment;
@@ -659,21 +643,25 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				//here are generated misspells table, chars table, and wraps;
 				Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn, subsFormat, hideOverrideTags ? chtagLen : -1);
 			}
-			if (!isComment) {
-				if (subsFormat != TMP && !(CPS & visibleColumns)) {
-					int chtime = Misspells.GetCPS(Dial);
-					strings.push_back(wxString::Format(L"%i", chtime));
-					shorttime = chtime > 15;
-				}
-				if (!(WRAPS & visibleColumns)) {
-					strings.push_back(Misspells.wraps);
-					badWraps = Misspells.badWraps;
-				}
+			
+			if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)) {
+				int chtime = Misspells.GetCPS(Dial);
+				strings.push_back(wxString::Format(L"%i", chtime));
+				shorttime = chtime > 15;
 			}
-			else{
+			else {
 				strings.push_back(L"");
-				shorttime = badWraps = false;
+				shorttime = false;
 			}
+			if (!isComment && !(WRAPS & visibleColumns)) {
+				strings.push_back(Misspells.GetStrippedWraps());
+				badWraps = Misspells.badWraps;
+			}
+			else {
+				strings.push_back(L"");
+				badWraps = false;
+			}
+			
 			
 			if (hideOverrideTags) {
 				wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
@@ -742,7 +730,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 		}
 
 		numColumns = strings.size();
-
+		
 
 		wxRect cur;
 		bool isCenter;
@@ -772,36 +760,15 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			gc->SetBrush(wxBrush((j == 0 && !isHeadline) ? label : col));
 			if (unknownStyle && j == 4 || 
 				shorttime && (j == 10 || (j == 3 && subsFormat != ASS && subsFormat != TMP)) ||
-				badWraps && j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP)){
+				badWraps && (j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP && subsFormat != ASS))){
 				gc->SetBrush(wxBrush(SpelcheckerCol));
 			}
 
 			gc->DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == numColumns - 1){
-				if (Misspells.size() > 1){
-					wxString & text = strings[j];
-					text.Replace(L"\t", L" ");
-					gc->SetBrush(wxBrush(SpelcheckerCol));
-					int cellSize = GridWidth[j];
-					for (size_t s = 0; s < Misspells.size(); s += 2){
-						wxString err = text.SubString(Misspells[s], Misspells[s + 1]);
-						err.Trim();
-						if (Misspells[s] > 0){
-
-							wxString berr = text.Mid(0, Misspells[s]);
-							gc->GetTextExtent(berr, &bfw, &bfh);
-						}
-						else{ bfw = 0; }
-						if (bfw + 3 > cellSize){
-							break;
-						}
-						gc->GetTextExtent(err, &fw, &fh);
-						gc->DrawRectangle(posX + bfw + 3, posY, fw, GridHeight);
-					}
-				}
-
-
+				SpellErrors[key].DrawMisspells(strings[j], wxPoint(posX, posY), gc, SpelcheckerCol, GridHeight);
+				
 				if (comparison){
 					gc->SetFont(font, ComparisonCol);
 					const wxString & text = strings[j];
@@ -937,7 +904,7 @@ void SubsGridWindow::RefreshColumns(int cell)
 	Refresh(false);
 }
 
-void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
+void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 {
 
 	int law = 0, startMax = 0, endMax = 0, stw = 0, edw = 0, syw = 0, acw = 0, efw = 0;
@@ -1074,7 +1041,7 @@ void SubsGridWindow::AdjustWidthsGDIPlus(GraphicsContext *gc, int cell)
 	}
 
 	if (WRAPS & cell) {
-		gc->GetTextExtent(_("Linie"), &fw, &fh);
+		gc->GetTextExtent(_("Linie") + L"XX", &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1103,7 +1070,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	GraphicsContext *gc = renderer->CreateMeasuringContext();
 	if (gc){
 		gc->SetFont(font, L"#FFFFFF");
-		AdjustWidthsGDIPlus(gc, cell);
+		AdjustWidthsD2D(gc, cell);
 		return;
 	}
 	wxClientDC dc(this);
@@ -1240,7 +1207,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	}
 
 	if (WRAPS & cell) {
-		dc.GetTextExtent(_("Linie"), &fw, &fh);
+		dc.GetTextExtent(_("Linie") + L"XX", &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1841,53 +1808,6 @@ void SubsGridWindow::HideOverrideTags()
 	Refresh(false);
 }
 
-int SubsGridWindow::CalcChars(const wxString &txt, wxString *lines, bool *bad)
-{
-	int len = txt.length();
-	bool block = false;
-	bool slash = false;
-	bool drawing = false;
-	bool hasLineSplit = (subsFormat > SRT);
-	wxUniChar split = (subsFormat > SRT) ? L'|' : L'\\';
-	int chars = 0, lastchars = 0, ns = 0;
-	wxUniChar brs = (subsFormat == SRT) ? L'<' : L'{';
-	wxUniChar bre = (subsFormat == SRT) ? L'>' : L'}';
-	for (int i = 0; i < len; i++)
-	{
-		if (txt[i] == brs){ block = true; }
-		else if (txt[i] == bre){ block = false; }
-		else if (block && txt[i] == L'p' && txt[i - 1] == L'\\' && (i + 1 < len && wxIsdigit(txt[i + 1]))){
-			if (txt[i + 1] == L'0'){ drawing = false; }
-			else{ drawing = true; }
-		}
-		else if (txt[i] == split && !block && !drawing){ slash = true; continue; }
-		else if (slash){
-			if (txt[i] == L'N' || hasLineSplit){
-				if (lines){
-					ns++;
-					int linechars = (chars - lastchars);
-					if (!(*bad)){ *bad = (linechars > 43 || ns > 1); }
-					(*lines) << linechars << L"/";
-					lastchars = chars;
-					if (hasLineSplit)
-						chars++;
-				}
-			}
-			else if (txt[i] != L'h'){ chars += 2; }
-			slash = false;
-		}
-		else if (!block && !drawing && txt[i] != L' '){ chars++; }
-
-	}
-	if (lines){
-		int linechars = (chars - lastchars);
-		if (!(*bad)){ *bad = (linechars > 43 || ns > 1); }
-		(*lines) << linechars << L"/";
-	}
-
-
-	return chars;
-}
 
 void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/, bool changeEditboxLine /*= true*/)
 {

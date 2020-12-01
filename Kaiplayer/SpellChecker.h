@@ -65,7 +65,8 @@ private:
 	static SpellChecker *SC;
 	wxString dictionaryPath;
 	wxString userDictionaryPath;
-	inline void Check(const std::wstring &checkText, TextData *errs, wxArrayString *misspells, const std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
+	//no const cause of clearing
+	inline void Check(std::wstring &checkText, TextData *errs, wxArrayString *misspells, std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
 };
 
 

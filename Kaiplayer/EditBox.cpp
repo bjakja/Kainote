@@ -425,7 +425,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 
 		//set characters per seconds and wraps
-		UpdateChars();
+		//UpdateChars();
 	}
 
 	//block show audio and video when preview enabled
@@ -489,10 +489,9 @@ void EditBox::UpdateChars()
 		wxString result;
 		bool isbad = false;
 		TextEditor * editor = GetEditor();
-		//int ilzn = grid->CalcChars(editor->GetValue(), &result, &isbad);
 		const TextData &td = editor->GetTextData();
-		Chars->SetLabelText(_("Łamania: ") + result + L"43");
-		Chars->SetForegroundColour((isbad) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
+		Chars->SetLabelText(_("Łamania: ") + td.wraps + L"43");
+		Chars->SetForegroundColour((td.badWraps) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = td.GetCPS(line);
 		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));
 		Chtime->SetForegroundColour((chtime > 15) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
