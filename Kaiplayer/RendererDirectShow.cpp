@@ -119,8 +119,9 @@ bool RendererDirectShow::InitRendererDX()
 	HR(hr, _("Zawiodło któreś z ustawień DirectX vertices"));
 
 
-	m_WindowWidth = m_WindowRect.right - m_WindowRect.left ;
-	m_WindowHeight = m_WindowRect.bottom - m_WindowRect.top ;
+	m_WindowWidth = m_WindowRect.right - m_WindowRect.left;
+	m_WindowHeight = m_WindowRect.bottom - m_WindowRect.top;
+	filtering = D3DTEXF_POINT;
 
 	m_LastBufferSize = m_WindowWidth * m_WindowHeight * 4;
 	if (m_SubtitlesBuffer)
@@ -376,8 +377,8 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	
 	//hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
 	//hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, filtering);
+	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, filtering);
 
 	hr = m_D3DDevice->SetTexture(0, m_BlitTexture);
 	if (isLibass)

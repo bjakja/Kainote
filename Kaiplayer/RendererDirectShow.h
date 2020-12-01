@@ -83,6 +83,7 @@ private:
 	//LPDIRECT3DPIXELSHADER9 m_CompiledShader = NULL;
 	unsigned char * m_SubtitlesBuffer = NULL;
 	//CUSTOMVERTEX pVertices[4];
+	D3DTEXTUREFILTERTYPE filtering = D3DTEXF_POINT;
 	int m_WindowWidth = -1;
 	int m_WindowHeight = -1;
 	int m_LastBufferSize = -1;
