@@ -425,7 +425,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 
 
 		//set characters per seconds and wraps
-		//UpdateChars();
+		UpdateChars();
 	}
 
 	//block show audio and video when preview enabled
@@ -612,10 +612,10 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 	if (oneline && !onlysel){
 		long whre;
 		wxString txt = TextEdit->GetValue();
-		TextEditor *GLOBAL_EDITOR = TextEdit;
+		TextEditor *editor = TextEdit;
 		if (grid->hasTLMode && txt == L""){
 			txt = TextEditOrig->GetValue();
-			GLOBAL_EDITOR = TextEditOrig;
+			editor = TextEditOrig;
 		}
 		if (!InBracket){
 			txt.insert(Placed.x, L"{" + text + L"}");
@@ -634,9 +634,9 @@ void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString
 			*texttoPutin = txt;
 			return;
 		}
-		GLOBAL_EDITOR->SetTextS(txt, true);
-		if (focus){ GLOBAL_EDITOR->SetFocus(); }
-		GLOBAL_EDITOR->SetSelection(whre, whre);
+		editor->SetTextS(txt, true);
+		if (focus){ editor->SetFocus(); }
+		editor->SetSelection(whre, whre);
 	}
 	else{
 		wxString tmp;

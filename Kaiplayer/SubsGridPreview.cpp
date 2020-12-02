@@ -198,7 +198,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue *acdial = /*(size > 0) ? */previewGrid->GetDialogue(previewGrid->currentLine)/* : NULL*/;
+	Dialogue *acdial = previewGrid->GetDialogue(previewGrid->currentLine);
 	Dialogue *Dial = NULL;
 
 	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
@@ -334,10 +334,12 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			wxString txttl = Dial->TextTl;
 			bool isTl = (previewGrid->hasTLMode && txttl != L"");
 
-			if (!isComment && (!previewGrid->hasTLMode && txt != L"" || isTl)) {
+			if (!isComment) {
 				//here are generated misspells table, chars table, and wraps;
+				//on original do not use spellchecking only calculating wraps and cps;
+				bool originalInTLMode = previewGrid->hasTLMode && txttl == L"";
 				Misspells.Init((isTl) ? txttl : txt,
-					SpellCheckerOn, previewGrid->subsFormat, 
+					SpellCheckerOn && !originalInTLMode, previewGrid->subsFormat,
 					previewGrid->hideOverrideTags ? chtagLen : -1);
 			}
 			if (!isComment && previewGrid->subsFormat != TMP && !(CPS & previewGrid->visibleColumns)) {

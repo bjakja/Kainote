@@ -21,6 +21,10 @@
 void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen) {
 	if (isInit)
 		return;
+	if (text.empty()) {
+		SetEmpty();
+		return;
+	}
 
 	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, NULL, tagReplaceLen);
 	isInit = true;

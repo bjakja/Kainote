@@ -130,7 +130,10 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 {
 	modified = modif;
 	MText = text;
-	CalcWrap(true, (noevent) ? false : modif);
+	CalcWrap(modif, (noevent) ? false : modif);
+	if (!modif)
+		CheckText();
+
 	if (resetsel){ SetSelection(0, 0); }
 	else{
 		if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
@@ -235,8 +238,8 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 	}
 		
 	if (updatechars){
-		if (useSpellchecker)
-			CheckText();
+		//check text to generate wraps and cps
+		CheckText();
 
 		EB->UpdateChars(); 
 	}
@@ -253,6 +256,11 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
 	while (i < textLen)
 	{
 		const wxUniChar &ch = MText[i];
+		if (ch == L'\t') {
+			i++;
+			continue;
+		}
+
 		auto &it = fontSizes.find(ch);
 		if (it != fontSizes.end()){
 			widthCount += it->second;
@@ -1018,7 +1026,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (parttext != L""){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				wxColour fontColor = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
+				wxColour fontColor = (val || (isTemplateLine && parttext.IsNumber() && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				gc->SetFont(font, fontColor);
@@ -1072,7 +1080,9 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				mestext << ch;
 				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
-				slash = val = false;
+				slash = false;
+				if (ch != L'.')
+					val = false;
 				wchar++;
 				continue;
 			}
@@ -2296,8 +2306,10 @@ bool TextEditor::SetFont(const wxFont &_font)
 }
 
 const TextData &TextEditor::GetTextData() {
-	if (!useSpellchecker)
+	if (!useSpellchecker) {
+		errors.clear();
 		errors.Init2(MText, false, EB->GetFormat(), NULL);
+	}
 	return errors;
 };
 

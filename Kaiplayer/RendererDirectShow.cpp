@@ -189,12 +189,12 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 	else {
 		KaiLog(_("Brak bufora klatki")); return false;
 	}
-	int size = m_LastBufferSize / 4;
+	//int size = m_LastBufferSize / 4;
 	memset(m_SubtitlesBuffer, 0, m_LastBufferSize);
-	byte* buff1 = m_SubtitlesBuffer;
+	//byte* buff1 = m_SubtitlesBuffer;
 
 	m_SubsProvider->Draw(m_SubtitlesBuffer, m_Time);
-	byte* buff = m_SubtitlesBuffer;
+	//byte* buff = m_SubtitlesBuffer;
 	
 
 	RECT dirtySubs = { 0, 0, m_WindowWidth, m_WindowHeight };

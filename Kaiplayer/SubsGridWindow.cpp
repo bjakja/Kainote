@@ -268,9 +268,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				wxString txt = Dial->Text;
 				wxString txttl = Dial->TextTl;
 				bool isTl = (hasTLMode && txttl != L"");
-				if (!isComment && (!hasTLMode && txt != L"" || isTl)) {
+				if (!isComment) {
 					//here are generated misspells table, chars table, and wraps;
-					Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn, subsFormat, hideOverrideTags ? chtagLen : -1);
+					//on original do not use spellchecking only calculating wraps and cps;
+					bool originalInTLMode = hasTLMode && txttl == L"";
+					Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn && !originalInTLMode, 
+						subsFormat, hideOverrideTags ? chtagLen : -1);
 				}
 				if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)) {
 					int chtime = Misspells.GetCPS(Dial);
@@ -639,9 +642,12 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			bool isTl = (hasTLMode && txttl != L"");
 
 			
-			if (!isComment && (!hasTLMode && txt != L"" || hasTLMode && txttl != L"")) {
+			if (!isComment) {
 				//here are generated misspells table, chars table, and wraps;
-				Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn, subsFormat, hideOverrideTags ? chtagLen : -1);
+				//on original do not use spellchecking only calculating wraps and cps;
+				bool originalInTLMode = hasTLMode && txttl == L"";
+				Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn && !originalInTLMode,
+					subsFormat, hideOverrideTags ? chtagLen : -1);
 			}
 			
 			if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)) {
