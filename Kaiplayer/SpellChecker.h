@@ -53,9 +53,10 @@ public:
 	//errors table for both
 	//misspells table for MyTextEditor
 	//tags replacement for SubsGrid
-	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, wxArrayString *misspells = NULL, int replaceTagsLen = -1);
+	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspells = NULL, int replaceTagsLen = -1);
 	//for spellchecker window
-	void CheckText(const wxString &text, wxArrayInt *errs);
+	void CheckText(const wxString &text, std::vector<MisspellData> *errs, int subsFormat);
+	void ReplaceMisspell(const wxString &misspell, const wxString &misspellReplace, int start, int end, wxString *textToReplace, int *newPosition);
 	static SpellChecker *Get();
 	static void Destroy();
 
@@ -67,7 +68,7 @@ private:
 	wxString userDictionaryPath;
 	bool useSpellChecker = true;
 	//no const cause of clearing
-	inline void Check(std::wstring &checkText, TextData *errs, wxArrayString *misspells, std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
+	inline void Check(std::wstring &checkText, TextData *errs, std::vector<MisspellData> *misspells, std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
 };
 
 

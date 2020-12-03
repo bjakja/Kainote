@@ -1089,8 +1089,8 @@ wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wx
 bool IsNumber(const wxString &test) {
 	bool isnumber = true;
 	wxString testchars = L"0123456789";
-	for (size_t i = 0; i < test.Len(); i++){
-		wxUniChar ch = test.GetChar(i);
+	for (size_t i = 0; i < test.length(); i++){
+		wxUniChar ch = test[i];
 		if (testchars.Find(ch) == -1){ isnumber = false; break; }
 	}
 	return isnumber;

@@ -39,3 +39,13 @@ void OpenInBrowser(const wxString &adress)
 	sei.fMask = SEE_MASK_FLAG_NO_UI; // we give error message ourselves
 	ShellExecuteEx(&sei);
 }
+
+bool IsNumberFloat(const wxString &test) {
+	bool isnumber = true;
+	wxString testchars = L"0123456789.";
+	for (size_t i = 0; i < test.length(); i++) {
+		wxUniChar ch = test[i];
+		if (testchars.Find(ch) == -1) { isnumber = false; break; }
+	}
+	return isnumber;
+}

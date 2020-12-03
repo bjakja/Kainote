@@ -387,7 +387,7 @@ DECLARE_ENUM(CONFIG, CFG)
 	//if you write here a new enum then change colorsSize below
 DECLARE_ENUM(COLOR, CLR)
 
-typedef void csri_rend;
+//typedef void csri_rend;
 
 class config
 {

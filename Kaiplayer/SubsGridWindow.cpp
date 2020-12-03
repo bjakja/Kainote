@@ -1047,7 +1047,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 	}
 
 	if (WRAPS & cell) {
-		gc->GetTextExtent(_("Linie") + L"XX", &fw, &fh);
+		gc->GetTextExtent(_("Linie") + L"X", &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1213,7 +1213,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	}
 
 	if (WRAPS & cell) {
-		dc.GetTextExtent(_("Linie") + L"XX", &fw, &fh);
+		dc.GetTextExtent(_("Linie") + L"X", &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 

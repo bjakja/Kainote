@@ -48,3 +48,5 @@ inline wxString GetTruncateText(const wxString &textToTruncate, int width, wxWin
 void SelectInFolder(const wxString & filename);
 
 void OpenInBrowser(const wxString &adress);
+
+bool IsNumberFloat(const wxString &test);

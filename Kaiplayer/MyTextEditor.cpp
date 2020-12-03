@@ -610,7 +610,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		time = timeGetTime();
 		int errn = FindError(mousePosition);
 		if (Options.GetBool(EDITBOX_SUGGESTIONS_ON_DOUBLE_CLICK) && errn >= 0){
-			wxString err = misspels[errn];
+			wxString err = misspells[errn].misspell;
 
 			wxArrayString suggs;
 			SpellChecker::Get()->Suggestions(err, suggs);
@@ -618,13 +618,12 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			KaiListBox lw(this, suggs, _("Sugestie poprawy"));
 			if (lw.ShowModal() == wxID_OK)
 			{
-				int from = errors[errn * 2];
-				int to = errors[(errn * 2) + 1];
-				wxString txt = lw.GetSelection();
-				MText.replace(from, to - from + 1, txt);
+				wxString suggestion = lw.GetSelection();
+				int newto = 0;
+				SpellChecker::Get()->ReplaceMisspell(err, suggestion,
+					misspells[errn].posStart, misspells[errn].posEnd, &MText, &newto);
 				modified = true;
 				CalcWrap();
-				int newto = from + txt.length();
 				SetSelection(newto, newto);
 				EB->Send(EDITBOX_SPELL_CHECKER, false);
 				modified = false;
@@ -1026,7 +1025,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (parttext != L""){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				wxColour fontColor = (val || (isTemplateLine && parttext.IsNumber() && (tags || templateCode))) ? cvalues : (slash) ? cnames :
+				wxColour fontColor = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				gc->SetFont(font, fontColor);
@@ -1066,10 +1065,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		}
 		if (isTemplateLine){
-			if (!templateString && (ch == L'!' || ch == L'.' || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
-				ch == L')' || ch == L'>' || ch == L'<' || ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';')){
+			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' ||
+				ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' || ch == L')' || ch == L'>' || ch == L'<' || 
+				ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';' || ch == L'~')){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
+				gc->SetFont(font, (IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
@@ -1080,9 +1080,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				mestext << ch;
 				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
-				slash = false;
-				if (ch != L'.')
-					val = false;
+				slash = val = false;
 				wchar++;
 				continue;
 			}
@@ -1103,7 +1101,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			}
 			if (!templateString && ch == L' '){
 				gc->GetTextExtent(mestext, &fw, &fh);
-				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
+				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + 3, posY);
 				mestext << parttext;
@@ -1372,7 +1370,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 			if (parttext != L""){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				wxColour kol = (val || (isTemplateLine && parttext.IsNumber())) ? cvalues : (slash) ? cnames :
+				wxColour kol = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				dc.SetTextForeground(kol);
@@ -1414,10 +1412,10 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 		}
 		if (isTemplateLine){
-			if (!templateString && (ch == L'!' || ch == L'.' || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
+			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
 				ch == L')' || ch == L'>' || ch == L'<' || ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';')){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground((parttext.IsNumber() || val) ? cvalues : (slash) ? cnames :
+				dc.SetTextForeground((IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
@@ -1449,7 +1447,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			}
 			if (!templateString && ch == L' '){
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground((!templateCode && !val && !slash) ? ctext : (parttext.IsNumber() || val) ? cvalues :
+				dc.SetTextForeground((!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + 3, posY);
 				mestext << parttext;
@@ -1660,8 +1658,8 @@ void TextEditor::CheckText()
 {
 	if (MText == L"") { errors.SetEmpty(); return; }
 	errors.clear();
-	misspels.Clear();
-	errors.Init2(MText, SpellCheckerOnOff, EB->GetFormat(), &misspels);
+	misspells.clear();
+	errors.Init2(MText, SpellCheckerOnOff, EB->GetFormat(), &misspells);
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1745,7 +1743,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	Menu menut;
 	wxString err;
 	wxArrayString suggs;
-	if (error >= 0){ err = misspels[error]; }
+	if (error >= 0){ err = misspells[error].misspell; }
 	if (!err.IsEmpty()){
 		SpellChecker::Get()->Suggestions(err, suggs);
 		for (size_t i = 0; i < suggs.size(); i++){
@@ -1817,37 +1815,9 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	id = menut.GetPopupMenuSelection(mpos, this);
 	if (id < 0)return;
 	if (id >= 30200){
-		int from = errors[error * 2];
-		int to = errors[(error * 2) + 1];
-		size_t errLen = err.length();
-		wxString sugestion = suggs[id - 30200];
-		size_t sugLen = sugestion.length();
-		int newto = from + sugLen;
-		int offset = 0;
-		if (to < errLen + from) {
-			int j = from, k = to, m = 0;
-			while (m <= errLen) {
-				int repLen = k - j + 1;
-				if (m + repLen >= sugLen)
-					offset = m + repLen - sugLen;
-				//Mid is safe when m >= size or repLen >= size
-				MText.replace(j, repLen, sugestion.Mid(m, repLen));
-				if (m >= errLen) {
-					newto = k;
-				}
-				
-
-				error++;
-				if (error * 2 >= errors.size()) {
-					newto = k;
-					break;
-				}
-				j = errors[error * 2] - offset;
-				k = errors[(error * 2) + 1] - offset;
-				m += repLen;
-			}
-		}else
-			MText.replace(from, to - from + 1, sugestion);
+		int newto = 0;
+		SpellChecker::Get()->ReplaceMisspell(err, suggs[id - 30200],
+			misspells[error].posStart, misspells[error].posEnd, &MText, &newto);
 
 		modified = true;
 		CalcWrap();
@@ -1972,11 +1942,12 @@ int TextEditor::FindError(wxPoint mpos, bool mouse)
 		cpos = mpos;
 	}
 	else if (mouse && !HitTest(mpos, &cpos)){ return-1; }
-
-	for (size_t i = 0; i < errors.size(); i += 2){
-		if (cpos.x >= errors[i] && cpos.x <= errors[i + 1]){
-			return i / 2;
+	int i = 0;
+	for (auto &misspell :misspells){
+		if (cpos.x >= misspell.posStart && cpos.x <= misspell.posEnd){
+			return i;
 		}
+		i++;
 	}
 
 

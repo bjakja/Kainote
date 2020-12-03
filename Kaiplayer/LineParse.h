@@ -16,9 +16,26 @@
 #pragma once
 
 #include <wx/wx.h>
+#include <vector>
 
 class Dialogue;
 class GraphicsContext;
+
+class MisspellData {
+public:
+	wxString misspell;
+	int posStart;
+	int posEnd;
+	MisspellData() {
+		posStart = -1;
+		posEnd = -1;
+	};
+	MisspellData(const wxString &_misspell, int posstart, int posend) {
+		misspell = _misspell;
+		posStart = posstart;
+		posEnd = posend;
+	}
+};
 
 class TextData {
 public:
@@ -39,7 +56,7 @@ public:
 	void Add(int val) { errors.Add(val); };
 	_wxArraywxArrayInt & operator[](size_t i) const { return errors[i]; }
 	void Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen);
-	void Init2(const wxString &text, bool spellchecker, int subsFormat, wxArrayString *misspels);
+	void Init2(const wxString &text, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspels);
 	void SetEmpty() {
 		errors.Clear();
 		isInit = true;
@@ -53,3 +70,4 @@ public:
 	void DrawMisspells(wxString &text, const wxPoint &pos, wxWindow *grid, 
 		wxDC *dc, const wxColour &col, int gridHeight, const wxFont &font);
 };
+

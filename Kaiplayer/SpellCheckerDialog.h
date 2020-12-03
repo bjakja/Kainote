@@ -20,6 +20,7 @@
 #include "KaiCheckBox.h"
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
+#include "LineParse.h"
 
 class KainoteFrame;
 class TabPanel;
@@ -63,7 +64,7 @@ private:
 	int lastActiveLine;
 	bool blockOnActive=false;
 	wxArrayString ignored;
-	wxArrayInt errors;
+	std::vector<MisspellData> errors;
 	wxString lastText;
 	KainoteFrame *Kai;
 	TabPanel *tab;

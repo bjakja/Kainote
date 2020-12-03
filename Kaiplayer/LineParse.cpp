@@ -16,7 +16,7 @@
 #include "LineParse.h"
 #include "SpellChecker.h"
 #include "SubsDialogue.h"
-#include "GraphicsD2D.h";
+#include "GraphicsD2D.h"
 
 void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen) {
 	if (isInit)
@@ -30,7 +30,7 @@ void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int
 	isInit = true;
 }
 
-void TextData::Init2(const wxString & text, bool spellchecker, int subsFormat, wxArrayString * misspels)
+void TextData::Init2(const wxString & text, bool spellchecker, int subsFormat, std::vector<MisspellData> * misspels)
 {
 	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, misspels, -1);
 }

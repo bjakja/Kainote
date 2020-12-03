@@ -91,7 +91,7 @@ protected:
 	KaiScrollbar *scroll;
 	PopupTagList *tagList = NULL;
 	wxFont font;
-	wxArrayString misspels;
+	std::vector<MisspellData> misspells;
 	wxCaret *caret;
 	std::vector<int> wraps;
 	TextData errors;

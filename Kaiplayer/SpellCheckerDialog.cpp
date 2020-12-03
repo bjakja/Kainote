@@ -108,19 +108,19 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
 		const wxString &Text = (tab->Grid->hasTLMode) ? Dial->TextTl : Dial->Text;
-		//w checktext kopiuje tekst więc nie muszę robić tego dwa razy.
-		SpellChecker::Get()->CheckText(Text, &errors);
+		SpellChecker::Get()->CheckText(Text, &errors, tab->Grid->subsFormat);
 		if (i != lastLine){ lastMisspell = 0; }
-		while (errors.size() > 1 && lastMisspell < errors.size()){
-			wxString misspellWord = Text.SubString(errors[lastMisspell], errors[lastMisspell + 1]);
-			lastMisspell += 2;
+		while (lastMisspell < errors.size()){
+			wxString misspellWord = errors[lastMisspell].misspell;
 			if (ignoreUpperCase && IsAllUpperCase(misspellWord)){
+				lastMisspell += 1;
 				continue;
 			}
 			if (ignored.Index(misspellWord, false) == -1){
 				lastLine = i;
 				return misspellWord;
 			}
+			lastMisspell += 1;
 		}
 		lastLine = i;
 	}
@@ -157,7 +157,7 @@ void SpellCheckerDialog::SetNextMisspell()
 	}
 	lastText = (tab->Grid->hasTLMode) ? tab->Edit->line->TextTl : tab->Edit->line->Text;
 	//tab->Edit->TextEdit->SetFocus();
-	tab->Edit->TextEdit->SetSelection(errors[lastMisspell - 2], errors[lastMisspell - 1] + 1);
+	tab->Edit->TextEdit->SetSelection(errors[lastMisspell].posStart, errors[lastMisspell].posEnd + 1);
 }
 
 void SpellCheckerDialog::Replace(wxCommandEvent &evt)
@@ -170,18 +170,15 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 		}
 	}
 	wxString replaceTxt = replaceWord->GetValue();
-	if (replaceTxt.IsEmpty() || errors.size() < 2){ return; }
+	if (replaceTxt.IsEmpty() || !errors.size()){ return; }
 	tab = Kai->GetTab();
 	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
 	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
-	int start = errors[lastMisspell - 2];
-	int end = errors[lastMisspell - 1] + 1;
-	Text.replace(start, end - start, replaceTxt);
+	SpellChecker::Get()->ReplaceMisspell(errors[lastMisspell].misspell, replaceTxt, 
+		errors[lastMisspell].posStart, errors[lastMisspell].posEnd, &Text, NULL);
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);
-	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
-	lastMisspell -= 2;
-	//}
+	//lastMisspell -= 1;
 	SetNextMisspell();
 }
 
@@ -192,8 +189,6 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	if (replaceTxt.IsEmpty() || misspellTxt.IsEmpty()){ return; }
 	tab = Kai->GetTab();
 	bool noComments = ignoreComments->GetValue();
-	//usunąć to nieszczęsne std regex które ć widzi jako word boundary
-
 	wxRegEx r(L"\\m" + misspellTxt.Lower() + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m \M matches a word boundary
 	if (!r.IsValid())
 		return;
@@ -236,9 +231,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);
-	//if(SpellChecker::Get()->CheckWord(replaceTxt)){
-	lastMisspell -= 2;
-	//}
+	//lastMisspell -= 1;
 	SetNextMisspell();
 }
 
@@ -256,10 +249,9 @@ void SpellCheckerDialog::IgnoreAll(wxCommandEvent &evt)
 void SpellCheckerDialog::AddWord(wxCommandEvent &evt)
 {
 	SpellChecker::Get()->AddWord(misSpell->GetValue());
-	if (lastMisspell > 0)
-		lastMisspell -= 2;
+	//if (lastMisspell > 0)
+		//lastMisspell -= 1;
 	//we have checked for example first misspell and after add and check again the next misspell will be first;
-	//decrease by 2, cause it gets only values divided by two.
 	SetNextMisspell();
 	Notebook::GetTab()->Edit->ClearErrs();
 }
