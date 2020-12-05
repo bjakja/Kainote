@@ -744,7 +744,13 @@ void FontCollector::CheckOrCopyFonts()
 	}
 	if (operation & AS_ZIP){
 		wxFFileOutputStream *out = new wxFFileOutputStream(fcd->copypath);
-		zip = new wxZipOutputStream(out, 9);
+		if (out->IsOk()) {
+			zip = new wxZipOutputStream(out, 9);
+		}
+		else {
+			delete out;
+			return;
+		}
 
 	}
 

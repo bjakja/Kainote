@@ -98,7 +98,9 @@ protected:
 	void DrawFld(wxDC &dc, int w, int h);
 	void DrawFieldD2D(GraphicsContext *gc, int w, int h);
 	void CalcWrap(bool sendevent = true, size_t position = 0);
-	void SendEvent();
+	void CalcWrapsGDI(int windowWidth, int currentPosition);
+	void CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int currentPosition);
+	//void SendEvent();
 	void GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight);
 	void GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight);
 	void MakeCursorVisible(bool refresh = true);
@@ -123,7 +125,9 @@ protected:
 	std::vector<int> wraps;
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
-	std::vector<int> charmap;
+	//std::vector<int> charmap;
+	std::map<wxUniChar, double> fontSizes;
+	std::map<wxUniChar, int> fontGDISizes;
 	wxMutex mutex;
 	wxSize lastSize;
 	long style;

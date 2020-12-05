@@ -288,128 +288,14 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 			}
 		}
 		size_t currentPosition = wraps[wraps.size() - 1];
-		size_t i = currentPosition;
-		int newWrap = -1;
 		size_t len = KText.length();
 		int mesureSize = w - 20;
 		if (mesureSize <= 10){ for (size_t t = 1; t < len; t++){ wraps.push_back(t);  positioning.push_back(5); return; } }
-		int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
-		int pos = 5;
-		while (i < len)
-		{
-			size_t nfound = KText.find(wxUniChar(L'\n'), i);
-			i = (nfound != -1) ? nfound : len - 1;
-			if (gc){
-				GetTextExtent(gc, KText.Mid(currentPosition, i - currentPosition + 1), &gfw, &gfh);
-				fw = gfw + 0.5;
-			}
-			else
-				GetTextExtent(KText.Mid(currentPosition, i - currentPosition + 1), &fw, &fh);
-			//check text to \n
-			if (fw > mesureSize){
-				size_t j = currentPosition + 1;
-				bool foundWrap = false;
-				size_t textPosition = currentPosition;
-				int currentFW = 0;
-				while (currentPosition < i)
-				{
-					size_t spacePos = KText.find(wxUniChar(L' '), j);
-					if (spacePos == -1 || spacePos > i)
-						spacePos = i;
-
-					j = spacePos + 1;
-					if (gc){
-						GetTextExtent(gc, KText.Mid(textPosition, spacePos - textPosition + 1), &gfw, &gfh);
-						fw = gfw + 0.5;
-					}
-					else
-						GetTextExtent(KText.Mid(textPosition, spacePos - textPosition + 1), &fw, &fh);
-					textPosition = spacePos + 1;
-					currentFW += fw;
-					//check text to space
-					if (currentFW <= mesureSize){
-						newWrap = j;
-						foundWrap = true;
-						if (j<i)
-							continue;
-					}//check text without spaces
-					else if (currentFW > mesureSize && !foundWrap){
-						j = (currentPosition + 30 < i) ? currentPosition + 30 : currentPosition + 1;
-						textPosition = currentPosition + 1;
-						int step = 10;
-						fw = currentFW = 0;
-						int newmessure = mesureSize - 12;
-						while (j <= spacePos){
-							if (gc){
-								GetTextExtent(gc, KText.Mid(textPosition, j - textPosition + 1), &gfw, &gfh);
-								fw = gfw + 0.5;
-							}
-							else
-								GetTextExtent(KText.Mid(textPosition, j - textPosition + 1), &fw, &fh);
-							textPosition = j + 1;
-							currentFW += fw;
-							if (currentFW > newmessure){
-								if (step == 10){
-									step = 1;
-									j -= 10;
-									textPosition -= 10;
-									currentFW -= fw;
-								}
-								else if (j < spacePos){
-									if (stylewrap){
-										if (gc){
-											GetTextExtent(gc, KText.Mid(currentPosition, j - currentPosition + 1), &gfw, &gfh);
-											fw = gfw + 0.5;
-										}
-										else
-											GetTextExtent(KText.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
-										pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
-									}
-									positioning.push_back(pos);
-									wraps.push_back(j);
-									currentPosition = j + 1;
-									step = 10;
-									currentFW = 0;
-								}
-							}
-							j += step;
-						}//now it's missing last wrap adding it in normal way set tu character after space or len
-						newWrap = spacePos + 1;
-					}
-					currentPosition = textPosition = newWrap;
-					currentFW = 0;
-					if (stylewrap){
-						if (gc){
-							GetTextExtent(gc, KText.Mid(currentPosition, newWrap - currentPosition + 1), &gfw, &gfh);
-							fw = gfw + 0.5;
-						}
-						else
-							GetTextExtent(KText.Mid(currentPosition, newWrap - currentPosition + 1), &fw, &fh);
-						pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
-					}
-					positioning.push_back(pos);
-					wraps.push_back((newWrap > len) ? len : newWrap);
-					currentPosition = newWrap;
-					foundWrap = false;
-					j = currentPosition + 1;
-				}
-			}
-			else{
-				size_t wrap = i + 1;
-				if (stylewrap){
-					if (gc){
-						GetTextExtent(gc, KText.Mid(currentPosition, wrap - currentPosition + 1), &gfw, &gfh);
-						fw = gfw + 0.5;
-					}
-					else
-						GetTextExtent(KText.Mid(currentPosition, wrap - currentPosition + 1), &fw, &fh);
-					pos = (stylewrap == 1) ? ((w - fw) / 2) : (w - fw) - 5;
-				}
-				positioning.push_back(pos);
-				wraps.push_back(wrap);
-				currentPosition = wrap;
-			}
-			i++;
+		if (gc) {
+			CalcWrapsD2D(gc, w, currentPosition);
+		}
+		else {
+			CalcWrapsGDI(w, currentPosition);
 		}
 	}
 	else{
@@ -439,6 +325,158 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 	if (posY < 2){ posY = 2; }
 	//if(multiline){posY -=scPos;}
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
+}
+
+void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
+{
+	int gfw, gfh, pos;
+	size_t i = currentPosition;
+	size_t textLen = KText.length();
+	int widthCount = 0;
+	int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
+	while (i < textLen)
+	{
+		const wxUniChar &ch = KText[i];
+
+		auto &it = fontGDISizes.find(ch);
+		if (it != fontGDISizes.end()) {
+			widthCount += it->second;
+		}
+		else {
+			if (ch == L'\t') {
+				wxWindow::GetTextExtent(L"        ", &gfw, &gfh, NULL, NULL, &font);
+				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
+			}//calculate size of \r to 0 to not slow code when splitting it on \n
+			else if (ch == L'\r') {
+				gfw = 0;
+				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, 0));
+			}
+			else {
+				wxWindow::GetTextExtent(ch, &gfw, &gfh, NULL, NULL, &font);
+				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
+			}
+			widthCount += gfw;
+		}
+		if (ch == L'\n') {
+			pos = (stylewrap == 1) ? ((windowWidth - widthCount) / 2) : (stylewrap == 2) ? (windowWidth - widthCount) - 5 : 5;
+			positioning.push_back(pos);
+			wraps.push_back(i + 1);
+			widthCount = 0;
+			i++;
+		}//add here scrollbar size, or maybe in the future I need to use scrollbar width here
+		else if (widthCount > windowWidth - 12) {
+			size_t wrapsSize = wraps.size();
+			int minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
+			int j = i - 2;
+			bool foundWrap = false;
+			int charDiffLength = 0;
+			//check for possible wraps else return char wrap
+			while (minChar < j) {
+				const wxUniChar &ch = KText[j];
+				if (ch == L' '/* || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')'*/) {
+					pos = (stylewrap == 1) ? ((windowWidth - (widthCount - charDiffLength)) / 2) : 
+						(stylewrap == 2) ? (windowWidth - (widthCount - charDiffLength)) - 5 : 5;
+					positioning.push_back(pos);
+					wraps.push_back(/*ch == L'{' ? j : */j + 1);
+					foundWrap = true;
+					i = j + 1;
+					break;
+				}
+				charDiffLength += fontGDISizes[ch];
+				j--;
+			}
+			if (!foundWrap) {
+				pos = (stylewrap == 1) ? ((windowWidth - widthCount) / 2) : (stylewrap == 2) ? (windowWidth - widthCount) - 5 : 5;
+				positioning.push_back(pos);
+				wraps.push_back(i - 1);
+				i--;
+			}
+			widthCount = 0;
+		}
+		i++;
+	}
+	if (wraps[wraps.size() - 1] != textLen) {
+		pos = (stylewrap == 1) ? (windowWidth / 2) : (stylewrap == 2) ? windowWidth - 5 : 5;
+		positioning.push_back(pos);
+		wraps.push_back(textLen);
+	}
+}
+
+void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int currentPosition)
+{
+	double gfw, gfh;
+	size_t i = currentPosition;
+	size_t textLen = KText.length();
+	double widthCount = 0.0;
+	int pos;
+	int stylewrap = (style & wxALIGN_CENTER_HORIZONTAL) ? 1 : (style & wxALIGN_RIGHT) ? 2 : 0;
+	while (i < textLen)
+	{
+		const wxUniChar &ch = KText[i];
+		
+		auto &it = fontSizes.find(ch);
+		if (it != fontSizes.end()) {
+			widthCount += it->second;
+		}
+		else {
+			if (ch == L'\t') {
+				gc->GetTextExtent(L"        ", &gfw, &gfh);
+				fontSizes.insert(std::pair<wxUniChar, int>(ch, gfw));
+			}//calculate size of \r to 0 to not slow code when splitting it on \n
+			else if (ch == L'\r') {
+				gfw = 0;
+				fontSizes.insert(std::pair<wxUniChar, int>(ch, 0));
+			}
+			else {
+				gc->GetTextExtent(ch, &gfw, &gfh);
+				fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
+			}
+			widthCount += gfw;
+		}
+		if (ch == L'\n') {
+			pos = (stylewrap == 1) ? ((windowWidth - (widthCount + 0.5)) / 2) : (stylewrap == 2) ? (windowWidth - (widthCount + 0.5)) - 5 : 5;
+			positioning.push_back(pos);
+			wraps.push_back(i + 1);
+			widthCount = 0;
+			i++;
+		}
+		else if (widthCount > windowWidth - 12) {
+			size_t wrapsSize = wraps.size();
+			int minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
+			int j = i - 2;
+			bool foundWrap = false;
+			int charDiffLength = 0;
+			//check for possible wraps else return char wrap
+			while (minChar < j) {
+				const wxUniChar &ch = KText[j];
+				if (ch == L' '/* || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')'*/) {
+					pos = (stylewrap == 1) ? ((windowWidth - (widthCount - charDiffLength + 0.5)) / 2) :
+						(stylewrap == 2) ? (windowWidth - (widthCount - charDiffLength + 0.5)) - 5 : 5;
+					positioning.push_back(pos);
+					wraps.push_back(/*ch == L'{' ? j : */j + 1);
+					foundWrap = true;
+					i = j + 1;
+					break;
+				}
+				charDiffLength += fontSizes[ch];
+				j--;
+			}
+			if (!foundWrap) {
+				pos = (stylewrap == 1) ? ((windowWidth - (widthCount + 0.5)) / 2) : 
+					(stylewrap == 2) ? (windowWidth - (widthCount + 0.5)) - 5 : 5;
+				positioning.push_back(pos);
+				wraps.push_back(i - 1);
+				i--;
+			}
+			widthCount = 0;
+		}
+		i++;
+	}
+	if (wraps[wraps.size() - 1] != textLen) {
+		wraps.push_back(textLen);
+		pos = (stylewrap == 1) ? (windowWidth / 2) : (stylewrap == 2) ? windowWidth - 5 : 5;
+		positioning.push_back(pos);
+	}
 }
 
 void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
@@ -786,6 +824,9 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 			if (scPos > diff2 - diff){ scPos = diff2 - diff; }
 			if (SetScrollBar(wxVERTICAL, scPos, diff, diff2, diff - 2)){
 				GetClientSize(&w, &h);
+				if (bitmapw != w) {
+					CalcWrap(false);
+				}
 			}
 		}
 		else{
@@ -794,6 +835,9 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 			scPos = 0;
 			if (SetScrollBar(wxVERTICAL, scPos, h, 0, h)){
 				GetClientSize(&w, &h);
+				if (bitmapw != w) {
+					CalcWrap(false);
+				}
 			}
 		}
 

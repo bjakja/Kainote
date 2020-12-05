@@ -169,67 +169,11 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			GraphicsContext *gc = renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
-				CalcWrapsD2D(gc, w, h);
+				CalcWrapsD2D(gc, w);
 				delete gc;
 			}
 			else{
-				//CalcWrapsGDI(w, h);
-				int podz = 0;
-				wxString wrapchars = L" \\,;:}{()";
-
-				int nwrap = -1;
-				int allwrap = 0;
-				int approxSize = w / fontSize;
-				while (i < textLen)
-				{
-					i = podz + approxSize;
-					if (i >= textLen){ i = textLen - 1; }
-					bool forward = false;
-					bool forwardNotFound = true;
-					bool backward = false;
-					bool backwardNotFound = true;
-					while (1)
-					{
-						wxString wrap = MText.SubString(podz, i);
-						GetTextExtent(wrap, &fw, &fh, NULL, NULL, &font);
-						
-						allwrap = i;
-						if (fw < w - 7 && !backward && backwardNotFound && i < textLen - 1){
-							int j = i + 1;
-							while (j < textLen && forwardNotFound){
-								if (wrapchars.Find(MText[j]) != -1){
-									nwrap = j;
-									if (MText[j] == L' '){ nwrap++; }
-									forward = true;
-									break;
-								}
-								j++;
-							}
-							if (!forward){ i++; forwardNotFound = false; }
-							else{ i = j; }
-						}
-						else if (fw > w - 7 && i > podz){
-							size_t k = i - 1;
-							while (k > podz && backwardNotFound){
-								if (wrapchars.Find(MText[k]) != -1){
-									nwrap = k;
-									if (MText[k] == L' '){ nwrap++; }
-									backward = true;
-									break;
-								}
-								k--;
-							}
-							if (!backward){ if (i > podz) i--; backwardNotFound = false; }
-							else{ i = k; }
-						}
-						else{
-							int wwrap = (nwrap > 0 && nwrap > wraps[wraps.size() - 1] && nwrap <= allwrap && i < textLen - 1) ? nwrap : (i >= textLen - 1) ? textLen : allwrap + 1;
-							wraps.push_back(wwrap); podz = wwrap; nwrap = -1; allwrap = i;
-							i++;
-							break;
-						}
-					}
-				}
+				CalcWrapsGDI(w);
 			}
 		}
 	}
@@ -246,9 +190,59 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 	if (sendevent){ wxCommandEvent evt2(wxEVT_COMMAND_TEXT_UPDATED, GetId()); AddPendingEvent(evt2); }
 }
 
-void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
+void TextEditor::CalcWrapsGDI(int windowWidth)
 {
-	//wxString wrapchars = L" \\,;:}{()";
+	int gfw, gfh;
+	size_t i = 0;
+	size_t textLen = MText.length();
+	int widthCount = 0;
+	while (i < textLen)
+	{
+		const wxUniChar &ch = MText[i];
+		if (ch == L'\t') {
+			i++;
+			continue;
+		}
+		
+		auto &it = fontGDISizes.find(ch);
+		if (it != fontGDISizes.end()) {
+			widthCount += it->second;
+		}
+		else {
+			GetTextExtent(ch, &gfw, &gfh, NULL, NULL, &font);
+			fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
+			widthCount += gfw;
+		}
+		if (widthCount > windowWidth - 7) {
+			size_t wrapsSize = wraps.size();
+			int minChar = wrapsSize ? wraps[wrapsSize - 1] : 0;
+			int j = i - 2;
+			bool foundWrap = false;
+			//check for possible wraps else return char wrap
+			while (minChar < j) {
+				const wxUniChar &ch = MText[j];
+				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
+					wraps.push_back(ch == L'{' ? j : j + 1);
+					foundWrap = true;
+					i = j + 1;
+					break;
+				}
+				j--;
+			}
+			if (!foundWrap) {
+				wraps.push_back(i - 1);
+				i--;
+			}
+			widthCount = 0;
+		}
+		i++;
+	}
+	if (wraps[wraps.size() - 1] != textLen)
+		wraps.push_back(textLen);
+}
+
+void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
+{
 	double gfw, gfh;
 	size_t i = 0;
 	size_t textLen = MText.length();
@@ -270,10 +264,27 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int w, int h)
 			fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
 			widthCount += gfw;
 		}
-		if (widthCount > w - 7){
-			wraps.push_back(i - 1);
+		if (widthCount > windowWidth - 7){
+			size_t wrapsSize = wraps.size();
+			int minChar = wrapsSize ? wraps[wrapsSize - 1] : 0;
+			int j = i - 2;
+			bool foundWrap = false;
+			//check for possible wraps else return char wrap
+			while (minChar < j) {
+				const wxUniChar &ch = MText[j];
+				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
+					wraps.push_back(ch == L'{' ? j : j + 1);
+					foundWrap = true;
+					i = j + 1;
+					break;
+				}
+				j--;
+			}
+			if (!foundWrap) {
+				wraps.push_back(i - 1);
+				i--;
+			}
 			widthCount = 0;
-			i--;
 		}
 		i++;
 	}

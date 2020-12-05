@@ -486,11 +486,14 @@ void EditBox::UpdateChars()
 		Chtime->SetLabelText(L"");
 	}
 	else{
-		wxString result;
-		bool isbad = false;
 		TextEditor * editor = GetEditor();
 		const TextData &td = editor->GetTextData();
-		Chars->SetLabelText(_("Łamania: ") + td.wraps + L"43");
+		wxString wraps;
+		if (td.wraps.length() < 50) { wraps = td.wraps; }
+		else {
+			wraps = td.wraps.Mid(0, 50).BeforeLast(L'/') + L"/.../";
+		}
+		Chars->SetLabelText(_("Łamania: ") + wraps + L"43");
 		Chars->SetForegroundColour((td.badWraps) ? WINDOW_WARNING_ELEMENTS : WINDOW_TEXT);
 		int chtime = td.GetCPS(line);
 		Chtime->SetLabelText(wxString::Format(_("Znaki na sekundę: %i<=15"), chtime));

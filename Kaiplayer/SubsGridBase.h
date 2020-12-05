@@ -156,8 +156,8 @@ public:
 	static bool hasCompare;
 	wxMutex &GetMutex() { return editionMutex; }
 private:
-	virtual void AdjustWidths(int cell = 8191){};
-	virtual void RefreshColumns(int cell = 8191){};
+	virtual void AdjustWidths(int cell = 16383){};
+	virtual void RefreshColumns(int cell = 16383){};
 	virtual void MakeVisible(int row){};
 	//to add option to not center lines is need make visible
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};

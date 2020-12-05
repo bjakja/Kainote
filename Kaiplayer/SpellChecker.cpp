@@ -435,6 +435,8 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bo
 	if (checkText.size()) {
 		Check(checkText, errs, misspells, textOffset, text, repltags, replaceTagsLen);
 	}
+	if (errs->wraps.empty())
+		errs->wraps = L"0";
 
 	if (lastStartCBracket > lastEndCBracket) { 
 		errs->Add(lastStartCBracket); 

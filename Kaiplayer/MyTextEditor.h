@@ -71,8 +71,8 @@ protected:
 	void DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
 	void CalcWrap(bool updatechars = true, bool sendevent = true);
-	void CalcWrapsD2D(GraphicsContext *gc, int w, int h);
-	//void CalcWrapsGDI(int w, int h);
+	void CalcWrapsGDI(int windowWidth);
+	void CalcWrapsD2D(GraphicsContext *gc, int windowWidth);
 	void FindWord(int pos, int *start, int *end);
 	int FindBracket(wxUniChar sbrkt, wxUniChar ebrkt, int pos, bool fromback = false);
 	void MakeCursorVisible();
@@ -118,6 +118,7 @@ protected:
 	int tmpstart, tmpend;
 	int statusBarHeight;
 	std::map<wxUniChar, double> fontSizes;
+	std::map<wxUniChar, int> fontGDISizes;
 	DECLARE_EVENT_TABLE()
 };
 

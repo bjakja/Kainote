@@ -50,7 +50,7 @@ LogWindow::LogWindow(wxWindow *parent, LogHandler *_handler)
 	MappedButton *OK = new MappedButton(this, 12457, _("Zamknij"));
 	sizer->Add(lastLogText, 0, wxALIGN_CENTER | wxALL, 10);
 	//sizer->Add(collapse, 0, wxALL, 4);
-	sizer->Add(logText, 0, wxEXPAND | wxALL, 4);
+	sizer->Add(logText, 1, wxEXPAND | wxALL, 4);
 	sizer->Add(OK, 0, wxALL | wxALIGN_CENTER, 4);
 
 	Bind(EVT_DO_LOG, &LogWindow::OnGetLog, this);
