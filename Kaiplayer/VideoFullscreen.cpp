@@ -135,21 +135,21 @@ void Fullscreen::OnSize()
 		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
 		wxSize toolbarSize = showToolbar->GetMinSize();
 		showToolbar->SetSize(180, toolBarHeight - 6 + ((26 - toolbarSize.y) / 2), toolbarSize.x, toolbarSize.y);
-		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 6, 13 * toolBarHeight, 26);
+		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 6, 13 * toolBarHeight, toolBarHeight - 6);
 		if (vToolbar->IsShown()){
 			vToolbar->SetSize(0, buttonSection, asize.x, toolBarHeight);
 		}
-		Videolabel->SetSize(180 + toolbarSize.x + 25 + (13 * toolBarHeight), toolBarHeight - 6, asize.x - 758, 26);
+		Videolabel->SetSize(180 + toolbarSize.x + 25 + (13 * toolBarHeight), toolBarHeight - 6, asize.x - 758, toolBarHeight - 6);
 	}
 	else{
 		//mstimes->SetSize(asize.x - difSize, -1);
 		if (vToolbar->IsShown()){
 			vToolbar->SetSize(asize.x, toolBarHeight);
 		}
-		Videolabel->SetSize(asize.x - 758, 26);
+		Videolabel->SetSize(asize.x - 758, toolBarHeight - 6);
 	}
 	
-	vslider->SetSize(wxSize(asize.x, 14));
+	vslider->SetSize(wxSize(asize.x, toolBarHeight - 8));
 	if(vc->IsDirectShow()){
 		volslider->Show(); 
 		volslider->SetPosition(wxPoint(asize.x - 110, toolBarHeight - 5));

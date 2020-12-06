@@ -78,7 +78,7 @@ SubtitlesLibass::~SubtitlesLibass()
 		ass_free_track(m_AssTrack);
 }
 
-// code taken from Aegisub
+// code taken from Aegisub and MPV
 #define _r(c) ((c)>>24)
 #define _g(c) (((c)>>16)&0xFF)
 #define _b(c) (((c)>>8)&0xFF)
@@ -91,42 +91,45 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
 
 		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, NULL);
-
+		int videoPitch = m_VideoSize.GetWidth() * m_BytesPerColor;
 		// libass actually returns several alpha-masked monochrome images.
 		// Here, we loop through their linked list, get the colour of the current, and blend into the frame.
 		// This is repeated for all of them.
-
-		using namespace boost::gil;
-		auto dst = interleaved_view(m_VideoSize.GetWidth(), m_VideoSize.GetHeight(), (bgra8_pixel_t*)buffer, m_VideoSize.GetWidth() * m_BytesPerColor);
-		if (m_IsSwapped)
-			dst = flipped_up_down_view(dst);
+		//if there real a swap frame that i have to change it
 
 		for (; img; img = img->next) {
-			unsigned int a = ((unsigned int)_a(img->color));
-			unsigned int opacity = 255 - a;
+			if (img->h == 0 || img->w == 0)
+				continue;
+
+			unsigned int a1 = ((unsigned int)_a(img->color));
+			unsigned int a = 255 - a1;
 			unsigned int r = (unsigned int)_r(img->color);
 			unsigned int g = (unsigned int)_g(img->color);
 			unsigned int b = (unsigned int)_b(img->color);
 
-			auto srcview = interleaved_view(img->w, img->h, (gray8_pixel_t*)img->bitmap, img->stride);
-			auto dstview = subimage_view(dst, img->dst_x, img->dst_y, img->w, img->h);
-
-			transform_pixels(dstview, srcview, dstview, [=](const bgra8_pixel_t frame, const gray8_pixel_t src) -> bgra8_pixel_t {
-				unsigned int k = ((unsigned)src) * opacity / 255;
-				unsigned int ck = 255 - k;
-
-				bgra8_pixel_t ret;
-				ret[0] = (k * b + ck * frame[0]) / 255;
-				ret[1] = (k * g + ck * frame[1]) / 255;
-				ret[2] = (k * r + ck * frame[2]) / 255;
-				if (m_Format == RGB32) {
-					ret[3] = 0;
+			byte * src = img->bitmap;
+			byte *dst = buffer + (img->dst_y * videoPitch) + (img->dst_x * 4);
+			
+			for (int y = 0; y < img->h; y++, dst += videoPitch, src += img->stride) {
+				uint32_t *dstrow = (uint32_t *)dst;
+				for (int x = 0; x < img->w; x++) {
+					const unsigned int v = src[x];
+					int rr = (r * a * v);
+					int gg = (g * a * v);
+					int bb = (b * a * v);
+					int aa = a * v;
+					uint32_t dstpix = dstrow[x];
+					unsigned int dstb = dstpix & 0xFF;
+					unsigned int dstg = (dstpix >> 8) & 0xFF;
+					unsigned int dstr = (dstpix >> 16) & 0xFF;
+					unsigned int dsta = (dstpix >> 24) & 0xFF;
+					dstb = (bb + dstb * (255 * 255 - aa)) / (255 * 255);
+					dstg = (gg + dstg * (255 * 255 - aa)) / (255 * 255);
+					dstr = (rr + dstr * (255 * 255 - aa)) / (255 * 255);
+					dsta = (aa * 255 + dsta * (255 * 255 - aa)) / (255 * 255);
+					dstrow[x] = dstb | (dstg << 8) | (dstr << 16) | (dsta << 24);
 				}
-				else {
-					ret[3] = (k * opacity + ck * frame[3]) / 255;
-				}
-				return ret;
-			});
+			}
 		}
 	}
 	else{

@@ -119,6 +119,9 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	SetCaret(caret);
 	caret->Move(3, 2);
 	caret->Show();
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt) {
+		PutTag();
+	}, GetId());
 }
 
 TextEditor::~TextEditor()
@@ -320,22 +323,29 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		Update();
 		modified = true;
 		//tag list
-		if (!tagList && (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\'))){
+		if (!tagList && (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\') ||
+			(Cursor.x < MText.length() && (MText[Cursor.x] == L'\\' || MText[Cursor.x] == L'}')))){
 			//No need to check end cause when there's no end start will take all line
 			//No need to show list when it's plain text, someone want to write \h or \N
+			wxString partTag;
+			bool hasPartTag = false;
 			for (int i = Cursor.x - 1; i >= 0; i--){
 				if (MText[i] == L'}')
 					break;
 				if (MText[i] == L'{'){
 					tagList = new PopupTagList(this);
-					if (wkey != L'\\')
-						tagList->AppendToKeyword(wkey);
+					if (wkey != L'\\') {
+						if (partTag.empty())
+							tagList->AppendToKeyword(wkey);
+						else
+							tagList->FilterListViaKeyword(partTag);
+					}
 
-					if (!tagList->GetCount()){
+					/*if (!tagList->GetCount()){
 						delete tagList;
 						tagList = NULL;
 						return;
-					}
+					}*/
 
 					//calculate position of popup list
 					wxPoint pos;
@@ -360,10 +370,14 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 						}
 					}
 					tagList->Popup(pos, wxSize(100, fontHeight+10), 0);
-					Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent &evt){
-						PutTag();
-					}, tagList->GetId());
 					break;
+				}
+				else if(!hasPartTag){
+					if (MText[i] == L'\\') {
+						hasPartTag = true;
+						continue;
+					}
+					partTag.insert(0, 1, MText[i]);
 				}
 			}
 			
@@ -373,7 +387,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			if (!tagList->GetCount()){
 				delete tagList;
 				tagList = NULL;
-				return;
+				//return;
 			}
 		}
 	}
@@ -411,7 +425,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	}
 	if (tagList){
 		if (key == WXK_ESCAPE || key == WXK_HOME || key == WXK_END || (ctrl && key == L'0')){
-			tagList->Destroy();
+			delete tagList;
 			tagList = NULL;
 		}
 	}
@@ -429,7 +443,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		selectionWords.clear();
 	//maybe only for now
 	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != EDITBOX_COMMIT_GO_NEXT_LINE){
-		tagList->Destroy();
+		delete tagList;
 		tagList = NULL;
 	}
 	switch (ID){
@@ -593,7 +607,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 	bool leftup = event.LeftUp();
 	if (event.ButtonDown()){ 
 		if (tagList){
-			tagList->Destroy();
+			delete tagList;
 			tagList = NULL;
 		}
 		SetFocus(); 
@@ -1687,7 +1701,7 @@ wxUniChar TextEditor::CheckQuotes()
 void TextEditor::OnKillFocus(wxFocusEvent& event)
 {
 	if (tagList){
-		tagList->Destroy();
+		delete tagList;
 		tagList = NULL;
 	}
 	Refresh(false);
@@ -2252,7 +2266,7 @@ void TextEditor::PutTag()
 
 				Replace(i + 1, Cursor.x, tag);
 				SetSelection(newPosition, newPosition);
-				tagList->Destroy();
+				delete tagList;//tagList->Destroy();
 				tagList = NULL;
 				return;
 			}

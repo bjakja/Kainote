@@ -956,9 +956,22 @@ void VideoFfmpeg::Render(bool wait){
 		return;
 	}
 	memcpy(&buff[0], fframe->Data[0], fplane);
-	rend->DrawTexture(buff);
+	rend->DrawTexture(fframe->Data[0], true);
+	//it's not event thats why must be safe from start
 	rend->Render(false);
-};
+}
+
+void VideoFfmpeg::GetFrameBuffer(byte **buffer)
+{
+	if (rend->m_Frame != lastframe) {
+		GetFFMSFrame();
+		lastframe = rend->m_Frame;
+	}
+	if (!fframe) {
+		return;
+	}
+	memcpy(*buffer, fframe->Data[0], fplane);
+}
 
 wxString VideoFfmpeg::ColorCatrixDescription(int cs, int cr) {
 	// Assuming TV for unspecified

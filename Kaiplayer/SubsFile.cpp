@@ -346,6 +346,9 @@ Dialogue * SubsFile::GetVisibleDialogue(size_t i)
 
 Dialogue *SubsFile::GetDialogue(size_t i)
 {
+	if (i >= subs->dialogues.size())
+		return NULL;
+
 	return subs->dialogues[i];
 }
 

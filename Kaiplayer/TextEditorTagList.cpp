@@ -18,49 +18,41 @@
 #include "config.h"
 #include "Menu.h"
 
-const int maxVisible = 15;
+const int maxVisible = 10;
 
-PopupTagList::PopupTagList(wxWindow *DialogParent)
+PopupWindow::PopupWindow(wxWindow *DialogParent, PopupTagList *Parent, int Height)
 : wxPopupWindow(DialogParent)
 , sel(0)
 , scrollPositionV(0)
 , scroll(NULL)
 , bmp(NULL)
-, Parent(DialogParent)
+, parent(Parent)
+, height(Height)
 {
 	int fw = 0;
 	SetFont(DialogParent->GetFont());
-	GetTextExtent(L"#TWFfGH", &fw, &height);
-	height += 6;
-	Bind(wxEVT_MOTION, &PopupTagList::OnMouseEvent, this);
-	Bind(wxEVT_LEFT_UP, &PopupTagList::OnMouseEvent, this);
-	Bind(wxEVT_RIGHT_UP, &PopupTagList::OnMouseEvent, this);
-	Bind(wxEVT_MOUSEWHEEL, &PopupTagList::OnMouseEvent, this);
-	Bind(wxEVT_PAINT, &PopupTagList::OnPaint, this);
-	Bind(wxEVT_SCROLL_THUMBTRACK, &PopupTagList::OnScroll, this);
-	Bind(wxEVT_MOUSE_CAPTURE_LOST, &PopupTagList::OnLostCapture, this);
-	//get options from config
-	int options = Options.GetInt(TEXT_EDITOR_TAG_LIST_OPTIONS);
-	InitList(options);
+	//GetTextExtent(L"#TWFfGH", &fw, &height);
+	//height += 6;
+	Bind(wxEVT_MOTION, &PopupWindow::OnMouseEvent, this);
+	Bind(wxEVT_LEFT_UP, &PopupWindow::OnMouseEvent, this);
+	Bind(wxEVT_RIGHT_UP, &PopupWindow::OnMouseEvent, this);
+	Bind(wxEVT_MOUSEWHEEL, &PopupWindow::OnMouseEvent, this);
+	Bind(wxEVT_PAINT, &PopupWindow::OnPaint, this);
+	Bind(wxEVT_SCROLL_THUMBTRACK, &PopupWindow::OnScroll, this);
+	Bind(wxEVT_MOUSE_CAPTURE_LOST, &PopupWindow::OnLostCapture, this);
+	
 }
 
-PopupTagList::~PopupTagList()
+PopupWindow::~PopupWindow()
 {
 	wxDELETE(bmp);
-	for (auto cur = itemsList.begin(); cur != itemsList.end(); cur++)
-		delete *cur;
 }
 
-void PopupTagList::Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem)
+void PopupWindow::Popup(const wxPoint &pos, const wxSize &size, int selectedItem)
 {
 	SetSelection(selectedItem);
-	wxPoint npos = pos;//Parent->ClientToScreen(pos);
-	wxSize size;
-	CalcPosAndSize(&npos, &size, controlSize);
-	SetPosition(npos);
-	if (size.y < 10)
-		size.y = 50;
-
+	
+	SetPosition(pos);
 	SetSize(size);
 	Show();
 	
@@ -69,16 +61,16 @@ void PopupTagList::Popup(const wxPoint &pos, const wxSize &controlSize, int sele
 	}
 }
 
-void PopupTagList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &_controlSize)
+void PopupTagList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize)
 {
 	int tx = 0, ty = 0;
-	controlSize = _controlSize;
 	size_t isize = GetCount();
 	wxString items;
 	for (size_t i = 0; i < itemsList.size(); i++){
 		itemsList[i]->GetTagText(&items);
-		GetTextExtent(items, &tx, &ty);
+		Parent->GetTextExtent(items, &tx, &ty);
 		if (tx > size->x){ size->x = tx; }
+		if (ty > height) { height = ty + 6; }
 	}
 
 	size->x += 18;
@@ -97,7 +89,7 @@ void PopupTagList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &_con
 	}
 }
 
-void PopupTagList::OnMouseEvent(wxMouseEvent &evt)
+void PopupWindow::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockMouseEvent){
 		blockMouseEvent = false;
@@ -106,7 +98,7 @@ void PopupTagList::OnMouseEvent(wxMouseEvent &evt)
 	int x = evt.GetX();
 	int y = evt.GetY();
 	wxSize sz = GetClientSize();
-	int itemsSize = GetCount();
+	int itemsSize = parent->GetCount();
 
 	if (evt.GetWheelRotation() != 0) {
 		int step = 3 * evt.GetWheelRotation() / evt.GetWheelDelta();
@@ -126,7 +118,7 @@ void PopupTagList::OnMouseEvent(wxMouseEvent &evt)
 		Refresh(false);
 	}
 	if (evt.LeftUp()){
-		wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetId());
+		wxCommandEvent evt(wxEVT_COMMAND_CHOICE_SELECTED, GetParent()->GetId());
 		this->ProcessEvent(evt);
 	}
 	else if (evt.RightUp()){
@@ -148,18 +140,18 @@ void PopupTagList::OnMouseEvent(wxMouseEvent &evt)
 		
 		options ^= changedOption;
 		Options.SetInt(TEXT_EDITOR_TAG_LIST_OPTIONS, options);
-		FilterListViaOptions(options);
+		parent->FilterListViaOptions(options);
 	}
 	//evt.Skip();
 }
 
-void PopupTagList::OnPaint(wxPaintEvent &event)
+void PopupWindow::OnPaint(wxPaintEvent &event)
 {
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
-	int itemsize = GetCount();
+	int itemsize = parent->GetCount();
 	if (scrollPositionV >= itemsize - maxVisible){ 
 		scrollPositionV = itemsize - maxVisible; 
 	}
@@ -195,15 +187,15 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 	tdc.SetBrush(wxBrush(Options.GetColour(MENUBAR_BACKGROUND)));
 	tdc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	tdc.DrawRectangle(0, 0, ow, h);
-	int keyPosition = FindItemById(scrollPositionV);
+	int keyPosition = parent->FindItemById(scrollPositionV);
 	//it should not return -1 here, but sanity checks needed
 	if (keyPosition < 0)
 		keyPosition = 0;
 
 	int i = keyPosition, k = 0;
-	while (k < maxsize && i < itemsList.size())
+	while (k < maxsize && i < parent->itemsList.size())
 	{
-		TagListItem *item = itemsList[i];
+		TagListItem *item = parent->itemsList[i];
 		if (!item->isVisible){
 			i++;
 			continue;
@@ -227,8 +219,8 @@ void PopupTagList::OnPaint(wxPaintEvent &event)
 	dc.Blit(0, 0, ow, h, &tdc, 0, 0);
 }
 
-void PopupTagList::SetSelection(int pos){
-	int elemConut = GetCount();
+void PopupWindow::SetSelection(int pos){
+	int elemConut = parent->GetCount();
 	if (pos < 0)
 		pos = elemConut - 1;
 	else if (pos >= elemConut)
@@ -242,30 +234,45 @@ void PopupTagList::SetSelection(int pos){
 		scrollPositionV = sel - maxVisible + 1; 
 	}
 	Refresh(false);
-};
+}
+
+PopupTagList::PopupTagList(wxWindow *DialogParent) 
+	: Parent(DialogParent) 
+{ 
+	//get options from config
+	int options = Options.GetInt(TEXT_EDITOR_TAG_LIST_OPTIONS);
+	InitList(options); 
+}
+
+PopupTagList::~PopupTagList() { 
+	if (popup) popup->Destroy(); 
+	for (auto item : itemsList) {
+		delete item;
+	}
+}
 
 void PopupTagList::FilterListViaOptions(int otptions)
 {
 	for (auto item : itemsList){
 		item->ShowItem(otptions);
 	}
-	wxPoint pos;
-	wxSize size;
-	//CalcPosAndSize(&pos, &size, controlSize);
-	//sel = (GetCount()) ? 0 : -1;
-	//Show(false);
-	//wxWindowBase::SetSize(wxSize(500,300));
-	//Show();
-	Refresh(false);
+	Popup(position, controlSize, 0);
 }
 
-void PopupTagList::FilterListViaKeyword(const wxString &keyWord)
+void PopupTagList::FilterListViaKeyword(const wxString &_keyWord, bool setKeyword)
 {
+	if (setKeyword)
+		keyWord = _keyWord;
 	for (auto item : itemsList){
-		item->ShowItem(keyWord);
+		item->ShowItem(_keyWord);
 	}
-	sel = (GetCount()) ? 0 : -1;
-	Refresh(false);
+	if (lastItems > GetCount()) {
+		Popup(position, controlSize, 0);
+	}
+	else if (popup) {
+		popup->SetSelection((GetCount()) ? 0 : -1);
+		popup->Refresh(false);
+	}
 }
 
 size_t PopupTagList::GetCount()
@@ -301,11 +308,6 @@ int PopupTagList::FindItemById(int id)
 	return -1;
 }
 
-void PopupTagList::AppendToKeyword(wxUniChar ch)
-{
-	keyWord << ch;
-	FilterListViaKeyword(keyWord);
-}
 
 TagListItem * PopupTagList::GetItem(int pos)
 {
@@ -316,7 +318,7 @@ TagListItem * PopupTagList::GetItem(int pos)
 	return NULL;
 }
 
-void PopupTagList::OnScroll(wxScrollEvent& event)
+void PopupWindow::OnScroll(wxScrollEvent& event)
 {
 	int newPos = event.GetPosition();
 	if (scrollPositionV != newPos) {
@@ -407,6 +409,30 @@ void PopupTagList::InitList(int option)
 	itemsList.push_back(new TagListItem(L"z", _("Koordynata Z dla tagów \\frx i \\fry"), TYPE_TAG_VSFILTER_MOD, option));
 }
 
+void PopupTagList::Popup(const wxPoint & pos, const wxSize & _controlSize, int selectedItem)
+{
+	if (popup)
+		popup->Destroy();
 
+	wxPoint npos = pos;
+	wxSize size;
+	CalcPosAndSize(&npos, &size, controlSize);
+	
+	if (size.y > 5) {
+		popup = new PopupWindow(Parent, this, height);
+		popup->Popup(pos, size, selectedItem);
+	}
+	else
+		popup = NULL;
 
+	position = pos;
+	controlSize = _controlSize;
+	lastItems = GetCount();
+}
 
+void PopupTagList::AppendToKeyword(wxUniChar ch)
+{
+	keyWord << ch;
+
+	FilterListViaKeyword(keyWord, false);
+}

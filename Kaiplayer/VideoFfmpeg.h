@@ -32,6 +32,7 @@ public:
 	VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *success);
 	~VideoFfmpeg();
 	void Render(bool wait=true);
+	void GetFrameBuffer(byte **buffer);
 	void Play();
 	void GetFrame(int frame, byte* buff);
 	void GetBuffer(void *buf, int64_t start, int64_t count, double vol = 1.0);

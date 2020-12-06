@@ -72,37 +72,62 @@ public:
 	bool needBrackets = false;
 };
 
-class PopupTagList : public wxPopupWindow{
+class PopupTagList;
+
+class PopupWindow : public wxPopupWindow{
+	friend class PopupTagList;
 public:
 
-	PopupTagList(wxWindow *DialogParent);
-	~PopupTagList();
+	PopupWindow(wxWindow *DialogParent, PopupTagList *Parent, int Height);
+	~PopupWindow();
 	void Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem);
-	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
 	void SetSelection(int pos);
-	int GetSelection(){ return sel; }
-	void FilterListViaOptions(int otptions);
-	void FilterListViaKeyword(const wxString &keyWord);
-	size_t GetCount();
-	int FindItemById(int id);
-	void AppendToKeyword(wxUniChar ch);
-	TagListItem *GetItem(int pos);
+	int GetSelection() { return sel; }
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()) ReleaseMouse(); };
-	void InitList(int option);
 	int sel;
 	int scrollPositionV;
 
 protected:
 	wxBitmap *bmp;
-	std::vector<TagListItem*> itemsList;
-	wxWindow *Parent;
-	wxString keyWord;
 	int height;
 	KaiScrollbar *scroll;
-	wxSize controlSize;
 	bool blockMouseEvent = true;
+	PopupTagList *parent;
+};
+
+class PopupTagList {
+	friend class PopupWindow;
+public:
+	PopupTagList(wxWindow *DialogParent);
+	~PopupTagList();
+	void Popup(const wxPoint &pos, const wxSize &controlSize, int selectedItem);
+	void SetSelection(int pos) { if (popup) { popup->SetSelection(pos); } };
+	int GetSelection() { if (popup) { return popup->GetSelection(); } return -1; }
+	size_t GetCount();
+	void AppendToKeyword(wxUniChar ch);
+	int GetId() {
+		if (popup) {
+			return popup->GetId();
+		}
+		return -1;
+	}
+	void CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &controlSize);
+	void FilterListViaOptions(int otptions);
+	void FilterListViaKeyword(const wxString &keyWord, bool setKeyword = true);
+	int FindItemById(int id);
+	TagListItem *GetItem(int pos);
+	void InitList(int option);
+private:
+	PopupWindow *popup = NULL;
+	wxWindow *Parent = NULL;
+	wxSize controlSize;
+	wxPoint position;
+	wxString keyWord;
+	size_t lastItems = 0;
+	std::vector<TagListItem*> itemsList;
+	int height = 0;
 };

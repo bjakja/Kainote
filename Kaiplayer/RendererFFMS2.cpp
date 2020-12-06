@@ -57,7 +57,10 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 		}
 	}
 	else {
-		KaiLog(_("Brak bufora klatki")); return false;
+		fdata = m_FrameBuffer;
+		m_FFMS2->GetFrameBuffer(&fdata);
+		if (!fdata)
+			return false;
 	}
 
 
@@ -106,9 +109,11 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 {
 	if (redrawSubsOnFrame && !m_DeviceLost){
-		m_FFMS2->Render(wait);
-		m_VideoResized = false;
-		return;
+		//no need to return cause of render do not send an event and need to be safe from start.
+		if (!DrawTexture())
+			return;
+		//m_VideoResized = false;
+		//return;
 	}
 	wxCriticalSectionLocker lock(m_MutexRendering);
 	m_VideoResized = false;
@@ -389,7 +394,7 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 		//rebuild spectrum cause position can be changed
 		//and it causes random bugs
 		if (m_AudioPlayer){ m_AudioPlayer->UpdateImage(false, true); }
-		m_FFMS2->Render();
+		/*m_FFMS2->*/Render();
 		videoControl->RefreshTime();
 	}
 }
