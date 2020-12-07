@@ -714,7 +714,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 				Kai->SetSize(sx + xDiff, sy + yDiff);
 			}
 		}
-		else{
+		else if(tab->Edit->IsShown() && tab->Grid->IsShown()) {
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
 			SetMinSize(wxSize(sx, sy + m_PanelHeight));

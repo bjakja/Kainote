@@ -186,12 +186,10 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 {
 	wxString replaceTxt = replaceWord->GetValue();
 	wxString misspellTxt = misSpell->GetValue();
+	wxString misspellTxtLower = misspellTxt.Lower();
 	if (replaceTxt.IsEmpty() || misspellTxt.IsEmpty()){ return; }
 	tab = Kai->GetTab();
 	bool noComments = ignoreComments->GetValue();
-	wxRegEx r(L"\\m" + misspellTxt.Lower() + L"\\M", wxRE_ADVANCED | wxRE_ICASE); // the pattern \m \M matches a word boundary
-	if (!r.IsValid())
-		return;
 
 	wxString text;
 	int lenMismatch = 0;
@@ -201,24 +199,19 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
 		wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
-		text = lineText;
-		//lenMismatch = 0;
-		textPos = 0;
+		text = lineText.Lower();
 		bool changed = false;
-		while (r.Matches(text)) {
-			size_t pos = 0, len = 0;
-			if (r.GetMatch(&pos, &len)){
-				wxString misspellToReplace = lineText.Mid(pos + textPos, len);
-				lineText.replace(pos + textPos, len, GetRightCase(replaceTxt, misspellToReplace));
-				len = replaceTxt.length();
+		if (text.find(misspellTxtLower) != -1) {
+			std::vector<MisspellData> misspells;
+			if (SpellChecker::Get()->FindMisspells(lineText, misspellTxtLower, &misspells, tab->Grid->subsFormat)) {
+				for (size_t k = misspells.size(); k > 0; k--) {
+					MisspellData &misspell = misspells[k - 1];
+					SpellChecker::Get()->ReplaceMisspell(misspell.misspell,
+						GetRightCase(replaceTxt, misspell.misspell), misspell.posStart, misspell.posEnd, &lineText, NULL);
+
+					changed = true;
+				}
 			}
-			else
-				continue;
-
-
-			textPos = pos + len;
-			text = lineText.Mid(textPos);
-			changed = true;
 		}
 		if (changed){
 			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
@@ -231,7 +224,6 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);
-	//lastMisspell -= 1;
 	SetNextMisspell();
 }
 
@@ -289,8 +281,13 @@ wxString SpellCheckerDialog::GetRightCase(const wxString &replaceWord, const wxS
 	}
 	if (upperCase == len)
 		result.MakeUpper();
-	else if (upperCase > 0)
+	else if (upperCase > 0) {
+		result.MakeLower();
 		result.at(0) = wxToupper(result.at(0));
+	}
+	else {
+		result.MakeLower();
+	}
 
 	return result;
 }

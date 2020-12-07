@@ -550,6 +550,97 @@ void SpellChecker::CheckText(const wxString &text, std::vector<MisspellData> *er
 	}
 }
 
+bool SpellChecker::FindMisspells(const wxString & text, const wxString &textToFind, std::vector<MisspellData> * misspells, int subsFormat)
+{
+	using namespace boost::locale;
+	using namespace std;
+	bool block = false;
+	bool drawing = false;
+	useSpellChecker = hunspell;
+	wstring checkText;
+	size_t textLen = text.length();
+	size_t i = 0;
+	wxUniChar split = (subsFormat > SRT) ? L'|' : L'\\';
+	wxUniChar bracketStart = (subsFormat == SRT) ? L'<' : L'{';
+	wxUniChar bracketEnd = (subsFormat == SRT) ? L'>' : L'}';
+	std::vector<size_t> textOffset;
+	while (i < textLen)
+	{
+		const wxUniChar &ch = text[i];
+		if (block) {
+			if (text[i] == L'p' && text[i - 1] == L'\\' && (i + 1 < textLen && wxIsdigit(text[i + 1]))) {
+				if (text[i + 1] == L'0') { drawing = false; }
+				else { drawing = true; }
+			}
+		}
+		if (ch == bracketStart) {
+			block = true;
+			i++;
+			continue;
+		}
+		else if (ch == bracketEnd) {
+			block = false;
+			i++;
+			continue;
+		}
+
+		if (!block && !drawing) {
+			if (ch == split) {
+				if (subsFormat > SRT) {
+					checkText += L" ";
+					textOffset.push_back(i);
+				}
+				else {
+					//replace for \n
+					wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
+					bool splitSecond = nch == L'N' || nch == L'n';
+					if (splitSecond || nch == L'h')
+						checkText += L"  ";
+					else {
+						checkText += ch;
+						checkText += nch;
+					}
+					textOffset.push_back(i);
+					textOffset.push_back(i + 1);
+
+					i++;
+				}
+
+			}
+			else {
+				checkText += ch;
+				textOffset.push_back(i);
+			}
+
+		}
+		i++;
+	}
+
+	if (textOffset.size() == checkText.size()) {
+		boundary::wssegment_index index(boundary::word, checkText.begin(), checkText.end());
+		boundary::wssegment_index::iterator p, e;
+		int counter1 = 0;
+		for (p = index.begin(), e = index.end(); p != e; ++p) {
+			wxString word = wxString(*p);
+			size_t wordLen = word.length();
+			if (p->rule() & boundary::word_letters) {
+				if (word.CmpNoCase(textToFind) == 0) {
+					size_t start = textOffset[counter1];
+					size_t end = textOffset[counter1 + wordLen - 1];
+					misspells->push_back(MisspellData(word, start, end));
+				}
+
+			}
+			counter1 += wordLen;
+		}
+	}
+	else {
+		KaiLog(L"text offset size != text size no spellchecking");
+		return false;
+	}
+	
+}
+
 void SpellChecker::ReplaceMisspell(const wxString & misspell, const wxString &misspellReplace, int start, int end, wxString * textToReplace, int *newPosition)
 {
 	bool hasTags = misspell.length() < end - start - 1;

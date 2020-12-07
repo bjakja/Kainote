@@ -56,6 +56,7 @@ public:
 	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspells = NULL, int replaceTagsLen = -1);
 	//for spellchecker window
 	void CheckText(const wxString &text, std::vector<MisspellData> *errs, int subsFormat);
+	bool FindMisspells(const wxString &text, const wxString &textToFind, std::vector<MisspellData> *misspells, int subsFormat);
 	void ReplaceMisspell(const wxString &misspell, const wxString &misspellReplace, int start, int end, wxString *textToReplace, int *newPosition);
 	static SpellChecker *Get();
 	static void Destroy();

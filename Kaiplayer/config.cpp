@@ -851,7 +851,7 @@ void config::SaveColors(const wxString &path){
 		finalpath = pathfull + L"\\Themes\\" + GetString(PROGRAM_THEME) + L".txt";
 	}
 	OpenWrite ow(finalpath, true);
-	ow.PartFileWrite(L"[" + progname + L"]\n");
+	//ow.PartFileWrite(L"[" + progname + L"]\n");
 	for (size_t i = 1; i < colorsSize; i++){
 		ow.PartFileWrite(wxString(::GetString((COLOR)i)) + L"=" + GetStringColor(i) + L"\r\n");
 	}
