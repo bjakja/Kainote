@@ -62,6 +62,7 @@ private:
 	bool holding;
 	//void OnMouseEvent(wxMouseEvent& event);
 	void OnFocus(wxChildFocusEvent& event);
+	void OnSize(wxSizeEvent & evt);
 	DECLARE_EVENT_TABLE()
 };
 

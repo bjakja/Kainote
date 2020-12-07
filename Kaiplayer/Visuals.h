@@ -166,6 +166,7 @@ private:
 	wxMutex m_MutexCrossLines;
 	float coeffX, coeffY;
 	int diffX = 0, diffY = 0;
+	bool isOnVideo = true;
 };
 
 class Position : public Visuals

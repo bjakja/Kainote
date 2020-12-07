@@ -55,14 +55,17 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		cross = true;
 		int nx = 0, ny = 0;
 		int w = 0, h = 0;
-		if (tab->Video->IsFullScreen()){
-			RendererVideo *renderer = tab->Video->GetRenderer();
-			if (!renderer)
-				return;
+		int diffW = 1, diffH = 1;
+		RendererVideo *renderer = tab->Video->GetRenderer();
+		if (renderer){
 			diffX = renderer->m_BackBufferRect.left;
 			diffY = renderer->m_BackBufferRect.top;
 			w = renderer->m_BackBufferRect.right - diffX;
 			h = renderer->m_BackBufferRect.bottom - diffY;
+			if (diffX)
+				diffW = 0;
+			if (diffY)
+				diffH = 0;
 		}
 		else{
 			tab->Video->GetClientSize(&w, &h);
@@ -70,11 +73,11 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 			h -= tab->Video->GetPanelHeight();
 		}
 		tab->Grid->GetASSRes(&nx, &ny);
-		coeffX = (float)nx / (float)(w - 1);
-		coeffY = (float)ny / (float)(h - 1);
+		coeffX = (float)nx / (float)(w - diffW);
+		coeffY = (float)ny / (float)(h - diffH);
 	}
-	int posx = (float)x * coeffX - diffX;
-	int posy = (float)y * coeffY - diffY;
+	int posx = (float)(x - diffX) * coeffX;
+	int posy = (float)(y - diffY) * coeffY;
 	coords = L"";
 	coords << posx << L", " << posy;
 	DrawLines(wxPoint(x, y));
@@ -87,8 +90,8 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		posmov.ReplaceAll(&ltext, L"");
 
 		wxString postxt;
-		float posx = (float)x * coeffX - diffX;
-		float posy = (float)y * coeffY - diffY;
+		int posx = (float)(x - diffX) * coeffX;
+		int posy = (float)(y - diffY) * coeffY;
 		postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
 		if (ltext.StartsWith(L"{")){
 			ltext.insert(1, postxt);
@@ -106,7 +109,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 
 void Cross::Draw(int time)
 {
-	if (cross){
+	if (cross && isOnVideo){
 		HRESULT hr;
 		DRAWOUTTEXT(font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF);
 		hr = line->SetWidth(3);
@@ -139,6 +142,14 @@ void Cross::DrawLines(wxPoint point)
 
 	wxMutexLocker lock(m_MutexCrossLines);
 	
+	if (point.y < renderer->m_BackBufferRect.top || point.x < renderer->m_BackBufferRect.left ||
+		point.y > renderer->m_BackBufferRect.bottom || point.x > renderer->m_BackBufferRect.right) {
+		isOnVideo = false;
+		goto done;
+	}
+	else
+		isOnVideo = true;
+
 
 	int w, h;
 	tab->Video->GetClientSize(&w, &h);
@@ -149,14 +160,16 @@ void Cross::DrawLines(wxPoint point)
 	crossRect.right = (w < point.x) ? point.x - 5 : point.x + 100;
 
 	vectors[0].x = point.x;
-	vectors[0].y = 0;
+	vectors[0].y = renderer->m_BackBufferRect.top;
 	vectors[1].x = point.x;
 	vectors[1].y = renderer->m_BackBufferRect.bottom;
-	vectors[2].x = 0;
+	vectors[2].x = renderer->m_BackBufferRect.left;
 	vectors[2].y = point.y;
 	vectors[3].x = renderer->m_BackBufferRect.right;
 	vectors[3].y = point.y;
 	cross = true;
+
+	done:
 	//play and pause
 	if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){
 		tab->Video->Render(renderer->m_VideoResized);
@@ -180,14 +193,19 @@ void Cross::SetCurVisual()
 
 	int nx = 0, ny = 0;
 	int w = 0, h = 0;
-	if (tab->Video->IsFullScreen()){
-		RendererVideo *renderer = tab->Video->GetRenderer();
-		if (!renderer)
-			return;
+	int diffW = 1, diffH = 1;
+	RendererVideo *renderer = tab->Video->GetRenderer();
+	
+	if (renderer){
+		
 		diffX = renderer->m_BackBufferRect.left;
 		diffY = renderer->m_BackBufferRect.top;
 		w = renderer->m_BackBufferRect.right - diffX;
 		h = renderer->m_BackBufferRect.bottom - diffY;
+		if (diffX)
+			diffW = 0;
+		if (diffY)
+			diffH = 0;
 	}
 	else{
 		tab->Video->GetClientSize(&w, &h);
@@ -195,6 +213,6 @@ void Cross::SetCurVisual()
 		diffX = diffY = 0;
 	}
 	tab->Grid->GetASSRes(&nx, &ny);
-	coeffX = (float)nx / (float)(w - 1);
-	coeffY = (float)ny / (float)(h - 1);
+	coeffX = (float)nx / (float)(w - diffW);
+	coeffY = (float)ny / (float)(h - diffH);
 }

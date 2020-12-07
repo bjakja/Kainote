@@ -265,7 +265,17 @@ bool TabPanel::SetFont(const wxFont &font)
 
 	return wxWindow::SetFont(font);
 }
+
+void TabPanel::OnSize(wxSizeEvent & evt)
+{
+	if (!Edit->IsShown() && !ShiftTimes->IsShown() && !Grid->IsShown()) {
+		wxSize tabSize = GetClientSize();
+		Video->SetMinSize(tabSize);
+		//Layout();
+	}
+	evt.Skip();
+}
 BEGIN_EVENT_TABLE(TabPanel, wxWindow)
-//EVT_MOUSE_EVENTS(TabPanel::OnMouseEvent)
+EVT_SIZE(TabPanel::OnSize)
 EVT_CHILD_FOCUS(TabPanel::OnFocus)
 END_EVENT_TABLE()
