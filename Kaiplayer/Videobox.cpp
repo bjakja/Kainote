@@ -1673,8 +1673,14 @@ int VideoCtrl::GetPlayEndTime(int time)
 void VideoCtrl::DisableVisuals(bool disable)
 {
 	m_VideoToolbar->DisableVisuals(disable);
-	if (renderer)
-		renderer->RemoveVisual(false, true);
+	if (renderer) {
+		if(disable)
+			renderer->RemoveVisual(false, true);
+		else if (!renderer->HasVisual()) {
+			tab->Edit->Visual = CROSS;
+			renderer->SetVisual();
+		}
+	}
 }
 void VideoCtrl::DeleteAudioCache()
 {
