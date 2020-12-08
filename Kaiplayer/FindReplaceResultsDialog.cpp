@@ -255,7 +255,23 @@ void SeekResults::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, K
 	needTooltip = ex.x + 22 > width - 8;
 	wxRect cur(x + 22, y, width - 8, height);
 	dc->SetClippingRegion(cur);
-	dc->DrawLabel(lineAndNum, cur, wxALIGN_CENTER_VERTICAL);
+	size_t lineNumLen = lineAndNum.length();
+	if (lineNumLen > 5000) {
+		int loops = (lineNumLen / 5000) + 1;
+		int newPosX = 0;
+		int newTextPos = 0;
+		while (loops) {
+			wxString currentText = lineAndNum.Mid(newTextPos, 5000);
+			dc->DrawText(currentText, cur.x + newPosX, cur.y + ((height - exOfFound.y) / 2));
+			wxSize curTextSize = theList->GetTextExtent(currentText);
+			loops--;
+			newPosX += curTextSize.x;
+			newTextPos += 5000;
+		}
+	}
+	else {
+		dc->DrawLabel(lineAndNum, cur, wxALIGN_CENTER_VERTICAL);
+	}
 	dc->DestroyClippingRegion();
 	dc->SetTextForeground(Options.GetColour(FIND_RESULT_FOUND_PHRASE_FOREGROUND));
 	const wxColour &background = Options.GetColour(FIND_RESULT_FOUND_PHRASE_BACKGROUND);

@@ -103,7 +103,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 		return true;
 	}
 
-	if (/*renderer->m_HasVisualEdition && */renderer->m_Visual->Visual == VECTORCLIP/* && renderer->m_Visual->dummytext*/){
+	if (renderer->m_Visual && renderer->m_Visual->Visual == VECTORCLIP){
 		wxString toAppend;
 		renderer->m_Visual->AppendClipMask(&toAppend);
 		if (!toAppend.empty()) {

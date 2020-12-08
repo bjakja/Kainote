@@ -76,8 +76,6 @@ public:
 	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
 	bool SetCursor(int cursorId){ 
-		
-
 		if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId){
 			m_LastFullScreenCursor = cursorId;
 			return m_FullScreenWindow->SetCursor(cursorId);

@@ -23,7 +23,7 @@ class RendererFFMS2 : public RendererVideo
 	friend class RendererVideo;
 	friend class VideoCtrl;
 public:
-	RendererFFMS2(VideoCtrl *control);
+	RendererFFMS2(VideoCtrl *control, bool visualDisabled);
 	virtual ~RendererFFMS2();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);

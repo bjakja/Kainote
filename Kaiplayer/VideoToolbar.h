@@ -147,6 +147,9 @@ public:
 		blockScroll = false;
 		Refresh(false); 
 	}
+	bool IsVisualsDisabled() {
+		return !iconsEnabled;
+	}
 	int GetStartDrawPos(){
 		return startDrawPos;
 	}

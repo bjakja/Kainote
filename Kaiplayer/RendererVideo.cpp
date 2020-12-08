@@ -36,7 +36,7 @@ void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
 	v->Color = Color;
 }
 
-RendererVideo::RendererVideo(VideoCtrl *control)
+RendererVideo::RendererVideo(VideoCtrl *control, bool visualDisabled)
 	: m_HasZoom(false)
 	, videoControl(control)
 {
@@ -55,7 +55,7 @@ RendererVideo::RendererVideo(VideoCtrl *control)
 	m_D3DDevice = NULL;
 	m_BlackBarsSurface = NULL;
 	m_D3DLine = NULL;
-	m_Visual = (tab->editor)? Visuals::Get(CROSS, videoControl) : NULL;
+	m_Visual = (tab->editor && !visualDisabled)? Visuals::Get(CROSS, videoControl) : NULL;
 	m_VideoResized = m_DirectShowSeeking = m_BlockResize = m_HasVisualEdition = false;
 	m_DeviceLost = false;
 	m_MainSurface = NULL;
@@ -827,7 +827,7 @@ bool RendererVideo::HasVisual(bool hasDefault)
 	if (hasDefault)
 		return m_Visual && m_Visual->Visual != CROSS;
 	else
-		return m_Visual;
+		return m_Visual != NULL;
 }
 
 Visuals *RendererVideo::GetVisual()

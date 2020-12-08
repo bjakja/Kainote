@@ -436,7 +436,7 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bo
 		Check(checkText, errs, misspells, textOffset, text, repltags, replaceTagsLen);
 	}
 	if (errs->wraps.empty())
-		errs->wraps = L"0";
+		errs->wraps = L"0/";
 
 	if (lastStartCBracket > lastEndCBracket) { 
 		errs->Add(lastStartCBracket); 
@@ -615,7 +615,7 @@ bool SpellChecker::FindMisspells(const wxString & text, const wxString &textToFi
 		}
 		i++;
 	}
-
+	bool found = false;
 	if (textOffset.size() == checkText.size()) {
 		boundary::wssegment_index index(boundary::word, checkText.begin(), checkText.end());
 		boundary::wssegment_index::iterator p, e;
@@ -628,6 +628,7 @@ bool SpellChecker::FindMisspells(const wxString & text, const wxString &textToFi
 					size_t start = textOffset[counter1];
 					size_t end = textOffset[counter1 + wordLen - 1];
 					misspells->push_back(MisspellData(word, start, end));
+					found = true;
 				}
 
 			}
@@ -638,7 +639,7 @@ bool SpellChecker::FindMisspells(const wxString & text, const wxString &textToFi
 		KaiLog(L"text offset size != text size no spellchecking");
 		return false;
 	}
-	
+	return found;
 }
 
 void SpellChecker::ReplaceMisspell(const wxString & misspell, const wxString &misspellReplace, int start, int end, wxString * textToReplace, int *newPosition)

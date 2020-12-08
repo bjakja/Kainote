@@ -19,8 +19,8 @@
 #include "OpennWrite.h"
 #include "DshowRenderer.h"
 
-RendererFFMS2::RendererFFMS2(VideoCtrl *control)
-	: RendererVideo(control)
+RendererFFMS2::RendererFFMS2(VideoCtrl *control, bool visualDisabled)
+	: RendererVideo(control, visualDisabled)
 	, m_FFMS2(NULL)
 {
 	

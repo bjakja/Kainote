@@ -29,7 +29,7 @@ class RendererDirectShow : public RendererVideo
 	friend class RendererVideo;
 	friend class VideoCtrl;
 public:
-	RendererDirectShow(VideoCtrl *control);
+	RendererDirectShow(VideoCtrl *control, bool visualDisabled);
 	virtual ~RendererDirectShow();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);

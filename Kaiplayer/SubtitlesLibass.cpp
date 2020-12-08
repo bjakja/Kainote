@@ -147,10 +147,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		SAFE_DELETE(text);
 		if (!m_HasParameters)
 			KaiLog(_("Libass działa tylko z FFMS2"));//Libass only works with with FFMS2
-		//else
-			//KaiLog("Libass not ready to open");
-			//m_SubsSkipped = true;
-
+	
 		return false;
 	}
 
@@ -192,13 +189,9 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	//sometimes it crashes on CROSS just like it visual was released and
 	//it still gives mi right values and violate memory on 0x266 adress
 	//m_HasVisualEdition == true cause it's should be set on false
-	//if (renderer->m_HasVisualEdition){
-		if (renderer->m_Visual->Visual == VECTORCLIP) {
-			//if (renderer->m_Visual->dummytext) {
-				renderer->m_Visual->AppendClipMask(textsubs);
-			//}
-		}
-	//}
+	if (renderer->m_Visual && renderer->m_Visual->Visual == VECTORCLIP) {
+		renderer->m_Visual->AppendClipMask(textsubs);
+	}
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);

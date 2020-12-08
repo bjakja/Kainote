@@ -200,7 +200,6 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 		if (Dial->IsComment && noComments){ continue; }
 		wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
 		text = lineText.Lower();
-		bool changed = false;
 		if (text.find(misspellTxtLower) != -1) {
 			std::vector<MisspellData> misspells;
 			if (SpellChecker::Get()->FindMisspells(lineText, misspellTxtLower, &misspells, tab->Grid->subsFormat)) {
@@ -208,17 +207,13 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 					MisspellData &misspell = misspells[k - 1];
 					SpellChecker::Get()->ReplaceMisspell(misspell.misspell,
 						GetRightCase(replaceTxt, misspell.misspell), misspell.posStart, misspell.posEnd, &lineText, NULL);
-
-					changed = true;
 				}
+				Dialogue *Dialc = tab->Grid->CopyDialogue(i);
+				wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
+				TextToChange = lineText;
+				if (tab->Grid->SpellErrors.size() > i)
+					tab->Grid->SpellErrors[i].clear();
 			}
-		}
-		if (changed){
-			Dialogue *Dialc = tab->Grid->CopyDialogue(i);
-			wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
-			TextToChange = lineText;
-			if(tab->Grid->SpellErrors.size() > i)
-				tab->Grid->SpellErrors[i].clear();
 		}
 	}
 

@@ -266,9 +266,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 	}
 	if (!renderer){
 		if (byFFMS2)
-			renderer = new RendererFFMS2(this);
+			renderer = new RendererFFMS2(this, m_VideoToolbar->IsVisualsDisabled());
 		else
-			renderer = new RendererDirectShow(this);
+			renderer = new RendererDirectShow(this, m_VideoToolbar->IsVisualsDisabled());
 	}
 
 
@@ -290,7 +290,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 
 	if (!m_IsFullscreen && !fulls){
 		int sx, sy;
-		//wyłączony edytor
+		//editor is turn off
 		if (!tab->editor){
 			if (!Kai->IsMaximized()){
 				int sizex, sizey;
@@ -307,9 +307,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 					tab->MainSizer->Layout();
 				}
 			}
-			//załączony edytor
+			
 		}
-		else{
+		else{//editor is turn on
 			int kw, kh;
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
@@ -522,7 +522,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		
 
-		if (!onVideo){
+		if (!onVideo || m_VideoToolbar->IsVisualsDisabled()){
 			SetCursor(wxCURSOR_ARROW);
 		}
 		else{
@@ -539,29 +539,30 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		m_FullScreenWindow->GetClientSize(&w, &h);
 		bool onFullVideo = m_Y < h - m_PanelHeight;
-		if (!HasArrow() && !m_FullScreenWindow->showToolbar->GetValue()){ 
+		bool showToolbar = m_FullScreenWindow->showToolbar->GetValue();
+		bool panelIsShown = m_FullScreenWindow->panel->IsShown();
+		if (!HasArrow() && !showToolbar){
 			SetCursor(wxCURSOR_ARROW); 
 		}
-		else if (HasArrow() && !m_IsMenuShown && m_FullScreenWindow->showToolbar->GetValue() && onFullVideo){
+		else if (HasArrow() && !m_IsMenuShown && showToolbar && onFullVideo && !m_VideoToolbar->IsVisualsDisabled()){
 			SetCursor(wxCURSOR_BLANK);
 		}
 
-		if (!onFullVideo && !m_FullScreenWindow->panel->IsShown()){
+		if (!onFullVideo && !panelIsShown){
 			m_VideoTimeTimer.Start(100); 
 			m_FullScreenWindow->panel->Show(); 
 		}
-		else if (onFullVideo && m_FullScreenWindow->panel->IsShown() && !m_PanelOnFullscreen){
+		else if (onFullVideo && panelIsShown && !m_PanelOnFullscreen){
 			m_VideoTimeTimer.Start(1000); 
 			m_FullScreenWindow->panel->Show(false); 
 			SetFocus(); 
 		}
-		if (!m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){ 
+		if (!panelIsShown && !m_IsMenuShown){
 			idletime.Start(1000, true); 
 		}
 	}
-	else if (tab->editor){
-		if (/*onVideo && */!m_IsMenuShown && HasArrow()){
-			//KaiLog(wxString::Format(L"Vb blank %i", (int)m_IsMenuShown));
+	else if (tab->editor && !m_VideoToolbar->IsVisualsDisabled()){
+		if (!m_IsMenuShown && HasArrow()){
 			SetCursor(wxCURSOR_BLANK);  
 		}
 
@@ -570,15 +571,9 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		SetCursor(wxCURSOR_ARROW);  
 	}
 
-
-
 	if (Options.GetBool(VIDEO_PAUSE_ON_CLICK) && event.LeftUp() && !event.ControlDown()){
 		Pause();
 	}
-
-
-	
-
 
 }
 
@@ -1678,6 +1673,8 @@ int VideoCtrl::GetPlayEndTime(int time)
 void VideoCtrl::DisableVisuals(bool disable)
 {
 	m_VideoToolbar->DisableVisuals(disable);
+	if (renderer)
+		renderer->RemoveVisual(false, true);
 }
 void VideoCtrl::DeleteAudioCache()
 {

@@ -546,6 +546,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->ShiftTimes->Show(false);
 			tab->windowResizer->Show(false);
 			wxSize tabSize = tab->GetClientSize();
+			wxSize tabsSize = Tabs->GetClientSize();
+			tabsSize.y -= Tabs->GetHeight();
+			if (tabSize.x != tabsSize.x || tabSize.y != tabsSize.y) {
+				KaiLog(wxString::Format(L"Bad tab size %i, %i, it should be %i %i", tabSize.x, tabSize.y, tabsSize.x, tabsSize.y));
+			}
 			tab->Video->SetMinSize(tabSize);
 		}
 		else if (!tab->Edit->IsShown()){
