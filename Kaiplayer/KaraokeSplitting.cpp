@@ -45,13 +45,11 @@ void Karaoke::Split()
 	bool block = false;
 	Dialogue *dial = AD->dialogue;
 	wxString Text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;
-	int len = Text.Len();
-	wxString aoi = L"aeioun ";
-	wxString aoi1 = L"aeiouy";
-	wxString aoi2 = L"aeiou";
+	int len = Text.length();
+	
 	//wxString aoi3=L"aeiou ";
-	wxString chars = L"!@#$%^&*()_+=-,./?'{}[]:;<> ";
-	wxString achars = aoi + chars;
+	//wxString chars = L"!@#$%^&*()_+=-,./?'{}[]:;<> ";
+	//wxString achars = aoi + chars;
 	int stime = dial->Start.mstime;
 
 	wxString textlow = Text;
@@ -100,7 +98,7 @@ void Karaoke::Split()
 			}
 			else{
 				res << ch;
-				if (nch == L'{'){ lastStartBracket = res.Len(); }
+				if (nch == L'{'){ lastStartBracket = res.length(); }
 			}
 
 		}
@@ -108,23 +106,32 @@ void Karaoke::Split()
 	}
 	else
 	{
+		wxString aoi = L"aeioun ";
+		wxString aoi1 = L"aeiouy";
+		wxString aoi2 = L"aeiou";
 		textlow += L" ";
-		len = textlow.Len();
+		len = textlow.length();
 		int start = 0;
 		int i = 0;
 		while (i < len)
 		{
 			//GetNextChar change i to next char and skip tags
+			int previ = (i > 0) ? i - 1 : 0;
+			wxUniChar pch = GetNextChar(&previ, textlow);
 			wxUniChar ch = GetNextChar(&i, textlow);
 			int newi = i;
 			wxUniChar nch = GetNextChar(&newi, textlow);
 			wxUniChar nnch = GetNextChar(&newi, textlow);
 
-			if ((Auto && achars.Find(ch) != -1 && chars.Find(nch) == -1) || (!Auto && ch == L' ')){
-				if (Auto && (ch == L'n' && aoi1.Find(nch) != -1 || //linia odpowiedzialna za podzia³ n
+			if ((Auto && (iswctype(wint_t(ch), _SPACE | _PUNCT) || aoi.Find(ch) != -1) && 
+				!iswctype(wint_t(nch), _SPACE | _PUNCT)) || (pch == L'\\' && ch == L'h') ||
+				(!Auto && iswctype(wint_t(ch), _SPACE))){
+				if (Auto && (ch == L'n' && aoi1.Find(nch) != -1 || //line for n splitting
 					(aoi2.Find(ch) != -1 && nch == L'n' &&
 					(nnch == L' ' || (Everyn && aoi1.Find(nnch) == -1))) ||
-					(nch == L'\"' && ch != L' ') || (nch == L'\\' && nnch == L'n'))){//#7 skip splitting " on end syllable
+					(nch == L'\"' && ch != L' ') //#7 skip splitting " on end syllable
+					|| (nch == L'\\' && (nnch == L'n' || nnch == L'h'))
+					|| (ch == L'\\' && (nch == L'n' || nch == L'h')))){
 					continue;
 				}
 				syls.Add(Text.SubString(start, i - 1));
@@ -161,7 +168,7 @@ wxString Karaoke::GetText()
 		int time = (i == 0) ? syltimes[i] - AD->curStartMS : (syltimes[i] - syltimes[i - 1]);
 		time /= 10;
 		const wxString & sylText = syls[i];
-		if (sylText.Len() && sylText[0] == L'{' && sylText.find(L'}', 1) != -1){
+		if (sylText.length() && sylText[0] == L'{' && sylText.find(L'}', 1) != -1){
 			text << L"{\\" << kaas[i] << time << sylText.After(L'{');
 		}
 		else
@@ -238,18 +245,31 @@ bool Karaoke::SplitSyl(int line, int nletters)
 wxUniChar Karaoke::GetNextChar(int *j, const wxString &text)
 {
 	bool block = false;
-	for (size_t i = *j; i < text.Len(); i++){
+	size_t textLen = text.length();
+	size_t i = *j;
+	while (i < textLen){
 		const wxUniChar & ch = text[i];
 		if (ch == L'{'){
 			block = true;
 		}
 		else if (ch == L'}'){ block = false; }
+		/*else if (ch == L'\\') {
+			wxUniChar &nch = text[i >= textLen ? i : i + 1];
+			if (nch == L'n' || nch == L'h') {
+				i++;
+			}
+			else {
+				*j = i + 1;
+				return ch;
+			}
+		}*/
 		else if (!block){
 			*j = i + 1;
 			return ch;
 		}
+		i++;
 	}
-	*j = text.Len();
+	*j = textLen;
 	return L'\t';
 }
 
@@ -267,14 +287,14 @@ bool Karaoke::GetLetterAtX(int x, int *syl, int *result)
 		end = AD->GetXAtMS(end);
 		int center = start + (((end - start) - tw) / 2);
 
-		for (size_t i = 0; i < text.Len(); i++)
+		for (size_t i = 0; i < text.length(); i++)
 		{
 			AD->GetTextExtentPixel(text[i], &tw, &th);
 			center += (tw / 2);
 			if (x < center){ *result = i; return true; }
 			center += (tw / 2);
 		}
-		*result = text.Len();
+		*result = text.length();
 		return true;
 	}
 
@@ -296,7 +316,7 @@ void Karaoke::GetSylVisibleTimes(int i, int &start, int &end)
 
 void Karaoke::GetLetters(int line, int nletters, wxString &first, wxString &second){
 	const wxString & sylText = syls[line];
-	size_t len = sylText.Len();
+	size_t len = sylText.length();
 	if (nletters == 0){
 		first = L"";
 		second = sylText;
@@ -326,7 +346,7 @@ void Karaoke::GetLetters(int line, int nletters, wxString &first, wxString &seco
 void Karaoke::GetTextStripped(int line, wxString &textStripped)
 {
 	const wxString & sylText = syls[line];
-	size_t len = sylText.Len();
+	size_t len = sylText.length();
 	bool block = false;
 	size_t lastBlock = 0;
 	textStripped.Empty();
@@ -346,5 +366,7 @@ void Karaoke::GetTextStripped(int line, wxString &textStripped)
 	if (block && lastBlock < len - 1){
 		textStripped += sylText.Mid(lastBlock);
 	}
-	textStripped.Replace(L"\\N", L"");
+	//textStripped.Replace(L"\\N", L"");
+	//textStripped.Replace(L"\\n", L"");
+	//textStripped.Replace(L"\\h", L"");
 }

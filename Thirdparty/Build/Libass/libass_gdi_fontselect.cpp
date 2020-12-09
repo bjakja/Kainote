@@ -113,7 +113,9 @@ char *get_fallback(void *provider, const char *search_family, uint32_t code)
 	
 	LOGFONTW lf{};
 	lf.lfCharSet = DEFAULT_CHARSET;
-	MultiByteToWideChar(CP_UTF8, 0, search_family, -1, lf.lfFaceName, LF_FACESIZE);
+	int numWritten = MultiByteToWideChar(CP_UTF8, 0, search_family, -1, lf.lfFaceName, LF_FACESIZE);
+	if(!numWritten)
+		return NULL;
 	
 	EnumFontFamiliesEx(dc.get(), &lf, [](const LOGFONT *lf, const TEXTMETRIC *, DWORD, LPARAM lParam) -> int {
 		hasFont = true;
