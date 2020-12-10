@@ -719,7 +719,9 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 void Visuals::SetModified(int action)
 {
 	tab->Video->SetVisualEdition(true);
-	if (tab->Edit->splittedTags){ tab->Edit->TextEditOrig->SetModified(); }
-	tab->Grid->SetModified(action, true);
+	if (tab->Edit->splittedTags){ 
+		tab->Edit->TextEditOrig->SetModified(); 
+	}
+	tab->Grid->SetModified(action);
 	tab->Grid->Refresh();
 }

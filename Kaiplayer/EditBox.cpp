@@ -579,8 +579,13 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 		cellm |= EFFECT;
 		EffectEdit->choiceText->SetModified(dummy);
 	}
-
-	if (TextEdit->IsModified() || splittedTags){
+	if (TextEditOrig->IsShown() && (TextEditOrig->IsModified() || (splittedTags && TextEdit->IsModified()))) {
+		line->Text = TextEditOrig->GetValue();
+		cellm |= TXT;
+		if(!splittedTags)
+		TextEditOrig->SetModified(dummy);
+	}
+	if (TextEdit->IsModified() || (splittedTags && TextEditOrig->IsModified())){
 		if (TextEditOrig->IsShown()){
 			line->TextTl = TextEdit->GetValue();
 			cellm |= TXTTL;
@@ -590,12 +595,10 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 			cellm |= TXT;
 		}
 		TextEdit->SetModified(dummy);
+		if (splittedTags)
+			TextEditOrig->SetModified(dummy);
 	}
-	if (TextEditOrig->IsShown() && (TextEditOrig->IsModified() || splittedTags)){
-		line->Text = TextEditOrig->GetValue();
-		cellm |= TXT;
-		TextEditOrig->SetModified(dummy);
-	}
+	
 
 	if (cellm){
 		if (currentLine < grid->GetCount() && !dummy){
@@ -1915,7 +1918,7 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 
 void EditBox::SetTextWithTags(bool RefreshVideo)
 {
-	if (grid->hasTLMode && line->TextTl == L"" && AutoMoveTags->GetValue()){
+	if (grid->hasTLMode && line->TextTl == L"" && AutoMoveTags->GetValue() && Visual <= CROSS){
 		wxString Text = line->Text;
 		Text.Replace(L"}{", L"");
 		int getr = Text.Find(L'}');
@@ -1957,8 +1960,8 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 
 
 
-			TextEdit->SetTextS(txtTl, TextEdit->IsModified(), true);
-			TextEditOrig->SetTextS(txtOrg, TextEditOrig->IsModified(), true);
+			TextEdit->SetTextS(txtTl, false, true);
+			TextEditOrig->SetTextS(txtOrg, false, true);
 			splittedTags = true;
 
 			TextEdit->SetSelection(pos, pos);
