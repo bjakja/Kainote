@@ -16,6 +16,8 @@
 #include "KaiScrollbar.h"
 #include "config.h"
 
+int KaiScrollbar::thickness = 17;
+
 KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
 	: wxWindow(parent, id, pos, size)
 	, isVertical((style & wxVERTICAL) != 0)
@@ -30,11 +32,15 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	, scrollRate(1)
 	, element(0)
 {
+	thickness = CalculateThickness(parent);
+
 	if (pos == wxDefaultPosition){
-		SetPosition((style & wxHORIZONTAL) ? wxPoint(0, parent->GetClientSize().y - 17) : wxPoint(parent->GetClientSize().x - 17, 0));
+		SetPosition((style & wxHORIZONTAL) ? wxPoint(0, parent->GetClientSize().y - thickness) :
+			wxPoint(parent->GetClientSize().x - thickness, 0));
 	}
 	if (size == wxDefaultSize){
-		SetSize((style & wxHORIZONTAL) ? wxSize(parent->GetClientSize().x, 17) : wxSize(17, parent->GetClientSize().y));
+		SetSize((style & wxHORIZONTAL) ? wxSize(parent->GetClientSize().x, thickness) :
+			wxSize(thickness, parent->GetClientSize().y));
 	}
 	pageLoop.SetOwner(this, 2345);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
@@ -44,7 +50,7 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 		else{ pageLoop.Stop(); pushed = true; Refresh(false); return; }
 		if (unitPos < 0){ unitPos = 0; }
 		if (unitPos > allVisibleSize){ unitPos = allVisibleSize; }
-		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 		SendEvent();
 		if (pageLoop.GetInterval() == 500){ pageLoop.Start(100); }
 	}, 2345);
@@ -55,14 +61,14 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 			unitPos += scrollRate;
 			if (unitPos > allVisibleSize){ unitPos = allVisibleSize; }
 			//thumbPos = (unitPos * unitToPixel)+17;
-			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 			SendEvent();
 		}
 		else if (element & ELEMENT_BUTTON_TOP && unitPos > 0){
 			unitPos -= scrollRate;
 			if (unitPos < 0){ unitPos = 0; }
 			//thumbPos = (unitPos * unitToPixel)+17;
-			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 			SendEvent();
 		}
 		if (arrowLoop.GetInterval() == 500){ arrowLoop.Start(50); }
@@ -81,9 +87,10 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, bool refresh)
 {
 	wxSize oldSize = GetClientSize();
+	int doubleThickness = thickness * 2;
 	if (twoScrollbars){
-		if (isVertical){ oldSize.y -= 17; }
-		else{ oldSize.x -= 17; }
+		if (isVertical){ oldSize.y -= thickness; }
+		else{ oldSize.x -= thickness; }
 	}
 	if (holding /*|| (unitPos >= range-visible && pos >= unitPos)*/){ return; }
 	allVisibleSize = range - visible;
@@ -93,11 +100,11 @@ void KaiScrollbar::SetScrollbar(int pos, int visible, int range, int _pageSize, 
 	pageSize = _pageSize;
 	float divScroll = (float)visibleSize / (float)allSize;
 	if (pos >= allVisibleSize){ unitPos = allVisibleSize; }
-	int paneSize = (isVertical) ? (oldSize.y - 34) : (oldSize.x - 34);
+	int paneSize = (isVertical) ? (oldSize.y - doubleThickness) : (oldSize.x - doubleThickness);
 	thumbSize = paneSize * divScroll;
 	if (thumbSize < 16){ thumbSize = 16; }
 	thumbRange = paneSize - thumbSize;
-	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 	Refresh(false);
 	Update();
 }
@@ -106,19 +113,20 @@ void KaiScrollbar::SetTwoscrolbars(bool _twoScrollbars)
 {
 	twoScrollbars = _twoScrollbars;
 	wxSize oldSize = GetClientSize();
+	int doubleThickness = thickness * 2;
 	if (twoScrollbars){
 		float div = 1;
-		if (isVertical){ div = (float)oldSize.y / (float)(oldSize.y - 17); oldSize.y -= 17; }
-		else{ div = (float)oldSize.x / (float)(oldSize.x - 17); oldSize.x -= 17; }
+		if (isVertical){ div = (float)oldSize.y / (float)(oldSize.y - thickness); oldSize.y -= thickness; }
+		else{ div = (float)oldSize.x / (float)(oldSize.x - thickness); oldSize.x -= thickness; }
 		allVisibleSize *= div;
 		visibleSize /= div;
 	}
 	float divScroll = (float)visibleSize / (float)allSize;
-	int paneSize = (isVertical) ? (oldSize.y - 34) : (oldSize.x - 34);
+	int paneSize = (isVertical) ? (oldSize.y - doubleThickness) : (oldSize.x - doubleThickness);
 	thumbSize = paneSize * divScroll;
 	if (thumbSize < 16){ thumbSize = 16; }
 	thumbRange = paneSize - thumbSize;
-	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 	Refresh(false);
 	Update();
 }
@@ -126,10 +134,22 @@ void KaiScrollbar::SetTwoscrolbars(bool _twoScrollbars)
 int KaiScrollbar::SetScrollPos(int pos)
 {
 	unitPos = MID(0, pos, allVisibleSize);
-	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 	Refresh(false);
 	Update();
 	return unitPos;
+}
+
+int KaiScrollbar::CalculateThickness(wxWindow *win)
+{
+	int fw, fh;
+	win->GetTextExtent(L"XX#%", &fw, &fh, NULL, NULL, Options.GetFont());
+	return fh + 1;
+}
+
+void KaiScrollbar::SetThickness(wxWindow * win)
+{
+	thickness = CalculateThickness(win);
 }
 
 void KaiScrollbar::SendEvent()
@@ -150,16 +170,17 @@ void KaiScrollbar::SendEvent()
 void KaiScrollbar::OnSize(wxSizeEvent& evt)
 {
 	wxSize oldSize = GetClientSize();
+	int doubleThickness = thickness * 2;
 	if (twoScrollbars){
-		if (isVertical){ oldSize.y -= 17; }
-		else{ oldSize.x -= 17; }
+		if (isVertical){ oldSize.y -= thickness; }
+		else{ oldSize.x -= thickness; }
 	}
-	int paneSize = (isVertical) ? (oldSize.y - 34) : (oldSize.x - 34);
+	int paneSize = (isVertical) ? (oldSize.y - doubleThickness) : (oldSize.x - doubleThickness);
 	float divScroll = (float)visibleSize / (float)allSize;
 	thumbSize = paneSize * divScroll;
 	if (thumbSize < 16){ thumbSize = 16; }
 	thumbRange = paneSize - thumbSize;
-	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+	thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 	Refresh(false);
 	Update();
 }
@@ -169,11 +190,15 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	int w = 0;
 	int h = 0;
 	int ow, oh;
+	int thumbSize1 = thickness * 0.78f;//13
+	int thumbPos1 = (thickness - thumbSize1) / 2;//2
+	int arrowPos1 = (thickness - 11) / 2;//2
+	int doubleThumbSize = thumbSize1 * 2;//26
 	GetClientSize(&ow, &oh);
 	if (ow == 0 || oh == 0){ return; }
 	if (twoScrollbars){
-		if (isVertical){ h = oh - 17; w = ow; }
-		else{ w = ow - 17; h = oh; }
+		if (isVertical){ h = oh - thickness; w = ow; }
+		else{ w = ow - thickness; h = oh; }
 	}
 	else{ w = ow; h = oh; }
 	wxMemoryDC tdc;
@@ -193,28 +218,28 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
 	wxBitmap scrollArrowPushed = wxBITMAP_PNG("arrow_list_pushed");
 	if (isVertical){
-		if (h > thumbSize + 26){
+		if (h > thumbSize + doubleThumbSize){
 			tdc.SetPen(wxPen(scroll));
 			tdc.SetBrush(wxBrush(scroll));
-			tdc.DrawRectangle(2, thumbPos, 13, thumbSize);
+			tdc.DrawRectangle(thumbPos1, thumbPos, thumbSize1, thumbSize);
 		}
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP) ? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180();
-		tdc.DrawBitmap(wxBitmap(img), 3, 3);
-		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM) ? scrollArrowPushed : scrollArrow, 3, h - 13);
+		tdc.DrawBitmap(wxBitmap(img), arrowPos1, arrowPos1);
+		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM) ? scrollArrowPushed : scrollArrow, arrowPos1, h - (10 + arrowPos1));
 	}
 	else{
-		if (w > thumbSize + 26){
+		if (w > thumbSize + doubleThumbSize){
 			tdc.SetPen(wxPen(scroll));
 			tdc.SetBrush(wxBrush(scroll));
-			tdc.DrawRectangle(thumbPos, 2, thumbSize, 13);
+			tdc.DrawRectangle(thumbPos, thumbPos1, thumbSize, thumbSize1);
 		}
 		wxImage img = (holding && element & ELEMENT_BUTTON_TOP) ? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate90();
-		tdc.DrawBitmap(wxBitmap(img), 3, 3);
+		tdc.DrawBitmap(wxBitmap(img), arrowPos1, arrowPos1);
 		img = (holding && element & ELEMENT_BUTTON_BOTTOM) ? scrollArrowPushed.ConvertToImage() : scrollArrow.ConvertToImage();
 		img = img.Rotate180().Rotate90();
-		tdc.DrawBitmap(wxBitmap(img), w - 13, 3);
+		tdc.DrawBitmap(wxBitmap(img), w - (11 + arrowPos1), arrowPos1);
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, ow, oh, &tdc, 0, 0);
@@ -239,8 +264,8 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 	int h = 0;
 	GetClientSize(&w, &h);
 	if (twoScrollbars){
-		if (isVertical){ h -= 17; }
-		else{ w -= 17; }
+		if (isVertical){ h -= thickness; }
+		else{ w -= thickness; }
 	}
 	int coord = (isVertical) ? y : x;
 	int coord2 = (isVertical) ? x : y;
@@ -251,7 +276,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 		unitPos -= step;
 		if (unitPos < 0){ unitPos = 0; SendEvent(); return; }
 		if (unitPos > allVisibleSize){ unitPos = allVisibleSize;  SendEvent(); return; }
-		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+		thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 		if (coord >= thumbPos && coord <= thumbPos + thumbSize){
 			enter = true;
 		}
@@ -272,10 +297,10 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if ((evt.RightDown() || evt.RightDClick() || //prawy przycisk
 		(evt.ShiftDown() && (evt.LeftDown() || evt.LeftDClick()))) && //lewy + shift
-		(coord < size - 17 && coord > 17)){ //blokada by nie dzia³a³o na przyciskach
+		(coord < size - thickness && coord > thickness)){ //blokada by nie dzia³a³o na przyciskach
 		thumbPos = coord - (thumbSize / 2);
-		thumbPos = MID(17, thumbPos, thumbRange + 17);
-		unitPos = ((thumbPos - 17) / (float)thumbRange) * allVisibleSize;
+		thumbPos = MID(thickness, thumbPos, thumbRange + thickness);
+		unitPos = ((thumbPos - thickness) / (float)thumbRange) * allVisibleSize;
 		enter = true;
 		pushed = true;
 		holding = true;
@@ -301,18 +326,18 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			element = ELEMENT_THUMB;
 			pushed = true;
 		}
-		else if (coord >= size - 18 && coord <= size && unitPos != allVisibleSize){
+		else if (coord >= size - (thickness + 1) && coord <= size && unitPos != allVisibleSize){
 			unitPos += scrollRate;
 			if (unitPos > allVisibleSize){ unitPos = allVisibleSize; }
-			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 			element = ELEMENT_BUTTON_BOTTOM;
 			SendEvent();
 			arrowLoop.Start(500);
 		}
-		else if (coord >= 0 && coord < 18 && unitPos != 0){
+		else if (coord >= 0 && coord <= thickness && unitPos != 0){
 			unitPos -= scrollRate;
 			if (unitPos < 0){ unitPos = 0; }
-			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 			element = ELEMENT_BUTTON_TOP;
 			//Refresh(false);
 			SendEvent();
@@ -322,7 +347,7 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 			unitPos += (coord < thumbPos) ? -pageSize : pageSize;
 			if (unitPos < 0){ unitPos = 0; }
 			if (unitPos > allVisibleSize){ unitPos = allVisibleSize; }
-			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + 17;
+			thumbPos = (((float)unitPos / (float)allVisibleSize) * thumbRange) + thickness;
 
 			element = ELEMENT_BETWEEN_THUMB;
 			diff = coord;
@@ -336,15 +361,15 @@ void KaiScrollbar::OnMouseEvent(wxMouseEvent &evt)
 
 	if (holding && element & ELEMENT_THUMB){
 		thumbPos = coord - diff;
-		thumbPos = MID(17, thumbPos, thumbRange + 17);
-		unitPos = ((thumbPos - 17) / (float)thumbRange) * allVisibleSize;
+		thumbPos = MID(thickness, thumbPos, thumbRange + thickness);
+		unitPos = ((thumbPos - thickness) / (float)thumbRange) * allVisibleSize;
 		SendEvent();
 	}
 }
 
 BEGIN_EVENT_TABLE(KaiScrollbar, wxWindow)
 EVT_MOUSE_EVENTS(KaiScrollbar::OnMouseEvent)
-END_EVENT_TABLE()
+END_EVENT_TABLE();
 
 KaiScrolledWindow::KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& pos,
 const wxSize& size, long style, const wxString& name)
@@ -363,7 +388,9 @@ const wxSize& size, long style, const wxString& name)
 
 void KaiScrolledWindow::Refresh(bool eraseBackground, const wxRect *rect){
 	wxSize sz = wxWindow::GetClientSize();
-	wxRect rc(0, 0, (vertical) ? sz.x - 17 : sz.x, (horizontal) ? sz.y - 17 : sz.y);
+
+	wxRect rc(0, 0, (vertical) ? sz.x - vertical->GetThickness() : 
+		sz.x, (horizontal) ? sz.y - horizontal->GetThickness() : sz.y);
 	if (rect){
 		rc.x = rect->x;
 		rc.y = rect->y;
@@ -384,7 +411,9 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 		}
 		else if (!horizontal && maxVisible < allItems){
 			wxSize size = wxWindow::GetClientSize();
-			horizontal = new KaiScrollbar(this, -1, wxPoint(0, size.y - 17), wxSize((vertical) ? size.x - 17 : size.x, 17));
+			int thickness = KaiScrollbar::CalculateThickness(this);
+			horizontal = new KaiScrollbar(this, -1, wxPoint(0, size.y - thickness), 
+				wxSize((vertical) ? size.x - thickness : size.x, thickness));
 			horizontal->integrated = true;
 			horizontal->SetCursor(wxCURSOR_ARROW);
 			horizontal->SetScrollRate(20);
@@ -396,8 +425,9 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 		}
 		if (horizontal){
 			wxSize size = wxWindow::GetClientSize();
-			horizontal->SetPosition(wxPoint(0, size.y - 17));
-			horizontal->SetSize(wxSize((vertical && !horizontal->twoScrollbars) ? size.x - 17 : size.x, 17));
+			int thickness = horizontal->GetThickness();
+			horizontal->SetPosition(wxPoint(0, size.y - thickness));
+			horizontal->SetSize(wxSize((vertical && !horizontal->twoScrollbars) ? size.x - thickness : size.x, thickness));
 			horizontal->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}
@@ -410,7 +440,8 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 		}
 		else if (!vertical && maxVisible < allItems){
 			wxSize size = wxWindow::GetClientSize();
-			vertical = new KaiScrollbar(this, -1, wxPoint(size.x - 17, 0), wxSize(17, (horizontal) ? size.y - 17 : size.y), wxVERTICAL);
+			int thickness = KaiScrollbar::CalculateThickness(this);
+			vertical = new KaiScrollbar(this, -1, wxPoint(size.x - thickness, 0), wxSize(thickness, (horizontal) ? size.y - thickness : size.y), wxVERTICAL);
 			vertical->integrated = true;
 			vertical->SetCursor(wxCURSOR_ARROW);
 			if (horizontal){
@@ -421,8 +452,9 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 		}
 		if (vertical){
 			wxSize size = wxWindow::GetClientSize();
-			vertical->SetPosition(wxPoint(size.x - 17, 0));
-			vertical->SetSize(wxSize(17, (horizontal && !vertical->twoScrollbars) ? size.y - 17 : size.y));
+			int thickness = vertical->GetThickness();
+			vertical->SetPosition(wxPoint(size.x - thickness, 0));
+			vertical->SetSize(wxSize(thickness, (horizontal && !vertical->twoScrollbars) ? size.y - thickness : size.y));
 			vertical->SetScrollbar(pos, maxVisible, allItems, pageSize, refresh);
 		}
 	}
@@ -473,33 +505,33 @@ bool KaiScrolledWindow::ScrollPages(int pages)
 void KaiScrolledWindow::GetSize(int *x, int *y)
 {
 	wxWindow::GetSize(x, y);
-	if (horizontal && horizontal->IsShown()){ *y -= 17; }
+	if (horizontal && horizontal->IsShown()){ *y -= horizontal->GetThickness(); }
 	if (vertical && vertical->IsShown()){
-		*x -= 17;
+		*x -= vertical->GetThickness();
 	}
 }
 
 void KaiScrolledWindow::GetClientSize(int *x, int *y)
 {
 	wxWindow::GetClientSize(x, y);
-	if (horizontal && horizontal->IsShown()){ *y -= 17; }
+	if (horizontal && horizontal->IsShown()){ *y -= horizontal->GetThickness(); }
 	if (vertical && vertical->IsShown()){
-		*x -= 17;
+		*x -= vertical->GetThickness();
 	}
 }
 
 wxSize KaiScrolledWindow::GetSize()
 {
 	wxSize size = wxWindow::GetSize();
-	if (horizontal && horizontal->IsShown()){ size.y -= 17; }
-	if (vertical && vertical->IsShown()){ size.x -= 17; }
+	if (horizontal && horizontal->IsShown()){ size.y -= horizontal->GetThickness(); }
+	if (vertical && vertical->IsShown()){ size.x -= vertical->GetThickness(); }
 	return size;
 }
 
 wxSize KaiScrolledWindow::GetClientSize()
 {
 	wxSize size = wxWindow::GetClientSize();
-	if (horizontal && horizontal->IsShown()){ size.y -= 17; }
-	if (vertical && vertical->IsShown()){ size.x -= 17; }
+	if (horizontal && horizontal->IsShown()){ size.y -= horizontal->GetThickness(); }
+	if (vertical && vertical->IsShown()){ size.x -= vertical->GetThickness(); }
 	return size;
 }

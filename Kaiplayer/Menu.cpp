@@ -619,11 +619,12 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	if (itemsize > parent->maxVisible){
 		maxsize = parent->maxVisible;
 		if (!scroll){
-			scroll = new KaiScrollbar(this, -1, wxPoint(w - 18, 1), wxSize(17, h - 2), wxVERTICAL);
+			int thickness = KaiScrollbar::CalculateThickness(this);
+			scroll = new KaiScrollbar(this, -1, wxPoint(w - thickness - 1, 1), wxSize(thickness, h - 2), wxVERTICAL);
 			scroll->SetScrollRate(3);
 		}
 		scroll->SetScrollbar(scPos, parent->maxVisible, itemsize, parent->maxVisible - 1);
-		w -= 18;
+		w -= (scroll->GetThickness() + 1);
 	}
 
 

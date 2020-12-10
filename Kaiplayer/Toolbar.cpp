@@ -555,7 +555,8 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	int ow = w;
-	w -= 18;
+	int thickness = scroll->GetThickness();
+	w -= (thickness + 1);
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
@@ -576,7 +577,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	else if (scPos < 0){ scPos = 0; }
 	int maxsize = MAX(idssize, scPos + visible);
 	scroll->SetScrollbar(scPos, visible, idssize, visible - 1);
-	scroll->SetSize(w, fh + 8, 17, h - (fh + 9));
+	scroll->SetSize(w, fh + 8, thickness, h - (fh + 9));
 	tdc.SetTextForeground(txt);
 	for (int i = 0; i < visible; i++)
 	{

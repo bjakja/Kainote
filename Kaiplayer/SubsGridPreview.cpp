@@ -128,8 +128,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 		scrows--;
 		//reduced to avoid crash or maybe now not needed cause is key + i < getcount()
 	}
-
-	scrollbar->SetSize(w - 21, previewGrid->GridHeight, 17, h - previewGrid->GridHeight - 4);
+	int thickness = scrollbar->GetThickness();
+	scrollbar->SetSize(w - (thickness + 4), previewGrid->GridHeight, thickness, h - previewGrid->GridHeight - 4);
 	scrollbar->SetScrollbar(previewGrid->scrollPositionId, panelrows, size + 3, panelrows - 3);
 
 	// Prepare bitmap
@@ -274,7 +274,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetTextForeground(Options.GetColour(WINDOW_HEADER_TEXT));
 			tdc.DrawText(tab->SubsName, center, 1);
 			int xHeight = previewGrid->GridHeight - 6;
-			int wPos = w + scHor - 21;
+			int wPos = w + scHor - thickness + 4;
 			if (onX || pushedX){
 				tdc.SetBrush(Options.GetColour(pushedX ? WINDOW_PUSHED_CLOSE_BUTTON : WINDOW_HOVER_CLOSE_BUTTON));
 				tdc.DrawRectangle(wPos, 3, xHeight + 2, xHeight + 2);
@@ -494,7 +494,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
 			tdc.SetPen(wxPen(Options.GetColour(GRID_ACTIVE_LINE)));
 			tdc.DrawRectangle(posX, ((idcurrentLine - previewGrid->scrollPositionId + 1) *
-				(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - 21, previewGrid->GridHeight + 2);
+				(previewGrid->GridHeight + 1)) - 1, w + scHor - posX - thickness + 4, previewGrid->GridHeight + 2);
 		}
 	}
 	tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
@@ -535,27 +535,29 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	if (event.ButtonDown())
 		tabp->Edit->SetGrid(previewGrid, true);
 
+	int ScrollAndBord = scrollbar->GetThickness() + 4;
+
 	if (onX){
 		onX = false;
-		wxRect rect(w - 21, 2, 20, previewGrid->GridHeight - 4);
+		wxRect rect(w - ScrollAndBord, 2, 20, previewGrid->GridHeight - 4);
 		Refresh(false, &rect);
 		if (event.Leaving()){ return; }
 	}
 	if (curY < previewGrid->GridHeight){
-		if (curX + 4 >= w - 21){
+		if (curX + 4 >= w - ScrollAndBord){
 			int Width = (previewGrid->GridHeight - 4);
-			if (curX + 4 >= (w - 21) + Width || curY < 2 || curY > Width + 2){ return; }
+			if (curX + 4 >= (w - ScrollAndBord) + Width || curY < 2 || curY > Width + 2){ return; }
 			if (left_up){
 				DestroyPreview(true);
 			}
 			else if (click){
 				pushedX = true;
-				wxRect rect(w - 21, 2, 20, Width);
+				wxRect rect(w - ScrollAndBord, 2, 20, Width);
 				Refresh(false, &rect);
 			}
 			else if (!onX){
 				onX = true;
-				wxRect rect(w - 21, 2, 20, Width);
+				wxRect rect(w - ScrollAndBord, 2, 20, Width);
 				Refresh(false, &rect);
 			}
 			return;

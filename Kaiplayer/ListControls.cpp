@@ -663,8 +663,8 @@ bool KaiChoice::SetFont(const wxFont &font)
 	if (choiceText){
 		choiceText->SetFont(font);
 	}
-	wxSize newSize = GetMinSize();
-	CalcMaxWidth(&newSize, false, true);
+	wxSize newSize(0, 0);
+	CalcMaxWidth(&newSize, true, true);
 
 	SetMinSize(newSize);
 	Refresh(false);
@@ -721,7 +721,8 @@ void PopupList::Popup(const wxPoint &pos, const wxSize &controlSize, int selecte
 	Show();
 	Bind(wxEVT_IDLE, &PopupList::OnIdle, this);
 	if (scroll){
-		scroll->SetSize(size.x - 18, 1, 17, size.y - 2);
+		int thickness = scroll->GetThickness();
+		scroll->SetSize(size.x - thickness -1, 1, thickness, size.y - 2);
 	}
 }
 
@@ -812,11 +813,12 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	if (itemsize > maxVisible){
 		maxsize = maxVisible;
 		if (!scroll){
-			scroll = new KaiScrollbar(this, -1, wxPoint(w - 18, 1), wxSize(17, h - 2), wxVERTICAL);
+			int thickness = KaiScrollbar::CalculateThickness(this);
+			scroll = new KaiScrollbar(this, -1, wxPoint(w - thickness - 1, 1), wxSize(thickness, h - 2), wxVERTICAL);
 			scroll->SetScrollRate(3);
 		}
 		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible - 1);
-		w -= 18;
+		w -= (scroll->GetThickness() + 1);
 	}
 
 	wxMemoryDC tdc;
@@ -869,7 +871,8 @@ void PopupList::OnPaint(wxPaintEvent &event)
 				wxPoint newPosition = Parent->ClientToScreen(originalPosition);
 				SetPosition(newPosition);
 				if (scroll) {
-					scroll->SetSize(descw + textw + 40 - 18, 1, 17, h - 2);
+					int thickness = scroll->GetThickness();
+					scroll->SetSize(descw + textw + 40 - thickness - 1, 1, thickness, h - 2);
 				}
 				return;
 			}

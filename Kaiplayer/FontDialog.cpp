@@ -353,12 +353,12 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	wxBoxSizer *Bsizer = new wxBoxSizer(wxHORIZONTAL);
 	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
 
-	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(180, -1));
+	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(250, -1));
 	Fonts->SetSelectionByName(acst->Fontname);
 	//Flist->Add(FontName,0,wxEXPAND|wxBOTTOM,3);
 	//Flist->Add(Fonts,0,wxEXPAND);
 
-	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 110));
+	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 180));
 	Preview->DrawPreview(acst);
 	FontSize = new NumCtrl(this, ID_FONTSIZE1, acst->Fontsize, 1, 10000, false, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	Bold = new KaiCheckBox(this, ID_FONTATTR, _("Pogrubienie"));

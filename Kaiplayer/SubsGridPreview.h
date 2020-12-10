@@ -53,7 +53,7 @@ private:
 	void OnSize(wxSizeEvent &evt);
 	void OnScroll(wxScrollEvent &evt);
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } holding = false; };
-	void OnOccurenceChanged(wxCommandEvent &evt);
+	//void OnOccurenceChanged(wxCommandEvent &evt);
 	void OnAccelerator(wxCommandEvent &evt);
 	void SeekForOccurences();
 	void ContextMenu(const wxPoint &pos);

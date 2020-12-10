@@ -523,6 +523,7 @@ bool KaiFrame::SetFont(const wxFont &font)
 	GetTextExtent(GetTitle(), &fw, &fh, 0, 0, &font);
 	frameTopBorder = (fh + 10 < 26) ? 26 : fh + 10;
 	wxWindow::SetFont(font);
+	KaiScrollbar::SetThickness(this);
 
 	const wxWindowList& siblings = GetChildren();
 	wxWindowList::compatibility_iterator nodeThis = siblings.GetFirst();

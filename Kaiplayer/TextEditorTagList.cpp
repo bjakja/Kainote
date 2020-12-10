@@ -57,7 +57,8 @@ void PopupWindow::Popup(const wxPoint &pos, const wxSize &size, int selectedItem
 	Show();
 	
 	if (scroll){
-		scroll->SetSize(size.x - 18, 1, 17, size.y - 2);
+		int thickness = scroll->GetThickness();
+		scroll->SetSize(size.x - thickness - 1, 1, thickness, size.y - 2);
 	}
 }
 
@@ -163,11 +164,12 @@ void PopupWindow::OnPaint(wxPaintEvent &event)
 	if (itemsize > maxVisible){
 		maxsize = maxVisible;
 		if (!scroll){
-			scroll = new KaiScrollbar(this, -1, wxPoint(w - 18, 1), wxSize(17, h - 2), wxVERTICAL);
+			int thickness = KaiScrollbar::CalculateThickness(this);
+			scroll = new KaiScrollbar(this, -1, wxPoint(w - thickness - 1, 1), wxSize(thickness, h - 2), wxVERTICAL);
 			scroll->SetScrollRate(3);
 		}
 		scroll->SetScrollbar(scrollPositionV, maxVisible, itemsize, maxVisible - 1);
-		w -= 18;
+		w -= (scroll->GetThickness() + 1);
 	}
 	else if (scroll){
 		scroll->Destroy();

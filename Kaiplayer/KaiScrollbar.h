@@ -24,9 +24,12 @@ public:
 	KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, int style = wxSB_HORIZONTAL);
 	virtual ~KaiScrollbar(){if(bmp){delete bmp;}};
 	void SetScrollbar(int pos, int visible, int range, int pageSize, bool refresh = true);
-	void SetScrollRate(int rate){scrollRate = rate;};
+	void SetScrollRate(int rate){ scrollRate = rate; };
 	int SetScrollPos(int pos);
-	int GetScrollPos(){return unitPos;}
+	int GetScrollPos() { return unitPos; }
+	int GetThickness() { return thickness; }
+	static int CalculateThickness(wxWindow *win);
+	static void SetThickness(wxWindow *win);
 	int unitPos;
 	int visibleSize;
 	int allSize;
@@ -34,7 +37,7 @@ private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnMouseLost(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();} holding=false; }
+	void OnMouseLost(wxMouseCaptureLostEvent &evt){ if(HasCapture()) { ReleaseMouse(); } holding=false; }
 	void OnErase(wxEraseEvent &evt){};
 	void SendEvent();
 	void SetTwoscrolbars(bool twoScrollbars = true);
@@ -45,6 +48,7 @@ private:
 	int pageSize;
 	int allVisibleSize;
 	int scrollRate;
+	static int thickness;
 	bool isVertical;
 	bool holding;
 	bool rholding;

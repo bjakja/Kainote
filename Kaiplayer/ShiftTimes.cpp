@@ -472,9 +472,10 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 	if (!isscrollbar && gh < h)//pojawianie scrollbara
 	{
 		isscrollbar = true;
-		SetMinSize(wxSize(w + 17, h));
+		int thickness = scroll->GetThickness();
+		SetMinSize(wxSize(w + thickness, h));
 		tab->GridShiftTimesSizer->Layout();
-		scroll->SetSize(w - 1, 0, 17, gh);
+		scroll->SetSize(w - 1, 0, thickness, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
 
@@ -490,7 +491,13 @@ void ShiftTimesWindow::OnSize(wxSizeEvent& event)
 		tab->GridShiftTimesSizer->Layout();
 	}
 	else if (scroll->IsShown()){
-		scroll->SetSize(ctw - 18, 0, 17, gh);
+		int thickness = scroll->GetThickness();
+		if (ctw != w + thickness) {
+			SetMinSize(wxSize(w + thickness, h));
+			tab->GridShiftTimesSizer->Layout();
+			scPos = 0;
+		}
+		scroll->SetSize(ctw - thickness - 1, 0, thickness, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		if (scPos != scroll->GetScrollPos()){
 			scPos = scroll->GetScrollPos();
@@ -657,9 +664,10 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 		scPos = 0;
 		if (gh < h)//pojawianie scrollbara
 		{
-			SetMinSize(wxSize(w + 17, h));
+			int thickness = scroll->GetThickness();
+			SetMinSize(wxSize(w + thickness, h));
 			cur->GridShiftTimesSizer->Layout();
-			scroll->SetSize(w, 0, 17, gh);
+			scroll->SetSize(w, 0, thickness, gh);
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 
 		}
@@ -948,15 +956,6 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	wxFont stFont = font;
 	stFont.SetPointSize(font.GetPointSize() - 2);
 
-	/*const wxWindowList& siblings = panel->GetChildren();
-	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
-		nodeAfter;
-		nodeAfter = nodeAfter->GetNext()){
-
-		wxWindow *win = nodeAfter->GetData();
-		win->SetFont(stFont);
-	}*/
-
 	wxWindow::SetFont(stFont);
 	//panel->Layout();
 	SaveOptions();
@@ -967,7 +966,7 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	panel = new wxWindow(this, -1);
 	CreateControls(normal);
 	Thaw();
-	isscrollbar = false;
+	//isscrollbar = false;
 	wxSizeEvent evt;
 	OnSize(evt);
 	RefVals();

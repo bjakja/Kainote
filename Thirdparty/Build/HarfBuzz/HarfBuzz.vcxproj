@@ -147,11 +147,9 @@
     <ClCompile Include="..\..\harfbuzz\src\hb-buffer-serialize.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-buffer.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-common.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-face.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-fallback-shape.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-font.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-gobject-structs.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-map.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-number.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-ot-cff1-table.cc" />
@@ -186,8 +184,6 @@
     <ClCompile Include="..\..\harfbuzz\src\hb-shape-plan.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-shape.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-shaper.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-static.cc" />
-    <ClCompile Include="..\..\harfbuzz\src\hb-style.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff-common.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff1.cc" />
     <ClCompile Include="..\..\harfbuzz\src\hb-subset-cff2.cc" />
@@ -233,13 +229,10 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-debug.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-deprecated.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-dispatch.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-draw.h" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-draw.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-face.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-face.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-font.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-font.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-gobject-structs.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-gobject.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-iter.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-kern.hh" />
@@ -343,7 +336,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-shaper-list.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-shaper.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-string-array.hh" />
-    <ClInclude Include="..\..\harfbuzz\src\hb-style.h" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff-common.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff1.hh" />
     <ClInclude Include="..\..\harfbuzz\src\hb-subset-cff2.hh" />

@@ -2299,6 +2299,24 @@ bool EditBox::SetFont(const wxFont &font)
 	}
 
 	wxWindow::SetFont(ebFont);
+	int fw, fh;
+	GetTextExtent(L"000000", &fw, &fh);
+	fw += 6;
+	fh += 10;
+	LayerEdit->SetMinSize(wxSize(fw, fh));
+	GetTextExtent(L"00:00:00,000", &fw, &fh);
+	fw += 6;
+	fh += 10;
+	StartEdit->SetMinSize(wxSize(fw, fh));
+	EndEdit->SetMinSize(wxSize(fw, fh));
+	DurEdit->SetMinSize(wxSize(fw, fh));
+	GetTextExtent(L"0000", &fw, &fh);
+	fw += 10;
+	fh += 10;
+	MarginLEdit->SetMinSize(wxSize(fw, fh));
+	MarginREdit->SetMinSize(wxSize(fw, fh));
+	MarginVEdit->SetMinSize(wxSize(fw, fh));
+
 	/*if (ABox){
 		ABox->Layout();
 	}*/

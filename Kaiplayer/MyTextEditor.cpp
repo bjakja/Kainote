@@ -842,8 +842,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 			Selend.y = FindY(Selend.x);
 			bitmaph = (wraps.size() * fontHeight) + 4;
 		}
-		int sw = 0, sh = 0;
-		scroll->GetSize(&sw, &sh);
+		int sw = scroll->GetThickness();
 		scroll->SetSize(w - sw, 0, sw, h);
 		int diff = h - statusBarHeight;
 		int diff2 = bitmaph;
@@ -2291,6 +2290,7 @@ void TextEditor::SetState(int _state, bool refresh){
 
 bool TextEditor::SetFont(const wxFont &_font)
 {
+	wxWindow::SetFont(_font);
 	font = _font;
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);

@@ -29,9 +29,6 @@
     <ClCompile Include="..\..\harfbuzz\src\hb-common.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\hb-draw.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-face.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -39,9 +36,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-font.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\hb-gobject-structs.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-map.cc">
@@ -144,12 +138,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-shaper.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\hb-static.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\harfbuzz\src\hb-style.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\harfbuzz\src\hb-subset.cc">
@@ -289,12 +277,6 @@
     <ClInclude Include="..\..\harfbuzz\src\hb-dispatch.hh">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\harfbuzz\src\hb-draw.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\harfbuzz\src\hb-draw.hh">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\harfbuzz\src\hb-face.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -308,9 +290,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\harfbuzz\src\hb-gobject.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\harfbuzz\src\hb-gobject-structs.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\harfbuzz\src\hb-iter.hh">
@@ -617,9 +596,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\harfbuzz\src\hb-string-array.hh">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\harfbuzz\src\hb-style.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\harfbuzz\src\hb-subset.h">

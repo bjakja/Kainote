@@ -57,7 +57,8 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 	int height = Options.GetInt(AUDIO_BOX_HEIGHT);
 	SetMinSize(wxSize(-1, height));
 	// Display
-	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, wxPoint(0, height - 17), wxSize(100, 17));
+	int thickness = KaiScrollbar::CalculateThickness(this);
+	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, wxPoint(0, height - thickness), wxSize(100, thickness));
 	audioScroll->SetToolTip(_("Pasek szukania"));
 
 	audioDisplay = new AudioDisplay(this);
@@ -652,6 +653,9 @@ int AudioBox::GetVolume()
 
 bool AudioBox::SetFont(const wxFont &font)
 {
+	int thickness = audioScroll->GetThickness();
+	audioScroll->SetMinSize(wxSize(-1, thickness));
+
 	const wxWindowList& siblings = GetChildren();
 
 	for (wxWindowList::compatibility_iterator nodeAfter = siblings.GetFirst();
