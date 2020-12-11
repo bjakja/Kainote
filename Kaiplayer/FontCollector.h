@@ -179,6 +179,9 @@ private:
 	bool AddFont(const wxString &string);
 	void CopyMKVFontsFromTab(const wxString &path);
 	void ClearTables();
+	bool MakeDirectory(bool isZip);
+	bool CreateZip();
+	void CloseZip();
 
 	wxArrayString facenames;
 	wxArrayString fontnames;

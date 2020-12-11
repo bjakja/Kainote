@@ -362,7 +362,6 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 			positioning.push_back(pos);
 			wraps.push_back(i + 1);
 			widthCount = 0;
-			i++;
 		}//add here scrollbar size, or maybe in the future I need to use scrollbar width here
 		else if (widthCount > windowWidth - 12) {
 			size_t wrapsSize = wraps.size();
@@ -438,7 +437,6 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 			positioning.push_back(pos);
 			wraps.push_back(i + 1);
 			widthCount = 0;
-			i++;
 		}
 		else if (widthCount > windowWidth - 12) {
 			size_t wrapsSize = wraps.size();
