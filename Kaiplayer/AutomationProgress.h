@@ -70,6 +70,8 @@ namespace Auto{
 		void AddDebugOutput(wxThreadEvent &evt);
 		void ShowConfigDialog(wxThreadEvent &evt);
 		void ShowProgressDialog(wxThreadEvent &evt);
+		void ShowOpenDialog(wxThreadEvent &evt);
+		void ShowSaveDialog(wxThreadEvent &evt);
 		void OnUpdate(wxTimerEvent &event);
 		void OnCancel(wxCommandEvent &evt);
 		lua_State *L;

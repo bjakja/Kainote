@@ -117,10 +117,6 @@ void ProgresDialog::Title(wxString title)
 {
 	text->SetLabelText(title);
 	Layout();
-	//bool main =wxThread::IsMain();
-	//if(!main){
-	//wxSafeYield(this);
-	//}
 }
 
 bool ProgresDialog::WasCancelled()
@@ -140,7 +136,6 @@ void ProgresDialog::OnCancel(wxCommandEvent& event)
 
 void ProgresDialog::OnShow(wxThreadEvent& evt)
 {
-	//bool main =wxThread::IsMain();
 	CenterOnParent();
 	ShowModal();
 }

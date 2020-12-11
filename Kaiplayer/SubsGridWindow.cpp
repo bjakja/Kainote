@@ -293,7 +293,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					badWraps = false;
 				}
 				if (hideOverrideTags) {
-					wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+					wxRegEx reg(subsFormat == SRT? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
 					reg.ReplaceAll(&txt, chtag);
 					if (showOriginal) { reg.ReplaceAll(&txttl, chtag); }
 				}
@@ -670,7 +670,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			
 			
 			if (hideOverrideTags) {
-				wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx reg(subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
 				reg.ReplaceAll(&txt, chtag);
 				if (showOriginal) { reg.ReplaceAll(&txttl, chtag); }
 			}

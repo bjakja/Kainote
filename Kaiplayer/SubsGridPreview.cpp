@@ -361,7 +361,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->hideOverrideTags){
-				wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
+				wxRegEx reg(previewGrid->subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
 				reg.ReplaceAll(&txt, chtag);
 				if (previewGrid->showOriginal){ reg.ReplaceAll(&txttl, chtag); }
 			}

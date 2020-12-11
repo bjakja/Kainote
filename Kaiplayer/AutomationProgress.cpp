@@ -42,6 +42,8 @@ namespace Auto{
 	wxDEFINE_EVENT(EVT_MESSAGE, wxThreadEvent);
 	wxDEFINE_EVENT(EVT_SHOW_PRGS_DIAL, wxThreadEvent);
 	wxDEFINE_EVENT(EVT_SHOW_CFG_DIAL, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_SHOW_OPEN_DIAL, wxThreadEvent);
+	wxDEFINE_EVENT(EVT_SHOW_SAVE_DIAL, wxThreadEvent);
 	LuaProgressSink *LuaProgressSink::ps = NULL;
 
 	LuaProgressSink::LuaProgressSink(lua_State *_L, wxWindow *parent)
@@ -249,63 +251,21 @@ namespace Auto{
 
 	int LuaProgressSink::LuaDisplayOpenDialog(lua_State *L)
 	{
-		//ProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
-		wxString message(check_string(L, 1));
-		wxString dir(check_string(L, 2));
-		wxString file(check_string(L, 3));
-		wxString wildcard(check_string(L, 4));
-		bool multiple = !!lua_toboolean(L, 5);
-		bool must_exist = lua_toboolean(L, 6) || lua_isnil(L, 6);
+		wxSemaphore sema(0, 1);
+		ps->SafeQueue(EVT_SHOW_OPEN_DIAL, &sema);
 
-		int flags = wxFD_OPEN;
-		if (multiple)
-			flags |= wxFD_MULTIPLE;
-		if (must_exist)
-			flags |= wxFD_FILE_MUST_EXIST;
-
-		wxFileDialog diag(nullptr, message, dir, file, wildcard, flags);
-		if (diag.ShowModal() == wxID_CANCEL) {
-			lua_pushnil(L);
-			return 1;
-		}
-
-		if (multiple) {
-			wxArrayString files;
-			diag.GetPaths(files);
-
-			lua_createtable(L, files.size(), 0);
-			for (size_t i = 0; i < files.size(); ++i) {
-				lua_pushstring(L, files[i].utf8_str());
-				lua_rawseti(L, -2, i + 1);
-			}
-
-			return 1;
-		}
-
-		lua_pushstring(L, diag.GetPath().utf8_str());
+		sema.Wait();
+		
 		return 1;
 	}
 
 	int LuaProgressSink::LuaDisplaySaveDialog(lua_State *L)
 	{
-		//ProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
-		wxString message(check_string(L, 1));
-		wxString dir(check_string(L, 2));
-		wxString file(check_string(L, 3));
-		wxString wildcard(check_string(L, 4));
-		bool prompt_overwrite = !lua_toboolean(L, 5);
+		wxSemaphore sema(0, 1);
+		ps->SafeQueue(EVT_SHOW_SAVE_DIAL, &sema);
 
-		int flags = wxFD_SAVE;
-		if (prompt_overwrite)
-			flags |= wxFD_OVERWRITE_PROMPT;
-
-		wxFileDialog diag(nullptr, message, dir, file, wildcard, flags);
-		if (diag.ShowModal() == wxID_CANCEL) {
-			lua_pushnil(L);
-			return 1;
-		}
-
-		lua_pushstring(L, diag.GetPath().utf8_str());
+		sema.Wait();
+		
 		return 1;
 	}
 
@@ -361,6 +321,8 @@ namespace Auto{
 		Bind(EVT_TASK, &LuaProgressDialog::SetTask, this);
 		Bind(EVT_SHOW_CFG_DIAL, &LuaProgressDialog::ShowConfigDialog, this);
 		Bind(EVT_SHOW_PRGS_DIAL, &LuaProgressDialog::ShowProgressDialog, this);
+		Bind(EVT_SHOW_OPEN_DIAL, &LuaProgressDialog::ShowOpenDialog, this);
+		Bind(EVT_SHOW_SAVE_DIAL, &LuaProgressDialog::ShowSaveDialog, this);
 	}
 	LuaProgressDialog::~LuaProgressDialog(){
 		update_timer.Stop();
@@ -370,6 +332,68 @@ namespace Auto{
 	{
 		LuaProgressDialog *dlg = evt.GetPayload<LuaProgressDialog*>();
 		dlg->ShowModal();
+	}
+
+	void LuaProgressDialog::ShowOpenDialog(wxThreadEvent & evt)
+	{
+		wxString message(check_string(L, 1));
+		wxString dir(check_string(L, 2));
+		wxString file(check_string(L, 3));
+		wxString wildcard(check_string(L, 4));
+		bool multiple = !!lua_toboolean(L, 5);
+		bool must_exist = lua_toboolean(L, 6) || lua_isnil(L, 6);
+
+		int flags = wxFD_OPEN;
+		if (multiple)
+			flags |= wxFD_MULTIPLE;
+		if (must_exist)
+			flags |= wxFD_FILE_MUST_EXIST;
+
+		wxFileDialog diag(nullptr, message, dir, file, wildcard, flags);
+		if (diag.ShowModal() == wxID_CANCEL) {
+			lua_pushnil(L);
+			evt.GetPayload<wxSemaphore*>()->Post();
+			return;
+		}
+
+		if (multiple) {
+			wxArrayString files;
+			diag.GetPaths(files);
+
+			lua_createtable(L, files.size(), 0);
+			for (size_t i = 0; i < files.size(); ++i) {
+				lua_pushstring(L, files[i].utf8_str());
+				lua_rawseti(L, -2, i + 1);
+			}
+			evt.GetPayload<wxSemaphore*>()->Post();
+			return;
+		}
+
+		lua_pushstring(L, diag.GetPath().utf8_str());
+		evt.GetPayload<wxSemaphore*>()->Post();
+	}
+
+	void LuaProgressDialog::ShowSaveDialog(wxThreadEvent & evt)
+	{
+		wxString message(check_string(L, 1));
+		wxString dir(check_string(L, 2));
+		wxString file(check_string(L, 3));
+		wxString wildcard(check_string(L, 4));
+		bool prompt_overwrite = !lua_toboolean(L, 5);
+
+		int flags = wxFD_SAVE;
+		if (prompt_overwrite)
+			flags |= wxFD_OVERWRITE_PROMPT;
+
+		wxFileDialog diag(nullptr, message, dir, file, wildcard, flags);
+		if (diag.ShowModal() == wxID_CANCEL) {
+			lua_pushnil(L);
+			evt.GetPayload<wxSemaphore*>()->Post();
+			return;
+		}
+
+		lua_pushstring(L, diag.GetPath().utf8_str());
+		evt.GetPayload<wxSemaphore*>()->Post();
 	}
 
 
