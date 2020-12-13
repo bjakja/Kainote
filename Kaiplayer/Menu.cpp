@@ -143,7 +143,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	if (isize > (size_t)maxVisible) { size->x += 20; isize = maxVisible; }
 	size->y = height * isize + 4;
 	int w, h;
-	wxRect workArea = GetMonitorRect(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
+	wxRect workArea = GetMonitorWorkArea(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
 	//It was probably the last bug of this element or maybe there are some wonder monitors combination

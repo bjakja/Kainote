@@ -66,7 +66,7 @@ void SubsGridWindow::SetStyle()
 	if (!font.IsOk())
 		font.SetFamily(wxFONTFAMILY_SWISS);
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
-	font.SetPointSize(Options.GetInt(GRID_FONT_SIZE));
+	font.SetPointSize(Options.GetInt(GRID_FONT_SIZE) * Options.GetFontScale());
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	GridHeight = ((fh + 3) * 2) / 2;
@@ -1423,7 +1423,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 					if (filterRow < scrollPosition){
 						if (state == 1){
 							filterRow = GetKeyFromPosition(filterRow, -1, false);
-							scrollPosition = filterRow + 1;
+							scrollPosition = filterRow? filterRow + 1 : filterRow;
 							scrollPositionId = file->GetElementByKey(scrollPosition);
 						}
 						else{

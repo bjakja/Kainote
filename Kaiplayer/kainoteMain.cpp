@@ -313,11 +313,14 @@ KainoteFrame::~KainoteFrame()
 	if (!im && !IsIconized()){
 		int posx, posy, sizex, sizey;
 		GetPosition(&posx, &posy);
-		if (posx < 4000 && posx> -200){
+		if (posx < 10000 && posx> -4000){
 			Options.SetCoords(WINDOW_POSITION, posx, posy);
 		}
 		GetSize(&sizex, &sizey);
 		Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+		wxRect monRect = GetMonitorRect1(0, NULL, wxRect(posx, posy, sizex, sizey));
+		Options.SetCoords(MONITOR_POSITION, monRect.x, monRect.y);
+		Options.SetCoords(MONITOR_SIZE, monRect.GetWidth(), monRect.GetHeight());
 	}
 
 	Toolbar->Destroy();
@@ -546,11 +549,6 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			tab->ShiftTimes->Show(false);
 			tab->windowResizer->Show(false);
 			wxSize tabSize = tab->GetClientSize();
-			wxSize tabsSize = Tabs->GetClientSize();
-			tabsSize.y -= Tabs->GetHeight();
-			if (tabSize.x != tabsSize.x || tabSize.y != tabsSize.y) {
-				KaiLog(wxString::Format(L"Bad tab size %i, %i, it should be %i %i", tabSize.x, tabSize.y, tabsSize.x, tabsSize.y));
-			}
 			tab->Video->SetMinSize(tabSize);
 		}
 		else if (!tab->Edit->IsShown()){
@@ -1208,13 +1206,6 @@ void KainoteFrame::OnRecent(wxCommandEvent& event)
 	}
 
 	if (Modif == wxMOD_CONTROL){
-		/*CoInitialize(0);
-		ITEMIDLIST *pidl = ILCreateFromPathW(filename.wc_str());
-		if (pidl) {
-			SHOpenFolderAndSelectItems(pidl, 0, 0, 0);
-			ILFree(pidl);
-		}
-		CoUninitialize();*/
 		SelectInFolder(filename);
 		return;
 	}

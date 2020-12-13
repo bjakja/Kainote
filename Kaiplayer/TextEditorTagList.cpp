@@ -83,7 +83,7 @@ void PopupTagList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &cont
 	if (size->x < controlSize.x){ size->x = controlSize.x; }
 	size->y = height * isize + 2;
 	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
-	wxRect workArea = GetMonitorRect(0, NULL, ScreenPos, true);
+	wxRect workArea = GetMonitorWorkArea(0, NULL, ScreenPos, true);
 	int h = workArea.height + workArea.y;
 	if ((ScreenPos.y + size->y) > h){
 		pos->y -= (size->y + controlSize.y);

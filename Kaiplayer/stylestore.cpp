@@ -716,7 +716,8 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	std::map<wxString, bool> lineStyles;
 	wxString delStyles;
 	wxString existsStyles;
-	SubsGrid *grid = Notebook::GetTab()->Grid;
+	TabPanel *tab = Notebook::GetTab();
+	SubsGrid *grid = tab->Grid;
 	const wxString &tlStyle = grid->GetSInfo(L"TLMode Style");
 
 	for (size_t i = 0; i < grid->file->GetCount(); i++){
@@ -745,8 +746,9 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	}
 	if (existsStyles.IsEmpty()){ existsStyles = _("Brak"); }
 	if (delStyles.IsEmpty()){ delStyles = _("Brak"); }
+	wxWindow *parent = (tab->Video->IsFullScreen()) ? tab->Video->GetFullScreenWindow() : NULL;
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), 
-		_("Status usuniętych stylów"));
+		_("Status usuniętych stylów"), 4L, parent);
 }
 
 

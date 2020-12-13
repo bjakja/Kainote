@@ -94,7 +94,7 @@ void SubsGridFiltering::Filter(bool autoFiltering, bool removeFiltering)
 void SubsGridFiltering::FilterPartial(int from)
 {
 	Dialogue *lastDial = NULL;
-	int keyFrom = from + 1;
+	int keyFrom = from? from + 1 : from;
 	int keyTo = keyFrom;
 	bool hide = true;
 	bool changed = false;

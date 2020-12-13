@@ -735,7 +735,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 	//turn on fullscreen
 	else{
 		if (wxWindow::HasCapture()){ wxWindow::ReleaseMouse(); }
-		wxRect rt = GetMonitorRect(monitor);
+		wxRect rt = GetMonitorRect1(monitor, &MonRects, Kai->GetRect());
 		if (!m_FullScreenWindow){
 			m_FullScreenWindow = new Fullscreen(this, rt.GetPosition(), rt.GetSize());
 			m_FullScreenWindow->Videolabel->SetLabelText(tab->VideoName);
@@ -846,7 +846,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	MenuItem *Item = menu->Append(VIDEO_FULL_SCREEN, txt1);
 	Item->Enable(GetState() != None);
 	Item->DisableMapping();
-	GetMonitorRect(-1);
+	GetMonitorRect1(-1, &MonRects, Kai->GetRect());
 	for (size_t i = 1; i < MonRects.size(); i++)
 	{
 		wxString txt2;
@@ -1424,43 +1424,43 @@ void VideoCtrl::ChangeStream()
 	
 }
 
-BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
-{
-	std::vector<RECT> * MonRects = (std::vector<RECT>*)dwData;
-	WinStruct<MONITORINFO> monitorinfo;
-	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
-		KaiLog(_("Nie można pobrać informacji o monitorze"));
-		return TRUE;
-	}
-	// Main monitor have to be put as first
-	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
-		MonRects->insert(MonRects->begin(), monitorinfo.rcMonitor);
-		return TRUE;
-	}
-	MonRects->push_back(monitorinfo.rcMonitor);
-	return TRUE;
-}
-
-wxRect VideoCtrl::GetMonitorRect(int wmonitor){
-	MonRects.clear();
-	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&MonRects);
-	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
-	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
-	else if (wmonitor == 0){
-		wxRect rect = Kai->GetRect();
-		int x = (rect.width / 2) + rect.x;
-		int y = (rect.height / 2) + rect.y;
-		for (size_t i = 0; i < MonRects.size(); i++){
-			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
-				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
-			}
-		}
-	}
-	else{
-		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
-	}
-	return rt;
-}
+//BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+//{
+//	std::vector<RECT> * MonRects = (std::vector<RECT>*)dwData;
+//	WinStruct<MONITORINFO> monitorinfo;
+//	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
+//		KaiLog(_("Nie można pobrać informacji o monitorze"));
+//		return TRUE;
+//	}
+//	// Main monitor have to be put as first
+//	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
+//		MonRects->insert(MonRects->begin(), monitorinfo.rcMonitor);
+//		return TRUE;
+//	}
+//	MonRects->push_back(monitorinfo.rcMonitor);
+//	return TRUE;
+//}
+//
+//wxRect VideoCtrl::GetMonitorRect(int wmonitor){
+//	MonRects.clear();
+//	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&MonRects);
+//	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
+//	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
+//	else if (wmonitor == 0){
+//		wxRect rect = Kai->GetRect();
+//		int x = (rect.width / 2) + rect.x;
+//		int y = (rect.height / 2) + rect.y;
+//		for (size_t i = 0; i < MonRects.size(); i++){
+//			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
+//				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
+//			}
+//		}
+//	}
+//	else{
+//		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
+//	}
+//	return rt;
+//}
 
 void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 {

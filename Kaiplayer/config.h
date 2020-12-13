@@ -24,21 +24,8 @@
 #include <wx/utils.h> 
 #include "EnumFactory.h"
 #include <wx/wx.h>
-#include "LogHandler.h"
-#undef wxBITMAP_PNG
+#include "Utils.h"
 
-
-#ifndef MIN
-#define MIN(a,b) ((a)<(b))?(a):(b)
-#endif
-
-#ifndef MAX
-#define MAX(a,b) ((a)>(b))?(a):(b)
-#endif
-
-#ifndef MID
-#define MID(a,b,c) MAX((a),MIN((b),(c)))
-#endif
 
 //Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \
@@ -220,6 +207,8 @@
 	CG(WINDOW_MAXIMIZED,)\
 	CG(WINDOW_POSITION,)\
 	CG(WINDOW_SIZE,)\
+	CG(MONITOR_POSITION,)\
+	CG(MONITOR_SIZE,)\
 	CG(EDITBOX_TAG_BUTTONS,)\
 	CG(EDITBOX_TAG_BUTTON_VALUE1,)\
 	CG(EDITBOX_TAG_BUTTON_VALUE2,)\
@@ -406,6 +395,7 @@ private:
 	bool ConfigNeedToConvert(const wxString & fullVersion);
 	int lastCheckedId = -1;
 	DWORD lastCheckedTime = 0;
+	float fontScale = 1.f;
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -471,6 +461,8 @@ public:
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0);
 	void FontsClear();
+	void SetFontScale(float scale);
+	float GetFontScale();
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();
@@ -480,63 +472,7 @@ public:
 	config();
 	~config();
 };
-bool sortfunc(Styles *styl1, Styles *styl2);
-//formating here works like this, 
-//first digit - digits before dot, second digit - digits after dot, for example 5.3f;
-wxString getfloat(float num, const wxString &format = L"5.3f", bool Truncate = true);
-wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
-wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
-wxImage CreateImageFromPngResource(const wxString& t_name);
-#define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)
-#define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
-void MoveToMousePosition(wxWindow *win);
-wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
-BOOL __stdcall MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
-wxRect GetMonitorRect(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
-static const wxString emptyString;
-bool IsNumber(const wxString &txt);
 
-#ifdef _M_IX86
-void SetThreadName(DWORD id, LPCSTR szThreadName);
-#else
-void SetThreadName(size_t id, LPCSTR szThreadName);
-#endif
-
-enum{
-	ASS = 1,
-	SRT,
-	TMP,
-	MDVD,
-	MPL2,
-	FRAME = 10
-};
-
-
-#ifndef SAFE_DELETE
-#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
-#endif
-
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(x) if (x != NULL) { x->Release(); x = NULL; } 
-#endif
-
-
-
-#ifndef PTR
-#define PTR(what,err) if(!what) {KaiLogSilent(err); return false;}
-#endif
-
-#ifndef PTR1
-#define PTR1(what,err) if(!what) {KaiLogSilent(err); return;}
-#endif
-
-#ifndef HR
-#define HR(what,err) if(FAILED(what)) {KaiLogSilent(err); return false;}
-#endif
-
-#ifndef HRN
-#define HRN(what,err) if(FAILED(what)) {KaiLogSilent(err); return;}
-#endif
 
 extern config Options;
 

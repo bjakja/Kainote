@@ -274,7 +274,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetTextForeground(Options.GetColour(WINDOW_HEADER_TEXT));
 			tdc.DrawText(tab->SubsName, center, 1);
 			int xHeight = previewGrid->GridHeight - 6;
-			int wPos = w + scHor - thickness + 4;
+			int wPos = w + scHor - (thickness + 4);
 			if (onX || pushedX){
 				tdc.SetBrush(Options.GetColour(pushedX ? WINDOW_PUSHED_CLOSE_BUTTON : WINDOW_HOVER_CLOSE_BUTTON));
 				tdc.DrawRectangle(wPos, 3, xHeight + 2, xHeight + 2);
@@ -528,6 +528,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	//border on left 4px
 	int curY = (event.GetY());
 	int curX = (event.GetX()) - 4;
+	size_t size = previewGrid->GetCount();
 
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
@@ -598,10 +599,10 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				if (previewGrid->currentLine > row){
 					int firstSel = previewGrid->FirstSelection();
 					if (firstSel < 0){
-						if (previewGrid->currentLine < previewGrid->GetCount())
+						if (previewGrid->currentLine < size)
 							previewGrid->file->InsertSelection(previewGrid->currentLine);
 						else
-							tab->Edit->SetLine(previewGrid->GetCount() - 1);
+							tab->Edit->SetLine(size - 1);
 					}
 					else
 						tab->Edit->SetLine(firstSel);
@@ -615,7 +616,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	// Seeking video by click on numeration column
 	if (click && isNumerizeColumn){
-		if (tabp->Video->GetState() != None && !(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())){
+		if (tabp->Video->GetState() != None && !(row < previewGrid->scrollPosition || row >= size)){
 			if (tabp->Video->GetState() != Paused){
 				if (tabp->Video->GetState() == Stopped){ tabp->Video->Play(); }
 				tabp->Video->Pause();
@@ -659,7 +660,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 
 	if (curX < hideColumnWidth){
 		int filterRow = previewGrid->GetKeyFromScrollPos(((curY + (previewGrid->GridHeight / 2)) / (previewGrid->GridHeight + 1)) - 1) - 1;
-		if (filterRow < previewGrid->GetCount() && curY >(previewGrid->GridHeight / 2)) {
+		if (filterRow < (int)size && curY >(previewGrid->GridHeight / 2)) {
 			if (click || dclick){
 				unsigned char state = previewGrid->file->CheckIfHasHiddenBlock(filterRow, filterRow < previewGrid->scrollPosition);
 				if (state){
@@ -667,7 +668,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 					if (filterRow < previewGrid->scrollPosition){
 						if (state == 1){
 							filterRow = previewGrid->GetKeyFromPosition(filterRow, -1, false);
-							previewGrid->scrollPosition = filterRow + 1;
+							previewGrid->scrollPosition = filterRow ? filterRow + 1 : filterRow;
 							previewGrid->scrollPositionId = previewGrid->file->GetElementByKey(previewGrid->scrollPosition);
 						}
 						else{
@@ -702,7 +703,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	VideoCtrl *video = tabp->Video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
-	if (!(row < previewGrid->scrollPosition || row >= previewGrid->GetCount())) {
+	if (!(row < previewGrid->scrollPosition || row >= size)) {
 
 
 		// Toggle selected
@@ -868,32 +869,38 @@ void SubsGridPreview::SeekForOccurences()
 					previewData.push_back(MultiPreviewData(tab, tab->Grid, j));
 				}
 			}
-			else if (dial->Start.mstime > startMax && dial->Start.mstime < startTime){
-				startMax = dial->Start.mstime; keyStartMax = j;
+			else {
+				if (dial->Start.mstime > startMax && dial->Start.mstime < startTime) {
+					startMax = dial->Start.mstime; keyStartMax = j;
+				}
+				else if (dial->Start.mstime < startMin && dial->Start.mstime > startTime) {
+					startMin = dial->Start.mstime; keyStartMin = j;
+				}
+				
+				if (dial->End.mstime > endMax && dial->End.mstime < endTime) {
+					endMax = dial->End.mstime; keyEndMax = j;
+				}
+				else if (dial->End.mstime < endMin && dial->End.mstime > endTime) {
+					endMin = dial->End.mstime; keyEndMin = j;
+				}
 			}
-			else if (dial->Start.mstime < startMin && dial->Start.mstime > startTime){
-				startMin = dial->Start.mstime; keyStartMin = j;
-			}
-			else if (dial->End.mstime > endMax && dial->End.mstime < endTime){
-				endMax = dial->End.mstime; keyEndMax = j;
-			}
-			else if (dial->End.mstime < endMin && dial->End.mstime > endTime){
-				endMin = dial->End.mstime; keyEndMin = j;
-			}
-
 		}
 		if (lastLine == -2){
 			int bestStart, bestJ;
 			int bestEnd, bestJE;
 
-			if (abs(startTime - startMax) > abs(startTime - startMin)){
+			if (abs(startTime - startMax) > abs(startTime - startMin) || startMax < 0){
 				bestStart = startMin; bestJ = keyStartMin;
 			}
-			else{ bestStart = startMax; bestJ = keyStartMax; }
-			if (abs(endTime - endMax) > abs(endTime - endMin)){
+			else{ 
+				bestStart = startMax; bestJ = keyStartMax; 
+			}
+			if (abs(endTime - endMax) > abs(endTime - endMin) || endMax < 0){
 				bestEnd = endMin; bestJE = keyEndMin;
 			}
-			else{ bestEnd = endMax; bestJE = keyEndMax; }
+			else{ 
+				bestEnd = endMax; bestJE = keyEndMax; 
+			}
 			if (abs(startTime - bestStart) > abs(endTime - bestEnd)){
 				bestJ = bestJE;
 			}

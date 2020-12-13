@@ -15,14 +15,15 @@
 
 
 #include "KaiFrame.h"
-#include "Utils.h"
+//#include <wx/wx.h>
+#include "config.h"
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
-#include "config.h"
 #include "kainoteApp.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
 #include "GraphicsD2D.h"
+//#include <shellscalingapi.h>
 #pragma comment(lib, "Dwmapi.lib")
 //#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 //#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
@@ -486,7 +487,82 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		return result;
 	}
-	
+	if (uMsg == WM_DISPLAYCHANGE) {
+		wxRect rt = GetMonitorRect1(-1, NULL, wxRect(0, 0, 1920, 1080));
+		int msizex, msizey;
+		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
+		if (msizex && msizey) {
+			if (rt.width != msizex || rt.height != msizey) {
+				int posx, posy, sizex, sizey;
+				GetPosition(&posx, &posy);
+				GetSize(&sizex, &sizey);
+				int mposx, mposy, vsizex, vsizey;
+				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
+				Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
+				float scalex = (float)rt.width / (float)msizex;
+				float scaley = (float)rt.height / (float)msizey;
+				posx -= mposx;
+				posy -= mposy;
+				posx *= scalex;
+				posy *= scaley;
+				if (posx == -1)
+					posx = 0;
+				if (posy == -1)
+					posy = 0;
+				sizex *= scalex;
+				sizey *= scaley;
+				vsizex *= scalex;
+				vsizey *= scaley;
+				Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
+				Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
+				Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+				POINT pnt = { mposx + 1, mposy + 1 };
+				HMONITOR mon = MonitorFromPoint(pnt, MONITOR_DEFAULTTONEAREST);
+				unsigned int dpiX = 0, dpiY = 0;
+				//GetDpiForMonitor(mon, MDT_DEFAULT, dpiX, dpiY);
+				HMODULE Lib = LoadLibraryW(L"Shcore.dll");
+				if (Lib != INVALID_HANDLE_VALUE) {
+					typedef int (WINAPI *getDPI)(HMONITOR, int, UINT*, UINT*);
+					getDPI pptr = (getDPI)GetProcAddress(Lib, "GetDpiForMonitor");
+					if (pptr != NULL) {
+						pptr(mon, 0, &dpiX, &dpiY);
+						if (dpiX || dpiY) {
+							//KaiLog(wxString::Format(L"dpix: %i, dpiy: %i", dpiX, dpiY));
+							HDC dc = ::GetDC(NULL);
+							auto normalDPIx = ::GetDeviceCaps(dc, LOGPIXELSX);
+							auto normalDPIy = ::GetDeviceCaps(dc, LOGPIXELSY);
+							::DeleteDC(dc);
+							if (normalDPIx) {
+								float fontScale = ((float)dpiX / (float)normalDPIx);
+								Options.FontsClear();
+								Options.SetFontScale(fontScale);
+								wxFont *font = Options.GetFont();
+								SetFont(*font);
+							}
+						}
+					}
+				}
+				
+				Notebook *tabs = Notebook::GetTabs();
+				for (size_t i = 0; i < tabs->Size(); i++) {
+					TabPanel *tab = tabs->Page(i);
+					wxSize minVideoSize = tab->Video->GetMinSize();
+					int panelHeight = tab->Video->GetPanelHeight();
+					minVideoSize.y -= panelHeight;
+					minVideoSize.x *= scalex;
+					minVideoSize.y *= scaley;
+					minVideoSize.y += panelHeight;
+					tab->Video->SetMinSize(minVideoSize);
+					tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
+					tab->Grid->SetStyle();
+					tab->Grid->RefreshColumns();
+				}
+				
+				SetSize(posx, posy, sizex, sizey);
+				
+			}
+		}
+	}
 
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }

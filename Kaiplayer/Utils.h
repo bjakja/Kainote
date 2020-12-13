@@ -18,6 +18,26 @@
 #include <wx/colour.h>
 #include <wx/string.h>
 #include <wx/window.h>
+#include <wx/bitmap.h>
+#include "Styles.h"
+#include <vector>
+#include "windows.h"
+#include "LogHandler.h"
+
+#undef wxBITMAP_PNG
+
+
+#ifndef MIN
+#define MIN(a,b) ((a)<(b))?(a):(b)
+#endif
+
+#ifndef MAX
+#define MAX(a,b) ((a)>(b))?(a):(b)
+#endif
+
+#ifndef MID
+#define MID(a,b,c) MAX((a),MIN((b),(c)))
+#endif
 
 inline wxColour GetColorWithAlpha(const wxColour &colorWithAlpha, const wxColour &background)
 {
@@ -50,3 +70,61 @@ void SelectInFolder(const wxString & filename);
 void OpenInBrowser(const wxString &adress);
 
 bool IsNumberFloat(const wxString &test);
+
+bool sortfunc(Styles *styl1, Styles *styl2);
+//formating here works like this, 
+//first digit - digits before dot, second digit - digits after dot, for example 5.3f;
+wxString getfloat(float num, const wxString &format = L"5.3f", bool Truncate = true);
+wxBitmap CreateBitmapFromPngResource(const wxString& t_name);
+wxBitmap *CreateBitmapPointerFromPngResource(const wxString& t_name);
+wxImage CreateImageFromPngResource(const wxString& t_name);
+#define wxBITMAP_PNG(x) CreateBitmapFromPngResource(x)
+#define PTR_BITMAP_PNG(x) CreateBitmapPointerFromPngResource(x)
+void MoveToMousePosition(wxWindow *win);
+wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
+wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
+wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect);
+static const wxString emptyString;
+bool IsNumber(const wxString &txt);
+
+#ifdef _M_IX86
+void SetThreadName(DWORD id, LPCSTR szThreadName);
+#else
+void SetThreadName(size_t id, LPCSTR szThreadName);
+#endif
+
+enum {
+	ASS = 1,
+	SRT,
+	TMP,
+	MDVD,
+	MPL2,
+	FRAME = 10
+};
+
+
+#ifndef SAFE_DELETE
+#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
+#endif
+
+#ifndef SAFE_RELEASE
+#define SAFE_RELEASE(x) if (x != NULL) { x->Release(); x = NULL; } 
+#endif
+
+
+
+#ifndef PTR
+#define PTR(what,err) if(!what) {KaiLogSilent(err); return false;}
+#endif
+
+#ifndef PTR1
+#define PTR1(what,err) if(!what) {KaiLogSilent(err); return;}
+#endif
+
+#ifndef HR
+#define HR(what,err) if(FAILED(what)) {KaiLogSilent(err); return false;}
+#endif
+
+#ifndef HRN
+#define HRN(what,err) if(FAILED(what)) {KaiLogSilent(err); return;}
+#endif

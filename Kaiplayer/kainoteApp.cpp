@@ -197,10 +197,36 @@ bool kainoteApp::OnInit()
 
 		for (int i = 1; i < argc; i++) { paths.Add(argv[i]); }
 
-		int posx, posy, sizex, sizey;
+		int posx, posy, sizex, sizey, msizex, msizey;
 		Options.GetCoords(WINDOW_POSITION, &posx, &posy);
 		Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
-		if (sizex < 500 || sizey < 350){
+		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
+		if (msizex && msizey) {
+			wxRect rt = GetMonitorRect1(-1, NULL, wxRect(posx, posy, sizex, sizey));
+			if (rt.width != msizex || rt.height != msizey) {
+				int mposx, mposy, vsizex, vsizey;
+				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
+				Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
+				float scalex = (float)rt.width / (float)msizex;
+				float scaley = (float)rt.height / (float)msizey;
+				posx -= mposx;
+				posy -= mposy;
+				posx *= scalex;
+				posy *= scaley;
+				if (posx == -1)
+					posx = 0;
+				if (posy == -1)
+					posy = 0;
+				sizex *= scalex;
+				sizey *= scaley;
+				vsizex *= scalex;
+				vsizey *= scaley;
+				Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
+				Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
+				Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+			}	
+		}
+		if (sizex < 500 || sizey < 350) {
 			sizex = 800; sizey = 650;
 		}
 

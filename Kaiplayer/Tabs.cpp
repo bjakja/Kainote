@@ -830,6 +830,19 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
 	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
 	tabsMenu.Append(MENU_CHOOSE - 1, _("Zamknij wszystkie zakładki"), _("Zamknij wszystkie zakładki"));
+	TabPanel *tab = Pages[iter];
+	if (!tab->SubsPath.empty()) {
+		tabsMenu.Append(MENU_OPEN_SUBS_FOLDER, _("Otwórz folder zawierający napisy"), _("Otwórz folder zawierający napisy"));
+	}
+	if (!tab->VideoPath.empty()) {
+		tabsMenu.Append(MENU_OPEN_VIDEO_FOLDER, _("Otwórz folder zawierający wideo"), _("Otwórz folder zawierający wideo"));
+	}
+	if (!tab->AudioPath.empty()) {
+		tabsMenu.Append(MENU_OPEN_AUDIO_FOLDER, _("Otwórz folder zawierający audio"), _("Otwórz folder zawierający audio"));
+	}
+	if (!tab->KeyframesPath.empty()) {
+		tabsMenu.Append(MENU_OPEN_KEYFRAMES_FOLDER, _("Otwórz folder zawierający klatki kluczowe"), _("Otwórz folder zawierający klatki kluczowe"));
+	}
 	if ((i != iter && Size() > 1 && i != -1) || split){
 		wxString txt = (split) ? _("Wyświetl jedną zakładkę") : _("Wyświetl dwie zakładki");
 		tabsMenu.Append((MENU_CHOOSE - 2) - i, txt);
@@ -875,6 +888,13 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	}
 	else if (id == MENU_COMPARE - 1){
 		SubsGridBase::RemoveComparison();
+	}
+	else if (id >= MENU_OPEN_SUBS_FOLDER && id <= MENU_OPEN_KEYFRAMES_FOLDER) {
+		const wxString &path = id == MENU_OPEN_SUBS_FOLDER ? tab->SubsPath :
+			id == MENU_OPEN_VIDEO_FOLDER ? tab->VideoPath :
+			id == MENU_OPEN_AUDIO_FOLDER ? tab->AudioPath : tab->KeyframesPath;
+
+		SelectInFolder(path);
 	}
 	else if (id == MENU_SAVE - 1 || (i >= 0 && id == MENU_SAVE + i)){
 		OnSave(id);

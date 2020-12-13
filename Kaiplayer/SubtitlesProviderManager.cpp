@@ -118,6 +118,7 @@ bool SubtitlesProviderManager::ReloadLibraries()
 		}
 		return true;
 	}
+	return false;
 }
 
 #endif

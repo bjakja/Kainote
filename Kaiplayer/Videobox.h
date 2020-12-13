@@ -69,7 +69,7 @@ public:
 	void NextChap();
 	void PrevChap();
 	void ConnectAcc(int id);
-	wxRect GetMonitorRect(int wmonitor);
+	//wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
 	void CaptureMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }

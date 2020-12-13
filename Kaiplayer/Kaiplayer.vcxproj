@@ -205,6 +205,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -242,6 +245,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -284,6 +290,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">
     <ClCompile>
@@ -326,6 +335,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">
     <ClCompile>
@@ -369,6 +381,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -411,6 +426,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
     <ClCompile>
@@ -454,6 +472,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <ClCompile>
@@ -496,6 +517,9 @@ git rev-parse --verify HEAD &gt;&gt;  gitparams.h
 echo | set /p dummyName=#define GIT_BRANCH &gt;&gt;  gitparams.h
 git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </PreBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioBox.cpp" />
