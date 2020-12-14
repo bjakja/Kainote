@@ -800,11 +800,11 @@ void KainoteFrame::OnConversion(char form)
 	if (form != ASS){
 		tab->Video->RemoveVisual(true, true);
 	}
+	tab->Video->DisableVisuals(form != ASS);
 	tab->Grid->Convert(form);
 	tab->ShiftTimes->Contents();
 	UpdateToolbar();
 	tab->Edit->HideControls();
-	tab->Video->DisableVisuals(form != ASS);
 }
 
 

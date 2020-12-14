@@ -207,6 +207,7 @@ bool kainoteApp::OnInit()
 				int mposx, mposy, vsizex, vsizey;
 				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
 				Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
+				int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
 				float scalex = (float)rt.width / (float)msizex;
 				float scaley = (float)rt.height / (float)msizey;
 				posx -= mposx;
@@ -221,9 +222,11 @@ bool kainoteApp::OnInit()
 				sizey *= scaley;
 				vsizex *= scalex;
 				vsizey *= scaley;
+				audioHeight *= scaley;
 				Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
 				Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
 				Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+				Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
 			}	
 		}
 		if (sizex < 500 || sizey < 350) {
@@ -276,11 +279,11 @@ bool kainoteApp::OnInit()
 
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
-#if _DEBUG
-			debugtimer.Start(400, true);
-#else
+//#if _DEBUG
+//			debugtimer.Start(400, true);
+//#else
 			debugtimer.Start(100, true);
-#endif
+//#endif
 			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 				Frame->Tabs->LoadLastSession();
 			}, 2299);

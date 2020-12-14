@@ -337,27 +337,27 @@ void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 	}
 	else if (x >= w - (frameTopBorder * 2) - maximizeDiff && x < w - frameTopBorder - 8 - maximizeDiff && 
 		y >= 5 + maximizeDiff && y < frameTopBorder - 3 + maximizeDiff){
-		pushedClose = enterClose = pushedMinimize = enterMinimize = false;
-		if (leftdown){ pushedMaximize = true; Refresh(false, &rc); }
-		if (!enterMaximize){ enterMaximize = true; Refresh(false, &rc); }
-		if (evt.LeftUp()){
-			pushedMaximize = enterMaximize = false;
-			Refresh(false, &rc);
-			Maximize(!IsMaximized());
-		}
-		return;
+			pushedClose = enterClose = pushedMinimize = enterMinimize = false;
+			if (leftdown){ pushedMaximize = true; Refresh(false, &rc); }
+			if (!enterMaximize){ enterMaximize = true; Refresh(false, &rc); }
+			if (evt.LeftUp()){
+				pushedMaximize = enterMaximize = false;
+				Refresh(false, &rc);
+				Maximize(!IsMaximized());
+			}
+			return;
 	}
 	else if (x >= w - (frameTopBorder * 3) - maximizeDiff && x < w - (frameTopBorder * 2) - 8 - maximizeDiff && 
 		y >= 5 + maximizeDiff && y < frameTopBorder - 3 + maximizeDiff){
-		pushedClose = enterClose = pushedMaximize = enterMaximize = false;
-		if (leftdown){ pushedMinimize = true; Refresh(false, &rc); }
-		if (!enterMinimize){ enterMinimize = true; Refresh(false, &rc); }
-		if (evt.LeftUp()){
-			pushedMinimize = enterMinimize = false;
-			Refresh(false, &rc);
-			ShowWindow(GetHWND(), SW_SHOWMINNOACTIVE);
-		}
-		return;
+			pushedClose = enterClose = pushedMaximize = enterMaximize = false;
+			if (leftdown){ pushedMinimize = true; Refresh(false, &rc); }
+			if (!enterMinimize){ enterMinimize = true; Refresh(false, &rc); }
+			if (evt.LeftUp()){
+				pushedMinimize = enterMinimize = false;
+				Refresh(false, &rc);
+				ShowWindow(GetHWND(), SW_SHOWMINNOACTIVE);
+			}
+			return;
 	}
 	else if (enterClose || pushedClose || enterMaximize || pushedMaximize || enterMinimize || pushedMinimize){
 		pushedClose = enterClose = pushedMinimize = enterMinimize = pushedMaximize = enterMaximize = false;
@@ -388,9 +388,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	{
 		int w = LOWORD(lParam);
 		int h = HIWORD(lParam);
-		/*if(width<800 || height < 600){
-			return 1;
-			}*/
+		
 		wxRect rc(0, 0, w, frameTopBorder);
 		Refresh(false, &rc);
 		if (!IsMaximized()){
@@ -401,6 +399,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			wxRect rc3(0, h - frameBorder, w, frameBorder);
 			Refresh(false, &rc3);
 		}
+		Options.SetCoords(WINDOW_SIZE, w, h);
 		//Cannot use update here cause window blinking even when video is paused
 		//and there is some trash on left top border
 		//Update();
@@ -487,39 +486,45 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		return result;
 	}
-	if (uMsg == WM_DISPLAYCHANGE) {
-		wxRect rt = GetMonitorRect1(-1, NULL, wxRect(0, 0, 1920, 1080));
-		int msizex, msizey;
-		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
-		if (msizex && msizey) {
-			if (rt.width != msizex || rt.height != msizey) {
-				int posx, posy, sizex, sizey;
-				GetPosition(&posx, &posy);
-				GetSize(&sizex, &sizey);
+	if (uMsg == WM_MOVE) {
+		int xPos = (int)(short)LOWORD(lParam);   // horizontal position 
+		int yPos = (int)(short)HIWORD(lParam);   // vertical position 
+		
+		wxRect rt = GetMonitorRect1(0, NULL, wxRect(xPos, yPos, 400, 400));
+		if ((rt.height != LastMonitorRect.height || rt.width != LastMonitorRect.width) && LastMonitorRect.width > 0 && LastMonitorRect.height > 0){
+			wxRect programRect = GetRect();
+			bool noResize = false;
+			if (programRect.x == rt.width / 2 && programRect.y == 0 && programRect.width == rt.width / 2) {
+				noResize = true;
+			}
+			POINT pnt = { xPos + 200, yPos + 200 };
+			HMONITOR mon = MonitorFromPoint(pnt, MONITOR_DEFAULTTONULL);
+			if (mon) {
+				//shift win arrow = true; 
+				//dragging with mouse = false;
+				bool needtoChangePos = rt.Contains(wxPoint(xPos, yPos)) && !noResize;
+				int sizex, sizey;
+				//when shift win arrow is used window is shrink 
+				if (needtoChangePos) {
+					Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
+				}
+				else
+					GetSize(&sizex, &sizey);
 				int mposx, mposy, vsizex, vsizey;
 				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
 				Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
-				float scalex = (float)rt.width / (float)msizex;
-				float scaley = (float)rt.height / (float)msizey;
-				posx -= mposx;
-				posy -= mposy;
-				posx *= scalex;
-				posy *= scaley;
-				if (posx == -1)
-					posx = 0;
-				if (posy == -1)
-					posy = 0;
+				int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
+				float scalex = (float)rt.width / (float)LastMonitorRect.width;
+				float scaley = (float)rt.height / (float)LastMonitorRect.height;
 				sizex *= scalex;
 				sizey *= scaley;
 				vsizex *= scalex;
 				vsizey *= scaley;
-				Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
 				Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
 				Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
-				POINT pnt = { mposx + 1, mposy + 1 };
-				HMONITOR mon = MonitorFromPoint(pnt, MONITOR_DEFAULTTONEAREST);
+				Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
 				unsigned int dpiX = 0, dpiY = 0;
-				//GetDpiForMonitor(mon, MDT_DEFAULT, dpiX, dpiY);
+
 				HMODULE Lib = LoadLibraryW(L"Shcore.dll");
 				if (Lib != INVALID_HANDLE_VALUE) {
 					typedef int (WINAPI *getDPI)(HMONITOR, int, UINT*, UINT*);
@@ -527,13 +532,14 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 					if (pptr != NULL) {
 						pptr(mon, 0, &dpiX, &dpiY);
 						if (dpiX || dpiY) {
-							//KaiLog(wxString::Format(L"dpix: %i, dpiy: %i", dpiX, dpiY));
 							HDC dc = ::GetDC(NULL);
 							auto normalDPIx = ::GetDeviceCaps(dc, LOGPIXELSX);
 							auto normalDPIy = ::GetDeviceCaps(dc, LOGPIXELSY);
 							::DeleteDC(dc);
-							if (normalDPIx) {
-								float fontScale = ((float)dpiX / (float)normalDPIx);
+							int dpinew = dpiX > dpiY ? dpiX : dpiY;
+							int dpiold = normalDPIx > normalDPIy ? normalDPIx : normalDPIy;
+							if (dpiold) {
+								float fontScale = ((float)dpinew / (float)dpiold);
 								Options.FontsClear();
 								Options.SetFontScale(fontScale);
 								wxFont *font = Options.GetFont();
@@ -541,8 +547,10 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 							}
 						}
 					}
+					FreeLibrary(Lib);
 				}
-				
+
+
 				Notebook *tabs = Notebook::GetTabs();
 				for (size_t i = 0; i < tabs->Size(); i++) {
 					TabPanel *tab = tabs->Page(i);
@@ -554,12 +562,117 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 					minVideoSize.y += panelHeight;
 					tab->Video->SetMinSize(minVideoSize);
 					tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
+					if (tab->Edit->ABox) {
+						wxSize asize = tab->Edit->ABox->GetMinSize();
+						asize.y *= scaley;
+						tab->Edit->ABox->SetMinSize(asize);
+						tab->Edit->BoxSizer1->Layout();
+					}
 					tab->Grid->SetStyle();
 					tab->Grid->RefreshColumns();
 				}
+				if (needtoChangePos) {
+					int posx = rt.x + ((float)(rt.width - sizex) / 2.f),
+						posy = rt.y + ((float)(rt.height - sizey) / 2.f);
+					SetSize(posx, posy, sizex, sizey);
+				}
+				else if (!noResize)
+					SetSize(sizex, sizey);
+				else
+					Layout();
+				Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
 				
-				SetSize(posx, posy, sizex, sizey);
+			}
 				
+			
+		}
+		LastMonitorRect = rt;
+	}
+	if (uMsg == WM_DISPLAYCHANGE) {
+		wxRect rt = GetMonitorRect1(-1, NULL, wxRect(0, 0, 1920, 1080));
+		int msizex, msizey;
+		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
+		if (msizex && msizey) {
+			if (rt.width != msizex || rt.height != msizey) {
+				
+				int posx, posy, sizex, sizey;
+				GetPosition(&posx, &posy);
+				GetSize(&sizex, &sizey);
+				int mposx, mposy, vsizex, vsizey;
+				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
+				Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
+				POINT pnt = { mposx + 1, mposy + 1 };
+				HMONITOR mon = MonitorFromPoint(pnt, MONITOR_DEFAULTTONULL);
+				if (mon) {
+					int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
+					float scalex = (float)rt.width / (float)msizex;
+					float scaley = (float)rt.height / (float)msizey;
+					posx -= mposx;
+					posy -= mposy;
+					posx *= scalex;
+					posy *= scaley;
+					if (posx == -1)
+						posx = 0;
+					if (posy == -1)
+						posy = 0;
+					sizex *= scalex;
+					sizey *= scaley;
+					vsizex *= scalex;
+					vsizey *= scaley;
+					Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
+					Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+					Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
+
+					unsigned int dpiX = 0, dpiY = 0;
+					HMODULE Lib = LoadLibraryW(L"Shcore.dll");
+					if (Lib != INVALID_HANDLE_VALUE) {
+						typedef int (WINAPI *getDPI)(HMONITOR, int, UINT*, UINT*);
+						getDPI pptr = (getDPI)GetProcAddress(Lib, "GetDpiForMonitor");
+						if (pptr != NULL) {
+							pptr(mon, 0, &dpiX, &dpiY);
+							if (dpiX || dpiY) {
+								HDC dc = ::GetDC(NULL);
+								auto normalDPIx = ::GetDeviceCaps(dc, LOGPIXELSX);
+								auto normalDPIy = ::GetDeviceCaps(dc, LOGPIXELSY);
+								::DeleteDC(dc);
+								int dpinew = dpiX > dpiY ? dpiX : dpiY;
+								int dpiold = normalDPIx > normalDPIy ? normalDPIx : normalDPIy;
+								if (dpiold) {
+									float fontScale = ((float)dpinew / (float)dpiold);
+									Options.FontsClear();
+									Options.SetFontScale(fontScale);
+									wxFont *font = Options.GetFont();
+									SetFont(*font);
+								}
+							}
+						}
+						FreeLibrary(Lib);
+					}
+
+					Notebook *tabs = Notebook::GetTabs();
+					for (size_t i = 0; i < tabs->Size(); i++) {
+						TabPanel *tab = tabs->Page(i);
+						wxSize minVideoSize = tab->Video->GetMinSize();
+						int panelHeight = tab->Video->GetPanelHeight();
+						minVideoSize.y -= panelHeight;
+						minVideoSize.x *= scalex;
+						minVideoSize.y *= scaley;
+						minVideoSize.y += panelHeight;
+						tab->Video->SetMinSize(minVideoSize);
+						tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
+						if (tab->Edit->ABox) {
+							wxSize asize = tab->Edit->ABox->GetMinSize();
+							asize.y *= scaley;
+							tab->Edit->ABox->SetMinSize(asize);
+							tab->Edit->BoxSizer1->Layout();
+						}
+						tab->Grid->SetStyle();
+						tab->Grid->RefreshColumns();
+					}
+
+					SetSize(posx, posy, sizex, sizey);
+					Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
+				}
 			}
 		}
 	}

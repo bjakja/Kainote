@@ -56,6 +56,7 @@ private:
 	bool isActive;
 	int frameBorder = 7;
 	int frameTopBorder = 26;
+	wxRect LastMonitorRect = { -1, -1, -1, -1 };
 
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };

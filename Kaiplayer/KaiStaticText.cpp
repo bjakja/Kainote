@@ -90,7 +90,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 					else if (currentFW > mesureSize && !foundWrap){
 						j = (currentPosition + 30 < i) ? currentPosition + 30 : currentPosition + 1;
 						fw = 0;
-						while (fw <= mesureSize){
+						while (fw <= mesureSize && j < text.length()){
 							GetTextExtent(text.Mid(currentPosition, j - currentPosition + 1), &fw, &fh);
 							j++;
 						}
