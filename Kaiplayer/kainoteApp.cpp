@@ -227,11 +227,22 @@ bool kainoteApp::OnInit()
 				Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
 				Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
 				Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
-			}	
+			}
+			if (sizex > rt.width) {
+				sizex = rt.width;
+			}
+			if (sizey > rt.height) {
+				sizey = rt.height - 100;
+			}
+			if (!rt.Contains(wxRect(posx, posy, sizex, sizey))) {
+				posx = rt.x + ((float)(rt.width - sizex) / 2.f),
+				posy = rt.y + ((float)(rt.height - sizey) / 2.f);
+			}
 		}
 		if (sizex < 500 || sizey < 350) {
 			sizex = 800; sizey = 650;
 		}
+		
 
 		Frame = NULL;
 		Frame = new KainoteFrame(wxPoint(posx, posy), wxSize(sizex, sizey));

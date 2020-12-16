@@ -260,6 +260,17 @@ wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const w
 	return rt;
 }
 
+int FindMonitor(std::vector<tagRECT> *MonitorRects, const wxPoint &pos) {
+	//skip monitor 0 it's primary we already on it
+	for (size_t i = 1; i < MonitorRects->size(); i++) {
+		if ((*MonitorRects)[i].left <= pos.x && pos.x <= (*MonitorRects)[i].right &&
+			(*MonitorRects)[i].top <= pos.y && pos.y <= (*MonitorRects)[i].bottom) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 bool IsNumber(const wxString &test) {
 	bool isnumber = true;
 	wxString testchars = L"0123456789";

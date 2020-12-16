@@ -84,6 +84,7 @@ void MoveToMousePosition(wxWindow *win);
 wxString MakePolishPlural(int num, const wxString &normal, const wxString &plural24, const wxString &pluralRest);
 wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
 wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect);
+int FindMonitor(std::vector<tagRECT> *MonitorRects, const wxPoint &pos);
 static const wxString emptyString;
 bool IsNumber(const wxString &txt);
 

@@ -17,6 +17,10 @@
 
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
+#include <wx/wx.h>
+#include <vector>
+//#include <windows.h>
+
 class GraphicsContext;
 
 
@@ -57,7 +61,8 @@ private:
 	int frameBorder = 7;
 	int frameTopBorder = 26;
 	wxRect LastMonitorRect = { -1, -1, -1, -1 };
-
+	bool wasWindowsSize = false;
+	
 	wxDECLARE_ABSTRACT_CLASS(KaiFrame);
 };
 
