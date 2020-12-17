@@ -254,12 +254,12 @@ public:
 	bool SetFont(const wxFont &font);
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
-	void OnCharHook(wxKeyEvent &evt);
+	//void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &event);
 	void OnSize(wxSizeEvent& event);
 	//void OnLostCapture(wxMouseCaptureLostEvent &evt){if(HasCapture()){ReleaseMouse();}};
 	//bool CheckMouse();
-	//void OnEraseBackground(wxEraseEvent &evt){}
+	void OnEraseBackground(wxEraseEvent &evt){}
 	int CalcMousePos(wxPoint *pos);
 	void HideMnemonics();
 	void ShowMenu();

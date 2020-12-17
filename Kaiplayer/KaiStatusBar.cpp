@@ -26,7 +26,7 @@ KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
 	Bind(wxEVT_MOTION, &KaiStatusBar::OnMouseMove, this);
-	//Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent evt){});
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent evt){});
 	SetMinSize(wxSize(200, 26));
 	int x = 0, y = 0;
 	GetTextExtent(L"#TWFfGHj", &x, &y);

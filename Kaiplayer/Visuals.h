@@ -257,6 +257,7 @@ public:
 	byte AN;
 	D3DXVECTOR2 scale;
 	wxPoint diffs;
+	bool wasUsedShift = false;
 	D3DXVECTOR2 arrowLengths = D3DXVECTOR2(100.f, 100.f);
 };
 

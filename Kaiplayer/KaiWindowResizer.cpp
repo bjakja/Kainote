@@ -42,6 +42,11 @@ KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _c
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent & evt){});
 }
 
+KaiWindowResizer::~KaiWindowResizer() 
+{ 
+	if (bmp) { delete bmp; } 
+}
+
 void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 {
 	bool click = evt.LeftDown();
@@ -100,7 +105,12 @@ void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 	const wxColour & backgroundColor = Options.GetColour(WINDOW_BACKGROUND);
 
 	wxSize size = GetClientSize();
-	wxMemoryDC mdc(wxBitmap(size.x, size.y));
+	if (bmp && (bmp->GetWidth() < size.x || bmp->GetHeight() < size.y)) {
+		delete bmp;
+		bmp = NULL;
+	}
+	if (!bmp) { bmp = new wxBitmap(size.x, size.y); }
+	wxMemoryDC mdc(*bmp);
 	mdc.SetBrush(backgroundColor);
 	mdc.SetPen(backgroundColor);
 	mdc.DrawRectangle(0, 0, size.x, size.y);
@@ -122,6 +132,6 @@ void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 		xpoint += 2;
 	}
 
-	wxClientDC dc(this);
+	wxPaintDC dc(this);
 	dc.Blit(0, 0, size.x, size.y, &mdc, 0, 0);
 }

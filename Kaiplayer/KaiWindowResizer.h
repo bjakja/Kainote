@@ -23,7 +23,7 @@ class KaiWindowResizer : public wxWindow
 {
 public:
 	KaiWindowResizer(wxWindow *parent/*, wxWindow *_windowBeforeResizer*/, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize);
-	virtual ~KaiWindowResizer(){}
+	virtual ~KaiWindowResizer();
 
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
@@ -35,4 +35,5 @@ private:
 	wxWindow *resizerParent;
 	bool holding = false;
 	int oldy = -1;
+	wxBitmap *bmp = NULL;
 };

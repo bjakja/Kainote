@@ -587,21 +587,21 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		}
 		else if (newRect->left < LastMonitorRect.x + LastMonitorRect.width && 
 			newRect->top < LastMonitorRect.y + LastMonitorRect.height) {
-			int posx, posy, osizex, osizey;
-			GetPosition(&posx, &posy);
-			Options.GetCoords(WINDOW_SIZE, &osizex, &osizey);
-			posx -= (sizex - osizex);
-			if (posx == -1)
-				posx = 0;
-			if (posy == -1)
-				posy = 0;
-			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
-			if (wasWindowsSize) {
-				SetPosition(wxPoint(posx, posy));
-				Layout();
-				wasWindowsSize = false;
-			}else
-				SetSize(posx, posy, sizex, sizey);
+				int posx, posy, osizex, osizey;
+				GetPosition(&posx, &posy);
+				Options.GetCoords(WINDOW_SIZE, &osizex, &osizey);
+				posx -= (sizex - osizex);
+				if (posx == -1)
+					posx = 0;
+				if (posy == -1)
+					posy = 0;
+				Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+				if (wasWindowsSize) {
+					SetPosition(wxPoint(posx, posy));
+					Layout();
+					wasWindowsSize = false;
+				}else
+					SetSize(posx, posy, sizex, sizey);
 		}
 		else{
 			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
