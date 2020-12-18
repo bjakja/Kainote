@@ -174,8 +174,12 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		textsubs = tab->Grid->GetVisible(NULL, NULL, NULL, true);
 		renderer->m_HasDummySubs = false;
 		break;
-	case CLOSE_SUBTITLES:
 	case OPEN_HAS_OWN_TEXT:
+		//make sure that is dummy subs
+		//to not hide subs after visual editon
+		renderer->m_HasDummySubs = true;
+		break;
+	case CLOSE_SUBTITLES:
 		break;
 	default:
 		break;

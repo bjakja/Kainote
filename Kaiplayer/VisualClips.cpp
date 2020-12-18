@@ -517,7 +517,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			}
 		}
 
-		tab->Video->SetVisualEdition(false);
+		//tab->Video->SetVisualEdition(false);
 		wxString *dtxt = new wxString(*dummytext);
 		RenderSubs(dtxt, redraw);
 
