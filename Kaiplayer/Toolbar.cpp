@@ -210,7 +210,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 			}
 			else{
 				wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, tools[elem]->id);
-				evt.SetInt(1000);
+				evt.SetInt(TOOLBAR_EVENT);
 				ProcessEvent(evt);
 			}
 		}

@@ -376,7 +376,8 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		if (Options.GetInt(GRID_SAVE_AFTER_CHARACTER_COUNT) > 1 && rowChanged && save) {
 			Send(EDITBOX_LINE_EDITION, false);
 		}
-		if (currentLine < grid->GetCount()) {
+		size_t gridCount = grid->GetCount();
+		if (currentLine < gridCount) {
 			Dialogue *prevDial = grid->GetDialogue(currentLine);
 			if (prevDial->Start.mstime > prevDial->End.mstime) {
 				prevDial->End = prevDial->Start;
@@ -392,6 +393,9 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		if (DurEdit->changedBackGround) {
 			DurEdit->SetForegroundColour(WINDOW_TEXT);
 		}
+		if (Row >= gridCount)
+			Row = gridCount - 1;
+
 		currentLine = Row;
 		grid->markedLine = Row;
 		grid->currentLine = Row;

@@ -198,7 +198,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Menubar->Append(ViewMenu, _("Wido&k"));
 
 	SubsMenu = new Menu();
-	SubsMenu->AppendTool(Toolbar, GLOBAL_EDITOR, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"));
+	SubsMenu->AppendTool(Toolbar, GLOBAL_EDITOR, _("Włącz / Wyłącz edytor"), _("Włączanie bądź wyłączanie edytora"), PTR_BITMAP_PNG(L"editor"))->Enable(!videoIndex);
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_ASS_PROPERTIES, _("Właściwości pliku ASS"), _("Właściwości napisów ASS"), PTR_BITMAP_PNG(L"ASSPROPS"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_STYLE_MANAGER, _("&Menedżer stylów"), _("Służy do zarządzania stylami ASS"), PTR_BITMAP_PNG(L"styles"));
 	ConvMenu = new Menu();
@@ -208,7 +208,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_MPL2, _("Konwertuj do MPL2"), _("Konwertuje do formatu MPL2"), PTR_BITMAP_PNG(L"convmpl2"));
 	ConvMenu->AppendTool(Toolbar, GLOBAL_CONVERT_TO_TMP, _("Konwertuj do TMP"), _("Konwertuje do formatu TMPlayer (niezalecane)"), PTR_BITMAP_PNG(L"convtmp"));
 
-	SubsMenu->Append(ID_CONV, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), true, PTR_BITMAP_PNG(L"convert"), ConvMenu);
+	SubsMenu->Append(ID_CONVERSION, _("Konwersja"), _("Konwersja z jednego formatu napisów na inny"), true, PTR_BITMAP_PNG(L"convert"), ConvMenu);
 	SubsMenu->AppendTool(Toolbar, GLOBAL_SHOW_SHIFT_TIMES, _("Okno zmiany &czasów\tCtrl-I"), _("Przesuwanie czasów napisów"), PTR_BITMAP_PNG(L"times"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_FONT_COLLECTOR, _("Kolekcjoner czcionek"), _("Kolekcjoner czcionek"), PTR_BITMAP_PNG(L"fontcollector"));
 	SubsMenu->AppendTool(Toolbar, GLOBAL_OPEN_SUBS_RESAMPLE, _("Zmień rozdzielczość napisów"), _("Zmień rozdzielczość napisów"), PTR_BITMAP_PNG(L"subsresample"));
@@ -461,9 +461,11 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		toolitem *ToolItem = Toolbar->FindItem(id);
 		MenuItem *Item = (item) ? item : Menubar->FindItem(id);
 		CONFIG conf = (id == GLOBAL_VIDEO_INDEXING) ? VIDEO_INDEX : SUBS_AUTONAMING;
-		if (Modif == 1000 && ToolItem){
+		bool ItemOn = true;
+		if (Modif == TOOLBAR_EVENT && ToolItem){
 			if (Item)
 				Item->Check(ToolItem->toggled);
+			ItemOn = ToolItem->toggled;
 			Options.SetBool(conf, ToolItem->toggled);
 		}
 		else if (Item){
@@ -473,8 +475,14 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 			}
 			if (id == Modif && Item)
 				Item->Check(!Item->IsChecked());
-
-			Options.SetBool(conf, Item->IsChecked());
+			ItemOn = Item->IsChecked();
+			Options.SetBool(conf, ItemOn);
+		}
+		if (id == GLOBAL_VIDEO_INDEXING) {
+			toolitem *TurnOffEditorToolItem = Toolbar->FindItem(GLOBAL_EDITOR);
+			if (TurnOffEditorToolItem) {
+				TurnOffEditorToolItem->Enable(!ItemOn);
+			}
 		}
 	}
 	else if (id == GLOBAL_VIDEO_ZOOM){
@@ -879,6 +887,9 @@ void KainoteFrame::OnAssProps()
 void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 {
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
+	if (!atab)
+		return;
+
 	if (atab->Grid->originalFormat != atab->Grid->subsFormat
 		|| (Options.GetBool(SUBS_AUTONAMING)
 		&& atab->SubsName.BeforeLast(L'.') != atab->VideoName.BeforeLast(L'.') && atab->VideoName != L"")
@@ -1503,10 +1514,6 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	TabPanel *cur = Tabs->GetPage();
 	if (!cur)
 		return;
-	if (!cur->Grid)
-		return;
-	if (!cur->Grid->file)
-		return;
 	int iter = cur->Grid->file->Iter();
 	if (cur->Grid->IsModified()){
 		whiter << iter << L"*";
@@ -1686,10 +1693,6 @@ bool KainoteFrame::SavePrompt(char mode, int wtab)
 	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
 	if (!atab)
 		return false;
-	if (!atab->Grid)
-		return false;
-	if (!atab->Grid->file)
-		return false;
 	if (atab->Grid->IsModified()){
 		wxString ext = (atab->Grid->subsFormat == ASS) ? L"ass" : (atab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
 		wxString subsExt;
@@ -1780,6 +1783,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	Menu *curMenu = event.GetMenu();
 	TabPanel *tab = GetTab();
 
+	bool editor = tab->editor;
+	char form = tab->Grid->subsFormat;
+	bool tlmode = tab->Grid->hasTLMode;
+
 	if (curMenu == FileMenu)
 	{
 		AppendRecent();
@@ -1790,14 +1797,44 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		AppendRecent(1);
 		//keyframes recent;
 		AppendRecent(3);
+		bool enable = (tab->Video->HasFFMS2() && editor);
+		Menubar->Enable(GLOBAL_GO_TO_PREVIOUS_KEYFRAME, enable);
+		Menubar->Enable(GLOBAL_GO_TO_NEXT_KEYFRAME, enable);
+		enable = (tab->Edit->ABox != NULL && editor);
+		Menubar->Enable(GLOBAL_SET_AUDIO_FROM_VIDEO, enable);
+		Menubar->Enable(GLOBAL_SET_AUDIO_MARK_FROM_VIDEO, enable);
+		enable = (tab->Video->GetState() != None);
+		
+		for (int i = GLOBAL_PLAY_PAUSE; i <= GLOBAL_SET_VIDEO_AT_END_TIME; i++)
+		{
+			Menubar->Enable(i, (i < GLOBAL_SET_START_TIME) ? enable : enable && editor);
+		}
+
 	}
 	else if (curMenu == AudMenu)
 	{
-		AppendRecent(2);
+		if(editor)
+			AppendRecent(2);
+
+		Menubar->Enable(GLOBAL_RECENT_AUDIO, editor);
 	}
 	else if (curMenu == AutoMenu)
 	{
-		Auto->BuildMenu(&AutoMenu);
+		if (editor) {
+			if (!AutoMenu->FindItemByPosition(0)->IsEnabled()) {
+				for (size_t i = 0; i < AutoMenu->GetMenuItemCount(); i++) {
+					AutoMenu->FindItemByPosition(i)->Enable(true);
+				}
+			}
+
+			Auto->BuildMenu(&AutoMenu);
+		}
+		//disable menuitems when editor not enabled
+		else {
+			for (size_t i = 0; i < AutoMenu->GetMenuItemCount(); i++) {
+				AutoMenu->FindItemByPosition(i)->Enable(false);
+			}
+		}
 	}
 	else if (curMenu == EditMenu){
 		const wxString &undoName = tab->Grid->file->GetUndoName();
@@ -1829,24 +1866,17 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			}
 		}
 	}
+	else if (curMenu == SubsMenu) {
+		MenuItem *indexItem = VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
+		if(indexItem)
+			Menubar->Enable(GLOBAL_EDITOR, !(indexItem->IsChecked() && indexItem->IsEnabled()));
 
-	bool enable = (tab->Video->GetState() != None);
-	bool editor = tab->editor;
-	for (int i = GLOBAL_PLAY_PAUSE; i <= GLOBAL_SET_VIDEO_AT_END_TIME; i++)
-	{
-		Menubar->Enable(i, (i < GLOBAL_SET_START_TIME) ? enable : enable && editor);
+		Menubar->Enable(ID_CONVERSION, editor);
 	}
-	enable = (tab->Video->HasFFMS2());
-	Menubar->Enable(GLOBAL_GO_TO_PREVIOUS_KEYFRAME, enable);
-	Menubar->Enable(GLOBAL_GO_TO_NEXT_KEYFRAME, enable);
-	enable = (tab->Edit->ABox != NULL);
-	Menubar->Enable(GLOBAL_SET_AUDIO_FROM_VIDEO, enable);
-	Menubar->Enable(GLOBAL_SET_AUDIO_MARK_FROM_VIDEO, enable);
-	//kolejno numery id
-	char form = tab->Grid->subsFormat;
-	bool tlmode = tab->Grid->hasTLMode;
+
+	
 	for (int i = GLOBAL_SAVE_SUBS; i <= GLOBAL_VIEW_SUBS; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatnim jest Automation
-		enable = true;
+		bool enable = true;
 
 		if (i >= GLOBAL_OPEN_ASS_PROPERTIES && i < GLOBAL_CONVERT_TO_ASS){ enable = form < SRT; }//Style manager and sinfo
 		else if (i == GLOBAL_CONVERT_TO_ASS){ enable = form > ASS; }//conversion to ASS

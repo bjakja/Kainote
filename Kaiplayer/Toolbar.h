@@ -123,3 +123,4 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+#define TOOLBAR_EVENT 1000

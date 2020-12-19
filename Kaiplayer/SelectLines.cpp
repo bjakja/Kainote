@@ -391,16 +391,26 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 
 			mdial.clear();
 		}
-		if (tab->Grid->GetCount() < 1){ tab->Grid->AddLine(new Dialogue()); }
+		if (tab->Grid->GetCount() < 1){ 
+			tab->Grid->AddLine(new Dialogue()); 
+		}
 	}
 	size_t firstSelected = tab->Grid->FirstSelection();
-	int newCurrentLine = (firstSelected == -1) ? tab->Grid->currentLine : firstSelected;
-	tab->Edit->SetLine(newCurrentLine);
+	if (firstSelected == -1) {
+		size_t gridGetCount = tab->Grid->GetCount();
+		if (tab->Grid->currentLine < gridGetCount){
+			firstSelected = tab->Grid->currentLine;
+		}
+		else {
+			firstSelected = gridGetCount - 1;
+		}
+	}
 	if (action > 1 && allSelections){
-		tab->Grid->SetModified(SELECT_LINES, false);
+		tab->Grid->SetModified(SELECT_LINES, true, false, firstSelected);
 		*refreshTabLabel = true;
 	}
 	else{
+		tab->Edit->SetLine(firstSelected);
 		*refreshTabLabel = false;
 	}
 	tab->Grid->RefreshColumns();

@@ -1171,6 +1171,11 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 							titem->toggled = true;
 							Kai->Toolbar->Refresh(false);
 						}
+						toolitem *etitem = Kai->Toolbar->FindItem(GLOBAL_EDITOR);
+						if (etitem) {
+							etitem->Enable(false);
+							Kai->Toolbar->Refresh(false);
+						}
 					}
 				}
 				if (hasVideoPath) {
