@@ -178,7 +178,7 @@ void RendererVideo::UpdateVideoWindow()
 	wxCriticalSectionLocker lock(m_MutexRendering);
 	if (!UpdateRects()){ return; }
 
-	if (!InitDX(true)){
+	if (!InitDX()){
 		//need tests, if lost device return any error when reseting or not
 		Clear();
 		if (!InitDX()){
@@ -201,10 +201,10 @@ void RendererVideo::UpdateVideoWindow()
 	videoControl->SetScaleAndZoom();
 }
 
-bool RendererVideo::InitDX(bool reset)
+bool RendererVideo::InitDX()
 {
 
-	if (!reset){
+	if (!m_D3DObject){
 		m_D3DObject = Direct3DCreate9(D3D_SDK_VERSION);
 		PTR(m_D3DObject, _("Nie można utworzyć obiektu Direct3D"));
 	}
@@ -228,7 +228,7 @@ bool RendererVideo::InitDX(bool reset)
 	d3dpp.EnableAutoDepthStencil = FALSE;
 	d3dpp.MultiSampleType = D3DMULTISAMPLE_NONE;
 
-	if (reset){
+	if (m_D3DDevice){
 		hr = m_D3DDevice->Reset(&d3dpp);
 		if (FAILED(hr)){
 			KaiLogSilent(_("Nie można zresetować Direct3D"));
@@ -335,6 +335,8 @@ void RendererVideo::Clear(bool clearObject)
 #endif
 	SAFE_RELEASE(m_DXVAProcessor);
 	SAFE_RELEASE(m_DXVAService);
+
+	//clear elements in dshow class
 	ClearObject();
 	if (clearObject){
 		SAFE_RELEASE(m_D3DDevice);

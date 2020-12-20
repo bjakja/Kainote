@@ -962,11 +962,12 @@ void SubsGridBase::UpdateUR(bool toolbar)
 	Kai->Menubar->Enable(GLOBAL_UNDO, undo);
 	Kai->Menubar->Enable(GLOBAL_REDO, _redo);
 	Kai->Menubar->Enable(GLOBAL_UNDO_TO_LAST_SAVE, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
-	Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 	if (toolbar){
 		Kai->Toolbar->UpdateId(GLOBAL_UNDO, undo);
 		Kai->Toolbar->UpdateId(GLOBAL_REDO, _redo);
 		Kai->Toolbar->UpdateId(GLOBAL_SAVE_SUBS, true);
+		int iter = file->Iter();
+		Kai->Toolbar->UpdateId(GLOBAL_HISTORY, iter > 0);
 	}
 }
 

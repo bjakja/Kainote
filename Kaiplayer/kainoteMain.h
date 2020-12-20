@@ -86,7 +86,6 @@ public:
 	bool SavePrompt(char mode = 1, int wtab = -1);
 	void UpdateToolbar();
 	void OnOpenAudio(wxCommandEvent& event);
-	void OnMenuClick(wxCommandEvent &event);
 	void SetStatusText(const wxString &label, int field){ StatusBar->SetLabelText(field, label); }
 	wxString GetStatusText(int field){ return StatusBar->GetStatusText(field); }
 	void SetSubsResolution(bool dialog = false);
@@ -118,7 +117,6 @@ private:
 	void OnClose1(wxCloseEvent& event);
 	void OnActivate(wxActivateEvent &evt);
 	void OnUseWindowHotkey(wxCommandEvent& event);
-	static void OnOutofMemory();
 	Menu* ConvMenu;
 	Menu* FileMenu;
 	Menu* HelpMenu;
@@ -140,7 +138,7 @@ private:
 
 enum{
 	ID_TABS = 6900,
-	ID_STATUSBAR1,
+	ID_STATUS_BAR,
 	ID_CONVERSION,
 	GLOBAL_ASK_FOR_LOAD_LAST_SESSION,
 	GLOBAL_LOAD_LAST_SESSION_ON_START,

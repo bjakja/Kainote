@@ -94,7 +94,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	//SetMinSize(wxSize(500,300));
 	Toolbar = new KaiToolbar(this, Menubar, -1);
 
-	StatusBar = new KaiStatusBar(this, ID_STATUSBAR1);
+	StatusBar = new KaiStatusBar(this, ID_STATUS_BAR);
 	int StatusBarWidths[9] = { -12, 0, 0, 0, 0, 0, 0, 0, -22 };
 	StatusBar->SetFieldsCount(9, StatusBarWidths);
 	wxString tooltips[] = { L"", _("Skala obrazu wideo"), _("Powiększenie wideo"), _("Czas trwania wideo"),
@@ -242,7 +242,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(GLOBAL_CLOSE_PAGE, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageClose);
 	Connect(GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnPageChange);
 	//Here add new ids
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SAVE_SUBS, GLOBAL_HISTORY);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SAVE_SUBS, GLOBAL_LOAD_LAST_SESSION);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, 
 		GLOBAL_SORT_ALL_BY_START_TIMES, GLOBAL_SORT_SELECTED_BY_LAYER);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnMenuSelected, this, GLOBAL_SHIFT_TIMES);
@@ -1787,38 +1787,95 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 	char form = tab->Grid->subsFormat;
 	bool tlmode = tab->Grid->hasTLMode;
 
-	if (curMenu == FileMenu)
+	if (curMenu == FileMenu || !curMenu)
 	{
-		AppendRecent();
+		if(curMenu)
+			AppendRecent();
+
+		for (int i = 0; i < FileMenu->GetMenuItemCount(); i++) {
+			MenuItem * fitem = FileMenu->FindItemByPosition(i);
+			if (fitem) {
+				int fid = fitem->GetId();
+				switch (fid) {
+				case GLOBAL_SAVE_SUBS:
+					fitem->Enable(editor && tab->Grid->IsModified());
+					break;
+				case GLOBAL_SAVE_TRANSLATION:
+					fitem->Enable(editor && tlmode);
+					break;
+				case GLOBAL_SAVE_ALL_SUBS:
+				case GLOBAL_SAVE_SUBS_AS:
+				case GLOBAL_REMOVE_SUBS:
+					fitem->Enable(editor);
+					break;
+				default:
+					break;
+				}
+			}
+		}
 	}
-	else if (curMenu == VidMenu)
+	if (curMenu == VidMenu || !curMenu)
 	{
 		//video recent
-		AppendRecent(1);
+		if (curMenu)
+			AppendRecent(1);
 		//keyframes recent;
-		AppendRecent(3);
-		bool enable = (tab->Video->HasFFMS2() && editor);
-		Menubar->Enable(GLOBAL_GO_TO_PREVIOUS_KEYFRAME, enable);
-		Menubar->Enable(GLOBAL_GO_TO_NEXT_KEYFRAME, enable);
-		enable = (tab->Edit->ABox != NULL && editor);
-		Menubar->Enable(GLOBAL_SET_AUDIO_FROM_VIDEO, enable);
-		Menubar->Enable(GLOBAL_SET_AUDIO_MARK_FROM_VIDEO, enable);
-		enable = (tab->Video->GetState() != None);
-		
-		for (int i = GLOBAL_PLAY_PAUSE; i <= GLOBAL_SET_VIDEO_AT_END_TIME; i++)
-		{
-			Menubar->Enable(i, (i < GLOBAL_SET_START_TIME) ? enable : enable && editor);
-		}
+		if(editor && curMenu)
+			AppendRecent(3);
 
+		for (int i = 0; i < VidMenu->GetMenuItemCount(); i++) {
+			MenuItem * vitem = VidMenu->FindItemByPosition(i);
+			if (vitem) {
+				bool hasFFMS2 = tab->Video->HasFFMS2();
+				bool hasVideoLoaded = (tab->Video->GetState() != None);
+				switch (vitem->GetId()) {
+				case GLOBAL_GO_TO_PREVIOUS_KEYFRAME:
+				case GLOBAL_GO_TO_NEXT_KEYFRAME:
+					vitem->Enable(hasFFMS2 && editor);
+					break;
+				case GLOBAL_SET_AUDIO_FROM_VIDEO:
+				case GLOBAL_SET_AUDIO_MARK_FROM_VIDEO:
+					vitem->Enable(tab->Edit->ABox != NULL && editor);
+					break;
+				case GLOBAL_PLAY_PAUSE:
+				case GLOBAL_PREVIOUS_FRAME:
+				case GLOBAL_NEXT_FRAME:
+				case GLOBAL_VIDEO_ZOOM:
+					vitem->Enable(hasVideoLoaded);
+					break;
+				case GLOBAL_VIDEO_INDEXING:
+				case GLOBAL_OPEN_VIDEO:
+				case GLOBAL_RECENT_VIDEO:
+					break;
+				default:
+					vitem->Enable(hasVideoLoaded && editor);
+					break;
+				}
+				
+			
+			}
+		}
+		
 	}
-	else if (curMenu == AudMenu)
+	if (curMenu == AudMenu || !curMenu)
 	{
-		if(editor)
+		if(editor && curMenu)
 			AppendRecent(2);
 
-		Menubar->Enable(GLOBAL_RECENT_AUDIO, editor);
+		for (int i = 0; i < AudMenu->GetMenuItemCount(); i++) {
+			MenuItem * aitem = AudMenu->FindItemByPosition(i);
+			if (aitem) {
+				int aid = aitem->GetId();
+				if(aid == GLOBAL_CLOSE_AUDIO)
+					aitem->Enable(editor && tab->Edit->ABox != NULL);
+				else if(aid == GLOBAL_AUDIO_FROM_VIDEO)
+					aitem->Enable(editor && tab->Video->GetState() != None);
+				else
+					aitem->Enable(editor);
+			}
+		}
 	}
-	else if (curMenu == AutoMenu)
+	if (curMenu == AutoMenu)
 	{
 		if (editor) {
 			if (!AutoMenu->FindItemByPosition(0)->IsEnabled()) {
@@ -1836,70 +1893,115 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			}
 		}
 	}
-	else if (curMenu == EditMenu){
-		const wxString &undoName = tab->Grid->file->GetUndoName();
-		const wxString &redoName = tab->Grid->file->GetRedoName();
-		MenuItem *undoItem = EditMenu->FindItem(GLOBAL_UNDO);
-		MenuItem *redoItem = EditMenu->FindItem(GLOBAL_REDO);
-		if (undoItem){
-			wxString accel = undoItem->GetAccel();
-			wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
-			accelName.Replace(L"+", L"-");
-			if (!undoName.empty()){
-				wxString lowerUndoName = wxString(undoName[0]).Lower() + undoName.Mid(1);
-				undoItem->label = _("&Cofnij do ") + lowerUndoName + accelName;
-			}
-			else{
-				undoItem->label = _("&Cofnij") + accelName;
-			}
-		}
-		if (redoItem){
-			wxString accel = redoItem->GetAccel();
-			wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
-			accelName.Replace(L"+", L"-");
-			if (!redoName.empty()){
-				wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);
-				redoItem->label = _("&Ponów do ") + lowerRedoName + accelName;
-			}
-			else{
-				redoItem->label = _("&Ponów") + accelName;
+	if (curMenu == EditMenu || !curMenu){
+		for (int i = 0; i < EditMenu->GetMenuItemCount(); i++) {
+			MenuItem * eitem = EditMenu->FindItemByPosition(i);
+			if (eitem) {
+				int eid = eitem->GetId();
+				if (eid == GLOBAL_UNDO && curMenu) {
+					const wxString &undoName = tab->Grid->file->GetUndoName();
+					wxString accel = eitem->GetAccel();
+					wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
+					accelName.Replace(L"+", L"-");
+					if (!undoName.empty()) {
+						wxString lowerUndoName = wxString(undoName[0]).Lower() + undoName.Mid(1);
+						eitem->label = _("&Cofnij do ") + lowerUndoName + accelName;
+					}
+					else {
+						eitem->label = _("&Cofnij") + accelName;
+					}
+				}
+				else if (eid == GLOBAL_REDO && curMenu) {
+					const wxString &redoName = tab->Grid->file->GetRedoName();
+					wxString accel = eitem->GetAccel();
+					wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
+					accelName.Replace(L"+", L"-");
+					if (!redoName.empty()) {
+						wxString lowerRedoName = wxString(redoName[0]).Lower() + redoName.Mid(1);
+						eitem->label = _("&Ponów do ") + lowerRedoName + accelName;
+					}
+					else {
+						eitem->label = _("&Ponów") + accelName;
+					}
+
+				}
+				else if (eid == GLOBAL_HISTORY) {
+					eitem->Enable(editor && tab->Grid->file->Iter() > 0);
+				}
+				// undo last save is disabled on start and activated later
+				else if(eid != GLOBAL_UNDO_TO_LAST_SAVE){
+					eitem->Enable(editor);
+				}
 			}
 		}
 	}
-	else if (curMenu == SubsMenu) {
+	if (curMenu == SubsMenu || !curMenu) {
 		MenuItem *indexItem = VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
-		if(indexItem)
-			Menubar->Enable(GLOBAL_EDITOR, !(indexItem->IsChecked() && indexItem->IsEnabled()));
+		for (int i = 0; i < SubsMenu->GetMenuItemCount(); i++) {
+			MenuItem * sitem = SubsMenu->FindItemByPosition(i);
+			if (sitem) {
+				int id = sitem->GetId();
+				if (id == GLOBAL_EDITOR && indexItem) {
+					sitem->Enable(!(indexItem->IsChecked() && indexItem->IsEnabled()) && tab->Video->IsDirectShow());
+				}
+				else if(id == ID_CONVERSION){
+					Menu* conversionMenu = sitem->GetSubMenu();
+					if (conversionMenu) {
+						bool enable = editor && !tlmode;
+						for (int k = 0; k < conversionMenu->GetMenuItemCount(); k++) {
+							MenuItem *citem = conversionMenu->FindItemByPosition(k);
+							if (citem) {
+								int cid = citem->GetId();
+								if (enable) {
+									if (cid == GLOBAL_CONVERT_TO_ASS) { enable = form > ASS; }//conversion to ASS
+									else if (cid == GLOBAL_CONVERT_TO_SRT) { enable = form != SRT; }//conversion to SRT
+									else if (cid == GLOBAL_CONVERT_TO_MDVD) { enable = form != MDVD; }//conversion to MDVD
+									else if (cid == GLOBAL_CONVERT_TO_MPL2) { enable = form != MPL2; }//conversion to MPL2
+									else if (cid == GLOBAL_CONVERT_TO_TMP) { enable = form != TMP; }//conversion to TMP
+								}
+								citem->Enable(enable);
+							}
+						}
+					}
+					sitem->Enable(editor);
+				}
+				else {
+					bool enable = editor;
+					if (enable && id >= GLOBAL_OPEN_ASS_PROPERTIES && id <= GLOBAL_OPEN_FONT_COLLECTOR) { enable = form < SRT; }
+					sitem->Enable(enable);
+				}
 
-		Menubar->Enable(ID_CONVERSION, editor);
-	}
-
-	
-	for (int i = GLOBAL_SAVE_SUBS; i <= GLOBAL_VIEW_SUBS; i++){//po kolejne idy zajrzyj do enuma z pliku h, ostatnim jest Automation
-		bool enable = true;
-
-		if (i >= GLOBAL_OPEN_ASS_PROPERTIES && i < GLOBAL_CONVERT_TO_ASS){ enable = form < SRT; }//Style manager and sinfo
-		else if (i == GLOBAL_CONVERT_TO_ASS){ enable = form > ASS; }//conversion to ASS
-		else if (i == GLOBAL_CONVERT_TO_SRT){ enable = form != SRT; }//conversion to SRT
-		else if (i == GLOBAL_CONVERT_TO_MDVD){ enable = form != MDVD; }//conversion to MDVD
-		else if (i == GLOBAL_CONVERT_TO_MPL2){ enable = form != MPL2; }//conversion to MPL2
-		else if (i == GLOBAL_CONVERT_TO_TMP){ enable = form != TMP; }//conversion to TMP
-		if ((i >= GLOBAL_CONVERT_TO_ASS && i <= GLOBAL_CONVERT_TO_MPL2) && tlmode){ enable = false; }
-		else if (i == GLOBAL_VIEW_AUDIO || i == GLOBAL_CLOSE_AUDIO){ enable = tab->Edit->ABox != 0; }
-		else if ((i == GLOBAL_VIEW_VIDEO || i == GLOBAL_VIEW_ALL) || i == GLOBAL_AUDIO_FROM_VIDEO || i == GLOBAL_VIEW_ONLY_VIDEO){
-			enable = tab->Video->GetState() != None;
-			if (i != GLOBAL_AUDIO_FROM_VIDEO){ enable = (enable && !tab->Video->IsOnAnotherMonitor()); }
+			}
 		}
-		else if (i == GLOBAL_SAVE_TRANSLATION){ enable = tlmode; }
-		else if (i == GLOBAL_SAVE_SUBS){ if (!tab->Grid->IsModified()){ enable = false; } }
-		//else if(i==GLOBAL_SAVE_ALL_SUBS){
-		//for(size_t k = 0; k < Tabs->Size(); k){}
-		//}
-		Menubar->Enable(i, editor && enable);
 	}
+	if (curMenu == ViewMenu || !curMenu) {
+		for (int i = 0; i < ViewMenu->GetMenuItemCount(); i++) {
+			MenuItem * viitem = ViewMenu->FindItemByPosition(i);
+			if (viitem) {
+				bool hasVideoLoaded = (tab->Video->GetState() != None);
+				bool isOnAnotherMonitor = tab->Video->IsOnAnotherMonitor();
+				switch (viitem->GetId())
+				{
+				case GLOBAL_VIEW_ALL:
+				case GLOBAL_VIEW_VIDEO://subs with video
+				case GLOBAL_VIEW_ONLY_VIDEO:
+					viitem->Enable(editor && hasVideoLoaded && !isOnAnotherMonitor);
+					break;
+				case GLOBAL_VIEW_AUDIO:
+					viitem->Enable(editor && tab->Edit->ABox != NULL);
+					break;
+				default://only subs
+					viitem->Enable(editor);
+					break;
+				}
+			
+			}
+		}
+	}
+
 	//specjalna poprawka do zapisywania w trybie tłumacza, jeśli jest tlmode, to zawsze ma działać.
-	tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
-	//if(curMenu){Menubar->ShowMenu();}
+	//tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
+
 }
 
 

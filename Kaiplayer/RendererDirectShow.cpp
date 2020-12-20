@@ -296,7 +296,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 			if (D3DERR_DEVICENOTRESET == hr)
 			{
-				Clear();
+				Clear(true);
 				InitDX();
 				RecreateSurface();
 				if (m_Visual){

@@ -190,9 +190,9 @@ public:
 	
 private:
 
-	bool InitDX(bool reset = false);
+	bool InitDX();
 	virtual bool InitRendererDX(){ return true; };
-	void Clear(bool clearObject = false);
+	void Clear(bool clearObject = true);
 	virtual void ClearObject() {};
 	virtual void DestroyFFMS2() {};
 
