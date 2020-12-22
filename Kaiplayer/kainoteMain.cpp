@@ -1936,13 +1936,12 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 		}
 	}
 	if (curMenu == SubsMenu || !curMenu) {
-		MenuItem *indexItem = VidMenu->FindItem(GLOBAL_VIDEO_INDEXING);
 		for (int i = 0; i < SubsMenu->GetMenuItemCount(); i++) {
 			MenuItem * sitem = SubsMenu->FindItemByPosition(i);
 			if (sitem) {
 				int id = sitem->GetId();
-				if (id == GLOBAL_EDITOR && indexItem) {
-					sitem->Enable(!(indexItem->IsChecked() && indexItem->IsEnabled()) && tab->Video->IsDirectShow());
+				if (id == GLOBAL_EDITOR) {
+					sitem->Enable(tab->Video->IsDirectShow());
 				}
 				else if(id == ID_CONVERSION){
 					Menu* conversionMenu = sitem->GetSubMenu();

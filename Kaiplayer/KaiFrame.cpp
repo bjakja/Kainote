@@ -493,7 +493,8 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 		int ydpi = (int)(short)HIWORD(wParam);
 		RECT *newRect = (RECT*)lParam;
 		wxRect newRt = wxRect(newRect->left, newRect->top, abs(newRect->right - newRect->left), abs(newRect->bottom - newRect->top));
-		wxRect rt = GetMonitorRect1(0, NULL, newRt);
+		std::vector<RECT> monitors;
+		wxRect rt = GetMonitorRect1(0, &monitors, newRt);
 		HDC dc = ::GetDC(NULL);
 		auto normalDPIy = ::GetDeviceCaps(dc, LOGPIXELSY);
 		::ReleaseDC(NULL, dc);
@@ -569,6 +570,16 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 				tab->MainSizer->Layout();
 			}
 		}
+		wxRect primaryMonitorRect;
+		wxRect secondMonitorRect; 
+		if (monitors.size() && monitors[0].left == rt.x && monitors[0].top == rt.y) { 
+			primaryMonitorRect = rt;
+			secondMonitorRect = LastMonitorRect;
+		} 
+		else {
+			primaryMonitorRect = LastMonitorRect;
+			secondMonitorRect = rt;
+		}
 		if (noResize || IsMaximized()) {
 			//Options.SetCoords(WINDOW_SIZE, sizex, sizey);
 			Layout();
@@ -585,8 +596,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			}else
 				SetSize(posx, posy, sizex, sizey);
 		}
-		else if (newRect->left < LastMonitorRect.x + LastMonitorRect.width && 
-			newRect->top < LastMonitorRect.y + LastMonitorRect.height) {
+		else if (secondMonitorRect.x < primaryMonitorRect.x && primaryMonitorRect.y + primaryMonitorRect.height > secondMonitorRect.y) {
 				int posx, posy, osizex, osizey;
 				GetPosition(&posx, &posy);
 				Options.GetCoords(WINDOW_SIZE, &osizex, &osizey);

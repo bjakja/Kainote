@@ -832,6 +832,24 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	int w = 0, h = 0;
 	GetClientSize(&w, &h);
 	if (w < 1 || h < 1){ return; }
+	wxRegionIterator upd(GetUpdateRegion());
+	while (upd) {
+		wxRect rect(upd.GetRect());
+		upd++;
+		//draw bitmap fragment, only use for
+		//Windows repaint draw existed bitmap
+		//instead of making a new
+		//when window size changed don't use part redraw
+		if ((rect.width < w || rect.height < h) && bmp && lastWidth == w && lastHeight == h) {
+			wxMemoryDC tdc;
+			tdc.SelectObject(*bmp);
+			wxPaintDC dc(this);
+			dc.Blit(rect.x, rect.y, rect.width, rect.height, &tdc, rect.x, rect.y);
+			if (!upd) return;
+		}
+	}
+	lastWidth = w;
+	lastHeight = h;
 	int bitmaph = (wraps.size() * fontHeight) + 4;
 	int windoww = w;
 	if (bitmaph > h){

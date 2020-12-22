@@ -117,6 +117,8 @@ protected:
 	int fontSize;
 	int tmpstart, tmpend;
 	int statusBarHeight;
+	int lastWidth = 0;
+	int lastHeight = 0;
 	std::map<wxUniChar, double> fontSizes;
 	std::map<wxUniChar, int> fontGDISizes;
 	DECLARE_EVENT_TABLE()

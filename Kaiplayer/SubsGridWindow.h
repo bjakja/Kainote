@@ -65,6 +65,8 @@ protected:
 	int lastsel = -1;
 	int oldX = -1;
 	bool holding = false;
+	int lastWidth = 0;
+	int lastHeight = 0;
 
 	wxBitmap* bmp;
 	wxFont font;

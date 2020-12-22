@@ -76,10 +76,35 @@ void SubsGridWindow::SetStyle()
 
 void SubsGridWindow::OnPaint(wxPaintEvent& event)
 {
-
 	int w = 0;
 	int h = 0;
 	GetClientSize(&w, &h);
+	int firstCol = GridWidth[0] + 1;
+	wxRegionIterator upd(GetUpdateRegion());
+	while (upd) {
+		wxRect rect(upd.GetRect());
+		upd++;
+		//draw bitmap fragment, only use for
+		//Windows repaint draw existed bitmap
+		//instead of making a new
+		//when window size changed don't use part redraw
+		if ((rect.width < w || rect.height < h) && bmp && lastWidth == w && lastHeight == h) {
+			wxMemoryDC tdc;
+			tdc.SelectObject(*bmp);
+			wxPaintDC dc(this);
+			int firstColPosX = firstCol + posX;
+			if (rect.x <= firstCol + posX)
+				dc.Blit(rect.x, rect.y, firstColPosX > rect.width ? rect.width : firstColPosX, rect.height, &tdc, rect.x, rect.y);
+			if (rect.x + rect.width > firstColPosX) {
+				int blitX = firstColPosX > rect.x ? firstColPosX : rect.x;
+				int blitWidth = firstColPosX > rect.x ? rect.width - (firstColPosX - rect.x) : rect.width;
+				dc.Blit(blitX, rect.y, blitWidth + scHor, rect.height, &tdc, scHor + blitX, rect.y);
+			}
+			if (!upd) {
+				return;
+			}
+		}
+	}
 	bool bg = false;
 	int size = file->GetIdCount();
 	wxPoint previewpos;
@@ -110,6 +135,9 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		GetClientSize(&w, &h);
 	}
 
+	lastWidth = w;
+	lastHeight = h;
+
 	// Prepare bitmap
 	if (bmp) {
 		if (bmp->GetWidth() < w + scHor || bmp->GetHeight() < h) {
@@ -123,7 +151,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	tdc.SelectObject(*bmp);
 
-	int firstCol = GridWidth[0] + 1;
+	
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (gc)

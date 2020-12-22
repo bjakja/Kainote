@@ -106,11 +106,13 @@ void Karaoke::Split()
 	}
 	else
 	{
-		wxString aoi = L"aeioun ";
+		wxString aoi = L"aeioun";
 		wxString aoi1 = L"aeiouy";
 		wxString aoi2 = L"aeiou";
-		textlow += L" ";
-		len = textlow.length();
+		textlow += L" X";
+		//don't go on last X it's only to get last split
+		//nch is not space and punctation and aoi
+		len = textlow.length() - 1;
 		int start = 0;
 		int i = 0;
 		while (i < len)
