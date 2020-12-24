@@ -660,7 +660,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 {
 	int id = event.GetId();
 	int Modif = event.GetInt();
-	TabPanel *pan = GetTab();
+	TabPanel *tab = GetTab();
 
 	if (Modif == wxMOD_SHIFT){
 		Hkeys.OnMapHkey(id, L"", this, GLOBAL_HOTKEY);
@@ -673,7 +673,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	if (id == GLOBAL_OPEN_SUBS){
 
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"),
-			(GetTab()->VideoPath != L"") ? GetTab()->VideoPath.BeforeLast(L'\\') :
+			(tab->VideoPath != L"") ? tab->VideoPath.BeforeLast(L'\\') :
 			(subsrec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : L"",
 			L"", _("Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -681,24 +681,25 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			wxArrayString paths;
 			FileDialog1->GetPaths(paths);
 			Freeze();
-			GetTab()->Hide();
+			tab->Hide();
 			for (auto &file : paths){
-				if (GetTab()->SubsPath != L""){ InsertTab(false); }
+				if (tab->SubsPath != L""){ InsertTab(false); }
 				if (file.AfterLast(L'.') == L"mkv"){
 					event.SetString(file);
-					GetTab()->Grid->OnMkvSubs(event);
+					tab->Grid->OnMkvSubs(event);
 				}
 				else{
 					OpenFile(file);
 				}
 			}
 			Thaw();
-			GetTab()->Show();
+			tab->Show();
 		}
 		FileDialog1->Destroy();
 	}
 	else if (id == GLOBAL_OPEN_VIDEO){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
+			(tab->SubsPath != L"") ? tab->SubsPath.BeforeLast(L'\\') :
 			(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : L"",
 			L"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
@@ -714,13 +715,14 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_OPEN_KEYFRAMES){
 		wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
+			tab->VideoPath != L"" ? tab->VideoPath.BeforeLast(L'\\') :
 			(keyframesRecent.size() > 0) ? keyframesRecent[0].BeforeLast(L'\\') : L"",
 			L"", _("Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie pliki (*.*)|*.*"),
 			wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 		if (FileDialog2->ShowModal() == wxID_OK){
 			wxString path = FileDialog2->GetPath();
-			GetTab()->KeyframesPath = path;
-			GetTab()->Video->OpenKeyframes(path);
+			tab->KeyframesPath = path;
+			tab->Video->OpenKeyframes(path);
 			SetRecent(3);
 		}
 		FileDialog2->Destroy();
@@ -731,13 +733,12 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		od.ShowModal();
 	}
 	else if (id == GLOBAL_SELECT_FROM_VIDEO){
-		GetTab()->Grid->SelVideoLine();
+		tab->Grid->SelVideoLine();
 	}
 	else if (id == GLOBAL_EDITOR){
 		HideEditor();
 	}
 	else if (id == GLOBAL_PLAY_ACTUAL_LINE){
-		TabPanel *tab = GetTab();
 		tab->Edit->TextEdit->SetFocus();
 		tab->Video->PlayLine(tab->Edit->line->Start.mstime, tab->Video->GetPlayEndTime(tab->Edit->line->End.mstime));
 	}

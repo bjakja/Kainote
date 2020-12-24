@@ -1276,8 +1276,12 @@ void Notebook::SaveLastSession(bool beforeClose)
 			result << tab->SubsPath;
 		}
 		result << L"\r\nActive: " << tab->Grid->currentLine <<
-			L"\r\nScroll: " << tab->Grid->GetScrollPosition() << 
+			L"\r\nScroll: " << tab->Grid->GetScrollPosition() <<
 			L"\r\nEditor: " << tab->editor << L"\r\n";
+		if (tab->KeyframesPath != L"") {
+			result << L"Keyframes: " << tab->KeyframesPath << L"\r\n";
+		}
+
 		numtab++;
 	}
 	OpenWrite op;
@@ -1318,6 +1322,7 @@ void Notebook::LoadLastSession()
 		wxString video;
 		int videoPosition = 0;
 		wxString subtitles;
+		wxString keyframes;
 		int activeLine = 0;
 		int scrollPosition = 0;
 		bool isFFMS2 = true;
@@ -1340,6 +1345,8 @@ void Notebook::LoadLastSession()
 				isFFMS2 = !!wxAtoi(rest);
 			else if (token.StartsWith(L"Editor: ", &rest))
 				hasEditor = !!wxAtoi(rest);
+			else if (token.StartsWith(L"Keyframes: ", &rest))
+				keyframes = rest;
 			// no else cause hasMoreTokens have to be checked everytime
 			bool hasnotMoreTokens = !tokenizer.HasMoreTokens();
 			if (token.StartsWith(L"Tab: ", &rest) || hasnotMoreTokens){
@@ -1351,12 +1358,17 @@ void Notebook::LoadLastSession()
 						sthis->LoadSubtitles(tab, subtitles, activeLine, scrollPosition);
 						sthis->Kai->SetRecent();
 					}
+					if (!keyframes.empty()) {
+						tab->Video->OpenKeyframes(keyframes);
+						tab->KeyframesPath = keyframes;
+					}
 					if (!video.empty()){
 						if (!hasEditor)
 							sthis->Kai->HideEditor();
 	
 						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor);
 					}
+					
 					sthis->Kai->Label();
 					tab->ShiftTimes->Contents();
 					video = L"";

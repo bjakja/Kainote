@@ -748,7 +748,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				//make sure that start is greater or even then end time of previous line
 				//and correct times but only when previous line end time was not greater than start time on start
 				//then discard correction.
-				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime){
+				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime && foundStartKeyframe){
 					dialc->Start.NewTime(previousEnd);
 					numOfStartModifications--;
 					foundStartKeyframe = false;
