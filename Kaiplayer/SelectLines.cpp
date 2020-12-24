@@ -381,7 +381,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		tab->Grid->file->DeleteSelectedDialogues();
 		tab->Grid->SaveSelections(true);
 		tab->Grid->SpellErrors.clear();
-		if (action == 3 || action == 4)
+		if ((action == 3 || action == 4) && mdial.size())
 		{
 			// we add lines to destroyer cause of it must be copied
 			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, true);

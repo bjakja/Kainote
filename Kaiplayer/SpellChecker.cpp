@@ -363,7 +363,7 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bo
 				}
 			}
 		}
-		if (lastStartTBracket >= 0 && ch == bracketStart || ch == bracketEnd) {
+		if (lastStartTBracket >= 0 && !repltags && (ch == bracketStart || ch == bracketEnd)) {
 			errs->Add(lastStartTBracket); 
 			errs->Add(lastStartTBracket);
 			if (misspells)
@@ -378,7 +378,7 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bo
 			lastStartCBracket = i;
 		}
 		else if (ch == bracketEnd) {
-			if (!block) {
+			if (!block && !repltags) {
 				errs->Add(i);
 				errs->Add(i);
 				if (misspells)
