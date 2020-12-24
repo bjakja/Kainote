@@ -2244,10 +2244,13 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 			BoxSizer1->Prepend(ABox, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
 
 			if (!tab->Video->IsShown()){
-				SetMinSize(wxSize(500, 350));
-			}
-			Layout();
-			//Tabs->Refresh(false);
+				int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
+				int minEBSize = (TextEditOrig->IsShown()) ? 200 : 150;
+				SetMinSize(wxSize(500, audioHeight + minEBSize));
+				GetParent()->Layout();
+			}else
+				Layout();
+			
 			ABox->audioDisplay->SetFocus();
 		}
 		else{ ABox->Destroy(); ABox = NULL; }

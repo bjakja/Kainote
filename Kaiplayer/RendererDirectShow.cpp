@@ -412,7 +412,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 		hr = m_D3DLine->Draw(&vectors[0], 5, 0xFF000000);
 		hr = m_D3DLine->Draw(&vectors[5], 5, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
-		hr = m_D3DLine->SetWidth(7);
+		hr = m_D3DLine->SetWidth(m_ProgressBarLineWidth);
 		hr = m_D3DLine->Begin();
 		hr = m_D3DLine->Draw(&vectors[10], 2, 0xFFFFFFFF);
 		hr = m_D3DLine->End();

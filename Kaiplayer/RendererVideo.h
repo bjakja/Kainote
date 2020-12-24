@@ -166,7 +166,7 @@ public:
 	virtual bool HasFFMS2(){ return false; };
 	virtual VideoFfmpeg * GetFFMS2(){ return NULL; };
 	// Non virtual functions
-	void DrawProgBar();
+	void DrawProgressBar(const wxString &timesString);
 	void Zoom(const wxSize &size);
 	void DrawZoom();
 	void ZoomMouseHandle(wxMouseEvent &evt);
@@ -209,6 +209,7 @@ private:
 
 	int m_AverangeFrameTime;
 	D3DXVECTOR2 vectors[12];
+	int m_ProgressBarLineWidth = 1;
 	AudioDisplay *m_AudioPlayer;
 	TabPanel* tab;
 	SubtitlesProviderManager *m_SubsProvider = NULL;

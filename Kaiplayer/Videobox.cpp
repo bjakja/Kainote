@@ -1267,10 +1267,9 @@ void VideoCtrl::RefreshTime()
 			m_FullScreenWindow->mstimes->Update();
 		}
 		if (!m_FullScreenProgressBar){ return; }
-		STime kkk1;
-		kkk1.mstime = dur;
-		renderer->m_ProgressBarTime = videoTime.raw(TMP) + L" / " + kkk1.raw(TMP);
-		renderer->DrawProgBar();
+		STime DurationTime;
+		DurationTime.mstime = dur;
+		renderer->DrawProgressBar(videoTime.raw(TMP) + L" / " + DurationTime.raw(TMP));
 	}
 	else{
 		m_SeekingSlider->SetValue(val);

@@ -317,7 +317,9 @@ bool RendererVideo::InitDX()
 		return false;
 
 	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
-	HR(D3DXCreateFont(m_D3DDevice, 20, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+	wxFont *font12 = Options.GetFont(4);
+	wxSize pixelSize = font12->GetPixelSize();
+	HR(D3DXCreateFont(m_D3DDevice, pixelSize.y, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
@@ -624,45 +626,51 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 
 }
 
-void RendererVideo::DrawProgBar()
+void RendererVideo::DrawProgressBar(const wxString &timesString)
 {
 	//Full screen progress bar position
 	wxMutexLocker lock(m_MutexProgressBar);
+	m_ProgressBarTime = timesString;
+	int fw, fh;
+	videoControl->GetTextExtent(timesString, &fw, &fh, NULL, NULL, Options.GetFont(4));
 	int w, h;
 	videoControl->m_FullScreenWindow->GetClientSize(&w, &h);
-	m_ProgressBarRect.top = 16;
-	m_ProgressBarRect.bottom = 60;
-	m_ProgressBarRect.left = w - 167;
-	m_ProgressBarRect.right = w - 3;
+	m_ProgressBarRect.top = fh - 3;
+	m_ProgressBarRect.bottom = fh + fh - 3;
+	m_ProgressBarRect.left = w - (fw - 1);
+	m_ProgressBarRect.right = w - 4;
 	//coordinates of black frame
-	vectors[0].x = w - 170;
+	vectors[0].x = w - fw;
 	vectors[0].y = 5;
 	vectors[1].x = w - 5;
 	vectors[1].y = 5;
 	vectors[2].x = w - 5;
-	vectors[2].y = 15;
-	vectors[3].x = w - 170;
-	vectors[3].y = 15;
-	vectors[4].x = w - 170;
+	vectors[2].y = fh - 4;
+	vectors[3].x = w - fw;
+	vectors[3].y = fh - 4;
+	vectors[4].x = w - fw;
 	vectors[4].y = 5;
 	//coordinates of white frame
-	vectors[5].x = w - 169;
+	vectors[5].x = w - (fw - 1);
 	vectors[5].y = 6;
 	vectors[6].x = w - 6;
 	vectors[6].y = 6;
 	vectors[7].x = w - 6;
-	vectors[7].y = 14;
-	vectors[8].x = w - 169;
-	vectors[8].y = 14;
-	vectors[9].x = w - 169;
+	vectors[7].y = fh - 5;
+	vectors[8].x = w - (fw - 1);
+	vectors[8].y = fh - 5;
+	vectors[9].x = w - (fw - 1);
 	vectors[9].y = 6;
 	//coordinates of progress bar
-	int rw = w - 168;
+	int rw = w - (fw - 2);
+	int progBarLen = fw - 9;
+	m_ProgressBarLineWidth = fh - 11;
 	vectors[10].x = rw;
-	vectors[10].y = 10.5;
+	vectors[10].y = 6 + (m_ProgressBarLineWidth / 2);
 	int Duration = GetDuration();
-	vectors[11].x = (Duration > 0) ? (((float)m_Time / (float)Duration) * 161) + rw : 161 + rw;
-	vectors[11].y = 10.5;
+	vectors[11].x = (Duration > 0) ? (((float)m_Time / (float)Duration) * progBarLen) + rw : progBarLen + rw;
+	vectors[11].y = 6 + (m_ProgressBarLineWidth / 2);
+	
 }
 
 void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/)

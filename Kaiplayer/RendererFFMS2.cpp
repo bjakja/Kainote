@@ -174,7 +174,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 		hr = m_D3DLine->Draw(&vectors[0], 5, 0xFF000000);
 		hr = m_D3DLine->Draw(&vectors[5], 5, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
-		hr = m_D3DLine->SetWidth(7);
+		hr = m_D3DLine->SetWidth(m_ProgressBarLineWidth);
 		hr = m_D3DLine->Begin();
 		hr = m_D3DLine->Draw(&vectors[10], 2, 0xFFFFFFFF);
 		hr = m_D3DLine->End();
@@ -394,8 +394,9 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 		//rebuild spectrum cause position can be changed
 		//and it causes random bugs
 		if (m_AudioPlayer){ m_AudioPlayer->UpdateImage(false, true); }
-		/*m_FFMS2->*/Render();
+		
 		videoControl->RefreshTime();
+		Render();
 	}
 }
 

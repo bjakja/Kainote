@@ -845,10 +845,50 @@ void AudioDisplay::DrawTimescale() {
 	// Timescale ticks
 	int64_t start = Position*samples;
 	int rate = provider->GetSampleRate();
-	int lastTextPos = -1000;
-	int lastLinePos = -20;
-	auto drawTime = [=](int x, int64_t pos, int *lastTextPos, bool drawMS){
-		wxCoord textW;
+	/*int lastTextPos = -1000;
+	int lastLinePos = -20;*/
+	int lineStart = 0;
+	int otherLinesModulo = 0;
+	int LinesModulo = 1;
+	for (int x = 0;; x++) {
+		int64_t pos = (x * samples) + start;
+		// Second boundary
+		if (pos % rate < samples) {
+			if (lineStart) {
+				//it's started from end
+				//to get longest time text extent
+				int lineDist = x - lineStart;
+				int s = pos / rate;
+				int hr = s / 3600;
+				int m = s / 60;
+				int textW;
+				if(hr)
+					GetTextExtent(L"X0:00:00X", &textW, NULL, NULL, NULL, &tahoma8);
+				else if(m)
+					GetTextExtent(L"X00:00X", &textW, NULL, NULL, NULL, &tahoma8);
+				else
+					GetTextExtent(L"X00X", &textW, NULL, NULL, NULL, &tahoma8);
+
+				float numTextPlaced = (float)lineDist / (float)textW;
+				if (numTextPlaced > 9.f)
+					otherLinesModulo = 1;
+				else if (numTextPlaced > 4.5f)
+					otherLinesModulo = 2;
+				else if (numTextPlaced > 2.5f)
+					otherLinesModulo = 5;
+				else if (numTextPlaced < 1.2f)
+					LinesModulo = (float)(textW + 10) / (float)lineDist;
+
+				if (!LinesModulo)
+					LinesModulo = 10;
+				break;
+			}
+			lineStart = x;
+		}
+		
+	}
+	auto drawTime = [=](int x, int64_t pos/*, int *lastTextPos*/, bool drawMS){
+		//wxCoord textW;
 		int s = pos / rate;
 		int hr = s / 3600;
 		int m = s / 60;
@@ -863,21 +903,22 @@ void AudioDisplay::DrawTimescale() {
 			if (ms)
 				text << wxString::Format(_T(".%i"), ms);
 		}
-		GetTextExtent(text, &textW, NULL, NULL, NULL, &tahoma8);
+		//GetTextExtent(text, &textW, NULL, NULL, NULL, &tahoma8);
 		//if (drawMS)
 		//textW += 20;
-		if (x > (*lastTextPos) + textW){
+		//if (x > (*lastTextPos) + textW){
 			RECT rect;
 			rect.left = x - 50;//MAX(0,x-textW/2)+1;
 			rect.top = h + 8;
 			rect.right = rect.left + 100;
 			rect.bottom = rect.top + 40;
 			d3dFontTahoma8->DrawTextW(NULL, text.wchar_str(), -1, &rect, DT_CENTER, timescaleText);
-			(*lastTextPos) = x;
-		}
+			//(*lastTextPos) = x;
+		//}
 	};
 	for (int i = 1; i < 32; i *= 2) {
 		int pixBounds = rate / (samples * 10 / i);
+		//cannot go to else when pixBounds = 1, cause it make from it 0
 		if (pixBounds <= 1)
 			pixBounds = 1;
 		else if (pixBounds > 10)
@@ -885,6 +926,7 @@ void AudioDisplay::DrawTimescale() {
 		else{
 			pixBounds = (pixBounds / 2) * 2;
 		}
+		//int linesCounter = 1;
 		for (int x = 0; x < w; x++) {
 			int64_t pos = (x * samples) + start;
 			// Second boundary
@@ -892,9 +934,13 @@ void AudioDisplay::DrawTimescale() {
 				v2[0] = D3DXVECTOR2(x, h + 2);
 				v2[1] = D3DXVECTOR2(x, h + 8);
 				d3dLine->Draw(v2, 2, timescaleText);
-				lastLinePos = x;
+				//lastLinePos = x;
+				int s = pos / rate;
 				// Draw text
-				drawTime(x, pos, &lastTextPos, false);
+				if (s % LinesModulo == 0)
+					drawTime(x, pos/*, &lastTextPos*/, false);
+
+				//linesCounter = 1;
 			}
 
 			// Other
@@ -902,9 +948,10 @@ void AudioDisplay::DrawTimescale() {
 				v2[0] = D3DXVECTOR2(x, h + 2);
 				v2[1] = D3DXVECTOR2(x, h + 5);
 				d3dLine->Draw(v2, 2, timescaleText);
-				if (lastLinePos + 20 <= x)
-					drawTime(x, pos, &lastTextPos, true);
-				lastLinePos = x;
+				int ms = (pos / (rate / pixBounds)) % pixBounds;
+				if (otherLinesModulo && (ms % otherLinesModulo == 0))
+					drawTime(x, pos/*, &lastTextPos*/, true);
+				//lastLinePos = x;
 			}
 		}
 		break;
@@ -2257,7 +2304,7 @@ unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
 			ad->stopPlayThread = false;
 			while (!ad->stopPlayThread) {
 				ad->UpdateTimer();
-				Sleep(10);
+				Sleep(18);
 			}
 		}
 		else
@@ -2299,7 +2346,7 @@ void AudioDisplay::UpdateTimer()
 						if (goTo >= 0) {
 							UpdatePosition(goTo, true);
 							DoUpdateImage(false);
-							Sleep(10);
+							//Sleep(10);
 							return;
 						}
 					}
@@ -2336,7 +2383,7 @@ void AudioDisplay::UpdateTimer()
 	}
 	oldCurPos = curpos;
 	if (oldCurPos < 0) oldCurPos = 0;
-	Sleep(10);
+	//Sleep(10);
 }
 
 
