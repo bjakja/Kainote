@@ -935,7 +935,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	}
 
 	if (id == VIDEO_COPY_COORDS){ OnCopyCoords(pos); }
-	else if (id > 1999 && id < MENU_STREAMS){
+	else if (id > 1999 && id < MENU_STREAMS || id == GLOBAL_OPEN_SUBS || id == GLOBAL_OPEN_VIDEO){
 		wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, id);
 		OnAccelerator(evt);
 	}
@@ -984,10 +984,11 @@ void VideoCtrl::OnDeleteVideo()
 
 void VideoCtrl::OnOpVideo()
 {
-	wxFileDialog* FileDialog2 = new wxFileDialog(this, _("Wybierz plik wideo"),
+	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik wideo"),
+		(tab->SubsPath != L"") ? tab->SubsPath.BeforeLast(L'\\') :
 		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast(L'\\') : L"",
 		L"", _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
-		wxFD_DEFAULT_STYLE);
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());
 	}
@@ -997,10 +998,11 @@ void VideoCtrl::OnOpVideo()
 void VideoCtrl::OnOpSubs()
 {
 	if (Kai->SavePrompt(2)){ return; }
-	wxFileDialog* FileDialog2 = new wxFileDialog(Kai, _("Wybierz plik napisów"),
+	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
+		(tab->VideoPath != L"") ? tab->VideoPath.BeforeLast(L'\\') :
 		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast(L'\\') : L"", L"",
 		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
-		wxFD_DEFAULT_STYLE);
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (FileDialog2->ShowModal() == wxID_OK){
 		Kai->OpenFile(FileDialog2->GetPath());

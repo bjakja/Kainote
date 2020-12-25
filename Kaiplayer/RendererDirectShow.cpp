@@ -119,9 +119,11 @@ bool RendererDirectShow::InitRendererDX()
 	HR(hr, _("Zawiodło któreś z ustawień DirectX vertices"));
 
 
-	m_WindowWidth = m_BackBufferRect.right- m_BackBufferRect.left;
-	m_WindowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
-	filtering = D3DTEXF_POINT;
+	int windowWidth = m_BackBufferRect.right- m_BackBufferRect.left;
+	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
+	m_WindowWidth = m_Width;
+	m_WindowHeight = m_Height;
+	filtering = (windowWidth == m_Width && windowHeight == m_Height) ? D3DTEXF_POINT : D3DTEXF_LINEAR;
 
 	m_LastBufferSize = m_WindowWidth * m_WindowHeight * 4;
 	if (m_SubtitlesBuffer)
@@ -140,13 +142,13 @@ bool RendererDirectShow::InitRendererDX()
 	pVertices[0].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
 	pVertices[0].tu = 0.0f;
 	pVertices[0].tv = 0.0f;
-	pVertices[1].position = D3DXVECTOR3(m_WindowWidth + m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
+	pVertices[1].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
 	pVertices[1].tu = 1.0f;
 	pVertices[1].tv = 0.0f;
-	pVertices[2].position = D3DXVECTOR3(m_WindowWidth + m_BackBufferRect.left , m_WindowHeight + m_BackBufferRect.top, 0.0f);
+	pVertices[2].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left , windowHeight + m_BackBufferRect.top, 0.0f);
 	pVertices[2].tu = 1.0f;
 	pVertices[2].tv = 1.0f;
-	pVertices[3].position = D3DXVECTOR3(m_BackBufferRect.left, m_WindowHeight + m_BackBufferRect.top, 0.0f);
+	pVertices[3].position = D3DXVECTOR3(m_BackBufferRect.left, windowHeight + m_BackBufferRect.top, 0.0f);
 	pVertices[3].tu = 0.0f;
 	pVertices[3].tv = 1.0f;
 	pVertices[4].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
