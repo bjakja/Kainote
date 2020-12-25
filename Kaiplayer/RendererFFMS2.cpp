@@ -41,8 +41,10 @@ void RendererFFMS2::DestroyFFMS2()
 
 bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 {
-
 	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (!m_MainSurface)
+		return false;
+
 	byte *fdata = NULL;
 	byte *texbuf;
 	byte bytes = 4;
@@ -101,7 +103,7 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
 	}
 
-	m_MainSurface->UnlockRect();
+	HR(m_MainSurface->UnlockRect(), _("Nie można oblokować bufora tekstury"));
 
 	return true;
 }
