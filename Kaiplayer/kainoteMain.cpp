@@ -1749,7 +1749,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		if (!Hkeys.AudioKeys && !Hkeys.LoadHkeys(true)){ KaiMessageBox(_("Nie można wczytać skrótów klawiszowych audio"), _("Błąd")); return; }
 		if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); return; }
 
-		wxString Path;
+		wxString audioPath;
 		if (id == GLOBAL_OPEN_AUDIO){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"),
 				(tab->VideoPath != L"") ? tab->VideoPath.BeforeLast(L'\\') :
@@ -1759,18 +1759,18 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 				_("Wszystkie pliki") + L" |*.*", wxFD_OPEN);
 			int result = FileDialog1->ShowModal();
 			if (result == wxID_OK){
-				Path = FileDialog1->GetPath();
+				audioPath = FileDialog1->GetPath();
 			}
 			FileDialog1->Destroy();
 			if (result == wxID_CANCEL){ return; }
 		}
-		if (id > 30039){ Path = path; }
-		if (Path.IsEmpty()){ Path = tab->VideoPath; }
-		if (Path.IsEmpty()){ return; }
+		if (id > 30039){ audioPath = path; }
+		if (audioPath.empty()){ audioPath = tab->VideoPath; }
+		if (audioPath.empty()){ return; }
 
-		if (tab->Edit->LoadAudio(Path, (id == 40000))){
+		if (tab->Edit->LoadAudio(audioPath, (id == 40000))){
 			SetRecent(2);
-			tab->AudioPath = path;
+			tab->AudioPath = audioPath;
 		}
 
 	}

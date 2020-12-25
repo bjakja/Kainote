@@ -1085,13 +1085,13 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 }
 
 int Notebook::LoadVideo(TabPanel *tab, const wxString & path, 
-	int position /*= -1*/, bool isFFMS2, bool hasEditor, bool fullscreen, bool loadPrompt)
+	int position /*= -1*/, bool isFFMS2, bool hasEditor, bool fullscreen, bool loadPrompt, bool dontLoadAudio)
 {
 	wxString videopath;
 	wxString audiopath;
 	wxString keyframespath;
 	bool hasVideoPath = false;
-	bool hasAudioPath = false;
+	bool hasAudioPath = dontLoadAudio;
 	bool hasKeyframePath = false;
 	bool found = !path.empty();
 
@@ -1278,6 +1278,9 @@ void Notebook::SaveLastSession(bool beforeClose)
 		result << L"\r\nActive: " << tab->Grid->currentLine <<
 			L"\r\nScroll: " << tab->Grid->GetScrollPosition() <<
 			L"\r\nEditor: " << tab->editor << L"\r\n";
+		if (tab->AudioPath != L"" && tab->AudioPath != tab->VideoPath) {
+			result << L"Audio: " << tab->AudioPath << L"\r\n";
+		}
 		if (tab->KeyframesPath != L"") {
 			result << L"Keyframes: " << tab->KeyframesPath << L"\r\n";
 		}
@@ -1323,6 +1326,7 @@ void Notebook::LoadLastSession()
 		int videoPosition = 0;
 		wxString subtitles;
 		wxString keyframes;
+		wxString audio;
 		int activeLine = 0;
 		int scrollPosition = 0;
 		bool isFFMS2 = true;
@@ -1345,6 +1349,8 @@ void Notebook::LoadLastSession()
 				isFFMS2 = !!wxAtoi(rest);
 			else if (token.StartsWith(L"Editor: ", &rest))
 				hasEditor = !!wxAtoi(rest);
+			else if (token.StartsWith(L"Audio: ", &rest))
+				audio = rest;
 			else if (token.StartsWith(L"Keyframes: ", &rest))
 				keyframes = rest;
 			// no else cause hasMoreTokens have to be checked everytime
@@ -1366,7 +1372,10 @@ void Notebook::LoadLastSession()
 						if (!hasEditor)
 							sthis->Kai->HideEditor();
 	
-						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor);
+						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor, false, false, audio != L"");
+					}
+					if (!audio.empty()) {
+						sthis->Kai->OpenAudioInTab(tab, 30040, audio);
 					}
 					
 					sthis->Kai->Label();
@@ -1378,6 +1387,7 @@ void Notebook::LoadLastSession()
 					scrollPosition = 0;
 					isFFMS2 = true;
 					hasEditor = true;
+					keyframes = L"";
 				}
 			}
 			if (hasnotMoreTokens)

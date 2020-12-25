@@ -49,7 +49,7 @@ public:
 	void RefreshBar(bool checkSizes = false);
 	bool LoadSubtitles(TabPanel *tab, const wxString & path, int active = -1, int scroll = -1);
 	int LoadVideo(TabPanel *tab, const wxString & path, int position = -1, 
-		bool isFFMS2 = true, bool hasEditor = true, bool fullscreen = false, bool loadPrompt = false);
+		bool isFFMS2 = true, bool hasEditor = true, bool fullscreen = false, bool loadPrompt = false, bool dontLoadAudio = false);
 	bool SetFont(const wxFont &font);
 	void ResetPrompt() { promptResult = 0; }
 
