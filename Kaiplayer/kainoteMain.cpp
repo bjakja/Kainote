@@ -683,7 +683,11 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			Freeze();
 			tab->Hide();
 			for (auto &file : paths){
-				if (tab->SubsPath != L""){ InsertTab(false); }
+				if (tab->SubsPath != L"") {
+					InsertTab(false); 
+					//set new tab
+					tab = GetTab();
+				}
 				if (file.AfterLast(L'.') == L"mkv"){
 					event.SetString(file);
 					tab->Grid->OnMkvSubs(event);
@@ -706,9 +710,9 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		if (FileDialog2->ShowModal() == wxID_OK){
 			wxArrayString paths;
 			FileDialog2->GetPaths(paths);
-			if (paths.size() < 2 && paths.size() > 0)
+			if (paths.size() == 1)
 				OpenFile(paths[0]);
-			else
+			else if(paths.size() > 1)
 				OpenFiles(paths);
 		}
 		FileDialog2->Destroy();
