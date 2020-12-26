@@ -229,7 +229,7 @@ HRESULT CD2DVideoRender::EndOfStream()
 {
 	HRESULT hr = CBaseRenderer::EndOfStream();
 	wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_BUTTON_CLICKED, ID_END_OF_STREAM);
-	wxQueueEvent(Vrend->videoControl, evt);//EndofStream();
+	wxQueueEvent(Vrend->videoControl, evt);
 	return hr;
 }
 

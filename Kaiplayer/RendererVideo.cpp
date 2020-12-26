@@ -632,44 +632,54 @@ void RendererVideo::DrawProgressBar(const wxString &timesString)
 	wxMutexLocker lock(m_MutexProgressBar);
 	m_ProgressBarTime = timesString;
 	int fw, fh;
-	videoControl->GetTextExtent(timesString, &fw, &fh, NULL, NULL, Options.GetFont(4));
+	RECT rcRect = { 0, 0, 0, 0 };
+	if (m_D3DFont->DrawTextW(NULL, timesString.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+		fw = rcRect.right - rcRect.left;
+		fh = rcRect.bottom - rcRect.top;
+	}
+	else {
+		videoControl->GetTextExtent(timesString, &fw, &fh, NULL, NULL, Options.GetFont(4));
+	}
+	int progresbarHeight = fh * 0.6f;
+	int margin = fh * 0.25f;
 	int w, h;
 	videoControl->m_FullScreenWindow->GetClientSize(&w, &h);
-	m_ProgressBarRect.top = fh - 3;
-	m_ProgressBarRect.bottom = fh + fh - 3;
-	m_ProgressBarRect.left = w - (fw - 1);
-	m_ProgressBarRect.right = w - 4;
+	m_ProgressBarRect.top = progresbarHeight + (margin * 1.5f);
+	m_ProgressBarRect.bottom = fh + m_ProgressBarRect.top;
+	m_ProgressBarRect.left = w - (fw + margin);
+	m_ProgressBarRect.right = w - (margin);
 	//coordinates of black frame
-	vectors[0].x = w - fw;
-	vectors[0].y = 5;
-	vectors[1].x = w - 5;
-	vectors[1].y = 5;
-	vectors[2].x = w - 5;
-	vectors[2].y = fh - 4;
-	vectors[3].x = w - fw;
-	vectors[3].y = fh - 4;
-	vectors[4].x = w - fw;
-	vectors[4].y = 5;
-	//coordinates of white frame
-	vectors[5].x = w - (fw - 1);
-	vectors[5].y = 6;
-	vectors[6].x = w - 6;
-	vectors[6].y = 6;
-	vectors[7].x = w - 6;
-	vectors[7].y = fh - 5;
-	vectors[8].x = w - (fw - 1);
-	vectors[8].y = fh - 5;
-	vectors[9].x = w - (fw - 1);
-	vectors[9].y = 6;
-	//coordinates of progress bar
-	int rw = w - (fw - 2);
-	int progBarLen = fw - 9;
-	m_ProgressBarLineWidth = fh - 11;
+	vectors[0].x = w - (fw + margin);
+	vectors[0].y = margin;
+	vectors[1].x = w - margin;
+	vectors[1].y = margin;
+	vectors[2].x = w - margin;
+	vectors[2].y = progresbarHeight + margin;
+	vectors[3].x = w - (fw + margin);
+	vectors[3].y = progresbarHeight + margin;
+	vectors[4].x = w - (fw + margin);
+	vectors[4].y = margin;
+	//coordinates of white frame inside black frame
+	vectors[5].x = w - (fw - 1 + margin);
+	vectors[5].y = margin + 1;
+	vectors[6].x = w - (margin + 1);
+	vectors[6].y = margin + 1;
+	vectors[7].x = w - (margin + 1);
+	vectors[7].y = progresbarHeight - 1 + margin;
+	vectors[8].x = w - (fw - 1 + margin);
+	vectors[8].y = progresbarHeight - 1 + margin;
+	vectors[9].x = w - (fw - 1 + margin);
+	vectors[9].y = margin + 1;
+	//coordinates of progress bar inside white frame
+	int rw = w - (fw - 2 + margin);
+	//two pixels from both sides
+	int progBarLen = fw - 4;
+	m_ProgressBarLineWidth = progresbarHeight - 2;
 	vectors[10].x = rw;
-	vectors[10].y = 6 + (m_ProgressBarLineWidth / 2);
+	vectors[10].y = (margin + 1) + (m_ProgressBarLineWidth / 2);
 	int Duration = GetDuration();
 	vectors[11].x = (Duration > 0) ? (((float)m_Time / (float)Duration) * progBarLen) + rw : progBarLen + rw;
-	vectors[11].y = 6 + (m_ProgressBarLineWidth / 2);
+	vectors[11].y = (margin + 1) + (m_ProgressBarLineWidth / 2);
 	
 }
 
