@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"POT-Creation-Date: 2020-12-26 03:47+0700\n"
-"PO-Revision-Date: 2020-12-26 03:47+0700\n"
+"POT-Creation-Date: 2020-12-26 16:23+0700\n"
+"PO-Revision-Date: 2020-12-26 16:32+0700\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: Alphabet-Works\n"
 "Language: th_TH\n"
@@ -151,8 +151,8 @@ msgstr "รูปแบบคีย์เฟรมไม่ถูกต้อง
 
 #: AudioBox.cpp:264 Automation.cpp:1188 Automation.cpp:1235 OptionsDialog.cpp:279
 #: OptionsDialog.cpp:600 VideoFfmpeg.cpp:53 VideoFfmpeg.cpp:1027 kainoteMain.cpp:605
-#: kainoteMain.cpp:609 kainoteMain.cpp:1749 kainoteMain.cpp:1750 kainoteMain.cpp:2153
-#: kainoteMain.cpp:2179 kainoteMain.cpp:2183
+#: kainoteMain.cpp:609 kainoteMain.cpp:1753 kainoteMain.cpp:1754 kainoteMain.cpp:2157
+#: kainoteMain.cpp:2183 kainoteMain.cpp:2187
 msgid "Błąd"
 msgstr "ผิดพลาด"
 
@@ -244,7 +244,7 @@ msgstr "แมโครชื่อ '%s' ได้ถูกกำหนดไว
 msgid "Wystąpił błąd podczas wykonywania skryptu Lua:\n"
 msgstr "เกิดข้อผิดพลาดขณะโหลดสคริปต์ Lua: \n"
 
-#: Automation.cpp:1041 Automation.cpp:1082 kainoteMain.cpp:609 kainoteMain.cpp:2183
+#: Automation.cpp:1041 Automation.cpp:1082 kainoteMain.cpp:609 kainoteMain.cpp:2187
 #, c-format
 msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
@@ -377,8 +377,8 @@ msgstr ""
 #: AutomationHotkeysDialog.cpp:237 AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:480 Hotkeys.cpp:490
 #: OptionsDialog.cpp:108 OptionsDialog.cpp:117 OptionsDialog.cpp:465 SpellCheckerDialog.cpp:139
 #: SubsGrid.cpp:960 SubsGridBase.cpp:517 SubsGridBase.cpp:546 Videobox.cpp:279 VisualClips.cpp:1042
-#: kainoteApp.cpp:157 kainoteApp.cpp:194 kainoteMain.cpp:917 kainoteMain.cpp:932
-#: kainoteMain.cpp:1036
+#: kainoteApp.cpp:157 kainoteApp.cpp:194 kainoteMain.cpp:921 kainoteMain.cpp:936
+#: kainoteMain.cpp:1040
 msgid "Uwaga"
 msgstr "คำเตือน"
 
@@ -765,12 +765,12 @@ msgstr "แทนที่ด้วย:"
 #: FindReplaceDialog.cpp:61
 msgid ""
 "Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\n"
-"Ze względu na duże pliku wideo szukanie\n"
-"wszystkiego \"*.*\" zostaje zmieniane na *.ass"
+"Ze względu na dużą wagę plików wideo\n"
+"szukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"
 msgstr ""
 "สามารถกรองการค้นหาของ Windows คั่นด้วยเครื่องหมายอัฒภาค (;) เช่น \"*.ass;*.srt\"\n"
-"เนื่องจากค้นหาแฟ้มวิดีโอนั้นขนาดใหญ่\n"
-"การค้นหาทั้งหมด \"*.*\" จะถูกเปลี่ยนเป็น * .ass"
+"หากต้องการค้นหาแฟ้มวิดีโอนั้นจะต้องระบุสกุลของแฟ้มวิดีโอ\n"
+"โดยทั่วไปแล้วค่าเริ่มต้นของการค้นหาคือ \"*.ass\" แต่หากกระบุ \"*.*\" จะเป็นการการค้นหาทั้งหมด"
 
 #: FindReplaceDialog.cpp:64
 msgid "Filtry:"
@@ -1029,8 +1029,8 @@ msgstr "มีแฟ้มซิปอยู่แล้วต้องการ
 
 #: FontCollector.cpp:512 SubsGrid.cpp:927 SubsGrid.cpp:1251 SubsGridBase.cpp:536
 #: SubsGridBase.cpp:1375 Tabs.cpp:1145 Videobox.cpp:805 Videobox.cpp:816 findreplace.cpp:395
-#: findreplace.cpp:402 findreplace.cpp:1318 findreplace.cpp:1322 kainoteMain.cpp:973
-#: kainoteMain.cpp:1712 stylestore.cpp:271 stylestore.cpp:303 stylestore.cpp:342 stylestore.cpp:490
+#: findreplace.cpp:402 findreplace.cpp:1318 findreplace.cpp:1322 kainoteMain.cpp:977
+#: kainoteMain.cpp:1716 stylestore.cpp:271 stylestore.cpp:303 stylestore.cpp:342 stylestore.cpp:490
 #: stylestore.cpp:635
 msgid "Potwierdzenie"
 msgstr "ยืนยัน"
@@ -1961,7 +1961,7 @@ msgstr "ซ่อนสไตล์"
 msgid "Stwórz drzewko"
 msgstr "สร้างไดเรกทอรีทรี"
 
-#: HotkeysNaming.cpp:167 OptionsDialog.cpp:587 kainoteMain.cpp:794
+#: HotkeysNaming.cpp:167 OptionsDialog.cpp:587 kainoteMain.cpp:798
 msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr "รายชื่อของผู้ที่มีส่วนร่วมในการสร้างโปรแกรม"
 
@@ -2489,7 +2489,7 @@ msgstr "ไม่ได้เปิดแฟ้ม"
 msgid "Nie można zapisać do pliku."
 msgstr "ไม่สามารถบันทึกแฟ้ม"
 
-#: OptionsDialog.cpp:279 VideoFfmpeg.cpp:53 kainoteMain.cpp:1750
+#: OptionsDialog.cpp:279 VideoFfmpeg.cpp:53 kainoteMain.cpp:1754
 msgid "Nie można wczytać opcji audio"
 msgstr "ไม่สามารถโหลดค่ากำหนดเสียง"
 
@@ -2791,7 +2791,7 @@ msgstr "โหมดตัวกรอง:"
 msgid "Funkcja"
 msgstr "ฟังก์ชัน"
 
-#: OptionsDialog.cpp:600 kainoteMain.cpp:1749
+#: OptionsDialog.cpp:600 kainoteMain.cpp:1753
 msgid "Nie można wczytać skrótów klawiszowych audio"
 msgstr "ไม่สามารถโหลดปุ่มลัดเสียง"
 
@@ -2860,7 +2860,7 @@ msgstr ""
 "การลบแฟ้มแคชเสียง"
 
 #: OptionsDialog.cpp:664 ScriptInfo.cpp:74 VideoFfmpeg.cpp:982 VideoFfmpeg.cpp:993
-#: kainoteMain.cpp:1180 stylestore.cpp:753 stylestore.cpp:754
+#: kainoteMain.cpp:1184 stylestore.cpp:753 stylestore.cpp:754
 msgid "Brak"
 msgstr "ไม่มี"
 
@@ -5942,7 +5942,7 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 msgid "Usuwanie"
 msgstr "การลบ"
 
-#: Videobox.cpp:987 kainoteMain.cpp:701 kainoteMain.cpp:717
+#: Videobox.cpp:987 kainoteMain.cpp:705 kainoteMain.cpp:721
 msgid "Wybierz plik wideo"
 msgstr "เลือกแฟ้มวิดีโอ"
 
@@ -5962,7 +5962,7 @@ msgstr "แฟ้มคำบรรยาย (*.ass),(*.sub),(*.txt)|*.ass;*.sub
 msgid "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"
 msgstr "การแทรกดับเบิล \"m\" ถูกบล็อกเนื่องจากข้อผิดพลาด Vsfilter"
 
-#: Visuals.cpp:141 kainoteMain.cpp:1036
+#: Visuals.cpp:141 kainoteMain.cpp:1040
 msgid "Nie można otworzyć napisów"
 msgstr "ไม่สามารถเปิดแฟ้มคำบรรยาย"
 
@@ -6334,11 +6334,11 @@ msgstr "ออกจากโปรแกรม"
 msgid "&Plik"
 msgstr "&แฟ้ม"
 
-#: kainoteMain.cpp:136 kainoteMain.cpp:1912
+#: kainoteMain.cpp:136 kainoteMain.cpp:1916
 msgid "&Cofnij"
 msgstr "&เลิกทำ"
 
-#: kainoteMain.cpp:138 kainoteMain.cpp:1925
+#: kainoteMain.cpp:138 kainoteMain.cpp:1929
 msgid "&Ponów"
 msgstr "&ทำซ้ำ"
 
@@ -6638,7 +6638,7 @@ msgstr "แฟ้มสคริปต์ (*.lua),(*.moon)|*.lua;*.moon;"
 msgid "Ten plik napisów nie ma dodanych żadnych skryptów"
 msgstr "คำบรรยายนี้ไม่ได้เพิ่มสคริปต์ใด ๆ"
 
-#: kainoteMain.cpp:605 kainoteMain.cpp:2179
+#: kainoteMain.cpp:605 kainoteMain.cpp:2183
 #, c-format
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
 msgstr "ไม่พบเงื่อนไขของสคริปต์ Lua ในสคริปต์ '%s'"
@@ -6651,7 +6651,7 @@ msgstr ""
 "แฟ้มคำบรรยาย (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt|วิดีโอที่มีคำบรรยาย "
 "(*.mkv)|*.mkv"
 
-#: kainoteMain.cpp:704
+#: kainoteMain.cpp:708
 msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.mpg),(*."
 "mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|Wszystkie "
@@ -6661,13 +6661,13 @@ msgstr ""
 "(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.mpg;*.mpeg;*.3gp;*.avs|แฟ้มทั้งหมด (*.*)|"
 "*.*"
 
-#: kainoteMain.cpp:720
+#: kainoteMain.cpp:724
 msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|Wszystkie "
 "pliki (*.*)|*.*"
 msgstr "แฟ้มคีย์เฟรม (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|แฟ้มทั้งหมด (*.*)|*.*"
 
-#: kainoteMain.cpp:752
+#: kainoteMain.cpp:756
 #, c-format
 msgid ""
 "Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
@@ -6676,7 +6676,7 @@ msgstr ""
 "เครื่องมือแก้ไขคำบรรยายโดย Marcin Drob ฉายยา Bakura หรือ Bjakja (bjakja7@gmail.com)\n"
 "เวอร์ชั่น %s อัพเดทวันที่ %s"
 
-#: kainoteMain.cpp:754
+#: kainoteMain.cpp:758
 msgid ""
 "Ten program powstał w celu zastąpienia dwóch programów: Bestplayera i Aegisuba.\n"
 "\n"
@@ -6684,7 +6684,7 @@ msgstr ""
 "ผมเขียนโปรแกรมนี้เพื่อมาทดแทน Bestplayer และ Aegisub\n"
 "\n"
 
-#: kainoteMain.cpp:755
+#: kainoteMain.cpp:759
 msgid ""
 "Jeśli zauważyłeś(aś) jakieś błędy bądź masz jakieś propozycje zmian lub nowych funkcji,\n"
 "możesz napisać o tym na: forum ANSI, Githubie, bądź mailowo.\n"
@@ -6694,11 +6694,11 @@ msgstr ""
 "สามารถเขียนเกี่ยวกับมันแล้วส่งให้ฉันใน Github หรืออีเมล (bjakja7@gmail.com)\n"
 "\n"
 
-#: kainoteMain.cpp:756
+#: kainoteMain.cpp:760
 msgid "Kainote zawiera w sobie części następujących projektów:\n"
 msgstr "Kainote มีบางส่วนของโครงการดังต่อไปนี้:\n"
 
-#: kainoteMain.cpp:758
+#: kainoteMain.cpp:762
 msgid ""
 "Color picker, wymuxowywanie napisów z mkv, audiobox, odwarzacz audio, automatyzacja\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
@@ -6706,31 +6706,31 @@ msgstr ""
 "ตัวหยิบสี, ถอดซับออกจากแฟ้ม MKV, ออดิโอบอกซ์, เครื่องเล่นเสียง, สคริปต์อัตโนมัติ\n"
 "และคุณสมบัติอื่น ๆ มากมายที่นำมาจาก Aegisub -\n"
 
-#: kainoteMain.cpp:770
+#: kainoteMain.cpp:774
 msgid "O Kainote"
 msgstr "เกี่ยวกับ Kainote"
 
-#: kainoteMain.cpp:775
+#: kainoteMain.cpp:779
 msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
 msgstr "ความช่วยเหลือด้านกราฟิก: (ปุ่ม, รูปภาพเพื่อช่วยเหลือ ฯลฯ ) \n"
 
-#: kainoteMain.cpp:776
+#: kainoteMain.cpp:780
 msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
 msgstr "- Kostek00 (ปุ่มสำหรับเครื่องมือภาพและเสียง)\n"
 
-#: kainoteMain.cpp:777
+#: kainoteMain.cpp:781
 msgid "- Xandros (nowe przyciski do wideo).\n"
 msgstr "- Xandros (ผู้สร้างปุ่มวิดีโอใหม่)\n"
 
-#: kainoteMain.cpp:778
+#: kainoteMain.cpp:782
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
 msgstr "- Devilkan (ไอคอนเมนูและแถบเครื่องมือ)\n"
 
-#: kainoteMain.cpp:779
+#: kainoteMain.cpp:783
 msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
 msgstr "- Zły Los (ไอคอนสำหรับการเชื่อมโยงแฟ้มและเมนู)\n"
 
-#: kainoteMain.cpp:780
+#: kainoteMain.cpp:784
 msgid ""
 "- Areki, duplex (tłumaczenie anglojęzyczne).\n"
 " \n"
@@ -6738,19 +6738,19 @@ msgstr ""
 "- Areki, duplex (แปลเป็นภาษาอังกฤษ)\n"
 " \n"
 
-#: kainoteMain.cpp:781
+#: kainoteMain.cpp:785
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
 msgstr "ผู้ทดสอบ: \n"
 
-#: kainoteMain.cpp:782
+#: kainoteMain.cpp:786
 msgid "- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
 msgstr "- Funki27 (ผู้ทดสอบ Kainote คนแรกที่มาช่วยปรับปรุง ต้องขอบคุณเขาจริงๆ\n"
 
-#: kainoteMain.cpp:783
+#: kainoteMain.cpp:787
 msgid "i najbardziej narzekający na wszystko).\n"
 msgstr "แต่ชอบบ่นไปหน่อย)\n"
 
-#: kainoteMain.cpp:784
+#: kainoteMain.cpp:788
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
@@ -6758,38 +6758,38 @@ msgstr ""
 "- Sacredus (นักแปลคนแรกที่ใช้โหมดการแปล\n"
 "ช่วยได้มากในการทดสอบ Kainote บนคอมพิวเตอร์ที่ช้า)\n"
 
-#: kainoteMain.cpp:785
+#: kainoteMain.cpp:789
 msgid "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum audio \n"
 msgstr "- Kostek00 (ผู้พบข้อบกพร่องมากมาย มีอิทธิพลอย่างมากต่อการพัฒนาสเปกตรัมเสียง\n"
 
-#: kainoteMain.cpp:786
+#: kainoteMain.cpp:790
 msgid "i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część ikon).\n"
 msgstr "และฟิลด์ข้อความหลักสร้างชุดรูปแบบที่มืดและสว่างและส่วนหนึ่งของไอคอน)\n"
 
-#: kainoteMain.cpp:787
+#: kainoteMain.cpp:791
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia wytropił już wiele crashy,\n"
 msgstr "- Devilkan (นักล่าข้อผิดพลาด เนื่องจากระบบและนิสัยของเขา เขาทำ Kainote crash บ่อยมาก\n"
 
-#: kainoteMain.cpp:788
+#: kainoteMain.cpp:792
 msgid "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych usprawnień).\n"
 msgstr "และเขามาช่วยปรับปรุงการทำงานและพัฒนาเครื่องมือเรียงพิมพ์การปรับปรุงอื่น ๆ อีกมากมาย)\n"
 
-#: kainoteMain.cpp:789
+#: kainoteMain.cpp:793
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga w debugowaniu "
 "crashy).\n"
 msgstr "- MatiasMovie (พบข้อขัดข้องบางส่วนและเสนอแนะการปรับปรุงบางอย่างช่วยแก้ไขข้อบกพร่อง)\n"
 
-#: kainoteMain.cpp:790
+#: kainoteMain.cpp:794
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
 msgstr "- mas1904 (ผู้พบข้อผิดพลาดบางอย่างและช่วยแก้ไขข้อผิดพลาด)\n"
 
-#: kainoteMain.cpp:791
+#: kainoteMain.cpp:795
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
 msgstr "- Senami (สร้างธีมใหม่และเป็นผู้พบข้อบกพร่องหลายอย่าง)\n"
 
-#: kainoteMain.cpp:792
+#: kainoteMain.cpp:796
 msgid ""
 "- Atalos (zdebugował wiele crashy).\n"
 " \n"
@@ -6797,19 +6797,19 @@ msgstr ""
 "- Athalos (ผู้ช่วยแก้ไขข้อขัดข้องหลายอย่าง)\n"
 "\n"
 
-#: kainoteMain.cpp:793
+#: kainoteMain.cpp:797
 msgid "Podziękowania także dla osób, które używają programu i zgłaszali błędy.\n"
 msgstr "ขอขอบคุณคนที่ใช้โปรแกรมนี้และรายงานข้อผิดพลาด\n"
 
-#: kainoteMain.cpp:900
+#: kainoteMain.cpp:904
 msgid "Plik napisów "
 msgstr "แฟ้มคำบรรยาย "
 
-#: kainoteMain.cpp:910
+#: kainoteMain.cpp:914
 msgid "Zapisz plik napisów"
 msgstr "บันทึกแฟ้มคำบรรยาย"
 
-#: kainoteMain.cpp:917 kainoteMain.cpp:932
+#: kainoteMain.cpp:921 kainoteMain.cpp:936
 msgid ""
 "Wybrany plik jest tylko do odczytu,\n"
 "proszę zapisać pod inną nazwą lub zmienić atrybuty pliku"
@@ -6817,57 +6817,57 @@ msgstr ""
 "แฟ้มที่เลือกเป็นแฟ้มที่อ่านได้อย่างเดียว\n"
 "โปรดบันทึกด้วยชื่ออื่นหรือเปลี่ยนแอตทริบิวต์แฟ้ม"
 
-#: kainoteMain.cpp:972
+#: kainoteMain.cpp:976
 #, c-format
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "คุณต้องการโหลดคำบรรยาย %s หรือไม่?"
 
-#: kainoteMain.cpp:1174
+#: kainoteMain.cpp:1178
 msgid "Otwórz"
 msgstr "เปิด"
 
-#: kainoteMain.cpp:1707
+#: kainoteMain.cpp:1711
 #, c-format
 msgid "Zapisać napisy o nazwie \"%s\" przed %s?"
 msgstr "ต้องการบันทึกคำบรรยาย \"%s\" ก่อน%sหรือไม่?"
 
-#: kainoteMain.cpp:1708
+#: kainoteMain.cpp:1712
 msgid "zamknięciem programu"
 msgstr "ปิดโปรแกรม"
 
-#: kainoteMain.cpp:1709
+#: kainoteMain.cpp:1713
 msgid "zamknięciem zakładki"
 msgstr "ปิดแท็บ"
 
-#: kainoteMain.cpp:1710
+#: kainoteMain.cpp:1714
 msgid "wczytaniem nowych napisów"
 msgstr "กำลังโหลดคำบรรยายใหม่"
 
-#: kainoteMain.cpp:1711
+#: kainoteMain.cpp:1715
 msgid "usunięciem napisów"
 msgstr "ลบคำบรรยาย"
 
-#: kainoteMain.cpp:1754
+#: kainoteMain.cpp:1758
 msgid "Wybierz plik audio"
 msgstr "เลือกแฟ้มเสียง"
 
-#: kainoteMain.cpp:1757
+#: kainoteMain.cpp:1761
 msgid "Pliki audio i wideo"
 msgstr "แฟ้มเสียงและวิดีโอ"
 
-#: kainoteMain.cpp:1759
+#: kainoteMain.cpp:1763
 msgid "Wszystkie pliki"
 msgstr "แฟ้มทั้งหมด"
 
-#: kainoteMain.cpp:1909
+#: kainoteMain.cpp:1913
 msgid "&Cofnij do "
 msgstr "&เลิกทำไปยัง "
 
-#: kainoteMain.cpp:1922
+#: kainoteMain.cpp:1926
 msgid "&Ponów do "
 msgstr "&ทำซ้ำไปยัง "
 
-#: kainoteMain.cpp:2153
+#: kainoteMain.cpp:2157
 #, c-format
 msgid "Skrót o nazwie '%s' nie należy do skrypru."
 msgstr "ปุ่มลัด '%s' ไม่ได้อยู่ในสคริปต์"
