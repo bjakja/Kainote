@@ -17,6 +17,7 @@
 #include "Config.h"
 #include "KaiTextCtrl.h"
 #include <wx/msw/private.h>
+#include "config.h"
 
 //wxBitmap toDisable(const wxBitmap &bmp)
 //{

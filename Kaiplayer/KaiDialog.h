@@ -15,6 +15,11 @@
 
 #pragma once
 
+#include <wx/defs.h>
+#include <wx/object.h>
+#include <wx/window.h>
+#undef Yield
+#undef CreateDialog
 #include <wx/toplevel.h>
 #include <wx/evtloop.h>
 #include <wx/sizer.h>

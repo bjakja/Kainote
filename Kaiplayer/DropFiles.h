@@ -16,18 +16,22 @@
 #pragma once
 
 #include <wx/dnd.h>
-#include <wx/wxprec.h>
+#include <wx/timer.h>
+#include <wx/arrstr.h>
 class KainoteFrame;
 
 class DragnDrop : public wxFileDropTarget
 {
     private:
     KainoteFrame* Kai;
+	wxTimer timer;
+	wxArrayString files;
+	int x, y;
     public:
     DragnDrop(KainoteFrame* kfparent);
 	virtual ~DragnDrop(){ };
-    bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
-
+    bool OnDropFiles(wxCoord posx, wxCoord posy, const wxArrayString& filenames);
+	void OnDropTimer(wxTimerEvent &evt);
 };
 
 //class DragScripts : public wxFileDropTarget

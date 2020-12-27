@@ -23,7 +23,7 @@
 #include "Styles.h"
 #include <wx/utils.h> 
 #include "EnumFactory.h"
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include "Utils.h"
 
 

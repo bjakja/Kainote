@@ -14,12 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiSlider.h"
-#include "config.h"
 #include <wx\bitmap.h>
 #include <wx\slider.h>
-#include <wx\dcmemory.h>
+#include <wx\dc.h>
 #include <wx\dcclient.h>
-#include <wx\log.h>
+#include <wx\dcmemory.h>
+#include "config.h"
+//#include <wx\log.h>
 
 KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _maxRange,
 	const wxPoint& pos, const wxSize& size, long _style)

@@ -29,7 +29,6 @@
 // Aegisub Project http://www.aegisub.org/
 
 
-#include "Config.h"
 
 #include <wx/image.h>
 #include <wx/statbox.h>
@@ -38,6 +37,7 @@
 #include <wx/gbsizer.h>
 #include <wx/event.h>
 #include <wx/tokenzr.h>
+#include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/dcscreen.h>
@@ -48,7 +48,7 @@
 #include "KainoteApp.h"
 
 #include <stdio.h>
-
+#include "Config.h"
 
 #define STATIC_BORDER_FLAG wxSTATIC_BORDER
 

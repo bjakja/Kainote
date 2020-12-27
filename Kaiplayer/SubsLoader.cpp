@@ -16,6 +16,9 @@
 #include "SubsLoader.h"
 #include "SubsGrid.h"
 #include "KaiMessageBox.h"
+#include "Utils.h"
+#include <wx/tokenzr.h>
+
 
 SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 {

@@ -15,10 +15,10 @@
 
 
 #include "KaiFrame.h"
-//#include <wx/wx.h>
-#include "config.h"
+#include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include "config.h"
 #include "kainoteApp.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>

@@ -15,8 +15,8 @@
 
 
 #pragma once
-
-#include <wx/wx.h>
+#undef CreateDialog
+#include <wx/dialog.h>
 #include "KaiGauge.h"
 #include <functional>
 #include "MappedButton.h"

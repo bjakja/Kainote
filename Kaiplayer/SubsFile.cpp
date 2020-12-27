@@ -17,6 +17,7 @@
 #include "SubsFile.h"
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
+#include "Config.h"
 
 //pamiętaj ilość elementów tablicy musi być równa ilości enumów
 //wxString 

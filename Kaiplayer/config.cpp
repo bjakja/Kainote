@@ -24,9 +24,9 @@
 #include <wx/string.h>
 #include <wx/log.h>
 #include "CsriMod.h"
-#include "Tabs.h"//<windows.h>
+#include "Tabs.h"
 #include "gitparams.h"
-#include <windows.h>
+//#include <windows.h>
 #include "ConfigConverter.h"
 #include "SubtitlesProviderManager.h"
 

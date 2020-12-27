@@ -16,12 +16,13 @@
 #pragma once
 
 #include <map>
-#include "config.h"
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
+#include <wx/object.h>
 
 class KaiTextCtrl;
 class KaiScrollbar;
+enum COLOR;
 
 class PopupList : public wxPopupWindow{
 	friend class KaiChoice;

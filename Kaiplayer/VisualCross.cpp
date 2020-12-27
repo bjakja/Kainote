@@ -150,25 +150,34 @@ void Cross::DrawLines(wxPoint point)
 	else
 		isOnVideo = true;
 
+	{
+		int w, h, fw, fh;
+		tab->Video->GetClientSize(&w, &h);
+		RECT rcRect = { 0, 0, 0, 0 };
+		if (font->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+			fw = rcRect.right - rcRect.left;
+			fh = rcRect.bottom - rcRect.top;
+		}
+		else {
+			tab->Video->GetTextExtent(coords, &fw, &fh, NULL, NULL, Options.GetFont(4));
+		}
+		int margin = fh * 0.25f;
+		w /= 2; h /= 2;
+		crossRect.top = (h > point.y) ? point.y - (margin * 2) - 2 : point.y - (margin * 2) - 2 - fh;
+		crossRect.bottom = (h > point.y) ? point.y + fh : point.y - margin;
+		crossRect.left = (w < point.x) ? point.x - fw - margin : point.x + margin;
+		crossRect.right = (w < point.x) ? point.x - margin : point.x + fw + margin;
 
-	int w, h;
-	tab->Video->GetClientSize(&w, &h);
-	w /= 2; h /= 2;
-	crossRect.top = (h > point.y) ? point.y - 12 : point.y - 40;
-	crossRect.bottom = (h > point.y) ? point.y + 23 : point.y - 5;
-	crossRect.left = (w < point.x) ? point.x - 100 : point.x + 5;
-	crossRect.right = (w < point.x) ? point.x - 5 : point.x + 100;
-
-	vectors[0].x = point.x;
-	vectors[0].y = renderer->m_BackBufferRect.top;
-	vectors[1].x = point.x;
-	vectors[1].y = renderer->m_BackBufferRect.bottom;
-	vectors[2].x = renderer->m_BackBufferRect.left;
-	vectors[2].y = point.y;
-	vectors[3].x = renderer->m_BackBufferRect.right;
-	vectors[3].y = point.y;
-	cross = true;
-
+		vectors[0].x = point.x;
+		vectors[0].y = renderer->m_BackBufferRect.top;
+		vectors[1].x = point.x;
+		vectors[1].y = renderer->m_BackBufferRect.bottom;
+		vectors[2].x = renderer->m_BackBufferRect.left;
+		vectors[2].y = point.y;
+		vectors[3].x = renderer->m_BackBufferRect.right;
+		vectors[3].y = point.y;
+		cross = true;
+	}
 	done:
 	//play and pause
 	if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){

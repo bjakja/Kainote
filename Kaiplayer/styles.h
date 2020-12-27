@@ -104,3 +104,12 @@ enum{
 	STYLE_MARGIN_VERTICAL = 1 << 20,
 	STYLE_ENCODING = 1 << 21,
 };
+
+enum {
+	ASS = 1,
+	SRT,
+	TMP,
+	MDVD,
+	MPL2,
+	FRAME = 10
+};

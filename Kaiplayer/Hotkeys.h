@@ -18,8 +18,8 @@
 #include <map>
 #include "HotkeysNaming.h"
 #include "ListControls.h"
-#include "KaiDialog.h"
 #include "EnumFactory.h"
+#include "KaiDialog.h"
 
 //Po zmianie VIDEO_PLAY_PAUSE nale¿y go zmieniæ w dshowrenderer by pauzowanie po odtwarzaniu linii zadzia³a³o
 

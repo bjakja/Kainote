@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MenuButton.h"
+#include "Config.h"
 
 MenuButton::MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos, const wxSize &size)
 	: MappedButton(parent, id, tooltip, wxBITMAP_PNG(L"ARROW_LIST_DOUBLE"), pos, size, -1, MAKE_SQUARE_BUTTON)

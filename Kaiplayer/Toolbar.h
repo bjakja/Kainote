@@ -15,8 +15,9 @@
 
 #pragma once
 
-#include <wx/wx.h>
 #include "Menu.h"
+#include <wx/window.h>
+#include <wx/dialog.h>
 #include <vector>
 
 
@@ -112,7 +113,7 @@ private:
 	void OnPaint(wxPaintEvent &event);
 	void OnScroll(wxScrollEvent& event);
 	void OnIdle(wxIdleEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
+	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	KaiToolbar *parent;
 	wxBitmap *bmp;
 	KaiScrollbar *scroll;

@@ -14,8 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiWindowResizer.h"
+#include <wx/dc.h>
+#include <wx/dcclient.h>
+#include <wx/dcmemory.h>
 #include "config.h"
-#include "wx/dcmemory.h"
 
 KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _canResize, std::function<void(int, bool)> _doResize)
 	:wxWindow(parent, -1, wxDefaultPosition, wxSize(-1, 5))

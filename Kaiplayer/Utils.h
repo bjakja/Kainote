@@ -94,15 +94,6 @@ void SetThreadName(DWORD id, LPCSTR szThreadName);
 void SetThreadName(size_t id, LPCSTR szThreadName);
 #endif
 
-enum {
-	ASS = 1,
-	SRT,
-	TMP,
-	MDVD,
-	MPL2,
-	FRAME = 10
-};
-
 
 #ifndef SAFE_DELETE
 #define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }

@@ -22,14 +22,12 @@
 
 #pragma once
 
+#include <windows.h>
 #include <wx/timer.h>
-#include <wx/sizer.h>
-#include <wx/filedlg.h>
 #include "KaiFrame.h"
 #include "Tabs.h"
 #include <vector>
 #include "TabPanel.h"
-#include "SpellChecker.h"
 #include "StyleStore.h"
 #include "FindReplaceDialog.h"
 #include "SelectLines.h"

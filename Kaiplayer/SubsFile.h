@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include "Config.h"
 #include "Styles.h"
 #include "SubsDialogue.h"
 #include "KaiDialog.h"

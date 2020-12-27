@@ -16,9 +16,11 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/window.h>
+#include <wx/timer.h>
+#include <wx/dialog.h>
 #include <vector>
-//#include <wx/process.h>
+#include <windows.h>
 
 class TabPanel;
 class SubsGrid;
@@ -113,7 +115,7 @@ private:
 	KainoteFrame *Kai;
 	wxMutex closeTabMutex;
 
-	static LRESULT CALLBACK PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam);
+	static LRESULT __stdcall PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam);
 
 	DECLARE_EVENT_TABLE()
 };

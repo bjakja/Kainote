@@ -31,18 +31,21 @@
 #include "Hotkeys.h"
 #include "FontCollector.h"
 #include "Menu.h"
-#include <wx/accel.h>
-#include <wx/dir.h>
-#include <wx/sysopt.h>
 #include "KaiTextCtrl.h"
 #include "KaiMessageBox.h"
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include "SpellChecker.h"
 #include "utils.h"
-#include <boost/locale/boundary/index.hpp>
-#include <boost/locale/boundary/segment.hpp>
-#include <boost/locale/boundary/types.hpp>
+//#include <wx/defs.h>
+#include <wx/accel.h>
+#include <wx/dir.h>
+#include <wx/sysopt.h>
+#include <wx/filedlg.h>
+
+//#include <boost/locale/boundary/index.hpp>
+//#include <boost/locale/boundary/segment.hpp>
+//#include <boost/locale/boundary/types.hpp>
 #include <boost/locale/generator.hpp>
 
 #undef IsMaximized
@@ -1903,7 +1906,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			MenuItem * eitem = EditMenu->FindItemByPosition(i);
 			if (eitem) {
 				int eid = eitem->GetId();
-				if (eid == GLOBAL_UNDO && curMenu) {
+				if (eid == GLOBAL_UNDO) {
+					if (!curMenu)
+						continue;
+
 					const wxString &undoName = tab->Grid->file->GetUndoName();
 					wxString accel = eitem->GetAccel();
 					wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;
@@ -1916,7 +1922,10 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 						eitem->label = _("&Cofnij") + accelName;
 					}
 				}
-				else if (eid == GLOBAL_REDO && curMenu) {
+				else if (eid == GLOBAL_REDO) {
+					if (!curMenu)
+						continue;
+
 					const wxString &redoName = tab->Grid->file->GetRedoName();
 					wxString accel = eitem->GetAccel();
 					wxString accelName = (accel.empty()) ? L"" : L"\t" + accel;

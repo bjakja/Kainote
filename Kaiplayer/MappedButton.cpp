@@ -16,8 +16,9 @@
 
 #include "MappedButton.h"
 #include "Config.h"
-#include "wx/dcmemory.h"
-#include "wx/dcclient.h"
+#include <wx/dc.h>
+#include <wx/dcclient.h>
+#include <wx/dcmemory.h>
 #include "GraphicsD2D.h"
 
 

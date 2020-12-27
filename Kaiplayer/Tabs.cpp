@@ -13,14 +13,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//#include <wx/graphics.h>
 #include "Tabs.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
-#include "Utils.h"
+
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)
@@ -1091,13 +1090,16 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	wxString audiopath;
 	wxString keyframespath;
 	bool hasVideoPath = false;
-	bool hasAudioPath = dontLoadAudio;
+	bool hasAudioPath = false;
 	bool hasKeyframePath = false;
 	bool found = !path.empty();
 
 	if (hasEditor) {
 		wxString subsPath = (path.empty()) ?
 			tab->SubsPath.BeforeLast(L'\\') + L"\\" : path.BeforeLast(L'\\') + L"\\";
+		audiopath = tab->Grid->GetSInfo(L"Audio File");
+		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
+		if (audiopath.StartsWith(L"?")) { audiopath = L""; }
 
 		if (loadPrompt) {
 			videopath = tab->Grid->GetSInfo(L"Video File");
@@ -1105,16 +1107,15 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 				wxFileExists(videopath.Prepend(subsPath))));
 
 			if (videopath.StartsWith(L"?dummy")) { videopath = L""; }
+
+			//fix for wxFileExists which working without full path when program run from command line
+			hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
+				wxFileExists(audiopath.Prepend(subsPath))));
+			hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
+				wxFileExists(keyframespath.Prepend(subsPath))));
 		}
-		audiopath = tab->Grid->GetSInfo(L"Audio File");
-		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
-		if (audiopath.StartsWith(L"?")) { audiopath = L""; }
-		//fix for wxFileExists which working without path when program run from command line
 		
-		hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-			wxFileExists(audiopath.Prepend(subsPath))));
-		hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
-			wxFileExists(keyframespath.Prepend(subsPath))));
+		
 
 		const wxString &videoPath = loadPrompt ? videopath : path;
 		bool sameAudioPath = audiopath == videoPath;
@@ -1194,7 +1195,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	}
 	if (found) {
 		if (!tab->Video->LoadVideo((hasVideoPath) ? videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
-			fullscreen, !hasAudioPath, (position != -1) ? isFFMS2 : -1, (position != -1))) {
+			fullscreen, !hasAudioPath && !dontLoadAudio, (position != -1) ? isFFMS2 : -1, (position != -1))) {
 			return 0;
 		}
 	}
@@ -1432,7 +1433,7 @@ int Notebook::FindPanel(TabPanel* tab, bool safe /*= true*/)
 }
 
 
-LRESULT CALLBACK Notebook::PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam)
+LRESULT __stdcall Notebook::PauseOnMinimalize(int code, WPARAM wParam, LPARAM lParam)
 {
 
 	if (code == HCBT_MINMAX){

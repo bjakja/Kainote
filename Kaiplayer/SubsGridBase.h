@@ -15,8 +15,6 @@
 
 #pragma once
 
-#include <wx/wx.h>
-
 #include "Styles.h"
 #include "SubsDialogue.h"
 #include "SubsFile.h"

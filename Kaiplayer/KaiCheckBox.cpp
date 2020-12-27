@@ -15,9 +15,11 @@
 
 
 #include "KaiCheckBox.h"
-#include <wx/dcmemory.h>
+#include <wx/dc.h>
 #include <wx/dcclient.h>
+#include <wx/dcmemory.h>
 #include "GraphicsD2D.h"
+#include "config.h"
 
 void BlueUp(wxBitmap *bmp)
 {

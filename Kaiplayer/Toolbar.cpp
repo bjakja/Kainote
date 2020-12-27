@@ -15,11 +15,10 @@
 
 
 //#include "Toolbar.h"
-#include "Config.h"
 #include "Hotkeys.h"
 #include "KainoteApp.h"
 #include "wx/utils.h"
-
+#include "Config.h"
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(thickness, -1))
@@ -649,6 +648,11 @@ void ToolbarMenu::OnIdle(wxIdleEvent& event)
 			}
 		}
 	}
+}
+
+void ToolbarMenu::OnLostCapture(wxMouseCaptureLostEvent &evt) 
+{ 
+	if (HasCapture()) { ReleaseMouse(); } 
 }
 
 void ToolbarMenu::OnScroll(wxScrollEvent& event)

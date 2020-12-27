@@ -14,9 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "KaiTreebook.h"
-#include "config.h"
-#include <wx/dcmemory.h>
+#include <wx/dc.h>
 #include <wx/dcclient.h>
+#include <wx/dcmemory.h>
+#include "config.h"
+
 
 bool Page::SetFont(const wxFont &font)
 {

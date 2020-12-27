@@ -15,11 +15,12 @@
 
 #pragma once
 
+#include <wx/window.h>
+#undef CreateDialog
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
-#include <wx/wx.h>
 #include <vector>
-//#include <windows.h>
+
 
 class GraphicsContext;
 

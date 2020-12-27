@@ -31,6 +31,7 @@
 #include "StyleChange.h"
 #include "Registry.h"
 #include "SubtitlesProviderManager.h"
+#include "SpellChecker.h"
 
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)

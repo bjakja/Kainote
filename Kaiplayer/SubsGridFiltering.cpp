@@ -15,6 +15,7 @@
 
 #include "SubsGridFiltering.h"
 #include "SubsGrid.h"
+#include "config.h"
 
 SubsGridFiltering::SubsGridFiltering(SubsGrid *_grid, int _activeLine)
 	:grid(_grid)

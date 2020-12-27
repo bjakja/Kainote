@@ -247,8 +247,8 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 							sample2 = line_length - 1;
 					}
 					else{
-						sample1 = std::max(0, maxband * y / imgheight + minband);
-						sample2 = std::min(signed(line_length - 1), maxband * (y + 1) / imgheight + minband);
+						sample1 = MAX(0, maxband * y / imgheight + minband);
+						sample2 = MIN(signed(line_length - 1), maxband * (y + 1) / imgheight + minband);
 					}
 					float maxval = 0;
 					for (int samp = sample1; samp <= sample2; samp++) {

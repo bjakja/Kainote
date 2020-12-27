@@ -15,6 +15,7 @@
 
 #include "HotkeysNaming.h"
 #include "hotkeys.h"
+#include "utils.h"
 
 HotkeysNaming::HotkeysNaming()
 {

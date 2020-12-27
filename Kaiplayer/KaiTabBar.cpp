@@ -16,6 +16,9 @@
 #include "KaiTabBar.h"
 #include "config.h"
 #include "hotkeys.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 wxDEFINE_EVENT(BEFORE_CHANGING_TAB, wxCommandEvent);
 wxDEFINE_EVENT(TAB_CHANGED, wxCommandEvent);

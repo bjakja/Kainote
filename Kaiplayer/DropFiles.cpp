@@ -16,35 +16,47 @@
 
 #include "DropFiles.h"
 #include "kainoteMain.h"
+#include <wx/event.h>
 
 DragnDrop::DragnDrop(KainoteFrame* kfparent)
 {
 	Kai = kfparent;
+	int timerId = 8989;
+	timer.SetOwner(Kai, timerId);
+	Kai->Bind(wxEVT_TIMER, [=](wxTimerEvent &evt) { OnDropTimer(evt); }, timerId);
 }
 
-bool DragnDrop::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
+bool DragnDrop::OnDropFiles(wxCoord posx, wxCoord posy, const wxArrayString& filenames)
 {
-	if(filenames.size() > 1){
-		Kai->OpenFiles(wxArrayString(filenames));
+	files = filenames;
+	x = posx;
+	y = posy;
+	timer.Start(50, true);
+	return true;
+}
+
+void DragnDrop::OnDropTimer(wxTimerEvent & evt)
+{
+	if (files.size() > 1) {
+		Kai->OpenFiles(files);
 	}
-	else if(filenames.size() > 0){
-		wxString ext = filenames[0].AfterLast(L'.').Lower();
+	else if (files.size() > 0) {
+		wxString ext = files[0].AfterLast(L'.').Lower();
 		bool isLuaScript = ext == L"lua" || ext == L"moon";
 		int w, h;
 		Kai->Tabs->GetClientSize(&w, &h);
-		if (!isLuaScript){
-			if (y >= h - Kai->Tabs->GetHeight()){
+		if (!isLuaScript) {
+			if (y >= h - Kai->Tabs->GetHeight()) {
 				int pixels;
 				int tab = Kai->Tabs->FindTab(x, &pixels);
-				if (tab < 0){ Kai->InsertTab(); }
-				else if (Kai->Tabs->iter != tab){ Kai->Tabs->ChangePage(tab); }
+				if (tab < 0) { Kai->InsertTab(); }
+				else if (Kai->Tabs->iter != tab) { Kai->Tabs->ChangePage(tab); }
 			}
-			else{
+			else {
 				int tabByPos = Kai->Tabs->GetIterByPos(wxPoint(x, y));
-				if (Kai->Tabs->iter != tabByPos){ Kai->Tabs->ChangePage(tabByPos); }
+				if (Kai->Tabs->iter != tabByPos) { Kai->Tabs->ChangePage(tabByPos); }
 			}
 		}
-		Kai->OpenFile(filenames[0]);
+		Kai->OpenFile(files[0]);
 	}
-	return true;
 }

@@ -33,8 +33,6 @@
 #include "KaiDialog.h"
 #include <wx/colour.h>
 #include <wx/bitmap.h>
-#include <wx/textctrl.h>
-#include <wx/choice.h>
 #include <wx/statbmp.h>
 #include <wx/timer.h>
 #include <vector>

@@ -36,13 +36,11 @@
 
 ///////////
 // Headers
-#include "config.h"
 #include <vector>
 #include <algorithm>
 #include <errno.h>
 #include <stdint.h>
 #include <wx/tokenzr.h>
-#include <wx/choicdlg.h>
 #include <wx/filename.h>
 #include "ProgressDialog.h"
 #include "MKVWrap.h"
@@ -52,6 +50,7 @@
 #include "OpenNWrite.h"
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
+#include "config.h"
 
 ////////////
 // Instance

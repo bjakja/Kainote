@@ -16,11 +16,11 @@
 
 #pragma once
 
-#include <wx/wx.h>
-#include <vector>
+#include <wx/timer.h>
 #include <wx/evtloop.h>
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
+#include <vector>
 #include <map>
 #include "Hotkeys.h"
 

@@ -36,7 +36,6 @@ extern "C" {
 
 #include "SubsDialogue.h"
 #include "SubsFile.h"
-#include <wx/wx.h>
 
 class AudioSpectrum;
 
@@ -71,7 +70,7 @@ namespace Auto{
 		void CheckAllowModify(); // throws an error if modification is disallowed
 
 			// keep a cursor of last accessed item to avoid walking over the entire file on every access
-		void InitScriptInfoIfNeeded();
+		//void InitScriptInfoIfNeeded();
 
 		static int ObjectIndexRead(lua_State *L);
 		static int ObjectIndexWrite(lua_State *L);

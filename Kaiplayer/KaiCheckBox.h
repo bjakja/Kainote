@@ -15,8 +15,10 @@
 
 #pragma once
 
+#include <wx/defs.h>
+#include <wx/object.h>
 #include <wx/window.h>
-#include "config.h"
+enum COLOR;
 
 class KaiCheckBox : public wxWindow
 {

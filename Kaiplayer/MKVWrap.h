@@ -39,13 +39,12 @@
 
 ///////////
 // Headers
-#include <wx/wxprec.h>
+#include <wx/string.h>
 #include <wx/zipstrm.h>
 #include <stdio.h>
 #include <map>
 #include <stdint.h>
 #include "MatroskaParser.h"
-//#include "vfr.h"
 
 
 //////////////

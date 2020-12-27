@@ -17,7 +17,8 @@
 
 #include <wx/window.h>
 #include <vector>
-#include "config.h"
+
+enum COLOR;
 
 class KaiStatusBar : public wxWindow{
 public:
