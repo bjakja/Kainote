@@ -77,7 +77,7 @@ public:
 	void DeleteRows();
 	void DeleteRow(int rw, int len = 1);
 	void DeleteText();
-	void GetUndo(bool redo, int iter = -2);
+	void DoUndo(bool redo, int iter = -2);
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash
 	//not adding it when needed cause memory leaks.
 	void InsertRows(int Row, const std::vector<Dialogue *> &RowsTable, bool AddToDestroy = false);

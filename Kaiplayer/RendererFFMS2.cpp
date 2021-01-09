@@ -103,7 +103,7 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
 	}
 
-	HR(m_MainSurface->UnlockRect(), _("Nie można oblokować bufora tekstury"));
+	HR(m_MainSurface->UnlockRect(), _("Nie można odblokować bufora tekstury"));
 
 	return true;
 }

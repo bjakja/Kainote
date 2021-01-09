@@ -2396,10 +2396,8 @@ void AudioDisplay::ChangeLine(int delta, bool block) {
 	if (line_n == 0 && delta < 0 || line_n == grid->GetCount() - 1 && delta > 0) { return; }
 	int next = grid->GetKeyFromPosition(line_n, delta);
 	// Set stuff
-	grid->SelectRow(next);
+	grid->SetActive(next);
 	grid->MakeVisible(next);
-	Edit->SetLine(next);
-
 }
 
 

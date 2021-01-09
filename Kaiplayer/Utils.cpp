@@ -1,4 +1,4 @@
-//  Copyright (c) 2017 - 2020, Marcin Drob
+ï»¿//  Copyright (c) 2017 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -187,10 +187,10 @@ BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMon
 	WinStruct<MONITORINFO> monitorinfo;
 
 	if (!GetMonitorInfo(hMonitor, &monitorinfo)) {
-		KaiLog(_("Nie mo¿na pobraæ informacji o monitorze"));
+		KaiLog(_("Nie moÅ¼na pobraÄ‡ informacji o monitorze"));
 		return TRUE;
 	}
-	//podstawowy monitor ma byæ pierwszy w tablicy
+	//podstawowy monitor ma byÄ‡ pierwszy w tablicy
 	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY) {
 		pair->first.insert(pair->first.begin(), (pair->second) ? monitorinfo.rcWork : monitorinfo.rcMonitor);
 		return TRUE;

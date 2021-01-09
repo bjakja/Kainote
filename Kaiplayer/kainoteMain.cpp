@@ -417,14 +417,14 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		}
 	}
 	else if (id == GLOBAL_UNDO){
-		tab->Grid->GetUndo(false);
+		tab->Grid->DoUndo(false);
 	}
 	else if (id == GLOBAL_REDO){
-		tab->Grid->GetUndo(true);
+		tab->Grid->DoUndo(true);
 	}
 	else if (id == GLOBAL_HISTORY){
 		tab->Grid->file->ShowHistory(this, [=](int iter){
-			tab->Grid->GetUndo(false, iter);
+			tab->Grid->DoUndo(false, iter);
 		});
 	}
 	else if (id == GLOBAL_SEARCH || id == GLOBAL_FIND_REPLACE){
@@ -635,7 +635,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(fsel)->End.mstime), false);
 	}
 	else if (id == GLOBAL_UNDO_TO_LAST_SAVE){
-		tab->Grid->GetUndo(false, tab->Grid->file->GetLastSaveIter());
+		tab->Grid->DoUndo(false, tab->Grid->file->GetLastSaveIter());
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION){
 		Tabs->LoadLastSession();

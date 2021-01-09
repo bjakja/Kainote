@@ -962,6 +962,7 @@ void SubsGridBase::UpdateUR(bool toolbar)
 	Kai->Menubar->Enable(GLOBAL_UNDO, undo);
 	Kai->Menubar->Enable(GLOBAL_REDO, _redo);
 	Kai->Menubar->Enable(GLOBAL_UNDO_TO_LAST_SAVE, file->GetActualHistoryIter() != 0 && file->GetLastSaveIter() != -1);
+	Kai->Menubar->Enable(GLOBAL_SAVE_SUBS, true);
 	if (toolbar){
 		Kai->Toolbar->UpdateId(GLOBAL_UNDO, undo);
 		Kai->Toolbar->UpdateId(GLOBAL_REDO, _redo);
@@ -976,7 +977,7 @@ bool SubsGridBase::IsModified()
 	return file->CanSave();
 }
 
-void SubsGridBase::GetUndo(bool redo, int iter)
+void SubsGridBase::DoUndo(bool redo, int iter)
 {
 	//wxMutexLocker lock(editionMutex);
 	Freeze();

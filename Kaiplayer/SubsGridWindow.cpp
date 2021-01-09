@@ -247,7 +247,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(_("Efekt"));
 				}
 				if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
-				strings.push_back(_("Linie"));
+				strings.push_back(_("Łamania"));
 				strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
 				if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
 				kol = header;
@@ -619,7 +619,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				strings.push_back(_("Efekt"));
 			}
 			if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
-			strings.push_back(_("Linie"));
+			strings.push_back(_("Łamania"));
 			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
 			if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
 			col = header;
@@ -1075,7 +1075,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 	}
 
 	if (WRAPS & cell) {
-		gc->GetTextExtent(_("Linie") + L"X", &fw, &fh);
+		gc->GetTextExtent(_("Łamania"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1241,7 +1241,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 	}
 
 	if (WRAPS & cell) {
-		dc.GetTextExtent(_("Linie") + L"X", &fw, &fh);
+		dc.GetTextExtent(_("Łamania"), &fw, &fh);
 		GridWidth[(subsFormat < SRT) ? 11 : (subsFormat != TMP) ? 4 : 2] = fw + 5;
 	}
 
@@ -1990,8 +1990,8 @@ void SubsGridWindow::MakeVisible(int rowKey)
 		delta = scdelta - maxDelta;
 		newPosition = position;
 	}
-
-	if (delta) {
+	//make it works on first line when pos = 0 and delta is negative
+	if (delta && !(newPosition == 0 && delta < 0)) {
 		ScrollTo(newPosition, false, delta);
 	}
 	else {//make sure to refresh, in some cases it causes bugs
