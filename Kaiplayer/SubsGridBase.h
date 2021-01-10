@@ -108,7 +108,7 @@ public:
 	Dialogue *CopyDialogue(size_t i, bool push = true);
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *CopyDialogueWithOffset(size_t i, int offset, bool push = true);
-	// no checks, check if value is unsure
+	// returns null when is out of range
 	Dialogue *GetDialogue(size_t i);
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *GetDialogueWithOffset(size_t i, int offset);

@@ -1034,9 +1034,9 @@ void Notebook::ChangeActive()
 {
 	wxWindow *win = FindFocus();
 	if (win && Pages[iter]->IsDescendant(win)){
-		Pages[iter]->lastFocusedWindow = win;
+		Pages[iter]->lastFocusedWindowId = win->GetId();
 	}
-	else{ Pages[iter]->lastFocusedWindow = NULL; }
+	else{ Pages[iter]->lastFocusedWindowId = 0; }
 	int tmp = iter;
 	iter = splititer;
 	splititer = tmp;

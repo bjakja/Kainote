@@ -269,10 +269,14 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	auto focusFunction = [=](wxFocusEvent &event) -> void {
 		TabPanel *tab = GetTab();
-		if (tab->lastFocusedWindow){
-			tab->lastFocusedWindow->SetFocus();
+		if (tab->lastFocusedWindowId){
+			wxWindow *win = FindWindowById(tab->lastFocusedWindowId, tab);
+			if (win) {
+				win->SetFocus();
+				return;
+			}
 		}
-		else if (tab->Grid->IsShown()){
+		if (tab->Grid->IsShown()){
 			tab->Grid->SetFocus();
 		}//test why it was disabled or fix this bug
 		else if (tab->Video->IsShown()){
@@ -1570,11 +1574,16 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 	if (!event.GetInt()){
 		//Todo: make some safe way for it, 
 		//sometimes this pointer can be deleted
-		if (cur->lastFocusedWindow != NULL){
-			cur->lastFocusedWindow->SetFocus();
+		if (cur->lastFocusedWindowId) {
+			wxWindow *win = FindWindowById(cur->lastFocusedWindowId, cur);
+			if (win) {
+				win->SetFocus();
+			}
 		}
-		else if (cur->editor){ cur->Grid->SetFocus(); }
-		else{ cur->Video->SetFocus(); }
+		if (!cur->lastFocusedWindowId) {
+			if (cur->editor) { cur->Grid->SetFocus(); }
+			else { cur->Video->SetFocus(); }
+		}
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(SHIFT_TIMES_CHANGE_VALUES_WITH_TAB)){
 			cur->ShiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->ShiftTimes);
 		}
@@ -2060,7 +2069,7 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 		TabPanel *tab = GetTab();
 		wxWindow *win = FindFocus();
 		if (win && tab->IsDescendant(win)){
-			tab->lastFocusedWindow = win;
+			tab->lastFocusedWindowId = win->GetId();
 		}
 
 	}

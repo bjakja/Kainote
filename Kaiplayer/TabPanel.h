@@ -53,7 +53,7 @@ public:
 	wxString VideoPath;
 	wxString AudioPath;
 	wxString KeyframesPath;
-	wxWindow *lastFocusedWindow = NULL;
+	int lastFocusedWindowId = 0;
 	KaiWindowResizer* windowResizer;
 private:
 

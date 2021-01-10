@@ -1991,7 +1991,7 @@ void SubsGridWindow::MakeVisible(int rowKey)
 		newPosition = position;
 	}
 	//make it works on first line when pos = 0 and delta is negative
-	if (delta && !(newPosition == 0 && delta < 0)) {
+	if (delta && !(newPosition == 0 && newPosition == scrollPosition)) {
 		ScrollTo(newPosition, false, delta);
 	}
 	else {//make sure to refresh, in some cases it causes bugs

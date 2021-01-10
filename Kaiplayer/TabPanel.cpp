@@ -231,9 +231,9 @@ bool TabPanel::Hide()
 	//Todo: check if grid is not descendant of tabpanel
 	wxWindow *win = FindFocus();
 	if (win && IsDescendant(win)){
-		lastFocusedWindow = win;
+		lastFocusedWindowId = win->GetId();
 	}
-	else{ lastFocusedWindow = NULL; }
+	else{ lastFocusedWindowId = 0; }
 	return wxWindow::Show(false);
 }
 
