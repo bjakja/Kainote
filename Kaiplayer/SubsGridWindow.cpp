@@ -1783,6 +1783,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			
 			// Set range
 			int i2 = extendRow;
+			int i11 = i1;
 			if (i2 < i1) {
 				int aux = i1;
 				i1 = i2;
@@ -1792,7 +1793,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			file->InsertSelections(i1, i2, true);
 			if (changeActive) {
 				lastActiveLine = currentLine;
-				Edit->SetLine(i2, true, true, false);
+				Edit->SetLine(i11, true, true, false);
 			}
 			MakeVisible(changeActive? currentLine : extendRow);
 		}

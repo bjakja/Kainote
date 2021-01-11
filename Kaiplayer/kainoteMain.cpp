@@ -629,14 +629,12 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Video->RefreshTime();
 	}
 	else if (id == GLOBAL_SET_VIDEO_AT_START_TIME){
-		int fsel = tab->Grid->FirstSelection();
-		if (fsel < 0){ return; }
-		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(fsel)->Start.mstime), true);
+		int curline = tab->Grid->currentLine;
+		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(curline)->Start.mstime), true);
 	}
 	else if (id == GLOBAL_SET_VIDEO_AT_END_TIME){
-		int fsel = tab->Grid->FirstSelection();
-		if (fsel < 0){ return; }
-		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(fsel)->End.mstime), false);
+		int curline = tab->Grid->currentLine;
+		tab->Video->Seek(MAX(0, tab->Grid->GetDialogue(curline)->End.mstime), false);
 	}
 	else if (id == GLOBAL_UNDO_TO_LAST_SAVE){
 		tab->Grid->DoUndo(false, tab->Grid->file->GetLastSaveIter());
