@@ -127,28 +127,31 @@ void Fullscreen::OnSize()
 
 	panel->SetSize(0, asize.y - panelsize, asize.x, panelsize);
 
-	if (oldPanelSize == panelsize){
+	wxSize toolbarSize = showToolbar->GetMinSize();
+	if (oldPanelSize == panelsize) {
 		bprev->SetPosition(wxPoint(5, toolBarHeight - 6));
 		bpause->SetPosition(wxPoint(40, toolBarHeight - 6));
 		bpline->SetPosition(wxPoint(75, toolBarHeight - 6));
 		bstop->SetPosition(wxPoint(110, toolBarHeight - 6));
 		bnext->SetPosition(wxPoint(145, toolBarHeight - 6));
-		wxSize toolbarSize = showToolbar->GetMinSize();
+		
 		showToolbar->SetSize(180, toolBarHeight - 6 + ((26 - toolbarSize.y) / 2), toolbarSize.x, toolbarSize.y);
+	}
 		mstimes->SetSize(180 + toolbarSize.x + 10, toolBarHeight - 6, 13 * toolBarHeight, toolBarHeight - 6);
 		if (vToolbar->IsShown()){
 			vToolbar->SetSize(0, buttonSection, asize.x, toolBarHeight);
 		}
-		Videolabel->SetSize(180 + toolbarSize.x + 25 + (13 * toolBarHeight), toolBarHeight - 6, asize.x - 758, toolBarHeight - 6);
-	}
-	else{
-		//mstimes->SetSize(asize.x - difSize, -1);
-		if (vToolbar->IsShown()){
-			vToolbar->SetSize(asize.x, toolBarHeight);
-		}
-		Videolabel->SetSize(asize.x - 758, toolBarHeight - 6);
-	}
-	
+		int posx = 180 + toolbarSize.x + 25 + (13 * toolBarHeight);
+		Videolabel->SetSize(posx, toolBarHeight - 6, asize.x - posx - 115, toolBarHeight - 6);
+	//}
+	//else{
+	//	//mstimes->SetSize(asize.x - difSize, -1);
+	//	if (vToolbar->IsShown()){
+	//		vToolbar->SetSize(asize.x, toolBarHeight);
+	//	}
+	//	Videolabel->SetSize(asize.x - 758, toolBarHeight - 6);
+	//}
+	//
 	vslider->SetSize(wxSize(asize.x, toolBarHeight - 8));
 	if(vc->IsDirectShow()){
 		volslider->Show(); 

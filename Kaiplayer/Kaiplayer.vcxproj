@@ -231,7 +231,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalLibraryDirectories>c:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\Hunspell\msvc\x64\Debug\libhunspell;..\Thirdparty\BaseClasses\$(Platform)\$(Configuration);..\Thirdparty\BaseClasses\x64\Release;..\Thirdparty\wxWidgets\build\msw\x64\Debug;..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;libboost_locale-vc141-mt-gd-x64-1_73.lib;libboost_regex-vc141-mt-gd-x64-1_73.lib;libboost_filesystem-vc141-mt-gd-x64-1_73.lib;libboost_system-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;libboost_locale-vc142-mt-gd-x64-1_73.lib;libboost_regex-vc142-mt-gd-x64-1_73.lib;libboost_filesystem-vc142-mt-gd-x64-1_73.lib;libboost_system-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -405,14 +405,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxjpeg.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;usp10.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxzlib.lib;wxregex.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;luaJit.lib;luaBins.lib;d3d9.lib;D3dx9.lib;ffms2_x64.lib;strmbase.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;..\Thirdparty\BaseClasses\x64\Release;M:\Program Files (x86)\Windows Kits\10\Lib\10.0.17134.0\um\x64;..\Thirdparty\wxWidgets\build\msw\x64\Release;..\Thirdparty\Hunspell\msvc\x64\Release\libhunspell;..\Thirdparty\Build\LuaBins\x64\Release;..\Thirdparty\Build\LuaJit\x64\Release;..\Thirdparty\Build\Boost\$(Platform)\Release;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x64-1_73.lib;libboost_regex-vc141-mt-x64-1_73.lib;libboost_filesystem-vc141-mt-x64-1_73.lib;libboost_system-vc141-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x64-1_73.lib;libboost_regex-vc142-mt-x64-1_73.lib;libboost_filesystem-vc142-mt-x64-1_73.lib;libboost_system-vc142-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -503,7 +503,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x64-1_73.lib;libboost_regex-vc141-mt-x64-1_73.lib;libboost_filesystem-vc141-mt-x64-1_73.lib;libboost_system-vc141-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x64-1_73.lib;libboost_regex-vc142-mt-x64-1_73.lib;libboost_filesystem-vc142-mt-x64-1_73.lib;libboost_system-vc142-mt-x64-1_73.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>

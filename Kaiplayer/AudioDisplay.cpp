@@ -947,9 +947,8 @@ void AudioDisplay::DrawTimescale() {
 				v2[1] = D3DXVECTOR2(x, h + 5);
 				d3dLine->Draw(v2, 2, timescaleText);
 				int ms = (pos / (rate / pixBounds)) % pixBounds;
-				if (otherLinesModulo && (ms % otherLinesModulo == 0))
-					drawTime(x, pos/*, &lastTextPos*/, true);
-				//lastLinePos = x;
+				if (otherLinesModulo && (ms % otherLinesModulo == 0) && pixBounds == 10)
+					drawTime(x, pos, true);
 			}
 		}
 		break;
@@ -1248,13 +1247,8 @@ void AudioDisplay::UpdateSamples() {
 		//to make not scaling with window change
 		//w to constant number for example 500
 		//spectrum posiotion have to changed that number too
-		int total = totalSamples / w1;
-		int max = 5760000 / w1;	// 2 minutes at 48 kHz maximum
-		if (total > max) total = max;
-		int min = 8;
-		if (total < min) total = min;
-		int range = total - min;
-		samples = int(range * pow(samplesPercent / 100.0, 3) + min);
+		int max = (provider->GetSampleRate() * 120) / w1;	// 2 minutes maximum
+		samples = int(max * pow(samplesPercent / 100.0, 3));
 
 		// Set position
 		int length = w1 * samples;
@@ -1386,9 +1380,14 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 void AudioDisplay::UpdateScrollbar() {
 	if (!provider) return;
 	int page = w / 12;
-	int len = provider->GetNumSamples() / samples / 12;
+	int len = (provider->GetNumSamples() / samples  / 12) + ScrollBar->GetThickness();
+	if (page > len) {
+		page = len;
+		PositionSample = 0;
+	}
 	Position = (PositionSample / samples);
 	ScrollBar->SetScrollbar(Position / 12, page, len, int(page * 0.7), true);
+	KaiLog(wxString::Format(L"pos %llu, page %i, len %i", Position, page, len));
 }
 
 

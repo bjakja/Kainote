@@ -55,12 +55,12 @@ inline wxString GetTruncateText(const wxString &textToTruncate, int width, wxWin
 	int w, h;
 	window->GetTextExtent(textToTruncate, &w, &h);
 	if (w > width){
-		int len = textToTruncate.Len() - 1;
+		size_t len = textToTruncate.length() - 1;
 		while (w > width && len > 3){
 			window->GetTextExtent(textToTruncate.SubString(0, len), &w, &h);
 			len--;
 		}
-		return textToTruncate.SubString(0, len - 2) + L"...";
+		return textToTruncate.SubString(0, len - 2i64) + L"...";
 	}
 	return textToTruncate;
 }

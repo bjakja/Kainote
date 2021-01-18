@@ -761,9 +761,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 			GetParent()->Layout();
 			m_IsOnAnotherMonitor = true;
 		}
-		else{
-			SetFocus();
-		}
+		SetFocus();
 	}
 	ChangeButtonBMP(!(GetState() == Playing));
 

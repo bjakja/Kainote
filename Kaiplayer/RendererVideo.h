@@ -200,7 +200,7 @@ private:
 	bool m_DeviceLost;
 
 	int diff;
-	char m_Grabbed;
+	char m_Grabbed = -1;
 
 	RECT m_ProgressBarRect;
 	RECT m_WindowRect;
