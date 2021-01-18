@@ -473,7 +473,7 @@ size_t SubsGridBase::GetCount()
 
 class compare { // simple comparison function
 public:
-	bool operator()(Dialogue *i, Dialogue *j) {
+	bool operator()(Dialogue *i, Dialogue *j) const{
 
 		if (i->Start.mstime != j->Start.mstime){
 			return (i->Start.mstime < j->Start.mstime);

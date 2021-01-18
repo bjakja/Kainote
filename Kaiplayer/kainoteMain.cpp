@@ -1767,7 +1767,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		if (id == GLOBAL_OPEN_AUDIO){
 			wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik audio"),
 				(tab->VideoPath != L"") ? tab->VideoPath.BeforeLast(L'\\') :
-				(videorec.size() > 0) ? subsrec[0].BeforeLast(L'\\') : L"", L"",
+				(videorec.size() > 0) ? videorec[0].BeforeLast(L'\\') : L"", L"",
 				_("Pliki audio i wideo") +
 				L" (*.wav),(*.w64),(*.flac),(*.ac3),(*.aac),(*.ogg),(*.mp3),(*.mp4),(*.m4a),(*.mkv),(*.avi)|*.wav;*.w64;*.flac;*.ac3;*.aac;*.ogg;*.mp3;*.mp4;*.m4a;*.mkv;*.avi|" +
 				_("Wszystkie pliki") + L" |*.*", wxFD_OPEN);
@@ -1962,7 +1962,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			if (sitem) {
 				int id = sitem->GetId();
 				if (id == GLOBAL_EDITOR) {
-					sitem->Enable(tab->Video->IsDirectShow());
+					sitem->Enable(tab->Video->IsDirectShow() || tab->Video->GetState() == None);
 				}
 				else if(id == ID_CONVERSION){
 					Menu* conversionMenu = sitem->GetSubMenu();
