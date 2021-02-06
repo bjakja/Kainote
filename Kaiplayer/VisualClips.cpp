@@ -468,10 +468,14 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 				}
 
 				wxString afterP1 = txt.Mid(edit->Placed.y);
-				int Mpos = -1;
+				
 				//FIXME: removing first bracket
-				if (hasP1) { Mpos = afterP1.find(L"m "); }
-				if (Mpos == -1) { Mpos = afterP1.find(L"}") + 1; }
+				int afterBracket = afterP1.find(L"}") + 1;
+				int Mpos = afterBracket;
+				if (hasP1) {
+					wxString afterP1Brakcet = afterP1.Mid(afterBracket);
+					Mpos = afterP1Brakcet.find(L"m ");
+				}
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find(L"{");
 				if (endClip == -1) {
@@ -1228,7 +1232,7 @@ void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)
 		tab->Video->Render(false);
 	}
 	else if(keyCode == L'W' || keyCode == L'S' || keyCode == L'A' || keyCode == L'D'){
-		int x = 0; int y = 0;
+		float x = 0; float y = 0;
 		float increase = (evt.ShiftDown() && Visual == VECTORDRAW)? 0.1f : 1.f;
 		switch (keyCode)
 		{
@@ -1250,7 +1254,7 @@ void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)
 
 }
 
-void DrawingAndClip::OnMoveSelected(int x, int y)
+void DrawingAndClip::OnMoveSelected(float x, float y)
 {
 	size_t psize = Points.size();
 	bool modified = false;

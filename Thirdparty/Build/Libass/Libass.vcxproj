@@ -243,10 +243,10 @@
     <ClCompile Include="libass_gdi_fontselect.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\FreeType2\FreeType2\FreeType2.vcxproj">
+    <ProjectReference Include="..\FreeType2\FreeType2.vcxproj">
       <Project>{9f3cc443-d4eb-43e6-8263-8448f731489f}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\fribidi\Fribidi\Fribidi.vcxproj">
+    <ProjectReference Include="..\Fribidi\Fribidi.vcxproj">
       <Project>{bc147feb-91cb-4626-80fe-e310273f3346}</Project>
     </ProjectReference>
     <ProjectReference Include="..\HarfBuzz\HarfBuzz.vcxproj">

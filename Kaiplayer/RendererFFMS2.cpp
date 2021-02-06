@@ -133,7 +133,11 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 			if (D3DERR_DEVICENOTRESET == hr)
 			{
 				Clear();
-				InitDX();
+				//make sure that dx is initialized 
+				//without device it crashes in SizeChanged
+				while (!InitDX()) {
+					Sleep(20);
+				}
 				if (m_Visual){
 					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 						m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);

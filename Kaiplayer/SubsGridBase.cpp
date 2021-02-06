@@ -198,7 +198,7 @@ void SubsGridBase::Convert(char type)
 {
 	if (Options.GetBool(CONVERT_SHOW_SETTINGS)){
 		OptionsDialog od(Kai, Kai);
-		od.OptionsTree->ChangeSelection(2);
+		od.OptionsTree->ChangeSelection(1);
 		od.okok->SetFocus();
 		if (od.ShowModal() == wxID_CANCEL){ return; }
 	}

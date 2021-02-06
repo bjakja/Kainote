@@ -1387,7 +1387,6 @@ void AudioDisplay::UpdateScrollbar() {
 	}
 	Position = (PositionSample / samples);
 	ScrollBar->SetScrollbar(Position / 12, page, len, int(page * 0.7), true);
-	KaiLog(wxString::Format(L"pos %llu, page %i, len %i", Position, page, len));
 }
 
 

@@ -941,6 +941,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 	//Adding pages
 	OptionsTree->AddPage(GLOBAL_EDITOR, _("Edytor"));
+	//After adding page before convert change it in function Convert in SubsGridBase.cpp!!!
 	OptionsTree->AddSubPage(ConvOpt, _("Konwersja"));
 	OptionsTree->AddSubPage(EditorAdvanced, _("Zaawansowane"));
 	OptionsTree->AddPage(Video, _("Wideo"));

@@ -299,7 +299,9 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 			if (D3DERR_DEVICENOTRESET == hr)
 			{
 				Clear(true);
-				InitDX();
+				while (!InitDX()) {
+					Sleep(20);
+				}
 				RecreateSurface();
 				if (m_Visual){
 					m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
