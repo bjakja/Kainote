@@ -33,7 +33,14 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	posY = 0;
 	scPos = 0;
 	style = _style/*|wxWANTS_CHARS*//*|wxTE_MULTILINE|wxALIGN_CENTER*/;
-	if (style & wxTE_MULTILINE){ maxSize = MAXINT; }
+	font = parent->GetFont();
+	int fw, fh;
+	GetTextExtent(L"#TWFfGH", &fw, &fh);
+	Fheight = fh;
+	wxSize newSize((size.x < 1) ? 100 : size.x, (size.y < 1) ? fh + 10 : size.y);
+
+	multiline = (style & wxTE_MULTILINE) != 0;
+	if (multiline){ maxSize = MAXINT; }
 	else{
 		style |= wxALIGN_CENTER_VERTICAL; maxSize = 1000;
 		KText.Replace(L"\r", L"");
@@ -83,8 +90,9 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 		entries[36].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
 		numEntries = 37;
 	}
-	bool processEnter = !(style & wxTE_PROCESS_ENTER) && (style & wxTE_MULTILINE);
-	if (processEnter){ entries[37].Set(wxACCEL_NORMAL, WXK_RETURN, ID_TRETURN); numEntries++; }
+	//process enter here makes dialog swollow this event
+	bool processEnter = !(style & wxTE_PROCESS_ENTER) && (multiline);
+	if (processEnter){ entries[numEntries].Set(wxACCEL_NORMAL, WXK_RETURN, ID_TRETURN); numEntries++; }
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
 	Connect(ID_TDEL, ID_TRETURN, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KaiTextCtrl::OnAccelerator);
@@ -102,11 +110,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 
 	holding = dholding = firstdhold = modified = false;
 
-	font = parent->GetFont();
-	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh);
-	Fheight = fh;
-	wxSize newSize((size.x < 1) ? 100 : size.x, (size.y < 1) ? fh + 10 : size.y);
+	
 	caret = new wxCaret(this, 1, Fheight);
 	SetCaret(caret);
 	caret->Move(3, (newSize.y - fh) / 2);
@@ -145,7 +149,7 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 	wxMutexLocker lock(mutex);
 	if (modif){ modified = modif; }
 	KText = text;
-	if (!(style & wxTE_MULTILINE)){
+	if (!multiline){
 		KText.Replace(L"\r", L"");
 		KText.Replace(L"\n", L"");
 	}
@@ -171,7 +175,7 @@ void KaiTextCtrl::AppendText(const wxString &text)
 	else{
 		KText << text;
 	}
-	if (!(style & wxTE_MULTILINE)){
+	if (!multiline){
 		KText.Replace(L"\r", L"");
 		KText.Replace(L"\n", L"");
 	}
@@ -208,7 +212,7 @@ bool KaiTextCtrl::FindStyle(size_t pos, size_t *ret, bool returnSize /*= false*/
 		if (textStyles[i].to >= pos){
 			bool ishit = (textStyles[i].from <= pos);
 			*ret = i;
-			if (ishit){ *ret--; }
+			if (ishit){ (*ret)--; }
 			return ishit;
 		}
 	}
@@ -263,8 +267,6 @@ void KaiTextCtrl::DeleteStyles(size_t textStart, size_t textEnd)
 
 void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
-
-	long multiline = (style & wxTE_MULTILINE);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
@@ -365,20 +367,20 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 		}//add here scrollbar size, or maybe in the future I need to use scrollbar width here
 		else if (widthCount > windowWidth - 12) {
 			size_t wrapsSize = wraps.size();
-			int minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
-			int j = i - 2;
+			long long minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
+			long long j = i - 2;
 			bool foundWrap = false;
 			int charDiffLength = 0;
 			//check for possible wraps else return char wrap
 			while (minChar < j) {
-				const wxUniChar &ch = KText[j];
+				const wxUniChar &ch = KText[(size_t)j];
 				if (ch == L' '/* || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')'*/) {
 					pos = (stylewrap == 1) ? ((windowWidth - (widthCount - charDiffLength)) / 2) : 
 						(stylewrap == 2) ? (windowWidth - (widthCount - charDiffLength)) - 5 : 5;
 					positioning.push_back(pos);
 					wraps.push_back(/*ch == L'{' ? j : */j + 1);
 					foundWrap = true;
-					i = j + 1;
+					i = j + 1ll;
 					break;
 				}
 				charDiffLength += fontGDISizes[ch];
@@ -387,18 +389,19 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 			if (!foundWrap) {
 				pos = (stylewrap == 1) ? ((windowWidth - widthCount) / 2) : (stylewrap == 2) ? (windowWidth - widthCount) - 5 : 5;
 				positioning.push_back(pos);
-				wraps.push_back(i - 1);
-				i--;
+				wraps.push_back((i < 1)? i : i - 1);
+				if(i < textLen - 1)
+					i--;
 			}
 			widthCount = 0;
 		}
 		i++;
 	}
-	if (wraps[wraps.size() - 1] != textLen) {
+	//if (wraps[wraps.size() - 1] != textLen) {
 		pos = (stylewrap == 1) ? (windowWidth / 2) : (stylewrap == 2) ? windowWidth - 5 : 5;
 		positioning.push_back(pos);
 		wraps.push_back(textLen);
-	}
+	//}
 }
 
 void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int currentPosition)
@@ -440,20 +443,20 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 		}
 		else if (widthCount > windowWidth - 12) {
 			size_t wrapsSize = wraps.size();
-			int minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
-			int j = i - 2;
+			long long minChar = wrapsSize ? wraps[wrapsSize - 1] : currentPosition;
+			long long j = i - 2;
 			bool foundWrap = false;
 			int charDiffLength = 0;
 			//check for possible wraps else return char wrap
 			while (minChar < j) {
-				const wxUniChar &ch = KText[j];
+				const wxUniChar &ch = KText[(size_t)j];
 				if (ch == L' '/* || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')'*/) {
 					pos = (stylewrap == 1) ? ((windowWidth - (widthCount - charDiffLength + 0.5)) / 2) :
 						(stylewrap == 2) ? (windowWidth - (widthCount - charDiffLength + 0.5)) - 5 : 5;
 					positioning.push_back(pos);
 					wraps.push_back(/*ch == L'{' ? j : */j + 1);
 					foundWrap = true;
-					i = j + 1;
+					i = j + 1ll;
 					break;
 				}
 				charDiffLength += fontSizes[ch];
@@ -463,18 +466,19 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 				pos = (stylewrap == 1) ? ((windowWidth - (widthCount + 0.5)) / 2) : 
 					(stylewrap == 2) ? (windowWidth - (widthCount + 0.5)) - 5 : 5;
 				positioning.push_back(pos);
-				wraps.push_back(i - 1);
-				i--;
+				wraps.push_back((i < 1) ? i : i - 1);
+				if (i < textLen - 1)
+					i--;
 			}
 			widthCount = 0;
 		}
 		i++;
 	}
-	if (wraps[wraps.size() - 1] != textLen) {
+	//if (wraps[wraps.size() - 1] != textLen) {
 		wraps.push_back(textLen);
 		pos = (stylewrap == 1) ? (windowWidth / 2) : (stylewrap == 2) ? windowWidth - 5 : 5;
 		positioning.push_back(pos);
-	}
+	//}
 }
 
 void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
@@ -766,7 +770,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		ContextMenu(pos);
 	}
 
-	if (event.GetWheelRotation() != 0 && (style & wxTE_MULTILINE)){
+	if (event.GetWheelRotation() != 0 && multiline){
 		if (style & SCROLL_ON_FOCUS && !HasFocus()){ event.Skip(); return; }
 		int step = 10 * event.GetWheelRotation() / event.GetWheelDelta();
 		if (step > 0 && scPos == 0){ return; }
@@ -807,14 +811,14 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 	wxPaintDC dc(this);
 	int bitmaph;
 	int bitmapw;
-	long multiline = (style & wxTE_MULTILINE);
+	size_t wrapssize = wraps.size();
 	if (multiline){
-		bitmaph = (wraps.size()*Fheight) + 4;
+		bitmaph = (wrapssize *Fheight) + 4;
 		bitmapw = w;
-		if (bitmaph > h){
+		if (bitmaph > h && (h >= (Fheight * 2) || wrapssize > 2)){
 			if (!HasScrollbar(wxVERTICAL)){
 				//CalcWrap(false);
-				bitmaph = (wraps.size()*Fheight) + 4;
+				bitmaph = (wraps.size() *Fheight) + 4;
 			}
 			int sw = 0, sh = 0;
 			int diff = h;
@@ -889,7 +893,6 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 
 	//Contsel=false;
 	//posY=2;
-	long multiline = (style & wxTE_MULTILINE);
 	int tmpPosY = posY;
 	int tmpPosX = (multiline) ? 0 : -scPos;
 	if (multiline){ tmpPosY -= scPos; }
@@ -1085,7 +1088,6 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 
 	//Contsel=false;
 	//posY=2;
-	long multiline = (style & wxTE_MULTILINE);
 	int tmpPosY = posY;
 	int tmpPosX = (multiline) ? 0 : -scPos;
 	if (multiline){ tmpPosY -= scPos; }
@@ -1264,10 +1266,10 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	int w, h, fw = 0, fh = 0;
 	double gfw = 0., gfh = 0.;
 	GetClientSize(&w, &h);
-	if (style & wxTE_MULTILINE){ pos.y += (scPos); }
-	if (!(style & wxTE_MULTILINE)){ pos.x += (scPos); }
+	if (multiline){ pos.y += (scPos); }
+	if (!multiline){ pos.x += (scPos); }
 
-	cur->y = (!(style & wxTE_MULTILINE)) ? 0 : (pos.y - posY) / Fheight;
+	cur->y = (!multiline) ? 0 : (pos.y - posY) / Fheight;
 	if (cur->y < 0 || wraps.size() < 2){ cur->y = 0; cur->x = 0; return false; }
 	if (cur->y >= (int)wraps.size() - 1){
 		cur->y = wraps.size() - 2; cur->x = wraps[wraps.size() - 2];
@@ -1495,7 +1497,7 @@ void KaiTextCtrl::Paste()
 			wxTheClipboard->GetData(data);
 			wxString whatpaste = data.GetText();
 			//whatpaste.Replace("\t"," ");
-			if (!(style & wxTE_MULTILINE)){
+			if (!multiline){
 				whatpaste.Replace(L"\n", L" ");
 				whatpaste.Replace(L"\r", L"");
 			}
@@ -1552,7 +1554,7 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	result.y = (cur.y + 1)*Fheight;
 	result.y += posY;
 
-	if (style & wxTE_MULTILINE){ result.y -= scPos; }
+	if (multiline){ result.y -= scPos; }
 	else{ result.x -= scPos; }
 
 	return result;
@@ -1624,7 +1626,6 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 {
 	wxSize size = GetClientSize();
 	wxPoint pixelPos = PosFromCursor(Cursor);
-	long multiline = style & wxTE_MULTILINE;
 	if (!multiline){
 		int moveFactor = size.x / 5;
 		if (pixelPos.x < 5){
@@ -1696,7 +1697,7 @@ bool KaiTextCtrl::SetFont(const wxFont &_font)
 {
 	font = _font;
 	int fw, fh;
-	GetTextExtent((style & wxTE_MULTILINE) != 0 ? L"#TWFfGH" : KText.empty()? L"T" : KText, &fw, &fh);
+	GetTextExtent(multiline ? L"#TWFfGH" : KText.empty()? L"T" : KText, &fw, &fh);
 	Fheight = fh;
 	wxSize minSize = GetMinSize();
 	minSize.y = fh + 10;

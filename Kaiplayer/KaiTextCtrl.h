@@ -117,12 +117,13 @@ protected:
 	bool holding;
 	bool dholding;
 	bool firstdhold;
+	bool multiline = false;
 	int Fheight;
 	int scPos;
 	int fsize;
 	int tmpstart, tmpend;
 	size_t maxSize;
-	std::vector<int> wraps;
+	std::vector<size_t> wraps;
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
 	//std::vector<int> charmap;

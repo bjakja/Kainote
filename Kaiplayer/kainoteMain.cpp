@@ -698,7 +698,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 					tab->Grid->OnMkvSubs(event);
 				}
 				else{
-					OpenFile(file);
+					OpenFile(file, false, false);
 				}
 			}
 			Thaw();

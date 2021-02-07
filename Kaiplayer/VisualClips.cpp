@@ -475,6 +475,10 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 				if (hasP1) {
 					wxString afterP1Brakcet = afterP1.Mid(afterBracket);
 					Mpos = afterP1Brakcet.find(L"m ");
+					if (Mpos == -1)
+						Mpos = afterBracket;
+					else
+						Mpos += afterBracket;
 				}
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find(L"{");

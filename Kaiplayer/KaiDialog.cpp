@@ -15,6 +15,7 @@
 
 #include "KaiDialog.h"
 #include "MappedButton.h"
+#include "KaiTextCtrl.h"
 #include "config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
@@ -164,7 +165,14 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 	}
 
 	if (key == WXK_ESCAPE || key == WXK_RETURN){
-		if (key == WXK_RETURN && IsButtonFocused()){ evt.Skip(); return; }
+		wxWindow* focused = FindFocus();
+		if (focused) {
+			if (key == WXK_RETURN && focused->IsKindOf(wxCLASSINFO(MappedButton))){ evt.Skip(); return; }
+			bool processEnter = (focused->GetWindowStyle() & wxTE_PROCESS_ENTER) != 0;
+			if (!processEnter && focused->IsKindOf(wxCLASSINFO(KaiTextCtrl))) {
+				evt.Skip(); return;
+			}
+		}
 		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, (key == WXK_ESCAPE) ? escapeId : enterId);
 		ProcessEvent(evt);
 		return;
