@@ -48,7 +48,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	bmp = NULL;
 	scPos = 0;
 	lastsel = 0;
-	lastRow = 0;
+	lastRow = -1;
 	holding = Switchlines = false;
 	sels.Add(0);
 	SetMinSize(wxSize(150, 150));
@@ -370,6 +370,7 @@ void StyleList::SetSelection(int _sel, bool reset)
 	if (sels.size() > 0){
 		scPos = MAX(0, sels[0] - 2);
 	}
+	lastRow = sels[0];
 	Refresh(false);
 	SendSelectionEvent();
 }
@@ -383,6 +384,7 @@ void StyleList::SetSelections(const wxArrayInt &_sels)
 	if (sels.size() > 0){
 		scPos = MAX(0, sels[0] - 2);
 	}
+	lastRow = sels[0];
 	Refresh(false);
 	SendSelectionEvent();
 }

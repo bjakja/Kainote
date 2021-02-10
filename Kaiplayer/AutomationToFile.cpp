@@ -895,7 +895,7 @@ namespace Auto{
 
 			}
 			else
-				nextKstart = text.Len();
+				nextKstart = text.length();
 
 			//size_t klen = tdata->value.Len() + tdata->tagName.Len();
 			kdur = wxAtoi(tdata->value);
@@ -903,8 +903,8 @@ namespace Auto{
 			if (nextKstart < 0)
 				ktext = L"";
 			else{
-				ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.Len() - 1);
-				size_t newStart = tdata->startTextPos + tdata->value.Len();
+				ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.length() - 1);
+				size_t newStart = tdata->startTextPos + tdata->value.length();
 				ktext += text.Mid(newStart, nextKstart - newStart + 1);
 				ktext.Replace(L"{}", L"");
 			}

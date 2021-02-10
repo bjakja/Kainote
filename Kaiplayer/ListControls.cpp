@@ -151,7 +151,7 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		return;
 	}
 	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1),
-		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE, validator);
+		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE | wxTE_PROCESS_ENTER, validator);
 	choiceText->Bind(wxEVT_ENTER_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this, 27789);
