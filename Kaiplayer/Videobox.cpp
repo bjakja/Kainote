@@ -1816,6 +1816,16 @@ void VideoCtrl::SetKeyFramesFileName(const wxString & fileName)
 {
 	m_KeyframesFileName = fileName;
 }
+void VideoCtrl::GetWindowSize(int* x, int* y)
+{
+	if (m_IsFullscreen) {
+		m_FullScreenWindow->GetClientSize(x, y);
+	}
+	else {
+		GetClientSize(x, y);
+	}
+}
+
 BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
 EVT_SIZE(VideoCtrl::OnSize)
 EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)

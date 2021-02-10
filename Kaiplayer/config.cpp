@@ -49,6 +49,9 @@ config::config()
 	AudioOpts = false;
 	defaultColour = wxColour();
 	InitLanguagesTable();
+	HDC dc = ::GetDC(NULL);
+	fontDPI = ::GetDeviceCaps(dc, LOGPIXELSY);
+	::ReleaseDC(NULL, dc);
 }
 
 
@@ -72,14 +75,18 @@ void config::FontsClear()
 	programFonts.clear();
 }
 
-void config::SetFontScale(float scale)
+int config::GetDPI()
 {
-	fontScale = scale;
+	return fontDPI;
 }
 
-float config::GetFontScale()
+void config::FontsRescale(int dpi)
 {
-	return fontScale;
+	for (std::map<int, wxFont*>::iterator it = programFonts.begin(); it != programFonts.end(); it++) {
+		int newPixelSize = -(int)((it->first * ((double)dpi) / 72.0) + 0.5);
+		it->second->SetPixelSize(wxSize(0, newPixelSize));
+	}
+	fontDPI = dpi;
 }
 
 wxString config::GetReleaseDate()
@@ -876,7 +883,6 @@ wxFont *config::GetFont(int offset)
 	if (!fontSize)
 		fontSize = 10;
 	fontSize += offset;//*= ((10.f + (float)offset + 0.5f) / 10.f);
-	fontSize *= fontScale;
 	wxString fontName = GetString(PROGRAM_FONT);
 	if (fontName.empty())
 		fontName = L"Tahoma";

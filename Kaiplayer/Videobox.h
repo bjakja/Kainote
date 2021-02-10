@@ -144,6 +144,7 @@ public:
 	bool IsMenuShown();
 	const wxString &GetKeyFramesFileName();
 	void SetKeyFramesFileName(const wxString &fileName);
+	void GetWindowSize(int* x, int* y);
 private:
 
 	BitmapButton* m_ButtonPreviousFile;

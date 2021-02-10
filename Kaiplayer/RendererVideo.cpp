@@ -319,8 +319,10 @@ bool RendererVideo::InitDX()
 	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
 	wxFont *font12 = Options.GetFont(4);
 	wxSize pixelSize = font12->GetPixelSize();
-	HR(D3DXCreateFont(m_D3DDevice, pixelSize.y, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
 		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, 0, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
 
 	return true;
 }
@@ -331,6 +333,7 @@ void RendererVideo::Clear(bool clearObject)
 	SAFE_RELEASE(m_BlackBarsSurface);
 	SAFE_RELEASE(m_D3DLine);
 	SAFE_RELEASE(m_D3DFont);
+	SAFE_RELEASE(m_D3DCalcFont);
 #if byvertices
 	SAFE_RELEASE(vertex);
 	SAFE_RELEASE(texture);
@@ -633,12 +636,12 @@ void RendererVideo::DrawProgressBar(const wxString &timesString)
 	m_ProgressBarTime = timesString;
 	int fw, fh;
 	RECT rcRect = { 0, 0, 0, 0 };
-	if (m_D3DFont->DrawTextW(NULL, timesString.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+	if (m_D3DCalcFont->DrawTextW(NULL, m_ProgressBarTime.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000)) {
 		fw = rcRect.right - rcRect.left;
 		fh = rcRect.bottom - rcRect.top;
 	}
 	else {
-		videoControl->GetTextExtent(timesString, &fw, &fh, NULL, NULL, Options.GetFont(4));
+		videoControl->GetTextExtent(m_ProgressBarTime, &fw, &fh, NULL, NULL, Options.GetFont(4));
 	}
 	int progresbarHeight = fh * 0.6f;
 	int margin = fh * 0.25f;

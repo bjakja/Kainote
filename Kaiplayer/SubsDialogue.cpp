@@ -315,10 +315,14 @@ void Dialogue::SetRaw(const wxString &ldial)
 					treeState = TREE_DESCRIPTION;
 				}
 			}
+			Actor.Trim(false);
+			Actor.Trim(true);
 			MarginL = wxAtoi(assdal.GetNextToken());
 			MarginR = wxAtoi(assdal.GetNextToken());
 			MarginV = wxAtoi(assdal.GetNextToken());
 			Effect = assdal.GetNextToken();
+			Effect.Trim(false);
+			Effect.Trim(true);
 			Text = ldial.Mid(assdal.GetPosition());
 			Text.Trim(false);
 			Text.Trim(true);

@@ -152,7 +152,7 @@ void Cross::DrawLines(wxPoint point)
 
 	{
 		int w, h, fw, fh;
-		tab->Video->GetClientSize(&w, &h);
+		tab->Video->GetWindowSize(&w, &h);
 		RECT rcRect = { 0, 0, 0, 0 };
 		if (font->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
 			fw = rcRect.right - rcRect.left;

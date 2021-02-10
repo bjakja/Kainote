@@ -209,6 +209,7 @@
 	CG(WINDOW_SIZE,)\
 	CG(MONITOR_POSITION,)\
 	CG(MONITOR_SIZE,)\
+	CG(DONT_SHOW_CRASH_INFO,)\
 	CG(EDITBOX_TAG_BUTTONS,)\
 	CG(EDITBOX_TAG_BUTTON_VALUE1,)\
 	CG(EDITBOX_TAG_BUTTON_VALUE2,)\
@@ -395,7 +396,7 @@ private:
 	bool ConfigNeedToConvert(const wxString & fullVersion);
 	int lastCheckedId = -1;
 	DWORD lastCheckedTime = 0;
-	float fontScale = 1.f;
+	int fontDPI = 1.f;
 public:
 	std::vector<Styles*> assstore;
 	wxString progname;
@@ -461,8 +462,8 @@ public:
 	//main value is 10 offset from 10
 	wxFont *GetFont(int offset = 0);
 	void FontsClear();
-	void SetFontScale(float scale);
-	float GetFontScale();
+	int GetDPI();
+	void FontsRescale(int dpi);
 	//wxString GetStringColor(unsigned int);
 	wxString GetStringColor(size_t optionName);
 	wxString GetReleaseDate();

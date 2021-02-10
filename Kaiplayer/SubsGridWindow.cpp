@@ -66,7 +66,8 @@ void SubsGridWindow::SetStyle()
 	if (!font.IsOk())
 		font.SetFamily(wxFONTFAMILY_SWISS);
 	font.SetWeight(wxFONTWEIGHT_NORMAL);
-	font.SetPointSize(Options.GetInt(GRID_FONT_SIZE) * Options.GetFontScale());
+	wxFont* defaultFont = Options.GetFont(Options.GetInt(GRID_FONT_SIZE) - 10);
+	font.SetPixelSize(defaultFont->GetPixelSize());
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	GridHeight = ((fh + 3) * 2) / 2;

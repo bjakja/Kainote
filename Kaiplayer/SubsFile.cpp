@@ -743,6 +743,9 @@ Styles *SubsFile::GetStyle(size_t i, const wxString &name/* = L""*/)
 			if (name == subs->styles[j]->Name){ return subs->styles[j]; }
 		}
 	}
+	if (!subs->styles.size()) {
+		AddStyle(new Styles());
+	}
 	return subs->styles[i];
 }
 
@@ -752,15 +755,15 @@ std::vector<Styles*> *SubsFile::GetStyleTable()
 }
 
 //multiplication musi być ustawione na zero, wtedy zwróci ilość multiplikacji
-size_t SubsFile::FindStyle(const wxString &name, int *multip)
+size_t SubsFile::FindStyle(const wxString &name, int *multiplication)
 {
 	size_t isfound = -1;
 	for (size_t j = 0; j < subs->styles.size(); j++)
 	{
 		if (name == subs->styles[j]->Name){
 			isfound = j;
-			if (multip){
-				*multip++;
+			if (multiplication){
+				(*multiplication)++;
 			}
 			else{ break; }
 		}

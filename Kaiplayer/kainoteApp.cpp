@@ -64,6 +64,12 @@ void seg_handler(int sig)
 	ow.FileWrite(Options.pathfull + "\\CrashInfo.txt", result);
 	Options.SaveOptions(true, false, true);
 	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
+	TabPanel* tab = Kai->GetTab();
+	wxWindow* messageWindow = NULL;
+	if (tab) {
+		messageWindow = tab->Video->GetMessageWindowParent();
+	}
+
 	Notebook::SaveLastSession(false);
 	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
 		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
@@ -71,7 +77,7 @@ void seg_handler(int sig)
 		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n") +
 		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n") + 
 		_("Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem.");
-	KaiMessageBox(Info, L"Crash", wxOK, Kai);
+	KaiMessageBox(Info, L"Crash", wxOK, (messageWindow)? messageWindow : Kai);
 	exit(1);
 }
 
@@ -139,11 +145,6 @@ bool kainoteApp::OnInit()
 	if (!m_checker->IsAnotherRunning())
 	{
 
-		signal(SIGSEGV, seg_handler);
-		std::set_terminate(std_handler);
-		//on x64 it makes not working unicode toupper tolower conversion
-		//setlocale(LC_CTYPE, "C");
-
 		wxImage::AddHandler(new wxPNGHandler);
 		wxImage::AddHandler(new wxICOHandler);
 		wxImage::AddHandler(new wxCURHandler);
@@ -187,6 +188,13 @@ bool kainoteApp::OnInit()
 				}
 			}
 		}
+
+		if (!Options.GetBool(DONT_SHOW_CRASH_INFO)) {
+			signal(SIGSEGV, seg_handler);
+			std::set_terminate(std_handler);
+		}
+		//on x64 it makes not working unicode toupper tolower conversion
+		//setlocale(LC_CTYPE, "C");
 		//locale numbers changes here cause of it is set with wxlocale, I have to change it back
 		setlocale(LC_NUMERIC, "C");
 

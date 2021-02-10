@@ -490,140 +490,141 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	}
 	//WM_DPICHANGED, used hex value cause off compatybility with win 7 that hasn't that
 	if (uMsg == 0x02E0) {
-		//int ydpi = (int)(short)HIWORD(wParam);
-		//RECT *newRect = (RECT*)lParam;
-		//wxRect newRt = wxRect(newRect->left, newRect->top, abs(newRect->right - newRect->left), abs(newRect->bottom - newRect->top));
-		//std::vector<RECT> monitors;
-		//wxRect rt = GetMonitorRect1(0, &monitors, newRt);
-		//HDC dc = ::GetDC(NULL);
-		//auto normalDPIy = ::GetDeviceCaps(dc, LOGPIXELSY);
-		//::ReleaseDC(NULL, dc);
-		//float fontScale = ((float)ydpi / (float)normalDPIy);
-		//
-		//Options.FontsClear();
-		//Options.SetFontScale(fontScale);
+		int ydpi = (int)(short)HIWORD(wParam);
+		int currentDPI = Options.GetDPI();
+		if (ydpi == currentDPI)
+			return 0;
 
-		//Notebook *tabs = Notebook::GetTabs();
-		////this case should not happen
-		////but who knows
-		//if (!tabs) {
-		//	LastMonitorRect = rt;
-		//	Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
-		//	Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
-		//	return 1;
-		//}
+		RECT *newRect = (RECT*)lParam;
+		wxRect newRt = wxRect(newRect->left, newRect->top, abs(newRect->right - newRect->left), abs(newRect->bottom - newRect->top));
+		std::vector<RECT> monitors;
+		wxRect rt = GetMonitorRect1(0, &monitors, newRt);
+		
+		float fontScale = ((float)ydpi / (float)currentDPI);
+		
+		Options.FontsRescale(ydpi);
 
-		//wxFont *font = Options.GetFont();
-		//SetFont(*font);
+		Notebook *tabs = Notebook::GetTabs();
+		//this case should not happen
+		//but who knows
+		if (!tabs) {
+			LastMonitorRect = rt;
+			Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
+			Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+			return 1;
+		}
 
-		//bool noResize = false;
-		//if ((newRt.x == rt.width / 2 || newRt.x == 0) && newRt.y == 0 && newRt.width == rt.width / 2) {
-		//	noResize = true;
-		//}
+		wxFont *font = Options.GetFont();
+		SetFont(*font);
 
-		//int sizex, sizey;
-		////Windows bug when shift win arrow is used window is shrink to display rect
-		////then event of DPI_CHANGED is sent
-		//if (fontScale <= 1.f) {
-		//	Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
-		//}
-		//else {
-		//	GetSize(&sizex, &sizey);
-		//}
-		//
-		//int vsizex, vsizey;
-		//Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
-		//int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
-		//float scalex = (float)rt.width / (float)LastMonitorRect.width;
-		//float scaley = (float)rt.height / (float)LastMonitorRect.height;
-		//if (!wasWindowsSize) {
-		//	sizex *= scalex;
-		//	sizey *= scaley;
-		//}
-		//vsizex *= scalex;
-		//vsizey *= scaley;
-		//Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
-		//Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
-		//Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
+		bool noResize = false;
+		if ((newRt.x == rt.width / 2 || newRt.x == 0) && newRt.y == 0 && newRt.width == rt.width / 2) {
+			noResize = true;
+		}
 
-		//
+		int sizex, sizey;
+		//Windows bug when shift win arrow is used window is shrink to display rect
+		//then event of DPI_CHANGED is sent
+		if (fontScale <= 1.f) {
+			Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
+		}
+		else {
+			GetSize(&sizex, &sizey);
+		}
+		
+		int vsizex, vsizey;
+		Options.GetCoords(VIDEO_WINDOW_SIZE, &vsizex, &vsizey);
+		int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
+		float scalex = (float)rt.width / (float)LastMonitorRect.width;
+		float scaley = (float)rt.height / (float)LastMonitorRect.height;
+		if (!wasWindowsSize) {
+			sizex *= scalex;
+			sizey *= scaley;
+		}
+		vsizex *= scalex;
+		vsizey *= scaley;
+		Options.SetCoords(MONITOR_SIZE, rt.width, rt.height);
+		Options.SetCoords(MONITOR_POSITION, rt.x, rt.y);
+		Options.SetInt(AUDIO_BOX_HEIGHT, audioHeight);
 
-		//for (size_t i = 0; i < tabs->Size(); i++) {
-		//	TabPanel *tab = tabs->Page(i);
-		//	wxSize minVideoSize = tab->Video->GetMinSize();
-		//	int panelHeight = tab->Video->GetPanelHeight();
-		//	minVideoSize.y -= panelHeight;
-		//	minVideoSize.x *= scalex;
-		//	minVideoSize.y *= scaley;
-		//	minVideoSize.y += panelHeight;
-		//	tab->Video->SetMinSize(minVideoSize);
-		//	tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
-		//	if (tab->Edit->ABox) {
-		//		wxSize asize = tab->Edit->ABox->GetMinSize();
-		//		asize.y *= scaley;
-		//		tab->Edit->ABox->SetMinSize(asize);
-		//		tab->Edit->BoxSizer1->Layout();
-		//	}
-		//	tab->Grid->SetStyle();
-		//	tab->Grid->RefreshColumns();
-		//	if (!tab->Video->IsShown()) {
-		//		tab->MainSizer->Layout();
-		//	}
-		//}
-		//wxRect primaryMonitorRect;
-		//wxRect secondMonitorRect; 
-		//if (monitors.size() && monitors[0].left == rt.x && monitors[0].top == rt.y) { 
-		//	primaryMonitorRect = rt;
-		//	secondMonitorRect = LastMonitorRect;
-		//} 
-		//else {
-		//	primaryMonitorRect = LastMonitorRect;
-		//	secondMonitorRect = rt;
-		//}
-		//if (noResize || IsMaximized()) {
-		//	//Options.SetCoords(WINDOW_SIZE, sizex, sizey);
-		//	Layout();
-		//	wasWindowsSize = noResize;
-		//}
-		//else if (rt.Contains(newRt)) {
-		//	int posx = rt.x + ((float)(rt.width - sizex) / 2.f),
-		//	posy = rt.y + ((float)(rt.height - sizey) / 2.f);
-		//	Options.SetCoords(WINDOW_SIZE, sizex, sizey);
-		//	if (wasWindowsSize) {
-		//		SetPosition(wxPoint(posx, posy));
-		//		Layout();
-		//		wasWindowsSize = false;
-		//	}else
-		//		SetSize(posx, posy, sizex, sizey);
-		//}
-		//else if (secondMonitorRect.x < primaryMonitorRect.x && primaryMonitorRect.y + primaryMonitorRect.height > secondMonitorRect.y) {
-		//		int posx, posy, osizex, osizey;
-		//		GetPosition(&posx, &posy);
-		//		Options.GetCoords(WINDOW_SIZE, &osizex, &osizey);
-		//		posx -= (sizex - osizex);
-		//		if (posx == -1)
-		//			posx = 0;
-		//		if (posy == -1)
-		//			posy = 0;
-		//		Options.SetCoords(WINDOW_SIZE, sizex, sizey);
-		//		if (wasWindowsSize) {
-		//			SetPosition(wxPoint(posx, posy));
-		//			Layout();
-		//			wasWindowsSize = false;
-		//		}else
-		//			SetSize(posx, posy, sizex, sizey);
-		//}
-		//else{
-		//	Options.SetCoords(WINDOW_SIZE, sizex, sizey);
-		//	if (wasWindowsSize) {
-		//		Layout();
-		//		wasWindowsSize = false;
-		//	}else
-		//		SetSize(sizex, sizey);
-		//}
-		//
-		//Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
-		//LastMonitorRect = rt;
+		
+
+		for (size_t i = 0; i < tabs->Size(); i++) {
+			TabPanel *tab = tabs->Page(i);
+			wxSize minVideoSize = tab->Video->GetMinSize();
+			int panelHeight = tab->Video->GetPanelHeight();
+			minVideoSize.y -= panelHeight;
+			minVideoSize.x *= scalex;
+			minVideoSize.y *= scaley;
+			minVideoSize.y += panelHeight;
+			tab->Video->SetMinSize(minVideoSize);
+			tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
+			if (tab->Edit->ABox) {
+				wxSize asize = tab->Edit->ABox->GetMinSize();
+				asize.y *= scaley;
+				tab->Edit->ABox->SetMinSize(asize);
+				tab->Edit->BoxSizer1->Layout();
+			}
+			tab->Grid->SetStyle();
+			tab->Grid->RefreshColumns();
+			if (!tab->Video->IsShown()) {
+				tab->MainSizer->Layout();
+			}
+		}
+		wxRect primaryMonitorRect;
+		wxRect secondMonitorRect; 
+		if (monitors.size() && monitors[0].left == rt.x && monitors[0].top == rt.y) { 
+			primaryMonitorRect = rt;
+			secondMonitorRect = LastMonitorRect;
+		} 
+		else {
+			primaryMonitorRect = LastMonitorRect;
+			secondMonitorRect = rt;
+		}
+		if (noResize || IsMaximized()) {
+			//Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+			Layout();
+			wasWindowsSize = noResize;
+		}
+		else if (rt.Contains(newRt)) {
+			int posx = rt.x + ((float)(rt.width - sizex) / 2.f),
+			posy = rt.y + ((float)(rt.height - sizey) / 2.f);
+			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+			if (wasWindowsSize) {
+				SetPosition(wxPoint(posx, posy));
+				Layout();
+				wasWindowsSize = false;
+			}else
+				SetSize(posx, posy, sizex, sizey);
+		}
+		else if (secondMonitorRect.x < primaryMonitorRect.x && primaryMonitorRect.y + primaryMonitorRect.height > secondMonitorRect.y) {
+				int posx, posy, osizex, osizey;
+				GetPosition(&posx, &posy);
+				Options.GetCoords(WINDOW_SIZE, &osizex, &osizey);
+				posx -= (sizex - osizex);
+				if (posx == -1)
+					posx = 0;
+				if (posy == -1)
+					posy = 0;
+				Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+				if (wasWindowsSize) {
+					SetPosition(wxPoint(posx, posy));
+					Layout();
+					wasWindowsSize = false;
+				}else
+					SetSize(posx, posy, sizex, sizey);
+		}
+		else{
+			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+			if (wasWindowsSize) {
+				Layout();
+				wasWindowsSize = false;
+			}else
+				SetSize(sizex, sizey);
+		}
+		
+		Options.SetCoords(VIDEO_WINDOW_SIZE, vsizex, vsizey);
+		LastMonitorRect = rt;
 	}
 	
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
