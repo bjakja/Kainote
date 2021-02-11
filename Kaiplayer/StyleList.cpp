@@ -367,10 +367,13 @@ void StyleList::SetSelection(int _sel, bool reset)
 
 	if (_sel == -1 || reset){ sels.clear(); }
 	if (_sel != -1){ sels.Add(_sel); }
-	if (sels.size() > 0){
+	if (sels.size() > 0) {
 		scPos = MAX(0, sels[0] - 2);
+		lastRow = sels[0];
 	}
-	lastRow = sels[0];
+	else
+		lastRow = 0;
+
 	Refresh(false);
 	SendSelectionEvent();
 }
@@ -381,10 +384,13 @@ void StyleList::SetSelections(const wxArrayInt &_sels)
 	for (size_t i = 0; i < _sels.size(); i++){
 		sels.push_back(_sels[i]);
 	}
-	if (sels.size() > 0){
+	if (sels.size() > 0) {
 		scPos = MAX(0, sels[0] - 2);
+		lastRow = sels[0];
 	}
-	lastRow = sels[0];
+	else
+		lastRow = 0;
+	
 	Refresh(false);
 	SendSelectionEvent();
 }

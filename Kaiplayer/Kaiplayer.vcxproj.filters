@@ -425,6 +425,9 @@
     <ClCompile Include="LineParse.cpp">
       <Filter>Source Files\Subs</Filter>
     </ClCompile>
+    <ClCompile Include="FontCatalogList.cpp">
+      <Filter>Source Files\Fonts</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -783,6 +786,9 @@
     </ClInclude>
     <ClInclude Include="LineParse.h">
       <Filter>Source Files\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCatalogList.h">
+      <Filter>Source Files\Fonts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

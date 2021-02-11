@@ -26,6 +26,7 @@
 
 //bool sortf(wxString name1,wxString name2);
 
+class FontCatalogList;
 
 class StyleChange : public wxWindow
 {
@@ -53,8 +54,9 @@ public:
 	MappedButton* btnCommit;
 	MappedButton* btnCancel;
 	KaiChoice* styleFont;
-	KaiTextCtrl *fontFilter;
+	KaiChoice* fontCatalog;
 	ToggleButton *Filter;
+	MappedButton* CatalogManage;
 	NumCtrl* alpha1;
 	NumCtrl* alpha2;
 	NumCtrl* alpha3;
@@ -104,8 +106,10 @@ private:
 	void OnCommit(wxCommandEvent& event);
 	void UpdateStyle();
 	void OnUpdatePreview(wxCommandEvent& event);
+	void ChangeCatalog(bool save = true);
+	wxArrayString * GetFontsTable(bool save = true);
 
-	void OnSetFocus(wxFocusEvent& event);
+	//void OnSetFocus(wxFocusEvent& event);
 
 	void DoTooltips();
 	void GetColorControls(MappedButton** color, NumCtrl** alpha, int numColor);
@@ -117,8 +121,9 @@ private:
 	Styles *CompareStyle = NULL;
 	AssColor lastColor;
 	wxArrayString encs;
+	wxString fontFilterText;
 	KaiDialog *SCD;
-
+	FontCatalogList* FCL = NULL;
 };
 
 
@@ -159,7 +164,10 @@ enum{
 	ID_CENCODING,
 	ID_BOK,
 	ID_BCANCEL,
-	ID_B_COMMIT
+	ID_B_COMMIT,
+	ID_FILTER,
+	ID_CATALOG_MANAGE,
+	ID_FONT_CATALOG_LIST
 };
 
 

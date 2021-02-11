@@ -2313,7 +2313,9 @@ bool TextEditor::SetFont(const wxFont &_font)
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
+	caret->SetSize(1, fh);
 	fontSizes.clear();
+	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 8;
 	CalcWrap();
 	Refresh(false);
 	return true;

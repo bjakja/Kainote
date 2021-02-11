@@ -846,9 +846,10 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 
 void StyleStore::ReloadFonts()
 {
+
 	wxArrayString *fontList = (!Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON)) ?
 		FontEnum.GetFonts(0, [](){}) :
-		FontEnum.GetFilteredFonts(0, [](){}, cc->fontFilter->GetValue());
+		FontEnum.GetFilteredFonts(0, [](){}, Options.GetString(STYLE_EDIT_FILTER_TEXT));
 	cc->styleFont->PutArray(fontList);
 	Store->Refresh(false);
 	ASSList->Refresh(false);

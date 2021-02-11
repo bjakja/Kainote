@@ -93,7 +93,7 @@ wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<vo
 	if(Fonts->size()<1){
 		EnumerateFonts(false);
 	}
-	if(client){observers[client] = func;}
+	if(client && !(observers.find(client) != observers.end())){observers[client] = func;}
 	return Fonts;
 }
 
@@ -106,7 +106,7 @@ wxArrayString *FontEnumerator::GetFilteredFonts(const wxWindow *client, std::fun
 		FilteredFontsTmp=new wxArrayString();
 		EnumerateFonts(false);
 	}
-	if(client){observers[client] = func;}
+	if(client && !(observers.find(client) != observers.end())){observers[client] = func;}
 	return FilteredFonts;
 }
 

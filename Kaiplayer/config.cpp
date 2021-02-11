@@ -887,7 +887,9 @@ wxFont *config::GetFont(int offset)
 	if (fontName.empty())
 		fontName = L"Tahoma";
 
-	wxFont *newFont = new wxFont(fontSize, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, fontName);
+	int newPixelSize = -(int)((fontSize * ((double)fontDPI) / 72.0) + 0.5);
+
+	wxFont *newFont = new wxFont(wxSize(0, newPixelSize), wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, fontName);
 	programFonts.insert(std::pair<int, wxFont*>(10 + offset, newFont));
 	return newFont;
 }

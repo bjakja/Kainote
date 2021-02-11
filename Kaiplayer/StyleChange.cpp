@@ -22,6 +22,7 @@
 #include "ColorPicker.h"
 #include "KaiStaticBoxSizer.h"
 #include "KaiMessageBox.h"
+#include "FontCatalogList.h"
 
 
 wxColour Blackorwhite(wxColour kol)
@@ -71,42 +72,35 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *fntsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *filtersizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
-	const wxString & fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
+	fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
 	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString(), KAI_FONT_LIST);
-	if (fontFilterText.IsEmpty() || !fontFilterOn){
-		styleFont->PutArray(FontEnum.GetFonts(this, [=](){
-			SS->ReloadFonts();
-		}));
-	}
-	else{
-		styleFont->PutArray(FontEnum.GetFilteredFonts(this, [=](){
-			SS->ReloadFonts();
-		}, fontFilterText));
-	}
 	fontSize = new NumCtrl(this, ID_TOUTLINE, L"32", 1, 10000, false, wxDefaultPosition, wxSize(66, -1), wxTE_PROCESS_ENTER);
-	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
-	Filter = new ToggleButton(this, 21342, _("Filtruj"));
+	FCManagement.LoadCatalogs();
+	fontCatalog = new KaiChoice(this, ID_FONT_CATALOG_LIST, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
+	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
+	fontCatalog->Insert(_("Bez katalogu"), 1);
+	fontCatalog->SetSelection(0);
+	CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE, _("Zarządzaj"));
+	Filter = new ToggleButton(this, ID_FILTER, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);
 	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent &evt){
-		wxString filter = fontFilter->GetValue();
-		bool filterOn = Filter->GetValue();
-		if (filter.IsEmpty() || !filterOn){
-			styleFont->PutArray(FontEnum.GetFonts(this, [=](){
-				SS->ReloadFonts();
-			}));
-			FontEnum.RemoveFilteredClient(this);
-		}
-		else{
-			styleFont->PutArray(FontEnum.GetFilteredFonts(this, [=](){
-				SS->ReloadFonts();
-			}, filter));
-		}
-		Options.SetString(STYLE_EDIT_FILTER_TEXT, filter);
-		Options.SetBool(STYLE_EDIT_FILTER_TEXT_ON, filterOn);
-	}, 21342);
+		ChangeCatalog(true);
+	}, ID_FILTER);
+	ChangeCatalog();
 
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		if (!FCL)
+			FCL = new FontCatalogList(this);
+
+		FCL->Show();
+		FCL->CenterOnParent();
+	}, ID_CATALOG_MANAGE);
+
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+		ChangeCatalog();
+	}, ID_FONT_CATALOG_LIST);
 	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"));
 	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"));
 	textUnderline = new KaiCheckBox(this, ID_CBOLD, _("Podkreślenie"));
@@ -114,7 +108,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	fntsizer->Add(styleFont, 4, wxEXPAND | wxALL, 2);
 	fntsizer->Add(fontSize, 1, wxEXPAND | wxALL, 2);
-	filtersizer->Add(fontFilter, 4, wxEXPAND | wxALL, 2);
+	filtersizer->Add(fontCatalog, 3, wxEXPAND | wxALL, 2);
+	filtersizer->Add(CatalogManage, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(Filter, 1, wxEXPAND | wxALL, 2);
 
 	biussizer->Add(textBold, 1, wxEXPAND | wxALL, 2);
@@ -596,6 +591,61 @@ void StyleChange::OnUpdatePreview(wxCommandEvent& event)
 	if (!block) {
 		UpdatePreview();
 	}
+}
+
+void StyleChange::ChangeCatalog(bool save)
+{
+	bool filterOn = Filter->GetValue();
+	wxArrayString* fonts = GetFontsTable(save);
+
+	int sel = fontCatalog->GetSelection();
+	if (sel == 0) {
+		styleFont->PutArray(fonts);
+	}
+	else if (sel == 1) {
+		//there is also second option, another table and adding instead deleting
+		styleFont->PutArray(fonts);
+		std::map<wxString, fontList> *map = FCManagement.GetCatalogsMap();
+		for (auto it = map->begin(); it != map->end(); it++) {
+			for (auto& font : (*it->second)) {
+				int fontpos = styleFont->FindString(font, true);
+				if (fontpos != -1)
+					styleFont->Delete(fontpos);
+			}
+		}
+	}
+	else {
+		fonts = GetFontsTable(save);
+		wxString newCatalog = fontCatalog->GetValue();
+		wxArrayString* cfonts = FCManagement.GetCatalogFonts(newCatalog);
+		styleFont->Clear();
+		if (cfonts) {
+			for (auto& font : *cfonts) {
+				styleFont->Append(font);
+			}
+		}
+	}
+	
+}
+
+wxArrayString* StyleChange::GetFontsTable(bool save)
+{
+	bool filterOn = Filter->GetValue();
+	wxArrayString* fonts;
+	if (fontFilterText.IsEmpty() || !filterOn) {
+		fonts = FontEnum.GetFonts(this, [=]() {
+			SS->ReloadFonts();
+			});
+	}
+	else {
+		fonts = FontEnum.GetFilteredFonts(this, [=]() {
+			SS->ReloadFonts();
+			}, fontFilterText);
+	}
+	if(save)
+		Options.SetBool(STYLE_EDIT_FILTER_TEXT_ON, filterOn);
+
+	return fonts;
 }
 
 bool StyleChange::Show(bool show)
