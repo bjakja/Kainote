@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"POT-Creation-Date: 2021-01-29 14:15+0700\n"
-"PO-Revision-Date: 2021-01-29 14:17+0700\n"
+"POT-Creation-Date: 2021-02-12 08:59+0700\n"
+"PO-Revision-Date: 2021-02-12 09:04+0700\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: Alphabet-Works\n"
 "Language: th_TH\n"
@@ -180,7 +180,7 @@ msgstr "ไม่สามารถกำหนดค่ามุมมองเ
 msgid "Nie można ustawić macierzy widoku"
 msgstr "ไม่สามารถกำหนดค่ามุมมองเมทริกซ์ได้"
 
-#: AudioDisplay.cpp:331 RendererDirectShow.cpp:50 RendererDirectShow.cpp:114 RendererFFMS2.cpp:584
+#: AudioDisplay.cpp:331 RendererDirectShow.cpp:50 RendererDirectShow.cpp:114 RendererFFMS2.cpp:588
 msgid "Nie można stworzyć powierzchni"
 msgstr "ไม่สามารถสร้างพื้นผิว"
 
@@ -189,11 +189,11 @@ msgid "Nie można stworzyć linii D3DX"
 msgstr "ไม่สามารถสร้างเส้น D3DX"
 
 #: AudioDisplay.cpp:338 AudioDisplay.cpp:339 AudioDisplay.cpp:340 RendererVideo.cpp:323
-#: Visuals.cpp:318
+#: RendererVideo.cpp:325 Visuals.cpp:318
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "ไม่สามารถสร้างแบบอักษร D3DX"
 
-#: AudioDisplay.cpp:342 RendererDirectShow.cpp:117 RendererFFMS2.cpp:587
+#: AudioDisplay.cpp:342 RendererDirectShow.cpp:117 RendererFFMS2.cpp:591
 msgid "Nie można stworzyć plain surface"
 msgstr "ไม่สามารถสร้างพื้นผิวธรรมดา"
 
@@ -338,8 +338,8 @@ msgstr "ลบปุ่มลัด"
 
 #: AutomationHotkeysDialog.cpp:145 AutomationProgress.cpp:285 ColorPicker.cpp:625
 #: ColorPicker.cpp:1400 EditBox.cpp:87 EditBox.cpp:1865 FontDialog.cpp:374 KaiMessageBox.cpp:78
-#: MappedButton.cpp:38 NewCatalog.cpp:42 OptionsDialog.cpp:960 ProgressDialog.cpp:39
-#: ScriptInfo.cpp:113 ShiftTimes.cpp:61 StyleChange.cpp:259 Stylelistbox.cpp:29 Stylelistbox.cpp:83
+#: MappedButton.cpp:38 NewCatalog.cpp:42 OptionsDialog.cpp:961 ProgressDialog.cpp:39
+#: ScriptInfo.cpp:113 ShiftTimes.cpp:61 StyleChange.cpp:254 Stylelistbox.cpp:29 Stylelistbox.cpp:83
 #: Stylelistbox.cpp:118 SubsFile.cpp:46 SubsGrid.cpp:1265 SubsGridDialogs.cpp:54
 #: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146
 msgid "Anuluj"
@@ -357,11 +357,11 @@ msgstr "คำบรรยาย"
 msgid "Edytor"
 msgstr "เครื่องมือแก้ไข"
 
-#: AutomationHotkeysDialog.cpp:211 Hotkeys.cpp:455 OptionsDialog.cpp:257 OptionsDialog.cpp:946
+#: AutomationHotkeysDialog.cpp:211 Hotkeys.cpp:455 OptionsDialog.cpp:257 OptionsDialog.cpp:947
 msgid "Wideo"
 msgstr "วีดีโอ"
 
-#: AutomationHotkeysDialog.cpp:211 Hotkeys.cpp:455 OptionsDialog.cpp:257 OptionsDialog.cpp:947
+#: AutomationHotkeysDialog.cpp:211 Hotkeys.cpp:455 OptionsDialog.cpp:257 OptionsDialog.cpp:948
 msgid "Audio"
 msgstr "เสียง"
 
@@ -376,8 +376,8 @@ msgstr ""
 
 #: AutomationHotkeysDialog.cpp:237 AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:480 Hotkeys.cpp:490
 #: OptionsDialog.cpp:109 OptionsDialog.cpp:118 OptionsDialog.cpp:466 SpellCheckerDialog.cpp:139
-#: SubsGrid.cpp:960 SubsGridBase.cpp:517 SubsGridBase.cpp:546 Videobox.cpp:279 VisualClips.cpp:1042
-#: kainoteApp.cpp:157 kainoteApp.cpp:194 kainoteMain.cpp:926 kainoteMain.cpp:941
+#: SubsGrid.cpp:960 SubsGridBase.cpp:517 SubsGridBase.cpp:546 Videobox.cpp:279 VisualClips.cpp:1050
+#: kainoteApp.cpp:158 kainoteApp.cpp:202 kainoteMain.cpp:926 kainoteMain.cpp:941
 #: kainoteMain.cpp:1045
 msgid "Uwaga"
 msgstr "คำเตือน"
@@ -452,7 +452,7 @@ msgid "Kolor HSV"
 msgstr "สี HSV"
 
 #: ColorPicker.cpp:527 ColorPicker.cpp:1367 EditBox.cpp:168 HotkeysNaming.cpp:90
-#: StyleChange.cpp:620 TextEditorTagList.cpp:339
+#: StyleChange.cpp:670 TextEditorTagList.cpp:339
 msgid "Kolor podstawowy"
 msgstr "สีหลัก"
 
@@ -461,12 +461,12 @@ msgid "Kolor zastępczy"
 msgstr "สีรอง"
 
 #: ColorPicker.cpp:527 ColorPicker.cpp:1367 EditBox.cpp:176 HotkeysNaming.cpp:89
-#: StyleChange.cpp:622 TextEditorTagList.cpp:341
+#: StyleChange.cpp:672 TextEditorTagList.cpp:341
 msgid "Kolor obwódki"
 msgstr "สีเส้นขอบ"
 
 #: ColorPicker.cpp:527 ColorPicker.cpp:1367 EditBox.cpp:180 HotkeysNaming.cpp:92
-#: StyleChange.cpp:623 TextEditorTagList.cpp:342
+#: StyleChange.cpp:673 TextEditorTagList.cpp:342
 msgid "Kolor cienia"
 msgstr "สีเงา"
 
@@ -562,23 +562,23 @@ msgstr "บันทึกแท็ก"
 msgid "Wybór czcionki"
 msgstr "เลือกแบบอักษร"
 
-#: EditBox.cpp:172 HotkeysNaming.cpp:91 StyleChange.cpp:621
+#: EditBox.cpp:172 HotkeysNaming.cpp:91 StyleChange.cpp:671
 msgid "Kolor zastępczy do karaoke"
 msgstr "สีรองใช้สำหรับคาราโอเกะ"
 
-#: EditBox.cpp:184 FontDialog.cpp:364 StyleChange.cpp:110 StyleChange.cpp:616
+#: EditBox.cpp:184 FontDialog.cpp:364 StyleChange.cpp:104 StyleChange.cpp:666
 msgid "Pogrubienie"
 msgstr "ตัวหนา"
 
-#: EditBox.cpp:187 StyleChange.cpp:617
+#: EditBox.cpp:187 StyleChange.cpp:667
 msgid "Pochylenie"
 msgstr "ตัวเอียง"
 
-#: EditBox.cpp:190 FontDialog.cpp:368 HotkeysNaming.cpp:95 StyleChange.cpp:112 StyleChange.cpp:618
+#: EditBox.cpp:190 FontDialog.cpp:368 HotkeysNaming.cpp:95 StyleChange.cpp:106 StyleChange.cpp:668
 msgid "Podkreślenie"
 msgstr "ขีดเส้นใต้"
 
-#: EditBox.cpp:193 FontDialog.cpp:370 HotkeysNaming.cpp:94 StyleChange.cpp:113 StyleChange.cpp:619
+#: EditBox.cpp:193 FontDialog.cpp:370 HotkeysNaming.cpp:94 StyleChange.cpp:107 StyleChange.cpp:669
 msgid "Przekreślenie"
 msgstr "ขีดฆ่า"
 
@@ -631,13 +631,13 @@ msgid "Komentarz"
 msgstr "ความคิดเห็น"
 
 #: EditBox.cpp:282 FindReplaceDialog.cpp:128 SelectLines.cpp:69 SubsGrid.cpp:431 SubsGrid.cpp:536
-#: SubsGridWindow.cpp:243 SubsGridWindow.cpp:615 SubsGridWindow.cpp:1053 SubsGridWindow.cpp:1219
+#: SubsGridWindow.cpp:244 SubsGridWindow.cpp:616 SubsGridWindow.cpp:1054 SubsGridWindow.cpp:1220
 #: kainoteMain.cpp:151
 msgid "Aktor"
 msgstr "แอคเตอร์"
 
 #: EditBox.cpp:288 FindReplaceDialog.cpp:131 SelectLines.cpp:70 SubsGrid.cpp:432 SubsGrid.cpp:537
-#: SubsGridWindow.cpp:247 SubsGridWindow.cpp:619 SubsGridWindow.cpp:1066 SubsGridWindow.cpp:1232
+#: SubsGridWindow.cpp:248 SubsGridWindow.cpp:620 SubsGridWindow.cpp:1067 SubsGridWindow.cpp:1233
 #: kainoteMain.cpp:152
 msgid "Efekt"
 msgstr "เอฟเฟกต์"
@@ -821,12 +821,12 @@ msgid "W polu"
 msgstr "ประเภท"
 
 #: FindReplaceDialog.cpp:117 SelectLines.cpp:67 SubsGrid.cpp:429 SubsGrid.cpp:537
-#: SubsGridWindow.cpp:251 SubsGridWindow.cpp:623
+#: SubsGridWindow.cpp:252 SubsGridWindow.cpp:624
 msgid "Tekst"
 msgstr "ข้อความ"
 
 #: FindReplaceDialog.cpp:122 SelectLines.cpp:68 SubsGrid.cpp:431 SubsGrid.cpp:536
-#: SubsGridWindow.cpp:242 SubsGridWindow.cpp:614 SubsGridWindow.cpp:1047 SubsGridWindow.cpp:1213
+#: SubsGridWindow.cpp:243 SubsGridWindow.cpp:615 SubsGridWindow.cpp:1048 SubsGridWindow.cpp:1214
 msgid "Styl"
 msgstr "สไตล์"
 
@@ -907,7 +907,7 @@ msgstr "จากที่เลือกอยู่"
 msgid "Znajdź i zamień"
 msgstr "ค้นหาและแทนที่"
 
-#: FindReplaceResultsDialog.cpp:22 MispellReplacerDialog.cpp:190
+#: FindReplaceResultsDialog.cpp:22 FontCatalogList.cpp:31 MispellReplacerDialog.cpp:190
 msgid "Wyniki szukania"
 msgstr "ผลการค้นหา"
 
@@ -929,6 +929,31 @@ msgstr "แทนที่"
 #, c-format
 msgid "Linia %i: "
 msgstr "บรรทัด %i: "
+
+#: FontCatalogList.cpp:35 TextEditorTagList.cpp:369
+msgid "Nazwa czcionki"
+msgstr "ชื่อแบบอักษร"
+
+#: FontCatalogList.cpp:36
+msgid "Przykład"
+msgstr "ตัวอย่าง"
+
+#: FontCatalogList.cpp:37
+msgid "Katalog"
+msgstr "แคตตาล็อก"
+
+#: FontCatalogList.cpp:41
+msgid "Dodaj katalog"
+msgstr "เพิ่มแคตตาล็อก"
+
+#: FontCatalogList.cpp:42
+msgid "Usuń katalog"
+msgstr "ลบแคตตาล็อก"
+
+#: FontCatalogList.cpp:338
+#, c-format
+msgid "Nie można dodać czcionki %s"
+msgstr "ไม่สามารถเพิ่มแบบอักษร %s"
 
 #: FontCollector.cpp:99
 msgid "W stylach:\n"
@@ -1280,7 +1305,7 @@ msgstr ""
 msgid "Wybierz czcionkę"
 msgstr "เลือกแบบอักษร"
 
-#: FontDialog.cpp:349 StyleChange.cpp:614
+#: FontDialog.cpp:349 StyleChange.cpp:664
 msgid "Czcionka"
 msgstr "แบบอักษร"
 
@@ -1288,7 +1313,7 @@ msgstr "แบบอักษร"
 msgid "Podgląd"
 msgstr "ตัวอย่าง"
 
-#: FontDialog.cpp:366 StyleChange.cpp:111
+#: FontDialog.cpp:366 StyleChange.cpp:105
 msgid "Kursywa"
 msgstr "ตัวเอียง"
 
@@ -1897,7 +1922,7 @@ msgstr "ไปยังคีย์เฟรมก่อนหน้า"
 msgid "Przejdź do następnej klatki kluczowej"
 msgstr "ไปยังคีย์เฟรมถัดไป"
 
-#: HotkeysNaming.cpp:151 StyleChange.cpp:89 SubsGrid.cpp:169
+#: HotkeysNaming.cpp:151 StyleChange.cpp:85 SubsGrid.cpp:169
 msgid "Filtruj"
 msgstr "ตัวกรอง"
 
@@ -2145,11 +2170,11 @@ msgstr "ล้างค่าสไตล์ของแฟ้ม ASS"
 msgid "Popraw drobne błędy (eksperymentalne)"
 msgstr "เครื่องมือแทนที่หลายค่า (ขั้นทดลอง)"
 
-#: KaiListCtrl.cpp:110 KaiTextCtrl.cpp:1409 MyTextEditor.cpp:1799
+#: KaiListCtrl.cpp:110 KaiTextCtrl.cpp:1411 MyTextEditor.cpp:1799
 msgid "&Kopiuj"
 msgstr "&คัดลอก"
 
-#: KaiListCtrl.cpp:111 KaiTextCtrl.cpp:1411 MyTextEditor.cpp:1801
+#: KaiListCtrl.cpp:111 KaiTextCtrl.cpp:1413 MyTextEditor.cpp:1801
 msgid "&Wklej"
 msgstr "&วาง"
 
@@ -2173,15 +2198,15 @@ msgstr "ไม่"
 msgid "Pomoc"
 msgstr "ช่วยเหลือ"
 
-#: KaiTextCtrl.cpp:1410 MyTextEditor.cpp:1800
+#: KaiTextCtrl.cpp:1412 MyTextEditor.cpp:1800
 msgid "Wy&tnij"
 msgstr "ตั&ด"
 
-#: KaiTextCtrl.cpp:1416 MyTextEditor.cpp:1806
+#: KaiTextCtrl.cpp:1418 MyTextEditor.cpp:1806
 msgid "Szukaj zaznaczonej frazy w Google"
 msgstr "ค้นหาที่เลือกใน Google"
 
-#: KaiTextCtrl.cpp:1418 MyTextEditor.cpp:1830
+#: KaiTextCtrl.cpp:1420 MyTextEditor.cpp:1830
 msgid "&Usuń"
 msgstr "&ลบ"
 
@@ -2218,7 +2243,7 @@ msgstr "ข้อผิดพลาด Zlib: %s"
 msgid "Odczyt napisów z pliku Matroska."
 msgstr "กำลังโหลดคำบรรยายจากแฟ้ม Matroska"
 
-#: MappedButton.cpp:39 OptionsDialog.cpp:959 StyleChange.cpp:258
+#: MappedButton.cpp:39 OptionsDialog.cpp:960 StyleChange.cpp:253
 msgid "Zastosuj"
 msgstr "นำไปใช้"
 
@@ -3486,75 +3511,75 @@ msgstr "ชื่อ"
 msgid "Kolor"
 msgstr "สี"
 
-#: OptionsDialog.cpp:898 OptionsDialog.cpp:1150
+#: OptionsDialog.cpp:898 OptionsDialog.cpp:1151
 msgid "Napisy ASS"
 msgstr "คำบรรยาย ASS"
 
-#: OptionsDialog.cpp:898 OptionsDialog.cpp:1150
+#: OptionsDialog.cpp:898 OptionsDialog.cpp:1151
 msgid "Napisy SSA"
 msgstr "คำบรรยาย SSA"
 
-#: OptionsDialog.cpp:898 OptionsDialog.cpp:1150
+#: OptionsDialog.cpp:898 OptionsDialog.cpp:1151
 msgid "Napisy SRT"
 msgstr "คำบรรยาย SRT"
 
-#: OptionsDialog.cpp:898 OptionsDialog.cpp:1150
+#: OptionsDialog.cpp:898 OptionsDialog.cpp:1151
 msgid "Napisy SUB"
 msgstr "คำบรรยาย SUB"
 
-#: OptionsDialog.cpp:899 OptionsDialog.cpp:1151
+#: OptionsDialog.cpp:899 OptionsDialog.cpp:1152
 msgid "Napisy TXT"
 msgstr "คำบรรยาย TXT"
 
-#: OptionsDialog.cpp:899 OptionsDialog.cpp:1151
+#: OptionsDialog.cpp:899 OptionsDialog.cpp:1152
 msgid "Wideo MKV"
 msgstr "วิดีโอ MKV"
 
-#: OptionsDialog.cpp:899 OptionsDialog.cpp:1151
+#: OptionsDialog.cpp:899 OptionsDialog.cpp:1152
 msgid "Wideo MP4"
 msgstr "วิดีโอ MP4"
 
-#: OptionsDialog.cpp:899 OptionsDialog.cpp:1151
+#: OptionsDialog.cpp:899 OptionsDialog.cpp:1152
 msgid "Wideo AVI"
 msgstr "วิดีโอ AVI"
 
-#: OptionsDialog.cpp:899 OptionsDialog.cpp:1151
+#: OptionsDialog.cpp:899 OptionsDialog.cpp:1152
 msgid "Wideo OGM"
 msgstr "วิดีโอ OGM"
 
-#: OptionsDialog.cpp:900 OptionsDialog.cpp:1152
+#: OptionsDialog.cpp:900 OptionsDialog.cpp:1153
 msgid "Wideo WMV"
 msgstr "วิดีโอ WMV"
 
-#: OptionsDialog.cpp:900 OptionsDialog.cpp:1152
+#: OptionsDialog.cpp:900 OptionsDialog.cpp:1153
 msgid "Wideo ASF"
 msgstr "วิดีโอ ASF"
 
-#: OptionsDialog.cpp:900 OptionsDialog.cpp:1152
+#: OptionsDialog.cpp:900 OptionsDialog.cpp:1153
 msgid "Wideo RMVB"
 msgstr "วิดีโอ RMVB"
 
-#: OptionsDialog.cpp:900 OptionsDialog.cpp:1152
+#: OptionsDialog.cpp:900 OptionsDialog.cpp:1153
 msgid "Wideo RM"
 msgstr "วิดีโอ RM"
 
-#: OptionsDialog.cpp:900 OptionsDialog.cpp:1152
+#: OptionsDialog.cpp:900 OptionsDialog.cpp:1153
 msgid "Wideo 3GP"
 msgstr "วิดีโอ 3GP"
 
-#: OptionsDialog.cpp:901 OptionsDialog.cpp:1153
+#: OptionsDialog.cpp:901 OptionsDialog.cpp:1154
 msgid "Wideo MPG"
 msgstr "วิดีโอ MPG"
 
-#: OptionsDialog.cpp:901 OptionsDialog.cpp:1153
+#: OptionsDialog.cpp:901 OptionsDialog.cpp:1154
 msgid "Wideo MPEG"
 msgstr "วิดีโอ MPEG"
 
-#: OptionsDialog.cpp:901 OptionsDialog.cpp:1153
+#: OptionsDialog.cpp:901 OptionsDialog.cpp:1154
 msgid "Wideo TS"
 msgstr "วิดีโอ TS"
 
-#: OptionsDialog.cpp:901 OptionsDialog.cpp:1153
+#: OptionsDialog.cpp:901 OptionsDialog.cpp:1154
 msgid "Wideo M2TS"
 msgstr "วิดีโอ M2TS"
 
@@ -3583,31 +3608,31 @@ msgstr "เลือกวิดีโอ"
 msgid "Odznacz wszystko"
 msgstr "ยกเลิกการเลือกทั้งหมด"
 
-#: OptionsDialog.cpp:944 kainoteMain.cpp:214
+#: OptionsDialog.cpp:945 kainoteMain.cpp:214
 msgid "Konwersja"
 msgstr "ตัวแปร"
 
-#: OptionsDialog.cpp:945 OptionsDialog.cpp:948
+#: OptionsDialog.cpp:946 OptionsDialog.cpp:949
 msgid "Zaawansowane"
 msgstr "ขั้นสูง"
 
-#: OptionsDialog.cpp:949
+#: OptionsDialog.cpp:950
 msgid "Motywy"
 msgstr "ชุดรูปแบบ"
 
-#: OptionsDialog.cpp:950
+#: OptionsDialog.cpp:951
 msgid "Skróty klawiszowe"
 msgstr "ปุ่มลัด"
 
-#: OptionsDialog.cpp:951
+#: OptionsDialog.cpp:952
 msgid "Skojarzenia"
 msgstr "ความสัมพันธ์"
 
-#: OptionsDialog.cpp:952
+#: OptionsDialog.cpp:953
 msgid "Właściwości napisów"
 msgstr "คุณสมบัติของคำบรรยาย"
 
-#: OptionsDialog.cpp:961
+#: OptionsDialog.cpp:962
 msgid "Ustaw domyślne"
 msgstr "คืนค่าเริ่มต้น"
 
@@ -3705,7 +3730,7 @@ msgstr "ไม่สามารถปลดล็อคการบัฟเฟ
 msgid "Nie można odblokować bufora tekstury"
 msgstr "ไม่สามารถปลดล็อคการบัฟเฟอร์พื้นผิว"
 
-#: RendererFFMS2.cpp:154
+#: RendererFFMS2.cpp:158
 msgid "Nie można nałożyć powierzchni na siebie"
 msgstr "ไม่สามารถใช้พื้นผิวได้"
 
@@ -3955,8 +3980,8 @@ msgstr "เลื่อนตามวิดีโอ / เสียง"
 msgid "Początek"
 msgstr "เริ่มต้น"
 
-#: ShiftTimes.cpp:313 SubsGridWindow.cpp:239 SubsGridWindow.cpp:611 SubsGridWindow.cpp:1034
-#: SubsGridWindow.cpp:1041 SubsGridWindow.cpp:1200 SubsGridWindow.cpp:1207
+#: ShiftTimes.cpp:313 SubsGridWindow.cpp:240 SubsGridWindow.cpp:612 SubsGridWindow.cpp:1035
+#: SubsGridWindow.cpp:1042 SubsGridWindow.cpp:1201 SubsGridWindow.cpp:1208
 msgid "Koniec"
 msgstr "สิ้นสุด"
 
@@ -4252,283 +4277,295 @@ msgstr "ไม่พบข้อผิดพลาดการสะกดแล
 msgid "Słowa dodane do słownika"
 msgstr "คำที่เพิ่มลงในพจนานุกรม"
 
-#: StyleChange.cpp:46
+#: StyleChange.cpp:47
 msgid "Edycja Stylu"
 msgstr "แก้ไขสไตล์"
 
-#: StyleChange.cpp:63
+#: StyleChange.cpp:64
 msgid "Nazwa stylu:"
 msgstr "ชื่อสไตล์:"
 
-#: StyleChange.cpp:70
+#: StyleChange.cpp:71
 msgid "Czcionka i rozmiar:"
 msgstr "แบบอักษรและขนาด:"
 
-#: StyleChange.cpp:90
+#: StyleChange.cpp:81
+msgid "Wszystkie czcionki"
+msgstr "แบบอักษรทั้งหมด"
+
+#: StyleChange.cpp:82
+msgid "Bez katalogu"
+msgstr "ไม่มีแคตตาล็อก"
+
+#: StyleChange.cpp:84
+msgid "Zarządzaj"
+msgstr "จัดการ"
+
+#: StyleChange.cpp:86
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "กรองแบบอักษรเพื่อให้มีอักขระที่ป้อน"
 
-#: StyleChange.cpp:129
+#: StyleChange.cpp:124
 msgid "Kolory i przezroczystość:"
 msgstr "สีและความโปร่งใส:"
 
-#: StyleChange.cpp:133
+#: StyleChange.cpp:128
 msgid "Pierwszy"
 msgstr "หลัก"
 
-#: StyleChange.cpp:135
+#: StyleChange.cpp:130
 msgid "Drugi"
 msgstr "รอง"
 
-#: StyleChange.cpp:137
+#: StyleChange.cpp:132
 msgid "Obwódka"
 msgstr "ขอบ"
 
-#: StyleChange.cpp:139
+#: StyleChange.cpp:134
 msgid "Cień"
 msgstr "เงา"
 
-#: StyleChange.cpp:159
+#: StyleChange.cpp:154
 msgid "Obwódka:"
 msgstr "ขอบ:"
 
-#: StyleChange.cpp:159
+#: StyleChange.cpp:154
 msgid "Cień:"
 msgstr "เงา:"
 
-#: StyleChange.cpp:159
+#: StyleChange.cpp:154
 msgid "Skala X:"
 msgstr "ขนาดแกน X:"
 
-#: StyleChange.cpp:159
+#: StyleChange.cpp:154
 msgid "Skala Y:"
 msgstr "ขนาดแกน Y:"
 
-#: StyleChange.cpp:174
+#: StyleChange.cpp:169
 msgid "Kąt:"
 msgstr "หมุน:"
 
-#: StyleChange.cpp:174
+#: StyleChange.cpp:169
 msgid "Odstępy:"
 msgstr "ระยะห่าง:"
 
-#: StyleChange.cpp:174
+#: StyleChange.cpp:169
 msgid "Typ obwódki:"
 msgstr "ประเภทขอบ:"
 
-#: StyleChange.cpp:179
+#: StyleChange.cpp:174
 msgid "Prost. obw."
 msgstr "กล่องทึบแสง"
 
-#: StyleChange.cpp:184
+#: StyleChange.cpp:179
 msgid "Margines lewy:"
 msgstr "ระยะขอบซ้าย:"
 
-#: StyleChange.cpp:184
+#: StyleChange.cpp:179
 msgid "Prawy:"
 msgstr "ระยะขอบขวา:"
 
-#: StyleChange.cpp:184
+#: StyleChange.cpp:179
 msgid "Pionowy:"
 msgstr "ระยะขอบแนวตั้ง:"
 
-#: StyleChange.cpp:198
+#: StyleChange.cpp:193
 msgid "Położenie tekstu:"
 msgstr "ตำแหน่งข้อความ:"
 
-#: StyleChange.cpp:228
+#: StyleChange.cpp:223
 msgid "0 - ANSI"
 msgstr "0 - ANSI"
 
-#: StyleChange.cpp:229
+#: StyleChange.cpp:224
 msgid "1 - Domyślny"
 msgstr "1 - ค่าเริ่มต้น"
 
-#: StyleChange.cpp:230
+#: StyleChange.cpp:225
 msgid "2 - Symbol"
 msgstr "2 - สัญลักษณ์"
 
-#: StyleChange.cpp:231
+#: StyleChange.cpp:226
 msgid "77 - Mac"
 msgstr "77 - Mac"
 
-#: StyleChange.cpp:232
+#: StyleChange.cpp:227
 msgid "128 - Japoński"
 msgstr "128 - ภาษาญี่ปุ่น"
 
-#: StyleChange.cpp:233
+#: StyleChange.cpp:228
 msgid "129 - Koreański"
 msgstr "129 - ภาษาเกาหลี"
 
-#: StyleChange.cpp:234
+#: StyleChange.cpp:229
 msgid "130 - Johab"
 msgstr "130 - Johab"
 
-#: StyleChange.cpp:235
+#: StyleChange.cpp:230
 msgid "134 - Chiński GB2312"
 msgstr "134 - ภาษาจีน GB2312"
 
-#: StyleChange.cpp:236
+#: StyleChange.cpp:231
 msgid "135 - Chiński BIG5"
 msgstr "135 - จีน BIG5"
 
-#: StyleChange.cpp:237
+#: StyleChange.cpp:232
 msgid "161 - Grecki"
 msgstr "161 - กรีก"
 
-#: StyleChange.cpp:238
+#: StyleChange.cpp:233
 msgid "162 - Turecki"
 msgstr "162 - ตุรกี"
 
-#: StyleChange.cpp:239
+#: StyleChange.cpp:234
 msgid "163 - Wietnamski"
 msgstr "163 - เวียตนาม"
 
-#: StyleChange.cpp:240
+#: StyleChange.cpp:235
 msgid "177 - Hebrajski"
 msgstr "177 - ฮีบรู"
 
-#: StyleChange.cpp:241
+#: StyleChange.cpp:236
 msgid "178 - Arabski"
 msgstr "178 - อาหรับ"
 
-#: StyleChange.cpp:242
+#: StyleChange.cpp:237
 msgid "186 - Języki Bałtyckie"
 msgstr "186 - ภาษาบอลติก"
 
-#: StyleChange.cpp:243
+#: StyleChange.cpp:238
 msgid "204 - Rosyjski"
 msgstr "204 - รัสเซีย"
 
-#: StyleChange.cpp:244
+#: StyleChange.cpp:239
 msgid "222 - Tajski"
 msgstr "222 - ไทย"
 
-#: StyleChange.cpp:245
+#: StyleChange.cpp:240
 msgid "238 - Europa Środkowa (Polski)"
 msgstr "238 - ยุโรปกลาง (โปแลนด์)"
 
-#: StyleChange.cpp:246
+#: StyleChange.cpp:241
 msgid "255 - OEM"
 msgstr "255 - OEM"
 
-#: StyleChange.cpp:248
+#: StyleChange.cpp:243
 msgid "Kodowanie tekstu:"
 msgstr "เข้ารหัสอักขระข้อความ:"
 
-#: StyleChange.cpp:252
+#: StyleChange.cpp:247
 msgid "Podgląd stylu:"
 msgstr "ตัวอย่างสไตล์:"
 
-#: StyleChange.cpp:450
+#: StyleChange.cpp:445
 msgid "Zmienić wszystkie zaznaczone style?"
 msgstr "จะเปลี่ยนแปลงสไตล์ที่เลือกทั้งหมดไหม?"
 
-#: StyleChange.cpp:450 Tabs.cpp:917 kainoteApp.cpp:283 stylestore.cpp:549
+#: StyleChange.cpp:445 Tabs.cpp:917 kainoteApp.cpp:291 stylestore.cpp:549
 msgid "Pytanie"
 msgstr "คำถาม"
 
-#: StyleChange.cpp:613
+#: StyleChange.cpp:663
 msgid "Nazwa stylu"
 msgstr "ชื่อสไตล์"
 
-#: StyleChange.cpp:615
+#: StyleChange.cpp:665
 msgid "Rozmiar czcionki"
 msgstr "ขนาดตัวอักษร"
 
-#: StyleChange.cpp:624
+#: StyleChange.cpp:674
 msgid "Przezroczystość koloru podstawowego, 0 - brak, 255 - przezroczystość"
 msgstr "ความโปร่งใสของสีหลัก 0 คือไม่มี, 255 คือโปร่งใส"
 
-#: StyleChange.cpp:625
+#: StyleChange.cpp:675
 msgid "Przezroczystość koloru zastępczego, 0 - brak, 255 - przezroczystość"
 msgstr "ความโปร่งใสของสีรอง 0 คือไม่มี, 255 คือโปร่งใส"
 
-#: StyleChange.cpp:626
+#: StyleChange.cpp:676
 msgid "Przezroczystość koloru obwódki, 0 - brak, 255 - przezroczystość"
 msgstr "ความโปร่งใสของเส้นขอบ 0 คือไม่มี, 255 คือโปร่งใส"
 
-#: StyleChange.cpp:627
+#: StyleChange.cpp:677
 msgid "Przezroczystość koloru cienia, 0 - brak, 255 - przezroczystość"
 msgstr "ความโปร่งใสของสีเงา 0 คือไม่มี, 255 คือโปร่งใส"
 
-#: StyleChange.cpp:628
+#: StyleChange.cpp:678
 msgid "Obwódka w pikselach"
 msgstr "เส้นขอบเป็นพิกเซล"
 
-#: StyleChange.cpp:629
+#: StyleChange.cpp:679
 msgid "Cień w pikselach"
 msgstr "เงาในหน่วยพิกเซล"
 
-#: StyleChange.cpp:630
+#: StyleChange.cpp:680
 msgid "Skala X w procentach"
 msgstr "ขนาดของแกน X เป็นเปอร์เซ็นต์"
 
-#: StyleChange.cpp:631
+#: StyleChange.cpp:681
 msgid "Skala Y w procentach"
 msgstr "ขนาดของแกน Y เป็นเปอร์เซ็นต์"
 
-#: StyleChange.cpp:632
+#: StyleChange.cpp:682
 msgid "Kąt w stopniach"
 msgstr "องศาการหมุน"
 
-#: StyleChange.cpp:633
+#: StyleChange.cpp:683
 msgid "Odstępy między literami w pikselach (wartości ujemne dozwolone)"
 msgstr "ระยะห่างระหว่างตัวอักษรเป็นพิกเซล (ใช้ค่าติดลบได้)"
 
-#: StyleChange.cpp:634
+#: StyleChange.cpp:684
 msgid "Prostokątna obwódka"
 msgstr "ตั้งฉากเส้นขอบ"
 
-#: StyleChange.cpp:635 SubsGrid.cpp:431 SubsGrid.cpp:536
+#: StyleChange.cpp:685 SubsGrid.cpp:431 SubsGrid.cpp:536
 msgid "Margines prawy"
 msgstr "ระยะขอบขวา"
 
-#: StyleChange.cpp:636 SubsGrid.cpp:431 SubsGrid.cpp:536
+#: StyleChange.cpp:686 SubsGrid.cpp:431 SubsGrid.cpp:536
 msgid "Margines lewy"
 msgstr "ขอบซ้าย"
 
-#: StyleChange.cpp:637
+#: StyleChange.cpp:687
 msgid "Margines górny i dolny"
 msgstr "ระยะขอบแนวตั้ง"
 
-#: StyleChange.cpp:638
+#: StyleChange.cpp:688
 msgid "Lewy dolny róg"
 msgstr "มุมล่างซ้าย"
 
-#: StyleChange.cpp:639
+#: StyleChange.cpp:689
 msgid "Wyśrodkowane na dole"
 msgstr "ล่างกลาง"
 
-#: StyleChange.cpp:640
+#: StyleChange.cpp:690
 msgid "Prawy dolny róg"
 msgstr "มุมล่างขวา"
 
-#: StyleChange.cpp:641
+#: StyleChange.cpp:691
 msgid "Wyśrodkowane po lewej"
 msgstr "ซ้ายกลาง"
 
-#: StyleChange.cpp:642
+#: StyleChange.cpp:692
 msgid "Wyśrodkowane"
 msgstr "กึ่งกลาง"
 
-#: StyleChange.cpp:643
+#: StyleChange.cpp:693
 msgid "Wyśrodkowane po prawej"
 msgstr "ขวากลาง"
 
-#: StyleChange.cpp:644
+#: StyleChange.cpp:694
 msgid "Lewy górny róg"
 msgstr "มุมซ้ายบน"
 
-#: StyleChange.cpp:645
+#: StyleChange.cpp:695
 msgid "Wyśrodkowane u góry"
 msgstr "บนกลาง"
 
-#: StyleChange.cpp:646
+#: StyleChange.cpp:696
 msgid "Prawy górny róg"
 msgstr "มุมบนขวา"
 
-#: StyleChange.cpp:647
+#: StyleChange.cpp:697
 msgid "Kodowanie tekstu"
 msgstr "เข้ารหัสอักขระข้อความ"
 
@@ -4973,44 +5010,44 @@ msgstr "ตั้งชื่อไดเรกทอรีทรี"
 msgid "Zmień nazwę drzewka"
 msgstr "เปลี่ยนชื่อไดเรกทอรีทรี"
 
-#: SubsGridWindow.cpp:235 SubsGridWindow.cpp:607 SubsGridWindow.cpp:1027 SubsGridWindow.cpp:1193
+#: SubsGridWindow.cpp:236 SubsGridWindow.cpp:608 SubsGridWindow.cpp:1028 SubsGridWindow.cpp:1194
 msgid "W."
 msgstr "ชั้น"
 
-#: SubsGridWindow.cpp:237 SubsGridWindow.cpp:609 SubsGridWindow.cpp:1027 SubsGridWindow.cpp:1034
-#: SubsGridWindow.cpp:1193 SubsGridWindow.cpp:1200
+#: SubsGridWindow.cpp:238 SubsGridWindow.cpp:610 SubsGridWindow.cpp:1028 SubsGridWindow.cpp:1035
+#: SubsGridWindow.cpp:1194 SubsGridWindow.cpp:1201
 msgid "Start"
 msgstr "เริ่มต้น"
 
-#: SubsGridWindow.cpp:244 SubsGridWindow.cpp:616
+#: SubsGridWindow.cpp:245 SubsGridWindow.cpp:617
 msgid "M.L."
 msgstr "ซ้าย"
 
-#: SubsGridWindow.cpp:245 SubsGridWindow.cpp:617
+#: SubsGridWindow.cpp:246 SubsGridWindow.cpp:618
 msgid "M.P."
 msgstr "ขวา"
 
-#: SubsGridWindow.cpp:246 SubsGridWindow.cpp:618 SubsGridWindow.cpp:1059 SubsGridWindow.cpp:1225
+#: SubsGridWindow.cpp:247 SubsGridWindow.cpp:619 SubsGridWindow.cpp:1060 SubsGridWindow.cpp:1226
 msgid "M.Pi."
 msgstr "แนวตั้ง"
 
-#: SubsGridWindow.cpp:249 SubsGridWindow.cpp:621 SubsGridWindow.cpp:1073 SubsGridWindow.cpp:1239
+#: SubsGridWindow.cpp:250 SubsGridWindow.cpp:622 SubsGridWindow.cpp:1074 SubsGridWindow.cpp:1240
 msgid "ZNS"
 msgstr "อักขระต่อวินาที"
 
-#: SubsGridWindow.cpp:250 SubsGridWindow.cpp:622 SubsGridWindow.cpp:1078 SubsGridWindow.cpp:1244
+#: SubsGridWindow.cpp:251 SubsGridWindow.cpp:623 SubsGridWindow.cpp:1079 SubsGridWindow.cpp:1245
 msgid "Łamania"
 msgstr "ยกคำ"
 
-#: SubsGridWindow.cpp:251 SubsGridWindow.cpp:623
+#: SubsGridWindow.cpp:252 SubsGridWindow.cpp:624
 msgid "Tekst oryginalny"
 msgstr "ข้อความต้นฉบับ"
 
-#: SubsGridWindow.cpp:252 SubsGridWindow.cpp:624 TLDialog.cpp:42
+#: SubsGridWindow.cpp:253 SubsGridWindow.cpp:625 TLDialog.cpp:42
 msgid "Tekst tłumaczenia"
 msgstr "ข้อความแปล"
 
-#: SubsGridWindow.cpp:1956
+#: SubsGridWindow.cpp:1957
 msgid "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "ไม่สามารถแสดงตัวอย่างได้เนื่องจากหน้าต่างคำบรรยายเล็กเกินไป"
 
@@ -5441,10 +5478,6 @@ msgstr "ความเอียงของแกน Y"
 #: TextEditorTagList.cpp:368
 msgid "Kodowanie znaków tekstu"
 msgstr "เข้ารหัสอักขระข้อความ"
-
-#: TextEditorTagList.cpp:369
-msgid "Nazwa czcionki"
-msgstr "ชื่อแบบอักษร"
 
 #: TextEditorTagList.cpp:370
 msgid "Zaokrąglenie tekstu"
@@ -5954,7 +5987,7 @@ msgstr ""
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "แฟ้มคำบรรยาย (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
-#: VisualClips.cpp:1041
+#: VisualClips.cpp:1049
 msgid "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"
 msgstr "การแทรกดับเบิล \"m\" ถูกบล็อกเนื่องจากข้อผิดพลาด Vsfilter"
 
@@ -5976,12 +6009,12 @@ msgstr ""
 "บรรทัดไม่ปรากฏในวิดีโอ\n"
 "หรืออาจมีเวลาเป็นศูนย์"
 
-#: config.cpp:589
+#: config.cpp:596
 #, c-format
 msgid "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
 msgstr "สีบางสีหายไปจากชุดรูปแบบ \"%s\" โดยจะอ่านอ่านจากค่าเริ่มต้น"
 
-#: config.cpp:599
+#: config.cpp:606
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
 msgstr "ไม่สามารถโหลดชุดรูปแบบได้ จะคืนค่าเป็นค่าเริ่มต้น"
 
@@ -6154,35 +6187,35 @@ msgstr ""
 msgid "Usuń nieistniejące style"
 msgstr "ลบสไตล์ที่ไม่มีอยู่"
 
-#: kainoteApp.cpp:68
+#: kainoteApp.cpp:74
 msgid "Kainote się scrashował i próbuje pozyskać istotne dane.\n"
 msgstr "Kainote ได้เกิดข้อผิดพลาด กำลังพยายามบันทึกข้อมูลที่เกี่ยวข้อง\n"
 
-#: kainoteApp.cpp:69
+#: kainoteApp.cpp:75
 msgid "Napisy zostały zapisane do folderu \"Recovery\".\n"
 msgstr "คำบรรยายจะถูกบันทึกไว้ในโฟลเดอร์ \"Recovery\"\n"
 
-#: kainoteApp.cpp:70
+#: kainoteApp.cpp:76
 msgid "Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n"
 msgstr "เซสชั่นสุดท้ายจะกลับมาทำงานต่อในครั้งต่อไปที่คุณใช้โปรแกรม\n"
 
-#: kainoteApp.cpp:71
+#: kainoteApp.cpp:77
 msgid "W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n"
 msgstr "ในกรณีที่เกิดข้อผิดพลาดจะมีการบันทึกอัตโนมัติไว้ในโฟลเดอร์ \"Subs\"\n"
 
-#: kainoteApp.cpp:72
+#: kainoteApp.cpp:78
 msgid "Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n"
 msgstr "ข้อผิดพลาดจะถูกบันทึกลงในแฟ้ม \"CrashInfo.txt\" ในโฟลเดอร์ของ Kainote\n"
 
-#: kainoteApp.cpp:73
+#: kainoteApp.cpp:79
 msgid "Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem."
 msgstr "โปรดส่งปัญหาไปยังอีเมล (bjakja7@gmail.com) ฉันอาจสามารถช่วยแก้ปัญหานี้ได้"
 
-#: kainoteApp.cpp:111 kainoteApp.cpp:120
+#: kainoteApp.cpp:117 kainoteApp.cpp:126
 msgid "Zabrakło pamięci RAM, usunięto część historii"
 msgstr "แรมไม่เพียงพอ ประวัติบางส่วนจะถูกลบ"
 
-#: kainoteApp.cpp:157
+#: kainoteApp.cpp:158
 msgid ""
 "Nie udało się wczytać opcji.\n"
 "Działanie programu zostanie zakończone."
@@ -6190,7 +6223,7 @@ msgstr ""
 "ไม่สามารถโหลดตัวเลือกได้\n"
 "โปรแกรมจะหยุดทำงาน"
 
-#: kainoteApp.cpp:194
+#: kainoteApp.cpp:202
 msgid ""
 "Nie udało się wczytać skrótów.\n"
 "Działanie programu zostanie zakończone."
@@ -6198,7 +6231,7 @@ msgstr ""
 "ไม่สามารถโหลดปุ่มลัดได้\n"
 "โปรแกรมจะหยุดทำงาน"
 
-#: kainoteApp.cpp:283
+#: kainoteApp.cpp:291
 msgid "Wczytać poprzednią sesję"
 msgstr "โหลดเซสชันก่อนหน้า"
 
