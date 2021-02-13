@@ -19,11 +19,14 @@
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
 #include "KaiScrollBar.h"
+#include "ListControls.h"
 #include <wx/wx.h>
 #include "StylePreview.h"
 #include "KaiDialog.h"
 
 wxDECLARE_EVENT(FONT_CHANGED, wxCommandEvent);
+
+class FontCatalogList;
 
 class FontList : public wxWindow
 {
@@ -38,7 +41,11 @@ public:
 	void Scroll(int step);
 	wxString GetString(int line);
 	int GetSelection();
-
+	void PutArray(wxArrayString* newList);
+	void Clear();
+	void Append(const wxString& font);
+	void Delete(int i);
+	int FindString(const wxString& text, bool caseSensitive = false);
 private:
 
 	void OnPaint(wxPaintEvent& event);
@@ -74,7 +81,10 @@ public:
 private:
 	FontDialog(wxWindow *parent, Styles *acstyl, bool changePointToPixel);
 	FontDialog(const FontDialog & copy) = delete;
+	wxArrayString* GetFontsTable(bool save);
+	void ChangeCatalog(bool save = false);
 	void SetStyle();
+	void ReloadFonts();
 	FontList *Fonts;
 	StylePreview *Preview;
 	NumCtrl *FontSize;
@@ -85,9 +95,12 @@ private:
 	MappedButton *Buttok;
 	MappedButton *Buttcancel;
 	KaiTextCtrl *FontName;
+	ToggleButton* Filter;
+	KaiChoice* fontCatalog;
 	Styles *editedStyle = NULL;
 	Styles *resultStyle = NULL;
 	wxTimer fontChangedTimer;
+	FontCatalogList* FCL = NULL;
 	bool pointToPixel = false;
 
 	void OnUpdatePreview(wxCommandEvent& event);
@@ -117,6 +130,9 @@ enum{
 	ID_FONTSIZE1,
 	ID_FONTATTR,
 	ID_FONT_NAME,
+	ID_FONT_CATALOG_LIST1,
+	ID_CATALOG_MANAGE1,
+	ID_FILTER1,
 	ID_SCROLL1,
 	ID_SCROLLUP=30060,
 	ID_SCROLLDOWN=30061

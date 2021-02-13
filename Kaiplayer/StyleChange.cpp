@@ -91,8 +91,16 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	ChangeCatalog();
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
-		if (!FCL)
-			FCL = new FontCatalogList(this);
+		if (!FCL) {
+			FCL = new FontCatalogList(this, styleFont->GetValue());
+			Bind(CATALOG_CHANGED, [=](wxCommandEvent& evt) {
+				fontCatalog->PutArray(FCManagement.GetCatalogNames());
+				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
+				fontCatalog->Insert(_("Bez katalogu"), 1);
+				ChangeCatalog();
+				FCManagement.SaveCatalogs();
+				}, FCL->GetId());
+		}
 
 		FCL->Show();
 		FCL->CenterOnParent();
@@ -595,7 +603,6 @@ void StyleChange::OnUpdatePreview(wxCommandEvent& event)
 
 void StyleChange::ChangeCatalog(bool save)
 {
-	bool filterOn = Filter->GetValue();
 	wxArrayString* fonts = GetFontsTable(save);
 
 	int sel = fontCatalog->GetSelection();
@@ -615,13 +622,13 @@ void StyleChange::ChangeCatalog(bool save)
 		}
 	}
 	else {
-		fonts = GetFontsTable(save);
 		wxString newCatalog = fontCatalog->GetValue();
 		wxArrayString* cfonts = FCManagement.GetCatalogFonts(newCatalog);
 		styleFont->Clear();
 		if (cfonts) {
 			for (auto& font : *cfonts) {
-				styleFont->Append(font);
+				if (fonts->Index(font) != -1)
+					styleFont->Append(font);
 			}
 		}
 	}

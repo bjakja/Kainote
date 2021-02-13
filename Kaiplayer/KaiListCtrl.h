@@ -206,6 +206,7 @@ public:
 			widths.clear();
 	}
 	void SetHeaderHeight(int height);
+	bool SetFont(const wxFont& font);
 private:
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);

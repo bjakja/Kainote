@@ -25,8 +25,13 @@ enum {
 	TYPE_LIST = 10,
 	ID_ADD_CATALOG = 1565,
 	ID_REMOVE_CATALOG,
-	ID_FONT_LIST
+	ID_FONT_LIST,
+	ID_FONT_SEEK,
+	ID_SAVE_FILTER,
+	ID_LOAD_CATALOGS,
 };
+
+wxDECLARE_EVENT(CATALOG_CHANGED, wxCommandEvent);
 
 class StylePreview;
 
@@ -34,7 +39,7 @@ class StylePreview;
 class CatalogList : public Item
 {
 public:
-	CatalogList(const wxString &text/*, int _positionInTable*/) : Item(TYPE_LIST){
+	CatalogList(const wxString &text) : Item(TYPE_LIST){
 		name = text;
 		modified = false;
 		if (!catalogList)
@@ -82,23 +87,29 @@ public:
 		modified = false;
 	}
 	virtual ~FontSample() {};
+	static void SetPreviewText(const wxString& text) { previewText = text; };
 private:
 	void OnPaint(wxMemoryDC* dc, int x, int y, int width, int height, KaiListCtrl* theList);
 	Item* Copy() { return new FontSample(*this); }
+	static wxString previewText;
 };
 
 
 class FontCatalogList : public KaiDialog
 {
 public:
-	FontCatalogList(wxWindow *parent);
+	FontCatalogList(wxWindow *parent, const wxString &styleFont);
 	virtual ~FontCatalogList();
 	void ClearList();
-	void GenerateList();
+	void GenerateList(const wxString& styleFont);
 	void RefreshPreview();
-	
+	void SetSelectionByPartialName(const wxString& PartialName);
+	void OnLoadCatalogs(wxCommandEvent& evt);
+	void RefreshList();
 private:
 	KaiChoice* catalog;
+	KaiTextCtrl* fontSeek;
+	KaiTextCtrl* fontFilter;
 	//MappedButton *replaceChecked;
 	KaiListCtrl* fontList;
 	StylePreview* preview;
@@ -110,9 +121,10 @@ typedef wxArrayString* fontList;
 class FontCatalogManagement {
 
 public:
-	FontCatalogManagement() { LoadCatalogs(); };
+	//cannot load catalogs from here, cause options is not initialized
+	FontCatalogManagement() {};
 	~FontCatalogManagement();
-	void LoadCatalogs();
+	void LoadCatalogs(const wxString &external = L"");
 	void SaveCatalogs();
 	void DestroyCatalogs();
 	wxArrayString* GetCatalogNames();

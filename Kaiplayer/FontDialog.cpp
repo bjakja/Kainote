@@ -20,6 +20,7 @@
 #include "Config.h"
 #include "SubsGrid.h"
 #include "KaiStaticBoxSizer.h"
+#include "FontCatalogList.h"
 
 wxDEFINE_EVENT(FONT_CHANGED, wxCommandEvent);
 wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
@@ -27,32 +28,26 @@ wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &size)
 	:wxWindow(parent, id, pos, size)
 {
+	fonts = new wxArrayString();
 	scrollBar = new KaiScrollbar(this, ID_SCROLL1, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scrollBar->SetScrollbar(0, 10, 100, 10);
-	fonts = FontEnum.GetFonts(this, [=](){
-		fonts = FontEnum.GetFonts(0, [](){});
-		Refresh(false);
-	});
 
-	font = *Options.GetFont();//wxFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
-
-	wxClientDC dc(this);
-	dc.SetFont(font);
+	font = *Options.GetFont();
 	int fw, fh;
-	dc.GetTextExtent(L"#TWFfGH", &fw, &fh);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Height = fh + 4;
 
 	bmp = NULL;
 	scPos = 0;
 	sel = 0;
 	holding = false;
-	Refresh();
 
 }
 
 FontList::~FontList(){
 	FontEnum.RemoveClient(this);
 	if (bmp){ delete bmp; bmp = 0; }
+	if (fonts) { delete fonts; fonts = NULL; }
 }
 
 
@@ -311,6 +306,37 @@ int FontList::GetSelection()
 	return sel;
 }
 
+void FontList::PutArray(wxArrayString* newList)
+{
+	delete fonts;
+	fonts = NULL;
+	fonts = new wxArrayString(*newList);
+	if (sel >= fonts->size())
+		SetSelection(fonts->size() - 1);
+
+	Refresh(false);
+}
+
+void FontList::Clear()
+{
+	fonts->clear();
+}
+
+void FontList::Append(const wxString& font)
+{
+	fonts->Add(font);
+}
+
+void FontList::Delete(int i)
+{
+	fonts->RemoveAt(i);
+}
+
+int FontList::FindString(const wxString& text, bool caseSensitive)
+{
+	return 0;
+}
+
 void FontList::Scroll(int step)
 {
 	sel += step;
@@ -354,7 +380,6 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
 
 	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(250, -1));
-	Fonts->SetSelectionByName(acst->Fontname);
 	//Flist->Add(FontName,0,wxEXPAND|wxBOTTOM,3);
 	//Flist->Add(Fonts,0,wxEXPAND);
 
@@ -382,6 +407,52 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 
 	Cfont->Add(Fonts, 1, wxEXPAND);
 	Cfont->Add(Fattr, 0, wxEXPAND);
+	FCManagement.LoadCatalogs();
+	fontCatalog = new KaiChoice(this, ID_FONT_CATALOG_LIST1, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
+	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
+	fontCatalog->Insert(_("Bez katalogu"), 1);
+	fontCatalog->SetSelection(0);
+	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _("Zarządzaj"));
+	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
+	Filter = new ToggleButton(this, ID_FILTER1, _("Filtruj"));
+	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
+	Filter->SetValue(fontFilterOn);
+	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		ChangeCatalog(true);
+		}, ID_FILTER1);
+	ChangeCatalog();
+
+	Fonts->SetSelectionByName(acst->Fontname);
+	KaiStaticBoxSizer* filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Filtrowanie i katalogi czcionek"));
+	filtersizer->Add(fontCatalog, 3, wxEXPAND | wxALL, 2);
+	filtersizer->Add(CatalogManage, 1, wxEXPAND | wxALL, 2);
+	filtersizer->Add(Filter, 1, wxEXPAND | wxALL, 2);
+
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		if (!FCL) {
+			FCL = new FontCatalogList(this, editedStyle->Fontname);
+			Bind(CATALOG_CHANGED, [=](wxCommandEvent& evt) {
+				int sel = fontCatalog->GetSelection();
+				
+				fontCatalog->PutArray(FCManagement.GetCatalogNames());
+				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
+				fontCatalog->Insert(_("Bez katalogu"), 1);
+				if (sel >= fontCatalog->GetCount()) {
+					sel = fontCatalog->GetCount() - 1;
+				}
+				fontCatalog->SetSelection(sel);
+				ChangeCatalog();
+				FCManagement.SaveCatalogs();
+				}, FCL->GetId());
+		}
+
+		FCL->Show();
+		FCL->CenterOnParent();
+	}, ID_CATALOG_MANAGE1);
+
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+		ChangeCatalog();
+		}, ID_FONT_CATALOG_LIST1);
 
 	prev->Add(Preview, 1, wxEXPAND | wxALL, 5);
 
@@ -390,6 +461,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Bsizer->Add(Buttcancel, 1, wxALL, 5);
 
 	Main->Add(Cfont, 0, wxEXPAND | wxALL, 5);
+	Main->Add(filtersizer, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 5);
 	Main->Add(prev, 1, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 5);
 	Main->Add(Bsizer, 0, wxBOTTOM | wxALIGN_CENTER, 5);
 
@@ -548,6 +620,69 @@ void FontDialog::OnScrollList(wxCommandEvent& event)
 	Fonts->Scroll(step);
 	FontName->SetValue(Fonts->GetString(Fonts->GetSelection()));
 	UpdatePreview();
+}
+
+void FontDialog::ChangeCatalog(bool save)
+{
+	wxArrayString* fonts = GetFontsTable(save);
+
+	int sel = fontCatalog->GetSelection();
+	/*if (sel == -1) {
+		fontCatalog->SetSelection(0);
+		sel = 0;
+	}*/
+	if (sel == 0) {
+		Fonts->PutArray(fonts);
+	}
+	else if (sel == 1) {
+		//there is also second option, another table and adding instead deleting
+		Fonts->PutArray(fonts);
+		std::map<wxString, fontList>* map = FCManagement.GetCatalogsMap();
+		for (auto it = map->begin(); it != map->end(); it++) {
+			for (auto& font : (*it->second)) {
+				int fontpos = Fonts->FindString(font, true);
+				if (fontpos != -1)
+					Fonts->Delete(fontpos);
+			}
+		}
+	}
+	else {
+		wxString newCatalog = fontCatalog->GetValue();
+		wxArrayString* cfonts = FCManagement.GetCatalogFonts(newCatalog);
+		Fonts->Clear();
+		if (cfonts) {
+			for (auto& font : *cfonts) {
+				if(fonts->Index(font) != -1)
+					Fonts->Append(font);
+			}
+		}
+	}
+	Fonts->Refresh(false);
+}
+
+void FontDialog::ReloadFonts()
+{
+}
+
+wxArrayString* FontDialog::GetFontsTable(bool save)
+{
+	bool filterOn = Filter->GetValue();
+	wxArrayString* fonts;
+	wxString fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
+	if (fontFilterText.IsEmpty() || !filterOn) {
+		fonts = FontEnum.GetFonts(this, [=]() {
+			ReloadFonts();
+			});
+	}
+	else {
+		fonts = FontEnum.GetFilteredFonts(this, [=]() {
+			ReloadFonts();
+			}, fontFilterText);
+	}
+	if (save)
+		Options.SetBool(STYLE_EDIT_FILTER_TEXT_ON, filterOn);
+
+	return fonts;
 }
 
 FontPickerButton::FontPickerButton(wxWindow *parent, int id, const wxFont& font,

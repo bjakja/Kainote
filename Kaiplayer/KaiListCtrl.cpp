@@ -203,11 +203,13 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(*Options.GetFont(-1));//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
-	wxAcceleratorEntry entries[2];
+	SetFont(*Options.GetFont(-1));
+	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_CTRL, L'Z', 11642);
 	entries[1].Set(wxACCEL_CTRL, L'Y', 11643);
-	wxAcceleratorTable accel(2, entries);
+	entries[2].Set(wxACCEL_NORMAL, WXK_UP, ID_TUP);
+	entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_TDOWN);
+	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Undo, this, 11642);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiListCtrl::Redo, this, 11643);
@@ -215,6 +217,16 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 	GetTextExtent(L"TEX{}", &fw, &fh);
 	lineHeight = fh + 3;
 	headerHeight = fh + 8;
+
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt) {
+		SetSelection(GetSelection() - 1);
+		ScrollTo(scPosV - 1);
+		}, ID_TUP);
+
+	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent& evt) {
+		SetSelection(GetSelection() + 1);
+		ScrollTo(scPosV + 1);
+		}, ID_TDOWN);
 }
 
 //checkboxList
@@ -345,6 +357,18 @@ void KaiListCtrl::DeleteItem(int row, bool save)
 void KaiListCtrl::SetHeaderHeight(int height)
 {
 	headerHeight = height;
+}
+
+bool KaiListCtrl::SetFont(const wxFont& font)
+{
+	int fw, fh;
+	GetTextExtent(L"TEX{}", &fw, &fh);
+	lineHeight = fh + 7;
+	if (headerHeight > 15)
+		headerHeight = lineHeight + 6;
+
+	bool result = wxWindow::SetFont(font);
+	return result;
 }
 
 int KaiListCtrl::InsertColumn(size_t col, const wxString &name, byte type, int width)
@@ -498,7 +522,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	int posY = headerHeight;
 	bool startBlock = false;
 	int startDrawPosYFromPlus = 0;
-
+	//Draw header
 	if (headerHeight > 4){
 		tdc.SetPen(wxPen(border));
 		tdc.SetTextForeground(enabled ? Options.GetColour(STATICLIST_TEXT_HEADLINE) : inactivetxt);
@@ -516,7 +540,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 		}
 		//tdc.DrawLine(0, headerHeight-2, w, headerHeight-2);
 	}
-
+	//Draw filter lines and boxes
 	posX = filteringHeader - scPosH;
 	if (isFiltered){
 		unsigned char hasHiddenBlock = CheckIfHasHiddenBlock(scPosV-1);
@@ -537,7 +561,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 			tdc.DrawLine(0, newPosY - 1, w + scPosH, newPosY - 1);
 		}
 	}
-
+	//draw lines
 	for (size_t i = scPosV; i < maxsize; i++){;
 		
 		auto &row = filteredList[i]->row;
@@ -650,15 +674,13 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		}
 		return;
 	}
-
+	Item* copy = NULL;
 	int elemYID = ((cursor.y - headerHeight) / lineHeight) + scPosV;
 	//size_t startI = 0;
 	int elemY = elemYID;//FindItemsRow(elemYID, startI);
 	if ((elemY < 0) || cursor.y <= headerHeight){
 		//if header < 5 wtedy nic nie robimy
 		if (headerHeight > 5){
-			if (HasToolTips())
-				UnsetToolTip();
 			if (!hasArrow && evt.LeftDown()){
 				if (!HasCapture()){ CaptureMouse(); }
 				diffX = cursor.x;
@@ -681,26 +703,29 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 						hasArrow = false;
 						lastCollumn = i;
 					}
-					return;
+					break;
 				}
 			}
 
 		}
-		lastSelX = -1; lastSelY = -1;
+		if (HasToolTips())
+			UnsetToolTip();
+		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()) {
+			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
+			lastSelX = -1; lastSelY = -1;
+		}
+		if (copy) { delete copy; }
+		//lastSelX = -1; lastSelY = -1;
 		if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
 		return;
 	}
 	if (!hasArrow){ SetCursor(wxCURSOR_ARROW); hasArrow = true; }
-	Item *copy = NULL;
+	
 	if (elemY < 0 || elemY >= filteredList.size()){
-		if (HasToolTips())
-			UnsetToolTip();
+		//if (HasToolTips())
+			//UnsetToolTip();
 		//Nothing to do here below elements on the bottom
-		if (lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size() && lastSelX < filteredList[lastSelY]->row.size()){
-			filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
-			lastSelX = -1; lastSelY = -1;
-		}
-		if (copy){ delete copy; }
+		
 		return;
 	}
 	int elemX = -1;
