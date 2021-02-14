@@ -1595,10 +1595,14 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 				dial->GetRaw(txt);
 			}
 			if (point && i == currentLine){
-				int all = txt->length(); 
-				point->x = all - 2;
+				
 				int len = (isTlmode && dial->TextTl != L"") ?
 					dial->TextTl.Len() : dial->Text.Len();
+				if (!len) {
+					dial->GetRaw(txt);
+				}
+				int all = txt->length();
+				point->x = all - 2;
 				point->y = len;
 				point->x -= len;
 			}

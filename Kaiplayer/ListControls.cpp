@@ -462,6 +462,9 @@ void KaiChoice::Append(const wxArrayString &itemsArray)
 
 void KaiChoice::PutArray(wxArrayString *arr)
 {
+	if (!arr)
+		return;
+
 	wxString ce = (choice >= 0 && choice < (int)list->size()) ? (*list)[choice] : L"";
 	if (list){ delete list; }
 	list = new wxArrayString(*arr);
@@ -596,6 +599,20 @@ wxString KaiChoice::GetValue(){
 	return txtchoice;
 }
 
+void KaiChoice::ChangeListElementName(int position, const wxString& newElementName)
+{
+	if (position < 0 || position >= list->size())
+		return;
+
+	(*list)[position] = newElementName;
+	choice = position;
+	if (choiceText) {
+		choiceText->SetValue(newElementName);
+	}
+	else
+		Refresh(false);
+}
+
 void KaiChoice::SelectChoice(int _choice, bool select, bool sendEvent){
 	choice = _choice;
 	txtchoice = (*list)[choice];
@@ -688,7 +705,6 @@ END_EVENT_TABLE()
 static int maxVisible = 20;
 
 PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, bool> *disabled)
-/*:wxFrame(DialogParent,-1,"",wxDefaultPosition, wxDefaultSize, wxFRAME_NO_TASKBAR|wxSTAY_ON_TOP|wxWS_EX_TRANSIENT)*/
 : wxPopupWindow(DialogParent/*, wxBORDER_NONE | wxWANTS_CHARS*/)
 , sel(0)
 , scPos(0)
@@ -820,6 +836,10 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		}
 		scroll->SetScrollbar(scPos, maxVisible, itemsize, maxVisible - 1);
 		w -= (scroll->GetThickness() + 1);
+	}
+	else if (scroll) {
+		scroll->Destroy();
+		scroll = NULL;
 	}
 
 	wxMemoryDC tdc;

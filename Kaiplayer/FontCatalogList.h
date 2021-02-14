@@ -20,15 +20,20 @@
 #include "ListControls.h"
 #include "MappedButton.h"
 #include "Styles.h"
+#include "KaiStatusBar.h"
+#include <wx/timer.h>
 
 enum {
 	TYPE_LIST = 10,
 	ID_ADD_CATALOG = 1565,
 	ID_REMOVE_CATALOG,
+	ID_EDIT_CATALOG,
 	ID_FONT_LIST,
 	ID_FONT_SEEK,
 	ID_SAVE_FILTER,
 	ID_LOAD_CATALOGS,
+	ID_EDIT_TIMER,
+	ID_EDIT_TIMER_REMOVE
 };
 
 wxDECLARE_EVENT(CATALOG_CHANGED, wxCommandEvent);
@@ -105,7 +110,8 @@ public:
 	void RefreshPreview();
 	void SetSelectionByPartialName(const wxString& PartialName);
 	void OnLoadCatalogs(wxCommandEvent& evt);
-	void RefreshList();
+	void RefreshList(bool catalogListToo = true);
+	static void StartEditionTimer(int ms);
 private:
 	KaiChoice* catalog;
 	KaiTextCtrl* fontSeek;
@@ -113,7 +119,12 @@ private:
 	//MappedButton *replaceChecked;
 	KaiListCtrl* fontList;
 	StylePreview* preview;
+	KaiStatusBar* status;
 	Styles fontStyle;
+	wxTimer autoSaveTimer;
+	wxTimer autoSaveTimerRemove;
+	int autoSaveI = 0;
+	static FontCatalogList* This;
 };
 
 typedef wxArrayString* fontList;
@@ -125,12 +136,13 @@ public:
 	FontCatalogManagement() {};
 	~FontCatalogManagement();
 	void LoadCatalogs(const wxString &external = L"");
-	void SaveCatalogs();
+	void SaveCatalogs(const wxString& external = L"");
 	void DestroyCatalogs();
 	wxArrayString* GetCatalogNames();
 	wxString FindCatalogByFont(const wxString& font);
 	wxArrayString* GetCatalogFonts(const wxString& catalog);
 	void AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator *it = NULL);
+	bool ChangeCatalogName(wxWindow *messagesParent, const wxString& oldCatalog, const wxString& newCatalog);
 	void RemoveCatalog(const wxString& catalog);
 	void AddCatalogFont(const wxString& catalog, const wxString& font);
 	void AddCatalogFonts(const wxString& catalog, const wxArrayString& fonts);
@@ -142,7 +154,7 @@ private:
 	wxArrayString fontCatalogsNames;
 	std::map<wxString, fontList> fontCatalogs;
 	bool isInit = false;
-
+	int saveInterval = 20000;
 };
 
 

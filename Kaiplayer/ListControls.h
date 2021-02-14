@@ -86,6 +86,7 @@ public:
 	int GetSelection(){ return choice; };
 	void SetValue(const wxString &text);
 	wxString GetValue();
+	void ChangeListElementName(int position, const wxString & newElementName);
 	void Select(int sel){ choice = sel; }
 	int GetCount();
 	int FindString(const wxString &text, bool caseSensitive = false);
