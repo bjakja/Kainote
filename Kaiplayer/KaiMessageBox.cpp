@@ -26,7 +26,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 {
 	SetMinSize(wxSize(300, -1));
 	wxBoxSizer *sizer1 = new wxBoxSizer(wxHORIZONTAL);
-	DialogSizer *sizer2 = new DialogSizer(wxVERTICAL);
+	sizer2 = new DialogSizer(wxVERTICAL);
 	KaiStaticText *txt = new KaiStaticText(this, -1, msg);
 	MappedButton *btn = NULL;
 	//wxFont thisFont(10, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma");
@@ -43,7 +43,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 			int askOnce = (kcb && kcb->GetValue()) ? ASK_ONCE : 0;
 			EndModal(wxOK | askOnce);
 		}, 9009);
-		sizer1->Add(btn, 1, wxALL, 3);
+		sizer1->Add(btn, 1, wxALL | wxEXPAND, 3);
 		if (buttonWithFocus < 0 || buttonWithFocus == wxOK) {
 			btn->SetFocus(); setFocus = false;
 		}
@@ -54,7 +54,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 			int result = wxYES_TO_ALL | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0);
 			EndModal(result);
 		}, wxYES_TO_ALL);
-		sizer1->Add(btn, 0, wxALL, 3);
+		sizer1->Add(btn, 0, wxALL | wxEXPAND, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES_TO_ALL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxYES){
@@ -63,7 +63,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 			int result = wxYES | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0);
 			EndModal(result);
 		}, wxID_YES);
-		sizer1->Add(btn, 1, wxALL, 3);
+		sizer1->Add(btn, 1, wxALL | wxEXPAND, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxYES)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxNO){
@@ -71,7 +71,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxNO | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, wxID_NO);
-		sizer1->Add(btn, 1, wxALL, 3);
+		sizer1->Add(btn, 1, wxALL | wxEXPAND, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxNO)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxCANCEL){
@@ -79,7 +79,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxCANCEL | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9010);
-		sizer1->Add(btn, 1, wxALL, 3);
+		sizer1->Add(btn, 1, wxALL | wxEXPAND, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxCANCEL)){ btn->SetFocus(); setFocus = false; }
 	}
 	if (elems & wxHELP){
@@ -87,7 +87,7 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 			EndModal(wxHELP | ((kcb && kcb->GetValue()) ? ASK_ONCE : 0));
 		}, 9011);
-		sizer1->Add(btn, 1, wxALL, 3);
+		sizer1->Add(btn, 1, wxALL | wxEXPAND, 3);
 		if (setFocus && (buttonWithFocus < 0 || buttonWithFocus == wxHELP)){ btn->SetFocus(); setFocus = false; }
 	}
 	sizer2->Add(txt, 0, wxALL | wxALIGN_LEFT, 16);
@@ -115,25 +115,37 @@ KaiMessageDialog::KaiMessageDialog(wxWindow *parent, const wxString& msg,
 void KaiMessageDialog::SetOkLabel(const wxString &label)
 {
 	MappedButton *btn = wxDynamicCast(FindWindowById(9009, this), MappedButton);
-	if (btn) btn->SetLabelText(label);
+	if (btn) { 
+		btn->SetLabelText(label); 
+		sizer2->Fit(this);
+	}
 }
 
 void KaiMessageDialog::SetYesLabel(const wxString &label)
 {
 	MappedButton *btn = wxDynamicCast(FindWindowById(wxID_YES, this), MappedButton);
-	if (btn) btn->SetLabelText(label);
+	if (btn) { 
+		btn->SetLabelText(label); 
+		sizer2->Fit(this);
+	}
 }
 
 void KaiMessageDialog::SetNoLabel(const wxString &label)
 {
 	MappedButton *btn = wxDynamicCast(FindWindowById(wxID_NO, this), MappedButton);
-	if (btn) btn->SetLabelText(label);
+	if (btn) {
+		btn->SetLabelText(label);
+		sizer2->Fit(this);
+	}
 }
 
 void KaiMessageDialog::SetHelpLabel(const wxString &label)
 {
 	MappedButton *btn = wxDynamicCast(FindWindowById(9011, this), MappedButton);
-	if (btn) btn->SetLabelText(label);
+	if (btn) {
+		btn->SetLabelText(label);
+		sizer2->Fit(this);
+	}
 }
 
 

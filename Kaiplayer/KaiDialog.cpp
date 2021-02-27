@@ -254,7 +254,7 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		//mdc.DrawRectangle(w - 25, 3, 18, 18);
 		int buttonScale = ((topBorder - 8) / 2) * 2;
 		buttonScale = (buttonScale < 18) ? 18 : buttonScale;
-		mdc.DrawRectangle(w - topBorder, 4, buttonScale, buttonScale);
+		mdc.DrawRectangle(w - topBorder - 1, 4, buttonScale, buttonScale);
 	}
 	//mdc.DrawText("X", w-20, 4);
 	mdc.SetPen(wxPen(text, 2));
@@ -280,7 +280,7 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 	GetClientSize(&w, &h);
 	int x = evt.GetX();
 	int y = evt.GetY();
-	wxRect rc(w - topBorder - 5, 0, topBorder - 3, topBorder - 3);
+	wxRect rc(w - topBorder - 5, 0, topBorder - 1, topBorder - 1);
 	if (evt.Leaving()){
 		pushed = enter = false;
 		Refresh(false, &rc);

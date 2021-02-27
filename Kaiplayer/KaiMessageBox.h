@@ -28,6 +28,7 @@ public:
 	void SetNoLabel(const wxString &label);
 	void SetHelpLabel(const wxString &label);
 	KaiCheckBox *kcb = NULL;
+	DialogSizer* sizer2 = NULL;
 
 };
 

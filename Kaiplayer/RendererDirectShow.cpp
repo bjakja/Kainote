@@ -121,8 +121,8 @@ bool RendererDirectShow::InitRendererDX()
 
 	int windowWidth = m_BackBufferRect.right- m_BackBufferRect.left;
 	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
-	m_WindowWidth = m_Width;
-	m_WindowHeight = m_Height;
+	m_WindowWidth = windowWidth/*m_Width*/;
+	m_WindowHeight = windowHeight/*m_Height*/;
 	filtering = (windowWidth == m_Width && windowHeight == m_Height) ? D3DTEXF_POINT : D3DTEXF_LINEAR;
 
 	m_LastBufferSize = m_WindowWidth * m_WindowHeight * 4;

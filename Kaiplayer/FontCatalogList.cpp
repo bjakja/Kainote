@@ -455,7 +455,7 @@ void CatalogList::RefreshCatalogList()
 
 void FontItem::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
-	bool isOnCheckbox = event.GetX() < 19;
+	bool isOnCheckbox = event.GetX() < 23;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox && !leave)){
 		enter = true;
 		theList->Refresh(false);

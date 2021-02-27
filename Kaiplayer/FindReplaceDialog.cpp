@@ -502,8 +502,7 @@ void FindReplaceDialog::OnActivate(wxActivateEvent& event)
 	EditBox *edit = tab->Edit;
 	edit->TextEdit->GetSelection(&from, &to);
 	edit->TextEditOrig->GetSelection(&fromO, &toO);
-	KaiChoice * findOrReplace = (currentTab->FindText->GetValue().Len() > 0 &&
-		currentTab->windowType != WINDOW_FIND && !FR->findTextReset) ? currentTab->ReplaceText : currentTab->FindText;
+	KaiChoice * findOrReplace = currentTab->FindText;
 	if (from < to){
 		if (from == FR->findstart && to == FR->findend)
 			return;
