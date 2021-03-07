@@ -246,6 +246,9 @@ void FontList::SetSelectionByName(wxString name)
 {
 	int sell = fonts->Index(name, false);
 	if (sell != -1){ SetSelection(sell); }
+	else {
+		SetSelectionByPartialName(name);
+	}
 }
 
 
@@ -657,7 +660,10 @@ void FontDialog::ChangeCatalog(bool save)
 			}
 		}
 	}
-	Fonts->Refresh(false);
+	if (editedStyle) {
+		Fonts->SetSelectionByName(editedStyle->Fontname);
+	}else
+		Fonts->Refresh(false);
 }
 
 void FontDialog::ReloadFonts()

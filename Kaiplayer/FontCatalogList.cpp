@@ -339,6 +339,16 @@ void FontCatalogList::RefreshList(bool catalogListToo)
 	fontList->Refresh(false);
 }
 
+void FontCatalogList::SetStyleFont(const wxString& styleFont)
+{
+	int sel = fontList->FindItem(0, styleFont);
+
+	if (sel >= 0) {
+		fontList->SetSelection(sel);
+		fontList->ScrollTo(sel - 2);
+	}
+}
+
 void FontCatalogList::StartEditionTimer(int ms)
 {
 	if (!This->autoSaveTimer.IsRunning())
@@ -571,8 +581,10 @@ void FontCatalogManagement::LoadCatalogs(const wxString& external)
 				{
 					if (it != fontCatalogs.end()) {
 						token.Trim(false);
-						if(!token.empty())
-							it->second->Add(token);
+						if (!token.empty()) {
+							if (it->second->Index(token) == -1)
+								it->second->Add(token);
+						}
 					}
 					else
 					{
@@ -641,18 +653,23 @@ wxArrayString* FontCatalogManagement::GetCatalogFonts(const wxString& catalog)
 void FontCatalogManagement::AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator* it)
 {
 	auto itc = fontCatalogs.find(catalog);
-	if (!(itc != fontCatalogs.end())) {
+	bool itcEnd = !(itc != fontCatalogs.end());
+	if (itcEnd) {
 		fontCatalogs[catalog] = new wxArrayString;
 		if (fontCatalogsNames.Index(catalog) == -1)
 			fontCatalogsNames.Add(catalog);
 		//is it possible that it cannot find iterator here?
-		if (it)
+		if (it) {
 			(*it) = fontCatalogs.find(catalog);
+		}
 	}
-	if (it)
-		it = &itc;
-	else
+	else{
+		(*it) = itc;
+	}
+
+	if(!it) {
 		FontCatalogList::StartEditionTimer(saveInterval);
+	}
 }
 
 bool FontCatalogManagement::ChangeCatalogName(wxWindow* messagesParent, const wxString& oldCatalog, const wxString& newCatalog)

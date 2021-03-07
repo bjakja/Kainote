@@ -94,12 +94,17 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 		if (!FCL) {
 			FCL = new FontCatalogList(this, styleFont->GetValue());
 			Bind(CATALOG_CHANGED, [=](wxCommandEvent& evt) {
+				int sel = fontCatalog->GetSelection();
 				fontCatalog->PutArray(FCManagement.GetCatalogNames());
 				fontCatalog->Insert(_("Wszystkie czcionki"), 0);
 				fontCatalog->Insert(_("Bez katalogu"), 1);
+				fontCatalog->SetSelection(sel);
 				ChangeCatalog();
 				FCManagement.SaveCatalogs();
 				}, FCL->GetId());
+		}
+		else {
+			FCL->SetStyleFont(styleFont->GetValue());
 		}
 
 		FCL->Show();

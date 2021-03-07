@@ -87,33 +87,33 @@ static inline void YUV420_to_RGB32(BYTE* src0, BYTE* src1, BYTE* src2, BYTE* dst
 
 			//up-left
 			y1 = tab_76309[*py1++];
-			*d1++ = clp[384 + ((y1 + c1) >> 16)];
-			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
 			*d1++ = clp[384 + ((y1 + c4) >> 16)];
+			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
+			*d1++ = clp[384 + ((y1 + c1) >> 16)]; 
 			if(isRGB32)
 				*d1++ = 0xff;
 
 			//down-left
 			y2 = tab_76309[*py2++];
-			*d2++ = clp[384 + ((y2 + c1) >> 16)];
-			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
 			*d2++ = clp[384 + ((y2 + c4) >> 16)];
+			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
+			*d2++ = clp[384 + ((y2 + c1) >> 16)]; 
 			if (isRGB32)
 				*d2++ = 0xff;
 
 			//up-right
 			y1 = tab_76309[*py1++];
-			*d1++ = clp[384 + ((y1 + c1) >> 16)];
-			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
 			*d1++ = clp[384 + ((y1 + c4) >> 16)];
+			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
+			*d1++ = clp[384 + ((y1 + c1) >> 16)]; 
 			if (isRGB32)
 				*d1++ = 0xff;
 
 			//down-right
 			y2 = tab_76309[*py2++];
-			*d2++ = clp[384 + ((y2 + c1) >> 16)];
-			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
 			*d2++ = clp[384 + ((y2 + c4) >> 16)];
+			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
+			*d2++ = clp[384 + ((y2 + c1) >> 16)]; 
 			if (isRGB32)
 				*d2++ = 0xff;
 		}
@@ -151,33 +151,33 @@ static inline void NV12_to_RGB32(BYTE* luma, BYTE* uv, BYTE* dst, int width, int
 
 			//up-left
 			y1 = tab_76309[*py1++];
-			*d1++ = clp[384 + ((y1 + c1) >> 16)];
-			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
 			*d1++ = clp[384 + ((y1 + c4) >> 16)];
+			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
+			*d1++ = clp[384 + ((y1 + c1) >> 16)]; 
 			if (isRGB32)
 				*d1++ = 0xff;
 
 			//down-left
 			y2 = tab_76309[*py2++];
-			*d2++ = clp[384 + ((y2 + c1) >> 16)];
-			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
 			*d2++ = clp[384 + ((y2 + c4) >> 16)];
+			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
+			*d2++ = clp[384 + ((y2 + c1) >> 16)]; 
 			if (isRGB32)
 				*d2++ = 0xff;
 
 			//up-right
 			y1 = tab_76309[*py1++];
-			*d1++ = clp[384 + ((y1 + c1) >> 16)];
-			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
 			*d1++ = clp[384 + ((y1 + c4) >> 16)];
+			*d1++ = clp[384 + ((y1 - c2 - c3) >> 16)];
+			*d1++ = clp[384 + ((y1 + c1) >> 16)]; 
 			if (isRGB32)
 				*d1++ = 0xff;
 
 			//down-right
 			y2 = tab_76309[*py2++];
-			*d2++ = clp[384 + ((y2 + c1) >> 16)];
-			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
 			*d2++ = clp[384 + ((y2 + c4) >> 16)];
+			*d2++ = clp[384 + ((y2 - c2 - c3) >> 16)];
+			*d2++ = clp[384 + ((y2 + c1) >> 16)]; 
 			if (isRGB32)
 				*d2++ = 0xff;
 		}
@@ -206,16 +206,16 @@ static inline bool yuy2_to_rgb32(const BYTE* input, BYTE* output, int numOfPixel
 		int v = *(input++);
 
 		get_rgb_from_yuv(y0, u, v, &r, &g, &b);
-		*(output++) = r;
-		*(output++) = g;
 		*(output++) = b;
+		*(output++) = g;
+		*(output++) = r;
 		if (isRGB32)
 			*(output++) = 0xff;  
 
 		get_rgb_from_yuv(y1, u, v, &r, &g, &b);
-		*(output++) = r;
-		*(output++) = g;
 		*(output++) = b;
+		*(output++) = g;
+		*(output++) = r;
 		if (isRGB32)
 			*(output++) = 0xff;         
 	}

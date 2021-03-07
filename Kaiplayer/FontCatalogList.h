@@ -111,6 +111,7 @@ public:
 	void SetSelectionByPartialName(const wxString& PartialName);
 	void OnLoadCatalogs(wxCommandEvent& evt);
 	void RefreshList(bool catalogListToo = true);
+	void SetStyleFont(const wxString& styleFont);
 	static void StartEditionTimer(int ms);
 private:
 	KaiChoice* catalog;

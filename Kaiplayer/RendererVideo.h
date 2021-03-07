@@ -141,7 +141,7 @@ public:
 	wxString m_ProgressBarTime;
 	ID3DXLine *m_D3DLine;
 	LPD3DXFONT m_D3DFont;
-	LPD3DXFONT m_D3DCalcFont;
+	LPD3DXFONT m_D3DCalcFont = NULL;
 	wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;

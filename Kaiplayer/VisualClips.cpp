@@ -483,7 +483,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 				wxString startM = afterP1.Mid(Mpos);
 				int endClip = startM.find(L"{");
 				if (endClip == -1) {
-					if (isf) { endClip = startM.length(); }
+					if (hasP1) { endClip = startM.length(); }
 					else { endClip = 0; }
 					clip += L"{\\p0}";
 				}
@@ -596,15 +596,21 @@ void DrawingAndClip::ChangeVisual(wxString *txt, Dialogue *_dial, wxString *clip
 		}
 
 		wxString afterP1 = txt->Mid(tab->Edit->Placed.y);
-		int Mpos = -1;
-		//FIXME: removing first bracket
-		if (hasP1) { Mpos = afterP1.find(L"m "); }
-		if (Mpos == -1) { Mpos = afterP1.find(L"}") + 1; }
+		int afterBracket = afterP1.find(L"}") + 1;
+		int Mpos = afterBracket;
+		if (hasP1) {
+			wxString afterP1Brakcet = afterP1.Mid(afterBracket);
+			Mpos = afterP1Brakcet.find(L"m ");
+			if (Mpos == -1)
+				Mpos = afterBracket;
+			else
+				Mpos += afterBracket;
+		}
 		wxString startM = afterP1.Mid(Mpos);
 		int endDrawing = startM.find(L"{");
 		wxString p0;
 		if (endDrawing == -1) {
-			if (isf) { endDrawing = startM.length(); }
+			if (hasP1) { endDrawing = startM.length(); }
 			else { endDrawing = 0; }
 			p0 += L"{\\p0}";
 		}
@@ -914,7 +920,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if (event.ButtonUp()){
 		return;
 	}
-
+	//remove points
 	if (event.MiddleDown() || (tool == 5 && click)){
 		grabbed = -1;
 		size_t i = (psize > 1) ? 1 : 0;
@@ -1081,8 +1087,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 
 		if (event.ShiftDown()){
 			
-			int diffx = abs(firstmove.x - x);
-			int diffy = abs(firstmove.y - y);
+			int diffx = abs(firstmove.x - zx);
+			int diffy = abs(firstmove.y - zy);
 			if (diffx != diffy){ if (diffx > diffy){ axis = 2; } else{ axis = 1; } }
 			
 			if (axis == 1){
