@@ -76,8 +76,10 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		coeffX = (float)nx / (float)(w - diffW);
 		coeffY = (float)ny / (float)(h - diffH);
 	}
-	int posx = (float)(x - diffX) * coeffX;
-	int posy = (float)(y - diffY) * coeffY;
+	float zx = (x / zoomScale.x) + zoomMove.x;
+	float zy = (y / zoomScale.y) + zoomMove.y;
+	int posx = (float)(zx - diffX) * coeffX;
+	int posy = (float)(zy - diffY) * coeffY;
 	coords = L"";
 	coords << posx << L", " << posy;
 	DrawLines(wxPoint(x, y));
@@ -90,8 +92,10 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		posmov.ReplaceAll(&ltext, L"");
 
 		wxString postxt;
-		int posx = (float)(x - diffX) * coeffX;
-		int posy = (float)(y - diffY) * coeffY;
+		float zx = (x / zoomScale.x) + zoomMove.x;
+		float zy = (y / zoomScale.y) + zoomMove.y;
+		float posx = (float)(zx - diffX) * coeffX;
+		float posy = (float)(zy - diffY) * coeffY;
 		postxt = L"\\pos(" + getfloat(posx) + L"," + getfloat(posy) + L")";
 		if (ltext.StartsWith(L"{")){
 			ltext.insert(1, postxt);

@@ -609,9 +609,11 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 
 	if (key == WXK_RETURN && renderer->m_HasZoom){
 		renderer->SetZoom();
+		SetCursor(wxCURSOR_ARROW);
 	}
 	else if (key == L'Z' && event.ControlDown() && event.ShiftDown()){
 		renderer->ResetZoom();
+		SetCursor(wxCURSOR_ARROW);
 	}
 	else if (renderer->HasVisual()){
 		renderer->GetVisual()->OnKeyPress(event);
@@ -1219,12 +1221,15 @@ void VideoCtrl::SetScaleAndZoom()
 
 void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 {
-	if (renderer && renderer->HasVisual())
+	if (!renderer)
+		return;
+	if (!renderer->HasVisual(true))
 		return;
 
 	Visuals *visual = renderer->GetVisual();
-	if (!visual || visual->Visual != CROSS)
-		return;
+	//hasvisual(true) have this check
+	/*if (!visual || visual->Visual != CROSS)
+		return;*/
 
 	visual->SetCurVisual();
 }
