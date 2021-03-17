@@ -1830,7 +1830,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
 	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, L"", 
 		ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
-	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cydzysłów"), 
+	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cudzysłów"), 
 		NULL, L"", ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){

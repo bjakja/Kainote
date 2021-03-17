@@ -205,6 +205,7 @@ void AudioDisplay::Reset() {
 ////////////////
 // Update image
 void AudioDisplay::UpdateImage(bool weak, bool updateImmediately) {
+	wxCriticalSectionLocker lock(mutex);
 	// Update samples
 	UpdateSamples();
 
@@ -354,7 +355,6 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	if (w < 1 || displayH < 1 || isHidden) return;
 	// Loaded?
 	if (!loaded || !provider) return;
-	wxCriticalSectionLocker lock(mutex);
 	
 	if (LastSize.x != w || LastSize.y != h || !d3dDevice || needToReset) {
 		LastSize = wxSize(w, h);
@@ -1215,6 +1215,7 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 	if (percent < 1) percent = 1;
 	if (percent > 100) percent = 100;
 	if (samplesPercent == percent) return;
+	wxCriticalSectionLocker lock(mutex);
 	samplesPercent = percent;
 
 	// Update
@@ -1239,7 +1240,6 @@ void AudioDisplay::SetSamplesPercent(int percent, bool update, float pivot) {
 // Update samples
 void AudioDisplay::UpdateSamples() {
 
-	wxCriticalSectionLocker lock(mutex);
 	// Set samples
 	if (!provider) return;
 	if (w) {
@@ -1665,6 +1665,7 @@ void AudioDisplay::AddLead(bool in, bool out) {
 // Paint
 void AudioDisplay::OnPaint(wxPaintEvent& event) {
 	//if (w == 0 || h == 0) return;
+	wxCriticalSectionLocker lock(mutex);
 	DoUpdateImage(needImageUpdateWeak);
 }
 
@@ -2267,13 +2268,18 @@ void AudioDisplay::GetTextExtentPixel(const wxString &text, int *x, int *y)
 // Size event
 void AudioDisplay::OnSize(wxSizeEvent &event) {
 	// Set size
-	LastSize = wxSize(w, h);
-	GetClientSize(&w, &h);
-	h -= timelineHeight;
-	screenRect = GetClientRect();
-	if (LastSize.x == w && LastSize.y == h)
+	int nw;
+	int nh;
+	GetClientSize(&nw, &nh);
+	if (nw == w && nw == h)
 		return;
 
+	wxCriticalSectionLocker lock(mutex);
+
+	LastSize = wxSize(w, h);
+	w = nw;
+	h = nh - timelineHeight;
+	screenRect = GetClientRect();
 	// Update image
 	UpdateSamples();
 	if (samples) {
@@ -2314,7 +2320,7 @@ unsigned int _stdcall  AudioDisplay::OnUpdateTimer(PVOID pointer)
 void AudioDisplay::UpdateTimer()
 {
 
-	wxCriticalSectionLocker lock(mutexUpdate);
+	wxCriticalSectionLocker lock(mutex);
 	
 
 	// Draw cursor

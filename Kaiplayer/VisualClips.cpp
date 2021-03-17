@@ -364,7 +364,9 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		if (!dummy) {
 			tab->Video->SetVisualEdition(true);
 			if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
-			grid->SetModified((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, true);
+			//dummy = true cause of deselecting points with multiline editing
+			//SetClip() should not be used
+			grid->SetModified((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, true, true);
 			grid->Refresh();
 		}
 		else {
