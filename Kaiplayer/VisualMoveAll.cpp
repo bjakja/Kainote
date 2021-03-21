@@ -381,12 +381,13 @@ void MoveAll::OnKeyPress(wxKeyEvent &evt)
 		}
 		directionX = (directionX / coeffW)/* - zoomMove.x) * zoomScale.x*/;
 		directionY = (directionY / coeffH)/* - zoomMove.y) * zoomScale.y*/;
+		numElem = -1;
 		for (size_t j = 0; j < elems.size(); j++){
 			if (!(selectedTags & elems[j].type)){ continue; }
-			if (numElem == -1){
+			if (numElem == -1) {
 				numElem = j;
+				beforeMove = elems[j].elem;
 			}
-			beforeMove = elems[j].elem;
 			elems[j].elem.x += directionX;
 			elems[j].elem.y += directionY;
 		}

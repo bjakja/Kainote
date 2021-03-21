@@ -80,10 +80,10 @@ static inline void YUV420_to_RGB32(BYTE* src0, BYTE* src1, BYTE* src2, BYTE* dst
 			u = *src1++;
 			v = *src2++;
 
-			c4 = crv_tab[v];
+			c4 = (isRGB32) ? crv_tab[v] : cbu_tab[u];
 			c2 = cgu_tab[u];
 			c3 = cgv_tab[v];
-			c1 = cbu_tab[u];
+			c1 = (isRGB32) ? cbu_tab[u] : crv_tab[v];
 
 			//up-left
 			y1 = tab_76309[*py1++];
@@ -144,10 +144,10 @@ static inline void NV12_to_RGB32(BYTE* luma, BYTE* uv, BYTE* dst, int width, int
 			v = *uv++;
 			u = *uv++;
 
-			c4 = crv_tab[v];
+			c4 = (isRGB32)? crv_tab[v] : cbu_tab[u];
 			c2 = cgu_tab[u];
 			c3 = cgv_tab[v];
-			c1 = cbu_tab[u];
+			c1 = (isRGB32) ? cbu_tab[u] : crv_tab[v];
 
 			//up-left
 			y1 = tab_76309[*py1++];
@@ -206,16 +206,16 @@ static inline bool yuy2_to_rgb32(const BYTE* input, BYTE* output, int numOfPixel
 		int v = *(input++);
 
 		get_rgb_from_yuv(y0, u, v, &r, &g, &b);
-		*(output++) = b;
+		*(output++) = (isRGB32)? b : r;
 		*(output++) = g;
-		*(output++) = r;
+		*(output++) = (isRGB32) ? r : b;
 		if (isRGB32)
 			*(output++) = 0xff;  
 
 		get_rgb_from_yuv(y1, u, v, &r, &g, &b);
-		*(output++) = b;
+		*(output++) = (isRGB32) ? b : r;
 		*(output++) = g;
-		*(output++) = r;
+		*(output++) = (isRGB32) ? r : b;
 		if (isRGB32)
 			*(output++) = 0xff;         
 	}
