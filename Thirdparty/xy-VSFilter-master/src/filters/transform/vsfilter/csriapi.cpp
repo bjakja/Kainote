@@ -20,7 +20,6 @@
  */
 
 #include "stdafx.h"
-#include <afxdlgs.h>
 #include <atlpath.h>
 #include "resource.h"
 #include "..\..\..\subtitles\VobSubFile.h"

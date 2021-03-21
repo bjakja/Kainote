@@ -8,8 +8,8 @@ http://www.boost.org/LICENSE_1_0.txt)
 #ifndef BOOST_PREDEF_ARCHITECTURE_X86_H
 #define BOOST_PREDEF_ARCHITECTURE_X86_H
 
-//#include <boost/predef/architecture/x86/32.h>
-//#include <boost/predef/architecture/x86/64.h>
+#include <boost/predef/architecture/x86/32.h>
+#include <boost/predef/architecture/x86/64.h>
 
 /*`
 [heading `BOOST_ARCH_X86`]

@@ -180,7 +180,7 @@ STDMETHODIMP CTextSubtitleInputPinHepler::Receive( IMediaSample* pSample )
                 }
                 else if(tag == __GAB1_ENTRY__)
                 {
-                    m_pRTS->Add((LPWSTR)CA2WEX<>(ptr), false, *(int*)ptr, *(int*)(ptr+4));
+                    m_pRTS->Add((LPWSTR)CA2WEX<>(ptr), false, MS2RT(*(int*)ptr), MS2RT(*(int*)(ptr+4)));
                 }
                 else if(tag == __GAB1_LANGUAGE_UNICODE__)
                 {
@@ -188,7 +188,7 @@ STDMETHODIMP CTextSubtitleInputPinHepler::Receive( IMediaSample* pSample )
                 }
                 else if(tag == __GAB1_ENTRY_UNICODE__)
                 {
-                    m_pRTS->Add((WCHAR*)(ptr+8), true, *(int*)ptr, *(int*)(ptr+4));
+                    m_pRTS->Add((WCHAR*)(ptr+8), true, MS2RT(*(int*)ptr), MS2RT(*(int*)(ptr+4)));
                 }
 
                 ptr += size;
@@ -225,7 +225,7 @@ STDMETHODIMP CTextSubtitleInputPinHepler::Receive( IMediaSample* pSample )
 
             if(!str.IsEmpty())
             {
-                m_pRTS->Add((LPWSTR)CA2WEX<>(str), false, (int)(tStart / 10000), (int)(tStop / 10000));
+                m_pRTS->Add((LPWSTR)CA2WEX<>(str), false, tStart, tStop);
             }
         }
         else
@@ -240,7 +240,7 @@ STDMETHODIMP CTextSubtitleInputPinHepler::Receive( IMediaSample* pSample )
             CStringW str = UTF8To16(CStringA((LPCSTR)pData, len)).Trim();
             if(!str.IsEmpty())
             {
-                m_pRTS->Add(str, true, (int)(tStart / 10000), (int)(tStop / 10000));
+                m_pRTS->Add(str, true, tStart, tStop);
             }
             else
             {
@@ -257,24 +257,24 @@ STDMETHODIMP CTextSubtitleInputPinHepler::Receive( IMediaSample* pSample )
                 int fields = m_mt.subtype == MEDIASUBTYPE_ASS2 ? 10 : 9;
 
                 CAtlList<CStringW> sl;
-                Explode(str, sl, ',', fields);
+                ExplodeNoTrim(str, sl, ',', fields);
                 if(sl.GetCount() == fields)
                 {
                     stse.readorder = wcstol(sl.RemoveHead(), NULL, 10);
                     stse.layer = wcstol(sl.RemoveHead(), NULL, 10);
-                    stse.style = sl.RemoveHead();
-                    stse.actor = sl.RemoveHead();
+                    stse.style = sl.RemoveHead(); // no trim, its value is a lookup key
+                    stse.actor = sl.RemoveHead().Trim();
                     stse.marginRect.left = wcstol(sl.RemoveHead(), NULL, 10);
                     stse.marginRect.right = wcstol(sl.RemoveHead(), NULL, 10);
                     stse.marginRect.top = stse.marginRect.bottom = wcstol(sl.RemoveHead(), NULL, 10);
                     if(fields == 10) stse.marginRect.bottom = wcstol(sl.RemoveHead(), NULL, 10);
-                    stse.effect = sl.RemoveHead();
-                    stse.str = sl.RemoveHead();
+                    stse.effect = sl.RemoveHead().Trim();
+                    stse.str = sl.RemoveHead().Trim();
                 }
 
                 if(!stse.str.IsEmpty())
                 {
-                    m_pRTS->Add(stse.str, true, (int)(tStart / 10000), (int)(tStop / 10000), 
+                    m_pRTS->Add(stse.str, true, tStart, tStop, 
                         stse.style, stse.actor, stse.effect, stse.marginRect, stse.layer, stse.readorder);
                 }
             }

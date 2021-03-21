@@ -277,11 +277,13 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc141-mt-x32-1_73.lib;libboost_regex-vc141-mt-x32-1_73.lib;libboost_filesystem-vc141-mt-x32-1_73.lib;libboost_system-vc141-mt-x32-1_73.libs;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_locale-vc142-mt-x32-1_73.lib;libboost_regex-vc142-mt-x32-1_73.lib;libboost_filesystem-vc142-mt-x32-1_73.lib;libboost_system-vc142-mt-x32-1_73.libs;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)Win32\Release\Kainote x86.zip" "H:\Google Drive\Kainote x86.zip" "x86"</Command>
+      <Command>$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)Win32\Release\Kainote x86.zip" "H:\Google Drive\Kainote x86.zip" "x86"
+xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)Win32\Release\Locale\th_TH.mo" /u /y
+xcopy "$(SolutionDir)en.mo" "$(SolutionDir)Win32\Release\Locale\en.mo" /u /y</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
@@ -417,7 +419,9 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Link>
     <PostBuildEvent>
       <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
-$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "H:\Google Drive\Kainote x64.zip" "x64"</Command>
+$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "H:\Google Drive\Kainote x64.zip" "x64"
+xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)x64\Release\Locale\th_TH.mo" /u /y
+xcopy "$(SolutionDir)en.mo" "$(SolutionDir)x64\Release\Locale\en.mo" /u /y</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
@@ -839,8 +843,38 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Thirdparty\BaseClasses\BaseClasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
+      <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
       <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
+      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\LuaJit\LuaJit.vcxproj">
+      <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Hunspell\msvc\hunspell.vcxproj">
+      <Project>{6a0453f4-b12a-4810-b9a2-8ab059316ed7}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_base.vcxproj">
+      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_core.vcxproj">
+      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxpng.vcxproj">
+      <Project>{8acc122a-ca6a-5aa6-9c97-9cdd2e533db0}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxregex.vcxproj">
+      <Project>{56a4b526-bb81-5d01-aaa9-16d23bbb169d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxzlib.vcxproj">
+      <Project>{8b867186-a0b5-5479-b824-e176edd27c40}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

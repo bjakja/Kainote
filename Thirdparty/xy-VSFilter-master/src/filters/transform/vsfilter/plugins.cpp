@@ -86,15 +86,15 @@ public:
 
         CacheManager::GetClipperAlphaMaskMruCache()->SetMaxItemNum(m_xy_int_opt[INT_CLIPPER_MRU_CACHE_ITEM_NUM]);
         CacheManager::GetTextInfoCache()->SetMaxItemNum(m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM]);
-        //CacheManager::GetAssTagListMruCache()->SetMaxItemNum(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
+        CacheManager::GetAssTagListMruCache()->SetMaxItemNum(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
 
         SubpixelPositionControler::GetGlobalControler().SetSubpixelLevel( static_cast<SubpixelPositionControler::SUBPIXEL_LEVEL>(m_xy_int_opt[INT_SUBPIXEL_POS_LEVEL]) );
-
+        
         m_script_selected_yuv = CSimpleTextSubtitle::YCbCrMatrix_AUTO;
         m_script_selected_range = CSimpleTextSubtitle::YCbCrRange_AUTO;
 
         CAMThread::Create();
-      }
+    }
 	virtual ~CFilter() {CAMThread::CallWorker(0);}
 
     DECLARE_IUNKNOWN;
@@ -127,6 +127,9 @@ public:
             case CSimpleTextSubtitle::YCbCrMatrix_BT709:
                 yuv_matrix = ColorConvTable::BT709;
                 break;
+            case CSimpleTextSubtitle::YCbCrMatrix_BT2020:
+                yuv_matrix = ColorConvTable::BT2020;
+                break;
             case CSimpleTextSubtitle::YCbCrMatrix_AUTO:
             default:
                 yuv_matrix = ColorConvTable::BT601;                
@@ -142,6 +145,9 @@ public:
                 break;
             case CDirectVobSub::BT_709:
                 yuv_matrix = ColorConvTable::BT709;
+                break;
+            case CDirectVobSub::BT_2020:
+                yuv_matrix = ColorConvTable::BT2020;
                 break;
             case CDirectVobSub::GUESS:
                 yuv_matrix = (dst.w > m_bt601Width || dst.h > m_bt601Height) ? ColorConvTable::BT709 : ColorConvTable::BT601;
@@ -190,44 +196,44 @@ public:
         if(!m_pSubPicProvider)
             return(false);
 
-          if(!m_fLazyInit)
-          {
+        if(!m_fLazyInit)
+        {
             m_fLazyInit = true;
 
             SetYuvMatrix(dst);
-          }
+        }
         CSize size(dst.w, dst.h);
 
-          if(!m_simple_provider)
-          {
+        if(!m_simple_provider)
+        {
             if(!(m_simple_provider = new SimpleSubPicProvider2(dst.type, size, size, CRect(CPoint(0,0), size), this, &hr)) || FAILED(hr))
             {
-              m_simple_provider = NULL;
-              return(false);
+                m_simple_provider = NULL;
+                return(false);
             }
 #if 0
             hr = XySetSize(SIZE_ORIGINAL_VIDEO, size); // E_INVALID_ARG
             CHECK_N_LOG(hr, "Failed to set option");
 #endif
             m_xy_size_opt[SIZE_ORIGINAL_VIDEO] = size; // PF20180411 readonly property, set here
-          }
+        }
 
-          if(m_SubPicProviderId != (DWORD_PTR)(ISubPicProvider*)m_pSubPicProvider)
-          {
+        if(m_SubPicProviderId != (DWORD_PTR)(ISubPicProvider*)m_pSubPicProvider)
+        {
             CSize playres(0,0);
             CLSID clsid;
             CComQIPtr<IPersist> tmp = m_pSubPicProvider;
             tmp->GetClassID(&clsid);
             if(clsid == __uuidof(CRenderedTextSubtitle))
             {
-              CRenderedTextSubtitle* pRTS = dynamic_cast<CRenderedTextSubtitle*>((ISubPicProvider*)m_pSubPicProvider);
-              playres = pRTS->m_dstScreenSize;
+                CRenderedTextSubtitle* pRTS = dynamic_cast<CRenderedTextSubtitle*>((ISubPicProvider*)m_pSubPicProvider);
+                playres = pRTS->m_dstScreenSize;
             }
             m_xy_size_opt[SIZE_ASS_PLAY_RESOLUTION] = playres;
 
             m_simple_provider->SetSubPicProvider(m_pSubPicProvider);
             m_SubPicProviderId = (DWORD_PTR)(ISubPicProvider*)m_pSubPicProvider;
-          }
+        }
 
 		CComPtr<ISimpleSubPic> pSubPic;
 		if(!m_simple_provider->LookupSubPic(rt, &pSubPic))
@@ -235,7 +241,7 @@ public:
 
         if(dst.type == MSP_RGB32 || dst.type == MSP_RGB24 || dst.type == MSP_RGB16 || dst.type == MSP_RGB15)
             dst.h = -dst.h;
-          pSubPic->AlphaBlt(&dst);
+        pSubPic->AlphaBlt(&dst);
 
         return(true);
     }
@@ -357,28 +363,28 @@ public:
 		SetFileName(_T(""));
 		m_pSubPicProvider = NULL;
 
-      if(!m_pSubPicProvider)
-      {
-        if(ssf::CRenderer* ssf = new ssf::CRenderer(&m_csSubLock))
-        {
-          m_pSubPicProvider = (ISubPicProvider*)ssf;
-          if(ssf->Open(CString(fn))) SetFileName(fn);
-          else m_pSubPicProvider = NULL;
-        }
-      }
+		if(!m_pSubPicProvider)
+		{
+			if(ssf::CRenderer* ssf = new ssf::CRenderer(&m_csSubLock))
+			{
+				m_pSubPicProvider = (ISubPicProvider*)ssf;
+				if(ssf->Open(CString(fn))) SetFileName(fn);
+				else m_pSubPicProvider = NULL;
+			}
+		}
 
-      if(!m_pSubPicProvider)
-      {
-        if(CRenderedTextSubtitle* rts = new CRenderedTextSubtitle(&m_csSubLock))
-        {
-          m_pSubPicProvider = (ISubPicProvider*)rts;
-          if(rts->Open(CString(fn), CharSet)) SetFileName(fn);
-          else m_pSubPicProvider = NULL;
+		if(!m_pSubPicProvider)
+		{
+			if(CRenderedTextSubtitle* rts = new CRenderedTextSubtitle(&m_csSubLock))
+			{
+				m_pSubPicProvider = (ISubPicProvider*)rts;
+				if(rts->Open(CString(fn), CharSet)) SetFileName(fn);
+				else m_pSubPicProvider = NULL;
 
-          m_script_selected_yuv = rts->m_eYCbCrMatrix;
-          m_script_selected_range = rts->m_eYCbCrRange;
-        }
-      }
+                m_script_selected_yuv = rts->m_eYCbCrMatrix;
+                m_script_selected_range = rts->m_eYCbCrRange;
+			}
+		}
 
 		return !!m_pSubPicProvider;
 	}
@@ -711,13 +717,13 @@ public:
             }
 
             void StringProc(const VDXFilterActivation* fa, const VDXFilterFunctions* ff, char* str) {
-                sprintf(str, " (%s)", !GetFileName().IsEmpty() ? CStringA(GetFileName()) : " (empty)");
+                sprintf(str, " (%s)", !GetFileName().IsEmpty() ? CStringA(GetFileName()).GetString() : " (empty)");
             }
 
             bool FssProc(VDXFilterActivation* fa, const VDXFilterFunctions* ff, char* buf, int buflen) {
                 CStringA fn(GetFileName());
                 fn.Replace("\\", "\\\\");
-                _snprintf_s(buf, buflen, buflen, "Config(\"%s\")", fn);
+                _snprintf_s(buf, buflen, buflen, "Config(\"%s\")", fn.GetString());
                 return true;
             }
         };
@@ -756,7 +762,7 @@ public:
 
             void StringProc(const VDXFilterActivation* fa, const VDXFilterFunctions* ff, char* str) {
                 if (!GetFileName().IsEmpty()) {
-                    sprintf(str, " (%s, %d)", CStringA(GetFileName()), GetCharSet());
+                    sprintf(str, " (%s, %d)", CStringA(GetFileName()).GetString(), GetCharSet());
                 } else {
                     sprintf(str, " (empty)");
                 }
@@ -765,7 +771,7 @@ public:
             bool FssProc(VDXFilterActivation* fa, const VDXFilterFunctions* ff, char* buf, int buflen) {
                 CStringA fn(GetFileName());
                 fn.Replace("\\", "\\\\");
-                _snprintf_s(buf, buflen, buflen, "Config(\"%s\", %d)", fn, GetCharSet());
+                _snprintf_s(buf, buflen, buflen, "Config(\"%s\", %d)", fn.GetString(), GetCharSet());
                 return true;
             }
         };
@@ -919,175 +925,552 @@ public:
         }
     }
 #endif
+
     //
     // Avisynth interface
     //
-#if 0 // no CPP 2.0 interface! PF 20180224
-    namespace AviSynth1
+    // PF20180224 Avs2.6 interface using AVS+ headers
+    namespace AviSynth26
     {
-#include "avisynth/avisynth1.h"
-
-        class CAvisynthFilter : public GenericVideoFilter, virtual public CFilter
-        {
-        public:
-            CAvisynthFilter(PClip c, IScriptEnvironment* env) : GenericVideoFilter(c) {}
-
-            PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) {
-                PVideoFrame frame = child->GetFrame(n, env);
-
-                env->MakeWritable(&frame);
-
-                SubPicDesc dst;
-                dst.w = vi.width;
-                dst.h = vi.height;
-                dst.pitch = frame->GetPitch();
-                dst.bits = (BYTE*)frame->GetWritePtr();
-                dst.bpp = vi.BitsPerPixel();
-                dst.type =
-                    vi.IsRGB32() ? (env->GetVar("RGBA").AsBool() ? MSP_RGBA : MSP_RGB32) :
-                        vi.IsRGB24() ? MSP_RGB24 :
-                        vi.IsYUY2() ? MSP_YUY2 :
-                        -1;
-
-                float fps = m_fps > 0 ? m_fps : (float)vi.fps_numerator / vi.fps_denominator;
-
-                Render(dst, (REFERENCE_TIME)(10000000i64 * n / fps), fps);
-
-                return frame;
-            }
-        };
-
-        class CVobSubAvisynthFilter : public CVobSubFilter, public CAvisynthFilter
-        {
-        public:
-            CVobSubAvisynthFilter(PClip c, const char* fn, IScriptEnvironment* env)
-                : CVobSubFilter(CString(fn))
-                , CAvisynthFilter(c, env) {
-                if (!m_pSubPicProvider) {
-                    env->ThrowError("VobSub: Can't open \"%s\"", fn);
-                }
-            }
-        };
-
-        AVSValue __cdecl VobSubCreateS(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-            return (DEBUG_NEW CVobSubAvisynthFilter(args[0].AsClip(), args[1].AsString(), env));
-        }
-
-        class CTextSubAvisynthFilter : public CTextSubFilter, public CAvisynthFilter
-        {
-        public:
-            CTextSubAvisynthFilter(PClip c, IScriptEnvironment* env, const char* fn, int CharSet = DEFAULT_CHARSET, float fps = -1)
-                : CTextSubFilter(CString(fn), CharSet, fps)
-                , CAvisynthFilter(c, env) {
-                if (!m_pSubPicProvider) {
-                    env->ThrowError("TextSub: Can't open \"%s\"", fn);
-                }
-            }
-        };
-
-        AVSValue __cdecl TextSubCreateS(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-            return (DEBUG_NEW CTextSubAvisynthFilter(args[0].AsClip(), env, args[1].AsString()));
-        }
-
-        AVSValue __cdecl TextSubCreateSI(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-            return (DEBUG_NEW CTextSubAvisynthFilter(args[0].AsClip(), env, args[1].AsString(), args[2].AsInt()));
-        }
-
-        AVSValue __cdecl TextSubCreateSIF(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-            return (DEBUG_NEW CTextSubAvisynthFilter(args[0].AsClip(), env, args[1].AsString(), args[2].AsInt(), (float)args[3].AsFloat()));
-        }
-
-        AVSValue __cdecl MaskSubCreateSIIFI(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-            AVSValue rgb32("RGB32");
-            AVSValue  tab[5] = {
-                args[1],
-                args[2],
-                args[3],
-                args[4],
-                rgb32
-            };
-            AVSValue value(tab, 5);
-            const char* nom[5] = {
-                "width",
-                "height",
-                "fps",
-                "length",
-                "pixel_type"
-            };
-            AVSValue clip(env->Invoke("Blackness", value, nom));
-            env->SetVar(env->SaveString("RGBA"), true);
-            return (DEBUG_NEW CTextSubAvisynthFilter(clip.AsClip(), env, args[0].AsString()));
-        }
-
-        extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit(IScriptEnvironment* env)
-        {
-            env->AddFunction("VobSub", "cs", VobSubCreateS, 0);
-            env->AddFunction("TextSub", "cs", TextSubCreateS, 0);
-            env->AddFunction("TextSub", "csi", TextSubCreateSI, 0);
-            env->AddFunction("TextSub", "csif", TextSubCreateSIF, 0);
-            env->AddFunction("MaskSub", "siifi", MaskSubCreateSIIFI, 0);
-            env->SetVar(env->SaveString("RGBA"), false);
-            return NULL;
-        }
-    }
-#endif
-
-#if 0 // no CPP 2.5 interface! PF 20180224
-    namespace AviSynth25
-    {
-#include "avisynth/avisynth25.h"
+#include "avisynth/avisynth.h"
 
         static bool s_fSwapUV = false;
 
         class CAvisynthFilter : public GenericVideoFilter, virtual public CFilter
         {
         public:
+            bool has_at_least_v8; // avs interface version check
+
             VFRTranslator* vfr;
 
-            CAvisynthFilter(PClip c, IScriptEnvironment* env, VFRTranslator* _vfr = 0) : GenericVideoFilter(c), vfr(_vfr) {}
+            CAvisynthFilter(PClip c, IScriptEnvironment* env, VFRTranslator* _vfr = 0) : GenericVideoFilter(c), vfr(_vfr)
+            {
+                has_at_least_v8 = true;
+                try { env->CheckVersion(8); }
+                catch (const AvisynthError&) { has_at_least_v8 = false; }
+            }
+
+            // Helpers for YUV420P10<->P010 and YUV420P16<->P016 conversion
+
+            template<bool before>
+            static void prepare_luma_shift6_c(uint8_t* pdst, int dstpitch, const uint8_t* src, int srcpitch, int width, int height)
+            {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        if (before)
+                            reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t*>(src)[x] << 6;
+                        else
+                            reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t*>(src)[x] >> 6;
+                    }
+                    src += srcpitch;
+                    pdst += dstpitch;
+                }
+            }
+
+            template<bool before>
+            static void prepare_luma_shift6_sse2(uint8_t* pdst, int dstpitch, const uint8_t* src, int srcpitch, int width, int height)
+            {
+                const int modw = (width / 8) * 8; // 8 uv pairs at a time
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < modw; x += 8) {
+                        __m128i y = _mm_load_si128(reinterpret_cast<const __m128i*>(reinterpret_cast<const uint16_t*>(src) + x));
+                        if (before)
+                            y = _mm_slli_epi16(y, 6); // make 10->16 bits
+                        else
+                            y = _mm_srli_epi16(y, 6); // make 16->10 bits
+                        _mm_store_si128(reinterpret_cast<__m128i*>(reinterpret_cast<uint16_t*>(pdst) + x), y);
+                    }
+
+                    for (int x = modw; x < width; x++) {
+                        if (before)
+                            reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t*>(src)[x] << 6;
+                        else
+                            reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t*>(src)[x] >> 6;
+                    }
+                    src += srcpitch;
+                    pdst += dstpitch;
+                }
+            }
+
+            template<bool shift6>
+            static void prepare_to_interleaved_uv_c(uint8_t* pdst, int dstpitch, const uint8_t* srcu, const uint8_t* srcv, int pitchUV, int width, int height)
+            {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        uint16_t u, v;
+                        if (shift6) {
+                            u = reinterpret_cast<const uint16_t*>(srcu)[x] << 6; // make 10->16 bits
+                            v = reinterpret_cast<const uint16_t*>(srcv)[x] << 6; // make 10->16 bits
+                        }
+                        else {
+                            u = reinterpret_cast<const uint16_t*>(srcu)[x];
+                            v = reinterpret_cast<const uint16_t*>(srcv)[x];
+                        }
+                        uint32_t uv = (v << 16) | u;
+                        reinterpret_cast<uint32_t*>(pdst)[x] = uv;
+                    }
+                    srcu += pitchUV;
+                    srcv += pitchUV;
+                    pdst += dstpitch;
+                }
+            }
+
+            template<bool shift6>
+            static void prepare_to_interleaved_uv_sse2(uint8_t* pdst, int dstpitch, const uint8_t* srcu, const uint8_t* srcv, int pitchUV, int width, int height)
+            {
+                const int modw = (width / 8) * 8; // 8 uv pairs at a time
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < modw; x += 8) {
+                        __m128i u = _mm_load_si128(reinterpret_cast<const __m128i*>(reinterpret_cast<const uint16_t*>(srcu) + x));
+                        __m128i v = _mm_load_si128(reinterpret_cast<const __m128i*>(reinterpret_cast<const uint16_t*>(srcv) + x));
+                        if (shift6) {
+                            u = _mm_slli_epi16(u, 6); // make 10->16 bits
+                            v = _mm_slli_epi16(v, 6);
+                        }
+                        __m128i uv;
+                        uv = _mm_unpacklo_epi16(u, v); // (v << 16) | u;
+                        _mm_store_si128(reinterpret_cast<__m128i*>(reinterpret_cast<uint32_t*>(pdst) + x), uv);
+                        uv = _mm_unpackhi_epi16(u, v); // (v << 16) | u;
+                        _mm_store_si128(reinterpret_cast<__m128i*>(reinterpret_cast<uint32_t*>(pdst) + x + 4), uv);
+                    }
+
+                    for (int x = modw; x < width; x++) {
+                        uint16_t u, v;
+                        if (shift6) {
+                            u = reinterpret_cast<const uint16_t*>(srcu)[x] << 6; // make 10->16 bits
+                            v = reinterpret_cast<const uint16_t*>(srcv)[x] << 6; // make 10->16 bits
+                        }
+                        else {
+                            u = reinterpret_cast<const uint16_t*>(srcu)[x];
+                            v = reinterpret_cast<const uint16_t*>(srcv)[x];
+                        }
+                        uint32_t uv = (v << 16) | u;
+                        reinterpret_cast<uint32_t*>(pdst)[x] = uv;
+                    }
+                    srcu += pitchUV;
+                    srcv += pitchUV;
+                    pdst += dstpitch;
+                }
+            }
+
+
+            template<bool shift6>
+            static void prepare_from_interleaved_uv_c(uint8_t* pdstu, uint8_t* pdstv, int pitchUV, const uint8_t* src, int srcpitch, int width, int height)
+            {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
+                        uint32_t uv = reinterpret_cast<const uint32_t*>(src)[x];
+                        uint16_t u = uv & 0xFFFF;
+                        uint16_t v = uv >> 16;
+                        if (shift6) {
+                            u >>= 6;
+                            v >>= 6;
+                        }
+                        reinterpret_cast<uint16_t*>(pdstu)[x] = u;
+                        reinterpret_cast<uint16_t*>(pdstv)[x] = v;
+                    }
+                    pdstu += pitchUV;
+                    pdstv += pitchUV;
+                    src += srcpitch;
+                }
+            }
+
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable: 4309)
+#endif
+            // fake _mm_packus_epi32 (orig is SSE4.1 only)
+            static __forceinline __m128i _MM_PACKUS_EPI32(__m128i a, __m128i b)
+            {
+                const __m128i val_32 = _mm_set1_epi32(0x8000);
+                const __m128i val_16 = _mm_set1_epi16(0x8000);
+
+                a = _mm_sub_epi32(a, val_32);
+                b = _mm_sub_epi32(b, val_32);
+                a = _mm_packs_epi32(a, b);
+                a = _mm_add_epi16(a, val_16);
+                return a;
+            }
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
+            template<bool shift6, bool hasSSE41>
+            static void prepare_from_interleaved_uv_sse2(uint8_t* pdstu, uint8_t* pdstv, int pitchUV, const uint8_t* src, int srcpitch, int width, int height)
+            {
+                const int modw = (width / 8) * 8;
+                auto mask0000FFFF = _mm_set1_epi32(0x0000FFFF);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < modw; x += 8) {
+                        auto uv_lo = _mm_load_si128(reinterpret_cast<const __m128i*>(reinterpret_cast<const uint32_t*>(src) + x));
+                        auto uv_hi = _mm_load_si128(reinterpret_cast<const __m128i*>(reinterpret_cast<const uint32_t*>(src) + x + 4));
+                        if (shift6) {
+                            uv_lo = _mm_srli_epi16(uv_lo, 6);
+                            uv_hi = _mm_srli_epi16(uv_hi, 6);
+                        }
+                        auto u_lo = _mm_and_si128(uv_lo, mask0000FFFF);
+                        auto u_hi = _mm_and_si128(uv_hi, mask0000FFFF);
+                        auto u = shift6 ? _mm_packs_epi32(u_lo, u_hi) : (hasSSE41 ? _mm_packus_epi32(u_lo, u_hi) : _MM_PACKUS_EPI32(u_lo, u_hi));
+                        _mm_store_si128(reinterpret_cast<__m128i*>(reinterpret_cast<uint16_t*>(pdstu) + x), u);
+
+                        auto v_lo = _mm_srli_epi32(uv_lo, 16);
+                        auto v_hi = _mm_srli_epi32(uv_hi, 16);
+                        auto v = shift6 ? _mm_packs_epi32(v_lo, v_hi) : (hasSSE41 ? _mm_packus_epi32(v_lo, v_hi) : _MM_PACKUS_EPI32(v_lo, v_hi));
+                        _mm_store_si128(reinterpret_cast<__m128i*>(reinterpret_cast<uint16_t*>(pdstv) + x), v);
+                    }
+
+                    for (int x = modw; x < width; x++) {
+                        uint32_t uv = reinterpret_cast<const uint32_t*>(src)[x];
+                        uint16_t u = uv & 0xFFFF;
+                        uint16_t v = uv >> 16;
+                        if (shift6) {
+                            u >>= 6;
+                            v >>= 6;
+                        }
+                        reinterpret_cast<uint16_t*>(pdstu)[x] = u;
+                        reinterpret_cast<uint16_t*>(pdstv)[x] = v;
+                    }
+
+                    pdstu += pitchUV;
+                    pdstv += pitchUV;
+                    src += srcpitch;
+                }
+            }
+
+            void convYUY2to422_c(const uint8_t* src, uint8_t* py, uint8_t* pu, uint8_t* pv, int pitch1, int pitch2Y, int pitch2UV, int width, int height)
+            {
+                width >>= 1;
+                for (int y = 0; y < height; ++y)
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        py[x << 1] = src[x << 2];
+                        pu[x] = src[(x << 2) + 1];
+                        py[(x << 1) + 1] = src[(x << 2) + 2];
+                        pv[x] = src[(x << 2) + 3];
+                    }
+                    py += pitch2Y;
+                    pu += pitch2UV;
+                    pv += pitch2UV;
+                    src += pitch1;
+                }
+            }
+
+            void convYUY2to422_SSE2(const uint8_t* src, uint8_t* py, uint8_t* pu,
+                uint8_t* pv, int pitch1, int pitch2Y, int pitch2UV, int width, int height)
+            {
+                width >>= 1;
+                __m128i Ymask = _mm_set1_epi16(0x00FF);
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x += 4) {
+                        __m128i fullsrc = _mm_load_si128(reinterpret_cast<const __m128i*>(src + x * 4)); // VYUYVYUYVYUYVYUY
+                        __m128i yy = _mm_and_si128(fullsrc, Ymask); // 0Y0Y0Y0Y0Y0Y0Y0Y
+                        __m128i uvuv = _mm_srli_epi16(fullsrc, 8); // 0V0U0V0U0V0U0V0U
+                        yy = _mm_packus_epi16(yy, yy); // xxxxxxxxYYYYYYYY
+                        uvuv = _mm_packus_epi16(uvuv, uvuv); // xxxxxxxxVUVUVUVU
+                        __m128i uu = _mm_and_si128(uvuv, Ymask); // xxxxxxxx0U0U0U0U
+                        __m128i vv = _mm_srli_epi16(uvuv, 8); // xxxxxxxx0V0V0V0V
+                        uu = _mm_packus_epi16(uu, uu); // xxxxxxxxxxxxUUUU
+                        vv = _mm_packus_epi16(vv, vv); // xxxxxxxxxxxxVVVV
+                        _mm_storel_epi64(reinterpret_cast<__m128i*>(py + x * 2), yy);
+                        *(uint32_t*)(pu + x) = _mm_cvtsi128_si32(uu);
+                        *(uint32_t*)(pv + x) = _mm_cvtsi128_si32(vv);
+                    }
+                    src += pitch1;
+                    py += pitch2Y;
+                    pu += pitch2UV;
+                    pv += pitch2UV;
+                }
+            }
+
+            void conv422toYUY2_c(const uint8_t* py, const uint8_t* pu, const uint8_t* pv,
+                uint8_t* dst, int pitch1Y, int pitch1UV, int pitch2, int width, int height)
+            {
+                width >>= 1;
+                for (int y = 0; y < height; ++y)
+                {
+                    for (int x = 0; x < width; ++x)
+                    {
+                        dst[x << 2] = py[x << 1];
+                        dst[(x << 2) + 1] = pu[x];
+                        dst[(x << 2) + 2] = py[(x << 1) + 1];
+                        dst[(x << 2) + 3] = pv[x];
+                    }
+                    py += pitch1Y;
+                    pu += pitch1UV;
+                    pv += pitch1UV;
+                    dst += pitch2;
+                }
+            }
+
+            void conv422toYUY2_SSE2(const uint8_t* py, const uint8_t* pu, const uint8_t* pv,
+                uint8_t* dst, int pitch1Y, int pitch1UV, int pitch2, int width, int height)
+            {
+                width >>= 1;
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x += 4) {
+                        __m128i yy = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(py + x * 2)); // YYYYYYYY
+                        __m128i uu = _mm_castps_si128(_mm_load_ss(reinterpret_cast<const float*>(pu + x))); // 000000000000UUUU
+                        __m128i vv = _mm_castps_si128(_mm_load_ss(reinterpret_cast<const float*>(pv + x))); // 000000000000VVVV
+                        __m128i uvuv = _mm_unpacklo_epi8(uu, vv); // 00000000VUVUVUVU
+                        __m128i yuyv = _mm_unpacklo_epi8(yy, uvuv); // VYUYVYUYVYUYVYUY
+                        _mm_store_si128(reinterpret_cast<__m128i*>(dst + x * 4), yuyv);
+                    }
+                    dst += pitch2;
+                    py += pitch1Y;
+                    pu += pitch1UV;
+                    pv += pitch1UV;
+                }
+            }
+
+            void convYUY2to422(const uint8_t* src, uint8_t* py, uint8_t* pu,
+                uint8_t* pv, int pitch1, int pitch2Y, int pitch2UV, int width, int height, bool useSSE2)
+            {
+                if (useSSE2)
+                    convYUY2to422_SSE2(src, py, pu, pv, pitch1, pitch2Y, pitch2UV, width, height);
+                else
+                    convYUY2to422_c(src, py, pu, pv, pitch1, pitch2Y, pitch2UV, width, height);
+            }
+
+            void conv422toYUY2(const uint8_t* py, const uint8_t* pu, const uint8_t* pv,
+                uint8_t* dst, int pitch1Y, int pitch1UV, int pitch2, int width, int height, bool useSSE2)
+            {
+                if (useSSE2)
+                    conv422toYUY2_SSE2(py, pu, pv, dst, pitch1Y, pitch1UV, pitch2, width, height);
+                else
+                    conv422toYUY2_c(py, pu, pv, dst, pitch1Y, pitch1UV, pitch2, width, height);
+            }
+
+            // Crash and/or corruption if MT. To be tested, why
+            int __stdcall SetCacheHints(int cachehints, int frame_range) override {
+                return cachehints == CACHE_GET_MTMODE ? MT_SERIALIZED : 0;
+            }
 
             PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) {
                 PVideoFrame frame = child->GetFrame(n, env);
 
-                env->MakeWritable(&frame);
+                const bool sse2 = (env->GetCPUFlags() & CPUF_SSE2) != 0;
+                const bool sse41 = (env->GetCPUFlags() & CPUF_SSE4_1) != 0;
+
+                const bool doYV16asYUY2 = false; // hey, we have native YV16 now
 
                 SubPicDesc dst;
+                // dst pointers: later
                 dst.w = vi.width;
                 dst.h = vi.height;
-                dst.pitch = frame->GetPitch();
-                dst.pitchUV = frame->GetPitch(PLANAR_U);
-                dst.bits = (BYTE*)frame->GetWritePtr();
-                dst.bitsU = frame->GetWritePtr(PLANAR_U);
-                dst.bitsV = frame->GetWritePtr(PLANAR_V);
-                dst.bpp = dst.pitch / dst.w * 8; //vi.BitsPerPixel();
-                dst.type =
-                    vi.IsRGB32() ? (env->GetVar("RGBA").AsBool() ? MSP_RGBA : MSP_RGB32)  :
-                        vi.IsRGB24() ? MSP_RGB24 :
-                        vi.IsYUY2() ? MSP_YUY2 :
-                /*vi.IsYV12()*/ vi.pixel_type == VideoInfo::CS_YV12 ? (s_fSwapUV ? MSP_IYUV : MSP_YV12) :
-                /*vi.IsIYUV()*/ vi.pixel_type == VideoInfo::CS_IYUV ? (s_fSwapUV ? MSP_YV12 : MSP_IYUV) :
-                        -1;
 
+                dst.type =
+                    vi.IsRGB32() ? (env->GetVar("RGBA").AsBool() ? MSP_RGBA : MSP_RGB32) :
+                    vi.IsRGB24() ? MSP_RGB24 :
+                    vi.IsYUY2() ? MSP_YUY2 :
+                    doYV16asYUY2 && vi.IsYV16() ? MSP_YUY2 :
+                    /*vi.IsYV12()*/ vi.pixel_type == VideoInfo::CS_YV12 ? (s_fSwapUV ? MSP_IYUV : MSP_YV12) :
+                    /*vi.IsIYUV()*/ vi.pixel_type == VideoInfo::CS_IYUV ? (s_fSwapUV ? MSP_YV12 : MSP_IYUV) :
+                    vi.pixel_type == VideoInfo::CS_YUV420P10 ? MSP_P010 : // P.F. 180224 10 bit support
+                    vi.pixel_type == VideoInfo::CS_YUV420P16 ? MSP_P016 : // P.F. 180224 16 bit support
+                    // 20210305
+                    vi.pixel_type == VideoInfo::CS_YUV422P10 ? MSP_P210 :
+                    vi.pixel_type == VideoInfo::CS_YUV422P16 ? MSP_P216 :
+                    vi.IsYV16() ? MSP_YV16 : // not natively yet. converted to YUY2 on the fly
+                    vi.IsYV24() ? MSP_YV24 :
+                    -1;
+
+                if (dst.type == -1)
+                    env->ThrowError("Format not supported. Use RGB24,RGB32,YUY2,YV12,YV16,YV24,YUV420P10/P16,YUV422P10/P16.");
+
+                bool YV16asYUY2 = doYV16asYUY2 && vi.IsYV16(); // must use single YUY2 buffer internally
+
+                bool semi_packed_p10 = (vi.pixel_type == VideoInfo::CS_YUV420P10) || (vi.pixel_type == VideoInfo::CS_YUV422P10);
+                bool semi_packed_p16 = (vi.pixel_type == VideoInfo::CS_YUV420P16) || (vi.pixel_type == VideoInfo::CS_YUV422P16);
+
+                // PF todo: check what to put here for 10 bits? 10 or 16? Now pitch/dst.w would 
+                // dst.bpp = dst.pitch / dst.w * 8; //vi.BitsPerPixel();
+                if (vi.BitsPerComponent() == 10)
+                    dst.bpp = 16;
+                else if (vi.BitsPerComponent() == 16)
+                    dst.bpp = 16;
+                else if(YV16asYUY2)
+                    dst.bpp = 2 * frame->GetRowSize() / dst.w * 8;
+                else
+                    dst.bpp = frame->GetRowSize() / dst.w * 8;
+
+                BYTE* pdst_save;
+                PVideoFrame buffer;
+
+                // P010/P016/P210/P216 format:
+                // Single buffer
+                // n lines   YYYYYYYYYYYYYY
+                // n/2 lines UVUVUVUVUVUVUV (4:2:0)
+                // or n lines UVUVUVUVUVUVUV (4:2:2)
+                // Pitch is common. P010/P210 is upshifted to 16 bits
+
+                if (semi_packed_p10 || semi_packed_p16) {
+                    VideoInfo vi2 = vi;
+                    int cheight = vi.height >> vi.GetPlaneHeightSubsampling(PLANAR_U);
+                    int cwidth = vi.width >> vi.GetPlaneWidthSubsampling(PLANAR_U);
+                    vi2.height = vi.height + cheight;
+                    vi2.pixel_type = semi_packed_p16 ? VideoInfo::CS_Y16 : VideoInfo::CS_Y10;
+                    buffer = env->NewVideoFrame(vi2);
+                    BYTE* pdst = buffer->GetWritePtr();
+                    pdst_save = pdst;
+
+                    // luma
+                    int pitch = buffer->GetPitch();
+                    int srcpitch = frame->GetPitch();
+                    const BYTE* src = frame->GetReadPtr();
+                    if (semi_packed_p16) {
+                        // no shift, native copy
+                        env->BitBlt(pdst, pitch, src, srcpitch, frame->GetRowSize(), vi.height);
+                    }
+                    else {
+                        // shift by 6 make 10->16 bits
+                        if (sse2)
+                            prepare_luma_shift6_sse2<true>(pdst, pitch, src, srcpitch, vi.width, vi.height); // true: before
+                        else
+                            prepare_luma_shift6_c<true>(pdst, pitch, src, srcpitch, vi.width, vi.height); // true: before
+                    }
+
+                    pdst += pitch * vi.height;
+
+                    // Chroma
+                    int pitchUV = frame->GetPitch(PLANAR_U);
+                    const BYTE* srcu = frame->GetReadPtr(PLANAR_U);
+                    const BYTE* srcv = frame->GetReadPtr(PLANAR_V);
+
+                    if (sse2) {
+                        if (semi_packed_p16)
+                            prepare_to_interleaved_uv_sse2<false>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight);
+                        else
+                            prepare_to_interleaved_uv_sse2<true>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight); // shift6 inside
+                    }
+                    else {
+                        if (semi_packed_p16)
+                            prepare_to_interleaved_uv_c<false>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight);
+                        else
+                            prepare_to_interleaved_uv_c<true>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight); // shift6 inside
+                    }
+                    // buffer is ready.
+                    // Fill dst pointers
+                    dst.pitch = pitch;
+                    dst.pitchUV = pitch; // n/a? // ? in P010 no separate UV pointers
+                    dst.bits = pdst_save;
+                    dst.bitsU = pdst_save + pitch * vi.height; // ? in P010 no separate pointers
+                    dst.bitsV = pdst_save + pitch * vi.height;
+                }
+                else if (YV16asYUY2) {
+                    // for 8 bit YUV 4:2:2 only YUY2 is supported in xy
+                    // converting to internal format
+                    VideoInfo vi2 = vi;
+                    vi2.width = vi.width * 2; // YUYV
+                    vi2.pixel_type = VideoInfo::CS_Y8; // single YUY2 buffer
+                    buffer = env->NewVideoFrame(vi2);
+                    BYTE* pdst = buffer->GetWritePtr();
+                    pdst_save = pdst;
+
+                    // luma
+                    int dstpitch = buffer->GetPitch();
+                    int srcpitch = frame->GetPitch();
+                    const BYTE* src = frame->GetReadPtr();
+                    conv422toYUY2(frame->GetReadPtr(PLANAR_Y), frame->GetReadPtr(PLANAR_U), frame->GetReadPtr(PLANAR_V),
+                        buffer->GetWritePtr(),
+                        frame->GetPitch(PLANAR_Y), frame->GetPitch(PLANAR_U), dstpitch,
+                        vi.width, vi.height,
+                        sse2);
+
+                    // buffer is ready.
+                    // Fill dst pointers
+                    dst.pitch = dstpitch;
+                    dst.pitchUV = 0; // n/a in YUY2 no separate UV pointers
+                    dst.bits = pdst;
+                    dst.bitsU = nullptr;
+                    dst.bitsV = nullptr;
+                }
+                else {
+                    // 8 bit classic
+                    env->MakeWritable(&frame);
+
+                    dst.pitch = frame->GetPitch();
+                    dst.pitchUV = frame->GetPitch(PLANAR_U);
+                    dst.bits = frame->GetWritePtr();
+                    dst.bitsU = frame->GetWritePtr(PLANAR_U);
+                    dst.bitsV = frame->GetWritePtr(PLANAR_V);
+                }
+
+                // Common part
                 float fps = m_fps > 0 ? m_fps : (float)vi.fps_numerator / vi.fps_denominator;
 
                 REFERENCE_TIME timestamp;
 
                 if (!vfr) {
                     timestamp = (REFERENCE_TIME)(10000000i64 * n / fps);
-                } else {
+                }
+                else {
                     timestamp = (REFERENCE_TIME)(10000000 * vfr->TimeStampFromFrameNumber(n));
                 }
 
                 Render(dst, timestamp, fps);
 
-                return frame;
+                if (semi_packed_p10 || semi_packed_p16) {
+                    // convert semi packed formats back to Avisynth YUV420P10 and P16 formats
+                    BYTE* src = pdst_save; // dst.bits;
+                    PVideoFrame dst_frame = has_at_least_v8 ? env->NewVideoFrameP(vi, &frame) : env->NewVideoFrame(vi);
+                    BYTE* pdst = dst_frame->GetWritePtr();
+
+                    int pitch = dst_frame->GetPitch();
+
+                    // Luma
+                    if (semi_packed_p16) {
+                        env->BitBlt(pdst, pitch, src, dst.pitch, vi.width * sizeof(uint16_t), vi.height);
+                    }
+                    else {
+                        // shift by 6 make 10->16 bits
+                        if (sse2)
+                            prepare_luma_shift6_sse2<false>(pdst, pitch, src, dst.pitch, vi.width, vi.height); // false: after
+                        else
+                            prepare_luma_shift6_c<false>(pdst, pitch, src, dst.pitch, vi.width, vi.height); // false: after
+                    }
+                    src += dst.pitch * vi.height;
+
+                    // Chroma
+                    int cheight = vi.height >> vi.GetPlaneHeightSubsampling(PLANAR_U);
+                    int cwidth = vi.width >> vi.GetPlaneWidthSubsampling(PLANAR_U);
+                    int pitchUV = dst_frame->GetPitch(PLANAR_U);
+                    BYTE* pdstu = dst_frame->GetWritePtr(PLANAR_U);
+                    BYTE* pdstv = dst_frame->GetWritePtr(PLANAR_V);
+                    if (sse41) {
+                        if (semi_packed_p16)
+                            prepare_from_interleaved_uv_sse2<false, true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
+                        else
+                            prepare_from_interleaved_uv_sse2<true, true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
+                    }
+                    else if (sse2) {
+                        if (semi_packed_p16)
+                            prepare_from_interleaved_uv_sse2<false, false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
+                        else
+                            prepare_from_interleaved_uv_sse2<true, false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
+                    }
+                    else {
+                        if (semi_packed_p16)
+                            prepare_from_interleaved_uv_c<false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
+                        else
+                            prepare_from_interleaved_uv_c<true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
+                    }
+                    return dst_frame;
+                }
+                else if (YV16asYUY2) {
+                    // YV16 was handled as YUY2 buffer internally, convert back
+                    PVideoFrame dst_frame = has_at_least_v8 ? env->NewVideoFrameP(vi, &frame) : env->NewVideoFrame(vi);
+                    convYUY2to422(buffer->GetReadPtr(), dst_frame->GetWritePtr(PLANAR_Y), dst_frame->GetWritePtr(PLANAR_U), dst_frame->GetWritePtr(PLANAR_V),
+                        buffer->GetPitch(), dst_frame->GetPitch(PLANAR_Y), dst_frame->GetPitch(PLANAR_U),
+                        vi.width, vi.height, sse2);
+                    return dst_frame;
+                }
+                else {
+                    return frame;
+                }
             }
         };
+
 
         class CVobSubAvisynthFilter : public CVobSubFilter, public CAvisynthFilter
         {
@@ -1129,12 +1512,12 @@ public:
             }
 
             return (DEBUG_NEW CTextSubAvisynthFilter(
-                        args[0].AsClip(),
-                        env,
-                        args[1].AsString(),
-                        args[2].AsInt(DEFAULT_CHARSET),
-                        (float)args[3].AsFloat(-1),
-                        vfr));
+                args[0].AsClip(),
+                env,
+                args[1].AsString(),
+                args[2].AsInt(DEFAULT_CHARSET),
+                (float)args[3].AsFloat(-1),
+                vfr));
         }
 
         AVSValue __cdecl TextSubSwapUV(AVSValue args, void* user_data, IScriptEnvironment* env)
@@ -1156,547 +1539,56 @@ public:
                 vfr = GetVFRTranslator(args[6].AsString());
             }
 
-            AVSValue rgb32("RGB32");
+            // well, its a source filter
             AVSValue fps(args[3].AsFloat(25));
             AVSValue  tab[6] = {
-                args[1],
-                args[2],
-                args[3],
-                args[4],
-                rgb32
+              args[1],
+              args[2],
+              args[3],
+              args[4],
+              args[7].AsString("RGB32") // PF 180224 new! pixel_type parameter defaulting to RGB32
             };
             AVSValue value(tab, 5);
             const char* nom[5] = {
-                "width",
-                "height",
-                "fps",
-                "length",
-                "pixel_type"
+              "width",
+              "height",
+              "fps",
+              "length",
+              "pixel_type"
             };
             AVSValue clip(env->Invoke("Blackness", value, nom));
             env->SetVar(env->SaveString("RGBA"), true);
             //return (DNew CTextSubAvisynthFilter(clip.AsClip(), env, args[0].AsString()));
             return (DEBUG_NEW CTextSubAvisynthFilter(
-                        clip.AsClip(),
-                        env,
-                        args[0].AsString(),
-                        args[5].AsInt(DEFAULT_CHARSET),
-                        (float)args[3].AsFloat(-1),
-                        vfr));
-        }
-
-        extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit2(IScriptEnvironment* env)
-        {
-            env->AddFunction("VobSub", "cs", VobSubCreateS, 0);
-            env->AddFunction("TextSub", "c[file]s[charset]i[fps]f[vfr]s", TextSubCreateGeneral, 0);
-            env->AddFunction("TextSubSwapUV", "b", TextSubSwapUV, 0);
-            env->AddFunction("MaskSub", "[file]s[width]i[height]i[fps]f[length]i[charset]i[vfr]s", MaskSubCreate, 0);
-            env->SetVar(env->SaveString("RGBA"), false);
-            return NULL;
-        }
-    }
-#endif
-
-
-// PF20180224 Avs2.6 interface using AVS+ headers
-    namespace AviSynth26
-    {
-#include "avisynth/avisynth.h"
-
-      static bool s_fSwapUV = false;
-
-      class CAvisynthFilter : public GenericVideoFilter, virtual public CFilter
-      {
-      public:
-        VFRTranslator * vfr;
-
-        CAvisynthFilter(PClip c, IScriptEnvironment* env, VFRTranslator* _vfr = 0) : GenericVideoFilter(c), vfr(_vfr) {}
-
-        // Helpers for YUV420P10<->P010 and YUV420P16<->P016 conversion
-
-        template<bool before>
-        static void prepare_luma_shift6_c(uint8_t* pdst, int dstpitch, const uint8_t *src, int srcpitch, int width, int height)
-        {
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-              if (before)
-                reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t *>(src)[x] << 6;
-              else
-                reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t *>(src)[x] >> 6;
-            }
-            src += srcpitch;
-            pdst += dstpitch;
-          }
-        }
-
-        template<bool before>
-        static void prepare_luma_shift6_sse2(uint8_t* pdst, int dstpitch, const uint8_t *src, int srcpitch, int width, int height)
-        {
-          const int modw = (width / 8) * 8; // 8 uv pairs at a time
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < modw; x += 8) {
-              __m128i y = _mm_load_si128(reinterpret_cast<const __m128i *>(reinterpret_cast<const uint16_t *>(src) + x));
-              if(before)
-                y = _mm_slli_epi16(y, 6); // make 10->16 bits
-              else
-                y = _mm_srli_epi16(y, 6); // make 16->10 bits
-              _mm_store_si128(reinterpret_cast<__m128i *>(reinterpret_cast<uint16_t *>(pdst) + x), y);
-            }
-
-            for (int x = modw; x < width; x++) {
-              if (before)
-                reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t *>(src)[x] << 6;
-              else
-                reinterpret_cast<uint16_t*>(pdst)[x] = reinterpret_cast<const uint16_t *>(src)[x] >> 6;
-            }
-            src += srcpitch;
-            pdst += dstpitch;
-          }
-        }
-
-        template<bool shift6>
-        static void prepare_to_interleaved_uv_c(uint8_t* pdst, int dstpitch, const uint8_t *srcu, const uint8_t *srcv, int pitchUV, int width, int height)
-        {
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-              uint16_t u, v;
-              if (shift6) {
-                u = reinterpret_cast<const uint16_t *>(srcu)[x] << 6; // make 10->16 bits
-                v = reinterpret_cast<const uint16_t *>(srcv)[x] << 6; // make 10->16 bits
-              }
-              else {
-                u = reinterpret_cast<const uint16_t *>(srcu)[x];
-                v = reinterpret_cast<const uint16_t *>(srcv)[x];
-              }
-              uint32_t uv = (v << 16) | u;
-              reinterpret_cast<uint32_t*>(pdst)[x] = uv;
-            }
-            srcu += pitchUV;
-            srcv += pitchUV;
-            pdst += dstpitch;
-          }
-        }
-
-        template<bool shift6>
-        static void prepare_to_interleaved_uv_sse2(uint8_t* pdst, int dstpitch, const uint8_t *srcu, const uint8_t *srcv, int pitchUV, int width, int height)
-        {
-          const int modw = (width / 8) * 8; // 8 uv pairs at a time
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < modw; x += 8) {
-              __m128i u = _mm_load_si128(reinterpret_cast<const __m128i *>(reinterpret_cast<const uint16_t *>(srcu) + x));
-              __m128i v = _mm_load_si128(reinterpret_cast<const __m128i *>(reinterpret_cast<const uint16_t *>(srcv) + x));
-              if (shift6) {
-                u = _mm_slli_epi16(u, 6); // make 10->16 bits
-                v = _mm_slli_epi16(v, 6);
-              }
-              __m128i uv;
-              uv = _mm_unpacklo_epi16(u, v); // (v << 16) | u;
-              _mm_store_si128(reinterpret_cast<__m128i *>(reinterpret_cast<uint32_t *>(pdst) + x), uv);
-              uv = _mm_unpackhi_epi16(u, v); // (v << 16) | u;
-              _mm_store_si128(reinterpret_cast<__m128i *>(reinterpret_cast<uint32_t *>(pdst) + x + 4), uv);
-            }
-
-            for (int x = modw; x < width; x++) {
-              uint16_t u, v;
-              if (shift6) {
-                u = reinterpret_cast<const uint16_t *>(srcu)[x] << 6; // make 10->16 bits
-                v = reinterpret_cast<const uint16_t *>(srcv)[x] << 6; // make 10->16 bits
-              }
-              else {
-                u = reinterpret_cast<const uint16_t *>(srcu)[x];
-                v = reinterpret_cast<const uint16_t *>(srcv)[x];
-              }
-              uint32_t uv = (v << 16) | u;
-              reinterpret_cast<uint32_t*>(pdst)[x] = uv;
-            }
-            srcu += pitchUV;
-            srcv += pitchUV;
-            pdst += dstpitch;
-          }
-        }
-
-
-        template<bool shift6>
-        static void prepare_from_interleaved_uv_c(uint8_t* pdstu, uint8_t* pdstv, int pitchUV, const uint8_t *src, int srcpitch, int width, int height)
-        {
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-              uint32_t uv = reinterpret_cast<const uint32_t*>(src)[x];
-              uint16_t u = uv & 0xFFFF;
-              uint16_t v = uv >> 16;
-              if (shift6) {
-                u >>= 6;
-                v >>= 6;
-              }
-              reinterpret_cast<uint16_t*>(pdstu)[x] = u;
-              reinterpret_cast<uint16_t*>(pdstv)[x] = v;
-            }
-            pdstu += pitchUV;
-            pdstv += pitchUV;
-            src += srcpitch;
-          }
-        }
-
-#ifdef _MSC_VER
-#pragma warning(push)
-#pragma warning(disable: 4309)
-#endif
-        // fake _mm_packus_epi32 (orig is SSE4.1 only)
-        static __forceinline __m128i _MM_PACKUS_EPI32(__m128i a, __m128i b)
-        {
-          const static __m128i val_32 = _mm_set1_epi32(0x8000);
-          const static __m128i val_16 = _mm_set1_epi16(0x8000);
-
-          a = _mm_sub_epi32(a, val_32);
-          b = _mm_sub_epi32(b, val_32);
-          a = _mm_packs_epi32(a, b);
-          a = _mm_add_epi16(a, val_16);
-          return a;
-        }
-#ifdef _MSC_VER
-#pragma warning(pop)
-#endif
-
-        template<bool shift6, bool hasSSE41>
-        static void prepare_from_interleaved_uv_sse2(uint8_t* pdstu, uint8_t* pdstv, int pitchUV, const uint8_t *src, int srcpitch, int width, int height)
-        {
-          const int modw = (width / 8) * 8;
-          auto mask0000FFFF = _mm_set1_epi32(0x0000FFFF);
-          for (int y = 0; y < height; y++) {
-            for (int x = 0; x < modw; x += 8) {
-              auto uv_lo = _mm_load_si128(reinterpret_cast<const __m128i *>(reinterpret_cast<const uint32_t*>(src) + x));
-              auto uv_hi = _mm_load_si128(reinterpret_cast<const __m128i *>(reinterpret_cast<const uint32_t*>(src) + x + 4));
-              if (shift6) {
-                uv_lo = _mm_srli_epi16(uv_lo, 6);
-                uv_hi = _mm_srli_epi16(uv_hi, 6);
-              }
-              auto u_lo = _mm_and_si128(uv_lo, mask0000FFFF);
-              auto u_hi = _mm_and_si128(uv_hi, mask0000FFFF);
-              auto u = shift6 ? _mm_packs_epi32(u_lo, u_hi) : (hasSSE41 ? _mm_packus_epi32(u_lo, u_hi) : _MM_PACKUS_EPI32(u_lo, u_hi));
-              _mm_store_si128(reinterpret_cast<__m128i *>(reinterpret_cast<uint16_t*>(pdstu) + x), u);
-
-              auto v_lo = _mm_srli_epi32(uv_lo, 16);
-              auto v_hi = _mm_srli_epi32(uv_hi, 16);
-              auto v = shift6 ? _mm_packs_epi32(v_lo, v_hi) : (hasSSE41 ? _mm_packus_epi32(v_lo, v_hi) : _MM_PACKUS_EPI32(v_lo, v_hi));
-              _mm_store_si128(reinterpret_cast<__m128i *>(reinterpret_cast<uint16_t*>(pdstv) + x), v);
-            }
-
-            for (int x = modw; x < width; x++) {
-              uint32_t uv = reinterpret_cast<const uint32_t*>(src)[x];
-              uint16_t u = uv & 0xFFFF;
-              uint16_t v = uv >> 16;
-              if (shift6) {
-                u >>= 6;
-                v >>= 6;
-              }
-              reinterpret_cast<uint16_t*>(pdstu)[x] = u;
-              reinterpret_cast<uint16_t*>(pdstv)[x] = v;
-            }
-
-            pdstu += pitchUV;
-            pdstv += pitchUV;
-            src += srcpitch;
-          }
-        }
-
-        // Crash and/or corruption if MT. To be tested, why
-        int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-          return cachehints == CACHE_GET_MTMODE ? MT_SERIALIZED : 0;
-        }
-
-        PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) {
-          PVideoFrame frame = child->GetFrame(n, env);
-          
-          const bool sse2 = (env->GetCPUFlags() & CPUF_SSE2) != 0;
-          const bool sse41 = (env->GetCPUFlags() & CPUF_SSE4_1) != 0;
-          
-          SubPicDesc dst;
-          // dst pointers: later
-          dst.w = vi.width;
-          dst.h = vi.height;
-          
-          // PF todo: check what to put here for 10 bits? 10 or 16? Now pitch/dst.w would 
-          // dst.bpp = dst.pitch / dst.w * 8; //vi.BitsPerPixel();
-          if (vi.BitsPerComponent() == 10)
-            dst.bpp = 16;
-          if (vi.BitsPerComponent() == 16)
-            dst.bpp = 16;
-          else
-            // PF180224  fix1: not pitch/width but rowsize/width should be used!!
-            dst.bpp = frame->GetRowSize() / dst.w * 8; //vi.BitsPerPixel();
-
-          BYTE *pdst_save;
-          PVideoFrame buffer;
-
-          dst.type =
-            vi.IsRGB32() ? (env->GetVar("RGBA").AsBool() ? MSP_RGBA : MSP_RGB32) :
-            vi.IsRGB24() ? MSP_RGB24 :
-            vi.IsYUY2() ? MSP_YUY2 :
-            /*vi.IsYV12()*/ vi.pixel_type == VideoInfo::CS_YV12 ? (s_fSwapUV ? MSP_IYUV : MSP_YV12) :
-            /*vi.IsIYUV()*/ vi.pixel_type == VideoInfo::CS_IYUV ? (s_fSwapUV ? MSP_YV12 : MSP_IYUV) :
-            vi.pixel_type == VideoInfo::CS_YUV420P10 ? MSP_P010 : // P.F. 180224 10 bit support
-            vi.pixel_type == VideoInfo::CS_YUV420P16 ? MSP_P016 : // P.F. 180224 16 bit support
-            -1;
-
-          bool semi_packed_p10 = (vi.pixel_type == VideoInfo::CS_YUV420P10) || (vi.pixel_type == VideoInfo::CS_YUV422P10);
-          bool semi_packed_p16 = (vi.pixel_type == VideoInfo::CS_YUV420P16) || (vi.pixel_type == VideoInfo::CS_YUV422P16);
-          // P010/P016 format:
-          // Single buffer
-          // n lines   YYYYYYYYYYYYYY
-          // n/2 lines UVUVUVUVUVUVUV
-          // Pitch is common. P010 is upshifted to 16 bits
-
-          if (semi_packed_p10 || semi_packed_p16) {
-            VideoInfo vi2 = vi;
-            int cheight = vi.height >> vi.GetPlaneHeightSubsampling(PLANAR_U);
-            int cwidth = vi.width >> vi.GetPlaneWidthSubsampling(PLANAR_U);
-            vi2.height = vi.height + cheight;
-            vi2.pixel_type = semi_packed_p16 ? VideoInfo::CS_Y16 : VideoInfo::CS_Y10;
-            buffer = env->NewVideoFrame(vi2);
-            BYTE *pdst = buffer->GetWritePtr();
-            pdst_save = pdst;
-
-            // luma
-            int pitch = buffer->GetPitch();
-            int srcpitch = frame->GetPitch();
-            const BYTE *src = frame->GetReadPtr();
-            if (semi_packed_p16) {
-              // no shift, native copy
-              env->BitBlt(pdst, pitch, src, srcpitch, frame->GetRowSize(), vi.height);
-            }
-            else {
-              // shift by 6 make 10->16 bits
-              if (sse2)
-                prepare_luma_shift6_sse2<true>(pdst, pitch, src, srcpitch, vi.width, vi.height); // true: before
-              else
-                prepare_luma_shift6_c<true>(pdst, pitch, src, srcpitch, vi.width, vi.height); // true: before
-            }
-
-            pdst += pitch * vi.height;
-
-            // Chroma
-            int pitchUV = frame->GetPitch(PLANAR_U);
-            const BYTE *srcu = frame->GetReadPtr(PLANAR_U);
-            const BYTE *srcv = frame->GetReadPtr(PLANAR_V);
-
-            if (sse2) {
-              if (semi_packed_p16)
-                prepare_to_interleaved_uv_sse2<false>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight);
-              else
-                prepare_to_interleaved_uv_sse2<true>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight); // shift6 inside
-            }
-            else {
-              if (semi_packed_p16)
-                prepare_to_interleaved_uv_c<false>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight);
-              else
-                prepare_to_interleaved_uv_c<true>(pdst, pitch, srcu, srcv, pitchUV, cwidth, cheight); // shift6 inside
-            }
-            // buffer is ready.
-            // Fill dst pointers
-            dst.pitch = pitch;
-            dst.pitchUV = pitch; // n/a? // ? in P010 no separate UV pointers
-            dst.bits = pdst_save;
-            dst.bitsU = pdst_save + pitch * vi.height; // ? in P010 no separate pointers
-            dst.bitsV = pdst_save + pitch * vi.height;
-          }
-          else {
-            // 8 bit classic
-            env->MakeWritable(&frame);
-
-            dst.pitch = frame->GetPitch();
-            dst.pitchUV = frame->GetPitch(PLANAR_U);
-            dst.bits = frame->GetWritePtr();
-            dst.bitsU = frame->GetWritePtr(PLANAR_U);
-            dst.bitsV = frame->GetWritePtr(PLANAR_V);
-          }
-
-          // Common part
-          float fps = m_fps > 0 ? m_fps : (float)vi.fps_numerator / vi.fps_denominator;
-
-          REFERENCE_TIME timestamp;
-
-          if (!vfr) {
-            timestamp = (REFERENCE_TIME)(10000000i64 * n / fps);
-          }
-          else {
-            timestamp = (REFERENCE_TIME)(10000000 * vfr->TimeStampFromFrameNumber(n));
-          }
-
-          Render(dst, timestamp, fps);
-
-          if (semi_packed_p10 || semi_packed_p16) {
-            // convert semi packed formats back to Avisynth YUV420P10 and P16 formats
-            BYTE *src = pdst_save; // dst.bits;
-            PVideoFrame frame = env->NewVideoFrame(vi);
-            BYTE *pdst = frame->GetWritePtr();
-
-            int pitch = frame->GetPitch();
-            //env->BitBlt(pdst, pitch, src, dst.pitch, dst.pitch, vi.height); // copy Y
-            
-            // Luma
-            if (semi_packed_p16) {
-              env->BitBlt(pdst, pitch, src, dst.pitch, vi.width * sizeof(uint16_t), vi.height);
-            }
-            else {
-              // shift by 6 make 10->16 bits
-              if (sse2)
-                prepare_luma_shift6_sse2<false>(pdst, pitch, src, dst.pitch, vi.width, vi.height); // false: after
-              else
-                prepare_luma_shift6_c<false>(pdst, pitch, src, dst.pitch, vi.width, vi.height); // false: after
-            }
-            src += dst.pitch *vi.height;
-
-            // Chroma
-            int cheight = vi.height >> vi.GetPlaneHeightSubsampling(PLANAR_U);
-            int cwidth = vi.width >> vi.GetPlaneWidthSubsampling(PLANAR_U);
-            int pitchUV = frame->GetPitch(PLANAR_U);
-            BYTE *pdstu = frame->GetWritePtr(PLANAR_U);
-            BYTE *pdstv = frame->GetWritePtr(PLANAR_V);
-            if (sse41) {
-              if (semi_packed_p16)
-                prepare_from_interleaved_uv_sse2<false, true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
-              else
-                prepare_from_interleaved_uv_sse2<true, true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
-            }
-            else if (sse2) {
-              if (semi_packed_p16)
-                prepare_from_interleaved_uv_sse2<false, false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
-              else
-                prepare_from_interleaved_uv_sse2<true, false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
-            }
-            else {
-              if (semi_packed_p16)
-                prepare_from_interleaved_uv_c<false>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight);
-              else
-                prepare_from_interleaved_uv_c<true>(pdstu, pdstv, pitchUV, src, dst.pitch, cwidth, cheight); // true: shift 6
-            }
-            return frame;
-          }
-          else {
-            return frame;
-          }
-        }
-      };
-
-
-        class CVobSubAvisynthFilter : public CVobSubFilter, public CAvisynthFilter
-        {
-        public:
-          CVobSubAvisynthFilter(PClip c, const char* fn, IScriptEnvironment* env)
-            : CVobSubFilter(CString(fn))
-            , CAvisynthFilter(c, env) {
-            if (!m_pSubPicProvider) {
-              env->ThrowError("VobSub: Can't open \"%s\"", fn);
-            }
-          }
-        };
-
-        AVSValue __cdecl VobSubCreateS(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-          return (DEBUG_NEW CVobSubAvisynthFilter(args[0].AsClip(), args[1].AsString(), env));
-        }
-
-        class CTextSubAvisynthFilter : public CTextSubFilter, public CAvisynthFilter
-        {
-        public:
-          CTextSubAvisynthFilter(PClip c, IScriptEnvironment* env, const char* fn, int CharSet = DEFAULT_CHARSET, float fps = -1, VFRTranslator* vfr = 0) //vfr patch
-            : CTextSubFilter(CString(fn), CharSet, fps)
-            , CAvisynthFilter(c, env, vfr) {
-            if (!m_pSubPicProvider) {
-              env->ThrowError("TextSub: Can't open \"%s\"", fn);
-            }
-          }
-        };
-
-        AVSValue __cdecl TextSubCreateGeneral(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-          if (!args[1].Defined()) {
-            env->ThrowError("TextSub: You must specify a subtitle file to use");
-          }
-          VFRTranslator* vfr = 0;
-          if (args[4].Defined()) {
-            vfr = GetVFRTranslator(args[4].AsString());
-          }
-
-          return (DEBUG_NEW CTextSubAvisynthFilter(
-            args[0].AsClip(),
-            env,
-            args[1].AsString(),
-            args[2].AsInt(DEFAULT_CHARSET),
-            (float)args[3].AsFloat(-1),
-            vfr));
-        }
-
-        AVSValue __cdecl TextSubSwapUV(AVSValue args, void* user_data, IScriptEnvironment* env)
-        {
-          s_fSwapUV = args[0].AsBool(false);
-          return AVSValue();
-        }
-
-        AVSValue __cdecl MaskSubCreate(AVSValue args, void* user_data, IScriptEnvironment* env)/*SIIFI*/
-        {
-          if (!args[0].Defined()) {
-            env->ThrowError("MaskSub: You must specify a subtitle file to use");
-          }
-          if (!args[3].Defined() && !args[6].Defined()) {
-            env->ThrowError("MaskSub: You must specify either FPS or a VFR timecodes file");
-          }
-          VFRTranslator* vfr = 0;
-          if (args[6].Defined()) {
-            vfr = GetVFRTranslator(args[6].AsString());
-          }
-
-          // well, its a source filter
-          AVSValue fps(args[3].AsFloat(25));
-          AVSValue  tab[6] = {
-            args[1],
-            args[2],
-            args[3],
-            args[4],
-            args[7].AsString("RGB32") // PF 180224 new! pixel_type parameter defaulting to RGB32
-          };
-          AVSValue value(tab, 5);
-          const char* nom[5] = {
-            "width",
-            "height",
-            "fps",
-            "length",
-            "pixel_type"
-          };
-          AVSValue clip(env->Invoke("Blackness", value, nom));
-          env->SetVar(env->SaveString("RGBA"), true);
-          //return (DNew CTextSubAvisynthFilter(clip.AsClip(), env, args[0].AsString()));
-          return (DEBUG_NEW CTextSubAvisynthFilter(
-            clip.AsClip(),
-            env,
-            args[0].AsString(),
-            args[5].AsInt(DEFAULT_CHARSET),
-            (float)args[3].AsFloat(-1),
-            vfr));
+                clip.AsClip(),
+                env,
+                args[0].AsString(),
+                args[5].AsInt(DEFAULT_CHARSET),
+                (float)args[3].AsFloat(-1),
+                vfr));
         }
 
         /* New 2.6 requirement!!! */
         // Declare and initialise server pointers static storage.
-        const AVS_Linkage *AVS_linkage = 0;
+        const AVS_Linkage* AVS_linkage = 0;
 
         /* New 2.6 requirement!!! */
         // DLL entry point called from LoadPlugin() to setup a user plugin.
         extern "C" __declspec(dllexport) const char* __stdcall
-          AvisynthPluginInit3(IScriptEnvironment* env, const AVS_Linkage* const vectors) {
+            AvisynthPluginInit3(IScriptEnvironment * env, const AVS_Linkage* const vectors) {
 
-          /* New 2.6 requirment!!! */
-          // Save the server pointers.
-          AVS_linkage = vectors;
-          env->AddFunction("VobSub", "cs", VobSubCreateS, 0);
-          env->AddFunction("TextSub", "c[file]s[charset]i[fps]f[vfr]s", TextSubCreateGeneral, 0);
-          env->AddFunction("TextSubSwapUV", "b", TextSubSwapUV, 0);
-          env->AddFunction("MaskSub", "[file]s[width]i[height]i[fps]f[length]i[charset]i[vfr]s[pixel_type]s", MaskSubCreate, 0); // new pixel_type parameter
-          env->SetVar(env->SaveString("RGBA"), false);
-          return NULL;
+            /* New 2.6 requirement!!! */
+            // Save the server pointers.
+            AVS_linkage = vectors;
+            env->AddFunction("VobSub", "cs", VobSubCreateS, 0);
+            env->AddFunction("TextSub", "c[file]s[charset]i[fps]f[vfr]s", TextSubCreateGeneral, 0);
+            env->AddFunction("TextSubSwapUV", "b", TextSubSwapUV, 0);
+            env->AddFunction("MaskSub", "[file]s[width]i[height]i[fps]f[length]i[charset]i[vfr]s[pixel_type]s", MaskSubCreate, 0); // new pixel_type parameter
+            env->SetVar(env->SaveString("RGBA"), false);
+            return NULL;
         }
-      }
     }
-    
+}
 
 
 UINT_PTR CALLBACK OpenHookProc(HWND hDlg, UINT uiMsg, WPARAM wParam, LPARAM lParam)

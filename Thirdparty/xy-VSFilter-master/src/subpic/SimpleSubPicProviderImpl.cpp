@@ -22,9 +22,9 @@ SimpleSubPicProvider::SimpleSubPicProvider( int alpha_blt_dst_type, SIZE spd_siz
     , m_fps(25.0)
     , m_consumer(consumer)
 {
-    //if(phr) {
-        //*phr = consumer ? S_OK : E_INVALIDARG;
-   // }
+    if(phr) {
+        *phr = /*consumer ? */S_OK/* : E_INVALIDARG*/;
+    }
 
     m_prefered_colortype.AddTail(MSP_AYUV_PLANAR);
     m_prefered_colortype.AddTail(MSP_AYUV);
@@ -246,17 +246,15 @@ HRESULT SimpleSubPicProvider::RenderTo( IXySubRenderFrame** pSubPic, REFERENCE_T
     CAtlList<CRect> rectList;
 
     CComPtr<IXySubRenderFrame> sub_render_frame;
-	SIZE size_render_with = m_spd_size;
+    SIZE size_render_with = m_spd_size;
     //ASSERT(m_consumer);
-	if (m_consumer){
-		hr = m_consumer->XyGetSize(DirectVobSubXyOptions::SIZE_LAYOUT_WITH, &size_render_with);
-		if (FAILED(hr))
-		{
-			return hr;
-		}
-	}
-
-    ASSERT(size_render_with.cx != 0 && size_render_with.cy != 0); // PF debug
+    if (m_consumer) {
+        hr = m_consumer->XyGetSize(DirectVobSubXyOptions::SIZE_LAYOUT_WITH, &size_render_with);
+        if (FAILED(hr))
+        {
+            return hr;
+        }
+    }
 
     hr = pSubPicProviderEx->RenderEx(pSubPic, m_spd_type,
         CRect(CPoint(),m_spd_size), CRect(CPoint(),m_spd_size),
@@ -292,6 +290,10 @@ bool SimpleSubPicProvider::IsSpdColorTypeSupported( int type )
                                     m_alpha_blt_dst_type == MSP_YV12 ||
                                     m_alpha_blt_dst_type == MSP_P010 ||
                                     m_alpha_blt_dst_type == MSP_P016 ||
+                                    m_alpha_blt_dst_type == MSP_YV16 ||
+                                    m_alpha_blt_dst_type == MSP_YV24 ||
+                                    m_alpha_blt_dst_type == MSP_P210 ||
+                                    m_alpha_blt_dst_type == MSP_P216 ||
                                     m_alpha_blt_dst_type == MSP_NV12 ||
                                     m_alpha_blt_dst_type == MSP_NV21)) )
     {
@@ -316,10 +318,10 @@ SimpleSubPicProvider2::SimpleSubPicProvider2( int alpha_blt_dst_type, SIZE max_s
     , m_fps(25.0)
     , m_consumer(consumer)
 {
-    //if (phr)
-    //{
-       // *phr= consumer ? S_OK : E_INVALIDARG;
-   // }
+    if (phr)
+    {
+        *phr= consumer ? S_OK : E_INVALIDARG;
+    }
     m_ex_provider = NULL;
     m_old_provider = NULL;
     m_cur_provider = NULL;

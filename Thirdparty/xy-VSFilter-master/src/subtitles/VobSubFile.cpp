@@ -597,10 +597,10 @@ bool CVobSubFile::ReadIdx(CString fn, int& ver)
             m_iLang = (iLang < 0 && size_t(iLang) >= m_langs.size()) ? -1 : size_t(iLang);
         } else if (entry == _T("palette")) {
             if (_stscanf_s(str, _T("%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x,%x"),
-                           &m_orgpal[0], &m_orgpal[1], &m_orgpal[2], &m_orgpal[3],
-                           &m_orgpal[4], &m_orgpal[5], &m_orgpal[6], &m_orgpal[7],
-                           &m_orgpal[8], &m_orgpal[9], &m_orgpal[10], &m_orgpal[11],
-                           &m_orgpal[12], &m_orgpal[13], &m_orgpal[14], &m_orgpal[15]
+                           (unsigned int *)&m_orgpal[0], (unsigned int *)&m_orgpal[1], (unsigned int *)&m_orgpal[2], (unsigned int *)&m_orgpal[3],
+                           (unsigned int *)&m_orgpal[4], (unsigned int *)&m_orgpal[5], (unsigned int *)&m_orgpal[6], (unsigned int *)&m_orgpal[7],
+                           (unsigned int *)&m_orgpal[8], (unsigned int *)&m_orgpal[9], (unsigned int *)&m_orgpal[10], (unsigned int *)&m_orgpal[11],
+                           (unsigned int *)&m_orgpal[12], (unsigned int *)&m_orgpal[13], (unsigned int *)&m_orgpal[14], (unsigned int *)&m_orgpal[15]
                           ) != 16) {
                 fError = true;
             }
@@ -637,7 +637,7 @@ bool CVobSubFile::ReadIdx(CString fn, int& ver)
             str = str.Mid(i + (int)_tcslen(_T("colors:")));
 
             RGBQUAD pal[4];
-            if (_stscanf_s(str, _T("%x,%x,%x,%x"), &pal[0], &pal[1], &pal[2], &pal[3]) != 4) {
+            if (_stscanf_s(str, _T("%x,%x,%x,%x"), (unsigned int *)&pal[0], (unsigned int *)&pal[1], (unsigned int *)&pal[2], (unsigned int *)&pal[3]) != 4) {
                 fError = true;
                 continue;
             }
@@ -2392,7 +2392,7 @@ void CVobSubStream::Open(CString name, BYTE* pData, int len)
                 m_alignver = ver == _T("TOP") ? 0 : ver == _T("CENTER") ? 1 : /*ver == _T("BOTTOM") ? 2 :*/ 2;
             }
         } else if (key == _T("fade in/out")) {
-            _stscanf_s(value, _T("%d%, %d%"), &m_fadein, &m_fadeout);
+            _stscanf_s(value, _T("%d, %d"), &m_fadein, &m_fadeout);
         } else if (key == _T("time offset")) {
             m_toff = _tcstol(value, nullptr, 10);
         } else if (key == _T("forced subs")) {

@@ -22,8 +22,17 @@
 #include "stdafx.h"
 #include "DirectVobSub.h"
 #include "VSFilter.h"
+#include <numeric>
 
 using namespace DirectVobSubXyOptions;
+
+// greatest common divisor helps normalizing mul/div formulas
+int get_gcd(int a, int b)
+{
+    if (b == 0)
+        return a;
+    return get_gcd(b, a % b);
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -363,6 +372,10 @@ STDMETHODIMP DirectVobSubImpl::put_SubtitleTiming(int delay, int speedmul, int s
     m_SubtitleDelay = delay;
     m_SubtitleSpeedMul = speedmul;
     if(speeddiv > 0) m_SubtitleSpeedDiv = speeddiv;
+
+    int gcd = get_gcd(m_SubtitleSpeedMul, m_SubtitleSpeedDiv);
+    m_SubtitleSpeedNormalizedMul = m_SubtitleSpeedMul / gcd;
+    m_SubtitleSpeedNormalizedDiv = m_SubtitleSpeedDiv / gcd;
 
     return OnOptionChanged(BIN2_SUBTITLE_TIMING);
 }
@@ -1065,12 +1078,14 @@ CDirectVobSub::CDirectVobSub( const Option *options, CCritSec * pLock )
 
     m_xy_int_opt[INT_SELECTED_LANGUAGE] = 0;
     m_xy_bool_opt[BOOL_HIDE_SUBTITLES] = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE), 0);
+    m_xy_bool_opt[BOOL_ALLOW_MOVING] = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_ALLOWMOVING), 0);
     m_xy_bool_opt[BOOL_PRE_BUFFERING] = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_DOPREBUFFERING), 1);
 
     m_xy_int_opt[INT_COLOR_SPACE] = GetCompatibleProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_COLOR_SPACE), YuvMatrix_AUTO);
     if( m_xy_int_opt[INT_COLOR_SPACE]!=YuvMatrix_AUTO && 
         m_xy_int_opt[INT_COLOR_SPACE]!=BT_601 && 
         m_xy_int_opt[INT_COLOR_SPACE]!=BT_709 &&
+        m_xy_int_opt[INT_COLOR_SPACE]!=BT_2020 &&
         m_xy_int_opt[INT_COLOR_SPACE]!=GUESS)
     {
         m_xy_int_opt[INT_COLOR_SPACE] = YuvMatrix_AUTO;
@@ -1101,6 +1116,10 @@ CDirectVobSub::CDirectVobSub( const Option *options, CCritSec * pLock )
     m_SubtitleDelay = theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLEDELAY), 0);
     m_SubtitleSpeedMul = theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLESPEEDMUL), 1000);
     m_SubtitleSpeedDiv = theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLESPEEDDIV), 1000);
+    int gcd = get_gcd(m_SubtitleSpeedMul, m_SubtitleSpeedDiv);
+    m_SubtitleSpeedNormalizedMul = m_SubtitleSpeedMul / gcd;
+    m_SubtitleSpeedNormalizedDiv = m_SubtitleSpeedDiv / gcd;
+
     m_xy_int_opt[INT_ASPECT_RATIO_SETTINGS] = static_cast<CSimpleTextSubtitle::EPARCompensationType>(theApp.GetProfileInt(ResStr(IDS_R_TEXT), ResStr(IDS_RT_AUTOPARCOMPENSATION), 0));
     m_xy_bool_opt[BOOL_HIDE_TRAY_ICON] =  !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE_TRAY_ICON), 0);
 
@@ -1132,9 +1151,9 @@ CDirectVobSub::CDirectVobSub( const Option *options, CCritSec * pLock )
         , CacheManager::TEXT_INFO_CACHE_ITEM_NUM);
     if(m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM] = 0;
 
-    //m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = GetCompatibleProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM)
-    //    , CacheManager::ASS_TAG_LIST_CACHE_ITEM_NUM);
-    //if(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = 0;
+    m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = GetCompatibleProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM)
+        , CacheManager::ASS_TAG_LIST_CACHE_ITEM_NUM);
+    if(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = 0;
 
     m_xy_int_opt[INT_SUBPIXEL_POS_LEVEL] = theApp.GetProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_SUBPIXEL_POS_LEVEL), SubpixelPositionControler::EIGHT_X_EIGHT);
     if(m_xy_int_opt[INT_SUBPIXEL_POS_LEVEL]<0) m_xy_int_opt[INT_SUBPIXEL_POS_LEVEL]=0;
@@ -1257,6 +1276,10 @@ CDirectVobSub::CDirectVobSub( const Option *options, CCritSec * pLock )
     {
         m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("BT709");
     }
+    else if (str_pgs_yuv_setting.Right(4).CompareNoCase(_T("2020"))==0)
+    {
+        m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("BT2020");
+    }
     else
     {
         m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("GUESS");
@@ -1309,6 +1332,7 @@ STDMETHODIMP CDirectVobSub::UpdateRegistry()
     CAutoLock cAutoLock(m_propsLock);
 
     theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE), m_xy_bool_opt[BOOL_HIDE_SUBTITLES]);
+    theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_ALLOWMOVING), m_xy_bool_opt[BOOL_ALLOW_MOVING]);
     theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_DOPREBUFFERING), m_xy_bool_opt[BOOL_PRE_BUFFERING]);
 
     theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_YUV_RANGE), m_xy_int_opt[INT_YUV_RANGE]);
@@ -1340,7 +1364,7 @@ STDMETHODIMP CDirectVobSub::UpdateRegistry()
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_BITMAP_MRU_CACHE_ITEM_NUM), m_xy_int_opt[INT_BITMAP_MRU_CACHE_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_CLIPPER_MRU_CACHE_ITEM_NUM), m_xy_int_opt[INT_CLIPPER_MRU_CACHE_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_TEXT_INFO_CACHE_ITEM_NUM), m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM]);
-    //theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM), m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
+    theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM), m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
 
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_OVERLAY_CACHE_MAX_ITEM_NUM), m_xy_int_opt[INT_OVERLAY_CACHE_MAX_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_OVERLAY_NO_BLUR_CACHE_MAX_ITEM_NUM), m_xy_int_opt[INT_OVERLAY_NO_BLUR_CACHE_MAX_ITEM_NUM]);
@@ -1450,6 +1474,7 @@ CDVS4XySubFilter::CDVS4XySubFilter( const Option *options, CCritSec * pLock )
 
     m_xy_int_opt [INT_SELECTED_LANGUAGE] = 0;
     m_xy_bool_opt[BOOL_HIDE_SUBTITLES  ] = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE), 0);
+    m_xy_bool_opt[BOOL_ALLOW_MOVING    ] = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_ALLOWMOVING), 0);
 
 
     CString str_color_space = theApp.GetProfileString(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_COLOR_SPACE), _T("AUTO"));
@@ -1473,6 +1498,10 @@ CDVS4XySubFilter::CDVS4XySubFilter( const Option *options, CCritSec * pLock )
     else if (str_color_space.Right(3).CompareNoCase(_T("709"))==0)
     {
         m_xy_int_opt[INT_COLOR_SPACE] = DirectVobSubImpl::BT_709;
+    }
+    else if (str_color_space.Right(4).CompareNoCase(_T("2020"))==0)
+    {
+        m_xy_int_opt[INT_COLOR_SPACE] = DirectVobSubImpl::BT_2020;
     }
     else if (str_color_space.Right(5).CompareNoCase(_T("GUESS"))==0)
     {
@@ -1498,6 +1527,9 @@ CDVS4XySubFilter::CDVS4XySubFilter( const Option *options, CCritSec * pLock )
     m_SubtitleDelay                         =   theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLEDELAY), 0);
     m_SubtitleSpeedMul                      =   theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLESPEEDMUL), 1000);
     m_SubtitleSpeedDiv                      =   theApp.GetProfileInt(ResStr(IDS_R_TIMING), ResStr(IDS_RTM_SUBTITLESPEEDDIV), 1000);
+    int gcd = get_gcd(m_SubtitleSpeedMul, m_SubtitleSpeedDiv);
+    m_SubtitleSpeedNormalizedMul = m_SubtitleSpeedMul / gcd;
+    m_SubtitleSpeedNormalizedDiv = m_SubtitleSpeedDiv / gcd;
 
     m_xy_bool_opt[BOOL_HIDE_TRAY_ICON]      = !!theApp.GetProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE_TRAY_ICON), 0);
 
@@ -1529,9 +1561,9 @@ CDVS4XySubFilter::CDVS4XySubFilter( const Option *options, CCritSec * pLock )
         , CacheManager::TEXT_INFO_CACHE_ITEM_NUM);
     if(m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM] = 0;
 
-    //m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = GetCompatibleProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM)
-    //    , CacheManager::ASS_TAG_LIST_CACHE_ITEM_NUM);
-    //if(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = 0;
+    m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = GetCompatibleProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM)
+        , CacheManager::ASS_TAG_LIST_CACHE_ITEM_NUM);
+    if(m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]<0) m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM] = 0;
 
     m_xy_int_opt[INT_MAX_CACHE_SIZE_MB] = theApp.GetProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_MAX_CACHE_SIZE_MB), -1);
 
@@ -1611,6 +1643,10 @@ CDVS4XySubFilter::CDVS4XySubFilter( const Option *options, CCritSec * pLock )
     {
         m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("BT709");
     }
+    else if (str_pgs_yuv_setting.Right(4).CompareNoCase(_T("2020"))==0)
+    {
+        m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("BT2020");
+    }
     else
     {
         m_xy_str_opt[STRING_PGS_YUV_MATRIX] = _T("GUESS");
@@ -1680,6 +1716,7 @@ STDMETHODIMP CDVS4XySubFilter::UpdateRegistry()
     CAutoLock cAutoLock(m_propsLock);
 
     theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_HIDE), m_xy_bool_opt[BOOL_HIDE_SUBTITLES]);
+    theApp.WriteProfileInt(ResStr(IDS_R_GENERAL), ResStr(IDS_RG_ALLOWMOVING), m_xy_bool_opt[BOOL_ALLOW_MOVING]);
 
     CString str_color_space;
     switch(m_xy_int_opt[INT_YUV_RANGE])
@@ -1701,6 +1738,9 @@ STDMETHODIMP CDVS4XySubFilter::UpdateRegistry()
         break;
     case DirectVobSubImpl::BT_709:
         str_color_space += _T(".BT709");
+        break;
+    case DirectVobSubImpl::BT_2020:
+        str_color_space += _T(".BT2020");
         break;
     case DirectVobSubImpl::GUESS:
         str_color_space += _T(".GUESS");
@@ -1731,7 +1771,7 @@ STDMETHODIMP CDVS4XySubFilter::UpdateRegistry()
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_BITMAP_MRU_CACHE_ITEM_NUM), m_xy_int_opt[INT_BITMAP_MRU_CACHE_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_CLIPPER_MRU_CACHE_ITEM_NUM), m_xy_int_opt[INT_CLIPPER_MRU_CACHE_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_TEXT_INFO_CACHE_ITEM_NUM), m_xy_int_opt[INT_TEXT_INFO_CACHE_ITEM_NUM]);
-    //theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM), m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
+    theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_ASS_TAG_LIST_CACHE_ITEM_NUM), m_xy_int_opt[INT_ASS_TAG_LIST_CACHE_ITEM_NUM]);
 
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_OVERLAY_CACHE_MAX_ITEM_NUM), m_xy_int_opt[INT_OVERLAY_CACHE_MAX_ITEM_NUM]);
     theApp.WriteProfileInt(ResStr(IDS_R_PERFORMANCE), ResStr(IDS_RP_OVERLAY_NO_BLUR_CACHE_MAX_ITEM_NUM), m_xy_int_opt[INT_OVERLAY_NO_BLUR_CACHE_MAX_ITEM_NUM]);

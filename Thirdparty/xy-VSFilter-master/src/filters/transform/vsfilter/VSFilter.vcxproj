@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,7 +22,7 @@
     <ProjectName>vsfilter</ProjectName>
     <ProjectGuid>{530890F8-CBCB-4DAB-BEDF-9FB667D0AFEE}</ProjectGuid>
     <RootNamespace>$(ProjectName)</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\..\..\configuration.props" />
@@ -35,24 +35,9 @@
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)'=='Release log'" Label="Configuration">
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\..\..\common.props" />
@@ -68,28 +53,11 @@
     <ResourceCompile>
       <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
-    <ClCompile>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile>
-      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ResourceCompile Include="VSFilter.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\xy-VSFilter-master\src\filters\transform\vsfilter\csriapi.cpp" />
     <ClCompile Include="..\..\..\thirdparty\mfc\afxctrlcontainer.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Debug' Or '$(VisualStudioVersion)'&gt;'10.0'">true</ExcludedFromBuild>
     </ClCompile>
@@ -101,6 +69,7 @@
     </ClCompile>
     <ClCompile Include="Copy.cpp">
     </ClCompile>
+    <ClCompile Include="csriapi.cpp" />
     <ClCompile Include="DirectVobSub.cpp" />
     <ClCompile Include="DirectVobSubFilter.cpp" />
     <ClCompile Include="DirectVobSubFilterDll.cpp" />
@@ -149,5 +118,6 @@
     <None Include="VSFilter.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
 </Project>

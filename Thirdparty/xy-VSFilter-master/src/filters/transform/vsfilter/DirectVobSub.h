@@ -38,6 +38,7 @@ public:
         YuvMatrix_AUTO = 0
         ,BT_601
         ,BT_709
+        ,BT_2020
         ,GUESS
     };
     enum YuvRange
@@ -89,6 +90,11 @@ protected:
 	bool m_fAdvancedRenderer;
 	int m_nReloaderDisableCount;
 	int m_SubtitleDelay, m_SubtitleSpeedMul, m_SubtitleSpeedDiv;
+    // User could specify any values for m_SubtitleSpeedMul and m_SubtitleSpeedDiv.
+    // We want to normalize the user input with their greatest common divisor to minimize 
+    // the chance of overflow later when we do calculations.
+    int m_SubtitleSpeedNormalizedMul, m_SubtitleSpeedNormalizedDiv;
+
 	NORMALIZEDRECT m_ZoomRect;
 
     CAtlArray<CStringW> m_known_source_filters_guid;
@@ -119,11 +125,11 @@ public:
 
     STDMETHODIMP get_FileName(WCHAR* fn);
     STDMETHODIMP put_FileName(WCHAR* fn);
-	STDMETHODIMP get_LanguageCount(int* nLangs);
-	STDMETHODIMP get_LanguageName(int iLanguage, WCHAR** ppName);
-	STDMETHODIMP get_SelectedLanguage(int* iSelected);
-	STDMETHODIMP put_SelectedLanguage(int iSelected);
-	STDMETHODIMP get_HideSubtitles(bool* fHideSubtitles);
+    STDMETHODIMP get_LanguageCount(int* nLangs);
+    STDMETHODIMP get_LanguageName(int iLanguage, WCHAR** ppName);
+    STDMETHODIMP get_SelectedLanguage(int* iSelected);
+    STDMETHODIMP put_SelectedLanguage(int iSelected);
+    STDMETHODIMP get_HideSubtitles(bool* fHideSubtitles);
     STDMETHODIMP put_HideSubtitles(bool fHideSubtitles);
     STDMETHODIMP get_PreBuffering(bool* fDoPreBuffering);
     STDMETHODIMP put_PreBuffering(bool fDoPreBuffering);

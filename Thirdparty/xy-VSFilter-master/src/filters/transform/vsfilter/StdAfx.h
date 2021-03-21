@@ -32,7 +32,6 @@
 #include "../../../DSUtil/DSUtil.h"
 #include "../../../subtitles/flyweight_base_types.h"
 #include "../../../subtitles/RTS.h"
-#include "../../../subpic/simplesubpicproviderimpl.h"
 #include "../../../subtitles/cache_manager.h"
 #include "../../../subtitles/subpixel_position_controler.h"
 #include "../../../subtitles/RenderedHdmvSubtitle.h"

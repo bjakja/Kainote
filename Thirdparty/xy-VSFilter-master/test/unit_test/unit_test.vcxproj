@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,7 +21,6 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{61CB0A9F-6347-423B-9296-6F35DD4745F5}</ProjectGuid>
     <RootNamespace>unit_test</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\..\src\configuration.props" />
@@ -36,18 +35,6 @@
   <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
     <UseOfAtl>Static</UseOfAtl>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PlatformToolset>v141</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -72,20 +59,12 @@
     <ClCompile>
       <PreprocessorDefinitions Condition="'$(VisualStudioVersion)'&gt;'10.0'">_VARIADIC_MAX=10;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <Link>
       <DelayLoadDLLs>oleacc.dll</DelayLoadDLLs>
     </Link>
-    <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories);M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;M:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared</AdditionalIncludeDirectories>
-    </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
