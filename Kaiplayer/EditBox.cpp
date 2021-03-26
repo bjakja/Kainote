@@ -2035,6 +2035,7 @@ void EditBox::OnStyleEdit(wxCommandEvent& event)
 
 bool EditBox::IsCursorOnStart()
 {
+	// is it possible that some selections can be hidden?
 	if (grid->file->SelectionsSize() > 1){ return true; }
 	/*if(Visual == CLIPRECT || Visual == MOVE){return true;}
 	wxString txt=TextEdit->GetValue();

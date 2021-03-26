@@ -505,9 +505,11 @@ void Visuals::SetVisual(bool dummy, int type)
 		wxArrayInt sels;
 		grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
-		if (dummy && !dummytext){
+		if (dummy && (!dummytext || selPositions.size() != sels.size())){
 			bool visible = false;
 			selPositions.clear();
+			//need to check if can delete when sizes are different dummytext is valid pointer
+			SAFE_DELETE(dummytext);
 			dummytext = grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
 				//KaiLog(L"Sizes mismatch");

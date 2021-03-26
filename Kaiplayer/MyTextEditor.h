@@ -79,7 +79,7 @@ protected:
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
 	void DrawWordRectangles(int type, wxDC &dc, int h);
-	void DrawWordRectangles(int type, GraphicsContext *gc, int h);
+	void DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
 
@@ -109,6 +109,7 @@ protected:
 	bool firstdhold;
 	bool wasDoubleClick;
 	bool modified;
+	bool hasRTL = false;
 	int numberChangingMousePos = -1;
 	int state = 0;
 	int time;

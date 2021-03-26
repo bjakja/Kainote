@@ -281,9 +281,10 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)Win32\Release\Kainote x86.zip" "H:\Google Drive\Kainote x86.zip" "x86"
-xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)Win32\Release\Locale\th_TH.mo" /u /y
-xcopy "$(SolutionDir)en.mo" "$(SolutionDir)Win32\Release\Locale\en.mo" /u /y</Command>
+      <Command>xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)Win32\Release\Locale\th_TH.mo" /u /y
+xcopy "$(SolutionDir)en.mo" "$(SolutionDir)Win32\Release\Locale\en.mo" /u /y
+$(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)Win32\Release\Kainote x86.zip" "H:\Google Drive\Kainote x86.zip" "x86"
+</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h
@@ -418,10 +419,11 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
-      <Command>$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
+      <Command>xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)x64\Release\Locale\th_TH.mo" /u /y
+xcopy "$(SolutionDir)en.mo" "$(SolutionDir)x64\Release\Locale\en.mo" /u /y
+$(SolutionDir)AutoVersioning "$(ProjectDir)VersionKainote.h"
 $(SolutionDir)AutoSending/x64/Release/AutoSending "$(SolutionDir)x64\Release\Kainote x64.zip" "H:\Google Drive\Kainote x64.zip" "x64"
-xcopy "$(SolutionDir)th_TH.mo" "$(SolutionDir)x64\Release\Locale\th_TH.mo" /u /y
-xcopy "$(SolutionDir)en.mo" "$(SolutionDir)x64\Release\Locale\en.mo" /u /y</Command>
+</Command>
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>echo | set /p dummyName=#define GIT_CUR_COMMIT &gt;  gitparams.h

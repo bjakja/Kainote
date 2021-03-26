@@ -522,7 +522,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			}
 		}
 		if (Cursor.x + 1 > wraps[Cursor.y + 1] && Cursor.y < (int)wraps.size() - 2){ Cursor.y++; }
-		else if (ID != ID_CRIGHT&&ID != ID_CSRIGHT){ Cursor.x++; }
+		else if (ID != ID_CRIGHT && ID != ID_CSRIGHT){ Cursor.x++; }
 
 		if (ID<ID_SRIGHT){ Selend = Cursor; }
 		Refresh(false);
@@ -942,10 +942,14 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	wxString digits = L"(0123456789-&+";
 	wxString tagtest;
 	wxString parttext;
-	wxString mestext;
+	wxString messureText;
 
 	posY = 2;
 	posY -= scrollPositionV;
+	int posX = 3;
+	if (hasRTL)
+		posX = w - 3;
+
 	bool isfirst = true;
 	int wline = 1;
 	int wchar = 0;
@@ -982,11 +986,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	//drawing spellchecker
 	if (SpellCheckerOnOff){
 		gc->SetBrush(cspellerrors);
-		DrawWordRectangles(0, gc, h);
+		DrawWordRectangles(0, gc, h, posX);
 	}
 	if (selectionWords.size()){
 		gc->SetBrush(cphrasesearch);
-		DrawWordRectangles(1, gc, h);
+		DrawWordRectangles(1, gc, h, posX);
 	}
 	else if (Cursor.x != Selend.x || Cursor.y != Selend.y){
 		Brackets.x = -1; Brackets.y = -1;
@@ -996,7 +1000,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		gc->SetBrush(wxBrush(wxColour(hasFocus ? cselection : cselnofocus)));
 		fww = 0.0;
-		//skip unnided selection drawing
+		//skip unneeded selection drawing
 		int lineStart = (scrollPositionV - 2) / fontHeight;
 		int charStart = wraps[lineStart];
 		int lineEnd = ((scrollPositionV - 2 + h) / fontHeight) + 1;
@@ -1026,7 +1030,15 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				stext.Replace(L"\t", L"");
 				gc->GetTextExtent(stext, &fww, &fh);
 			}
-			gc->DrawRectangle(fw + 3, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+			if (hasRTL) {
+				wxString rowText = MText.Mid(startWrap, endWrap);
+				double fww1 = 0.f;
+				gc->GetTextExtent(rowText, &fww1, &fh);
+				gc->DrawRectangle(fw + posX - fww1, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+			}
+			else {
+				gc->DrawRectangle(fw + posX, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+			}
 		}
 	}
 	//skip unneeded lines, start one line before to avoid not colored values on start
@@ -1053,39 +1065,45 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			break;
 
 		const wxUniChar &ch = alltext[i];
+		size_t wrap = wraps[wline];
+		if (hasRTL && wline > 0 && i == wraps[wline - 1]) {
+			wxString rowText = MText.Mid(wraps[wline - 1], wrap);
+			double fww = 0.f;
+			gc->GetTextExtent(rowText, &fww, &fh);
+			posX = w - fww - 3;
+		}
 
 
-		if (i == wraps[wline]){
+		if (i == wrap){
 			if (Cursor.x + Cursor.y == wchar){
 				double fww = 0.f;
-				wxString text = mestext + parttext;
+				wxString text = messureText + parttext;
 				if (!text.empty())
 					gc->GetTextExtent(text, &fww, &fh);
-				caret->Move(fww + 3, posY);
+				caret->Move(fww + posX, posY);
 				cursorWasSet = true;
 			}
 
 			if (parttext != L""){
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				wxColour fontColor = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				gc->SetFont(font, fontColor);
-				mestext << parttext;
-				gc->DrawTextU(parttext, fw + 3, posY);
+				gc->DrawTextU(parttext, fw + posX, posY);
 			}
 
 			posY += fontHeight;
 			wline++;
 			wchar++;
 			parttext.clear();
-			mestext.clear();
+			messureText.clear();
 		}
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
-			if (mestext + parttext == L""){ fw = 0.0; }
-			else{ gc->GetTextExtent(mestext + parttext, &fw, &fh); }
-			caret->Move(fw + 3, posY);
+			if (messureText + parttext == L""){ fw = 0.0; }
+			else{ gc->GetTextExtent(messureText + parttext, &fw, &fh); }
+			caret->Move(fw + posX, posY);
 			cursorWasSet = true;
 		}
 		if (hasFocus && (i == Brackets.x || i == Brackets.y)){
@@ -1098,11 +1116,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (i > 0){ gc->GetTextExtent(text, &fw, &fh); }
 			else{ fw = 0; }
 			gc->GetTextExtent(MText[i], &fww, &fh);
-			gc->DrawRectangle(fw + 3, ((bry*fontHeight) + 2) - scrollPositionV, fww, fontHeight);
+			gc->DrawRectangle(fw + posX, ((bry*fontHeight) + 2) - scrollPositionV, fww, fontHeight);
 			wxFont fnt = font;
 			fnt = fnt.Bold();
 			gc->SetFont(fnt, (ch == L'{' || ch == L'}') ? ccurlybraces : coperators);
-			gc->DrawTextU(MText[i], fw + 3, ((bry*fontHeight) + 2) - scrollPositionV);
+			gc->DrawTextU(MText[i], fw + posX, ((bry*fontHeight) + 2) - scrollPositionV);
 			gc->SetFont(font, ctext);
 
 		}
@@ -1110,16 +1128,17 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' ||
 				ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' || ch == L')' || ch == L'>' || ch == L'<' || 
 				ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';' || ch == L'~')){
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, (IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawTextU(parttext, fw + 3, posY);
-				mestext << parttext;
+				gc->DrawTextU(parttext, fw + posX, posY);
+				messureText << parttext;
 				parttext.clear();
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
-				gc->DrawTextU(ch, fw + 3, posY);
-				mestext << ch;
+				gc->DrawTextU(ch, fw + posX, posY);
+				messureText << ch;
+
 				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
 				slash = val = false;
@@ -1129,11 +1148,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (ch == L'"'){
 				if (templateString){
-					parttext << ch;
-					gc->GetTextExtent(mestext, &fw, &fh);
+					messureText << ch;
+					gc->GetTextExtent(messureText, &fw, &fh);
 					gc->SetFont(font, ctstrings);
-					gc->DrawTextU(parttext, fw + 3, posY);
-					mestext << parttext;
+					gc->DrawTextU(parttext, fw + posX, posY);
+					messureText << parttext;
 					parttext.clear();
 					templateString = !templateString;
 					wchar++;
@@ -1142,13 +1161,14 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				templateString = !templateString;
 			}
 			if (!templateString && ch == L' '){
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
-				gc->DrawTextU(parttext, fw + 3, posY);
-				mestext << parttext;
+				gc->DrawTextU(parttext, fw + posX, posY);
+				messureText << parttext;
 				parttext.clear();
-				mestext << ch;
+				messureText << ch;
+
 				slash = val = false;
 				wchar++;
 				continue;
@@ -1156,7 +1176,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		}
 		if (ch != L'\t'){
 			parttext << ch;
-
 		}
 
 		if (templateString){
@@ -1167,25 +1186,25 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (ch == L'{'){
 				tags = true;
 				wxString bef = parttext.BeforeLast(L'{');
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, ctext);
-				gc->DrawTextU(bef, fw + 3, posY);
-				mestext << bef;
+				gc->DrawTextU(bef, fw + posX, posY);
+				messureText << bef;
 				parttext = L"{";
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
-				gc->DrawTextU(tmp, fw + 3, posY);
-				mestext << tmp;
+				gc->DrawTextU(tmp, fw + posX, posY);
+				messureText << tmp;
 				parttext = L"}";
 				tags = slash = val = false;
 			}
-			gc->GetTextExtent(mestext, &fw, &fh);
+			gc->GetTextExtent(messureText, &fw, &fh);
 			gc->SetFont(font, ccurlybraces);
-			gc->DrawTextU(parttext, fw + 3, posY);
-			mestext << parttext;
+			gc->DrawTextU(parttext, fw + posX, posY);
+			messureText << parttext;
 			parttext.clear();
 			val = false;
 		}
@@ -1195,10 +1214,10 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || tagtest == L"fn" || ch == L'('){
 				slash = false;
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
-				gc->GetTextExtent(mestext, &fw, &fh);
+				gc->GetTextExtent(messureText, &fw, &fh);
 				gc->SetFont(font, cnames);
-				gc->DrawTextU(tmp, fw + 3, posY);
-				mestext << tmp;
+				gc->DrawTextU(tmp, fw + posX, posY);
+				messureText << tmp;
 				if (tagtest == L"fn"){ parttext.clear(); }
 				else{ parttext = ch; }
 				val = true;
@@ -1208,16 +1227,16 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
-			gc->GetTextExtent(mestext, &fw, &fh);
+			gc->GetTextExtent(messureText, &fw, &fh);
 			gc->SetFont(font, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
-			gc->DrawTextU(tmp, fw + 3, posY);
-			mestext << tmp;
+			gc->DrawTextU(tmp, fw + posX, posY);
+			messureText << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
-			gc->GetTextExtent(mestext, &fw, &fh);
+			gc->GetTextExtent(messureText, &fw, &fh);
 			gc->SetFont(font, coperators);
-			gc->DrawTextU(parttext, fw + 3, posY);
-			mestext << parttext;
+			gc->DrawTextU(parttext, fw + posX, posY);
+			messureText << parttext;
 			parttext.clear();
 			if (ch == L'('){ val = true; slash = false; }
 			else if (ch != L','){ val = false; }
@@ -1628,7 +1647,24 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
-	for (int i = cur->x; i<wraps[cur->y + 1] + 1; i++)
+	int curEnd = wraps[cur->y + 1];
+	int lineLen = curEnd - cur->x;
+	if (hasRTL) {
+		wxString rowText = MText.Mid(cur->x, curEnd);
+		int w = 0, h = 0;
+		GetSize(&w, &h);
+		if (gc) {
+			double fwidth = 0.0, fheight = 0.0;
+			gc->GetTextExtent(rowText, &fwidth, &fheight);
+			pos.x -= (w - fwidth - 8);
+		}
+		else {
+			int fwidth = 0, fheight = 0;
+			GetTextExtent(rowText, &fwidth, &fheight, NULL, NULL, &font);
+			pos.x -= (w - fwidth - 8);
+		}
+	}
+	for (int i = cur->x; i < curEnd + 1; i++)
 	{
 		wxString text = txt.SubString(cur->x, i);
 		text.Replace(L"\t", L"");
@@ -2187,7 +2223,7 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 	}
 }
 
-void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h)
+void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX)
 {
 	const wxArrayInt & words = (type == 0) ? errors.errors : selectionWords;
 	size_t len = words.size();
@@ -2225,7 +2261,15 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h)
 			gc->GetTextExtent(btext, &fwww, &fh);
 			gc->DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
-		gc->DrawRectangle(fw + 3, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+		if (hasRTL) {
+			wxString rowText = MText.Mid(charStart, charEnd);
+			double fww1 = 0.f;
+			gc->GetTextExtent(rowText, &fww1, &fh);
+			gc->DrawRectangle(fw + posX - fww1, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+		}
+		else {
+			gc->DrawRectangle(fw + posX, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
+		}
 	}
 }
 
