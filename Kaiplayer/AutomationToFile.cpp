@@ -80,8 +80,10 @@ namespace Auto{
 	bool AutoToFile::LineToLua(lua_State *L, int i)
 	{
 		//AutoToFile *laf = GetObjPointer(L, 1);
-		File *Subs = laf->file;
-
+		File *Subs = GetSubs(L);
+		if (!Subs) {
+			return false;
+		}
 		int sinfo = Subs->sinfo.size();
 		int styles = sinfo + Subs->styles.size();
 		int dials = styles + Subs->dialogues.size();
@@ -436,7 +438,10 @@ namespace Auto{
 
 	int AutoToFile::ObjectIndexRead(lua_State *L)
 	{
-		File *Subs = laf->file;
+		File *Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		switch (lua_type(L, 2)) {
 
 		case LUA_TNUMBER:
@@ -535,7 +540,10 @@ namespace Auto{
 			return 0;
 		}
 
-		File *Subs = laf->file;
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		laf->CheckAllowModify();
 
 		int n = lua_tointeger(L, 2);
@@ -619,14 +627,21 @@ namespace Auto{
 
 	int AutoToFile::ObjectGetLen(lua_State *L)
 	{
-		File *Subs = laf->file;
+		File *Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
+
 		lua_pushnumber(L, Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size());
 		return 1;
 	}
 
 	int AutoToFile::ObjectLens(lua_State *L)
 	{
-		File *Subs = laf->file;
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		lua_pushinteger(L, (int)Subs->sinfo.size());
 		lua_pushinteger(L, (int)Subs->styles.size());
 		lua_pushinteger(L, (int)Subs->dialogues.size());
@@ -636,7 +651,10 @@ namespace Auto{
 
 	int AutoToFile::ObjectDelete(lua_State *L)
 	{
-		File *Subs = laf->file;
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		laf->CheckAllowModify();
 
 		// get number of items to delete
@@ -691,8 +709,10 @@ namespace Auto{
 
 	int AutoToFile::ObjectDeleteRange(lua_State *L)
 	{
-		File *Subs = laf->file;
-
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		laf->CheckAllowModify();
 
 		if (!lua_isnumber(L, 1) || !lua_isnumber(L, 2)) {
@@ -731,8 +751,10 @@ namespace Auto{
 
 	int AutoToFile::ObjectAppend(lua_State *L)
 	{
-		File *Subs = laf->file;
-
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		laf->CheckAllowModify();
 
 		int n = lua_gettop(L);
@@ -766,8 +788,10 @@ namespace Auto{
 
 	int AutoToFile::ObjectInsert(lua_State *L)
 	{
-		File *Subs = laf->file;
-
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		laf->CheckAllowModify();
 
 		if (!lua_isnumber(L, 1)) {
@@ -951,7 +975,10 @@ namespace Auto{
 
 	int AutoToFile::IterNext(lua_State *L)
 	{
-		File *Subs = laf->file;
+		File* Subs = GetSubs(L);
+		if (!Subs) {
+			return 0;
+		}
 		size_t i = check_uint(L, 2);
 		if (i >= Subs->dialogues.size() + Subs->sinfo.size() + Subs->styles.size()) {
 			lua_pushnil(L);
@@ -1024,6 +1051,17 @@ namespace Auto{
 		}
 		push_value(L, intensities);
 		return 2;
+	}
+
+	File* AutoToFile::GetSubs(lua_State* L)
+	{
+		File* Subs = laf->file;
+		if (!Subs) {
+			wxString error = _("Brakujący wskaźnik napisów");
+			lua_pushstring(L, error.mb_str(wxConvUTF8).data());
+			lua_error(L);
+		}
+		return nullptr;
 	}
 
 	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char _subsFormat)

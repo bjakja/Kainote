@@ -89,6 +89,7 @@ namespace Auto{
 		static int LuaSetUndoPoint(lua_State *L) {return 0;};
 		//static int LuaGenerateFFT(lua_State *L);
 		static int LuaGetFreqencyReach(lua_State *L);
+		static File* GetSubs(lua_State* L);
 
 		static AutoToFile *laf;//GetObjPointer(lua_State *L, int idx);
 

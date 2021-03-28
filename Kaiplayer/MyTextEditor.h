@@ -82,11 +82,16 @@ protected:
 	void DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
+	bool IsRTLCharacter(const wxUniChar& ch);
+	void SwitchWordsToRTL();
+	void BIDIConvert(wxString* text);
+	void BIDIReverseConvert(wxString* text);
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
 	bool changeQuotes;
 	wxString MText;
+	wxString RTLText;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
 	PopupTagList *tagList = NULL;
@@ -158,6 +163,8 @@ enum{
 	ID_CTLV,
 	ID_CTLC,
 	ID_CTLX,
+	ID_CTRL_ALT_R,
+	ID_CTRL_ALT_L,
 	ID_ENTER,
 	ID_WMENU,
 };

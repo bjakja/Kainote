@@ -26,6 +26,13 @@
 #include <regex>
 #include "GraphicsD2D.h"
 #include "Utils.h"
+#include <unicode/utypes.h>
+#include <unicode/ubidi.h>
+#include <unicode/ubiditransform.h>
+#include <unicode/uchar.h>
+#include <unicode/localpointer.h>
+#include <unicode/putil.h>
+#include <unicode/ushape.h>
 
 #undef DrawText
 
@@ -44,7 +51,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	posY = 0;
 	scrollPositionV = 0;
 	SetCursor(wxCURSOR_IBEAM);
-	wxAcceleratorEntry entries[32];
+	wxAcceleratorEntry entries[34];
 	entries[0].Set(wxACCEL_NORMAL, WXK_DELETE, ID_DEL);
 	entries[1].Set(wxACCEL_NORMAL, WXK_BACK, ID_BACK);
 	entries[2].Set(wxACCEL_CTRL, WXK_BACK, ID_CBACK);
@@ -66,23 +73,26 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[18].Set(wxACCEL_CTRL, L'C', ID_CTLC);
 	entries[19].Set(wxACCEL_CTRL, L'X', ID_CTLX);
 	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
+	entries[21].Set(wxACCEL_CTRL | wxACCEL_ALT, L'R', ID_CTRL_ALT_R);
+	entries[22].Set(wxACCEL_CTRL | wxACCEL_ALT, L'L', ID_CTRL_ALT_L);
+	
 	// fix for not working enter for confirm and go to next line
 	// but it's not a ideal fix, after change enter it will still work in this field
-	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
-	int numEntries = 22;
+	entries[23].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
+	int numEntries = 24;
 	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
-		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
-		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
-		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
-		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
-		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
-		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
-		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
-		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
-		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
-		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
-		numEntries = 32;
+		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
+		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
+		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
+		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
+		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
+		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
+		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
+		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
+		entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
+		entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
+		numEntries = 34;
 	}
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
@@ -150,6 +160,10 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 	
 	if (selectionWords.size())
 		selectionWords.clear();
+
+	// make it uses every text normally, cause it have to be switched before calc wraps
+	if (hasRTL)
+		SwitchWordsToRTL();
 
 	wraps.clear();
 	wraps.push_back(0);
@@ -312,13 +326,35 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		int len = MText.length();
 		if (wkey == L'"' && changeQuotes)
 			wkey = CheckQuotes();
-
-		if (Cursor.x >= len){ MText << wkey; }
-		else{ MText.insert(Cursor.x, 1, wkey); }
+		if (hasRTL) {
+			size_t startBracket = MText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x - 1).Find(L'{');
+			size_t endBracket = MText.Mid(Cursor.x).Find(L'}');
+			if (startBracket < endBracket && startBracket != -1 && endBracket != -1) {
+				if (Cursor.x >= len) { MText << wkey; }
+				else { MText.insert(Cursor.x, 1, wkey); }
+			}
+			else {
+				if (Cursor.x >= len) { MText << wkey; }
+				else { MText.insert(Cursor.x, 1, wkey); }
+			}
+		}
+		else {
+			if (Cursor.x >= len) { MText << wkey; }
+			else { MText.insert(Cursor.x, 1, wkey); }
+		}
 		CalcWrap();
-		if (Cursor.x + 1 > wraps[Cursor.y + 1]){ Cursor.y++; }
-		Cursor.x++;
-		Selend = Cursor;
+		if (hasRTL) {
+			if (!IsRTLCharacter(wkey)) {
+				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
+				Cursor.x++;
+			}
+			Selend = Cursor;
+		}
+		else {
+			if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
+			Cursor.x++;
+			Selend = Cursor;
+		}
 		Refresh(false);
 		Update();
 		modified = true;
@@ -445,6 +481,47 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != EDITBOX_COMMIT_GO_NEXT_LINE){
 		delete tagList;
 		tagList = NULL;
+	}
+	if (hasRTL) {
+		int originalID = ID;
+		switch (originalID) {
+		case ID_CDELETE:
+			ID = ID_CBACK;
+			break;
+		case ID_CBACK:
+			ID = ID_CDELETE;
+			break;
+		case ID_DEL:
+			ID = ID_BACK;
+			break;
+		case ID_BACK:
+			ID = ID_DEL;
+			break;
+		case ID_LEFT:
+			ID = ID_RIGHT;
+			break;
+		case ID_CLEFT:
+			ID = ID_CRIGHT;
+			break;
+		case ID_SLEFT:
+			ID = ID_SRIGHT;
+			break;
+		case ID_CSLEFT:
+			ID = ID_CSRIGHT;
+			break;
+		case ID_RIGHT:
+			ID = ID_LEFT;
+			break;
+		case ID_CRIGHT:
+			ID = ID_CLEFT;
+			break;
+		case ID_SRIGHT:
+			ID = ID_SLEFT;
+			break;
+		case ID_CSRIGHT:
+			ID = ID_CSLEFT;
+			break;
+		}
 	}
 	switch (ID){
 	case ID_CDELETE:
@@ -585,6 +662,26 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_WMENU:
 		//Selend=Cursor;
 		ContextMenu(PosFromCursor(Cursor), FindError(Cursor, false));
+		break;
+	case ID_CTRL_ALT_R:
+		if (!hasRTL) {
+			hasRTL = true;
+			CalcWrap(false, false);
+			Refresh(false);
+		}
+		else {
+			event.Skip();
+		}
+		break;
+	case ID_CTRL_ALT_L:
+		if (hasRTL) {
+			hasRTL = false;
+			CalcWrap(false, false);
+			Refresh(false);
+		}
+		else {
+			event.Skip();
+		}
 		break;
 	case EDITBOX_COMMIT_GO_NEXT_LINE:
 		if (tagList)
@@ -942,7 +1039,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	wxString digits = L"(0123456789-&+";
 	wxString tagtest;
 	wxString parttext;
-	wxString messureText;
+	wxString measureText;
 
 	posY = 2;
 	posY -= scrollPositionV;
@@ -954,7 +1051,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	int wline = 1;
 	int wchar = 0;
 	bool hasFocus = HasFocus();
-
+	const wxString& fieldText = (hasRTL) ? RTLText : MText;
 	wxString alltext = MText + L" ";
 	int len = alltext.length();
 	const wxUniChar &bchar = alltext[Cursor.x];
@@ -1016,22 +1113,22 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				break;
 
 			if (j == fst.y){
-				wxString ftext = MText.SubString(startWrap, fst.x - 1);
+				wxString ftext = fieldText.SubString(startWrap, fst.x - 1);
 				ftext.Replace(L"\t", L"");
 				if (startWrap > fst.x - 1){ fw = 0.0; }
 				else{ gc->GetTextExtent(ftext, &fw, &fh); }
-				wxString stext = MText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : endWrap - 1);
+				wxString stext = fieldText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", L"");
 				gc->GetTextExtent(stext, &fww, &fh);
 			}
 			else{
 				fw = 0.0;
-				wxString stext = MText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
+				wxString stext = fieldText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", L"");
 				gc->GetTextExtent(stext, &fww, &fh);
 			}
 			if (hasRTL) {
-				wxString rowText = MText.Mid(startWrap, endWrap);
+				wxString rowText = fieldText.Mid(startWrap, endWrap);
 				double fww1 = 0.f;
 				gc->GetTextExtent(rowText, &fww1, &fh);
 				gc->DrawRectangle(fw + posX - fww1, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
@@ -1065,19 +1162,18 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			break;
 
 		const wxUniChar &ch = alltext[i];
-		size_t wrap = wraps[wline];
 		if (hasRTL && wline > 0 && i == wraps[wline - 1]) {
-			wxString rowText = MText.Mid(wraps[wline - 1], wrap);
+			wxString rowText = MText.Mid(wraps[wline - 1], wraps[wline]);
 			double fww = 0.f;
 			gc->GetTextExtent(rowText, &fww, &fh);
 			posX = w - fww - 3;
 		}
 
 
-		if (i == wrap){
+		if (wline < wraps.size() && i == wraps[wline]){
 			if (Cursor.x + Cursor.y == wchar){
 				double fww = 0.f;
-				wxString text = messureText + parttext;
+				wxString text = measureText + parttext;
 				if (!text.empty())
 					gc->GetTextExtent(text, &fww, &fh);
 				caret->Move(fww + posX, posY);
@@ -1085,7 +1181,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			}
 
 			if (parttext != L""){
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				wxColour fontColor = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
@@ -1097,12 +1193,21 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			wline++;
 			wchar++;
 			parttext.clear();
-			messureText.clear();
+			measureText.clear();
 		}
 
 		if (hasFocus && (Cursor.x + Cursor.y == wchar)){
-			if (messureText + parttext == L""){ fw = 0.0; }
-			else{ gc->GetTextExtent(messureText + parttext, &fw, &fh); }
+			if (measureText + parttext == L"") { fw = 0.0; }
+			else {
+				if (hasRTL) {
+					int start = i - (measureText + parttext).length();
+					wxString measureTxt = RTLText.Mid(start, i - start);
+					gc->GetTextExtent(measureTxt, &fw, &fh);
+				}
+				else {
+					gc->GetTextExtent(measureText + parttext, &fw, &fh); 
+				}
+			}
 			caret->Move(fw + posX, posY);
 			cursorWasSet = true;
 		}
@@ -1128,16 +1233,16 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' ||
 				ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' || ch == L')' || ch == L'>' || ch == L'<' || 
 				ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';' || ch == L'~')){
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, (IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + posX, posY);
-				messureText << parttext;
+				measureText << parttext;
 				parttext.clear();
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, (ch == L'!') ? ctcodemarks : coperators);
 				gc->DrawTextU(ch, fw + posX, posY);
-				messureText << ch;
+				measureText << ch;
 
 				if (state == 2 && ch == L'!')
 					templateCode = !templateCode;
@@ -1148,11 +1253,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (ch == L'"'){
 				if (templateString){
-					messureText << ch;
-					gc->GetTextExtent(messureText, &fw, &fh);
+					measureText << ch;
+					gc->GetTextExtent(measureText, &fw, &fh);
 					gc->SetFont(font, ctstrings);
 					gc->DrawTextU(parttext, fw + posX, posY);
-					messureText << parttext;
+					measureText << parttext;
 					parttext.clear();
 					templateString = !templateString;
 					wchar++;
@@ -1161,13 +1266,13 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				templateString = !templateString;
 			}
 			if (!templateString && ch == L' '){
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, (!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				gc->DrawTextU(parttext, fw + posX, posY);
-				messureText << parttext;
+				measureText << parttext;
 				parttext.clear();
-				messureText << ch;
+				measureText << ch;
 
 				slash = val = false;
 				wchar++;
@@ -1186,25 +1291,25 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if (ch == L'{'){
 				tags = true;
 				wxString bef = parttext.BeforeLast(L'{');
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, ctext);
 				gc->DrawTextU(bef, fw + posX, posY);
-				messureText << bef;
+				measureText << bef;
 				parttext = L"{";
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
 				gc->DrawTextU(tmp, fw + posX, posY);
-				messureText << tmp;
+				measureText << tmp;
 				parttext = L"}";
 				tags = slash = val = false;
 			}
-			gc->GetTextExtent(messureText, &fw, &fh);
+			gc->GetTextExtent(measureText, &fw, &fh);
 			gc->SetFont(font, ccurlybraces);
 			gc->DrawTextU(parttext, fw + posX, posY);
-			messureText << parttext;
+			measureText << parttext;
 			parttext.clear();
 			val = false;
 		}
@@ -1214,10 +1319,10 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || tagtest == L"fn" || ch == L'('){
 				slash = false;
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
-				gc->GetTextExtent(messureText, &fw, &fh);
+				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, cnames);
 				gc->DrawTextU(tmp, fw + posX, posY);
-				messureText << tmp;
+				measureText << tmp;
 				if (tagtest == L"fn"){ parttext.clear(); }
 				else{ parttext = ch; }
 				val = true;
@@ -1227,16 +1332,16 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
-			gc->GetTextExtent(messureText, &fw, &fh);
+			gc->GetTextExtent(measureText, &fw, &fh);
 			gc->SetFont(font, (val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
 			gc->DrawTextU(tmp, fw + posX, posY);
-			messureText << tmp;
+			measureText << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
-			gc->GetTextExtent(messureText, &fw, &fh);
+			gc->GetTextExtent(measureText, &fw, &fh);
 			gc->SetFont(font, coperators);
 			gc->DrawTextU(parttext, fw + posX, posY);
-			messureText << parttext;
+			measureText << parttext;
 			parttext.clear();
 			if (ch == L'('){ val = true; slash = false; }
 			else if (ch != L','){ val = false; }
@@ -1637,9 +1742,10 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	else{ cur->x = wraps[cur->y]; }
 
 	bool find = false;
-	wxString txt = MText + L" ";
+	wxString& rtltext = (hasRTL) ? RTLText : MText;
+	wxString txt = rtltext + L" ";
 
-	int wlen = MText.length();
+	int wlen = rtltext.length();
 	int fww = 0;
 	double gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
@@ -1649,33 +1755,45 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 
 	int curEnd = wraps[cur->y + 1];
 	int lineLen = curEnd - cur->x;
+	//int rtlLineLength = 0;
 	if (hasRTL) {
-		wxString rowText = MText.Mid(cur->x, curEnd);
+		
+		wxString rowText = rtltext.Mid(cur->x, curEnd);
 		int w = 0, h = 0;
 		GetSize(&w, &h);
+		
 		if (gc) {
 			double fwidth = 0.0, fheight = 0.0;
 			gc->GetTextExtent(rowText, &fwidth, &fheight);
 			pos.x -= (w - fwidth - 8);
+			//rtlLineLength = fwidth;
 		}
 		else {
 			int fwidth = 0, fheight = 0;
 			GetTextExtent(rowText, &fwidth, &fheight, NULL, NULL, &font);
 			pos.x -= (w - fwidth - 8);
+			//rtlLineLength = fwidth;
 		}
 	}
+	
 	for (int i = cur->x; i < curEnd + 1; i++)
 	{
 		wxString text = txt.SubString(cur->x, i);
 		text.Replace(L"\t", L"");
 		if (gc){
 			gc->GetTextExtent(text, &gcfw, &gcfh);
-			gc->GetTextExtent(txt[i], &gcfw1, &gcfh);
-			if (gcfw + 1.f - (gcfw1 / 2.f) > pos.x){ cur->x = i; find = true; break; }
+			//int measure = (hasRTL) ? rtlLineLength - gcfw - 1.f - ((gcfw - gcfw1) / 2.f) : 
+				//gcfw + 1.f - ((gcfw - gcfw1) / 2.f);
+			if (gcfw + 1.f - ((gcfw - gcfw1) / 2.f) > pos.x){
+				cur->x = i; 
+				find = true; 
+				break; 
+			}
+			gcfw1 = gcfw;
 		}
 		else{
 			GetTextExtent(text, &fw, &fh, NULL, NULL, &font);
-			GetTextExtent(txt[i], &fww, &fh, NULL, NULL, &font);
+			GetTextExtent(txt[i + 1], &fww, &fh, NULL, NULL, &font);
 			if (fw + 1 - (fww / 2)>pos.x){ cur->x = i; find = true; break; }
 		}
 	}
@@ -1737,7 +1855,7 @@ void TextEditor::CheckText()
 	if (MText == L"") { errors.SetEmpty(); return; }
 	errors.clear();
 	misspells.clear();
-	errors.Init2(MText, SpellCheckerOnOff, EB->GetFormat(), &misspells);
+	errors.Init2((hasRTL)? RTLText : MText, SpellCheckerOnOff, EB->GetFormat(), &misspells);
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -1966,8 +2084,10 @@ void TextEditor::Copy(bool cut)
 {
 	if (Selend.x == Cursor.x){ return; }
 	int curx = Cursor.x; int selx = Selend.x; if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-
-	wxString whatcopy = MText.SubString(curx, selx - 1);
+	wxString &text = (hasRTL) ? RTLText : MText;
+	wxString whatcopy = text.SubString(curx, selx - 1);
+	if(hasRTL)
+		BIDIReverseConvert(&whatcopy);
 	if (wxTheClipboard->Open())
 	{
 		wxTheClipboard->SetData(new wxTextDataObject(whatcopy));
@@ -1975,7 +2095,7 @@ void TextEditor::Copy(bool cut)
 		wxTheClipboard->Flush();
 	}
 	if (cut){
-		MText.Remove(curx, selx - curx);
+		text.Remove(curx, selx - curx);
 		CalcWrap();
 		SetSelection(curx, curx);
 		modified = true;
@@ -2226,12 +2346,13 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX)
 {
 	const wxArrayInt & words = (type == 0) ? errors.errors : selectionWords;
+	const wxString& text = (hasRTL) ? RTLText : MText;
 	size_t len = words.size();
 	double fw = 0.0, fh = 0.0, fww = 0.0, fwww = 0.0;
 	int lineStart = (scrollPositionV - 2) / fontHeight;
 	int charStart = wraps[lineStart];
 	int lineEnd = ((scrollPositionV - 2 + h) / fontHeight) + 1;
-	int charEnd = (lineEnd < wraps.size())? wraps[lineEnd] : MText.length();
+	int charEnd = (lineEnd < wraps.size())? wraps[lineEnd] : text.length();
 
 	for (size_t g = 0; g < len; g += 2)
 	{
@@ -2246,23 +2367,23 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h, int po
 		int fsty = FindY(startWord);
 		if (wraps[fsty] >= startWord){ fw = 0.0; }
 		else{
-			wxString ftext = MText.SubString(wraps[fsty], startWord - 1);
+			wxString ftext = text.SubString(wraps[fsty], startWord - 1);
 			ftext.Replace(L"\t", L"");
 			gc->GetTextExtent(ftext, &fw, &fh);
 		}
 		int scndy = FindY(endWord);
-		wxString etext = MText.SubString(words[g], (fsty == scndy) ? endWord : wraps[fsty + 1] - 1);
+		wxString etext = text.SubString(words[g], (fsty == scndy) ? endWord : wraps[fsty + 1] - 1);
 		etext.Replace(L"\t", L"");
 		gc->GetTextExtent(etext, &fww, &fh);
 		for (int q = fsty + 1; q <= scndy; q++){
 			int rest = (q == scndy) ? endWord : wraps[q + 1];
-			wxString btext = MText.SubString(wraps[q], rest);
+			wxString btext = text.SubString(wraps[q], rest);
 			btext.Replace(L"\t", L"");
 			gc->GetTextExtent(btext, &fwww, &fh);
 			gc->DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
 		if (hasRTL) {
-			wxString rowText = MText.Mid(charStart, charEnd);
+			wxString rowText = text.Mid(charStart, charEnd);
 			double fww1 = 0.f;
 			gc->GetTextExtent(rowText, &fww1, &fh);
 			gc->DrawRectangle(fw + posX - fww1, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
@@ -2333,6 +2454,216 @@ void TextEditor::PutTag()
 			}
 		}
 	}
+}
+
+
+//taken from https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
+bool TextEditor::IsRTLCharacter(const wxUniChar& ch)
+{
+	unsigned int c = ch.GetValue();
+	if (c >= 0x5BE && c <= 0x10B7F)
+	{
+		if (c <= 0x85E)
+		{
+			if (c == 0x5BE)                        return true;
+			else if (c == 0x5C0)                   return true;
+			else if (c == 0x5C3)                   return true;
+			else if (c == 0x5C6)                   return true;
+			else if (0x5D0 <= c && c <= 0x5EA)     return true;
+			else if (0x5F0 <= c && c <= 0x5F4)     return true;
+			else if (c == 0x608)                   return true;
+			else if (c == 0x60B)                   return true;
+			else if (c == 0x60D)                   return true;
+			else if (c == 0x61B)                   return true;
+			else if (0x61E <= c && c <= 0x64A)     return true;
+			else if (0x66D <= c && c <= 0x66F)     return true;
+			else if (0x671 <= c && c <= 0x6D5)     return true;
+			else if (0x6E5 <= c && c <= 0x6E6)     return true;
+			else if (0x6EE <= c && c <= 0x6EF)     return true;
+			else if (0x6FA <= c && c <= 0x70D)     return true;
+			else if (c == 0x710)                   return true;
+			else if (0x712 <= c && c <= 0x72F)     return true;
+			else if (0x74D <= c && c <= 0x7A5)     return true;
+			else if (c == 0x7B1)                   return true;
+			else if (0x7C0 <= c && c <= 0x7EA)     return true;
+			else if (0x7F4 <= c && c <= 0x7F5)     return true;
+			else if (c == 0x7FA)                   return true;
+			else if (0x800 <= c && c <= 0x815)     return true;
+			else if (c == 0x81A)                   return true;
+			else if (c == 0x824)                   return true;
+			else if (c == 0x828)                   return true;
+			else if (0x830 <= c && c <= 0x83E)     return true;
+			else if (0x840 <= c && c <= 0x858)     return true;
+			else if (c == 0x85E)                   return true;
+		}
+		else if (c == 0x200F)                      return true;
+		else if (c >= 0xFB1D)
+		{
+			if (c == 0xFB1D)                       return true;
+			else if (0xFB1F <= c && c <= 0xFB28)   return true;
+			else if (0xFB2A <= c && c <= 0xFB36)   return true;
+			else if (0xFB38 <= c && c <= 0xFB3C)   return true;
+			else if (c == 0xFB3E)                  return true;
+			else if (0xFB40 <= c && c <= 0xFB41)   return true;
+			else if (0xFB43 <= c && c <= 0xFB44)   return true;
+			else if (0xFB46 <= c && c <= 0xFBC1)   return true;
+			else if (0xFBD3 <= c && c <= 0xFD3D)   return true;
+			else if (0xFD50 <= c && c <= 0xFD8F)   return true;
+			else if (0xFD92 <= c && c <= 0xFDC7)   return true;
+			else if (0xFDF0 <= c && c <= 0xFDFC)   return true;
+			else if (0xFE70 <= c && c <= 0xFE74)   return true;
+			else if (0xFE76 <= c && c <= 0xFEFC)   return true;
+			else if (0x10800 <= c && c <= 0x10805) return true;
+			else if (c == 0x10808)                 return true;
+			else if (0x1080A <= c && c <= 0x10835) return true;
+			else if (0x10837 <= c && c <= 0x10838) return true;
+			else if (c == 0x1083C)                 return true;
+			else if (0x1083F <= c && c <= 0x10855) return true;
+			else if (0x10857 <= c && c <= 0x1085F) return true;
+			else if (0x10900 <= c && c <= 0x1091B) return true;
+			else if (0x10920 <= c && c <= 0x10939) return true;
+			else if (c == 0x1093F)                 return true;
+			else if (c == 0x10A00)                 return true;
+			else if (0x10A10 <= c && c <= 0x10A13) return true;
+			else if (0x10A15 <= c && c <= 0x10A17) return true;
+			else if (0x10A19 <= c && c <= 0x10A33) return true;
+			else if (0x10A40 <= c && c <= 0x10A47) return true;
+			else if (0x10A50 <= c && c <= 0x10A58) return true;
+			else if (0x10A60 <= c && c <= 0x10A7F) return true;
+			else if (0x10B00 <= c && c <= 0x10B35) return true;
+			else if (0x10B40 <= c && c <= 0x10B55) return true;
+			else if (0x10B58 <= c && c <= 0x10B72) return true;
+			else if (0x10B78 <= c && c <= 0x10B7F) return true;
+		}
+	}
+	return false;
+}
+
+void TextEditor::SwitchWordsToRTL()
+{
+	if (!MText.size())
+		return;
+
+	RTLText.clear();
+
+	for (size_t i = 0; i < wraps.size() - 1; i++) {
+		wxString textLine;
+		wxString ltrText;
+		wxString rtlText;
+		int startChar = wraps[i];
+		int endChar = wraps[i + 1];
+		if (endChar >= MText.length())
+			endChar = MText.length() - 1;
+		bool containsRTL = false;
+		int lastRTLWordPos = 0;
+		for (int j = startChar; j <= endChar; j++) {
+			const wxUniChar& ch = MText[j];
+			if (ch == L' ') {
+				if (!ltrText.empty()) {
+					textLine << ltrText;
+
+					ltrText.clear();
+					textLine << ch;
+				}
+				if (!rtlText.empty()) {
+					BIDIConvert(&rtlText);
+					textLine.insert(lastRTLWordPos, rtlText);
+					rtlText.clear();
+					textLine.insert(lastRTLWordPos, ch);
+				}
+				
+			}
+			else if (IsRTLCharacter(ch)) {
+				if (!ltrText.empty()) {
+					
+
+					textLine << ltrText;
+					lastRTLWordPos = textLine.length();
+					ltrText.clear();
+				}
+				rtlText << ch;
+				containsRTL = true;
+			}
+			else {
+				if (!rtlText.empty()) {
+					BIDIConvert(&rtlText);
+					textLine.insert(lastRTLWordPos, rtlText);
+					rtlText.clear();
+				}
+				ltrText << ch;
+			}
+			
+		}
+		if (!ltrText.empty())
+			textLine << ltrText;
+		if (!rtlText.empty())
+			BIDIConvert(&rtlText);
+			textLine.insert(lastRTLWordPos, rtlText);
+
+		RTLText << textLine;
+	}
+}
+
+void TextEditor::BIDIConvert(wxString* text)
+{
+	UErrorCode errorCode = U_ZERO_ERROR;
+
+	// Open a new UBiDiTransform.
+
+	UBiDiTransform* transform = ubiditransform_open(&errorCode);
+
+	// Run a transformation.
+	std::wstring wtext = text->ToStdWstring();
+
+	std::u16string text1(wtext.begin(), wtext.end());
+	size_t len = (text1.size() + 1) * 2;
+	UChar* text2 = (UChar*)malloc(len);
+	if (!text2) {
+		KaiLog(L"Cannot allocate bidi conversion text");
+		return;
+	}
+
+	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
+		UBIDI_RTL, UBIDI_LOGICAL, UBIDI_LTR, UBIDI_VISUAL,
+		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_SHAPE, &errorCode);
+
+	ubiditransform_close(transform);
+	std::u16string result16(text2);
+	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
+
+	(*text) = wxString(result);
+	free(text2);
+}
+
+void TextEditor::BIDIReverseConvert(wxString* text)
+{
+	UErrorCode errorCode = U_ZERO_ERROR;
+
+	// Open a new UBiDiTransform.
+
+	UBiDiTransform* transform = ubiditransform_open(&errorCode);
+
+	// Run a transformation.
+	std::wstring wtext = text->ToStdWstring();
+
+	std::u16string text1(wtext.begin(), wtext.end());
+	size_t len = (text1.size() + 1) * 2;
+	UChar* text2 = (UChar*)malloc(len);
+	if (!text2) {
+		KaiLog(L"Cannot allocate bidi conversion text");
+		return;
+	}
+
+	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
+		UBIDI_LTR, UBIDI_VISUAL, UBIDI_RTL, UBIDI_LOGICAL,
+		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_UNSHAPE, &errorCode);
+
+	ubiditransform_close(transform);
+	std::u16string result16(text2);
+	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
+
+	(*text) = wxString(result);
+	free(text2);
 }
 
 //state here is for template and for disable spellchecker and wraps
