@@ -143,7 +143,7 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 {
 	modified = modif;
 	MText = text;
-	CalcWrap(modif, (noevent) ? false : modif);
+	CalcWraps(modif, (noevent) ? false : modif);
 	if (!modif)
 		CheckText();
 
@@ -155,20 +155,21 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 	}
 }
 
-void TextEditor::CalcWrap(bool updatechars, bool sendevent)
+void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL)
 {
 	
 	if (selectionWords.size())
 		selectionWords.clear();
 
 	// make it uses every text normally, cause it have to be switched before calc wraps
-	if (hasRTL)
-		SwitchWordsToRTL();
+	if (hasRTL && !dontConvertRTL)
+		ConvertToRTL();
 
 
 	wraps.clear();
 	wraps.push_back(0);
-	if (MText != L""){
+	size_t textLen = (hasRTL) ? RTLText.length() : MText.length();
+	if (textLen > 0){
 		int w, h, fw = 0, fh = 0;
 		double gcfw = 0.f, gcfh = 0.f;
 		GetClientSize(&w, &h);
@@ -178,7 +179,6 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 			w -= sw;
 		}
 		size_t i = 0;
-		size_t textLen = MText.length();
 		if (w < 20){
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
@@ -196,7 +196,7 @@ void TextEditor::CalcWrap(bool updatechars, bool sendevent)
 		}
 	}
 	else{
-		wraps.push_back(MText.length());
+		wraps.push_back(textLen);
 	}
 		
 	if (updatechars){
@@ -268,6 +268,8 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 	double widthCount = 0.0;
 	while (i < textLen)
 	{
+		//for RTL have to calc wraps from end
+		int RTLi = (hasRTL) ? textLen - 1 - i : i;
 		const wxUniChar &ch = text[i];
 		if (ch == L'\t') {
 			i++;
@@ -290,9 +292,10 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 			bool foundWrap = false;
 			//check for possible wraps else return char wrap
 			while (minChar < j) {
-				const wxUniChar &ch = text[j];
+				int RTLj = (hasRTL) ? textLen - 1 - j : j;
+				const wxUniChar &ch = text[RTLj];
 				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
-					wraps.push_back(ch == L'{' ? j : j + 1);
+					wraps.push_back(ch == L'{' ? RTLj : RTLj + 1);
 					foundWrap = true;
 					i = j + 1;
 					break;
@@ -300,13 +303,15 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 				j--;
 			}
 			if (!foundWrap) {
-				wraps.push_back(i - 1);
+				wraps.push_back(RTLi - 1);
 				i--;
 			}
 			widthCount = 0;
 		}
 		i++;
 	}
+	//need to think about this there is too many times used wraps to change it everytime when
+	//rtl is used
 	if (wraps[wraps.size() - 1] != textLen)
 		wraps.push_back(textLen);
 }
@@ -344,7 +349,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			if (Cursor.x >= len) { MText << wkey; }
 			else { MText.insert(Cursor.x, 1, wkey); }
 		}
-		CalcWrap();
+		CalcWraps();
 		if (hasRTL) {
 			if (!IsRTLCharacter(wkey)) {
 				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
@@ -444,7 +449,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 		fontHeight = fh;
 		caret->SetSize(1, fh);
-		CalcWrap(false, false);
+		CalcWraps(false, false);
 		Refresh(false);
 		return;
 	}
@@ -546,7 +551,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
 			MText.Remove(curx, selx - curx);
 			Selend = Cursor;
-			CalcWrap();
+			CalcWraps();
 			SetSelection(curx, curx);
 		}
 		else
@@ -559,7 +564,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			MText.Remove(Cursor.x, 1);
 		}
 		len = wraps.size();
-		CalcWrap();
+		CalcWraps();
 
 		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
@@ -668,7 +673,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_CTRL_ALT_R:
 		if (!hasRTL) {
 			hasRTL = true;
-			CalcWrap(false, false);
+			CalcWraps(false, false);
 			CheckText();
 			Refresh(false);
 		}
@@ -679,7 +684,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_CTRL_ALT_L:
 		if (hasRTL) {
 			hasRTL = false;
-			CalcWrap(false, false);
+			CalcWraps(false, false);
 			CheckText();
 			Refresh(false);
 		}
@@ -749,7 +754,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 				SpellChecker::Get()->ReplaceMisspell(err, suggestion,
 					misspells[errn].posStart, misspells[errn].posEnd, &MText, &newto);
 				modified = true;
-				CalcWrap();
+				CalcWraps();
 				SetSelection(newto, newto);
 				EB->Send(EDITBOX_SPELL_CHECKER, false);
 				modified = false;
@@ -894,7 +899,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			fontHeight = fh;
 			caret->SetSize(1, fh);
 			fontSizes.clear();
-			CalcWrap(false, false);
+			CalcWraps(false, false);
 			Refresh(false);
 			statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 8;
 			Options.SetInt(TEXT_EDITOR_FONT_SIZE, fontSize);
@@ -916,7 +921,7 @@ void TextEditor::OnSize(wxSizeEvent& event)
 	else if (size.y >= 80 && !Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR))
 		statusBarHeight = fontHeight + 8;
 
-	CalcWrap(false, false);
+	CalcWraps(false, false);
 	Cursor.y = FindY(Cursor.x);
 	Selend.y = FindY(Selend.x);
 	MakeCursorVisible();
@@ -956,7 +961,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	if (bitmaph > h){
 		if (!scroll->IsShown()){
 			scroll->Show();
-			CalcWrap(false, false);
+			CalcWraps(false, false);
 			Cursor.y = FindY(Cursor.x);
 			Selend.y = FindY(Selend.x);
 			bitmaph = (wraps.size() * fontHeight) + 4;
@@ -973,7 +978,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	else{
 		if (scroll->IsShown()){
 			scroll->Hide();
-			CalcWrap(false, false);
+			CalcWraps(false, false);
 			Cursor.y = FindY(Cursor.x);
 			Selend.y = FindY(Selend.x);
 		}
@@ -1119,7 +1124,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (j == fst.y){
 				fw = 0.0;
-				if (hasRTL) {
+				/*if (hasRTL) {
 					if (fst.y == scd.y) {
 						wxString ftext = fieldText.SubString(startWrap, fst.x - 1);
 						ftext.Replace(L"\t", L"");
@@ -1129,18 +1134,18 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					stext.Replace(L"\t", L"");
 					gc->GetTextExtent(stext, &fww, &fh);
 				}
-				else {
+				else {*/
 					wxString ftext = fieldText.SubString(startWrap, fst.x - 1);
 					ftext.Replace(L"\t", L"");
 					if (startWrap <= fst.x - 1) { gc->GetTextExtent(ftext, &fw, &fh); }
 					wxString stext = fieldText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : endWrap - 1);
 					stext.Replace(L"\t", L"");
 					gc->GetTextExtent(stext, &fww, &fh);
-				}
+				//}
 			}
 			else{
 				fw = 0.0;
-				if(hasRTL){
+				/*if(hasRTL){
 					if (j == scd.y) {
 						wxString ftext = fieldText.SubString(startWrap, scd.x - 1);
 						ftext.Replace(L"\t", L"");
@@ -1150,11 +1155,11 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					stext.Replace(L"\t", L"");
 					gc->GetTextExtent(stext, &fww, &fh);
 				}
-				else {
+				else {*/
 					wxString stext = fieldText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
 					stext.Replace(L"\t", L"");
 					gc->GetTextExtent(stext, &fww, &fh);
-				}
+				//}
 			}
 			if (hasRTL) {
 				wxString rowText = fieldText.Mid(startWrap, endWrap - startWrap);
@@ -1813,7 +1818,6 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 
 	int curEnd = wraps[cur->y + 1];
 	int lineLen = curEnd - cur->x;
-	//int rtlLineLength = 0;
 	if (hasRTL) {
 		
 		wxString rowText = rtltext.Mid(cur->x, curEnd - cur->x);
@@ -1824,13 +1828,11 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 			double fwidth = 0.0, fheight = 0.0;
 			gc->GetTextExtent(rowText, &fwidth, &fheight);
 			pos.x -= (w - fwidth - 8);
-			//rtlLineLength = fwidth;
 		}
 		else {
 			int fwidth = 0, fheight = 0;
 			GetTextExtent(rowText, &fwidth, &fheight, NULL, NULL, &font);
 			pos.x -= (w - fwidth - 8);
-			//rtlLineLength = fwidth;
 		}
 	}
 	
@@ -1840,8 +1842,6 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 		text.Replace(L"\t", L"");
 		if (gc){
 			gc->GetTextExtent(text, &gcfw, &gcfh);
-			//int measure = (hasRTL) ? rtlLineLength - gcfw - 1.f - ((gcfw - gcfw1) / 2.f) : 
-				//gcfw + 1.f - ((gcfw - gcfw1) / 2.f);
 			if (gcfw + 1.f - ((gcfw - gcfw1) / 2.f) > pos.x){
 				cur->x = i; 
 				find = true; 
@@ -1902,7 +1902,7 @@ void TextEditor::Replace(int start, int end, const wxString &rep)
 {
 	modified = true;
 	MText.replace(start, end - start, rep);
-	CalcWrap();
+	CalcWraps();
 	if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
 	if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
 	Refresh(false);
@@ -2075,7 +2075,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 			misspells[error].posStart, misspells[error].posEnd, &MText, &newto);
 
 		modified = true;
-		CalcWrap();
+		CalcWraps();
 		SetSelection(newto, newto);
 		EB->Send(EDITBOX_SPELL_CHECKER, false);
 		modified = false;
@@ -2093,7 +2093,7 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		long from, to;
 		GetSelection(&from, &to);
 		MText.Remove(from, to - from);
-		CalcWrap();
+		CalcWraps();
 		SetSelection(from, from); modified = true;
 	}
 	else if (id == TEXTM_ADD && !err.IsEmpty()){
@@ -2146,7 +2146,7 @@ void TextEditor::Copy(bool cut)
 	wxString &text = (hasRTL) ? RTLText : MText;
 	wxString whatcopy = text.SubString(curx, selx - 1);
 	if(hasRTL)
-		BIDIReverseConvert(&whatcopy);
+		ConvertToLTR(&whatcopy);
 	if (wxTheClipboard->Open())
 	{
 		wxTheClipboard->SetData(new wxTextDataObject(whatcopy));
@@ -2155,7 +2155,7 @@ void TextEditor::Copy(bool cut)
 	}
 	if (cut){
 		text.Remove(curx, selx - curx);
-		CalcWrap();
+		CalcWraps();
 		SetSelection(curx, curx);
 		modified = true;
 	}
@@ -2177,12 +2177,22 @@ void TextEditor::Paste()
 			whatpaste.Replace(L"\t", L" ");
 			int curx = Cursor.x;
 			int selx = Selend.x; if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-			if (Selend.x != Cursor.x){
-				MText.Remove(curx, selx - curx);
+			if (hasRTL) {
+				ConvertToRTL(&whatpaste);
+				if (Selend.x != Cursor.x) {
+					RTLText.Remove(curx, selx - curx);
+				}
+				RTLText.insert(curx, whatpaste);
+				ConvertToLTR(&RTLText, &MText);
 			}
-			MText.insert(curx, whatpaste);
+			else {
+				if (Selend.x != Cursor.x) {
+					MText.Remove(curx, selx - curx);
+				}
+				MText.insert(curx, whatpaste);
+			}
 			modified = true;
-			CalcWrap();
+			CalcWraps(true, true, true);
 			int whre = curx + whatpaste.length();
 			SetSelection(whre, whre);
 
@@ -2446,7 +2456,9 @@ void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h, int po
 			gc->DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}
 		if (hasRTL) {
-			wxString rowText = text.Mid(charStart, charEnd);
+			int misspellLineStart = wraps[fsty];
+			int misspellLineEnd = wraps[(fsty + 1 >= wraps.size()) ? wraps.size() - 1 : fsty + 1];
+			wxString rowText = text.Mid(misspellLineStart, misspellLineEnd - misspellLineStart);
 			double fww1 = 0.f;
 			gc->GetTextExtent(rowText, &fww1, &fh);
 			gc->DrawRectangle(fw + posX - fww1, ((fsty * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
@@ -2602,7 +2614,7 @@ bool TextEditor::IsRTLCharacter(const wxUniChar& ch)
 	return false;
 }
 
-void TextEditor::SwitchWordsToRTL()
+void TextEditor::ConvertToRTL()
 {
 	size_t len = MText.size();
 	if (!len)
@@ -2610,40 +2622,18 @@ void TextEditor::SwitchWordsToRTL()
 
 	RTLText.clear();
 
-
-	//wxString textLine;
 	wxString ltrText;
 	wxString rtlText;
 	int lastRTLWordPos = 0;
 	for (int j = 0; j < len; j++) {
 		const wxUniChar& ch = MText[j];
-		//if (ch == L' ') {
-		//	if (!ltrText.empty()) {
-		//		//textLine << ltrText;
-		//		textLine.insert(lastRTLWordPos, ltrText);
-
-		//		ltrText.clear();
-		//		//textLine << ch;
-		//		textLine.insert(lastRTLWordPos, ch);
-		//	}
-		//	if (!rtlText.empty()) {
-		//		BIDIConvert(&rtlText);
-		//		textLine.insert(lastRTLWordPos, rtlText);
-		//		rtlText.clear();
-		//		textLine.insert(lastRTLWordPos, ch);
-		//	}
-		//	
-		//}
-		/*else */if (IsRTLCharacter(ch)) {
+		if (IsRTLCharacter(ch)) {
 			if (!ltrText.empty()) {
 					
 				RTLText.insert(lastRTLWordPos, ltrText);
-				//textLine << ltrText;
-				//lastRTLWordPos = textLine.length();
 				ltrText.clear();
 			}
 			rtlText << ch;
-			//containsRTL = true;
 		}
 		else {
 			if (!rtlText.empty()) {
@@ -2656,7 +2646,6 @@ void TextEditor::SwitchWordsToRTL()
 			
 	}
 	if (!ltrText.empty()) {
-		//textLine << ltrText;
 		RTLText.insert(lastRTLWordPos, ltrText);
 	}
 	if (!rtlText.empty()) {
@@ -2664,8 +2653,49 @@ void TextEditor::SwitchWordsToRTL()
 		RTLText.insert(lastRTLWordPos, rtlText);
 	}
 
-	//RTLText << textLine;
+}
 
+void TextEditor::ConvertToRTL(wxString* text)
+{
+	if (!text)
+		return;
+
+	size_t len = text->size();
+	if (!len)
+		return;
+
+	wxString convertedText;
+	wxString ltrText;
+	wxString rtlText;
+	for (int j = 0; j < len; j++) {
+		const wxUniChar& ch = (*text)[j];
+		if (IsRTLCharacter(ch)) {
+			if (!ltrText.empty()) {
+
+				convertedText.insert(0, ltrText);
+				ltrText.clear();
+			}
+			rtlText << ch;
+		}
+		else {
+			if (!rtlText.empty()) {
+				BIDIConvert(&rtlText);
+				convertedText.insert(0, rtlText);
+				rtlText.clear();
+			}
+			ltrText << ch;
+		}
+
+	}
+	if (!ltrText.empty()) {
+		convertedText.insert(0, ltrText);
+	}
+	if (!rtlText.empty()) {
+		BIDIConvert(&rtlText);
+		convertedText.insert(0, rtlText);
+	}
+
+	*text = convertedText;
 }
 
 void TextEditor::BIDIConvert(wxString* text)
@@ -2730,6 +2760,54 @@ void TextEditor::BIDIReverseConvert(wxString* text)
 	free(text2);
 }
 
+//put normal RTL text and get converted to LTR when text == NULL or len = 0 function fail
+void TextEditor::ConvertToLTR(wxString* textin, wxString* textout)
+{
+	if (!textin)
+		return;
+
+	size_t len = textin->size();
+	if (!len)
+		return;
+
+	wxString ltrText;
+	wxString rtlText;
+	wxString resultText;
+		
+	for (int j = 0; j < len; j++) {
+		const wxUniChar& ch = (*textin)[j];
+		if (IsRTLCharacter(ch)) {
+			if (!ltrText.empty()) {
+
+				resultText.insert(0, ltrText);
+				ltrText.clear();
+			}
+			rtlText << ch;
+		}
+		else {
+			if (!rtlText.empty()) {
+				BIDIReverseConvert(&rtlText);
+				resultText.insert(0, rtlText);
+				rtlText.clear();
+			}
+			ltrText << ch;
+		}
+
+	}
+	if (!ltrText.empty()) {
+		resultText.insert(0, ltrText);
+	}
+	if (!rtlText.empty()) {
+		BIDIReverseConvert(&rtlText);
+		resultText.insert(0, rtlText);
+	}
+
+	if (textout)
+		*textout = resultText;
+	else
+		*textin = resultText;
+}
+
 //state here is for template and for disable spellchecker and wraps
 void TextEditor::SetState(int _state, bool refresh){
 	if (state == _state)
@@ -2755,7 +2833,7 @@ bool TextEditor::SetFont(const wxFont &_font)
 	caret->SetSize(1, fh);
 	fontSizes.clear();
 	statusBarHeight = (Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR)) ? 0 : fontHeight + 8;
-	CalcWrap();
+	CalcWraps();
 	Refresh(false);
 	return true;
 }

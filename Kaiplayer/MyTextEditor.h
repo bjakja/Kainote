@@ -70,7 +70,7 @@ protected:
 	void DrawFieldGDI(wxDC &dc, int w, int h, int windowh);
 	void DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh);
 	bool HitTest(wxPoint pos, wxPoint *cur);
-	void CalcWrap(bool updatechars = true, bool sendevent = true);
+	void CalcWraps(bool updatechars = true, bool sendevent = true, bool dontConvertRTL = false);
 	void CalcWrapsGDI(int windowWidth);
 	void CalcWrapsD2D(GraphicsContext *gc, int windowWidth);
 	void FindWord(int pos, int *start, int *end);
@@ -83,9 +83,12 @@ protected:
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
 	bool IsRTLCharacter(const wxUniChar& ch);
-	void SwitchWordsToRTL();
+	void ConvertToRTL();
+	void ConvertToRTL(wxString* text);
 	void BIDIConvert(wxString* text);
 	void BIDIReverseConvert(wxString* text);
+	//when textout is NULL result puts to textIn
+	void ConvertToLTR(wxString *textin, wxString *textout = NULL);
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
