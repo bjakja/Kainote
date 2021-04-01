@@ -82,19 +82,14 @@ protected:
 	void DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
-	bool IsRTLCharacter(const wxUniChar& ch);
-	void ConvertToRTL();
-	void ConvertToRTL(wxString* text);
-	void BIDIConvert(wxString* text);
-	void BIDIReverseConvert(wxString* text);
-	//when textout is NULL result puts to textIn
-	void ConvertToLTR(wxString *textin, wxString *textout = NULL);
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
 	bool changeQuotes;
 	wxString MText;
 	wxString RTLText;
+	wxString tempRTLtext;
+	wxUniChar lastKey;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
 	PopupTagList *tagList = NULL;
@@ -109,6 +104,7 @@ protected:
 	int oldstart, oldend;
 	int posY;
 	wxPoint Cursor;
+	wxPoint RTLCursor;
 	wxPoint Selend;
 	wxPoint Brackets;
 	wxPoint dclickCurPos;

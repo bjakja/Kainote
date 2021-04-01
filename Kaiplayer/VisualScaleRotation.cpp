@@ -647,9 +647,11 @@ void ScaleRotation::ChangeInLines(bool dummy)
 	tab->Grid->file->GetSelections(sels);
 	wxString *dtxt;
 	if (dummy){
-		if (!dummytext){
+		if (!dummytext || selPositions.size() != sels.size()){
 			selPositions.clear();
 			bool visible = false;
+			// release dummy text when sels size is different
+			SAFE_DELETE(dummytext);
 			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
 				//KaiLog(L"Sizes mismatch");

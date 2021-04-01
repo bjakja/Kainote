@@ -26,13 +26,7 @@
 #include <regex>
 #include "GraphicsD2D.h"
 #include "Utils.h"
-#include <unicode/utypes.h>
-#include <unicode/ubidi.h>
-#include <unicode/ubiditransform.h>
-#include <unicode/uchar.h>
-#include <unicode/localpointer.h>
-#include <unicode/putil.h>
-#include <unicode/ushape.h>
+#include "BidiConversion.h"
 
 #undef DrawText
 
@@ -163,7 +157,7 @@ void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL
 
 	// make it uses every text normally, cause it have to be switched before calc wraps
 	if (hasRTL && !dontConvertRTL)
-		ConvertToRTL();
+		ConvertToRTL(&MText, &RTLText);
 
 
 	wraps.clear();
@@ -269,7 +263,7 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 	while (i < textLen)
 	{
 		//for RTL have to calc wraps from end
-		int RTLi = (hasRTL) ? textLen - 1 - i : i;
+		//int RTLi = (hasRTL) ? textLen - 1 - i : i;
 		const wxUniChar &ch = text[i];
 		if (ch == L'\t') {
 			i++;
@@ -292,10 +286,10 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 			bool foundWrap = false;
 			//check for possible wraps else return char wrap
 			while (minChar < j) {
-				int RTLj = (hasRTL) ? textLen - 1 - j : j;
-				const wxUniChar &ch = text[RTLj];
+				//int RTLj = (hasRTL) ? textLen - 1 - j : j;
+				const wxUniChar &ch = text[j];
 				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
-					wraps.push_back(ch == L'{' ? RTLj : RTLj + 1);
+					wraps.push_back(ch == L'{' ? j : j + 1);
 					foundWrap = true;
 					i = j + 1;
 					break;
@@ -303,7 +297,7 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 				j--;
 			}
 			if (!foundWrap) {
-				wraps.push_back(RTLi - 1);
+				wraps.push_back(i - 1);
 				i--;
 			}
 			widthCount = 0;
@@ -320,38 +314,57 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 void TextEditor::OnCharPress(wxKeyEvent& event)
 {
 	wxUniChar wkey = event.GetUnicodeKey();
+	wxUniChar key = wkey;
+	/*if (hasRTL && lastKey) {
+		key = wxString(lastKey).Lower().at(0);
+	}*/
 	if (wkey == L'\t'){ return; }
 	if (wkey){
+		wxString& text = (hasRTL) ? RTLText : MText;
 		if (Cursor != Selend){
 			int curx = Cursor.x;
 			int selx = Selend.x;
 			if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-			MText.Remove(curx, selx - curx);
-			if (Cursor.x<Selend.x){ Selend = Cursor; }
+			text.Remove(curx, selx - curx);
+			if (Cursor.x < Selend.x){ Selend = Cursor; }
 			else{ Cursor = Selend; }
 		}
-		int len = MText.length();
+		
 		if (wkey == L'"' && changeQuotes)
 			wkey = CheckQuotes();
+
+
+		bool isInBracket = false;
 		if (hasRTL) {
-			size_t startBracket = MText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x - 1).Find(L'{');
-			size_t endBracket = MText.Mid(Cursor.x).Find(L'}');
-			if (!IsRTLCharacter(wkey) || (startBracket < endBracket&& startBracket != -1 && endBracket != -1)) {
-				if (Cursor.x >= len) { MText << wkey; }
-				else { MText.insert(Cursor.x, 1, wkey); }
+			int len = RTLText.length();
+			size_t startBracket = RTLText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x).Find(L'{', true);
+			size_t endBracket = RTLText.Mid((Cursor.x - 2 < 0) ? 0 : Cursor.x - 2).Find(L'}');
+			endBracket += (Cursor.x - 2);
+			
+			if (startBracket < endBracket && startBracket != -1 && endBracket != -1) {
+				if (Cursor.x >= len) { RTLText << key; }
+				else { RTLText.insert(Cursor.x, 1, key); }
+				isInBracket = true;
+			}
+			else if(IsRTLCharacter(wkey)){
+				if (Cursor.x >= len) { RTLText << wkey; }
+				else { RTLText.insert(Cursor.x + 1, 1, wkey); }
 			}
 			else {
-				if (Cursor.x >= len) { MText << wkey; }
-				else { MText.insert(Cursor.x + 1, 1, wkey); }
+				//here have to be written a fancy version ltr for rtl
+				if (Cursor.x >= len) { RTLText << wkey; }
+				else { RTLText.insert(Cursor.x, 1, wkey); }
 			}
+			ConvertToLTR(&RTLText, &MText);
 		}
 		else {
+			int len = MText.length();
 			if (Cursor.x >= len) { MText << wkey; }
 			else { MText.insert(Cursor.x, 1, wkey); }
 		}
-		CalcWraps();
+		CalcWraps(true, true, true);
 		if (hasRTL) {
-			if (!IsRTLCharacter(wkey)) {
+			if (isInBracket || !IsRTLCharacter(wkey)) {
 				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
 				Cursor.x++;
 			}
@@ -366,20 +379,20 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		Update();
 		modified = true;
 		//tag list
-		if (!tagList && (wkey == L'\\' || (Cursor.x - 2 >= 0 && MText[Cursor.x - 2] == L'\\') ||
-			(Cursor.x < MText.length() && (MText[Cursor.x] == L'\\' || MText[Cursor.x] == L'}')))){
+		if (!tagList && (key == L'\\' || (Cursor.x - 2 >= 0 && text[Cursor.x - 2] == L'\\') ||
+			(Cursor.x < text.length() && (text[Cursor.x] == L'\\' || text[Cursor.x] == L'}')))){
 			//No need to check end cause when there's no end start will take all line
 			//No need to show list when it's plain text, someone want to write \h or \N
 			wxString partTag;
 			bool hasPartTag = false;
 			for (int i = Cursor.x - 1; i >= 0; i--){
-				if (MText[i] == L'}')
+				if (text[i] == L'}')
 					break;
-				if (MText[i] == L'{'){
+				if (text[i] == L'{'){
 					tagList = new PopupTagList(this);
-					if (wkey != L'\\') {
+					if (key != L'\\') {
 						if (partTag.empty())
-							tagList->AppendToKeyword(wkey);
+							tagList->AppendToKeyword(key);
 						else
 							tagList->FilterListViaKeyword(partTag);
 					}
@@ -399,7 +412,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					if (wrap < Cursor.x){
 						GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 						GraphicsContext *gc = renderer->CreateMeasuringContext();
-						wxString textBeforeCursor = MText.Mid(wrap, Cursor.x - wrap + 1);
+						wxString textBeforeCursor = text.Mid(wrap, Cursor.x - wrap + 1);
 						if (gc){
 							gc->SetFont(font, L"#FFFFFF");
 							double fw, fh;
@@ -416,17 +429,17 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					break;
 				}
 				else if(!hasPartTag){
-					if (MText[i] == L'\\') {
+					if (text[i] == L'\\') {
 						hasPartTag = true;
 						continue;
 					}
-					partTag.insert(0, 1, MText[i]);
+					partTag.insert(0, 1, text[i]);
 				}
 			}
 			
 		}
 		else if (tagList){
-			tagList->AppendToKeyword(wkey);
+			tagList->AppendToKeyword(key);
 			if (!tagList->GetCount()){
 				delete tagList;
 				tagList = NULL;
@@ -473,8 +486,10 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 		}
 	}
 	if (((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0) || (alt && (key >= WXK_NUMPAD0 && key <= WXK_NUMPAD9))){
+		lastKey = key;
 		event.Skip(); return; 
 	}
+	lastKey = 0;
 }
 
 void TextEditor::OnAccelerator(wxCommandEvent& event)
@@ -530,15 +545,16 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			break;
 		}
 	}
+	wxString& text = (hasRTL) ? RTLText : MText;
 	switch (ID){
 	case ID_CDELETE:
 	case ID_CBACK:
 		//len = MText.length();
-		if ((ID == ID_CBACK && Cursor.x == 0) || (ID == ID_CDELETE && Cursor.x >= (int)MText.length())){ return; }
+		if ((ID == ID_CBACK && Cursor.x == 0) || (ID == ID_CDELETE && Cursor.x >= (int)text.length())){ return; }
 		Selend.x = Cursor.x;
 		if (ID == ID_CBACK){
 			FindWord((Cursor.x < 2) ? 0 : Cursor.x - 1, &Cursor.x, &len);
-			if (Cursor.x == 1 && MText[0] == L' '){ Cursor.x--; }
+			if (Cursor.x == 1 && text[0] == L' '){ Cursor.x--; }
 		}
 		else{
 			FindWord(Cursor.x, &len, &Selend.x);
@@ -549,9 +565,11 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			int curx = Cursor.x;
 			int selx = Selend.x;
 			if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-			MText.Remove(curx, selx - curx);
+			text.Remove(curx, selx - curx);
 			Selend = Cursor;
-			CalcWraps();
+			/*if (hasRTL)
+				ConvertToLTR(&RTLText, &MText);
+			CalcWraps(true, true, true);*/
 			SetSelection(curx, curx);
 		}
 		else
@@ -560,11 +578,14 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 				if (Cursor.x < 1){ return; }
 				Cursor.x--;
 			}
-			if (ID == ID_DEL && Cursor.x >= (int)MText.length()){ return; }
-			MText.Remove(Cursor.x, 1);
+			if (ID == ID_DEL && Cursor.x >= (int)text.length()){ return; }
+			text.Remove(Cursor.x, 1);
 		}
 		len = wraps.size();
-		CalcWraps();
+		if(hasRTL)
+			ConvertToLTR(&RTLText, &MText);
+
+		CalcWraps(true, true, true);
 
 		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
@@ -587,7 +608,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		else if (ID != ID_CLEFT && ID != ID_CSLEFT){ Cursor.x--; }
 
 
-		if (ID<ID_SLEFT){ Selend = Cursor; }
+		if (ID < ID_SLEFT){ Selend = Cursor; }
 		Refresh(false);
 		break;
 
@@ -596,9 +617,9 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_SRIGHT:
 	case ID_CSRIGHT:
 		if (ID == ID_RIGHT && Selend.x>Cursor.x){ Cursor = Selend; Refresh(false); return; }
-		if (Cursor.x >= (int)MText.length()){ return; }
+		if (Cursor.x >= (int)text.length()){ return; }
 		if (ID == ID_CRIGHT || ID == ID_CSRIGHT){
-			if (Cursor.x == MText.length() - 1){
+			if (Cursor.x == text.length() - 1){
 				Cursor.x++;
 			}
 			else{
@@ -608,7 +629,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		if (Cursor.x + 1 > wraps[Cursor.y + 1] && Cursor.y < (int)wraps.size() - 2){ Cursor.y++; }
 		else if (ID != ID_CRIGHT && ID != ID_CSRIGHT){ Cursor.x++; }
 
-		if (ID<ID_SRIGHT){ Selend = Cursor; }
+		if (ID < ID_SRIGHT){ Selend = Cursor; }
 		Refresh(false);
 		break;
 
@@ -620,7 +641,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			tagList->SetSelection(sel);
 			break;
 		}
-		len = MText.length();
+		len = text.length();
 		if (Cursor.y >= (int)wraps.size() - 2){ Cursor.y = wraps.size() - 2; Cursor.x = len; }
 		else{
 			Cursor.x -= wraps[Cursor.y];
@@ -654,7 +675,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	case ID_CTLA:
 
 		Cursor.x = Cursor.y = 0;
-		Selend.x = MText.length(); Selend.y = wraps.size() - 2;
+		Selend.x = text.length(); Selend.y = wraps.size() - 2;
 		Refresh(false);
 		break;
 	case ID_CTLV:
@@ -736,6 +757,8 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 
 	if (event.LeftDClick() && MText != L"" && isInField){
+		if (hasRTL && !tempRTLtext.empty())
+			tempRTLtext.clear();
 		wasDoubleClick = true;
 		dclickCurPos = mousePosition;
 		time = timeGetTime();
@@ -785,7 +808,12 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			selectionWords.clear();
 		wxPoint cur;
 		HitTest(mousePosition, &cur);
-		if (cur != Cursor){ wxCommandEvent evt(CURSOR_MOVED, GetId()); AddPendingEvent(evt); }
+		if (cur != Cursor){ 
+			if (hasRTL && !tempRTLtext.empty())
+				tempRTLtext.clear();
+			wxCommandEvent evt(CURSOR_MOVED, GetId()); 
+			AddPendingEvent(evt); 
+		}
 		Cursor = cur;
 		if (!event.ShiftDown()){ Selend = Cursor; }
 		if (wasDoubleClick){
@@ -1901,10 +1929,13 @@ wxString TextEditor::GetValue() const
 void TextEditor::Replace(int start, int end, const wxString &rep)
 {
 	modified = true;
-	MText.replace(start, end - start, rep);
-	CalcWraps();
-	if ((size_t)Cursor.x > MText.length()){ Cursor.x = MText.length(); Cursor.y = FindY(Cursor.x); }
-	if ((size_t)Selend.x > MText.length()){ Selend.x = MText.length(); Selend.y = FindY(Selend.x); }
+	wxString& text = (hasRTL) ? RTLText : MText;
+	text.replace(start, end - start, rep);
+	if(hasRTL)
+		ConvertToLTR(&RTLText, &MText);
+	CalcWraps(true, true, true);
+	if ((size_t)Cursor.x > text.length()){ Cursor.x = text.length(); Cursor.y = FindY(Cursor.x); }
+	if ((size_t)Selend.x > text.length()){ Selend.x = text.length(); Selend.y = FindY(Selend.x); }
 	Refresh(false);
 }
 
@@ -2155,7 +2186,10 @@ void TextEditor::Copy(bool cut)
 	}
 	if (cut){
 		text.Remove(curx, selx - curx);
-		CalcWraps();
+		if (hasRTL)
+			ConvertToLTR(&RTLText, &MText);
+
+		CalcWraps(true, true, true);
 		SetSelection(curx, curx);
 		modified = true;
 	}
@@ -2511,8 +2545,9 @@ void TextEditor::PutTag()
 {
 	TagListItem *item = tagList->GetItem(tagList->GetSelection());
 	if (item){
+		wxString& text = (hasRTL) ? RTLText : MText;
 		for (int i = Cursor.x - 1; i >= 0; i--){
-			if (MText[i] == L'\\'){
+			if (text[i] == L'\\'){
 				//It would be nice to add brackets or some else elements;
 				//Looks like it have to be added for all tags separely
 				wxString tag;
@@ -2529,283 +2564,6 @@ void TextEditor::PutTag()
 			}
 		}
 	}
-}
-
-
-//taken from https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
-bool TextEditor::IsRTLCharacter(const wxUniChar& ch)
-{
-	unsigned int c = ch.GetValue();
-	if (c >= 0x5BE && c <= 0x10B7F)
-	{
-		if (c <= 0x85E)
-		{
-			if (c == 0x5BE)                        return true;
-			else if (c == 0x5C0)                   return true;
-			else if (c == 0x5C3)                   return true;
-			else if (c == 0x5C6)                   return true;
-			else if (0x5D0 <= c && c <= 0x5EA)     return true;
-			else if (0x5F0 <= c && c <= 0x5F4)     return true;
-			else if (c == 0x608)                   return true;
-			else if (c == 0x60B)                   return true;
-			else if (c == 0x60D)                   return true;
-			else if (c == 0x61B)                   return true;
-			else if (0x61E <= c && c <= 0x64A)     return true;
-			else if (0x66D <= c && c <= 0x66F)     return true;
-			else if (0x671 <= c && c <= 0x6D5)     return true;
-			else if (0x6E5 <= c && c <= 0x6E6)     return true;
-			else if (0x6EE <= c && c <= 0x6EF)     return true;
-			else if (0x6FA <= c && c <= 0x70D)     return true;
-			else if (c == 0x710)                   return true;
-			else if (0x712 <= c && c <= 0x72F)     return true;
-			else if (0x74D <= c && c <= 0x7A5)     return true;
-			else if (c == 0x7B1)                   return true;
-			else if (0x7C0 <= c && c <= 0x7EA)     return true;
-			else if (0x7F4 <= c && c <= 0x7F5)     return true;
-			else if (c == 0x7FA)                   return true;
-			else if (0x800 <= c && c <= 0x815)     return true;
-			else if (c == 0x81A)                   return true;
-			else if (c == 0x824)                   return true;
-			else if (c == 0x828)                   return true;
-			else if (0x830 <= c && c <= 0x83E)     return true;
-			else if (0x840 <= c && c <= 0x858)     return true;
-			else if (c == 0x85E)                   return true;
-		}
-		else if (c == 0x200F)                      return true;
-		else if (c >= 0xFB1D)
-		{
-			if (c == 0xFB1D)                       return true;
-			else if (0xFB1F <= c && c <= 0xFB28)   return true;
-			else if (0xFB2A <= c && c <= 0xFB36)   return true;
-			else if (0xFB38 <= c && c <= 0xFB3C)   return true;
-			else if (c == 0xFB3E)                  return true;
-			else if (0xFB40 <= c && c <= 0xFB41)   return true;
-			else if (0xFB43 <= c && c <= 0xFB44)   return true;
-			else if (0xFB46 <= c && c <= 0xFBC1)   return true;
-			else if (0xFBD3 <= c && c <= 0xFD3D)   return true;
-			else if (0xFD50 <= c && c <= 0xFD8F)   return true;
-			else if (0xFD92 <= c && c <= 0xFDC7)   return true;
-			else if (0xFDF0 <= c && c <= 0xFDFC)   return true;
-			else if (0xFE70 <= c && c <= 0xFE74)   return true;
-			else if (0xFE76 <= c && c <= 0xFEFC)   return true;
-			else if (0x10800 <= c && c <= 0x10805) return true;
-			else if (c == 0x10808)                 return true;
-			else if (0x1080A <= c && c <= 0x10835) return true;
-			else if (0x10837 <= c && c <= 0x10838) return true;
-			else if (c == 0x1083C)                 return true;
-			else if (0x1083F <= c && c <= 0x10855) return true;
-			else if (0x10857 <= c && c <= 0x1085F) return true;
-			else if (0x10900 <= c && c <= 0x1091B) return true;
-			else if (0x10920 <= c && c <= 0x10939) return true;
-			else if (c == 0x1093F)                 return true;
-			else if (c == 0x10A00)                 return true;
-			else if (0x10A10 <= c && c <= 0x10A13) return true;
-			else if (0x10A15 <= c && c <= 0x10A17) return true;
-			else if (0x10A19 <= c && c <= 0x10A33) return true;
-			else if (0x10A40 <= c && c <= 0x10A47) return true;
-			else if (0x10A50 <= c && c <= 0x10A58) return true;
-			else if (0x10A60 <= c && c <= 0x10A7F) return true;
-			else if (0x10B00 <= c && c <= 0x10B35) return true;
-			else if (0x10B40 <= c && c <= 0x10B55) return true;
-			else if (0x10B58 <= c && c <= 0x10B72) return true;
-			else if (0x10B78 <= c && c <= 0x10B7F) return true;
-		}
-	}
-	return false;
-}
-
-void TextEditor::ConvertToRTL()
-{
-	size_t len = MText.size();
-	if (!len)
-		return;
-
-	RTLText.clear();
-
-	wxString ltrText;
-	wxString rtlText;
-	int lastRTLWordPos = 0;
-	for (int j = 0; j < len; j++) {
-		const wxUniChar& ch = MText[j];
-		if (IsRTLCharacter(ch)) {
-			if (!ltrText.empty()) {
-					
-				RTLText.insert(lastRTLWordPos, ltrText);
-				ltrText.clear();
-			}
-			rtlText << ch;
-		}
-		else {
-			if (!rtlText.empty()) {
-				BIDIConvert(&rtlText);
-				RTLText.insert(lastRTLWordPos, rtlText);
-				rtlText.clear();
-			}
-			ltrText << ch;
-		}
-			
-	}
-	if (!ltrText.empty()) {
-		RTLText.insert(lastRTLWordPos, ltrText);
-	}
-	if (!rtlText.empty()) {
-		BIDIConvert(&rtlText);
-		RTLText.insert(lastRTLWordPos, rtlText);
-	}
-
-}
-
-void TextEditor::ConvertToRTL(wxString* text)
-{
-	if (!text)
-		return;
-
-	size_t len = text->size();
-	if (!len)
-		return;
-
-	wxString convertedText;
-	wxString ltrText;
-	wxString rtlText;
-	for (int j = 0; j < len; j++) {
-		const wxUniChar& ch = (*text)[j];
-		if (IsRTLCharacter(ch)) {
-			if (!ltrText.empty()) {
-
-				convertedText.insert(0, ltrText);
-				ltrText.clear();
-			}
-			rtlText << ch;
-		}
-		else {
-			if (!rtlText.empty()) {
-				BIDIConvert(&rtlText);
-				convertedText.insert(0, rtlText);
-				rtlText.clear();
-			}
-			ltrText << ch;
-		}
-
-	}
-	if (!ltrText.empty()) {
-		convertedText.insert(0, ltrText);
-	}
-	if (!rtlText.empty()) {
-		BIDIConvert(&rtlText);
-		convertedText.insert(0, rtlText);
-	}
-
-	*text = convertedText;
-}
-
-void TextEditor::BIDIConvert(wxString* text)
-{
-	UErrorCode errorCode = U_ZERO_ERROR;
-
-	// Open a new UBiDiTransform.
-
-	UBiDiTransform* transform = ubiditransform_open(&errorCode);
-
-	// Run a transformation.
-	std::wstring wtext = text->ToStdWstring();
-
-	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 1) * 2;
-	UChar* text2 = (UChar*)malloc(len);
-	if (!text2) {
-		KaiLog(L"Cannot allocate bidi conversion text");
-		return;
-	}
-
-	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
-		UBIDI_RTL, UBIDI_LOGICAL, UBIDI_LTR, UBIDI_VISUAL,
-		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_SHAPE, &errorCode);
-
-	ubiditransform_close(transform);
-	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
-
-	(*text) = wxString(result);
-	free(text2);
-}
-
-void TextEditor::BIDIReverseConvert(wxString* text)
-{
-	UErrorCode errorCode = U_ZERO_ERROR;
-
-	// Open a new UBiDiTransform.
-
-	UBiDiTransform* transform = ubiditransform_open(&errorCode);
-
-	// Run a transformation.
-	std::wstring wtext = text->ToStdWstring();
-
-	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 1) * 2;
-	UChar* text2 = (UChar*)malloc(len);
-	if (!text2) {
-		KaiLog(L"Cannot allocate bidi conversion text");
-		return;
-	}
-
-	ubiditransform_transform(transform, text1.data(), -1, text2, (len),
-		UBIDI_LTR, UBIDI_VISUAL, UBIDI_RTL, UBIDI_LOGICAL,
-		UBIDI_MIRRORING_OFF, U_SHAPE_LETTERS_UNSHAPE, &errorCode);
-
-	ubiditransform_close(transform);
-	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
-
-	(*text) = wxString(result);
-	free(text2);
-}
-
-//put normal RTL text and get converted to LTR when text == NULL or len = 0 function fail
-void TextEditor::ConvertToLTR(wxString* textin, wxString* textout)
-{
-	if (!textin)
-		return;
-
-	size_t len = textin->size();
-	if (!len)
-		return;
-
-	wxString ltrText;
-	wxString rtlText;
-	wxString resultText;
-		
-	for (int j = 0; j < len; j++) {
-		const wxUniChar& ch = (*textin)[j];
-		if (IsRTLCharacter(ch)) {
-			if (!ltrText.empty()) {
-
-				resultText.insert(0, ltrText);
-				ltrText.clear();
-			}
-			rtlText << ch;
-		}
-		else {
-			if (!rtlText.empty()) {
-				BIDIReverseConvert(&rtlText);
-				resultText.insert(0, rtlText);
-				rtlText.clear();
-			}
-			ltrText << ch;
-		}
-
-	}
-	if (!ltrText.empty()) {
-		resultText.insert(0, ltrText);
-	}
-	if (!rtlText.empty()) {
-		BIDIReverseConvert(&rtlText);
-		resultText.insert(0, rtlText);
-	}
-
-	if (textout)
-		*textout = resultText;
-	else
-		*textin = resultText;
 }
 
 //state here is for template and for disable spellchecker and wraps

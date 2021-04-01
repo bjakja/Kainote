@@ -428,6 +428,9 @@
     <ClCompile Include="FontCatalogList.cpp">
       <Filter>Source Files\Fonts</Filter>
     </ClCompile>
+    <ClCompile Include="BidiConversion.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -789,6 +792,9 @@
     </ClInclude>
     <ClInclude Include="FontCatalogList.h">
       <Filter>Source Files\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="BidiConversion.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
