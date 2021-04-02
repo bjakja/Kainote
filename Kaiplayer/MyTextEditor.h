@@ -33,7 +33,8 @@ public:
 	TextEditor(wxWindow *parent, int id, bool spell, const wxPoint& pos = wxDefaultPosition, 
 		const wxSize& size = wxDefaultSize, long style = wxWANTS_CHARS);
 	virtual ~TextEditor();
-	void SetTextS(const wxString &text, bool modif = false, bool resetsel = true, bool noevent = false);
+	void SetTextS(const wxString &text, bool modif = false, 
+		bool resetsel = true, bool noevent = false, bool BIDIConversion = true);
 	bool IsModified();
 	void SetModified(bool _modified = true);
 	void GetSelection(long *start, long* end);
@@ -41,7 +42,7 @@ public:
 	void Replace(int start, int end, const wxString &rep);
 	void Copy(bool cut = false);
 	void Paste();
-	wxString GetValue() const;
+	wxString GetValue(bool BIDIConversion = true) const;
 	void SpellcheckerOnOff(bool on);
 	void ClearSpellcheckerTable();
 	//0-normal, 1-comment, 2-template line, 3-code template line

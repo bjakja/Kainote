@@ -888,11 +888,11 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		leftClick = !leftClick;
 
 	wxString tmptext = TextEdit->GetValue();
-	TextEditor *GLOBAL_EDITOR = TextEdit;
+	TextEditor *editor = TextEdit;
 	int tmpIter = grid->file->Iter();
 	if (grid->hasTLMode && tmptext == L""){
 		tmptext = TextEditOrig->GetValue();
-		GLOBAL_EDITOR = TextEditOrig;
+		editor = TextEditOrig;
 	}
 
 	AssColor actualColor = AssColor(wxString(L"#FFFFFF"));
@@ -910,12 +910,12 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		if (ColourDialog->ShowModal() == wxID_OK) {
 			//Called only to add color to recent
 			ColourDialog->GetColor();
-			wxString txt = GLOBAL_EDITOR->GetValue();
+			wxString txt = editor->GetValue();
 			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
-			GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
+			editor->SetSelection(Placed.x, Placed.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
@@ -935,18 +935,18 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		AssColor ret;
 		if (scp.PickColor(&ret)){
 			scpd->AddRecent();
-			wxString txt = GLOBAL_EDITOR->GetValue();
+			wxString txt = editor->GetValue();
 			if (txt[Placed.x] != L'}'){
 				int bracketPos = txt.find(L"}", Placed.x);
 				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 			}
-			GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
+			editor->SetSelection(Placed.x, Placed.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
 		}
 	}
-	GLOBAL_EDITOR->SetFocus();
+	editor->SetFocus();
 }
 
 void EditBox::GetColor(AssColor *actualColor, int numColor)
@@ -1461,7 +1461,14 @@ bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &te
 		}
 	}
 	else{ txt = text; }
-	if (txt == L""){ Placed.x = 0; Placed.y = 0; InBracket = false; cursorpos = 0; if (endsel){ *endsel = false; } return false; }
+	if (txt == L""){ 
+		Placed.x = 0; 
+		Placed.y = 0; 
+		InBracket = false; 
+		cursorpos = 0; 
+		if (endsel){ *endsel = false; } 
+		return false; 
+	}
 	if (grid->file->SelectionsSize() < 2){
 		TextEditor *GLOBAL_EDITOR = (fromOriginal) ? TextEditOrig : TextEdit;
 		if (mode != 1){ GLOBAL_EDITOR->GetSelection(&from, &to); }

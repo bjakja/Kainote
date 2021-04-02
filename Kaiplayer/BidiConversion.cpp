@@ -107,7 +107,12 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 	bool block = false;
 	for (int j = 0; j < len; j++) {
 		const wxUniChar& ch = (*textin)[j];
-		if (ch == L'{' && !reverseRTL.empty()) {
+		if (ch == L'{' && (!reverseRTL.empty() || !rtlText.empty())) {
+			if (!rtlText.empty()) {
+				BIDIConvert(&rtlText);
+				reverseRTL.insert(0, rtlText);
+				rtlText.clear();
+			}
 			convertedText << reverseRTL;
 			reverseRTL.clear();
 			ltrText << ch;
@@ -382,8 +387,12 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 	int lastBracket = 0;
 	for (int j = 0; j < len; j++) {
 		const wxUniChar& ch = (*textin)[j];
-		if (ch == L'{' && !reverseRTL.empty()) {
-
+		if (ch == L'{' && (!reverseRTL.empty() || !rtlText.empty())) {
+			if (!rtlText.empty()) {
+				BIDIReverseConvert(&rtlText);
+				reverseRTL.insert(0, rtlText);
+				rtlText.clear();
+			}
 			convertedText << reverseRTL;
 			reverseRTL.clear();
 			ltrText << ch;
@@ -514,7 +523,7 @@ bool IsRTLCharacter(const wxUniChar& ch)
 	return false;
 }
 
-bool CheckRTL(wxString* text)
+bool CheckRTL(const wxString* text)
 {
 	for (size_t i = 0; i < text->size(); i++) {
 		const wxUniChar& ch = (*text)[i];

@@ -133,12 +133,17 @@ TextEditor::~TextEditor()
 	if (bmp)delete bmp;
 }
 
-void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool noevent)
+void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool noevent, bool BIDIConversion)
 {
 	modified = modif;
-	MText = text;
-	isRTL = CheckRTL(&MText);
-	CalcWraps(modif, (noevent) ? false : modif);
+	isRTL = CheckRTL(&text);
+	if (isRTL && BIDIConversion) {
+		RTLText = text;
+		ConvertToLTRChars(&RTLText, &MText);
+	}else
+		MText = text;
+
+	CalcWraps(modif, (noevent) ? false : modif, BIDIConversion);
 	if (!modif)
 		CheckText();
 
@@ -1928,8 +1933,19 @@ void TextEditor::SetSelection(int start, int end, bool noEvent)
 	Refresh(false);
 }
 
-wxString TextEditor::GetValue() const
+wxString TextEditor::GetValue(bool BIDIConversion) const
 {
+	if (BIDIConversion) {
+		if (hasRTL) {
+			wxString result;
+			ConvertToRTLChars(&MText, &result);
+			return result;
+		}
+		else if(isRTL)
+			return RTLText;
+
+	}
+
 	return MText;
 }
 
