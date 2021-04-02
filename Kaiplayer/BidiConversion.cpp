@@ -36,12 +36,33 @@ void ConvertToRTL(wxString* textin, wxString* textout)
 	wxString convertedText;
 	wxString ltrText;
 	wxString rtlText;
+	bool block = false;
 	for (int j = 0; j < len; j++) {
 		const wxUniChar& ch = (*textin)[j];
-		if (IsRTLCharacter(ch)) {
+		if (ch == L'{') {
+			if (!rtlText.empty()) {
+				BIDIConvert(&rtlText);
+				convertedText << rtlText;
+				rtlText.clear();
+			}
+			ltrText << ch;
+			block = true;
+		}
+		else if (ch == L'}') {
+			block = false;
+			convertedText << ltrText << ch;
+			ltrText.clear();
+		}
+		else if (block) {
+			ltrText << ch;
+		}
+		else {
+			rtlText << ch;
+		}
+		/*if (IsRTLCharacter(ch)) {
 			if (!ltrText.empty()) {
 
-				convertedText.insert(0, ltrText);
+				convertedText << ltrText;
 				ltrText.clear();
 			}
 			rtlText << ch;
@@ -49,19 +70,85 @@ void ConvertToRTL(wxString* textin, wxString* textout)
 		else {
 			if (!rtlText.empty()) {
 				BIDIConvert(&rtlText);
-				convertedText.insert(0, rtlText);
+				convertedText << rtlText;
 				rtlText.clear();
+			}
+			ltrText << ch;
+		}*/
+
+	}
+	if (!ltrText.empty()) {
+		convertedText << ltrText;
+	}
+	if (!rtlText.empty()) {
+		BIDIConvert(&rtlText);
+		convertedText << rtlText;
+	}
+
+	if (textout)
+		*textout = convertedText;
+	else
+		*textin = convertedText;
+}
+
+void ConvertToRTLChars(wxString* textin, wxString* textout)
+{
+	if (!textin)
+		return;
+
+	size_t len = textin->size();
+	if (!len)
+		return;
+
+	wxString convertedText;
+	wxString ltrText;
+	wxString rtlText;
+	wxString reverseRTL;
+	bool block = false;
+	for (int j = 0; j < len; j++) {
+		const wxUniChar& ch = (*textin)[j];
+		if (ch == L'{' && !reverseRTL.empty()) {
+			convertedText << reverseRTL;
+			reverseRTL.clear();
+			ltrText << ch;
+			convertedText << ltrText;
+			ltrText.clear();
+		}
+		else if (ch == L' ' && !rtlText.empty()) {
+			BIDIConvert(&rtlText);
+			const wxUniChar& nch = (*textin)[(j + 1 < len) ? j + 1 : j];
+			bool isNextRTL = IsRTLCharacter(nch);
+			reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
+			rtlText.clear();
+			if (!isNextRTL)
+				ltrText.insert(0, ch);
+		}
+		else if (IsRTLCharacter(ch)) {
+			if (!ltrText.empty()) {
+
+				convertedText << ltrText;
+				ltrText.clear();
+			}
+			rtlText << ch;
+		}
+		else {
+			if (!reverseRTL.empty()) {
+				convertedText << reverseRTL;
+				reverseRTL.clear();
 			}
 			ltrText << ch;
 		}
 
 	}
-	if (!ltrText.empty()) {
-		convertedText.insert(0, ltrText);
-	}
+	
 	if (!rtlText.empty()) {
 		BIDIConvert(&rtlText);
-		convertedText.insert(0, rtlText);
+		reverseRTL.insert(0, rtlText);
+		convertedText << reverseRTL;
+		reverseRTL.clear();
+	}
+	if (!ltrText.empty()) {
+		convertedText << ltrText;
 	}
 
 	if (textout)
@@ -135,6 +222,91 @@ void BIDIReverseConvert(wxString* text)
 //put normal RTL text and get converted to LTR when text == NULL or len = 0 function fail
 void ConvertToLTR(wxString* textin, wxString* textout)
 {
+	//if (!textin)
+	//	return;
+
+	//size_t len = textin->size();
+	//if (!len)
+	//	return;
+
+	//wxString ltrText;
+	//wxString rtlText;
+	//wxString resultText;
+	//bool block = false;
+	//int lastBracketsPos = 0;
+
+	//for (int j = 0; j < len; j++) {
+	//	const wxUniChar& ch = (*textin)[j];
+	//	if (ch == L'{') {
+	//		if (!rtlText.empty()) {
+	//			BIDIReverseConvert(&rtlText);
+	//			resultText.insert(lastBracketsPos, rtlText);
+	//			rtlText.clear();
+	//		}
+	//		if (!ltrText.empty()) {
+	//			resultText.insert(lastBracketsPos, ltrText);
+	//			ltrText.clear();
+	//		}
+	//		ltrText << ch;
+	//		block = true;
+	//		lastBracketsPos = j + 1;
+	//	}
+	//	else if (ch == L'}') {
+	//		block = false;
+	//		resultText << ltrText << ch;
+	//		ltrText.clear();
+	//		lastBracketsPos = j + 1;
+	//	}
+	//	else if (ch == L' ' && !rtlText.empty()) {
+	//		BIDIReverseConvert(&rtlText);
+	//		resultText.insert(lastBracketsPos, rtlText);
+	//		rtlText.clear();
+	//		ltrText << ch;
+	//		resultText.insert(lastBracketsPos, ch);
+	//	}
+	//	else if (IsRTLCharacter(ch)) {
+	//		if (!ltrText.empty()) {
+	//			if (block) {
+	//				resultText << ltrText;
+	//				block = false;
+	//			}
+	//			else
+	//				resultText.insert(0, ltrText);
+
+	//			ltrText.clear();
+	//		}
+	//		rtlText << ch;
+	//	}//when single { to avoid shit first check RTL character
+	//	else if (block) {
+	//		ltrText << ch;
+	//		lastBracketsPos = j + 1;
+	//	}
+	//	else {
+	//		if (!rtlText.empty()) {
+	//			BIDIReverseConvert(&rtlText);
+	//			resultText.insert(lastBracketsPos, rtlText);
+	//			rtlText.clear();
+	//		}
+	//		ltrText << ch;
+	//	}
+
+	//}
+	//if (!ltrText.empty()) {
+	//	if (block)
+	//		resultText << ltrText;
+	//	else
+	//		resultText.insert(0, ltrText);
+	//}
+	//if (!rtlText.empty()) {
+	//	BIDIReverseConvert(&rtlText);
+	//	resultText.insert(lastBracketsPos, rtlText);
+	//}
+
+	//if (textout)
+	//	*textout = resultText;
+	//else
+	//	*textin = resultText;
+
 	if (!textin)
 		return;
 
@@ -144,14 +316,27 @@ void ConvertToLTR(wxString* textin, wxString* textout)
 
 	wxString ltrText;
 	wxString rtlText;
+	wxString rtlWord;
 	wxString resultText;
 
 	for (int j = 0; j < len; j++) {
 		const wxUniChar& ch = (*textin)[j];
-		if (IsRTLCharacter(ch)) {
+		if (ch == L'{'/* || ch == L'}'*/) {
+			if (!ltrText.empty()) {
+				resultText << ltrText;
+				ltrText.clear();
+			}
+			if (!rtlText.empty()) {
+				BIDIReverseConvert(&rtlText);
+				resultText << rtlText;
+				rtlText.clear();
+			}
+			ltrText << ch;
+		}
+		else if (IsRTLCharacter(ch)) {
 			if (!ltrText.empty()) {
 
-				resultText.insert(0, ltrText);
+				resultText << ltrText;
 				ltrText.clear();
 			}
 			rtlText << ch;
@@ -159,7 +344,7 @@ void ConvertToLTR(wxString* textin, wxString* textout)
 		else {
 			if (!rtlText.empty()) {
 				BIDIReverseConvert(&rtlText);
-				resultText.insert(0, rtlText);
+				resultText << rtlText;
 				rtlText.clear();
 			}
 			ltrText << ch;
@@ -167,17 +352,84 @@ void ConvertToLTR(wxString* textin, wxString* textout)
 
 	}
 	if (!ltrText.empty()) {
-		resultText.insert(0, ltrText);
+		resultText << ltrText;
 	}
 	if (!rtlText.empty()) {
 		BIDIReverseConvert(&rtlText);
-		resultText.insert(0, rtlText);
+		resultText << rtlText;
 	}
 
 	if (textout)
 		*textout = resultText;
 	else
 		*textin = resultText;
+}
+
+void ConvertToLTRChars(wxString* textin, wxString* textout)
+{
+	if (!textin)
+		return;
+
+	size_t len = textin->size();
+	if (!len)
+		return;
+
+	wxString convertedText;
+	wxString ltrText;
+	wxString rtlText;
+	wxString reverseRTL;
+	bool block = false;
+	int lastBracket = 0;
+	for (int j = 0; j < len; j++) {
+		const wxUniChar& ch = (*textin)[j];
+		if (ch == L'{' && !reverseRTL.empty()) {
+
+			convertedText << reverseRTL;
+			reverseRTL.clear();
+			ltrText << ch;
+			convertedText << ltrText;
+			ltrText.clear();
+		}
+		else if (ch == L' ' && !rtlText.empty()) {
+			BIDIReverseConvert(&rtlText);
+			const wxUniChar& nch = (*textin)[(j + 1 < len)? j + 1 : j];
+			bool isNextRTL = IsRTLCharacter(nch);
+			reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
+			rtlText.clear();
+			if (!isNextRTL)
+				ltrText.insert(0, ch);
+		}
+		else if (IsRTLCharacter(ch)) {
+			if (!ltrText.empty()) {
+
+				convertedText << ltrText;
+				ltrText.clear();
+			}
+			rtlText << ch;
+		}
+		else {
+			if (!reverseRTL.empty()) {
+				convertedText << reverseRTL;
+				reverseRTL.clear();
+			}
+			ltrText << ch;
+		}
+
+	}
+	if (!rtlText.empty()) {
+		BIDIReverseConvert(&rtlText);
+		reverseRTL.insert(0, rtlText);
+		convertedText << reverseRTL;
+	}
+	if (!ltrText.empty()) {
+		convertedText << ltrText;
+	}
+	
+
+	if (textout)
+		*textout = convertedText;
+	else
+		*textin = convertedText;
 }
 
 //taken from https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
@@ -257,6 +509,17 @@ bool IsRTLCharacter(const wxUniChar& ch)
 			else if (0x10B40 <= c && c <= 0x10B55) return true;
 			else if (0x10B58 <= c && c <= 0x10B72) return true;
 			else if (0x10B78 <= c && c <= 0x10B7F) return true;
+		}
+	}
+	return false;
+}
+
+bool CheckRTL(wxString* text)
+{
+	for (size_t i = 0; i < text->size(); i++) {
+		const wxUniChar& ch = (*text)[i];
+		if (IsRTLCharacter(ch)) {
+			return true;
 		}
 	}
 	return false;

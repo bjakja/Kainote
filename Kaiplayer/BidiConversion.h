@@ -17,9 +17,12 @@
 #include <wx/string.h>
 
 //when textout is NULL result puts to textIn
+void ConvertToRTLChars(wxString* textin, wxString* textout = NULL);
 void ConvertToRTL(wxString* textin, wxString* textout = NULL);
 void BIDIConvert(wxString* text);
 void BIDIReverseConvert(wxString* text);
 //when textout is NULL result puts to textIn
 void ConvertToLTR(wxString* textin, wxString* textout = NULL);
+void ConvertToLTRChars(wxString* textin, wxString* textout = NULL);
 bool IsRTLCharacter(const wxUniChar& ch);
+bool CheckRTL(wxString* text);

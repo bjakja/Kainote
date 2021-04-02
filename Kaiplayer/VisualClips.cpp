@@ -1341,7 +1341,7 @@ void DrawingAndClip::CreateClipMask(wxString * clip, wxString * clipTag)
 	if (!clip->empty() && (clipTag || tab->Edit->FindValue(L"(i?clip.)[^)]*\\)", &tmp, maskDialogue->GetTextNoCopy(), 0, 1))) {
 		wxString tmp1 = clipTag? *clipTag : (tmp[0] == L'c') ? L"iclip(" : L"clip(";
 		wxString text;
-		text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << *clip << L")}m 0 0 l " <<
+		text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\frz0\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << *clip << L")}m 0 0 l " <<
 			nx << L" 0 " << nx << L" " << ny << L" 0 " << ny << L"\r\n";
 		maskDialogue->SetTextElement(TXT, text);
 		clipMask.Empty();

@@ -137,6 +137,7 @@ void TextEditor::SetTextS(const wxString &text, bool modif, bool resetsel, bool 
 {
 	modified = modif;
 	MText = text;
+	isRTL = CheckRTL(&MText);
 	CalcWraps(modif, (noevent) ? false : modif);
 	if (!modif)
 		CheckText();
@@ -158,7 +159,8 @@ void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL
 	// make it uses every text normally, cause it have to be switched before calc wraps
 	if (hasRTL && !dontConvertRTL)
 		ConvertToRTL(&MText, &RTLText);
-
+	else if(isRTL && !dontConvertRTL)
+		ConvertToRTLChars(&MText, &RTLText);
 
 	wraps.clear();
 	wraps.push_back(0);
@@ -320,7 +322,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 	}*/
 	if (wkey == L'\t'){ return; }
 	if (wkey){
-		wxString& text = (hasRTL) ? RTLText : MText;
+		wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 		if (Cursor != Selend){
 			int curx = Cursor.x;
 			int selx = Selend.x;
@@ -335,7 +337,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 
 
 		bool isInBracket = false;
-		if (hasRTL) {
+		if (hasRTL || isRTL) {
 			int len = RTLText.length();
 			size_t startBracket = RTLText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x).Find(L'{', true);
 			size_t endBracket = RTLText.Mid((Cursor.x - 2 < 0) ? 0 : Cursor.x - 2).Find(L'}');
@@ -355,7 +357,10 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 				if (Cursor.x >= len) { RTLText << wkey; }
 				else { RTLText.insert(Cursor.x, 1, wkey); }
 			}
-			ConvertToLTR(&RTLText, &MText);
+			if (hasRTL)
+				ConvertToLTR(&RTLText, &MText);
+			else if (isRTL)
+				ConvertToLTRChars(&RTLText, &MText);
 		}
 		else {
 			int len = MText.length();
@@ -363,7 +368,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			else { MText.insert(Cursor.x, 1, wkey); }
 		}
 		CalcWraps(true, true, true);
-		if (hasRTL) {
+		if (hasRTL || isRTL) {
 			if (isInBracket || !IsRTLCharacter(wkey)) {
 				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
 				Cursor.x++;
@@ -545,7 +550,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			break;
 		}
 	}
-	wxString& text = (hasRTL) ? RTLText : MText;
+	wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 	switch (ID){
 	case ID_CDELETE:
 	case ID_CBACK:
@@ -583,6 +588,8 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		}
 		len = wraps.size();
 		if(hasRTL)
+			ConvertToLTR(&RTLText, &MText);
+		else if(isRTL)
 			ConvertToLTR(&RTLText, &MText);
 
 		CalcWraps(true, true, true);
@@ -1089,7 +1096,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	int rtlwline = 0;
 	int wchar = 0;
 	bool hasFocus = HasFocus();
-	const wxString& fieldText = (hasRTL) ? RTLText : MText;
+	const wxString& fieldText = (hasRTL || isRTL) ? RTLText : MText;
 	wxString alltext = fieldText + L" ";
 	int len = alltext.length();
 	const wxUniChar &bchar = alltext[Cursor.x];
@@ -1244,7 +1251,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
 				gc->SetFont(font, fontColor);
-				if (hasRTL) {
+				if (hasRTL || isRTL) {
 					double chfw = 0.;
 					double chpos = 0.;
 					for (size_t i = 0; i < parttext.size(); i++) {
@@ -1372,7 +1379,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				wxString bef = parttext.BeforeLast(L'{');
 				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, ctext);
-				if (hasRTL) {
+				if (hasRTL || isRTL) {
 					double chfw = 0.;
 					double chpos = 0.;
 					for (size_t i = 0; i < bef.size(); i++) {
@@ -1929,10 +1936,13 @@ wxString TextEditor::GetValue() const
 void TextEditor::Replace(int start, int end, const wxString &rep)
 {
 	modified = true;
-	wxString& text = (hasRTL) ? RTLText : MText;
+	wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 	text.replace(start, end - start, rep);
-	if(hasRTL)
+	if (hasRTL)
 		ConvertToLTR(&RTLText, &MText);
+	else if (isRTL)
+		ConvertToLTRChars(&RTLText, &MText);
+
 	CalcWraps(true, true, true);
 	if ((size_t)Cursor.x > text.length()){ Cursor.x = text.length(); Cursor.y = FindY(Cursor.x); }
 	if ((size_t)Selend.x > text.length()){ Selend.x = text.length(); Selend.y = FindY(Selend.x); }
@@ -1944,7 +1954,7 @@ void TextEditor::CheckText()
 	if (MText == L"") { errors.SetEmpty(); return; }
 	errors.clear();
 	misspells.clear();
-	errors.Init2((hasRTL)? RTLText : MText, SpellCheckerOnOff, EB->GetFormat(), &misspells);
+	errors.Init2((hasRTL || isRTL)? RTLText : MText, SpellCheckerOnOff, EB->GetFormat(), &misspells);
 }
 
 wxUniChar TextEditor::CheckQuotes()
@@ -2174,10 +2184,13 @@ void TextEditor::Copy(bool cut)
 {
 	if (Selend.x == Cursor.x){ return; }
 	int curx = Cursor.x; int selx = Selend.x; if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-	wxString &text = (hasRTL) ? RTLText : MText;
+	wxString &text = (hasRTL || isRTL) ? RTLText : MText;
 	wxString whatcopy = text.SubString(curx, selx - 1);
 	if(hasRTL)
 		ConvertToLTR(&whatcopy);
+	else if (isRTL)
+		ConvertToLTRChars(&whatcopy);
+
 	if (wxTheClipboard->Open())
 	{
 		wxTheClipboard->SetData(new wxTextDataObject(whatcopy));
@@ -2188,6 +2201,8 @@ void TextEditor::Copy(bool cut)
 		text.Remove(curx, selx - curx);
 		if (hasRTL)
 			ConvertToLTR(&RTLText, &MText);
+		else if (isRTL)
+			ConvertToLTRChars(&RTLText, &MText);
 
 		CalcWraps(true, true, true);
 		SetSelection(curx, curx);
@@ -2211,13 +2226,20 @@ void TextEditor::Paste()
 			whatpaste.Replace(L"\t", L" ");
 			int curx = Cursor.x;
 			int selx = Selend.x; if (curx > selx){ int tmp = curx; curx = selx; selx = tmp; }
-			if (hasRTL) {
-				ConvertToRTL(&whatpaste);
+			if (hasRTL || isRTL) {
+				if (hasRTL)
+					ConvertToRTL(&whatpaste);
+				else if (isRTL)
+					ConvertToRTLChars(&whatpaste);
+
 				if (Selend.x != Cursor.x) {
 					RTLText.Remove(curx, selx - curx);
 				}
 				RTLText.insert(curx, whatpaste);
-				ConvertToLTR(&RTLText, &MText);
+				if(hasRTL)
+					ConvertToLTR(&RTLText, &MText);
+				else if (isRTL)
+					ConvertToLTRChars(&RTLText, &MText);
 			}
 			else {
 				if (Selend.x != Cursor.x) {
@@ -2453,7 +2475,7 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h)
 void TextEditor::DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX)
 {
 	const wxArrayInt & words = (type == 0) ? errors.errors : selectionWords;
-	const wxString& text = (hasRTL) ? RTLText : MText;
+	const wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 	size_t len = words.size();
 	double fw = 0.0, fh = 0.0, fww = 0.0, fwww = 0.0;
 	int lineStart = (scrollPositionV - 2) / fontHeight;

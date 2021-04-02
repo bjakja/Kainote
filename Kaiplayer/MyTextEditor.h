@@ -114,6 +114,7 @@ protected:
 	bool wasDoubleClick;
 	bool modified;
 	bool hasRTL = false;
+	bool isRTL = false;
 	int numberChangingMousePos = -1;
 	int state = 0;
 	int time;
