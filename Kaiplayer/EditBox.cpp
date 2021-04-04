@@ -584,18 +584,18 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 		EffectEdit->choiceText->SetModified(dummy);
 	}
 	if (TextEditOrig->IsShown() && (TextEditOrig->IsModified() || (splittedTags && TextEdit->IsModified()))) {
-		line->Text = TextEditOrig->GetValue();
+		line->Text = TextEditOrig->GetValue(false);
 		cellm |= TXT;
 		if(!splittedTags)
 		TextEditOrig->SetModified(dummy);
 	}
 	if (TextEdit->IsModified() || (splittedTags && TextEditOrig->IsModified())){
 		if (TextEditOrig->IsShown()){
-			line->TextTl = TextEdit->GetValue();
+			line->TextTl = TextEdit->GetValue(false);
 			cellm |= TXTTL;
 		}
 		else{
-			line->Text = TextEdit->GetValue();
+			line->Text = TextEdit->GetValue(false);
 			cellm |= TXT;
 		}
 		TextEdit->SetModified(dummy);
@@ -1176,7 +1176,7 @@ void EditBox::SetTlMode(bool tl, bool dummyTlMode /*= false*/)
 
 void EditBox::OnCopyAll(wxCommandEvent& event)
 {
-	TextEdit->SetTextS(TextEditOrig->GetValue(), true);
+	TextEdit->SetTextS(TextEditOrig->GetValue(false), true, true, false, false);
 	TextEdit->SetFocus();
 }
 
@@ -1971,8 +1971,8 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 
 
 
-			TextEdit->SetTextS(txtTl, false, true);
-			TextEditOrig->SetTextS(txtOrg, false, true);
+			TextEdit->SetTextS(txtTl, false, true, false, false);
+			TextEditOrig->SetTextS(txtOrg, false, true, false, false);
 			splittedTags = true;
 
 			TextEdit->SetSelection(pos, pos);
@@ -1982,8 +1982,8 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	}
 	if (splittedTags){ delete line; line = grid->GetDialogue(currentLine)->Copy(); }
 	splittedTags = false;
-	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->IsModified(), true);
-	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true); }
+	TextEdit->SetTextS((TextEditOrig->IsShown()) ? line->TextTl : line->Text, TextEdit->IsModified(), true, false, false);
+	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true, false, false); }
 done:
 	if (RefreshVideo){
 		VideoCtrl *vb = tab->Video;

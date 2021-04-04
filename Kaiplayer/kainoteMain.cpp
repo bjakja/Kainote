@@ -42,13 +42,6 @@
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include <wx/filedlg.h>
-#include <unicode/utypes.h>
-#include <unicode/ubidi.h>
-#include <unicode/ubiditransform.h>
-#include <unicode/uchar.h>
-#include <unicode/localpointer.h>
-#include <unicode/putil.h>
-#include <unicode/ushape.h>
 
 #include <boost/locale/generator.hpp>
 
@@ -261,51 +254,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(wxEVT_CLOSE_WINDOW, (wxObjectEventFunction)&KainoteFrame::OnClose1);
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
-		//LogHandler::ShowLogWindow();
-		UErrorCode errorCode = U_ZERO_ERROR;
-
-		// Open a new UBiDiTransform.
-
-		UBiDiTransform* transform = ubiditransform_open(&errorCode);
-
-		// Run a transformation.
-		std::wstring text = L"!هنا أنا اكتب بالعربية\0";
-		
-		//const char* chartext = text.mb_str(wxConvUTF8).data();
-		std::u16string text1(text.begin(), text.end());
-		size_t len = (text1.size() + 1) * 2;
-		//UChar* text1 = u"!هنا أنا اكتب بالعربية\0";
-		UChar *text2 = (UChar*)malloc(len);
-
-		//u_charsToUChars(chartext, text1, 33);
-
-		ubiditransform_transform(transform,
-
-			text1.data(), -1, text2, (len),
-
-			
-
-			UBIDI_RTL, UBIDI_LOGICAL,
-
-			UBIDI_LTR, UBIDI_VISUAL,
-
-			UBIDI_MIRRORING_OFF,
-
-			U_SHAPE_LETTERS_SHAPE,
-
-			& errorCode);
-
-		ubiditransform_close(transform);
-		//char* chartext2 = new char(u16str.size());
-		//u_UCharsToChars(text2, chartext2, 33);
-		//size_t len2 = strlen(chartext2);
-		std::u16string result16(text2);
-		const wchar_t *result = reinterpret_cast<LPCWSTR>(result16.c_str());
-		//delete text1;
-		wxString wxresult = wxString(result);
-		KaiLog(wxresult);
-		free(text2);
-		bool good = true;
+		LogHandler::ShowLogWindow();
 	}, 9989);
 
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);

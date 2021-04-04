@@ -90,6 +90,7 @@ protected:
 	wxString MText;
 	wxString RTLText;
 	wxString tempRTLtext;
+	wxPoint RTLtextPos;
 	wxUniChar lastKey;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;

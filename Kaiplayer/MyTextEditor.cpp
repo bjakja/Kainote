@@ -67,26 +67,24 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	entries[18].Set(wxACCEL_CTRL, L'C', ID_CTLC);
 	entries[19].Set(wxACCEL_CTRL, L'X', ID_CTLX);
 	entries[20].Set(wxACCEL_NORMAL, WXK_WINDOWS_MENU, ID_WMENU);
-	entries[21].Set(wxACCEL_CTRL | wxACCEL_ALT, L'R', ID_CTRL_ALT_R);
-	entries[22].Set(wxACCEL_CTRL | wxACCEL_ALT, L'L', ID_CTRL_ALT_L);
 	
 	// fix for not working enter for confirm and go to next line
 	// but it's not a ideal fix, after change enter it will still work in this field
-	entries[23].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
-	int numEntries = 24;
+	entries[21].Set(wxACCEL_NORMAL, WXK_RETURN, EDITBOX_COMMIT_GO_NEXT_LINE);
+	int numEntries = 22;
 	bool setNumpadAccels = !Options.GetBool(TEXT_FIELD_ALLOW_NUMPAD_HOTKEYS);
 	if (setNumpadAccels){
-		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
-		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
-		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
-		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
-		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
-		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
-		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
-		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
-		entries[32].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
-		entries[33].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
-		numEntries = 34;
+		entries[22].Set(wxACCEL_NORMAL, WXK_NUMPAD0, WXK_NUMPAD0 + 10000);
+		entries[23].Set(wxACCEL_NORMAL, WXK_NUMPAD1, WXK_NUMPAD1 + 10000);
+		entries[24].Set(wxACCEL_NORMAL, WXK_NUMPAD2, WXK_NUMPAD2 + 10000);
+		entries[25].Set(wxACCEL_NORMAL, WXK_NUMPAD3, WXK_NUMPAD3 + 10000);
+		entries[26].Set(wxACCEL_NORMAL, WXK_NUMPAD4, WXK_NUMPAD4 + 10000);
+		entries[27].Set(wxACCEL_NORMAL, WXK_NUMPAD5, WXK_NUMPAD5 + 10000);
+		entries[28].Set(wxACCEL_NORMAL, WXK_NUMPAD6, WXK_NUMPAD6 + 10000);
+		entries[29].Set(wxACCEL_NORMAL, WXK_NUMPAD7, WXK_NUMPAD7 + 10000);
+		entries[30].Set(wxACCEL_NORMAL, WXK_NUMPAD8, WXK_NUMPAD8 + 10000);
+		entries[31].Set(wxACCEL_NORMAL, WXK_NUMPAD9, WXK_NUMPAD9 + 10000);
+		numEntries = 32;
 	}
 	wxAcceleratorTable accel(numEntries, entries);
 	SetAcceleratorTable(accel);
@@ -262,7 +260,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 
 void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 {
-	wxString& text = (hasRTL) ? RTLText : MText;
+	wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 	double gfw, gfh;
 	size_t i = 0;
 	size_t textLen = text.length();
@@ -354,11 +352,24 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 				isInBracket = true;
 			}
 			else if(IsRTLCharacter(wkey)){
-				if (Cursor.x >= len) { RTLText << wkey; }
-				else { RTLText.insert(Cursor.x + 1, 1, wkey); }
+				bool needToReplace = !tempRTLtext.empty();
+				tempRTLtext << wkey;
+				wxString textConverted;
+				ConvertToRTLChars(&tempRTLtext, &textConverted);
+				if (Cursor.x >= len) { 
+					RTLText << textConverted; 
+				}
+				else if (needToReplace) {
+					RTLText.replace(RTLtextPos.x, RTLtextPos.y, textConverted);
+				}
+				else { 
+					RTLText.insert(Cursor.x, textConverted); 
+				}
+				RTLtextPos = wxPoint(Cursor.x, textConverted.length());
 			}
 			else {
 				//here have to be written a fancy version ltr for rtl
+				tempRTLtext.clear();
 				if (Cursor.x >= len) { RTLText << wkey; }
 				else { RTLText.insert(Cursor.x, 1, wkey); }
 			}
@@ -374,7 +385,9 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		}
 		CalcWraps(true, true, true);
 		if (hasRTL || isRTL) {
-			if (isInBracket || !IsRTLCharacter(wkey)) {
+			int res = iswctype(wint_t(wkey), _SPACE | _PUNCT);
+			if (isInBracket || !IsRTLCharacter(wkey) && 
+				!(res != 0 && IsRTLCharacter(text[Cursor.y + 1 < text.length()? Cursor.y + 1 : Cursor.y]))) {
 				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
 				Cursor.x++;
 			}
@@ -595,7 +608,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		if(hasRTL)
 			ConvertToLTR(&RTLText, &MText);
 		else if(isRTL)
-			ConvertToLTR(&RTLText, &MText);
+			ConvertToLTRChars(&RTLText, &MText);
 
 		CalcWraps(true, true, true);
 
@@ -703,7 +716,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		//Selend=Cursor;
 		ContextMenu(PosFromCursor(Cursor), FindError(Cursor, false));
 		break;
-	case ID_CTRL_ALT_R:
+	/*case ID_CTRL_ALT_R:
 		if (!hasRTL) {
 			hasRTL = true;
 			CalcWraps(false, false);
@@ -724,7 +737,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		else {
 			event.Skip();
 		}
-		break;
+		break;*/
 	case EDITBOX_COMMIT_GO_NEXT_LINE:
 		if (tagList)
 			PutTag();
@@ -737,7 +750,11 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 
 		break;
 	}
-	if (ID != ID_CTLC || ID != ID_WMENU){ wxCommandEvent evt(CURSOR_MOVED, GetId()); AddPendingEvent(evt); }
+	if (ID != ID_CTLC || ID != ID_WMENU){ 
+		if (isRTL || hasRTL)
+			tempRTLtext.clear();
+		wxCommandEvent evt(CURSOR_MOVED, GetId()); AddPendingEvent(evt); 
+	}
 }
 
 void TextEditor::OnMouseEvent(wxMouseEvent& event)
@@ -769,7 +786,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 
 
 	if (event.LeftDClick() && MText != L"" && isInField){
-		if (hasRTL && !tempRTLtext.empty())
+		if (isRTL || hasRTL)
 			tempRTLtext.clear();
 		wasDoubleClick = true;
 		dclickCurPos = mousePosition;
@@ -821,7 +838,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 		wxPoint cur;
 		HitTest(mousePosition, &cur);
 		if (cur != Cursor){ 
-			if (hasRTL && !tempRTLtext.empty())
+			if (isRTL || hasRTL)
 				tempRTLtext.clear();
 			wxCommandEvent evt(CURSOR_MOVED, GetId()); 
 			AddPendingEvent(evt); 
@@ -1845,7 +1862,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	else{ cur->x = wraps[cur->y]; }
 
 	bool find = false;
-	wxString& rtltext = (hasRTL) ? RTLText : MText;
+	wxString& rtltext = (hasRTL || isRTL) ? RTLText : MText;
 	wxString txt = rtltext + L" ";
 
 	int wlen = rtltext.length();
@@ -1929,6 +1946,8 @@ void TextEditor::SetSelection(int start, int end, bool noEvent)
 	Selend.x = start;
 	Selend.y = FindY(Selend.x);
 	Cursor.y = FindY(Cursor.x);
+	if(isRTL || hasRTL)
+		tempRTLtext.clear();
 
 	Refresh(false);
 }
@@ -1938,7 +1957,8 @@ wxString TextEditor::GetValue(bool BIDIConversion) const
 	if (BIDIConversion) {
 		if (hasRTL) {
 			wxString result;
-			ConvertToRTLChars(&MText, &result);
+			wxString MtextCopy = MText;
+			ConvertToRTLChars(&MtextCopy, &result);
 			return result;
 		}
 		else if(isRTL)

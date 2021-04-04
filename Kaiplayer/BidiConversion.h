@@ -26,3 +26,5 @@ void ConvertToLTR(wxString* textin, wxString* textout = NULL);
 void ConvertToLTRChars(wxString* textin, wxString* textout = NULL);
 bool IsRTLCharacter(const wxUniChar& ch);
 bool CheckRTL(const wxString* text);
+void SwitchRTLChars(wxString* text);
+bool NeedConversion(const wxString* text);
