@@ -44,8 +44,10 @@ public:
 	bool Initialize();
 	static void AvailableDics(wxArrayString &dics, wxArrayString &symbols);
 	void Cleaning();
-	bool CheckWord(wxString word);
-	bool AddWord(wxString word);
+	//converts Arabic words to basic chars
+	//to use with spellchecker
+	bool CheckWord(wxString *word);
+	bool AddWord(const wxString &word);
 	bool RemoveWords(const wxArrayString &word);
 	void Suggestions(wxString word, wxArrayString &results);
 
@@ -68,6 +70,7 @@ private:
 	wxString dictionaryPath;
 	wxString userDictionaryPath;
 	bool useSpellChecker = true;
+	bool isRTL = false;
 	//no const cause of clearing
 	inline void Check(std::wstring &checkText, TextData *errs, std::vector<MisspellData> *misspells, std::vector<size_t> &textOffset, const wxString &text, bool repltags, int replaceTagsLen);
 };

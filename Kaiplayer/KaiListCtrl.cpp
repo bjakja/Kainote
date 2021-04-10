@@ -287,7 +287,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	SetBackgroundColour(parent->GetBackgroundColour());
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
-	SetFont(*Options.GetFont(-1));//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
+	SetFont(*Options.GetFont(-1));
 	InsertColumn(0, L"", TYPE_TEXT, -1);
 	int maxwidth = -1;
 	for (size_t i = 0; i < list.size(); i++){
@@ -854,6 +854,24 @@ void KaiListCtrl::FilterList(int column, int mode)
 	Refresh(false);
 }
 
+void KaiListCtrl::FilterItem(int row, byte type, bool showHidden)
+{
+	if (row < 0 || row >= itemList->size())
+		return;
+
+	ItemRow* keyRow = (*itemList)[row];
+	keyRow->isVisible = type;
+	if (showHidden && type != VISIBLE) {
+		isFiltered = true;
+	}
+}
+
+void KaiListCtrl::FilterFinalize()
+{
+	RebuildFiltered();
+	Refresh(false);
+}
+
 int KaiListCtrl::GetType(int row, int column)
 {
 	if (row < 0 || row >= itemList->size())
@@ -1077,9 +1095,14 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 }
 
 //set selection as key everything form list is get as key
-void KaiListCtrl::SetSelection(int selection, bool center)
+void KaiListCtrl::SetSelection(int selection, bool center, bool isId)
 {
-	sel = FindId(selection);
+	if (isId) {
+		sel = selection;
+	}
+	else {
+		sel = FindId(selection);
+	}
 	if (center){
 		int w = 0;
 		int h = 0;
@@ -1092,8 +1115,11 @@ void KaiListCtrl::SetSelection(int selection, bool center)
 }
 
 //GetSelection as key rather not possible to get invisible element
-int KaiListCtrl::GetSelection()
+int KaiListCtrl::GetSelection(bool getId)
 {
+	if (getId)
+		return sel;
+
 	//check why this is key
 	//getItem no longer uses keys return only id
 	return FindKey(sel);
@@ -1160,6 +1186,7 @@ size_t KaiListCtrl::FindId(size_t key)
 	}
 	return -1;
 }
+
 
 BEGIN_EVENT_TABLE(KaiListCtrl, KaiScrolledWindow)
 EVT_PAINT(KaiListCtrl::OnPaint)

@@ -182,6 +182,7 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_JOIN_WITH_PREVIOUS] = _("Scal z poprzednią linijką");
 	names[GLOBAL_JOIN_WITH_NEXT] = _("Scal z następną linijką");
 	names[GLOBAL_OPEN_KEYFRAMES] = _("Otwórz klatki kluczowe");
+	names[GLOBAL_OPEN_AUTO_SAVE] = _("Otwórz autozapis");
 	names[GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT] = _("Uruchom ostatnio zaczytany skrypt");
 	names[VIDEO_5_SECONDS_BACKWARD] = _("5 sekund do tyłu");
 	names[VIDEO_MINUTE_BACKWARD] = _("Minuta do tyłu");

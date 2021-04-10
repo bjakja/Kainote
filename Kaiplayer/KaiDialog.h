@@ -50,7 +50,7 @@ public:
 	int ShowModal();
 	void EndModal(int retCode);
 	bool IsModal() const;
-	void SetEnterId(int _enterId);
+	void SetEnterId(int _enterId, bool bind = true);
 	void SetEscapeId(int _escapeId, bool setFocus = false);
 	int GetEnterId() const { return enterId; }
 	int GetEscapeId() const { return escapeId; }

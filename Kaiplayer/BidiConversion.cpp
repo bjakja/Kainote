@@ -109,10 +109,16 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 		const wxUniChar& ch = (*textin)[j];
 		if (ch == L'{' && (!reverseRTL.empty() || !rtlText.empty())) {
 			if (!rtlText.empty()) {
-				if (NeedConversion(&rtlText))
-					BIDIConvert(&rtlText);
-				else
-					SwitchRTLChars(&rtlText);
+				if (NeedConversion(&rtlText)) {
+					//if (!spellChecking)
+						BIDIConvert(&rtlText);
+				}
+				else {
+					/*if(spellChecking)
+						BIDIReverseConvert(&rtlText);
+					else*/
+						SwitchRTLChars(&rtlText);
+				}
 
 				reverseRTL.insert(0, rtlText);
 				rtlText.clear();
@@ -123,16 +129,23 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 			convertedText << ltrText;
 			ltrText.clear();
 		}
-		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 && (!rtlText.empty() || !reverseRTL.empty())) {
+		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 && 
+			(!rtlText.empty() || !reverseRTL.empty()) && ch != 0x61F && ch != L'\\') {
 			if (rtlText.empty())
 				reverseRTL.insert(0, ch);
 			else {
-				if (NeedConversion(&rtlText))
-					BIDIConvert(&rtlText);
-				else
-					SwitchRTLChars(&rtlText);
+				if (NeedConversion(&rtlText)) {
+					//if (!spellChecking)
+						BIDIConvert(&rtlText);
+				}
+				else {
+					/*if (spellChecking)
+						BIDIReverseConvert(&rtlText);
+					else*/
+						SwitchRTLChars(&rtlText);
+				}
 				const wxUniChar& nch = (j + 1 < len) ? (*textin)[j + 1] : L'A';
-				bool isNextRTL = IsRTLCharacter(nch) || iswctype(wint_t(nch), _SPACE | _PUNCT) != 0;
+				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && nch != L'{');
 				reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
 				rtlText.clear();
 				if (!isNextRTL)
@@ -148,7 +161,22 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 			rtlText << ch;
 		}
 		else {
-			if (!reverseRTL.empty()) {
+			if (!reverseRTL.empty() || !rtlText.empty()) {
+				if (!rtlText.empty()) {
+					if (NeedConversion(&rtlText)) {
+						//if (!spellChecking)
+							BIDIConvert(&rtlText);
+					}
+					else {
+						/*if (spellChecking)
+							BIDIReverseConvert(&rtlText);
+						else*/
+							SwitchRTLChars(&rtlText);
+					}
+
+					reverseRTL.insert(0, rtlText);
+					rtlText.clear();
+				}
 				convertedText << reverseRTL;
 				reverseRTL.clear();
 			}
@@ -159,12 +187,19 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 	
 	if (!rtlText.empty() || !reverseRTL.empty()) {
 		if (!rtlText.empty()) {
-			if (NeedConversion(&rtlText))
-				BIDIConvert(&rtlText);
-			else
-				SwitchRTLChars(&rtlText);
+			if (NeedConversion(&rtlText)) {
+				//if (!spellChecking)
+					BIDIConvert(&rtlText);
+			}
+			else {
+				/*if (spellChecking)
+					BIDIReverseConvert(&rtlText);
+				else*/
+					SwitchRTLChars(&rtlText);
+			}
+
+			reverseRTL.insert(0, rtlText);
 		}
-		reverseRTL.insert(0, rtlText);
 		convertedText << reverseRTL;
 		reverseRTL.clear();
 	}
@@ -190,7 +225,7 @@ void BIDIConvert(wxString* text)
 	std::wstring wtext = text->ToStdWstring();
 
 	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 2) * 2;
+	size_t len = (text1.size() + 3) * 2;
 	UChar* text2 = (UChar*)malloc(len);
 	if (!text2) {
 		KaiLog(L"Cannot allocate bidi conversion text");
@@ -221,7 +256,7 @@ void BIDIReverseConvert(wxString* text)
 	std::wstring wtext = text->ToStdWstring();
 
 	std::u16string text1(wtext.begin(), wtext.end());
-	size_t len = (text1.size() + 2) * 2;
+	size_t len = (text1.size() + 3) * 2;
 	UChar* text2 = (UChar*)malloc(len);
 	if (!text2) {
 		KaiLog(L"Cannot allocate bidi conversion text");
@@ -423,7 +458,7 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 				BIDIReverseConvert(&rtlText);
 				//SwitchRTLChars(&rtlText);
 				const wxUniChar& nch = (j + 1 < len) ? (*textin)[j + 1] : L'A';
-				bool isNextRTL = IsRTLCharacter(nch) || iswctype(wint_t(nch), _SPACE | _PUNCT) != 0;
+				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && nch != L'{');
 				reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
 				rtlText.clear();
 				if (!isNextRTL)
@@ -439,7 +474,12 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 			rtlText << ch;
 		}
 		else {
-			if (!reverseRTL.empty()) {
+			if (!reverseRTL.empty() || !rtlText.empty()) {
+				if (!rtlText.empty()) {
+					BIDIReverseConvert(&rtlText);
+					reverseRTL.insert(0, rtlText);
+					rtlText.clear();
+				}
 				convertedText << reverseRTL;
 				reverseRTL.clear();
 			}
@@ -450,9 +490,9 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 	if (!rtlText.empty() || !reverseRTL.empty()) {
 		if (!rtlText.empty()) {
 			BIDIReverseConvert(&rtlText);
+			reverseRTL.insert(0, rtlText);
 		}
 		//SwitchRTLChars(&rtlText);
-		reverseRTL.insert(0, rtlText);
 		convertedText << reverseRTL;
 	}
 	if (!ltrText.empty()) {
@@ -485,6 +525,8 @@ bool IsRTLCharacter(const wxUniChar& ch)
 			else if (c == 0x60D)                   return true;
 			else if (c == 0x61B)                   return true;
 			else if (0x61E <= c && c <= 0x64A)     return true;
+			else if (c <= 0x64F)     return true;
+			else if (c <= 0x651)     return true;
 			else if (0x66D <= c && c <= 0x66F)     return true;
 			else if (0x671 <= c && c <= 0x6D5)     return true;
 			else if (0x6E5 <= c && c <= 0x6E6)     return true;

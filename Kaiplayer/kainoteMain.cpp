@@ -37,7 +37,7 @@
 #include "SpellCheckerDialog.h"
 #include "SpellChecker.h"
 #include "utils.h"
-//#include <wx/defs.h>
+#include "AutoSaveOpen.h"
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
@@ -126,6 +126,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	FileMenu->AppendTool(Toolbar, GLOBAL_REMOVE_SUBS, _("Usuń napisy z e&dytora"), _("Usuń napisy z edytora"), PTR_BITMAP_PNG(L"close"));
 	FileMenu->Append(GLOBAL_SAVE_WITH_VIDEO_NAME, _("Zapisuj napisy z nazwą wideo"), _("Zapisuj napisy z nazwą wideo"), true, PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SUBS_AUTONAMING));
 	Toolbar->AddID(GLOBAL_SAVE_WITH_VIDEO_NAME);
+	FileMenu->Append(GLOBAL_OPEN_AUTO_SAVE, _("Otwórz autozapis"), _("Otwiera autozapis wybrany z listy"));
 	FileMenu->Append(9989, _("Pokaż / Ukryj okno logów"))->DisableMapping();
 	FileMenu->Append(9990, _("Ostatnia sesja"), _("Opcje ostatniej sesji"), true, PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"), lastSession);
 	FileMenu->AppendTool(Toolbar, GLOBAL_SETTINGS, _("&Ustawienia"), _("Ustawienia programu"), PTR_BITMAP_PNG(L"SETTINGS"));
@@ -732,6 +733,10 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			SetRecent(3);
 		}
 		FileDialog2->Destroy();
+	}
+	else if (id == GLOBAL_OPEN_AUTO_SAVE) {
+		AutoSaveOpen aso(this);
+		aso.ShowModal();
 	}
 	else if (id == GLOBAL_SETTINGS){
 		OptionsDialog od(this, this);

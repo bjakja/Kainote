@@ -342,11 +342,12 @@ void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 //	Update();
 //}
 
-void KaiDialog::SetEnterId(int _enterId)
+void KaiDialog::SetEnterId(int _enterId, bool bind)
 {
 	Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 	enterId = _enterId;
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
+	if(bind)
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KaiDialog::OnEnter, this, enterId);
 
 }
 void KaiDialog::SetEscapeId(int _escapeId, bool setFocus)

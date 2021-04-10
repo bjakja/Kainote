@@ -33,6 +33,7 @@
 #include <wx/log.h>
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
+#include "BidiConversion.h"
 #include <boost/locale/boundary/index.hpp>
 #include <boost/locale/boundary/segment.hpp>
 #include <boost/locale/boundary/types.hpp>
@@ -107,6 +108,8 @@ bool SpellChecker::Initialize()
 	if (name == L""){ name = L"pl"; }
 	wxString dic = dictionaryPath + name + L".dic";
 	wxString aff = dictionaryPath + name + L".aff";
+	isRTL = (name.StartsWith(L"ar") || name.StartsWith(L"he"));
+
 	// Check if language is available
 	if (!wxFileExists(dic) || !wxFileExists(aff))
 	{
@@ -144,11 +147,14 @@ bool SpellChecker::Initialize()
 	return false;
 }
 
-bool SpellChecker::CheckWord(wxString word) {
+bool SpellChecker::CheckWord(wxString *word) {
 	//useSpellchecker checks if hunspell exist, no need check it again
 	if (!useSpellChecker) return true;
+	if (isRTL && CheckRTL(word)) {
+		BIDIReverseConvert(word);
+	}
 
-	wxCharBuffer buf = word.mb_str(*conv);
+	wxCharBuffer buf = word->mb_str(*conv);
 	if (buf && strlen(buf)) return (hunspell->spell(buf) == 1);
 
 	return false;
@@ -175,7 +181,7 @@ void SpellChecker::Suggestions(wxString word, wxArrayString &results)
 	hunspell->free_list(&result, n);
 }
 
-bool SpellChecker::AddWord(wxString word)
+bool SpellChecker::AddWord(const wxString& word)
 {
 	if (word.IsEmpty() || word.IsNumber()) return false;
 
@@ -236,7 +242,7 @@ inline void SpellChecker::Check(std::wstring &checkText, TextData *errs, std::ve
 			wxString word = wxString(*p);
 			size_t wordLen = word.length();
 			if (p->rule() & boundary::word_letters) {
-				if (!CheckWord(word)) {
+				if (!CheckWord(&word)) {
 					size_t start = textOffset[counter1];
 					size_t end = textOffset[counter1 + wordLen - 1];
 					if (end - start > wordLen) {
@@ -535,7 +541,7 @@ void SpellChecker::CheckText(const wxString &text, std::vector<MisspellData> *er
 			wxString word = wxString(*p);
 			size_t wordLen = word.length();
 			if (p->rule() & boundary::word_letters) {
-				if (!CheckWord(word)) {
+				if (!CheckWord(&word)) {
 					size_t start = textOffset[counter1];
 					size_t end = textOffset[counter1 + wordLen - 1];
 					errs->push_back(MisspellData(word, start, end));

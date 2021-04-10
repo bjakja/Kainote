@@ -1061,7 +1061,7 @@ namespace Auto{
 			lua_pushstring(L, error.mb_str(wxConvUTF8).data());
 			lua_error(L);
 		}
-		return nullptr;
+		return Subs;
 	}
 
 	AutoToFile::AutoToFile(lua_State *_L, File *subsfile, bool _can_modify, char _subsFormat)

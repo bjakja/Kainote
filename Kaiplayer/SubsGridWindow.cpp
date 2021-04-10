@@ -24,6 +24,7 @@
 #include "SubsGridPreview.h"
 #include <wx/regex.h>
 #include "GraphicsD2D.h"
+#include "BidiConversion.h"
 
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)
@@ -600,7 +601,8 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 		bool comparison = false;
 		bool isSelected = false;
 		strings.clear();
-		
+		wxString convertedText;
+		bool isRTL = false;
 
 		if (isHeadline){
 			strings.push_back(L"#");
@@ -669,13 +671,17 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
 			bool isTl = (hasTLMode && txttl != L"");
-
+			wxString& checkingText = (isTl) ? txttl : txt;
+			if (CheckRTL(&checkingText)) {
+				ConvertToRTLChars(&checkingText, &convertedText);
+				isRTL = true;
+			}
 			
 			if (!isComment) {
 				//here are generated misspells table, chars table, and wraps;
 				//on original do not use spellchecking only calculating wraps and cps;
 				bool originalInTLMode = hasTLMode && txttl == L"";
-				Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn && !originalInTLMode,
+				Misspells.Init(isRTL? convertedText : checkingText, SpellCheckerOn && !originalInTLMode,
 					subsFormat, hideOverrideTags ? chtagLen : -1);
 			}
 			
@@ -802,11 +808,12 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			gc->DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 			if (!isHeadline && j == numColumns - 1){
-				SpellErrors[key].DrawMisspells(strings[j], wxPoint(posX, posY), gc, SpelcheckerCol, GridHeight);
+				wxString& text = (isRTL)? convertedText : strings[j];
+				SpellErrors[key].DrawMisspells(text, wxPoint(posX, posY), gc, SpelcheckerCol, GridHeight);
+				
 				
 				if (comparison){
 					gc->SetFont(font, ComparisonCol);
-					const wxString & text = strings[j];
 					int cellSize = GridWidth[j];
 					for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
 						wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);

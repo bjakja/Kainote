@@ -431,6 +431,9 @@
     <ClCompile Include="BidiConversion.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="AutoSaveOpen.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -795,6 +798,9 @@
     </ClInclude>
     <ClInclude Include="BidiConversion.h">
       <Filter>Source Files\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSaveOpen.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

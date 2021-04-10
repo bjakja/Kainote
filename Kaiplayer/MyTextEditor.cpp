@@ -338,20 +338,26 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		if (wkey == L'"' && changeQuotes)
 			wkey = CheckQuotes();
 
+		bool hasRTLChar = IsRTLCharacter(wkey);
+		if (hasRTLChar && !(hasRTL || isRTL)) {
+			RTLText = MText;
+			isRTL = true;
+		}
 
 		bool isInBracket = false;
 		if (hasRTL || isRTL) {
 			int len = RTLText.length();
-			size_t startBracket = RTLText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x).Find(L'{', true);
+			/*size_t startBracket = RTLText.Mid(0, (Cursor.x == 0)? 0 : Cursor.x).Find(L'{', true);
 			size_t endBracket = RTLText.Mid((Cursor.x - 2 < 0) ? 0 : Cursor.x - 2).Find(L'}');
-			endBracket += (Cursor.x - 2);
+			if(endBracket != -1)
+				endBracket += (Cursor.x - 2);
 			
 			if (startBracket < endBracket && startBracket != -1 && endBracket != -1) {
 				if (Cursor.x >= len) { RTLText << key; }
 				else { RTLText.insert(Cursor.x, 1, key); }
 				isInBracket = true;
 			}
-			else if(IsRTLCharacter(wkey)){
+			else */if(hasRTLChar){
 				bool needToReplace = !tempRTLtext.empty();
 				tempRTLtext << wkey;
 				wxString textConverted;
@@ -386,8 +392,10 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 		CalcWraps(true, true, true);
 		if (hasRTL || isRTL) {
 			int res = iswctype(wint_t(wkey), _SPACE | _PUNCT);
-			if (isInBracket || !IsRTLCharacter(wkey) && 
-				!(res != 0 && IsRTLCharacter(text[Cursor.y + 1 < text.length()? Cursor.y + 1 : Cursor.y]))) {
+			int nextCharPos = Cursor.x + 1 < text.length() ? Cursor.x + 1 :
+				(Cursor.x > 0) ? Cursor.x - 1 : Cursor.x;
+			if (isInBracket || !hasRTLChar &&
+				!(res != 0 && IsRTLCharacter(text[nextCharPos]))) {
 				if (Cursor.x + 1 > wraps[Cursor.y + 1]) { Cursor.y++; }
 				Cursor.x++;
 			}

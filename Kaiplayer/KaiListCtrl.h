@@ -180,11 +180,13 @@ public:
 	int FindItem(int column, Item *item, int row = 0);
 	//collumn must be set
 	void FilterList(int column, int mode);
+	void FilterItem(int row, byte type, bool showHidden = true);
+	void FilterFinalize();
 	int GetType(int row, int column);
 	void ScrollTo(int row);
 	size_t GetCount(){return itemList->size();}
-	void SetSelection(int selection, bool center = false);
-	int GetSelection();
+	void SetSelection(int selection, bool center = false, bool isId = false);
+	int GetSelection(bool getId = false);
 	void PushHistory();
 	void Undo(wxCommandEvent &evt);
 	void Redo(wxCommandEvent &evt);

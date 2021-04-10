@@ -1249,7 +1249,9 @@ void AudioDisplay::UpdateSamples() {
 		//spectrum posiotion have to changed that number too
 		int max = (provider->GetSampleRate() * 120) / w1;	// 2 minutes maximum
 		samples = int(max * pow(samplesPercent / 100.0, 3));
-
+		if (samples <= 0) {
+			samples = 1;
+		}
 		// Set position
 		int length = w1 * samples;
 		if (PositionSample + length > totalSamples) {
