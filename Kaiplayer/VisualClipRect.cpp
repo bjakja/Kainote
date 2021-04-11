@@ -252,6 +252,7 @@ void ClipRect::SetCurVisual()
 			x2 = wxAtoi(re.GetMatch(clip, match + 2));
 			y2 = wxAtoi(re.GetMatch(clip, match + 3));
 			showClip = true;
+			invClip = clip.StartsWith("i");
 		}
 
 	}
