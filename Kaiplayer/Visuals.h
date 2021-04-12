@@ -346,7 +346,11 @@ public:
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){
-		tool = _tool;
+		//invert clip
+		if (tool == 6) {
+			InvertClip();
+		}else
+			tool = _tool;
 	};
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
@@ -355,6 +359,7 @@ public:
 	int CheckCurve(int pos, bool checkSpline = true);
 	void AppendClipMask(wxString *mask);
 	void CreateClipMask(wxString *clip, wxString *clipTag = NULL);
+	void InvertClip();
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

@@ -97,8 +97,11 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 		return;
 
 	size_t len = textin->size();
-	if (!len)
+	if (!len) {
+		if (textout)
+			*textout = *textin;
 		return;
+	}
 
 	wxString convertedText;
 	wxString ltrText;
@@ -145,7 +148,8 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 						SwitchRTLChars(&rtlText);
 				}
 				const wxUniChar& nch = (j + 1 < len) ? (*textin)[j + 1] : L'A';
-				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && nch != L'{');
+				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && 
+					nch != L'{' && nch != L'\\');
 				reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
 				rtlText.clear();
 				if (!isNextRTL)
@@ -427,8 +431,11 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 		return;
 
 	size_t len = textin->size();
-	if (!len)
+	if (!len) {
+		if (textout)
+			*textout = *textin;
 		return;
+	}
 
 	wxString convertedText;
 	wxString ltrText;
@@ -451,14 +458,16 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 			convertedText << ltrText;
 			ltrText.clear();
 		}
-		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 && (!rtlText.empty() || !reverseRTL.empty())) {
+		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 && 
+			(!rtlText.empty() || !reverseRTL.empty()) && ch != 0x61F && ch != L'\\') {
 			if (rtlText.empty())
 				reverseRTL.insert(0, ch);
 			else {
 				BIDIReverseConvert(&rtlText);
 				//SwitchRTLChars(&rtlText);
 				const wxUniChar& nch = (j + 1 < len) ? (*textin)[j + 1] : L'A';
-				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && nch != L'{');
+				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 && 
+					nch != L'{' && nch != L'\\');
 				reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
 				rtlText.clear();
 				if (!isNextRTL)

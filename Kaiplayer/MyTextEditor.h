@@ -83,6 +83,8 @@ protected:
 	void DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();
+	bool IsNextRTLChar(int numchar);
+	bool IsPrevRTLChar(int numchar);
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;

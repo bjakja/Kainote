@@ -165,17 +165,18 @@ void ScaleRotation::DrawRotationZ(int time)
 	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), L"Primitive failed");
 
 	line->SetWidth(2.f);
-	if (hasOrg){
+	if (hasOrg) {
 		line->Begin();
 		line->Draw(&v2[2], 2, 0xFFBB0000);
 		line->End();
 		line->Begin();
 		line->Draw(&v2[4], 2, 0xFFBB0000);
 		line->End();
-		line->Begin();
-		line->Draw(&v2[0], 2, 0xFFBB0000);
-		line->End();
 	}
+	line->Begin();
+	line->Draw(&v2[0], 2, 0xFFBB0000);
+	line->End();
+	
 }
 
 void ScaleRotation::DrawRotationXY(int time)
@@ -322,24 +323,26 @@ void ScaleRotation::OnMouseEvent(wxMouseEvent &evt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 
-	if (evt.ButtonUp() && type != 255){
+	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		ChangeInLines(false);
-		if (selectedTool == 1){
-			to = org;
-			if (isOrg){
-				lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
-				lastmove.x += lastmove.y;
+		if (type != 255) {
+			ChangeInLines(false);
+			if (selectedTool == 1) {
+				to = org;
+				if (isOrg) {
+					lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
+					lastmove.x += lastmove.y;
+				}
 			}
-		}
-		else if (selectedTool == 2)
-			oldAngle = angle;
+			else if (selectedTool == 2)
+				oldAngle = angle;
 
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
-		if (isOrg)
-			isOrg = false;
-		else
-			beforeMove = afterMove;
+			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (isOrg)
+				isOrg = false;
+			else
+				beforeMove = afterMove;
+		}
 	}
 	if (selectedTool == 0 && !holding){
 		if (abs(lastmove.x - x) < 8 && abs(lastmove.y - y) < 8 && (tagXFound || tagYFound)){

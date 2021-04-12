@@ -1688,10 +1688,10 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 		//KaiLog(wxString::Format("scrollpos = %i, %i, %i", scrollPosition, y, offset));
 		scrollPosition = nextY;
 		scrollPositionId = file->GetElementByKey(nextY);
-		Refresh(false);
-		if (useUpdate)
-			Update();
 	}
+	Refresh(false);
+	if (useUpdate)
+		Update();
 }
 
 void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {

@@ -205,6 +205,8 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		int ww, hh;
 		int panelHeight = Video->GetPanelHeight();
 		Video->CalcSize(&ww, &hh, w, h, false, true);
+		if (ww < 450)
+			ww = 450;
 		Video->SetMinSize(wxSize(ww, hh + panelHeight));
 		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + panelHeight);
 	}
@@ -219,6 +221,8 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 		if (tab->Video->GetState() != None){
 			int ww, hh;
 			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
+			if (ww < 450)
+				ww = 450;
 			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->GetPanelHeight()));
 		}
 		tab->Edit->SetMinSize(wxSize(-1, h));

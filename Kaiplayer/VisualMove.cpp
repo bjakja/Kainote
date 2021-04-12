@@ -116,23 +116,21 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
 
-		if (abs(to.x - x) < 8 && abs(to.y - y) < 8){
-			grabbed = 1; type = 1;
-			//lastTo = to;
-			diffs.x = to.x - x;
-			diffs.y = to.y - y;
-		}
-		else if (abs(from.x - x) < 8 && abs(from.y - y) < 8){
+		if (abs(from.x - x) < 8 && abs(from.y - y) < 8 && leftc){
 			grabbed = 0; type = 0;
 			diffs.x = from.x - x;
 			diffs.y = from.y - y;
 		}
-		else if (!shift){
+		else if (abs(to.x - x) < 8 && abs(to.y - y) < 8) {
+			grabbed = 1; type = 1;
+			diffs.x = to.x - x;
+			diffs.y = to.y - y;
+		}
+		else if (!shift) {
 			grabbed = -1;
 			if (type == 1){
 				to.x = x;
 				to.y = y;
-				//lastTo = to;
 			}
 			else{
 				from.x = x;

@@ -389,7 +389,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			if (Cursor.x >= len) { MText << wkey; }
 			else { MText.insert(Cursor.x, 1, wkey); }
 		}
-		CalcWraps(true, true, true);
+		CalcWraps();
 		if (hasRTL || isRTL) {
 			int res = iswctype(wint_t(wkey), _SPACE | _PUNCT);
 			int nextCharPos = Cursor.x + 1 < text.length() ? Cursor.x + 1 :
@@ -576,6 +576,27 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 			break;
 		}
 	}
+	else if(isRTL && ID >= ID_DEL && ID <= ID_CDELETE){
+		bool needSwitch = (ID == ID_BACK || ID == ID_CBACK)? IsNextRTLChar(Cursor.x) : IsPrevRTLChar(Cursor.x);
+
+		if (needSwitch) {
+			int originalID = ID;
+			switch (originalID) {
+			case ID_CDELETE:
+				ID = ID_CBACK;
+				break;
+			case ID_CBACK:
+				ID = ID_CDELETE;
+				break;
+			case ID_DEL:
+				ID = ID_BACK;
+				break;
+			case ID_BACK:
+				ID = ID_DEL;
+				break;
+			}
+		}
+	}
 	wxString& text = (hasRTL || isRTL) ? RTLText : MText;
 	switch (ID){
 	case ID_CDELETE:
@@ -618,7 +639,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 		else if(isRTL)
 			ConvertToLTRChars(&RTLText, &MText);
 
-		CalcWraps(true, true, true);
+		CalcWraps();
 
 		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
@@ -2630,6 +2651,44 @@ void TextEditor::PutTag()
 			}
 		}
 	}
+}
+
+bool TextEditor::IsNextRTLChar(int numchar)
+{
+	if (numchar >= RTLText.length())
+		numchar = RTLText.length() - 1;
+	else if (numchar < 0)
+		numchar = 0;
+
+	for (size_t i = numchar; i < RTLText.length(); i++) {
+		const wxUniChar& ch = RTLText[i];
+		if (IsRTLCharacter(ch)) {
+			return true;
+		}
+		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) == 0) {
+			return false;
+		}
+	}
+	return IsPrevRTLChar(numchar);
+}
+
+bool TextEditor::IsPrevRTLChar(int numchar)
+{
+	if (numchar >= RTLText.length())
+		numchar = RTLText.length() - 1;
+	else if (numchar < 0)
+		numchar = 0;
+
+	for (size_t i = numchar; i + 1 > 0; i--) {
+		const wxUniChar& ch = RTLText[i];
+		if (IsRTLCharacter(ch)) {
+			return true;
+		}
+		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) == 0) {
+			return false;
+		}
+	}
+	return IsNextRTLChar(numchar);
 }
 
 //state here is for template and for disable spellchecker and wraps

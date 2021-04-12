@@ -49,7 +49,7 @@ class MoveAllItem : public VisualItem
 {
 public:
 	MoveAllItem() : VisualItem() { 
-		startIconNumber = 17; 
+		startIconNumber = 18; 
 		MoveToggled[0] = true;
 		for (int i = 1; i < numMoveIcons; i++){
 			MoveToggled[i] = false;
@@ -78,7 +78,11 @@ private:
 class VectorItem : public VisualItem
 {
 public:
-	VectorItem() : VisualItem() { startIconNumber = 11; };
+	VectorItem(bool isClip) : VisualItem() { 
+		startIconNumber = 11; 
+		if (!isClip)
+			numIcons = 6;
+	};
 	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
 	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
 	void Synchronize(VisualItem * item){
@@ -93,8 +97,9 @@ public:
 		else if (toggled >= numIcons)
 			toggled = (*item) = 0;
 	};
-	int numIcons = 6;
+	int numIcons = 7;
 	int toggled = 1;
+	bool isNormalButton = false;
 };
 
 class ScaleRotationItem : public VisualItem
@@ -169,9 +174,12 @@ private:
 	const static int toolsSize = 11;
 	bool clicked;
 	bool iconsEnabled = true;
+	bool hasHiddenLists = false;
+	bool insufficentPlace = false;
 	wxBitmap *bmp;
 	std::vector<VisualItem*> visualItems;
-	int startDrawPos = 146;
+	int startDrawPos = 2;
+	int endDrawPos = 146;
 };
 
 enum{
@@ -183,6 +191,7 @@ enum{
 	BUTTON_ORG=32,
 	ID_VIDEO_TOOLBAR_EVENT=21909,
 	ID_VECTOR_TOOLBAR_EVENT,
+	ID_VECTOR_TOOLBAR_NORMAL_BUTTON,
 	ID_MOVE_TOOLBAR_EVENT,
 	ID_SCALE_ROTATE_TOOLBAR_EVENT,
 	ID_SEEK_AFTER=22222,
