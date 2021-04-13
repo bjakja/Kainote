@@ -150,7 +150,7 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.Leaving() || noelem){ 
 		sel = -1; 
 		Refresh(false); 
-		if (HasToolTips()){ UnsetToolTip(); } 
+		if (!noelem && HasToolTips()){ UnsetToolTip(); } 
 		return; 
 	}
 
@@ -364,6 +364,7 @@ void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 		selection = -1;
 		clicked = false;
 		vt->Refresh(false);
+		if (vt->HasToolTips()) { vt->UnsetToolTip(); }
 		return;
 	}
 	if (elem >= numIcons)
@@ -381,8 +382,9 @@ void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 
 	if (elem != selection){
 		selection = elem;
-		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
+		wxString& tooltext = vt->icons[elem + startIconNumber]->help;
 		vt->Refresh(false);
+		vt->SetToolTip(tooltext);
 	}
 	if (evt.LeftDown()){
 		//when added more normal buttons make table for it or something like that not just enumerate it by if

@@ -347,7 +347,7 @@ public:
 	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){
 		//invert clip
-		if (tool == 6) {
+		if (_tool == 6) {
 			InvertClip();
 		}else
 			tool = _tool;

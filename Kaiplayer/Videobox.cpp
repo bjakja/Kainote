@@ -299,6 +299,10 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 				wxSize panelsize = m_VideoPanel->GetSize();
 				sx += Kai->borders.left + Kai->borders.right;
 				sy += (m_PanelHeight + Kai->borders.bottom + Kai->borders.top);
+				//here corect sx to >= 450
+				if (sx < 450)
+					sx = 450;
+
 				if (sx == sizex && sy == sizey){
 					renderer->UpdateVideoWindow();
 				}
@@ -314,6 +318,10 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
 			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
 			if (ischanged || !shown){
+				//here corect sx to >= 450
+				if (sx < 450)
+					sx = 450;
+
 				SetMinSize(wxSize(sx, sy + m_PanelHeight));
 				tab->MainSizer->Layout();
 			}
