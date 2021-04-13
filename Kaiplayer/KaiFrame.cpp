@@ -100,8 +100,8 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC mdc;
 	mdc.SelectObject(wxBitmap(w, h));
 
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(mdc);
+	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
+	GraphicsContext* gc = NULL;//renderer->CreateContext(mdc);
 	if (!gc){
 		mdc.SetFont(GetFont());
 		wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);

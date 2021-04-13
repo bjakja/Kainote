@@ -902,6 +902,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	if (!atab)
 		return;
 
+	bool nameWasChanged = false;
 	if (atab->Grid->originalFormat != atab->Grid->subsFormat
 		|| (Options.GetBool(SUBS_AUTONAMING)
 		&& atab->SubsName.BeforeLast(L'.') != atab->VideoName.BeforeLast(L'.') && atab->VideoName != L"")
@@ -933,6 +934,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			wxString ext = (atab->Grid->subsFormat < SRT) ? L"ass" : (atab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
 			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << L"." << ext; }
 			atab->SubsName = atab->SubsPath.AfterLast(L'\\');
+			nameWasChanged = true;
 			SetRecent(0, wtab);
 		}
 		else{ return; }
@@ -951,6 +953,9 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 		Toolbar->UpdateId(GLOBAL_SAVE_SUBS, false);
 		Menubar->Enable(GLOBAL_SAVE_SUBS, false);
 		Label(0, false, wtab);
+	}
+	if (nameWasChanged) {
+		Tabs->SaveLastSession();
 	}
 #if _DEBUG
 	wxBell();
@@ -1061,6 +1066,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 		tab->Thaw();
 		// do not save options, cause it load many files and save options after it.
 		Options.SaveOptions(true, false);
+		Tabs->SaveLastSession();
 	}
 	return true;
 }
@@ -1507,6 +1513,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 	UpdateToolbar();
 	Tabs->GetTab()->Video->DeleteAudioCache();
 	Options.SaveOptions(true, false);
+	Tabs->SaveLastSession();
 }
 
 void KainoteFrame::OnPageChange(wxCommandEvent& event)

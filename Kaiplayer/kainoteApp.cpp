@@ -70,7 +70,7 @@ void seg_handler(int sig)
 		messageWindow = tab->Video->GetMessageWindowParent();
 	}
 
-	Notebook::SaveLastSession(false);
+	Notebook::SaveLastSession(false, true);
 	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
 		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
 		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n") +
@@ -282,6 +282,7 @@ bool kainoteApp::OnInit()
 		if (opevent){
 			openTimer.Start(500, true);
 		}
+		bool loadCrashSession = false;
 #if _DEBUG
 		bool loadSession = true;
 #else
@@ -292,10 +293,13 @@ bool kainoteApp::OnInit()
 				loadSession = true;
 			}
 		}
+		//Check if program was bad close or crashed
+		if (!loadSession && Notebook::CheckLastSession() == 2) {
+			if (KaiMessageBox(_("Program się skraszował albo został zamknięty\nw niewłaściwy sposób, wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
+				loadCrashSession = loadSession = true;
+			}
+		}
 #endif
-		/*if (opevent)
-			loadSession = false;*/
-
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
 //#if _DEBUG
@@ -304,7 +308,7 @@ bool kainoteApp::OnInit()
 			debugtimer.Start(100, true);
 //#endif
 			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-				Frame->Tabs->LoadLastSession();
+				Frame->Tabs->LoadLastSession(loadCrashSession);
 			}, 2299);
 		}
 

@@ -33,7 +33,7 @@ public:
 
 	virtual ~Notebook();
 	TabPanel *GetPage();
-	void AddPage(bool refresh = true);
+	void AddPage(bool refresh = true, bool saveLastSession = false);
 	void SetPageText(int page, const wxString &label);
 	void ChangePage(int page, bool makeActiveVisible = false);
 	TabPanel *GetSecondPage();
@@ -62,8 +62,11 @@ public:
 	static Notebook *sthis;
 	static TabPanel *GetTab();
 	static void RefreshVideo(bool reloadLibass = false);
-	static void SaveLastSession(bool beforeClose = false);
-	static void LoadLastSession();
+	static void SaveLastSession(bool beforeClose = false, bool recovery = false);
+	static void LoadLastSession(bool loadCrashSession = false);
+	//changes last session subs path to path from auto save
+	//if no auto save leaves unchanged
+	static void FindAutoSaveSubstitute(wxString* path, int tab);
 	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session
 	static int CheckLastSession();
 
@@ -96,6 +99,7 @@ private:
 	bool allTabsVisible;
 	bool arrow;
 	bool splitLineHolding = false;
+	bool tabsWasSwapped = false;
 	int splitline;
 	int splititer;
 	int oldtab;

@@ -125,7 +125,7 @@ TabPanel *Notebook::GetPage()
 	return Pages[iter];
 }
 
-void Notebook::AddPage(bool refresh)
+void Notebook::AddPage(bool refresh, bool saveLastSession)
 {
 	if (iter < Pages.size() && Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
 	int w, h;
@@ -156,6 +156,10 @@ void Notebook::AddPage(bool refresh)
 		RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 	}
 	else{ Pages[iter]->ShiftTimes->RefVals(Pages[olditer]->ShiftTimes); }
+
+	if (saveLastSession) {
+		SaveLastSession();
+	}
 }
 
 int Notebook::GetSelection()
@@ -281,6 +285,7 @@ void Notebook::DeletePage(int page)
 	//GetClientSize(&w,&h);
 	//RefreshRect(wxRect(0,h-TabHeight,w,TabHeight),false);
 	Refresh(false);
+	SaveLastSession();
 }
 
 void Notebook::CalcSizes(bool makeActiveVisible)
@@ -360,6 +365,11 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		UnsetToolTip();
 		if (!arrow){ SetCursor(wxCURSOR_ARROW); arrow = true; }
 		return;
+	}
+
+	if (tabsWasSwapped && event.ButtonUp()) {
+		SaveLastSession();
+		tabsWasSwapped = false;
 	}
 
 	if (y < hh && split){
@@ -448,7 +458,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			return;
 		}
 		else if (click && x > start && x < start + TabHeight - 4){
-			AddPage(true);
+			AddPage(true, true);
 			return;
 		}
 
@@ -456,7 +466,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 		if (i == -1){
 			if (dclick){
 				AddPendingEvent(choiceSelectedEvent);
-				AddPage(true);
+				AddPage(true, true);
 				return;
 			}
 		}
@@ -505,6 +515,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			splititer = oldI;
 		}
 		oldI = i;
+		tabsWasSwapped = true;
 		return;
 	}
 	if (event.LeftUp() && (rightArrowClicked || leftArrowClicked)){
@@ -1251,7 +1262,7 @@ TabPanel *Notebook::GetTab()
 	}
 }
 
-void Notebook::SaveLastSession(bool beforeClose)
+void Notebook::SaveLastSession(bool beforeClose, bool recovery)
 {
 	wxString result = L"[" + Options.progname + L"]\r\n";
 	if (beforeClose)
@@ -1265,7 +1276,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath <<
 			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDirectShow() <<
 			L"\r\nSubtitles: ";
-		if (!beforeClose){
+		if (recovery){
 			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
 			wxString fullPath = recoveryPath + tab->SubsName.BeforeLast(L'.') + L"." + ext;
 			tab->Grid->SaveFile(fullPath);
@@ -1293,7 +1304,7 @@ void Notebook::SaveLastSession(bool beforeClose)
 
 }
 
-void Notebook::LoadLastSession()
+void Notebook::LoadLastSession(bool loadCrashSession)
 {
 	wxString riddenSession;
 	OpenWrite op;
@@ -1361,8 +1372,15 @@ void Notebook::LoadLastSession()
 					sthis->AddPage(false);
 					int lastTab = sthis->Size() - 1;
 					TabPanel *tab = sthis->Pages[lastTab];
+					
 					if (!subtitles.empty()){
-						sthis->LoadSubtitles(tab, subtitles, activeLine, scrollPosition);
+						//when load crash session better use active line from subtitles
+						if (loadCrashSession) {
+							FindAutoSaveSubstitute(&subtitles, lastTab);
+							sthis->LoadSubtitles(tab, subtitles);
+						}else
+							sthis->LoadSubtitles(tab, subtitles, activeLine, scrollPosition);
+
 						sthis->Kai->SetRecent();
 					}
 					if (!keyframes.empty()) {
@@ -1404,7 +1422,55 @@ void Notebook::LoadLastSession()
 		sthis->Kai->SetSubsResolution(false);
 		sthis->Kai->UpdateToolbar();
 		Options.SaveOptions(true, false);
+		SaveLastSession();
 	}
+}
+
+void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
+{
+	wxString seekpath = path->AfterLast(L'\\');
+	wxString seekPathWithoutExt = seekpath. BeforeLast(L'.');
+	if (seekPathWithoutExt.empty())
+		seekPathWithoutExt = seekpath;
+
+	wxString autosavePath = Options.pathfull + L"\\Subs\\" + 
+		seekPathWithoutExt + L"_" + std::to_wstring(tab) + L"*";
+
+	WIN32_FIND_DATAW data;
+	HANDLE h = FindFirstFileW(autosavePath.wc_str(), &data);
+	if (h == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+	SYSTEMTIME highiestTime = {0,0,0,0,0,0,0,0};
+	wxString latestFile;
+	while (1) {
+		if (data.nFileSizeLow == 0) { continue; }
+
+		FILETIME accessTime = data.ftLastWriteTime;
+		SYSTEMTIME accessSystemTime;
+		FileTimeToSystemTime(&accessTime, &accessSystemTime);
+		if (highiestTime.wYear <= accessSystemTime.wYear) {
+			if (highiestTime.wMonth <= accessSystemTime.wMonth) {
+				if (highiestTime.wDay <= accessSystemTime.wDay) {
+					if (highiestTime.wHour <= accessSystemTime.wHour) {
+						if (highiestTime.wMinute <= accessSystemTime.wMinute) {
+							if (highiestTime.wSecond < accessSystemTime.wSecond) {
+								highiestTime = accessSystemTime;
+								latestFile = wxString(data.cFileName);
+							}
+						}
+					}
+				}
+			}
+		}
+		int result = FindNextFile(h, &data);
+		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
+	}
+	if (!latestFile.empty()) {
+		*path = Options.pathfull + L"\\Subs\\" + latestFile;
+	}
+	FindClose(h);
 }
 
 int Notebook::CheckLastSession()

@@ -177,7 +177,7 @@ void AutoSaveOpen::GenerateList()
 			versions[findResult]->insert(std::pair<wxString, wxString>(accessStringTime, fileName));
 		}
 	}
-
+	FindClose(h);
 	if (!paths.GetCount()) {
 		KaiLog(_("Folder autozapisu jest pusty"));
 		return;
