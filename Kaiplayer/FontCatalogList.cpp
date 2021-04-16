@@ -358,6 +358,9 @@ void FontCatalogList::StartEditionTimer(int ms)
 void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
 {
 	bool click = event.LeftUp();
+	if(isMenuShown && event.LeftDown())
+		isMenuShown = false;
+
 	if (_enter) {
 		enter = true;
 		theList->Refresh(false);
@@ -368,61 +371,67 @@ void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Kai
 	}
 
 	else if (click) {
+		if (isMenuShown) {
+			return;
+		}
+
 		RefreshCatalogList();
 		int choice = catalogList->Index(name);
+		int selection = theList->GetSelection();
+		Item* thisItem = theList->GetItem(selection, 0);
+		if (!thisItem)
+			return;
 
 		Menu menuList;
-		menuList.Append(2999, L"");
 		int i = 0;
 		for (auto& catalog : *catalogList) {
-			menuList.Append(3000 + i, catalog);
+			bool checked = FCManagement.IsFontInCatalog(catalog, thisItem->name);
+			menuList.Append(3000 + i, catalog, NULL, L"", ITEM_CHECK_AND_HIDE)->Check(checked);
 			i++;
 		}
 		menuList.SelectOnStart(choice);
 		menuList.SetMinWidth(lastWidth);
-		menuList.SetShowIcons(false);
+		
+		isMenuShown = true;
 		int result = menuList.GetPopupMenuSelection(wxPoint(lastX - 2, lastY + lastHeight), theList);
+
+		
 		if (result >= 3000 && catalogList->size() > result - 3000) {
-			name = (*catalogList)[result - 3000];
+			int listPos = result - 3000;
 			int selection = theList->GetSelection();
 			Item* thisItem = theList->GetItem(selection, 0);
 			if (!thisItem)
 				return;
 
-			thisItem->modified = false;
-			FCManagement.AddCatalogFont(name, thisItem->name);
-			for (size_t j = 0; j < theList->GetCount(); j++) {
-				Item* item = theList->GetItem(j, 0);
-				Item* item1 = theList->GetItem(j, 1);
-				if (item && item->modified) {
-					FCManagement.AddCatalogFont(name, item->name);
-					item->modified = false;
-					if (item1) {
-						item1->name = name;
-					}
-				}
-			}
-		}
-		else if (result = 2999) {
-			int selection = theList->GetSelection();
-			Item* thisItem = theList->GetItem(selection, 0);
-			if (!thisItem)
+			MenuItem* mitem = menuList.FindItemByPosition(listPos);
+			if (!mitem)
 				return;
 
+			bool addFont = mitem->IsChecked();
+			name = (*catalogList)[listPos];
 			thisItem->modified = false;
-			FCManagement.RemoveCatalogFont(name, thisItem->name);
+
+			if(addFont)
+				FCManagement.AddCatalogFont(name, thisItem->name);
+			else
+				FCManagement.RemoveCatalogFont(name, thisItem->name);
 			for (size_t j = 0; j < theList->GetCount(); j++) {
 				Item* item = theList->GetItem(j, 0);
 				Item* item1 = theList->GetItem(j, 1);
 				if (item && item->modified) {
-					FCManagement.RemoveCatalogFont(name, item->name);
+					if (addFont)
+						FCManagement.AddCatalogFont(name, item->name);
+					else
+						FCManagement.RemoveCatalogFont(name, item->name);
 					item->modified = false;
 					if (item1) {
-						item1->name = L"";
+						item1->name = addFont? name : L"";
 					}
 				}
 			}
-			name = L"";
+			if (!addFont) {
+				name = FCManagement.FindCatalogByFont(thisItem->name);
+			}
 		}
 	}
 }
@@ -650,6 +659,48 @@ wxArrayString* FontCatalogManagement::GetCatalogFonts(const wxString& catalog)
 	return nullptr;
 }
 
+bool FontCatalogManagement::IsFontInCatalog(const wxString& catalog, const wxString& font)
+{
+	auto it = fontCatalogs.find(catalog);
+	if (it != fontCatalogs.end() && it->second->Index(font) != -1)
+		return true;
+
+	return false;
+}
+
+void FontCatalogManagement::AddToCatalog(const wxString& font, const wxPoint& pos, wxWindow *parent)
+{
+	if (!fontCatalogsNames.GetCount()) {
+		KaiLog(_("Aby móc dodawać czcionki do katalogu,\nnależy najpierw kliknąć przycisk \"Zarządzaj\",\nby utworzyć nowy katalog."));
+		return;
+	}
+	Menu menuList;
+	std::vector<bool> checkTable;
+	int i = 0;
+	for (auto& catalog : fontCatalogsNames) {
+		bool checked = IsFontInCatalog(catalog, font);
+		menuList.Append(3000 + i, catalog, NULL, L"", ITEM_CHECK_AND_HIDE)->Check(checked);
+		checkTable.push_back(checked);
+		i++;
+	}
+	int result = menuList.GetPopupMenuSelection(wxPoint(pos.x, pos.y), parent);
+	bool changed = false;
+	for (size_t j = 0; j < checkTable.size(); j++) {
+		MenuItem *item = menuList.FindItemByPosition(j);
+		if (item && item->IsChecked() != checkTable[j]) {
+			if (item->IsChecked()) {
+				AddCatalogFont(item->GetLabel(), font, false);
+			}
+			else {
+				RemoveCatalogFont(item->GetLabel(), font, false);
+			}
+			changed = true;
+		}
+	}
+	if (changed)
+		SaveCatalogs();
+}
+
 void FontCatalogManagement::AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator* it)
 {
 	auto itc = fontCatalogs.find(catalog);
@@ -725,14 +776,15 @@ void FontCatalogManagement::RemoveCatalog(const wxString& catalog)
 	FontCatalogList::StartEditionTimer(saveInterval);
 }
 
-void FontCatalogManagement::AddCatalogFont(const wxString& catalog, const wxString& font)
+void FontCatalogManagement::AddCatalogFont(const wxString& catalog, const wxString& font, bool AutoSave)
 {
 	auto it = fontCatalogs.find(catalog);
 	if (it != fontCatalogs.end()) {
 		if(it->second->Index(font) == -1)
 			it->second->Add(font);
 	}
-	FontCatalogList::StartEditionTimer(saveInterval);
+	if(AutoSave)
+		FontCatalogList::StartEditionTimer(saveInterval);
 }
 
 void FontCatalogManagement::AddCatalogFonts(const wxString& catalog, const wxArrayString& fonts)
@@ -747,7 +799,7 @@ void FontCatalogManagement::AddCatalogFonts(const wxString& catalog, const wxArr
 	FontCatalogList::StartEditionTimer(saveInterval);
 }
 
-void FontCatalogManagement::RemoveCatalogFont(const wxString& catalog, const wxString& font)
+void FontCatalogManagement::RemoveCatalogFont(const wxString& catalog, const wxString& font, bool AutoSave)
 {
 	auto it = fontCatalogs.find(catalog);
 	if (it != fontCatalogs.end()) {
@@ -756,7 +808,8 @@ void FontCatalogManagement::RemoveCatalogFont(const wxString& catalog, const wxS
 			it->second->RemoveAt(fontI);
 		}
 	}
-	FontCatalogList::StartEditionTimer(saveInterval);
+	if(AutoSave)
+		FontCatalogList::StartEditionTimer(saveInterval);
 }
 
 void FontCatalogManagement::ReplaceCatalogFonts(const wxString& catalog, const wxArrayString& fonts)

@@ -81,7 +81,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
 	fontCatalog->Insert(_("Bez katalogu"), 1);
 	fontCatalog->SetSelection(0);
+	CatalogAdd = new MappedButton(this, ID_CATALOG_ADD, _("Dodaj"));
+	CatalogAdd->SetToolTip(_("Dodaje czcionki do wcześniej utworzonego katalogu"));
 	CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE, _("Zarządzaj"));
+	CatalogManage->SetToolTip(_("Umorzliwia zarządzanie katalogami stylów"));
 	Filter = new ToggleButton(this, ID_FILTER, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);
@@ -114,6 +117,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
 		ChangeCatalog();
 	}, ID_FONT_CATALOG_LIST);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &StyleChange::OnCatalogAdd, this, ID_CATALOG_ADD);
 	textBold = new KaiCheckBox(this, ID_CBOLD, _("Pogrubienie"));
 	textItalic = new KaiCheckBox(this, ID_CBOLD, _("Kursywa"));
 	textUnderline = new KaiCheckBox(this, ID_CBOLD, _("Podkreślenie"));
@@ -121,7 +125,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 
 	fntsizer->Add(styleFont, 4, wxEXPAND | wxALL, 2);
 	fntsizer->Add(fontSize, 1, wxEXPAND | wxALL, 2);
-	filtersizer->Add(fontCatalog, 3, wxEXPAND | wxALL, 2);
+	filtersizer->Add(fontCatalog, 2, wxEXPAND | wxALL, 2);
+	filtersizer->Add(CatalogAdd, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(CatalogManage, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(Filter, 1, wxEXPAND | wxALL, 2);
 
@@ -550,6 +555,13 @@ void StyleChange::UpdateValues(Styles *style, bool allowMultiEdit, bool enableNo
 void StyleChange::OnCommit(wxCommandEvent& event)
 {
 	CommitChange(false);
+}
+
+void StyleChange::OnCatalogAdd(wxCommandEvent& event)
+{
+	wxPoint pos = CatalogAdd->GetPosition();
+	wxSize size = CatalogAdd->GetSize();
+	FCManagement.AddToCatalog(styleFont->GetValue(), wxPoint(pos.x, pos.y + size.y), this);
 }
 
 

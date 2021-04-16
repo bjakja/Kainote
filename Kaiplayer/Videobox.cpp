@@ -851,9 +851,9 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 	wxString txt1;
 	if (!m_IsFullscreen){ txt1 = _("Pełny ekran\tF"); }
 	else{ txt1 = _("Wyłącz pełny ekran\tEscape"); }
-	MenuItem *Item = menu->Append(VIDEO_FULL_SCREEN, txt1);
+	MenuItem *Item = menu->SetAccMenu(VIDEO_FULL_SCREEN, txt1);
 	Item->Enable(GetState() != None);
-	Item->DisableMapping();
+	//Item->DisableMapping();
 	GetMonitorRect1(-1, &MonRects, Kai->GetRect());
 	for (size_t i = 1; i < MonRects.size(); i++)
 	{

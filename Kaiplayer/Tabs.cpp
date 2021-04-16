@@ -1450,27 +1450,44 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 		FILETIME accessTime = data.ftLastWriteTime;
 		SYSTEMTIME accessSystemTime;
 		FileTimeToSystemTime(&accessTime, &accessSystemTime);
-		if (highiestTime.wYear <= accessSystemTime.wYear) {
-			if (highiestTime.wMonth <= accessSystemTime.wMonth) {
-				if (highiestTime.wDay <= accessSystemTime.wDay) {
-					if (highiestTime.wHour <= accessSystemTime.wHour) {
-						if (highiestTime.wMinute <= accessSystemTime.wMinute) {
-							if (highiestTime.wSecond < accessSystemTime.wSecond) {
-								highiestTime = accessSystemTime;
-								latestFile = wxString(data.cFileName);
-							}
-						}
-					}
-				}
-			}
+		if (CheckDate(&highiestTime, &accessSystemTime) ){
+			highiestTime = accessSystemTime;
+			latestFile = wxString(data.cFileName);
 		}
 		int result = FindNextFile(h, &data);
 		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
 	}
 	if (!latestFile.empty()) {
-		*path = Options.pathfull + L"\\Subs\\" + latestFile;
+		FILETIME ft;
+		HANDLE ffile = CreateFile(path->wc_str(), 
+			GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+		GetFileTime(ffile, 0, 0, &ft);
+		CloseHandle(ffile);
+		SYSTEMTIME accessSystemTime;
+		FileTimeToSystemTime(&ft, &accessSystemTime);
+		if (CheckDate(&accessSystemTime, &highiestTime)) {
+			*path = Options.pathfull + L"\\Subs\\" + latestFile;
+		}
 	}
 	FindClose(h);
+}
+
+bool Notebook::CheckDate(SYSTEMTIME* firstDate, SYSTEMTIME* secondDate)
+{
+	if (firstDate->wYear <= secondDate->wYear) {
+		if (firstDate->wMonth <= secondDate->wMonth) {
+			if (firstDate->wDay <= secondDate->wDay) {
+				if (firstDate->wHour <= secondDate->wHour) {
+					if (firstDate->wMinute <= secondDate->wMinute) {
+						if (firstDate->wSecond < secondDate->wSecond) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+	}
+	return false;
 }
 
 int Notebook::CheckLastSession()

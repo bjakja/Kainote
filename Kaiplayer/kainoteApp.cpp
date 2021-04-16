@@ -295,7 +295,7 @@ bool kainoteApp::OnInit()
 		}
 		//Check if program was bad close or crashed
 		if (!loadSession && Notebook::CheckLastSession() == 2) {
-			if (KaiMessageBox(_("Program się skraszował albo został zamknięty\nw niewłaściwy sposób, wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
+			if (KaiMessageBox(_("Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
 				loadCrashSession = loadSession = true;
 			}
 		}

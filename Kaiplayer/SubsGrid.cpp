@@ -587,20 +587,51 @@ void SubsGrid::CopyRows(int id)
 void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 {
 	SaveSelections(true);
-	int rw = currentLine;
-	file->EraseSelection(rw);
-	Dialogue *dialog = CopyDialogue(rw, false);
-	if (!frameTime){
+	if (frameTime) {
+		if (selections.size() < 1)
+			selections.push_back(currentLine);
+
+		int rw = selections[0];
+		int rw1 = rw;
+		int rw2 = (before) ? rw : selections[selections.size() - 1] + 1;
+		size_t i = 0;
+		std::vector<Dialogue*> dupl;
+		int time = tab->Video->GetFrameTime();
+		int endtime = tab->Video->GetFrameTime(false);
+		while (i < selections.GetCount()) {
+			if (rw1 == selections[i]) {
+				Dialogue* dial = file->CopyDialogue(rw1, false);
+				dial->Start.NewTime(ZEROIT(time));
+				dial->End.NewTime(ZEROIT(endtime));
+				dupl.push_back(dial);
+				i++; rw1++;
+			}
+			else
+				rw1++;
+		}
+
+		if (dupl.size() > 0) {
+			InsertRows(rw2, dupl);
+			dupl.clear();
+		}
+		file->InsertSelections(rw2, rw2 + i - 1, false, true);
+		SetModified(GRID_DUPLICATE, true, false, rw2);
+		Refresh(false);
+	}
+	else {
+		int rw = currentLine;
+		file->EraseSelection(rw);
+		Dialogue* dialog = CopyDialogue(rw, false);
 		dialog->Text = L"";
 		dialog->TextTl = L"";
+		int time = tab->Video->GetFrameTime();
+		dialog->Start.NewTime(ZEROIT(time));
+		int endtime = time + 4000;
+		dialog->End.NewTime(ZEROIT(endtime));
+		int newCurrentLine = (before) ? rw : rw + 1;
+		markedLine = currentLine = newCurrentLine;
+		InsertRows(newCurrentLine, 1, dialog, false, true);
 	}
-	int time = tab->Video->GetFrameTime();
-	dialog->Start.NewTime(ZEROIT(time));
-	int endtime = frameTime ? tab->Video->GetFrameTime(false) : time + 4000;
-	dialog->End.NewTime(ZEROIT(endtime));
-	int newCurrentLine = (before) ? rw : rw + 1;
-	markedLine = currentLine = newCurrentLine;
-	InsertRows(newCurrentLine, 1, dialog, false, true);
 }
 
 void SubsGrid::OnAccelerator(wxCommandEvent &event)

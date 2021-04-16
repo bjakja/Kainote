@@ -36,13 +36,13 @@ void MessageCallback(int level, const char *fmt, va_list args, void *) {
 
 	if (level < 2) // warning/error
 #if _DEBUG
-		KaiLogDebug(L"Libass: " + wxString(buf, wxConvUTF8));
+		KaiLogSilent(L"Libass: " + wxString(buf, wxConvUTF8));
 #else
 		KaiLogSilent(L"Libass: " + wxString(buf, wxConvUTF8));
 #endif
 #if _DEBUG
 	else // verbose
-		KaiLogDebug(L"Libass: " + wxString(buf, wxConvUTF8));
+		KaiLogSilent(L"Libass: " + wxString(buf, wxConvUTF8));
 #endif
 }
 

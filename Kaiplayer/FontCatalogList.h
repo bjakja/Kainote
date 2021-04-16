@@ -60,6 +60,7 @@ public:
 private:
 	bool enter = false;
 	bool clicked = false;
+	bool isMenuShown = false;
 	int lastX = 0;
 	int lastY = 0;
 	int lastWidth = 100;
@@ -142,12 +143,14 @@ public:
 	wxArrayString* GetCatalogNames();
 	wxString FindCatalogByFont(const wxString& font);
 	wxArrayString* GetCatalogFonts(const wxString& catalog);
+	bool IsFontInCatalog(const wxString& catalog, const wxString& font);
+	void AddToCatalog(const wxString& font, const wxPoint &pos, wxWindow *parent);
 	void AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator *it = NULL);
 	bool ChangeCatalogName(wxWindow *messagesParent, const wxString& oldCatalog, const wxString& newCatalog);
 	void RemoveCatalog(const wxString& catalog);
-	void AddCatalogFont(const wxString& catalog, const wxString& font);
+	void AddCatalogFont(const wxString& catalog, const wxString& font, bool AutoSave = true);
 	void AddCatalogFonts(const wxString& catalog, const wxArrayString& fonts);
-	void RemoveCatalogFont(const wxString& catalog, const wxString& font);
+	void RemoveCatalogFont(const wxString& catalog, const wxString& font, bool AutoSave = true);
 	void ReplaceCatalogFonts(const wxString& catalog, const wxArrayString& fonts);
 	std::map<wxString, fontList>* GetCatalogsMap() { return &fontCatalogs; };
 

@@ -57,6 +57,7 @@ public:
 	KaiChoice* fontCatalog;
 	ToggleButton *Filter;
 	MappedButton* CatalogManage;
+	MappedButton* CatalogAdd;
 	NumCtrl* alpha1;
 	NumCtrl* alpha2;
 	NumCtrl* alpha3;
@@ -104,6 +105,7 @@ private:
 	void OnColor3RightClick(wxMouseEvent& event);
 	void OnColor4RightClick(wxMouseEvent& event);
 	void OnCommit(wxCommandEvent& event);
+	void OnCatalogAdd(wxCommandEvent& event);
 	void UpdateStyle();
 	void OnUpdatePreview(wxCommandEvent& event);
 	void ChangeCatalog(bool save = true);
@@ -167,6 +169,7 @@ enum{
 	ID_B_COMMIT,
 	ID_FILTER,
 	ID_CATALOG_MANAGE,
+	ID_CATALOG_ADD,
 	ID_FONT_CATALOG_LIST
 };
 

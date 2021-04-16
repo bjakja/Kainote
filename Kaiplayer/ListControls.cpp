@@ -716,7 +716,14 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 , disabledItems(disabled)
 {
 	int fw = 0;
-	SetFont(DialogParent->GetFont());
+	bool isFontList = (Parent->GetWindowStyle() & KAI_FONT_LIST) != 0;
+	if (isFontList) {
+		wxFont parentFont = DialogParent->GetFont();
+		int fsize = parentFont.GetPointSize();
+		parentFont.SetPointSize(fsize + 4);
+		SetFont(parentFont);
+	}else
+		SetFont(DialogParent->GetFont());
 	GetTextExtent(L"#TWFfGH", &fw, &height);
 	height += 6;
 }
@@ -873,9 +880,15 @@ void PopupList::OnPaint(wxPaintEvent &event)
 
 		tdc.SetTextForeground((disabledItems->find(scrollPos) != disabledItems->end()) ? graytext : text);
 		if (isFontList) {
-			int textw, texth;
+			int textw = 0, texth = 0;
 			copyFont.SetFaceName(desc);
 			GetTextExtent(previewText, &textw, &texth, NULL, NULL, &copyFont);
+			//fix for not working fonts that gives random values
+			if (texth > 50 || textw > 500) {
+				textw = 0;
+				texth = 0;
+			}
+
 			if (height + 10 < texth) {
 				int pointSize = copyFont.GetPointSize() - 1;
 				while (texth > height + 10 && pointSize >= 1) {
@@ -884,7 +897,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 					pointSize--;
 				}
 			}
-			int descw, desch;
+			int descw = 0, desch = 0;
 			GetTextExtent(desc, &descw, &desch, NULL, NULL, &font);
 			//the font name cannot have 1000+ chars that's why not check it 
 			if (descw + textw + 12 > w) {

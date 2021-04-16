@@ -85,6 +85,7 @@ private:
 	void ChangeCatalog(bool save = false);
 	void SetStyle();
 	void ReloadFonts();
+	void GetFontName(wxString* fontname);
 	FontList *Fonts;
 	StylePreview *Preview;
 	NumCtrl *FontSize;
@@ -131,6 +132,7 @@ enum{
 	ID_FONTATTR,
 	ID_FONT_NAME,
 	ID_FONT_CATALOG_LIST1,
+	ID_CATALOG_ADD1,
 	ID_CATALOG_MANAGE1,
 	ID_FILTER1,
 	ID_SCROLL1,

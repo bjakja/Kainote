@@ -415,11 +415,21 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	fontCatalog->Insert(_("Wszystkie czcionki"), 0);
 	fontCatalog->Insert(_("Bez katalogu"), 1);
 	fontCatalog->SetSelection(0);
+	MappedButton* CatalogAdd = new MappedButton(this, ID_CATALOG_ADD1, _("Dodaj"));
+	CatalogAdd->SetToolTip(_("Dodaje czcionki do wcześniej utworzonego katalogu"));
 	MappedButton* CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE1, _("Zarządzaj"));
+	CatalogManage->SetToolTip(_("Umorzliwia zarządzanie katalogami stylów"));
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
 	Filter = new ToggleButton(this, ID_FILTER1, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		wxPoint pos = CatalogAdd->GetPosition();
+		wxSize size = CatalogAdd->GetSize();
+		wxString font;
+		GetFontName(&font);
+		FCManagement.AddToCatalog(font, wxPoint(pos.x, pos.y + size.y), this);
+		}, ID_CATALOG_ADD1);
 	Bind(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, [=](wxCommandEvent& evt) {
 		ChangeCatalog(true);
 		}, ID_FILTER1);
@@ -428,12 +438,15 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Fonts->SetSelectionByName(acst->Fontname);
 	KaiStaticBoxSizer* filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Filtrowanie i katalogi czcionek"));
 	filtersizer->Add(fontCatalog, 3, wxEXPAND | wxALL, 2);
+	filtersizer->Add(CatalogAdd, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(CatalogManage, 1, wxEXPAND | wxALL, 2);
 	filtersizer->Add(Filter, 1, wxEXPAND | wxALL, 2);
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
 		if (!FCL) {
-			FCL = new FontCatalogList(this, editedStyle->Fontname);
+			wxString fontname;
+			GetFontName(&fontname);
+			FCL = new FontCatalogList(this, fontname);
 			Bind(CATALOG_CHANGED, [=](wxCommandEvent& evt) {
 				int sel = fontCatalog->GetSelection();
 				
@@ -536,8 +549,6 @@ void FontDialog::GetStyles(Styles **inputStyle, Styles **outputStyle)
 {
 	if (inputStyle != NULL && outputStyle != NULL){
 		*inputStyle = editedStyle;
-		if (!resultStyle)
-			bool thisisbad = true;
 		*outputStyle = (resultStyle) ? resultStyle : GetFont();
 	}
 }
@@ -559,7 +570,7 @@ Styles * FontDialog::GetFont()
 	resultStyle->Italic = Italic->GetValue();
 	resultStyle->Underline = Underl->GetValue();
 	resultStyle->StrikeOut = Strike->GetValue();
-	resultStyle->Fontname = Fonts->GetString(Fonts->GetSelection());
+	GetFontName(&resultStyle->Fontname);
 	resultStyle->Fontsize = FontSize->GetString(); 
 	return resultStyle;
 }
@@ -668,6 +679,18 @@ void FontDialog::ChangeCatalog(bool save)
 
 void FontDialog::ReloadFonts()
 {
+	ChangeCatalog(false);
+}
+
+void FontDialog::GetFontName(wxString* fontname)
+{
+	int sel = fontCatalog->GetSelection();
+	if (sel != 0 && FontName->GetValue() == editedStyle->Fontname) {
+		*fontname = editedStyle->Fontname;
+	}
+	else {
+		*fontname = Fonts->GetString(Fonts->GetSelection());
+	}
 }
 
 wxArrayString* FontDialog::GetFontsTable(bool save)

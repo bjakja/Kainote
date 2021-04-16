@@ -1685,7 +1685,6 @@ void SubsGridWindow::ScrollTo(int y, bool center /*= false*/, int offset /*= 0*/
 	int nextY = MID(0, y, GetCount() - 1);
 
 	if (scrollPosition != nextY) {
-		//KaiLog(wxString::Format("scrollpos = %i, %i, %i", scrollPosition, y, offset));
 		scrollPosition = nextY;
 		scrollPositionId = file->GetElementByKey(nextY);
 	}

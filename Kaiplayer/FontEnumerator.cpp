@@ -93,7 +93,7 @@ wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<vo
 	if(Fonts->size()<1){
 		EnumerateFonts(false);
 	}
-	if(client && !(observers.find(client) != observers.end())){observers[client] = func;}
+	if(client){observers[client] = func;}
 	return Fonts;
 }
 
@@ -214,6 +214,7 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 	while(1){
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, INFINITE);
 		if(wait_result == WAIT_OBJECT_0 + 0){
+			Sleep(1000);
 			FontEnum.EnumerateFonts(true);
 			FontEnum.RefreshClientsFonts();
 			Notebook::RefreshVideo(true);

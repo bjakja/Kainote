@@ -67,6 +67,8 @@ public:
 	//changes last session subs path to path from auto save
 	//if no auto save leaves unchanged
 	static void FindAutoSaveSubstitute(wxString* path, int tab);
+	//check first date with second if second is highier then returns true;
+	static bool CheckDate(SYSTEMTIME* firstDate, SYSTEMTIME* secondDate);
 	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session
 	static int CheckLastSession();
 
