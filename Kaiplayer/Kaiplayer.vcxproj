@@ -541,6 +541,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="AutomationScriptReader.cpp" />
     <ClCompile Include="AutomationToFile.cpp" />
     <ClCompile Include="AutomationUtils.cpp" />
+    <ClCompile Include="AutoSavesRemoving.cpp" />
     <ClCompile Include="BidiConversion.cpp" />
     <ClCompile Include="BitmapButton.cpp" />
     <ClCompile Include="ConfigConverter.cpp" />
@@ -701,6 +702,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="AutomationToFile.h" />
     <ClInclude Include="AutomationUtils.h" />
     <ClInclude Include="AutoSaveOpen.h" />
+    <ClInclude Include="AutoSavesRemoving.h" />
     <ClInclude Include="BidiConversion.h" />
     <ClInclude Include="BitmapButton.h" />
     <ClInclude Include="ConfigConverter.h" />

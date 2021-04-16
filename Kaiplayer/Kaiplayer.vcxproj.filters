@@ -434,6 +434,9 @@
     <ClCompile Include="AutoSaveOpen.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="AutoSavesRemoving.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -800,6 +803,9 @@
       <Filter>Source Files\Controls</Filter>
     </ClInclude>
     <ClInclude Include="AutoSaveOpen.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSavesRemoving.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
