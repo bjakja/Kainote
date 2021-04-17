@@ -16,6 +16,7 @@
 #pragma once
 
 #include "KaiDialog.h"
+#include "ListControls.h"
 
 
 class AutoSavesRemoving : public KaiDialog 
@@ -31,6 +32,10 @@ private:
 	void ClearAll(int id);
 	void ClearByDate(int id);
 
+	KaiChoice* day;
+	KaiChoice* month;
+	KaiChoice* year;
+
 	enum {
 		ID_REMOVE_SELECTED_AUTO_SAVES = 12341,
 		ID_REMOVE_SELECTED_INDICES,
@@ -41,6 +46,10 @@ private:
 		ID_REMOVE_AUTO_SAVES_BY_DATE,
 		ID_REMOVE_INDICES_BY_DATE,
 		ID_REMOVE_AUDIO_CACHE_BY_DATE,
+		ID_REMOVE_ALL,
+		ID_REMOVE_ALL_BY_DATE,
+		ID_DATE_DAY_LIST,
+		ID_DATE_MONTH_LIST
 	};
 };
 

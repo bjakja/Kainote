@@ -1,4 +1,4 @@
-//  Copyright (c) 2021, Marcin Drob
+Ôªø//  Copyright (c) 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -15,87 +15,123 @@
 
 #include "AutoSavesRemoving.h"
 #include "MappedButton.h"
-#include "ListControls.h"
+#include "KaiStaticBoxSizer.h"
 #include "config.h"
 #include <ctime>
+#include <wx/filedlg.h>
+#include <wx/dir.h>
+#include "Tabs.h"
 
 AutoSavesRemoving::AutoSavesRemoving(wxWindow* parent)
-	:KaiDialog(parent, -1, _("UsuÒ pliki autozapisÛw oraz cache"))
+	:KaiDialog(parent, -1, _("Usu≈Ñ pliki tymczasowe"))
 {
 	std::time_t t = std::time(0);
 	std::tm* now = std::localtime(&t);
 
 	DialogSizer* main = new DialogSizer(wxVERTICAL);
 	//date
-	wxStaticBoxSizer* date = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Data dla usuwania starszych plikÛw"));
+	KaiStaticBoxSizer* date = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Usu≈Ñ pliki starsze ni≈º"));
+	wxBoxSizer* dateAndRemoveAll = new wxBoxSizer(wxHORIZONTAL);
 	wxArrayString days;
 	for (int i = 1; i < 32; i++) {
 		days.Add(std::to_wstring(i));
 	}
-	KaiChoice* day = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, days);
+	day = new KaiChoice(this, ID_DATE_DAY_LIST, wxDefaultPosition, wxDefaultSize, days);
 	day->SetSelection(now->tm_mday - 1);
-	wxString months[] = { _("StyczeÒ"), _("Luty"), _("Marzec"), _("KwiecieÒ"), 
-		_("Maj"), _("Czerwiec"), _("Lipiec"), _("SierpieÒ"), _("WrzesieÒ"), 
-		_("Paüdziernik"), _("Listopad"), _("GrudzieÒ") };
-	KaiChoice* month = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 12, months);
+	wxString months[] = { _("Stycze≈Ñ"), _("Luty"), _("Marzec"), _("Kwiecie≈Ñ"),
+		_("Maj"), _("Czerwiec"), _("Lipiec"), _("Sierpie≈Ñ"), _("Wrzesie≈Ñ"),
+		_("Pa≈∫dziernik"), _("Listopad"), _("Grudzie≈Ñ") };
+	month = new KaiChoice(this, ID_DATE_MONTH_LIST, wxDefaultPosition, wxDefaultSize, 12, months);
+	
 	wxArrayString years;
 	for (int i = 2012; i <= now->tm_year + 1900; i++) {
 		years.Add(std::to_wstring(i));
 	}
-	KaiChoice* year = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, years);
-	
+	year = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, years);
+
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+		int sely = year->GetSelection();
+		wxString selyear = year->GetString(sely);
+		int numyear = wxAtoi(selyear);
+		if (numyear < now->tm_year + 1900)
+			return;
+
+		int selm = month->GetSelection();
+		if (selm < now->tm_mon)
+			return;
+
+		int seld = day->GetSelection() + 1;
+		if (seld < now->tm_mday)
+			return;
+
+		year->SetSelection(sely - 1);
+		}, ID_DATE_DAY_LIST, ID_DATE_MONTH_LIST);
 	//month before today 0-11
 	int monthBeforeMonth = now->tm_mon - 1;
 	if (monthBeforeMonth < 0) {
 		year->SetSelection(year->GetCount() - 2);
 		monthBeforeMonth = 11;
-	}else
+	}
+	else
 		year->SetSelection(year->GetCount() - 1);
 
 	month->SetSelection(monthBeforeMonth);
 
-	date->Add(day, 0, wxALL | wxEXPAND, 3);
-	date->Add(month, 0, wxALL | wxEXPAND, 3);
-	date->Add(year, 0, wxALL | wxEXPAND, 3);
+	date->Add(day, 0, wxALL, 3);
+	date->Add(month, 0, wxALL, 3);
+	date->Add(year, 0, wxALL, 3);
+
+	//remove all
+	KaiStaticBoxSizer* removeAll = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Usu≈Ñ z wszystkich folder√≥w"));
+	MappedButton* removeAllTemporary =
+		new MappedButton(this, ID_REMOVE_ALL, _("Usu≈Ñ wszystkie pliki"));
+	MappedButton* removeAllTemporaryByDate =
+		new MappedButton(this, ID_REMOVE_ALL_BY_DATE, _("Usu≈Ñ wszystkie starsze pliki"));
+
+	removeAll->Add(removeAllTemporary, 1, wxALL | wxEXPAND, 3);
+	removeAll->Add(removeAllTemporaryByDate, 1, wxALL | wxEXPAND, 3);
+
+	dateAndRemoveAll->Add(date, 0, wxRIGHT, 3);
+	dateAndRemoveAll->Add(removeAll, 1, wxEXPAND, 0);
 
 	//auto saves
-	wxStaticBoxSizer* autoSaves = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Auto zapis"));
-	MappedButton* removeSelectedAutoSaves = 
-		new MappedButton(this, ID_REMOVE_SELECTED_AUTO_SAVES, _("UsuÒ wybrane pliki auto zapisu"));
+	KaiStaticBoxSizer* autoSaves = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Auto zapis"));
+	MappedButton* removeSelectedAutoSaves =
+		new MappedButton(this, ID_REMOVE_SELECTED_AUTO_SAVES, _("Usu≈Ñ wybrane pliki auto zapisu"));
 	MappedButton* removeAllAutoSaves =
-		new MappedButton(this, ID_REMOVE_ALL_AUTO_SAVES, _("UsuÒ wszystkie pliki auto zapisu"));
+		new MappedButton(this, ID_REMOVE_ALL_AUTO_SAVES, _("Usu≈Ñ wszystkie pliki auto zapisu"));
 	MappedButton* removeAutoSavesByDate =
-		new MappedButton(this, ID_REMOVE_AUTO_SAVES_BY_DATE, _("UsuÒ starsze pliki auto zapisu"));
+		new MappedButton(this, ID_REMOVE_AUTO_SAVES_BY_DATE, _("Usu≈Ñ starsze pliki auto zapisu"));
 
-	autoSaves->Add(removeSelectedAutoSaves, 1, wxALL, 3);
-	autoSaves->Add(removeAllAutoSaves, 1, wxALL, 3);
-	autoSaves->Add(removeAutoSavesByDate, 1, wxALL, 3);
+	autoSaves->Add(removeSelectedAutoSaves, 1, wxALL | wxEXPAND, 3);
+	autoSaves->Add(removeAllAutoSaves, 1, wxALL | wxEXPAND, 3);
+	autoSaves->Add(removeAutoSavesByDate, 1, wxALL | wxEXPAND, 3);
 
 	//indices
-	wxStaticBoxSizer* indices = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Indeks"));
+	KaiStaticBoxSizer* indices = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Indeks"));
 	MappedButton* removeSelectedIndices =
-		new MappedButton(this, ID_REMOVE_SELECTED_AUTO_SAVES, _("UsuÒ wybrane indeksy"));
+		new MappedButton(this, ID_REMOVE_SELECTED_INDICES, _("Usu≈Ñ wybrane indeksy"));
 	MappedButton* removeAllIndices =
-		new MappedButton(this, ID_REMOVE_ALL_AUTO_SAVES, _("UsuÒ wszystkie indeksy"));
+		new MappedButton(this, ID_REMOVE_ALL_INDICES, _("Usu≈Ñ wszystkie indeksy"));
 	MappedButton* removeIndicesByDate =
-		new MappedButton(this, ID_REMOVE_AUTO_SAVES_BY_DATE, _("UsuÒ starsze indeksy"));
+		new MappedButton(this, ID_REMOVE_INDICES_BY_DATE, _("Usu≈Ñ starsze indeksy"));
 
-	indices->Add(removeSelectedIndices, 1, wxALL, 3);
-	indices->Add(removeAllIndices, 1, wxALL, 3);
-	indices->Add(removeIndicesByDate, 1, wxALL, 3);
+	indices->Add(removeSelectedIndices, 1, wxALL | wxEXPAND, 3);
+	indices->Add(removeAllIndices, 1, wxALL | wxEXPAND, 3);
+	indices->Add(removeIndicesByDate, 1, wxALL | wxEXPAND, 3);
 
 	//audio cache
-	wxStaticBoxSizer* audioCache = new wxStaticBoxSizer(wxHORIZONTAL, this, _("Audio cache"));
-	MappedButton* removeSelectedAutoSaves =
-		new MappedButton(this, ID_REMOVE_SELECTED_AUTO_SAVES, _("UsuÒ wybrane pliki autozapisu"));
-	MappedButton* removeAllAutoSaves =
-		new MappedButton(this, ID_REMOVE_ALL_AUTO_SAVES, _("UsuÒ wszystkie pliki autozapisu"));
-	MappedButton* removeAutoSavesByDate =
-		new MappedButton(this, ID_REMOVE_AUTO_SAVES_BY_DATE, _("UsuÒ starsze pliki autozapisu"));
+	KaiStaticBoxSizer* audioCache = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Audio cache"));
+	MappedButton* removeSelectedAudioCache =
+		new MappedButton(this, ID_REMOVE_SELECTED_AUDIO_CACHES, _("Usu≈Ñ wybrane pliki audio cache"));
+	MappedButton* removeAllAudioCache =
+		new MappedButton(this, ID_REMOVE_ALL_AUDIO_CACHES, _("Usu≈Ñ wszystkie pliki audio cache"));
+	MappedButton* removeAudioCacheByDate =
+		new MappedButton(this, ID_REMOVE_AUDIO_CACHE_BY_DATE, _("Usu≈Ñ starsze pliki audio cache"));
 
-	audioCache->Add(removeSelectedAutoSaves, 1, wxALL, 3);
-	audioCache->Add(removeAllAutoSaves, 1, wxALL, 3);
-	audioCache->Add(removeAutoSavesByDate, 1, wxALL, 3);
+	audioCache->Add(removeSelectedAudioCache, 1, wxALL | wxEXPAND, 3);
+	audioCache->Add(removeAllAudioCache, 1, wxALL | wxEXPAND, 3);
+	audioCache->Add(removeAudioCacheByDate, 1, wxALL | wxEXPAND, 3);
 
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
 		ClearSelected(evt.GetId());
@@ -109,10 +145,22 @@ AutoSavesRemoving::AutoSavesRemoving(wxWindow* parent)
 		ClearByDate(evt.GetId());
 		}, ID_REMOVE_AUTO_SAVES_BY_DATE, ID_REMOVE_AUDIO_CACHE_BY_DATE);
 
-	main->Add(date, 1, wxALL, 2);
-	main->Add(autoSaves, 1, wxALL, 2);
-	main->Add(indices, 1, wxALL, 2);
-	main->Add(audioCache, 1, wxALL, 2);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		ClearAll(ID_REMOVE_ALL_AUTO_SAVES);
+		ClearAll(ID_REMOVE_ALL_INDICES);
+		ClearAll(ID_REMOVE_ALL_AUDIO_CACHES);
+		}, ID_REMOVE_ALL);
+
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		ClearByDate(ID_REMOVE_AUTO_SAVES_BY_DATE);
+		ClearByDate(ID_REMOVE_INDICES_BY_DATE);
+		ClearByDate(ID_REMOVE_AUDIO_CACHE_BY_DATE);
+		}, ID_REMOVE_ALL_BY_DATE);
+
+	main->Add(dateAndRemoveAll, 1, wxALL | wxEXPAND, 2);
+	main->Add(autoSaves, 1, wxALL | wxEXPAND, 2);
+	main->Add(indices, 1, wxALL | wxEXPAND, 2);
+	main->Add(audioCache, 1, wxALL | wxEXPAND, 2);
 	SetSizerAndFit(main);
 	CenterOnParent();
 }
@@ -120,23 +168,99 @@ AutoSavesRemoving::AutoSavesRemoving(wxWindow* parent)
 void AutoSavesRemoving::ClearSelected(int id)
 {
 	wxString folder = (id == ID_REMOVE_SELECTED_AUTO_SAVES) ? L"\\Subs\\" :
-		(id == ID_REMOVE_SELECTED_INDICES) ? L"\\Indices\\" : L"\\Audio Cache\\";
+		(id == ID_REMOVE_SELECTED_INDICES) ? L"\\Indices\\" : L"\\AudioCache\\";
 
 	wxString path = Options.pathfull + folder;
+	wxString description = (id == ID_REMOVE_SELECTED_AUTO_SAVES) ?
+		_("Pliki napis√≥w (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*.txt") :
+		(id == ID_REMOVE_SELECTED_INDICES) ? _("Pliki indeks√≥w (*.ffindex)|*.ffindex") :
+		_("Pliki audio cache (*.w64)|*.w64");
+
+	wxFileDialog* FileDialog = new wxFileDialog(this, _("Wybierz plik i do usuniƒôcia"), path,
+		L"", description,
+		wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+
+	if (FileDialog->ShowModal() == wxID_OK) {
+		wxArrayString paths;
+		FileDialog->GetPaths(paths);
+		for (auto& path : paths) {
+			_wremove(path.wc_str());
+		}
+	}
+	FileDialog->Destroy();
 }
 
 void AutoSavesRemoving::ClearAll(int id)
 {
 	wxString folder = (id == ID_REMOVE_ALL_AUTO_SAVES) ? L"\\Subs\\" :
-		(id == ID_REMOVE_ALL_INDICES) ? L"\\Indices\\" : L"\\Audio Cache\\";
+		(id == ID_REMOVE_ALL_INDICES) ? L"\\Indices\\" : L"\\AudioCache\\";
 
 	wxString path = Options.pathfull + folder;
+	wxDir dir(path);
+	if (dir.IsOpened()) {
+		wxArrayString paths;
+		dir.GetAllFiles(path, &paths);
+		for (auto& path : paths) {
+			_wremove(path.wc_str());
+		}
+		return;
+	}
+	KaiLog(_("Nie mo≈ºna otworzyƒá folderu plik√≥w tymczasowych"));
 }
 
 void AutoSavesRemoving::ClearByDate(int id)
 {
 	wxString folder = (id == ID_REMOVE_AUTO_SAVES_BY_DATE) ? L"\\Subs\\" :
-		(id == ID_REMOVE_INDICES_BY_DATE) ? L"\\Indices\\" : L"\\Audio Cache\\";
+		(id == ID_REMOVE_INDICES_BY_DATE) ? L"\\Indices\\" : L"\\AudioCache\\";
 
 	wxString path = Options.pathfull + folder;
+	wxString findPath = path + L"*";
+
+	TIME_ZONE_INFORMATION timeZoneInfo;
+	GetTimeZoneInformation(&timeZoneInfo);
+
+	SYSTEMTIME chosenTime;
+
+	chosenTime.wMonth = month->GetSelection() + 1;
+	chosenTime.wDay = day->GetSelection() + 1;
+	chosenTime.wYear = wxAtoi(year->GetString(year->GetSelection()));
+	chosenTime.wHour = 14;
+	chosenTime.wMinute = 11;
+	chosenTime.wSecond = 11;
+	wxArrayString paths;
+
+	WIN32_FIND_DATAW data;
+	HANDLE h = FindFirstFileW(findPath.wc_str(), &data);
+	if (h == INVALID_HANDLE_VALUE)
+	{
+		KaiLog(_("Nie mo≈ºna otworzyƒá folderu plik√≥w tymczasowych"));
+		return;
+	}
+
+	while (1) {
+		int result = FindNextFile(h, &data);
+		if (result == ERROR_NO_MORE_FILES || result == 0) { break; }
+		else if (data.nFileSizeLow == 0) { continue; }
+		SYSTEMTIME accessSystemTime;
+		SYSTEMTIME accessSystemUniversalTime;
+		FileTimeToSystemTime(&data.ftLastWriteTime, &accessSystemUniversalTime);
+		BOOL succeeded = SystemTimeToTzSpecificLocalTime(&timeZoneInfo, &accessSystemUniversalTime, &accessSystemTime);
+		if (accessSystemTime.wYear > chosenTime.wYear)
+			continue;
+
+		if (accessSystemTime.wMonth > chosenTime.wMonth && accessSystemTime.wYear == chosenTime.wYear)
+			continue;
+
+		if (accessSystemTime.wDay >= chosenTime.wDay && accessSystemTime.wYear == chosenTime.wYear && 
+			accessSystemTime.wMonth == chosenTime.wMonth)
+			continue;
+		
+		paths.Add(path + data.cFileName);
+	}
+
+	FindClose(h);
+
+	for (auto& path : paths) {
+		_wremove(path.wc_str());
+	}
 }

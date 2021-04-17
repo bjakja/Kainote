@@ -1471,22 +1471,37 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 	}
 	FindClose(h);
 }
-
+//first < second
 bool Notebook::CheckDate(SYSTEMTIME* firstDate, SYSTEMTIME* secondDate)
 {
-	if (firstDate->wYear <= secondDate->wYear) {
-		if (firstDate->wMonth <= secondDate->wMonth) {
-			if (firstDate->wDay <= secondDate->wDay) {
-				if (firstDate->wHour <= secondDate->wHour) {
-					if (firstDate->wMinute <= secondDate->wMinute) {
-						if (firstDate->wSecond < secondDate->wSecond) {
-							return true;
-						}
-					}
-				}
-			}
-		}
-	}
+	if (firstDate->wYear < secondDate->wYear) 
+		return true;
+	else if(firstDate->wYear > secondDate->wYear)
+		return false;
+
+	if (firstDate->wMonth < secondDate->wMonth)
+		return true;
+	else if(firstDate->wMonth > secondDate->wMonth)
+		return false;
+
+	if (firstDate->wDay < secondDate->wDay)
+		return true;
+	else if (firstDate->wDay > secondDate->wDay)
+		return false;
+
+	if (firstDate->wHour < secondDate->wHour)
+		return true;
+	else if (firstDate->wHour > secondDate->wHour)
+		return false;
+
+	if (firstDate->wMinute < secondDate->wMinute)
+		return true;
+	else if (firstDate->wMinute < secondDate->wMinute)
+		return false;
+
+	if (firstDate->wSecond < secondDate->wSecond) 
+		return true;
+	
 	return false;
 }
 
