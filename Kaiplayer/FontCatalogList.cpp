@@ -138,7 +138,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		wxString ctlg = catalog->GetValue();
 		int ctlgIndex = catalog->FindString(ctlg);
 		if (!ctlg.empty() && ctlgIndex != -1) {
-			if (KaiMessageBox(_("Czy na pewno chcesz usunąć ten katalog"), _("Pytanie"), wxYES_NO, this) == wxYES) {
+			if (KaiMessageBox(_("Czy na pewno chcesz usunąć ten katalog?"), _("Pytanie"), wxYES_NO, this) == wxYES) {
 				FCManagement.RemoveCatalog(ctlg);
 				catalog->Delete(ctlgIndex);
 				CatalogList::RefreshCatalogList();
@@ -597,7 +597,7 @@ void FontCatalogManagement::LoadCatalogs(const wxString& external)
 					}
 					else
 					{
-						KaiLog(wxString::Format(_("Nie można dodać czcionki %s"), token));
+						KaiLog(wxString::Format(_("Nie można dodać czcionki %s."), token));
 					}
 				}
 				continue;

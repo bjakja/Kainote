@@ -932,7 +932,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			wxString path = saveFileDialog.GetPath();
 			DWORD attributes = ::GetFileAttributesW(path.wc_str());
 			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku"), _("Uwaga"), 4L, this);
+				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
 				goto repeatOpening;
 			}
 
@@ -948,7 +948,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	else{
 		DWORD attributes = ::GetFileAttributesW(atab->SubsPath.wc_str());
 		if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY){
-			KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku"), _("Uwaga"), 4L, this);
+			KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
 			goto repeatOpening;
 		}
 	}
@@ -1987,14 +1987,15 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 							MenuItem *citem = conversionMenu->FindItemByPosition(k);
 							if (citem) {
 								int cid = citem->GetId();
-								if (enable) {
-									if (cid == GLOBAL_CONVERT_TO_ASS) { enable = form > ASS; }//conversion to ASS
-									else if (cid == GLOBAL_CONVERT_TO_SRT) { enable = form != SRT; }//conversion to SRT
-									else if (cid == GLOBAL_CONVERT_TO_MDVD) { enable = form != MDVD; }//conversion to MDVD
-									else if (cid == GLOBAL_CONVERT_TO_MPL2) { enable = form != MPL2; }//conversion to MPL2
-									else if (cid == GLOBAL_CONVERT_TO_TMP) { enable = form != TMP; }//conversion to TMP
+								bool tempEnable = enable;
+								if (tempEnable) {
+									if (cid == GLOBAL_CONVERT_TO_ASS) { tempEnable = form > ASS; }//conversion to ASS
+									else if (cid == GLOBAL_CONVERT_TO_SRT) { tempEnable = form != SRT; }//conversion to SRT
+									else if (cid == GLOBAL_CONVERT_TO_MDVD) { tempEnable = form != MDVD; }//conversion to MDVD
+									else if (cid == GLOBAL_CONVERT_TO_MPL2) { tempEnable = form != MPL2; }//conversion to MPL2
+									else if (cid == GLOBAL_CONVERT_TO_TMP) { tempEnable = form != TMP; }//conversion to TMP
 								}
-								citem->Enable(enable);
+								citem->Enable(tempEnable);
 							}
 						}
 					}

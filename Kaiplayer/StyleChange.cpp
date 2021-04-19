@@ -84,7 +84,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	CatalogAdd = new MappedButton(this, ID_CATALOG_ADD, _("Dodaj"));
 	CatalogAdd->SetToolTip(_("Dodaje czcionki do wcześniej utworzonego katalogu"));
 	CatalogManage = new MappedButton(this, ID_CATALOG_MANAGE, _("Zarządzaj"));
-	CatalogManage->SetToolTip(_("Umorzliwia zarządzanie katalogami stylów"));
+	CatalogManage->SetToolTip(_("Umorzliwia zarządzanie katalogami czcionek"));
 	Filter = new ToggleButton(this, ID_FILTER, _("Filtruj"));
 	Filter->SetToolTip(_("Filtruje czcionki, by zawierały wpisane znaki"));
 	Filter->SetValue(fontFilterOn);

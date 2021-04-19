@@ -289,7 +289,7 @@ bool kainoteApp::OnInit()
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
 		bool loadSession = (session == 2) || Options.HasCrashed();
 		if (session == 1){
-			if (KaiMessageBox(_("Wczytać poprzednią sesję"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
+			if (KaiMessageBox(_("Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
 			}
 		}
