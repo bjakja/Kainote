@@ -66,6 +66,7 @@
     <ClInclude Include="..\LuaJitBuild\x64\Release\lj_recdef.h" />
     <ClInclude Include="..\LuaJitBuild\x64\Release\lj_ffdef.h" />
     <ClInclude Include="..\LuaJitBuild\x64\Release\lj_folddef.h" />
+    <ClInclude Include="..\..\LuaJIT\src\lj_buf.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LuaJIT\src\jit\bc.lua" />

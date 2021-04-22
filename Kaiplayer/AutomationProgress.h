@@ -108,6 +108,8 @@ class LuaProgressSink : public wxEvtHandler{
 		LuaProgressDialog *lpd;
 		void Destroy();
 		wxString Log;
+		int lastProgress = -1;
+		int lastTaskTime = 0;
 	};
 
 	

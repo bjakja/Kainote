@@ -390,7 +390,7 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 				pos = (stylewrap == 1) ? ((windowWidth - widthCount) / 2) : (stylewrap == 2) ? (windowWidth - widthCount) - 5 : 5;
 				positioning.push_back(pos);
 				wraps.push_back((i < 1)? i : i - 1);
-				if(i < textLen - 1)
+				if(i < textLen - 1 && i > 0)
 					i--;
 			}
 			widthCount = 0;

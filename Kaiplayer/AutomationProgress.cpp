@@ -53,6 +53,7 @@ namespace Auto{
 	{
 		ps = this;
 		_parent = parent;
+		
 		// Init trace level
 		trace_level = Options.GetInt(AUTOMATION_TRACE_LEVEL);
 
@@ -163,15 +164,22 @@ namespace Auto{
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
 		int progress = lua_tonumber(L, 1);
-		ps->SafeQueue(EVT_PROGRESS, progress);
+		if (ps->lastProgress < progress) {
+			ps->SafeQueue(EVT_PROGRESS, progress);
+		}
+		ps->lastProgress = progress;
 		return 0;
 	}
 
 	int LuaProgressSink::LuaSetTask(lua_State *L)
 	{
 		//LuaProgressSink *ps = GetObjPointer(L, lua_upvalueindex(1));
-		wxString task(lua_tostring(L, 1), wxConvUTF8);
-		ps->SafeQueue(EVT_TASK, task);
+		int newTime = timeGetTime();
+		if (ps->lastTaskTime + 5 < newTime) {
+			wxString task(lua_tostring(L, 1), wxConvUTF8);
+			ps->SafeQueue(EVT_TASK, task);
+			ps->lastTaskTime = newTime;
+		}
 		return 0;
 	}
 

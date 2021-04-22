@@ -27,7 +27,11 @@ RendererDummyVideo::~RendererDummyVideo()
 
 bool RendererDummyVideo::OpenFile(const wxString& fname, int subsFlag, bool vobsub, bool changeAudio)
 {
-	return false;
+	if(!ParseDummyData(fname))
+		return false;
+
+
+	return true;
 }
 
 bool RendererDummyVideo::OpenSubs(int flag, bool redraw, wxString* text, bool resetParameters)
@@ -168,4 +172,20 @@ bool RendererDummyVideo::ParseDummyData(const wxString& data)
 	if (!strfps.ToCDouble(&dfps))
 		return false;
 	FPS = dfps;
+	int dur = wxAtoi(strduration);
+	if (dur < 1)
+		return false;
+
+	duration = dur;
+	int width = wxAtoi(strwidth);
+	int height = wxAtoi(strheight);
+	if (!width || !height)
+		return false;
+
+	m_Width = width;
+	m_Height = height;
+
+	frameColor = wxColour(wxAtoi(strcolorr), wxAtoi(strcolorg), wxAtoi(strcolorb));
+	if (strpattern == L"c")
+		pattern = true;
 }

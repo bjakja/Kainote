@@ -437,6 +437,9 @@
     <ClCompile Include="AutoSavesRemoving.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="RendererDummyVideo.cpp">
+      <Filter>Source Files\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -807,6 +810,9 @@
     </ClInclude>
     <ClInclude Include="AutoSavesRemoving.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererDummyVideo.h">
+      <Filter>Source Files\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

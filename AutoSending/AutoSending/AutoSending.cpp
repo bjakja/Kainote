@@ -109,6 +109,7 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Automation\\automation\\Include\\clipboard.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\DM\\DownloadManager.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\DM\\DownloadManager\\DownloadManager.dll\0");
+	filenames.push_back(L"\\Automation\\automation\\Include\\effector-auto4.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\json.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\json\\decode.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\json\\decode\\composite.lua\0");
