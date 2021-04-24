@@ -61,6 +61,5 @@ public:
 	bool ParseDummyData(const wxString& data);
 	size_t duration = 0;
 	wxColour frameColor;
-	float FPS = 0;
 	bool pattern = false;
 };

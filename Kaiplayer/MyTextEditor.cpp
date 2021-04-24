@@ -1390,7 +1390,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 			if (ch == L'"'){
 				if (templateString){
-					measureText << ch;
+					parttext << ch;
 					gc->GetTextExtent(measureText, &fw, &fh);
 					gc->SetFont(font, ctstrings);
 					gc->DrawTextU(parttext, fw + posX, posY);

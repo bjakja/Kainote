@@ -4597,7 +4597,11 @@ void wxD2DContext::EnsureInitialized()
 {
 	if (!m_renderTargetHolder->IsResourceAcquired())
 	{
-		m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+		//loop it avoid to crash when target is null cause of context problem
+		while (!m_cachedRenderTarget) {
+			m_cachedRenderTarget = m_renderTargetHolder->GetD2DResource();
+			Sleep(10);
+		}
 		GetRenderTarget()->GetTransform(&m_initTransform);
 		GetRenderTarget()->BeginDraw();
 	}

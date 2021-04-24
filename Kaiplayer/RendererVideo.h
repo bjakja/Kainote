@@ -76,6 +76,7 @@ class RendererVideo
 {
 	friend class RendererDirectShow;
 	friend class RendererFFMS2;
+	friend class RendererDummyVideo;
 	friend class VideoCtrl;
 public:
 	RendererVideo(VideoCtrl *control, bool visualDisabled);

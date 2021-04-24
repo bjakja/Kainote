@@ -32,6 +32,7 @@ class VideoCtrl : public wxWindow
 {
 	friend class RendererVideo;
 	friend class RendererDirectShow;
+	friend class RendererDummyVideo;
 	friend class RendererFFMS2;
 public:
 

@@ -14,6 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RendererDummyVideo.h"
+#include "DshowRenderer.h"
+#include "Videobox.h"
+#include "AudioBox.h"
+#include "TabPanel.h"
 #include <wx/tokenzr.h>
 
 RendererDummyVideo::RendererDummyVideo(VideoCtrl* control, bool visualDisabled)
@@ -27,16 +31,98 @@ RendererDummyVideo::~RendererDummyVideo()
 
 bool RendererDummyVideo::OpenFile(const wxString& fname, int subsFlag, bool vobsub, bool changeAudio)
 {
-	if(!ParseDummyData(fname))
+	wxMutexLocker lock(m_MutexOpen);
+	if (m_State == Playing) { videoControl->Stop(); }
+
+	if (m_State != None) {
+		m_VideoResized = videoControl->m_FullScreenProgressBar = false;
+		m_State = None;
+		Clear();
+	}
+
+	if (!ParseDummyData(fname))
+		return false;
+	if (m_Width < 1 || m_Height < 1)
 		return false;
 
+	m_Time = 0;
+	m_Frame = 0;
 
+	m_D3DFormat = D3DFMT_X8R8G8B8;
+	m_Format = RGB32;
+	int arwidth = m_Width;
+	int arheight = m_Height;
+	while (1) {
+		bool divided = false;
+		for (int i = 10; i > 1; i--) {
+			if ((arwidth % i) == 0 && (arheight % i) == 0) {
+				arwidth /= i; arheight /= i;
+				divided = true;
+				break;
+			}
+		}
+		if (!divided) { break; }
+	}
+	videoControl->m_AspectRatioX = arwidth;
+	videoControl->m_AspectRatioY = arheight;
+	if (m_Width % 2 != 0) { m_Width++; }
+	m_Pitch = m_Width * 4;
+
+	diff = 0;
+	m_FrameDuration = (1000.0f / videoControl->m_FPS);
+	if (videoControl->m_AspectRatioY == 0 || videoControl->m_AspectRatioX == 0) { videoControl->m_AspectRatio = 0.0f; }
+	else { videoControl->m_AspectRatio = (float)videoControl->m_AspectRatioY / (float)videoControl->m_AspectRatioX; }
+
+	m_MainStreamRect.bottom = m_Height;
+	m_MainStreamRect.right = m_Width;
+	m_MainStreamRect.left = 0;
+	m_MainStreamRect.top = 0;
+	if (m_FrameBuffer) { delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	m_FrameBuffer = new byte[m_Height * m_Pitch];
+	if (pattern) {
+
+	}
+	else {
+		byte* buff = m_FrameBuffer;
+		int r = frameColor.Red();
+		int g = frameColor.Green();
+		int b = frameColor.Blue();
+		for (int i = 0; i < m_Height; i++) {
+			for (int k = 0; k < m_Width; k++) {
+				*buff++ = 0;
+				*buff++ = b;
+				*buff++ = g;
+				*buff++ = r;
+			}
+		}
+	}
+
+	UpdateRects();
+
+	if (!InitDX()) {
+		return false;
+	}
+
+	m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), RGB32, false);
+
+	OpenSubs(subsFlag, false);
+
+	m_State = Stopped;
+
+	if (m_Visual) {
+		m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
+			m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
+	}
 	return true;
 }
 
 bool RendererDummyVideo::OpenSubs(int flag, bool redraw, wxString* text, bool resetParameters)
 {
-	return false;
+	wxCriticalSectionLocker lock(m_MutexRendering);
+	if (resetParameters)
+		m_SubsProvider->SetVideoParameters(wxSize(m_Width, m_Height), m_Format, m_SwapFrame);
+
+	return m_SubsProvider->Open(tab, flag, text);
 }
 
 bool RendererDummyVideo::Play(int end)
@@ -56,10 +142,45 @@ bool RendererDummyVideo::Stop()
 
 void RendererDummyVideo::SetPosition(int _time, bool starttime, bool corect, bool async)
 {
-}
+	bool playing = m_State == Playing;
+	m_Time = MID(0, _time, GetDuration());
+	if (corect) {
+		m_Time /= m_FrameDuration;
+		if (starttime) { m_Time++; }
+		m_Time *= m_FrameDuration;
+	}
+	m_Frame = m_Time / m_FrameDuration;
+	m_LastTime = timeGetTime() - m_Time;
+	m_PlayEndTime = GetDuration();
 
-void RendererDummyVideo::SetFFMS2Position(int time, bool starttime)
-{
+	if (m_HasVisualEdition) {
+		//block removing or changing visual from main thread
+		wxMutexLocker lock(m_MutexVisualChange);
+		SAFE_DELETE(m_Visual->dummytext);
+		/*if (m_Visual->Visual == VECTORCLIP){
+			m_Visual->SetClip(m_Visual->GetVisual(), true, false, false);
+		}
+		else{*/
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+		if (playing) { m_HasVisualEdition = false; }
+		//}
+	}
+	else if (m_HasDummySubs) {
+		OpenSubs((playing) ? OPEN_WHOLE_SUBTITLES : OPEN_DUMMY, true);
+	}
+	if (playing) {
+		if (m_AudioPlayer) {
+			m_AudioPlayer->player->SetCurrentPosition(m_AudioPlayer->GetSampleAtMS(m_Time));
+		}
+	}
+	else {
+		//rebuild spectrum cause position can be changed
+		//and it causes random bugs
+		if (m_AudioPlayer) { m_AudioPlayer->UpdateImage(false, true); }
+
+		videoControl->RefreshTime();
+		Render();
+	}
 }
 
 void RendererDummyVideo::GoToNextKeyframe()
@@ -96,24 +217,42 @@ int RendererDummyVideo::GetPlayEndTime(int time)
 
 int RendererDummyVideo::GetDuration()
 {
-	return 0;
+	return duration;
 }
 
 int RendererDummyVideo::GetVolume()
 {
-	return 0;
+	if (m_State == None || !m_AudioPlayer) { return 0; }
+	double dvol = m_AudioPlayer->player->GetVolume();
+	dvol = sqrt(dvol);
+	dvol *= 8100.0;
+	dvol -= 8100.0;
+	return dvol;
 }
 
 void RendererDummyVideo::GetVideoSize(int* width, int* height)
 {
+	*width = m_Width;
+	*height = m_Height;
 }
 
 void RendererDummyVideo::GetFpsnRatio(float* fps, long* arx, long* ary)
 {
+	*fps = videoControl->m_FPS;
+	*arx = videoControl->m_AspectRatioX;
+	*ary = videoControl->m_AspectRatioY;
 }
 
 void RendererDummyVideo::SetVolume(int vol)
 {
+	if (m_State == None || !m_AudioPlayer) { return; }
+
+	vol = 7600 + vol;
+	double dvol = vol / 7600.0;
+	int sliderValue = (dvol * 99) + 1;
+	if (tab->Edit->ABox) {
+		tab->Edit->ABox->SetVolume(sliderValue);
+	}
 }
 
 bool RendererDummyVideo::DrawTexture(byte* nframe, bool copy)
@@ -171,7 +310,7 @@ bool RendererDummyVideo::ParseDummyData(const wxString& data)
 	double dfps = 0;
 	if (!strfps.ToCDouble(&dfps))
 		return false;
-	FPS = dfps;
+	videoControl->m_FPS = dfps;
 	int dur = wxAtoi(strduration);
 	if (dur < 1)
 		return false;

@@ -105,6 +105,7 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	wxSize size;
 	CalcPosAndSize(parent, &npos, &size, clientPos);
 	if (center){ npos.x -= (size.x / 2); }
+	showMnemonics = true;
 
 	dialog = new MenuDialog(this, parent, npos, size, false);
 	int ret = dialog->ShowPartialModal();
@@ -1079,6 +1080,11 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 	}
 
 	if (wParam == VK_MENU && !(lParam & 1073741824)){//536870912 1073741824 lparam mówi nam o altup, który ma specjalny bajt 
+		//close menu after alt up
+		if (Menubar->md) {
+			Menubar->md->HideMenu();
+			return 1;
+		}
 		byte state[256];
 		if (GetKeyboardState(state) == FALSE){ return 0; }
 		if (!(state[VK_LMENU]>1 && state[VK_LSHIFT] < 2 && state[VK_RSHIFT] < 2 && state[VK_LCONTROL] < 2 && state[VK_RCONTROL] < 2)){ return 0; }
@@ -1111,7 +1117,10 @@ LRESULT CALLBACK MenuBar::OnKey(int code, WPARAM wParam, LPARAM lParam){
 			if (foundmnemonics != mn.end()){
 				byte state[256];
 				if (GetKeyboardState(state) == FALSE){ return 0; }
-				if (!(state[VK_LMENU] > 1 && state[VK_LSHIFT] < 2 && state[VK_RSHIFT] < 2 && state[VK_LCONTROL] < 2 && state[VK_RCONTROL] < 2)){ return 0; }
+				// when menu open with alt - ... then you can release alt and type only corresponting key
+				if (!(/*state[VK_LMENU] > 1 && */state[VK_LSHIFT] < 2 && state[VK_RSHIFT] < 2 && state[VK_LCONTROL] < 2 && state[VK_RCONTROL] < 2)){ 
+					return 0; 
+				}
 				if (Menubar->md){
 					if (Menubar->md->items[foundmnemonics->second]->submenu){
 						Menubar->md->dialog->sel = Menubar->md->dialog->submenuShown = foundmnemonics->second;

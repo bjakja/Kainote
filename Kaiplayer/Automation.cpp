@@ -250,7 +250,14 @@ namespace Auto{
 
 		wxString text(lua_tostring(L, 2), wxConvUTF8);
 
-		//if(text==""){return 0;}
+		if(text==""){
+			SAFE_DELETE(e);
+			lua_pushnumber(L, 0);
+			lua_pushnumber(L, 0);
+			lua_pushnumber(L, 0);
+			lua_pushnumber(L, 0);
+			return 4;
+		}
 
 		double width = 0, height = 0, descent = 0, extlead = 0;
 		double fontsize = st->GetFontSizeDouble() * 32;
@@ -260,7 +267,7 @@ namespace Auto{
 		size_t thetextlen = text.length();
 		const TCHAR* thetext = text.wc_str();
 
-		if (thetextlen) {
+		//if (thetextlen) {
 
 			HDC thedc = CreateCompatibleDC(0);
 			if (!thedc) return false;
@@ -306,7 +313,7 @@ namespace Auto{
 
 			DeleteObject(thedc);
 			DeleteObject(thefont);
-		}
+		//}
 		width = (wxAtoi(st->ScaleX) / 100.0) * (width / 32);
 		height = (wxAtoi(st->ScaleY) / 100.0) * (height / 32);
 		descent = (wxAtoi(st->ScaleY) / 100.0) * (descent / 32);
