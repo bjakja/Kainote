@@ -245,21 +245,23 @@ inline void SpellChecker::Check(std::wstring &checkText, TextData *errs, std::ve
 				if (!CheckWord(&word)) {
 					size_t start = textOffset[counter1];
 					size_t end = textOffset[counter1 + wordLen - 1];
-					if (end - start > wordLen) {
-						size_t j = start, k = start, m = start;
+					//when used repltags then colorize these tags aswell 
+					//to avoid unneded conversion
+					if (end - start > wordLen && !repltags) {
+						size_t j = start, k = start/*, m = start*/;
 						while (j <= end) {
 							const wxUniChar & chr = text[j];
 							if (chr == L'{' || j >= end) {
-								errs->Add(repltags ? m : k);
+								errs->Add(/*repltags ? m : */k);
 								errs->Add(j >= end ? j : j - 1);
 
 								if (misspells)
 									misspells->push_back(MisspellData(word, start, end));
-								m = j - 1;
+								//m = j - 1;
 							}
 							else if (chr == L'}') {
 								k = j + 1;
-								m += replaceTagsLen;
+								//m += replaceTagsLen;
 							}
 
 							j++;

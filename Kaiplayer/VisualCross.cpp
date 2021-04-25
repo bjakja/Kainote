@@ -42,7 +42,7 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 			RendererVideo *renderer = tab->Video->GetRenderer();
 			tab->Video->SetCursor(wxCURSOR_ARROW); 
 				
-			if (tab->Video->GetState() == Paused && !renderer->m_BlockResize){ 
+			if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){ 
 				tab->Video->Render(false); 
 			}
 		}
@@ -144,7 +144,7 @@ void Cross::DrawLines(wxPoint point)
 	if (!renderer)
 		return;
 
-	wxMutexLocker lock(m_MutexCrossLines);
+	//wxMutexLocker lock(m_MutexCrossLines);
 	
 	if (point.y < renderer->m_BackBufferRect.top || point.x < renderer->m_BackBufferRect.left ||
 		point.y > renderer->m_BackBufferRect.bottom || point.x > renderer->m_BackBufferRect.right) {

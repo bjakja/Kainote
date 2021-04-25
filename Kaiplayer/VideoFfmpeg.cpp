@@ -33,7 +33,6 @@
 VideoFfmpeg::VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *_success)
 	: rend(renderer)
 	, eventStartPlayback(CreateEvent(0, FALSE, FALSE, 0))
-	, eventRefresh(CreateEvent(0, FALSE, FALSE, 0))
 	, eventSetPosition(CreateEvent(0, FALSE, FALSE, 0))
 	, eventKillSelf(CreateEvent(0, FALSE, FALSE, 0))
 	, eventComplete(CreateEvent(0, FALSE, FALSE, 0))
@@ -48,7 +47,7 @@ VideoFfmpeg::VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWi
 	, lastframe(-1)
 	, width(-1)
 	, index(NULL)
-	, isBusy(false)
+	//, isBusy(false)
 {
 	if (!Options.AudioOpts && !Options.LoadAudioOpts()){ KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); }
 	disccache = !Options.GetBool(AUDIO_RAM_CACHE);
@@ -87,7 +86,6 @@ void VideoFfmpeg::Processing()
 {
 	HANDLE events_to_wait[] = {
 		eventStartPlayback,
-		eventRefresh,
 		eventSetPosition,
 		eventKillSelf
 	};
@@ -109,7 +107,6 @@ void VideoFfmpeg::Processing()
 		{
 			byte *buff = (byte*)rend->m_FrameBuffer;
 			int acttime;
-			//isBusy = false;
 			while (1){
 
 				if (rend->m_Frame != lastframe){
@@ -142,7 +139,7 @@ void VideoFfmpeg::Processing()
 				tdiff = rend->m_Time - acttime;
 
 				if (tdiff > 0){ Sleep(tdiff); }
-				else{
+				else if(tdiff < -20){
 					while (1){
 						int frameTime = Timecodes[rend->m_Frame];
 						if (frameTime >= acttime || frameTime >= rend->m_PlayEndTime || rend->m_Frame >= NumFrames){
@@ -162,23 +159,6 @@ void VideoFfmpeg::Processing()
 			}
 		}
 		else if (wait_result == WAIT_OBJECT_0 + 1){
-			byte *buff = (byte*)rend->m_FrameBuffer;
-			if (rend->m_Frame != lastframe){
-				GetFFMSFrame();
-				lastframe = rend->m_Frame;
-			}
-			if (!fframe){
-				isBusy = false; 
-				continue;
-			}
-			memcpy(&buff[0], fframe->Data[0], fplane);
-
-			rend->DrawTexture(buff);
-			rend->Render(false);
-
-			isBusy = false;
-		}
-		else if (wait_result == WAIT_OBJECT_0 + 2){
 			//entire seeking have to be in this thread or subtitles will out of sync
 			rend->SetFFMS2Position(changedTime, isStartTime);
 		}
@@ -518,7 +498,6 @@ VideoFfmpeg::~VideoFfmpeg()
 		WaitForSingleObject(thread, 20000);
 		CloseHandle(thread);
 		CloseHandle(eventStartPlayback);
-		CloseHandle(eventRefresh);
 		CloseHandle(eventKillSelf);
 	}
 
@@ -944,21 +923,6 @@ void VideoFfmpeg::DeleteOldAudioCache()
 		count++;
 	}
 
-}
-
-void VideoFfmpeg::Render(bool wait){
-	byte *buff = (byte*)rend->m_FrameBuffer;
-	if (rend->m_Frame != lastframe){
-		GetFFMSFrame();
-		lastframe = rend->m_Frame;
-	}
-	if (!fframe){
-		return;
-	}
-	memcpy(&buff[0], fframe->Data[0], fplane);
-	rend->DrawTexture(fframe->Data[0], true);
-	//it's not event thats why must be safe from start
-	rend->Render(false);
 }
 
 void VideoFfmpeg::GetFrameBuffer(byte **buffer)

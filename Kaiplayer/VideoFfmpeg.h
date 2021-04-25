@@ -31,7 +31,6 @@ class VideoFfmpeg
 public:
 	VideoFfmpeg(const wxString &filename, RendererVideo *renderer, wxWindow *progressSinkWindow, bool *success);
 	~VideoFfmpeg();
-	void Render(bool wait=true);
 	void GetFrameBuffer(byte **buffer);
 	void Play();
 	void GetFrame(int frame, byte* buff);
@@ -76,7 +75,7 @@ public:
 	volatile bool success;
 	volatile bool audioNotInitialized = true;
 	volatile bool lockGetFrame = true;
-	volatile bool isBusy;
+	//volatile bool isBusy;
 	volatile float audioProgress = 0;
 	int width;
 	int height;
@@ -97,7 +96,6 @@ public:
 	int64_t NumSamples;
 	HANDLE thread;
 	HANDLE eventStartPlayback,
-		eventRefresh,
 		eventSetPosition,
 		eventKillSelf,
 		eventComplete,

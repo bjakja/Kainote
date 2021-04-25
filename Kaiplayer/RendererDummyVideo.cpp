@@ -18,6 +18,7 @@
 #include "Videobox.h"
 #include "AudioBox.h"
 #include "TabPanel.h"
+#include "ColorSpace.h"
 #include <wx/tokenzr.h>
 
 RendererDummyVideo::RendererDummyVideo(VideoCtrl* control, bool visualDisabled)
@@ -79,20 +80,44 @@ bool RendererDummyVideo::OpenFile(const wxString& fname, int subsFlag, bool vobs
 	m_MainStreamRect.top = 0;
 	if (m_FrameBuffer) { delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
 	m_FrameBuffer = new byte[m_Height * m_Pitch];
+	byte r = frameColor.Red();
+	byte g = frameColor.Green();
+	byte b = frameColor.Blue();
+	byte* buff = m_FrameBuffer;
 	if (pattern) {
+		byte h = 0, s = 0, l = 0;
+		byte r1 = 0, g1 = 0, b1 = 0;
+		//I don't know if it's "b" swapped with "g" specially 
+		//but I leave it like that to looks exactly like in Aegisub
+		rgb_to_hsl(r, b, g, &h, &s, &l);
+		l += 24;
+		if (l < 24) l -= 48;
+		hsl_to_rgb(h, s, l, &r1, &b1, &g1);
+		bool ch = false;
+		bool ch1 = false;
+		for (int i = 0; i < m_Height; i++)
+		{
+			if ((i % 10) == 0) { ch1 = !ch1; }
+			ch = ch1;
+			for (int j = 0; j < m_Width; j++)
+			{
+				int k = ((i * m_Width) + j) * 4;
+				if ((j % 10) == 0 && j > 0) { ch = !ch; }
+				buff[k] = (ch) ? b : b1;
+				buff[k + 1] = (ch) ? g : g1;
+				buff[k + 2] = (ch) ? r : r1;
+				buff[k + 3] = 0xFF;
+			}
 
+		}
 	}
 	else {
-		byte* buff = m_FrameBuffer;
-		int r = frameColor.Red();
-		int g = frameColor.Green();
-		int b = frameColor.Blue();
 		for (int i = 0; i < m_Height; i++) {
 			for (int k = 0; k < m_Width; k++) {
-				*buff++ = 0;
 				*buff++ = b;
 				*buff++ = g;
 				*buff++ = r;
+				*buff++ = 0xFF;
 			}
 		}
 	}
