@@ -2727,7 +2727,12 @@ const TextData &TextEditor::GetTextData() {
 		errors.Init2(MText, false, EB->GetFormat(), NULL);
 	}
 	return errors;
-};
+}
+bool TextEditor::HasRTLText()
+{
+	return isRTL || hasRTL;
+}
+;
 
 BEGIN_EVENT_TABLE(TextEditor, wxWindow)
 EVT_PAINT(TextEditor::OnPaint)

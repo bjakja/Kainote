@@ -49,6 +49,7 @@ public:
 	void SetState(int _state, bool refresh = false);
 	bool SetFont(const wxFont &font);
 	const TextData &GetTextData();
+	bool HasRTLText();
 	EditBox* EB;
 
 protected:

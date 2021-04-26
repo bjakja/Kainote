@@ -1300,6 +1300,64 @@ wxPoint EditBox::FindBrackets(const wxString & text, long from)
 	return wxPoint(startBrakcetPos, endBrakcetPos);
 }
 
+void EditBox::SwapRTLTextLines(wxString* text, int posOfSplit, const wxString& splitTag)
+{
+	size_t textStart = 0;
+	size_t textEnd = text->length() - 1;
+	size_t splitTagLen = splitTag.length();
+	if (posOfSplit < 1 || posOfSplit + splitTagLen >= textEnd)
+		return;
+
+	bool gotEnd = false;
+	if (posOfSplit > 0) {
+		for (size_t i = posOfSplit - 1; i + 1 > 0; i--) {
+			if ((*text)[i] == splitTag[0]) {
+				if (splitTagLen == 1) {
+					textStart = i + 1;
+					break;
+				}
+				else if (splitTagLen > 1 && (*text)[i + 1] == splitTag[1]) {
+					textStart = i + 2;
+					break;
+				}
+			}
+		}
+	}
+	if (posOfSplit + 2 <= textEnd) {
+		for (size_t i = posOfSplit + splitTagLen; i < text->length(); i++) {
+			if ((*text)[i] == splitTag[0]) {
+				if (splitTagLen == 1) {
+					textEnd = i - 1;
+					gotEnd = true;
+					break;
+				}
+				else if (splitTagLen > 1 && (*text)[i + 1] == splitTag[1]) {
+					textEnd = i - 1;
+					gotEnd = true;
+					break;
+				}
+			}
+		}
+	}
+	wxString result;
+	if (textStart != 0) {
+		result = text->Mid(0, textStart);
+	}
+	if (posOfSplit + splitTagLen - 1 < text->length() - 1) {
+		size_t startpos = posOfSplit + splitTagLen;
+		result << text->Mid(startpos, textEnd - startpos + 1);
+	}
+	result << splitTag;
+	if (posOfSplit - 1 > 0) {
+		result << text->Mid(textStart, posOfSplit - textStart);
+	}
+	if (text->length() > textEnd + 1) {
+		result << text->Mid(textEnd + 1);
+	}
+
+	*text = result;
+}
+
 void EditBox::OnSize(wxSizeEvent& event)
 {
 	int w, h;
@@ -1414,7 +1472,12 @@ void EditBox::OnSplit(wxCommandEvent& event)
 	if (ennd < (int)txt.length() && txt[ennd] == L' '){ ennd++; }
 
 	if (strt != ennd){ txt.Remove(strt, ennd - strt); }
+	
 	txt.insert(strt, Splitchar);
+	if (tedit->HasRTLText()) {
+		SwapRTLTextLines(&txt, strt, Splitchar);
+	}
+	
 	tedit->SetTextS(txt, true);
 	long whre = strt + Splitchar.length();
 	tedit->SetSelection(whre, whre);

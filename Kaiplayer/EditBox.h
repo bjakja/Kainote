@@ -203,6 +203,7 @@ private:
 	void SetTagButtons();
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);
+	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
 
 	bool isdetached;
 	bool hasPreviewGrid = false;
