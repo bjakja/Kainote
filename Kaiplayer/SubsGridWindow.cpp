@@ -155,7 +155,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 	
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateContext(tdc);
+	GraphicsContext* gc = renderer? renderer->CreateContext(tdc) : NULL;
 	if (gc)
 		PaintD2D(gc, w, h, size, scrows, previewpos, previewsize, bg);
 	else
@@ -230,6 +230,8 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 			bool comparison = false;
 			bool isSelected = false;
 			strings.clear();
+			wxString convertedText;
+			bool isRTL = false;
 			
 			if (isHeadline){
 				strings.push_back(L"#");
@@ -298,11 +300,16 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				wxString txt = Dial->Text;
 				wxString txttl = Dial->TextTl;
 				bool isTl = (hasTLMode && txttl != L"");
+				wxString& checkingText = (isTl) ? txttl : txt;
+				if (CheckRTL(&checkingText)) {
+					ConvertToRTLChars(&checkingText, &convertedText);
+					isRTL = true;
+				}
 				if (!isComment) {
 					//here are generated misspells table, chars table, and wraps;
 					//on original do not use spellchecking only calculating wraps and cps;
 					bool originalInTLMode = hasTLMode && txttl == L"";
-					Misspells.Init((isTl) ? txttl : txt, SpellCheckerOn && !originalInTLMode, 
+					Misspells.Init(isRTL ? convertedText : checkingText, SpellCheckerOn && !originalInTLMode,
 						subsFormat, hideOverrideTags ? chtagLen : -1);
 				}
 				if (!isComment && subsFormat != TMP && !(CPS & visibleColumns)) {
@@ -414,17 +421,17 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (unknownStyle && j == 4 ||
 					shorttime && (j == 10 || (j == 3 && subsFormat != ASS && subsFormat != TMP)) ||
 					badWraps && (j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP && subsFormat != ASS))) {
-					gc->SetBrush(wxBrush(SpelcheckerCol));
+					tdc.SetBrush(wxBrush(SpelcheckerCol));
 				}
 
 				tdc.DrawRectangle(posX, posY, GridWidth[j], GridHeight);
 
 				if (!isHeadline && j == ilcol - 1){
-					SpellErrors[key].DrawMisspells(strings[j], wxPoint(posX, posY), this, &tdc, SpelcheckerCol, GridHeight, font);
+					wxString& text = (isRTL) ? convertedText : strings[j];
+					SpellErrors[key].DrawMisspells(text, wxPoint(posX, posY), this, &tdc, SpelcheckerCol, GridHeight, font);
 
 					if (comparison){
 						tdc.SetTextForeground(ComparisonCol);
-						const wxString & text = strings[j];
 						for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
 							wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);
 
@@ -1109,7 +1116,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 void SubsGridWindow::AdjustWidths(int cell)
 {
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = renderer->CreateMeasuringContext();
+	GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
 	if (gc){
 		gc->SetFont(font, L"#FFFFFF");
 		AdjustWidthsD2D(gc, cell);

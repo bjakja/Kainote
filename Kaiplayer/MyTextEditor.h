@@ -80,7 +80,7 @@ protected:
 	void MakeCursorVisible();
 	bool CheckIfKeyword(const wxString &word);
 	void SeekSelected(const wxString &word);
-	void DrawWordRectangles(int type, wxDC &dc, int h);
+	void DrawWordRectangles(int type, wxDC &dc, int h, int posX);
 	void DrawWordRectangles(int type, GraphicsContext *gc, int h, int posX);
 	bool GetNumberFromCursor(int cursorPos, wxPoint &numberPos, float &number, float &step);
 	void PutTag();

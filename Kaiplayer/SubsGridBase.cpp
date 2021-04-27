@@ -681,18 +681,20 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 			if (PostprocessorOptions & 1) {
 				dialc->Start.Change(-LeadIn);
-				if (dialc->Start < it->first->End && cur != tmpmap.begin()) {
+				//no need to correct
+				/*if (dialc->Start < it->first->End && cur != tmpmap.begin()) {
 					dialc->Start = it->first->End;
 				}
-				if (oldStart != dialc->Start.mstime)
+				if (oldStart != dialc->Start.mstime)*/
 					numOfStartModifications++;
 			}
 			if (PostprocessorOptions & 2) {
 				dialc->End.Change(LeadOut);
-				if (dialc->End > itplus->first->Start) {
+				//no need to correct
+				/*if (dialc->End > itplus->first->Start) {
 					dialc->End = itplus->first->Start;
 				}
-				if (oldEnd != dialc->End.mstime)
+				if (oldEnd != dialc->End.mstime)*/
 					numOfEndModifications++;
 			}
 

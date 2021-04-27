@@ -440,6 +440,9 @@
     <ClCompile Include="RendererDummyVideo.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
+    <ClCompile Include="AudioDeviceEnumeration.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -813,6 +816,9 @@
     </ClInclude>
     <ClInclude Include="RendererDummyVideo.h">
       <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDeviceEnumeration.h">
+      <Filter>Source Files\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

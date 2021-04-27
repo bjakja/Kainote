@@ -529,6 +529,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AudioBox.cpp" />
+    <ClCompile Include="AudioDeviceEnumeration.cpp" />
     <ClCompile Include="AudioDisplay.cpp" />
     <ClCompile Include="AudioPlayerDSound.cpp" />
     <ClCompile Include="AudioSpectrum.cpp" />
@@ -700,6 +701,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h" />
+    <ClInclude Include="AudioDeviceEnumeration.h" />
     <ClInclude Include="AudioDisplay.h" />
     <ClInclude Include="AudioPlayerDSound.h" />
     <ClInclude Include="AudioSpectrum.h" />
