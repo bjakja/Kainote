@@ -14,9 +14,12 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#define AUDIO_DEVICE_ENUMERATION 0
 
+#if AUDIO_DEVICE_ENUMERATION
 #include <wx/arrstr.h>
 #include <mmdeviceapi.h>
 
 bool EnumerateAudioDevices(wxArrayString* devices);
 bool GetGuid(const wxString& name, REFIID iid, DWORD dwClsCtx, void** ppInterface);
+#endif

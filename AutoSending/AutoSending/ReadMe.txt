@@ -25,4 +25,4 @@ AutoSending.cpp
     This is the main application source file.
 
 /////////////////////////////////////////////////////////////////////////////
-This application pack Kainote files and puting zip file in dropbox folder.
+This application pack Kainote files and puting zip file in synchronization folder of Google Drive.

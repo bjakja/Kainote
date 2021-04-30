@@ -163,7 +163,7 @@ private:
 	RECT crossRect;
 	wxString coords;
 	bool cross;
-	//wxMutex m_MutexCrossLines;
+	wxMutex m_MutexCrossLines;
 	float coeffX, coeffY;
 	int diffX = 0, diffY = 0;
 	bool isOnVideo = true;

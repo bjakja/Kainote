@@ -48,8 +48,6 @@
 
 #include "KainoteApp.h"
 #include "AudioPlayerDSound.h"
-//#include <chrono>
-#include "AudioDeviceEnumeration.h"
 
 
 struct COMInitialization {
@@ -197,12 +195,14 @@ void DirectSoundPlayer2Thread::Run()
 	COMInitialization COM_library;
 	try	{ COM_library.Init(); }
 	catch (std::exception e)
-		REPORT_ERROR("Could not initialise COM")
+		REPORT_ERROR("Could not initialise COM");
 
 
-		// Create DirectSound object
-		COMObjectRetainer<IDirectSound8> ds;
-	wxArrayString arr;
+	// Create DirectSound object
+	COMObjectRetainer<IDirectSound8> ds;
+	//code to get run direct show video with chosen audio device
+	//#include "AudioDeviceEnumeration.h"
+	/*wxArrayString arr;
 	EnumerateAudioDevices(&arr);
 	if (arr.GetCount() == 0) {
 		REPORT_ERROR("No audio devices");
@@ -213,9 +213,9 @@ void DirectSoundPlayer2Thread::Run()
 			if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
 				REPORT_ERROR("Cound not create DirectSound object");
 		}
-	}
-	//if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
-		//REPORT_ERROR("Cound not create DirectSound object")
+	}*/
+	if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
+		REPORT_ERROR("Cound not create DirectSound object")
 
 
 		// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)

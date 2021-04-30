@@ -144,7 +144,8 @@ void Cross::DrawLines(wxPoint point)
 	if (!renderer)
 		return;
 
-	//wxMutexLocker lock(m_MutexCrossLines);
+	//without this mutex it crash maybe only slowing something else and blocking crash in that way
+	wxMutexLocker lock(m_MutexCrossLines);
 	
 	if (point.y < renderer->m_BackBufferRect.top || point.x < renderer->m_BackBufferRect.left ||
 		point.y > renderer->m_BackBufferRect.bottom || point.x > renderer->m_BackBufferRect.right) {

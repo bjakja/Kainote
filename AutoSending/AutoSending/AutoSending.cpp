@@ -28,6 +28,9 @@ int check_exist_file(const wchar_t* filename)
 
 bool ConvertAndPrepend(wchar_t *source, char *prepend, char **dest){
 	size_t sourcelen = wcslen(source);
+	if (sourcelen > 6 && source[1] == '.' && source[2] == '.') {
+		source += 6;
+	}
 	int result = WideCharToMultiByte(CP_UTF8, 0, source, sourcelen, 0, 0, 0, 0);
 	if (!result)
 		return false;
@@ -200,9 +203,10 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\KaiNote.exe\0");
 	filenames.push_back(L"\\KaiNote.pdb\0");
 	filenames.push_back(L"\\LICENSE.txt\0");
-	filenames.push_back(L"\\Locale\\en.mo\0");
+	filenames.push_back(L"\\..\\..\\Locale\\en.mo\0");
+	filenames.push_back(L"\\..\\..\\Locale\\ko_KR.mo\0");
 	filenames.push_back(L"\\Locale\\zh_CN.mo\0");
-	filenames.push_back(L"\\Locale\\th_TH.mo\0");
+	filenames.push_back(L"\\..\\..\\Locale\\th_TH.mo\0");
 	filenames.push_back(L"\\msvcp140.dll\0");
 	filenames.push_back(L"\\vcruntime140_1.dll\0");
 	filenames.push_back(L"\\Themes\\DeepDark.txt\0");

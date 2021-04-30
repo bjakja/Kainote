@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#if AUDIO_DEVICE_ENUMERATION
+
 #include "AudioDeviceEnumeration.h"
 #include "utils.h"
 #include <Functiondiscoverykeys_devpkey.h>
@@ -165,3 +167,5 @@ Exit:
 	SAFE_RELEASE(pProps);
 	return false;
 }
+
+#endif

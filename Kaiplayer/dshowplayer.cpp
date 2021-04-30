@@ -18,7 +18,6 @@
 #include "DShowPlayer.h"
 #include "Videobox.h"
 #include "Menu.h"
-#include "AudioDeviceEnumeration.h"
 
 #include <Dvdmedia.h>
 
@@ -102,7 +101,9 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	renderer->QueryInterface(IID_IBaseFilter, (void**)&frend.obj);
 	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), _("Nie można dodać renderera wideo"));
 
-	wxArrayString arr;
+	//code to get run direct show video with chosen audio device
+	//#include "AudioDeviceEnumeration.h"
+	/*wxArrayString arr;
 	EnumerateAudioDevices(&arr);
 	if (arr.GetCount() == 0) {
 		KaiLog("No audio devices");
@@ -112,8 +113,9 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 			KaiLog("Can't get audio device, load default");
 			HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 		}
-	}
+	}*/
 	//
+	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 
 	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera Direct Sound"));
 
