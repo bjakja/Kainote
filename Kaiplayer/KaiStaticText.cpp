@@ -33,7 +33,7 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	CalculateSize(&fullw, &windowHeight);
 
 	if (size.x < 1){
-		newSize.x = fullw + 20;
+		newSize.x = fullw;
 	}
 	if (size.y < 1){
 		newSize.y = windowHeight + 2;

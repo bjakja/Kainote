@@ -141,7 +141,7 @@ void ShiftTimesWindow::Contents(bool addopts)
 	bool state;
 	form = tab->Grid->subsFormat;
 	VideoCtrl *vb = tab->Video;
-	VideoFfmpeg *FFMS2 = vb->GetFFMS2();
+	Provider *FFMS2 = vb->GetFFMS2();
 	if (form < SRT){
 		state = true;
 		WhichLines->EnableItem(3);

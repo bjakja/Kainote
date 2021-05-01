@@ -261,6 +261,9 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 	else
 		byFFMS2 = customFFMS2 == 1;
 
+	if (fileName.StartsWith("?"))
+		byFFMS2 = true;
+
 	if (byFFMS2 != curentFFMS2){
 		SAFE_DELETE(renderer);
 	}

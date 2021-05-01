@@ -57,7 +57,7 @@ class AutoSaveOpen : public KaiDialog
 {
 public:
 	AutoSaveOpen(KainoteFrame *_Kai);
-	~AutoSaveOpen();
+	virtual ~AutoSaveOpen();
 private:
 	void FindFiles();
 	void GenerateList();

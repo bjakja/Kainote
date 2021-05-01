@@ -21,7 +21,7 @@
 class ProviderDummy : public Provider 
 {
 public:
-	~ProviderDummy();
+	virtual ~ProviderDummy();
 	ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
 	void GetFrameBuffer(byte** buffer) override;
 	void GetFrame(int frame, byte* buff) override;

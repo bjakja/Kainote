@@ -17,39 +17,58 @@
 
 #include "KaiDialog.h"
 #include "ListControls.h"
+#include "KaiCheckBox.h"
+#include "NumCtrl.h"
+#include "ColorPicker.h"
+#include "TimeCtrl.h"
+#include "KaiStaticText.h"
 
-
-class AutoSavesRemoving : public KaiDialog 
+class DummyVideo : public KaiDialog
 {
 public:
-	AutoSavesRemoving(wxWindow *parent);
-	virtual ~AutoSavesRemoving() {};
-
-
+	DummyVideo(wxWindow* parent);
+	virtual ~DummyVideo() {};
+	wxString GetDummyText();
 private:
-
-	void ClearSelected(int id);
-	void ClearAll(int id);
-	void ClearByDate(int id);
-
-	KaiChoice* day;
-	KaiChoice* month;
-	KaiChoice* year;
+	void OnResolutionChoose(wxCommandEvent& evt);
+	KaiChoice* videoResolution;
+	NumCtrl* videoResolutionWidth;
+	NumCtrl* videoResolutionHeight;
+	ButtonColorPicker* color;
+	KaiCheckBox* pattern;
+	KaiChoice* frameRate;
+	TimeCtrl* duration;
+	KaiStaticText* frameDuration;
 
 	enum {
-		ID_REMOVE_SELECTED_AUTO_SAVES = 12341,
-		ID_REMOVE_SELECTED_INDICES,
-		ID_REMOVE_SELECTED_AUDIO_CACHES,
-		ID_REMOVE_ALL_AUTO_SAVES,
-		ID_REMOVE_ALL_INDICES,
-		ID_REMOVE_ALL_AUDIO_CACHES,
-		ID_REMOVE_AUTO_SAVES_BY_DATE,
-		ID_REMOVE_INDICES_BY_DATE,
-		ID_REMOVE_AUDIO_CACHE_BY_DATE,
-		ID_REMOVE_ALL,
-		ID_REMOVE_ALL_BY_DATE,
-		ID_DATE_DAY_LIST,
-		ID_DATE_MONTH_LIST
+		ID_VIDEO_RESOLUTION = 5678
 	};
 };
 
+
+
+
+
+
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

@@ -189,7 +189,7 @@ namespace Auto{
 	{
 		TabPanel *tab = Notebook::GetTab();
 		if (tab->Video->GetState() != None && tab->Video->HasFFMS2()){
-			wxArrayInt & value = tab->Video->GetFFMS2()->KeyFrames;
+			const wxArrayInt & value = tab->Video->GetFFMS2()->GetKeyframes();
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);

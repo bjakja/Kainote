@@ -346,7 +346,7 @@ void Visuals::GetMoveTimes(int *start, int *end)
 {
 	VideoCtrl *video = tab->Video;
 	EditBox *edit = tab->Edit;
-	VideoFfmpeg *FFMS2 = video->GetFFMS2();
+	Provider *FFMS2 = video->GetFFMS2();
 	float fps;
 	video->GetFPSAndAspectRatio(&fps, NULL, NULL, NULL);
 	int startTime = ZEROIT(edit->line->Start.mstime);

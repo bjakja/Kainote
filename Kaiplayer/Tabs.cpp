@@ -1114,11 +1114,11 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		if (loadPrompt) {
 			videopath = tab->Grid->GetSInfo(L"Video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
-				wxFileExists(videopath.Prepend(subsPath)) || videopath.StartsWith(L"?dummy")));
+				videopath.StartsWith(L"?dummy") || wxFileExists(videopath.Prepend(subsPath))));
 
 			//fix for wxFileExists which working without full path when program run from command line
 			hasAudioPath = (!audiopath.empty() && ((wxFileExists(audiopath) && audiopath.find(L':') == 1) ||
-				wxFileExists(audiopath.Prepend(subsPath)) || audiopath.StartsWith(L"dummy")));
+				audiopath.StartsWith(L"dummy") || wxFileExists(audiopath.Prepend(subsPath))));
 			hasKeyframePath = (!keyframespath.empty() && ((wxFileExists(keyframespath) && keyframespath.find(L':') == 1) ||
 				wxFileExists(keyframespath.Prepend(subsPath))));
 		}

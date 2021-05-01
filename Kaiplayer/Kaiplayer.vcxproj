@@ -574,6 +574,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="DummyVideo.cpp" />
     <ClCompile Include="FontCatalogList.cpp" />
     <ClCompile Include="KaiGauge.cpp" />
     <ClCompile Include="Languages.cpp" />
@@ -582,16 +583,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="ProviderDummy.cpp" />
     <ClCompile Include="ProviderFFMS2.cpp" />
     <ClCompile Include="RendererDirectShow.cpp" />
-    <ClCompile Include="RendererDummyVideo.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="RendererFFMS2.cpp" />
     <ClCompile Include="RendererVideo.cpp" />
     <ClCompile Include="AutoSaveOpen.cpp" />
@@ -687,7 +678,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="Toolbar.cpp" />
     <ClCompile Include="Videobox.cpp" />
-    <ClCompile Include="VideoFfmpeg.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
@@ -749,6 +739,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
     <ClInclude Include="KaiGauge.h" />
     <ClInclude Include="LineParse.h" />
@@ -756,16 +747,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ProviderDummy.h" />
     <ClInclude Include="ProviderFFMS2.h" />
     <ClInclude Include="RendererDirectShow.h" />
-    <ClInclude Include="RendererDummyVideo.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="RendererFFMS2.h" />
     <ClInclude Include="RendererVideo.h" />
     <ClInclude Include="ShiftTimes.h" />
@@ -859,7 +840,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
     <ClInclude Include="Videobox.h" />
-    <ClInclude Include="VideoFfmpeg.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />

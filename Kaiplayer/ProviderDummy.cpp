@@ -21,6 +21,16 @@
 
 ProviderDummy::~ProviderDummy()
 {
+	if (m_thread) {
+		SetEvent(m_eventKillSelf);
+		WaitForSingleObject(m_thread, 20000);
+		CloseHandle(m_thread);
+		CloseHandle(m_eventStartPlayback);
+		CloseHandle(m_eventKillSelf);
+	}
+
+	delete[] m_FrameBuffer;
+	m_FrameBuffer = NULL;
 }
 
 ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success)
@@ -59,7 +69,8 @@ void ProviderDummy::GetFrame(int frame, byte* buff)
 
 void ProviderDummy::GetBuffer(void* buf, int64_t start, int64_t count, double vol)
 {
-	memset(buf, 0, count);
+	//buff has two bits
+	memset(buf, 0, count * 2);
 }
 
 void ProviderDummy::GetChapters(std::vector<chapter>* _chapters)
@@ -97,6 +108,11 @@ void ProviderDummy::GenerateFrame()
 	byte r = m_frameColor.Red();
 	byte g = m_frameColor.Green();
 	byte b = m_frameColor.Blue();
+	if (m_FrameBuffer) {
+		delete[] m_FrameBuffer;
+		m_FrameBuffer = NULL;
+	}
+	m_FrameBuffer = new byte[m_framePlane];
 	byte* buff = m_FrameBuffer;
 	if (m_pattern) {
 		byte h = 0, s = 0, l = 0;
@@ -213,6 +229,7 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 		m_pattern = true;
 
 	m_framePlane = m_height * m_width * 4;
+	return true;
 }
 
 unsigned int __stdcall ProviderDummy::DummyProc(void* cls)

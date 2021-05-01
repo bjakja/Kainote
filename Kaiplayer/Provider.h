@@ -27,11 +27,10 @@ class Provider
 	friend class RendererFFMS2;
 public:
 	static Provider* Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
-	~Provider();
+	virtual ~Provider();
 	virtual void GetFrameBuffer(byte** buffer) {};
 	virtual void GetFrame(int frame, byte* buff) {};
 	virtual void GetBuffer(void* buf, int64_t start, int64_t count, double vol = 1.0) {};
-	virtual void GetWaveForm(int* min, int* peak, int64_t start, int w, int h, int samples, float scale) {};
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
 	virtual void SetColorSpace(const wxString& matrix) {};
@@ -71,7 +70,7 @@ protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
 	volatile bool audioNotInitialized = true;
 	volatile float m_audioProgress = 0;
-	RendererVideo* m_renderer;
+	RendererVideo* m_renderer = NULL;
 	int m_width = -1;
 	int m_height;
 	int m_arwidth;
@@ -88,7 +87,7 @@ protected:
 	double m_duration = 0;
 	float m_FPS;
 	int64_t m_numSamples;
-	HANDLE m_thread;
+	HANDLE m_thread = NULL;
 	HANDLE m_eventStartPlayback,
 		m_eventSetPosition,
 		m_eventKillSelf,

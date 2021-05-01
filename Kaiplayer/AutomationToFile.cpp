@@ -1007,7 +1007,7 @@ namespace Auto{
 			return 0;
 		}
 		TabPanel *tab = Notebook::GetTab();
-		VideoFfmpeg* FFMS2 = tab->Video->GetFFMS2();
+		Provider* FFMS2 = tab->Video->GetFFMS2();
 		if (!FFMS2){
 			if (!tab->Edit->ABox){
 				lua_pushstring(L, "GetFreqencyReach needs loaded audio by FFMS2");

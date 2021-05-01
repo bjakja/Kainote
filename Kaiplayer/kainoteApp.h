@@ -34,7 +34,9 @@
 //
 //  #define DEBUG_NEW   new( _CLIENT_BLOCK, __FILE__, __LINE__)
 //  #define new DEBUG_NEW
-//#include <vld.h>
+//#pragma comment(lib, "C:\\Program Files (x86)\\Visual Leak Detector\\lib\\Win64\\vld.lib")
+//#include <C:\Program Files (x86)\Visual Leak Detector\include\vld.h>
+
 #endif
 
 class kainoteApp : public wxApp

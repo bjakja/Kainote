@@ -39,6 +39,7 @@
 #include "utils.h"
 #include "AutoSaveOpen.h"
 #include "AutoSavesRemoving.h"
+#include "DummyVideo.h"
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
@@ -164,7 +165,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_VIDEO, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG(L"recentvideo"), true, VidsRecMenu);
 	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_KEYFRAMES, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
-	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_DUMMY_VIDEO, _("Otwórz dummy video"), _("Otwórz dummy video"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
+	VidMenu->Append(GLOBAL_OPEN_DUMMY_VIDEO, _("Otwórz dummy wideo"), _("Otwórz dummy wideo"));
 	KeyframesRecentMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_KEYFRAMES, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG(L"RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_START_TIME, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG(L"setstarttime"), false);
@@ -737,6 +738,18 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 			SetRecent(3);
 		}
 		FileDialog2->Destroy();
+	}
+	else if (id == GLOBAL_OPEN_DUMMY_VIDEO) {
+		DummyVideo dv(this);
+		if (dv.ShowModal() == wxID_OK) {
+			wxString dresult = dv.GetDummyText();
+			if (!dresult.empty())
+				Tabs->LoadVideo(GetTab(), dresult, -1, true, true, false, false, true);
+		}
+	}
+	else if (id == GLOBAL_OPEN_DUMMY_AUDIO) {
+		event.SetString(L"dummy-audio:silence?sr=44100&bd=16&ch=1&ln=396900000");
+		OnOpenAudio(event);
 	}
 	else if (id == GLOBAL_OPEN_AUTO_SAVE) {
 		AutoSaveOpen aso(this);
@@ -1795,7 +1808,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 			FileDialog1->Destroy();
 			if (result == wxID_CANCEL){ return; }
 		}
-		if (id > 30039){ audioPath = path; }
+		if (id > 30039 || id == GLOBAL_OPEN_DUMMY_AUDIO){ audioPath = path; }
 		if (audioPath.empty()){ audioPath = tab->VideoPath; }
 		if (audioPath.empty()){ return; }
 
@@ -1878,6 +1891,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 				case GLOBAL_VIDEO_INDEXING:
 				case GLOBAL_OPEN_VIDEO:
 				case GLOBAL_RECENT_VIDEO:
+				case GLOBAL_OPEN_DUMMY_VIDEO:
 					break;
 				default:
 					vitem->Enable(hasVideoLoaded && editor);

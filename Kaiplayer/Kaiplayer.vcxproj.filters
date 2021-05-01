@@ -218,9 +218,6 @@
     <ClCompile Include="Videobox.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="VideoFfmpeg.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="VideoFullscreen.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
@@ -437,9 +434,6 @@
     <ClCompile Include="AutoSavesRemoving.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="RendererDummyVideo.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="AudioDeviceEnumeration.cpp">
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
@@ -451,6 +445,9 @@
     </ClCompile>
     <ClCompile Include="ProviderFFMS2.cpp">
       <Filter>Source Files\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyVideo.cpp">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -706,9 +703,6 @@
     <ClInclude Include="Videobox.h">
       <Filter>Source Files\Video</Filter>
     </ClInclude>
-    <ClInclude Include="VideoFfmpeg.h">
-      <Filter>Source Files\Video</Filter>
-    </ClInclude>
     <ClInclude Include="VideoFullscreen.h">
       <Filter>Source Files\Video</Filter>
     </ClInclude>
@@ -823,9 +817,6 @@
     <ClInclude Include="AutoSavesRemoving.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="RendererDummyVideo.h">
-      <Filter>Source Files\Video</Filter>
-    </ClInclude>
     <ClInclude Include="AudioDeviceEnumeration.h">
       <Filter>Source Files\Audio</Filter>
     </ClInclude>
@@ -837,6 +828,9 @@
     </ClInclude>
     <ClInclude Include="ProviderFFMS2.h">
       <Filter>Source Files\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyVideo.h">
+      <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

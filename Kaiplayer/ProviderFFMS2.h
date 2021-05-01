@@ -22,7 +22,7 @@ class ProviderFFMS2 : public Provider
 {
 public:
 	ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
-	~ProviderFFMS2();
+	virtual ~ProviderFFMS2();
 	void GetFrameBuffer(byte** buffer) override;
 	void GetFrame(int frame, byte* buff) override;
 	void GetBuffer(void* buf, int64_t start, int64_t count, double vol = 1.0) override;
@@ -51,7 +51,6 @@ public:
 	int m_CR;
 	int m_CS;
 	double m_delay = 0;
-	HANDLE m_eventAudioComplete = NULL;
 	HANDLE m_eventAudioComplete = NULL;
 	wxString m_diskCacheFilename;
 	wxString m_colorSpace;

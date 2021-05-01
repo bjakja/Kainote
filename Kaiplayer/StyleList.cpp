@@ -52,7 +52,8 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	holding = Switchlines = false;
 	sels.Add(0);
 	SetMinSize(wxSize(150, 150));
-	Refresh();
+	//Refresh();
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent& evt) {});
 
 }
 

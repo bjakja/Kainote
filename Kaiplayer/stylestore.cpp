@@ -31,7 +31,7 @@
 
 
 StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
-	: KaiDialog(parent, -1, _("Menedżer stylów"), pos, wxSize(400, -1), wxDEFAULT_DIALOG_STYLE)
+	: KaiDialog(parent, -1, _("Menedżer stylów"), pos, wxSize(400, -1), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
 	, stayOnTop(false)
 {
 	bool isDetached = detachedEtit = Options.GetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW);
@@ -174,7 +174,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 	Mainsm->Add(ASSStylesSizer, 1, wxEXPAND | wxALL, 2);
 	Mainsm->Add(buttons, 0, wxALIGN_CENTER | wxALL, 4);
 
-	Mainall->Add(Mainsm, 0, wxEXPAND);
+	Mainall->Add(Mainsm, 1, wxEXPAND);
 	if (!isDetached){
 		Mainall->Add(cc, 0, wxEXPAND);
 		wxSize bs = wxSize(-1, cc->GetBestSize().y + 29);
@@ -216,7 +216,7 @@ StyleStore::StyleStore(wxWindow* parent, const wxPoint& pos)
 
 	DoTooltips();
 
-	//SetMaxSize(wxSize(500,-1));
+	
 }
 
 StyleStore::~StyleStore()
