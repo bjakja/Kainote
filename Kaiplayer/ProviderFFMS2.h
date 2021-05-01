@@ -43,11 +43,11 @@ public:
 	void DeleteOldAudioCache();
 	wxString ColorMatrixDescription(int cs, int cr);
 	void SetColorSpace(const wxString& matrix);
+	bool HasVideo();
 
 	bool m_discCache;
 	volatile bool m_success;
 	volatile bool m_lockGetFrame = true;
-	volatile float m_audioProgress = 0;
 	int m_CR;
 	int m_CS;
 	double m_delay = 0;

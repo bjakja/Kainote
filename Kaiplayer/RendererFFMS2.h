@@ -16,12 +16,13 @@
 #pragma once
 
 #include "RendererVideo.h"
-#include "VideoFfmpeg.h"
+#include "Provider.h"
 
 class RendererFFMS2 : public RendererVideo
 {
 	friend class RendererVideo;
 	friend class VideoCtrl;
+	friend class Provider;
 public:
 	RendererFFMS2(VideoCtrl *control, bool visualDisabled);
 	virtual ~RendererFFMS2();
@@ -66,8 +67,8 @@ public:
 	void OpenKeyframes(const wxString &filename);
 	bool HasFFMS2();
 	bool InitRendererDX();
-	VideoFfmpeg * GetFFMS2();
-	VideoFfmpeg *m_FFMS2;
+	Provider* GetFFMS2();
+	Provider *m_FFMS2;
 protected:
 	void DestroyFFMS2();
 };

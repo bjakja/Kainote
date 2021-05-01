@@ -193,7 +193,7 @@ public:
 	SubsGrid *grid;
 	EditBox *Edit;
 	TabPanel *tab;
-	VideoFfmpeg *provider;
+	Provider *provider;
 	DirectSoundPlayer2 *player;
 	Karaoke *karaoke;
 

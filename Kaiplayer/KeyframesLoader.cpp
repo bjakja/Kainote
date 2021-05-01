@@ -18,9 +18,9 @@
 #include "KeyframesLoader.h"
 #include <wx/file.h>
 #include "OpennWrite.h"
-#include "VideoFfmpeg.h"
+#include "Provider.h"
 
-KeyframeLoader::KeyframeLoader(const wxString &filename, wxArrayInt *_keyframes, VideoFfmpeg *_receiver)
+KeyframeLoader::KeyframeLoader(const wxString &filename, wxArrayInt *_keyframes, Provider *_receiver)
 	: keyframes(_keyframes)
 	, receiver(_receiver)
 {

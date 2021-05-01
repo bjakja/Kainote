@@ -29,14 +29,13 @@ public:
 	void GetChapters(std::vector<chapter>* _chapters) override;
 	void DeleteOldAudioCache() override;
 	void SetColorSpace(const wxString& matrix) override;
-	void GenerateTimecodes();
-	void GenerateFrame();
-
-	bool ParseDummyData(const wxString& data);
-
+	bool HasVideo();
 private:
 	static unsigned int __stdcall DummyProc(void* cls);
 	void Processing();
+	void GenerateTimecodes();
+	void GenerateFrame();
+	bool ParseDummyData(const wxString& data);
 	byte *m_FrameBuffer = NULL;
 	wxColour m_frameColor;
 	bool m_pattern = false;

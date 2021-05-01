@@ -137,27 +137,6 @@ int Provider::FramefromTime(int time)
 	m_lastTime = time;
 	return m_lastFrame;
 }
-int VideoFfmpeg::GetMSfromFrame(int frame)
-{
-	if (frame >= NumFrames) { return frame * (1000.f / fps); }
-	else if (frame < 0) { return 0; }
-	return Timecodes[frame];
-}
-
-int VideoFfmpeg::GetFramefromMS(int MS, int seekfrom, bool safe)
-{
-	if (MS <= 0) return 0;
-	int result = (safe) ? NumFrames - 1 : NumFrames;
-	for (int i = seekfrom; i < NumFrames; i++)
-	{
-		if (Timecodes[i] >= MS)
-		{
-			result = i;
-			break;
-		}
-	}
-	return result;
-}
 
 int Provider::GetMSfromFrame(int frame)
 {

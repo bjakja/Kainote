@@ -164,6 +164,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	VidsRecMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_VIDEO, _("Ostatnio otwarte wideo"), _("Ostatnio otwarte video"), PTR_BITMAP_PNG(L"recentvideo"), true, VidsRecMenu);
 	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_KEYFRAMES, _("Otwórz klatki kluczowe"), _("Otwórz klatki kluczowe"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
+	VidMenu->AppendTool(Toolbar, GLOBAL_OPEN_DUMMY_VIDEO, _("Otwórz dummy video"), _("Otwórz dummy video"), PTR_BITMAP_PNG(L"OPEN_KEYFRAMES"));
 	KeyframesRecentMenu = new Menu();
 	VidMenu->AppendTool(Toolbar, GLOBAL_RECENT_KEYFRAMES, _("Ostatnio otwarte klatki kluczowe"), _("Ostatnio otwarte klatki kluczowe"), PTR_BITMAP_PNG(L"RECENT_KEYFRAMES"), true, KeyframesRecentMenu);
 	VidMenu->AppendTool(Toolbar, GLOBAL_SET_START_TIME, _("Wstaw czas początkowy z wideo"), _("Wstawia czas początkowy z wideo"), PTR_BITMAP_PNG(L"setstarttime"), false);
@@ -189,6 +190,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	AudMenu->AppendTool(Toolbar, GLOBAL_RECENT_AUDIO, _("Ostatnio otwarte audio"), _("Ostatnio otwarte audio"), PTR_BITMAP_PNG(L"recentaudio"), true, AudsRecMenu);
 	AudMenu->AppendTool(Toolbar, GLOBAL_AUDIO_FROM_VIDEO, _("Otwórz audio z wideo"), _("Otwiera audio z wideo"), PTR_BITMAP_PNG(L"audiofromvideo"));
+	AudMenu->Append(GLOBAL_OPEN_DUMMY_AUDIO, _("Otwórz puste audio na 2:30 godziny"), _("Otwiera puste audio na 2:30 godziny"));
 	AudMenu->AppendTool(Toolbar, GLOBAL_CLOSE_AUDIO, _("Zamknij audio"), _("Zamyka audio"), PTR_BITMAP_PNG(L"closeaudio"));
 	Menubar->Append(AudMenu, _("A&udio"));
 
@@ -2101,8 +2103,8 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	int time = (snapStartTime) ? tab->Edit->line->Start.mstime : tab->Edit->line->End.mstime;
 	int time2 = (snapStartTime) ? tab->Edit->line->End.mstime : tab->Edit->line->Start.mstime;
 	int snaptime = time;
-	VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
-	wxArrayInt &KeyFrames = FFMS2->KeyFrames;
+	Provider *FFMS2 = tab->Video->GetFFMS2();
+	const wxArrayInt &KeyFrames = FFMS2->GetKeyframes();
 	int lastDifferents = MAXINT;
 	//wxArrayInt boundaries;
 	for (unsigned int i = 0; i < KeyFrames.Count(); i++) {

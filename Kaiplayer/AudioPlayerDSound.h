@@ -40,7 +40,7 @@
 #include <mmsystem.h>
 #include <dsound.h>
 
-#include "VideoFfmpeg.h"
+#include "Provider.h"
 
 
 class DirectSoundPlayer2Thread;
@@ -60,7 +60,7 @@ public:
 
 	void OpenStream();
 	void CloseStream();
-	void SetProvider(VideoFfmpeg *_provider);
+	void SetProvider(Provider *_provider);
 
 	void Play(int64_t start, int64_t count);
 	void Stop(bool timerToo = true);
@@ -77,7 +77,7 @@ public:
 	double GetVolume();
 	//void SetDisplayTimer(wxTimer *Timer);
 
-	VideoFfmpeg *provider;
+	Provider*provider;
 	//wxTimer *displayTimer;
 };
 

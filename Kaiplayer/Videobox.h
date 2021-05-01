@@ -26,7 +26,7 @@
 
 class KainoteFrame;
 class TabPanel;
-class VideoFfmpeg;
+class Provider;
 
 class VideoCtrl : public wxWindow
 {
@@ -124,7 +124,7 @@ public:
 	void ResetVisual();
 	bool HasFFMS2();
 	//can return null
-	VideoFfmpeg *GetFFMS2();
+	Provider *GetFFMS2();
 	void SetVisualEdition(bool value);
 	//can return null
 	RendererVideo *GetRenderer();

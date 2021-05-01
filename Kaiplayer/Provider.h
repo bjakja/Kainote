@@ -24,8 +24,9 @@ class RendererVideo;
 
 class Provider
 {
+	friend class RendererFFMS2;
 public:
-	Provider* Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
+	static Provider* Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
 	~Provider();
 	virtual void GetFrameBuffer(byte** buffer) {};
 	virtual void GetFrame(int frame, byte* buff) {};
@@ -34,6 +35,7 @@ public:
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
 	virtual void SetColorSpace(const wxString& matrix) {};
+	virtual bool HasVideo() { return false; };
 
 	void Play();
 	int GetSampleRate();
@@ -45,11 +47,30 @@ public:
 	int FramefromTime(int time);
 	int GetMSfromFrame(int frame);
 	int GetFramefromMS(int MS, int seekfrom = 0, bool safe = true);
+	const wxArrayInt& GetKeyframes() { return m_keyFrames; };
+	const std::vector<int> GetTimecodes() { return m_timecodes; };
+	void SetKeyframes(const wxArrayInt& keyframes) {
+		m_keyFrames = keyframes;
+	}
+	void SetTimecodes(const std::vector<int>& timecodes) {
+		m_timecodes = timecodes;
+	}
+	float GetFPS() { return m_FPS; }
+	void SetFPS(float FPS) { m_FPS = FPS; }
+	int64_t GetNumFrames() { return m_numFrames; }
+	void SetNumFrames(int64_t numFrames) { m_numFrames = numFrames; }
 	void OpenKeyframes(const wxString& filename);
 	void SetPosition(int time, bool starttime);
+	bool AudioNotInitialized() {
+		return audioNotInitialized;
+	}
+	int GetAudioProgress() {
+		return m_audioProgress;
+	}
 protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
 	volatile bool audioNotInitialized = true;
+	volatile float m_audioProgress = 0;
 	RendererVideo* m_renderer;
 	int m_width = -1;
 	int m_height;
@@ -64,7 +85,7 @@ protected:
 	int m_framePlane = 0;
 	int m_changedTime = 0;
 	bool m_isStartTime = false;
-	double m_duration;
+	double m_duration = 0;
 	float m_FPS;
 	int64_t m_numSamples;
 	HANDLE m_thread;

@@ -1260,7 +1260,7 @@ void VideoCtrl::RefreshTime()
 			if (!m_IsDirectShow){
 				times << renderer->m_Frame << L";  ";
 				if (renderer->HasFFMS2()){
-					if (renderer->GetFFMS2()->KeyFrames.Index(renderer->m_Time) != -1){
+					if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
 						m_ShownKeyframe = true;
 						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 					}
@@ -1292,7 +1292,7 @@ void VideoCtrl::RefreshTime()
 		if (!m_IsDirectShow){
 			times << renderer->m_Frame << L";  ";
 			if (renderer->HasFFMS2()){
-				if (renderer->GetFFMS2()->KeyFrames.Index(renderer->m_Time) != -1){
+				if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
 					m_ShownKeyframe = true;
 					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 				}
@@ -1733,7 +1733,7 @@ bool VideoCtrl::HasFFMS2()
 {
 	return renderer && renderer->HasFFMS2();
 }
-VideoFfmpeg *VideoCtrl::GetFFMS2()
+Provider *VideoCtrl::GetFFMS2()
 {
 	if (renderer)
 		return renderer->GetFFMS2();

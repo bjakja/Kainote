@@ -272,7 +272,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 				
 				if (showFrames && tab->Video->HasFFMS2()){
-					VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+					Provider *FFMS2 = tab->Video->GetFFMS2();
 					wxString frame;
 					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 					strings.push_back(frame);
@@ -649,7 +649,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 			if (showFrames && tab->Video->HasFFMS2()){
-				VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+				Provider *FFMS2 = tab->Video->GetFFMS2();
 				wxString frame;
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
@@ -1015,7 +1015,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->Video->GetFFMS2();
 			if (FFMS2)
 				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
@@ -1028,7 +1028,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->Video->GetFFMS2();
 			if (FFMS2)
 				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else
@@ -1181,7 +1181,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->Video->GetFFMS2();
 			if (FFMS2)
 				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
@@ -1194,7 +1194,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->Video->GetFFMS2();
 			if (FFMS2)
 				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else

@@ -141,10 +141,10 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	h -= timelineHeight;
 	ProgressTimer.SetOwner(this, 7654);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-		if (!provider->audioNotInitialized){
+		if (!provider->AudioNotInitialized()){
 			UpdateImage(); ProgressTimer.Stop();
 		}
-		else if (provider->audioProgress != lastProgress){
+		else if (provider->GetAudioProgress() != lastProgress){
 			Refresh(false);
 		}
 	}, 7654);
@@ -404,7 +404,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 	hr = d3dDevice->BeginScene();
 	// Draw image to be displayed
 
-	if (provider->audioNotInitialized){
+	if (provider->AudioNotInitialized()){
 		DrawProgress();
 	}
 	else{
@@ -598,7 +598,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			}
 		}
 		// Draw keyframes
-		if (drawKeyframes && provider->KeyFrames.size() > 0) {
+		if (drawKeyframes && provider->GetKeyframes().size() > 0) {
 			DrawKeyframes();
 		}
 
@@ -1068,7 +1068,7 @@ void AudioDisplay::DrawProgress()
 	int rw = 22;
 	vectors[14].x = rw;
 	vectors[14].y = halfY;
-	vectors[15].x = ((provider->audioProgress / 1.f) * (w - 44)) + rw;
+	vectors[15].x = ((provider->GetAudioProgress() / 1.f) * (w - 44)) + rw;
 	vectors[15].y = halfY;
 
 	RECT textParcent;
@@ -1076,7 +1076,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.right = w - 20;
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
-	wxString txt = std::to_string((int)(provider->audioProgress * 100.f)) + L"%";
+	wxString txt = std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%";
 	
 	d3dLine->SetWidth(1);
 	d3dLine->Begin();
@@ -1310,27 +1310,27 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 		try {
 			// Get provider
 			VideoCtrl *vb = tab->Video;
-			VideoFfmpeg *FFMS2 = vb->GetFFMS2();
+			Provider *FFMS2 = vb->GetFFMS2();
 			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
 			if (FFMS2 && fromvideo){
 				provider = FFMS2;
-				ownProvider = (provider->videosource == NULL);
+				ownProvider = (!provider->HasVideo());
 				if (ownProvider){ FFMS2 = NULL; }
 			}
 			else{
-				provider = new VideoFfmpeg(file, 0, Kaia->Frame, &success);
-				if (!success || provider->SampleRate < 0) {
+				provider = Provider::Get(file, NULL, Kaia->Frame, &success);
+				if (!success || provider->GetSampleRate() < 0) {
 					delete provider; provider = 0;
 					loaded = false; return;
 				}
 				//copy keyframes to not check if video is loaded
 
 				if (FFMS2){
-					provider->KeyFrames = FFMS2->KeyFrames;
-					provider->Timecodes = FFMS2->Timecodes;
-					provider->NumFrames = FFMS2->NumFrames;
-					provider->fps = FFMS2->fps;
+					provider->SetKeyframes(FFMS2->GetKeyframes());
+					provider->SetTimecodes(FFMS2->GetTimecodes());
+					provider->SetNumFrames(FFMS2->GetNumFrames());
+					provider->SetFPS(FFMS2->GetFPS());
 				}
 				RendererVideo* renderer = vb->GetRenderer();
 				ownProvider = true;
@@ -1367,7 +1367,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	if (!loaded) return;
 
 	assert(loaded == (provider != NULL));
-	if (provider->audioNotInitialized){
+	if (provider->AudioNotInitialized()){
 		ProgressTimer.Start(50);
 	}
 	// Set default selection
@@ -2174,15 +2174,18 @@ int AudioDisplay::GetBoundarySnap(int ms, int rangeX, bool shiftHeld, bool start
 
 	bool snapKey = Options.GetBool(AUDIO_SNAP_TO_KEYFRAMES);
 	if (shiftHeld) snapKey = !snapKey;
-	if (snapKey && provider->KeyFrames.size() > 0 && drawKeyframes) {
+
+	if (snapKey && drawKeyframes) {
+		const wxArrayInt& keyFrames = provider->GetKeyframes();
+		size_t timecodesSize = provider->GetTimecodes().size();
 		int64_t keyMS;
 
-		for (unsigned int i = 0; i < provider->KeyFrames.Count(); i++) {
-			keyMS = provider->KeyFrames[i];
+		for (unsigned int i = 0; i < keyFrames.Count(); i++) {
+			keyMS = keyFrames[i];
 			int keyX = GetXAtMS(keyMS);
 			if (keyX >= 0 && keyX < w) {
 				int frameTime = 0;
-				if (provider->Timecodes.size() < 1){
+				if (timecodesSize < 1){
 					//there is nothing to do when video is not loaded
 					//put half of frame 23.976FPS
 					frameTime = keyMS - 21;
@@ -2521,8 +2524,9 @@ void AudioDisplay::DrawKeyframes() {
 	D3DXVECTOR2 v2[2];
 	// Scan list
 	d3dLine->Begin();
-	for (size_t i = 0; i < provider->KeyFrames.size(); i++) {
-		int cur = provider->KeyFrames[i];
+	const wxArrayInt& keyFrames = provider->GetKeyframes();
+	for (size_t i = 0; i < keyFrames.size(); i++) {
+		int cur = keyFrames[i];
 		if (cur >= mintime && cur <= maxtime)
 		{
 			cur = ((cur - 20) / 10) * 10;

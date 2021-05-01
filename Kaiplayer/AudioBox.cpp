@@ -239,8 +239,8 @@ void AudioBox::SetKeyframes(const wxArrayInt &keyframes)
 		return;
 
 	if (audioDisplay->ownProvider){
-		audioDisplay->provider->KeyFrames = keyframes;
-		audioDisplay->provider->NumFrames = keyframes.size();
+		audioDisplay->provider->SetKeyframes(keyframes);
+		audioDisplay->provider->SetNumFrames(keyframes.size());
 	}
 
 	Refresh(false);
@@ -252,7 +252,7 @@ bool AudioBox::OpenKeyframes(const wxString & filename)
 	//or was loaded file without video, 
 	//without timecodes we can't do anything
 	//keyframe loader load pseudotimecodes from fps that's a random float number.
-	if (!audioDisplay->ownProvider && audioDisplay->provider && audioDisplay->provider->Timecodes.size())
+	if (!audioDisplay->ownProvider && audioDisplay->provider && audioDisplay->provider->GetTimecodes().size())
 		return false;
 
 	wxArrayInt keyframes;

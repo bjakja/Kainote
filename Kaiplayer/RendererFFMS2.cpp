@@ -203,11 +203,11 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 {
 	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	VideoFfmpeg *tmpvff = NULL;
+	Provider *tmpvff = NULL;
 	if (m_State == Playing){ videoControl->Stop(); }
 
 	bool success;
-	tmpvff = new VideoFfmpeg(fname, this, videoControl->GetMessageWindowParent(), &success);
+	tmpvff = Provider::Get(fname, this, videoControl->GetMessageWindowParent(), &success);
 	//this is safe mode, when new video not load, 
 	//the last opened will not be released
 	if (!success || !tmpvff){
@@ -216,8 +216,8 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	}
 	
 	//when loading only audio do not remove video
-	if (tmpvff->width < 0 && tmpvff->GetSampleRate() > 0){
-		VideoFfmpeg *tmp = m_FFMS2;
+	if (tmpvff->m_width < 0 && tmpvff->GetSampleRate() > 0){
+		Provider *tmp = m_FFMS2;
 		m_FFMS2 = tmpvff;
 		Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 		m_AudioPlayer = tab->Edit->ABox->audioDisplay;
@@ -239,11 +239,11 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	m_FFMS2 = tmpvff;
 	m_D3DFormat = D3DFMT_X8R8G8B8;
 	m_Format = RGB32;
-	m_Width = m_FFMS2->width;
-	m_Height = m_FFMS2->height;
-	videoControl->m_FPS = m_FFMS2->fps;
-	videoControl->m_AspectRatioX = m_FFMS2->arwidth;
-	videoControl->m_AspectRatioY = m_FFMS2->arheight;
+	m_Width = m_FFMS2->m_width;
+	m_Height = m_FFMS2->m_height;
+	videoControl->m_FPS = m_FFMS2->m_FPS;
+	videoControl->m_AspectRatioX = m_FFMS2->m_arwidth;
+	videoControl->m_AspectRatioY = m_FFMS2->m_arheight;
 	if (m_Width % 2 != 0){ m_Width++; }
 	m_Pitch = m_Width * 4;
 	if (changeAudio){
@@ -253,7 +253,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 		}
 		else if (m_AudioPlayer){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
 	}
-	if (!m_FFMS2 || m_FFMS2->width < 0){
+	if (!m_FFMS2 || m_FFMS2->m_width < 0){
 		return false;
 	}
 	
@@ -318,7 +318,7 @@ bool RendererFFMS2::Play(int end)
 
 	m_State = Playing;
 
-	m_Time = m_FFMS2->Timecodes[m_Frame];
+	m_Time = m_FFMS2->m_timecodes[m_Frame];
 	m_LastTime = timeGetTime() - m_Time;
 	if (m_AudioPlayer){ m_AudioPlayer->Play(m_Time, -1, false); }
 	m_FFMS2->Play();
@@ -370,9 +370,9 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 	m_Frame = m_FFMS2->GetFramefromMS(_time, (m_Time > _time) ? 0 : m_Frame);
 	if (!starttime){
 		m_Frame--;
-		if (m_FFMS2->Timecodes[m_Frame] >= _time){ m_Frame--; }
+		if (m_FFMS2->m_timecodes[m_Frame] >= _time){ m_Frame--; }
 	}
-	m_Time = m_FFMS2->Timecodes[m_Frame];
+	m_Time = m_FFMS2->m_timecodes[m_Frame];
 	m_LastTime = timeGetTime() - m_Time;
 	m_PlayEndTime = GetDuration();
 
@@ -408,7 +408,7 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 
 int RendererFFMS2::GetDuration()
 {
-	return m_FFMS2->Duration * 1000.0;
+	return m_FFMS2->m_duration * 1000.0;
 }
 
 int RendererFFMS2::GetFrameTime(bool start)
@@ -418,7 +418,7 @@ int RendererFFMS2::GetFrameTime(bool start)
 		return m_Time + ((prevFrameTime - m_Time) / 2);
 	}
 	else{
-		if (m_Frame + 1 >= m_FFMS2->NumFrames){
+		if (m_Frame + 1 >= m_FFMS2->m_numFrames){
 			int prevFrameTime = m_FFMS2->GetMSfromFrame(m_Frame - 1);
 			return m_Time + ((m_Time - prevFrameTime) / 2);
 		}
@@ -483,15 +483,15 @@ void RendererFFMS2::OpenKeyframes(const wxString &filename)
 
 void RendererFFMS2::GetFpsnRatio(float *fps, long *arx, long *ary)
 {
-	*fps = m_FFMS2->fps;
-	*arx = m_FFMS2->arwidth;
-	*ary = m_FFMS2->arheight;
+	*fps = m_FFMS2->m_FPS;
+	*arx = m_FFMS2->m_arwidth;
+	*ary = m_FFMS2->m_arheight;
 }
 
 void RendererFFMS2::GetVideoSize(int *width, int *height)
 {
-	*width = m_FFMS2->width;
-	*height = m_FFMS2->height;
+	*width = m_FFMS2->m_width;
+	*height = m_FFMS2->m_height;
 }
 
 void RendererFFMS2::SetVolume(int vol)
@@ -520,8 +520,8 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 {
 	if (m_State == Playing || m_State == None){ return; }
 	
-		m_Frame = MID(0, m_Frame + step, m_FFMS2->NumFrames - 1);
-		m_Time = m_FFMS2->Timecodes[m_Frame];
+		m_Frame = MID(0, m_Frame + step, m_FFMS2->m_numFrames - 1);
+		m_Time = m_FFMS2->m_timecodes[m_Frame];
 		if (m_HasVisualEdition || m_HasDummySubs){
 			OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 			m_HasVisualEdition = false;
@@ -552,23 +552,23 @@ byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del, void *converter)
 
 void RendererFFMS2::GoToNextKeyframe()
 {
-	for (size_t i = 0; i < m_FFMS2->KeyFrames.size(); i++){
-		if (m_FFMS2->KeyFrames[i] > m_Time){
-			SetPosition(m_FFMS2->KeyFrames[i]);
+	for (size_t i = 0; i < m_FFMS2->m_keyFrames.size(); i++){
+		if (m_FFMS2->m_keyFrames[i] > m_Time){
+			SetPosition(m_FFMS2->m_keyFrames[i]);
 			return;
 		}
 	}
-	SetPosition(m_FFMS2->KeyFrames[0]);
+	SetPosition(m_FFMS2->m_keyFrames[0]);
 }
 void RendererFFMS2::GoToPrevKeyframe()
 {
-	for (int i = m_FFMS2->KeyFrames.size() - 1; i >= 0; i--){
-		if (m_FFMS2->KeyFrames[i] < m_Time){
-			SetPosition(m_FFMS2->KeyFrames[i]);
+	for (int i = m_FFMS2->m_keyFrames.size() - 1; i >= 0; i--){
+		if (m_FFMS2->m_keyFrames[i] < m_Time){
+			SetPosition(m_FFMS2->m_keyFrames[i]);
 			return;
 		}
 	}
-	SetPosition(m_FFMS2->KeyFrames[m_FFMS2->KeyFrames.size() - 1]);
+	SetPosition(m_FFMS2->m_keyFrames[m_FFMS2->m_keyFrames.size() - 1]);
 }
 
 bool RendererFFMS2::HasFFMS2()
@@ -576,7 +576,7 @@ bool RendererFFMS2::HasFFMS2()
 	return m_FFMS2 != NULL;
 }
 
-VideoFfmpeg * RendererFFMS2::GetFFMS2()
+Provider* RendererFFMS2::GetFFMS2()
 {
 	return m_FFMS2;
 }

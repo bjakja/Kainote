@@ -74,9 +74,22 @@ void ProviderDummy::SetColorSpace(const wxString& matrix)
 {
 }
 
+bool ProviderDummy::HasVideo()
+{
+	return m_width != -1;
+}
+
 void ProviderDummy::GenerateTimecodes()
 {
-
+	double timecode = 0.;
+	double frametime = 1000. / m_FPS;
+	size_t counter = 0;
+	m_timecodes.resize(m_numFrames);
+	while (counter < m_numFrames) {
+		m_timecodes[counter] = (int)timecode;
+		timecode += frametime;
+		counter++;
+	}
 }
 
 void ProviderDummy::GenerateFrame()
@@ -131,6 +144,7 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 		m_sampleRate = 44100;
 		m_bytesPerSample = 2;
 		m_numSamples = (int64_t)5 * 30 * 60 * 1000 * m_sampleRate / 1000;
+		audioNotInitialized = false;
 		return true;
 	}
 	wxStringTokenizer tokenzr(data, L":", wxTOKEN_RET_EMPTY_ALL);
@@ -141,7 +155,7 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 	wxString strfps = tokenzr.GetNextToken();
 	if (!tokenzr.HasMoreTokens())
 		return false;
-	wxString strduration = tokenzr.GetNextToken();
+	wxString strnumframes = tokenzr.GetNextToken();
 	if (!tokenzr.HasMoreTokens())
 		return false;
 	wxString strwidth = tokenzr.GetNextToken();
@@ -165,11 +179,13 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 	if (!strfps.ToCDouble(&dfps))
 		return false;
 	m_FPS = dfps;
-	int dur = wxAtoi(strduration);
-	if (dur < 1)
+	int nframes = wxAtoi(strnumframes);
+	if (nframes < 1)
 		return false;
 
-	m_duration = dur;
+	m_numFrames = nframes;
+	float frametime = 1000.f / m_FPS;
+	m_duration = (nframes * frametime) / 1000.;
 	int width = wxAtoi(strwidth);
 	int height = wxAtoi(strheight);
 	if (!width || !height)
@@ -177,6 +193,20 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 
 	m_width = width;
 	m_height = height;
+	m_arwidth = m_width;
+	m_arheight = m_height;
+
+	while (1) {
+		bool divided = false;
+		for (int i = 10; i > 1; i--) {
+			if ((m_arwidth % i) == 0 && (m_arheight % i) == 0) {
+				m_arwidth /= i; m_arheight /= i;
+				divided = true;
+				break;
+			}
+		}
+		if (!divided) { break; }
+	}
 
 	m_frameColor = wxColour(wxAtoi(strcolorr), wxAtoi(strcolorg), wxAtoi(strcolorb));
 	if (strpattern == L"c")

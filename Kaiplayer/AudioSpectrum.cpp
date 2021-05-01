@@ -129,7 +129,7 @@ CacheLine SpectrumCache::null_line;
 
 
 // AudioSpectrum
-AudioSpectrum::AudioSpectrum(VideoFfmpeg *_provider)
+AudioSpectrum::AudioSpectrum(Provider *_provider)
 {
 	provider = _provider;
 	power_scale = 1;
@@ -399,7 +399,7 @@ void AudioSpectrum::ChangeColours()
 
 }
 
-AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(VideoFfmpeg *provider, std::vector<SpectrumCache*> *_sub_caches)
+AudioSpectrumMultiThreading::AudioSpectrumMultiThreading(Provider *provider, std::vector<SpectrumCache*> *_sub_caches)
 {
 	sub_caches = _sub_caches;
 	sthread = this; 

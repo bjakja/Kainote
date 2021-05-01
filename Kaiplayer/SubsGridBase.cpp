@@ -484,7 +484,7 @@ public:
 
 void SubsGridBase::ChangeTimes(bool byFrame)
 {
-	VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+	Provider *FFMS2 = tab->Video->GetFFMS2();
 	if (byFrame && !FFMS2){ wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
@@ -709,8 +709,9 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				int keyMS = 0;
 				int startResult = INT_MAX;
 				int endResult = -1;
-				for (size_t g = 0; g < FFMS2->KeyFrames.Count(); g++) {
-					keyMS = FFMS2->KeyFrames[g];
+				const wxArrayInt& keyFrames = FFMS2->GetKeyframes();
+				for (size_t g = 0; g < keyFrames.Count(); g++) {
+					keyMS = keyFrames[g];
 					if (keyMS > startRange && keyMS < startRange1) {
 						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
 						if (oldStart == keyMS) {

@@ -69,14 +69,13 @@ void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
 class AudioDisplay;
 class DShowPlayer;
 class Menu;
-class VideoFfmpeg;
+class Provider;
 class VideoCtrl;
 
 class RendererVideo
 {
 	friend class RendererDirectShow;
 	friend class RendererFFMS2;
-	friend class RendererDummyVideo;
 	friend class VideoCtrl;
 public:
 	RendererVideo(VideoCtrl *control, bool visualDisabled);
@@ -166,7 +165,7 @@ public:
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
 	virtual bool HasFFMS2(){ return false; };
-	virtual VideoFfmpeg * GetFFMS2(){ return NULL; };
+	virtual Provider * GetFFMS2(){ return NULL; };
 	// Non virtual functions
 	void DrawProgressBar(const wxString &timesString);
 	void Zoom(const wxSize &size);

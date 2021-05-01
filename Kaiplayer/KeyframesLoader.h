@@ -16,20 +16,19 @@
 #pragma once
 #include <wx/dynarray.h>
 #include <wx/tokenzr.h>
-class VideoFfmpeg;
+class Provider;
 
 class KeyframeLoader
 {
 public:
 	//load keyframes after loading video, it need timecodes
-	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, VideoFfmpeg *receiver);
+	KeyframeLoader(const wxString &filename, wxArrayInt *keyframes, Provider *receiver);
 private:
 	void OpenAegisubKeyframes(wxStringTokenizer *kftokenizer);
 	void OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer);
 
 	wxArrayInt *keyframes;
-	VideoFfmpeg *receiver;
-	//wxStringTokenizer kftokenizer;
+	Provider *receiver;
 };
 
 enum{

@@ -18,7 +18,7 @@
 template<typename T>
 class AbstractFFT;
 
-class VideoFfmpeg;
+class Provider;
 
 const unsigned long line_length = 1 << 10; // number of frequency components per line (half of number of samples)
 const unsigned long doublelen = line_length * 2;
@@ -28,13 +28,13 @@ class FFT
 public:
 	FFT(){};
 	~FFT();
-	void Set(VideoFfmpeg *_prov);
+	void Set(Provider *_prov);
 	void Transform(int64_t whre);
 	float Get(int i);
 	void SetAudio(int64_t from, int64_t to);
 	float * output;
 private:
-	VideoFfmpeg *prov;
+	Provider *prov;
 	short * input;
 	AbstractFFT<float>* gfft;
 	int64_t inputSize = 0;

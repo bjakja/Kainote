@@ -305,7 +305,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 
 			if (previewGrid->showFrames && tab->Video->HasFFMS2()){
-				VideoFfmpeg *FFMS2 = tab->Video->GetFFMS2();
+				Provider *FFMS2 = tab->Video->GetFFMS2();
 				wxString frame;
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);

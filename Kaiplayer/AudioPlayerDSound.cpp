@@ -159,10 +159,10 @@ class DirectSoundPlayer2Thread {
 	//std::chrono::system_clock::time_point last_playback_restart;
 	int last_playback_restart;
 
-	VideoFfmpeg *provider;
+	Provider *provider;
 
 public:
-	DirectSoundPlayer2Thread(VideoFfmpeg *provider, int WantedLatency, int BufferLength);
+	DirectSoundPlayer2Thread(Provider *provider, int WantedLatency, int BufferLength);
 	~DirectSoundPlayer2Thread();
 
 	void Play(int64_t start, int64_t count);
@@ -587,7 +587,7 @@ void DirectSoundPlayer2Thread::CheckError()
 }
 
 
-DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(VideoFfmpeg *provider, int _WantedLatency, int _BufferLength)
+DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _WantedLatency, int _BufferLength)
 	: event_start_playback  (CreateEvent(0, FALSE, FALSE, 0))
 	, event_stop_playback   (CreateEvent(0, FALSE, FALSE, 0))
 	, event_update_end_time (CreateEvent(0, FALSE, FALSE, 0))
@@ -837,16 +837,16 @@ void DirectSoundPlayer2::CloseStream()
 }
 
 
-void DirectSoundPlayer2::SetProvider(VideoFfmpeg *_provider)
+void DirectSoundPlayer2::SetProvider(Provider *_provider)
 {
 	try
 	{
+		provider = _provider;
 		if (IsThreadAlive())
 		{
 			delete thread;
 			thread = new DirectSoundPlayer2Thread(provider, WantedLatency, BufferLength);
 		}
-		provider=_provider;
 	}
 	catch (const wxChar *msg)
 	{

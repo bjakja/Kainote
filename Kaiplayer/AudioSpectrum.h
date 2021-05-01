@@ -39,7 +39,7 @@
 #include <wx/wxprec.h>
 #include <stdint.h>
 #include "GFFT/GFFT.h"
-#include "VideoFfmpeg.h"
+#include "Provider.h"
 
 
 class SpectrumCache;
@@ -55,7 +55,7 @@ private:
 	// Colour pallettes
 	unsigned char palette[256 * 3];
 
-	VideoFfmpeg *provider;
+	Provider *provider;
 	//unsigned int fft_overlaps; // number of overlaps used in FFT
 	float power_scale; // amplification of displayed power
 	int minband; // smallest frequency band displayed
@@ -66,7 +66,7 @@ private:
 	std::vector<SpectrumCache*> sub_caches;
 	AudioSpectrumMultiThreading *AudioThreads;
 public:
-	AudioSpectrum(VideoFfmpeg *_provider);
+	AudioSpectrum(Provider *_provider);
 	~AudioSpectrum();
 	
 	void RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent);
@@ -79,7 +79,7 @@ public:
 class AudioSpectrumMultiThreading
 {
 public:
-	AudioSpectrumMultiThreading(VideoFfmpeg *provider, std::vector<SpectrumCache*> *_sub_caches);
+	AudioSpectrumMultiThreading(Provider *provider, std::vector<SpectrumCache*> *_sub_caches);
 	~AudioSpectrumMultiThreading();
 	//void SetCache(unsigned int _overlaps){overlaps = _overlaps; }
 	void CreateCache(unsigned long _start, unsigned long _end);

@@ -839,3 +839,8 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 	m_colorSpace = matrix;
 
 }
+
+bool ProviderFFMS2::HasVideo()
+{
+	return m_videoSource != NULL;
+}

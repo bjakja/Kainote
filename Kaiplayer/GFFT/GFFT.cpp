@@ -21,7 +21,7 @@
 #include <cmath>
 #include <math.h>
 #include "Factory.h"
-#include "../VideoFfmpeg.h"
+#include "../Provider.h"
 #include "../GFFT/GFFT.h"
 
 #define PI 3.1415926535897932384626433832795f
@@ -237,7 +237,7 @@ FFT::~FFT(){
 	delete gfft;
 }
 
-void FFT::Set( VideoFfmpeg *_prov){
+void FFT::Set(Provider *_prov){
 	Loki::Factory<AbstractFFT<float>, unsigned int> gfft_factory;
 	FactoryInit<GFFTList<GFFT, doublelen, doublelen + 20, float>::Result>::apply(gfft_factory);
 
