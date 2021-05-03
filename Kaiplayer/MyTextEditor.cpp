@@ -1127,6 +1127,8 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	const wxColour & ctkeywords = Options.GetColour(EDITOR_TEMPLATE_KEYWORDS);
 	const wxColour & ctstrings = Options.GetColour(EDITOR_TEMPLATE_STRINGS);
 	const wxColour & cphrasesearch = Options.GetColour(EDITOR_PHRASE_SEARCH);
+	const wxColour & csplitanddrawings = Options.GetColour(EDITOR_SPLIT_LINES_AND_DRAWINGS);
+
 
 	gc->SetBrush(cbackground);
 	gc->SetPen(*wxTRANSPARENT_PEN);
@@ -1280,6 +1282,8 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 	}
 
 	bool cursorWasSet = false;
+	bool hasSplit = false;
+	bool hasDrawing = false;
 	//Drawing text
 	for (int i = charStart; i < len; i++){
 		if (posY > h)
@@ -1301,7 +1305,8 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				gc->GetTextExtent(measureText, &fw, &fh);
 				wxColour fontColor = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
-					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
+					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : 
+					templateCode ? ctvariables : hasDrawing ? csplitanddrawings : ctext;
 				gc->SetFont(font, fontColor);
 				if (hasRTL || isRTL) {
 					double chfw = 0.;
@@ -1425,19 +1430,31 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 			wchar++;
 			continue;
 		}
-		if (ch == L'{' || ch == L'}'){
-			if (ch == L'{'){
-				tags = true;
-				wxString bef = parttext.BeforeLast(L'{');
+		if (hasSplit) {
+			if (ch == L'N' || ch == L'n' || ch == L'h') {
 				gc->GetTextExtent(measureText, &fw, &fh);
-				gc->SetFont(font, ctext);
+				gc->SetFont(font, csplitanddrawings);
+				gc->DrawTextU(parttext, fw + posX, posY);
+				measureText << parttext;
+				parttext.clear();
+			}
+			hasSplit = false;
+		}
+
+		if (ch == L'{' || ch == L'}' || (ch == L'\\' && !tags)){
+			if (ch == L'{' || ch == L'\\'){
+				tags = ch == L'{';
+				hasSplit = ch == L'\\';
+				wxString bef = parttext.BeforeLast(ch);
+				gc->GetTextExtent(measureText, &fw, &fh);
+				gc->SetFont(font, hasDrawing? csplitanddrawings : ctext);
 				if (hasRTL || isRTL) {
 					double chfw = 0.;
 					double chpos = 0.;
 					for (size_t i = 0; i < bef.size(); i++) {
-						const wxUniChar& ch = bef[i];
-						gc->DrawTextU(ch, fw + posX + chpos, posY);
-						gc->GetTextExtent(ch, &chfw, &fh);
+						const wxUniChar& ch1 = bef[i];
+						gc->DrawTextU(ch1, fw + posX + chpos, posY);
+						gc->GetTextExtent(ch1, &chfw, &fh);
 						chpos += chfw;
 					}
 				}
@@ -1445,7 +1462,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 					gc->DrawTextU(bef, fw + posX, posY);
 				}
 				measureText << bef;
-				parttext = L"{";
+				parttext = ch;
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
@@ -1453,21 +1470,29 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 				gc->SetFont(font, (val) ? cvalues : (slash) ? cnames : ctext);
 				gc->DrawTextU(tmp, fw + posX, posY);
 				measureText << tmp;
-				parttext = L"}";
+				parttext = ch;
 				tags = slash = val = false;
 			}
-			gc->GetTextExtent(measureText, &fw, &fh);
-			gc->SetFont(font, ccurlybraces);
-			gc->DrawTextU(parttext, fw + posX, posY);
-			measureText << parttext;
-			parttext.clear();
-			val = false;
+			if (ch != L'\\') {
+				gc->GetTextExtent(measureText, &fw, &fh);
+				gc->SetFont(font, ccurlybraces);
+				gc->DrawTextU(parttext, fw + posX, posY);
+				measureText << parttext;
+				parttext.clear();
+				val = false;
+			}
 		}
 
 		if (slash){
 			tagtest += ch;
 			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || tagtest == L"fn" || ch == L'('){
 				slash = false;
+				//block pos tag
+				if (tagtest.StartsWith("p") && ch != L'(') {
+					wxString pnumstr = tagtest.Mid(1);
+					int pnum = wxAtoi(pnumstr);
+					hasDrawing = pnum > 0;
+				}
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
 				gc->GetTextExtent(measureText, &fw, &fh);
 				gc->SetFont(font, cnames);

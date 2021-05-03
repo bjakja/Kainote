@@ -1,4 +1,4 @@
-
+ï»¿
 //  Copyright (c) 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
@@ -172,7 +172,7 @@ void Provider::OpenKeyframes(const wxString& filename)
 		}
 	}
 	else {
-		KaiMessageBox(_("Nieprawid³owy format klatek kluczowych"), _("B³¹d"), 4L, Notebook::GetTab());
+		KaiMessageBox(_("NieprawidÅ‚owy format klatek kluczowych"), _("BÅ‚Ä…d"), 4L, Notebook::GetTab());
 	}
 }
 

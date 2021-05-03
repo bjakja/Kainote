@@ -1,4 +1,4 @@
-//  Copyright (c) 2021, Marcin Drob
+ï»¿//  Copyright (c) 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
 {
-	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { KaiMessageBox(_("Nie mo¿na wczytaæ opcji audio"), _("B³¹d")); }
+	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { KaiMessageBox(_("Nie moÅ¼na wczytaÄ‡ opcji audio"), _("BÅ‚Ä…d")); }
 	m_discCache = !Options.GetBool(AUDIO_RAM_CACHE);
 
 	m_success = false;
@@ -159,7 +159,7 @@ int ProviderFFMS2::Init()
 
 	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.utf8_str(), &m_errInfo);
 	if (!Indexer) {
-		KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"), m_errInfo.Buffer)); return 0;
+		KaiLog(wxString::Format(_("WystÄ…piÅ‚ bÅ‚Ä…d indeksowania: %s"), m_errInfo.Buffer)); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
@@ -246,7 +246,7 @@ int ProviderFFMS2::Init()
 		audiotrack = progress->ShowSecondaryDialog([=]() {
 			kainoteApp* Kaia = (kainoteApp*)wxTheApp;
 
-			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz œcie¿kê"), true);
+			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz Å›cieÅ¼kÄ™"), true);
 			if (tracks.ShowModal() == wxID_OK) {
 				int result = wxAtoi(tracks.GetSelection().BeforeFirst(':'));
 				return result;
@@ -290,10 +290,10 @@ done:
 		if (m_index == NULL) {
 			if (wxString(m_errInfo.Buffer).StartsWith(L"Cancelled")) {
 				//No need spam user that he clicked cancel button
-				//KaiLog(_("Indeksowanie anulowane przez u¿ytkownika"));
+				//KaiLog(_("Indeksowanie anulowane przez uÅ¼ytkownika"));
 			}
 			else {
-				KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"), m_errInfo.Buffer));
+				KaiLog(wxString::Format(_("WystÄ…piÅ‚ bÅ‚Ä…d indeksowania: %s"), m_errInfo.Buffer));
 			}
 			//FFMS_CancelIndexing(Indexer);
 			return 0;
@@ -304,7 +304,7 @@ done:
 		}
 		if (FFMS_WriteIndex(m_indexPath.utf8_str(), m_index, &m_errInfo))
 		{
-			KaiLog(wxString::Format(_("Nie mo¿na zapisaæ indeksu, wyst¹pi³ b³¹d %s"), m_errInfo.Buffer));
+			KaiLog(wxString::Format(_("Nie moÅ¼na zapisaÄ‡ indeksu, wystÄ…piÅ‚ bÅ‚Ä…d %s"), m_errInfo.Buffer));
 			//FFMS_DestroyIndex(index);
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
@@ -331,7 +331,7 @@ done:
 
 		if (m_videoSource == NULL) {
 			if (audiotrack == -1) {
-				KaiLog(_("Nie mo¿na utworzyæ VideoSource."));
+				KaiLog(_("Nie moÅ¼na utworzyÄ‡ VideoSource."));
 				return 0;
 			}
 			else
@@ -370,7 +370,7 @@ done:
 		pixfmt[1] = -1;
 
 		if (FFMS_SetOutputFormatV2(m_videoSource, pixfmt, m_width, m_height, FFMS_RESIZER_BILINEAR, &m_errInfo)) {
-			KaiLog(_("Nie mo¿na przekonwertowaæ wideo na RGBA"));
+			KaiLog(_("Nie moÅ¼na przekonwertowaÄ‡ wideo na RGBA"));
 			return 0;
 		}
 
@@ -384,13 +384,13 @@ done:
 			m_colorSpace = m_realColorSpace = ColorMatrixDescription(m_CS, m_CR);
 			if (m_CS == FFMS_CS_BT709 && colormatrix == L"TV.709") {
 				if (FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT709, m_CR, FFMS_GetPixFmt(""), &m_errInfo)) {
-					KaiLog(_("Nie mo¿na zmieniæ macierzy YCbCr"));
+					KaiLog(_("Nie moÅ¼na zmieniÄ‡ macierzy YCbCr"));
 				}
 			}
 			if (colormatrix == L"TV.601") {
 				m_colorSpace = ColorMatrixDescription(FFMS_CS_BT470BG, m_CR);
 				if (FFMS_SetInputFormatV(m_videoSource, FFMS_CS_BT470BG, m_CR, FFMS_GetPixFmt(""), &m_errInfo)) {
-					KaiLog(_("Nie mo¿na zmieniæ macierzy YCbCr"));
+					KaiLog(_("Nie moÅ¼na zmieniÄ‡ macierzy YCbCr"));
 				}
 			}
 			else if (colormatrix == L"TV.709") {
@@ -400,12 +400,12 @@ done:
 
 		FFMS_Track* FrameData = FFMS_GetTrackFromVideo(m_videoSource);
 		if (FrameData == NULL) {
-			KaiLog(_("Nie mo¿na pobraæ œcie¿ki wideo"));
+			KaiLog(_("Nie moÅ¼na pobraÄ‡ Å›cieÅ¼ki wideo"));
 			return 0;
 		}
 		const FFMS_TrackTimeBase* TimeBase = FFMS_GetTimeBase(FrameData);
 		if (TimeBase == NULL) {
-			KaiLog(_("Nie mo¿na pobraæ informacji o wideo"));
+			KaiLog(_("Nie moÅ¼na pobraÄ‡ informacji o wideo"));
 			return 0;
 		}
 
@@ -435,7 +435,7 @@ audio:
 	if (audiotrack != -1) {
 		m_audioSource = FFMS_CreateAudioSource(m_filename.utf8_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
 		if (m_audioSource == NULL) {
-			KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d tworzenia Ÿród³a audio: %s"), m_errInfo.Buffer));
+			KaiLog(wxString::Format(_("WystÄ…piÅ‚ bÅ‚Ä…d tworzenia ÅºrÃ³dÅ‚a audio: %s"), m_errInfo.Buffer));
 			return 0;
 		}
 
@@ -444,7 +444,7 @@ audio:
 		resopts->SampleFormat = FFMS_FMT_S16;
 
 		if (FFMS_SetOutputFormatA(m_audioSource, resopts, &m_errInfo)) {
-			KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d konwertowania audio: %s"), m_errInfo.Buffer));
+			KaiLog(wxString::Format(_("WystÄ…piÅ‚ bÅ‚Ä…d konwertowania audio: %s"), m_errInfo.Buffer));
 			return 1;
 		}
 		FFMS_DestroyResampleOptions(resopts);
@@ -457,7 +457,7 @@ audio:
 		m_channels = 1;
 
 		if (abs(m_delay) >= (m_sampleRate * m_numSamples * m_bytesPerSample)) {
-			KaiLog(_("Nie mo¿na ustawiæ opóŸnienia, przekracza czas trwania audio"));
+			KaiLog(_("Nie moÅ¼na ustawiÄ‡ opÃ³Åºnienia, przekracza czas trwania audio"));
 			m_delay = 0;
 		}
 		m_audioLoadThread = new std::thread(AudioLoad, this, newIndex, audiotrack);
@@ -628,7 +628,7 @@ void ProviderFFMS2::GetBuffer(void* buf, int64_t start, int64_t count, double vo
 
 bool ProviderFFMS2::RAMCache()
 {
-	//progress->Title(_("Zapisywanie do pamiêci RAM"));
+	//progress->Title(_("Zapisywanie do pamiÄ™ci RAM"));
 	m_audioProgress = 0;
 	int64_t end = m_numSamples * m_bytesPerSample;
 
@@ -636,7 +636,7 @@ bool ProviderFFMS2::RAMCache()
 	m_blockNum = ((float)end / (float)blsize) + 1;
 	m_cache = NULL;
 	m_cache = new char* [m_blockNum];
-	if (m_cache == NULL) { KaiMessageBox(_("Za ma³o pamiêci RAM")); return false; }
+	if (m_cache == NULL) { KaiMessageBox(_("Za maÅ‚o pamiÄ™ci RAM")); return false; }
 
 	int64_t pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
 	int halfsize = (blsize / m_bytesPerSample);

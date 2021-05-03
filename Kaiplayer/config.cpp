@@ -412,6 +412,7 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[EDITOR_TAG_VALUES].Set((dark) ? L"#0076FF" : L"#34C200");
 	colours[EDITOR_CURLY_BRACES].Set((dark) ? L"#8791FD" : L"#7E3B00");
 	colours[EDITOR_TAG_OPERATORS].Set((dark) ? L"#00C3FF" : L"#787600");
+	colours[EDITOR_SPLIT_LINES_AND_DRAWINGS].Set((dark) ? L"#ADABAB" : L"#817F7F");
 	colours[EDITOR_TEMPLATE_VARIABLES].Set((dark) ? L"#BDB76B" : L"#BDB76B");
 	colours[EDITOR_TEMPLATE_CODE_MARKS].Set((dark) ? L"#FB4544" : L"#FB4544");
 	colours[EDITOR_TEMPLATE_FUNCTIONS].Set((dark) ? L"#00C3FF" : L"#00C3FF");
