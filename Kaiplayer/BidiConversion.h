@@ -18,13 +18,20 @@
 
 //when textout is NULL result puts to textIn
 void ConvertToRTLChars(wxString* textin, wxString* textout = NULL);
+void ConvertToRTLCharsSpellchecker(wxString* textin, wxString* textout);
 void ConvertToRTL(wxString* textin, wxString* textout = NULL);
 void BIDIConvert(wxString* text);
 void BIDIReverseConvert(wxString* text);
 //when textout is NULL result puts to textIn
 void ConvertToLTR(wxString* textin, wxString* textout = NULL);
 void ConvertToLTRChars(wxString* textin, wxString* textout = NULL);
+//check all rtl chars
 bool IsRTLCharacter(const wxUniChar& ch);
+//check converted rtl chars
+bool IsRTLConvertedCharacter(const wxUniChar& ch);
+//check all rtl chars
 bool CheckRTL(const wxString* text);
+//check converted chars
+bool CheckRTLConverted(const wxString* text);
 void SwitchRTLChars(wxString* text);
 bool NeedConversion(const wxString* text);

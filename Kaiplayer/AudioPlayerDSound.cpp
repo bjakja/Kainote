@@ -815,7 +815,7 @@ void DirectSoundPlayer2::OpenStream()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		thread = 0;
 	}
 }
@@ -831,7 +831,7 @@ void DirectSoundPlayer2::CloseStream()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 	thread = 0;
 }
@@ -850,7 +850,7 @@ void DirectSoundPlayer2::SetProvider(Provider *_provider)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -866,7 +866,7 @@ void DirectSoundPlayer2::Play(int64_t start, int64_t count)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -883,7 +883,7 @@ void DirectSoundPlayer2::Stop(bool timerToo)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -897,7 +897,7 @@ bool DirectSoundPlayer2::IsPlaying()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return false;
 	}
 }
@@ -912,7 +912,7 @@ int64_t DirectSoundPlayer2::GetStartPosition()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return 0;
 	}
 }
@@ -927,7 +927,7 @@ int64_t DirectSoundPlayer2::GetEndPosition()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return 0;
 	}
 }
@@ -942,7 +942,7 @@ int64_t DirectSoundPlayer2::GetCurrentPosition()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return 0;
 	}
 }
@@ -956,7 +956,7 @@ int DirectSoundPlayer2::GetCurPositionMS()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return 0;
 	}
 }
@@ -970,7 +970,7 @@ void DirectSoundPlayer2::SetEndPosition(int64_t pos)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -983,7 +983,7 @@ void DirectSoundPlayer2::SetCurrentPosition(int64_t pos)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -996,7 +996,7 @@ void DirectSoundPlayer2::SetVolume(double vol)
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 	}
 }
 
@@ -1010,7 +1010,7 @@ double DirectSoundPlayer2::GetVolume()
 	}
 	catch (const wxChar *msg)
 	{
-		wxLogError(msg);
+		KaiLog(msg);
 		return 0;
 	}
 }

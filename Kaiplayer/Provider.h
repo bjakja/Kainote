@@ -63,7 +63,7 @@ public:
 	bool AudioNotInitialized() {
 		return audioNotInitialized;
 	}
-	int GetAudioProgress() {
+	float GetAudioProgress() {
 		return m_audioProgress;
 	}
 protected:

@@ -150,7 +150,9 @@ bool SpellChecker::Initialize()
 bool SpellChecker::CheckWord(wxString *word) {
 	//useSpellchecker checks if hunspell exist, no need check it again
 	if (!useSpellChecker) return true;
-	if (isRTL && CheckRTL(word)) {
+	//reverse convert RTL when words was converted
+	//spellchecker not working with converted words
+	if (isRTL && CheckRTLConverted(word)) {
 		BIDIReverseConvert(word);
 	}
 

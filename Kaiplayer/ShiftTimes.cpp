@@ -114,7 +114,6 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxW
 	SetAcceleratorTable(ctaccel);
 	CreateControls(Options.GetInt(POSTPROCESSOR_ON) < 16);
 	RefVals();
-
 }
 
 ShiftTimesWindow::~ShiftTimesWindow()
@@ -196,7 +195,10 @@ void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
-	if (result != L""){ WhichLines->SetSelection(5); }
+	if (result != L""){ 
+		WhichLines->SetSelection(5); 
+		OnEdition(event);
+	}
 }
 
 void ShiftTimesWindow::SaveOptions()
@@ -295,6 +297,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
 		MoveTagTimes = new KaiCheckBox(panel, 22889, _("Czasy tagów"));
 		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimesWindow::OnChangeDisplayUnits, this, 31221);
+		Bind(NUMBER_CHANGED, &ShiftTimesWindow::OnEdition, this, 22890);
 		timegrid->Add(TimeText, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		timegrid->Add(MoveTime, 0, wxEXPAND | wxRIGHT, 2);
 		timegrid->Add(Forward, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
@@ -609,6 +612,7 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 		else{ EndVAtime->SetValue(true); }
 
 		EndTimeCorrection->SetSelection((secondWindow) ? secondWindow->EndTimeCorrection->GetSelection() : Options.GetInt(SHIFT_TIMES_CORRECT_END_TIMES));
+		ChangeProfileIfIsSet();
 	}
 	int enables = Options.GetInt(POSTPROCESSOR_ON);
 
@@ -743,26 +747,11 @@ void ShiftTimesWindow::GetProfilesNames(wxArrayString &list)
 
 void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 {
-	wxString moveToAudioTime = (MoveToAudioTime->GetValue()) ? L"1" : L"0";
-	wxString moveToVideoTime = (MoveToVideoTime->GetValue()) ? L"1" : L"0";
-	wxString moveToStartTimes = (StartVAtime->GetValue()) ? L"1" : L"0";
-	wxString moveTagTimes = (MoveTagTimes->GetValue()) ? L"1" : L"0";
-	wxString forward = (Forward->GetValue()) ? L"1" : L"0";
-	wxString frames = (DisplayFrames->GetValue()) ? L"1" : L"0";
+	wxString newProfile;
+	GetProfileString(name, &newProfile);
 	wxArrayString profiles;
 	wxArrayString changedProfiles;
 	Options.GetTable(SHIFT_TIMES_PROFILES, profiles);
-
-	wxString newProfile;
-	newProfile << name << L": Time: " << TimeText->GetTime().mstime <<
-		L" Forward: " << forward << L" Frames: " << frames <<
-		L" MoveTagTimes: " << moveTagTimes << L" MoveToStartTimes: " <<
-		moveToStartTimes << L" MoveToVideoTime: " << moveToVideoTime <<
-		L" MoveToVideoTime: " << moveToAudioTime << L" WhichLines: " <<
-		WhichLines->GetSelection() << L" StylesText: " <<
-		Stylestext->GetValue() << L" WhichTimes: " << WhichTimes->GetSelection() <<
-		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection();
-
 	changedProfiles.Add(newProfile);
 	for (auto Profile : profiles){
 		if (!Profile.StartsWith(name + L":")){
@@ -775,6 +764,52 @@ void ShiftTimesWindow::CreateProfile(const wxString &name, bool overwrite)
 	GetProfilesNames(profilesList);
 	ProfilesList->PutArray(&profilesList);
 	ProfilesList->SetSelection(0);
+}
+
+void ShiftTimesWindow::GetProfileString(const wxString& name, wxString* profileString)
+{
+	wxString moveToAudioTime = (MoveToAudioTime->GetValue()) ? L"1" : L"0";
+	wxString moveToVideoTime = (MoveToVideoTime->GetValue()) ? L"1" : L"0";
+	wxString moveToStartTimes = (StartVAtime->GetValue()) ? L"1" : L"0";
+	wxString moveTagTimes = (MoveTagTimes->GetValue()) ? L"1" : L"0";
+	wxString forward = (Forward->GetValue()) ? L"1" : L"0";
+	wxString frames = (DisplayFrames->GetValue()) ? L"1" : L"0";
+
+	
+	(*profileString) << name << L": Time: " << TimeText->GetTime().mstime <<
+		L" Forward: " << forward << L" Frames: " << frames <<
+		L" MoveTagTimes: " << moveTagTimes << L" MoveToStartTimes: " <<
+		moveToStartTimes << L" MoveToVideoTime: " << moveToVideoTime <<
+		L" MoveToVideoTime: " << moveToAudioTime << L" WhichLines: " <<
+		WhichLines->GetSelection() << L" StylesText: " <<
+		Stylestext->GetValue() << L" WhichTimes: " << WhichTimes->GetSelection() <<
+		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection();
+}
+
+void ShiftTimesWindow::ChangeProfileIfIsSet()
+{
+	wxArrayString profiles;
+	Options.GetTable(SHIFT_TIMES_PROFILES, profiles);
+	wxString curProfile; 
+	GetProfileString("dummy", &curProfile);
+	size_t cpos = curProfile.find("Time:");
+	if (cpos == -1)
+		return;
+	wxString truncCurProfile = curProfile.Mid(cpos);
+	size_t numProfile = 0;
+	for (auto& profile : profiles) {
+		size_t pos = profile.find("Time:");
+		if (pos == -1) {
+			numProfile++;
+			continue;
+		}
+		wxString truncProfile = profile.Mid(pos);
+		if (truncProfile == truncCurProfile) {
+			ProfilesList->SetSelection(numProfile);
+			return;
+		}
+		numProfile++;
+	}
 }
 
 void ShiftTimesWindow::SetProfile(const wxString &name)
@@ -945,10 +980,11 @@ void ShiftTimesWindow::OnChangeProfile(wxCommandEvent& event)
 
 void ShiftTimesWindow::OnEdition(wxCommandEvent& event)
 {
-	if (LeadIn || ProfilesList->GetSelection() < 0)
+	if (LeadIn /*|| ProfilesList->GetSelection() < 0*/)
 		return;
-
-	ProfilesList->SetSelection(-1);
+	if(ProfilesList->GetSelection() != -1)
+		ProfilesList->SetSelection(-1);
+	ChangeProfileIfIsSet();
 }
 
 bool ShiftTimesWindow::SetFont(const wxFont &font)

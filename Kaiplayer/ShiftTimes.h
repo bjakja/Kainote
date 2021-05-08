@@ -110,6 +110,8 @@ private:
 	void CreateControls(bool normal = true);
 	void GetProfilesNames(wxArrayString &list);
 	void CreateProfile(const wxString &name, bool overwrite = false);
+	void GetProfileString(const wxString& name, wxString* profileString);
+	void ChangeProfileIfIsSet();
 	void SetProfile(const wxString &name);
 
 	DECLARE_EVENT_TABLE()

@@ -182,8 +182,7 @@ void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
 		else{
-			GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
+			GraphicsContext* gc = GetGraphicsContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				CalcWrapsD2D(gc, w);
@@ -231,7 +230,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 			fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			widthCount += gfw;
 		}
-		if (widthCount > windowWidth - 7) {
+		if (widthCount > windowWidth - 2) {
 			size_t wrapsSize = wraps.size();
 			int minChar = wrapsSize ? wraps[wrapsSize - 1] : 0;
 			int j = i - 2;
@@ -239,10 +238,11 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 			//check for possible wraps else return char wrap
 			while (minChar < j) {
 				const wxUniChar &ch = text[j];
-				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
-					wraps.push_back(ch == L'{' ? j : j + 1);
+				if (ch == L' ' || ch == L'\\' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
+					size_t g = ch == L'{' || ch == L'\\' || ch == L'(' ? j : j + 1;
+					wraps.push_back(g);
 					foundWrap = true;
-					i = j + 1;
+					i = g;
 					break;
 				}
 				j--;
@@ -294,10 +294,11 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 			while (minChar < j) {
 				//int RTLj = (hasRTL) ? textLen - 1 - j : j;
 				const wxUniChar &ch = text[j];
-				if (ch == L' ' || ch == L'\\' || ch == L',' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
-					wraps.push_back(ch == L'{' ? j : j + 1);
+				if (ch == L' ' || ch == L'\\' || ch == L'{' || ch == L'}' || ch == L'(' || ch == L')') {
+					size_t g = ch == L'{' || ch == L'\\' || ch == L'(' ? j : j + 1;
+					wraps.push_back(g);
 					foundWrap = true;
-					i = j + 1;
+					i = g;
 					break;
 				}
 				j--;
@@ -442,8 +443,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 					pos.x = 3;
 					int wrap = wraps[Cursor.y];
 					if (wrap < Cursor.x){
-						GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-						GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
+						GraphicsContext* gc = GetGraphicsContext();
 						wxString textBeforeCursor = text.Mid(wrap, Cursor.x - wrap + 1);
 						if (gc){
 							gc->SetFont(font, L"#FFFFFF");
@@ -1085,8 +1085,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	wxMemoryDC bmpDC;
 	bmpDC.SelectObject(*bmp);
 
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext* gc = renderer? renderer->CreateContext(bmpDC) : NULL;
+	GraphicsContext* gc = GetGraphicsContext(bmpDC);
 
 	if (!gc){
 		DrawFieldGDI(bmpDC, w, h - statusBarHeight, h);
@@ -1262,6 +1261,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		}
 	}
 	//skip unneeded lines, start one line before to avoid not colored values on start
+	bool hasDrawing = false;
 	int lineStart = ((scrollPositionV - 2) / fontHeight) - 1;
 	int charStart = 0;
 	if (lineStart > 0){
@@ -1273,6 +1273,18 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		if (endBracket == -1 || startBracket > endBracket){
 			tags = slash = val = true;
 		}
+		if (startBracket == -1 || startBracket < endBracket) {
+			wxString tagText = fieldText.Mid(startBracket, endBracket - startBracket + 1);
+			wxRegEx re("\\\\p([0-9]+)", wxRE_ADVANCED | wxRE_ICASE);
+			if (re.IsValid() && re.Matches(tagText)) {
+				wxString result = re.GetMatch(tagText, 1);
+				if (!result.empty()) {
+					if (result[0] > L'0' && result[0] < L'9') {
+						hasDrawing = true;
+					}
+				}
+			}
+		}
 		wline = lineStart + 1;
 		rtlwline = wline - 1;
 		if (rtlwline < 0)
@@ -1283,7 +1295,6 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 
 	bool cursorWasSet = false;
 	bool hasSplit = false;
-	bool hasDrawing = false;
 	//Drawing text
 	for (int i = charStart; i < len; i++){
 		if (posY > h)
@@ -1581,6 +1592,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 	const wxColour & ctkeywords = Options.GetColour(EDITOR_TEMPLATE_KEYWORDS);
 	const wxColour & ctstrings = Options.GetColour(EDITOR_TEMPLATE_STRINGS);
 	const wxColour & cphrasesearch = Options.GetColour(EDITOR_PHRASE_SEARCH);
+	const wxColour & csplitanddrawings = Options.GetColour(EDITOR_SPLIT_LINES_AND_DRAWINGS);
 
 	dc.SetBrush(cbackground);
 	dc.SetPen(*wxTRANSPARENT_PEN);
@@ -1706,6 +1718,8 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		wchar = charStart + lineStart;
 	}
 	bool cursorWasSet = false;
+	bool hasSplit = false;
+	bool hasDrawing = false;
 	//Drawing text
 	for (int i = charStart; i < len; i++){
 		if (posY > h)
@@ -1726,7 +1740,8 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				wxColour kol = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
-					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : ctext;
+					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : 
+					hasDrawing ? csplitanddrawings : ctext;
 				dc.SetTextForeground(kol);
 				mestext << parttext;
 				dc.DrawText(parttext, fw + posX, posY);
@@ -1843,12 +1858,24 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			wchar++;
 			continue;
 		}
-		if (ch == L'{' || ch == L'}'){
-			if (ch == L'{'){
-				tags = true;
-				wxString bef = parttext.BeforeLast(L'{');
+		if (hasSplit) {
+			if (ch == L'N' || ch == L'n' || ch == L'h') {
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-				dc.SetTextForeground(ctext);
+				dc.SetTextForeground(csplitanddrawings);
+				dc.DrawText(parttext, fw + posX, posY);
+				mestext << parttext;
+				parttext.clear();
+			}
+			hasSplit = false;
+		}
+
+		if (ch == L'{' || ch == L'}' || (ch == L'\\' && !tags)) {
+			if (ch == L'{' || ch == L'\\') {
+				tags = ch == L'{';
+				hasSplit = ch == L'\\';
+				wxString bef = parttext.BeforeLast(ch);
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				dc.SetTextForeground(hasDrawing ? csplitanddrawings : ctext);
 				if (hasRTL || isRTL) {
 					int chfw = 0;
 					int chpos = 0;
@@ -1863,7 +1890,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					dc.DrawText(bef, fw + posX, posY);
 				}
 				mestext << bef;
-				parttext = L"{";
+				parttext = ch;
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
@@ -1871,15 +1898,17 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				dc.SetTextForeground((val) ? cvalues : (slash) ? cnames : ctext);
 				dc.DrawText(tmp, fw + posX, posY);
 				mestext << tmp;
-				parttext = L"}";
+				parttext = ch;
 				tags = slash = val = false;
 			}
-			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
-			dc.SetTextForeground(ccurlybraces);
-			dc.DrawText(parttext, fw + posX, posY);
-			mestext << parttext;
-			parttext.clear();
-			val = false;
+			if (ch != L'\\') {
+				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				dc.SetTextForeground(ccurlybraces);
+				dc.DrawText(parttext, fw + posX, posY);
+				mestext << parttext;
+				parttext.clear();
+				val = false;
+			}
 		}
 
 		if (slash){
@@ -1887,6 +1916,12 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			if ((digits.Find(ch) != -1 && tagtest != L"1" && tagtest != L"2" && tagtest != L"3" && tagtest != L"4") || 
 				tagtest == L"fn" || ch == L'('){
 				slash = false;
+				//block pos tag
+				if (tagtest.StartsWith("p") && ch != L'(') {
+					wxString pnumstr = tagtest.Mid(1);
+					int pnum = wxAtoi(pnumstr);
+					hasDrawing = pnum > 0;
+				}
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
 				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
 				dc.SetTextForeground(cnames);
@@ -1970,8 +2005,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 	int wlen = rtltext.length();
 	int fw1 = 0;
 	double gcfw = 0.f, gcfh = 0.f, gcfw1 = 0.f;
-	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
+	GraphicsContext* gc = GetGraphicsContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -2424,8 +2458,7 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 	int fw, fh;
 	if (wraps.size() < 2 || wraps[cur.y] == cur.x){ fw = 0; }
 	else{ 
-		GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
+		GraphicsContext* gc = GetGraphicsContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gcfw, gcfh;
@@ -2776,6 +2809,28 @@ bool TextEditor::IsPrevRTLChar(int numchar)
 		}
 	}
 	return IsNextRTLChar(numchar);
+}
+
+//context for drawing
+GraphicsContext* TextEditor::GetGraphicsContext(const wxMemoryDC& dc)
+{
+	if (graphicsRendering) {
+		GraphicsRenderer* renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext* gc = renderer ? renderer->CreateContext(dc) : NULL;
+		return gc;
+	}
+	return NULL;
+}
+
+//context for measuring
+GraphicsContext* TextEditor::GetGraphicsContext()
+{
+	if (graphicsRendering) {
+		GraphicsRenderer* renderer = GraphicsRenderer::GetDirect2DRenderer();
+		GraphicsContext* gc = renderer ? renderer->CreateMeasuringContext() : NULL;
+		return gc;
+	}
+	return NULL;
 }
 
 //state here is for template and for disable spellchecker and wraps

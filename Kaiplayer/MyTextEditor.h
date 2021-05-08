@@ -86,10 +86,15 @@ protected:
 	void PutTag();
 	bool IsNextRTLChar(int numchar);
 	bool IsPrevRTLChar(int numchar);
+	//context for drawing
+	GraphicsContext* GetGraphicsContext(const wxMemoryDC &dc);
+	//context for measuring
+	GraphicsContext* GetGraphicsContext();
 
 	bool SpellCheckerOnOff;
 	bool useSpellchecker;
 	bool changeQuotes;
+	bool graphicsRendering = true;
 	wxString MText;
 	wxString RTLText;
 	wxString tempRTLtext;

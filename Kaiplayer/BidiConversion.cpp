@@ -133,7 +133,8 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 			ltrText.clear();
 		}
 		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 && 
-			(!rtlText.empty() || !reverseRTL.empty()) && ch != 0x61F && ch != L'\\') {
+			//0x61F = Arabic "?"
+			(!rtlText.empty() || !reverseRTL.empty()) && ch != 0x61F && ch != L'\\'/* && ch != 0x60C*/) {
 			if (rtlText.empty())
 				reverseRTL.insert(0, ch);
 			else {
@@ -161,6 +162,11 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 
 				convertedText << ltrText;
 				ltrText.clear();
+				if (ch == 0x60C) {
+					convertedText << ch;
+					continue;
+				}
+
 			}
 			rtlText << ch;
 		}
@@ -202,6 +208,101 @@ void ConvertToRTLChars(wxString* textin, wxString* textout)
 					SwitchRTLChars(&rtlText);
 			}
 
+			reverseRTL.insert(0, rtlText);
+		}
+		convertedText << reverseRTL;
+		reverseRTL.clear();
+	}
+	if (!ltrText.empty()) {
+		convertedText << ltrText;
+	}
+
+	if (textout)
+		*textout = convertedText;
+	else
+		*textin = convertedText;
+}
+
+void ConvertToRTLCharsSpellchecker(wxString* textin, wxString* textout)
+{
+	if (!textin)
+		return;
+
+	size_t len = textin->size();
+	if (!len) {
+		if (textout)
+			*textout = *textin;
+		return;
+	}
+
+	wxString convertedText;
+	wxString ltrText;
+	wxString rtlText;
+	wxString reverseRTL;
+	bool block = false;
+	for (int j = 0; j < len; j++) {
+		const wxUniChar& ch = (*textin)[j];
+		if (ch == L'{' && (!reverseRTL.empty() || !rtlText.empty())) {
+			if (!rtlText.empty()) {
+				//BIDIReverseConvert(&rtlText);
+				reverseRTL.insert(0, rtlText);
+				rtlText.clear();
+			}
+			convertedText << reverseRTL;
+			reverseRTL.clear();
+			ltrText << ch;
+			convertedText << ltrText;
+			ltrText.clear();
+		}
+		else if (iswctype(wint_t(ch), _SPACE | _PUNCT) != 0 &&
+			//0x61F = Arabic "?"
+			(!rtlText.empty() || !reverseRTL.empty()) && ch != 0x61F && ch != L'\\') {
+			if (rtlText.empty())
+				reverseRTL.insert(0, ch);
+			else {
+				//BIDIReverseConvert(&rtlText);
+				const wxUniChar& nch = (j + 1 < len) ? (*textin)[j + 1] : L'A';
+				bool isNextRTL = IsRTLCharacter(nch) || (iswctype(wint_t(nch), _SPACE | _PUNCT) != 0 &&
+					nch != L'{' && nch != L'\\');
+				reverseRTL.insert(0, isNextRTL ? ch + rtlText : rtlText);
+				rtlText.clear();
+				if (!isNextRTL)
+					ltrText.insert(0, ch);
+			}
+		}
+		else if (ch == 0x61F) {
+			rtlText.insert(0, ch);
+		}
+		else if (IsRTLCharacter(ch)) {
+			if (!ltrText.empty()) {
+
+				convertedText << ltrText;
+				ltrText.clear();
+				if (ch == 0x60C) {
+					convertedText << ch;
+					continue;
+				}
+			}
+			rtlText << ch;
+		}
+		else {
+			if (!reverseRTL.empty() || !rtlText.empty()) {
+				if (!rtlText.empty()) {
+					//BIDIReverseConvert(&rtlText);
+					reverseRTL.insert(0, rtlText);
+					rtlText.clear();
+				}
+				convertedText << reverseRTL;
+				reverseRTL.clear();
+			}
+			ltrText << ch;
+		}
+
+	}
+
+	if (!rtlText.empty() || !reverseRTL.empty()) {
+		if (!rtlText.empty()) {
+			//BIDIReverseConvert(&rtlText);
 			reverseRTL.insert(0, rtlText);
 		}
 		convertedText << reverseRTL;
@@ -479,6 +580,10 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 
 				convertedText << ltrText;
 				ltrText.clear();
+				if (ch == 0x60C) {
+					convertedText << ch;
+					continue;
+				}
 			}
 			rtlText << ch;
 		}
@@ -515,6 +620,7 @@ void ConvertToLTRChars(wxString* textin, wxString* textout)
 		*textin = convertedText;
 }
 
+
 //taken from https://stackoverflow.com/questions/4330951/how-to-detect-whether-a-character-belongs-to-a-right-to-left-language
 bool IsRTLCharacter(const wxUniChar& ch)
 {
@@ -531,11 +637,11 @@ bool IsRTLCharacter(const wxUniChar& ch)
 			else if (0x5F0 <= c && c <= 0x5F4)     return true;
 			else if (c == 0x608)                   return true;
 			else if (c == 0x60B)                   return true;
+			else if (c == 0x60C)                   return true;
 			else if (c == 0x60D)                   return true;
 			else if (c == 0x61B)                   return true;
 			else if (0x61E <= c && c <= 0x64A)     return true;
-			else if (c <= 0x64F)     return true;
-			else if (c <= 0x651)     return true;
+			else if (c >= 0x64B && c <= 0x65F)     return true;
 			else if (0x66D <= c && c <= 0x66F)     return true;
 			else if (0x671 <= c && c <= 0x6D5)     return true;
 			else if (0x6E5 <= c && c <= 0x6E6)     return true;
@@ -599,11 +705,66 @@ bool IsRTLCharacter(const wxUniChar& ch)
 	return false;
 }
 
+bool IsRTLConvertedCharacter(const wxUniChar& ch)
+{
+	unsigned int c = ch.GetValue();
+	if (c >= 0xFB1D)
+	{
+		if (c == 0xFB1D)                       return true;
+		else if (0xFB1F <= c && c <= 0xFB28)   return true;
+		else if (0xFB2A <= c && c <= 0xFB36)   return true;
+		else if (0xFB38 <= c && c <= 0xFB3C)   return true;
+		else if (c == 0xFB3E)                  return true;
+		else if (0xFB40 <= c && c <= 0xFB41)   return true;
+		else if (0xFB43 <= c && c <= 0xFB44)   return true;
+		else if (0xFB46 <= c && c <= 0xFBC1)   return true;
+		else if (0xFBD3 <= c && c <= 0xFD3D)   return true;
+		else if (0xFD50 <= c && c <= 0xFD8F)   return true;
+		else if (0xFD92 <= c && c <= 0xFDC7)   return true;
+		else if (0xFDF0 <= c && c <= 0xFDFC)   return true;
+		else if (0xFE70 <= c && c <= 0xFE74)   return true;
+		else if (0xFE76 <= c && c <= 0xFEFC)   return true;
+		else if (0x10800 <= c && c <= 0x10805) return true;
+		else if (c == 0x10808)                 return true;
+		else if (0x1080A <= c && c <= 0x10835) return true;
+		else if (0x10837 <= c && c <= 0x10838) return true;
+		else if (c == 0x1083C)                 return true;
+		else if (0x1083F <= c && c <= 0x10855) return true;
+		else if (0x10857 <= c && c <= 0x1085F) return true;
+		else if (0x10900 <= c && c <= 0x1091B) return true;
+		else if (0x10920 <= c && c <= 0x10939) return true;
+		else if (c == 0x1093F)                 return true;
+		else if (c == 0x10A00)                 return true;
+		else if (0x10A10 <= c && c <= 0x10A13) return true;
+		else if (0x10A15 <= c && c <= 0x10A17) return true;
+		else if (0x10A19 <= c && c <= 0x10A33) return true;
+		else if (0x10A40 <= c && c <= 0x10A47) return true;
+		else if (0x10A50 <= c && c <= 0x10A58) return true;
+		else if (0x10A60 <= c && c <= 0x10A7F) return true;
+		else if (0x10B00 <= c && c <= 0x10B35) return true;
+		else if (0x10B40 <= c && c <= 0x10B55) return true;
+		else if (0x10B58 <= c && c <= 0x10B72) return true;
+		else if (0x10B78 <= c && c <= 0x10B7F) return true;
+	}
+	return false;
+}
+
 bool CheckRTL(const wxString* text)
 {
 	for (size_t i = 0; i < text->size(); i++) {
 		const wxUniChar& ch = (*text)[i];
 		if (IsRTLCharacter(ch)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CheckRTLConverted(const wxString* text)
+{
+	for (size_t i = 0; i < text->size(); i++) {
+		const wxUniChar& ch = (*text)[i];
+		if (IsRTLConvertedCharacter(ch)) {
 			return true;
 		}
 	}

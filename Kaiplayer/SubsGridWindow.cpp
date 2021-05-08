@@ -302,7 +302,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				bool isTl = (hasTLMode && txttl != L"");
 				wxString& checkingText = (isTl) ? txttl : txt;
 				if (CheckRTL(&checkingText)) {
-					ConvertToRTLChars(&checkingText, &convertedText);
+					ConvertToRTLCharsSpellchecker(&checkingText, &convertedText);
 					isRTL = true;
 				}
 				if (!isComment) {
@@ -680,7 +680,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			bool isTl = (hasTLMode && txttl != L"");
 			wxString& checkingText = (isTl) ? txttl : txt;
 			if (CheckRTL(&checkingText)) {
-				ConvertToRTLChars(&checkingText, &convertedText);
+				ConvertToRTLCharsSpellchecker(&checkingText, &convertedText);
 				isRTL = true;
 			}
 			
