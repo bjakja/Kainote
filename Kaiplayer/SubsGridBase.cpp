@@ -640,6 +640,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		bool isPreviousEndGreater = false;
 		bool isEndGreater = false;
 		bool previousIsKeyFrame = true;
+		bool isPreviousEndEdited = false;
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;
@@ -751,10 +752,10 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				//make sure that start is greater or even then end time of previous line
 				//and correct times but only when previous line end time was not greater than start time on start
 				//then discard correction.
-				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < dialc->End.mstime && foundStartKeyframe){
-					dialc->Start.NewTime(previousEnd);
-					numOfStartModifications--;
-					foundStartKeyframe = false;
+				if (dialc->Start.mstime < previousEnd && !isPreviousEndGreater && previousEnd < oldEnd && isPreviousEndEdited) {
+					it->first->End.NewTime(dialc->Start.mstime);
+					//numOfStartModifications--;
+					//foundStartKeyframe = false;
 				}
 			}
 			
@@ -784,6 +785,7 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 			previousIsKeyFrame = foundEndKeyframe;
 			isPreviousEndGreater = isEndGreater;
+			isPreviousEndEdited = numOfEndModifications > 0;
 			dialc->ClearParse();
 		}
 

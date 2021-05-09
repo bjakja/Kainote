@@ -12,8 +12,11 @@
 
 #undef GetHwnd
 
-//#include "wx/msw/wrapwin.h"
+#include <d2d1.h>
+#include <dwrite.h>
 
+//#include "wx/msw/wrapwin.h"
+#ifndef DXGI_JPEG_DC_HUFFMAN_TABLE
 typedef struct DXGI_JPEG_DC_HUFFMAN_TABLE
 {
 	BYTE CodeCounts[12];
@@ -30,9 +33,8 @@ typedef struct DXGI_JPEG_QUANTIZATION_TABLE
 {
 	BYTE Elements[64];
 } DXGI_JPEG_QUANTIZATION_TABLE;
+#endif
 
-#include <d2d1.h>
-#include <dwrite.h>
 #include <wincodec.h>
 
 IWICImagingFactory* wxWICImagingFactory();
