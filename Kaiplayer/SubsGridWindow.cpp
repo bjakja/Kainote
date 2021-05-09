@@ -128,11 +128,12 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		// when all subtitles are visible do not scrolling position = 0
 		if (panelrows > size + 3){ scrollPosition = 0; scrollPositionId = 0; }
 	}
-	else if (scrows >= size + 2){
+	else if (scrows >= size + 2) {
 		bg = true;
 		scrows--;
 		//reduced to avoid crash or maybe now not needed cause is key + i < getcount()
 	}
+	
 	if (SetScrollBar(wxVERTICAL, scrollPositionId, panelrows, size + 3, panelrows - 3)){
 		GetClientSize(&w, &h);
 	}

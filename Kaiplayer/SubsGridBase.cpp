@@ -641,6 +641,12 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 		bool isEndGreater = false;
 		bool previousIsKeyFrame = true;
 		bool isPreviousEndEdited = false;
+		const wxArrayInt& keyFrames = FFMS2->GetKeyframes();
+		wxArrayInt keyFramesStart;
+		for (size_t g = 0; g < keyFrames.Count(); g++) {
+			int keyMS = keyFrames[g];
+			keyFramesStart.Add(ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS)));
+		}
 		for (auto cur = tmpmap.begin(); cur != tmpmap.end(); cur++){
 			auto it = cur;
 			dialc = cur->first;
@@ -706,44 +712,54 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 				int endRange = oldEnd - KeyframeBeforeEnd;
 				int endRange1 = dialc->End.mstime + KeyframeAfterEnd;
 				
-
-				int keyMS = 0;
+				if (dialc->GetTextNoCopy() == "I dorzucić na kupę złomu!")
+				{
+					bool costam = false;
+				}
+				
 				int startResult = INT_MAX;
 				int endResult = -1;
-				const wxArrayInt& keyFrames = FFMS2->GetKeyframes();
-				for (size_t g = 0; g < keyFrames.Count(); g++) {
-					keyMS = keyFrames[g];
-					if (keyMS > startRange && keyMS < startRange1) {
-						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
-						if (oldStart == keyMS) {
+				//it uses only keyframes move to start time (- fpstime / 2)
+				for (size_t g = 0; g < keyFramesStart.Count(); g++) {
+					int keyMSS = keyFramesStart[g];
+					if (keyMSS >= startRange && keyMSS <= startRange1) {
+						if (oldStart == keyMSS) {
 							startRange = -1; startRange1 = -1; startResult = INT_MAX;
 							dialc->Start.NewTime(oldStart);
 							numOfStartModifications--;
 						}
-						if (startResult > keyMS/* && keyMS != dialc->Start.mstime*/){ startResult = keyMS; }
+						if (startResult > keyMSS/* && keyMS != dialc->Start.mstime*/){
+							if (startResult == INT_MAX || abs(startResult - dialc->Start.mstime) > abs(keyMSS - dialc->Start.mstime))
+								startResult = keyMSS;
+						}
 					}
-					if (keyMS > endRange && keyMS < endRange1) {
-						keyMS = ZEROIT(tab->Video->GetFrameTimeFromTime(keyMS));
-						if (oldEnd == keyMS) {
+					if (keyMSS >= endRange && keyMSS <= endRange1) {
+						if (oldEnd == keyMSS) {
 							endRange = -1; endRange1 = -1; endResult = -1;
 							dialc->End.NewTime(oldEnd);
 							numOfEndModifications--;
 						}
-						if (endResult < keyMS && keyMS > dialc->Start.mstime){ endResult = keyMS; }
+						if (endResult < keyMSS && keyMSS > dialc->Start.mstime) {
+							if (endResult == -1 || abs(endResult - dialc->End.mstime) > abs(keyMSS - dialc->End.mstime))
+								endResult = keyMSS;
+						}
 					}
 				}
 				//here is main problem we do not know if next start will be changed
 				//and it makes mess here but changing only start should be enough
 				//startResult >= compareStart and endResult <= compareEnd should be changed or even remove
+				
 				if (startResult != INT_MAX){
-					if (dialc->Start != startResult){
+					int checkEnd = endResult != -1 ? endResult : dialc->End.mstime;
+
+					if (dialc->Start != startResult && (checkEnd - startResult > 600)){
 						dialc->Start.NewTime(startResult);
 						numOfStartModifications++;
 					}
 					foundStartKeyframe = true;
 				}
 				if (endResult != -1){
-					if (dialc->End != endResult){
+					if (dialc->End != endResult && (endResult - dialc->Start.mstime > 600)){
 						dialc->End.NewTime(endResult);
 						numOfEndModifications++;
 					}

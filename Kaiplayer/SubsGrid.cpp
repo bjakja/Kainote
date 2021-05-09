@@ -523,6 +523,7 @@ void SubsGrid::OnPaste(int id)
 		file->InsertSelections(startline, rws - 1);
 	}
 	scrollPosition += cttkns;
+	scrollPositionId += cttkns;
 	SetModified((id == GRID_PASTE) ? GRID_PASTE_LINES : GRID_PASTE_DIALOGUE_COLUMNS, true, false, FirstSelection());
 	Thaw();
 	RefreshColumns();

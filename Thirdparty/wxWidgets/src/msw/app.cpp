@@ -829,7 +829,8 @@ void wxApp::WakeUpIdle()
             if ( !::PostMessage(hwndTop, WM_NULL, 0, 0) )
             {
                 // should never happen
-                wxLogLastError(wxT("PostMessage(WM_NULL)"));
+                //wxLogLastError(wxT("PostMessage(WM_NULL)"));
+                bool isbad = true;
             }
         }
     }
