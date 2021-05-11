@@ -1090,7 +1090,7 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 	}
 	if (scroll != -1)
 		tab->Grid->ScrollTo(scroll);
-
+	loadedRecoverySubs = false;
 	return true;
 }
 
@@ -1464,6 +1464,10 @@ void Notebook::FindAutoSaveSubstitute(wxString* path, int tab)
 		FileTimeToSystemTime(&ft, &accessSystemTime);
 		if (CheckDate(&accessSystemTime, &highiestTime)) {
 			*path = Options.pathfull + L"\\Subs\\" + latestFile;
+			sthis->loadedRecoverySubs = true;
+		}
+		else {
+			sthis->loadedRecoverySubs = false;
 		}
 	}
 	FindClose(h);

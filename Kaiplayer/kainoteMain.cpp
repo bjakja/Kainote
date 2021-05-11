@@ -389,7 +389,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		//return;
 
 	if (id == GLOBAL_SAVE_SUBS){
-		Save(false);
+		Save(Tabs->HasRecoverySubs());
 	}
 	else if (id == GLOBAL_SAVE_SUBS_AS){
 		Save(true);
@@ -917,9 +917,9 @@ void KainoteFrame::OnAssProps()
 	}
 }
 
-void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
+void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 {
-	TabPanel* atab = (wtab < 0) ? GetTab() : Tabs->Page(wtab);
+	TabPanel* atab = (tabToSave < 0) ? GetTab() : Tabs->Page(tabToSave);
 	if (!atab)
 		return;
 
@@ -927,7 +927,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	if (atab->Grid->originalFormat != atab->Grid->subsFormat
 		|| (Options.GetBool(SUBS_AUTONAMING)
 		&& atab->SubsName.BeforeLast(L'.') != atab->VideoName.BeforeLast(L'.') && atab->VideoName != L"")
-		|| atab->SubsPath == L"" || dial)
+		|| atab->SubsPath == L"" || showDialog)
 	{
 	repeatOpening:
 		wxString extens = _("Plik napisów ");
@@ -956,7 +956,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 			if (!atab->SubsPath.EndsWith(ext)){ atab->SubsPath << L"." << ext; }
 			atab->SubsName = atab->SubsPath.AfterLast(L'\\');
 			nameWasChanged = true;
-			SetRecent(0, wtab);
+			SetRecent(0, tabToSave);
 		}
 		else{ return; }
 	}
@@ -973,7 +973,7 @@ void KainoteFrame::Save(bool dial, int wtab, bool changeLabel)
 	if (changeLabel){
 		Toolbar->UpdateId(GLOBAL_SAVE_SUBS, false);
 		Menubar->Enable(GLOBAL_SAVE_SUBS, false);
-		Label(0, false, wtab);
+		Label(0, false, tabToSave);
 	}
 	if (nameWasChanged) {
 		Tabs->SaveLastSession();

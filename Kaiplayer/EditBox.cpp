@@ -799,9 +799,9 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
 	if (FD->ShowModal() == wxID_OK) {
 		wxString txt = TextEdit->GetValue();
-		TextEditor * GLOBAL_EDITOR = TextEdit;
+		TextEditor * editor = TextEdit;
 		if (grid->hasTLMode && txt == L""){
-			GLOBAL_EDITOR = TextEditOrig;
+			editor = TextEditOrig;
 			txt = TextEditOrig->GetValue();
 		}
 
@@ -809,8 +809,8 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 			int bracketPos = txt.find(L"}", Placed.x);
 			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
 		}
-		GLOBAL_EDITOR->SetSelection(Placed.x, Placed.x);
-		GLOBAL_EDITOR->SetFocus();
+		editor->SetSelection(Placed.x, Placed.x);
+		editor->SetFocus();
 	}
 	else{
 		grid->DummyUndo(tmpIter);

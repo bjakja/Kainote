@@ -105,7 +105,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Yasm>
-      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0</Config>
+      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0 -Dprivate_prefix=ass</Config>
     </Yasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -129,7 +129,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Yasm>
-      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
+      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0 -Dprivate_prefix=ass</Config>
     </Yasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -153,7 +153,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Yasm>
-      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0</Config>
+      <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0 -Dprivate_prefix=ass</Config>
     </Yasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -181,7 +181,7 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Yasm>
-      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0</Config>
+      <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0 -Dprivate_prefix=ass</Config>
     </Yasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>

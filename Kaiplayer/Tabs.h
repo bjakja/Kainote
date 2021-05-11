@@ -54,7 +54,9 @@ public:
 		bool isFFMS2 = true, bool hasEditor = true, bool fullscreen = false, bool loadPrompt = false, bool dontLoadAudio = false);
 	bool SetFont(const wxFont &font);
 	void ResetPrompt() { promptResult = 0; }
-
+	bool HasRecoverySubs() {
+		return loadedRecoverySubs;
+	}
 	int iter;
 	bool block;
 	bool split;
@@ -71,6 +73,7 @@ public:
 	static bool CheckDate(SYSTEMTIME* firstDate, SYSTEMTIME* secondDate);
 	//results 0 - no session, 1 - normal session saved at end, 2 crash or bad close session
 	static int CheckLastSession();
+
 
 private:
 	void ContextMenu(const wxPoint &pos, int i);
@@ -102,6 +105,7 @@ private:
 	bool arrow;
 	bool splitLineHolding = false;
 	bool tabsWasSwapped = false;
+	bool loadedRecoverySubs = false;
 	int splitline;
 	int splititer;
 	int oldtab;

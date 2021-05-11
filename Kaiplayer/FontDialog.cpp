@@ -489,7 +489,14 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Bind(wxEVT_TIMER, [=](wxTimerEvent & event){
 		wxCommandEvent evt(FONT_CHANGED, GetId());
 		evt.SetClientData(this);
-		AddPendingEvent(evt);
+		//process event immediately
+		GetEventHandler()->ProcessEvent(evt);
+		//delete edited style and set result style for next using
+		if (editedStyle) {
+			delete editedStyle;
+			editedStyle = resultStyle;
+			resultStyle = NULL;
+		}
 	}, 12345);
 
 	Connect(ID_FONTLIST, wxEVT_COMMAND_LISTBOX_SELECTED, (wxObjectEventFunction)&FontDialog::OnFontChanged);
@@ -556,13 +563,7 @@ void FontDialog::GetStyles(Styles **inputStyle, Styles **outputStyle)
 Styles * FontDialog::GetFont()
 {
 	if (resultStyle){
-		if (editedStyle){
-			delete editedStyle;
-			editedStyle = resultStyle;
-		}
-		else{
-			delete resultStyle;
-		}
+		delete resultStyle;
 		resultStyle = NULL;
 	}
 	resultStyle = new Styles();
@@ -685,7 +686,7 @@ void FontDialog::ReloadFonts()
 void FontDialog::GetFontName(wxString* fontname)
 {
 	int sel = fontCatalog->GetSelection();
-	if (sel != 0 && FontName->GetValue() == editedStyle->Fontname) {
+	if (sel >= 0 && FontName->GetValue() == editedStyle->Fontname) {
 		*fontname = editedStyle->Fontname;
 	}
 	else {

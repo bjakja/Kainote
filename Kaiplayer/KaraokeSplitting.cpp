@@ -46,10 +46,6 @@ void Karaoke::Split()
 	Dialogue *dial = AD->dialogue;
 	wxString Text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;
 	int len = Text.length();
-	
-	//wxString aoi3=L"aeiou ";
-	//wxString chars = L"!@#$%^&*()_+=-,./?'{}[]:;<> ";
-	//wxString achars = aoi + chars;
 	int stime = dial->Start.mstime;
 
 	wxString textlow = Text;
