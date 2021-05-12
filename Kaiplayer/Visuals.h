@@ -360,6 +360,8 @@ public:
 	void AppendClipMask(wxString *mask);
 	void CreateClipMask(wxString *clip, wxString *clipTag = NULL);
 	void InvertClip();
+	void RotateDrawing(ClipPoint *point, float rad, float radius);
+	void RotateDrawingReverse(ClipPoint* point, float rad, float radius);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
@@ -386,6 +388,8 @@ public:
 	// _x and _y points of move of drawings
 	float _x, _y;
 	D3DXVECTOR2 offsetxy;
+	D3DXVECTOR2 org;
+	float frz = 0.f;
 	wxString clipMask;
 };
 

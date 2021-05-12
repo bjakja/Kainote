@@ -171,6 +171,7 @@ void DrawingAndClip::SetCurVisual()
 {
 	wxString clip;
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
+	bool isDrawing = false;
 
 	if (Visual != VECTORDRAW){
 		bool found = tab->Edit->FindValue(L"(i?clip[^)]+\\))", &clip, L"", 0, 1);
@@ -186,9 +187,10 @@ void DrawingAndClip::SetCurVisual()
 		CreateClipMask(&clip);
 	}
 	else{
+		isDrawing = true;
 		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
-		//GLOBAL_EDITOR
-		TextEditor *GLOBAL_EDITOR = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+		//editor
+		//TextEditor *editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = { L"p" };
 		tab->Edit->line->ParseTags(tags, 1);
 		ParseData *pdata = tab->Edit->line->parseData;
@@ -207,6 +209,25 @@ void DrawingAndClip::SetCurVisual()
 		_y = (linepos.y / scale.y);
 		coeffW /= scale.x;
 		coeffH /= scale.y;
+		wxString res;
+		if (tab->Edit->FindValue(L"frz?([0-9.-]+)", &res)) {
+			double result = 0.;
+			res.ToDouble(&result);
+			frz = result;
+		}
+		else {
+			Styles* actualStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+			double result = 0.;
+			actualStyle->Angle.ToDouble(&result);
+			frz = result;
+		}
+		if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res)) {
+			wxString rest;
+			double orx, ory;
+			if (res.BeforeFirst(L',', &rest).ToDouble(&orx)) { org.x = orx; }
+			if (rest.ToDouble(&ory)) { org.y = ory; }
+		}
+		else { org = D3DXVECTOR2(_x, _y); }
 	}
 
 	Points.clear();
@@ -249,10 +270,13 @@ void DrawingAndClip::SetCurVisual()
 	}
 
 	if (!Points.empty() && Visual == VECTORDRAW){
-		D3DXVECTOR2 xyoffset = CalcWH();
+		offsetxy = CalcWH();
+		float rad = 0.01745329251994329576923690768489f;
+		float radius = sqrt(pow(abs(org.x - _x), 2) + pow(abs(org.y - _y), 2));
 		for (size_t i = 0; i < Points.size(); i++){
-			Points[i].x -= xyoffset.x;
-			Points[i].y -= xyoffset.y;
+			Points[i].x -= offsetxy.x;
+			Points[i].y -= offsetxy.y;
+			RotateDrawing(&Points[i], rad, radius);
 		}
 	}
 	pointArea = 4.f / zoomScale.x;
@@ -267,13 +291,31 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	wxString lasttype;
 	int countB = 0;
 	bool spline = false;
-	offsetxy = (Visual == VECTORDRAW) ? CalcWH() : D3DXVECTOR2(0, 0);
 	size_t psize = Points.size();
+	std::vector<ClipPoint> originalPoints;
+	if (Visual == VECTORDRAW) {
+		if (frz) {
+			float rad = 0.01745329251994329576923690768489f;
+			float radius = sqrt(pow(abs(org.x - _x), 2) + pow(abs(org.y - _y), 2));
+			originalPoints = Points;
+			for (size_t i = 0; i < psize; i++)
+			{
+				RotateDrawingReverse(&Points[i], rad, radius);
+			}
+		}
+		offsetxy = CalcWH();
+	}
+	else {
+		offsetxy = D3DXVECTOR2(0, 0);
+	}
+	
+	
 	for (size_t i = 0; i < psize; i++)
 	{
 		ClipPoint pos = Points[i];
 		float x = pos.x + offsetxy.x;
 		float y = pos.y + offsetxy.y;
+		
 		if (countB && !pos.start){
 			*visual << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
 			countB++;
@@ -296,6 +338,9 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	}
 	if (spline){ *visual << L"c "; }
 	visual->Trim();
+	if (Visual == VECTORDRAW) {
+		Points = originalPoints;
+	}
 }
 
 void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
@@ -1409,5 +1454,29 @@ void DrawingAndClip::InvertClip()
 	}
 	if (changed) {
 		grid->SetModified(VISUAL_VECTOR_CLIP);
+	}
+}
+
+void DrawingAndClip::RotateDrawing(ClipPoint* point, float rad, float radius)
+{
+	if (frz != 0) {
+		float s = sin(-frz * rad);
+		float c = cos(-frz * rad);
+		float x = point->x + abs(_x - org.x);
+		float y = point->y + abs(_y - org.y);
+		point->x = (x * c) - (y * s);
+		point->y = (x * s) + (y * c);
+	}
+}
+
+void DrawingAndClip::RotateDrawingReverse(ClipPoint* point, float rad, float radius)
+{
+	if (frz != 0) {
+		float s = sin(frz * rad);
+		float c = cos(frz * rad);
+		float x = point->x;
+		float y = point->y;
+		point->x = (x * c) - (y * s);
+		point->y = (x * s) + (y * c);
 	}
 }
