@@ -360,8 +360,7 @@ public:
 	void AppendClipMask(wxString *mask);
 	void CreateClipMask(wxString *clip, wxString *clipTag = NULL);
 	void InvertClip();
-	void RotateDrawing(ClipPoint *point, float rad, float radius);
-	void RotateDrawingReverse(ClipPoint* point, float rad, float radius);
+	void RotateDrawing(ClipPoint *point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

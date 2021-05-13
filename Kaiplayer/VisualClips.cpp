@@ -272,11 +272,13 @@ void DrawingAndClip::SetCurVisual()
 	if (!Points.empty() && Visual == VECTORDRAW){
 		offsetxy = CalcWH();
 		float rad = 0.01745329251994329576923690768489f;
-		float radius = sqrt(pow(abs(org.x - _x), 2) + pow(abs(org.y - _y), 2));
+		D3DXVECTOR2 orgpivot = { (float)sqrt(pow(abs(org.x - _x), 2)), (float)sqrt(pow(abs(org.y - _y), 2)) };
+		float s = sin(-frz * rad);
+		float c = cos(-frz * rad);
 		for (size_t i = 0; i < Points.size(); i++){
 			Points[i].x -= offsetxy.x;
 			Points[i].y -= offsetxy.y;
-			RotateDrawing(&Points[i], rad, radius);
+			RotateDrawing(&Points[i], s, c, orgpivot);
 		}
 	}
 	pointArea = 4.f / zoomScale.x;
@@ -296,11 +298,13 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	if (Visual == VECTORDRAW) {
 		if (frz) {
 			float rad = 0.01745329251994329576923690768489f;
-			float radius = sqrt(pow(abs(org.x - _x), 2) + pow(abs(org.y - _y), 2));
+			D3DXVECTOR2 orgpivot = { (float)sqrt(pow(abs(org.x - _x), 2)), (float)sqrt(pow(abs(org.y - _y), 2)) };
+			float s = sin(frz * rad);
+			float c = cos(frz * rad);
 			originalPoints = Points;
 			for (size_t i = 0; i < psize; i++)
 			{
-				RotateDrawingReverse(&Points[i], rad, radius);
+				RotateDrawing(&Points[i], s, c, orgpivot);
 			}
 		}
 		offsetxy = CalcWH();
@@ -1457,26 +1461,12 @@ void DrawingAndClip::InvertClip()
 	}
 }
 
-void DrawingAndClip::RotateDrawing(ClipPoint* point, float rad, float radius)
+void DrawingAndClip::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
 {
 	if (frz != 0) {
-		float s = sin(-frz * rad);
-		float c = cos(-frz * rad);
-		float x = point->x + abs(_x - org.x);
-		float y = point->y + abs(_y - org.y);
-		point->x = (x * c) - (y * s);
-		point->y = (x * s) + (y * c);
-	}
-}
-
-void DrawingAndClip::RotateDrawingReverse(ClipPoint* point, float rad, float radius)
-{
-	if (frz != 0) {
-		float s = sin(frz * rad);
-		float c = cos(frz * rad);
-		float x = point->x;
-		float y = point->y;
-		point->x = (x * c) - (y * s);
-		point->y = (x * s) + (y * c);
+		float x = point->x + orgpivot.x;
+		float y = point->y + orgpivot.y;
+		point->x = (x * cosOfAngle) - (y * sinOfAngle) - orgpivot.x;
+		point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
 	}
 }
