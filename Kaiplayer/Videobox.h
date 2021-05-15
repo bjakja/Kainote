@@ -73,6 +73,7 @@ public:
 	//wxRect GetMonitorRect(int wmonitor);
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
+	void OnKeyPress(wxKeyEvent& event);
 	void CaptureMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
 	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
 	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
@@ -194,7 +195,6 @@ private:
 	bool m_IsDirectShow = false;
 
 	void OnSize(wxSizeEvent& event);
-	void OnKeyPress(wxKeyEvent& event);
 	void OnPlaytime(wxTimerEvent& event);
 	void OnIdle(wxTimerEvent& event);
 	void OnHidePB();

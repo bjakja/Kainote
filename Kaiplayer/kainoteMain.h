@@ -74,7 +74,7 @@ public:
 	void OnMenuSelected(wxCommandEvent& event);
 	void OnMenuSelected1(wxCommandEvent& event);
 	void OnRecent(wxCommandEvent& event);
-
+	void OnUseWindowHotkey(wxCommandEvent& event);
 	TabPanel* GetTab();
 
 	void InsertTab(bool refresh = true);
@@ -114,7 +114,7 @@ private:
 	void OnDelete(wxCommandEvent& event);
 	void OnClose1(wxCloseEvent& event);
 	void OnActivate(wxActivateEvent &evt);
-	void OnUseWindowHotkey(wxCommandEvent& event);
+	
 	Menu* ConvMenu;
 	Menu* FileMenu;
 	Menu* HelpMenu;

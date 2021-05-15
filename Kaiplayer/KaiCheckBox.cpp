@@ -76,6 +76,8 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	Bind(wxEVT_PAINT, &KaiCheckBox::OnPaint, this);
 	//Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
 	Bind(wxEVT_ERASE_BACKGROUND, &KaiCheckBox::OnEraseBackground, this);
+	Bind(wxEVT_KILL_FOCUS, &KaiCheckBox::OnKillFocus, this);
+	Bind(wxEVT_SET_FOCUS, &KaiCheckBox::OnKillFocus, this);
 	//SetBackgroundColour(parent->GetBackgroundColour());
 	//SetForegroundColour(parent->GetForegroundColour());
 	/*Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
@@ -107,7 +109,10 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	tdc.SetFont(GetFont());
 	const wxColour & background = Options.GetColour(this->background);
 	tdc.SetBrush(wxBrush(background));
-	tdc.SetPen(wxPen(background));
+	if (HasFocus()) {
+		tdc.SetPen(wxPen(Options.GetColour(WINDOW_TEXT_INACTIVE), 1, wxPENSTYLE_DOT));
+	}else
+		tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
 
@@ -176,6 +181,11 @@ void KaiCheckBox::OnKeyPress(wxKeyEvent &event)
 		wxCommandEvent evt((isCheckBox)? wxEVT_COMMAND_CHECKBOX_CLICKED : wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
 		this->ProcessEvent(evt);
 		}*/
+}
+
+void KaiCheckBox::OnKillFocus(wxFocusEvent& event)
+{
+	Refresh(false);
 }
 
 void KaiCheckBox::OnSize(wxSizeEvent& event)

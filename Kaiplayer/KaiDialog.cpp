@@ -156,10 +156,40 @@ bool KaiDialog::IsButtonFocused()
 	return (focused && focused->IsKindOf(wxCLASSINFO(MappedButton)));
 }
 
+void KaiDialog::SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next)
+{
+	if (!node)
+		return;
+
+	auto nextWindow = next? node->GetNext() : node->GetPrevious();
+	while (1) {
+		if (!nextWindow) {
+			nextWindow = next ? list.GetFirst() : list.GetLast();
+			wxObject* data = nextWindow->GetData();
+			if (data) {
+				wxWindow* win = wxDynamicCast(data, wxWindow);
+				if (win && win->IsFocusable()) {
+					win->SetFocus(); return;
+				}
+			}
+		}
+		else if (nextWindow) {
+			wxObject* data = nextWindow->GetData();
+			if (data) {
+				wxWindow* win = wxDynamicCast(data, wxWindow);
+				if (win && win->IsFocusable()) {
+					win->SetFocus(); return;
+				}
+			}
+		}
+		nextWindow = next? nextWindow->GetNext() : nextWindow->GetPrevious();
+	}
+}
+
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
 	const int key = evt.GetKeyCode();
-	if (evt.GetModifiers() != 0){
+	if (evt.GetModifiers() != 0 && key != WXK_TAB){
 		evt.Skip();
 		return;
 	}
@@ -177,35 +207,61 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 		ProcessEvent(evt);
 		return;
 	}
-	else if (key == WXK_TAB){
-		const wxWindowList list = GetChildren();
+	else if (key == WXK_TAB && (evt.GetModifiers() == 0 || evt.GetModifiers() == wxMOD_SHIFT)){
+		wxWindowList &list = GetChildren();
 		wxWindow *focused = FindFocus();
-		auto result = list.Find(focused);
-		wxWindowListNode *nextWindow = NULL;
-		//todo ta wersja nie radzi sobie z listami bo focusa ma ich dziecko
-		if (!result){
-			result = list.Find(focused->GetParent());
-			//if still no result, it's mean thats nothing to do
+		if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
+			focused = focused->GetParent();
 		}
-		if (result){
-			auto nextWindow = result->GetNext();
-			while (1){
-				if (!nextWindow){
-					nextWindow = list.GetFirst();
-					wxObject *data = nextWindow->GetData();
-					if (data){
-						wxWindow *win = wxDynamicCast(data, wxWindow);
-						if (win && win->IsFocusable()){
-							win->SetFocus(); return;
+		bool nextControl = evt.GetModifiers() == 0;
+
+		auto result = list.Find(focused);
+		//find it in next window
+		if (!result) {
+			for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
+				wxObject* data = cur->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win) {
+						wxWindowList &list1 = win->GetChildren();
+						result = list1.Find(focused);
+						if (result) {
+							SetFocusFromNode(result, list1, nextControl);
+							return;
 						}
 					}
 				}
-				else if (nextWindow->GetData()->IsFocusable()){
-					nextWindow->GetData()->SetFocus();
-					return;
-				}
-				nextWindow = nextWindow->GetNext();
 			}
+		}
+		//find it in 3rd window for example tab like in find replace
+		if (!result) {
+			for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
+				wxObject* data = cur->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win) {
+						wxWindowList list1 = win->GetChildren();
+						for (wxWindowListNode* cur1 = list1.GetFirst(); cur1 != NULL; cur1 = cur1->GetNext()) {
+							wxObject* data1 = cur1->GetData();
+							if (data1) {
+								wxWindow* win1 = wxDynamicCast(data1, wxWindow);
+								if (win1) {
+									wxWindowList list2 = win1->GetChildren();
+									result = list2.Find(focused);
+									if (result) {
+										SetFocusFromNode(result, list2, nextControl);
+										return;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+			//if still no result, it's mean thats nothing to do
+		}
+		if (result){
+			SetFocusFromNode(result, list, nextControl);
 		}
 		return;
 	}

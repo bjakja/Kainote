@@ -2101,7 +2101,7 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 		if (win && tab->IsDescendant(win)){
 			tab->lastFocusedWindowId = win->GetId();
 		}
-
+		Menubar->HideMnemonics();
 	}
 	if (evt.GetActive()){
 		sendFocus.Start(50, true);

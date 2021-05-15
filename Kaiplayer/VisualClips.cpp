@@ -272,7 +272,7 @@ void DrawingAndClip::SetCurVisual()
 	if (!Points.empty() && Visual == VECTORDRAW){
 		offsetxy = CalcWH();
 		float rad = 0.01745329251994329576923690768489f;
-		D3DXVECTOR2 orgpivot = { (float)sqrt(pow(abs(org.x - _x), 2)), (float)sqrt(pow(abs(org.y - _y), 2)) };
+		D3DXVECTOR2 orgpivot = { abs(org.x - _x), abs(org.y - _y) };
 		float s = sin(-frz * rad);
 		float c = cos(-frz * rad);
 		for (size_t i = 0; i < Points.size(); i++){
@@ -298,7 +298,7 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	if (Visual == VECTORDRAW) {
 		if (frz) {
 			float rad = 0.01745329251994329576923690768489f;
-			D3DXVECTOR2 orgpivot = { (float)sqrt(pow(abs(org.x - _x), 2)), (float)sqrt(pow(abs(org.y - _y), 2)) };
+			D3DXVECTOR2 orgpivot = { abs(org.x - _x), abs(org.y - _y) };
 			float s = sin(frz * rad);
 			float c = cos(frz * rad);
 			originalPoints = Points;
@@ -342,7 +342,7 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	}
 	if (spline){ *visual << L"c "; }
 	visual->Trim();
-	if (Visual == VECTORDRAW) {
+	if (originalPoints.size()) {
 		Points = originalPoints;
 	}
 }

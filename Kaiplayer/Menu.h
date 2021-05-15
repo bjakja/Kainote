@@ -252,6 +252,7 @@ public:
 	void Enable(int id, bool enable = true);
 	//void AppendAccelerators(std::vector <wxAcceleratorEntry> *entries);
 	bool SetFont(const wxFont &font);
+	void HideMnemonics();
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	//void OnCharHook(wxKeyEvent &evt);
@@ -261,7 +262,6 @@ private:
 	//bool CheckMouse();
 	void OnEraseBackground(wxEraseEvent &evt){}
 	int CalcMousePos(wxPoint *pos);
-	void HideMnemonics();
 	void ShowMenu();
 
 	std::vector< Menu* > Menus;

@@ -47,8 +47,12 @@ public:
 	int panelsize;
 	int buttonSection;
 private:
-	
+	void OnMouseEvent(wxMouseEvent& evt);
+	void OnKeyPress(wxKeyEvent& evt);
+	void SetAccels();
+	void OnUseWindowHotkey(wxCommandEvent& event);
 	wxWindow *vb;
 	int toolBarHeight;
+	DECLARE_EVENT_TABLE()
 };
 

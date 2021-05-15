@@ -53,6 +53,7 @@ private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnKeyPress(wxKeyEvent &evt);
 	void OnEraseBackground(wxEraseEvent &event){}
+	void OnKillFocus(wxFocusEvent& event);
 	wxString label;
 	int fontHeight;
 	COLOR background;

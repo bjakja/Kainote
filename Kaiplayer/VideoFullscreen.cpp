@@ -16,7 +16,7 @@
 #include "VideoFullscreen.h"
 #include "Videobox.h"
 #include "Config.h"
-#include "KainoteMain.h"
+#include "KainoteApp.h"
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
@@ -96,15 +96,14 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 		panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	});
-	this->SetEventHandler(parent);
+	//this->SetEventHandler(parent);
 	//sprawdzić jeszcze co się dzieje z focusem gdy klikamy w wideo a później w slider albo w static text
-	wxAcceleratorTable *VBaccels = parent->GetAcceleratorTable();
-	panel->SetAcceleratorTable(*VBaccels);
+	SetAccels();
 }
 
 Fullscreen::~Fullscreen()
 {
-	this->SetEventHandler(this);
+	//this->SetEventHandler(this);
 	//Zwolnić event handler
 }
 
@@ -175,3 +174,74 @@ void Fullscreen::HideToolbar(bool hide){
 	vc->UpdateVideoWindow();
 }
 
+void Fullscreen::OnMouseEvent(wxMouseEvent& evt)
+{
+	VideoCtrl* vc = (VideoCtrl*)vb;
+	vc->OnMouseEvent(evt);
+}
+
+void Fullscreen::OnKeyPress(wxKeyEvent& evt)
+{
+	VideoCtrl* vc = (VideoCtrl*)vb;
+	vc->OnKeyPress(evt);
+}
+
+void Fullscreen::SetAccels()
+{
+	kainoteApp* Kaia = ((kainoteApp*)wxTheApp);
+	if (!Kaia)
+		return;
+
+	KainoteFrame* Kai = Kaia->Frame;
+	std::vector<wxAcceleratorEntry> entries;
+
+	const std::map<idAndType, hdata>& hkeys = Hkeys.GetHotkeysMap();
+	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++) {
+		//if (cur->first.Type != GLOBAL_HOTKEY) { continue; }
+		int id = cur->first.id;
+		bool emptyAccel = cur->second.Accel == L"";
+		if (id >= 5000 && id < 5150) {
+			MenuItem* item = Kai->Menubar->FindItem(id);
+			if (!item) { /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
+			if (emptyAccel) {
+				item->SetAccel(NULL);
+				continue;
+			}
+			else {
+				wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
+				item->SetAccel(&accel);
+				entries.push_back(accel);
+			}
+		}
+		else if (emptyAccel)
+			continue;
+		else if (id >= 5150) {
+			if (id >= 30100) {
+				//Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnRunScript, this, id);
+				continue;
+			}
+			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+		}
+		else if (id >= 2000 && id < 3000) {
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &Fullscreen::OnUseWindowHotkey, this, id);
+			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
+		}
+		if (!entries[entries.size() - 1].IsOk()) {
+			entries.pop_back();
+		}
+	}
+	wxAcceleratorTable accel(entries.size(), &entries[0]);
+	SetAcceleratorTable(accel);
+}
+
+void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
+{
+  	int id = event.GetId();
+	VideoCtrl* vc = (VideoCtrl*)vb;
+	vc->OnAccelerator(event);
+}
+
+BEGIN_EVENT_TABLE(Fullscreen, wxFrame)
+EVT_MOUSE_EVENTS(Fullscreen::OnMouseEvent)
+EVT_KEY_DOWN(Fullscreen::OnKeyPress)
+END_EVENT_TABLE()
