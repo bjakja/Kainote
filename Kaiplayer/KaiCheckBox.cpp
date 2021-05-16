@@ -109,13 +109,13 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	tdc.SetFont(GetFont());
 	const wxColour & background = Options.GetColour(this->background);
 	tdc.SetBrush(wxBrush(background));
-	if (HasFocus()) {
-		tdc.SetPen(wxPen(Options.GetColour(WINDOW_TEXT_INACTIVE), 1, wxPENSTYLE_DOT));
-	}else
-		tdc.SetPen(wxPen(background));
+	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
 	tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
-
+	if (HasFocus()) {
+		wxPoint frame[5] = { wxPoint(0, 0), wxPoint(w - 1, 0), wxPoint(w - 1, h - 1), wxPoint(0, h - 1), wxPoint(0, 0) };
+		DrawDashedLine(&tdc, frame, 5, 1, Options.GetColour(WINDOW_TEXT_INACTIVE));
+	}
 	if (w > 18){
 		tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) : Options.GetColour(WINDOW_TEXT_INACTIVE));
 		tdc.DrawText(label, 18, (h - fontHeight) / 2);

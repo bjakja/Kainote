@@ -348,17 +348,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 
 
 	if (accel == L""){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
-	int modif = 0;
-	if (accel.Find(L"Alt-") != -1){
-		modif |= 1;
-	}
-	if (accel.Find(L"Shift-") != -1){
-		modif |= 4;
-	}
-	if (accel.Find(L"Ctrl-") != -1){
-		modif |= 2;
-	}
-
+	int modif = GetModifier(accel);
 
 	wxString akey = (accel.EndsWith(L"-")) ? L"-" : accel.AfterLast(L'-');
 	int key = 0;
@@ -371,7 +361,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 		}
 	}
 
-	if (key == 0 && akey.Len() < 2){ key = static_cast<int>(akey[0]); }
+	if (key == 0 && akey.length() < 2){ key = static_cast<int>(akey[0]); }
 	else if (key == 0){
 		KaiLog(wxString::Format(_("Skrót \"%s\" nie jest prawidłowy"), akey));
 	}
@@ -574,6 +564,21 @@ void Hotkeys::ResetDefaults()
 	LoadDefault(defaultHotkeys);
 	LoadDefault(defaultHotkeys, true);
 	hkeys = defaultHotkeys;
+}
+
+int Hotkeys::GetModifier(const wxString& accel)
+{
+	int modif = 0;
+	if (accel.Find(L"Alt-") != -1) {
+		modif |= 1;
+	}
+	if (accel.Find(L"Shift-") != -1) {
+		modif |= 4;
+	}
+	if (accel.Find(L"Ctrl-") != -1) {
+		modif |= 2;
+	}
+	return modif;
 }
 
 //Dialog window catching keyboard shortcuts

@@ -79,6 +79,7 @@ public:
 
 	virtual ~KaiChoice();
 	void SetSelection(int sel, bool changeText = true);
+	void SetTextSelection(long start, long end);
 	void Clear();
 	/*void Prepend(wxString what);*/
 	void Insert(const wxString &what, int position);
@@ -109,7 +110,10 @@ public:
 		return newSize;
 	}
 	bool SetFont(const wxFont &font);
-	KaiTextCtrl *choiceText;
+	bool IsModified();
+	void SetModified(bool modified);
+protected:
+	KaiTextCtrl* choiceText;
 private:
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);

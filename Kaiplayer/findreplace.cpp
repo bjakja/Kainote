@@ -363,11 +363,11 @@ seekFromStart:
 				}
 				if (dialogueColumn == ACTOR){
 					//pan->Edit->ActorEdit->SetFocus();
-					tab->Edit->ActorEdit->choiceText->SetSelection(foundPosition, findend);
+					tab->Edit->ActorEdit->SetTextSelection(foundPosition, findend);
 				}
 				if (dialogueColumn == EFFECT){
 					//pan->Edit->EffectEdit->SetFocus();
-					tab->Edit->EffectEdit->choiceText->SetSelection(foundPosition, findend);
+					tab->Edit->EffectEdit->SetTextSelection(foundPosition, findend);
 				}
 
 				foundsome = true;
@@ -1044,10 +1044,10 @@ void FindReplace::Replace(TabWindow *window)
 			tab->Edit->TextEdit->SetTextS(replacedText);
 	}
 	else if (wrep == ACTOR){
-		tab->Edit->ActorEdit->choiceText->SetValue(replacedText);
+		tab->Edit->ActorEdit->SetValue(replacedText);
 	}
 	else if (wrep == EFFECT){
-		tab->Edit->EffectEdit->choiceText->SetValue(replacedText);
+		tab->Edit->EffectEdit->SetValue(replacedText);
 	}
 	Dialc->SetTextElement(wrep, replacedText, tab->Grid->hasTLMode);
 	grid->SetModified(REPLACE_SINGLE);

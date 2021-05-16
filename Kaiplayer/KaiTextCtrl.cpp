@@ -726,13 +726,18 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 	if (click){
-		wxPoint cur;
-		HitTest(event.GetPosition(), &cur);
-		Cursor = cur;
-		if (!event.ShiftDown()){ Selend = Cursor; }
-		Refresh(false);
-		holding = true;
-		if (!HasCapture()){ CaptureMouse(); }
+		if (selectedAfterFocus) {
+			selectedAfterFocus = false;
+		}
+		else {
+			wxPoint cur;
+			HitTest(event.GetPosition(), &cur);
+			Cursor = cur;
+			if (!event.ShiftDown()) { Selend = Cursor; }
+			Refresh(false);
+			holding = true;
+			if (!HasCapture()) { CaptureMouse(); }
+		}
 	}
 
 	if (holding){
@@ -1355,11 +1360,27 @@ void KaiTextCtrl::Replace(int start, int end, const wxString & rep, bool sendEve
 
 void KaiTextCtrl::OnKillFocus(wxFocusEvent& event)
 {
+	if (style & wxTE_NOHIDESEL) {
+		SetSelection(0, 0);
+	}
 	Refresh(false);
+}
+
+void KaiTextCtrl::OnSetFocus(wxFocusEvent& event)
+{
+	if (style & wxTE_NOHIDESEL) {
+		selectedAfterFocus = true;
+		SetSelection(0, -1);
+		Refresh(false);
+	}
+	else {
+		Refresh(false);
+	}
 }
 
 void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 {
+	//todo: rewrite it to some more reasonable way
 	wxString wfind = L" }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=\t\n";
 	int len = KText.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
@@ -1723,7 +1744,7 @@ EVT_ERASE_BACKGROUND(KaiTextCtrl::OnEraseBackground)
 EVT_CHAR(KaiTextCtrl::OnCharPress)
 //EVT_KEY_DOWN(KaiTextCtrl::OnKeyPress)
 EVT_KILL_FOCUS(KaiTextCtrl::OnKillFocus)
-EVT_SET_FOCUS(KaiTextCtrl::OnKillFocus)
+EVT_SET_FOCUS(KaiTextCtrl::OnSetFocus)
 EVT_SCROLLWIN(KaiTextCtrl::OnScroll)
 EVT_MOUSE_CAPTURE_LOST(KaiTextCtrl::OnLostCapture)
 END_EVENT_TABLE()

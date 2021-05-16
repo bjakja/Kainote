@@ -88,23 +88,17 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	}, 7777);
 	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	//Connect(GLOBAL_PLAY_ACTUAL_LINE,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	//Connect(ID_BPREV,ID_BNEXT,wxEVT_COMMAND_BUTTON_CLICKED,(wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
 	//Connect(wxEVT_SIZE, (wxObjectEventFunction)&Fullscreen::OnSize);
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
 		panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 		panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	});
-	//this->SetEventHandler(parent);
-	//sprawdzić jeszcze co się dzieje z focusem gdy klikamy w wideo a później w slider albo w static text
 	SetAccels();
 }
 
 Fullscreen::~Fullscreen()
 {
-	//this->SetEventHandler(this);
-	//Zwolnić event handler
 }
 
 void Fullscreen::OnSize()
@@ -241,7 +235,13 @@ void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
 	vc->OnAccelerator(event);
 }
 
+void Fullscreen::OnPaint(wxPaintEvent& evt)
+{
+	vb->Refresh(false);
+}
+
 BEGIN_EVENT_TABLE(Fullscreen, wxFrame)
 EVT_MOUSE_EVENTS(Fullscreen::OnMouseEvent)
 EVT_KEY_DOWN(Fullscreen::OnKeyPress)
+EVT_PAINT(Fullscreen::OnPaint)
 END_EVENT_TABLE()

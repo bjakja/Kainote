@@ -233,7 +233,7 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 				}
 			}
 		}
-		//find it in 3rd window for example tab like in find replace
+		//find it in 3rd window for example tab like in find replace or tree from options
 		if (!result) {
 			for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
 				wxObject* data = cur->GetData();

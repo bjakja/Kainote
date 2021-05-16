@@ -558,10 +558,10 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 		line->Style = checkstyle;
 		cellm |= STYLE;
 	}
-	if (ActorEdit->choiceText->IsModified()){
+	if (ActorEdit->IsModified()){
 		line->Actor = ActorEdit->GetValue();
 		cellm |= ACTOR;
-		ActorEdit->choiceText->SetModified(dummy);
+		ActorEdit->SetModified(dummy);
 	}
 	if (MarginLEdit->IsModified()){
 		line->MarginL = MarginLEdit->GetInt();
@@ -578,10 +578,10 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 		cellm |= MARGINV;
 		MarginVEdit->SetModified(dummy);
 	}
-	if (EffectEdit->choiceText->IsModified()){
+	if (EffectEdit->IsModified()){
 		line->Effect = EffectEdit->GetValue();
 		cellm |= EFFECT;
-		EffectEdit->choiceText->SetModified(dummy);
+		EffectEdit->SetModified(dummy);
 	}
 	if (TextEditOrig->IsShown() && (TextEditOrig->IsModified() || (splittedTags && TextEdit->IsModified()))) {
 		line->Text = TextEditOrig->GetValue(false);

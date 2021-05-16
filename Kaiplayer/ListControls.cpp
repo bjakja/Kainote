@@ -151,27 +151,27 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 		return;
 	}
 	choiceText = new KaiTextCtrl(this, 27789, comboBoxText, wxPoint(1, 1),
-		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE | wxTE_PROCESS_ENTER, validator);
+		wxSize(newSize.x - 22, newSize.y - 2), wxBORDER_NONE | wxTE_PROCESS_ENTER | wxTE_NOHIDESEL, validator);
 	choiceText->Bind(wxEVT_ENTER_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_LEAVE_WINDOW, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_MOUSEWHEEL, &KaiChoice::OnMouseEvent, this, 27789);
 	choiceText->Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent &evt){
-		focusSet = true; Refresh(false);/* choiceText->GetSelection(&sels, &sele);*/
+		Refresh(false); evt.Skip();
 	}, 27789);
 	choiceText->Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent &evt){
-		Refresh(false);
-		choiceText->SetSelection(0, 0);
+		Refresh(false); evt.Skip();
 	}, 27789);
-	choiceText->Bind(wxEVT_LEFT_UP, [=](wxMouseEvent &evt){
-		if (focusSet){
-			long sels, sele;
-			choiceText->GetSelection(&sels, &sele); 
-			if(sels == sele)
-				choiceText->SetSelection(0, -1, true);
-			focusSet = false;
-		}
-		evt.Skip();
-	}, 27789);
+	//choiceText->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
+	//	if (focusSet){
+	//		/*long sels, sele;
+	//		choiceText->GetSelection(&sels, &sele); 
+	//		if(sels == sele)
+	//			choiceText->SetSelection(0, -1, true);*/
+	//		focusSet = false;
+	//		return;
+	//	}
+	//	evt.Skip();
+	//}, 27789);
 	Bind(wxEVT_COMMAND_TEXT_UPDATED, [=](wxCommandEvent &evt){
 		SetSelectionByPartialName(choiceText->GetValue());
 	}, 27789);
@@ -444,6 +444,12 @@ void KaiChoice::SetSelection(int sel, bool changeText)
 	else{ SetToolTip(toolTip); }
 }
 
+void KaiChoice::SetTextSelection(long start, long end)
+{
+	if (choiceText)
+		choiceText->SetSelection(start, end);
+}
+
 void KaiChoice::Clear()
 {
 	list->Clear();
@@ -666,7 +672,10 @@ bool KaiChoice::HasFocus()
 
 void KaiChoice::SetFocus()
 {
-	if (choiceText){ choiceText->SetFocus(); }
+	if (choiceText) { 
+		choiceText->SetFocus();
+		choiceText->SetSelection(0, -1);
+	}
 	else{ wxWindow::SetFocus(); }
 }
 
@@ -687,6 +696,21 @@ bool KaiChoice::SetFont(const wxFont &font)
 	SetMinSize(newSize);
 	Refresh(false);
 	return true;
+}
+
+bool KaiChoice::IsModified()
+{
+	if (choiceText && choiceText->IsModified())
+		return true;
+
+	return false;
+}
+
+void KaiChoice::SetModified(bool modified)
+{
+	if (choiceText) {
+		choiceText->SetModified(modified);
+	}
 }
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiChoice, wxWindow);

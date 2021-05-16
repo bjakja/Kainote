@@ -547,11 +547,11 @@ void FindReplaceDialog::OnEnterConfirm(wxCommandEvent& event)
 void FindReplaceDialog::SetSelection(TabWindow *tab)
 {
 	if (lastFocusedId == ID_REPLACE_TEXT && tab->ReplaceText){
-		tab->ReplaceText->choiceText->SetSelection(0, -1);
+		//tab->ReplaceText->choiceText->SetSelection(0, -1);
 		tab->ReplaceText->SetFocus();
 	}
 	else{
-		tab->FindText->choiceText->SetSelection(0, -1);
+		//tab->FindText->choiceText->SetSelection(0, -1);
 		tab->FindText->SetFocus();
 	}
 }

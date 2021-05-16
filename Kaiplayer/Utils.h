@@ -87,6 +87,7 @@ wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const w
 int FindMonitor(std::vector<tagRECT> *MonitorRects, const wxPoint &pos);
 static const wxString emptyString;
 bool IsNumber(const wxString &txt);
+void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);
 
 #ifdef _M_IX86
 void SetThreadName(DWORD id, LPCSTR szThreadName);

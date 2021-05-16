@@ -51,6 +51,7 @@ private:
 	void OnKeyPress(wxKeyEvent& evt);
 	void SetAccels();
 	void OnUseWindowHotkey(wxCommandEvent& event);
+	void OnPaint(wxPaintEvent& evt);
 	wxWindow *vb;
 	int toolBarHeight;
 	DECLARE_EVENT_TABLE()

@@ -187,20 +187,26 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 		posX += tabs[i]->tabSize;
 	}
 
-	if (currentTab < 0 || currentTab >= tabs.size())
-		return;
-	//current tab
-	tdc.SetTextForeground(activeText);
-	tdc.SetBrush(tabsBarBackgroundActive);
-	tdc.SetPen(tabsBarBackgroundActive);
-	tdc.DrawRectangle(currentTabPos, 2, tabs[currentTab]->tabSize, tabHeader - 2);
-	tdc.SetPen(activeLines);
-	tdc.DrawText(tabs[currentTab]->tabName, currentTabPos + 5, 2 + ((tabHeader - textHeight) / 2));
-	currentTabPos -= 1;
-	tdc.DrawLine(currentTabPos, 2, currentTabPos, tabHeader - 1);
-	tdc.DrawLine(currentTabPos, 2, currentTabPos + tabs[currentTab]->tabSize + 1, 2);
-	tdc.DrawLine(currentTabPos + tabs[currentTab]->tabSize + 1, 2, currentTabPos + tabs[currentTab]->tabSize + 1, tabHeader - 1);
-
+	if (currentTab >= 0 || currentTab < tabs.size()) {
+		//current tab
+		tdc.SetTextForeground(activeText);
+		tdc.SetBrush(tabsBarBackgroundActive);
+		tdc.SetPen(tabsBarBackgroundActive);
+		tdc.DrawRectangle(currentTabPos, 2, tabs[currentTab]->tabSize, tabHeader - 2);
+		tdc.SetPen(activeLines);
+		tdc.DrawText(tabs[currentTab]->tabName, currentTabPos + 5, 2 + ((tabHeader - textHeight) / 2));
+		currentTabPos -= 1;
+		tdc.DrawLine(currentTabPos, 2, currentTabPos, tabHeader - 1);
+		tdc.DrawLine(currentTabPos, 2, currentTabPos + tabs[currentTab]->tabSize + 1, 2);
+		tdc.DrawLine(currentTabPos + tabs[currentTab]->tabSize + 1, 2, currentTabPos + tabs[currentTab]->tabSize + 1, tabHeader - 1);
+		if (HasFocus()) {
+			wxPoint frame[5] = { wxPoint(currentTabPos + 2, 4), 
+				wxPoint(currentTabPos + tabs[currentTab]->tabSize - 1, 4), 
+				wxPoint(currentTabPos + tabs[currentTab]->tabSize - 1, tabHeader - 2),
+				wxPoint(currentTabPos + 2, tabHeader - 2), wxPoint(currentTabPos + 2, 4) };
+			DrawDashedLine(&tdc, frame, 5, 1, Options.GetColour(TABS_TEXT_INACTIVE));
+		}
+	}
 	//blit
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, tabHeader, &tdc, 0, 0);

@@ -354,6 +354,7 @@ public:
 	const std::map<idAndType, hdata> &GetHotkeysMap(){ return hkeys; }
 	void SetHotkeysMap(const std::map<idAndType, hdata> &hotkeys){ hkeys = std::map<idAndType, hdata>(hotkeys); }
 	void ResetDefaults();
+	int GetModifier(const wxString& accel);
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	int lastScriptId;

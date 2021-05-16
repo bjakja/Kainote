@@ -92,6 +92,7 @@ protected:
 	void OnSize(wxSizeEvent& event);
 	void OnPaint(wxPaintEvent& event);
 	void OnKillFocus(wxFocusEvent& event);
+	void OnSetFocus(wxFocusEvent& event);
 	void OnEraseBackground(wxEraseEvent& event){};
 	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
 	void OnScroll(wxScrollWinEvent& event);
@@ -118,6 +119,7 @@ protected:
 	bool dholding;
 	bool firstdhold;
 	bool multiline = false;
+	bool selectedAfterFocus = false;
 	int Fheight;
 	int scPos;
 	int fsize;

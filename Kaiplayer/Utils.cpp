@@ -18,6 +18,7 @@
 #include <ShlObj.h>
 #include <wx/msw/private.h>
 #include <wx/mstream.h>
+#include <wx/dc.h>
 
 
 void SelectInFolder(const wxString & filename)
@@ -279,6 +280,35 @@ bool IsNumber(const wxString &test) {
 		if (testchars.Find(ch) == -1) { isnumber = false; break; }
 	}
 	return isnumber;
+}
+
+void DrawDashedLine(wxDC *dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color)
+{
+
+	wxPoint actualPoint[2];
+	wxPen tmppen = dc->GetPen();
+	dc->SetPen(color);
+	for (size_t i = 0; i < vectorSize - 1; i++) {
+		size_t iPlus1 = (i < (vectorSize - 1)) ? i + 1 : 0;
+		wxPoint pdiff = vector[i] - vector[iPlus1];
+		int len = sqrt((pdiff.x * pdiff.x) + (pdiff.y * pdiff.y));
+		if (len == 0) { return; }
+		wxPoint diffUnits = pdiff / len;
+		float singleMovement = 1.f / (len / (float)(dashLen * 2));
+		if (singleMovement == 0) { 
+			return; 
+		}
+		actualPoint[0] = vector[i];
+		actualPoint[1] = actualPoint[0];
+		for (float j = 0; j <= 1; j += singleMovement) {
+			actualPoint[1] -= diffUnits * dashLen;
+			if (j + singleMovement >= 1) { actualPoint[1] = vector[iPlus1]; }
+			dc->DrawLines(2, actualPoint);
+			actualPoint[1] -= diffUnits * dashLen;
+			actualPoint[0] -= (diffUnits * dashLen) * 2;
+		}
+	}
+	dc->SetPen(tmppen);
 }
 
 #ifdef _M_IX86
