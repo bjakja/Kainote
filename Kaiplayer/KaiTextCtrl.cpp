@@ -518,9 +518,23 @@ void KaiTextCtrl::OnCharPress(wxKeyEvent& event)
 
 }
 
-void KaiTextCtrl::OnKeyPress(wxKeyEvent& event)
+void KaiTextCtrl::OnKeyPress(wxKeyEvent& evt)
 {
-	event.Skip();
+	if (evt.GetKeyCode() == WXK_TAB) {
+		wxNavigationKeyEvent event;
+		event.SetDirection(!evt.ShiftDown());
+		event.SetWindowChange(evt.ControlDown());
+		event.SetFromTab(true);
+		event.SetEventObject(this);
+		wxWindow* win = GetParent();
+		while (win) {
+			if (win->GetEventHandler()->ProcessEvent(event))
+				break;
+			win = win->GetParent();
+		}
+		return;
+	}
+	evt.Skip();
 }
 
 void KaiTextCtrl::OnAccelerator(wxCommandEvent& event)
@@ -707,6 +721,9 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		holding = dholding = false;
 		if (HasCapture()){ ReleaseMouse(); }
 		//event.Skip();
+		if (selectedAfterFocus) {
+			selectedAfterFocus = false;
+		}
 		return;
 	}
 	if (event.LeftDClick()){
@@ -726,8 +743,9 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 		return;
 	}
 	if (click){
+		//block changing cursor when selecting on focus is on
 		if (selectedAfterFocus) {
-			selectedAfterFocus = false;
+			HitTest(event.GetPosition(), &lastCur);
 		}
 		else {
 			wxPoint cur;
@@ -735,14 +753,19 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 			Cursor = cur;
 			if (!event.ShiftDown()) { Selend = Cursor; }
 			Refresh(false);
-			holding = true;
-			if (!HasCapture()) { CaptureMouse(); }
 		}
+		holding = true;
+		if (!HasCapture()) { CaptureMouse(); }
 	}
 
 	if (holding){
 		wxPoint cur;
 		HitTest(event.GetPosition(), &cur);
+		if (selectedAfterFocus) {
+			if (lastCur == cur)
+				return;
+			selectedAfterFocus = false;
+		}
 		Cursor = cur;
 		MakeCursorVisible(true);
 		//Refresh(false);

@@ -2108,6 +2108,7 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 	}
 }
 
+
 void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 {
 	TabPanel *tab = GetTab();

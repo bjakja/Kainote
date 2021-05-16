@@ -84,7 +84,18 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
-	if (!(_style & wxWANTS_CHARS)){ Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this); }
+	if (!(_style & wxWANTS_CHARS)){ 
+		/*wxAcceleratorEntry entries[4];
+		entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_PREV_CONTROL);
+		entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_NEXT_CONTROL);
+		entries[2].Set(wxACCEL_NORMAL, WXK_UP, ID_PREV_CONTROL);
+		entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_NEXT_CONTROL);
+		wxAcceleratorTable accel(4, entries);*/
+		//SetAcceleratorTable(accel);
+		Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this); 
+		//Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiDialog::OnAccelerator, this, ID_NEXT_CONTROL, ID_PREV_CONTROL);
+		Bind(wxEVT_NAVIGATION_KEY, &KaiDialog::OnNavigation, this);
+	}
 	Bind(wxEVT_LEFT_DOWN, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_UP, &KaiDialog::OnMouseEvent, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiDialog::OnMouseEvent, this);
@@ -186,6 +197,74 @@ void KaiDialog::SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, boo
 	}
 }
 
+void KaiDialog::SetNextControl(bool next)
+{
+	wxWindowList& list = GetChildren();
+	wxWindow* focused = FindFocus();
+	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
+		focused = focused->GetParent();
+	}
+
+	auto result = list.Find(focused);
+	//find it in next window
+	if (!result) {
+		for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
+			wxObject* data = cur->GetData();
+			if (data) {
+				wxWindow* win = wxDynamicCast(data, wxWindow);
+				if (win) {
+					wxWindowList& list1 = win->GetChildren();
+					result = list1.Find(focused);
+					if (result) {
+						SetFocusFromNode(result, list1, next);
+						return;
+					}
+				}
+			}
+		}
+	}
+	//find it in 3rd window for example tab like in find replace or tree from options
+	if (!result) {
+		for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
+			wxObject* data = cur->GetData();
+			if (data) {
+				wxWindow* win = wxDynamicCast(data, wxWindow);
+				if (win) {
+					wxWindowList list1 = win->GetChildren();
+					for (wxWindowListNode* cur1 = list1.GetFirst(); cur1 != NULL; cur1 = cur1->GetNext()) {
+						wxObject* data1 = cur1->GetData();
+						if (data1) {
+							wxWindow* win1 = wxDynamicCast(data1, wxWindow);
+							if (win1) {
+								wxWindowList list2 = win1->GetChildren();
+								result = list2.Find(focused);
+								if (result) {
+									SetFocusFromNode(result, list2, next);
+									return;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		//if still no result, it's mean thats nothing to do
+	}
+	if (result) {
+		SetFocusFromNode(result, list, next);
+	}
+}
+
+void KaiDialog::OnNavigation(wxNavigationKeyEvent& evt)
+{
+	SetNextControl(evt.GetDirection());
+}
+
+//void KaiDialog::OnAccelerator(wxCommandEvent& evt)
+//{
+//	SetNextControl(evt.GetId() == ID_NEXT_CONTROL);
+//}
+
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
 	const int key = evt.GetKeyCode();
@@ -207,64 +286,11 @@ void KaiDialog::OnCharHook(wxKeyEvent &evt)
 		ProcessEvent(evt);
 		return;
 	}
-	else if (key == WXK_TAB && (evt.GetModifiers() == 0 || evt.GetModifiers() == wxMOD_SHIFT)){
-		wxWindowList &list = GetChildren();
-		wxWindow *focused = FindFocus();
-		if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
-			focused = focused->GetParent();
-		}
+	/*else if (key == WXK_TAB && (evt.GetModifiers() == 0 || evt.GetModifiers() == wxMOD_SHIFT)){
 		bool nextControl = evt.GetModifiers() == 0;
-
-		auto result = list.Find(focused);
-		//find it in next window
-		if (!result) {
-			for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
-				wxObject* data = cur->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					if (win) {
-						wxWindowList &list1 = win->GetChildren();
-						result = list1.Find(focused);
-						if (result) {
-							SetFocusFromNode(result, list1, nextControl);
-							return;
-						}
-					}
-				}
-			}
-		}
-		//find it in 3rd window for example tab like in find replace or tree from options
-		if (!result) {
-			for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
-				wxObject* data = cur->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					if (win) {
-						wxWindowList list1 = win->GetChildren();
-						for (wxWindowListNode* cur1 = list1.GetFirst(); cur1 != NULL; cur1 = cur1->GetNext()) {
-							wxObject* data1 = cur1->GetData();
-							if (data1) {
-								wxWindow* win1 = wxDynamicCast(data1, wxWindow);
-								if (win1) {
-									wxWindowList list2 = win1->GetChildren();
-									result = list2.Find(focused);
-									if (result) {
-										SetFocusFromNode(result, list2, nextControl);
-										return;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			//if still no result, it's mean thats nothing to do
-		}
-		if (result){
-			SetFocusFromNode(result, list, nextControl);
-		}
+		SetNextControl(nextControl);
 		return;
-	}
+	}*/
 	evt.Skip();
 }
 
@@ -373,6 +399,7 @@ void KaiDialog::OnMouseEvent(wxMouseEvent &evt)
 	//}
 	evt.Skip();
 }
+
 
 void KaiDialog::SetSizerAndFit1(wxSizer *sizer, bool deleteOld)
 {

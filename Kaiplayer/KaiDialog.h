@@ -57,14 +57,20 @@ public:
 	void SetSizerAndFit1(wxSizer *sizer, bool deleteOld = true);
 	void SetLabel(const wxString &text);
 	bool SetFont(const wxFont &font);
+	enum {
+		ID_NEXT_CONTROL = 4567,
+		ID_PREV_CONTROL,
+	};
 private:
 	bool IsButtonFocused();
 	void SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next);
+	void SetNextControl(bool next);
+	//void OnAccelerator(wxCommandEvent& evt);
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);
 	void OnMouseEvent(wxMouseEvent &evt);
-	//void OnActivate(wxActivateEvent &evt);
+	void OnNavigation(wxNavigationKeyEvent &evt);
 	void OnEnter(wxCommandEvent &evt);
 	void OnEscape(wxCommandEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);

@@ -115,6 +115,7 @@ protected:
 	int posY;
 	wxPoint Cursor;
 	wxPoint Selend;
+	wxPoint lastCur;
 	bool holding;
 	bool dholding;
 	bool firstdhold;

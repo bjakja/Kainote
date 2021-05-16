@@ -372,6 +372,20 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 void KaiChoice::OnKeyPress(wxKeyEvent &event)
 {
 	int key = event.GetKeyCode();
+	if (key == WXK_TAB) {
+		wxNavigationKeyEvent evt;
+		evt.SetDirection(!event.ShiftDown());
+		evt.SetWindowChange(event.ControlDown());
+		evt.SetFromTab(true);
+		evt.SetEventObject(this);
+		wxWindow* win = GetParent();
+		while (win) {
+			if (win->GetEventHandler()->ProcessEvent(event))
+				break;
+			win = win->GetParent();
+		}
+		return;
+	}
 	if (itemList && itemList->IsShown()){
 		itemList->OnKeyPress(event);
 	}
@@ -412,6 +426,7 @@ void KaiChoice::OnArrow(wxCommandEvent &evt)
 	}
 	choice += (up) ? -1 : 1;
 	SelectChoice(choice, false);
+	SetTextSelection(0, -1);
 }
 
 void KaiChoice::ShowList()

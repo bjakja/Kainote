@@ -54,6 +54,7 @@ private:
 	void OnKeyPress(wxKeyEvent &evt);
 	void OnEraseBackground(wxEraseEvent &event){}
 	void OnKillFocus(wxFocusEvent& event);
+	void OnSetFocus(wxFocusEvent& event);
 	wxString label;
 	int fontHeight;
 	COLOR background;

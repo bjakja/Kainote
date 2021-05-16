@@ -77,7 +77,7 @@ KaiCheckBox::KaiCheckBox(wxWindow *parent, int id, const wxString& _label,
 	//Bind(wxEVT_KEY_DOWN, &KaiCheckBox::OnKeyPress, this);
 	Bind(wxEVT_ERASE_BACKGROUND, &KaiCheckBox::OnEraseBackground, this);
 	Bind(wxEVT_KILL_FOCUS, &KaiCheckBox::OnKillFocus, this);
-	Bind(wxEVT_SET_FOCUS, &KaiCheckBox::OnKillFocus, this);
+	Bind(wxEVT_SET_FOCUS, &KaiCheckBox::OnSetFocus, this);
 	//SetBackgroundColour(parent->GetBackgroundColour());
 	//SetForegroundColour(parent->GetForegroundColour());
 	/*Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
@@ -184,6 +184,11 @@ void KaiCheckBox::OnKeyPress(wxKeyEvent &event)
 }
 
 void KaiCheckBox::OnKillFocus(wxFocusEvent& event)
+{
+	Refresh(false);
+}
+
+void KaiCheckBox::OnSetFocus(wxFocusEvent& event)
 {
 	Refresh(false);
 }

@@ -507,7 +507,7 @@ bool MappedButton::SetFont(const wxFont &font)
 
 ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
 	const wxPoint& pos, const wxSize& size, long style)
-	:wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
+	:wxWindow(parent, id, pos, size, style)
 	, bmp(0)
 	, enter(false)
 	, toggled(false)
@@ -548,6 +548,8 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 		SendEvent();
 	});
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
 	wxAcceleratorEntry centries[1];
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
@@ -662,7 +664,10 @@ void ToggleButton::PaintGDI(wxDC &tdc, int w, int h){
 			tdc.DrawLabel(name, cur, wxALIGN_CENTER);
 			tdc.DestroyClippingRegion();
 		}
-
+		if (HasFocus()) {
+			wxPoint frame[5] = { wxPoint(3, 3), wxPoint(w - 4, 3), wxPoint(w - 4, h - 4), wxPoint(3, h - 4), wxPoint(3, 3) };
+			DrawDashedLine(&tdc, frame, 5, 1, Options.GetColour(WINDOW_TEXT_INACTIVE));
+		}
 	}
 }
 

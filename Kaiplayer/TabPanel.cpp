@@ -21,7 +21,7 @@
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
-	: wxWindow(parent, -1, pos, size)
+	: wxWindow(parent, -1, pos, size, wxWANTS_CHARS)
 	, windowResizer(NULL)
 	, editor(true)
 	, holding(false)
@@ -70,6 +70,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	SubsName = _("Bez tytułu");
 
 	SetAccels();
+	Bind(wxEVT_NAVIGATION_KEY, &TabPanel::OnNavigation, this);
 }
 
 
@@ -279,6 +280,48 @@ void TabPanel::OnSize(wxSizeEvent & evt)
 	}
 	evt.Skip();
 }
+
+void TabPanel::OnNavigation(wxNavigationKeyEvent& evt)
+{
+	SetNextControl(evt.GetDirection());
+}
+
+void TabPanel::SetNextControl(bool next)
+{
+	wxWindow* focused = FindFocus();
+	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
+		focused = focused->GetParent();
+	}
+
+	wxWindowList& list = focused->GetParent()->GetChildren();
+	auto node = list.Find(focused);
+	if (node) {
+		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+		while (1) {
+			if (!nextWindow) {
+				nextWindow = next ? list.GetFirst() : list.GetLast();
+				wxObject* data = nextWindow->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win && win->IsFocusable()) {
+						win->SetFocus(); return;
+					}
+				}
+			}
+			else if (nextWindow) {
+				wxObject* data = nextWindow->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win && win->IsFocusable()) {
+						win->SetFocus(); return;
+					}
+				}
+			}
+			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+		}
+	}
+}
+
 BEGIN_EVENT_TABLE(TabPanel, wxWindow)
 EVT_SIZE(TabPanel::OnSize)
 EVT_CHILD_FOCUS(TabPanel::OnFocus)

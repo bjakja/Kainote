@@ -61,6 +61,8 @@ private:
 	//void OnMouseEvent(wxMouseEvent& event);
 	void OnFocus(wxChildFocusEvent& event);
 	void OnSize(wxSizeEvent & evt);
+	void OnNavigation(wxNavigationKeyEvent& evt);
+	void SetNextControl(bool next);
 	DECLARE_EVENT_TABLE()
 };
 

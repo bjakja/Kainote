@@ -28,10 +28,12 @@ KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 	Bind(wxEVT_LEFT_DOWN, &KaiRadioButton::OnMouseLeft, this);
 	Bind(wxEVT_LEFT_DCLICK, &KaiRadioButton::OnMouseLeft, this);
 	if (style & wxRB_GROUP){ SetValue(true); }
-	wxAcceleratorEntry entries[2];
+	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_ACCEL_LEFT);
 	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_ACCEL_RIGHT);
-	wxAcceleratorTable accel(2, entries);
+	entries[2].Set(wxACCEL_NORMAL, WXK_UP, ID_ACCEL_LEFT);
+	entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_ACCEL_RIGHT);
+	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectPrev(false); }, ID_ACCEL_LEFT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){SelectNext(false); }, ID_ACCEL_RIGHT);
