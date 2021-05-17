@@ -51,6 +51,8 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 	Bind(wxEVT_MIDDLE_DOWN, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_DOWN, &SubsGridWindow::OnMouseEvent, this);
 	Bind(wxEVT_RIGHT_UP, &SubsGridWindow::OnMouseEvent, this);
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
 }
 
 SubsGridWindow::~SubsGridWindow()
@@ -529,6 +531,11 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				tdc.DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 2);
 			}
 		}
+		if (HasFocus()) {
+			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
+			tdc.SetPen(wxPen(textcol));
+			tdc.DrawRectangle(0, 0, w + scHor - 1, h - 1);
+		}
 	}
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, firstCol + posX, h, &tdc, 0, 0);
@@ -944,6 +951,11 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (preview && ypos >= previewpos.y - 2){ ypos += previewsize.y + 5; }
 			gc->DrawRectangle(posX, ypos - 1, w + scHor - posX, GridHeight + 1);
 		}
+	}
+	if (HasFocus()) {
+		gc->SetBrush(*wxTRANSPARENT_BRUSH);
+		gc->SetPen(wxPen(textcol));
+		gc->DrawRectangle(0, 0, w + scHor - 1, h - 1);
 	}
 	delete gc;
 }
@@ -1718,6 +1730,20 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		pos.x = w / 2;
 		pos.y = h / 2;
 		ContextMenu(pos);
+		return;
+	}
+	else if (key == WXK_TAB) {
+		wxNavigationKeyEvent evt;
+		evt.SetDirection(!event.ShiftDown());
+		evt.SetWindowChange(event.ControlDown());
+		evt.SetFromTab(true);
+		evt.SetEventObject(this);
+		wxWindow* win = GetParent();
+		while (win) {
+			if (win->GetEventHandler()->ProcessEvent(evt))
+				break;
+			win = win->GetParent();
+		}
 		return;
 	}
 

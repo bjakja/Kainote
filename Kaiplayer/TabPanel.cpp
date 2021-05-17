@@ -21,7 +21,7 @@
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
-	: wxWindow(parent, -1, pos, size, wxWANTS_CHARS)
+	: wxWindow(parent, -1, pos, size, 0)
 	, windowResizer(NULL)
 	, editor(true)
 	, holding(false)
@@ -33,22 +33,25 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	if (vw < 200){ vw = 550; vh = 400; }
 	Video = new VideoCtrl(this, kai, wxSize(vw, vh));
 	Video->Hide();
-	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
-	Edit = new EditBox(this, Grid, -1);
-	//check if there is nothing in constructor that crash or get something wrong when construct
-	Edit->StartEdit->SetVideoCtrl(Video);
-	Edit->EndEdit->SetVideoCtrl(Video);
-	Edit->DurEdit->SetVideoCtrl(Video);
-	Edit->SetMinSize(wxSize(-1, 200));
-	Edit->SetLine(0);
+	Edit = new EditBox(this, -1);
 
 	GridShiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
+	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
+	Edit->SetGrid1(Grid);
+
 	ShiftTimes = new ShiftTimesWindow(this, kai, -1);
 	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	GridShiftTimesSizer->Add(Grid, 1, wxEXPAND, 0);
 	GridShiftTimesSizer->Add(ShiftTimes, 0, wxEXPAND, 0);
 	VideoEditboxSizer->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
 	VideoEditboxSizer->Add(Edit, 1, wxEXPAND | wxALIGN_TOP, 0);
+
+	//check if there is nothing in constructor that crash or get something wrong when construct
+	Edit->StartEdit->SetVideoCtrl(Video);
+	Edit->EndEdit->SetVideoCtrl(Video);
+	Edit->DurEdit->SetVideoCtrl(Video);
+	Edit->SetMinSize(wxSize(-1, 200));
+	Edit->SetLine(0);
 
 	windowResizer = new KaiWindowResizer(this, [=](int newpos){
 		int mw, mh;
@@ -300,15 +303,8 @@ void TabPanel::SetNextControl(bool next)
 		while (1) {
 			if (!nextWindow) {
 				nextWindow = next ? list.GetFirst() : list.GetLast();
-				wxObject* data = nextWindow->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					if (win && win->IsFocusable()) {
-						win->SetFocus(); return;
-					}
-				}
 			}
-			else if (nextWindow) {
+			if (nextWindow) {
 				wxObject* data = nextWindow->GetData();
 				if (data) {
 					wxWindow* win = wxDynamicCast(data, wxWindow);

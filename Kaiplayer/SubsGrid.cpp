@@ -36,7 +36,10 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 	:SubsGridWindow(parent, id, pos, size, style)
 {
 	tab = (TabPanel*)parent;
+	Edit = tab->Edit;
 	Kai = kfparent;
+	//Editbox here exists
+
 	ignoreFiltered = Options.GetBool(GRID_IGNORE_FILTERING);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem *item = (MenuItem*)evt.GetClientData();
@@ -113,6 +116,8 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			ignoreFiltered = item->check;
 		}
 	}, ID_CHECK_EVENT);
+	if(Edit->Frames->GetValue())
+		ChangeTimeDisplay(true);
 }
 
 SubsGrid::~SubsGrid()

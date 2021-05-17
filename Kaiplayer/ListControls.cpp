@@ -380,7 +380,7 @@ void KaiChoice::OnKeyPress(wxKeyEvent &event)
 		evt.SetEventObject(this);
 		wxWindow* win = GetParent();
 		while (win) {
-			if (win->GetEventHandler()->ProcessEvent(event))
+			if (win->GetEventHandler()->ProcessEvent(evt))
 				break;
 			win = win->GetParent();
 		}

@@ -16,6 +16,7 @@
 
 #include "KaiRadioButton.h"
 #include "KaiStaticBoxSizer.h"
+#include "ListControls.h"
 #include "config.h"
 
 KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
@@ -263,12 +264,19 @@ KaiRadioBox::KaiRadioBox(wxWindow *parent, int id, const wxString& label,
 	}, 9876, 9876 + names.size() - 1);
 	SetSizerAndFit(box);
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
+	//Bind(wxEVT_NAVIGATION_KEY, &KaiRadioBox::OnNavigation, this);
 }
 
 
 int KaiRadioBox::GetSelection()
 {
-	return selected;
+	for (size_t i = 0; i < buttons.size(); i++) {
+		if (buttons[i]->GetValue()) {
+			selected = i;
+			return i;
+		}
+	}
+	return -1;
 }
 
 void KaiRadioBox::SetSelection(int sel)
@@ -285,5 +293,55 @@ bool KaiRadioBox::Enable(bool enable)
 	box->Enable(enable);
 	return wxWindow::Enable(enable);
 }
+
+void KaiRadioBox::SetFocus()
+{
+	for (size_t i = 0; i < buttons.size(); i++) {
+		if (buttons[i]->GetValue()) {
+			buttons[i]->SetFocus();
+			selected = i;
+		}
+	}
+}
+
+//void KaiRadioBox::OnNavigation(wxNavigationKeyEvent& evt)
+//{
+//	bool next = evt.GetDirection();
+//	wxWindow* focused = FindFocus();
+//	wxWindowList& list = this->GetChildren();
+//	auto node = list.Find(focused);
+//	if (node) {
+//		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+//		while (1) {
+//			if (!nextWindow) {
+//				//nextWindow = next ? list.GetFirst() : list.GetLast();
+//				wxWindowList& list1 = this->GetParent()->GetChildren();
+//				nextWindow = list1.Find(this);
+//				if (!nextWindow) {
+//					KaiLog("Cannot find radiobox control");
+//					return;
+//				}
+//				nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+//				if (!nextWindow) {
+//					nextWindow = next ? list1.GetFirst() : list1.GetLast();
+//				}
+//				if (!nextWindow) {
+//					KaiLog("Cannot find any controls on window with radiobox");
+//					return;
+//				}
+//			}
+//			if (nextWindow) {
+//				wxObject* data = nextWindow->GetData();
+//				if (data) {
+//					wxWindow* win = wxDynamicCast(data, wxWindow);
+//					if (win && win->IsFocusable()) {
+//						win->SetFocus(); return;
+//					}
+//				}
+//			}
+//			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+//		}
+//	}
+//}
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiRadioBox, wxWindow);

@@ -16,6 +16,7 @@
 #include "KaiDialog.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
+#include "KaiRadioButton.h"
 #include "config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
@@ -201,8 +202,10 @@ void KaiDialog::SetNextControl(bool next)
 {
 	wxWindowList& list = GetChildren();
 	wxWindow* focused = FindFocus();
-	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
-		focused = focused->GetParent();
+	wxWindow* focusedParent = focused->GetParent();
+	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice)) || 
+		focusedParent->IsKindOf(CLASSINFO(KaiRadioBox))) {
+		focused = focusedParent;
 	}
 
 	auto result = list.Find(focused);
@@ -268,7 +271,7 @@ void KaiDialog::OnNavigation(wxNavigationKeyEvent& evt)
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
 	const int key = evt.GetKeyCode();
-	if (evt.GetModifiers() != 0 && key != WXK_TAB){
+	if (evt.GetModifiers() != 0){
 		evt.Skip();
 		return;
 	}

@@ -27,7 +27,7 @@ class StyleList : public KaiScrolledWindow
 {
 public:
 	StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray,
-		const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxWANTS_CHARS);
+		const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = 0);
 	virtual ~StyleList();
 
 	void SetSelection(int sel, bool reset = false);
@@ -42,7 +42,7 @@ private:
 
 	void OnPaint(wxPaintEvent& event);
 	void OnSize(wxSizeEvent& event);
-	void DrawFld(wxDC &dc, int w, int h);
+	//void DrawFld(wxDC &dc, int w, int h);
 	void OnScroll(wxScrollWinEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnArrow(wxCommandEvent& event);

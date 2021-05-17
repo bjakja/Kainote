@@ -46,7 +46,9 @@ public:
 	int GetSelection();
 	void SetSelection(int sel);
 	bool Enable(bool enable=true);
+	void SetFocus();
 private:
+	//void OnNavigation(wxNavigationKeyEvent& evt);
 	int selected;
 	std::vector< KaiRadioButton*> buttons;
 	KaiStaticBoxSizer *box;

@@ -28,7 +28,9 @@ public:
 private:
 	void OnMouseEvent(wxMouseEvent &evt);
 	void OnPaint(wxPaintEvent& evt);
-
+	bool AcceptsFocus() const { return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const { return false; }
 	wxDialog* splitLine = NULL;
 	std::function<bool(int)> canResize;
 	std::function<void(int, bool)> doResize;

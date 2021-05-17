@@ -24,7 +24,7 @@ class VideoSlider : public wxWindow
 public:
 	VideoSlider(wxWindow *parent, const long int id, 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-		long style = wxWANTS_CHARS, const wxString& name = wxPanelNameStr);
+		long style = 0/*wxWANTS_CHARS*/, const wxString& name = wxPanelNameStr);
 	virtual ~VideoSlider();
 
 	void SetValue(float pos);
@@ -34,7 +34,7 @@ protected:
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnMouseLeave(wxMouseCaptureLostEvent& event);
-	void OnKeyPress(wxKeyEvent& event);
+	//void OnKeyPress(wxKeyEvent& event);
 	void OnSize(wxSizeEvent& event);
 	void OnEraseBackground(wxEraseEvent& rEvent){}
 	int position = 0;
@@ -60,7 +60,7 @@ class VolSlider : public wxWindow
 public:
 	VolSlider(wxWindow *parent, const long int id, int apos, 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-		long style = wxWANTS_CHARS, const wxString& name = wxPanelNameStr);
+		long style = 0/*wxWANTS_CHARS*/, const wxString& name = wxPanelNameStr);
 	virtual ~VolSlider();
 
 	void SetValue(int pos);

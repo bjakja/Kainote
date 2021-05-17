@@ -220,7 +220,7 @@ void Fullscreen::SetAccels()
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &Fullscreen::OnUseWindowHotkey, this, id);
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}
-		if (!entries[entries.size() - 1].IsOk()) {
+		if (entries.size() && !entries[entries.size() - 1].IsOk()) {
 			entries.pop_back();
 		}
 	}

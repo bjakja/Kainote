@@ -78,7 +78,7 @@ private:
 class EditBox : public wxWindow
 {
 public:
-	EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd);
+	EditBox(wxWindow *parent, int idd);
 	virtual ~EditBox();
 	void SetLine(int Row, bool setaudio = true, bool save = true, bool nochangeline = false, bool autoPlay = false);
 	void SetTlMode(bool tl, bool dummyTlMode = false);
@@ -142,6 +142,7 @@ public:
 	void RebuildActorEffectLists();
 	void SetActiveLineToDoubtful();
 	void SetGrid(SubsGrid *_grid, bool isPreview = false);
+	void SetGrid1(SubsGrid* _grid) { grid = _grid; };
 	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
 	void CloseAudio();
 	TextEditor *GetEditor(const wxString &text = L"");
@@ -200,10 +201,14 @@ private:
 	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void OnStyleEdit(wxCommandEvent& event);
 	void OnFontChange(wxCommandEvent& event);
+	void OnNavigation(wxNavigationKeyEvent& evt);
 	void SetTagButtons();
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);
 	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
+	bool AcceptsFocus() const { return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const { return false; }
 
 	bool isdetached;
 	bool hasPreviewGrid = false;

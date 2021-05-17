@@ -130,7 +130,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 
-EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
+EditBox::EditBox(wxWindow *parent, int idd)
 	: wxWindow(parent, idd)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
@@ -140,13 +140,13 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 	, CurrentUntranslated(0)
 	, TagButtonManager(NULL)
 {
+	//Warning don't use any grid in constructor cause editbox is constructed
+	//before Subsgrid cause of tab shortcut order
 	tab = (TabPanel*)GetParent();
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxWindow::SetFont(*Options.GetFont(-1));
 	currentLine = 0;
-	grid = subsGrid;
-	grid->Edit = this;
 	isdetached = splittedTags = false;
 	Visual = 0;
 
@@ -343,9 +343,9 @@ EditBox::EditBox(wxWindow *parent, SubsGrid *subsGrid, int idd)
 		Connect(ID_TEXT_EDITOR, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
 	}
 	Connect(ID_TEXT_EDITOR, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
+	Bind(wxEVT_NAVIGATION_KEY, &EditBox::OnNavigation, this);
 	DoTooltips();
 	if (asFrames){
-		grid->ChangeTimeDisplay(asFrames);
 		StartEdit->ShowFrames(asFrames);
 		EndEdit->ShowFrames(asFrames);
 		DurEdit->ShowFrames(asFrames);
@@ -2403,4 +2403,40 @@ bool EditBox::SetFont(const wxFont &font)
 	}*/
 	Layout();
 	return true;
+}
+
+void EditBox::OnNavigation(wxNavigationKeyEvent& evt)
+{
+	wxWindow* focused = FindFocus();
+	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
+		focused = focused->GetParent();
+	}
+	bool next = evt.GetDirection();
+	wxWindowList& list = focused->GetParent()->GetChildren();
+	auto node = list.Find(focused);
+	if (node) {
+		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+		while (1) {
+			if (!nextWindow) {
+				nextWindow = next ? list.GetFirst() : list.GetLast();
+				wxObject* data = nextWindow->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win && win->IsFocusable()) {
+						win->SetFocus(); return;
+					}
+				}
+			}
+			else if (nextWindow) {
+				wxObject* data = nextWindow->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win && win->IsFocusable()) {
+						win->SetFocus(); return;
+					}
+				}
+			}
+			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+		}
+	}
 }

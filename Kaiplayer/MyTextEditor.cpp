@@ -517,6 +517,20 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 			tagList = NULL;
 		}
 	}
+	if (key == WXK_TAB) {
+		wxNavigationKeyEvent evt;
+		evt.SetDirection(!event.ShiftDown());
+		evt.SetWindowChange(event.ControlDown());
+		evt.SetFromTab(true);
+		evt.SetEventObject(this);
+		wxWindow* win = GetParent();
+		while (win) {
+			if (win->GetEventHandler()->ProcessEvent(evt))
+				break;
+			win = win->GetParent();
+		}
+		return;
+	}
 	if (((!ctrl && !alt) || (ctrl && alt)) && (key > 30 || key == 0) || (alt && (key >= WXK_NUMPAD0 && key <= WXK_NUMPAD9))){
 		lastKey = key;
 		event.Skip(); return; 

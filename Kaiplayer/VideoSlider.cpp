@@ -265,10 +265,10 @@ void VideoSlider::OnMouseLeave(wxMouseCaptureLostEvent& event)
 	}
 	Refresh(false);
 }
-void VideoSlider::OnKeyPress(wxKeyEvent& event)
-{
-	VB->GetEventHandler()->ProcessEvent(event);
-}
+//void VideoSlider::OnKeyPress(wxKeyEvent& event)
+//{
+//	VB->GetEventHandler()->ProcessEvent(event);
+//}
 
 void VideoSlider::OnSize(wxSizeEvent& event)
 {
@@ -458,6 +458,6 @@ EVT_SIZE(VideoSlider::OnSize)
 EVT_PAINT(VideoSlider::OnPaint)
 EVT_MOUSE_EVENTS(VideoSlider::OnMouseEvent)
 EVT_MOUSE_CAPTURE_LOST(VideoSlider::OnMouseLeave)
-EVT_KEY_DOWN(VideoSlider::OnKeyPress)
+//EVT_KEY_DOWN(VideoSlider::OnKeyPress)
 EVT_ERASE_BACKGROUND(VideoSlider::OnEraseBackground)
 END_EVENT_TABLE()
