@@ -97,7 +97,7 @@ ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxW
 	Kai = kfparent;
 	tab = (TabPanel *)parent;
 	form = ASS;
-	panel = new wxWindow(this, -1);
+	panel = new wxPanel(this, -1);
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	scroll = new KaiScrollbar(this, 5558, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
@@ -643,7 +643,7 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 	Freeze();
 	panel->Destroy();
 	LeadIn = NULL;
-	panel = new wxWindow(this, -1);
+	panel = new wxPanel(this, -1);
 	CreateControls(!collapsed);
 	Thaw();
 	if (collapsed){
@@ -999,7 +999,7 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	bool normal = LeadIn == NULL;
 	panel->Destroy();
 	LeadIn = NULL;
-	panel = new wxWindow(this, -1);
+	panel = new wxPanel(this, -1);
 	CreateControls(normal);
 	Thaw();
 	//isscrollbar = false;

@@ -49,8 +49,11 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 {
 	int fullw = 0;
 	textHeight = 0;
-	if (text.empty())
+	int textLineHeight = 0;
+	if (text.empty()) {
 		GetTextExtent(L"|", &fullw, &textHeight, 0, 0, &GetFont());
+		textLineHeight = textHeight;
+	}
 	else{
 		int fw, fh;
 		int newWrap = -1;
@@ -65,6 +68,8 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 			i = (nfound != -1) ? nfound : text.length() - 1;
 			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
 			GetTextExtent((stringToMesure.length()) ? stringToMesure : L"|", &fw, &fh);
+			if (!textLineHeight)
+				textLineHeight = fh;
 			if (fw > mesureSize){
 				size_t j = currentPosition + 1;
 				bool foundWrap = false;
@@ -131,6 +136,9 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 	int heightMesure = (*h > 0) ? *h : 600;
 	*h = textHeight;
 	if (textHeight > heightMesure){ *h = heightMesure; fullw += 20; }
+	if (textLineHeight < textHeight && fullw < 200) {
+		fullw = 200;
+	}
 	*w = fullw;
 }
 

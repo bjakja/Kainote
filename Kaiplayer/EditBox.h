@@ -75,7 +75,7 @@ private:
 };
 
 
-class EditBox : public wxWindow
+class EditBox : public wxPanel
 {
 public:
 	EditBox(wxWindow *parent, int idd);
@@ -206,9 +206,9 @@ private:
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);
 	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
-	bool AcceptsFocus() const { return false; }
-	bool AcceptsFocusFromKeyboard() const { return false; }
-	bool AcceptsFocusRecursively() const { return false; }
+	//bool AcceptsFocus() const { return false; }
+	//bool AcceptsFocusFromKeyboard() const { return false; }
+	//bool AcceptsFocusRecursively() const { return false; }
 
 	bool isdetached;
 	bool hasPreviewGrid = false;

@@ -372,7 +372,7 @@ void KaiChoice::OnMouseEvent(wxMouseEvent &event)
 void KaiChoice::OnKeyPress(wxKeyEvent &event)
 {
 	int key = event.GetKeyCode();
-	if (key == WXK_TAB) {
+	/*if (key == WXK_TAB) {
 		wxNavigationKeyEvent evt;
 		evt.SetDirection(!event.ShiftDown());
 		evt.SetWindowChange(event.ControlDown());
@@ -385,7 +385,7 @@ void KaiChoice::OnKeyPress(wxKeyEvent &event)
 			win = win->GetParent();
 		}
 		return;
-	}
+	}*/
 	if (itemList && itemList->IsShown()){
 		itemList->OnKeyPress(event);
 	}

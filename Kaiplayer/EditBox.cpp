@@ -131,7 +131,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 EditBox::EditBox(wxWindow *parent, int idd)
-	: wxWindow(parent, idd)//|wxCLIP_CHILDREN
+	: wxPanel(parent, idd/*, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS*/)//|wxCLIP_CHILDREN
 	, EditCounter(1)
 	, ABox(NULL)
 	, line(NULL)

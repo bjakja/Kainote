@@ -127,6 +127,9 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 	else if (size.x < 1){
 		newSize.x = fw + 16;
 		if (newSize.x < controlHeight){ newSize.x = controlHeight; }
+		else if ((window == -1 && newSize.x < 50)) {
+			newSize.x = 50;
+		}
 	}
 
 	if (size.y < 1 || makeSquare){
