@@ -63,9 +63,9 @@ public:
 	};
 private:
 	bool IsButtonFocused();
-	void SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next);
+	//void SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next);
+	wxWindowListNode *GetTabControl(bool next, wxWindow *focused);
 	void SetNextControl(bool next);
-	//void OnAccelerator(wxCommandEvent& evt);
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &evt);
 	void OnSize(wxSizeEvent &evt);

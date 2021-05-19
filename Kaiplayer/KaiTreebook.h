@@ -18,6 +18,7 @@
 #include <wx/window.h>
 #include <vector>
 
+
 class Page{
 public:
 	Page(wxWindow *_page, const wxString &_name, int _whichSupbage = 0){
@@ -47,6 +48,7 @@ public:
 	void ChangeSelection(int sel);
 	void RefreshTree();
 	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
+	wxWindow* GetTab();
 	//bool SetFont(const wxFont &font);
 private:
 	void OnKeyPress(wxKeyEvent& event);
@@ -56,11 +58,15 @@ private:
 	void ChangePage(int page);
 	void CalcWidth();
 	int CalcElement(int element, int *lastPage = NULL);
+	bool HasMultiplePages() const {
+		return true;
+	};
 	std::vector<Page *> Pages;
 	wxBitmap *bmp;
 	int treeWidth;
 	int selection;
 	int textHeight = 12;
 	DECLARE_EVENT_TABLE()
+	wxDECLARE_ABSTRACT_CLASS(KaiTreebook);
 };
 

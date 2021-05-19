@@ -52,6 +52,9 @@ private:
 	void RefreshTabBar();
 	void SetColours(const wxColour &bgcol, const wxColour &fgcol);
 	int FindCurrentTab(const wxPoint &pos);
+	bool HasMultiplePages() const {
+		return true;
+	};
 
 	std::vector<TabData *> tabs;
 	int tabHeader = 28;
@@ -59,4 +62,6 @@ private:
 	int lastTab = -1;
 	int textHeight = 0;
 	int tabHighlighted = -1;
+
+	wxDECLARE_ABSTRACT_CLASS(KaiTabBar);
 };

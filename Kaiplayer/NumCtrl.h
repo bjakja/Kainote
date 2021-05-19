@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include "KaiTextCtrl.h"
 wxDECLARE_EVENT(NUMBER_CHANGED, wxCommandEvent);
 

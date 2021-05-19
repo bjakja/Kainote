@@ -19,7 +19,7 @@
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
-#include "GraphicsD2D.h"
+//#include "GraphicsD2D.h"
 
 
 wxColour WhiteUp(const wxColour &color)

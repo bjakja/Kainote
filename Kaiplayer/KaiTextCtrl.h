@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/window.h>
 #include <wx/caret.h>
 #include "KaiTextValidator.h"
 #include "KaiScrollbar.h"

@@ -201,7 +201,7 @@ private:
 	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void OnStyleEdit(wxCommandEvent& event);
 	void OnFontChange(wxCommandEvent& event);
-	void OnNavigation(wxNavigationKeyEvent& evt);
+	//void OnNavigation(wxNavigationKeyEvent& evt);
 	void SetTagButtons();
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);

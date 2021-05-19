@@ -17,6 +17,8 @@
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiRadioButton.h"
+#include "KaiTabBar.h"
+#include "KaiTreeBook.h"
 #include "config.h"
 #include "wx/dcmemory.h"
 #include "wx/dcclient.h"
@@ -86,15 +88,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	Bind(wxEVT_SIZE, &KaiDialog::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiDialog::OnPaint, this);
 	if (!(_style & wxWANTS_CHARS)){ 
-		/*wxAcceleratorEntry entries[4];
-		entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_PREV_CONTROL);
-		entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_NEXT_CONTROL);
-		entries[2].Set(wxACCEL_NORMAL, WXK_UP, ID_PREV_CONTROL);
-		entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_NEXT_CONTROL);
-		wxAcceleratorTable accel(4, entries);*/
-		//SetAcceleratorTable(accel);
 		Bind(wxEVT_CHAR_HOOK, &KaiDialog::OnCharHook, this); 
-		//Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiDialog::OnAccelerator, this, ID_NEXT_CONTROL, ID_PREV_CONTROL);
 		Bind(wxEVT_NAVIGATION_KEY, &KaiDialog::OnNavigation, this);
 	}
 	Bind(wxEVT_LEFT_DOWN, &KaiDialog::OnMouseEvent, this);
@@ -168,93 +162,140 @@ bool KaiDialog::IsButtonFocused()
 	return (focused && focused->IsKindOf(wxCLASSINFO(MappedButton)));
 }
 
-void KaiDialog::SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next)
-{
-	if (!node)
-		return;
+//void KaiDialog::SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next)
+//{
+//	if (!node)
+//		return;
+//
+//	auto nextWindow = next? node->GetNext() : node->GetPrevious();
+//	while (1) {
+//		if (!nextWindow) {
+//			nextWindow = next ? list.GetFirst() : list.GetLast();
+//			wxObject* data = nextWindow->GetData();
+//			if (data) {
+//				wxWindow* win = wxDynamicCast(data, wxWindow);
+//				if (win && win->IsFocusable()) {
+//					win->SetFocus(); return;
+//				}
+//			}
+//		}
+//		else if (nextWindow) {
+//			wxObject* data = nextWindow->GetData();
+//			if (data) {
+//				wxWindow* win = wxDynamicCast(data, wxWindow);
+//				if (win && win->IsFocusable()) {
+//					win->SetFocus(); return;
+//				}
+//			}
+//		}
+//		nextWindow = next? nextWindow->GetNext() : nextWindow->GetPrevious();
+//	}
+//}
 
-	auto nextWindow = next? node->GetNext() : node->GetPrevious();
-	while (1) {
-		if (!nextWindow) {
-			nextWindow = next ? list.GetFirst() : list.GetLast();
-			wxObject* data = nextWindow->GetData();
-			if (data) {
-				wxWindow* win = wxDynamicCast(data, wxWindow);
-				if (win && win->IsFocusable()) {
-					win->SetFocus(); return;
-				}
-			}
-		}
-		else if (nextWindow) {
-			wxObject* data = nextWindow->GetData();
-			if (data) {
-				wxWindow* win = wxDynamicCast(data, wxWindow);
-				if (win && win->IsFocusable()) {
-					win->SetFocus(); return;
-				}
-			}
-		}
-		nextWindow = next? nextWindow->GetNext() : nextWindow->GetPrevious();
+wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
+{
+	wxWindow* tab = NULL;
+	//every new multitab controls have to be added here
+	if (focused->IsKindOf(CLASSINFO(KaiTabBar))) {
+		KaiTabBar* ktb = wxDynamicCast(focused, KaiTabBar);
+		if (ktb)
+			tab = ktb->GetTab();
 	}
+	else if (focused->IsKindOf(CLASSINFO(KaiTreebook))) {
+		KaiTreebook* ktb = wxDynamicCast(focused, KaiTreebook);
+		if (ktb)
+			tab = ktb->GetTab();
+	}
+	if (tab) {
+		const wxWindowList& tablist = tab->GetChildren();
+		return next ? tablist.GetFirst() : tablist.GetLast();
+	}
+	return NULL;
 }
 
 void KaiDialog::SetNextControl(bool next)
 {
-	wxWindowList& list = GetChildren();
+	// what if someone put only statictext to entire dialog?
+	// avoid somehow infinite loop
+	bool positionWasReset = false;
+	bool goToGrandparent = false;
 	wxWindow* focused = FindFocus();
 	wxWindow* focusedParent = focused->GetParent();
 	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice)) || 
 		focusedParent->IsKindOf(CLASSINFO(KaiRadioBox))) {
 		focused = focusedParent;
+		focusedParent = focused->GetParent();
 	}
+	wxWindow* focusedGrandParent = (focusedParent->IsTopLevel())? NULL : focusedParent->GetParent();
+	bool hasMultiplePages = focused->HasMultiplePages();
 
-	auto result = list.Find(focused);
-	//find it in next window
-	if (!result) {
-		for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
-			wxObject* data = cur->GetData();
-			if (data) {
-				wxWindow* win = wxDynamicCast(data, wxWindow);
-				if (win) {
-					wxWindowList& list1 = win->GetChildren();
-					result = list1.Find(focused);
-					if (result) {
-						SetFocusFromNode(result, list1, next);
-						return;
+	const wxWindowList& list = focusedParent->GetChildren();
+	auto node = list.Find(focused);
+	if (node) {
+		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+		while (1) {
+			//if tabbar or treebook is only children then go to its tab
+			if (hasMultiplePages && (next || list.GetCount() == 1)) {
+				nextWindow = GetTabControl(next, focused);
+				//have to disable option to go in this place again
+				//even if was found window to avoid unfinite loop
+				//when window was found then have to seek nexte element on list
+				hasMultiplePages = false;
+			}
+			if (!nextWindow) {
+				//when there was a reset position it means that 
+				//there is no controls or there is no focusable controls
+				//avoid to infinite loop
+				if (positionWasReset)
+					break;
+
+				positionWasReset = true;
+				//case for tabs and treebook when there are two windows in dialog and controls are third in row.
+				//need to move to tab level
+				if (focusedGrandParent && focusedGrandParent->HasMultiplePages()) {
+					wxWindow * parentOfTabs = focusedGrandParent->GetParent();
+					if (parentOfTabs) {
+						const wxWindowList& tablist = parentOfTabs->GetChildren();
+						auto tabsnode = tablist.Find(focusedGrandParent);
+						if (tabsnode) {
+							nextWindow = next ? tabsnode->GetNext() : tabsnode;
+							goToGrandparent = true;
+						}
 					}
 				}
+				if(!nextWindow) {
+					nextWindow = next ? list.GetFirst() : list.GetLast();
+				}
 			}
-		}
-	}
-	//find it in 3rd window for example tab like in find replace or tree from options
-	if (!result) {
-		for (wxWindowListNode* cur = list.GetFirst(); cur != NULL; cur = cur->GetNext()) {
-			wxObject* data = cur->GetData();
-			if (data) {
-				wxWindow* win = wxDynamicCast(data, wxWindow);
-				if (win) {
-					wxWindowList list1 = win->GetChildren();
-					for (wxWindowListNode* cur1 = list1.GetFirst(); cur1 != NULL; cur1 = cur1->GetNext()) {
-						wxObject* data1 = cur1->GetData();
-						if (data1) {
-							wxWindow* win1 = wxDynamicCast(data1, wxWindow);
-							if (win1) {
-								wxWindowList list2 = win1->GetChildren();
-								result = list2.Find(focused);
-								if (result) {
-									SetFocusFromNode(result, list2, next);
-									return;
+			if (nextWindow) {
+				wxObject* data = nextWindow->GetData();
+				if (data) {
+					wxWindow* win = wxDynamicCast(data, wxWindow);
+					if (win && win->IsFocusable()) {
+						if (!next && win->HasMultiplePages() && !goToGrandparent) {
+							auto nodetc = GetTabControl(next, win);
+							if (nodetc) {
+								wxObject* datatc = nodetc->GetData();
+								if (datatc) {
+									wxWindow* wintc = wxDynamicCast(datatc, wxWindow);
+									if (wintc && wintc->IsFocusable()) {
+										wintc->SetFocus();
+										return;
+									}
+									//if window is not focusable then set nextWindow to seek again window
+									nextWindow = nodetc;
 								}
 							}
+						}
+						else {
+							win->SetFocus(); 
+							return;
 						}
 					}
 				}
 			}
+			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
 		}
-		//if still no result, it's mean thats nothing to do
-	}
-	if (result) {
-		SetFocusFromNode(result, list, next);
 	}
 }
 
@@ -262,11 +303,6 @@ void KaiDialog::OnNavigation(wxNavigationKeyEvent& evt)
 {
 	SetNextControl(evt.GetDirection());
 }
-
-//void KaiDialog::OnAccelerator(wxCommandEvent& evt)
-//{
-//	SetNextControl(evt.GetId() == ID_NEXT_CONTROL);
-//}
 
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {

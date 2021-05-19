@@ -267,3 +267,5 @@ int KaiTabBar::FindCurrentTab(const wxPoint &pos)
 	}
 	return -1;
 }
+
+wxIMPLEMENT_ABSTRACT_CLASS(KaiTabBar, wxWindow);

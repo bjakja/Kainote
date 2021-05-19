@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
-
+#include <wx/window.h>
 #include "KaiTextCtrl.h"
 #include "KaiMessageBox.h"
 

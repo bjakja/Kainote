@@ -19,6 +19,8 @@
 #include <wx/dcmemory.h>
 #include "config.h"
 
+#undef GetClassInfo
+
 
 bool Page::SetFont(const wxFont &font)
 {
@@ -38,12 +40,13 @@ bool Page::SetFont(const wxFont &font)
 
 KaiTreebook::KaiTreebook(wxWindow *parent, int id,
 	const wxPoint& pos, const wxSize& size, long style)
-	: wxWindow(parent, id, pos, size, style)
+	: wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
 	, treeWidth(20)
 	, selection(0)
 	, bmp(NULL)
 {
-
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
 }
 
 KaiTreebook::~KaiTreebook()
@@ -135,9 +138,55 @@ void KaiTreebook::ChangePage(int page)
 	selection = page;
 }
 
-void KaiTreebook::OnKeyPress(wxKeyEvent& event)
+void KaiTreebook::OnKeyPress(wxKeyEvent& evt)
 {
-	//shithappens na razie
+	int key = evt.GetKeyCode();
+	if (key == WXK_DOWN) {
+		int i = selection + 1;
+		if (i >= Pages.size())
+			i = 0;
+		ChangePage(i);
+		RefreshTree();
+	}
+	if (key == WXK_UP) {
+		int i = selection - 1;
+		if (i < 0)
+			i = Pages.size() - 1;
+		ChangePage(i);
+		RefreshTree();
+	}
+	if (key >= 'A' && key <= 'Z') {
+		int i = selection + 1;
+		while (1) {
+			if (i >= Pages.size())
+				i = 0;
+			Page* pg = Pages[i];
+			if (pg->name.length() && pg->name[0] == key) {
+				ChangePage(i);
+				RefreshTree();
+				break;
+			}
+			if (i == selection)
+				break;
+
+			i++;
+		}
+	}
+	if (key == WXK_TAB) {
+		wxNavigationKeyEvent event;
+		event.SetDirection(!evt.ShiftDown());
+		event.SetWindowChange(evt.ControlDown());
+		event.SetFromTab(true);
+		event.SetEventObject(this);
+		wxWindow* win = GetParent();
+		while (win) {
+			if (win->GetEventHandler()->ProcessEvent(event))
+				break;
+			win = win->GetParent();
+		}
+		return;
+	}
+	evt.Skip();
 }
 
 void KaiTreebook::OnMouseEvent(wxMouseEvent& event)
@@ -222,6 +271,11 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 			tdc.SetBrush(wxBrush(selColor));
 			tdc.SetPen(wxPen(selColor));
 			tdc.DrawRectangle(cur.x, cur.y, textSize.x, cur.height);
+			if (HasFocus()) {
+				wxPoint points[5] = { wxPoint(cur.x, cur.y), wxPoint(cur.x + textSize.x, cur.y),
+					wxPoint(cur.x + textSize.x, cur.y + cur.height), wxPoint(cur.x, cur.y + cur.height), wxPoint(cur.x, cur.y) };
+				DrawDashedLine(&tdc, points, 5, 1, wfg);
+			}
 		}
 		tdc.SetClippingRegion(cur);
 		tdc.DrawLabel(Pages[i]->name, cur, wxALIGN_CENTER_VERTICAL);
@@ -297,21 +351,27 @@ void KaiTreebook::SetColours(const wxColour &bgcol, const wxColour &fgcol)
 	SetForegroundColour(fgcol);
 }
 
-//bool KaiTreebook::SetFont(const wxFont &font)
-//{
-//	wxWindow::SetFont(font);
-//	for (auto page : Pages){
-//		page->SetFont(font);
-//	}
-//	Fit();
-//	return true;
-//}
+wxWindow* KaiTreebook::GetTab()
+{
+	if (selection >= 0 && selection < Pages.size()) {
+		return Pages[selection]->page;
+	}
+	for (size_t i = 0; i < Pages.size(); i++) {
+		if (Pages[i]->page->IsShown()) {
+			return Pages[i]->page;
+		}
+	}
+	return nullptr;
+}
+
+
+wxIMPLEMENT_ABSTRACT_CLASS(KaiTreebook, wxWindow);
 
 BEGIN_EVENT_TABLE(KaiTreebook, wxWindow)
 EVT_PAINT(KaiTreebook::OnPaint)
 EVT_SIZE(KaiTreebook::OnSize)
 //EVT_ERASE_BACKGROUND(KaiTreebook::OnEraseBackground)
 EVT_MOUSE_EVENTS(KaiTreebook::OnMouseEvent)
-//EVT_KEY_DOWN(KaiTreebook::OnKeyPress)
+EVT_KEY_DOWN(KaiTreebook::OnKeyPress)
 //EVT_MOUSE_CAPTURE_LOST(KaiTextCtrl::OnLostCapture)
 END_EVENT_TABLE()

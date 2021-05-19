@@ -343,7 +343,7 @@ EditBox::EditBox(wxWindow *parent, int idd)
 		Connect(ID_TEXT_EDITOR, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
 	}
 	Connect(ID_TEXT_EDITOR, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
-	Bind(wxEVT_NAVIGATION_KEY, &EditBox::OnNavigation, this);
+	//Bind(wxEVT_NAVIGATION_KEY, &EditBox::OnNavigation, this);
 	DoTooltips();
 	if (asFrames){
 		StartEdit->ShowFrames(asFrames);
@@ -2405,38 +2405,38 @@ bool EditBox::SetFont(const wxFont &font)
 	return true;
 }
 
-void EditBox::OnNavigation(wxNavigationKeyEvent& evt)
-{
-	wxWindow* focused = FindFocus();
-	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
-		focused = focused->GetParent();
-	}
-	bool next = evt.GetDirection();
-	wxWindowList& list = focused->GetParent()->GetChildren();
-	auto node = list.Find(focused);
-	if (node) {
-		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
-		while (1) {
-			if (!nextWindow) {
-				nextWindow = next ? list.GetFirst() : list.GetLast();
-				wxObject* data = nextWindow->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					if (win && win->IsFocusable()) {
-						win->SetFocus(); return;
-					}
-				}
-			}
-			else if (nextWindow) {
-				wxObject* data = nextWindow->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					if (win && win->IsFocusable()) {
-						win->SetFocus(); return;
-					}
-				}
-			}
-			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
-		}
-	}
-}
+//void EditBox::OnNavigation(wxNavigationKeyEvent& evt)
+//{
+//	wxWindow* focused = FindFocus();
+//	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
+//		focused = focused->GetParent();
+//	}
+//	bool next = evt.GetDirection();
+//	wxWindowList& list = focused->GetParent()->GetChildren();
+//	auto node = list.Find(focused);
+//	if (node) {
+//		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+//		while (1) {
+//			if (!nextWindow) {
+//				nextWindow = next ? list.GetFirst() : list.GetLast();
+//				wxObject* data = nextWindow->GetData();
+//				if (data) {
+//					wxWindow* win = wxDynamicCast(data, wxWindow);
+//					if (win && win->IsFocusable()) {
+//						win->SetFocus(); return;
+//					}
+//				}
+//			}
+//			else if (nextWindow) {
+//				wxObject* data = nextWindow->GetData();
+//				if (data) {
+//					wxWindow* win = wxDynamicCast(data, wxWindow);
+//					if (win && win->IsFocusable()) {
+//						win->SetFocus(); return;
+//					}
+//				}
+//			}
+//			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+//		}
+//	}
+//}
