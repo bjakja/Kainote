@@ -18,6 +18,7 @@
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
+#include "Utils.h"
 
 #if byvertices
 struct CUSTOMVERTEX

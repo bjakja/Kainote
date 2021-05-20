@@ -13,11 +13,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "VideoFullscreen.h"
-#include "Videobox.h"
-#include "Config.h"
-#include "KainoteApp.h"
 
+#include "Videobox.h"
+#include "KainoteApp.h"
+#include "Config.h"
+#include "VideoFullscreen.h"
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	: wxFrame(parent, -1, L"", pos, size, wxBORDER_NONE | wxSTAY_ON_TOP)

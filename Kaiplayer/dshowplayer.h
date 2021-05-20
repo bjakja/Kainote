@@ -18,7 +18,7 @@
 #include "RendererVideo.h"
 #include "Menu.h"
 
-#include <wx/wx.h>
+#include <wx/window.h>
 #include <dshow.h>
 #include <qnetwork.h>
 

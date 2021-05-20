@@ -14,14 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma  once
-
 #include "SubtitlesProviderManager.h"
 #ifdef subsProvider
-
-#include <wx/wx.h>
+#include "CsriMod.h"
+#include <wx/window.h>
 #include <wx/arrstr.h>
 #include <atomic>
-#include "CsriMod.h"
+
 extern "C" {
 #include <libass/ass.h>
 }

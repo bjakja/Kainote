@@ -15,20 +15,20 @@
 
 
 
+#include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
 #include <wx/dir.h>
 #include "Videobox.h"
 #include "KainoteMain.h"
 #include "Hotkeys.h"
-#include <shellapi.h>
-#include <wx/clipbrd.h>
 #include "ColorSpaceConverter.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
 #include "RendererDirectShow.h"
 #include "RendererFFMS2.h"
+#include <shellapi.h>
 
 #pragma warning ( disable: 4482 )
 

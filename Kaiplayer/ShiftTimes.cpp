@@ -92,7 +92,7 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 
 
 ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-	: wxWindow(parent, id, pos, size, style | wxVERTICAL)
+	: wxWindow(parent, id, pos, size, style/* | wxVERTICAL*/)
 {
 	Kai = kfparent;
 	tab = (TabPanel *)parent;
@@ -274,11 +274,11 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	if (normal){
 		//profiles
 		profileSizer = new KaiStaticBoxSizer(wxHORIZONTAL, panel, _("Edycja profilów"));
-		NewProfile = new MappedButton(panel, 31229, L"+", -1);
-		NewProfile->SetToolTip(_("Dodawanie i edycja profilów"));
+		NewProfile = new MappedButton(panel, 31229, L"+", _("Dodawanie i edycja profilów"), 
+			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnAddProfile, this, 31229);
-		RemoveProfile = new MappedButton(panel, 31230, L"-", -1);
-		RemoveProfile->SetToolTip(_("Usuwanie profilów"));
+		RemoveProfile = new MappedButton(panel, 31230, L"-", _("Usuwanie profilów"), 
+			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
 		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimesWindow::OnRemoveProfile, this, 31230);
 		wxArrayString profileList;
 		GetProfilesNames(profileList);

@@ -31,12 +31,16 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	//Bind(wxEVT_LEFT_UP, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiTabBar::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiTabBar::OnMouseEvent, this);
-	wxAcceleratorEntry entries[2];
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	wxAcceleratorEntry entries[4];
 	
 	entries[0] = Hkeys.GetHKey(idAndType(GLOBAL_NEXT_TAB));
 	entries[1] = Hkeys.GetHKey(idAndType(GLOBAL_PREVIOUS_TAB));
+	entries[2].Set(wxACCEL_NORMAL, WXK_LEFT, GLOBAL_PREVIOUS_TAB);
+	entries[3].Set(wxACCEL_NORMAL, WXK_RIGHT, GLOBAL_NEXT_TAB);
 
-	wxAcceleratorTable accel(2, entries);
+	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){

@@ -16,7 +16,9 @@
 
 #include "StyleList.h"
 #include "config.h"
-#include <wx/msgdlg.h>
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 #include <algorithm>
 #include "FontEnumerator.h"
 

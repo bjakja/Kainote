@@ -63,6 +63,7 @@ private:
 	void OnSize(wxSizeEvent & evt);
 	void OnNavigation(wxNavigationKeyEvent& evt);
 	void SetNextControl(bool next);
+	bool HasMultiplePages() const { return true; };
 	DECLARE_EVENT_TABLE()
 };
 

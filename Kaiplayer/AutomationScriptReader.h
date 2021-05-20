@@ -18,7 +18,7 @@
 #pragma once
 
 #include <vector>
-#include <wx/wx.h>
+#include <wx/string.h>
 struct lua_State;
 
 

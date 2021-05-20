@@ -14,11 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <wx/window.h>
+
+//#include <wx/window.h>
+#include "RendererVideo.h"
 #include <vector>
 #include <thread>
 #include "include\ffms.h"
-#include "RendererVideo.h"
+
 
 class RendererVideo;
 

@@ -33,7 +33,7 @@
 #include <deque>
 #include <vector>
 #include <map>
-#include <wx/wx.h>
+#include <wx/window.h>
 #include <wx/thread.h>
 
 
@@ -43,7 +43,9 @@ struct lua_State;
 
 
 class Menu;
-
+#ifndef HANDLE
+typedef void* HANDLE;
+#endif
 
 namespace Auto {
 

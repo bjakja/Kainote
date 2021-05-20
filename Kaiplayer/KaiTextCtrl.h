@@ -17,9 +17,13 @@
 
 #include <wx/window.h>
 #include <wx/caret.h>
+#include <wx/textctrl.h>
 #include "KaiTextValidator.h"
 #include "KaiScrollbar.h"
-#include "config.h"
+//#include "config.h"
+#include <vector>
+#include <map>
+enum COLOR;
 
 class TextStyle{
 public:

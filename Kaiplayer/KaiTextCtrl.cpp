@@ -18,6 +18,7 @@
 #include <wx/clipbrd.h>
 #include "Utils.h"
 #include "GraphicsD2D.h"
+#include "config.h"
 
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,

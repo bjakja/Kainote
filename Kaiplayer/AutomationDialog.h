@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include "KaiDialog.h"
 #include <memory>
 #include <vector>

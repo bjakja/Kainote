@@ -32,6 +32,8 @@
 #include "AutomationDialog.h"
 #include "AutomationUtils.h"
 #include "Config.h"
+#include "KaiTextCtrl.h"
+#include <wx/filedlg.h>
 
 
 namespace Auto{

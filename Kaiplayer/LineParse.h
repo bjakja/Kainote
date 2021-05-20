@@ -15,7 +15,9 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/string.h>
+#include <wx/dynarray.h>
+#include <wx/window.h>
 #include <vector>
 
 class Dialogue;

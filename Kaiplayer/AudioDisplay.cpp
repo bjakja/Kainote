@@ -37,6 +37,7 @@
 ///////////
 // Headers
 
+#include "Utils.h"
 #include "KaiMessageBox.h"
 #include <wx/filename.h>
 #include <math.h>

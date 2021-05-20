@@ -15,11 +15,12 @@
 
 #pragma once
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
+#include "KaiScrollbar.h"
 #include <vector>
 #include "Styles.h"
 #include "ListControls.h"
-#include "KaiScrollbar.h"
+
 
 wxDECLARE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 

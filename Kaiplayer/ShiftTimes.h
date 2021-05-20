@@ -21,8 +21,8 @@
 #include "MappedButton.h"
 #include "ListControls.h"
 #include "KaiRadioButton.h"
-#include <wx/wx.h>
-#include <wx/collpane.h>
+#include <wx/window.h>
+//#include <wx/collpane.h>
 #include "KaiStaticBoxSizer.h"
 
 class KainoteFrame;
@@ -113,6 +113,7 @@ private:
 	void GetProfileString(const wxString& name, wxString* profileString);
 	void ChangeProfileIfIsSet();
 	void SetProfile(const wxString &name);
+	bool HasMultiplePages() const { return true; };
 
 	DECLARE_EVENT_TABLE()
 };

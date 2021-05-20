@@ -292,25 +292,61 @@ void TabPanel::OnNavigation(wxNavigationKeyEvent& evt)
 void TabPanel::SetNextControl(bool next)
 {
 	wxWindow* focused = FindFocus();
-	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
-		focused = focused->GetParent();
+	wxWindow* focusedParent = focused->GetParent();
+	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice))) {
+		focused = focusedParent;
+		focusedParent = focusedParent->GetParent();
 	}
 
-	wxWindowList& list = focused->GetParent()->GetChildren();
+	wxWindowList& list = focusedParent->GetChildren();
 	auto node = list.Find(focused);
 	if (node) {
 		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
 		while (1) {
 			if (!nextWindow) {
-				nextWindow = next ? list.GetFirst() : list.GetLast();
+				wxWindow* fparent = focusedParent;
+				while (fparent && (fparent->IsKindOf(CLASSINFO(wxPanel)) || fparent->HasMultiplePages())) {
+					wxWindowList& list1 = fparent->GetParent()->GetChildren();
+					//if panel is empty then just continue
+					//don't give it focus
+					if (!list1.GetCount()) {
+						break;
+					}
+					auto node1 = list1.Find(fparent);
+					if (node1) {
+						fparent = fparent->GetParent();
+						nextWindow = next ? node1->GetNext() : node1->GetPrevious();
+						if(!nextWindow)
+							nextWindow = next ? list1.GetFirst() : list1.GetLast();
+					}
+					else
+						fparent = NULL;
+				}
+				if(!nextWindow)
+					nextWindow = next ? list.GetFirst() : list.GetLast();
 			}
 			if (nextWindow) {
 				wxObject* data = nextWindow->GetData();
 				if (data) {
 					wxWindow* win = wxDynamicCast(data, wxWindow);
+					while(win->IsKindOf(CLASSINFO(wxPanel)) || win->HasMultiplePages()){
+						wxWindowList& list1 = win->GetChildren();
+						//if panel is empty then just continue
+						//don't give it focus
+						if (!list1.GetCount()) {
+							win = NULL;
+							break;
+						}
+						nextWindow = next ? list1.GetFirst() : list1.GetLast();
+						wxObject* data1 = nextWindow->GetData();
+						if (data1) {
+							win = wxDynamicCast(data1, wxWindow);
+						}
+					}
 					if (win && win->IsFocusable()) {
 						win->SetFocus(); return;
 					}
+					
 				}
 			}
 			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();

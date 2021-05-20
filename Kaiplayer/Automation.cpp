@@ -32,7 +32,7 @@
 /// @brief Lua 5.1-based scripting engine
 /// @ingroup scripting
 ///
-
+#include "Utils.h"
 #include "Automation.h"
 #include "Hotkeys.h"
 
@@ -49,7 +49,7 @@
 #include <cassert>
 #include <mutex>
 #include <wx/clipbrd.h>
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>

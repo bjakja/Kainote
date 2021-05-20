@@ -28,7 +28,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 // Aegisub Project http://www.aegisub.org/
-
+#include "Utils.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
 #include "KainoteApp.h"

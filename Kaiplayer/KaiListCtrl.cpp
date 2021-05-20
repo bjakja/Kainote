@@ -17,8 +17,10 @@
 #include "KaiCheckBox.h"
 #include "ColorPicker.h"
 #include "config.h"
+#include "Utils.h"
 #include "Menu.h"
-#include "wx/clipbrd.h"
+#include <wx/clipbrd.h>
+#include <wx/dcclient.h>
 
 //std::vector< ItemRow*> List::filteredList = std::vector< ItemRow*>();
 

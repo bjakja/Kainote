@@ -15,6 +15,9 @@
 
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
+#include "Utils.h"
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 KaiStaticBox::KaiStaticBox(wxWindow *parent, const wxString& _label)
 	: wxStaticBox(parent, -1, _label)

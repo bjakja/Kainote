@@ -15,8 +15,12 @@
 
 #include "TextEditorTagList.h"
 #include "KaiScrollbar.h"
-#include "config.h"
 #include "Menu.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
+#include "config.h"
+#include "Utils.h"
 
 const int maxVisible = 10;
 

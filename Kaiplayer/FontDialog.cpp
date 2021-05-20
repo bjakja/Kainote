@@ -17,7 +17,9 @@
 #include "FontDialog.h"
 #include "FontEnumerator.h"
 #include <wx/regex.h>
+#include <wx/dcclient.h>
 #include "Config.h"
+#include "Utils.h"
 #include "SubsGrid.h"
 #include "KaiStaticBoxSizer.h"
 #include "FontCatalogList.h"

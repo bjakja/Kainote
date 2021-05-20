@@ -36,6 +36,7 @@
 #include "AutomationUtils.h"
 #include "ListControls.h"
 #include "KaiCheckBox.h"
+#include "KaiTextCtrl.h"
 #include "config.h"
 
 #include "KaiStaticText.h"
@@ -246,18 +247,18 @@ namespace Auto{
 	class IntEdit : public LuaDialogControl {
 		NumCtrl *cw;
 		int value;
-		int min, max;
+		int min1, max1;
 
 	public:
 		IntEdit(lua_State *L)
 			: LuaDialogControl(L)
 			, value(get_field(L, "value", 0))
-			, min(get_field(L, "min", INT_MIN))
-			, max(get_field(L, "max", INT_MAX))
+			, min1(get_field(L, "min", INT_MIN))
+			, max1(get_field(L, "max", INT_MAX))
 		{
-			if (min >= max) {
-				max = INT_MAX;
-				min = INT_MIN;
+			if (min1 >= max1) {
+				max1 = INT_MAX;
+				min1 = INT_MIN;
 			}
 		}
 
@@ -268,7 +269,7 @@ namespace Auto{
 		wxWindow *Create(wxWindow *parent) {
 			wxString tmpval;
 			tmpval << value;
-			cw = new NumCtrl(parent, -1, tmpval, min, max, true, wxDefaultPosition, wxDefaultSize);
+			cw = new NumCtrl(parent, -1, tmpval, min1, max1, true, wxDefaultPosition, wxDefaultSize);
 			cw->SetToolTip(wxString(hint));
 			return cw;
 		}
@@ -282,8 +283,8 @@ namespace Auto{
 	// Float only edit
 	class FloatEdit : public LuaDialogControl {
 		double value;
-		double min;
-		double max;
+		double min1;
+		double max1;
 		double step;
 		NumCtrl *scd;
 
@@ -291,13 +292,13 @@ namespace Auto{
 		FloatEdit(lua_State *L)
 			: LuaDialogControl(L)
 			, value(get_field(L, "value", 0.0))
-			, min(get_field(L, "min", -DBL_MAX))
-			, max(get_field(L, "max", DBL_MAX))
+			, min1(get_field(L, "min", -DBL_MAX))
+			, max1(get_field(L, "max", DBL_MAX))
 			, step(get_field(L, "step", 0.0))
 		{
-			if (min >= max) {
-				max = DBL_MAX;
-				min = -DBL_MAX;
+			if (min1 >= max1) {
+				max1 = DBL_MAX;
+				min1 = -DBL_MAX;
 			}
 		}
 
@@ -306,7 +307,7 @@ namespace Auto{
 		void UnserialiseValue(const wxString &serialised) { value = atof(serialised.utf8_str().data()); }
 
 		wxWindow *Create(wxWindow *parent) {
-			scd = new NumCtrl(parent, -1, value, min, max, false, wxDefaultPosition, wxDefaultSize);
+			scd = new NumCtrl(parent, -1, value, min1, max1, false, wxDefaultPosition, wxDefaultSize);
 			scd->SetToolTip(wxString(hint));
 			return scd;
 

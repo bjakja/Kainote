@@ -16,6 +16,9 @@
 
 #include "StylePreview.h"
 #include "config.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)

@@ -259,6 +259,8 @@ void KaiDialog::SetNextControl(bool next)
 						auto tabsnode = tablist.Find(focusedGrandParent);
 						if (tabsnode) {
 							nextWindow = next ? tabsnode->GetNext() : tabsnode;
+							if (!nextWindow)
+								nextWindow = tabsnode;
 							goToGrandparent = true;
 						}
 					}

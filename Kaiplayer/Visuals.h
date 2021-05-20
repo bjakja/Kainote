@@ -16,7 +16,10 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/string.h>
+#include <wx/bitmap.h>
+#include <wx/event.h>
+#include <wx/thread.h>
 #include <vector>
 #include <d3d9.h>
 #include <d3dx9.h>

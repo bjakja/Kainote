@@ -21,6 +21,7 @@
 #include <wx/filedlg.h>
 #include <wx/dir.h>
 #include "Tabs.h"
+#include "LogHandler.h"
 
 AutoSavesRemoving::AutoSavesRemoving(wxWindow* parent)
 	:KaiDialog(parent, -1, _("Usuń pliki tymczasowe"))

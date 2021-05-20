@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
+#include "config.h"
 #include "DShowPlayer.h"
 #include "Videobox.h"
 #include "Menu.h"

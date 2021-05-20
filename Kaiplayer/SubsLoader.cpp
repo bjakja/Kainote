@@ -16,7 +16,7 @@
 #include "SubsLoader.h"
 #include "SubsGrid.h"
 #include "KaiMessageBox.h"
-#include "Utils.h"
+#include "config.h"
 #include <wx/tokenzr.h>
 
 

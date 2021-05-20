@@ -15,7 +15,9 @@
 
 #include "VideoToolbar.h"
 #include "Config.h"
-
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 std::vector<itemdata*> VideoToolbar::icons;
 
@@ -197,7 +199,9 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 		delete bmp;
 		bmp = NULL;
 	}
-	if (!bmp){ bmp = new wxBitmap(w, h); }
+	if (!bmp){ 
+		bmp = new wxBitmap(w, h); 
+	}
 	tdc.SelectObject(*bmp);
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));

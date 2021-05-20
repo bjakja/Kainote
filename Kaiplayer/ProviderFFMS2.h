@@ -14,9 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include "RendererVideo.h"
 #include "Provider.h"
 #include "ProgressDialog.h"
+
 
 class ProviderFFMS2 : public Provider
 {

@@ -23,7 +23,7 @@ extern "C" {
 #include <vector>
 #include <memory>
 //#include <type_traits>
-#include <wx/wx.h>
+#include <wx/string.h>
 
 struct tm;
 

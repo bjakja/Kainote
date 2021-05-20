@@ -52,6 +52,7 @@
 #include "Stylelistbox.h"
 #include "config.h"
 
+
 ////////////
 // Instance
 MatroskaWrapper MatroskaWrapper::wrapper;

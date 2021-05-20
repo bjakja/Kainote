@@ -18,6 +18,10 @@
 #include "KaiTextCtrl.h"
 #include <wx/msw/private.h>
 #include "config.h"
+#include "Utils.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 
 //wxBitmap toDisable(const wxBitmap &bmp)
 //{

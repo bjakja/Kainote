@@ -30,7 +30,7 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/dialog.h>
 
 #include "AutomationDialog.h"
 #include "MappedButton.h"

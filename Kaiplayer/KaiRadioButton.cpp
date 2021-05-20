@@ -18,6 +18,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "ListControls.h"
 #include "config.h"
+#undef GetClassInfo
 
 KaiRadioButton::KaiRadioButton(wxWindow *parent, int id, const wxString& label,
 	const wxPoint& pos, const wxSize& size, long style)

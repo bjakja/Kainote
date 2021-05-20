@@ -17,6 +17,7 @@
 #include "kainoteMain.h"
 
 #include "config.h"
+#include "Utils.h"
 #include "NewCatalog.h"
 #include "OpennWrite.h"
 #include "Stylelistbox.h"

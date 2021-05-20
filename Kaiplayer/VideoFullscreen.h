@@ -16,8 +16,7 @@
 #pragma once
 
 #include <wx/panel.h>
-//#include <wx/font.h>
-#include <wx/window.h>
+#include <wx/frame.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "KaiTextCtrl.h"

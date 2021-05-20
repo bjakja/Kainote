@@ -13,13 +13,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "KaiCheckBox.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include "GraphicsD2D.h"
 #include "config.h"
+#include "Utils.h"
 
 void BlueUp(wxBitmap *bmp)
 {

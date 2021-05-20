@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
 #include <vector>
 #include "KaiScrollbar.h"
 #include "SubsDialogue.h"
@@ -35,7 +36,7 @@ class KaiListCtrl;
 
 class Item{
 public:
-	Item(byte _type=TYPE_TEXT){type=_type; modified=false;}
+	Item(unsigned char _type=TYPE_TEXT){type=_type; modified=false;}
 	virtual ~Item(){}
 	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
@@ -46,7 +47,7 @@ public:
 	virtual Item* Copy(){return NULL;}
 	bool modified;
 	bool needTooltip = false;
-	byte type;
+	unsigned char type;
 	wxString name;
 };
 
@@ -87,14 +88,14 @@ public:
 
 class ItemRow {
 public:
-	void Insert(size_t col, Item *item, byte _type=TYPE_TEXT){
+	void Insert(size_t col, Item *item, unsigned char _type=TYPE_TEXT){
 		if(col >= row.size()){
 			row.push_back(item);
 			return;
 		}
 		row.insert(row.begin()+col, item);
 	}
-	ItemRow(size_t col, Item *item, byte _type=TYPE_TEXT){row.push_back(item);}
+	ItemRow(size_t col, Item *item, unsigned char _type=TYPE_TEXT){row.push_back(item);}
 	ItemRow(){};
 	~ItemRow(){
 		for(auto it = row.begin(); it != row.end(); it++){
@@ -168,7 +169,7 @@ public:
 		delete itemList;
 		if(bmp){delete bmp;}
 	};
-	int InsertColumn(size_t col, const wxString &name, byte type, int width);
+	int InsertColumn(size_t col, const wxString &name, unsigned char type, int width);
 	int AppendItem(Item *item); 
 	int AppendItemWithExtent(Item *item);
 	int SetItem(size_t row, size_t col, Item *item); 
@@ -180,7 +181,7 @@ public:
 	int FindItem(int column, Item *item, int row = 0);
 	//collumn must be set
 	void FilterList(int column, int mode);
-	void FilterItem(int row, byte type, bool showHidden = true);
+	void FilterItem(int row, unsigned char type, bool showHidden = true);
 	void FilterFinalize();
 	int GetType(int row, int column);
 	void ScrollTo(int row);

@@ -14,8 +14,12 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include <windows.h>
+#include <wx/window.h>
+#include <wx/statbox.h>
+#include <wx/sizer.h>
+#include <wx/dc.h>
 
-#include <wx/wx.h>
 
 class KaiStaticBox : public wxStaticBox
 {

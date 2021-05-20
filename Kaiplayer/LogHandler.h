@@ -15,8 +15,8 @@
 
 #pragma once
 
-#include "wx/window.h"
-#include "wx/thread.h"
+#include <wx/window.h>
+#include <wx/thread.h>
 //#define Get_Log LogHandler::Get()
 
 class LogWindow;

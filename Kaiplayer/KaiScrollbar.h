@@ -14,8 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
-#include <wx/wx.h>
+#undef GetClassInfo
+#include <wx/bitmap.h>
+#include <wx/window.h>
+#include <wx/scrolbar.h>
+#include <wx/timer.h>
 
 class KaiScrollbar : public wxWindow
 {
@@ -41,6 +44,9 @@ private:
 	void OnErase(wxEraseEvent &evt){};
 	void SendEvent();
 	void SetTwoscrolbars(bool twoScrollbars = true);
+	bool AcceptsFocus() const { return false; }
+	bool AcceptsFocusFromKeyboard() const { return false; }
+	bool AcceptsFocusRecursively() const { return false; }
 	int thumbPos;
 	int thumbSize;
 	int diff;
@@ -56,7 +62,7 @@ private:
 	bool integrated;
 	bool twoScrollbars;
 	bool pushed;
-	byte element;
+	unsigned char element;
 	wxTimer pageLoop;
 	wxTimer arrowLoop;
 	wxBitmap *bmp;

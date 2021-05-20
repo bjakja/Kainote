@@ -13,11 +13,12 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "RendererFFMS2.h"
+
 #include "kainoteApp.h"
-#include "CsriMod.h"
+//#include "CsriMod.h"
 #include "OpennWrite.h"
 #include "DshowRenderer.h"
+#include "RendererFFMS2.h"
 
 RendererFFMS2::RendererFFMS2(VideoCtrl *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)

@@ -16,9 +16,14 @@
 
 #include "Menu.h"
 #include "Config.h"
+#include "Utils.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
 #include "wx/msw/private.h"
+#include <wx/msw/winundef.h>
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
 #include "KainoteApp.h"
 
 //cannot use font outside class cause it create before it can get font scale from system

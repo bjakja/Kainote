@@ -15,7 +15,8 @@
 
 #pragma once
 
-#include <wx/wx.h>
+#include <wx/window.h>
+#include <wx/bitmap.h>
 
 class VideoCtrl;
 

@@ -40,7 +40,7 @@
 #pragma comment(lib, "dsound.lib")
 #pragma comment(lib, "dxguid.lib")
 
-
+#include "Utils.h"
 #include <wx/wxprec.h>
 #include <mmsystem.h>
 #include <dsound.h>

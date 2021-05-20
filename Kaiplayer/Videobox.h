@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "RendererVideo.h"

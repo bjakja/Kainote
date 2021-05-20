@@ -17,7 +17,7 @@
 
 
 #include "AutomationUtils.h"
-//#include "Automation.h"
+#include <windows.h>
 
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>

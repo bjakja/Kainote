@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
+#include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
 #include <wx/regex.h>

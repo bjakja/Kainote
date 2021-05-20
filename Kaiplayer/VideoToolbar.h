@@ -14,8 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
-#include <wx/wx.h>
+#include <wx/bitmap.h>
+#include <wx/window.h>
 #include <vector>
 #include "ListControls.h"
 
@@ -131,7 +131,10 @@ public:
 		for (auto cur = visualItems.begin(); cur != visualItems.end(); cur++){
 			delete (*cur);
 		}
-		if (bmp){ delete bmp; bmp = NULL; }
+		if (bmp){ 
+			delete bmp; 
+			bmp = NULL; 
+		}
 	};
 
 	int GetToggled();

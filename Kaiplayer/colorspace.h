@@ -35,7 +35,7 @@
 
 #pragma once
 
-#include <wx/wxprec.h>
+//#include <wx/wxprec.h>
 #include <wx/colour.h>
 #include <wx/string.h>
 

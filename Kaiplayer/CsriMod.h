@@ -39,6 +39,7 @@ extern "C" {
 #endif
 
 #include "csri.h"
+#include <windows.h>
 //#define CSRIAPI export
 struct csrilib_os {
 	HMODULE dlhandle;
