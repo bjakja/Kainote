@@ -34,7 +34,7 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 	scrollBar = new KaiScrollbar(this, ID_SCROLL1, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scrollBar->SetScrollbar(0, 10, 100, 10);
 
-	font = *Options.GetFont();
+	font = *Options.GetFont(4);
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	Height = fh + 4;
@@ -43,7 +43,7 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 	scPos = 0;
 	sel = 0;
 	holding = false;
-
+	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent& evt) {});
 }
 
 FontList::~FontList(){
@@ -384,7 +384,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	wxBoxSizer *Bsizer = new wxBoxSizer(wxHORIZONTAL);
 	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
 
-	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(250, -1));
+	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(250, 200));
 	//Flist->Add(FontName,0,wxEXPAND|wxBOTTOM,3);
 	//Flist->Add(Fonts,0,wxEXPAND);
 

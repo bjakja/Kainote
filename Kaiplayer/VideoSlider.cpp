@@ -21,7 +21,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 //#include "Config.h"
-#include "Utils.h"
+//#include "Utils.h"
 
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent, id, pos, size, style, name)
@@ -375,7 +375,7 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 		if (pos - 3 < (-86)){ pos = -86; }
 		//wxLogMessage(wxString::Format("pos %i", pos));
 		if (pos > 0 || pos < (-86)){ return; }
-		wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
+		wxScrollEvent evt(wxEVT_SCROLL_CHANGED, GetId());
 		evt.SetPosition(pos);
 		AddPendingEvent(evt);
 		SetValue(pos);
@@ -387,7 +387,7 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 		if (block){
 			position = MID(0, curX - 10, w - 24);
 
-			wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
+			wxScrollEvent evt(wxEVT_SCROLL_CHANGED, GetId());
 			evt.SetPosition(position - 86);
 			AddPendingEvent(evt);
 			block = false;
@@ -417,7 +417,7 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 		block = true; 
 		position = MID(0, curX - 10, w - 24); 
 		Refresh(false);
-		wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
+		wxScrollEvent evt(wxEVT_SCROLL_CHANGED, GetId());
 		evt.SetPosition(position - 86);
 		AddPendingEvent(evt);
 	}
@@ -425,7 +425,7 @@ void VolSlider::OnMouseEvent(wxMouseEvent& event)
 	else if (click && curX > 4 && curX < w - 6 && curY > h - 22 && curY < h - 2 && (curX < position || curX > position + 20)){
 		block = true; 
 		position = MID(0, curX - 10, w - 24);
-		wxScrollEvent evt(wxEVT_COMMAND_SLIDER_UPDATED, GetId());
+		wxScrollEvent evt(wxEVT_SCROLL_CHANGED, GetId());
 		evt.SetPosition(position - 86);
 		AddPendingEvent(evt);
 		Refresh(false); 

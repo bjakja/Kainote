@@ -65,6 +65,7 @@ private:
 	bool IsButtonFocused();
 	//void SetFocusFromNode(wxWindowListNode* node, wxWindowList& list, bool next);
 	wxWindowListNode *GetTabControl(bool next, wxWindow *focused);
+	wxWindow* FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow * focused);
 	void SetNextControl(bool next);
 	void OnCharHook(wxKeyEvent &evt);
 	void OnPaint(wxPaintEvent &evt);

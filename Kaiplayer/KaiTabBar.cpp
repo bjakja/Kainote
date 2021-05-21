@@ -37,19 +37,34 @@ KaiTabBar::KaiTabBar(wxWindow * parent, int id, const wxPoint & position /*= wxD
 	
 	entries[0] = Hkeys.GetHKey(idAndType(GLOBAL_NEXT_TAB));
 	entries[1] = Hkeys.GetHKey(idAndType(GLOBAL_PREVIOUS_TAB));
-	entries[2].Set(wxACCEL_NORMAL, WXK_LEFT, GLOBAL_PREVIOUS_TAB);
-	entries[3].Set(wxACCEL_NORMAL, WXK_RIGHT, GLOBAL_NEXT_TAB);
+	entries[2].Set(wxACCEL_NORMAL, WXK_LEFT, ID_GO_TO_LEFT_TAB);
+	entries[3].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_GO_TO_RIGHT_TAB);
 
 	wxAcceleratorTable accel(4, entries);
 	SetAcceleratorTable(accel);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		if (tabs.size() < 2){ return; }
-		int newTab = (evt.GetId() == GLOBAL_NEXT_TAB) ? currentTab + 1 : currentTab - 1;
+		int id = evt.GetId();
+		if (id >= ID_GO_TO_LEFT_TAB && id <= ID_GO_TO_RIGHT_TAB && !HasFocus()) {
+			wxNavigationKeyEvent event;
+			event.SetDirection(id == ID_GO_TO_RIGHT_TAB);
+			event.SetWindowChange(false);
+			event.SetFromTab(false);
+			event.SetEventObject(this);
+			wxWindow* win = GetParent();
+			while (win) {
+				if (win->GetEventHandler()->ProcessEvent(event))
+					break;
+				win = win->GetParent();
+			}
+			return;
+		}
+		int newTab = (id == GLOBAL_NEXT_TAB || id == ID_GO_TO_RIGHT_TAB) ? currentTab + 1 : currentTab - 1;
 		if (newTab < 0){ newTab = tabs.size() - 1; }
 		else if (newTab >= (int)tabs.size()){ newTab = 0; }
 		SetTab(newTab);
-	}, GLOBAL_NEXT_TAB, GLOBAL_PREVIOUS_TAB);
+	}, GLOBAL_NEXT_TAB, ID_GO_TO_RIGHT_TAB);
 
 	int x = 0, y = 0;
 	GetTextExtent(L"#TWFfGHj", &x, &y);

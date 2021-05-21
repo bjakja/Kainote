@@ -164,7 +164,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);
 	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
+	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
 	idletime.SetOwner(this, ID_IDLE);

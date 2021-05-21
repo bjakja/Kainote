@@ -89,7 +89,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	Bind(wxEVT_ACTIVATE, &SpellCheckerDialog::OnActive, this);
 	SetEscapeId(ID_CLOSE_DIALOG);
 	SetEnterId(ID_REPLACE);
-
+	replaceWord->SetFocus();
 }
 
 wxString SpellCheckerDialog::FindNextMisspell()

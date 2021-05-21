@@ -396,7 +396,7 @@
       <ObjectFileName>vc_mswu\html\$(Platform)\</ObjectFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(ProjectName).pdb</ProgramDataBaseFileName>
     </ClCompile>
     <ResourceCompile>

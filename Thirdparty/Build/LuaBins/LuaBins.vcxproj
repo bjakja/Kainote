@@ -207,6 +207,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\luajit\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

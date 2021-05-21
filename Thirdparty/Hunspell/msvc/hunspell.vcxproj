@@ -225,8 +225,7 @@
       </PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>

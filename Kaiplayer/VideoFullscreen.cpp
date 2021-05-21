@@ -43,10 +43,10 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	panel->SetCursor(wxCURSOR_ARROW);
 	vslider = new VideoSlider(panel, ID_SLIDER, wxPoint(0, 1), wxSize(size.x, toolBarHeight - 8));
 	vslider->VB = vc;
-	vslider->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
+	/*vslider->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
-	});
+	});*/
 	bprev = new BitmapButton(panel, CreateBitmapFromPngResource(L"backward"), CreateBitmapFromPngResource(L"backward1"), 
 		VIDEO_PREVIOUS_FILE, _("Poprzedni plik wideo"), wxPoint(5, toolBarHeight - 6), wxSize(26, 26));
 	bpause = new BitmapButton(panel, CreateBitmapFromPngResource(L"play"), CreateBitmapFromPngResource(L"play1"), 
@@ -86,9 +86,11 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 		OnSize();
 		vc->UpdateVideoWindow();
 	}, 7777);
-	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	Connect(ID_VOL, wxEVT_COMMAND_SLIDER_UPDATED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Fullscreen::OnUseWindowHotkey, this, VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &Fullscreen::OnUseWindowHotkey, this, VIDEO_PLAY_PAUSE, VIDEO_STOP);
+	Bind(wxEVT_SCROLL_CHANGED, [=](wxScrollEvent& evt) {
+		vc->OnVolume(evt);
+		}, ID_VOL);
 	//Connect(wxEVT_SIZE, (wxObjectEventFunction)&Fullscreen::OnSize);
 	Bind(wxEVT_SYS_COLOUR_CHANGED, [=](wxSysColourChangedEvent & evt){
 		panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
@@ -195,17 +197,9 @@ void Fullscreen::SetAccels()
 		int id = cur->first.id;
 		bool emptyAccel = cur->second.Accel == L"";
 		if (id >= 5000 && id < 5150) {
-			MenuItem* item = Kai->Menubar->FindItem(id);
-			if (!item) { /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
-			if (emptyAccel) {
-				item->SetAccel(NULL);
-				continue;
-			}
-			else {
-				wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
-				item->SetAccel(&accel);
-				entries.push_back(accel);
-			}
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &Fullscreen::OnUseWindowHotkey, this, id);
+			wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);
+			entries.push_back(accel);
 		}
 		else if (emptyAccel)
 			continue;
@@ -214,6 +208,7 @@ void Fullscreen::SetAccels()
 				//Bind(wxEVT_COMMAND_MENU_SELECTED, &KainoteFrame::OnRunScript, this, id);
 				continue;
 			}
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &Fullscreen::OnUseWindowHotkey, this, id);
 			entries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 		}
 		else if (id >= 2000 && id < 3000) {
@@ -230,7 +225,6 @@ void Fullscreen::SetAccels()
 
 void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
 {
-  	int id = event.GetId();
 	VideoCtrl* vc = (VideoCtrl*)vb;
 	vc->OnAccelerator(event);
 }

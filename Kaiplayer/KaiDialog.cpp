@@ -213,6 +213,51 @@ wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
 	return NULL;
 }
 
+wxWindow* KaiDialog::FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused)
+{
+	wxWindow* result = NULL;
+	bool beforeGroup = false;
+	while (1) {
+		if ((*listWithRadioButton)) {
+			wxObject* data = (*listWithRadioButton)->GetData();
+			if (data) {
+				wxWindow* win = wxDynamicCast(data, wxWindow);
+				if (win && win->IsFocusable()) {
+					if (win->IsKindOf(CLASSINFO(KaiRadioButton))) {
+						KaiRadioButton* krb = wxDynamicCast(win, KaiRadioButton);
+						if (krb) {
+							if (beforeGroup) {
+								break;
+							}
+							if (krb->HasFlag(wxRB_GROUP) || krb->HasFlag(wxRB_SINGLE)) {
+								if (next && focused->IsKindOf(CLASSINFO(KaiRadioButton)))
+									break;
+								else if (!next)
+									beforeGroup = true;
+							}
+							if (krb->GetValue()) {
+								result = win;
+								break;
+							}
+						}
+					}
+					else{
+						result = win;
+						break;
+					}
+				}
+				
+			}
+		}
+		else
+			break;
+
+		(*listWithRadioButton) = next ? (*listWithRadioButton)->GetNext() :
+			(*listWithRadioButton)->GetPrevious();
+	}
+	return result;
+}
+
 void KaiDialog::SetNextControl(bool next)
 {
 	// what if someone put only statictext to entire dialog?
@@ -226,6 +271,7 @@ void KaiDialog::SetNextControl(bool next)
 		focused = focusedParent;
 		focusedParent = focused->GetParent();
 	}
+
 	wxWindow* focusedGrandParent = (focusedParent->IsTopLevel())? NULL : focusedParent->GetParent();
 	bool hasMultiplePages = focused->HasMultiplePages();
 
@@ -274,6 +320,14 @@ void KaiDialog::SetNextControl(bool next)
 				if (data) {
 					wxWindow* win = wxDynamicCast(data, wxWindow);
 					if (win && win->IsFocusable()) {
+						if (win->IsKindOf(CLASSINFO(KaiRadioButton)) && !win->HasFlag(wxRB_SINGLE)) {
+							win = FindCheckedRadiobutton(next, &nextWindow, focused);
+							if (!win) {
+								//get next window before continue
+								nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+								continue;
+							}
+						}
 						if (!next && win->HasMultiplePages() && !goToGrandparent) {
 							auto nodetc = GetTabControl(next, win);
 							if (nodetc) {

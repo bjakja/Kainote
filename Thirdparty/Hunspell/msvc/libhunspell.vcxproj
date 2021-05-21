@@ -283,8 +283,7 @@
       </PrecompiledHeader>
       <ProgramDataBaseFileName>$(IntDir)$(ProjectName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>
-      </DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>

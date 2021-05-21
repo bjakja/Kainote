@@ -241,7 +241,7 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>

@@ -46,6 +46,10 @@ public:
 	void Fit();
 
 private:
+	enum {
+		ID_GO_TO_LEFT_TAB = 5156,
+		ID_GO_TO_RIGHT_TAB
+	};
 	void CalculateTabsSizes();
 	void OnPaint(wxPaintEvent& event);
 	void OnMouseEvent(wxMouseEvent &event);

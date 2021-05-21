@@ -173,6 +173,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\build\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

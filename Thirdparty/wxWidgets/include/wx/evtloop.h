@@ -15,6 +15,8 @@
 #include "wx/event.h"
 #include "wx/utils.h"
 
+#undef Yield
+
 // TODO: implement wxEventLoopSource for MSW (it should wrap a HANDLE and be
 //       monitored using MsgWaitForMultipleObjects())
 #if defined(__WXOSX__) || (defined(__UNIX__) && !defined(__WXMSW__))
