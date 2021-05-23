@@ -21,8 +21,9 @@
 #include "EditBox.h"
 #include "ShiftTimes.h"
 #include "KaiWindowResizer.h"
+#include "KaiPanel.h"
 
-class TabPanel : public wxWindow
+class TabPanel : public KaiPanel
 {
 public:
 	TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize);
@@ -61,9 +62,10 @@ private:
 	//void OnMouseEvent(wxMouseEvent& event);
 	void OnFocus(wxChildFocusEvent& event);
 	void OnSize(wxSizeEvent & evt);
-	void OnNavigation(wxNavigationKeyEvent& evt);
+	/*void OnNavigation(wxNavigationKeyEvent& evt);
 	void SetNextControl(bool next);
-	bool HasMultiplePages() const { return true; };
+	void FindFocusable(bool next, wxWindowListNode** node);*/
+	//bool HasMultiplePages() const { return true; };
 	DECLARE_EVENT_TABLE()
 };
 

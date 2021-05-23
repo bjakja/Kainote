@@ -479,11 +479,20 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 //function return 1 when need to add bracket or 0
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
+	if (pos.x >= txt->length()) {
+		return 0;
+	}
 	if (!inbracket){
 		txt->insert(pos.x, L"{" + what + L"}");
 		return 1;
 	}
-	if (pos.x < pos.y){ txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1); }
+	
+	if (pos.x < pos.y){ 
+		if (pos.y + 1 >= txt->length())
+			txt->erase(txt->begin() + pos.x, txt->end());
+		else
+			txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1); 
+	}
 	txt->insert(pos.x, what);
 	return 0;
 }

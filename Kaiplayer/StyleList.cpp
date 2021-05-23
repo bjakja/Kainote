@@ -31,9 +31,8 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 {
 
 	stylenames = stylearray;
-	//SetMinSize(size);
 
-	font = *Options.GetFont();//wxFont(10, wxSWISS, wxFONTSTYLE_NORMAL, wxNORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
+	font = *Options.GetFont();
 	wxAcceleratorEntry entries[4];
 	entries[0].Set(wxACCEL_NORMAL, WXK_UP, 15555);
 	entries[1].Set(wxACCEL_NORMAL, WXK_DOWN, 15556);
@@ -54,9 +53,9 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 	holding = Switchlines = false;
 	sels.Add(0);
 	SetMinSize(wxSize(150, 150));
-	//Refresh();
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent& evt) {});
-
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) { Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) { Refresh(false); });
 }
 
 StyleList::~StyleList(){
@@ -101,7 +100,8 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	bdc.Clear();
 	bdc.SetFont(font);
 	const wxColour & background = Options.GetColour(STATICLIST_BACKGROUND);
-	bdc.SetPen(wxPen(Options.GetColour(STATICLIST_BORDER)));
+	bdc.SetPen(wxPen(HasFocus()? Options.GetColour(TEXT_FIELD_BORDER_ON_FOCUS) : 
+		Options.GetColour(STATICLIST_BORDER)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0, 0, w, h);
 	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});

@@ -41,7 +41,7 @@
 // Headers
 //#include <wx/wx.h>
 #include <wx/string.h>
-#include <wx/panel.h>
+#include "KaiPanel.h"
 #include "KaiSlider.h"
 #include <wx/sizer.h>
 
@@ -56,7 +56,7 @@ class ToggleButton;
 
 ///////////////////
 // Audio box class
-class AudioBox : public wxPanel {
+class AudioBox : public KaiPanel {
 	friend class AudioDisplay;
 
 private:

@@ -16,7 +16,6 @@
 #include "BitmapButton.h"
 #include "Config.h"
 #include "Hotkeys.h"
-#include "Utils.h"
 
 BitmapButton::BitmapButton(wxWindow* parent, wxBitmap bitmap, wxBitmap bitmap1, int hkeyId, const wxString &tooltip, const wxPoint& pos, const wxSize& size, int _window)
 	: wxStaticBitmap(parent, hkeyId + 300, bitmap, pos, size)

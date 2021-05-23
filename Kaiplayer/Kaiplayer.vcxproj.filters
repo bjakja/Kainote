@@ -449,6 +449,9 @@
     <ClCompile Include="DummyVideo.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
+    <ClCompile Include="KaiPanel.cpp">
+      <Filter>Source Files\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -831,6 +834,9 @@
     </ClInclude>
     <ClInclude Include="DummyVideo.h">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiPanel.h">
+      <Filter>Source Files\Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

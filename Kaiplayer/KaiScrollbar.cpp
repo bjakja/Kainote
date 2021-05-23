@@ -244,7 +244,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	wxBitmap scrollArrow = wxBITMAP_PNG("arrow_list");
 	wxBitmap scrollArrowPushed = wxBITMAP_PNG("arrow_list_pushed");
 	if (isVertical){
-		if (h > thumbSize + doubleThumbSize){
+		if (h > thumbSize + doubleThumbSize && IsThisEnabled()){
 			tdc.SetPen(wxPen(scroll));
 			tdc.SetBrush(wxBrush(scroll));
 			tdc.DrawRectangle(thumbPos1, thumbPos, thumbSize1, thumbSize);
@@ -255,7 +255,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 		tdc.DrawBitmap((holding && element & ELEMENT_BUTTON_BOTTOM) ? scrollArrowPushed : scrollArrow, arrowPos1, h - (10 + arrowPos1));
 	}
 	else{
-		if (w > thumbSize + doubleThumbSize && thumbPos){
+		if (w > thumbSize + doubleThumbSize && thumbPos && IsThisEnabled()){
 			tdc.SetPen(wxPen(scroll));
 			tdc.SetBrush(wxBrush(scroll));
 			tdc.DrawRectangle(thumbPos, thumbPos1, thumbSize, thumbSize1);

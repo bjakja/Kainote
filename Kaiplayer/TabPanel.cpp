@@ -21,7 +21,7 @@
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
-	: wxWindow(parent, -1, pos, size, 0)
+	: KaiPanel(parent, -1, pos, size)
 	, windowResizer(NULL)
 	, editor(true)
 	, holding(false)
@@ -73,7 +73,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	SubsName = _("Bez tytułu");
 
 	SetAccels();
-	Bind(wxEVT_NAVIGATION_KEY, &TabPanel::OnNavigation, this);
+	//Bind(wxEVT_NAVIGATION_KEY, &TabPanel::OnNavigation, this);
 }
 
 
@@ -284,75 +284,102 @@ void TabPanel::OnSize(wxSizeEvent & evt)
 	evt.Skip();
 }
 
-void TabPanel::OnNavigation(wxNavigationKeyEvent& evt)
-{
-	SetNextControl(evt.GetDirection());
-}
-
-void TabPanel::SetNextControl(bool next)
-{
-	wxWindow* focused = FindFocus();
-	wxWindow* focusedParent = focused->GetParent();
-	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice))) {
-		focused = focusedParent;
-		focusedParent = focusedParent->GetParent();
-	}
-
-	wxWindowList& list = focusedParent->GetChildren();
-	auto node = list.Find(focused);
-	if (node) {
-		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
-		while (1) {
-			if (!nextWindow) {
-				wxWindow* fparent = focusedParent;
-				while (fparent && (fparent->IsKindOf(CLASSINFO(wxPanel)) || fparent->HasMultiplePages())) {
-					wxWindowList& list1 = fparent->GetParent()->GetChildren();
-					//if panel is empty then just continue
-					//don't give it focus
-					if (!list1.GetCount()) {
-						break;
-					}
-					auto node1 = list1.Find(fparent);
-					if (node1) {
-						fparent = fparent->GetParent();
-						nextWindow = next ? node1->GetNext() : node1->GetPrevious();
-						if(!nextWindow)
-							nextWindow = next ? list1.GetFirst() : list1.GetLast();
-					}
-					else
-						fparent = NULL;
-				}
-				if(!nextWindow)
-					nextWindow = next ? list.GetFirst() : list.GetLast();
-			}
-			if (nextWindow) {
-				wxObject* data = nextWindow->GetData();
-				if (data) {
-					wxWindow* win = wxDynamicCast(data, wxWindow);
-					while(win->IsKindOf(CLASSINFO(wxPanel)) || win->HasMultiplePages()){
-						wxWindowList& list1 = win->GetChildren();
-						//if panel is empty then just continue
-						//don't give it focus
-						if (!list1.GetCount()) {
-							win = NULL;
-							break;
-						}
-						nextWindow = next ? list1.GetFirst() : list1.GetLast();
-						wxObject* data1 = nextWindow->GetData();
-						if (data1) {
-							win = wxDynamicCast(data1, wxWindow);
-						}
-					}
-					if (win && win->IsFocusable()) {
-						win->SetFocus(); return;
-					}
-					
-				}
-			}
-			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
-		}
-	}
-}
+//void TabPanel::OnNavigation(wxNavigationKeyEvent& evt)
+//{
+//	SetNextControl(evt.GetDirection());
+//}
+//
+//void TabPanel::SetNextControl(bool next)
+//{
+//	wxWindow* focused = FindFocus();
+//	wxWindow* focusedParent = focused->GetParent();
+//	bool nextWindowWasNULL = false;
+//	if (focusedParent->IsKindOf(CLASSINFO(KaiChoice))) {
+//		focused = focusedParent;
+//		focusedParent = focusedParent->GetParent();
+//	}
+//
+//	wxWindowList& list = focusedParent->GetChildren();
+//	auto node = list.Find(focused);
+//	if (node) {
+//		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
+//		while (1) {
+//			if (!nextWindow) {
+//				if (nextWindowWasNULL)
+//					break;
+//
+//				nextWindowWasNULL = true;
+//				wxWindow* fparent = focusedParent;
+//				while (fparent) {
+//					wxWindowList& list1 = fparent->GetParent()->GetChildren();
+//					//if panel is empty then just continue
+//					//don't give it focus
+//					if (!list1.GetCount()) {
+//						break;
+//					}
+//					auto node1 = list1.Find(fparent);
+//					if (node1) {
+//						fparent = fparent->GetParent();
+//						nextWindow = next ? node1->GetNext() : node1->GetPrevious();
+//						FindFocusable(next, &nextWindow);
+//						if (!nextWindow)
+//							nextWindow = next ? list1.GetFirst() : list1.GetLast();
+//						FindFocusable(next, &nextWindow);
+//						if (nextWindow)
+//							break;
+//					}
+//					else
+//						fparent = NULL;
+//				}
+//				if(!nextWindow)
+//					nextWindow = next ? list.GetFirst() : list.GetLast();
+//			}
+//			if (nextWindow) {
+//				wxObject* data = nextWindow->GetData();
+//				if (data) {
+//					wxWindow* win = wxDynamicCast(data, wxWindow);
+//					while(win->IsKindOf(CLASSINFO(wxPanel)) || win->HasMultiplePages()){
+//						wxWindowList& list1 = win->GetChildren();
+//						//if panel is empty then just continue
+//						//don't give it focus
+//						if (!list1.GetCount()) {
+//							win = NULL;
+//							break;
+//						}
+//						nextWindow = next ? list1.GetFirst() : list1.GetLast();
+//						wxObject* data1 = nextWindow->GetData();
+//						if (data1) {
+//							win = wxDynamicCast(data1, wxWindow);
+//						}
+//					}
+//					if (win && win->IsFocusable()) {
+//						win->SetFocus(); return;
+//					}
+//					
+//				}
+//			}
+//			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+//		}
+//	}
+//}
+//
+//void TabPanel::FindFocusable(bool next, wxWindowListNode** node)
+//{
+//	wxWindowListNode* nextWindow = *node;
+//	while (nextWindow) {
+//		//check the window and return focusable window
+//		//to avoid infinite loop
+//		wxObject* data = nextWindow->GetData();
+//		if (data) {
+//			wxWindow* win = wxDynamicCast(data, wxWindow);
+//			if (win && win->IsFocusable()) {
+//				break;
+//			}
+//		}
+//		nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
+//	}
+//	*node = nextWindow;
+//}
 
 BEGIN_EVENT_TABLE(TabPanel, wxWindow)
 EVT_SIZE(TabPanel::OnSize)

@@ -575,6 +575,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="DummyVideo.cpp" />
     <ClCompile Include="FontCatalogList.cpp" />
     <ClCompile Include="KaiGauge.cpp" />
+    <ClCompile Include="KaiPanel.cpp" />
     <ClCompile Include="Languages.cpp" />
     <ClCompile Include="LineParse.cpp" />
     <ClCompile Include="Provider.cpp" />
@@ -740,6 +741,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
     <ClInclude Include="KaiGauge.h" />
+    <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />

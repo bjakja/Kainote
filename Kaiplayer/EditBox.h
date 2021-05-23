@@ -16,8 +16,8 @@
 
 #pragma once
 
-#include <wx/window.h>
-#include <wx/stattext.h>
+//#include <wx/window.h>
+//#include <wx/stattext.h>
 #include "TimeCtrl.h"
 #include "SubsDialogue.h"
 #include "MyTextEditor.h"
@@ -31,6 +31,7 @@
 #include "MenuButton.h"
 #include "ColorPicker.h"
 #include "KaiWindowResizer.h"
+#include "KaiPanel.h"
 
 
 class SubsGrid;
@@ -75,7 +76,7 @@ private:
 };
 
 
-class EditBox : public wxPanel
+class EditBox : public KaiPanel
 {
 public:
 	EditBox(wxWindow *parent, int idd);
@@ -201,14 +202,10 @@ private:
 	void OnChangeTimeDisplay(wxCommandEvent& event);
 	void OnStyleEdit(wxCommandEvent& event);
 	void OnFontChange(wxCommandEvent& event);
-	//void OnNavigation(wxNavigationKeyEvent& evt);
 	void SetTagButtons();
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);
 	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
-	//bool AcceptsFocus() const { return false; }
-	//bool AcceptsFocusFromKeyboard() const { return false; }
-	//bool AcceptsFocusRecursively() const { return false; }
 
 	bool isdetached;
 	bool hasPreviewGrid = false;

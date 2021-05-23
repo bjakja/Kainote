@@ -131,7 +131,7 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 
 
 EditBox::EditBox(wxWindow *parent, int idd)
-	: wxPanel(parent, idd/*, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS*/)//|wxCLIP_CHILDREN
+	: KaiPanel(parent, idd)
 	, EditCounter(1)
 	, ABox(NULL)
 	, line(NULL)
@@ -165,6 +165,18 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, L"", _("Wybór czcionki"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bfont->SetBitmap(wxBITMAP_PNG(L"FONTS"));
+	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, L"", _("Pogrubienie"),
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
+	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, L"", _("Pochylenie"),
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"),
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"),
+		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
+	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
 	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, L"", _("Kolor podstawowy"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol1->SetBitmap(wxBITMAP_PNG(L"Kolor1"));
@@ -181,18 +193,7 @@ EditBox::EditBox(wxWindow *parent, int idd)
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol4->SetBitmap(wxBITMAP_PNG(L"Kolor4"));
 	Bcol4->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, L"", _("Pogrubienie"), 
-		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
-	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
-	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, L"", _("Pochylenie"), 
-		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
-	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
-	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"), 
-		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
-	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
-	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"), 
-		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
-	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
+	
 	Ban = new KaiChoice(this, ID_AN, wxDefaultPosition, wxDefaultSize, ans);
 	Ban->Select(1);
 
@@ -343,7 +344,6 @@ EditBox::EditBox(wxWindow *parent, int idd)
 		Connect(ID_TEXT_EDITOR, wxEVT_COMMAND_TEXT_UPDATED, (wxObjectEventFunction)&EditBox::OnEdit);
 	}
 	Connect(ID_TEXT_EDITOR, CURSOR_MOVED, (wxObjectEventFunction)&EditBox::OnCursorMoved);
-	//Bind(wxEVT_NAVIGATION_KEY, &EditBox::OnNavigation, this);
 	DoTooltips();
 	if (asFrames){
 		StartEdit->ShowFrames(asFrames);
@@ -2404,39 +2404,3 @@ bool EditBox::SetFont(const wxFont &font)
 	Layout();
 	return true;
 }
-
-//void EditBox::OnNavigation(wxNavigationKeyEvent& evt)
-//{
-//	wxWindow* focused = FindFocus();
-//	if (focused->GetParent()->IsKindOf(CLASSINFO(KaiChoice))) {
-//		focused = focused->GetParent();
-//	}
-//	bool next = evt.GetDirection();
-//	wxWindowList& list = focused->GetParent()->GetChildren();
-//	auto node = list.Find(focused);
-//	if (node) {
-//		auto nextWindow = next ? node->GetNext() : node->GetPrevious();
-//		while (1) {
-//			if (!nextWindow) {
-//				nextWindow = next ? list.GetFirst() : list.GetLast();
-//				wxObject* data = nextWindow->GetData();
-//				if (data) {
-//					wxWindow* win = wxDynamicCast(data, wxWindow);
-//					if (win && win->IsFocusable()) {
-//						win->SetFocus(); return;
-//					}
-//				}
-//			}
-//			else if (nextWindow) {
-//				wxObject* data = nextWindow->GetData();
-//				if (data) {
-//					wxWindow* win = wxDynamicCast(data, wxWindow);
-//					if (win && win->IsFocusable()) {
-//						win->SetFocus(); return;
-//					}
-//				}
-//			}
-//			nextWindow = next ? nextWindow->GetNext() : nextWindow->GetPrevious();
-//		}
-//	}
-//}

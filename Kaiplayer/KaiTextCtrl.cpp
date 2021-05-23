@@ -766,6 +766,7 @@ void KaiTextCtrl::OnMouseEvent(wxMouseEvent& event)
 			if (lastCur == cur)
 				return;
 			selectedAfterFocus = false;
+			if (!event.ShiftDown()) { Selend = lastCur; }
 		}
 		Cursor = cur;
 		MakeCursorVisible(true);

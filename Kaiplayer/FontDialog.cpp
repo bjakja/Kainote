@@ -44,6 +44,8 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 	sel = 0;
 	holding = false;
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent& evt) {});
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {Refresh(false); });
 }
 
 FontList::~FontList(){
@@ -56,7 +58,6 @@ FontList::~FontList(){
 
 void FontList::OnPaint(wxPaintEvent& event)
 {
-	wxPaintDC dc(this);
 	int w = 0;
 	int h = 0;
 	int sw = 0;
@@ -75,19 +76,13 @@ void FontList::OnPaint(wxPaintEvent& event)
 	if (!bmp) bmp = new wxBitmap(w, h);
 
 	// Draw bitmap
-	wxMemoryDC bmpDC;
-	bmpDC.SelectObject(*bmp);
-	DrawFld(bmpDC, w, h);
-	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
+	wxMemoryDC dc;
+	dc.SelectObject(*bmp);
 
-
-}
-
-void FontList::DrawFld(wxDC &dc, int w, int h)
-{
 	int fw = 0, fh = 0, posX = 1, posY = 1;
 
-	dc.SetPen(wxPen(Options.GetColour(STATICLIST_BORDER)));
+	dc.SetPen(wxPen(HasFocus()? Options.GetColour(TEXT_FIELD_BORDER_ON_FOCUS) : 
+		Options.GetColour(STATICLIST_BORDER)));
 	dc.SetBrush(wxBrush(Options.GetColour(STATICLIST_BACKGROUND)));
 	dc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	dc.DrawRectangle(0, 0, w, h);
@@ -134,6 +129,8 @@ void FontList::DrawFld(wxDC &dc, int w, int h)
 		posY += Height;
 	}
 
+	wxPaintDC pdc(this);
+	pdc.Blit(0, 0, w, h, &dc, 0, 0);
 }
 
 void FontList::OnSize(wxSizeEvent& event)
@@ -230,15 +227,25 @@ void FontList::OnMouseEvent(wxMouseEvent& event)
 
 void FontList::SetSelection(int pos)
 {
-	if (pos < 0 || pos >= (int)fonts->size()){ wxBell(); return; }
-	if ((scPos<pos || scPos>pos + 7) && scPos >= sel && scPos < sel + 8){
-		scPos -= (sel - pos);
+	if (pos < 0 || pos >= (int)fonts->size()){ 
+		if (pos < 0) {
+			sel = -1;
+			scPos = 0;
+		}
+		else {
+			sel = fonts->size() - 1;
+			scPos = 0;
+		}
 	}
-	else{
-		scPos = pos - 3;
+	else {
+		if ((scPos<pos || scPos>pos + 7) && scPos >= sel && scPos < sel + 8) {
+			scPos -= (sel - pos);
+		}
+		else {
+			scPos = pos - 3;
+		}
+		sel = pos;
 	}
-	sel = pos;
-
 	Refresh(false);
 	wxCommandEvent evt(SELECTION_CHANGED, GetId());
 	AddPendingEvent(evt);
@@ -316,8 +323,9 @@ void FontList::PutArray(wxArrayString* newList)
 	delete fonts;
 	fonts = NULL;
 	fonts = new wxArrayString(*newList);
-	if (sel >= fonts->size())
-		SetSelection(fonts->size() - 1);
+	size_t size = fonts->size();
+	if (sel >= size)
+		SetSelection(size? size - 1 : 0);
 
 	Refresh(false);
 }
@@ -380,16 +388,11 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	KaiStaticBoxSizer *Cfont = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Czcionka"));
 	KaiStaticBoxSizer *prev = new KaiStaticBoxSizer(wxVERTICAL, this, _("Podgląd"));
 	wxBoxSizer *Fattr = new wxBoxSizer(wxVERTICAL);
-	//wxBoxSizer *Flist= new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *Bsizer = new wxBoxSizer(wxHORIZONTAL);
-	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
-
+	
 	Fonts = new FontList(this, ID_FONTLIST, wxDefaultPosition, wxSize(250, 200));
-	//Flist->Add(FontName,0,wxEXPAND|wxBOTTOM,3);
-	//Flist->Add(Fonts,0,wxEXPAND);
 
-	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 180));
-	Preview->DrawPreview(acst);
+	FontName = new KaiTextCtrl(this, ID_FONT_NAME, acst->Fontname, wxDefaultPosition, wxSize(150, -1), wxTE_PROCESS_ENTER);
 	FontSize = new NumCtrl(this, ID_FONTSIZE1, acst->Fontsize, 1, 10000, false, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	Bold = new KaiCheckBox(this, ID_FONTATTR, _("Pogrubienie"));
 	Bold->SetValue(acst->Bold);
@@ -399,7 +402,8 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Underl->SetValue(acst->Underline);
 	Strike = new KaiCheckBox(this, ID_FONTATTR, _("Przekreślenie"));
 	Strike->SetValue(acst->StrikeOut);
-	//MappedButton *ButtApply = new MappedButton(this, wxID_APPLY, "Zastosuj");
+	Preview = new StylePreview(this, -1, wxDefaultPosition, wxSize(-1, 180));
+	Preview->DrawPreview(acst);
 	Buttok = new MappedButton(this, wxID_OK, L"OK");
 	Buttcancel = new MappedButton(this, 8999, _("Anuluj"));
 	SetEscapeId(8999);

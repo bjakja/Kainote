@@ -15,7 +15,6 @@
 
 #pragma once
 
-//#include <wx/wx.h>
 #include "KaiScrollbar.h"
 #include <vector>
 #include "Styles.h"
@@ -43,7 +42,6 @@ private:
 
 	void OnPaint(wxPaintEvent& event);
 	void OnSize(wxSizeEvent& event);
-	//void DrawFld(wxDC &dc, int w, int h);
 	void OnScroll(wxScrollWinEvent& event);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnArrow(wxCommandEvent& event);
@@ -60,9 +58,6 @@ private:
 	int Height;
 	bool holding;
 	std::vector<Styles*> *stylenames;
-	//wxArrayString *fontseeker;
-
-	//wxScrollBar *scrollBar;
 	wxBitmap *bmp;
 	wxFont font;
 

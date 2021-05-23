@@ -38,6 +38,14 @@ KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _m
 	, isUpDirection(false)
 {
 	SetBackgroundColour(parent->GetBackgroundColour());
+	wxAcceleratorEntry entries[4];
+	entries[0].Set(wxACCEL_NORMAL, WXK_LEFT, ID_ACCEL_LEFT);
+	entries[1].Set(wxACCEL_NORMAL, WXK_RIGHT, ID_ACCEL_RIGHT);
+	entries[2].Set(wxACCEL_NORMAL, WXK_UP, ID_ACCEL_LEFT);
+	entries[3].Set(wxACCEL_NORMAL, WXK_DOWN, ID_ACCEL_RIGHT);
+	wxAcceleratorTable accel(4, entries);
+	SetAcceleratorTable(accel);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &KaiSlider::OnArrow, this, ID_ACCEL_LEFT, ID_ACCEL_RIGHT);
 	if (style & wxVERTICAL){
 		SetMinSize(wxSize((size.x < 1) ? 26 : size.x, (size.y < 1) ? 150 : size.y));
 	}
@@ -72,6 +80,8 @@ KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _m
 		if (pageLoop.GetInterval() == 500){ pageLoop.Start(100); }
 	}, 2345);
 
+	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) { Refresh(false); });
+	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) { Refresh(false); });
 }
 
 void KaiSlider::OnSize(wxSizeEvent& evt)
@@ -105,11 +115,13 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	bool enabled = IsThisEnabled();
 	wxColour slider = (enter && !pushed) ? Options.GetColour(SLIDER_BACKGROUND_HOVER) :
 		(pushed) ? Options.GetColour(SLIDER_BACKGROUND_PUSHED) :
-		(enabled) ? Options.GetColour(SLIDER_BACKGROUND) :
+		(enabled) ? HasFocus() ? Options.GetColour(BUTTON_BACKGROUND_ON_FOCUS) : 
+		Options.GetColour(SLIDER_BACKGROUND) :
 		Options.GetColour(WINDOW_BACKGROUND_INACTIVE);
 	wxColour sliderBorder = (enter && !pushed) ? Options.GetColour(SLIDER_BORDER_HOVER) :
 		(pushed) ? Options.GetColour(SLIDER_BORDER_PUSHED) :
-		(enabled) ? Options.GetColour(SLIDER_BORDER) :
+		(enabled) ? HasFocus()? Options.GetColour(BUTTON_BORDER_ON_FOCUS) : 
+		Options.GetColour(SLIDER_BORDER) :
 		Options.GetColour(BUTTON_BORDER_INACTIVE);
 	tdc.SetPen(wxPen(Options.GetColour(SLIDER_PATH_BORDER)));
 	tdc.SetBrush(wxBrush(Options.GetColour(SLIDER_PATH_BACKGROUND)));
@@ -267,6 +279,19 @@ void KaiSlider::SetThumbPosition(int position)
 	value = (thumbPos / valueDivide) + 0.5f;
 	Refresh(false);
 	Update();
+}
+
+void KaiSlider::OnArrow(wxCommandEvent& evt)
+{
+	int id = evt.GetId();
+	int step = id == ID_ACCEL_LEFT ? -3 : 3;
+	if (style & wxSL_INVERSE)
+		step = -step;
+
+	int pos = GetValue();
+	pos += step;
+	SetValue(pos);
+	SendEvent();
 }
 
 void KaiSlider::SendEvent(bool isWheel)

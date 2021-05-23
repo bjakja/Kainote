@@ -190,16 +190,16 @@ void ColorPickerSpectrum::OnMouse(wxMouseEvent &evt)
 
 
 ColorPickerRecent::ColorPickerRecent(wxWindow *parent, wxWindowID id, int _cols, int _rows, int _cellsize)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, STATIC_BORDER_FLAG)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
 	, rows(_rows)
 	, cols(_cols)
 	, cellsize(_cellsize)
-	, internal_control_offset(0, 0)
+	, internal_control_offset(1, 1)
 	, background_valid(false)
 	, background()
 {
 	LoadFromString(wxEmptyString);
-	SetClientSize(cols*cellsize, rows*cellsize);
+	SetClientSize((cols*cellsize) + 2, (rows*cellsize) + 2);
 	SetMinSize(GetSize());
 	SetMaxSize(GetSize());
 	SetCursor(*wxCROSS_CURSOR);
@@ -282,7 +282,7 @@ void ColorPickerRecent::OnPaint(wxPaintEvent &evt)
 	if (!background_valid) {
 		wxSize sz = pdc.GetSize();
 
-		background = wxBitmap(sz.x, sz.y);
+		background = wxBitmap(sz.x - 2, sz.y - 2);
 		wxMemoryDC dc(background);
 
 		int i = 0;
@@ -291,8 +291,8 @@ void ColorPickerRecent::OnPaint(wxPaintEvent &evt)
 		for (int cy = 0; cy < rows; cy++) {
 			for (int cx = 0; cx < cols; cx++) {
 				int x, y;
-				x = cx * cellsize + internal_control_offset.x;
-				y = cy * cellsize + internal_control_offset.y;
+				x = cx * cellsize; //+ internal_control_offset.x;
+				y = cy * cellsize; //+ internal_control_offset.y;
 
 				dc.SetBrush(wxBrush(colors[i]));
 				dc.DrawRectangle(x, y, x + cellsize, y + cellsize);
@@ -302,9 +302,13 @@ void ColorPickerRecent::OnPaint(wxPaintEvent &evt)
 		}
 
 		background_valid = true;
+		pdc.SetBackground(*wxTRANSPARENT_BRUSH);
+		pdc.SetPen(wxPen(Options.GetColour(STATICLIST_BORDER)));
+		pdc.DrawRectangle(0, 0, sz.x, sz.y);
 	}
 
-	pdc.DrawBitmap(background, 0, 0, false);
+	pdc.DrawBitmap(background, 1, 1, false);
+	
 }
 
 void ColorPickerRecent::OnSize(wxSizeEvent &evt)
@@ -514,7 +518,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, L"", 0, 255, true, wxDefaultPosition, textinput_size);
 
 	preview_bitmap = wxBitmap(40, 40, 24);
-	preview_box = new wxStaticBitmap(this, -1, preview_bitmap, wxDefaultPosition, wxSize(40, 40), STATIC_BORDER_FLAG);
+	preview_box = new wxStaticBitmap(this, -1, preview_bitmap, wxDefaultPosition, wxSize(40, 40), wxBORDER_NONE);
 
 	recent_box = new ColorPickerRecent(this, SELECTOR_RECENT, 8, 4, 16);
 
@@ -553,7 +557,7 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	wxSizer *spectop_sizer = new wxBoxSizer(wxHORIZONTAL);
 	spectop_sizer->Add(colorType, 1, /*wxALIGN_CENTER_VERTICAL | */wxLEFT | wxEXPAND, 2);
 	spectop_sizer->Add(new KaiStaticText(this, -1, _("Wybrany kolor:")), 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 17);
-	spectop_sizer->Add(preview_box);
+	spectop_sizer->Add(preview_box, 0, wxLEFT, 4);
 	wxSizer *spectrum_sizer = new wxBoxSizer(wxHORIZONTAL);
 	//spectrum_sizer->Add(spectop_sizer, wxALIGN_CENTER_HORIZONTAL);
 	//spectrum_sizer->AddStretchSpacer(1);
@@ -1121,41 +1125,34 @@ void DialogColorPicker::OnRecentSelect(wxCommandEvent &evt)
 
 void DialogColorPicker::OnDropperMouse(wxMouseEvent &evt)
 {
-	if ((evt.LeftDown() || evt.LeftDClick()) && !screen_dropper_icon->HasCapture()) {
-
-		screen_dropper_icon->SetCursor(wxCursor(L"eyedropper_cursor"));
-		screen_dropper_icon->SetBitmap(wxNullBitmap);
-		screen_dropper_icon->CaptureMouse();
-		eyedropper_grab_point = evt.GetPosition();
-		eyedropper_is_grabbed = false;
-	}
-
-	if (evt.LeftUp()) {
-#define ABS(x) (x < 0 ? -x : x)
-		wxPoint ptdiff = evt.GetPosition() - eyedropper_grab_point;
-		bool release_now = /*eyedropper_is_grabbed || */ABS(ptdiff.x) + ABS(ptdiff.y) > 0;
-		if (release_now) {
-			screen_dropper_icon->ReleaseMouse();
-			eyedropper_is_grabbed = false;
-			screen_dropper_icon->SetCursor(wxNullCursor);
-			screen_dropper_icon->SetBitmap(eyedropper_bitmap);
-		}
-		else {
-			eyedropper_is_grabbed = true;
-		}
-	}
-
 	if (screen_dropper_icon->HasCapture()) {
 		wxPoint scrpos = screen_dropper_icon->ClientToScreen(evt.GetPosition());
 		screen_dropper->DropFromScreenXY(scrpos.x, scrpos.y);
-		if (evt.RightUp()){//we do not have access to resx and resy, it's 7, after change needs to be fix
+		if (evt.RightUp()) {
+			//we do not have access to resx and resy, it's 7, after change needs to be fix
 			screen_dropper->SendGetColorEvent(3, 3);
 			screen_dropper_icon->ReleaseMouse();
-			eyedropper_is_grabbed = false;
 			screen_dropper_icon->SetCursor(wxNullCursor);
 			screen_dropper_icon->SetBitmap(eyedropper_bitmap);
 		}
 	}
+
+
+
+	if ((evt.LeftDown())) {
+		if (!screen_dropper_icon->HasCapture()) {
+			screen_dropper_icon->SetCursor(wxCursor(L"eyedropper_cursor"));
+			screen_dropper_icon->SetBitmap(wxNullBitmap);
+			screen_dropper_icon->CaptureMouse();
+			eyedropper_grab_point = evt.GetPosition();
+		}
+		else {
+			screen_dropper_icon->ReleaseMouse();
+			screen_dropper_icon->SetCursor(wxNullCursor);
+			screen_dropper_icon->SetBitmap(eyedropper_bitmap);
+		}
+	}
+
 }
 
 

@@ -21,6 +21,7 @@
 #include "EditBox.h"
 #include "KaiDialog.h"
 #include "KaiMessageBox.h"
+//#include "KaiPanel.h"
 
 class ProfileEdition : public KaiDialog
 {
@@ -92,12 +93,12 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 
 
 ShiftTimesWindow::ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-	: wxWindow(parent, id, pos, size, style/* | wxVERTICAL*/)
+	: KaiPanel(parent, id, pos, size, style/* | wxVERTICAL*/)
 {
 	Kai = kfparent;
 	tab = (TabPanel *)parent;
 	form = ASS;
-	panel = new wxPanel(this, -1);
+	panel = new KaiPanel(this, -1);
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	scroll = new KaiScrollbar(this, 5558, wxDefaultPosition, wxDefaultSize, wxVERTICAL);
@@ -643,7 +644,7 @@ void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 	Freeze();
 	panel->Destroy();
 	LeadIn = NULL;
-	panel = new wxPanel(this, -1);
+	panel = new KaiPanel(this, -1);
 	CreateControls(!collapsed);
 	Thaw();
 	if (collapsed){
@@ -999,7 +1000,7 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	bool normal = LeadIn == NULL;
 	panel->Destroy();
 	LeadIn = NULL;
-	panel = new wxPanel(this, -1);
+	panel = new KaiPanel(this, -1);
 	CreateControls(normal);
 	Thaw();
 	//isscrollbar = false;

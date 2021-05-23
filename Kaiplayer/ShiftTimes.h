@@ -22,14 +22,14 @@
 #include "ListControls.h"
 #include "KaiRadioButton.h"
 #include <wx/window.h>
-//#include <wx/collpane.h>
+#include "KaiPanel.h"
 #include "KaiStaticBoxSizer.h"
 
 class KainoteFrame;
 class TabPanel;
 
 
-class ShiftTimesWindow: public wxWindow
+class ShiftTimesWindow: public KaiPanel
 {
 public:
 	
@@ -113,7 +113,6 @@ private:
 	void GetProfileString(const wxString& name, wxString* profileString);
 	void ChangeProfileIfIsSet();
 	void SetProfile(const wxString &name);
-	bool HasMultiplePages() const { return true; };
 
 	DECLARE_EVENT_TABLE()
 };

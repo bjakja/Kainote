@@ -49,7 +49,7 @@
 // Constructor
 //
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
-wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
+	KaiPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 {
 	// Setup
 	loaded = false;
@@ -204,7 +204,7 @@ wxPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 	SetSizer(MainSizer);//}
 
 	SetAccels();
-	SetFocusIgnoringChildren();
+	//SetFocusIgnoringChildren();
 	sliderPositionSave.SetOwner(this, AUDIO_TIMER);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent) {
 		Options.SaveAudioOpts();

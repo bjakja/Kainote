@@ -20,7 +20,6 @@
 #include "MappedButton.h"
 #include "KaiScrollBar.h"
 #include "ListControls.h"
-//#include <wx/wx.h>
 #include "StylePreview.h"
 #include "KaiDialog.h"
 

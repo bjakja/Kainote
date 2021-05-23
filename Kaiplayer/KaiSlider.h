@@ -30,6 +30,10 @@ public:
 	void SetThumbPosition(int position);
 	void SetToolTip(const wxString &_tip){tip = _tip; wxWindow::SetToolTip(_tip);}
 private:
+	enum {
+		ID_ACCEL_LEFT = 8787,
+		ID_ACCEL_RIGHT
+	};
 	void OnSize(wxSizeEvent& evt);
 	void OnPaint(wxPaintEvent& evt);
 	void OnMouseEvent(wxMouseEvent &evt);
@@ -38,6 +42,7 @@ private:
 		holding = false;
 	};
 	void OnEraseBackground(wxEraseEvent& rEvent){};
+	void OnArrow(wxCommandEvent& evt);
 	void SendEvent(bool isWheel = false);
 	wxTimer pageLoop;
 	int value;

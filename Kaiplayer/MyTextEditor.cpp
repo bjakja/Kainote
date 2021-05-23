@@ -178,10 +178,10 @@ void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL
 			w -= sw;
 		}
 		size_t i = 0;
-		if (w < 20){
+		/*if (w < 20){
 			while (i < textLen){ i++; wraps.push_back(i); }
 		}
-		else{
+		else{*/
 			GraphicsContext* gc = GetGraphicsContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
@@ -191,7 +191,7 @@ void TextEditor::CalcWraps(bool updatechars, bool sendevent, bool dontConvertRTL
 			else{
 				CalcWrapsGDI(w);
 			}
-		}
+		//}
 	}
 	else{
 		wraps.push_back(textLen);
@@ -212,6 +212,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 	int gfw, gfh;
 	size_t i = 0;
 	size_t textLen = text.length();
+	size_t lastI = 0;
 	int widthCount = 0;
 	while (i < textLen)
 	{
@@ -230,7 +231,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 			fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			widthCount += gfw;
 		}
-		if (widthCount > windowWidth - 2) {
+		if (widthCount > windowWidth) {
 			size_t wrapsSize = wraps.size();
 			int minChar = wrapsSize ? wraps[wrapsSize - 1] : 0;
 			int j = i - 2;
@@ -242,16 +243,19 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 					size_t g = ch == L'{' || ch == L'\\' || ch == L'(' ? j : j + 1;
 					wraps.push_back(g);
 					foundWrap = true;
-					i = g;
+					i = g - 1;
 					break;
 				}
 				j--;
 			}
-			if (!foundWrap) {
-				wraps.push_back(i - 1);
-				i--;
+			if (lastI < i || foundWrap) {
+				if (!foundWrap) {
+					lastI = i;
+					wraps.push_back(i - 1);
+					i = i - 2;
+				}
+				widthCount = 0;
 			}
-			widthCount = 0;
 		}
 		i++;
 	}
@@ -265,6 +269,7 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 	double gfw, gfh;
 	size_t i = 0;
 	size_t textLen = text.length();
+	size_t lastI = 1;
 	double widthCount = 0.0;
 	while (i < textLen)
 	{
@@ -285,7 +290,8 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 			fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
 			widthCount += gfw;
 		}
-		if (widthCount > windowWidth - 7){
+		
+		if (widthCount > windowWidth){
 			size_t wrapsSize = wraps.size();
 			int minChar = wrapsSize ? wraps[wrapsSize - 1] : 0;
 			int j = i - 2;
@@ -298,18 +304,24 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 					size_t g = ch == L'{' || ch == L'\\' || ch == L'(' ? j : j + 1;
 					wraps.push_back(g);
 					foundWrap = true;
-					i = g;
+					//++ is below
+					i = g - 1;
 					break;
 				}
 				j--;
 			}
-			if (!foundWrap) {
-				wraps.push_back(i - 1);
-				i--;
+			if (lastI < i || foundWrap) {
+				if (!foundWrap) {
+					lastI = i;
+					wraps.push_back(i - 1);
+					i = i - 2;
+				}
+				widthCount = 0.;
 			}
-			widthCount = 0;
+			
 		}
 		i++;
+		
 	}
 	//need to think about this there is too many times used wraps to change it everytime when
 	//rtl is used
@@ -1284,7 +1296,7 @@ void TextEditor::DrawFieldD2D(GraphicsContext *gc, int w, int h, int windowh)
 		wxString seekingPart = fieldText.Mid(0, charStart);
 		size_t endBracket = seekingPart.Find(L'}', true);
 		size_t startBracket = seekingPart.Find(L'{', true);
-		if (endBracket == -1 || startBracket > endBracket){
+		if ((endBracket == -1 && startBracket != -1) || startBracket > endBracket){
 			tags = slash = val = true;
 		}
 		if (startBracket == -1 || startBracket < endBracket) {
