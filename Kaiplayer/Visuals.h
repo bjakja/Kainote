@@ -24,6 +24,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <map>
+#include "VisualAllTagsEdition.h"
 
 
 enum{
@@ -442,29 +443,7 @@ private:
 	bool tagYFound = false;
 };
 
-class AllTagsSetting
-{
-public:
-	AllTagsSetting() {};
-	AllTagsSetting(const wxString& _name, const wxString& _tag,
-		float _rangeMin, float _rangeMax, float _value,
-		float _step, unsigned char _mode = 0) {
-		name = _name;
-		tag = _tag;
-		rangeMin = _rangeMin;
-		rangeMax = _rangeMax;
-		value = _value;
-		step = _step;
-		mode = _mode;
-	};
-	wxString name;
-	wxString tag;
-	float rangeMin = 0.f;
-	float rangeMax = 0.f;
-	float value = 0.f;
-	float step = 0.f;
-	unsigned char mode = 0;
-};
+
 
 class AllTags : public Visuals 
 {
@@ -483,9 +462,8 @@ private:
 		THUMB_HOVER,
 		THUMB_PUSHED
 	};
-	void LoadSettings();
 	void ChangeInLines(bool dummy);
-	std::vector<AllTagsSetting> tags;
+	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	bool holding = false;
 	bool changeMoveDiff = false;

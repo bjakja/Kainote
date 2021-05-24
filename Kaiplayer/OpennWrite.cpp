@@ -77,7 +77,7 @@ bool OpenWrite::FileOpen(const wxString &filename, wxString *riddenText, bool te
 		}
 		else{ fileo.ReadAll(riddenText, wxConvLocal); }
 		fileo.Close();
-		if (riddenText->IsEmpty()) return false;
+		if (riddenText->empty()) return false;
 		return true;
 	}
 

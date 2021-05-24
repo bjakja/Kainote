@@ -41,6 +41,7 @@ public:
 	virtual void Synchronize(VisualItem * item){};
 	virtual int GetItemToggled(){ return 0; };
 	virtual void SetItemToggled(int *item){};
+	virtual void HideContols() {};
 
 	int startIconNumber;
 	bool clicked = false;
@@ -51,7 +52,7 @@ class MoveAllItem : public VisualItem
 {
 public:
 	MoveAllItem() : VisualItem() { 
-		startIconNumber = 18; 
+		startIconNumber = 19; 
 		MoveToggled[0] = true;
 		for (int i = 1; i < numMoveIcons; i++){
 			MoveToggled[i] = false;
@@ -81,7 +82,7 @@ class VectorItem : public VisualItem
 {
 public:
 	VectorItem(bool isClip) : VisualItem() { 
-		startIconNumber = 11; 
+		startIconNumber = 12; 
 		if (!isClip)
 			numIcons = 6;
 	};
@@ -133,13 +134,14 @@ public:
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt);
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt);
 	void Synchronize(VisualItem* item);
-	int GetItemToggled() { return toggled; };
+	int GetItemToggled();
 	void SetItemToggled(int* item);
+	void HideContols();
 private:
-	int toggled = 0;
 	KaiChoice* tagList;
 	KaiCheckBox* addToExist;
 	MappedButton* edition;
+	int maxWidth;
 	enum {
 		ID_TAG_LIST = 12378,
 		ID_ADD_TO_EXIST,
@@ -170,6 +172,9 @@ public:
 			delete (*cur);
 		}
 	}
+	static std::vector<AllTagsSetting>* GetTagsSettings() {
+		return &tags;
+	}
 	void DisableVisuals(bool Disable){ 
 		iconsEnabled = !Disable; 
 		Toggled = 0;
@@ -198,15 +203,16 @@ private:
 	void OnSize(wxSizeEvent &evt);
 	int Toggled;
 	int sel;
-	const static int toolsSize = 11;
+	const static int toolsSize = 12;
 	bool clicked;
 	bool iconsEnabled = true;
 	bool hasHiddenLists = false;
 	bool insufficentPlace = false;
 	wxBitmap *bmp;
 	std::vector<VisualItem*> visualItems;
+	static std::vector<AllTagsSetting> tags;
 	int startDrawPos = 2;
-	int endDrawPos = 146;
+	int endDrawPos = 162;
 };
 
 enum{

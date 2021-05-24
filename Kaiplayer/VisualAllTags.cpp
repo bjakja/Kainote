@@ -15,10 +15,14 @@
 
 #include "Visuals.h"
 #include "TabPanel.h"
+#include "VideoToolbar.h"
 
 AllTags::AllTags()
 {
-
+	tags = VideoToolbar::GetTagsSettings();
+	if (!tags->size()) {
+		LoadSettings(tags);
+	}
 }
 
 void AllTags::DrawVisual(int time)
@@ -154,9 +158,9 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 void AllTags::SetCurVisual()
 {
-	if (currentTag < 0 || currentTag >= tags.size())
+	if (currentTag < 0 || currentTag >= tags->size())
 		currentTag = 0;
-	actualTag = tags[currentTag];
+	actualTag = (*tags)[currentTag];
 	tab->Video->Render(false);
 }
 
@@ -188,11 +192,6 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue* _dial)
 	wxString visualText;
 	GetVisual(&visualText, tmp);
 	ChangeText(txt, visualText, tab->Edit->InBracket, tab->Edit->Placed);
-}
-
-void AllTags::LoadSettings()
-{
-
 }
 
 void AllTags::ChangeInLines(bool dummy)

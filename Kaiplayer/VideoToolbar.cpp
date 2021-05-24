@@ -43,7 +43,8 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Zmieniacz pozycji")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
-		//11
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ALL_TAGS"), _("Zmieniacz pozostałych tagów")));
+		//12
 		//Here clip icons
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Przesuń punkty")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Line"), _("Dodaj linię")));
@@ -76,6 +77,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	visualItems.push_back(new VectorItem(false));
 	visualItems.push_back(new MoveAllItem());
 	visualItems.push_back(new ScaleRotationItem());
+	visualItems.push_back(new AllTagsItem(this));
 
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&VideoToolbar::OnSize);
@@ -162,6 +164,9 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 		Refresh(false);
 	}
 	if (evt.LeftDown()){
+		if (visualItems[Toggled])
+			visualItems[Toggled]->HideContols();
+
 		if (elem == Toggled){ Toggled = 0; }
 		else{ Toggled = elem; }
 		//hide lists only when there is insufficent place
@@ -246,7 +251,7 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 	int seekMinWidth = seekMinSize.GetWidth();
 	int playMinWidth = playMinSize.GetWidth();
 	int height = size.y - 2;
-	int allToolsSize = 19 * size.y;
+	int allToolsSize = 20 * size.y;
 	//one square for spacing
 	int spaceForLists = (size.x - allToolsSize - 6);
 	if (spaceForLists < seekMinWidth + playMinWidth){
@@ -444,6 +449,7 @@ void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolb
 		selection = -1;
 		clicked = false;
 		vt->Refresh(false);
+		if (vt->HasToolTips()) { vt->UnsetToolTip(); }
 		return;
 	}
 	if (elem >= numIcons)
@@ -506,30 +512,90 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 AllTagsItem::AllTagsItem(VideoToolbar* vt)
 {
 	wxArrayString list;
-	//wxSize size = vt->GetSize();
-	int maxWidth = vt->GetEndDrawPos() - 4;
+	maxWidth = vt->GetEndDrawPos();
 	tagList = new KaiChoice(vt, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
-	tagList->Hide();
+	
 	addToExist = new KaiCheckBox(vt, ID_ADD_TO_EXIST, _("Dodaj wartości"));
 	addToExist->SetToolTip(_("Dodaj wartości do istniejących bądź wstawiaj nowe wartości"));
-	addToExist->Hide();
+	
 	edition = new MappedButton(vt, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
+	wxSize atebs = addToExist->GetBestSize();
+	wxSize tlbs = tagList->GetBestSize();
+	wxSize ebs = edition->GetBestSize();
+	wxPoint pos(maxWidth - 4 - ebs.x, 1);
+	edition->SetPosition(pos);
+	pos.x -= atebs.x + 4;
+	pos.y = 5;
+	addToExist->SetPosition(pos);
+	pos.y = 1;
+	pos.x -= tlbs.x + 4;
+	tagList->SetPosition(pos);
 	edition->Hide();
+	addToExist->Hide();
+	tagList->Hide();
 }
 
 void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 {
+	
 }
 
 void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
+	if (!tagList->IsShown() || !addToExist->IsShown() || !edition->IsShown()) {
+		tagList->Show();
+		addToExist->Show();
+		edition->Show();
+	}
+	if (maxWidth != vt->GetEndDrawPos()) {
+		wxSize atebs = addToExist->GetBestSize();
+		wxSize tlbs = tagList->GetBestSize();
+		wxSize ebs = edition->GetBestSize();
+		wxPoint pos(maxWidth - 4 - ebs.x, 1);
+		edition->SetPosition(pos);
+		pos.x -= atebs.x + 4;
+		pos.y = 5;
+		addToExist->SetPosition(pos);
+		pos.y = 1;
+		pos.x -= tlbs.x + 4;
+		tagList->SetPosition(pos);
+	}
 }
 
 void AllTagsItem::Synchronize(VisualItem* item)
 {
+	AllTagsItem* ati = (AllTagsItem*)item;
+	tagList->SetSelection(ati->tagList->GetSelection());
+	addToExist->SetValue(ati->addToExist->GetValue());
+}
+
+int AllTagsItem::GetItemToggled()
+{
+	if (tagList)
+		return tagList->GetSelection();
+
+	return 0;
 }
 
 void AllTagsItem::SetItemToggled(int* item)
 {
+	if (tagList) {
+		int numitem = *item;
+		if (numitem < 0)
+			numitem = tagList->GetCount() - 1;
+		else if (numitem >= tagList->GetCount())
+			numitem = 0;
+
+		tagList->SetSelection(numitem);
+	}
+}
+
+void AllTagsItem::HideContols()
+{
+	if (tagList->IsShown() || addToExist->IsShown() || edition->IsShown()) {
+		tagList->Show(false);
+		addToExist->Show(false);
+		edition->Show(false);
+	}
 }
