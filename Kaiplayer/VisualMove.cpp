@@ -43,7 +43,7 @@ void Move::DrawVisual(int time)
 	v4[0].y = from.y;
 	v4[1].x = to.x;
 	v4[1].y = to.y;
-	//drawarrow od razu przesuwa punkt tak by linia koñczy³a siê przed strza³k¹
+	//drawarrow moves line point to ends before arrow, it modifies v4[1]
 	DrawArrow(from, &v4[1], 6);
 
 

@@ -502,3 +502,34 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 		i++;
 	}
 }
+
+AllTagsItem::AllTagsItem(VideoToolbar* vt)
+{
+	wxArrayString list;
+	//wxSize size = vt->GetSize();
+	int maxWidth = vt->GetEndDrawPos() - 4;
+	tagList = new KaiChoice(vt, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
+	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
+	tagList->Hide();
+	addToExist = new KaiCheckBox(vt, ID_ADD_TO_EXIST, _("Dodaj wartości"));
+	addToExist->SetToolTip(_("Dodaj wartości do istniejących bądź wstawiaj nowe wartości"));
+	addToExist->Hide();
+	edition = new MappedButton(vt, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
+	edition->Hide();
+}
+
+void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
+{
+}
+
+void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
+{
+}
+
+void AllTagsItem::Synchronize(VisualItem* item)
+{
+}
+
+void AllTagsItem::SetItemToggled(int* item)
+{
+}

@@ -66,7 +66,7 @@ public:
 	Visuals();
 	virtual ~Visuals();
 	static Visuals *Get(int Visual, wxWindow *_parent);
-	void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
+	virtual void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
 	void DrawRect(D3DXVECTOR2 vector, bool sel = false, float size = 5.0f);
 	void DrawCircle(D3DXVECTOR2 vector, bool sel = false, float size = 6.0f);
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin = true);
@@ -161,6 +161,7 @@ public:
 	void Draw(int time);
 	void DrawLines(wxPoint point);
 	void SetCurVisual();
+	void SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device);
 private:
 	D3DXVECTOR2 vectors[4];
 	RECT crossRect;
@@ -170,6 +171,7 @@ private:
 	float coeffX, coeffY;
 	int diffX = 0, diffY = 0;
 	bool isOnVideo = true;
+	LPD3DXFONT calcfont;
 };
 
 class Position : public Visuals
@@ -438,6 +440,59 @@ private:
 	byte selectedTool = 0;
 	bool tagXFound = false;
 	bool tagYFound = false;
+};
+
+class AllTagsSetting
+{
+public:
+	AllTagsSetting() {};
+	AllTagsSetting(const wxString& _name, const wxString& _tag,
+		float _rangeMin, float _rangeMax, float _value,
+		float _step, unsigned char _mode = 0) {
+		name = _name;
+		tag = _tag;
+		rangeMin = _rangeMin;
+		rangeMax = _rangeMax;
+		value = _value;
+		step = _step;
+		mode = _mode;
+	};
+	wxString name;
+	wxString tag;
+	float rangeMin = 0.f;
+	float rangeMax = 0.f;
+	float value = 0.f;
+	float step = 0.f;
+	unsigned char mode = 0;
+};
+
+class AllTags : public Visuals 
+{
+public:
+	AllTags();
+	~AllTags() {};
+	void DrawVisual(int time);
+	void OnMouseEvent(wxMouseEvent& event);
+	void SetCurVisual();
+	void ChangeTool(int _tool);
+	void GetVisual(wxString* visual, const wxString &curValue);
+	void ChangeVisual(wxString* txt, Dialogue* _dial);
+private:
+	enum {
+		THUMB_RELEASED = 0,
+		THUMB_HOVER,
+		THUMB_PUSHED
+	};
+	void LoadSettings();
+	void ChangeInLines(bool dummy);
+	std::vector<AllTagsSetting> tags;
+	AllTagsSetting actualTag;
+	bool holding = false;
+	bool changeMoveDiff = false;
+	float thumbValue = 0.f;
+	float lastThumbValue = 0.f;
+	int thumbState = 0;
+	int currentTag = 0;
 };
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);

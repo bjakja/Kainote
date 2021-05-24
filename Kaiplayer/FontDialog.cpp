@@ -87,7 +87,7 @@ void FontList::OnPaint(wxPaintEvent& event)
 	dc.SetTextForeground(Options.GetColour(WINDOW_TEXT));
 	dc.DrawRectangle(0, 0, w, h);
 
-
+	//setup scrollbar
 	int panelrows = (h / Height) + 1;
 	int scrows;
 	if (scPos < 0){ scPos = 0; }
@@ -95,6 +95,7 @@ void FontList::OnPaint(wxPaintEvent& event)
 		scrows = fonts->size();
 		scPos = (scrows - panelrows) + 1;
 		if (panelrows > (int)fonts->size()){
+			//disable
 			scPos = 0;
 			scrollBar->Enable(false);
 		}

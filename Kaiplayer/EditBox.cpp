@@ -143,7 +143,7 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	//Warning don't use any grid in constructor cause editbox is constructed
 	//before Subsgrid cause of tab shortcut order
 	tab = (TabPanel*)GetParent();
-	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
+	//SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxWindow::SetFont(*Options.GetFont(-1));
 	currentLine = 0;

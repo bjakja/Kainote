@@ -57,6 +57,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	oldy = -1;
 	int height = Options.GetInt(AUDIO_BOX_HEIGHT);
 	SetMinSize(wxSize(-1, height));
+	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	// Display
 	int thickness = KaiScrollbar::CalculateThickness(this);
 	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, wxPoint(0, height - thickness), wxSize(100, thickness));

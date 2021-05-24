@@ -112,7 +112,6 @@ void DrawingAndClip::DrawVisual(int time)
 	if (Points[0].type != L"m"){ Points[0].type = L"m"; }
 	size_t g = (size < 2) ? 0 : 1;
 	size_t lastM = 0;
-	bool minusminus = false;
 	while (g < size){
 
 		if (Points[g].type == L"l"){

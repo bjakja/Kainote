@@ -161,6 +161,7 @@ SubsFile::SubsFile(wxMutex * editionGuard)
 			_("Narzędzie rysunków wektorowych"),
 			_("Narzędzie zmieniacz pozycji"),
 			_("Narzędzie zmieniacz skali i obrotów"),
+			_("Narzędzie zmieniacz wszystkich tagów"),
 			_("Zamień"),
 			_("Zamień wszystko"),
 			/*50*/_("Poprawa drobnych błędów"),

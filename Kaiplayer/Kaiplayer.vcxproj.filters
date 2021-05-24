@@ -452,6 +452,9 @@
     <ClCompile Include="KaiPanel.cpp">
       <Filter>Source Files\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="VisualAllTags.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">

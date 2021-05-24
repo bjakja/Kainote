@@ -160,7 +160,7 @@ void Cross::DrawLines(wxPoint point)
 		int w, h, fw, fh;
 		tab->Video->GetWindowSize(&w, &h);
 		RECT rcRect = { 0, 0, 0, 0 };
-		if (font->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+		if (calcfont->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
 			fw = rcRect.right - rcRect.left;
 			fh = rcRect.bottom - rcRect.top;
 		}
@@ -230,4 +230,16 @@ void Cross::SetCurVisual()
 	tab->Grid->GetASSRes(&nx, &ny);
 	coeffX = (float)nx / (float)(w - diffW);
 	coeffY = (float)ny / (float)(h - diffH);
+}
+
+void Cross::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
+{
+	Visuals::SizeChanged(wsize, _line, _font, _device);
+	wxFont* font12 = Options.GetFont(4);
+	wxSize pixelSize = font12->GetPixelSize();
+	HRN(D3DXCreateFontW(device, pixelSize.y, 0, FW_BOLD, 0, FALSE, 
+		DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &calcfont), 
+		_("Nie mo¿na stworzyæ czcionki D3DX"));
+	
 }

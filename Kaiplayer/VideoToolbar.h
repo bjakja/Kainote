@@ -18,6 +18,8 @@
 #include <wx/window.h>
 #include <vector>
 #include "ListControls.h"
+#include "KaiCheckBox.h"
+#include "MappedButton.h"
 
 class itemdata{
 public:
@@ -124,6 +126,27 @@ public:
 	int toggled = 0;
 };
 
+class AllTagsItem : public VisualItem
+{
+public:
+	AllTagsItem(VideoToolbar* vt);
+	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt);
+	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt);
+	void Synchronize(VisualItem* item);
+	int GetItemToggled() { return toggled; };
+	void SetItemToggled(int* item);
+private:
+	int toggled = 0;
+	KaiChoice* tagList;
+	KaiCheckBox* addToExist;
+	MappedButton* edition;
+	enum {
+		ID_TAG_LIST = 12378,
+		ID_ADD_TO_EXIST,
+		ID_EDITION
+	};
+};
+
 class VideoToolbar: public wxWindow {
 public:
 	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);
@@ -163,6 +186,7 @@ public:
 	}
 	bool SetFont(const wxFont &font);
 	void SetHeight(int height);
+	int GetEndDrawPos() { return endDrawPos; };
 	KaiChoice *videoSeekAfter;
 	KaiChoice *videoPlayAfter;
 	static std::vector<itemdata*> icons;

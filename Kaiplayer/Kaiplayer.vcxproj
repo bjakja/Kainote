@@ -524,6 +524,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
     <ClCompile Include="AudioDeviceEnumeration.cpp" />
     <ClCompile Include="AudioDisplay.cpp" />
