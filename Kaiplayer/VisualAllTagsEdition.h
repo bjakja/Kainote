@@ -38,6 +38,7 @@ public:
 		step = _step;
 		mode = _mode;
 	};
+	AllTagsSetting(const wxString& _name) { name = _name; };
 	wxString name;
 	wxString tag;
 	float rangeMin = 0.f;
@@ -58,7 +59,9 @@ private:
 	void OnSave(wxCommandEvent& evt);
 	void OnAddTag(wxCommandEvent& evt);
 	void OnRemoveTag(wxCommandEvent& evt);
+	void OnListChanged(wxCommandEvent& evt);
 	void UpdateTag();
+	void SetTagFromSettings();
 	void SetTag(int num);
 	enum {
 		ID_TAG_LIST = 7809,
