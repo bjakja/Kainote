@@ -15,8 +15,9 @@
 
 
 #include "Menu.h"
+#include "Hotkeys.h"
 #include "Config.h"
-#include "Utils.h"
+#include "UtilsWindows.h"
 #include "Toolbar.h"
 #include "KaiScrollbar.h"
 #include "wx/msw/private.h"

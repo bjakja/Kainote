@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "Utils.h"
+//#include "Utils.h"
 #include "Menu.h"
 #include <wx/window.h>
 #include <wx/dialog.h>

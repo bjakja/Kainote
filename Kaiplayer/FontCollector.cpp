@@ -24,7 +24,7 @@
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include <ShlObj.h>
-#include "Utils.h"
+#include "UtilsWindows.h"
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);

@@ -19,16 +19,13 @@
  * along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************/
 
-
-
 #include "KainoteApp.h"
 #include <wx/image.h>
 #include <wx/ipc.h>
 #include <wx/utils.h>
 #include <locale.h>
+#include "UtilsWindows.h"
 #include "OpennWrite.h"
-#include "Config.h"
-#include "Utils.h"
 #include "Hotkeys.h"
 #include <wx/intl.h>
 #include "KaiMessageBox.h"

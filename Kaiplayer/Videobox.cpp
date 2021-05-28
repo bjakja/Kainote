@@ -19,6 +19,9 @@
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
 #include <wx/dir.h>
+#include <wx/dc.h>
+#include <wx/dcclient.h>
+#include "UtilsWindows.h"
 #include "Videobox.h"
 #include "KainoteMain.h"
 #include "Hotkeys.h"
@@ -29,6 +32,8 @@
 #include "RendererDirectShow.h"
 #include "RendererFFMS2.h"
 #include <shellapi.h>
+
+#undef DrawText
 
 #pragma warning ( disable: 4482 )
 
@@ -104,7 +109,7 @@ void AspectRatioDialog::OnSlider(wxCommandEvent &event)
 
 
 VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
-	: wxWindow(parent, -1, wxDefaultPosition, size)
+	: wxWindow(parent, -1, wxDefaultPosition, size, wxWANTS_CHARS)
 	, Kai(kfpar)
 	, tab((TabPanel*)parent)
 	//, m_HasArrow(true)

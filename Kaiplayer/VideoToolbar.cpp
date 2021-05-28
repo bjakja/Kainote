@@ -19,6 +19,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
+std::vector<AllTagsSetting> VideoToolbar::tags;
 std::vector<itemdata*> VideoToolbar::icons;
 
 VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &size)
@@ -77,7 +78,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	visualItems.push_back(new VectorItem(false));
 	visualItems.push_back(new MoveAllItem());
 	visualItems.push_back(new ScaleRotationItem());
-	visualItems.push_back(new AllTagsItem(this));
+	visualItems.push_back(new AllTagsItem());
 
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&VideoToolbar::OnSize);
@@ -169,6 +170,9 @@ void VideoToolbar::OnMouseEvent(wxMouseEvent &evt)
 
 		if (elem == Toggled){ Toggled = 0; }
 		else{ Toggled = elem; }
+
+		if (visualItems[Toggled])
+			visualItems[Toggled]->ShowContols(this);
 		//hide lists only when there is insufficent place
 		if (visualItems[Toggled] && insufficentPlace) {
 			videoSeekAfter->Show(false);
@@ -509,31 +513,8 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 	}
 }
 
-AllTagsItem::AllTagsItem(VideoToolbar* vt)
+AllTagsItem::AllTagsItem()
 {
-	wxArrayString list;
-	maxWidth = vt->GetEndDrawPos();
-	tagList = new KaiChoice(vt, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
-	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
-	
-	addToExist = new KaiCheckBox(vt, ID_ADD_TO_EXIST, _("Dodaj wartości"));
-	addToExist->SetToolTip(_("Dodaj wartości do istniejących bądź wstawiaj nowe wartości"));
-	
-	edition = new MappedButton(vt, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
-	wxSize atebs = addToExist->GetBestSize();
-	wxSize tlbs = tagList->GetBestSize();
-	wxSize ebs = edition->GetBestSize();
-	wxPoint pos(maxWidth - 4 - ebs.x, 1);
-	edition->SetPosition(pos);
-	pos.x -= atebs.x + 4;
-	pos.y = 5;
-	addToExist->SetPosition(pos);
-	pos.y = 1;
-	pos.x -= tlbs.x + 4;
-	tagList->SetPosition(pos);
-	edition->Hide();
-	addToExist->Hide();
-	tagList->Hide();
 }
 
 void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
@@ -543,12 +524,10 @@ void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt
 
 void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
-	if (!tagList->IsShown() || !addToExist->IsShown() || !edition->IsShown()) {
-		tagList->Show();
-		addToExist->Show();
-		edition->Show();
+	if (!tagList || !addToExist || !edition) {
+		ShowContols(vt);
 	}
-	if (maxWidth != vt->GetEndDrawPos()) {
+	else if (maxWidth != vt->GetEndDrawPos()) {
 		wxSize atebs = addToExist->GetBestSize();
 		wxSize tlbs = tagList->GetBestSize();
 		wxSize ebs = edition->GetBestSize();
@@ -566,8 +545,13 @@ void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 void AllTagsItem::Synchronize(VisualItem* item)
 {
 	AllTagsItem* ati = (AllTagsItem*)item;
-	tagList->SetSelection(ati->tagList->GetSelection());
-	addToExist->SetValue(ati->addToExist->GetValue());
+	if (ati->tagList && ati->addToExist) {
+		tagList->SetSelection(ati->tagList->GetSelection());
+		addToExist->SetValue(ati->addToExist->GetValue());
+	}
+	else {
+		KaiLog(L"No sychronization, pointers released");
+	}
 }
 
 int AllTagsItem::GetItemToggled()
@@ -593,9 +577,59 @@ void AllTagsItem::SetItemToggled(int* item)
 
 void AllTagsItem::HideContols()
 {
-	if (tagList->IsShown() || addToExist->IsShown() || edition->IsShown()) {
-		tagList->Show(false);
-		addToExist->Show(false);
-		edition->Show(false);
+	if (tagList || addToExist || edition) {
+		tagList->Destroy();
+		addToExist->Destroy();
+		edition->Destroy();
+		tagList = NULL;
+		addToExist = NULL;
+		edition = NULL;
 	}
+}
+
+void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
+{
+	auto tags = VideoToolbar::GetTagsSettings();
+	wxArrayString list;
+	maxWidth = vtoolbar->GetEndDrawPos();
+	GetNames(tags, &list);
+	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
+	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
+	tagList->SetSelection(0);
+	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		event->SetInt(GetItemToggled());
+		wxQueueEvent(vtoolbar, event);
+		}, ID_TAG_LIST
+	);
+
+	addToExist = new KaiCheckBox(vtoolbar, ID_ADD_TO_EXIST, _("Dodaj"));
+	addToExist->SetToolTip(_("Dodaj wartości do istniejących bądź wstawiaj nowe wartości"));
+
+	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
+	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
+		//wxPoint Pos = edition->GetPosition();
+		AllTagsEdition edit(vtoolbar, wxPoint(), tags, tagList->GetSelection());
+		if (edit.ShowModal() == wxID_OK) {
+			VideoToolbar::SetTagsSettings(edit.GetTags());
+		}
+		}, ID_EDITION
+	);
+	wxSize atebs = addToExist->GetBestSize();
+	wxSize tlbs = tagList->GetBestSize();
+	wxSize ebs = edition->GetBestSize();
+	wxSize vts = vtoolbar->GetSize();
+	wxPoint pos(maxWidth - 4 - ebs.x, 1);
+	edition->SetPosition(pos);
+	ebs.y = vts.y - 2;
+	edition->SetSize(ebs);
+	pos.x -= atebs.x + 4;
+	pos.y = 5;
+	addToExist->SetPosition(pos);
+	addToExist->SetSize(atebs);
+	pos.y = 1;
+	pos.x -= tlbs.x + 4;
+	tagList->SetPosition(pos);
+	tlbs.y = vts.y - 2;
+	tagList->SetSize(tlbs);
 }

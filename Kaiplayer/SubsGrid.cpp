@@ -15,10 +15,9 @@
 
 #include "SubsGrid.h"
 
-
+#include "config.h"
 #include <wx/intl.h>
 #include <wx/string.h>
-#include "Utils.h"
 #include <wx/clipbrd.h>
 #include "KainoteMain.h"
 #include "Hotkeys.h"

@@ -20,6 +20,7 @@
 #include "ListControls.h"
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
+#include "VisualAllTagsEdition.h"
 
 class itemdata{
 public:
@@ -42,6 +43,7 @@ public:
 	virtual int GetItemToggled(){ return 0; };
 	virtual void SetItemToggled(int *item){};
 	virtual void HideContols() {};
+	virtual void ShowContols(VideoToolbar* vt) {};
 
 	int startIconNumber;
 	bool clicked = false;
@@ -130,18 +132,19 @@ public:
 class AllTagsItem : public VisualItem
 {
 public:
-	AllTagsItem(VideoToolbar* vt);
-	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt);
-	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt);
-	void Synchronize(VisualItem* item);
-	int GetItemToggled();
-	void SetItemToggled(int* item);
-	void HideContols();
+	AllTagsItem();
+	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
+	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
+	void Synchronize(VisualItem* item) override;
+	int GetItemToggled() override;
+	void SetItemToggled(int* item) override;
+	void HideContols() override;
+	void ShowContols(VideoToolbar* vt) override;
 private:
-	KaiChoice* tagList;
-	KaiCheckBox* addToExist;
-	MappedButton* edition;
-	int maxWidth;
+	KaiChoice* tagList = NULL;
+	KaiCheckBox* addToExist = NULL;
+	MappedButton* edition = NULL;
+	int maxWidth = -1;
 	enum {
 		ID_TAG_LIST = 12378,
 		ID_ADD_TO_EXIST,
@@ -154,7 +157,8 @@ public:
 	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);
 	virtual ~VideoToolbar(){
 		for (auto cur = visualItems.begin(); cur != visualItems.end(); cur++){
-			delete (*cur);
+			if(*cur)
+				delete (*cur);
 		}
 		if (bmp){ 
 			delete bmp; 
@@ -173,7 +177,13 @@ public:
 		}
 	}
 	static std::vector<AllTagsSetting>* GetTagsSettings() {
+		if (!tags.size()) {
+			LoadSettings(&tags);
+		}
 		return &tags;
+	}
+	static void SetTagsSettings(std::vector<AllTagsSetting>* _tags) {
+		tags = *_tags;
 	}
 	void DisableVisuals(bool Disable){ 
 		iconsEnabled = !Disable; 

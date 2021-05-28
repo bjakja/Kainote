@@ -25,7 +25,7 @@
 #include "SubsFile.h"
 #include <regex>
 #include "GraphicsD2D.h"
-#include "Utils.h"
+//#include "Utils.h"
 #include "BidiConversion.h"
 
 #undef DrawText

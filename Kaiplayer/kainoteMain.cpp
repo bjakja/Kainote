@@ -22,6 +22,7 @@
 
 
 #include "KainoteMain.h"
+#include "UtilsWindows.h"
 #include "SubsTime.h"
 #include "ScriptInfo.h"
 #include "Config.h"
@@ -36,10 +37,10 @@
 #include "SubsResampleDialog.h"
 #include "SpellCheckerDialog.h"
 #include "SpellChecker.h"
-#include "utils.h"
 #include "AutoSaveOpen.h"
 #include "AutoSavesRemoving.h"
 #include "DummyVideo.h"
+
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>

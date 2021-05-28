@@ -32,7 +32,7 @@
 /// @brief Lua 5.1-based scripting engine
 /// @ingroup scripting
 ///
-#include "Utils.h"
+#include "config.h"
 #include "Automation.h"
 #include "Hotkeys.h"
 

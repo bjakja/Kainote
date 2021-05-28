@@ -15,8 +15,7 @@
 
 #pragma once
 
-#include <d3d9.h>
-#include <d3dx9.h>
+
 //#include "Videobox.h"
 //#include "dshowplayer.h"
 #include "Visuals.h"
@@ -24,6 +23,9 @@
 #include <vector>
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
+
+#include <d3d9.h>
+#include <d3dx9.h>
 
 #undef DrawText
 

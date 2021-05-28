@@ -17,12 +17,15 @@
 #pragma once
 
 //#include <wx/wx.h>
+#undef GetCharWidth
+#undef GetClassInfo
+
 #include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "RendererVideo.h"
 #include "VideoFullscreen.h"
-#include "VideoToolbar.h"
 #include "KaiTextCtrl.h"
+#include "VideoToolbar.h"
 
 class KainoteFrame;
 class TabPanel;

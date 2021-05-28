@@ -353,7 +353,7 @@
     <ClCompile Include="Languages.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
-    <ClCompile Include="Utils.cpp">
+    <ClCompile Include="UtilsWindows.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
     <ClCompile Include="ConfigConverter.cpp">
@@ -457,6 +457,9 @@
     </ClCompile>
     <ClCompile Include="VisualAllTagsEdition.cpp">
       <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="TagFindReplace.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -688,7 +691,7 @@
     <ClInclude Include="SpellChecker.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
-    <ClInclude Include="Utils.h">
+    <ClInclude Include="UtilsWindows.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
     <ClInclude Include="VersionKainote.h">
@@ -846,6 +849,9 @@
     </ClInclude>
     <ClInclude Include="VisualAllTagsEdition.h">
       <Filter>Source Files\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="TagFindReplace.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

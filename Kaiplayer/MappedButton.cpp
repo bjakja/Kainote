@@ -16,7 +16,7 @@
 
 #include "MappedButton.h"
 #include "Config.h"
-#include "Utils.h"
+//#include "Utils.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>

@@ -190,7 +190,7 @@ void MoveAll::SetCurVisual()
 		elems.push_back(elem);
 	}
 	if (tab->Edit->FindValue(L"p([0-9]+)", &res, L"", 0, 1)){
-		res = tab->Edit->TextEdit->GetValue();
+		res = tab->Edit->GetEditor()->GetValue();
 		wxRegEx re(L"} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
 		if (re.Matches(res)){
 			moveElems elem;

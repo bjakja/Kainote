@@ -57,6 +57,9 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 	case SCALE_ROTATION:
 		visual = new ScaleRotation();
 		break;
+	case ALL_TAGS:
+		visual = new AllTags();
+		break;
 	default:
 		visual = new Position();
 		break;
@@ -64,6 +67,7 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 
 	visual->tab = (TabPanel*)_parent->GetParent();
 	visual->Visual = Visual;
+	visual->SetTabPanel(visual->tab);
 	return visual;
 }
 
@@ -479,9 +483,11 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 //function return 1 when need to add bracket or 0
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
 {
-	if (pos.x >= txt->length()) {
+	//use only if needed if pos.x == 0 and length == 0 than block 
+	//puting tags for drawing
+	/*if (pos.x > txt->length()) {
 		return 0;
-	}
+	}*/
 	if (!inbracket){
 		txt->insert(pos.x, L"{" + what + L"}");
 		return 1;

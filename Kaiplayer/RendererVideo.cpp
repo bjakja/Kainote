@@ -14,11 +14,12 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "RendererVideo.h"
+#include "Config.h"
 #include "kainoteMain.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
-#include "Utils.h"
+
 
 #if byvertices
 struct CUSTOMVERTEX

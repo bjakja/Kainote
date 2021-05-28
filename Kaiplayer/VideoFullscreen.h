@@ -22,6 +22,8 @@
 #include "KaiTextCtrl.h"
 #include "KaiStaticText.h"
 #include "KaiCheckBox.h"
+
+#undef GetClassInfo
 class VideoToolbar;
 
 class Fullscreen : public wxFrame

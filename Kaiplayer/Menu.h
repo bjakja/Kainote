@@ -22,7 +22,7 @@
 #include <wx/msw/popupwin.h>
 #include <vector>
 #include <map>
-#include "Hotkeys.h"
+
 
 class MenuEvent;
 class Menu;

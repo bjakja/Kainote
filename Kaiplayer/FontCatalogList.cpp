@@ -15,7 +15,7 @@
 
 #include "FontCatalogList.h"
 #include "config.h"
-#include "Utils.h"
+//#include "Utils.h"
 #include "KaiCheckBox.h"
 #include "KaiStaticText.h"
 #include "FontEnumerator.h"

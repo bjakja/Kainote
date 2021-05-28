@@ -33,7 +33,7 @@
 #include <wx/mstream.h>
 #include <wx/dc.h>
 #include "Config.h"
-#include "Utils.h"
+#include "UtilsWindows.h"
 
 #define ADD_QUOTES_HELPER(s) #s
 #define ADD_QUOTES(s) ADD_QUOTES_HELPER(s)

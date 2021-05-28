@@ -64,6 +64,7 @@ void AllTags::DrawVisual(int time)
 		if (i - lastPos > 10) {
 			D3DXVECTOR2 linepoints[] = { D3DXVECTOR2(i, top - 6), D3DXVECTOR2(i, top + 8 + 6) };
 			line->Draw(linepoints, 2, 0xFFBB0000);
+			lastPos = i;
 		}
 	}
 	line->End();
@@ -74,8 +75,7 @@ void AllTags::DrawVisual(int time)
 	float thumbright = thumbpos + 4;
 	float thumbtop = top - 10;
 	float thumbbottom = bottom + 10;
-	D3DCOLOR fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
-	VERTEX v9[9];
+	fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
 	CreateVERTEX(&v9[0], thumbleft, thumbtop, fill);
 	CreateVERTEX(&v9[1], thumbright, thumbtop, fill);
 	CreateVERTEX(&v9[2], thumbleft, thumbbottom, fill);
@@ -132,24 +132,32 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 	if (holding) {
 		//calculate new thumb value from mouse position
+		thumbValue = (x - left - thumbposdiff) / coeff;
+		thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
+		if(lastThumbValue != thumbValue)
+			ChangeInLines(true);
+
+		lastThumbValue = thumbValue;
+	}
+
+	if (event.LeftDown() || event.LeftDClick()) {
+		lastThumbValue = firstThumbValue = thumbValue;
 		if (onThumb) {
+			if (!tab->Video->HasCapture()) {
+				tab->Video->CaptureMouse();
+			}
+			holding = true;
+		}
+		else if (onSlider) {
 			thumbValue = (x - left - thumbposdiff) / coeff;
 			thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
 			ChangeInLines(true);
 		}
 	}
 
-	if (event.LeftDown() || event.LeftDClick()) {
-		if (!tab->Video->HasFocus()) {
-			tab->Video->CaptureMouse();
-		}
-		holding = true;
-		lastThumbValue = thumbValue;
-	}
-
 	if (event.LeftUp()) {
 		holding = false;
-		if (tab->Video->HasFocus()) {
+		if (tab->Video->HasCapture()) {
 			tab->Video->ReleaseMouse();
 		}
 		ChangeInLines(false);
@@ -158,10 +166,51 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 void AllTags::SetCurVisual()
 {
+	
 	if (currentTag < 0 || currentTag >= tags->size())
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
+	FindTagValues();
+	thumbValue = actualTag.value;
 	tab->Video->Render(false);
+}
+
+void AllTags::FindTagValues()
+{
+	if (FindTag(actualTag.tag + L"([0-9.,\\(\\) ]*)", L"", actualTag.mode)) {
+		const FindData& data = GetResult();
+		if (data.finding.StartsWith(L"(")) {
+			//remove brackets;
+			wxStringTokenizer toknzr(data.finding.Mid(1, data.finding.length() - 2), L",", wxTOKEN_STRTOK);
+			int i = 0;
+			while (toknzr.HasMoreTokens())
+			{
+				wxString token = toknzr.GetNextToken().Trim(false).Trim();
+				double val = 0;
+				if (token.ToCDouble(&val)) {
+					if (i == 0) {
+						actualTag.value = val;
+						CheckRange(val);
+					}
+					else if (i == 1) {
+						actualTag.value2 = val;
+						CheckRange(val);
+					}
+				}
+				i++;
+				if (i >= 2)
+					break;
+			}
+
+		}
+		else {
+			double val = 0;
+			if (data.finding.ToCDouble(&val)) {
+				actualTag.value = val;
+				CheckRange(val);
+			}
+		}
+	}
 }
 
 void AllTags::ChangeTool(int _tool)
@@ -170,28 +219,50 @@ void AllTags::ChangeTool(int _tool)
 	SetCurVisual();
 }
 
-void AllTags::GetVisual(wxString* visual, const wxString& curValue)
+void AllTags::GetVisualValue(wxString* visual, const wxString& curValue, bool dummy)
 {
 	float value = thumbValue;
-	if (changeMoveDiff) {
+	float valuediff = dummy? thumbValue - lastThumbValue : thumbValue - firstThumbValue;
+	wxString strval;
+	if (curValue.empty()) {
+		//value = thumbValue;
+		
+		strval = getfloat(changeMoveDiff? MID(actualTag.rangeMin, valuediff, actualTag.rangeMax) : value);
+	}
+	else if (curValue.StartsWith(L"(")) {
+		//remove brackets;
+		wxStringTokenizer toknzr(curValue.Mid(1, curValue.length() - 2), L",", wxTOKEN_STRTOK);
+		strval = L"(";
+		while (toknzr.HasMoreTokens())
+		{
+			wxString token = toknzr.GetNextToken().Trim(false).Trim();
+			double val = 0;
+			if (token.ToCDouble(&val)) {
+				val += valuediff;
+				strval << getfloat(val);
+			}
+		}
+		strval << L")";
+	}
+	else {
 		double val = 0;
-		if (curValue.ToCDouble(&val)) {
-			value = val + (thumbValue - lastThumbValue);
+		wxString trimed = curValue;
+		trimed.Trim(false).Trim();
+		if (trimed.ToCDouble(&val)) {
+			val += valuediff;
+			strval = getfloat(val);
 		}
 	}
 	
-	*visual = L"\\" + actualTag.tag + getfloat(value);
+	*visual = strval;
 }
 
-void AllTags::ChangeVisual(wxString* txt, Dialogue* _dial)
+void AllTags::ChangeVisual(wxString* txt, bool dummy)
 {
-	wxString tagpattern = actualTag.tag + L"([0-9.-]+)";
-	wxString tmp;
-	tab->Edit->FindValue(tagpattern, &tmp, *txt, 0, actualTag.mode);
-
-	wxString visualText;
-	GetVisual(&visualText, tmp);
-	ChangeText(txt, visualText, tab->Edit->InBracket, tab->Edit->Placed);
+	auto replfunc = [=](const FindData& data, wxString* result) {
+		GetVisualValue(result, data.finding, dummy);
+	};
+	ReplaceAll(actualTag.tag + L"([0-9.,\\(\\) ]*)", actualTag.tag, txt, replfunc, true);
 }
 
 void AllTags::ChangeInLines(bool dummy)
@@ -225,14 +296,14 @@ void AllTags::ChangeInLines(bool dummy)
 		int moveLength = 0;
 		const wxString& tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++) {
-
-			Dialogue* Dial = grid->GetDialogue(sels[i]);
+			int sel = sels[i];
+			Dialogue* Dial = grid->GetDialogue(sel);
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
-			ChangeVisual(&txt, Dial);
+			ChangeVisual(&txt, false);
 			if (!dummy) {
-				grid->CopyDialogue(sels[i])->SetText(txt);
+				grid->CopyDialogue(sel)->SetText(txt);
 			}
 			else {
 				Dialogue Cpy = Dialogue(*Dial);
@@ -272,21 +343,17 @@ void AllTags::ChangeInLines(bool dummy)
 	//put it on to editor
 	if (dummy) {
 		wxString txt = editor->GetValue();
-		wxString tmp;
-
-		wxString tagpattern = actualTag.tag + L"([0-9.-]+)";
-		edit->FindValue(tagpattern, &tmp, txt, 0, actualTag.mode);
-
-		wxString visualText;
-		GetVisual(&visualText, tmp);
-		ChangeText(&txt, visualText, edit->InBracket, edit->Placed);
+		ChangeVisual(&txt, dummy);
 		if (!dummytext) {
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &dumplaced);
 			if (!vis) { SAFE_DELETE(dummytext); return; }
 		}
+
 		editor->SetTextS(txt, false, false);
-		editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
+		FindTag(actualTag.tag + L"([0-9.,\\(\\) ]*)", L"", actualTag.mode);
+		const FindData& data = GetResult();
+		editor->SetSelection(data.positionInText.x, data.positionInText.x, true);
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
 		dumplaced.y = txt.length();
 		wxString* dtxt = new wxString(*dummytext);
@@ -300,3 +367,12 @@ void AllTags::ChangeInLines(bool dummy)
 
 	}
 }
+
+void AllTags::CheckRange(float val)
+{
+	if (val < actualTag.rangeMin)
+		actualTag.rangeMin = val;
+	if (val > actualTag.rangeMax)
+		actualTag.rangeMax = val;
+}
+

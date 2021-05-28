@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Utils.h"
+//#include "Utils.h"
 #include "KaiScrollbar.h"
 #include "config.h"
 #include <wx/dc.h>

@@ -15,16 +15,17 @@
 
 
 #pragma once
-
+#include <d3d9.h>
+#include <d3dx9.h>
+#undef DrawText
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/thread.h>
 #include <vector>
-#include <d3d9.h>
-#include <d3dx9.h>
 #include <map>
 #include "VisualAllTagsEdition.h"
+#include "TagFindReplace.h"
 
 
 enum{
@@ -38,7 +39,8 @@ enum{
 	VECTORCLIP,
 	VECTORDRAW,
 	MOVEALL,
-	SCALE_ROTATION
+	SCALE_ROTATION,
+	ALL_TAGS
 };
 
 class Dialogue;
@@ -61,7 +63,7 @@ public:
 	bool isSelected;
 };
 
-class Visuals
+class Visuals : public TagFindReplace
 {
 public:
 	Visuals();
@@ -443,19 +445,57 @@ private:
 	bool tagYFound = false;
 };
 
+//typedef std::vector<float> pointsTable;
+//class Data
+//{
+//public:
+//	Data() {};
+//	Data(pointsTable *table, const FindData &fdata) {
+//		floatResults = table;
+//		findData = fdata;
+//	}
+//	~Data() {
+//		delete floatResults;
+//	}
+//	FindData findData;
+//	pointsTable *floatResults;
+//};
+//
+//class AllTagsData {
+//	
+//public:
+//	AllTagsData() {};
+//	AllTagsData(Dialogue* dial, size_t linenum, const std::vector<Data *>& points) {
+//		dialogue = dial;
+//		line = linenum;
+//		dataPoints = points;
+//	}
+//	~AllTagsData() {
+//		for (auto cur = dataPoints.begin(); cur != dataPoints.end(); cur++) {
+//			delete (*cur);
+//		}
+//	}
+//	std::vector<Data*> dataPoints;
+//	Dialogue* dialogue;
+//	size_t line;
+//};
 
-
-class AllTags : public Visuals 
+class AllTags : public Visuals
 {
 public:
 	AllTags();
-	~AllTags() {};
+	~AllTags() {
+		/*for (auto cur = data.begin(); cur != data.end(); cur++) {
+			delete (*cur);
+		}*/
+	};
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent& event);
 	void SetCurVisual();
+	void FindTagValues();
 	void ChangeTool(int _tool);
-	void GetVisual(wxString* visual, const wxString &curValue);
-	void ChangeVisual(wxString* txt, Dialogue* _dial);
+	void GetVisualValue(wxString* visual, const wxString &curValue, bool dummy);
+	void ChangeVisual(wxString* txt, bool dummy);
 private:
 	enum {
 		THUMB_RELEASED = 0,
@@ -463,12 +503,15 @@ private:
 		THUMB_PUSHED
 	};
 	void ChangeInLines(bool dummy);
+	void CheckRange(float val);
 	std::vector<AllTagsSetting> *tags;
+	//std::vector<AllTagsData *> data;
 	AllTagsSetting actualTag;
 	bool holding = false;
 	bool changeMoveDiff = false;
 	float thumbValue = 0.f;
 	float lastThumbValue = 0.f;
+	float firstThumbValue = 0.f;
 	int thumbState = 0;
 	int currentTag = 0;
 };

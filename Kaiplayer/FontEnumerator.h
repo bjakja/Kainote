@@ -15,11 +15,11 @@
 
 #pragma once
 
+#include <windows.h>
+#include <wingdi.h>
 #include <wx/arrstr.h>
 #include <wx/thread.h>
 #include <wx/window.h>
-#include <windows.h>
-#include <wingdi.h>
 #include <map>
 #include <vector>
 #include <functional>

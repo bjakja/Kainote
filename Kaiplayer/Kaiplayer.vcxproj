@@ -524,6 +524,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
     <ClCompile Include="AudioDeviceEnumeration.cpp" />
@@ -639,7 +640,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubtitlesProviderManager.cpp" />
     <ClCompile Include="SubtitlesVSFilter.cpp" />
     <ClCompile Include="TextEditorTagList.cpp" />
-    <ClCompile Include="Utils.cpp" />
+    <ClCompile Include="UtilsWindows.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
     <ClCompile Include="VisualAllTagsEdition.cpp" />
     <ClCompile Include="VisualCross.cpp" />
@@ -813,9 +814,10 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsResampleDialog.h" />
     <ClInclude Include="SubtitlesProvider.h" />
     <ClInclude Include="SubtitlesProviderManager.h" />
+    <ClInclude Include="TagFindReplace.h" />
     <ClInclude Include="TextEditorTagList.h" />
     <ClInclude Include="Toolbar.h" />
-    <ClInclude Include="Utils.h" />
+    <ClInclude Include="UtilsWindows.h" />
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />
     <ClInclude Include="KaraokeSplitting.h" />

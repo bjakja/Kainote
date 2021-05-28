@@ -17,7 +17,7 @@
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
 #include "KainoteMain.h"
-#include "Utils.h"
+#include "Config.h"
 #include <wx/regex.h>
 
 SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size)

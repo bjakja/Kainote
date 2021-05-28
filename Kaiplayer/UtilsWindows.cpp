@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Utils.h"
+#include "UtilsWindows.h"
 #include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>

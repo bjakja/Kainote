@@ -13,11 +13,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
 #include "Hotkeys.h"
-#include "OpennWrite.h"
 #include "KainoteMain.h"
 #include "Config.h"
+#include "OpennWrite.h"
+
 #include "KaiMessageBox.h"
 #include "ConfigConverter.h"
 #include <wx/regex.h>

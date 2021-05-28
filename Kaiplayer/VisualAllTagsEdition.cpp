@@ -33,12 +33,12 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	KaiStaticBoxSizer* tagSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Edytowany tag"));
 	tagList = new KaiChoice(this, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetSelection(curTag);
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &AllTagsEdition::OnAddTag, ID_BUTTON_ADD_TAG);
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &AllTagsEdition::OnListChanged, this, ID_BUTTON_ADD_TAG);
 	newTagName = new KaiTextCtrl(this, -1);
 	MappedButton* addTag = new MappedButton(this, ID_BUTTON_ADD_TAG, _("Dodaj tag"));
 	MappedButton* removeTag = new MappedButton(this, ID_BUTTON_REMOVE_TAG, _("Usuń tag"));
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnAddTag, ID_BUTTON_ADD_TAG);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnRemoveTag, ID_BUTTON_REMOVE_TAG);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnAddTag, this, ID_BUTTON_ADD_TAG);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnRemoveTag, this, ID_BUTTON_REMOVE_TAG);
 	tagSizer->Add(tagList, 1, wxALL | wxEXPAND, 4);
 	tagSizer->Add(newTagName, 1, wxALL | wxEXPAND, 4);
 	tagSizer->Add(addTag, 1, wxALL | wxEXPAND, 4);
@@ -74,7 +74,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	value2->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
 	modeVal2Sizer->Add(mode, 2, wxALL | wxEXPAND, 4);
 	modeVal2Sizer->Add(new KaiStaticText(this, -1, _("Wartość 2:")), 1, wxALL | wxEXPAND, 4);
-	modeVal2Sizer->Add(step, 1, wxALL | wxEXPAND, 4);
+	modeVal2Sizer->Add(value2, 1, wxALL | wxEXPAND, 4);
 	editionSizer->Add(nameTagSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(minMaxSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(valStepSizer, 0, wxEXPAND, 0);
@@ -145,6 +145,10 @@ void AllTagsEdition::OnRemoveTag(wxCommandEvent& evt)
 	int sel = tagList->GetSelection();
 	if (sel < 0 || sel >= tags.size()) {
 		KaiMessageBox(L"Selected tag is out of range of tagList.", L"Error", wxOK, this);
+		return;
+	}
+	if (tags.size() <= 1) {
+		KaiMessageBox(_("Nie można usunąć wszystkich tagów z listy"), _("Błąd"), wxOK, this);
 		return;
 	}
 	tags.erase(tags.begin() + sel);
@@ -277,6 +281,7 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 					tmp.has2value = true;
 				}
 			}
+			tags->push_back(tmp);
 		}
 	}
 }

@@ -20,7 +20,7 @@
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include "config.h"
-#include "Utils.h"
+#include "UtilsWindows.h"
 
 const int maxVisible = 10;
 

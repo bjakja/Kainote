@@ -16,13 +16,12 @@
 #pragma once
 
 #include <wx/window.h>
-#undef CreateDialog
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
 #include <vector>
+#undef CreateDialog
 
-
-class GraphicsContext;
+//class GraphicsContext;
 
 
 class KaiFrame : public wxTopLevelWindow
@@ -44,7 +43,7 @@ public:
 	bool SetFont(const wxFont &font);
 private:
 	void OnPaint(wxPaintEvent &evt);
-	void PaintD2D(GraphicsContext *gc, int w, int h);
+	//void PaintD2D(GraphicsContext *gc, int w, int h);
 	/*void OnSize(wxSizeEvent &evt);*/
 	void OnMouseEvent(wxMouseEvent &evt);
 	WXLRESULT MSWWindowProc(WXUINT message, WXWPARAM wParam, WXLPARAM lParam);

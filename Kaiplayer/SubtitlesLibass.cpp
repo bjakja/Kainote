@@ -16,7 +16,7 @@
 #include "SubtitlesProvider.h"
 #ifdef subsProvider
 
-#include "Utils.h"
+#include "UtilsWindows.h"
 #include "RendererVideo.h"
 #include "OpennWrite.h"
 #include "kainoteMain.h"

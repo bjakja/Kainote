@@ -16,7 +16,7 @@
 #include "ProviderDummy.h"
 #include "ColorSpace.h"
 #include <wx/tokenzr.h>
-#include "utils.h"
+#include "UtilsWindows.h"
 #include "Videobox.h"
 
 ProviderDummy::~ProviderDummy()

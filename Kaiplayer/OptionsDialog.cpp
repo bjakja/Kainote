@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
+#include "Registry.h"
 #include "OptionsDialog.h"
 #include "config.h"
 #include "kainoteMain.h"
@@ -29,7 +29,6 @@
 #include "KaiStaticText.h"
 #include "OptionsPanels.h"
 #include "StyleChange.h"
-#include "Registry.h"
 #include "SubtitlesProviderManager.h"
 #include "SpellChecker.h"
 

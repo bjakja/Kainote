@@ -15,7 +15,7 @@
 
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
-#include "Utils.h"
+//#include "Utils.h"
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 

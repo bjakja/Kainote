@@ -55,6 +55,7 @@ class AllTagsEdition : public KaiDialog
 public:
 	AllTagsEdition(wxWindow* parent, const wxPoint& pos, std::vector<AllTagsSetting>* _tags, int curTag);
 	virtual ~AllTagsEdition() {};
+	std::vector<AllTagsSetting>* GetTags() { return &tags; };
 private:
 	void OnSave(wxCommandEvent& evt);
 	void OnAddTag(wxCommandEvent& evt);

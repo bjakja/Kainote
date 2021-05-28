@@ -21,10 +21,7 @@
  **************************************************************/
 
 #pragma once
-
-#include <windows.h>
-#include <wx/timer.h>
-#include "KaiFrame.h"
+//#include <windows.h>
 #include "Tabs.h"
 #include <vector>
 #include "TabPanel.h"
@@ -36,8 +33,12 @@
 #include "KaiStatusBar.h"
 #include "LogHandler.h"
 #include "MisspellReplacer.h"
+#include "KaiFrame.h"
+#include <wx/timer.h>
 
 class FontCollector;
+struct tagRECT;
+typedef RECT tagRECT;
 
 class KainoteFrame : public KaiFrame
 {

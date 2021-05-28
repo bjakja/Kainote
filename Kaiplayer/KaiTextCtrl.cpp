@@ -16,7 +16,7 @@
 #include "KaiTextCtrl.h"
 #include "Menu.h"
 #include <wx/clipbrd.h>
-#include "Utils.h"
+//#include "Utils.h"
 #include "GraphicsD2D.h"
 #include "config.h"
 
