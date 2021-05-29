@@ -57,6 +57,13 @@ public:
 	double GetFontSizeDouble();
 	void SetFontSizeString(const wxString &size){ Fontsize = size; };
 	void SetFontSizeDouble(double size);
+	double GetOtlineDouble();
+	double GetShadowDouble();
+	double GetSpacingDouble();
+	double GetAngleDouble();
+	int GetAlignment();
+	double GetScaleXDouble();
+	double GetScaleYDouble();
 	Styles();
 	Styles(wxString styledata, char format = 1);
 	~Styles();

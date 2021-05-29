@@ -1510,6 +1510,14 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 }
 
+void VideoCtrl::OnLostCapture(wxMouseCaptureLostEvent& evt)
+{
+	if (HasCapture()) { ReleaseMouse(); }
+	if (renderer && renderer->HasVisual(false)) {
+		renderer->GetVisual()->OnMouseCaptureLost(evt);
+	}
+}
+
 bool VideoCtrl::SetBackgroundColour(const wxColour &col)
 {
 	m_VideoPanel->SetBackgroundColour(col);

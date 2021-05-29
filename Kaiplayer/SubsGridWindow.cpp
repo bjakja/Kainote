@@ -320,7 +320,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(wxString::Format(L"%i", chtime));
 					shorttime = chtime > 15;
 				}
-				else {
+				else if (subsFormat != TMP) {
 					strings.push_back(L"");
 					shorttime = false;
 				}
@@ -464,7 +464,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 				if (subsFormat < SRT) { isCenter = !(j == 4 || j == 5 || j == 9 || j > 10); }
-				else if (subsFormat == TMP) { isCenter = (j == 1); }
+				else if (subsFormat == TMP) { isCenter = (j == 0 || j == 1); }
 				else { isCenter = !(j == 4 || j == 5); }
 
 				tdc.SetTextForeground((isHeadline) ? headerText : (collis) ? collcol : textcol);
@@ -636,7 +636,9 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				strings.push_back(_("M.Pi."));
 				strings.push_back(_("Efekt"));
 			}
-			if (subsFormat != TMP){ strings.push_back(_("ZNS")); }
+			if (subsFormat != TMP) {
+				strings.push_back(_("ZNS"));
+			}
 			strings.push_back(_("Łamania"));
 			strings.push_back(showOriginal ? _("Tekst oryginalny") : _("Tekst"));
 			if (showOriginal){ strings.push_back(_("Tekst tłumaczenia")); }
@@ -705,7 +707,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				strings.push_back(wxString::Format(L"%i", chtime));
 				shorttime = chtime > 15;
 			}
-			else {
+			else if (subsFormat != TMP) {
 				strings.push_back(L"");
 				shorttime = false;
 			}
@@ -861,7 +863,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				(Dial->Start < acdial->End && Dial->End > acdial->Start));
 
 			if (subsFormat < SRT){ isCenter = !(j == 4 || j == 5 || j == 9 || j > 10); }
-			else if (subsFormat == TMP){ isCenter = (j == 1); }
+			else if (subsFormat == TMP){ isCenter = (j == 0 || j == 1); }
 			else{ isCenter = !(j == 4 || j == 5); }
 
 			gc->SetFont(font, (isHeadline) ? headerText : (collis) ? collcol : textcol);

@@ -46,6 +46,7 @@ enum{
 class Dialogue;
 class TabPanel;
 class DrawingAndClip;
+class TextEditor;
 
 class ClipPoint
 {
@@ -91,6 +92,7 @@ public:
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
+	virtual void OnMouseCaptureLost(wxMouseCaptureLostEvent &evt){}
 	virtual void GetVisual(wxString *visual){};
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	virtual void AppendClipMask(wxString *mask) {};
@@ -494,8 +496,8 @@ public:
 	void SetCurVisual();
 	void FindTagValues();
 	void ChangeTool(int _tool);
-	void GetVisualValue(wxString* visual, const wxString &curValue, bool dummy);
-	void ChangeVisual(wxString* txt, bool dummy);
+	void GetVisualValue(wxString* visual, const wxString &curValue);
+	void ChangeVisual(wxString* txt);
 private:
 	enum {
 		THUMB_RELEASED = 0,
@@ -504,16 +506,25 @@ private:
 	};
 	void ChangeInLines(bool dummy);
 	void CheckRange(float val);
+	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	std::vector<AllTagsSetting> *tags;
 	//std::vector<AllTagsData *> data;
 	AllTagsSetting actualTag;
+	wxString currentLineText;
+	TextEditor* editor = NULL;
 	bool holding = false;
+	bool rholding = false;
 	bool changeMoveDiff = false;
 	float thumbValue = 0.f;
-	float lastThumbValue = 0.f;
 	float firstThumbValue = 0.f;
+	float lastThumbValue = 0.f;
+	float x = 0, y = 0;
 	int thumbState = 0;
 	int currentTag = 0;
+	int sliderPositionY = 40;
+	int sliderPositionDiff = 0;
+	bool onThumb = false;
+	bool onSlider = false;
 };
 
 int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);

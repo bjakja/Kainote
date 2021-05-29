@@ -208,7 +208,7 @@ private:
 	void OnCopyCoords(const wxPoint &pos);
 	void OnErase(wxEraseEvent& event){};
 	void OnChangeVisual(wxCommandEvent &evt);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt){ if (HasCapture()){ ReleaseMouse(); } };
+	void OnLostCapture(wxMouseCaptureLostEvent &evt);
 	void ChangeButtonBMP(bool play = false);
 	wxTimer idletime;
 	DECLARE_EVENT_TABLE()

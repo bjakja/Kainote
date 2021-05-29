@@ -33,11 +33,10 @@ void AllTags::DrawVisual(int time)
 		return;
 	}
 
-	float ypos = VideoSize.height - 20;
 	float left = 20;
 	float right = VideoSize.width - 40;
-	float bottom = ypos;
-	float top = ypos - 8;
+	float bottom = sliderPositionY;
+	float top = sliderPositionY - 8;
 
 	D3DCOLOR fill = /*(sel) ? 0xAAFCE6B1 : */0xAA121150;
 	VERTEX v9[9];
@@ -58,23 +57,33 @@ void AllTags::DrawVisual(int time)
 	float sliderRange = right - left;
 	float coeff = sliderRange / range;
 	float step = actualTag.step * coeff;
+	float thumbtop = top - 10;
+	float thumbbottom = bottom + 10;
+	float thumbposdiff = -actualTag.rangeMin;
 	float lastPos = 0;
 	line->Begin();
+	int j = 0;
 	for (float i = left; i <= right; i += step) {
 		if (i - lastPos > 10) {
 			D3DXVECTOR2 linepoints[] = { D3DXVECTOR2(i, top - 6), D3DXVECTOR2(i, top + 8 + 6) };
 			line->Draw(linepoints, 2, 0xFFBB0000);
 			lastPos = i;
+			float thumbOnSliderValue = ((i - left) / coeff) - thumbposdiff;
+			bool ismod0 = j % 4 == 0;
+			if (j % 4 == 2 || ismod0) {
+				RECT rect = { i - 50, ismod0 ? thumbbottom + 2 : thumbtop - 60, i + 50, ismod0 ? thumbbottom + 60 : thumbtop - 2 };
+				int align = ismod0 ? DT_CENTER : DT_CENTER | DT_BOTTOM;
+				DRAWOUTTEXT(font, getfloat(thumbOnSliderValue, L"5.1f"), rect, align, 0xFFFFFFFF);
+			}
+			j++;
 		}
 	}
 	line->End();
 
-	float thumbposdiff = -actualTag.rangeMin;
-	float thumbpos = (thumbValue * coeff) + left + thumbposdiff;
+	
+	float thumbpos = ((thumbValue + thumbposdiff) * coeff) + left;
 	float thumbleft = thumbpos - 4;
 	float thumbright = thumbpos + 4;
-	float thumbtop = top - 10;
-	float thumbbottom = bottom + 10;
 	fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
 	CreateVERTEX(&v9[0], thumbleft, thumbtop, fill);
 	CreateVERTEX(&v9[1], thumbright, thumbtop, fill);
@@ -88,6 +97,18 @@ void AllTags::DrawVisual(int time)
 
 	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
 	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
+
+	if (onThumb) {
+		RECT rect = { thumbleft - 50, thumbbottom + 10, thumbright + 50, thumbbottom + 50 };
+		DRAWOUTTEXT(font, getfloat(thumbValue), rect, DT_CENTER, 0xFFFFFFFF);
+	}
+	if (onSlider) {
+		float thumbOnSliderValue = ((x - left) / coeff) - thumbposdiff;
+		thumbOnSliderValue = MID(actualTag.rangeMin, thumbOnSliderValue, actualTag.rangeMax);
+		RECT rect = { x - 50, y + 20, x + 50, y + 70 };
+		DRAWOUTTEXT(font, getfloat(thumbOnSliderValue), rect, DT_CENTER, 0xFFFFFFFF);
+	}
+
 }
 
 void AllTags::OnMouseEvent(wxMouseEvent& event)
@@ -99,40 +120,93 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	}
 	float thumbposdiff = -actualTag.rangeMin;
 
-	float ypos = VideoSize.height - 20;
 	float left = 20;
 	float right = VideoSize.width - 40;
-	float bottom = ypos;
-	float top = ypos - 8;
+	float bottom = sliderPositionY;
+	float top = sliderPositionY - 8;
 	float sliderRange = right - left;
 	float coeff = sliderRange / range;
 	float step = actualTag.step * coeff;
-	float thumbpos = (thumbValue * coeff) + left + thumbposdiff;
+	float thumbpos = ((thumbValue + thumbposdiff) * coeff) + left;
 	float thumbleft = thumbpos - 4;
 	float thumbright = thumbpos + 4;
 	float thumbtop = top - 10;
 	float thumbbottom = bottom + 10;
-	float x = event.GetX();
-	float y = event.GetY();
-	bool onThumb = false;
-	bool onSlider = false;
-	//outside slider, nothing to do
-	if ((x < left || y < thumbtop || x > right || y > thumbbottom) && !holding)
-		return;
+	x = event.GetX();
+	y = event.GetY();
+	if (event.Leaving()) {
+		if (thumbState != 0) {
+			thumbState = 0;
+			tab->Video->Render(false);
+		}
+	}
 
-	//on thumb position
-	if (x >= thumbleft && x <= thumbright && y >= thumbtop && y <= thumbbottom) {
-		onThumb = true;
-	}//on slider
-	else if (y >= top - 5 && y <= bottom + 5)
-		onSlider = true;
-	//if not holding just return, nothing to do
-	else if (!holding)
-		return;
+	if (rholding) {
+		sliderPositionY = y + sliderPositionDiff;
+		tab->Video->Render(false);
+		onSlider = onThumb = false;
+		if (!event.RightUp()) {
+			return;
+		}
+	}
+
+	if (event.GetWheelRotation() != 0) {
+		int rot = event.GetWheelRotation() / event.GetWheelDelta();
+		firstThumbValue = thumbValue;
+		thumbValue = rot < 0 ? thumbValue - actualTag.step : thumbValue + actualTag.step;
+		thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
+		//sprwdziæ dlaczego to nie dzia³a
+		if (firstThumbValue != thumbValue) {
+			if (tab->Edit->IsCursorOnStart()) {
+				ChangeInLines(false);
+			}
+			else {
+				ChangeInLines(false);
+				ChangeInLines(true);
+			}
+		}
+	}
+	
+	if (!holding) {
+		
+		//outside slider, nothing to do
+		if ((x < left - 5 || y < thumbtop || x > right + 5 || y > thumbbottom)) {
+			if (thumbState != 0 || onSlider || onThumb) {
+				thumbState = 0;
+				onSlider = onThumb = false;
+				tab->Video->Render(false);
+			}
+			return;
+		}
+
+		onThumb = false;
+		onSlider = false;
+		//on thumb position
+		if (x >= thumbleft && x <= thumbright && y >= thumbtop && y <= thumbbottom) {
+			onThumb = true;
+			if (!event.LeftDown() && !event.LeftDClick() && !event.LeftUp() && thumbState != 1) {
+				thumbState = 1;
+				tab->Video->Render(false);
+			}
+		}//on slider
+		else{
+			if (y >= top - 5 && y <= bottom + 5 && x >= left && x <= right) {
+				onSlider = true;
+			}
+			if (!event.LeftDown() && !event.LeftDClick() && !event.LeftUp()) {
+				thumbState = 0;
+				tab->Video->Render(false);
+			}
+			
+			if (!onSlider)
+				return;
+		}
+		
+	}
 
 	if (holding) {
 		//calculate new thumb value from mouse position
-		thumbValue = (x - left - thumbposdiff) / coeff;
+		thumbValue = ((x - left) / coeff) - thumbposdiff;
 		thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
 		if(lastThumbValue != thumbValue)
 			ChangeInLines(true);
@@ -143,24 +217,43 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	if (event.LeftDown() || event.LeftDClick()) {
 		lastThumbValue = firstThumbValue = thumbValue;
 		if (onThumb) {
+			thumbState = 2;
 			if (!tab->Video->HasCapture()) {
 				tab->Video->CaptureMouse();
 			}
+			tab->Video->Render(false);
 			holding = true;
 		}
 		else if (onSlider) {
-			thumbValue = (x - left - thumbposdiff) / coeff;
+			thumbState = 1;
+			thumbValue = ((x - left) / coeff) - thumbposdiff;
 			thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
 			ChangeInLines(true);
 		}
 	}
 
 	if (event.LeftUp()) {
+		thumbState = 0;
 		holding = false;
 		if (tab->Video->HasCapture()) {
 			tab->Video->ReleaseMouse();
 		}
 		ChangeInLines(false);
+	}
+	
+	if (event.RightDown() || event.RightDClick()) {
+		if (!tab->Video->HasCapture()) {
+			tab->Video->CaptureMouse();
+		}
+		sliderPositionDiff = sliderPositionY - y;
+		rholding = true;
+	}
+
+	if (event.RightUp()) {
+		if (tab->Video->HasCapture()) {
+			tab->Video->ReleaseMouse();
+		}
+		rholding = false;
 	}
 }
 
@@ -177,7 +270,20 @@ void AllTags::SetCurVisual()
 
 void AllTags::FindTagValues()
 {
-	if (FindTag(actualTag.tag + L"([0-9.,\\(\\) ]*)", L"", actualTag.mode)) {
+	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
+	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+	currentLineText = editor->GetValue();
+	Styles* acstyl = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+	if (actualTag.tag == L"fs")
+		actualTag.value = acstyl->GetFontSizeDouble();
+	else if(actualTag.tag == L"bord")
+		actualTag.value = acstyl->GetOtlineDouble();
+	else if(actualTag.tag == L"shad")
+		actualTag.value = acstyl->GetShadowDouble();
+	else if (actualTag.tag == L"fsp")
+		actualTag.value = acstyl->GetSpacingDouble();
+
+	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", L"", actualTag.mode)) {
 		const FindData& data = GetResult();
 		if (data.finding.StartsWith(L"(")) {
 			//remove brackets;
@@ -219,10 +325,10 @@ void AllTags::ChangeTool(int _tool)
 	SetCurVisual();
 }
 
-void AllTags::GetVisualValue(wxString* visual, const wxString& curValue, bool dummy)
+void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 {
 	float value = thumbValue;
-	float valuediff = dummy? thumbValue - lastThumbValue : thumbValue - firstThumbValue;
+	float valuediff = thumbValue - firstThumbValue;
 	wxString strval;
 	if (curValue.empty()) {
 		//value = thumbValue;
@@ -257,22 +363,19 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue, bool du
 	*visual = strval;
 }
 
-void AllTags::ChangeVisual(wxString* txt, bool dummy)
+void AllTags::ChangeVisual(wxString* txt)
 {
 	auto replfunc = [=](const FindData& data, wxString* result) {
-		GetVisualValue(result, data.finding, dummy);
+		GetVisualValue(result, data.finding);
 	};
-	ReplaceAll(actualTag.tag + L"([0-9.,\\(\\) ]*)", actualTag.tag, txt, replfunc, true);
+	ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
 }
 
 void AllTags::ChangeInLines(bool dummy)
 {
 	EditBox* edit = tab->Edit;
 	SubsGrid* grid = tab->Grid;
-
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
 	//Get editor
-	TextEditor* editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//two stages, stage first selected lines
 	if (edit->IsCursorOnStart()) {
 		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
@@ -301,7 +404,7 @@ void AllTags::ChangeInLines(bool dummy)
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
-			ChangeVisual(&txt, false);
+			ChangeVisual(&txt);
 			if (!dummy) {
 				grid->CopyDialogue(sel)->SetText(txt);
 			}
@@ -342,8 +445,8 @@ void AllTags::ChangeInLines(bool dummy)
 	}
 	//put it on to editor
 	if (dummy) {
-		wxString txt = editor->GetValue();
-		ChangeVisual(&txt, dummy);
+		wxString txt = currentLineText;
+		ChangeVisual(&txt);
 		if (!dummytext) {
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &dumplaced);
@@ -374,5 +477,10 @@ void AllTags::CheckRange(float val)
 		actualTag.rangeMin = val;
 	if (val > actualTag.rangeMax)
 		actualTag.rangeMax = val;
+}
+
+void AllTags::OnMouseCaptureLost(wxMouseCaptureLostEvent& evt)
+{
+	holding = rholding = false;
 }
 

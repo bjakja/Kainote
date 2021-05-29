@@ -124,6 +124,66 @@ bool AssColor::NotEqual(const AssColor& color, bool alpha /*= false*/)
 	return r != color.r || g != color.g || b != color.b;
 }
 
+double Styles::GetOtlineDouble()
+{
+	double outline = 0.;
+	if (!Outline.ToDouble(&outline))
+		outline = wxAtoi(Outline);
+
+	return outline;
+}
+
+double Styles::GetShadowDouble()
+{
+	double shadow = 0.;
+	if (!Shadow.ToDouble(&shadow))
+		shadow = wxAtoi(Shadow);
+
+	return shadow;
+}
+double Styles::GetSpacingDouble()
+{
+	double spacing = 0.;
+	if (!Spacing.ToDouble(&spacing))
+		spacing = wxAtoi(Spacing);
+
+	return spacing;
+}
+double Styles::GetAngleDouble()
+{
+	double angle = 0.;
+	if (!Angle.ToDouble(&angle))
+		angle = wxAtoi(Angle);
+
+	return angle;
+}
+int Styles::GetAlignment()
+{
+	double align = 0.;
+	if (!Alignment.ToDouble(&align))
+		align = wxAtoi(Alignment);
+
+	return align;
+}
+
+double Styles::GetScaleXDouble()
+{
+	double scalex = 0.;
+	if (!ScaleX.ToDouble(&scalex))
+		scalex = wxAtoi(ScaleX);
+
+	return scalex;
+}
+
+double Styles::GetScaleYDouble()
+{
+	double scaley = 0.;
+	if (!ScaleY.ToDouble(&scaley))
+		scaley = wxAtoi(ScaleY);
+
+	return scaley;
+}
+
 Styles::Styles()
 {
 	Name = _T("Default");
