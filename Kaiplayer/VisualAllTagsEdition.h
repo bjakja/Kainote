@@ -29,13 +29,14 @@ public:
 	AllTagsSetting() {};
 	AllTagsSetting(const wxString& _name, const wxString& _tag,
 		float _rangeMin, float _rangeMax, float _value,
-		float _step, unsigned char _mode = 0) {
+		float _step, unsigned char numDigitsAfterDot, unsigned char _mode = 0) {
 		name = _name;
 		tag = _tag;
 		rangeMin = _rangeMin;
 		rangeMax = _rangeMax;
 		value = _value;
 		step = _step;
+		DigitsAfterDot = numDigitsAfterDot;
 		mode = _mode;
 	};
 	AllTagsSetting(const wxString& _name) { name = _name; };
@@ -48,6 +49,7 @@ public:
 	float value2 = 0.f;
 	bool has2value = false;
 	unsigned char mode = 0;
+	unsigned char DigitsAfterDot = 0;
 };
 
 class AllTagsEdition : public KaiDialog

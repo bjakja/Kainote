@@ -100,13 +100,13 @@ void AllTags::DrawVisual(int time)
 
 	if (onThumb) {
 		RECT rect = { thumbleft - 50, thumbbottom + 10, thumbright + 50, thumbbottom + 50 };
-		DRAWOUTTEXT(font, getfloat(thumbValue), rect, DT_CENTER, 0xFFFFFFFF);
+		DRAWOUTTEXT(font, getfloat(thumbValue, floatFormat), rect, DT_CENTER, 0xFFFFFFFF);
 	}
 	if (onSlider) {
 		float thumbOnSliderValue = ((x - left) / coeff) - thumbposdiff;
 		thumbOnSliderValue = MID(actualTag.rangeMin, thumbOnSliderValue, actualTag.rangeMax);
 		RECT rect = { x - 50, y + 20, x + 50, y + 70 };
-		DRAWOUTTEXT(font, getfloat(thumbOnSliderValue), rect, DT_CENTER, 0xFFFFFFFF);
+		DRAWOUTTEXT(font, getfloat(thumbOnSliderValue, floatFormat), rect, DT_CENTER, 0xFFFFFFFF);
 	}
 
 }
@@ -134,13 +134,35 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	float thumbbottom = bottom + 10;
 	x = event.GetX();
 	y = event.GetY();
+	//leave the window
 	if (event.Leaving()) {
 		if (thumbState != 0) {
 			thumbState = 0;
 			tab->Video->Render(false);
 		}
 	}
-
+	//wheel rotation
+	if (event.GetWheelRotation() != 0) {
+		int rot = event.GetWheelRotation() / event.GetWheelDelta();
+		firstThumbValue = thumbValue;
+		thumbValue = rot < 0 ? thumbValue - actualTag.step : thumbValue + actualTag.step;
+		thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
+		
+		if (firstThumbValue != thumbValue) {
+			onThumb = true;
+			onSlider = false;
+			if (tab->Edit->IsCursorOnStart()) {
+				ChangeInLines(false);
+			}
+			else {
+				ChangeInLines(false);
+				ChangeInLines(true);
+			}
+			
+		}
+		return;
+	}
+	// right holding
 	if (rholding) {
 		sliderPositionY = y + sliderPositionDiff;
 		tab->Video->Render(false);
@@ -149,24 +171,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			return;
 		}
 	}
-
-	if (event.GetWheelRotation() != 0) {
-		int rot = event.GetWheelRotation() / event.GetWheelDelta();
-		firstThumbValue = thumbValue;
-		thumbValue = rot < 0 ? thumbValue - actualTag.step : thumbValue + actualTag.step;
-		thumbValue = MID(actualTag.rangeMin, thumbValue, actualTag.rangeMax);
-		//sprwdziæ dlaczego to nie dzia³a
-		if (firstThumbValue != thumbValue) {
-			if (tab->Edit->IsCursorOnStart()) {
-				ChangeInLines(false);
-			}
-			else {
-				ChangeInLines(false);
-				ChangeInLines(true);
-			}
-		}
-	}
-	
+	//skip unneeded positions
 	if (!holding) {
 		
 		//outside slider, nothing to do
@@ -263,6 +268,7 @@ void AllTags::SetCurVisual()
 	if (currentTag < 0 || currentTag >= tags->size())
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
+	floatFormat = wxString::Format(L"5.%if", actualTag.DigitsAfterDot);
 	FindTagValues();
 	thumbValue = actualTag.value;
 	tab->Video->Render(false);
@@ -333,7 +339,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	if (curValue.empty()) {
 		//value = thumbValue;
 		
-		strval = getfloat(changeMoveDiff? MID(actualTag.rangeMin, valuediff, actualTag.rangeMax) : value);
+		strval = getfloat(changeMoveDiff? MID(actualTag.rangeMin, valuediff, actualTag.rangeMax) : value, floatFormat);
 	}
 	else if (curValue.StartsWith(L"(")) {
 		//remove brackets;
@@ -345,7 +351,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			double val = 0;
 			if (token.ToCDouble(&val)) {
 				val += valuediff;
-				strval << getfloat(val);
+				strval << getfloat(val, floatFormat);
 			}
 		}
 		strval << L")";
@@ -356,7 +362,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		trimed.Trim(false).Trim();
 		if (trimed.ToCDouble(&val)) {
 			val += valuediff;
-			strval = getfloat(val);
+			strval = getfloat(val, floatFormat);
 		}
 	}
 	

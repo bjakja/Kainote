@@ -511,6 +511,7 @@ private:
 	//std::vector<AllTagsData *> data;
 	AllTagsSetting actualTag;
 	wxString currentLineText;
+	wxString floatFormat = L"5.3f";
 	TextEditor* editor = NULL;
 	bool holding = false;
 	bool rholding = false;

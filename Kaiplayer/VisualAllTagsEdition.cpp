@@ -225,20 +225,20 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 	wxString txtSettings;
 	if (!ow.FileOpen(path, &txtSettings, false)) {
 		//write entire setings in plain text
-		//Tag: name, tag, min, max, value, step, mode, [valuey]
-		txtSettings = L"Tag: blur, blur, 0, 200, 0, 0.5, 0\n"\
-			L"Tag: border, bord, 0, 50, 0, 1, 0\n"\
-			L"Tag: blur edge, be, 0, 100, 0, 1, 0\n"\
-			L"Tag: fading, fad, 0, 2000, 0, 5, 1, 0\n"\
-			L"Tag: fax, fax, -10, 10, 0, 0.05, 0\n"\
-			L"Tag: fay, fay, -10, 10, 0, 0.05, 0\n"\
-			L"Tag: font size, fs, 0, 300, 70, 1, 0\n"\
-			L"Tag: spacing, fsp, -100, 100, 0, 1, 0\n"\
-			L"Tag: shadow, shad, 0, 80, 0, 1, 0\n"\
-			L"Tag: xborder, xbord, 0, 80, 0, 1, 0\n"\
-			L"Tag: yborder, ybord, 0, 80, 0, 1, 0\n"\
-			L"Tag: xshadow, xshad, -80, 80, 0, 1, 0\n"\
-			L"Tag: yshadow, yshad, -80, 80, 0, 1, 0\n";
+		//Tag: name, tag, min, max, value, step, num digits after dot, mode, [valuey]
+		txtSettings = L"Tag: blur, blur, 0, 200, 0, 0.5, 1, 0\n"\
+			L"Tag: border, bord, 0, 50, 0, 1, 1, 0\n"\
+			L"Tag: blur edge, be, 0, 100, 0, 1, 1, 0\n"\
+			L"Tag: fading, fad, 0, 2000, 0, 5, 0, 1, 0\n"\
+			L"Tag: fax, fax, -10, 10, 0, 0.05, 3, 0\n"\
+			L"Tag: fay, fay, -10, 10, 0, 0.05, 3, 0\n"\
+			L"Tag: font size, fs, 0, 300, 70, 1, 0, 0\n"\
+			L"Tag: spacing, fsp, -100, 100, 0, 1, 1, 0\n"\
+			L"Tag: shadow, shad, 0, 80, 0, 1, 1, 0\n"\
+			L"Tag: xborder, xbord, 0, 80, 0, 1, 1, 0\n"\
+			L"Tag: yborder, ybord, 0, 80, 0, 1, 1, 0\n"\
+			L"Tag: xshadow, xshad, -80, 80, 0, 1, 1, 0\n"\
+			L"Tag: yshadow, yshad, -80, 80, 0, 1, 1, 0\n";
 	}
 	wxStringTokenizer tokenzer(txtSettings, "\n", wxTOKEN_STRTOK);
 	while (tokenzer.HasMoreTokens()) {
@@ -272,6 +272,9 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 			if (!tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval))
 				continue;
 			tmp.step = tmpval;
+			if (!tkzer.HasMoreTokens())
+				continue;
+			tmp.DigitsAfterDot = wxAtoi(tkzer.GetNextToken().Trim(false));
 			if (!tkzer.HasMoreTokens())
 				continue;
 			tmp.mode = wxAtoi(tkzer.GetNextToken().Trim(false));
