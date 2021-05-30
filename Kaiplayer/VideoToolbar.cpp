@@ -611,7 +611,12 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 		//wxPoint Pos = edition->GetPosition();
 		AllTagsEdition edit(vtoolbar, wxPoint(), tags, tagList->GetSelection());
 		if (edit.ShowModal() == wxID_OK) {
-			VideoToolbar::SetTagsSettings(edit.GetTags());
+			auto tags = edit.GetTags();
+			VideoToolbar::SetTagsSettings(tags);
+			wxArrayString names;
+			GetNames(tags, &names);
+			tagList->PutArray(&names);
+			selection = tagList->GetSelection();
 			wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 			event->SetInt(GetItemToggled());
 			wxQueueEvent(vtoolbar, event);

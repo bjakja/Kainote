@@ -98,6 +98,7 @@ private:
 	KaiCheckBox* has2Value;
 	std::vector<AllTagsSetting> tags;
 	AllTagsSetting currentTag;
+	int selection = 0;
 };
 
 void LoadSettings(std::vector<AllTagsSetting>* tags);

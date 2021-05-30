@@ -25,14 +25,15 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	if (curTag < 0 || curTag >= _tags->size())
 		curTag = 0;
 
+	selection = curTag;
 	tags = std::vector<AllTagsSetting>(*_tags);
-	currentTag = tags[curTag];
+	currentTag = tags[selection];
 	wxArrayString list;
 	GetNames(&tags, &list);
 	DialogSizer *main = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer* tagSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Edytowany tag"));
 	tagList = new KaiChoice(this, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
-	tagList->SetSelection(curTag);
+	tagList->SetSelection(selection);
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &AllTagsEdition::OnListChanged, this, ID_TAG_LIST);
 	newTagName = new KaiTextCtrl(this, -1);
 	MappedButton* addTag = new MappedButton(this, ID_BUTTON_ADD_TAG, _("Dodaj tag"));
@@ -127,12 +128,12 @@ void AllTagsEdition::OnResetDefault(wxCommandEvent& evt)
 		_("Potwierdzenie"), wxYES_NO, this) == wxYES){
 		wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
 		_wremove(path.wc_str());
+		tags.clear();
 		LoadSettings(&tags);
 		wxArrayString names;
 		GetNames(&tags, &names);
 		tagList->PutArray(&names);
-		tagList->SetSelection(0);
-		SetTag(0);
+		SetTag(tagList->GetSelection());
 	}
 }
 
@@ -143,17 +144,21 @@ void AllTagsEdition::OnAddTag(wxCommandEvent& evt)
 		KaiMessageBox(_("Wpisz nazwę nowego tagu."), _("Błąd"), wxOK, this);
 		return;
 	}
+	if (tagList->FindString(newTagNameStr) != -1) {
+		KaiMessageBox(_("Nowy tag już istnieje na liście, wpisz inną nazwę."), _("Błąd"), wxOK, this);
+		return;
+	}
 	currentTag = AllTagsSetting(newTagNameStr);
 	tags.push_back(currentTag);
 	tagList->Append(currentTag.name);
-	tagList->SetSelection(tags.size() - 1);
+	selection = tags.size() - 1;
+	tagList->SetSelection(selection);
 	SetTagFromSettings();
 }
 
 void AllTagsEdition::OnRemoveTag(wxCommandEvent& evt)
 {
-	int sel = tagList->GetSelection();
-	if (sel < 0 || sel >= tags.size()) {
+	if (selection < 0 || selection >= tags.size()) {
 		KaiMessageBox(L"Selected tag is out of range of tagList.", L"Error", wxOK, this);
 		return;
 	}
@@ -161,35 +166,34 @@ void AllTagsEdition::OnRemoveTag(wxCommandEvent& evt)
 		KaiMessageBox(_("Nie można usunąć wszystkich tagów z listy"), _("Błąd"), wxOK, this);
 		return;
 	}
-	tags.erase(tags.begin() + sel);
-	tagList->Delete(sel);
-	if (sel >= tagList->GetCount()) {
+	tags.erase(tags.begin() + selection);
+	tagList->Delete(selection);
+	if (selection >= tagList->GetCount()) {
 		tagList->SetSelection(tagList->GetCount() - 1);
 	}
 	else
-		tagList->Refresh(false);
+		tagList->SetSelection(selection);
 
-	sel = tagList->GetSelection();
+	selection = tagList->GetSelection();
 	//list is empty
-	if (sel < 0) {
+	if (selection < 0) {
 		currentTag = AllTagsSetting();
 	}
 	else {
-		currentTag = tags[sel];
+		currentTag = tags[selection];
 	}
 	SetTagFromSettings();
 }
 
 void AllTagsEdition::OnListChanged(wxCommandEvent& evt)
 {
-	int sel = tagList->GetSelection();
 	if (CheckModified()) {
-		if (KaiMessageBox(wxString::Format(_("Zapisać zmiany tagu %s?"),
-			tagList->GetString(sel)), _("Potwierdzenie"), wxYES_NO, this) == wxYES) {
+		if (KaiMessageBox(wxString::Format(_("Zapisać zmiany tagu \"%s\"?"),
+			currentTag.tag), _("Potwierdzenie"), wxYES_NO, this) == wxYES) {
 			Save(ID_BUTTON_COMMIT);
 		}
 	}
-	SetTag(sel);
+	SetTag(tagList->GetSelection());
 }
 
 void AllTagsEdition::UpdateTag()
@@ -235,7 +239,7 @@ void AllTagsEdition::SetTag(int num)
 		num = 0;
 
 	currentTag = tags[num];
-	
+	selection = num;
 	SetTagFromSettings();
 
 }
@@ -249,13 +253,12 @@ bool AllTagsEdition::CheckModified()
 		currentTag.value != (float)value->GetDouble() ||
 		currentTag.step != (float)step->GetDouble() ||
 		currentTag.mode != mode->GetSelection() ||
-		currentTag.value2 != (float)value2->GetDouble() ||
 		currentTag.DigitsAfterDot != digitAfterDot->GetInt() ||
 		currentTag.has2value != has2Value->GetValue())
 	{
 		return true;
 	}
-	return false;
+	return currentTag.has2value ? currentTag.value2 != (float)value2->GetDouble() : false;
 }
 
 void AllTagsEdition::Save(int id)
@@ -269,20 +272,19 @@ void AllTagsEdition::Save(int id)
 		currentTag.name = currentTag.tag;
 		tagName->SetValue(currentTag.name);
 	}
-	if (abs(currentTag.rangeMax) - abs(currentTag.rangeMin) <= 0) {
+	if (currentTag.rangeMax <= currentTag.rangeMin) {
 		KaiMessageBox(_("Pole \"Maksymalna wartość\" musi zawierać wartość\nwiększą od pola \"Minimalna wartość\"."), _("Błąd"), wxOK, this);
 		return;
 	}
-	if (((abs(currentTag.rangeMax) - abs(currentTag.rangeMin)) / currentTag.step) < 2) {
+	if (((currentTag.rangeMax - currentTag.rangeMin) / currentTag.step) < 2) {
 		KaiMessageBox(_("Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."), _("Błąd"), wxOK, this);
 		return;
 	}
-	int sel = tagList->GetSelection();
-	if (sel < 0 || sel >= tags.size()) {
+	if (selection < 0 || selection >= tags.size()) {
 		KaiMessageBox(L"Selected tag is out of range of tagList.", L"Error", wxOK, this);
 		return;
 	}
-	tags[sel] = currentTag;
+	tags[selection] = currentTag;
 
 	if (id == ID_BUTTON_OK) {
 		SaveSettings(&tags);

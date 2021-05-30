@@ -497,10 +497,13 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	if (itemList){ itemList->Destroy(); itemList = NULL; }
 	if (ce != L""){
 		if (choice >= (int)list->size()){
-			choice = 0;
+			SetSelection(0);
 		}
 		if (ce != (*list)[choice]){
-			choice = list->Index(ce);
+			int ichoice = list->Index(ce);
+			if(ichoice == -1)
+				ichoice = 0;
+			SetSelection(ichoice);
 		}
 	}
 	Refresh(false);
@@ -990,10 +993,10 @@ void PopupList::OnScroll(wxScrollEvent& event)
 //Odwo³uje pêtlê czekaj¹c¹
 void PopupList::EndPartialModal(int ReturnId)
 {
-	((KaiChoice*)Parent)->SendEvent(ReturnId);
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
 	if (HasCapture()){ ReleaseMouse(); }
 	Hide();
+	((KaiChoice*)Parent)->SendEvent(ReturnId);
 	((KaiChoice*)Parent)->SetFocus();
 }
 
