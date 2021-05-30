@@ -316,16 +316,106 @@ int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 	return 0;
 }
 
-int TagFindReplace::ReplaceFromFindData(const wxString& replaceTxt, const FindData& data)
+//int TagFindReplace::ReplaceFromFindData(const wxString& replaceTxt, const FindData& data)
+//{
+//	
+//	return 0;
+//}
+
+bool TagFindReplace::GetDouble(double* retval)
 {
-	
+	if (result.finding.ToCDouble(retval)) {
+		return true;
+	}
+	return false;
+}
+
+bool TagFindReplace::GetTwoValueInt(int* retval, int* retval2)
+{
+	wxString valtext = result.finding;
+	bool bracketS = valtext.StartsWith(L"(");
+	bool bracketE = valtext.EndsWith(L")");
+	if (bracketS || bracketE) {
+		valtext = valtext.Mid(bracketS ? 1 : 0, bracketE ? valtext.length() - 2 : -1);
+	}
+	double firstval = 0, secondval = 0;
+	wxString sval;
+	wxString fval = result.finding.BeforeFirst(L',', &sval);
+	if (fval.ToCDouble(&firstval) && sval.ToCDouble(&secondval)) {
+		*retval = (int)firstval;
+		*retval2 = (int)secondval;
+		return true;
+	}
+	return false;
+}
+
+bool TagFindReplace::GetTwoValueDouble(double* retval, double* retval2)
+{
+	wxString valtext = result.finding;
+	bool bracketS = valtext.StartsWith(L"(");
+	bool bracketE = valtext.EndsWith(L")");
+	if (bracketS || bracketE) {
+		valtext = valtext.Mid(bracketS ? 1 : 0, bracketE ? valtext.length() - 2 : -1);
+	}
+	wxString sval;
+	wxString fval = result.finding.BeforeFirst(L',', &sval);
+	if (fval.ToCDouble(retval) && sval.ToCDouble(retval2)) {
+		return true;
+	}
+	return false;
+}
+
+bool TagFindReplace::GetInt(int* retval) 
+{
+	bool hasZero = result.finding.StartsWith(L"0");
+	*retval = wxAtoi(result.finding);
+	if (*retval == 0 && !hasZero)
+		return false;
+
+	return true;
+}
+
+//function return 1 when need to add bracket or 0
+int TagFindReplace::ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos)
+{
+	//use only if needed if pos.x == 0 and length == 0 than block 
+	//puting tags for drawing
+	/*if (pos.x > txt->length()) {
+		return 0;
+	}*/
+	if (!inbracket) {
+		txt->insert(pos.x, L"{" + what + L"}");
+		return 1;
+	}
+
+	if (pos.x < pos.y) {
+		if (pos.y + 1 >= txt->length())
+			txt->erase(txt->begin() + pos.x, txt->end());
+		else
+			txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1);
+	}
+	txt->insert(pos.x, what);
 	return 0;
 }
 
-bool TagFindReplace::DoFindNextTag()
+bool TagFindReplace::GetTextResult(wxString* rettext)
 {
-	return false;
+	if (result.finding.empty())
+		return false;
+
+	*rettext = result.finding;
+	return true;
 }
+
+wxPoint TagFindReplace::GetPositionInText()
+{
+	return result.positionInText;
+}
+
+//bool TagFindReplace::DoFindNextTag()
+//{
+//	return false;
+//}
 
 wxPoint FindBrackets(const wxString& text, long from)
 {

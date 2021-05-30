@@ -159,38 +159,39 @@ void MoveAll::SetCurVisual()
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 	elems.clear();
 
-	wxString res;
-	if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res, L"", 0, 1)){
-		wxString rest;
-		double orx, ory;
+	if (FindTag(L"org\\(([^\\)]+)")){
+		double orx = 0, ory = 0;
 
 		moveElems elem;
-		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ elem.elem.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
-		if (rest.ToDouble(&ory)){ elem.elem.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
-		elem.type = TAGORG;
-		elems.push_back(elem);
+		if (GetTwoValueDouble(&orx, &ory)) {
+			elem.elem.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
+			elem.elem.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y;
+			elem.type = TAGORG;
+			elems.push_back(elem);
+		}
 	}
-	if (tab->Edit->FindValue(L"(i?clip[^\\)]+)", &res, L"", 0, 1)){
+	if (FindTag(L"(i?clip[^\\)]+)", L"", 1)){
+		const FindData& data = GetResult();
 		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems elem;
-		if (re.Matches(res)){
-			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
-				((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
+		if (re.Matches(data.finding)){
+			elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(data.finding, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
+				((wxAtoi(re.GetMatch(data.finding, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 		}
 		else{
 			//wxString txt = tab->Edit->TextEdit->GetValue();
-			int repl = res.Replace(L",", L",");
+			int repl = data.finding.Freq(L',');
 			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
-			if (repl >= 3 && re.Matches(res)){
-				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
-					((wxAtoi(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
+			if (repl >= 3 && re.Matches(data.finding)){
+				elem.elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(data.finding, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
+					((wxAtoi(re.GetMatch(data.finding, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 			}
 		}
 		elem.type = TAGCLIP;
 		elems.push_back(elem);
 	}
-	if (tab->Edit->FindValue(L"p([0-9]+)", &res, L"", 0, 1)){
-		res = tab->Edit->GetEditor()->GetValue();
+	if (FindTag(L"p([0-9]+)", L"", 1)){
+		wxString res = tab->Edit->GetEditor()->GetValue();
 		wxRegEx re(L"} ?m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
 		if (re.Matches(res)){
 			moveElems elem;

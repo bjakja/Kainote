@@ -20,6 +20,7 @@
 #include "MappedButton.h"
 #include "KaiStaticBoxSizer.h"
 #include "KaiStaticText.h"
+#include "KaiCheckBox.h"
 #include "NumCtrl.h"
 #include <vector>
 
@@ -39,7 +40,12 @@ public:
 		DigitsAfterDot = numDigitsAfterDot;
 		mode = _mode;
 	};
-	AllTagsSetting(const wxString& _name) { name = _name; };
+	AllTagsSetting(const wxString& _name) {
+		name = _name; 
+		tag = name;
+		step = 1.f;
+		rangeMax = 100.f;
+	};
 	wxString name;
 	wxString tag;
 	float rangeMin = 0.f;
@@ -60,18 +66,23 @@ public:
 	std::vector<AllTagsSetting>* GetTags() { return &tags; };
 private:
 	void OnSave(wxCommandEvent& evt);
+	void OnResetDefault(wxCommandEvent& evt);
 	void OnAddTag(wxCommandEvent& evt);
 	void OnRemoveTag(wxCommandEvent& evt);
 	void OnListChanged(wxCommandEvent& evt);
 	void UpdateTag();
 	void SetTagFromSettings();
 	void SetTag(int num);
+	bool CheckModified();
+	void Save(int id);
 	enum {
 		ID_TAG_LIST = 7809,
+		ID_2VALUE_CHECKBOX,
 		ID_BUTTON_REMOVE_TAG,
 		ID_BUTTON_ADD_TAG,
 		ID_BUTTON_OK,
-		ID_BUTTON_COMMIT
+		ID_BUTTON_COMMIT,
+		ID_BUTTON_RESET_DEFAULT
 	};
 	KaiChoice* tagList;
 	KaiTextCtrl* newTagName;
@@ -82,7 +93,9 @@ private:
 	NumCtrl* value;
 	NumCtrl* step;
 	KaiChoice* mode;
+	NumCtrl* digitAfterDot;
 	NumCtrl* value2;
+	KaiCheckBox* has2Value;
 	std::vector<AllTagsSetting> tags;
 	AllTagsSetting currentTag;
 };

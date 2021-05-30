@@ -386,6 +386,7 @@ void ScaleRotation::OnClickRotationZ(int x, int y)
 		lastOrg = org;
 		diffs.x = org.x - x;
 		diffs.y = org.y - y;
+		type = 2;
 		return;
 	}
 	else if(tagXFound){
@@ -408,6 +409,7 @@ void ScaleRotation::OnClickRotationXY(int x, int y, bool leftClick, bool rightCl
 		lastOrg = org;
 		diffs.x = org.x - x;
 		diffs.y = org.y - y;
+		type = 2;
 	}
 	firstmove = D3DXVECTOR2(x, y);
 	if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZENS); }

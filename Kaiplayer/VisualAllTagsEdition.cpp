@@ -33,7 +33,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	KaiStaticBoxSizer* tagSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Edytowany tag"));
 	tagList = new KaiChoice(this, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetSelection(curTag);
-	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &AllTagsEdition::OnListChanged, this, ID_BUTTON_ADD_TAG);
+	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &AllTagsEdition::OnListChanged, this, ID_TAG_LIST);
 	newTagName = new KaiTextCtrl(this, -1);
 	MappedButton* addTag = new MappedButton(this, ID_BUTTON_ADD_TAG, _("Dodaj tag"));
 	MappedButton* removeTag = new MappedButton(this, ID_BUTTON_REMOVE_TAG, _("Usuń tag"));
@@ -65,65 +65,74 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	valStepSizer->Add(value, 1, wxALL | wxEXPAND, 4);
 	valStepSizer->Add(new KaiStaticText(this, -1, _("Przeskok:")), 1, wxALL | wxEXPAND, 4);
 	valStepSizer->Add(step, 1, wxALL | wxEXPAND, 4);
-	wxBoxSizer* modeVal2Sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* modesSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxString modes[] = { _("Wstawiany w każdym miejscu"), _("Wstawiany tylko na początku"), 
 		_("Wycinek prostokątny z obsługą animacji")};
 	mode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, modes);
 	mode->SetSelection(currentTag.mode);
+	digitAfterDot = new NumCtrl(this, -1, L"1", 0, 6, true);
+	digitAfterDot->SetInt(currentTag.DigitsAfterDot);
+	modesSizer->Add(mode, 2, wxALL | wxEXPAND, 4);
+	modesSizer->Add(new KaiStaticText(this, -1, _("Liczby po przecinku:")), 1, wxALL | wxEXPAND, 4);
+	modesSizer->Add(digitAfterDot, 1, wxALL | wxEXPAND, 4);
+
+	wxBoxSizer* value2Sizer = new wxBoxSizer(wxHORIZONTAL);
 	value2 = new NumCtrl(this, -1, currentTag.value2, -10000, 10000, false);
 	value2->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
-	modeVal2Sizer->Add(mode, 2, wxALL | wxEXPAND, 4);
-	modeVal2Sizer->Add(new KaiStaticText(this, -1, _("Wartość 2:")), 1, wxALL | wxEXPAND, 4);
-	modeVal2Sizer->Add(value2, 1, wxALL | wxEXPAND, 4);
+	if (!currentTag.has2value)
+		value2->Enable(false);
+
+	has2Value = new KaiCheckBox(this, ID_2VALUE_CHECKBOX, _("Włącz wartość 2:"));
+	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent& evt) {
+		bool ischecked = has2Value->GetValue();
+		value2->Enable(ischecked);
+		}, ID_2VALUE_CHECKBOX);
+	value2Sizer->Add(has2Value, 2, wxALL | wxEXPAND, 4);
+	value2Sizer->Add(new KaiStaticText(this, -1, _("Wartość 2:")), 1, wxALL | wxEXPAND, 4);
+	value2Sizer->Add(value2, 1, wxALL | wxEXPAND, 4);
+
 	editionSizer->Add(nameTagSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(minMaxSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(valStepSizer, 0, wxEXPAND, 0);
-	editionSizer->Add(modeVal2Sizer, 0, wxEXPAND, 0);
+	editionSizer->Add(modesSizer, 0, wxEXPAND, 0);
+	editionSizer->Add(value2Sizer, 0, wxEXPAND, 0);
+
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* commit = new MappedButton(this, ID_BUTTON_COMMIT, _("Zastosuj"));
 	MappedButton* OK = new MappedButton(this, ID_BUTTON_OK, L"OK");
 	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	MappedButton* resetDefault = new MappedButton(this, ID_BUTTON_RESET_DEFAULT, _("Przywróć domyślne"));
 	buttonSizer->Add(commit, 1, wxALL, 4);
 	buttonSizer->Add(OK, 1, wxALL, 4);
 	buttonSizer->Add(cancel, 1, wxALL, 4);
+	buttonSizer->Add(resetDefault, 1, wxALL, 4);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnSave, this, ID_BUTTON_OK, ID_BUTTON_COMMIT);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AllTagsEdition::OnResetDefault, this, ID_BUTTON_RESET_DEFAULT);
 	main->Add(tagSizer, 0, wxALL | wxEXPAND, 2);
 	main->Add(editionSizer, 0, wxALL | wxEXPAND, 2);
 	main->Add(buttonSizer, 0, wxALL | wxEXPAND, 2);
 	SetSizerAndFit(main);
 	CenterOnParent();
+	SetEnterId(ID_BUTTON_OK);
 }
 
 void AllTagsEdition::OnSave(wxCommandEvent& evt)
 {
-	int id = GetId();
-	UpdateTag();
-	if (currentTag.tag.empty()) {
-		KaiMessageBox(_("Pole \"Tag\" nie może być puste."), _("Błąd"), wxOK, this);
-		return;
-	}
-	if (currentTag.name.empty()) {
-		currentTag.name = currentTag.tag;
-		tagName->SetValue(currentTag.name);
-	}
-	if (currentTag.rangeMax - currentTag.rangeMin <= 0) {
-		KaiMessageBox(_("Pole \"Maksymalna wartość\" musi zawierać wartość\nwiększą od pola \"Minimalna wartość\"."), _("Błąd"), wxOK, this);
-		return;
-	}
-	if ((currentTag.rangeMax - currentTag.rangeMin) / currentTag.step > 2) {
-		KaiMessageBox(_("Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."), _("Błąd"), wxOK, this);
-		return;
-	}
-	int sel = tagList->GetSelection();
-	if (sel < 0 || sel >= tags.size()) {
-		KaiMessageBox(L"Selected tag is out of range of tagList.", L"Error", wxOK, this);
-		return;
-	}
-	tags[sel] = currentTag;
+	Save(evt.GetId());
+}
 
-	if (id == ID_BUTTON_OK) {
-		SaveSettings(&tags);
-		EndModal(wxID_OK);
+void AllTagsEdition::OnResetDefault(wxCommandEvent& evt)
+{
+	if (KaiMessageBox(_("Czy na pewno chcesz przywrócić ustawienia domyślne?"), 
+		_("Potwierdzenie"), wxYES_NO, this) == wxYES){
+		wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
+		_wremove(path.wc_str());
+		LoadSettings(&tags);
+		wxArrayString names;
+		GetNames(&tags, &names);
+		tagList->PutArray(&names);
+		tagList->SetSelection(0);
+		SetTag(0);
 	}
 }
 
@@ -137,6 +146,7 @@ void AllTagsEdition::OnAddTag(wxCommandEvent& evt)
 	currentTag = AllTagsSetting(newTagNameStr);
 	tags.push_back(currentTag);
 	tagList->Append(currentTag.name);
+	tagList->SetSelection(tags.size() - 1);
 	SetTagFromSettings();
 }
 
@@ -173,6 +183,12 @@ void AllTagsEdition::OnRemoveTag(wxCommandEvent& evt)
 void AllTagsEdition::OnListChanged(wxCommandEvent& evt)
 {
 	int sel = tagList->GetSelection();
+	if (CheckModified()) {
+		if (KaiMessageBox(wxString::Format(_("Zapisać zmiany tagu %s?"),
+			tagList->GetString(sel)), _("Potwierdzenie"), wxYES_NO, this) == wxYES) {
+			Save(ID_BUTTON_COMMIT);
+		}
+	}
 	SetTag(sel);
 }
 
@@ -186,10 +202,12 @@ void AllTagsEdition::UpdateTag()
 	currentTag.step = (float)step->GetDouble();
 	currentTag.mode = mode->GetSelection();
 	currentTag.value2 = (float)value2->GetDouble();
-	if (currentTag.value2 || currentTag.name == L"fad" || currentTag.name == L"pos" ||
+	currentTag.DigitsAfterDot = digitAfterDot->GetInt();
+	currentTag.has2value = has2Value->GetValue();
+	/*if (currentTag.value2 || currentTag.name == L"fad" || currentTag.name == L"pos" ||
 		currentTag.name == L"move" || currentTag.name == L"clip" || currentTag.name == L"iclip") {
 		currentTag.has2value = true;
-	}
+	}*/
 }
 
 void AllTagsEdition::SetTagFromSettings()
@@ -205,6 +223,10 @@ void AllTagsEdition::SetTagFromSettings()
 		value2->SetDouble(currentTag.value2);
 	else
 		value2->SetDouble(0);
+	if (currentTag.has2value != has2Value->GetValue()) {
+		has2Value->SetValue(currentTag.has2value);
+		value2->Enable(currentTag.has2value);
+	}
 }
 
 void AllTagsEdition::SetTag(int num)
@@ -218,6 +240,56 @@ void AllTagsEdition::SetTag(int num)
 
 }
 
+bool AllTagsEdition::CheckModified()
+{
+	if (currentTag.name != tagName->GetValue() ||
+		currentTag.tag != tagWithoutSlash->GetValue() ||
+		currentTag.rangeMin != (float)minValue->GetDouble() ||
+		currentTag.rangeMax != (float)maxValue->GetDouble() ||
+		currentTag.value != (float)value->GetDouble() ||
+		currentTag.step != (float)step->GetDouble() ||
+		currentTag.mode != mode->GetSelection() ||
+		currentTag.value2 != (float)value2->GetDouble() ||
+		currentTag.DigitsAfterDot != digitAfterDot->GetInt() ||
+		currentTag.has2value != has2Value->GetValue())
+	{
+		return true;
+	}
+	return false;
+}
+
+void AllTagsEdition::Save(int id)
+{
+	UpdateTag();
+	if (currentTag.tag.empty()) {
+		KaiMessageBox(_("Pole \"Tag\" nie może być puste."), _("Błąd"), wxOK, this);
+		return;
+	}
+	if (currentTag.name.empty()) {
+		currentTag.name = currentTag.tag;
+		tagName->SetValue(currentTag.name);
+	}
+	if (abs(currentTag.rangeMax) - abs(currentTag.rangeMin) <= 0) {
+		KaiMessageBox(_("Pole \"Maksymalna wartość\" musi zawierać wartość\nwiększą od pola \"Minimalna wartość\"."), _("Błąd"), wxOK, this);
+		return;
+	}
+	if (((abs(currentTag.rangeMax) - abs(currentTag.rangeMin)) / currentTag.step) < 2) {
+		KaiMessageBox(_("Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."), _("Błąd"), wxOK, this);
+		return;
+	}
+	int sel = tagList->GetSelection();
+	if (sel < 0 || sel >= tags.size()) {
+		KaiMessageBox(L"Selected tag is out of range of tagList.", L"Error", wxOK, this);
+		return;
+	}
+	tags[sel] = currentTag;
+
+	if (id == ID_BUTTON_OK) {
+		SaveSettings(&tags);
+		EndModal(wxID_OK);
+	}
+}
+
 void LoadSettings(std::vector<AllTagsSetting>* tags)
 {
 	wxString path = Options.pathfull + L"\\Config\\AllTagsSettings.txt";
@@ -226,13 +298,13 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 	if (!ow.FileOpen(path, &txtSettings, false)) {
 		//write entire setings in plain text
 		//Tag: name, tag, min, max, value, step, num digits after dot, mode, [valuey]
-		txtSettings = L"Tag: blur, blur, 0, 200, 0, 0.5, 1, 0\n"\
+		txtSettings = L"Tag: blur, blur, 0, 100, 0, 0.5, 1, 0\n"\
 			L"Tag: border, bord, 0, 50, 0, 1, 1, 0\n"\
 			L"Tag: blur edge, be, 0, 100, 0, 1, 1, 0\n"\
 			L"Tag: fading, fad, 0, 2000, 0, 5, 0, 1, 0\n"\
 			L"Tag: fax, fax, -10, 10, 0, 0.05, 3, 0\n"\
 			L"Tag: fay, fay, -10, 10, 0, 0.05, 3, 0\n"\
-			L"Tag: font size, fs, 0, 300, 70, 1, 0, 0\n"\
+			L"Tag: font size, fs, 20, 300, 70, 1, 0, 0\n"\
 			L"Tag: spacing, fsp, -100, 100, 0, 1, 1, 0\n"\
 			L"Tag: shadow, shad, 0, 80, 0, 1, 1, 0\n"\
 			L"Tag: xborder, xbord, 0, 80, 0, 1, 1, 0\n"\
@@ -306,7 +378,7 @@ void SaveSettings(std::vector<AllTagsSetting>* tags)
 		wxString tagText = L"Tag: ";
 		tagText << tag.name << ", " << tag.tag << ", " << tag.rangeMin << ", " <<
 			tag.rangeMax << ", " << tag.value << ", " << tag.step << ", " <<
-			tag.mode;
+			(int)tag.DigitsAfterDot << ", " << (int)tag.mode;
 		if (tag.has2value) {
 			tagText << ", " << tag.value2;
 		}

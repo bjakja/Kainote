@@ -376,8 +376,11 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
-	TextEditor *GLOBAL_EDITOR = edit->TextEdit;
-	if (grid->hasTLMode && txt == L""){ txt = edit->TextEditOrig->GetValue(); GLOBAL_EDITOR = edit->TextEditOrig; }
+	TextEditor *editor = edit->TextEdit;
+	if (grid->hasTLMode && txt == L""){ 
+		txt = edit->TextEditOrig->GetValue(); 
+		editor = edit->TextEditOrig; 
+	}
 
 
 	Styles *acstyl = grid->GetStyle(0, edit->line->Style);
@@ -412,20 +415,11 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		tbl[5] = startTime + end;
 	}
 
-	wxString sxfd, syfd;
-	bool scx = edit->FindValue(L"fscx([.0-9-]+)", &sxfd, L"", 0, !beforeCursor);
-	bool scy = edit->FindValue(L"fscy([.0-9-]+)", &syfd, L"", 0, !beforeCursor);
 	double fscx = 100.0, fscy = 100.0;
-	if (scx){
-		sxfd.ToDouble(&fscx);
-	}
-	else{
+	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
 		acstyl->ScaleX.ToDouble(&fscx);
 	}
-	if (scy){
-		syfd.ToDouble(&fscy);
-	}
-	else{
+	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
 		acstyl->ScaleY.ToDouble(&fscy);
 	}
 	if (scale){
@@ -478,29 +472,6 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 
 	return ppos;
-}
-
-//function return 1 when need to add bracket or 0
-int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos)
-{
-	//use only if needed if pos.x == 0 and length == 0 than block 
-	//puting tags for drawing
-	/*if (pos.x > txt->length()) {
-		return 0;
-	}*/
-	if (!inbracket){
-		txt->insert(pos.x, L"{" + what + L"}");
-		return 1;
-	}
-	
-	if (pos.x < pos.y){ 
-		if (pos.y + 1 >= txt->length())
-			txt->erase(txt->begin() + pos.x, txt->end());
-		else
-			txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1); 
-	}
-	txt->insert(pos.x, what);
-	return 0;
 }
 
 
@@ -598,23 +569,27 @@ void Visuals::SetVisual(bool dummy, int type)
 			(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" :
 			(Visual == ROTATEXY) ? L"(fr" + frxytype + L").+" :
 			L"(i?clip).+";
-		edit->FindValue(tagpattern, &tmp, txt, 0, mode);
-
+		FindTag(tagpattern, txt, mode);
+		const FindData& data = GetResult();
 		if (type == 2 && Visual > 0){
-			if (edit->Placed.x < edit->Placed.y){ txt.erase(txt.begin() + edit->Placed.x, txt.begin() + edit->Placed.y + 1); }
-			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : (Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
-			edit->FindValue(tagpattern, &tmp, txt, 0, mode);
+			if (data.positionInText.x < data.positionInText.y){
+				txt.erase(txt.begin() + data.positionInText.x, 
+					txt.begin() + data.positionInText.y + 1);
+			}
+			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : 
+				(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
+			FindTag(tagpattern, txt, mode);
 		}
 		wxString visualText;
 		GetVisual(&visualText);
-		ChangeText(&txt, visualText, edit->InBracket, edit->Placed);
+		Replace(visualText, &txt);
 		if (!dummytext){
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &dumplaced);
 			if (!vis){ SAFE_DELETE(dummytext); return; }
 		}
 		editor->SetTextS(txt, false, false);
-		editor->SetSelection(edit->Placed.x, edit->Placed.x, true);
+		editor->SetSelection(data.positionInText.x, data.positionInText.x, true);
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
 		dumplaced.y = txt.length();
 		wxString *dtxt = new wxString(*dummytext);
@@ -706,13 +681,11 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	double orgx = 0, orgy = 0;
 	bool PutinBrackets = false;
 	wxPoint strPos;
-	if (tab->Edit->FindValue(L"org\\((.+)\\)", &val, *txt, 0, 1)){
-		wxString orgystr;
-		wxString orgxstr = val.BeforeFirst(L',', &orgystr);
-		orgxstr.ToCDouble(&orgx);
-		orgystr.ToCDouble(&orgy);
+	if (FindTag(L"org\\((.+)\\)", *txt, 1)){
+		const FindData& data = GetResult();
+		GetTwoValueDouble(&orgx, &orgy);
 		PutinBrackets = false;
-		strPos = tab->Edit->Placed;
+		strPos = data.positionInText;
 	}
 	else{
 		D3DXVECTOR2 pos = GetPosition(_dial, &PutinBrackets, &strPos);

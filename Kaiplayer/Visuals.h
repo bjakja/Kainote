@@ -368,7 +368,7 @@ public:
 	void OnMoveSelected(float x, float y);
 	int CheckCurve(int pos, bool checkSpline = true);
 	void AppendClipMask(wxString *mask);
-	void CreateClipMask(wxString *clip, wxString *clipTag = NULL);
+	void CreateClipMask(const wxString &clip, wxString *clipTag = NULL);
 	void InvertClip();
 	void RotateDrawing(ClipPoint *point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	std::vector<ClipPoint> Points;
@@ -517,10 +517,14 @@ private:
 	bool rholding = false;
 	bool changeMoveDiff = false;
 	float thumbValue = 0.f;
+	float thumbValue2 = 0.f;
 	float firstThumbValue = 0.f;
 	float lastThumbValue = 0.f;
+	float firstThumbValue2 = 0.f;
+	float lastThumbValue2 = 0.f;
 	float x = 0, y = 0;
 	int thumbState = 0;
+	int thumbState2 = 0;
 	int currentTag = 0;
 	int sliderPositionY = 40;
 	int sliderPositionDiff = 0;
@@ -528,6 +532,6 @@ private:
 	bool onSlider = false;
 };
 
-int ChangeText(wxString *txt, const wxString &what, bool inbracket, const wxPoint &pos);
+
 
 

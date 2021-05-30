@@ -85,8 +85,6 @@ public:
 	void SetTlMode(bool tl, bool dummyTlMode = false);
 	void Send(unsigned char editionType, bool selline = true, bool dummy = false, bool visualdummy = false);
 	void RefreshStyle(bool resetline = false);
-	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
-	bool FindValue(const wxString &wval, wxString *returnval, const wxString &text = L"", bool *endsel = 0, int mode = 0);
 	void HideControls();
 	void UpdateChars();
 
@@ -128,9 +126,6 @@ public:
 	ToggleButton* AutoMoveTags;
 	KaiChoice* Ban;
 
-
-	void PutinText(const wxString &text, bool focus = true, bool onlysel = false, wxString *texttoPutin = NULL);
-	void PutinNonass(const wxString &text, const wxString &tag);
 	//set text and needed tags from original and right position of cursor
 	void SetTextWithTags(bool RefreshVideo = false);
 	//second bool works only when spellcheckeronoff is true
@@ -154,8 +149,6 @@ public:
 	wxBoxSizer* BoxSizer1;
 
 	Dialogue *line;
-	wxPoint Placed;
-	bool InBracket;
 	bool splittedTags;
 	bool lastVisible;
 	int Visual;
@@ -163,7 +156,8 @@ public:
 	KaiWindowResizer *windowResizer;
 private:
 	
-	
+	wxPoint Placed;
+	bool InBracket;
 	wxString lasttag;
 	int cursorpos;
 
@@ -173,6 +167,10 @@ private:
 	wxBoxSizer* BoxSizer5;
 	wxBoxSizer* BoxSizer6;
 
+	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
+	bool FindValue(const wxString& wval, wxString* returnval, const wxString& text = L"", bool* endsel = 0, int mode = 0);
+	void PutinText(const wxString& text, bool focus = true, bool onlysel = false, wxString* texttoPutin = NULL);
+	void PutinNonass(const wxString& text, const wxString& tag);
 	void ChangeFont(Styles *retStyle, Styles *editedStyle);
 	void OnCommit(wxCommandEvent& event);
 	void OnNewline(wxCommandEvent& event);

@@ -240,19 +240,19 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 void ClipRect::SetCurVisual()
 {
 	int x1 = 0, x2 = SubsSize.x, y1 = 0, y2 = SubsSize.y;
-	wxString clip;
-	bool found = tab->Edit->FindValue(L"(i?clip[^\\)]+)", &clip);
-	if (found && clip.Freq(L',') == 3){
+	bool found = FindTag(L"(i?clip[^\\)]+)");
+	const FindData& data = GetResult();
+	if (found && data.finding.Freq(L',') == 3){
 		int match = 1;
 		wxRegEx re(L"\\(([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)[, ]*([0-9-]+)", wxRE_ADVANCED);
 
-		if (re.Matches(clip)){
-			x1 = wxAtoi(re.GetMatch(clip, match));
-			y1 = wxAtoi(re.GetMatch(clip, match + 1));
-			x2 = wxAtoi(re.GetMatch(clip, match + 2));
-			y2 = wxAtoi(re.GetMatch(clip, match + 3));
+		if (re.Matches(data.finding)){
+			x1 = wxAtoi(re.GetMatch(data.finding, match));
+			y1 = wxAtoi(re.GetMatch(data.finding, match + 1));
+			x2 = wxAtoi(re.GetMatch(data.finding, match + 2));
+			y2 = wxAtoi(re.GetMatch(data.finding, match + 3));
 			showClip = true;
-			invClip = clip.StartsWith("i");
+			invClip = data.finding.StartsWith("i");
 		}
 
 	}
@@ -328,8 +328,8 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 	wxString val;
 	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
-	tab->Edit->FindValue(L"i?clip(.+)", &val, *txt, 0, 1);
-	ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+	FindTag(L"i?clip(.+)", *txt, 1);
+	Replace(tag, txt);
 }
 
 void ClipRect::OnKeyPress(wxKeyEvent &evt)

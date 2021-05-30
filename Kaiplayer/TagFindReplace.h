@@ -49,7 +49,7 @@ public:
 	void SetTabPanel(TabPanel* _tab) { currentTab = _tab; }
 	//when founds nothing it returns place and inbracket that says if need to put in brackets or not
 	//always for seeking first tag in cursor bracket
-	bool FindTag(const wxString &pattern, const wxString &text, int mode = 0, bool toEndOfSelection = false);
+	bool FindTag(const wxString &pattern, const wxString &text = L"", int mode = 0, bool toEndOfSelection = false);
 	//replaces all values using normal regex seeking
 	//cause it works only when tags exists else always return false
 	//void (*function)(EventArg &)
@@ -58,10 +58,18 @@ public:
 	//replace that's was captured don't put all tag when it was not taptured
 	int ReplaceAll(const wxString& pattern, const wxString& tag, wxString *text, std::function<void (const FindData &, wxString *)> func, bool returnPosWhenNoTags = false);
 	int Replace(const wxString& replaceTxt, wxString* txt);
-	int ReplaceFromFindData(const wxString& replaceTxt, const FindData& data);
+	//int ReplaceFromFindData(const wxString& replaceTxt, const FindData& data);
 	const FindData& GetResult() { return result; };
+	bool GetDouble(double* retval);
+	bool GetInt(int* retval);
+	bool GetTwoValueInt(int* retval, int* retval2);
+	bool GetTwoValueDouble(double* retval, double* retval2);
+	bool GetTextResult(wxString* rettext);
+	wxPoint GetPositionInText();
+	//function return 1 when need to add bracket or 0
+	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
 private:
-	bool DoFindNextTag();
+	//bool DoFindNextTag();
 	FindData result;
 	wxRegEx regex;
 	TabPanel* currentTab;

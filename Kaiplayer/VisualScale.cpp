@@ -194,19 +194,18 @@ void Scale::SetCurVisual()
 void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	wxString tag;
-	wxString val;
 
 	if (type != 1){
 		tag = L"\\fscx" + getfloat(scale.x * 100);
 
-		tab->Edit->FindValue(L"fscx([0-9.-]+)", &val, *txt, 0, 1);
-		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		FindTag(L"fscx([0-9.-]+)", *txt, 0, 1);
+		Replace(tag, txt);
 	}
 	if (type != 0){
 		tag = L"\\fscy" + getfloat(scale.y * 100);
 
-		tab->Edit->FindValue(L"fscy([0-9.-]+)", &val, *txt, 0, 1);
-		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		FindTag(L"fscy([0-9.-]+)", *txt, 1);
+		Replace(tag, txt);
 	}
 
 

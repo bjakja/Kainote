@@ -244,21 +244,24 @@ void RotationXY::SetCurVisual()
 	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
-	wxString res;
 	oldAngle = D3DXVECTOR2(0, 0);
-	if (tab->Edit->FindValue(L"frx([0-9.-]+)", &res)){
-		double result = 0; res.ToDouble(&result);
+	if (FindTag(L"frx([0-9.-]+)")){
+		double result = 0; 
+		GetDouble(&result);
 		oldAngle.y = result;
 	}
-	if (tab->Edit->FindValue(L"fry([0-9.-]+)", &res)){
-		double result = 0; res.ToDouble(&result);
+	if (FindTag(L"fry([0-9.-]+)")){
+		double result = 0; 
+		GetDouble(&result);
 		oldAngle.x = result;
 	}
-	if (tab->Edit->FindValue(L"org\\(([^\\)]+)", &res)){
-		wxString rest;
+	if (FindTag(L"org\\(([^\\)]+)")){
 		double orx, ory;
-		if (res.BeforeFirst(L',', &rest).ToDouble(&orx)){ org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x; }
-		if (rest.ToDouble(&ory)){ org.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y; }
+		if (GetTwoValueDouble(&orx, &ory)) {
+			org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
+			org.y = ((ory / coeffH) - zoomMove.y) * zoomScale.y;
+		}
+		else { org = from; }
 	}
 	else{ org = from; }
 	firstmove = to;
@@ -276,21 +279,20 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 
 	wxString tag;
-	wxString val;
 	if (type != 1){
 		angle.x = (to.x - firstmove.x) + oldAngle.x;
 		angle.x = fmodf(angle.x + 360.f, 360.f);
 		tag = L"\\fry" + getfloat(angle.x);
-		tab->Edit->FindValue(L"fry([0-9.-]+)", &val, *txt, 0, 1);
-		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		FindTag(L"fry([0-9.-]+)", *txt, 1);
+		Replace(tag, txt);
 	}
 	if (type != 0){
 		//swap plus to minus to not keep oldAngle and angle in minuses
 		float angy = (to.y - firstmove.y) - oldAngle.y;
 		angle.y = fmodf((-angy) + 360.f, 360.f);
 		tag = L"\\frx" + getfloat(angle.y);
-		tab->Edit->FindValue(L"frx([0-9.-]+)", &val, *txt, 0, 1);
-		ChangeText(txt, tag, tab->Edit->InBracket, tab->Edit->Placed);
+		FindTag(L"frx([0-9.-]+)", *txt, 1);
+		Replace(tag, txt);
 	}
 
 }

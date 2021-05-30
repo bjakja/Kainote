@@ -99,13 +99,13 @@ void AllTags::DrawVisual(int time)
 	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
 
 	if (onThumb) {
-		RECT rect = { thumbleft - 50, thumbbottom + 10, thumbright + 50, thumbbottom + 50 };
+		RECT rect = { (long)thumbleft - 50, (long)thumbbottom + 10, (long)thumbright + 50, (long)thumbbottom + 50 };
 		DRAWOUTTEXT(font, getfloat(thumbValue, floatFormat), rect, DT_CENTER, 0xFFFFFFFF);
 	}
 	if (onSlider) {
 		float thumbOnSliderValue = ((x - left) / coeff) - thumbposdiff;
 		thumbOnSliderValue = MID(actualTag.rangeMin, thumbOnSliderValue, actualTag.rangeMax);
-		RECT rect = { x - 50, y + 20, x + 50, y + 70 };
+		RECT rect = { (long)x - 50, (long)y + 20, (long)x + 50, (long)y + 70 };
 		DRAWOUTTEXT(font, getfloat(thumbOnSliderValue, floatFormat), rect, DT_CENTER, 0xFFFFFFFF);
 	}
 
@@ -335,6 +335,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 {
 	float value = thumbValue;
 	float valuediff = thumbValue - firstThumbValue;
+	float valuediff2 = thumbValue2 - firstThumbValue2;
 	wxString strval;
 	if (curValue.empty()) {
 		//value = thumbValue;
@@ -345,14 +346,16 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		//remove brackets;
 		wxStringTokenizer toknzr(curValue.Mid(1, curValue.length() - 2), L",", wxTOKEN_STRTOK);
 		strval = L"(";
+		int counter = 0;
 		while (toknzr.HasMoreTokens())
 		{
 			wxString token = toknzr.GetNextToken().Trim(false).Trim();
 			double val = 0;
 			if (token.ToCDouble(&val)) {
-				val += valuediff;
+				val += (counter % 2 == 0)? valuediff : valuediff2;
 				strval << getfloat(val, floatFormat);
 			}
+			counter++;
 		}
 		strval << L")";
 	}
@@ -470,6 +473,7 @@ void AllTags::ChangeInLines(bool dummy)
 	}
 	else {
 		editor->SetModified();
+		currentLineText = editor->GetValue();
 		tab->Video->SetVisualEdition(true);
 		if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
 		edit->Send(VISUAL_ALL_TAGS, false, false, true);
