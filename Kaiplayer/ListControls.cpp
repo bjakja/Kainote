@@ -996,8 +996,8 @@ void PopupList::EndPartialModal(int ReturnId)
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
 	if (HasCapture()){ ReleaseMouse(); }
 	Hide();
-	((KaiChoice*)Parent)->SendEvent(ReturnId);
 	((KaiChoice*)Parent)->SetFocus();
+	((KaiChoice*)Parent)->SendEvent(ReturnId);
 }
 
 void PopupList::OnKeyPress(wxKeyEvent &event)

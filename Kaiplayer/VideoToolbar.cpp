@@ -546,7 +546,8 @@ void AllTagsItem::Synchronize(VisualItem* item)
 {
 	AllTagsItem* ati = (AllTagsItem*)item;
 	if (ati->tagList && ati->addToExist) {
-		tagList->SetSelection(ati->tagList->GetSelection());
+		selection = ati->tagList->GetSelection();
+		tagList->SetSelection(selection);
 		addToExist->SetValue(ati->addToExist->GetValue());
 	}
 	else {
@@ -557,27 +558,30 @@ void AllTagsItem::Synchronize(VisualItem* item)
 int AllTagsItem::GetItemToggled()
 {
 	if (tagList)
-		return tagList->GetSelection();
-
-	return 0;
+		selection = tagList->GetSelection();
+		
+	return selection;
 }
 
 void AllTagsItem::SetItemToggled(int* item)
 {
 	if (tagList) {
-		int numitem = *item;
-		if (numitem < 0)
-			numitem = tagList->GetCount() - 1;
-		else if (numitem >= tagList->GetCount())
-			numitem = 0;
+		selection = *item;
+		if (selection < 0)
+			selection = tagList->GetCount() - 1;
+		else if (selection >= tagList->GetCount())
+			selection = 0;
 
-		tagList->SetSelection(numitem);
+		tagList->SetSelection(selection);
 	}
 }
 
 void AllTagsItem::HideContols()
 {
 	if (tagList || addToExist || edition) {
+		if (tagList)
+			selection = tagList->GetSelection();
+
 		tagList->Destroy();
 		addToExist->Destroy();
 		edition->Destroy();
@@ -595,11 +599,13 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	GetNames(tags, &list);
 	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
-	tagList->SetSelection(0);
+	tagList->SetSelection(selection);
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
 		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		event->SetInt(GetItemToggled());
 		wxQueueEvent(vtoolbar, event);
+		wxWindow* grandParent = vtoolbar->GetGrandParent();
+		grandParent->SetFocus();
 		}, ID_TAG_LIST
 	);
 
