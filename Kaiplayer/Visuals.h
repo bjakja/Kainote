@@ -493,6 +493,7 @@ public:
 	};
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent& event);
+	void OnKeyPress(wxKeyEvent& evt);
 	void SetCurVisual();
 	void FindTagValues();
 	void ChangeTool(int _tool);
@@ -513,23 +514,20 @@ private:
 	wxString currentLineText;
 	wxString floatFormat = L"5.3f";
 	TextEditor* editor = NULL;
-	bool holding = false;
+	bool holding[2] = { false, false };
 	bool rholding = false;
 	bool changeMoveDiff = false;
-	float thumbValue = 0.f;
-	float thumbValue2 = 0.f;
-	float firstThumbValue = 0.f;
-	float lastThumbValue = 0.f;
-	float firstThumbValue2 = 0.f;
-	float lastThumbValue2 = 0.f;
+	float thumbValue[2] = { 0.f, 0.f };
+	float firstThumbValue[2] = { 0.f, 0.f };
+	float lastThumbValue[2] = { 0.f, 0.f };
 	float x = 0, y = 0;
-	int thumbState = 0;
-	int thumbState2 = 0;
+	int thumbState[2] = { 0, 0 };
 	int currentTag = 0;
 	int sliderPositionY = 40;
 	int sliderPositionDiff = 0;
-	bool onThumb = false;
-	bool onSlider = false;
+	bool onThumb[2] = { false, false };
+	bool onSlider[2] = { false, false };
+	int increase = 80;
 };
 
 

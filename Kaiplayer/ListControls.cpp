@@ -990,7 +990,7 @@ void PopupList::OnScroll(wxScrollEvent& event)
 	}
 }
 
-//Odwo³uje pêtlê czekaj¹c¹
+//end of wait loop
 void PopupList::EndPartialModal(int ReturnId)
 {
 	Unbind(wxEVT_IDLE, &PopupList::OnIdle, this);
