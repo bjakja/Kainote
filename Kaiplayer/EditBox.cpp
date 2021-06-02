@@ -975,8 +975,8 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString value = (mstyle->Bold) ? L"0" : L"1";
-		wxString nvalue;
+		wxString value = (mstyle->Bold) ? L"1" : L"0";
+		wxString nvalue = (mstyle->Bold) ? L"0" : L"1";
 		if (FindTag(L"b(0|1)", L"", 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
@@ -991,8 +991,8 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString value = (mstyle->Italic) ? L"0" : L"1";
-		wxString nvalue;
+		wxString value = (mstyle->Italic) ? L"1" : L"0";
+		wxString nvalue = (mstyle->Italic) ? L"0" : L"1";
 		if (FindTag(L"i(0|1)", L"", 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
@@ -1008,8 +1008,8 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString value = (mstyle->Underline) ? L"0" : L"1";
-		wxString nvalue;
+		wxString value = (mstyle->Underline) ? L"1" : L"0";
+		wxString nvalue = (mstyle->Underline) ? L"0" : L"1";
 		if (FindTag(L"u(0|1)", L"", 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
@@ -1023,8 +1023,8 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString value = (mstyle->StrikeOut) ? L"0" : L"1";
-		wxString nvalue;
+		wxString value = (mstyle->StrikeOut) ? L"1" : L"0";
+		wxString nvalue = (mstyle->StrikeOut) ? L"0" : L"1";
 		if (FindTag(L"s(0|1)", L"", 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";

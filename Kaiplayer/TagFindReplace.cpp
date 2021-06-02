@@ -31,7 +31,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 		if (txt.empty())
 			txt = editor->GetValue();
 
-		if (currentTab->Grid->file->SelectionsSize() < 2 && !from) {
+		if (currentTab->Grid->file->SelectionsSize() < 2 /*&& !from*/) {
 			if (mode != 1) { editor->GetSelection(&from, &to); }
 			if (mode == 2) {
 				wxPoint brackets = FindBrackets(txt, from);
@@ -58,7 +58,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 		return false;
 	}
 
-	if (toEndOfSelection && from == to) { result.hasSelection = false; }
+	if (toEndOfSelection && from != to) { result.hasSelection = true; }
 
 	wxPoint brackets = FindBrackets(txt, from);
 	int bracketStart = brackets.x;
