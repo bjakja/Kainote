@@ -65,8 +65,10 @@ void AllTags::DrawVisual(int time)
 		float lastPos = 0;
 		line->Begin();
 		int j = 0;
-		for (float i = left; i <= right; i += step) {
-			if (i - lastPos > 10) {
+		float rightend = right + (step / 2);
+		float distance = (abs(actualTag.rangeMax) > 999 || abs(actualTag.rangeMin) > 999) ? 15 : 10;
+		for (float i = left; i <= rightend; i += step) {
+			if (i - lastPos > distance) {
 				D3DXVECTOR2 linepoints[] = { D3DXVECTOR2(i, top - 6), D3DXVECTOR2(i, top + 8 + 6) };
 				line->Draw(linepoints, 2, 0xFFBB0000);
 				lastPos = i;
@@ -421,10 +423,10 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	if (curValue.empty()) {
 		//value = thumbValue;
 		if (actualTag.has2value) {
-			strval = L"(" + getfloat(changeMoveDiff ? MID(actualTag.rangeMin, valuediff, actualTag.rangeMax) : value, floatFormat) + L"," +
-				getfloat(changeMoveDiff ? MID(actualTag.rangeMin, valuediff2, actualTag.rangeMax) : value2, floatFormat) + L")";
+			strval = L"(" + getfloat(value, floatFormat) + L"," +
+				getfloat(value2, floatFormat) + L")";
 		}else
-			strval = getfloat(changeMoveDiff? MID(actualTag.rangeMin, valuediff, actualTag.rangeMax) : value, floatFormat);
+			strval = getfloat(value, floatFormat);
 	}
 	else if (curValue.StartsWith(L"(")) {
 		//remove brackets;

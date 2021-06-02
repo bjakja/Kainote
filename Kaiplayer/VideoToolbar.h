@@ -142,11 +142,11 @@ public:
 	void ShowContols(VideoToolbar* vt) override;
 private:
 	KaiChoice* tagList = NULL;
-	KaiCheckBox* addToExist = NULL;
+	//KaiCheckBox* addToExist = NULL;
 	MappedButton* edition = NULL;
 	int maxWidth = -1;
 	int selection = 0;
-	int mode = 0;
+	//int mode = 0;
 	enum {
 		ID_TAG_LIST = 12378,
 		ID_ADD_TO_EXIST,

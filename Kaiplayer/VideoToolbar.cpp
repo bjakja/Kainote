@@ -524,18 +524,14 @@ void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt
 
 void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
-	if (!tagList || !addToExist || !edition) {
+	if (!tagList || !edition) {
 		ShowContols(vt);
 	}
 	else if (maxWidth != vt->GetEndDrawPos()) {
-		wxSize atebs = addToExist->GetBestSize();
 		wxSize tlbs = tagList->GetBestSize();
 		wxSize ebs = edition->GetBestSize();
 		wxPoint pos(maxWidth - 4 - ebs.x, 1);
 		edition->SetPosition(pos);
-		pos.x -= atebs.x + 4;
-		pos.y = 5;
-		addToExist->SetPosition(pos);
 		pos.y = 1;
 		pos.x -= tlbs.x + 4;
 		tagList->SetPosition(pos);
@@ -545,10 +541,9 @@ void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 void AllTagsItem::Synchronize(VisualItem* item)
 {
 	AllTagsItem* ati = (AllTagsItem*)item;
-	if (ati->tagList && ati->addToExist) {
+	if (ati->tagList) {
 		selection = ati->tagList->GetSelection();
 		tagList->SetSelection(selection);
-		addToExist->SetValue(ati->addToExist->GetValue());
 	}
 	else {
 		KaiLog(L"No sychronization, pointers released");
@@ -578,15 +573,13 @@ void AllTagsItem::SetItemToggled(int* item)
 
 void AllTagsItem::HideContols()
 {
-	if (tagList || addToExist || edition) {
+	if (tagList || edition) {
 		if (tagList)
 			selection = tagList->GetSelection();
 
 		tagList->Destroy();
-		addToExist->Destroy();
 		edition->Destroy();
 		tagList = NULL;
-		addToExist = NULL;
 		edition = NULL;
 	}
 }
@@ -609,9 +602,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 		}, ID_TAG_LIST
 	);
 
-	addToExist = new KaiCheckBox(vtoolbar, ID_ADD_TO_EXIST, _("Dodaj"));
-	addToExist->SetToolTip(_("Dodaj wartości do istniejących bądź wstawiaj nowe wartości"));
-
 	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
 	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
 		//wxPoint Pos = edition->GetPosition();
@@ -629,7 +619,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 		}
 		}, ID_EDITION
 	);
-	wxSize atebs = addToExist->GetBestSize();
 	wxSize tlbs = tagList->GetBestSize();
 	wxSize ebs = edition->GetBestSize();
 	wxSize vts = vtoolbar->GetSize();
@@ -637,10 +626,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	edition->SetPosition(pos);
 	ebs.y = vts.y - 2;
 	edition->SetSize(ebs);
-	pos.x -= atebs.x + 4;
-	pos.y = 5;
-	addToExist->SetPosition(pos);
-	addToExist->SetSize(atebs);
 	pos.y = 1;
 	pos.x -= tlbs.x + 4;
 	tagList->SetPosition(pos);

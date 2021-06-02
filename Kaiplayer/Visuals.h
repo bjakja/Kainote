@@ -516,7 +516,7 @@ private:
 	TextEditor* editor = NULL;
 	bool holding[2] = { false, false };
 	bool rholding = false;
-	bool changeMoveDiff = false;
+	//bool changeMoveDiff = false;
 	float thumbValue[2] = { 0.f, 0.f };
 	float firstThumbValue[2] = { 0.f, 0.f };
 	float lastThumbValue[2] = { 0.f, 0.f };
