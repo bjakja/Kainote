@@ -32,6 +32,7 @@
 #include "ColorPicker.h"
 #include "KaiWindowResizer.h"
 #include "KaiPanel.h"
+#include "TagFindReplace.h"
 
 
 class SubsGrid;
@@ -76,7 +77,7 @@ private:
 };
 
 
-class EditBox : public KaiPanel
+class EditBox : public KaiPanel, TagFindReplace
 {
 public:
 	EditBox(wxWindow *parent, int idd);
@@ -156,20 +157,12 @@ public:
 	KaiWindowResizer *windowResizer;
 private:
 	
-	wxPoint Placed;
-	bool InBracket;
-	wxString lasttag;
-	int cursorpos;
-
 	wxBoxSizer* BoxSizer2;
 	wxBoxSizer* BoxSizer3;
 	wxBoxSizer* BoxSizer4;
 	wxBoxSizer* BoxSizer5;
 	wxBoxSizer* BoxSizer6;
 
-	// mode 0 in place of cursor, 1 on start of line, 2 in first bracket for clip rectangle
-	bool FindValue(const wxString& wval, wxString* returnval, const wxString& text = L"", bool* endsel = 0, int mode = 0);
-	void PutinText(const wxString& text, bool focus = true, bool onlysel = false, wxString* texttoPutin = NULL);
 	void PutinNonass(const wxString& text, const wxString& tag);
 	void ChangeFont(Styles *retStyle, Styles *editedStyle);
 	void OnCommit(wxCommandEvent& event);

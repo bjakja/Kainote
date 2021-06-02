@@ -59,7 +59,7 @@ void AssColor::SetAss(wxString color)
 		color.Replace(L"&", L"");
 		color.Replace(L"H", L"");
 		color.Replace(L"#", L"");
-		if (color.Len() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
+		if (color.length() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
 		rstr = color.SubString(4, 5), gstr = color.SubString(2, 3), bstr = color.SubString(0, 1);
 		if (ishtml){ wxString tmp = rstr; rstr = bstr; bstr = tmp; }
 		rstr.ToLong(&r, 16);

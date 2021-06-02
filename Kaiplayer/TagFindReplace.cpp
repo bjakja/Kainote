@@ -18,12 +18,12 @@
 #include "TabPanel.h"
 
 
-bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int _mode, bool _toEndOfSelection)
+bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int mode, bool toEndOfSelection)
 {
 	result = FindData();
-	txt = text;
-	mode = _mode;
-	toEndOfSelection = _toEndOfSelection;
+	wxString txt = text;
+	lastPattern = pattern;
+	lastMode = mode;
 	regex.Compile(L"^" + pattern, wxRE_ADVANCED);
 
 	if (currentTab) {
@@ -38,6 +38,9 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 				if (brackets.x != 0) {
 					from = to = 0;
 				}
+			}
+			if (mode == 3) {
+				from = to;
 			}
 		}
 	}
@@ -223,30 +226,30 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 	return false;
 }
 
-void TagFindReplace::FindAllTags(const wxString& pattern, const wxString& text, std::function<void(const FindData&)> func, bool returnPosWhenNoTags)
-{
-	regex.Compile(L"^" + pattern, wxRE_ADVANCED);
-
-	int pos = result.positionInText.x + result.positionInText.y;
-	size_t startMatch = 0, lenMatch = 0;
-	size_t textPosition = 0;
-	wxString tmp;
-	bool findMatch = false;
-	while (regex.Matches(text.Mid(textPosition))) {
-		regex.GetMatch(&startMatch, &lenMatch, 1);
-		int position = textPosition + startMatch;
-		tmp = text.Mid(position, lenMatch);
-		FindData res(tmp, wxPoint(position, lenMatch), true, false);
-		func(res);
-		textPosition += startMatch + lenMatch;
-		findMatch = true;
-	}
-	if (returnPosWhenNoTags && !findMatch) {
-		int pos = (text.StartsWith("{")) ? 1 : 0;
-		FindData res(L"", wxPoint(pos, pos), false, false);
-		func(res);
-	}
-}
+//void TagFindReplace::FindAllTags(const wxString& pattern, const wxString& text, std::function<void(const FindData&)> func, bool returnPosWhenNoTags)
+//{
+//	regex.Compile(L"^" + pattern, wxRE_ADVANCED);
+//
+//	int pos = result.positionInText.x + result.positionInText.y;
+//	size_t startMatch = 0, lenMatch = 0;
+//	size_t textPosition = 0;
+//	wxString tmp;
+//	bool findMatch = false;
+//	while (regex.Matches(text.Mid(textPosition))) {
+//		regex.GetMatch(&startMatch, &lenMatch, 1);
+//		int position = textPosition + startMatch;
+//		tmp = text.Mid(position, lenMatch);
+//		FindData res(tmp, wxPoint(position, lenMatch), true, false);
+//		func(res);
+//		textPosition += startMatch + lenMatch;
+//		findMatch = true;
+//	}
+//	if (returnPosWhenNoTags && !findMatch) {
+//		int pos = (text.StartsWith("{")) ? 1 : 0;
+//		FindData res(L"", wxPoint(pos, pos), false, false);
+//		func(res);
+//	}
+//}
 
 
 int TagFindReplace::ReplaceAll(const wxString& pattern, const wxString& tag, wxString * text, std::function< void(const FindData&, wxString*)> func, bool returnPosWhenNoTags)
@@ -412,10 +415,83 @@ wxPoint TagFindReplace::GetPositionInText()
 	return result.positionInText;
 }
 
-//bool TagFindReplace::DoFindNextTag()
-//{
-//	return false;
-//}
+void TagFindReplace::SetPositionInText(const wxPoint& pos)
+{
+	result.positionInText = pos;
+}
+
+void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag, bool focus)
+{
+	if (!currentTab)
+		return;
+
+	SubsGrid* grid = currentTab->Grid;
+	EditBox* edit = currentTab->Edit;
+
+	if (grid->file->SelectionsSize() < 2) {
+		long whre;
+		wxString txt = edit->TextEdit->GetValue();
+		TextEditor* editor = edit->TextEdit;
+		if (grid->hasTLMode && txt == L"") {
+			txt = edit->TextEditOrig->GetValue();
+			editor = edit->TextEditOrig;
+		}
+		if (!result.inBracket) {
+			txt.insert(result.positionInText.x, L"{" + tag + L"}");
+			whre = result.cursorPosition + tag.length() + 2;
+		}
+		else {
+			if (result.positionInText.x < result.positionInText.y) {
+				txt.erase(txt.begin() + result.positionInText.x, 
+					txt.begin() + result.positionInText.y + 1);
+				whre = (focus) ? result.cursorPosition + tag.length() -
+					(result.positionInText.y - result.positionInText.x) : result.positionInText.x;
+			}
+			else { 
+				whre = (focus) ? result.cursorPosition + 1 + tag.length() :
+					result.positionInText.x; 
+			}
+			txt.insert(result.positionInText.x, tag);
+		}
+		if (tag == L"") { txt.Replace(L"{}", L""); }
+		editor->SetTextS(txt, true);
+		if (result.hasSelection && !resettag.empty() && lastMode == 0 && from != to) {
+			FindTag(lastPattern, L"", 3);
+			PutTagInText(resettag, L"", focus);
+			return;
+		}
+
+		editor->SetSelection(whre, whre);
+		if (focus) { editor->SetFocus(); }
+	}
+	else {
+		wxArrayInt sels;
+		grid->file->GetSelections(sels);
+		for (size_t i = 0; i < sels.size(); i++) {
+			Dialogue* dialc = grid->CopyDialogue(sels[i]);
+			wxString txt = dialc->GetTextNoCopy();
+			FindTag(lastPattern, txt);
+
+			if (result.inBracket && txt != L"") {
+				if (result.positionInText.x < result.positionInText.y) { 
+					txt.erase(txt.begin() + result.positionInText.x, 
+						txt.begin() + result.positionInText.y + 1);
+				}
+				txt.insert(result.positionInText.x, tag);
+				dialc->SetText(txt);
+			}
+			else {
+				if (grid->hasTLMode && dialc->TextTl != L"") {
+					dialc->TextTl->Prepend(L"{" + tag + L"}");
+				}
+				else { dialc->Text->Prepend(L"{" + tag + L"}"); }
+			}
+		}
+		grid->SetModified(EDITBOX_MULTILINE_EDITION);
+		grid->Refresh(false);
+	}
+
+}
 
 wxPoint FindBrackets(const wxString& text, long from)
 {

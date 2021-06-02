@@ -143,6 +143,7 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	//Warning don't use any grid in constructor cause editbox is constructed
 	//before Subsgrid cause of tab shortcut order
 	tab = (TabPanel*)GetParent();
+	SetTabPanel(tab);
 	//SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	wxWindow::SetFont(*Options.GetFont(-1));
@@ -616,65 +617,6 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 }
 
 
-void EditBox::PutinText(const wxString &text, bool focus, bool onlysel, wxString *texttoPutin)
-{
-	bool oneline = (grid->file->SelectionsSize() < 2);
-	if (oneline && !onlysel){
-		long whre;
-		wxString txt = TextEdit->GetValue();
-		TextEditor *editor = TextEdit;
-		if (grid->hasTLMode && txt == L""){
-			txt = TextEditOrig->GetValue();
-			editor = TextEditOrig;
-		}
-		if (!InBracket){
-			txt.insert(Placed.x, L"{" + text + L"}");
-			whre = cursorpos + text.length() + 2;
-		}
-		else{
-			if (Placed.x < Placed.y){
-				txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1);
-				whre = (focus) ? cursorpos + text.length() - (Placed.y - Placed.x) : Placed.x;
-			}
-			else{ whre = (focus) ? cursorpos + 1 + text.length() : Placed.x; }
-			txt.insert(Placed.x, text);
-		}
-		if (text == L""){ txt.Replace(L"{}", L""); }
-		if (texttoPutin){
-			*texttoPutin = txt;
-			return;
-		}
-		editor->SetTextS(txt, true);
-		if (focus){ editor->SetFocus(); }
-		editor->SetSelection(whre, whre);
-	}
-	else{
-		wxString tmp;
-		wxArrayInt sels;
-		grid->file->GetSelections(sels);
-		for (size_t i = 0; i < sels.size(); i++){
-			Dialogue *dialc = grid->CopyDialogue(sels[i]);
-			wxString txt = dialc->GetTextNoCopy();
-			FindValue(lasttag, &tmp, txt);
-
-			if (InBracket && txt != L""){
-				if (Placed.x < Placed.y){ txt.erase(txt.begin() + Placed.x, txt.begin() + Placed.y + 1); }
-				txt.insert(Placed.x, text);
-				dialc->SetText(txt);
-			}
-			else{
-				if (grid->hasTLMode && dialc->TextTl != L""){
-					dialc->TextTl->Prepend(L"{" + text + L"}");
-				}
-				else{ dialc->Text->Prepend(L"{" + text + L"}"); }
-			}
-		}
-		grid->SetModified(EDITBOX_MULTILINE_EDITION);
-		grid->Refresh(false);
-	}
-
-}
-
 void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 {
 	if (grid->subsFormat == TMP) return;
@@ -770,30 +712,33 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 {
 	char form = grid->subsFormat;
 	Styles *mstyle = (form < SRT) ? grid->GetStyle(0, line->Style)->Copy() : new Styles();
-	wxString tmp;
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
-
-		if (FindValue(L"b(0|1)", &tmp)){ 
-			if (mstyle->Bold && tmp == L"0"){ mstyle->Bold = false; } 
-			else if (!mstyle->Bold && tmp == L"1"){ mstyle->Bold = true; } 
+		wxString tmp;
+		if (FindTag(L"b(0|1)"), L"", 0, true){
+			GetTextResult(&tmp);
+			mstyle->Bold = tmp == L"1";
 		}
-		if (FindValue(L"i(0|1)", &tmp)){ 
-			if (mstyle->Italic && tmp == L"0"){ mstyle->Italic = false; } 
-			else if (!mstyle->Italic && tmp == L"1"){ mstyle->Italic = true; } 
+		if (FindTag(L"i(0|1)"), L"", 0, true){
+			GetTextResult(&tmp);
+			mstyle->Italic = tmp == L"1";
 		}
-		if (FindValue(L"u(0|1)", &tmp)){ 
-			if (mstyle->Underline && tmp == L"0"){ mstyle->Underline = false; } 
-			else if (!mstyle->Underline && tmp == L"1"){ mstyle->Underline = true; } 
+		if (FindTag(L"u(0|1)"), L"", 0, true){
+			GetTextResult(&tmp);
+			mstyle->Underline = tmp == L"1";
 		}
-		if (FindValue(L"s(0|1)", &tmp)){ 
-			if (mstyle->StrikeOut && tmp == L"0"){ mstyle->StrikeOut = false; } 
-			else if (!mstyle->StrikeOut && tmp == L"1"){ mstyle->StrikeOut = true; } 
+		if (FindTag(L"s(0|1)"), L"", 0, true){
+			GetTextResult(&tmp);
+			mstyle->StrikeOut = tmp == L"1";
 		}
-		if (FindValue(L"fs([0-9]+)", &tmp)){ 
+		if (FindTag(L"fs([0-9.]+)", L"", 0, true)){
+			GetTextResult(&tmp);
 			mstyle->SetFontSizeString(tmp); 
 		}
-		if (FindValue(L"fn(.*)", &tmp)){ mstyle->Fontname = tmp; }
+		if (FindTag(L"fn(.*)", L"", 0, true)){
+			GetTextResult(&tmp);
+			mstyle->Fontname = tmp; 
+		}
 	}
 	FontDialog *FD = FontDialog::Get(this, mstyle);
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
@@ -804,12 +749,12 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 			editor = TextEditOrig;
 			txt = TextEditOrig->GetValue();
 		}
-
-		if (txt[Placed.x] != L'}'){
-			int bracketPos = txt.find(L"}", Placed.x);
-			if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+		wxPoint pos = GetPositionInText();
+		if (txt[pos.x] != L'}'){
+			int bracketPos = txt.find(L"}", pos.x);
+			if (bracketPos != -1){ pos.x = pos.y = bracketPos + 1; }
 		}
-		editor->SetSelection(Placed.x, Placed.x);
+		editor->SetSelection(pos.x, pos.x);
 		editor->SetFocus();
 	}
 	else{
@@ -836,16 +781,16 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontname != editedStyle->Fontname)
 	{
 		if (form < SRT){
-			FindValue(L"fn(.*)", &tmp);
-			PutinText(L"\\fn" + retStyle->Fontname, false);
+			FindTag(L"fn(.*)", L"", 0, true);
+			PutTagInText(L"\\fn" + retStyle->Fontname, L"\\fn" + editedStyle->Fontname, false);
 		}
 		else{ PutinNonass(L"F:" + retStyle->Fontname, L"f:([^}]*)"); }
 	}
 	if (retStyle->Fontsize != editedStyle->Fontsize)
 	{
 		if (form < SRT){
-			FindValue(L"fs([0-9]+)", &tmp);
-			PutinText(L"\\fs" + retStyle->Fontsize, false);
+			FindTag(L"fs([0-9]+)", L"", 0, true);
+			PutTagInText(L"\\fs" + retStyle->Fontsize, L"\\fs" + editedStyle->Fontsize, false);
 		}
 		else{ PutinNonass(L"S:" + retStyle->Fontname, L"s:([^}]*)"); }
 	}
@@ -853,8 +798,9 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString bld = (retStyle->Bold) ? L"1" : L"0";
-			FindValue(L"b(0|1)", &tmp);
-			PutinText(L"\\b" + bld, false);
+			wxString bld1 = (editedStyle->Bold) ? L"1" : L"0";
+			FindTag(L"b(0|1)", L"", 0, true);
+			PutTagInText(L"\\b" + bld, L"\\b" + bld1, false);
 		}
 		else{ PutinNonass(L"y:b", (retStyle->Bold) ? L"Y:b" : L""); }
 	}
@@ -862,22 +808,25 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString ital = (retStyle->Italic) ? L"1" : L"0";
-			FindValue(L"i(0|1)", &tmp);
-			PutinText(L"\\i" + ital, false);
+			wxString ital1 = (editedStyle->Italic) ? L"1" : L"0";
+			FindTag(L"i(0|1)", L"", 0, true);
+			PutTagInText(L"\\i" + ital, L"\\i" + ital1, false);
 		}
 		else{ PutinNonass(L"y:i", (retStyle->Italic) ? L"Y:i" : L""); }
 	}
 	if (retStyle->Underline != editedStyle->Underline)
 	{
-		FindValue(L"u(0|1)", &tmp);
+		FindTag(L"u(0|1)", L"", 0, true);
 		wxString under = (retStyle->Underline) ? L"1" : L"0";
-		PutinText(L"\\u" + under, false);
+		wxString under1 = (editedStyle->Underline) ? L"1" : L"0";
+		PutTagInText(L"\\u" + under, L"\\u" + under1, false);
 	}
 	if (retStyle->StrikeOut != editedStyle->StrikeOut)
 	{
-		FindValue(L"s(0|1)", &tmp);
+		FindTag(L"s(0|1)", L"", 0, true);
 		wxString strike = (retStyle->StrikeOut) ? L"1" : L"0";
-		PutinText(L"\\s" + strike, false);
+		wxString strike1 = (editedStyle->StrikeOut) ? L"1" : L"0";
+		PutTagInText(L"\\s" + strike, L"\\s" + strike1, false);
 	}
 }
 
@@ -911,11 +860,12 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 			//Called only to add color to recent
 			ColourDialog->GetColor();
 			wxString txt = editor->GetValue();
-			if (txt[Placed.x] != L'}'){
-				int bracketPos = txt.find(L"}", Placed.x);
-				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+			wxPoint pos = GetPositionInText();
+			if (txt[pos.x] != L'}'){
+				int bracketPos = txt.find(L"}", pos.x);
+				if (bracketPos != -1){ pos.x = bracketPos + 1; }
 			}
-			editor->SetSelection(Placed.x, Placed.x);
+			editor->SetSelection(pos.x, pos.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
@@ -936,11 +886,12 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		if (scp.PickColor(&ret)){
 			scpd->AddRecent();
 			wxString txt = editor->GetValue();
-			if (txt[Placed.x] != L'}'){
-				int bracketPos = txt.find(L"}", Placed.x);
-				if (bracketPos != -1){ Placed.x = Placed.y = bracketPos + 1; }
+			wxPoint pos = GetPositionInText();
+			if (txt[pos.x] != L'}'){
+				int bracketPos = txt.find(L"}", pos.x);
+				if (bracketPos != -1){ pos.x = bracketPos + 1; }
 			}
-			editor->SetSelection(Placed.x, Placed.x);
+			editor->SetSelection(pos.x, pos.x);
 		}
 		else{
 			grid->DummyUndo(tmpIter);
@@ -961,11 +912,15 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
 			style->BackColour;
-		if (FindValue(colorNumber + tag, &retTag)){
+		if (FindTag(colorNumber + tag, L"", 0, true)){
+			GetTextResult(&retTag);
 			actualColor->Copy(AssColor(L"&" + retTag));
 		}
 		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
-		if (FindValue(colorNumber + L"a&|alpha(.*)", &retTag)){ actualColor->SetAlphaString(retTag); }
+		if (FindTag(colorNumber + L"a&|alpha(.*)", L"", 0, true)){
+			GetTextResult(&retTag);
+			actualColor->SetAlphaString(retTag); 
+		}
 	}
 }
 
@@ -1020,14 +975,13 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Bold) ? L"0" : L"1";
-		bool issel = true;
-		if (FindValue(L"b(0|1)", &wart, L"", &issel)){ wart = (wart == L"1") ? L"0" : L"1"; }
-		PutinText(L"\\b" + wart);
-		if (!issel)return;
-		wart = (mstyle->Bold) ? L"1" : L"0";
-		if (FindValue(L"b(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\b" + wart);
+		wxString value = (mstyle->Bold) ? L"0" : L"1";
+		wxString nvalue;
+		if (FindTag(L"b(0|1)", L"", 0, true)){ 
+			GetTextResult(&value);
+			nvalue = (value == L"1") ? L"0" : L"1";
+		}
+		PutTagInText(L"\\b" + nvalue, L"\\b" + value);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass(L"b", L"b"); }
 	else { PutinNonass(L"y:b", L"Y:b"); }
@@ -1037,14 +991,13 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Italic) ? L"0" : L"1";
-		bool issel = true;
-		if (FindValue(L"i(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\i" + wart);
-		if (!issel)return;
-		wart = (mstyle->Italic) ? L"1" : L"0";
-		if (FindValue(L"i(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\i" + wart);
+		wxString value = (mstyle->Italic) ? L"0" : L"1";
+		wxString nvalue;
+		if (FindTag(L"i(0|1)", L"", 0, true)){ 
+			GetTextResult(&value);
+			nvalue = (value == L"1") ? L"0" : L"1";
+		}
+		PutTagInText(L"\\i" + nvalue, L"\\i" + value);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass(L"i", L"i"); }
 	else if (grid->subsFormat == MDVD){ PutinNonass(L"y:i", L"Y:i"); }
@@ -1055,14 +1008,13 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->Underline) ? L"0" : L"1";
-		bool issel = true;
-		if (FindValue(L"u(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\u" + wart);
-		if (!issel)return;
-		wart = (mstyle->Underline) ? L"1" : L"0";
-		if (FindValue(L"u(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\u" + wart);
+		wxString value = (mstyle->Underline) ? L"0" : L"1";
+		wxString nvalue;
+		if (FindTag(L"u(0|1)", L"", 0, true)){ 
+			GetTextResult(&value);
+			nvalue = (value == L"1") ? L"0" : L"1";
+		}
+		PutTagInText(L"\\u" + nvalue, L"\\u" + value);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass(L"u", L"u"); }
 }
@@ -1071,26 +1023,21 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 {
 	if (grid->subsFormat < SRT){
 		Styles *mstyle = grid->GetStyle(0, line->Style);
-		wxString wart = (mstyle->StrikeOut) ? L"0" : L"1";
-		bool issel = true;
-		if (FindValue(L"s(0|1)", &wart, L"", &issel)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\s" + wart);
-		if (!issel)return;
-		wart = (mstyle->StrikeOut) ? L"0" : L"1";
-		if (FindValue(L"s(0|1)", &wart)){ if (wart == L"1"){ wart = L"0"; } else{ wart = L"1"; } }
-		PutinText(L"\\s" + wart);
+		wxString value = (mstyle->StrikeOut) ? L"0" : L"1";
+		wxString nvalue;
+		if (FindTag(L"s(0|1)", L"", 0, true)){ 
+			GetTextResult(&value);
+			nvalue = (value == L"1") ? L"0" : L"1";
+		}
+		PutTagInText(L"\\s" + nvalue, L"\\s" + value);
 	}
 	else if (grid->subsFormat == SRT){ PutinNonass(L"s", L"s"); }
 }
 
 void EditBox::OnAnChoice(wxCommandEvent& event)
 {
-	TextEdit->SetSelection(0, 0);
-	if (grid->hasTLMode){ TextEditOrig->SetSelection(0, 0); }
-	lasttag = L"an([0-9])";
-	wxString tag;
-	FindValue(L"an([0-9])", &tag);
-	PutinText(L"\\" + Ban->GetString(Ban->GetSelection()), true);
+	FindTag(L"an([0-9])", L"", 1);
+	PutTagInText(L"\\" + Ban->GetString(Ban->GetSelection()), L"", true);
 }
 
 void EditBox::OnTlMode(wxCommandEvent& event)
@@ -1506,213 +1453,6 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 	int npos = startPosition + diffAsString.length();
 	TextEdit->SetSelection(npos, npos);
 }
-//find tags in text field
-//in seeking not use // and seek only to end of tag, not next tag
-bool EditBox::FindValue(const wxString &tag, wxString *Found, const wxString &text, bool *endsel, int mode)
-{
-	lasttag = tag;
-	long from = 0, to = 0;
-	bool brkt = true;
-	bool inbrkt = true;
-	bool fromOriginal = false;
-	wxString txt;
-	if (text == L""){
-		txt = TextEdit->GetValue();
-		if (grid->hasTLMode && txt == L""){
-			fromOriginal = true;
-			txt = TextEditOrig->GetValue();
-		}
-	}
-	else{ txt = text; }
-	if (txt == L""){ 
-		Placed.x = 0; 
-		Placed.y = 0; 
-		InBracket = false; 
-		cursorpos = 0; 
-		if (endsel){ *endsel = false; } 
-		return false; 
-	}
-	if (grid->file->SelectionsSize() < 2){
-		TextEditor *GLOBAL_EDITOR = (fromOriginal) ? TextEditOrig : TextEdit;
-		if (mode != 1){ GLOBAL_EDITOR->GetSelection(&from, &to); }
-		if (mode == 2){
-			wxPoint brackets = FindBrackets(txt, from);
-			if (brackets.x != 0){
-				from = to = 0;
-			}
-		}
-	}
-
-	if (endsel && from == to){ *endsel = false; }
-	wxRegEx rex(L"^" + tag, wxRE_ADVANCED);
-
-	wxPoint brackets = FindBrackets(txt, from);
-	int bracketStart = brackets.x;
-	int bracketEnd = brackets.y;
-	// not in {} brackets
-	// if bracketStart == bracketEnd + 1 there is between brackets 
-	// and it should be treated as inbrackets, new brackets needs
-	// to be found
-	if (bracketStart == -1 || (bracketStart > bracketEnd + 1)){
-		InBracket = false;
-		inbrkt = false;
-		bracketEnd = from;
-		brkt = false;
-	}//in brackets
-	else{
-		if (bracketStart == bracketEnd + 1) {
-			wxPoint brackets = FindBrackets(txt, bracketStart + 1);
-			bracketStart = brackets.x;
-			bracketEnd = brackets.y;
-		}
-		InBracket = true;
-	}
-
-	Placed.x = bracketEnd;
-	Placed.y = bracketEnd;
-	if (endsel && *endsel){
-		cursorpos = to;
-		if (InBracket){ cursorpos--; }
-	}
-	else{
-		cursorpos = bracketEnd;
-	}
-	bool isT = false;
-	bool firstT = false;
-	bool hasR = false;
-	bool placedInT = false;
-	// maybe this name is wrong, it's for end posiotion for \t without end bracket
-	int endT;
-	int lastT = endT = bracketEnd - 1;
-	int lslash = bracketEnd + 1;
-	int lastTag = -1;
-	wxString found[2];
-	wxPoint fpoints[2];
-	if (bracketEnd == txt.length()){ bracketEnd--; }
-
-	for (int i = bracketEnd; i >= 0; i--){
-		wxUniChar ch = txt[i];
-		if (ch == L'\\' && brkt){
-			//tag is placed on begining of tags in bracket
-			if (i >= bracketStart)
-				lastTag = i;
-
-			wxString ftag = txt.SubString(i + 1, lslash - 1);
-			if (ftag == L"r"){
-				hasR = true;
-			}
-			if (ftag.EndsWith(L")")){
-				//fixes \fn(name)
-				if (/*ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 && */ftag.Freq(L')') > ftag.Freq(L'(') 
-					|| ftag.StartsWith(L"t(")){
-					isT = true;
-					endT = lslash - 1;
-				}
-			}
-			if (ftag.StartsWith(L"t(")){
-				if (endT == -1)
-					endT = lastT;
-
-				if (i <= from && from <= endT){
-
-					if (!found[1].empty() && fpoints[1].y <= endT){
-						Placed = fpoints[1];
-						*Found = found[1];
-						return true;
-					}
-					else if (!found[0].empty()){
-						if (fpoints[0].y <= endT){ break; }
-					}
-					else{
-						Placed.x = endT;
-						Placed.y = Placed.x;
-						InBracket = true;
-						placedInT = true;
-						//return false;
-					}
-
-				}
-				isT = false;
-				lslash = i;
-				endT = -1;
-				// maybe this name is wrong, it's for end posiotion for \t without end bracket
-				lastT = i;
-				continue;
-			}
-			//fixes fontnames with (...) on end
-			bool isFN = ftag.StartsWith(L"fn");
-			int reps = rex.ReplaceAll(&ftag, L"\\1");
-			if (reps > 0){
-				//maybe better for fix fn bug would be ftag.Freq(L')') > ftag.Freq(L'(') cause it also can prevent it for another tags
-				if (ftag.EndsWith(L")") && !isFN && (!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || ftag.EndsWith(L"}")){
-					ftag.RemoveLast(1);
-					lslash--;
-				}
-
-				if (found[0] == L"" && !isT){
-					found[0] = ftag;
-					fpoints[0].x = (i < lastTag)? lastTag : i;
-					fpoints[0].y = (i < lastTag) ? lastTag : lslash - 1;
-				}
-				else{
-					found[1] = ftag;
-					fpoints[1].x = i;
-					fpoints[1].y = (isT && txt[lslash - 1] == L')') ? lslash - 2 : lslash - 1;
-				}
-				//block break till i <= from cause of test if cursor is in \t tag
-				//else it will fail if there is value without \t on the end
-				if (!isT && found[0] != L"" && i <= from){
-					break;
-				}
-			}
-
-			lslash = i;
-		}
-		else if (ch == L'{' && i > 0){
-			wxString textBeforeBracket = txt.SubString(0, i - 1);
-			int startBracket = textBeforeBracket.Find(L'{', true);
-			int endBracket = textBeforeBracket.Find(L'}', true);
-			if (endBracket >= startBracket){
-				brkt = false;
-				if (txt[i - 1] != L'}'){ 
-					inbrkt = false; 
-					if (hasR){ break; } 
-				}
-			}
-			else{
-				lslash = i - 1;
-			}
-		}
-		else if (ch == L'}' && i > 0){
-			wxString textBeforeBracket = txt.SubString(0, i - 1);
-			int startBracket = textBeforeBracket.Find(L'{', true);
-			int endBracket = textBeforeBracket.Find(L'}', true);
-			if (endBracket < startBracket){
-				lslash = i;
-				brkt = true;
-			}
-		}
-
-	}
-
-	if (!isT && found[0] != L""){
-		//In bracket here blocks changing position of tag putting in plain text
-		//inbrkt here changing value when plain text is on start, not use it here
-		if (InBracket && !placedInT){
-			Placed = fpoints[0];
-		}
-		*Found = found[0];
-		return true;
-	}
-	else if (lastTag >= 0 && InBracket && !placedInT){
-		Placed.x = lastTag;
-		Placed.y = lastTag;
-	}
-
-
-	return false;
-}
-
 
 void EditBox::OnEdit(wxCommandEvent& event)
 {
@@ -1810,31 +1550,42 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString colorNumber;
 		colorNumber << intColorNumber;
 		wxString colorString;
-		wxString tag = (colorNumber == L"1") ? L"?c&(.*)&" : L"c&(.*)&";
+		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
-		AssColor col = (colorNumber == L"1") ? style->PrimaryColour :
-			(colorNumber == L"2") ? style->SecondaryColour :
-			(colorNumber == L"3") ? style->OutlineColour :
+		AssColor col = (intColorNumber == 1) ? style->PrimaryColour :
+			(intColorNumber == 2) ? style->SecondaryColour :
+			(intColorNumber == 3) ? style->OutlineColour :
 			style->BackColour;
 
-		FindValue(colorNumber + tag, &colorString);
-		if (colorString != choosenColorAsString){
-			PutinText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", false);
+		if (FindTag(colorNumber + tag)) {
+			GetTextResult(&colorString);
+			col.SetAss(colorString);
+		}
+		//check only colors, not aplha
+		if (col.r != choosenColor.r || col.g != choosenColor.g || col.b != choosenColor.b){
+			if (colorString.empty())
+				colorString = col.GetAss(false);
+
+			PutTagInText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", 
+				L"\\" + colorNumber + L"c" + colorString + L"&", false);
 		}
 
-		if (FindValue(L"(" + colorNumber + L"a&|alpha.*)", &colorString)){
+		if (FindTag(L"(" + colorNumber + L"a&|alpha.*)")){
+			GetTextResult(&colorString);
 			if (colorString.StartsWith(colorNumber + L"a&"))
 				colorString = colorString.Mid(2);
 			else{
 				colorString = colorString.Mid(5);
-				Placed.y++;
-				Placed.x = Placed.y;
+				wxPoint pos = GetPositionInText();
+				pos.y++;
+				pos.x = pos.y;
 			}
 			col.SetAlphaString(colorString);
 		}
 
 		if (col.a != choosenColor.a){
-			PutinText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), false);
+			PutTagInText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), 
+				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", col.a), false);
 		}
 
 	}
@@ -1867,20 +1618,27 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		wxString result;
 		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
 		//we did not need this value at all.
-		wxString pattern = (findtag.StartsWith(L"fn")) ? L"fn(.*)" : 
-			(findtag.StartsWith(L"r")) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
-		FindValue(pattern, &result, L"", 0, type == L"1");
-
-		PutinText(tag);
+		bool isFN = findtag.StartsWith(L"fn");
+		bool isR = findtag.StartsWith(L"r");
+		wxString pattern = (isFN) ? L"fn(.*)" :
+			(isR) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
+		bool onceInText = type == L"1";
+		FindTag(pattern, L"", onceInText, !onceInText);
+		GetTextResult(&result);
+		wxString resetTag = (isFN) ? L"\\fn" + result : (isR) ? result : findtag + result;
+		PutTagInText(tag, resetTag);
 	}
 	else{
 		bool oneline = (grid->file->SelectionsSize() < 2);
 
 		long from, to;
 		wxString txt = TextEdit->GetValue();
-		TextEditor *GLOBAL_EDITOR = TextEdit;
-		if (grid->hasTLMode && txt == L""){ txt = TextEditOrig->GetValue(); GLOBAL_EDITOR = TextEditOrig; }
-		GLOBAL_EDITOR->GetSelection(&from, &to);
+		TextEditor *editor = TextEdit;
+		if (grid->hasTLMode && txt == L""){ 
+			txt = TextEditOrig->GetValue(); 
+			editor = TextEditOrig; 
+		}
+		editor->GetSelection(&from, &to);
 		if (oneline){
 			if (from != to){
 				txt.erase(txt.begin() + from, txt.begin() + to);
@@ -1893,8 +1651,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 			}
 			txt.insert(from, tag);
 			from += tag.length();
-			GLOBAL_EDITOR->SetTextS(txt, true);
-			GLOBAL_EDITOR->SetSelection(from, from);
+			editor->SetTextS(txt, true);
+			editor->SetSelection(from, from);
 		}
 		else{
 			wxArrayInt sels;

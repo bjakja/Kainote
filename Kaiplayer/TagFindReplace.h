@@ -53,7 +53,7 @@ public:
 	//replaces all values using normal regex seeking
 	//cause it works only when tags exists else always return false
 	//void (*function)(EventArg &)
-	void FindAllTags(const wxString& pattern, const wxString& text, std::function<void(const FindData&)> func, bool returnPosWhenNoTags = false);
+	//void FindAllTags(const wxString& pattern, const wxString& text, std::function<void(const FindData&)> func, bool returnPosWhenNoTags = false);
 	//no need to put in bracket function do it when needed
 	//replace that's was captured don't put all tag when it was not taptured
 	int ReplaceAll(const wxString& pattern, const wxString& tag, wxString *text, std::function<void (const FindData &, wxString *)> func, bool returnPosWhenNoTags = false);
@@ -66,6 +66,12 @@ public:
 	bool GetTwoValueDouble(double* retval, double* retval2);
 	bool GetTextResult(wxString* rettext);
 	wxPoint GetPositionInText();
+	//when need to change position for using tag placing functions
+	void SetPositionInText(const wxPoint &pos);
+	//editbox function, put tag in text and reset it when selected
+	//that's need reset tag that is given when seeking
+	//full tag with value and full reset tag with value
+	void PutTagInText(const wxString& tag, const wxString& resettag, bool focus = true);
 	//function return 1 when need to add bracket or 0
 	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
 private:
@@ -73,11 +79,9 @@ private:
 	FindData result;
 	wxRegEx regex;
 	TabPanel* currentTab;
-	wxString txt;
+	wxString lastPattern;
+	int lastMode = 0;
 	long from = 0, to = 0;
-	int mode = 0;
-	int loopEndPosition = 0;
-	bool toEndOfSelection = false;
 
 };
 
