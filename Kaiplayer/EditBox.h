@@ -1,4 +1,4 @@
-//  Copyright (c) 2016-2020, Marcin Drob
+//  Copyright (c) 2016-2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -197,7 +197,8 @@ private:
 	void DoTooltips();
 	wxPoint FindBrackets(const wxString & text, long from);
 	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
-
+	AssColor actualColor;
+	wxString actualColorstr;
 	bool isdetached;
 	bool hasPreviewGrid = false;
 	wxMutex mutex;

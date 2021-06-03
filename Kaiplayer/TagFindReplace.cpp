@@ -32,15 +32,15 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 			txt = editor->GetValue();
 
 		if (currentTab->Grid->file->SelectionsSize() < 2 /*&& !from*/) {
-			if (mode != 1) { editor->GetSelection(&from, &to); }
+			if (mode != 1 && mode != 3) { editor->GetSelection(&from, &to); }
 			if (mode == 2) {
 				wxPoint brackets = FindBrackets(txt, from);
 				if (brackets.x != 0) {
 					from = to = 0;
 				}
 			}
-			if (mode == 3) {
-				from = to;
+			if (mode == 1) {
+				from = to = 0;
 			}
 		}
 	}
@@ -58,7 +58,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 		return false;
 	}
 
-	if (toEndOfSelection && from != to) { result.hasSelection = true; }
+	if (toEndOfSelection && from != to && mode == 0) { result.hasSelection = true; }
 
 	wxPoint brackets = FindBrackets(txt, from);
 	int bracketStart = brackets.x;
@@ -117,7 +117,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 			}
 			if (ftag.EndsWith(L")")) {
 				//fixes \fn(name)
-				if (/*ftag.Find(L'(') == -1 || ftag.Freq(L')') >= 2 && */ftag.Freq(L')') > ftag.Freq(L'(')
+				if (ftag.Freq(L')') > ftag.Freq(L'(')
 					|| ftag.StartsWith(L"t(")) {
 					isT = true;
 					endT = lslash - 1;
@@ -319,6 +319,55 @@ int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 	return 0;
 }
 
+bool TagFindReplace::TagValueFromStyle(Styles* style, const wxString& tag, wxString* value)
+{
+	Styles* acstyl = style? style : currentTab->Grid->GetStyle(0, currentTab->Edit->line->Style);
+	if (tag == L"fs")
+		*value = acstyl->Fontsize;
+	else if (tag == L"bord")
+		*value = acstyl->Outline;
+	else if (tag == L"shad")
+		*value = acstyl->Shadow;
+	else if (tag == L"fsp")
+		*value = acstyl->Spacing;
+	else if (tag == L"fscx")
+		*value = acstyl->ScaleX;
+	else if (tag == L"fscy")
+		*value = acstyl->ScaleY;
+	else if (tag == L"c" || tag == L"1c")
+		*value = acstyl->PrimaryColour.GetAss(false);
+	else if (tag == L"2c")
+		*value = acstyl->SecondaryColour.GetAss(false);
+	else if (tag == L"3c")
+		*value = acstyl->OutlineColour.GetAss(false);
+	else if (tag == L"4c")
+		*value = acstyl->BackColour.GetAss(false);
+	else if (tag == L"1a")
+		*value = acstyl->PrimaryColour.GetAlpha();
+	else if (tag == L"2a")
+		*value = acstyl->SecondaryColour.GetAlpha();
+	else if (tag == L"3a")
+		*value = acstyl->OutlineColour.GetAlpha();
+	else if (tag == L"4a")
+		*value = acstyl->BackColour.GetAlpha();
+	else if (tag == L"fn")
+		*value = acstyl->Fontname;
+	else if (tag == L"b")
+		*value = acstyl->Bold ? L"1" : L"0";
+	else if (tag == L"i")
+		*value = acstyl->Italic ? L"1" : L"0";
+	else if (tag == L"u")
+		*value = acstyl->Underline ? L"1" : L"0";
+	else if (tag == L"s")
+		*value = acstyl->StrikeOut ? L"1" : L"0";
+	else if (tag == L"fr" || tag == L"frz")
+		*value = acstyl->Angle;
+	else
+		return false;
+
+	return true;
+}
+
 //int TagFindReplace::ReplaceFromFindData(const wxString& replaceTxt, const FindData& data)
 //{
 //	
@@ -455,7 +504,12 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 		}
 		if (tag == L"") { txt.Replace(L"{}", L""); }
 		editor->SetTextS(txt, true);
-		if (result.hasSelection && !resettag.empty() && lastMode == 0 && from != to) {
+		if (result.hasSelection && !resettag.empty()) {
+			if (!result.inBracket)
+				from = to + tag.length() + 2;
+			else
+				from = to + tag.length();
+
 			FindTag(lastPattern, L"", 3);
 			PutTagInText(resettag, L"", focus);
 			return;

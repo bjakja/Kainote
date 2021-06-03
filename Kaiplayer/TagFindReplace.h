@@ -20,6 +20,7 @@
 #include <wx/gdicmn.h>
 #include <functional>
 #include <wx/regex.h>
+#include "Styles.h"
 
 
 class FindData {
@@ -74,6 +75,7 @@ public:
 	void PutTagInText(const wxString& tag, const wxString& resettag, bool focus = true);
 	//function return 1 when need to add bracket or 0
 	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
+	bool TagValueFromStyle(Styles* style, const wxString& tag, wxString *value);
 private:
 	//bool DoFindNextTag();
 	FindData result;

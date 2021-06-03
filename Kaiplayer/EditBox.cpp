@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016-2020, Marcin Drob
+﻿//  Copyright (c) 2016-2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 #include "SubsGrid.h"
 #include "KainoteApp.h"
 #include <wx/regex.h>
-#include <wx/tglbtn.h>
+//#include <wx/tglbtn.h>
 #include "FontDialog.h"
 #include "Visuals.h"
 #include "KaiMessageBox.h"
@@ -844,17 +844,17 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 		editor = TextEditOrig;
 	}
 
-	AssColor actualColor = AssColor(wxString(L"#FFFFFF"));
 	GetColor(&actualColor, numColor);
+	actualColorstr = actualColor.GetAss(false, true);
 
 	if (leftClick){
 		DialogColorPicker *ColourDialog = DialogColorPicker::Get(this, actualColor.GetWX(), numColor);
 		MoveToMousePosition(ColourDialog);
 		ColourDialog->Connect(ID_COLOR_PICKER_DIALOG, COLOR_CHANGED, (wxObjectEventFunction)&EditBox::OnColorChange, 0, this);
 		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
-			AssColor col;
-			GetColor(&col, evt.GetInt());
-			ColourDialog->SetColor(col, 0, false);
+			GetColor(&actualColor, evt.GetInt());
+			actualColorstr = actualColor.GetAss(false, true);
+			ColourDialog->SetColor(actualColor, 0, false);
 		}, ID_COLOR_PICKER_DIALOG);
 		if (ColourDialog->ShowModal() == wxID_OK) {
 			//Called only to add color to recent
@@ -1552,40 +1552,31 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString colorString;
 		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
-		AssColor col = (intColorNumber == 1) ? style->PrimaryColour :
-			(intColorNumber == 2) ? style->SecondaryColour :
-			(intColorNumber == 3) ? style->OutlineColour :
-			style->BackColour;
 
-		if (FindTag(colorNumber + tag)) {
-			GetTextResult(&colorString);
-			col.SetAss(colorString);
-		}
+		FindTag(colorNumber + tag, L"", 0, true);
 		//check only colors, not aplha
-		if (col.r != choosenColor.r || col.g != choosenColor.g || col.b != choosenColor.b){
-			if (colorString.empty())
-				colorString = col.GetAss(false);
+		if (actualColor.r != choosenColor.r || actualColor.g != choosenColor.g || 
+			actualColor.b != choosenColor.b){
 
 			PutTagInText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", 
-				L"\\" + colorNumber + L"c" + colorString + L"&", false);
+				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
 
-		if (FindTag(L"(" + colorNumber + L"a&|alpha.*)")){
+		if (FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
 			GetTextResult(&colorString);
-			if (colorString.StartsWith(colorNumber + L"a&"))
-				colorString = colorString.Mid(2);
-			else{
-				colorString = colorString.Mid(5);
+			if (!colorString.StartsWith(colorNumber + L"a&")){
+				//colorString = colorString.Mid(5);
 				wxPoint pos = GetPositionInText();
 				pos.y++;
 				pos.x = pos.y;
+				SetPositionInText(pos);
 			}
-			col.SetAlphaString(colorString);
+			//col.SetAlphaString(colorString);
 		}
 
-		if (col.a != choosenColor.a){
+		if (actualColor.a != choosenColor.a){
 			PutTagInText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), 
-				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", col.a), false);
+				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", actualColor.a), false);
 		}
 
 	}
@@ -1623,9 +1614,15 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		wxString pattern = (isFN) ? L"fn(.*)" :
 			(isR) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
 		bool onceInText = type == L"1";
-		FindTag(pattern, L"", onceInText, !onceInText);
-		GetTextResult(&result);
-		wxString resetTag = (isFN) ? L"\\fn" + result : (isR) ? result : findtag + result;
+		if (FindTag(pattern, L"", onceInText, !onceInText)) {
+			GetTextResult(&result);
+		}
+		else if(!isR){
+			wxString tagTofind = (isFN) ? L"fn" : findtag;
+			if (!TagValueFromStyle(NULL, tagTofind, &result))
+				result = L"0";
+		}
+		wxString resetTag = result.empty() ? L"" : (isFN) ? L"\\fn" + result : (isR) ? L"\\" + result : L"\\" + findtag + result;
 		PutTagInText(tag, resetTag);
 	}
 	else{

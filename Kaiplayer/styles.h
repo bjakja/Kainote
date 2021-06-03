@@ -1,4 +1,4 @@
-//  Copyright (c) 2016 - 2020, Marcin Drob
+//  Copyright (c) 2016 - 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@ class AssColor
 	public:
 	long r, g, b, a;
 	wxString GetAss(bool alpha, bool style = false) const;
+	wxString GetAlpha() const;
 	wxColour GetWX() const;
 	//no const cause it replaces this string
 	void SetAss(wxString color);

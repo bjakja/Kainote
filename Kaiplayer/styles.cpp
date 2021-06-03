@@ -93,6 +93,11 @@ wxString AssColor::GetAss(bool alpha, bool style) const {
 	return k1;
 }
 
+wxString AssColor::GetAlpha() const
+{
+	return wxString::Format(L"%02X", a);
+}
+
 wxColour AssColor::GetWX() const
 {
 	wxColour kol;
