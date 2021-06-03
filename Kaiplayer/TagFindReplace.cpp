@@ -23,7 +23,6 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 	result = FindData();
 	wxString txt = text;
 	lastPattern = pattern;
-	lastMode = mode;
 	regex.Compile(L"^" + pattern, wxRE_ADVANCED);
 
 	if (currentTab) {
@@ -469,7 +468,7 @@ void TagFindReplace::SetPositionInText(const wxPoint& pos)
 	result.positionInText = pos;
 }
 
-void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag, bool focus)
+void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag, bool focus, bool restoreSelection)
 {
 	if (!currentTab)
 		return;
@@ -505,17 +504,25 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 		if (tag == L"") { txt.Replace(L"{}", L""); }
 		editor->SetTextS(txt, true);
 		if (result.hasSelection && !resettag.empty()) {
+			int addition = tag.length();
 			if (!result.inBracket)
-				from = to + tag.length() + 2;
-			else
-				from = to + tag.length();
+				addition += 2;
+			else if (result.positionInText.y - result.positionInText.x)
+				addition -= (result.positionInText.y - result.positionInText.x) + 1;
+
+			from += addition;
+			to += addition;
+			lastSelection = wxPoint(from, to);
+			from = to;
 
 			FindTag(lastPattern, L"", 3);
-			PutTagInText(resettag, L"", focus);
+			PutTagInText(resettag, L"", focus, true);
 			return;
 		}
-
-		editor->SetSelection(whre, whre);
+		if (restoreSelection)
+			editor->SetSelection(lastSelection.x, lastSelection.y);
+		else
+			editor->SetSelection(whre, whre);
 		if (focus) { editor->SetFocus(); }
 	}
 	else {

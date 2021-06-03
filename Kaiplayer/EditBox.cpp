@@ -712,6 +712,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 {
 	char form = grid->subsFormat;
 	Styles *mstyle = (form < SRT) ? grid->GetStyle(0, line->Style)->Copy() : new Styles();
+	actualStyle = Styles(*mstyle);
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 		wxString tmp;
@@ -782,7 +783,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			FindTag(L"fn(.*)", L"", 0, true);
-			PutTagInText(L"\\fn" + retStyle->Fontname, L"\\fn" + editedStyle->Fontname, false);
+			PutTagInText(L"\\fn" + retStyle->Fontname, L"\\fn" + actualStyle.Fontname, false);
 		}
 		else{ PutinNonass(L"F:" + retStyle->Fontname, L"f:([^}]*)"); }
 	}
@@ -790,7 +791,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			FindTag(L"fs([0-9]+)", L"", 0, true);
-			PutTagInText(L"\\fs" + retStyle->Fontsize, L"\\fs" + editedStyle->Fontsize, false);
+			PutTagInText(L"\\fs" + retStyle->Fontsize, L"\\fs" + actualStyle.Fontsize, false);
 		}
 		else{ PutinNonass(L"S:" + retStyle->Fontname, L"s:([^}]*)"); }
 	}
@@ -798,7 +799,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString bld = (retStyle->Bold) ? L"1" : L"0";
-			wxString bld1 = (editedStyle->Bold) ? L"1" : L"0";
+			wxString bld1 = (actualStyle.Bold) ? L"1" : L"0";
 			FindTag(L"b(0|1)", L"", 0, true);
 			PutTagInText(L"\\b" + bld, L"\\b" + bld1, false);
 		}
@@ -808,7 +809,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		if (form < SRT){
 			wxString ital = (retStyle->Italic) ? L"1" : L"0";
-			wxString ital1 = (editedStyle->Italic) ? L"1" : L"0";
+			wxString ital1 = (actualStyle.Italic) ? L"1" : L"0";
 			FindTag(L"i(0|1)", L"", 0, true);
 			PutTagInText(L"\\i" + ital, L"\\i" + ital1, false);
 		}
@@ -818,14 +819,14 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	{
 		FindTag(L"u(0|1)", L"", 0, true);
 		wxString under = (retStyle->Underline) ? L"1" : L"0";
-		wxString under1 = (editedStyle->Underline) ? L"1" : L"0";
+		wxString under1 = (actualStyle.Underline) ? L"1" : L"0";
 		PutTagInText(L"\\u" + under, L"\\u" + under1, false);
 	}
 	if (retStyle->StrikeOut != editedStyle->StrikeOut)
 	{
 		FindTag(L"s(0|1)", L"", 0, true);
 		wxString strike = (retStyle->StrikeOut) ? L"1" : L"0";
-		wxString strike1 = (editedStyle->StrikeOut) ? L"1" : L"0";
+		wxString strike1 = (actualStyle.StrikeOut) ? L"1" : L"0";
 		PutTagInText(L"\\s" + strike, L"\\s" + strike1, false);
 	}
 }

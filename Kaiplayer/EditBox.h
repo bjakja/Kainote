@@ -199,6 +199,7 @@ private:
 	void SwapRTLTextLines(wxString* text, int posOfSplit, const wxString & splitTag);
 	AssColor actualColor;
 	wxString actualColorstr;
+	Styles actualStyle;
 	bool isdetached;
 	bool hasPreviewGrid = false;
 	wxMutex mutex;

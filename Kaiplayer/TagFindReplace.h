@@ -72,7 +72,8 @@ public:
 	//editbox function, put tag in text and reset it when selected
 	//that's need reset tag that is given when seeking
 	//full tag with value and full reset tag with value
-	void PutTagInText(const wxString& tag, const wxString& resettag, bool focus = true);
+	//restore selection is reserved
+	void PutTagInText(const wxString& tag, const wxString& resettag, bool focus = true, bool restoreSelection = false);
 	//function return 1 when need to add bracket or 0
 	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
 	bool TagValueFromStyle(Styles* style, const wxString& tag, wxString *value);
@@ -82,7 +83,7 @@ private:
 	wxRegEx regex;
 	TabPanel* currentTab;
 	wxString lastPattern;
-	int lastMode = 0;
+	wxPoint lastSelection;
 	long from = 0, to = 0;
 
 };
