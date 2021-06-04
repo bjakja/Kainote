@@ -501,7 +501,10 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 			}
 			txt.insert(result.positionInText.x, tag);
 		}
-		if (tag == L"") { txt.Replace(L"{}", L""); }
+		if (tag.empty()) { 
+			txt.Replace(L"{}", L""); 
+			whre--;
+		}
 		editor->SetTextS(txt, true);
 		if (result.hasSelection && !resettag.empty()) {
 			int addition = tag.length();

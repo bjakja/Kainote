@@ -1554,7 +1554,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
 
-		FindTag(colorNumber + tag, L"", 0, true);
+		bool found = FindTag(colorNumber + tag, L"", 0, true);
 		//check only colors, not aplha
 		if (actualColor.r != choosenColor.r || actualColor.g != choosenColor.g || 
 			actualColor.b != choosenColor.b){
@@ -1562,8 +1562,10 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutTagInText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", 
 				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
+		else if (found)
+			PutTagInText(L"", L"", false);
 
-		if (FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
+		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
 			GetTextResult(&colorString);
 			if (!colorString.StartsWith(colorNumber + L"a&")){
 				//colorString = colorString.Mid(5);
@@ -1579,6 +1581,8 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutTagInText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), 
 				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", actualColor.a), false);
 		}
+		else if (found)
+			PutTagInText(L"", L"", false);
 
 	}
 	else{ PutinNonass(L"C:" + choosenColorAsString.Mid(2), L"C:([^}]*)"); }

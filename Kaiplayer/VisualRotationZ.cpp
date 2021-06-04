@@ -26,6 +26,20 @@ RotationZ::RotationZ()
 
 void RotationZ::DrawVisual(int time)
 {
+	if (hasTwoPoints) {
+		if (visibility[1]) {
+			line->SetWidth(2.f);
+			line->Begin();
+			line->Draw(twoPoints, 2, 0xFFBB0000);
+			line->End();
+			DrawRect(twoPoints[1], hover[1]);
+		}
+		if (visibility[0]) {
+			DrawRect(twoPoints[0], hover[0]);
+		}
+		return;
+	}
+	
 	if (time != oldtime && moveValues[6] > 3){
 		BOOL noOrg = (org == from);
 		from = CalcMovePos();
@@ -114,13 +128,24 @@ void RotationZ::DrawVisual(int time)
 
 void RotationZ::GetVisual(wxString *visual)
 {
+	if (hasTwoPoints && (!visibility[0] || !visibility[1])) {
+		*visual = L"";
+		return;
+	}
+
 	if (isOrg){
 		*visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 		return;
 	}
 
-	float angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
+	float angle;
+	if (hasTwoPoints) {
+		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
+		angle = -angle + 180;
+	}
+	else
+		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 	angle = fmodf(angle + 360.f, 360.f);
 	lastmove.y = angle;
 
@@ -147,34 +172,96 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 		tab->Video->Render();
 		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
+		grabbed = -1;
+	}
+	if (hasTwoPoints && evt.Moving()) {
+		float screenx = (x - zoomMove.x) * zoomScale.x;
+		float screeny = (y - zoomMove.y) * zoomScale.y;
+		if (abs(twoPoints[0].x - screenx) < 8 && abs(twoPoints[0].y - screeny) < 8) {
+			hover[0] = true;
+			tab->Video->Render();
+		}
+		else if (abs(twoPoints[1].x - screenx) < 8 && abs(twoPoints[1].y - screeny) < 8) {
+			hover[1] = true;
+			tab->Video->Render();
+		}
+		else if (hover[0] || hover[1]) {
+			hover[0] = false;
+			hover[1] = false;
+			tab->Video->Render();
+		}
+
 	}
 
 	if (click){
 		tab->Video->CaptureMouse();
-		tab->Video->SetCursor(wxCURSOR_SIZING);
-		if (abs(org.x - x) < 8 && abs(org.y - y) < 8){
-			isOrg = true;
-			lastOrg = org;
-			diffs.x = org.x - x;
-			diffs.y = org.y - y;
-			return;
+		if (hasTwoPoints) {
+			float screenx = (x - zoomMove.x) * zoomScale.x;
+			float screeny = (y - zoomMove.y) * zoomScale.y;
+			if (!visibility[0]) {
+				visibility[0] = true;
+				twoPoints[0].x = screenx;
+				twoPoints[0].y = screeny;
+				tab->Video->Render(false);
+				return;
+			}
+			else if (!visibility[1]) {
+				visibility[1] = true;
+				twoPoints[1].x = screenx;
+				twoPoints[1].y = screeny;
+			}
+			else if (abs(twoPoints[0].x - screenx) < 8 && abs(twoPoints[0].y - screeny) < 8) {
+				diffs.x = twoPoints[0].x - screenx;
+				diffs.y = twoPoints[0].y - screeny;
+				grabbed = 0;
+			}
+			else if (abs(twoPoints[1].x - screenx) < 8 && abs(twoPoints[1].y - screeny) < 8) {
+				diffs.x = twoPoints[1].x - screenx;
+				diffs.y = twoPoints[1].y - screeny;
+				grabbed = 1;
+			}
+			else {
+				return;
+			}
+			tab->Video->SetCursor(wxCURSOR_SIZING);
+			SetVisual(true, 0);
 		}
-		else{
-			lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
-			lastmove.x += lastmove.y;
+		else {
+			tab->Video->SetCursor(wxCURSOR_SIZING);
+			if (abs(org.x - x) < 8 && abs(org.y - y) < 8) {
+				isOrg = true;
+				lastOrg = org;
+				diffs.x = org.x - x;
+				diffs.y = org.y - y;
+				return;
+			}
+			else {
+				lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
+				lastmove.x += lastmove.y;
+			}
 		}
 	}
 	else if (holding){
-		if (isOrg){
-			org.x = x + diffs.x;
-			org.y = y + diffs.y;
-
-			SetVisual(true, 100);//type tak¿e ma liczbê 100 by by³o rozpoznawalne.
-			return;
+		if (hasTwoPoints) {
+			if (grabbed != -1) {
+				float screenx = (x - zoomMove.x) * zoomScale.x;
+				float screeny = (y - zoomMove.y) * zoomScale.y;
+				twoPoints[grabbed].x = screenx + diffs.x;
+				twoPoints[grabbed].y = screeny + diffs.y;
+				SetVisual(true, 0);
+			}
 		}
-		to.x = x; to.y = y;
-		SetVisual(true, 0);
-
+		else {
+			if (isOrg) {
+				org.x = x + diffs.x;
+				org.y = y + diffs.y;
+				//type also have number 100 to be recognized
+				SetVisual(true, 100);
+				return;
+			}
+			to.x = x; to.y = y;
+			SetVisual(true, 0);
+		}
 	}
 
 }
@@ -185,6 +272,7 @@ void RotationZ::SetCurVisual()
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
+	double lastfrz = lastmove.y;
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
 	if (FindTag(L"frz?([0-9.-]+)")){
@@ -212,18 +300,29 @@ void RotationZ::SetCurVisual()
 	}
 	else{ org = from; }
 	to = org;
-
+	if (hasTwoPoints && abs(lastfrz - lastmove.y) > 0.01) {
+		visibility[0] = false;
+		visibility[1] = false;
+	}
 }
 
 void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 {
+	if (hasTwoPoints && (!visibility[0] || !visibility[1]))
+		return;
+
 	if (isOrg){
 		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x) * coeffW,
 			(((org.y - lastOrg.y) / zoomScale.y) + zoomMove.y) * coeffH);
 		return;
 	}
 
-	float angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
+	float angle;
+	if(hasTwoPoints)
+		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
+	else
+		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
+
 	angle = fmodf(angle + 360.f, 360.f);
 	lastmove.y = angle;
 
@@ -233,7 +332,25 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	Replace(tag, txt);
 }
 
+void RotationZ::ChangeTool(int _tool) { 
+	if (_tool == 0 != hasTwoPoints) {
+		hasTwoPoints = _tool == 0;
+		visibility[0] = false;
+		visibility[1] = false;
+		//selection[0] = false;
+		//selection[1] = false;
+		tab->Video->Render(false);
+	}
+};
+
 void RotationZ::OnKeyPress(wxKeyEvent &evt)
 {
+	/*if (!hasTwoPoints)
+		return;
 
+	if (evt.ControlDown() && evt.GetKeyCode() == L'A') {
+		selection[0] = true;
+		selection[1] = true;
+		tab->Video->Render(false);
+	}*/
 }

@@ -63,13 +63,17 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEDRAWINGS"), _("Przenieś rysunki,\nużywać tylko w przypadku,\ngdy chcemy przesunąć punkty rysunku,\nnie łączyć z trzema pierwszymi opcjami")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Przenieś punkty org")));
 		//6
+		//icon rotation z
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
+		//1
+		
 	}
 	//adding visual second toolbar elements
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
-	visualItems.push_back(NULL);
+	visualItems.push_back(new RotationZItem());
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
 	//clip
@@ -632,3 +636,85 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	tlbs.y = vts.y - 2;
 	tagList->SetSize(tlbs);
 }
+
+void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
+{
+	int startDrawPos = w - (h * numIcons);
+	int x, y;
+	evt.GetPosition(&x, &y);
+	int elem = ((x - startDrawPos) / h);
+	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
+		if (vt->HasToolTips()) { vt->UnsetToolTip(); }
+		return;
+	}
+	if (elem >= numIcons)
+		return;
+
+	if (evt.GetWheelRotation() != 0) {
+		if (vt->blockScroll) { evt.Skip(); return; }
+		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		toggled -= step;
+		if (toggled < 0) { toggled = numIcons - 1; }
+		else if (toggled >= numIcons) { toggled = 0; }
+		vt->Refresh(false);
+		return;
+	}
+
+	if (elem != selection) {
+		selection = elem;
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
+		vt->Refresh(false);
+	}
+	if (evt.LeftDown()) {
+		toggled = (toggled == elem)? -1 : elem;
+		clicked = true;
+		vt->Refresh(false);
+	}
+	if (evt.LeftUp()) {
+		clicked = false;
+		vt->Refresh(false);
+		wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		evt->SetInt(toggled);
+		wxQueueEvent(vt, evt);
+	}
+}
+
+void RotationZItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
+{
+	int posX = w - (h * numIcons);
+	int i = 0;
+	while (i < numIcons) {
+		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
+		if (icon->IsOk()) {
+			if (i == selection) {
+				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+			else if (i == toggled) {
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
+			posX += h;
+		}
+		i++;
+	}
+}
+
+void RotationZItem::Synchronize(VisualItem* item)
+{
+	RotationZItem* rzi = (RotationZItem*)item;
+	toggled = rzi->toggled;
+}
+
+void RotationZItem::SetItemToggled(int* item)
+{
+	//nothing to do, cause it's only one button
+}
+

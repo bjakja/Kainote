@@ -281,12 +281,17 @@ public:
 	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
-	void ChangeTool(int _tool){};
+	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg;
 	D3DXVECTOR2 org;
 	D3DXVECTOR2 lastOrg;
-	wxPoint diffs;
+	D3DXVECTOR2 twoPoints[2];
+	D3DXVECTOR2 diffs;
+	bool hasTwoPoints = false;
+	bool hover[2] = { false, false };
+	bool visibility[2] = { false, false };
+	int grabbed = -1;
 };
 
 class RotationXY : public Visuals
