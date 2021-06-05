@@ -367,6 +367,54 @@ bool TagFindReplace::TagValueFromStyle(Styles* style, const wxString& tag, wxStr
 	return true;
 }
 
+bool TagFindReplace::TagValueToStyle(Styles* style, const wxString& tag, const wxString& value)
+{
+	if (tag == L"fs")
+		style->Fontsize = value;
+	else if (tag == L"bord")
+		style->Outline = value;
+	else if (tag == L"shad")
+		style->Shadow = value;
+	else if (tag == L"fsp")
+		style->Spacing = value;
+	else if (tag == L"fscx")
+		style->ScaleX = value;
+	else if (tag == L"fscy")
+		style->ScaleY = value;
+	else if (tag == L"c" || tag == L"1c")
+		style->PrimaryColour.SetAss(value);
+	else if (tag == L"2c")
+		style->SecondaryColour.SetAss(value);
+	else if (tag == L"3c")
+		style->OutlineColour.SetAss(value);
+	else if (tag == L"4c")
+		style->BackColour.SetAss(value);
+	else if (tag == L"1a")
+		style->PrimaryColour.SetAlphaString(value);
+	else if (tag == L"2a")
+		style->SecondaryColour.SetAlphaString(value);
+	else if (tag == L"3a")
+		style->OutlineColour.SetAlphaString(value);
+	else if (tag == L"4a")
+		style->BackColour.SetAlphaString(value);
+	else if (tag == L"fn")
+		style->Fontname = value;
+	else if (tag == L"b")
+		style->Bold = value == L"1";
+	else if (tag == L"i")
+		style->Italic = value == L"1";
+	else if (tag == L"u")
+		style->Underline = value == L"1";
+	else if (tag == L"s")
+		style->StrikeOut = value == L"1";
+	else if (tag == L"fr" || tag == L"frz")
+		style->Angle = value;
+	else
+		return false;
+
+	return true;
+}
+
 //int TagFindReplace::ReplaceFromFindData(const wxString& replaceTxt, const FindData& data)
 //{
 //	

@@ -106,6 +106,9 @@ public:
 
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action);
+	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
+	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL);
+	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -260,15 +263,32 @@ public:
 	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
-	void ChangeTool(int _tool){};
+	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
+	int HitTest(const D3DXVECTOR2& pos, bool originalRect = false, bool diff = false);
+private:
+	void SortPoints();
+	void SetScale();
+	D3DXVECTOR2 ScaleToVideo(D3DXVECTOR2 point);
 	byte type;
 	int grabbed;
 	byte AN;
 	D3DXVECTOR2 scale;
-	wxPoint diffs;
+	D3DXVECTOR2 originalScale;
+	D3DXVECTOR2 diffs = D3DXVECTOR2(0.f, 0.f);
 	bool wasUsedShift = false;
 	D3DXVECTOR2 arrowLengths = D3DXVECTOR2(100.f, 100.f);
+	D3DXVECTOR2 sizingRectangle[2];
+	D3DXVECTOR2 sizingOriginalRectangle[2];
+	D3DXVECTOR2 originalSize;
+	D3DXVECTOR2 border;
+	bool hasScaleToRenctangle = false;
+	bool hasOriginalRectangle = false;
+	bool hasScaleX = false;
+	bool hasScaleY = false;
+	bool preserveAspectRatio = false;
+	bool rectangleVisible = false;
+	bool originalRectangleVisible = false;
 };
 
 

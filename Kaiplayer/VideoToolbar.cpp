@@ -66,13 +66,19 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		//icon rotation z
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
 		//1
-		
+		//icons scale
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEMOVESTART"), _("Skaluj szerokość")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Utrzymuj proporcje")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVE"), _("Skaluj wysokość")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
+		//5
 	}
 	//adding visual second toolbar elements
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
-	visualItems.push_back(NULL);
+	visualItems.push_back(new ScaleItem());
 	visualItems.push_back(new RotationZItem());
 	visualItems.push_back(NULL);
 	visualItems.push_back(NULL);
@@ -653,7 +659,7 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 	if (elem >= numIcons)
 		return;
 
-	if (evt.GetWheelRotation() != 0) {
+	/*if (evt.GetWheelRotation() != 0) {
 		if (vt->blockScroll) { evt.Skip(); return; }
 		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
 		toggled -= step;
@@ -661,7 +667,7 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 		else if (toggled >= numIcons) { toggled = 0; }
 		vt->Refresh(false);
 		return;
-	}
+	}*/
 
 	if (elem != selection) {
 		selection = elem;
@@ -718,3 +724,98 @@ void RotationZItem::SetItemToggled(int* item)
 	//nothing to do, cause it's only one button
 }
 
+void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
+{
+	int startDrawPos = w - (h * numIcons);
+	int x, y;
+	evt.GetPosition(&x, &y);
+	int elem = ((x - startDrawPos) / h);
+	bool isGrayed = elem > 0 && !Toggled[0] || (elem == 1 || elem == 3) && Toggled[2];
+	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
+		if (vt->HasToolTips()) { vt->UnsetToolTip(); }
+		return;
+	}
+	if (elem >= numIcons)
+		return;
+
+	/*if (evt.GetWheelRotation() != 0) {
+		if (vt->blockScroll) { evt.Skip(); return; }
+		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
+		toggled -= step;
+		if (toggled < 0) { toggled = numIcons - 1; }
+		else if (toggled >= numIcons) { toggled = 0; }
+		vt->Refresh(false);
+		return;
+	}*/
+
+	if (elem != selection) {
+		selection = elem;
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
+		vt->Refresh(false);
+	}
+	if (evt.LeftDown() && !isGrayed) {
+		Toggled[elem] = !Toggled[elem];
+		//icon 1 or 2 for scale x and y
+		//one of scale have to be selected
+		if (elem == 1 || elem == 3) {
+			if (!Toggled[1] && !Toggled[3]) {
+				int nsel = elem == 1 ? 3 : 1;
+				Toggled[nsel] = true;
+			}
+		}
+		//select scale x when preserve aspect ratio is used
+		if (elem == 2 && Toggled[elem]) {
+			Toggled[1] = true;
+		}
+		clicked = true;
+		vt->Refresh(false);
+	}
+	if (evt.LeftUp() && !isGrayed) {
+		clicked = false;
+		vt->Refresh(false);
+		wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		evt->SetInt(GetItemToggled());
+		wxQueueEvent(vt, evt);
+	}
+}
+
+void ScaleItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
+{
+	int posX = w - (h * numIcons);
+	int i = 0;
+	while (i < numIcons) {
+		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
+		bool isGrayed = i > 0 && !Toggled[0] || i == 3 && Toggled[2];
+		if (icon->IsOk()) {
+			if (i == selection && !isGrayed) {
+				dc.SetBrush(wxBrush(Options.GetColour((Toggled[i] || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((Toggled[i] || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+			else if (Toggled[i] && !isGrayed) {
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+
+			dc.DrawBitmap(isGrayed ? icon->ConvertToDisabled() : *icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
+			posX += h;
+		}
+		i++;
+	}
+}
+
+void ScaleItem::Synchronize(VisualItem* item)
+{
+	ScaleItem* si = (ScaleItem*)item;
+	for (int i = 0; i < numIcons; i++) {
+		Toggled[i] = si->Toggled[i];
+	}
+}
+
+void ScaleItem::SetItemToggled(int* item)
+{
+}

@@ -715,3 +715,226 @@ void Visuals::SetModified(int action)
 	tab->Grid->SetModified(action);
 	tab->Grid->Refresh();
 }
+
+bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width, float* height, float* descent, float* extlead)
+{
+	float fwidth = 0, fheight = 0, fdescent = 0, fextlead = 0;
+	float fontsize = style->GetFontSizeDouble() * 32;
+	float spacing = wxAtof(style->Spacing) * 32;
+
+	
+	size_t thetextlen = text.length();
+	if (!thetextlen) {
+		*width = 0;
+		*height = 0;
+		if (descent)
+			*descent = 0;
+		if (extlead)
+			*extlead = 0;
+		return true;
+	}
+
+	const wchar_t* thetext = text.wc_str();
+
+	
+	SIZE sz;
+	HDC thedc = CreateCompatibleDC(0);
+	if (!thedc) return false;
+	SetMapMode(thedc, MM_TEXT);
+
+	LOGFONTW lf;
+	ZeroMemory(&lf, sizeof(lf));
+	lf.lfHeight = (LONG)fontsize;
+	lf.lfWeight = style->Bold ? FW_BOLD : FW_NORMAL;
+	lf.lfItalic = style->Italic;
+	lf.lfUnderline = style->Underline;
+	lf.lfStrikeOut = style->StrikeOut;
+	lf.lfCharSet = wxAtoi(style->Encoding);
+	lf.lfOutPrecision = OUT_TT_PRECIS;
+	lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+	lf.lfQuality = ANTIALIASED_QUALITY;
+	lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+	_tcsncpy(lf.lfFaceName, style->Fontname.wc_str(), 32);
+
+	HFONT thefont = CreateFontIndirect(&lf);
+	if (!thefont) return false;
+	SelectObject(thedc, thefont);
+
+	if (spacing != 0) {
+		fwidth = 0;
+		for (unsigned int i = 0; i < thetextlen; i++) {
+			GetTextExtentPoint32(thedc, &thetext[i], 1, &sz);
+			fwidth += sz.cx + spacing;
+			fheight = sz.cy;
+		}
+	}
+	else {
+		GetTextExtentPoint32(thedc, thetext, (int)thetextlen, &sz);
+		fwidth = sz.cx;
+		fheight = sz.cy;
+	}
+
+
+	TEXTMETRIC tm;
+	GetTextMetrics(thedc, &tm);
+	fdescent = tm.tmDescent;
+	fextlead = tm.tmExternalLeading;
+
+	DeleteObject(thedc);
+	DeleteObject(thefont);
+	float scalex = wxAtof(style->ScaleX) / 100.f;
+	float scaley = wxAtof(style->ScaleY) / 100.f;
+
+	*width = scalex * (fwidth / 32);
+	*height = scaley * (fheight / 32);
+	if(descent)
+		*descent = scaley * (fdescent / 32);
+	if(extlead)
+		*extlead = scaley * (fextlead / 32);
+
+	return true;
+}
+
+D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style)
+{
+	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", L"bord", L"xbord", L"ybord" };
+	D3DXVECTOR2 result = D3DXVECTOR2(0.f, 0.f);
+	const wxString& text = dial->GetTextNoCopy();
+	if (!text.length())
+		return result;
+
+	Styles* measuringStyle = NULL;
+	if (style)
+		measuringStyle = style->Copy();
+	else
+		measuringStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style)->Copy();
+
+	dial->ParseTags(tags, 9, true);
+	ParseData *presult = dial->parseData;
+	float bord = measuringStyle->GetOtlineDouble();
+	float xbord = bord;
+	float xbord1 = bord;
+	float ybord1 = bord;
+	wxString drawingText;
+	bool wasPlain = false;
+	float maxwidth = 0.f;
+	float maxheight = 0.f;
+	float extlead = 0.f;
+	float descent = 0.f;
+	for (auto tag : presult->tags) {
+		if (tag->tagName == L"p") {
+			if (!tag->value.IsNumber()) {
+				drawingText << tag->value;
+			}
+			else if(tag->value == L"0"){
+				D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText);
+				result += drawingsize;
+				drawingText.clear();
+			}
+		}//set first and last bord
+		else if (tag->tagName.EndsWith(L"ord")) {
+			bool isx = tag->tagName[0] != L'y';
+			bool isy = tag->tagName[0] != L'x';
+			float bord = wxAtof(tag->value);
+			if (isx) {
+				//last bord in last bracket
+				xbord1 = bord;
+				//last bord in first bracket
+				if (!wasPlain)
+					xbord = bord;
+			}
+			if (isy) {
+				//last bord in last bracket
+				ybord1 = bord;
+			}
+		}//plain text for measuring
+		else if (tag->tagName == L"plain") {
+			if (!tag->value.empty()) {
+				wasPlain = true;
+				size_t i = 0;
+				size_t g = 0;
+				float fwidth = 0;
+				float fheight = 0;
+				while (i != -1) {
+					i = tag->value.find(L"\\N", (i > 0)? i + 2 : i);
+					wxString pltext = tag->value.Mid(g, i - g);
+					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
+						maxwidth += fwidth;
+						fheight -= extlead + descent;
+						if (maxheight < fheight)
+							maxheight = fheight;
+						if (i != -1) {
+							if (maxwidth > result.x)
+								result.x = maxwidth;
+
+							result.y += maxheight;
+							maxwidth = 0.f;
+							maxheight = 0.f;
+						}
+					}
+					else {
+						KaiLog("Cannot measure text: " + tag->value.Mid(g, i - g));
+					}
+					g = i + 2;
+				}
+			}
+		}//assign to style
+		else {
+			if (!TagValueToStyle(measuringStyle, tag->tagName, tag->value))
+				KaiLog(L"Cannot assign style to tag: " + tag->tagName + " with value: " + tag->value);
+		}
+	}
+	if (!drawingText.empty()) {
+		D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText);
+		result += drawingsize;
+	}
+	//don't know if it's needed
+	if (maxwidth || maxheight) {
+		if (maxwidth > result.x)
+			result.x = maxwidth;
+
+		result.y += maxheight;
+	}
+	if (border) {
+		border->x = xbord + xbord1;
+		border->y = ybord1 * 2;
+	}
+	dial->ClearParse();
+	delete measuringStyle;
+	return result;
+}
+
+D3DXVECTOR2 Visuals::GetDrawingSize(const wxString& drawing)
+{
+	double minx = DBL_MAX;
+	double miny = DBL_MAX;
+	double maxx = -DBL_MAX;
+	double maxy = -DBL_MAX;
+	wxStringTokenizer tokenzr(drawing, L" ");
+	double value;
+	bool isX = true;
+	while (tokenzr.HasMoreTokens()) {
+		wxString token = tokenzr.GetNextToken();
+		if (token == L"m" || token == L"l" || token == L"b" || token == L"s" || token == L"c")
+			continue;
+		if (token.EndsWith(L"c"))
+			token = token.Mid(0, token.length() - 1);
+
+		if (token.ToDouble(&value)) {
+			if (isX) {
+				if (value < minx) { minx = value; }
+				if (value > maxx) { maxx = value; }
+				isX = false;
+			}
+			else {
+				if (value < miny) { miny = value; }
+				if (value > maxy) { maxy = value; }
+				isX = true;
+			}
+		}
+		else {
+			KaiLog(wxString::Format(_("Zła wartość punktu rysunku %s."), token));
+		}
+	}
+	return D3DXVECTOR2(maxx - minx, maxy - miny);
+}

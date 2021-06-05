@@ -77,6 +77,7 @@ public:
 	//function return 1 when need to add bracket or 0
 	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
 	bool TagValueFromStyle(Styles* style, const wxString& tag, wxString *value);
+	bool TagValueToStyle(Styles* style, const wxString& tag, const wxString& value);
 private:
 	//bool DoFindNextTag();
 	FindData result;

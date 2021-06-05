@@ -169,6 +169,29 @@ private:
 	int toggled = -1;
 };
 
+class ScaleItem :public VisualItem
+{
+public:
+	ScaleItem() {
+		startIconNumber = 26;
+	};
+	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
+	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
+	void Synchronize(VisualItem* item) override;
+	int GetItemToggled() override { 
+		int result = 0;
+		for (int i = 0; i < numIcons; i++) {
+			if (Toggled[i]) { result |= (1 << i); }
+		}
+		return result;
+	};
+	void SetItemToggled(int* item) override;
+private:
+	static const int numIcons = 5;
+	bool Toggled[numIcons] = { false, true, true, false, false };
+};
+
+
 class VideoToolbar: public wxWindow {
 public:
 	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);

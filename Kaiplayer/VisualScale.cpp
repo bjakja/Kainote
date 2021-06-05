@@ -17,6 +17,15 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 
+enum {
+	LEFT = 1,
+	RIGHT,
+	TOP = 4,
+	BOTTOM = 8,
+	INSIDE = 16,
+	OUTSIDE = 32
+};
+
 Scale::Scale()
 	: Visuals()
 	, type(0)
@@ -26,7 +35,40 @@ Scale::Scale()
 
 void Scale::DrawVisual(int time)
 {
-	
+	if (hasScaleToRenctangle) {
+		if (rectangleVisible) {
+			D3DXVECTOR2 point1 = ScaleToVideo(sizingRectangle[0]);
+			D3DXVECTOR2 point2 = ScaleToVideo(sizingRectangle[1]);
+			D3DXVECTOR2 v4[5];
+			v4[0] = point1;
+			v4[1].x = point2.x;
+			v4[1].y = point1.y;
+			v4[2] = point2;
+			v4[3].x = point1.x;
+			v4[3].y = point2.y;
+			v4[4] = point1;
+			line->Begin();
+			line->Draw(v4, 5, 0xFFBB0000);
+			line->End();
+			if (hasOriginalRectangle) {
+				D3DXVECTOR2 opoint1 = ScaleToVideo(sizingOriginalRectangle[0]);
+				D3DXVECTOR2 opoint2 = ScaleToVideo(sizingOriginalRectangle[1]);
+				D3DXVECTOR2 v4[5];
+				v4[0] = opoint1;
+				v4[1].x = opoint2.x;
+				v4[1].y = opoint1.y;
+				v4[2] = opoint2;
+				v4[3].x = opoint1.x;
+				v4[3].y = opoint2.y;
+				v4[4] = opoint1;
+				line->Begin();
+				line->Draw(v4, 5, 0xFF0000BB);
+				line->End();
+			}
+		}
+		return;
+	}
+
 	if (time != oldtime && moveValues[6] > 3){
 		from = CalcMovePos();
 		from.x = ((from.x / coeffW) - zoomMove.x) * zoomScale.x;
@@ -83,6 +125,110 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 
+	if (hasScaleToRenctangle) {
+		type = ((hasScaleX && hasScaleY) || preserveAspectRatio) ? 2 : hasScaleY ? 1 : 0;
+		if (evt.ButtonUp()) {
+			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+			if (rectangleVisible) {
+				if (sizingRectangle[1].y == sizingRectangle[0].y || 
+					sizingRectangle[1].x == sizingRectangle[0].x)
+					rectangleVisible = false;
+
+				SortPoints();
+			}
+			if (rectangleVisible) {
+				SetScale();
+				SetVisual(false, type);
+			}
+
+			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		}
+
+		if (!holding && rectangleVisible) {
+
+			bool setarrow = false;
+			int test = HitTest(D3DXVECTOR2(x, y), false);
+			if (test < INSIDE) {
+				setarrow = true;
+				tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+					(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
+					(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
+			}
+			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		}
+		if (click) {
+			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+			grabbed = OUTSIDE;
+			int pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+				pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
+			if (rectangleVisible) {
+				grabbed = HitTest(D3DXVECTOR2(x, y));
+				if (grabbed == INSIDE) {
+					if (sizingRectangle[0].x <= pointx && sizingRectangle[1].x >= pointx &&
+						sizingRectangle[0].y <= pointy && sizingRectangle[1].y >= pointy) {
+						diffs.x = x;
+						diffs.y = y;
+					}
+				}
+			}
+			if (!rectangleVisible || grabbed == OUTSIDE) {
+				sizingRectangle[0].x = sizingRectangle[1].x = pointx;
+				sizingRectangle[0].y = sizingRectangle[1].y = pointy;
+				grabbed = OUTSIDE;
+				rectangleVisible = true;
+			}
+
+		}
+		else if (holding && grabbed != -1) {
+
+			if (grabbed < INSIDE) {
+				if (grabbed & LEFT || grabbed & RIGHT) {
+					x = MID(VideoSize.x, x, VideoSize.width);
+					sizingRectangle[(grabbed & RIGHT) ? 1 : 0].x = 
+						((((x /*+ diffs.x*/) / zoomScale.x) + zoomMove.x) * coeffW);
+					if (grabbed & LEFT && sizingRectangle[0].x > sizingRectangle[1].x) { 
+						sizingRectangle[0].x = sizingRectangle[1].x;
+					}
+					if (grabbed & RIGHT && sizingRectangle[1].x < sizingRectangle[0].x) { 
+						sizingRectangle[1].x = sizingRectangle[0].x; 
+					}
+				}
+				if (grabbed & TOP || grabbed & BOTTOM) {
+					y = MID(VideoSize.y, y, VideoSize.height);
+					sizingRectangle[(grabbed & BOTTOM) ? 1 : 0].y = 
+						((((y/* + diffs.y*/) / zoomScale.y) + zoomMove.y) * coeffH);
+					if (grabbed & TOP && sizingRectangle[0].y > sizingRectangle[1].y) { 
+						sizingRectangle[0].y = sizingRectangle[1].y; 
+					}
+					if (grabbed & BOTTOM && sizingRectangle[1].y < sizingRectangle[0].y) { 
+						sizingRectangle[1].y = sizingRectangle[0].y;
+					}
+				}
+			}
+			else if (grabbed == INSIDE) {
+				float movex = (((x - diffs.x) / zoomScale.x) * coeffW),
+					movey = (((y - diffs.y) / zoomScale.y) * coeffH);
+				sizingRectangle[0].x += movex;
+				sizingRectangle[0].y += movey;
+				sizingRectangle[1].x += movex;
+				sizingRectangle[1].y += movey;
+				diffs.x = x;
+				diffs.y = y;
+			}
+			else if (grabbed == OUTSIDE) {
+				int pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+					pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
+				sizingRectangle[1].x = pointx;
+				sizingRectangle[1].y = pointy;
+			}
+			SortPoints();
+			SetScale();
+			SetVisual(true, type);
+		}
+
+		return;
+	}
+
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
 		SetVisual(false, type);
@@ -137,7 +283,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			int move = (diffx > diffy) ? x - diffs.x : diffs.y - y;
 
 			D3DXVECTOR2 copyto = to;
-			wxPoint copydiffs = diffs;
+			D3DXVECTOR2 copydiffs = diffs;
 			bool normalArrowX = arrowLengths.x > 0;
 			bool normalArrowY = arrowLengths.y > 0;
 			
@@ -179,6 +325,8 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 void Scale::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, moveValues);
+	originalScale = scale;
+
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
@@ -189,6 +337,20 @@ void Scale::SetCurVisual()
 	to.x = from.x + (scale.x * arrowLengths.x);
 	to.y = from.y + (scale.y * arrowLengths.y);
 
+}
+
+void Scale::ChangeTool(int _tool)
+{
+	if (!hasScaleToRenctangle && _tool & 1) {
+		originalSize = GetTextSize(tab->Edit->line, &border);
+	}
+	hasScaleToRenctangle = _tool & 1;
+	hasScaleX = _tool & 2;
+	preserveAspectRatio = _tool & 4;
+	hasScaleY = _tool & 8;
+	hasOriginalRectangle = _tool & 16;
+	
+	tab->Video->Render(false);
 }
 
 void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
@@ -242,4 +404,98 @@ void Scale::OnKeyPress(wxKeyEvent &evt)
 		return;
 	}
 	evt.Skip();
+}
+
+int Scale::HitTest(const D3DXVECTOR2 &pos, bool originalRect, bool diff)
+{
+	int resultX = 0, resultY = 0, resultInside = 0, resultFinal = 0, oldpointx = 0, oldpointy = 0;
+	D3DXVECTOR2* points = originalRect ? sizingOriginalRectangle : sizingRectangle;
+	for (int i = 0; i < 2; i++) {
+		float pointx = ((points[i].x / coeffW) - zoomMove.x) * zoomScale.x,
+			pointy = ((points[i].y / coeffH) - zoomMove.y) * zoomScale.y;
+		bool hasResult = false;
+		if (abs(pos.x - pointx) < 5) {
+			if (diff) {
+				diffs.x = pointx - pos.x;
+			}
+			resultX |= (i + 1);
+		}
+		if (abs(pos.y - pointy) < 5) {
+			if (diff) {
+				diffs.y = pointy - pos.y;
+			}
+			resultY |= ((i + 1) * 4);
+		}
+		if (i) {
+			resultInside |= (resultX ||
+				(oldpointx <= pointx && oldpointx <= pos.x && pointx >= pos.x) ||
+				(oldpointx >= pointx && oldpointx >= pos.x && pointx <= pos.x)) ? INSIDE : OUTSIDE;
+			resultInside |= (resultY ||
+				(oldpointx <= pointx && oldpointy <= pos.y && pointy >= pos.y) ||
+				(oldpointx >= pointx && oldpointy >= pos.y && pointy <= pos.y)) ? INSIDE : OUTSIDE;
+		}
+		else {
+			oldpointx = pointx;
+			oldpointy = pointy;
+		}
+	}
+
+	resultFinal = (resultInside & OUTSIDE) ? OUTSIDE : INSIDE;
+	if (resultFinal == INSIDE) {
+		resultFinal |= resultX;
+		resultFinal |= resultY;
+		if (resultFinal > INSIDE) { resultFinal ^= INSIDE; }
+	}
+	return resultFinal;
+}
+
+void Scale::SortPoints()
+{
+	if (sizingRectangle[1].y < sizingRectangle[0].y) {
+		float tmpy = sizingRectangle[0].y;
+		sizingRectangle[0].y = sizingRectangle[1].y;
+		sizingRectangle[1].y = tmpy;
+	}
+	if (sizingRectangle[1].x < sizingRectangle[0].x) {
+		float tmpy = sizingRectangle[0].x;
+		sizingRectangle[0].x = sizingRectangle[1].x;
+		sizingRectangle[1].x = tmpy;
+	}
+	/*if (sizingOriginalRectangle[1].y < sizingOriginalRectangle[0].y) {
+		float tmpy = sizingOriginalRectangle[0].y;
+		sizingOriginalRectangle[0].y = sizingOriginalRectangle[1].y;
+		sizingOriginalRectangle[1].y = tmpy;
+	}
+	if (sizingOriginalRectangle[1].x < sizingOriginalRectangle[0].x) {
+		float tmpy = sizingOriginalRectangle[0].x;
+		sizingOriginalRectangle[0].x = sizingOriginalRectangle[1].x;
+		sizingOriginalRectangle[1].x = tmpy;
+	}*/
+}
+
+void Scale::SetScale()
+{
+	if (originalRectangleVisible) {
+		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x) /
+			(sizingOriginalRectangle[1].x - sizingOriginalRectangle[0].x));
+		if (preserveAspectRatio)
+			scale.y = scale.x;
+		else
+			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y) /
+				(sizingOriginalRectangle[1].y - sizingOriginalRectangle[0].y));
+	}
+	else {
+		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x - border.x) / originalSize.x);
+		if (preserveAspectRatio)
+			scale.y = scale.x;
+		else
+			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y - border.y) / originalSize.y);
+	}
+}
+
+D3DXVECTOR2 Scale::ScaleToVideo(D3DXVECTOR2 point)
+{
+	float pointx = ((point.x / coeffW) - zoomMove.x) * zoomScale.x,
+		pointy = ((point.y / coeffH) - zoomMove.y) * zoomScale.y;
+	return D3DXVECTOR2(pointx, pointy);
 }

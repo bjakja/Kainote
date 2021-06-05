@@ -671,7 +671,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 		else if (ch == L'{' || pos >= len - 1){
 			tagsBlock = true;
 			if (pos >= len - 1){ pos++; }
-			//aby nie skraszowaæ programu odejmuj¹c od 0 przy unsigned dodam 1 do plain start
+			//to not crash the program when subtract from unsigned 0 just add 1 to plain start
 			if ((plainText || hasDrawing) && plainStart + 1 <= pos){
 				TagData *newTag = new TagData((hasDrawing) ? L"p" : L"plain", plainStart);
 				newTag->PutValue(txt.SubString(plainStart, pos - 1));
