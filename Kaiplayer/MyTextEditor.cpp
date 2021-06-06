@@ -668,7 +668,11 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 
 		CalcWraps();
 
-		if (Cursor.x<wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ Cursor.y--; }
+		if (Cursor.x < wraps[Cursor.y] || (Cursor.x == wraps[Cursor.y] && len != wraps.size())){ 
+			//block to go cursor.y to -1
+			if(Cursor.y > 0)
+				Cursor.y--; 
+		}
 		else if (Cursor.x>wraps[Cursor.y + 1]){ Cursor.y++; }
 		Selend = Cursor;
 		Refresh(false);

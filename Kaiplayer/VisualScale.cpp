@@ -50,21 +50,21 @@ void Scale::DrawVisual(int time)
 			line->Begin();
 			line->Draw(v4, 5, 0xFFBB0000);
 			line->End();
-			if (hasOriginalRectangle) {
-				D3DXVECTOR2 opoint1 = ScaleToVideo(sizingOriginalRectangle[0]);
-				D3DXVECTOR2 opoint2 = ScaleToVideo(sizingOriginalRectangle[1]);
-				D3DXVECTOR2 v4[5];
-				v4[0] = opoint1;
-				v4[1].x = opoint2.x;
-				v4[1].y = opoint1.y;
-				v4[2] = opoint2;
-				v4[3].x = opoint1.x;
-				v4[3].y = opoint2.y;
-				v4[4] = opoint1;
-				line->Begin();
-				line->Draw(v4, 5, 0xFF0000BB);
-				line->End();
-			}
+		}
+		if (originalRectangleVisible) {
+			D3DXVECTOR2 opoint1 = ScaleToVideo(sizingRectangle[2]);
+			D3DXVECTOR2 opoint2 = ScaleToVideo(sizingRectangle[3]);
+			D3DXVECTOR2 v4[5];
+			v4[0] = opoint1;
+			v4[1].x = opoint2.x;
+			v4[1].y = opoint1.y;
+			v4[2] = opoint2;
+			v4[3].x = opoint1.x;
+			v4[3].y = opoint2.y;
+			v4[4] = opoint1;
+			line->Begin();
+			line->Draw(v4, 5, 0xFF0000BB);
+			line->End();
 		}
 		return;
 	}
@@ -133,6 +133,11 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				if (sizingRectangle[1].y == sizingRectangle[0].y || 
 					sizingRectangle[1].x == sizingRectangle[0].x)
 					rectangleVisible = false;
+				if (originalRectangleVisible) {
+					if (sizingRectangle[3].y == sizingRectangle[2].y ||
+						sizingRectangle[3].x == sizingRectangle[2].x)
+						originalRectangleVisible = false;
+				}
 
 				SortPoints();
 			}
@@ -144,86 +149,128 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 		}
 
-		if (!holding && rectangleVisible) {
+		if (!holding && (rectangleVisible || originalRectangleVisible)) {
 
 			bool setarrow = false;
-			int test = HitTest(D3DXVECTOR2(x, y), false);
+			int test = HitTest(D3DXVECTOR2(x, y));
 			if (test < INSIDE) {
 				setarrow = true;
 				tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 					(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 					(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 			}
+			if (originalRectangleVisible) {
+				int test = HitTest(D3DXVECTOR2(x, y), true);
+				if (test < INSIDE) {
+					setarrow = true;
+					tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+						(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
+						(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
+				}
+			}
 			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 		}
 		if (click) {
 			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+			rightHolding = evt.RightDown() && hasOriginalRectangle;
 			grabbed = OUTSIDE;
-			int pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
 				pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
 			if (rectangleVisible) {
 				grabbed = HitTest(D3DXVECTOR2(x, y));
 				if (grabbed == INSIDE) {
-					if (sizingRectangle[0].x <= pointx && sizingRectangle[1].x >= pointx &&
-						sizingRectangle[0].y <= pointy && sizingRectangle[1].y >= pointy) {
+					if (sizingRectangle[0].x <= pointx && 
+						sizingRectangle[1].x >= pointx &&
+						sizingRectangle[0].y <= pointy && 
+						sizingRectangle[1].y >= pointy) {
 						diffs.x = x;
 						diffs.y = y;
 					}
 				}
+				else if (grabbed < INSIDE) {
+					rightHolding = false;
+				}
 			}
-			if (!rectangleVisible || grabbed == OUTSIDE) {
-				sizingRectangle[0].x = sizingRectangle[1].x = pointx;
-				sizingRectangle[0].y = sizingRectangle[1].y = pointy;
+			if (originalRectangleVisible) {
+				int grabbed1 = HitTest(D3DXVECTOR2(x, y), true);
+				if (grabbed1 == INSIDE) {
+					if (sizingRectangle[2].x <= pointx &&
+						sizingRectangle[3].x >= pointx &&
+						sizingRectangle[2].y <= pointy &&
+						sizingRectangle[3].y >= pointy) {
+						diffs.x = x;
+						diffs.y = y;
+					}
+					grabbed = grabbed1;
+				}
+				else if (grabbed1 < INSIDE) {
+					grabbed = grabbed1;
+					rightHolding = true;
+				}
+			}
+			int tablediff = rightHolding ? 2 : 0;
+			bool visible = rightHolding ? originalRectangleVisible : rectangleVisible;
+			if (!visible || grabbed == OUTSIDE) {
+				sizingRectangle[0 + tablediff].x = sizingRectangle[1 + tablediff].x = pointx;
+				sizingRectangle[0 + tablediff].y = sizingRectangle[1 + tablediff].y = pointy;
 				grabbed = OUTSIDE;
-				rectangleVisible = true;
+				if (rightHolding)
+					originalRectangleVisible = true;
+				else
+					rectangleVisible = true;
 			}
 
 		}
 		else if (holding && grabbed != -1) {
-
+			int tablediff = rightHolding ? 2 : 0;
 			if (grabbed < INSIDE) {
 				if (grabbed & LEFT || grabbed & RIGHT) {
 					x = MID(VideoSize.x, x, VideoSize.width);
-					sizingRectangle[(grabbed & RIGHT) ? 1 : 0].x = 
+					int posInTable = (grabbed & RIGHT) ? 1 : 0;
+					sizingRectangle[posInTable + tablediff].x =
 						((((x /*+ diffs.x*/) / zoomScale.x) + zoomMove.x) * coeffW);
-					if (grabbed & LEFT && sizingRectangle[0].x > sizingRectangle[1].x) { 
-						sizingRectangle[0].x = sizingRectangle[1].x;
+					if (grabbed & LEFT && sizingRectangle[0 + tablediff].x > sizingRectangle[1 + tablediff].x) {
+						sizingRectangle[0 + tablediff].x = sizingRectangle[1 + tablediff].x;
 					}
-					if (grabbed & RIGHT && sizingRectangle[1].x < sizingRectangle[0].x) { 
-						sizingRectangle[1].x = sizingRectangle[0].x; 
+					if (grabbed & RIGHT && sizingRectangle[1 + tablediff].x < sizingRectangle[0 + tablediff].x) {
+						sizingRectangle[1 + tablediff].x = sizingRectangle[0 + tablediff].x;
 					}
 				}
 				if (grabbed & TOP || grabbed & BOTTOM) {
 					y = MID(VideoSize.y, y, VideoSize.height);
-					sizingRectangle[(grabbed & BOTTOM) ? 1 : 0].y = 
+					int posInTable = (grabbed & BOTTOM) ? 1 : 0;
+					sizingRectangle[posInTable + tablediff].y =
 						((((y/* + diffs.y*/) / zoomScale.y) + zoomMove.y) * coeffH);
-					if (grabbed & TOP && sizingRectangle[0].y > sizingRectangle[1].y) { 
-						sizingRectangle[0].y = sizingRectangle[1].y; 
+					if (grabbed & TOP && sizingRectangle[0 + tablediff].y > sizingRectangle[1 + tablediff].y) {
+						sizingRectangle[0 + tablediff].y = sizingRectangle[1 + tablediff].y;
 					}
-					if (grabbed & BOTTOM && sizingRectangle[1].y < sizingRectangle[0].y) { 
-						sizingRectangle[1].y = sizingRectangle[0].y;
+					if (grabbed & BOTTOM && sizingRectangle[1 + tablediff].y < sizingRectangle[0 + tablediff].y) {
+						sizingRectangle[1 + tablediff].y = sizingRectangle[0 + tablediff].y;
 					}
 				}
 			}
 			else if (grabbed == INSIDE) {
 				float movex = (((x - diffs.x) / zoomScale.x) * coeffW),
 					movey = (((y - diffs.y) / zoomScale.y) * coeffH);
-				sizingRectangle[0].x += movex;
-				sizingRectangle[0].y += movey;
-				sizingRectangle[1].x += movex;
-				sizingRectangle[1].y += movey;
+				sizingRectangle[0 + tablediff].x += movex;
+				sizingRectangle[0 + tablediff].y += movey;
+				sizingRectangle[1 + tablediff].x += movex;
+				sizingRectangle[1 + tablediff].y += movey;
 				diffs.x = x;
 				diffs.y = y;
 			}
 			else if (grabbed == OUTSIDE) {
-				int pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+				float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
 					pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
-				sizingRectangle[1].x = pointx;
-				sizingRectangle[1].y = pointy;
+				sizingRectangle[1 + tablediff].x = pointx;
+				sizingRectangle[1 + tablediff].y = pointy;
 			}
 			SortPoints();
 			SetScale();
-			SetVisual(true, type);
+			if (rectangleVisible)
+				SetVisual(true, type);
+			else
+				tab->Video->Render(false);
 		}
 
 		return;
@@ -409,11 +456,11 @@ void Scale::OnKeyPress(wxKeyEvent &evt)
 int Scale::HitTest(const D3DXVECTOR2 &pos, bool originalRect, bool diff)
 {
 	int resultX = 0, resultY = 0, resultInside = 0, resultFinal = 0, oldpointx = 0, oldpointy = 0;
-	D3DXVECTOR2* points = originalRect ? sizingOriginalRectangle : sizingRectangle;
+	int tablediff = (originalRect) ? 2 : 0;
 	for (int i = 0; i < 2; i++) {
-		float pointx = ((points[i].x / coeffW) - zoomMove.x) * zoomScale.x,
-			pointy = ((points[i].y / coeffH) - zoomMove.y) * zoomScale.y;
-		bool hasResult = false;
+		float pointx = ((sizingRectangle[i + tablediff].x / coeffW) - zoomMove.x) * zoomScale.x,
+			pointy = ((sizingRectangle[i + tablediff].y / coeffH) - zoomMove.y) * zoomScale.y;
+		//bool hasResult = false;
 		if (abs(pos.x - pointx) < 5) {
 			if (diff) {
 				diffs.x = pointx - pos.x;
@@ -457,32 +504,34 @@ void Scale::SortPoints()
 		sizingRectangle[1].y = tmpy;
 	}
 	if (sizingRectangle[1].x < sizingRectangle[0].x) {
-		float tmpy = sizingRectangle[0].x;
+		float tmpx = sizingRectangle[0].x;
 		sizingRectangle[0].x = sizingRectangle[1].x;
-		sizingRectangle[1].x = tmpy;
+		sizingRectangle[1].x = tmpx;
 	}
-	/*if (sizingOriginalRectangle[1].y < sizingOriginalRectangle[0].y) {
-		float tmpy = sizingOriginalRectangle[0].y;
-		sizingOriginalRectangle[0].y = sizingOriginalRectangle[1].y;
-		sizingOriginalRectangle[1].y = tmpy;
+	if (originalRectangleVisible) {
+		if (sizingRectangle[3].y < sizingRectangle[2].y) {
+			float tmpy = sizingRectangle[2].y;
+			sizingRectangle[2].y = sizingRectangle[3].y;
+			sizingRectangle[3].y = tmpy;
+		}
+		if (sizingRectangle[3].x < sizingRectangle[2].x) {
+			float tmpx = sizingRectangle[2].x;
+			sizingRectangle[2].x = sizingRectangle[3].x;
+			sizingRectangle[3].x = tmpx;
+		}
 	}
-	if (sizingOriginalRectangle[1].x < sizingOriginalRectangle[0].x) {
-		float tmpy = sizingOriginalRectangle[0].x;
-		sizingOriginalRectangle[0].x = sizingOriginalRectangle[1].x;
-		sizingOriginalRectangle[1].x = tmpy;
-	}*/
 }
 
 void Scale::SetScale()
 {
 	if (originalRectangleVisible) {
-		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x) /
-			(sizingOriginalRectangle[1].x - sizingOriginalRectangle[0].x));
+		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x - border.x) /
+			(sizingRectangle[3].x - sizingRectangle[2].x - border.x));
 		if (preserveAspectRatio)
 			scale.y = scale.x;
 		else
-			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y) /
-				(sizingOriginalRectangle[1].y - sizingOriginalRectangle[0].y));
+			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y - border.y) /
+				(sizingRectangle[3].y - sizingRectangle[2].y - border.y));
 	}
 	else {
 		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x - border.x) / originalSize.x);

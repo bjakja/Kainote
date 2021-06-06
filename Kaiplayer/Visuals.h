@@ -275,11 +275,10 @@ private:
 	byte AN;
 	D3DXVECTOR2 scale;
 	D3DXVECTOR2 originalScale;
-	D3DXVECTOR2 diffs = D3DXVECTOR2(0.f, 0.f);
+	D3DXVECTOR2 diffs/* = D3DXVECTOR2(0.f, 0.f)*/;
 	bool wasUsedShift = false;
 	D3DXVECTOR2 arrowLengths = D3DXVECTOR2(100.f, 100.f);
-	D3DXVECTOR2 sizingRectangle[2];
-	D3DXVECTOR2 sizingOriginalRectangle[2];
+	D3DXVECTOR2 sizingRectangle[4] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
 	D3DXVECTOR2 originalSize;
 	D3DXVECTOR2 border;
 	bool hasScaleToRenctangle = false;
@@ -289,6 +288,7 @@ private:
 	bool preserveAspectRatio = false;
 	bool rectangleVisible = false;
 	bool originalRectangleVisible = false;
+	bool rightHolding = false;
 };
 
 

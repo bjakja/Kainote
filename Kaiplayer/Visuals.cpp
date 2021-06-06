@@ -419,7 +419,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
 		acstyl->ScaleX.ToDouble(&fscx);
 	}
-	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
+	if (!(FindTag(L"fscy([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscy))){
 		acstyl->ScaleY.ToDouble(&fscy);
 	}
 	if (scale){

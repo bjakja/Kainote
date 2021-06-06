@@ -533,7 +533,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 		if (HasFocus()) {
 			tdc.SetBrush(*wxTRANSPARENT_BRUSH);
-			tdc.SetPen(wxPen(textcol));
+			tdc.SetPen(wxPen(Options.GetColour(EDITOR_BORDER_ON_FOCUS)));
 			tdc.DrawRectangle(0, 0, w + scHor - 1, h - 1);
 		}
 	}
