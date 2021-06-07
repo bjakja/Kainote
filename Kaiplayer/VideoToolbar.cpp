@@ -64,14 +64,14 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Przenieś punkty org")));
 		//6
 		//icon rotation z
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEORGS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
 		//1
 		//icons scale
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEMOVESTART"), _("Skaluj szerokość")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Utrzymuj proporcje")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVE"), _("Skaluj wysokość")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"cliprect"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Skaluj szerokość")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_LINK"), _("Utrzymuj proporcje")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Skaluj wysokość")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ORIGINAL_FRAME"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
 		//5
 	}
 	//adding visual second toolbar elements
@@ -706,7 +706,7 @@ void RotationZItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2), true);
 			posX += h;
 		}
 		i++;
@@ -801,7 +801,7 @@ void ScaleItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
 
-			dc.DrawBitmap(isGrayed ? icon->ConvertToDisabled() : *icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
+			dc.DrawBitmap(isGrayed ? icon->ConvertToDisabled() : *icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2), true);
 			posX += h;
 		}
 		i++;
