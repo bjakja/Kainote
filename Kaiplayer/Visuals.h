@@ -194,13 +194,31 @@ public:
 	void ChangeMultiline(bool all);
 	void SetCurVisual();
 	void Draw(int time);
-	void ChangeTool(int _tool){};
+	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
-	//void SetVisual(int _start,int _end);
+private:
+	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
+	void SortPoints();
+	void SetPosition();
+	D3DXVECTOR2 PositionToVideo(D3DXVECTOR2 point);
+	void GetPositioningData();
 	std::vector<PosData> data;
 	wxPoint helperLinePos;
 	bool hasHelperLine = false;
 	bool movingHelperLine = false;
+	D3DXVECTOR2 PositionRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f)};
+	D3DXVECTOR2 textSize;
+	D3DXVECTOR2 border;
+	D3DXVECTOR2 diffs;
+	D3DXVECTOR2 curLinePosition;
+	bool hasPositionToRenctangle = false;
+	bool hasPositionX = false;
+	bool hasPositionY = false;
+	bool rectangleVisible = false;
+	int grabbed = -1;
+	//ass alignment -1 starts from 0
+	byte alignment = 0;
+	byte curLineAlingment = 1;
 };
 
 class Move : public Visuals

@@ -18,6 +18,15 @@
 #include "TabPanel.h"
 #include <wx/regex.h>
 
+enum {
+	LEFT = 1,
+	RIGHT,
+	TOP = 4,
+	BOTTOM = 8,
+	INSIDE = 16,
+	OUTSIDE = 32
+};
+
 Position::Position()
 	: Visuals()
 {
@@ -29,6 +38,7 @@ void Position::Draw(int time)
 	wxMutexLocker lock(clipmutex);
 	line->SetAntialias(TRUE);
 	line->SetWidth(2.0);
+
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
@@ -38,6 +48,25 @@ void Position::Draw(int time)
 			DrawRect(pos.pos);
 			nothintoshow = false;
 		}
+	}
+
+	if (hasPositionToRenctangle && !nothintoshow) {
+		if (rectangleVisible) {
+			D3DXVECTOR2 point1 = PositionToVideo(PositionRectangle[0]);
+			D3DXVECTOR2 point2 = PositionToVideo(PositionRectangle[1]);
+			D3DXVECTOR2 v4[5];
+			v4[0] = point1;
+			v4[1].x = point2.x;
+			v4[1].y = point1.y;
+			v4[2] = point2;
+			v4[3].x = point1.x;
+			v4[3].y = point2.y;
+			v4[4] = point1;
+			line->Begin();
+			line->Draw(v4, 5, 0xFFBB0000);
+			line->End();
+		}
+		return;
 	}
 
 	line->SetAntialias(FALSE);
@@ -60,6 +89,18 @@ void Position::Draw(int time)
 	}
 }
 
+void Position::ChangeTool(int _tool)
+{
+	if (!hasPositionToRenctangle && _tool & 1) {
+		GetPositioningData();
+	}
+	hasPositionToRenctangle = _tool & 1;
+	hasPositionX = _tool & 2;
+	hasPositionY = _tool & 4;
+
+	tab->Video->Render(false);
+}
+
 void Position::OnMouseEvent(wxMouseEvent &evt)
 {
 
@@ -69,6 +110,115 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 	int x, y;
 	evt.GetPosition(&x, &y);
+
+	if (hasPositionToRenctangle) {
+		if (evt.ButtonUp()) {
+			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+			if (rectangleVisible) {
+				if (PositionRectangle[1].y == PositionRectangle[0].y ||
+					PositionRectangle[1].x == PositionRectangle[0].x)
+					rectangleVisible = false;
+
+				SortPoints();
+			}
+			if (rectangleVisible) {
+				SetPosition();
+				ChangeMultiline(false);
+			}
+
+			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		}
+
+		if (!holding && rectangleVisible) {
+
+			bool setarrow = false;
+			int test = HitTest(D3DXVECTOR2(x, y));
+			if (test < INSIDE) {
+				setarrow = true;
+				tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+					(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
+					(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
+			}
+			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		}
+		if (click) {
+			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+			grabbed = OUTSIDE;
+			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+				pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
+			if (rectangleVisible) {
+				grabbed = HitTest(D3DXVECTOR2(x, y), true);
+				if (grabbed == INSIDE) {
+					if (PositionRectangle[0].x <= pointx &&
+						PositionRectangle[1].x >= pointx &&
+						PositionRectangle[0].y <= pointy &&
+						PositionRectangle[1].y >= pointy) {
+						diffs.x = x;
+						diffs.y = y;
+					}
+				}
+			}
+			if (!rectangleVisible || grabbed == OUTSIDE) {
+				PositionRectangle[0].x = PositionRectangle[1].x = pointx;
+				PositionRectangle[0].y = PositionRectangle[1].y = pointy;
+				grabbed = OUTSIDE;
+				rectangleVisible = true;
+			}
+
+		}
+		else if (holding && grabbed != -1) {
+			if (grabbed < INSIDE) {
+				if (grabbed & LEFT || grabbed & RIGHT) {
+					x = MID(VideoSize.x, x, VideoSize.width);
+					int posInTable = (grabbed & RIGHT) ? 1 : 0;
+					PositionRectangle[posInTable].x =
+						((((x + diffs.x) / zoomScale.x) + zoomMove.x) * coeffW);
+					if (grabbed & LEFT && PositionRectangle[0].x > PositionRectangle[1].x) {
+						PositionRectangle[0].x = PositionRectangle[1].x;
+					}
+					if (grabbed & RIGHT && PositionRectangle[1].x < PositionRectangle[0].x) {
+						PositionRectangle[1].x = PositionRectangle[0].x;
+					}
+				}
+				if (grabbed & TOP || grabbed & BOTTOM) {
+					y = MID(VideoSize.y, y, VideoSize.height);
+					int posInTable = (grabbed & BOTTOM) ? 1 : 0;
+					PositionRectangle[posInTable].y =
+						((((y + diffs.y) / zoomScale.y) + zoomMove.y) * coeffH);
+					if (grabbed & TOP && PositionRectangle[0].y > PositionRectangle[1].y) {
+						PositionRectangle[0].y = PositionRectangle[1].y;
+					}
+					if (grabbed & BOTTOM && PositionRectangle[1].y < PositionRectangle[0].y) {
+						PositionRectangle[1].y = PositionRectangle[0].y;
+					}
+				}
+			}
+			else if (grabbed == INSIDE) {
+				float movex = (((x - diffs.x) / zoomScale.x) * coeffW),
+					movey = (((y - diffs.y) / zoomScale.y) * coeffH);
+				PositionRectangle[0].x += movex;
+				PositionRectangle[0].y += movey;
+				PositionRectangle[1].x += movex;
+				PositionRectangle[1].y += movey;
+				diffs.x = x;
+				diffs.y = y;
+			}
+			else if (grabbed == OUTSIDE) {
+				float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
+					pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
+				PositionRectangle[1].x = pointx;
+				PositionRectangle[1].y = pointy;
+			}
+			SortPoints();
+			SetPosition();
+			if (rectangleVisible)
+				ChangeMultiline(false);
+			else
+				tab->Video->Render(false);
+		}
+
+		return;
+	}
 
 	if (evt.RightDown() || evt.LeftDClick()){
 		for (size_t i = 0; i < data.size(); i++){
@@ -172,6 +322,10 @@ void Position::SetCurVisual()
 		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
 			((pos.y / coeffH) - zoomMove.y)*zoomScale.y), textPosition, putInBracket));
 	}
+
+	if (hasPositionToRenctangle) {
+		GetPositioningData();
+	}
 }
 
 void Position::ChangeMultiline(bool all)
@@ -273,4 +427,131 @@ void Position::OnKeyPress(wxKeyEvent &evt)
 		return;
 	}
 	evt.Skip();
+}
+
+int Position::HitTest(const D3DXVECTOR2& pos, bool diff)
+{
+	int resultX = 0, resultY = 0, resultInside = 0, resultFinal = 0, oldpointx = 0, oldpointy = 0;
+	for (int i = 0; i < 2; i++) {
+		float pointx = ((PositionRectangle[i].x / coeffW) - zoomMove.x) * zoomScale.x,
+			pointy = ((PositionRectangle[i].y / coeffH) - zoomMove.y) * zoomScale.y;
+		//bool hasResult = false;
+		if (abs(pos.x - pointx) < 5) {
+			if (diff) {
+				diffs.x = pointx - pos.x;
+			}
+			resultX |= (i + 1);
+		}
+		if (abs(pos.y - pointy) < 5) {
+			if (diff) {
+				diffs.y = pointy - pos.y;
+			}
+			resultY |= ((i + 1) * 4);
+		}
+		if (i) {
+			resultInside |= (resultX ||
+				(oldpointx <= pointx && oldpointx <= pos.x && pointx >= pos.x) ||
+				(oldpointx >= pointx && oldpointx >= pos.x && pointx <= pos.x)) ? INSIDE : OUTSIDE;
+			resultInside |= (resultY ||
+				(oldpointx <= pointx && oldpointy <= pos.y && pointy >= pos.y) ||
+				(oldpointx >= pointx && oldpointy >= pos.y && pointy <= pos.y)) ? INSIDE : OUTSIDE;
+		}
+		else {
+			oldpointx = pointx;
+			oldpointy = pointy;
+		}
+	}
+
+	resultFinal = (resultInside & OUTSIDE) ? OUTSIDE : INSIDE;
+	if (resultFinal == INSIDE) {
+		resultFinal |= resultX;
+		resultFinal |= resultY;
+		if (resultFinal > INSIDE) { resultFinal ^= INSIDE; }
+	}
+	return resultFinal;
+}
+
+void Position::SortPoints()
+{
+	if (PositionRectangle[1].y < PositionRectangle[0].y) {
+		float tmpy = PositionRectangle[0].y;
+		PositionRectangle[0].y = PositionRectangle[1].y;
+		PositionRectangle[1].y = tmpy;
+	}
+	if (PositionRectangle[1].x < PositionRectangle[0].x) {
+		float tmpx = PositionRectangle[0].x;
+		PositionRectangle[0].x = PositionRectangle[1].x;
+		PositionRectangle[1].x = tmpx;
+	}
+}
+
+D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
+{
+	return D3DXVECTOR2();
+}
+
+void Position::SetPosition()
+{
+	if(hasPositionToRenctangle) {
+		int an = alignment + 1;
+		float x = PositionRectangle[0].x, y = PositionRectangle[0].y;
+		
+		if (an % 3 == 0) {
+			x = PositionRectangle[1].x;
+		}
+		else if (an % 3 == 2) {
+			x += (PositionRectangle[1].x - PositionRectangle[0].x) / 2;
+		}
+		if (an <= 3) {
+			y = PositionRectangle[1].y;
+		}
+		else if (an <= 6) {
+			y += (PositionRectangle[1].y - PositionRectangle[0].y) / 2;
+		}
+		
+		
+		for (size_t i = 0; i < data.size(); i++) {
+			if (data[i].numpos == tab->Grid->currentLine) {
+				data[i].pos.x = curLinePosition.x + x;
+				data[i].pos.y = curLinePosition.y + y;
+				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
+				data[i].lastpos = data[i].pos;
+
+				for (size_t j = 0; j < data.size(); j++) {
+					if (j == i) { continue; }
+					data[j].pos += diff;
+					data[j].lastpos = data[j].pos;
+				}
+				break;
+			}
+
+		}
+	}
+	
+}
+
+D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
+{
+	float pointx = ((point.x / coeffW) - zoomMove.x) * zoomScale.x,
+		pointy = ((point.y / coeffH) - zoomMove.y) * zoomScale.y;
+	return D3DXVECTOR2(pointx, pointy);
+}
+
+void Position::GetPositioningData()
+{
+	textSize = GetTextSize(tab->Edit->line, &border);
+	curLinePosition = GetPosnScale(NULL, &curLineAlingment, moveValues);
+	//make from current line position an7
+	if (curLineAlingment % 3 == 0) {
+		curLinePosition.x -= textSize.x;
+	}
+	else if (curLineAlingment % 3 == 2) {
+		curLinePosition.x -= (textSize.x) / 2;
+	}
+	if (curLineAlingment <= 3) {
+		curLinePosition.y -= textSize.y;
+	}
+	else if (curLineAlingment <= 6) {
+		curLinePosition.y -= (textSize.y / 2);
+	}
 }

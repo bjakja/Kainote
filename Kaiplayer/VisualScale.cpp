@@ -384,6 +384,9 @@ void Scale::SetCurVisual()
 	to.x = from.x + (scale.x * arrowLengths.x);
 	to.y = from.y + (scale.y * arrowLengths.y);
 
+	if (hasScaleToRenctangle) {
+		originalSize = GetTextSize(tab->Edit->line, &border);
+	}
 }
 
 void Scale::ChangeTool(int _tool)

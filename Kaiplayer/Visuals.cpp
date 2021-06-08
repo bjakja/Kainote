@@ -396,7 +396,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 			if (!token.ToDouble(&tbl[ipos])){ tbl[ipos] = 0; }
 			ipos++;
 		}
-		tbl[4] += edit->line->Start.mstime; tbl[5] += edit->line->Start.mstime;
+		tbl[4] += edit->line->Start.mstime; 
+		tbl[5] += edit->line->Start.mstime;
 		tbl[6] = ipos;
 		if (ipos > 1){ ppos.x = tbl[0]; ppos.y = tbl[1]; foundpos = true; }
 
