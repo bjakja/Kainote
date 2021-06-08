@@ -177,7 +177,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
 				pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
 			if (rectangleVisible) {
-				grabbed = HitTest(D3DXVECTOR2(x, y));
+				grabbed = HitTest(D3DXVECTOR2(x, y), false, true);
 				if (grabbed == INSIDE) {
 					if (sizingRectangle[0].x <= pointx && 
 						sizingRectangle[1].x >= pointx &&
@@ -192,7 +192,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				}
 			}
 			if (originalRectangleVisible) {
-				int grabbed1 = HitTest(D3DXVECTOR2(x, y), true);
+				int grabbed1 = HitTest(D3DXVECTOR2(x, y), true, true);
 				if (grabbed1 == INSIDE) {
 					if (sizingRectangle[2].x <= pointx &&
 						sizingRectangle[3].x >= pointx &&
@@ -228,7 +228,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 					x = MID(VideoSize.x, x, VideoSize.width);
 					int posInTable = (grabbed & RIGHT) ? 1 : 0;
 					sizingRectangle[posInTable + tablediff].x =
-						((((x /*+ diffs.x*/) / zoomScale.x) + zoomMove.x) * coeffW);
+						((((x + diffs.x) / zoomScale.x) + zoomMove.x) * coeffW);
 					if (grabbed & LEFT && sizingRectangle[0 + tablediff].x > sizingRectangle[1 + tablediff].x) {
 						sizingRectangle[0 + tablediff].x = sizingRectangle[1 + tablediff].x;
 					}
@@ -240,7 +240,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 					y = MID(VideoSize.y, y, VideoSize.height);
 					int posInTable = (grabbed & BOTTOM) ? 1 : 0;
 					sizingRectangle[posInTable + tablediff].y =
-						((((y/* + diffs.y*/) / zoomScale.y) + zoomMove.y) * coeffH);
+						((((y + diffs.y) / zoomScale.y) + zoomMove.y) * coeffH);
 					if (grabbed & TOP && sizingRectangle[0 + tablediff].y > sizingRectangle[1 + tablediff].y) {
 						sizingRectangle[0 + tablediff].y = sizingRectangle[1 + tablediff].y;
 					}
@@ -540,6 +540,10 @@ void Scale::SetScale()
 		else
 			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y - border.y) / originalSize.y);
 	}
+	if (scale.x < 0.f)
+		scale.x = 0.f;
+	if (scale.y < 0.f)
+		scale.y = 0.f;
 }
 
 D3DXVECTOR2 Scale::ScaleToVideo(D3DXVECTOR2 point)
