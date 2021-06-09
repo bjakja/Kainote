@@ -601,6 +601,7 @@ void DrawingAndClip::ChangeVisual(wxString *txt, Dialogue *_dial, wxString *clip
 	if (Visual == VECTORCLIP) {
 		wxString tmp = L"clip(";
 		bool fv = FindTag(L"(i?clip.)[^)]*\\)", *txt, 1);
+		GetTextResult(&tmp);
 		if (clip->empty() && fv) {
 			Replace(L"", txt);
 			txt->Replace(L"{}", L"");

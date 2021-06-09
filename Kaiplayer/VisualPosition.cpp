@@ -66,7 +66,7 @@ void Position::Draw(int time)
 			line->Draw(v4, 5, 0xFFBB0000);
 			line->End();
 		}
-		return;
+		//return;
 	}
 
 	line->SetAntialias(FALSE);
@@ -91,14 +91,24 @@ void Position::Draw(int time)
 
 void Position::ChangeTool(int _tool)
 {
-	if (!hasPositionToRenctangle && _tool & 1) {
+	if (!hasPositionToRenctangle && _tool & 16) {
 		GetPositioningData();
 	}
-	hasPositionToRenctangle = _tool & 1;
-	hasPositionX = _tool & 2;
-	hasPositionY = _tool & 4;
-
-	tab->Video->Render(false);
+	hasPositionToRenctangle = _tool & 16;
+	hasPositionX = _tool & 32;
+	hasPositionY = _tool & 64;
+	int reset = 16 | 32 | 64;
+	int newalignment = _tool | reset;
+	newalignment ^= reset;
+	if (newalignment != alignment) {
+		alignment = newalignment;
+		SortPoints();
+		SetPosition();
+		ChangeMultiline(true);
+	}
+	else {
+		tab->Video->Render(false);
+	}
 }
 
 void Position::OnMouseEvent(wxMouseEvent &evt)
@@ -123,7 +133,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			}
 			if (rectangleVisible) {
 				SetPosition();
-				ChangeMultiline(false);
+				ChangeMultiline(true);
 			}
 
 			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
@@ -141,7 +151,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			}
 			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 		}
-		if (click) {
+		if (click || evt.LeftDClick()) {
 			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
 			grabbed = OUTSIDE;
 			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
@@ -301,8 +311,14 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 wxString Position::GetVisual(int datapos)
 {
-	return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-		getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+	if (hasPositionToRenctangle) {
+		return L"\\pos(" + getfloat(data[datapos].pos.x) + L"," +
+			getfloat(data[datapos].pos.y) + L")";
+	}
+	else {
+		return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+			getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+	}
 }
 
 
@@ -325,6 +341,7 @@ void Position::SetCurVisual()
 
 	if (hasPositionToRenctangle) {
 		GetPositioningData();
+		//hasPositionToRenctangle = false;
 	}
 }
 
@@ -485,35 +502,37 @@ void Position::SortPoints()
 	}
 }
 
-D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
-{
-	return D3DXVECTOR2();
-}
-
 void Position::SetPosition()
 {
 	if(hasPositionToRenctangle) {
-		int an = alignment + 1;
+		int an = alignment;
+		float bordery = border.y / 2;
+		float borderx = border.x / 2;
 		float x = PositionRectangle[0].x, y = PositionRectangle[0].y;
 		
 		if (an % 3 == 0) {
-			x = PositionRectangle[1].x;
+			x = PositionRectangle[1].x - (textSize.x + borderx - 2);
+		}
+		else if (an % 3 == 1) {
+			x += borderx + 2;
 		}
 		else if (an % 3 == 2) {
-			x += (PositionRectangle[1].x - PositionRectangle[0].x) / 2;
+			x += (PositionRectangle[1].x - (PositionRectangle[0].x + textSize.x)) / 2;
 		}
 		if (an <= 3) {
-			y = PositionRectangle[1].y;
+			y = PositionRectangle[1].y - bordery;
 		}
 		else if (an <= 6) {
-			y += (PositionRectangle[1].y - PositionRectangle[0].y) / 2;
+			y += ((PositionRectangle[1].y - PositionRectangle[0].y) + textSize.y + bordery) / 2;
 		}
-		
+		else if (an <= 9) {
+			y += textSize.y + bordery;
+		}
 		
 		for (size_t i = 0; i < data.size(); i++) {
 			if (data[i].numpos == tab->Grid->currentLine) {
-				data[i].pos.x = curLinePosition.x + x;
-				data[i].pos.y = curLinePosition.y + y;
+				data[i].pos.x = x + curLinePosition.x;
+				data[i].pos.y = y + curLinePosition.y;
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
 				data[i].lastpos = data[i].pos;
 
@@ -540,18 +559,24 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
 void Position::GetPositioningData()
 {
 	textSize = GetTextSize(tab->Edit->line, &border);
-	curLinePosition = GetPosnScale(NULL, &curLineAlingment, moveValues);
+	float bordery = border.y / 2;
+	float borderx = border.x / 2;
+	curLinePosition = D3DXVECTOR2(0, 0);
+	GetPosnScale(NULL, &curLineAlingment, moveValues);
 	//make from current line position an7
 	if (curLineAlingment % 3 == 0) {
-		curLinePosition.x -= textSize.x;
+		curLinePosition.x += textSize.x;
 	}
 	else if (curLineAlingment % 3 == 2) {
-		curLinePosition.x -= (textSize.x) / 2;
+		curLinePosition.x += (textSize.x) / 2;
 	}
 	if (curLineAlingment <= 3) {
-		curLinePosition.y -= textSize.y;
+		//curLinePosition.y = 0;
 	}
 	else if (curLineAlingment <= 6) {
-		curLinePosition.y -= (textSize.y / 2);
+		curLinePosition.y += (textSize.y / 2);
+	}
+	else if (curLineAlingment <= 9) {
+		curLinePosition.y += textSize.y;
 	}
 }

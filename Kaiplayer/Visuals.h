@@ -216,8 +216,7 @@ private:
 	bool hasPositionY = false;
 	bool rectangleVisible = false;
 	int grabbed = -1;
-	//ass alignment -1 starts from 0
-	byte alignment = 0;
+	byte alignment = 1;
 	byte curLineAlingment = 1;
 };
 

@@ -195,22 +195,29 @@ class PositionItem :public VisualItem
 {
 public:
 	PositionItem() {
-		startIconNumber = 26;
+		startIconNumber = 31;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
 	void Synchronize(VisualItem* item) override;
 	int GetItemToggled() override {
-		int result = 0;
+		//add 1 to get an from 1 to 9
+		//the standard of ass
+		int result = an + 1;
 		for (int i = 0; i < numIcons; i++) {
-			if (Toggled[i]) { result |= (1 << i); }
+			if (Toggled[i]) { result |= (16 << i); }
 		}
 		return result;
 	};
 	void SetItemToggled(int* item) override {};
+	void HideContols() override;
+	void ShowContols(VideoToolbar* vt) override;
 private:
+	static const int ID_ALIGNMENT = 3452;
 	static const int numIcons = 3;
 	bool Toggled[numIcons] = { false, true, true };
+	int an = 0;
+	KaiChoice* alignment = NULL;
 };
 
 

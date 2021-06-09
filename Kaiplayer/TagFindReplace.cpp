@@ -42,6 +42,8 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 				from = to = 0;
 			}
 		}
+		else
+			from = to = 0;
 	}
 
 	bool brkt = true;
@@ -582,7 +584,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 		for (size_t i = 0; i < sels.size(); i++) {
 			Dialogue* dialc = grid->CopyDialogue(sels[i]);
 			wxString txt = dialc->GetTextNoCopy();
-			FindTag(lastPattern, txt);
+			FindTag(lastPattern, txt, 1);
 
 			if (result.inBracket && txt != L"") {
 				if (result.positionInText.x < result.positionInText.y) { 
@@ -593,10 +595,8 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 				dialc->SetText(txt);
 			}
 			else {
-				if (grid->hasTLMode && dialc->TextTl != L"") {
-					dialc->TextTl->Prepend(L"{" + tag + L"}");
-				}
-				else { dialc->Text->Prepend(L"{" + tag + L"}"); }
+				txt.Prepend(L"{" + tag + L"}");
+				dialc->SetText(txt);
 			}
 		}
 		grid->SetModified(EDITBOX_MULTILINE_EDITION);

@@ -821,6 +821,10 @@ void ScaleItem::Synchronize(VisualItem* item)
 void PositionItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 {
 	int startDrawPos = w - (h * numIcons);
+	if (alignment) {
+		wxSize asize = alignment->GetSize();
+		startDrawPos -= (asize.x + 6);
+	}
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
@@ -875,6 +879,10 @@ void PositionItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* v
 void PositionItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
 	int posX = w - (h * numIcons);
+	if (alignment) {
+		wxSize asize = alignment->GetSize();
+		posX -= (asize.x + 6);
+	}
 	int i = 0;
 	while (i < numIcons) {
 		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
@@ -904,4 +912,35 @@ void PositionItem::Synchronize(VisualItem* item)
 	for (int i = 0; i < numIcons; i++) {
 		Toggled[i] = pi->Toggled[i];
 	}
+}
+
+void PositionItem::HideContols()
+{
+	if (alignment) {
+		alignment->Destroy();
+		alignment = NULL;
+	}
+}
+
+void PositionItem::ShowContols(VideoToolbar* vt)
+{
+	wxString alignments[] = { _("Lewo-dół"), _("Środek-dół"), _("Prawo-dół"),
+		_("Lewo-środek"), _("Środek"), _("Prawo-środek"), 
+		_("Lewo-góra"), _("Środek-góra"), _("Prawo-góra") };
+	alignment = new KaiChoice(vt, ID_ALIGNMENT, wxDefaultPosition, wxDefaultSize, 9, alignments);
+	vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+		wxCommandEvent* evt1 = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		an = alignment->GetSelection();
+		evt1->SetInt(GetItemToggled());
+		wxQueueEvent(vt, evt1);
+		}, ID_ALIGNMENT);
+	alignment->SetSelection(an);
+	alignment->SetToolTip(_("Położenie tekstu, działa podobnie jak w stylach"));
+	int maxWidth = vt->GetEndDrawPos();
+	wxSize ans = alignment->GetBestSize();
+	wxSize vts = vt->GetSize();
+	wxPoint pos(maxWidth - 4 - ans.x, 1);
+	alignment->SetPosition(pos);
+	ans.y = vts.y - 2;
+	alignment->SetSize(ans);
 }
