@@ -93,6 +93,7 @@ void Position::ChangeTool(int _tool)
 {
 	if (!hasPositionToRenctangle && _tool & 16) {
 		GetPositioningData();
+		rectangleVisible = false;
 	}
 	hasPositionToRenctangle = _tool & 16;
 	hasPositionX = _tool & 32;
@@ -504,7 +505,7 @@ void Position::SortPoints()
 
 void Position::SetPosition()
 {
-	if(hasPositionToRenctangle) {
+	if(hasPositionToRenctangle && rectangleVisible) {
 		int an = alignment;
 		float bordery = border.y / 2;
 		float borderx = border.x / 2;
@@ -517,7 +518,7 @@ void Position::SetPosition()
 			x += borderx + 2;
 		}
 		else if (an % 3 == 2) {
-			x += (PositionRectangle[1].x - (PositionRectangle[0].x + textSize.x)) / 2;
+			x += (PositionRectangle[1].x - (PositionRectangle[0].x + textSize.x) + borderx) / 2;
 		}
 		if (an <= 3) {
 			y = PositionRectangle[1].y - bordery;

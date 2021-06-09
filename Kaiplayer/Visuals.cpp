@@ -861,7 +861,9 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 					wxString pltext = tag->value.Mid(g, i - g);
 					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
 						maxwidth += fwidth;
-						fheight -= extlead + descent;
+						if(!result.y)
+							fheight -= extlead + descent;
+
 						if (maxheight < fheight)
 							maxheight = fheight;
 						if (i != -1) {
