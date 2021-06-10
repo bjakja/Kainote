@@ -229,8 +229,10 @@ public:
 	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
-	void ChangeTool(int _tool){};
+	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
+private:
+	void SetMove();
 	int moveStart;
 	int moveEnd;
 	byte type;
@@ -239,9 +241,13 @@ public:
 	D3DXVECTOR2 lastFrom;
 	D3DXVECTOR2 lastTo;
 	D3DXVECTOR2 moveDistance;
+	D3DXVECTOR2 lineToMoveStart;
+	D3DXVECTOR2 lineToMoveEnd;
 	wxPoint helperLinePos;
 	bool hasHelperLine = false;
 	bool movingHelperLine = false;
+	bool hasLineToMove = false;
+	bool lineToMoveVisibility[2] = { false, false };
 };
 
 struct moveElems

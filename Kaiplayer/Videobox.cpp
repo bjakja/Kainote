@@ -1502,7 +1502,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if (renderer->m_HasZoom){ renderer->SetZoom(); }
 		eb->Visual = vis;
 		renderer->SetVisual();
-		if (vis >= VECTORCLIP || vis == ROTATEZ || vis == SCALE || vis == CHANGEPOS){
+		if (vis >= VECTORCLIP || (vis >= CHANGEPOS && vis <= ROTATEZ) ){
 			renderer->VisualChangeTool(vTB->GetItemToggled()); }
 		if (!HasArrow()){ SetCursor(wxCURSOR_ARROW); }
 		SetFocus();

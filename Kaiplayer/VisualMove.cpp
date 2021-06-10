@@ -28,6 +28,21 @@ Move::Move()
 
 void Move::DrawVisual(int time)
 {
+	if (hasLineToMove && lineToMoveVisibility[0]) {
+		DrawRect(lineToMoveStart);
+		if (lineToMoveVisibility[1]) {
+			D3DXVECTOR2 v2[2];
+			v2[0] = lineToMoveStart;
+			v2[1] = lineToMoveEnd;
+			//drawarrow moves line point to ends before arrow, it modifies v4[1]
+			DrawArrow(lineToMoveStart, &v2[1], 6);
+			line->Begin();
+			line->Draw(v2, 2, 0xFFBB0000);
+			line->End();
+			DrawCircle(lineToMoveEnd);
+		}
+	}
+
 	if (hasHelperLine){
 		D3DXVECTOR2 v2[2] = { D3DXVECTOR2(helperLinePos.x, 0), D3DXVECTOR2(helperLinePos.x, this->VideoSize.GetHeight()) };
 		D3DXVECTOR2 v21[2] = { D3DXVECTOR2(0, helperLinePos.y), D3DXVECTOR2(this->VideoSize.GetWidth(), helperLinePos.y) };
@@ -38,11 +53,9 @@ void Move::DrawVisual(int time)
 		DrawRect(D3DXVECTOR2(helperLinePos.x, helperLinePos.y), false, 4.f);
 	}
 
-	D3DXVECTOR2 v4[6];
-	v4[0].x = from.x;
-	v4[0].y = from.y;
-	v4[1].x = to.x;
-	v4[1].y = to.y;
+	D3DXVECTOR2 v4[2];
+	v4[0] = from;
+	v4[1] = to;
 	//drawarrow moves line point to ends before arrow, it modifies v4[1]
 	DrawArrow(from, &v4[1], 6);
 
@@ -91,6 +104,82 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 	int x, y;
 	evt.GetPosition(&x, &y);
+
+	if (hasLineToMove) {
+
+		if (evt.ButtonUp()) {
+			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+			SetVisual(false, type);
+			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			grabbed = -1;
+			moveDistance = to - from;
+			movingHelperLine = false;
+		}
+
+		if (movingHelperLine) {
+			helperLinePos = evt.GetPosition();
+			tab->Video->Render(false);
+			return;
+		}
+
+		if (click) {
+			tab->Video->CaptureMouse();
+			if (IsInPos(evt.GetPosition(), helperLinePos, 4)) {
+				movingHelperLine = true;
+				return;
+			}
+			float screenx = (x - zoomMove.x) * zoomScale.x;
+			float screeny = (y - zoomMove.y) * zoomScale.y;
+			type = 0;
+			if (!lineToMoveVisibility[0]) {
+				lineToMoveVisibility[0] = true;
+				lineToMoveStart.x = screenx;
+				lineToMoveStart.y = screeny;
+				tab->Video->Render(false);
+				return;
+			}
+			else if (!lineToMoveVisibility[1]) {
+				lineToMoveVisibility[1] = true;
+				lineToMoveEnd.x = screenx;
+				lineToMoveEnd.y = screeny;
+				type = 1;
+			}
+			else if (abs(lineToMoveStart.x - screenx) < 8 && abs(lineToMoveStart.y - screeny) < 8) {
+				diffs.x = lineToMoveStart.x - screenx;
+				diffs.y = lineToMoveStart.y - screeny;
+				grabbed = 0;
+			}
+			else if (abs(lineToMoveEnd.x - screenx) < 8 && abs(lineToMoveEnd.y - screeny) < 8) {
+				diffs.x = lineToMoveEnd.x - screenx;
+				diffs.y = lineToMoveEnd.y - screeny;
+				grabbed = 1;
+				type = 1;
+			}
+			else {
+				return;
+			}
+			tab->Video->SetCursor(wxCURSOR_SIZING);
+			SetMove();
+			SetVisual(true, type);
+		}
+
+		if (holding && grabbed != -1) {
+			float screenx = (x - zoomMove.x) * zoomScale.x;
+			float screeny = (y - zoomMove.y) * zoomScale.y;
+			if (grabbed == 0) {
+				lineToMoveStart.x = screenx + diffs.x;
+				lineToMoveStart.y = screeny + diffs.y;
+			}
+			else {
+				lineToMoveEnd.x = screenx + diffs.x;
+				lineToMoveEnd.y = screeny + diffs.y;
+			}
+			SetMove();
+			SetVisual(true, grabbed);
+		}
+
+		return;
+	}
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
@@ -238,4 +327,28 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 void Move::OnKeyPress(wxKeyEvent &evt)
 {
 
+}
+
+void Move::SetMove()
+{
+	int time = tab->Video->Tell();
+	if (time + 80 < moveStart) {
+		KaiLog(_("Wideo musi byæ ustawione minimum 2 klatki po starcie"));
+		return;
+	}
+
+	float t1 = time - moveStart;
+	float t2 = moveEnd - moveStart;
+	float currentTime = t1 / t2;
+
+	to = from + (lineToMoveStart - lineToMoveEnd);
+	if (time <= moveEnd) { 
+		to.x = from.x - ((from.x - to.x) * currentTime);
+		to.y = from.y - ((from.y - to.y) * currentTime);
+	}
+}
+
+void Move::ChangeTool(int _tool)
+{
+	hasLineToMove = _tool != -1;
 }

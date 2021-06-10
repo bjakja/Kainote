@@ -220,6 +220,22 @@ private:
 	KaiChoice* alignment = NULL;
 };
 
+class MoveItem :public VisualItem
+{
+public:
+	MoveItem() {
+		startIconNumber = 25;
+	};
+	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
+	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
+	void Synchronize(VisualItem* item) override;
+	int GetItemToggled() override { return toggled; };
+	void SetItemToggled(int* item) override {};
+private:
+	int numIcons = 1;
+	int toggled = -1;
+};
+
 
 class VideoToolbar: public wxWindow {
 public:
