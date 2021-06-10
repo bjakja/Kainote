@@ -312,14 +312,14 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 wxString Position::GetVisual(int datapos)
 {
-	if (hasPositionToRenctangle) {
+	/*if (hasPositionToRenctangle) {
 		return L"\\pos(" + getfloat(data[datapos].pos.x) + L"," +
 			getfloat(data[datapos].pos.y) + L")";
 	}
-	else {
+	else {*/
 		return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
-	}
+	//}
 }
 
 
@@ -534,6 +534,7 @@ void Position::SetPosition()
 			if (data[i].numpos == tab->Grid->currentLine) {
 				data[i].pos.x = x + curLinePosition.x;
 				data[i].pos.y = y + curLinePosition.y;
+				data[i].pos = PositionToVideo(data[i].pos);
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
 				data[i].lastpos = data[i].pos;
 

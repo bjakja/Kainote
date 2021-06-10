@@ -862,7 +862,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
 						maxwidth += fwidth;
 						if(!result.y)
-							fheight -= extlead + descent;
+							fheight -= (extlead - descent);
 
 						if (maxheight < fheight)
 							maxheight = fheight;
