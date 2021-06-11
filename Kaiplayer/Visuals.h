@@ -241,13 +241,15 @@ private:
 	D3DXVECTOR2 lastFrom;
 	D3DXVECTOR2 lastTo;
 	D3DXVECTOR2 moveDistance;
-	D3DXVECTOR2 lineToMoveStart;
-	D3DXVECTOR2 lineToMoveEnd;
+	D3DXVECTOR2 lineToMoveStart = D3DXVECTOR2(0, 0);
+	D3DXVECTOR2 lineToMoveEnd = D3DXVECTOR2(0, 0);
 	wxPoint helperLinePos;
 	bool hasHelperLine = false;
 	bool movingHelperLine = false;
 	bool hasLineToMove = false;
 	bool lineToMoveVisibility[2] = { false, false };
+	int lastVideoTime = -1;
+	int lineStartTime = -1;
 };
 
 struct moveElems

@@ -224,7 +224,7 @@ class MoveItem :public VisualItem
 {
 public:
 	MoveItem() {
-		startIconNumber = 25;
+		startIconNumber = 34;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;

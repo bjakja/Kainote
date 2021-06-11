@@ -716,19 +716,19 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 		wxString tmp;
-		if (FindTag(L"b(0|1)"), L"", 0, true){
+		if (FindTag(L"b(0|1)", L"", 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Bold = tmp == L"1";
 		}
-		if (FindTag(L"i(0|1)"), L"", 0, true){
+		if (FindTag(L"i(0|1)", L"", 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Italic = tmp == L"1";
 		}
-		if (FindTag(L"u(0|1)"), L"", 0, true){
+		if (FindTag(L"u(0|1)", L"", 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Underline = tmp == L"1";
 		}
-		if (FindTag(L"s(0|1)"), L"", 0, true){
+		if (FindTag(L"s(0|1)", L"", 0, true)){
 			GetTextResult(&tmp);
 			mstyle->StrikeOut = tmp == L"1";
 		}
@@ -1562,8 +1562,8 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutTagInText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", 
 				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
-		else if (found)
-			PutTagInText(L"", L"", false);
+		//else if (found)
+			//PutTagInText(L"", L"", false);
 
 		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
 			GetTextResult(&colorString);
@@ -1581,8 +1581,8 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutTagInText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), 
 				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", actualColor.a), false);
 		}
-		else if (found)
-			PutTagInText(L"", L"", false);
+		//else if (found)
+			//PutTagInText(L"", L"", false);
 
 	}
 	else{ PutinNonass(L"C:" + choosenColorAsString.Mid(2), L"C:([^}]*)"); }

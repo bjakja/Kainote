@@ -322,13 +322,15 @@ KainoteFrame::~KainoteFrame()
 	Unbind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
 	bool im = IsMaximized();
 	if (!im && !IsIconized()){
-		int posx, posy, sizex, sizey;
+		int posx, posy, sizex = 0, sizey = 0;
 		GetPosition(&posx, &posy);
-		if (posx < 10000 && posx> -4000){
+		if (posx < 10000 && posx > -4000){
 			Options.SetCoords(WINDOW_POSITION, posx, posy);
 		}
 		GetSize(&sizex, &sizey);
-		Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+		if (sizex >= 600 && sizey >= 400)
+			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
+
 		wxRect monRect = GetMonitorRect1(0, NULL, wxRect(posx, posy, sizex, sizey));
 		Options.SetCoords(MONITOR_POSITION, monRect.x, monRect.y);
 		Options.SetCoords(MONITOR_SIZE, monRect.GetWidth(), monRect.GetHeight());

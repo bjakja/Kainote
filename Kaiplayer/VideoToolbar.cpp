@@ -78,6 +78,8 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Pozycjonuj w osi X")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Pozycjonuj w osi Y")));
 		//3
+		//icons move 
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw ruch 2 punktów i pozycji wideo.\nPo ustawieniu pierwszego punktu przed tekstem który się porusza.\nPrzesunięciu wideo o tyle klatek,\nby na wideo wciąż był widoczny ten sam element,\ndo którego był ustawiony punkt początkowy.\nRuch generuje postawienie drugiego punktu.")));
 	}
 	//adding visual second toolbar elements
 	visualItems.push_back(NULL);//cross

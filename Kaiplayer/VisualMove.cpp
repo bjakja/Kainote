@@ -30,6 +30,16 @@ void Move::DrawVisual(int time)
 {
 	if (hasLineToMove && lineToMoveVisibility[0]) {
 		DrawRect(lineToMoveStart);
+		if (lineStartTime == -1)
+			lineStartTime = time;
+
+		/*if (time == lineStartTime) {
+			wxString text = _("Edycja");
+			RECT rect = { lineToMoveStart.x + 10, lineToMoveStart.y - 100, 
+				lineToMoveStart.x + 150, lineToMoveStart.y + 100 };
+			DRAWOUTTEXT(font, text, rect, DT_VCENTER, 0xFFFFFFFF);
+		}*/
+
 		if (lineToMoveVisibility[1]) {
 			D3DXVECTOR2 v2[2];
 			v2[0] = lineToMoveStart;
@@ -40,6 +50,12 @@ void Move::DrawVisual(int time)
 			line->Draw(v2, 2, 0xFFBB0000);
 			line->End();
 			DrawCircle(lineToMoveEnd);
+			/*if (lastVideoTime == time) {
+				wxString text = _("Edycja");
+				RECT rect = { lineToMoveEnd.x + 10, lineToMoveEnd.y - 100, 
+					lineToMoveEnd.x + 150, lineToMoveEnd.y + 100 };
+				DRAWOUTTEXT(font, text, rect, DT_VCENTER, 0xFFFFFFFF);
+			}*/
 		}
 	}
 
@@ -130,6 +146,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			}
 			float screenx = (x - zoomMove.x) * zoomScale.x;
 			float screeny = (y - zoomMove.y) * zoomScale.y;
+			//int time = tab->Video->Tell();
 			type = 0;
 			if (!lineToMoveVisibility[0]) {
 				lineToMoveVisibility[0] = true;
@@ -138,18 +155,29 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				tab->Video->Render(false);
 				return;
 			}
-			else if (!lineToMoveVisibility[1]) {
-				lineToMoveVisibility[1] = true;
-				lineToMoveEnd.x = screenx;
-				lineToMoveEnd.y = screeny;
-				type = 1;
-			}
-			else if (abs(lineToMoveStart.x - screenx) < 8 && abs(lineToMoveStart.y - screeny) < 8) {
+			else if (abs(lineToMoveStart.x - screenx) < 8 && abs(lineToMoveStart.y - screeny) < 8/* && lineStartTime == time*/) {
 				diffs.x = lineToMoveStart.x - screenx;
 				diffs.y = lineToMoveStart.y - screeny;
 				grabbed = 0;
 			}
-			else if (abs(lineToMoveEnd.x - screenx) < 8 && abs(lineToMoveEnd.y - screeny) < 8) {
+			else if (!lineToMoveVisibility[1]) {
+				lineToMoveVisibility[1] = true;
+				lineToMoveEnd.x = screenx;
+				lineToMoveEnd.y = screeny;
+				
+				if (shift) {
+					if (abs(lineToMoveStart.x - lineToMoveEnd.x) <
+						abs(lineToMoveStart.y - lineToMoveEnd.y)) {
+						lineToMoveEnd.x = lineToMoveStart.x;
+					}
+					else {
+						lineToMoveEnd.y = lineToMoveStart.y;
+					}
+					
+				}
+				type = 1;
+			}
+			else if (abs(lineToMoveEnd.x - screenx) < 8 && abs(lineToMoveEnd.y - screeny) < 8/* && lastVideoTime == time*/) {
 				diffs.x = lineToMoveEnd.x - screenx;
 				diffs.y = lineToMoveEnd.y - screeny;
 				grabbed = 1;
@@ -166,16 +194,21 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		if (holding && grabbed != -1) {
 			float screenx = (x - zoomMove.x) * zoomScale.x;
 			float screeny = (y - zoomMove.y) * zoomScale.y;
+			float shiftType = 0;
+			if (shift && lineToMoveVisibility[1]) {
+				shiftType = (abs(lineToMoveStart.x - lineToMoveEnd.x) <
+					abs(lineToMoveStart.y - lineToMoveEnd.y)) ? 1 : 2;
+			}
 			if (grabbed == 0) {
-				lineToMoveStart.x = screenx + diffs.x;
-				lineToMoveStart.y = screeny + diffs.y;
+				lineToMoveStart.x = (shiftType == 1) ? lineToMoveEnd.x : screenx + diffs.x;
+				lineToMoveStart.y = (shiftType == 2) ? lineToMoveEnd.y : screeny + diffs.y;
 			}
 			else {
-				lineToMoveEnd.x = screenx + diffs.x;
-				lineToMoveEnd.y = screeny + diffs.y;
+				lineToMoveEnd.x = (shiftType == 1) ? lineToMoveStart.x : screenx + diffs.x;
+				lineToMoveEnd.y = (shiftType == 2) ? lineToMoveStart.y : screeny + diffs.y;
 			}
 			SetMove();
-			SetVisual(true, grabbed);
+			SetVisual(true, type);
 		}
 
 		return;
@@ -332,20 +365,24 @@ void Move::OnKeyPress(wxKeyEvent &evt)
 void Move::SetMove()
 {
 	int time = tab->Video->Tell();
-	if (time + 80 < moveStart) {
-		KaiLog(_("Wideo musi byæ ustawione minimum 2 klatki po starcie"));
+	if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
+		//KaiLog(_("Wideo musi byæ ustawione minimum 2 klatki po starcie"));
 		return;
 	}
+	if(lastVideoTime == -1)
+		lastVideoTime = time;
 
-	float t1 = time - moveStart;
-	float t2 = moveEnd - moveStart;
-	float currentTime = t1 / t2;
+	//if (time == lastVideoTime) {
+		//int start, end;
+		//GetMoveTimes(&start, &end);
+		//int moveStartTime = moveStart - start;
+		//int moveEndTime = moveEnd;
+		float t1 = lastVideoTime - moveStart;
+		float t2 = moveEnd - moveStart;
+		float currentTime = t2 / t1;
 
-	to = from + (lineToMoveStart - lineToMoveEnd);
-	if (time <= moveEnd) { 
-		to.x = from.x - ((from.x - to.x) * currentTime);
-		to.y = from.y - ((from.y - to.y) * currentTime);
-	}
+		to = from + ((lineToMoveEnd - lineToMoveStart) * currentTime);
+	//}
 }
 
 void Move::ChangeTool(int _tool)
