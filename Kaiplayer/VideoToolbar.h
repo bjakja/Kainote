@@ -162,18 +162,25 @@ public:
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
 	void Synchronize(VisualItem* item) override;
-	int GetItemToggled() override { return toggled; };
+	int GetItemToggled() override {
+		int result = 0;
+		for (int i = 0; i < numIcons; i++) {
+			if (Toggled[i]) { result |= (1 << i); }
+		}
+		return result;
+	};
 	void SetItemToggled(int* item) override {};
 private:
-	int numIcons = 1;
-	int toggled = -1;
+	static const int numIcons = 3;
+	//int toggled = -1;
+	bool Toggled[numIcons] = { false, true, true};
 };
 
 class ScaleItem :public VisualItem
 {
 public:
 	ScaleItem() {
-		startIconNumber = 26;
+		startIconNumber = 28;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
@@ -187,15 +194,15 @@ public:
 	};
 	void SetItemToggled(int* item) override {};
 private:
-	static const int numIcons = 5;
-	bool Toggled[numIcons] = { false, true, true, false, false };
+	static const int numIcons = 7;
+	bool Toggled[numIcons] = { false, true, true, false, false, false, false };
 };
 
 class PositionItem :public VisualItem
 {
 public:
 	PositionItem() {
-		startIconNumber = 31;
+		startIconNumber = 35;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
@@ -224,13 +231,27 @@ class MoveItem :public VisualItem
 {
 public:
 	MoveItem() {
-		startIconNumber = 34;
+		startIconNumber = 38;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
 	void Synchronize(VisualItem* item) override;
 	int GetItemToggled() override { return toggled; };
-	void SetItemToggled(int* item) override {};
+private:
+	int numIcons = 1;
+	int toggled = -1;
+};
+
+class RotationXYItem :public VisualItem
+{
+public:
+	RotationXYItem() {
+		startIconNumber = 38;
+	};
+	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
+	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;
+	void Synchronize(VisualItem* item) override;
+	int GetItemToggled() override { return toggled; };
 private:
 	int numIcons = 1;
 	int toggled = -1;

@@ -301,3 +301,8 @@ void RotationXY::OnKeyPress(wxKeyEvent &evt)
 {
 
 }
+
+void RotationXY::ChangeTool(int _tool)
+{
+	changeAllTags = _tool == 0;
+}

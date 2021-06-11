@@ -333,8 +333,11 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 }
 
 void RotationZ::ChangeTool(int _tool) { 
-	if (_tool == 0 != hasTwoPoints) {
-		hasTwoPoints = _tool == 0;
+	bool twoPointsTool = _tool & 1 != 0;
+	changeAllTags = _tool & 2 != 0;
+	preserveProportions = _tool & 4 != 0;
+	if (twoPointsTool != hasTwoPoints) {
+		hasTwoPoints = twoPointsTool;
 		visibility[0] = false;
 		visibility[1] = false;
 		//selection[0] = false;

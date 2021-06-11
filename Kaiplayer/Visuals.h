@@ -314,6 +314,8 @@ private:
 	bool rectangleVisible = false;
 	bool originalRectangleVisible = false;
 	bool rightHolding = false;
+	bool preserveProportions = false;
+	bool changeAllTags = false;
 };
 
 
@@ -336,6 +338,8 @@ public:
 	bool hasTwoPoints = false;
 	bool hover[2] = { false, false };
 	bool visibility[2] = { false, false };
+	bool preserveProportions = false;
+	bool changeAllTags = false;
 	int grabbed = -1;
 };
 
@@ -348,7 +352,7 @@ public:
 	void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	void SetCurVisual();
-	void ChangeTool(int _tool){};
+	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg;
 	D3DXVECTOR2 angle;
@@ -358,6 +362,7 @@ public:
 	byte type;
 	byte AN;
 	wxPoint diffs;
+	bool changeAllTags = false;
 };
 
 class ClipRect : public Visuals

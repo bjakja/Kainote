@@ -65,14 +65,18 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		//6
 		//icon rotation z
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
-		//1
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów obrotu wokół osi Z")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po obrocie rysunki wektorowe\nnie poprzestawiały się względem siebie.")));
+		//3
 		//icons scale
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Skaluj szerokość")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_LINK"), _("Utrzymuj proporcje")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Skaluj wysokość")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ORIGINAL_FRAME"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
-		//5
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów skali")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po skalowaniu rysunki wektorowe\nnie poprzestawiały się względem siebie.")));
+		//7
 		//icons position
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw pozycję według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nspozycjonowany wg jednej osi badź dwóch\ndla wybranego położenia")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_X"), _("Pozycjonuj w osi X")));
@@ -80,6 +84,10 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		//3
 		//icons move 
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw ruch 2 punktów i pozycji wideo.\nPo ustawieniu pierwszego punktu przed tekstem który się porusza.\nPrzesunięciu wideo o tyle klatek,\nby na wideo wciąż był widoczny ten sam element,\ndo którego był ustawiony punkt początkowy.\nRuch generuje postawienie drugiego punktu.")));
+		//1
+		//icon rotation x / y
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów obrotu wokół osi X / Y")));
+
 	}
 	//adding visual second toolbar elements
 	visualItems.push_back(NULL);//cross
@@ -666,15 +674,6 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 	if (elem >= numIcons)
 		return;
 
-	/*if (evt.GetWheelRotation() != 0) {
-		if (vt->blockScroll) { evt.Skip(); return; }
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		toggled -= step;
-		if (toggled < 0) { toggled = numIcons - 1; }
-		else if (toggled >= numIcons) { toggled = 0; }
-		vt->Refresh(false);
-		return;
-	}*/
 
 	if (elem != selection) {
 		selection = elem;
@@ -682,7 +681,7 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 		vt->Refresh(false);
 	}
 	if (evt.LeftDown()) {
-		toggled = (toggled == elem)? -1 : elem;
+		Toggled[elem] = !Toggled[elem];
 		clicked = true;
 		vt->Refresh(false);
 	}
@@ -690,7 +689,7 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 		clicked = false;
 		vt->Refresh(false);
 		wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
-		evt->SetInt(toggled);
+		evt->SetInt(GetItemToggled());
 		wxQueueEvent(vt, evt);
 	}
 }
@@ -703,11 +702,11 @@ void RotationZItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()) {
 			if (i == selection) {
-				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
-				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+				dc.SetBrush(wxBrush(Options.GetColour((Toggled[i] || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((Toggled[i] || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
-			else if (i == toggled) {
+			else if (Toggled[i]) {
 				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
 				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
@@ -723,9 +722,10 @@ void RotationZItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 void RotationZItem::Synchronize(VisualItem* item)
 {
 	RotationZItem* rzi = (RotationZItem*)item;
-	toggled = rzi->toggled;
+	for (int i = 0; i < numIcons; i++) {
+		Toggled[i] = rzi->Toggled[i];
+	}
 }
-
 
 void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 {
@@ -744,15 +744,6 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 	if (elem >= numIcons)
 		return;
 
-	/*if (evt.GetWheelRotation() != 0) {
-		if (vt->blockScroll) { evt.Skip(); return; }
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		toggled -= step;
-		if (toggled < 0) { toggled = numIcons - 1; }
-		else if (toggled >= numIcons) { toggled = 0; }
-		vt->Refresh(false);
-		return;
-	}*/
 
 	if (elem != selection) {
 		selection = elem;
@@ -841,15 +832,6 @@ void PositionItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* v
 	if (elem >= numIcons)
 		return;
 
-	/*if (evt.GetWheelRotation() != 0) {
-		if (vt->blockScroll) { evt.Skip(); return; }
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		toggled -= step;
-		if (toggled < 0) { toggled = numIcons - 1; }
-		else if (toggled >= numIcons) { toggled = 0; }
-		vt->Refresh(false);
-		return;
-	}*/
 
 	if (elem != selection) {
 		selection = elem;
@@ -963,16 +945,6 @@ void MoveItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 	if (elem >= numIcons)
 		return;
 
-	/*if (evt.GetWheelRotation() != 0) {
-		if (vt->blockScroll) { evt.Skip(); return; }
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		toggled -= step;
-		if (toggled < 0) { toggled = numIcons - 1; }
-		else if (toggled >= numIcons) { toggled = 0; }
-		vt->Refresh(false);
-		return;
-	}*/
-
 	if (elem != selection) {
 		selection = elem;
 		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
@@ -1021,4 +993,70 @@ void MoveItem::Synchronize(VisualItem* item)
 {
 	MoveItem* mi = (MoveItem*)item;
 	toggled = mi->toggled;
+}
+
+void RotationXYItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
+{
+	int startDrawPos = w - (h * numIcons);
+	int x, y;
+	evt.GetPosition(&x, &y);
+	int elem = ((x - startDrawPos) / h);
+	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
+		selection = -1;
+		clicked = false;
+		vt->Refresh(false);
+		if (vt->HasToolTips()) { vt->UnsetToolTip(); }
+		return;
+	}
+	if (elem >= numIcons)
+		return;
+
+	if (elem != selection) {
+		selection = elem;
+		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
+		vt->Refresh(false);
+	}
+	if (evt.LeftDown()) {
+		toggled = (toggled == elem) ? -1 : elem;
+		clicked = true;
+		vt->Refresh(false);
+	}
+	if (evt.LeftUp()) {
+		clicked = false;
+		vt->Refresh(false);
+		wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		evt->SetInt(toggled);
+		wxQueueEvent(vt, evt);
+	}
+}
+
+void RotationXYItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
+{
+	int posX = w - (h * numIcons);
+	int i = 0;
+	while (i < numIcons) {
+		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
+		if (icon->IsOk()) {
+			if (i == selection) {
+				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+			else if (i == toggled) {
+				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
+				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			}
+
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2), true);
+			posX += h;
+		}
+		i++;
+	}
+}
+
+void RotationXYItem::Synchronize(VisualItem* item)
+{
+	RotationXYItem* rxyi = (RotationXYItem*)item;
+	toggled = rxyi->toggled;
 }

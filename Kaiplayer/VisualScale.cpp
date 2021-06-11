@@ -399,6 +399,8 @@ void Scale::ChangeTool(int _tool)
 	preserveAspectRatio = _tool & 4;
 	hasScaleY = _tool & 8;
 	hasOriginalRectangle = _tool & 16;
+	preserveProportions = _tool & 32;
+	changeAllTags = _tool & 64;
 	
 	tab->Video->Render(false);
 }
