@@ -66,7 +66,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		//icon rotation z
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"TWO_POINTS"), _("Ustaw kąt z 2 punktów.\nPo ustawieniu 2 punktów pod tekstem\nna wideo oblicza z nich kąt.")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów obrotu wokół osi Z")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po obrocie rysunki wektorowe\nnie poprzestawiały się względem siebie.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\nnie poprzestawiały się względem siebie.")));
 		//3
 		//icons scale
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw skalę według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nzeskalowany wg jednej osi badź dwóch.")));
@@ -75,7 +75,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_Y"), _("Skaluj wysokość")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ORIGINAL_FRAME"), _("Ustaw własny prostokąt dla obecnej skali.\nW przypadku niepożądanych różnic można ustawić\nwłasny prostokąt dla pierwotnej skali.")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmiana wszystkich tagów skali")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po skalowaniu rysunki wektorowe\nnie poprzestawiały się względem siebie.")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SUBSRESAMPLE"), _("Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\nnie poprzestawiały się względem siebie.")));
 		//7
 		//icons position
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"FRAME_TO_SCALE"), _("Ustaw pozycję według prostokąta.\nPo narysowaniu prostokąta tekst zostanie\nspozycjonowany wg jednej osi badź dwóch\ndla wybranego położenia")));
@@ -664,6 +664,7 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
+	bool isGrayed = elem == 1 && Toggled[2];
 	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
 		selection = -1;
 		clicked = false;
@@ -680,12 +681,15 @@ void RotationZItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* 
 		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
 		vt->Refresh(false);
 	}
-	if (evt.LeftDown()) {
+	if (evt.LeftDown() && !isGrayed) {
 		Toggled[elem] = !Toggled[elem];
+		if (elem == 2 && Toggled[elem]) {
+			Toggled[1] = true;
+		}
 		clicked = true;
 		vt->Refresh(false);
 	}
-	if (evt.LeftUp()) {
+	if (evt.LeftUp() && !isGrayed) {
 		clicked = false;
 		vt->Refresh(false);
 		wxCommandEvent* evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
@@ -733,7 +737,7 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	bool isGrayed = ((elem > 0 && elem < 5) && !Toggled[0]) || (elem == 1 || elem == 3) && Toggled[2];
+	bool isGrayed = ((elem > 0 && elem < 5) && !Toggled[0]) || (elem == 1 || elem == 3) && Toggled[2] || elem == 5 && Toggled[6];
 	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
 		selection = -1;
 		clicked = false;
@@ -763,6 +767,9 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 		//select scale x when preserve aspect ratio is used
 		if (elem == 2 && Toggled[elem]) {
 			Toggled[1] = true;
+		}
+		if (elem == 6 && Toggled[elem]) {
+			Toggled[5] = true;
 		}
 		clicked = true;
 		vt->Refresh(false);
