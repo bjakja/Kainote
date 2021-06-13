@@ -95,7 +95,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	visualItems.push_back(new MoveItem());
 	visualItems.push_back(new ScaleItem());
 	visualItems.push_back(new RotationZItem());
-	visualItems.push_back(NULL);//rotation xy
+	visualItems.push_back(new RotationXYItem());//rotation xy
 	visualItems.push_back(NULL);//clip rectangle
 	//clip
 	visualItems.push_back(new VectorItem(true));

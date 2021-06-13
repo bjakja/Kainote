@@ -299,6 +299,7 @@ private:
 	int grabbed;
 	byte AN;
 	D3DXVECTOR2 scale;
+	D3DXVECTOR2 lastScale;
 	D3DXVECTOR2 originalScale;
 	D3DXVECTOR2 diffs/* = D3DXVECTOR2(0.f, 0.f)*/;
 	bool wasUsedShift = false;
@@ -330,16 +331,20 @@ public:
 	void SetCurVisual();
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
+private:
+	void RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	bool isOrg;
 	D3DXVECTOR2 org;
 	D3DXVECTOR2 lastOrg;
 	D3DXVECTOR2 twoPoints[2];
 	D3DXVECTOR2 diffs;
+	float lastAngle = 0.f;
 	bool hasTwoPoints = false;
 	bool hover[2] = { false, false };
 	bool visibility[2] = { false, false };
 	bool preserveProportions = false;
 	bool changeAllTags = false;
+	bool isfirst = true;
 	int grabbed = -1;
 };
 

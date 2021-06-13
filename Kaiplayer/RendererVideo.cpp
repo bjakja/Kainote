@@ -550,23 +550,36 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 		else if (m_Grabbed < 0){
 			float oldzx = m_ZoomRect.x;
 			float oldzy = m_ZoomRect.y;
-			if (m_ZoomRect.x >= minx && m_ZoomRect.width < s.x || (m_ZoomRect.width == s.x && m_ZoomRect.x > x - m_ZoomDiff.x)){
+			if (m_ZoomRect.x >= minx && m_ZoomRect.width < s.x || 
+				(m_ZoomRect.width == s.x && m_ZoomRect.x > x - m_ZoomDiff.x)){
+				float zoomwidth = m_ZoomRect.width - m_ZoomRect.x;
 				m_ZoomRect.x = x - m_ZoomDiff.x;
-			}
-			if (m_ZoomRect.y >= miny && m_ZoomRect.height < s.y || (m_ZoomRect.height == s.y && m_ZoomRect.y > y - m_ZoomDiff.y)){
-				m_ZoomRect.y = y - m_ZoomDiff.y;
-			}
-			if (m_ZoomRect.x >= minx && m_ZoomRect.width <= s.x){
+				m_ZoomRect.x = MID(minx, m_ZoomRect.x, (s.x - zoomwidth));
 				m_ZoomRect.width += (m_ZoomRect.x - oldzx);
+			}
+			if (m_ZoomRect.y >= miny && m_ZoomRect.height < s.y || 
+				(m_ZoomRect.height == s.y && m_ZoomRect.y > y - m_ZoomDiff.y)){
+				float zoomheight = m_ZoomRect.height - m_ZoomRect.y;
+				m_ZoomRect.y = y - m_ZoomDiff.y;
+				m_ZoomRect.y = MID(miny, m_ZoomRect.y, (s.y - zoomheight));
+				m_ZoomRect.height += (m_ZoomRect.y - oldzy);
+			}
+			/*if (m_ZoomRect.x >= minx && m_ZoomRect.width <= s.x){
+				m_ZoomRect.width += (m_ZoomRect.x - oldzx);
+				if (m_ZoomRect.width > s.x) {
+
+				}
+				m_ZoomRect.width = MIN(m_ZoomRect.width, s.x);
 			}
 			if (m_ZoomRect.y >= miny && m_ZoomRect.height <= s.y){
 				m_ZoomRect.height += (m_ZoomRect.y - oldzy);
-			}
-			m_ZoomRect.x = MID(minx, m_ZoomRect.x, s.x);
-			m_ZoomRect.y = MID(miny, m_ZoomRect.y, s.y);
-			m_ZoomRect.width = MIN(m_ZoomRect.width, s.x);
-			m_ZoomRect.height = MIN(m_ZoomRect.height, s.y);
-			Zoom(s1);
+				m_ZoomRect.height = MIN(m_ZoomRect.height, s.y);
+			}*/
+			
+			
+			if(m_ZoomRect.x != oldzx || m_ZoomRect.y != oldzy)
+				Zoom(s1);
+
 			return;
 		}
 		else if (m_Grabbed < 2){
@@ -623,7 +636,7 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 		m_ZoomRect.height = MIN(m_ZoomRect.height, s.y);
 		m_ZoomRect.x = MID(minx, m_ZoomRect.x, s.x);
 		m_ZoomRect.y = MID(miny, m_ZoomRect.y, s.y);
-		if (m_ZoomRect.width - m_ZoomRect.x < 100){
+		if (m_ZoomRect.width - m_ZoomRect.x < 100 || m_ZoomRect.height - m_ZoomRect.y < 56){
 			m_ZoomRect = tmp;
 		}
 		Zoom(s1);

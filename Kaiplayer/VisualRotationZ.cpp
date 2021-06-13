@@ -52,7 +52,8 @@ void RotationZ::DrawVisual(int time)
 			to = org;
 	}
 	float rad = 0.01745329251994329576923690768489f;
-	float radius = sqrt(pow(abs(org.x - from.x), 2) + pow(abs(org.y - from.y), 2)) + 40;
+	//changed every function to float version
+	float radius = sqrtf(powf(fabs(org.x - from.x), 2) + powf(fabs(org.y - from.y), 2)) + 40;
 	D3DXVECTOR2 v2[6];
 	VERTEX v5[726];
 	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), 0xAA121150);
@@ -177,11 +178,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 	if (hasTwoPoints && evt.Moving()) {
 		float screenx = (x - zoomMove.x) * zoomScale.x;
 		float screeny = (y - zoomMove.y) * zoomScale.y;
-		if (abs(twoPoints[0].x - screenx) < 8 && abs(twoPoints[0].y - screeny) < 8) {
+		if (fabs(twoPoints[0].x - screenx) < 8 && fabs(twoPoints[0].y - screeny) < 8) {
 			hover[0] = true;
 			tab->Video->Render();
 		}
-		else if (abs(twoPoints[1].x - screenx) < 8 && abs(twoPoints[1].y - screeny) < 8) {
+		else if (fabs(twoPoints[1].x - screenx) < 8 && fabs(twoPoints[1].y - screeny) < 8) {
 			hover[1] = true;
 			tab->Video->Render();
 		}
@@ -205,17 +206,17 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 				tab->Video->Render(false);
 				return;
 			}
+			else if (fabs(twoPoints[0].x - screenx) < 8 && fabs(twoPoints[0].y - screeny) < 8) {
+				diffs.x = twoPoints[0].x - screenx;
+				diffs.y = twoPoints[0].y - screeny;
+				grabbed = 0;
+			}
 			else if (!visibility[1]) {
 				visibility[1] = true;
 				twoPoints[1].x = screenx;
 				twoPoints[1].y = screeny;
 			}
-			else if (abs(twoPoints[0].x - screenx) < 8 && abs(twoPoints[0].y - screeny) < 8) {
-				diffs.x = twoPoints[0].x - screenx;
-				diffs.y = twoPoints[0].y - screeny;
-				grabbed = 0;
-			}
-			else if (abs(twoPoints[1].x - screenx) < 8 && abs(twoPoints[1].y - screeny) < 8) {
+			else if (fabs(twoPoints[1].x - screenx) < 8 && fabs(twoPoints[1].y - screeny) < 8) {
 				diffs.x = twoPoints[1].x - screenx;
 				diffs.y = twoPoints[1].y - screeny;
 				grabbed = 1;
@@ -223,12 +224,16 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			else {
 				return;
 			}
+			if (changeAllTags) {
+				lastAngle = lastmove.y;
+			}
+			isfirst = true;
 			tab->Video->SetCursor(wxCURSOR_SIZING);
 			SetVisual(true, 0);
 		}
 		else {
 			tab->Video->SetCursor(wxCURSOR_SIZING);
-			if (abs(org.x - x) < 8 && abs(org.y - y) < 8) {
+			if (fabs(org.x - x) < 8 && fabs(org.y - y) < 8) {
 				isOrg = true;
 				lastOrg = org;
 				diffs.x = org.x - x;
@@ -239,9 +244,13 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 				lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
 				lastmove.x += lastmove.y;
 			}
+			if (changeAllTags) {
+				lastAngle = lastmove.y;
+			}
 		}
 	}
 	else if (holding){
+		isfirst = true;
 		if (hasTwoPoints) {
 			if (grabbed != -1) {
 				float screenx = (x - zoomMove.x) * zoomScale.x;
@@ -300,7 +309,7 @@ void RotationZ::SetCurVisual()
 	}
 	else{ org = from; }
 	to = org;
-	if (hasTwoPoints && abs(lastfrz - lastmove.y) > 0.01) {
+	if (hasTwoPoints && fabs(lastfrz - lastmove.y) > 0.01) {
 		visibility[0] = false;
 		visibility[1] = false;
 	}
@@ -318,24 +327,69 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 
 	float angle;
-	if(hasTwoPoints)
+	if (hasTwoPoints)
 		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
 	else
 		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 
 	angle = fmodf(angle + 360.f, 360.f);
-	lastmove.y = angle;
 
-	wxString tag = L"\\frz" + getfloat(angle);
-	wxString val;
-	FindTag(L"frz?([0-9.-]+)", *txt, 1);
-	Replace(tag, txt);
+	if (changeAllTags) {
+		if (preserveProportions) {
+			float posRotationAngle = (lastAngle - angle);
+			bool putInBracket = false;
+			wxPoint textPos;
+			D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPos);
+			float rad = 0.01745329251994329576923690768489f;
+			D3DXVECTOR2 orgpivot = { ((org.x / zoomScale.x) + zoomMove.x) * coeffW,
+			((org.y / zoomScale.y) + zoomMove.y) * coeffH };
+			if (FindTag(L"org\\(([^\\)]+)")) {
+				double orx, ory;
+				if (GetTwoValueDouble(&orx, &ory)) {
+					orgpivot = { (float)orx, (float)ory };
+				}
+			}
+			float s = sin(posRotationAngle * rad);
+			float c = cos(posRotationAngle * rad);
+			RotateZ(&pos, s, c, orgpivot);
+			wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
+			//got put in bracket need in bracket
+			if (putInBracket) { posstr = L"{" + posstr + L"}"; }
+			txt->replace(textPos.x, textPos.y, posstr);
+		}
+		auto replfunc = [=](const FindData& data, wxString* result) {
+			float newangle = angle;
+			if (!data.finding.empty()) {
+				float oldangle = std::stof(data.finding.ToStdString());
+				if (hasTwoPoints)
+					newangle = -(oldangle + (lastAngle - angle));
+				else {
+					//frz has -angle
+					newangle = oldangle - (lastAngle - angle);
+				}
+				newangle = fmodf(newangle + 360.f, 360.f);
+			}
+			if (isfirst) {
+				lastmove.y = newangle;
+				isfirst = false;
+			}
+			*result = getfloat(newangle);
+		};
+		ReplaceAll(L"frz([0-9.-]+)", L"frz", txt, replfunc, true);
+	}
+	else {
+		lastmove.y = angle;
+		wxString tag = L"\\frz" + getfloat(angle);
+		wxString val;
+		FindTag(L"frz?([0-9.-]+)", *txt, 1);
+		Replace(tag, txt);
+	}
 }
 
 void RotationZ::ChangeTool(int _tool) { 
-	bool twoPointsTool = _tool & 1 != 0;
-	changeAllTags = _tool & 2 != 0;
-	preserveProportions = _tool & 4 != 0;
+	bool twoPointsTool = (_tool & 1) != 0;
+	changeAllTags = (_tool & 2) != 0;
+	preserveProportions = (_tool & 4) != 0;
 	if (twoPointsTool != hasTwoPoints) {
 		hasTwoPoints = twoPointsTool;
 		visibility[0] = false;
@@ -356,4 +410,12 @@ void RotationZ::OnKeyPress(wxKeyEvent &evt)
 		selection[1] = true;
 		tab->Video->Render(false);
 	}*/
+}
+
+void RotationZ::RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
+{
+	float x = point->x - orgpivot.x;
+	float y = point->y - orgpivot.y;
+	point->x = (x * cosOfAngle) - (y * sinOfAngle) + orgpivot.x;
+	point->y = (x * sinOfAngle) + (y * cosOfAngle) + orgpivot.y;
 }

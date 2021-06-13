@@ -219,7 +219,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				else
 					rectangleVisible = true;
 			}
-
+			lastScale = scale;
 		}
 		else if (holding && grabbed != -1) {
 			int tablediff = rightHolding ? 2 : 0;
@@ -322,6 +322,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			diffs.y = (from.y - y) + (arrowLengths.y * scale.y);
 		}
 		wasUsedShift = evt.ShiftDown();
+		lastScale = scale;
 	}
 	else if (holding){
 		if (evt.ShiftDown()){
@@ -410,16 +411,40 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 	wxString tag;
 
 	if (type != 1){
-		tag = L"\\fscx" + getfloat(scale.x * 100);
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float scalex = scale.x;
+				if (!data.finding.empty()) {
+					scalex = std::stof(data.finding.ToStdString()) + (lastScale.x - scale.x);
+				}
+				*result = getfloat(scalex * 100);
+			};
+			ReplaceAll(L"fscx([0-9.-]+)", L"fscx", txt, replfunc, true);
+		}
+		else {
+			tag = L"\\fscx" + getfloat(scale.x * 100);
 
-		FindTag(L"fscx([0-9.-]+)", *txt, 0, 1);
-		Replace(tag, txt);
+			FindTag(L"fscx([0-9.-]+)", *txt, 0, 1);
+			Replace(tag, txt);
+		}
 	}
 	if (type != 0){
-		tag = L"\\fscy" + getfloat(scale.y * 100);
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float scaley = scale.y;
+				if (!data.finding.empty()) {
+					scaley = std::stof(data.finding.ToStdString()) + (lastScale.y - scale.y);
+				}
+				*result = getfloat(scaley * 100);
+			};
+			ReplaceAll(L"fscy([0-9.-]+)", L"fscy", txt, replfunc, true);
+		}
+		else {
+			tag = L"\\fscy" + getfloat(scale.y * 100);
 
-		FindTag(L"fscy([0-9.-]+)", *txt, 1);
-		Replace(tag, txt);
+			FindTag(L"fscy([0-9.-]+)", *txt, 1);
+			Replace(tag, txt);
+		}
 	}
 
 

@@ -18,7 +18,6 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include <wx/regex.h>
-//#include <regex>
 
 
 Visuals *Visuals::Get(int Visual, wxWindow *_parent)

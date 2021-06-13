@@ -172,8 +172,7 @@ public:
 	void SetItemToggled(int* item) override {};
 private:
 	static const int numIcons = 3;
-	//int toggled = -1;
-	bool Toggled[numIcons] = { false, true, true};
+	bool Toggled[numIcons] = { false, false, false };
 };
 
 class ScaleItem :public VisualItem
@@ -246,7 +245,7 @@ class RotationXYItem :public VisualItem
 {
 public:
 	RotationXYItem() {
-		startIconNumber = 38;
+		startIconNumber = 39;
 	};
 	void OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt) override;
 	void OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt) override;

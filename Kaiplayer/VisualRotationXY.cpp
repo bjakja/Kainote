@@ -280,19 +280,42 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 
 	wxString tag;
 	if (type != 1){
-		angle.x = (to.x - firstmove.x) + oldAngle.x;
-		angle.x = fmodf(angle.x + 360.f, 360.f);
-		tag = L"\\fry" + getfloat(angle.x);
-		FindTag(L"fry([0-9.-]+)", *txt, 1);
-		Replace(tag, txt);
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float oldangle = data.finding.empty()? oldAngle.x : std::stof(data.finding.ToStdString());
+				angle.x = (to.x - firstmove.x) + oldangle;
+				angle.x = fmodf(angle.x + 360.f, 360.f);
+				*result = getfloat(angle.x);
+			};
+			ReplaceAll(L"fry([0-9.-]+)", L"fry", txt, replfunc, true);
+		}
+		else {
+			angle.x = (to.x - firstmove.x) + oldAngle.x;
+			angle.x = fmodf(angle.x + 360.f, 360.f);
+			tag = L"\\fry" + getfloat(angle.x);
+			FindTag(L"fry([0-9.-]+)", *txt, 1);
+			Replace(tag, txt);
+		}
 	}
 	if (type != 0){
-		//swap plus to minus to not keep oldAngle and angle in minuses
-		float angy = (to.y - firstmove.y) - oldAngle.y;
-		angle.y = fmodf((-angy) + 360.f, 360.f);
-		tag = L"\\frx" + getfloat(angle.y);
-		FindTag(L"frx([0-9.-]+)", *txt, 1);
-		Replace(tag, txt);
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float oldangle = data.finding.empty() ? oldAngle.y : std::stof(data.finding.ToStdString());
+				//swap plus to minus to not keep oldAngle and angle in minuses
+				float angy = (to.y - firstmove.y) - oldangle;
+				angle.y = fmodf((-angy) + 360.f, 360.f);
+				*result = getfloat(angle.y);
+			};
+			ReplaceAll(L"frx([0-9.-]+)", L"frx", txt, replfunc, true);
+		}
+		else {
+			//swap plus to minus to not keep oldAngle and angle in minuses
+			float angy = (to.y - firstmove.y) - oldAngle.y;
+			angle.y = fmodf((-angy) + 360.f, 360.f);
+			tag = L"\\frx" + getfloat(angle.y);
+			FindTag(L"frx([0-9.-]+)", *txt, 1);
+			Replace(tag, txt);
+		}
 	}
 
 }

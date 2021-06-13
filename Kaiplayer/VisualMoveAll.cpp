@@ -276,10 +276,9 @@ void MoveAll::ChangeInLines(bool all)
 			size_t startMatch = 0, lenMatch = 0;
 			if (re.Matches(txt)){
 				wxString visual;
-				//wxString tag=re.GetMatch(txt, 1); tag też nigdzie nie jest potrzebny, bo wycinamy tylko jego wartość.
 				tmp = re.GetMatch(txt, 1);
 				if (type == TAGCLIP){
-					int replacements = tmp.Replace(L',', L',');
+					int replacements = tmp.Freq(L',');
 					if (replacements == 1){
 						tmp = tmp.After(L',');
 					}
@@ -287,7 +286,6 @@ void MoveAll::ChangeInLines(bool all)
 						delimiter = L",";
 					}
 				}
-				//re.GetMatch(&startMatch, &lenMatch, 2); niepotrzebny drugi raz użycie tego samego
 				wxStringTokenizer tkn(tmp, delimiter, wxTOKEN_STRTOK);
 				int count = 0;
 				while (tkn.HasMoreTokens()){
