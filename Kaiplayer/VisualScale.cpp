@@ -373,7 +373,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 void Scale::SetCurVisual()
 {
 	D3DXVECTOR2 linepos = GetPosnScale(&scale, &AN, moveValues);
-	originalScale = scale;
+	originalScale = lastScale = scale;
 
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
@@ -400,8 +400,8 @@ void Scale::ChangeTool(int _tool)
 	preserveAspectRatio = _tool & 4;
 	hasScaleY = _tool & 8;
 	hasOriginalRectangle = _tool & 16;
-	preserveProportions = _tool & 32;
-	changeAllTags = _tool & 64;
+	changeAllTags = _tool & 32;
+	preserveProportions = _tool & 64;
 	
 	tab->Video->Render(false);
 }
@@ -415,7 +415,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 			auto replfunc = [=](const FindData& data, wxString* result) {
 				float scalex = scale.x;
 				if (!data.finding.empty()) {
-					scalex = std::stof(data.finding.ToStdString()) + (lastScale.x - scale.x);
+					scalex = (wxAtof(data.finding) / 100.f) + (lastScale.x - scale.x);
 				}
 				*result = getfloat(scalex * 100);
 			};
@@ -433,7 +433,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 			auto replfunc = [=](const FindData& data, wxString* result) {
 				float scaley = scale.y;
 				if (!data.finding.empty()) {
-					scaley = std::stof(data.finding.ToStdString()) + (lastScale.y - scale.y);
+					scaley = (wxAtof(data.finding) / 100.f) + (lastScale.y - scale.y);
 				}
 				*result = getfloat(scaley * 100);
 			};

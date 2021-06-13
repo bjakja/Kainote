@@ -733,7 +733,7 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	bool isGrayed = elem > 0 && !Toggled[0] || (elem == 1 || elem == 3) && Toggled[2];
+	bool isGrayed = ((elem > 0 && elem < 5) && !Toggled[0]) || (elem == 1 || elem == 3) && Toggled[2];
 	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
 		selection = -1;
 		clicked = false;
@@ -782,7 +782,7 @@ void ScaleItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 	int i = 0;
 	while (i < numIcons) {
 		wxBitmap* icon = vt->icons[i + startIconNumber]->icon;
-		bool isGrayed = i > 0 && !Toggled[0] || i == 3 && Toggled[2];
+		bool isGrayed = ((i > 0 && i < 5) && !Toggled[0]) || i == 3 && Toggled[2];
 		if (icon->IsOk()) {
 			if (i == selection && !isGrayed) {
 				dc.SetBrush(wxBrush(Options.GetColour((Toggled[i] || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));

@@ -327,8 +327,10 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 
 	float angle;
-	if (hasTwoPoints)
+	if (hasTwoPoints) {
 		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
+		angle = -angle + 180;
+	}
 	else
 		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
 
@@ -361,12 +363,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 			float newangle = angle;
 			if (!data.finding.empty()) {
 				float oldangle = std::stof(data.finding.ToStdString());
-				if (hasTwoPoints)
-					newangle = -(oldangle + (lastAngle - angle));
-				else {
-					//frz has -angle
-					newangle = oldangle - (lastAngle - angle);
-				}
+				newangle = oldangle - (lastAngle - angle);
 				newangle = fmodf(newangle + 360.f, 360.f);
 			}
 			if (isfirst) {
