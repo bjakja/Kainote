@@ -39,7 +39,6 @@ enum{
 	VECTORCLIP,
 	VECTORDRAW,
 	MOVEALL,
-	SCALE_ROTATION,
 	ALL_TAGS
 };
 
@@ -76,7 +75,8 @@ public:
 	void DrawCross(D3DXVECTOR2 position, D3DCOLOR color = 0xFFFF0000, bool useBegin = true);
 	void DrawArrow(D3DXVECTOR2 vector, D3DXVECTOR2 *vector1, int diff = 0);
 	void DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen = 4, unsigned int color = 0xFFBB0000);
-	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
+	//can overwrite but need to use Visuals::SetZoom
+	virtual void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale){
 		zoomMove = move;
 		zoomScale = scale;
 	};
@@ -84,7 +84,7 @@ public:
 	int GetDialoguePosition();
 	void RenderSubs(wxString *subs, bool redraw = true);
 
-	virtual void SetVisual(int _start, int _end, bool notDial, bool noRefresh = false);
+	virtual void SetVisual(Dialogue* dial, int tool, bool noRefresh = false);
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
@@ -93,12 +93,13 @@ public:
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
 	virtual void OnMouseCaptureLost(wxMouseCaptureLostEvent &evt){}
-	virtual void GetVisual(wxString *visual){};
+	//virtual void GetVisual(wxString *visual){};
 	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
+	virtual wxPoint ChangeVisual(wxString* txt) { return wxPoint(0, 0); };
 	virtual void AppendClipMask(wxString *mask) {};
 	void DrawWarning(bool comment);
 	//virtual void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true) {};
-	void SetVisual(bool dummy, int type);
+	void SetVisual(bool dummy);
 	void ChangeOrg(wxString *text, Dialogue *_dial, float coordx, float coordy);
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
@@ -138,12 +139,16 @@ public:
 	TabPanel *tab;
 	bool blockevents;
 	bool notDialogue;
+	bool replaceTagsInCursorPosition = true;
 	wxString *dummytext;
 	wxPoint dumplaced;
 	wxPoint textplaced;
 	D3DXVECTOR2 zoomMove;
 	D3DXVECTOR2 zoomScale;
 	wxArrayInt selPositions;
+	wxString currentLineText;
+private:
+	TextEditor* editor = NULL;
 	//Dialogue adresses are valid only for one modification
 	//need recreate on every checking
 	std::vector<Dialogue*> dialoguesWithoutPosition;
@@ -188,8 +193,6 @@ public:
 	Position();
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
-	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all);
 	void SetCurVisual();
@@ -226,12 +229,14 @@ public:
 	Move();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
+	//returns true if visual can be set or false if only need to refresh video
 	bool SetMove();
 	int moveStart;
 	int moveEnd;
@@ -264,8 +269,6 @@ public:
 	MoveAll();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial){};
 	void SetCurVisual();
 	void ChangeInLines(bool all);
 	void ChangeTool(int _tool);
@@ -285,8 +288,9 @@ public:
 	Scale();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
@@ -326,8 +330,9 @@ public:
 	RotationZ();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
@@ -354,8 +359,9 @@ public:
 	RotationXY();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
@@ -376,8 +382,9 @@ public:
 	ClipRect();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	//void GetVisual(wxString *visual);
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool){};
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
@@ -397,7 +404,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial, wxString *visualText);
+	void ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString *visualText);
 	void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true);
 	void SetCurVisual();
 	void SetPos(int x, int y);
@@ -431,6 +438,7 @@ public:
 	void CreateClipMask(const wxString &clip, wxString *clipTag = NULL);
 	void InvertClip();
 	void RotateDrawing(ClipPoint *point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
+	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale) override;
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;
@@ -462,94 +470,11 @@ public:
 	wxString clipMask;
 };
 
-class ScaleRotation : public Visuals
-{
-public:
-	ScaleRotation();
-	~ScaleRotation(){};
-	void DrawVisual(int time);
-	void OnMouseEvent(wxMouseEvent &event);
-	void SetCurVisual();
-	void ChangeTool(int _tool);
-	//wxString GetVisual();
-
-private:
-	void DrawScale(int time);
-	void DrawRotationZ(int time);
-	void DrawRotationXY(int time);
-	void ChangeInLines(bool dummy = true);
-	void OnHoldingRotation(int x, int y);
-	void OnHoldingScaling(int x, int y, bool hasShift);
-	void OnClickRotationZ(int x, int y);
-	void OnClickRotationXY(int x, int y, bool leftClick, bool rightClick, bool middleClick);
-	void OnClickScaling(int x, int y, bool leftClick, bool rightClick, bool middleClick, bool shiftDown);
-	bool SeekTags(const wxString &text, const wxString &pattern, wxString *result);
-	void OnKeyPress(wxKeyEvent &evt);
-	bool isOrg = false;
-	bool hasOrg = false;
-	bool onlyFirst = false;
-	float addy = 100.f, addx = 100.f;
-	//with rotation xy angle.x = fry and angle.y = frx
-	D3DXVECTOR2 angle;
-	D3DXVECTOR2 oldAngle;
-	D3DXVECTOR2 org;
-	D3DXVECTOR2 lastOrg;
-	D3DXVECTOR2 scale;
-	//tagvalues needed to calculate value change
-	//add defferent from this two values
-	D3DXVECTOR2 beforeMove;//tagvalue
-	D3DXVECTOR2 afterMove;//tagvalue
-	byte type = 255;
-	byte AN;
-	wxPoint diffs;
-	byte selectedTool = 0;
-	bool tagXFound = false;
-	bool tagYFound = false;
-};
-
-//typedef std::vector<float> pointsTable;
-//class Data
-//{
-//public:
-//	Data() {};
-//	Data(pointsTable *table, const FindData &fdata) {
-//		floatResults = table;
-//		findData = fdata;
-//	}
-//	~Data() {
-//		delete floatResults;
-//	}
-//	FindData findData;
-//	pointsTable *floatResults;
-//};
-//
-//class AllTagsData {
-//	
-//public:
-//	AllTagsData() {};
-//	AllTagsData(Dialogue* dial, size_t linenum, const std::vector<Data *>& points) {
-//		dialogue = dial;
-//		line = linenum;
-//		dataPoints = points;
-//	}
-//	~AllTagsData() {
-//		for (auto cur = dataPoints.begin(); cur != dataPoints.end(); cur++) {
-//			delete (*cur);
-//		}
-//	}
-//	std::vector<Data*> dataPoints;
-//	Dialogue* dialogue;
-//	size_t line;
-//};
-
 class AllTags : public Visuals
 {
 public:
 	AllTags();
 	~AllTags() {
-		/*for (auto cur = data.begin(); cur != data.end(); cur++) {
-			delete (*cur);
-		}*/
 	};
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent& event);
@@ -558,22 +483,20 @@ public:
 	void FindTagValues();
 	void ChangeTool(int _tool);
 	void GetVisualValue(wxString* visual, const wxString &curValue);
-	void ChangeVisual(wxString* txt);
+	wxPoint ChangeVisual(wxString* txt) override;
+	void ChangeVisual(wxString* txt, Dialogue* _dial) override;
 private:
 	enum {
 		THUMB_RELEASED = 0,
 		THUMB_HOVER,
 		THUMB_PUSHED
 	};
-	void ChangeInLines(bool dummy);
 	void CheckRange(float val);
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	std::vector<AllTagsSetting> *tags;
 	//std::vector<AllTagsData *> data;
 	AllTagsSetting actualTag;
-	wxString currentLineText;
 	wxString floatFormat = L"5.3f";
-	TextEditor* editor = NULL;
 	bool holding[2] = { false, false };
 	bool rholding = false;
 	//bool changeMoveDiff = false;

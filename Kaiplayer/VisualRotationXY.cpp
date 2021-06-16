@@ -165,29 +165,6 @@ void RotationXY::DrawVisual(int time)
 	line->End();
 }
 
-void RotationXY::GetVisual(wxString *visual)
-{
-	if (isOrg){
-		*visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
-		return;
-	}
-
-	if (type != 1){
-		angle.x = (to.x - firstmove.x) + oldAngle.x;
-		angle.x = fmodf(angle.x + 360.f, 360.f);
-		*visual += L"\\fry" + getfloat(angle.x);
-
-	}
-	if (type != 0){
-		//swap plus to minus to not keep oldAngle and angle in minuses
-		float angy = (to.y - firstmove.y) - oldAngle.y;
-		angle.y = fmodf((-angy) + 360.f, 360.f);
-		*visual += L"\\frx" + getfloat(angle.y);
-
-	}
-}
-
 void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
@@ -202,7 +179,7 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		SetVisual(false, type);
+		SetVisual(false);
 		oldAngle = angle;
 		if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
@@ -228,11 +205,11 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 		if (isOrg){
 			org.x = x + diffs.x;
 			org.y = y + diffs.y;
-			SetVisual(true, 100);//type also have number 100 for org.
+			SetVisual(true);//type also have number 100 for org.
 			return;
 		}
 		to.x = x; to.y = y;
-		SetVisual(true, type);
+		SetVisual(true);
 	}
 
 }
@@ -245,17 +222,17 @@ void RotationXY::SetCurVisual()
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 
 	oldAngle = D3DXVECTOR2(0, 0);
-	if (FindTag(L"frx([0-9.-]+)")){
+	if (FindTag(L"frx([0-9.-]+)", currentLineText, changeAllTags)){
 		double result = 0; 
 		GetDouble(&result);
 		oldAngle.y = result;
 	}
-	if (FindTag(L"fry([0-9.-]+)")){
+	if (FindTag(L"fry([0-9.-]+)", currentLineText, changeAllTags)){
 		double result = 0; 
 		GetDouble(&result);
 		oldAngle.x = result;
 	}
-	if (FindTag(L"org\\(([^\\)]+)")){
+	if (FindTag(L"org\\(([^\\)]+)", currentLineText)){
 		double orx, ory;
 		if (GetTwoValueDouble(&orx, &ory)) {
 			org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
@@ -320,6 +297,65 @@ void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
 
 }
 
+wxPoint RotationXY::ChangeVisual(wxString* txt)
+{
+	if (isOrg) {
+		//org is placed only on time in line
+		FindTag(L"org\\(([^\\)]+)", *txt, 1);
+		wxString visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+
+		Replace(visual, txt);
+		return GetPositionInText();
+	}
+
+	wxString tag;
+	if (type != 1) {
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float oldangle = data.finding.empty() ? oldAngle.x : std::stof(data.finding.ToStdString());
+				angle.x = (to.x - firstmove.x) + oldangle;
+				angle.x = fmodf(angle.x + 360.f, 360.f);
+				*result = getfloat(angle.x);
+			};
+			ReplaceAll(L"fry([0-9.-]+)", L"fry", txt, replfunc, true);
+			//this function don't return any position need to return any for cursor placing
+			FindTag(L"frz?([0-9.-]+)", *txt);
+		}
+		else {
+			angle.x = (to.x - firstmove.x) + oldAngle.x;
+			angle.x = fmodf(angle.x + 360.f, 360.f);
+			tag = L"\\fry" + getfloat(angle.x);
+			FindTag(L"fry([0-9.-]+)", *txt);
+			Replace(tag, txt);
+		}
+	}
+	if (type != 0) {
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float oldangle = data.finding.empty() ? oldAngle.y : std::stof(data.finding.ToStdString());
+				//swap plus to minus to not keep oldAngle and angle in minuses
+				float angy = (to.y - firstmove.y) - oldangle;
+				angle.y = fmodf((-angy) + 360.f, 360.f);
+				*result = getfloat(angle.y);
+			};
+			ReplaceAll(L"frx([0-9.-]+)", L"frx", txt, replfunc, true);
+			//this function don't return any position need to return any for cursor placing
+			FindTag(L"frz?([0-9.-]+)", *txt);
+		}
+		else {
+			//swap plus to minus to not keep oldAngle and angle in minuses
+			float angy = (to.y - firstmove.y) - oldAngle.y;
+			angle.y = fmodf((-angy) + 360.f, 360.f);
+			tag = L"\\frx" + getfloat(angle.y);
+			FindTag(L"frx([0-9.-]+)", *txt);
+			Replace(tag, txt);
+		}
+	}
+	return GetPositionInText();
+}
+
+
 void RotationXY::OnKeyPress(wxKeyEvent &evt)
 {
 
@@ -327,5 +363,11 @@ void RotationXY::OnKeyPress(wxKeyEvent &evt)
 
 void RotationXY::ChangeTool(int _tool)
 {
+	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = _tool == 0;
+	replaceTagsInCursorPosition = !changeAllTags;
+	if (oldChangeAllTags != changeAllTags) {
+		SetCurVisual();
+	}
+	tab->Video->Render(false);
 }

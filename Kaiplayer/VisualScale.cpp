@@ -105,14 +105,6 @@ void Scale::DrawVisual(int time)
 
 }
 
-void Scale::GetVisual(wxString *visual)
-{
-	if (type != 1)
-		*visual += L"\\fscx" + getfloat(scale.x * 100);
-	if (type != 0)
-		*visual += L"\\fscy" + getfloat(scale.y * 100);
-}
-
 void Scale::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
@@ -143,7 +135,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			}
 			if (rectangleVisible) {
 				SetScale();
-				SetVisual(false, type);
+				SetVisual(false);
 			}
 
 			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
@@ -268,7 +260,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			SortPoints();
 			SetScale();
 			if (rectangleVisible)
-				SetVisual(true, type);
+				SetVisual(true);
 			else
 				tab->Video->Render(false);
 		}
@@ -278,7 +270,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		SetVisual(false, type);
+		SetVisual(false);
 		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		wasUsedShift = false;
 	}
@@ -366,7 +358,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		scale.x = abs((to.x - from.x) / arrowLengths.x);
 		scale.y = abs((to.y - from.y) / arrowLengths.y);
 
-		SetVisual(true, type);
+		SetVisual(true);
 	}
 }
 
@@ -392,17 +384,21 @@ void Scale::SetCurVisual()
 
 void Scale::ChangeTool(int _tool)
 {
-	if (!hasScaleToRenctangle && _tool & 1) {
-		originalSize = GetTextSize(tab->Edit->line, &border);
-	}
 	hasScaleToRenctangle = _tool & 1;
 	hasScaleX = _tool & 2;
 	preserveAspectRatio = _tool & 4;
 	hasScaleY = _tool & 8;
 	hasOriginalRectangle = _tool & 16;
+	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = _tool & 32;
 	preserveProportions = _tool & 64;
-	
+	replaceTagsInCursorPosition = !changeAllTags;
+	if (oldChangeAllTags != changeAllTags) {
+		SetCurVisual();
+	}
+	else if (!hasScaleToRenctangle && _tool & 1) {
+		originalSize = GetTextSize(tab->Edit->line, &border);
+	}
 	tab->Video->Render(false);
 }
 
@@ -450,7 +446,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		else {
 			tag = L"\\fscx" + getfloat(scale.x * 100);
 
-			FindTag(L"fscx([0-9.-]+)", *txt, 0, 1);
+			FindTag(L"fscx([0-9.-]+)", *txt, 1);
 			Replace(tag, txt);
 		}
 	}
@@ -476,6 +472,52 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 
 
+}
+
+wxPoint Scale::ChangeVisual(wxString* txt)
+{
+	wxString tag;
+	if (type != 1) {
+		//change all tags fscx that are in line and add first one
+		//when there is no tags
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float scalex = scale.x;
+				if (!data.finding.empty()) {
+					scalex = (wxAtof(data.finding) / 100.f) * (scale.x / lastScale.x);
+				}
+				*result = getfloat(scalex * 100);
+			};
+			ReplaceAll(L"fscx([0-9.-]+)", L"fscx", txt, replfunc, true);
+		}
+		else {
+			tag = L"\\fscx" + getfloat(scale.x * 100);
+
+			FindTag(L"fscx([0-9.-]+)", *txt);
+			Replace(tag, txt);
+		}
+	}
+	if (type != 0) {
+		//change all tags fscx that are in line and add first one
+		//when there is no tags
+		if (changeAllTags) {
+			auto replfunc = [=](const FindData& data, wxString* result) {
+				float scaley = scale.y;
+				if (!data.finding.empty()) {
+					scaley = (wxAtof(data.finding) / 100.f) * (scale.y / lastScale.y);
+				}
+				*result = getfloat(scaley * 100);
+			};
+			ReplaceAll(L"fscy([0-9.-]+)", L"fscy", txt, replfunc, true);
+		}
+		else {
+			tag = L"\\fscy" + getfloat(scale.y * 100);
+
+			FindTag(L"fscy([0-9.-]+)", *txt);
+			Replace(tag, txt);
+		}
+	}
+	return GetPositionInText();
 }
 
 void Scale::OnKeyPress(wxKeyEvent &evt)
@@ -504,8 +546,8 @@ void Scale::OnKeyPress(wxKeyEvent &evt)
 		scale.x = abs((to.x - from.x) / arrowLengths.x);
 		scale.y = abs((to.y - from.y) / arrowLengths.y);
 		
-		SetVisual(true, type);
-		SetVisual(false, type);
+		SetVisual(true);
+		SetVisual(false);
 		return;
 	}
 	evt.Skip();

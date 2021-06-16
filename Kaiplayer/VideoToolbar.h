@@ -318,7 +318,7 @@ private:
 	void OnSize(wxSizeEvent &evt);
 	int Toggled;
 	int sel;
-	const static int toolsSize = 12;
+	const static int toolsSize = 11;
 	bool clicked;
 	bool iconsEnabled = true;
 	bool hasHiddenLists = false;

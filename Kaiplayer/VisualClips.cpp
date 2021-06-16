@@ -382,7 +382,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
-			ChangeVisual(&txt, Dial, &clip);
+			ChangeVectorVisual(&txt, Dial, &clip);
 			if (!dummy) {
 				grid->CopyDialogue(sels[i])->SetText(txt);
 			}
@@ -595,7 +595,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 	}
 }
 
-void DrawingAndClip::ChangeVisual(wxString *txt, Dialogue *_dial, wxString *clip)
+void DrawingAndClip::ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString *clip)
 {
 
 	if (Visual == VECTORCLIP) {
@@ -904,13 +904,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		tool -= step;
 		VideoCtrl *vc = tab->Video;
-		Fullscreen * fullScreen = vc->GetFullScreenWindow();
-		if (vc->IsFullScreen() && fullScreen){
-			fullScreen->vToolbar->SetItemToggled(&tool);
-		}
-		else{
-			vc->GetVideoToolbar()->SetItemToggled(&tool);
-		}
+		vc->GetVideoToolbar()->SetItemToggled(&tool);
 		return;
 	}
 	if (blockevents){ return; }
@@ -1476,4 +1470,10 @@ void DrawingAndClip::RotateDrawing(ClipPoint* point, float sinOfAngle, float cos
 		point->x = (x * cosOfAngle) - (y * sinOfAngle) - orgpivot.x;
 		point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
 	}
+}
+
+void DrawingAndClip::SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale)
+{
+	Visuals::SetZoom(move, scale);
+	pointArea = 4.f / zoomScale.x;
 }

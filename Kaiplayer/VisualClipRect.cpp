@@ -109,28 +109,6 @@ void ClipRect::DrawVisual(int time)
 	line->End();
 }
 
-void ClipRect::GetVisual(wxString *visual)
-{
-	int x1, x2, y1, y2;
-	if (Corner[0].x < Corner[1].x){
-		x1 = Corner[0].x;
-		x2 = Corner[1].x;
-	}
-	else{
-		x1 = Corner[1].x;
-		x2 = Corner[0].x;
-	}
-	if (Corner[0].y < Corner[1].y){
-		y1 = Corner[0].y;
-		y2 = Corner[1].y;
-	}
-	else{
-		y1 = Corner[1].y;
-		y2 = Corner[0].y;
-	}
-	*visual = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
-}
-
 void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
@@ -158,7 +136,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 			}
 		}
 		if (showClip)
-			SetVisual(false, 0);
+			SetVisual(false);
 
 		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 	}
@@ -231,7 +209,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 			Corner[1].x = pointx;
 			Corner[1].y = pointy;
 		}
-		SetVisual(true, 0);
+		SetVisual(true);
 	}
 
 
@@ -307,6 +285,32 @@ int ClipRect::HitTest(D3DXVECTOR2 pos, bool diff)
 	return resultFinal;
 }
 
+wxPoint ClipRect::ChangeVisual(wxString* txt)
+{
+	int x1, x2, y1, y2;
+	if (Corner[0].x < Corner[1].x) {
+		x1 = Corner[0].x;
+		x2 = Corner[1].x;
+	}
+	else {
+		x1 = Corner[1].x;
+		x2 = Corner[0].x;
+	}
+	if (Corner[0].y < Corner[1].y) {
+		y1 = Corner[0].y;
+		y2 = Corner[1].y;
+	}
+	else {
+		y1 = Corner[1].y;
+		y2 = Corner[0].y;
+	}
+	wxString val;
+	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
+	FindTag(L"i?clip(.+)", *txt, 2);
+	Replace(tag, txt);
+	return GetPositionInText();
+}
+
 void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	int x1, x2, y1, y2;
@@ -359,9 +363,10 @@ void ClipRect::OnKeyPress(wxKeyEvent &evt)
 		Corner[1].x += directionX;
 		Corner[1].y += directionY;
 
-		SetVisual(true, 0);
-		SetVisual(false, 0);
+		SetVisual(true);
+		SetVisual(false);
 		return;
 	}
 	evt.Skip();
 }
+

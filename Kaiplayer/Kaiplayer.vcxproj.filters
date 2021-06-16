@@ -407,9 +407,6 @@
     <ClCompile Include="VisualScale.cpp">
       <Filter>Source Files\Video\Visuals</Filter>
     </ClCompile>
-    <ClCompile Include="VisualScaleRotation.cpp">
-      <Filter>Source Files\Video\Visuals</Filter>
-    </ClCompile>
     <ClCompile Include="ContextDX9.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>

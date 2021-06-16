@@ -98,17 +98,6 @@ void Move::DrawVisual(int time)
 
 }
 
-void Move::GetVisual(wxString *visual)
-{
-	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
-	*visual = L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-		getfloat(((from.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
-		getfloat(((to.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-		getfloat(((to.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
-		getfloat(moveValues[4] - startTime) + L"," +
-		getfloat(moveValues[5] - startTime) + L")";
-}
-
 void Move::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
@@ -125,7 +114,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 		if (evt.ButtonUp()) {
 			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
-			SetVisual(false, type);
+			SetVisual(false);
 			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 			grabbed = -1;
 			moveDistance = to - from;
@@ -186,7 +175,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			}
 			tab->Video->SetCursor(wxCURSOR_SIZING);
 			if (SetMove()) {
-				SetVisual(true, type);
+				SetVisual(true);
 			}
 			else {
 				tab->Video->Render(false);
@@ -208,7 +197,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				lineToMoveEnd.y = (shiftType == 2) ? lineToMoveStart.y : y + diffs.y;
 			}
 			SetMove();
-			SetVisual(true, type);
+			SetVisual(true);
 		}
 
 		return;
@@ -216,7 +205,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		SetVisual(false, type);
+		SetVisual(false);
 		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
 		grabbed = -1;
 		moveDistance = to - from;
@@ -263,7 +252,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		}
 		lastmove = lastTo = to;
 		firstmove = lastFrom = from;
-		SetVisual(true, type);
+		SetVisual(true);
 		axis = 0;
 	}
 	if (holding){
@@ -298,7 +287,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				}
 			}
 		}
-		SetVisual(true, type);
+		SetVisual(true);
 	}
 	if (evt.MiddleDown()){
 		wxPoint mousePos = evt.GetPosition();
@@ -357,6 +346,22 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	ChangeText(txt, tag, !putinbracket, tagPos);
 }
 
+wxPoint Move::ChangeVisual(wxString* txt)
+{
+	FindTag(L"(move|pos).+", *txt, 1);
+	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+	wxString visual = L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((from.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		getfloat(((to.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((to.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+		getfloat(moveValues[4] - startTime) + L"," +
+		getfloat(moveValues[5] - startTime) + L")";
+
+	Replace(visual, txt);
+
+	return GetPositionInText();
+}
+
 void Move::OnKeyPress(wxKeyEvent &evt)
 {
 
@@ -369,7 +374,7 @@ bool Move::SetMove()
 		if(time == lineStartTime)
 			KaiLog(_("Wideo musi byæ ustawione minimum jedn¹ klatkê po starcie"));
 
-		return true;
+		return false;
 	}
 	if(lastVideoTime == -1)
 		lastVideoTime = time;
@@ -380,7 +385,7 @@ bool Move::SetMove()
 
 	to = from + ((lineToMoveEnd - lineToMoveStart) * currentTime);
 
-	return false;
+	return true;
 }
 
 void Move::ChangeTool(int _tool)

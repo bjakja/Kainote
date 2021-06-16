@@ -127,32 +127,6 @@ void RotationZ::DrawVisual(int time)
 
 }
 
-void RotationZ::GetVisual(wxString *visual)
-{
-	if (hasTwoPoints && (!visibility[0] || !visibility[1])) {
-		*visual = L"";
-		return;
-	}
-
-	if (isOrg){
-		*visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
-		return;
-	}
-
-	float angle;
-	if (hasTwoPoints) {
-		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
-		angle = -angle + 180;
-	}
-	else
-		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
-	angle = fmodf(angle + 360.f, 360.f);
-	lastmove.y = angle;
-
-	*visual = L"\\frz" + getfloat(angle);
-}
-
 void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 {
 	if (blockevents){ return; }
@@ -164,7 +138,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.ButtonUp()){
 		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
-		SetVisual(false, (isOrg) ? 100 : 0);
+		SetVisual(false);
 		to = org;
 		if (isOrg){
 			lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
@@ -225,7 +199,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			}
 			isfirst = true;
 			tab->Video->SetCursor(wxCURSOR_SIZING);
-			SetVisual(true, 0);
+			SetVisual(true);
 		}
 		else {
 			tab->Video->SetCursor(wxCURSOR_SIZING);
@@ -251,7 +225,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 			if (grabbed != -1) {
 				twoPoints[grabbed].x = x + diffs.x;
 				twoPoints[grabbed].y = y + diffs.y;
-				SetVisual(true, 0);
+				SetVisual(true);
 			}
 		}
 		else {
@@ -259,11 +233,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 				org.x = x + diffs.x;
 				org.y = y + diffs.y;
 				//type also have number 100 to be recognized
-				SetVisual(true, 100);
+				SetVisual(true);
 				return;
 			}
 			to.x = x; to.y = y;
-			SetVisual(true, 0);
+			SetVisual(true);
 		}
 	}
 
@@ -278,7 +252,7 @@ void RotationZ::SetCurVisual()
 	double lastfrz = lastmove.y;
 	lastmove = D3DXVECTOR2(0, 0);
 	wxString res;
-	if (FindTag(L"frz?([0-9.-]+)")){
+	if (FindTag(L"frz?([0-9.-]+)", currentLineText, changeAllTags)){
 		double result = 0.; 
 		GetDouble(&result);
 		lastmove.y = result;
@@ -291,7 +265,7 @@ void RotationZ::SetCurVisual()
 		lastmove.y = result;
 		lastmove.x += lastmove.y;
 	}
-	if (FindTag(L"org\\(([^\\)]+)")){
+	if (FindTag(L"org\\(([^\\)]+)", currentLineText)){
 		double orx, ory;
 		if (GetTwoValueDouble(&orx, &ory)) {
 			org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
@@ -380,18 +354,71 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	}
 }
 
+wxPoint RotationZ::ChangeVisual(wxString* txt)
+{
+	if (hasTwoPoints && (!visibility[0] || !visibility[1])) {
+		return wxPoint();
+	}
+
+	if (isOrg) {
+		FindTag(L"org\\(([^\\)]+)", *txt, 1);
+		wxString visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
+
+		Replace(visual, txt);
+		return GetPositionInText();
+	}
+
+	float angle;
+	if (hasTwoPoints) {
+		angle = atan2((twoPoints[0].y - twoPoints[1].y), (twoPoints[0].x - twoPoints[1].x)) * (180.f / 3.1415926536f);
+		angle = -angle + 180;
+	}
+	else
+		angle = lastmove.x - atan2((org.y - to.y), (org.x - to.x)) * (180.f / 3.1415926536f);
+	angle = fmodf(angle + 360.f, 360.f);
+	if (changeAllTags) {
+		auto replfunc = [=](const FindData& data, wxString* result) {
+			float newangle = angle;
+			if (!data.finding.empty()) {
+				float oldangle = std::stof(data.finding.ToStdString());
+				newangle = oldangle - (lastAngle - angle);
+				newangle = fmodf(newangle + 360.f, 360.f);
+			}
+			if (isfirst) {
+				lastmove.y = newangle;
+				isfirst = false;
+			}
+			*result = getfloat(newangle);
+		};
+		ReplaceAll(L"frz([0-9.-]+)", L"frz", txt, replfunc, true);
+		FindTag(L"frz?([0-9.-]+)", *txt);
+	}
+	else {
+		lastmove.y = angle;
+		wxString tag = L"\\frz" + getfloat(angle);
+		wxString val;
+		FindTag(L"frz?([0-9.-]+)", *txt);
+		Replace(tag, txt);
+	}
+	return GetPositionInText();
+}
+
 void RotationZ::ChangeTool(int _tool) { 
 	bool twoPointsTool = (_tool & 1) != 0;
+	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = (_tool & 2) != 0;
+	replaceTagsInCursorPosition = !changeAllTags;
 	preserveProportions = (_tool & 4) != 0;
-	if (twoPointsTool != hasTwoPoints) {
+	if (oldChangeAllTags != changeAllTags) {
+		SetCurVisual();
+	}
+	else if (twoPointsTool != hasTwoPoints) {
 		hasTwoPoints = twoPointsTool;
 		visibility[0] = false;
 		visibility[1] = false;
-		//selection[0] = false;
-		//selection[1] = false;
-		tab->Video->Render(false);
 	}
+	tab->Video->Render(false);
 };
 
 void RotationZ::OnKeyPress(wxKeyEvent &evt)

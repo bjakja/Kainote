@@ -103,7 +103,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 	int lastTag = -1;
 	wxString found[2];
 	wxPoint fpoints[2];
-	if (bracketEnd == txt.length()) { bracketEnd--; }
+	if (bracketEnd >= txt.length()) { bracketEnd--; }
 
 	for (int i = bracketEnd; i >= 0; i--) {
 		wxUniChar ch = txt[i];
@@ -172,7 +172,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 				else {
 					found[1] = ftag;
 					fpoints[1].x = i;
-					fpoints[1].y = (isT && txt[lslash - 1] == L')') ? lslash - 2 : lslash - 1;
+					fpoints[1].y = /*(isT && txt[lslash - 1] == L')') ? lslash - 2 : */lslash - 1;
 				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end

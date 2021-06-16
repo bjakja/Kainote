@@ -53,9 +53,9 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 	case VECTORDRAW:
 		visual = new DrawingAndClip();
 		break;
-	case SCALE_ROTATION:
+	/*case SCALE_ROTATION:
 		visual = new ScaleRotation();
-		break;
+		break;*/
 	case ALL_TAGS:
 		visual = new AllTags();
 		break;
@@ -146,25 +146,26 @@ void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 	if (redraw){ tab->Video->Render(); }
 }
 
-void Visuals::SetVisual(int _start, int _end, bool notDial, bool noRefresh)
+void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 {
 	int nx = 0, ny = 0;
 	tab->Grid->GetASSRes(&nx, &ny);
 	SubsSize = wxSize(nx, ny);
-	start = _start;
-	end = _end;
-	notDialogue = notDial;
+	start = dial->Start.mstime;
+	end = dial->End.mstime;
+	notDialogue = dial->IsComment;
 
 	coeffW = ((float)SubsSize.x / (float)(VideoSize.width - VideoSize.x));
 	coeffH = ((float)SubsSize.y / (float)(VideoSize.height - VideoSize.y));
 	tab->Video->SetVisualEdition(true);
 
+	//set copy of editbox text that every dummy edition have the same text
+	//not changed by other dummy editions to avoid mismatches when moving
+	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
+	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+	currentLineText = editor->GetValue();
+	ChangeTool(tool);
 	SetCurVisual();
-	//if (Visual == VECTORCLIP){
-	//	tab->Video->OpenSubs(OPEN_DUMMY);
-	//	//return;
-	//}
-	
 }
 
 void Visuals::SizeChanged(wxRect wsize, LPD3DXLINE _line, LPD3DXFONT _font, LPDIRECT3DDEVICE9 _device)
@@ -369,7 +370,9 @@ void Visuals::GetMoveTimes(int *start, int *end)
 //Getting position and scale with vector drawing need to put scale in rest of cases can put one value or none
 D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 {
-	bool beforeCursor = !(Visual >= VECTORCLIP || Visual == MOVE || Visual == CHANGEPOS);
+	bool beforeCursor = !(Visual >= VECTORCLIP || Visual == MOVE || 
+		Visual == CHANGEPOS) && replaceTagsInCursorPosition;
+
 	bool draw = (Visual == VECTORCLIP || Visual == VECTORDRAW);
 	D3DXVECTOR2 ppos(0.0f, 0.0f);
 	EditBox *edit = tab->Edit;
@@ -476,7 +479,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 
 //Put visuals in line text
-void Visuals::SetVisual(bool dummy, int type)
+void Visuals::SetVisual(bool dummy)
 {
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
@@ -545,7 +548,8 @@ void Visuals::SetVisual(bool dummy, int type)
 			if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 			grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
 				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
-				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, true);
+				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : 
+				(Visual == CLIPRECT)? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, true);
 			grid->Refresh();
 		}
 		else{
@@ -555,41 +559,17 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 	//put it on to editor
 	if (dummy){
-		wxString txt = editor->GetValue();
-		int mode = false;
-		if (Visual == MOVE || type == 100){ mode = 1; }
-		else if (Visual == CLIPRECT){ mode = 2; }
-		wxString tmp;
-		wxString xytype = (type == 0) ? L"x" : L"y";
-		wxString frxytype = (type == 1) ? L"x" : L"y";
-
-		wxString tagpattern = (type == 100) ? L"(org).+" :
-			(Visual == MOVE) ? L"(move|pos).+" :
-			(Visual == SCALE) ? L"(fsc" + xytype + L").+" :
-			(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" :
-			(Visual == ROTATEXY) ? L"(fr" + frxytype + L").+" :
-			L"(i?clip).+";
-		FindTag(tagpattern, txt, mode);
-		const FindData& data = GetResult();
-		if (type == 2 && Visual > 0){
-			if (data.positionInText.x < data.positionInText.y){
-				txt.erase(txt.begin() + data.positionInText.x, 
-					txt.begin() + data.positionInText.y + 1);
-			}
-			wxString tagpattern = (Visual == SCALE) ? L"(fscx).+" : 
-				(Visual == ROTATEZ) ? L"(frz?)[.0-9-]+" : L"(frx).+";
-			FindTag(tagpattern, txt, mode);
-		}
-		wxString visualText;
-		GetVisual(&visualText);
-		Replace(visualText, &txt);
+		//in text position need to always get new value
+		//no addition to old value, always placed a new one
+		wxString txt = replaceTagsInCursorPosition? editor->GetValue() : currentLineText;
+		wxPoint positionInText = ChangeVisual(&txt);
 		if (!dummytext){
 			bool vis = false;
 			dummytext = grid->GetVisible(&vis, &dumplaced);
 			if (!vis){ SAFE_DELETE(dummytext); return; }
 		}
 		editor->SetTextS(txt, false, false);
-		editor->SetSelection(data.positionInText.x, data.positionInText.x, true);
+		editor->SetSelection(positionInText.x, positionInText.x, true);
 		dummytext->replace(dumplaced.x, dumplaced.y, txt);
 		dumplaced.y = txt.length();
 		wxString *dtxt = new wxString(*dummytext);
@@ -597,11 +577,13 @@ void Visuals::SetVisual(bool dummy, int type)
 	}
 	else{
 		editor->SetModified();
+		currentLineText = editor->GetValue();
 		tab->Video->SetVisualEdition(true);
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == MOVE) ? VISUAL_MOVE :
 			(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
-			(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : VISUAL_RECT_CLIP, false, false, true);
+			(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : 
+			(Visual == CLIPRECT) ? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, false, false, true);
 
 	}
 }

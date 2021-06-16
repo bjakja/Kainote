@@ -177,11 +177,11 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			//set holding before us to know what value use
 			holding[i] = true;
 			if (tab->Edit->IsCursorOnStart()) {
-				ChangeInLines(false);
+				SetVisual(false);
 			}
 			else {
-				ChangeInLines(true);
-				ChangeInLines(false);
+				SetVisual(true);
+				SetVisual(false);
 			}
 			holding[i] = false;
 		}
@@ -252,7 +252,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			thumbValue[i] = ((x - left) / coeff) - thumbposdiff;
 			thumbValue[i] = MID(actualTag.rangeMin, thumbValue[i], actualTag.rangeMax);
 			if (lastThumbValue[i] != thumbValue[i])
-				ChangeInLines(true);
+				SetVisual(true);
 
 			lastThumbValue[i] = thumbValue[i];
 		}
@@ -274,11 +274,11 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				//set holding before us to know what value use
 				holding[i] = true;
 				if (tab->Edit->IsCursorOnStart()) {
-					ChangeInLines(false);
+					SetVisual(false);
 				}
 				else {
-					ChangeInLines(true);
-					ChangeInLines(false);
+					SetVisual(true);
+					SetVisual(false);
 				}
 				holding[i] = false;
 			}
@@ -290,7 +290,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				tab->Video->ReleaseMouse();
 			}
 			//if(holding[i])
-				ChangeInLines(false);
+			SetVisual(false);
 			//lastThumbValue[i] = firstThumbValue[i] = thumbValue[i];
 			holding[i] = false;
 		}
@@ -331,11 +331,11 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 		}
 		holding[hkeystart? 0 : 1] = true;
 		if (tab->Edit->IsCursorOnStart()) {
-			ChangeInLines(false);
+			SetVisual(false);
 		}
 		else {
-			ChangeInLines(true);
-			ChangeInLines(false);
+			SetVisual(true);
+			SetVisual(false);
 		}
 		holding[hkeystart ? 0 : 1] = false;
 		//firstThumbValue[0] = thumbValue[0];
@@ -358,9 +358,6 @@ void AllTags::SetCurVisual()
 
 void AllTags::FindTagValues()
 {
-	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
-	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
-	currentLineText = editor->GetValue();
 	Styles* acstyl = tab->Grid->GetStyle(0, tab->Edit->line->Style);
 	if (actualTag.tag == L"fs")
 		actualTag.value = acstyl->GetFontSizeDouble();
@@ -461,113 +458,22 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	*visual = strval;
 }
 
-void AllTags::ChangeVisual(wxString* txt)
+wxPoint AllTags::ChangeVisual(wxString* txt)
 {
 	auto replfunc = [=](const FindData& data, wxString* result) {
 		GetVisualValue(result, data.finding);
 	};
 	ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
+	FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)");
+	return GetPositionInText();
 }
 
-void AllTags::ChangeInLines(bool dummy)
+void AllTags::ChangeVisual(wxString* txt, Dialogue *dial)
 {
-	EditBox* edit = tab->Edit;
-	SubsGrid* grid = tab->Grid;
-	//Get editor
-	//two stages, stage first selected lines
-	if (edit->IsCursorOnStart()) {
-		bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
-		wxString* dtxt;
-		wxArrayInt sels;
-		grid->file->GetSelections(sels);
-		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
-		if (dummy && (!dummytext || selPositions.size() != sels.size())) {
-			bool visible = false;
-			selPositions.clear();
-			//need to check if can delete when sizes are different dummytext is valid pointer
-			SAFE_DELETE(dummytext);
-			dummytext = grid->GetVisible(&visible, 0, &selPositions);
-			if (selPositions.size() != sels.size()) {
-				//KaiLog(L"Sizes mismatch");
-				return;
-			}
-		}
-		if (dummy) { dtxt = new wxString(*dummytext); }
-		int _time = tab->Video->Tell();
-		int moveLength = 0;
-		const wxString& tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
-		for (size_t i = 0; i < sels.size(); i++) {
-			int sel = sels[i];
-			Dialogue* Dial = grid->GetDialogue(sel);
-			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
-
-			wxString txt = Dial->GetTextNoCopy();
-			ChangeVisual(&txt);
-			if (!dummy) {
-				grid->CopyDialogue(sel)->SetText(txt);
-			}
-			else {
-				Dialogue Cpy = Dialogue(*Dial);
-				if (Dial->TextTl != L"" && grid->hasTLMode) {
-					Cpy.TextTl = txt;
-					wxString tlLines;
-					if (showOriginalOnVideo)
-						Cpy.GetRaw(&tlLines, false, tlStyle);
-
-					Cpy.GetRaw(&tlLines, true);
-					dtxt->insert(selPositions[i] + moveLength, tlLines);
-					moveLength += tlLines.length();
-				}
-				else {
-					Cpy.Text = txt;
-					wxString thisLine;
-					Cpy.GetRaw(&thisLine);
-					dtxt->insert(selPositions[i] + moveLength, thisLine);
-					moveLength += thisLine.length();
-				}
-			}
-
-
-		}
-
-		if (!dummy) {
-			tab->Video->SetVisualEdition(true);
-			if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
-			grid->SetModified(VISUAL_ALL_TAGS, true);
-			grid->Refresh();
-		}
-		else {
-			RenderSubs(dtxt);
-		}
-		return;
-	}
-	//put it on to editor
-	if (dummy) {
-		wxString txt = currentLineText;
-		ChangeVisual(&txt);
-		if (!dummytext) {
-			bool vis = false;
-			dummytext = grid->GetVisible(&vis, &dumplaced);
-			if (!vis) { SAFE_DELETE(dummytext); return; }
-		}
-
-		editor->SetTextS(txt, false, false);
-		FindTag(actualTag.tag + L"([0-9.,\\(\\) ]*)", L"", actualTag.mode);
-		const FindData& data = GetResult();
-		editor->SetSelection(data.positionInText.x, data.positionInText.x, true);
-		dummytext->replace(dumplaced.x, dumplaced.y, txt);
-		dumplaced.y = txt.length();
-		wxString* dtxt = new wxString(*dummytext);
-		RenderSubs(dtxt);
-	}
-	else {
-		editor->SetModified();
-		currentLineText = editor->GetValue();
-		tab->Video->SetVisualEdition(true);
-		if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
-		edit->Send(VISUAL_ALL_TAGS, false, false, true);
-
-	}
+	auto replfunc = [=](const FindData& data, wxString* result) {
+		GetVisualValue(result, data.finding);
+	};
+	ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
 }
 
 void AllTags::CheckRange(float val)

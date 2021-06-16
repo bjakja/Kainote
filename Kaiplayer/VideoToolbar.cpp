@@ -43,8 +43,11 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"clip"), _("Wycinki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Zmieniacz pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ALL_TAGS"), _("Zmieniacz pozostałych tagów")));
+		//it's inactive but I will not change all position when I plan to make a visual for fax
+		//then I will need it back
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
+
 		//12
 		//Here clip icons
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"Vector_Drag"), _("Przesuń punkty")));
@@ -102,8 +105,10 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	//drawing
 	visualItems.push_back(new VectorItem(false));
 	visualItems.push_back(new MoveAllItem());
-	visualItems.push_back(new ScaleRotationItem());
 	visualItems.push_back(new AllTagsItem());
+	//for safty there is still scale rotation item
+	//in future replaced for fax visual
+	visualItems.push_back(new ScaleRotationItem());
 
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&VideoToolbar::OnSize);

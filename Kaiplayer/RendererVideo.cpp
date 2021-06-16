@@ -720,8 +720,8 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 	m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 		m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	SetVisualZoom();
-	m_Visual->SetVisual(tab->Edit->line->Start.mstime, tab->Edit->line->End.mstime,
-		tab->Edit->line->IsComment, noRefresh);
+	int tool = tab->Video->GetVideoToolbar()->GetItemToggled();
+	m_Visual->SetVisual(tab->Edit->line, tool, noRefresh);
 	bool vectorclip = m_Visual->Visual == VECTORCLIP;
 	if (vectorclip || settext) { OpenSubs(OPEN_DUMMY); }
 	Render(!noRefresh);

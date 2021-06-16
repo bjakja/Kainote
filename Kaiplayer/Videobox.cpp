@@ -1492,7 +1492,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 	EditBox *eb = tab->Edit;
 	int vis = evt.GetInt();
-	VideoToolbar *vTB = (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
+	//VideoToolbar *vTB = (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
 
 	if (vis == eb->Visual){ return; }
 	if (vis == 0){
@@ -1502,8 +1502,8 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if (renderer->m_HasZoom){ renderer->SetZoom(); }
 		eb->Visual = vis;
 		renderer->SetVisual();
-		if (vis >= VECTORCLIP || (vis >= CHANGEPOS && vis <= ROTATEXY) ){
-			renderer->VisualChangeTool(vTB->GetItemToggled()); }
+		//if (vis >= VECTORCLIP || (vis >= CHANGEPOS && vis <= ROTATEXY) ){
+			//renderer->VisualChangeTool(vTB->GetItemToggled()); }
 		if (!HasArrow()){ SetCursor(wxCURSOR_ARROW); }
 		SetFocus();
 	}
@@ -1777,7 +1777,7 @@ Fullscreen *VideoCtrl::GetFullScreenWindow()
 }
 VideoToolbar *VideoCtrl::GetVideoToolbar()
 {
-	return m_VideoToolbar;
+	return (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
 }
 
 void VideoCtrl::HideVideoToolbar()
