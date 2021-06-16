@@ -410,12 +410,38 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	wxString tag;
 
+	//Change positions of scaled lines 
+	//that the image before scaling don't change
+	//it distorts when positions are different then first one
+	//TODO:  Change GetPosition on something that can return move points 
+	//to avoid changing move when is in lines
+	if (changeAllTags && preserveProportions) {
+		float posScalex = scale.x / lastScale.x;
+		float posScaley = scale.y / lastScale.y;
+		bool putInBracket = false;
+		wxPoint textPos;
+		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPos);
+		//need to restore subtitles position
+		D3DXVECTOR2 activeLinePos = { ((from.x / zoomScale.x) + zoomMove.x) * coeffW,
+		((from.y / zoomScale.y) + zoomMove.y) * coeffH };
+		pos.x = activeLinePos.x + ((pos.x - activeLinePos.x) * posScalex);
+		pos.y = activeLinePos.y + ((pos.y - activeLinePos.y) * posScaley);
+		wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
+		//position returns length instead position of end and needs 
+		//different function ChangeTag not works till I change position of end
+		//maybe everything switch to replace function using length is better
+		if (putInBracket) { posstr = L"{" + posstr + L"}"; }
+		txt->replace(textPos.x, textPos.y, posstr);
+	}
+
 	if (type != 1){
+		//change all tags fscx that are in line and add first one
+		//when there is no tags
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
 				float scalex = scale.x;
 				if (!data.finding.empty()) {
-					scalex = (wxAtof(data.finding) / 100.f) + (lastScale.x - scale.x);
+					scalex = (wxAtof(data.finding) / 100.f) * (scale.x / lastScale.x);
 				}
 				*result = getfloat(scalex * 100);
 			};
@@ -429,11 +455,13 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		}
 	}
 	if (type != 0){
+		//change all tags fscx that are in line and add first one
+		//when there is no tags
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
 				float scaley = scale.y;
 				if (!data.finding.empty()) {
-					scaley = (wxAtof(data.finding) / 100.f) + (lastScale.y - scale.y);
+					scaley = (wxAtof(data.finding) / 100.f) * (scale.y / lastScale.y);
 				}
 				*result = getfloat(scaley * 100);
 			};

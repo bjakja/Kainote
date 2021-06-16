@@ -232,7 +232,7 @@ public:
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
-	void SetMove();
+	bool SetMove();
 	int moveStart;
 	int moveEnd;
 	byte type;

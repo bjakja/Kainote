@@ -176,13 +176,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 		grabbed = -1;
 	}
 	if (hasTwoPoints && evt.Moving()) {
-		float screenx = (x - zoomMove.x) * zoomScale.x;
-		float screeny = (y - zoomMove.y) * zoomScale.y;
-		if (fabs(twoPoints[0].x - screenx) < 8 && fabs(twoPoints[0].y - screeny) < 8) {
+		if (fabs(twoPoints[0].x - x) < 8 && fabs(twoPoints[0].y - y) < 8) {
 			hover[0] = true;
 			tab->Video->Render();
 		}
-		else if (fabs(twoPoints[1].x - screenx) < 8 && fabs(twoPoints[1].y - screeny) < 8) {
+		else if (fabs(twoPoints[1].x - x) < 8 && fabs(twoPoints[1].y - y) < 8) {
 			hover[1] = true;
 			tab->Video->Render();
 		}
@@ -197,28 +195,26 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 	if (click){
 		tab->Video->CaptureMouse();
 		if (hasTwoPoints) {
-			float screenx = (x - zoomMove.x) * zoomScale.x;
-			float screeny = (y - zoomMove.y) * zoomScale.y;
 			if (!visibility[0]) {
 				visibility[0] = true;
-				twoPoints[0].x = screenx;
-				twoPoints[0].y = screeny;
+				twoPoints[0].x = x;
+				twoPoints[0].y = y;
 				tab->Video->Render(false);
 				return;
 			}
-			else if (fabs(twoPoints[0].x - screenx) < 8 && fabs(twoPoints[0].y - screeny) < 8) {
-				diffs.x = twoPoints[0].x - screenx;
-				diffs.y = twoPoints[0].y - screeny;
+			else if (fabs(twoPoints[0].x - x) < 8 && fabs(twoPoints[0].y - y) < 8) {
+				diffs.x = twoPoints[0].x - x;
+				diffs.y = twoPoints[0].y - y;
 				grabbed = 0;
 			}
 			else if (!visibility[1]) {
 				visibility[1] = true;
-				twoPoints[1].x = screenx;
-				twoPoints[1].y = screeny;
+				twoPoints[1].x = x;
+				twoPoints[1].y = y;
 			}
-			else if (fabs(twoPoints[1].x - screenx) < 8 && fabs(twoPoints[1].y - screeny) < 8) {
-				diffs.x = twoPoints[1].x - screenx;
-				diffs.y = twoPoints[1].y - screeny;
+			else if (fabs(twoPoints[1].x - x) < 8 && fabs(twoPoints[1].y - y) < 8) {
+				diffs.x = twoPoints[1].x - x;
+				diffs.y = twoPoints[1].y - y;
 				grabbed = 1;
 			}
 			else {
@@ -253,10 +249,8 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 		isfirst = true;
 		if (hasTwoPoints) {
 			if (grabbed != -1) {
-				float screenx = (x - zoomMove.x) * zoomScale.x;
-				float screeny = (y - zoomMove.y) * zoomScale.y;
-				twoPoints[grabbed].x = screenx + diffs.x;
-				twoPoints[grabbed].y = screeny + diffs.y;
+				twoPoints[grabbed].x = x + diffs.x;
+				twoPoints[grabbed].y = y + diffs.y;
 				SetVisual(true, 0);
 			}
 		}
@@ -337,6 +331,10 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	angle = fmodf(angle + 360.f, 360.f);
 
 	if (changeAllTags) {
+		//rotate all positions to not destroy image that it 
+		//presents before rotation.
+		//TODO:  Change GetPosition on something that can return move points 
+		//to avoid changing move when is in lines
 		if (preserveProportions) {
 			float posRotationAngle = (lastAngle - angle);
 			bool putInBracket = false;
@@ -355,7 +353,6 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 			float c = cos(posRotationAngle * rad);
 			RotateZ(&pos, s, c, orgpivot);
 			wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
-			//got put in bracket need in bracket
 			if (putInBracket) { posstr = L"{" + posstr + L"}"; }
 			txt->replace(textPos.x, textPos.y, posstr);
 		}
