@@ -20,6 +20,7 @@
 
 AllTags::AllTags()
 {
+	replaceTagsInCursorPosition = false;
 	tags = VideoToolbar::GetTagsSettings();
 	if (!tags->size()) {
 		LoadSettings(tags);

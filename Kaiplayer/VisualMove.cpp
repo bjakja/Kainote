@@ -114,7 +114,13 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 		if (evt.ButtonUp()) {
 			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
-			SetVisual(false);
+			int time = tab->Video->Tell();
+			if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
+				bool bad = true;
+			}
+			else {
+				SetVisual(false);
+			}
 			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
 			grabbed = -1;
 			moveDistance = to - from;
@@ -173,6 +179,8 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			else {
 				return;
 			}
+			lastmove = lastTo = to;
+			firstmove = lastFrom = from;
 			tab->Video->SetCursor(wxCURSOR_SIZING);
 			if (SetMove()) {
 				SetVisual(true);
@@ -196,8 +204,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				lineToMoveEnd.x = (shiftType == 1) ? lineToMoveStart.x : x + diffs.x;
 				lineToMoveEnd.y = (shiftType == 2) ? lineToMoveStart.y : y + diffs.y;
 			}
-			SetMove();
-			SetVisual(true);
+			if (SetMove()) {
+				SetVisual(true);
+			}
+			else {
+				tab->Video->Render(false);
+			}
 		}
 
 		return;
@@ -323,7 +335,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
 	int moveStartTime = 0, moveEndTime = 0;
-	wxString tagBefore = putinbracket ? L"" : txt->SubString(tagPos.x, tagPos.y);
+	wxString tagBefore = putinbracket ? L"" : txt->Mid(tagPos.x, tagPos.y);
 	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
 		GetMoveTimes(&moveStartTime, &moveEndTime);

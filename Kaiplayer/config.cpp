@@ -1122,6 +1122,35 @@ void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, c
 	dc->SetPen(tmppen);
 }
 
+size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignoreCase)
+{
+	const wxString casetext = ignoreCase ? text.Lower() : text;
+	const wxString caseWTF = ignoreCase ? whatToFind.Lower() : whatToFind;
+	size_t len = casetext.length();
+	size_t wtflen = caseWTF.length();
+	if (!len || !wtflen)
+		return -1;
+
+	wxUniChar wtfch = caseWTF[wtflen - 1];
+	for (size_t i = len - 1; i + 1 > 0; i--) {
+		const wxUniChar ch = casetext[i];
+		if (ch == wtfch) {
+			if (wtflen == 1)
+				return i;
+			for (size_t k = 1; k < wtflen && (i - k) + 1 > 0; k++) {
+				const wxUniChar cch = casetext[i - k];
+				if (cch != caseWTF[(wtflen - 1) - k]) {
+					break;
+				}
+				if (k == wtflen - 1) {
+					return i - k;
+				}
+			}
+		}
+	}
+	return -1;
+}
+
 DEFINE_ENUM(CONFIG, CFG);
 
 DEFINE_ENUM(COLOR, CLR);

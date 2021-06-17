@@ -569,6 +569,7 @@ wxString MakePolishPlural(int num, const wxString& normal, const wxString& plura
 static const wxString emptyString;
 bool IsNumber(const wxString& txt);
 void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);
+size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignoreCase = false);
 
 extern config Options;
 

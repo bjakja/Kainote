@@ -384,6 +384,7 @@ void Scale::SetCurVisual()
 
 void Scale::ChangeTool(int _tool)
 {
+	bool oldHasScaleToRenctangle = hasScaleToRenctangle;
 	hasScaleToRenctangle = _tool & 1;
 	hasScaleX = _tool & 2;
 	preserveAspectRatio = _tool & 4;
@@ -396,7 +397,7 @@ void Scale::ChangeTool(int _tool)
 	if (oldChangeAllTags != changeAllTags) {
 		SetCurVisual();
 	}
-	else if (!hasScaleToRenctangle && _tool & 1) {
+	else if (oldHasScaleToRenctangle != hasScaleToRenctangle) {
 		originalSize = GetTextSize(tab->Edit->line, &border);
 	}
 	tab->Video->Render(false);
@@ -423,6 +424,14 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		pos.x = activeLinePos.x + ((pos.x - activeLinePos.x) * posScalex);
 		pos.y = activeLinePos.y + ((pos.y - activeLinePos.y) * posScaley);
 		wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
+		if (moveValues[6] > 2) {
+			D3DXVECTOR2 pos1(moveValues[2] - moveValues[0], moveValues[3] - moveValues[1]);
+			int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+			posstr = L"\\move(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L"," +
+				getfloat(pos.x + pos1.x) + L"," + getfloat(pos.y + pos1.y) + L"," +
+				getfloat(moveValues[4] - startTime, L"6.0f") + L"," +
+				getfloat(moveValues[5] - startTime, L"6.0f") + L")";
+		}
 		//position returns length instead position of end and needs 
 		//different function ChangeTag not works till I change position of end
 		//maybe everything switch to replace function using length is better

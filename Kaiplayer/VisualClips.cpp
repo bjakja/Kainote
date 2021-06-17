@@ -220,7 +220,7 @@ void DrawingAndClip::SetCurVisual()
 			actualStyle->Angle.ToDouble(&result);
 			frz = result;
 		}
-		if (FindTag(L"org\\(([^\\)]+)")) {
+		if (FindTag(L"org(\\([^\\)]+)")) {
 			double orx, ory;
 			if (GetTwoValueDouble(&orx, &ory)) {
 				org = D3DXVECTOR2(orx, ory);
