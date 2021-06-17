@@ -368,6 +368,6 @@ void RotationXY::ChangeTool(int _tool)
 	replaceTagsInCursorPosition = !changeAllTags;
 	if (oldChangeAllTags != changeAllTags) {
 		SetCurVisual();
+		tab->Video->Render(false);
 	}
-	tab->Video->Render(false);
 }

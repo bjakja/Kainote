@@ -102,39 +102,67 @@ void Visuals::GetDialoguesWithoutPosition()
 
 	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
-		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue || activeLineKey == i){ continue; }
+		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue){ 
+			continue;
+		}
 
 		if (time >= dial->Start.mstime && time < dial->End.mstime){
 			const wxString &text = dial->GetTextNoCopy();
 			if (!pos.Matches(text)){
+				if (i == activeLineKey)
+					activeLineInTable = dialoguesWithoutPosition.size() - 1;
 				dialoguesWithoutPosition.push_back(dial);
 			}
 		}
 	}
 }
 
-int Visuals::GetDialoguePosition()
+D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 {
-	if (!dialoguesWithoutPosition.size())
-		return 0;
+	//if (!dialoguesWithoutPosition.size())
+	dialoguesWithoutPosition.clear();
+	GetDialoguesWithoutPosition();
 
 	bool tlMode = tab->Grid->hasTLMode;
+	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
+	Styles* acstyle = tab->Grid->GetStyle(0, dialogue->Style);
+	int curlineAn = wxAtoi(acstyle->Alignment);
+	const wxString& txt = dialogue->GetTextNoCopy();
+	if (an.Matches(txt)) {
+		curlineAn = wxAtoi(an.GetMatch(txt, 1));
+	}
+	int clan = curlineAn / 3.1f;
+
+	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
 
 	for (size_t i = 0; i < dialoguesWithoutPosition.size(); i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
 		Styles *acstyle = tab->Grid->GetStyle(0, dial->Style);
 		const wxString &txt = dial->GetTextNoCopy();
 		int newan = wxAtoi(acstyle->Alignment);
-		wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 		if (an.Matches(txt)){
 			newan = wxAtoi(an.GetMatch(txt, 1));
 		}
-		//if (((AN - 1) / 3) == ((newan - 1) / 3)){
+		if ((activeLineInTable < (int)i && dialogue == tab->Edit->line))
+			break;
+		if (dial == dialogue)
+			break;
 
-		//}
+		int nan = newan / 3.1f;
+		if (nan == clan) {
+			D3DXVECTOR2 bord;
+			D3DXVECTOR2 size = GetTextSize(dial, &bord, acstyle, true);
+			//top
+			if(clan == 2)
+				result.y += size.y + bord.y;
+			else if(clan == 1)
+				result.y += (size.y + bord.y) / 2;
+			else if (clan == 0)
+				result.y -= (size.y + bord.y);
+		}
 		
 	}
-	return 0;
+	return result;
 }
 
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
@@ -408,6 +436,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		if (tbl){ tbl[6] = 0; }
 		ppos.x = (edit->line->MarginL != 0) ? edit->line->MarginL : wxAtoi(acstyl->MarginL);
 		ppos.y = (edit->line->MarginV != 0) ? edit->line->MarginV : wxAtoi(acstyl->MarginV);
+		D3DXVECTOR2 additional = GetDialogueAdditionalPosition(edit->line);
+		ppos.y += additional.y;
 	}
 
 	if (tbl && tbl[6] < 4){
@@ -653,7 +683,8 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	else if (tmpan < 7){
 		result.y = (y / 2);
 	}
-
+	D3DXVECTOR2 additional = GetDialogueAdditionalPosition(Dial);
+	result.y += additional.y;
 	return result;
 }
 
@@ -777,7 +808,7 @@ bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width,
 	return true;
 }
 
-D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style)
+D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, bool keepExtraLead)
 {
 	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", L"bord", L"xbord", L"ybord" };
 	D3DXVECTOR2 result = D3DXVECTOR2(0.f, 0.f);
@@ -842,7 +873,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 					wxString pltext = tag->value.Mid(g, i - g);
 					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
 						maxwidth += fwidth;
-						if(!result.y)
+						if(!result.y && !keepExtraLead)
 							fheight -= (extlead - descent);
 
 						if (maxheight < fheight)

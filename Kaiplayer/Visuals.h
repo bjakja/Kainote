@@ -81,7 +81,8 @@ public:
 		zoomScale = scale;
 	};
 	void GetDialoguesWithoutPosition();
-	int GetDialoguePosition();
+	//get dialogue additional position when there is no pos or move tag
+	D3DXVECTOR2 GetDialogueAdditionalPosition(Dialogue *dialogue);
 	void RenderSubs(wxString *subs, bool redraw = true);
 
 	virtual void SetVisual(Dialogue* dial, int tool, bool noRefresh = false);
@@ -108,7 +109,7 @@ public:
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
-	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL);
+	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false);
 	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
@@ -149,6 +150,7 @@ public:
 	wxString currentLineText;
 private:
 	TextEditor* editor = NULL;
+	int activeLineInTable = -1;
 	//Dialogue adresses are valid only for one modification
 	//need recreate on every checking
 	std::vector<Dialogue*> dialoguesWithoutPosition;

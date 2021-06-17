@@ -410,8 +410,6 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 	//Change positions of scaled lines 
 	//that the image before scaling don't change
 	//it distorts when positions are different then first one
-	//TODO:  Change GetPosition on something that can return move points 
-	//to avoid changing move when is in lines
 	if (changeAllTags && preserveProportions) {
 		float posScalex = scale.x / lastScale.x;
 		float posScaley = scale.y / lastScale.y;

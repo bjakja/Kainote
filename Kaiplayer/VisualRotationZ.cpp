@@ -308,8 +308,6 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 	if (changeAllTags) {
 		//rotate all positions to not destroy image that it 
 		//presents before rotation.
-		//TODO:  Change GetPosition on something that can return move points 
-		//to avoid changing move when is in lines
 		if (preserveProportions) {
 			float posRotationAngle = (lastAngle - angle);
 			bool putInBracket = false;
@@ -421,13 +419,14 @@ void RotationZ::ChangeTool(int _tool) {
 	preserveProportions = (_tool & 4) != 0;
 	if (oldChangeAllTags != changeAllTags) {
 		SetCurVisual();
+		tab->Video->Render(false);
 	}
 	else if (twoPointsTool != hasTwoPoints) {
 		hasTwoPoints = twoPointsTool;
 		visibility[0] = false;
 		visibility[1] = false;
+		tab->Video->Render(false);
 	}
-	tab->Video->Render(false);
 };
 
 void RotationZ::OnKeyPress(wxKeyEvent &evt)
