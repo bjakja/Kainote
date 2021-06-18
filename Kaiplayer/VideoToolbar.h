@@ -45,7 +45,7 @@ public:
 	virtual void HideContols() {};
 	virtual void ShowContols(VideoToolbar* vt) {};
 
-	int startIconNumber;
+	int startIconNumber = 0;
 	bool clicked = false;
 	int selection = -1;
 };

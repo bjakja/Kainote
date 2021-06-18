@@ -257,7 +257,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				sizingRectangle[1 + tablediff].x = pointx;
 				sizingRectangle[1 + tablediff].y = pointy;
 			}
-			SortPoints();
+			//SortPoints();
 			SetScale();
 			if (rectangleVisible)
 				SetVisual(true);
@@ -632,20 +632,20 @@ void Scale::SortPoints()
 void Scale::SetScale()
 {
 	if (originalRectangleVisible) {
-		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x - border.x) /
-			(sizingRectangle[3].x - sizingRectangle[2].x - border.x));
+		scale.x = originalScale.x * ((fabs(sizingRectangle[1].x - sizingRectangle[0].x) - border.x) /
+			(fabs(sizingRectangle[3].x - sizingRectangle[2].x) - border.x));
 		if (preserveAspectRatio)
 			scale.y = scale.x;
 		else
-			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y - border.y) /
-				(sizingRectangle[3].y - sizingRectangle[2].y - border.y));
+			scale.y = originalScale.y * ((fabs(sizingRectangle[1].y - sizingRectangle[0].y) - border.y) /
+				(fabs(sizingRectangle[3].y - sizingRectangle[2].y) - border.y));
 	}
 	else {
-		scale.x = originalScale.x * ((sizingRectangle[1].x - sizingRectangle[0].x - border.x) / originalSize.x);
+		scale.x = originalScale.x * ((fabs(sizingRectangle[1].x - sizingRectangle[0].x) - border.x) / originalSize.x);
 		if (preserveAspectRatio)
 			scale.y = scale.x;
 		else
-			scale.y = originalScale.y * ((sizingRectangle[1].y - sizingRectangle[0].y - border.y) / originalSize.y);
+			scale.y = originalScale.y * ((fabs(sizingRectangle[1].y - sizingRectangle[0].y) - border.y) / originalSize.y);
 	}
 	if (scale.x < 0.f)
 		scale.x = 0.f;

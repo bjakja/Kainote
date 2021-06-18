@@ -91,8 +91,9 @@ Visuals::~Visuals()
 	SAFE_DELETE(dummytext);
 }
 
-void Visuals::GetDialoguesWithoutPosition()
+void Visuals::GetDialoguesWithoutPosition(Dialogue* dialogue)
 {
+	dialoguesWithoutPosition.clear();
 	int time = tab->Video->Tell();
 	SubsGrid *grid = tab->Grid;
 
@@ -106,63 +107,148 @@ void Visuals::GetDialoguesWithoutPosition()
 			continue;
 		}
 
+		if (i == activeLineKey && dialogue == tab->Edit->line)
+			break;
+		if (dial == dialogue)
+			break;
+
 		if (time >= dial->Start.mstime && time < dial->End.mstime){
 			const wxString &text = dial->GetTextNoCopy();
 			if (!pos.Matches(text)){
-				if (i == activeLineKey)
-					activeLineInTable = dialoguesWithoutPosition.size() - 1;
 				dialoguesWithoutPosition.push_back(dial);
 			}
 		}
+		
 	}
 }
 
 D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 {
 	//if (!dialoguesWithoutPosition.size())
-	dialoguesWithoutPosition.clear();
-	GetDialoguesWithoutPosition();
+	GetDialoguesWithoutPosition(dialogue);
+	D3DXVECTOR2 result = { 0, 0 };
+	size_t dialoguesSize = dialoguesWithoutPosition.size();
 
 	bool tlMode = tab->Grid->hasTLMode;
 	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
-	Styles* acstyle = tab->Grid->GetStyle(0, dialogue->Style);
-	int curlineAn = wxAtoi(acstyle->Alignment);
+	Styles* currentDialogueStyle = tab->Grid->GetStyle(0, dialogue->Style);
+	int curlineAn = wxAtoi(currentDialogueStyle->Alignment);
 	const wxString& txt = dialogue->GetTextNoCopy();
 	if (an.Matches(txt)) {
 		curlineAn = wxAtoi(an.GetMatch(txt, 1));
 	}
 	int clan = curlineAn / 3.1f;
 
-	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
+	
+	D3DXVECTOR2 dialPos = { 0, 0 };
+	D3DXVECTOR2 dialPos1 = { 0, 0 };
+	D3DXVECTOR2 bord;
+	D3DXVECTOR2 size = GetTextSize(dialogue, &bord, currentDialogueStyle, true);
+	size.x += bord.x;
+	size.y += bord.y;
+	GetRectFromSize(size, curlineAn, dialogue, currentDialogueStyle, &dialPos, &dialPos1);
+	int placesForText = 0;
+	int placesTaken = 0;
 
-	for (size_t i = 0; i < dialoguesWithoutPosition.size(); i++){
+	for (size_t i = 0; i < dialoguesSize; i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
-		Styles *acstyle = tab->Grid->GetStyle(0, dial->Style);
+		Styles *currentStyle = tab->Grid->GetStyle(0, dial->Style);
 		const wxString &txt = dial->GetTextNoCopy();
-		int newan = wxAtoi(acstyle->Alignment);
+		int newan = wxAtoi(currentStyle->Alignment);
 		if (an.Matches(txt)){
 			newan = wxAtoi(an.GetMatch(txt, 1));
 		}
-		if ((activeLineInTable < (int)i && dialogue == tab->Edit->line))
-			break;
-		if (dial == dialogue)
-			break;
-
+		
 		int nan = newan / 3.1f;
 		if (nan == clan) {
 			D3DXVECTOR2 bord;
-			D3DXVECTOR2 size = GetTextSize(dial, &bord, acstyle, true);
-			//top
-			if(clan == 2)
-				result.y += size.y + bord.y;
-			else if(clan == 1)
-				result.y += (size.y + bord.y) / 2;
-			else if (clan == 0)
-				result.y -= (size.y + bord.y);
+			D3DXVECTOR2 size = GetTextSize(dial, &bord, currentStyle, true);
+			size.x += bord.x;
+			size.y += bord.y;
+			D3DXVECTOR2 newpos;
+			D3DXVECTOR2 newpos1;
+			GetRectFromSize(size, newan, dial, currentStyle, &newpos, &newpos1);
+			//check position of current dialogue with this one,
+			//if rects colides change position
+			if (IsInRect(dialPos, dialPos1, newpos, newpos1)) {
+				//top
+				if (clan == 2)
+					result.y += size.y;
+				else if (clan == 1)
+					result.y += size.y / 2;
+				else if (clan == 0)
+					result.y -= size.y;
+
+				placesTaken++;
+			}
+			// when there is a place for this line then break the loop
+			else if (placesTaken < placesForText && placesTaken > 0 && placesForText > 0) {
+				break;
+			}
+			else
+				placesForText++;
+				
 		}
 		
 	}
 	return result;
+}
+
+void Visuals::GetRectFromSize(D3DXVECTOR2 size, int an, Dialogue* dial, Styles* style, D3DXVECTOR2* pos, D3DXVECTOR2* pos1)
+{
+	D3DXVECTOR2 result;
+	SetPositionByAn(&result, an, dial, style);
+	if (an % 3 == 2) {
+		result.x -= (size.x / 2);
+	}
+	else if (an % 3 == 0) {
+		result.x -= size.x;
+	}
+	if (an < 4) {
+		result.y -= size.y;
+	}
+	else if (an < 7) {
+		result.y -= (size.y / 2);
+	}
+	/*else if (an < 10) {
+		
+	}*/
+	*pos = result;
+	pos1->x = result.x + size.x;
+	pos1->y = result.y + size.y;
+}
+
+bool Visuals::IsInRect(D3DXVECTOR2 pos, D3DXVECTOR2 pos1, D3DXVECTOR2 secondpos, D3DXVECTOR2 secondpos1)
+{
+	return ((secondpos1.x > pos.x) && (secondpos.x < pos1.x)
+		&& (secondpos1.y > pos.y) && (secondpos.y < pos1.y));
+}
+
+void Visuals::SetPositionByAn(D3DXVECTOR2* pos, int an, Dialogue* dial, Styles* style)
+{
+	if (an % 3 == 2) {
+		int marginL = (dial->MarginL != 0) ? dial->MarginL : wxAtoi(style->MarginL);
+		int marginR = (dial->MarginR != 0) ? dial->MarginR : wxAtoi(style->MarginR);
+		pos->x = ((SubsSize.x + marginL - marginR) / 2);
+	}
+	else if (an % 3 == 0) {
+		pos->x = (dial->MarginR != 0) ? dial->MarginR : wxAtoi(style->MarginR);
+		pos->x = SubsSize.x - pos->x;
+	}
+	else {
+		pos->x = (dial->MarginL != 0) ? dial->MarginL : wxAtoi(style->MarginL);
+	}
+
+	if (an < 4) {
+		pos->y = (dial->MarginV != 0) ? dial->MarginV : wxAtoi(style->MarginV);
+		pos->y = SubsSize.y - pos->y;
+	}
+	else if (an < 7) {
+		pos->y = (SubsSize.y / 2);
+	}
+	else {
+		pos->y = (dial->MarginV != 0) ? dial->MarginV : wxAtoi(style->MarginV);
+	}
 }
 
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
@@ -413,7 +499,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 
 
-	Styles *acstyl = grid->GetStyle(0, edit->line->Style);
+	Styles *currentStyle = grid->GetStyle(0, edit->line->Style);
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
 	if (pos.Matches(txt) && tbl){
@@ -434,8 +520,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 	else{
 		if (tbl){ tbl[6] = 0; }
-		ppos.x = (edit->line->MarginL != 0) ? edit->line->MarginL : wxAtoi(acstyl->MarginL);
-		ppos.y = (edit->line->MarginV != 0) ? edit->line->MarginV : wxAtoi(acstyl->MarginV);
+		ppos.x = (edit->line->MarginL != 0) ? edit->line->MarginL : wxAtoi(currentStyle->MarginL);
+		ppos.y = (edit->line->MarginV != 0) ? edit->line->MarginV : wxAtoi(currentStyle->MarginV);
 		D3DXVECTOR2 additional = GetDialogueAdditionalPosition(edit->line);
 		ppos.y += additional.y;
 	}
@@ -450,10 +536,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	double fscx = 100.0, fscy = 100.0;
 	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
-		acstyl->ScaleX.ToDouble(&fscx);
+		currentStyle->ScaleX.ToDouble(&fscx);
 	}
 	if (!(FindTag(L"fscy([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscy))){
-		acstyl->ScaleY.ToDouble(&fscy);
+		currentStyle->ScaleY.ToDouble(&fscy);
 	}
 	if (scale){
 		scale->x = fscx / 100.f;
@@ -478,29 +564,15 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	}
 	if (Visual != VECTORCLIP){
 		int tmpan;
-		tmpan = wxAtoi(acstyl->Alignment);
+		tmpan = wxAtoi(currentStyle->Alignment);
 		wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 		if (an.Matches(txt)){
 			tmpan = wxAtoi(an.GetMatch(txt, 1));
 		}
 		if (AN){ *AN = tmpan; }
 		if (foundpos){ return ppos; }
-		int x, y;
-		grid->GetASSRes(&x, &y);
-		if (tmpan % 3 == 2){
-			ppos.x = (x / 2);
-		}
-		else if (tmpan % 3 == 0){
-			ppos.x = (edit->line->MarginR != 0) ? edit->line->MarginR : wxAtoi(acstyl->MarginR);
-			ppos.x = x - ppos.x;
-		}
-		if (tmpan < 4){
-			ppos.y = (edit->line->MarginV != 0) ? edit->line->MarginV : wxAtoi(acstyl->MarginV);
-			ppos.y = y - ppos.y;
-		}
-		else if (tmpan < 7){
-			ppos.y = (y / 2);
-		}
+		
+		SetPositionByAn(&ppos, tmpan, edit->line, currentStyle);
 	}
 
 
@@ -626,7 +698,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	//calculate right position and pass results to positioning and move.
 	*putinBracket = false;
 	D3DXVECTOR2 result;
-	Styles *acstyl = tab->Grid->GetStyle(0, Dial->Style);
+	Styles *currentStyle = tab->Grid->GetStyle(0, Dial->Style);
 	const wxString &txt = Dial->GetText();
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
@@ -647,9 +719,6 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 		}
 	}
 
-	result.x = (tab->Edit->line->MarginL != 0) ? tab->Edit->line->MarginL : wxAtoi(acstyl->MarginL);
-	result.y = (tab->Edit->line->MarginV != 0) ? tab->Edit->line->MarginV : wxAtoi(acstyl->MarginV);
-
 	if (txt != L"" && txt[0] == L'{'){
 		TextPos->x = 1;
 		TextPos->y = 0;
@@ -660,29 +729,12 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 		*putinBracket = true;
 	}
 	int tmpan;
-	tmpan = wxAtoi(acstyl->Alignment);
+	tmpan = wxAtoi(currentStyle->Alignment);
 	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
 	if (an.Matches(txt)){
 		tmpan = wxAtoi(an.GetMatch(txt, 1));
 	}
-	int x, y;
-	tab->Grid->GetASSRes(&x, &y);
-	if (tmpan % 3 == 2){
-		int marginL = (Dial->MarginL != 0) ? Dial->MarginL : wxAtoi(acstyl->MarginL);
-		int marginR = (Dial->MarginR != 0) ? Dial->MarginR : wxAtoi(acstyl->MarginR);
-		result.x = ((x + marginL - marginR) / 2);
-	}
-	else if (tmpan % 3 == 0){
-		result.x = (Dial->MarginR != 0) ? Dial->MarginR : wxAtoi(acstyl->MarginR);
-		result.x = x - result.x;
-	}
-	if (tmpan < 4){
-		result.y = (Dial->MarginV != 0) ? Dial->MarginV : wxAtoi(acstyl->MarginV);
-		result.y = y - result.y;
-	}
-	else if (tmpan < 7){
-		result.y = (y / 2);
-	}
+	SetPositionByAn(&result, tmpan, Dial, currentStyle);
 	D3DXVECTOR2 additional = GetDialogueAdditionalPosition(Dial);
 	result.y += additional.y;
 	return result;

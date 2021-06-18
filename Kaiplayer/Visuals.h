@@ -80,9 +80,12 @@ public:
 		zoomMove = move;
 		zoomScale = scale;
 	};
-	void GetDialoguesWithoutPosition();
+	void GetDialoguesWithoutPosition(Dialogue* dialogue);
 	//get dialogue additional position when there is no pos or move tag
 	D3DXVECTOR2 GetDialogueAdditionalPosition(Dialogue *dialogue);
+	void GetRectFromSize(D3DXVECTOR2 size, int an, Dialogue* dial, Styles* style, D3DXVECTOR2* pos, D3DXVECTOR2* pos1);
+	bool IsInRect(D3DXVECTOR2 pos, D3DXVECTOR2 pos1, D3DXVECTOR2 secondpos, D3DXVECTOR2 secondpos1);
+	void SetPositionByAn(D3DXVECTOR2* pos, int an, Dialogue *dial, Styles *style);
 	void RenderSubs(wxString *subs, bool redraw = true);
 
 	virtual void SetVisual(Dialogue* dial, int tool, bool noRefresh = false);
@@ -150,7 +153,7 @@ public:
 	wxString currentLineText;
 private:
 	TextEditor* editor = NULL;
-	int activeLineInTable = -1;
+	//int activeLineInTable = -1;
 	//Dialogue adresses are valid only for one modification
 	//need recreate on every checking
 	std::vector<Dialogue*> dialoguesWithoutPosition;

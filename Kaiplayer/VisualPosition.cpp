@@ -220,7 +220,6 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 				PositionRectangle[1].x = pointx;
 				PositionRectangle[1].y = pointy;
 			}
-			SortPoints();
 			SetPosition();
 			if (rectangleVisible)
 				ChangeMultiline(false);
@@ -509,22 +508,31 @@ void Position::SetPosition()
 		int an = alignment;
 		float bordery = border.y / 2;
 		float borderx = border.x / 2;
-		float x = PositionRectangle[0].x, y = PositionRectangle[0].y;
+		//need to use rectangle[0] > rectangle[1]
+		float rectx = PositionRectangle[0].x < PositionRectangle[1].x ? 
+			PositionRectangle[0].x : PositionRectangle[1].x;
+		float recty = PositionRectangle[0].y < PositionRectangle[1].y ?
+			PositionRectangle[0].y : PositionRectangle[1].y;
+		float rectx1 = PositionRectangle[0].x > PositionRectangle[1].x ?
+			PositionRectangle[0].x : PositionRectangle[1].x;
+		float recty1 = PositionRectangle[0].y > PositionRectangle[1].y ?
+			PositionRectangle[0].y : PositionRectangle[1].y;
+		float x = rectx, y = recty;
 		
 		if (an % 3 == 0) {
-			x = PositionRectangle[1].x - (textSize.x + borderx - 2);
+			x = rectx1 - (textSize.x + borderx - 2);
 		}
 		else if (an % 3 == 1) {
 			x += borderx + 2;
 		}
 		else if (an % 3 == 2) {
-			x += (PositionRectangle[1].x - (PositionRectangle[0].x + textSize.x) + borderx) / 2;
+			x += (rectx1 - (rectx + textSize.x) + borderx) / 2;
 		}
 		if (an <= 3) {
-			y = PositionRectangle[1].y - bordery;
+			y = recty1 - bordery;
 		}
 		else if (an <= 6) {
-			y += ((PositionRectangle[1].y - PositionRectangle[0].y) + textSize.y + bordery) / 2;
+			y += ((recty1 - recty1) + textSize.y + bordery) / 2;
 		}
 		else if (an <= 9) {
 			y += textSize.y + bordery;

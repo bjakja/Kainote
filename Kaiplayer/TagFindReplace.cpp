@@ -331,47 +331,47 @@ int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 
 bool TagFindReplace::TagValueFromStyle(Styles* style, const wxString& tag, wxString* value)
 {
-	Styles* acstyl = style? style : currentTab->Grid->GetStyle(0, currentTab->Edit->line->Style);
+	Styles* currentStyle = style? style : currentTab->Grid->GetStyle(0, currentTab->Edit->line->Style);
 	if (tag == L"fs")
-		*value = acstyl->Fontsize;
+		*value = currentStyle->Fontsize;
 	else if (tag == L"bord")
-		*value = acstyl->Outline;
+		*value = currentStyle->Outline;
 	else if (tag == L"shad")
-		*value = acstyl->Shadow;
+		*value = currentStyle->Shadow;
 	else if (tag == L"fsp")
-		*value = acstyl->Spacing;
+		*value = currentStyle->Spacing;
 	else if (tag == L"fscx")
-		*value = acstyl->ScaleX;
+		*value = currentStyle->ScaleX;
 	else if (tag == L"fscy")
-		*value = acstyl->ScaleY;
+		*value = currentStyle->ScaleY;
 	else if (tag == L"c" || tag == L"1c")
-		*value = acstyl->PrimaryColour.GetAss(false);
+		*value = currentStyle->PrimaryColour.GetAss(false);
 	else if (tag == L"2c")
-		*value = acstyl->SecondaryColour.GetAss(false);
+		*value = currentStyle->SecondaryColour.GetAss(false);
 	else if (tag == L"3c")
-		*value = acstyl->OutlineColour.GetAss(false);
+		*value = currentStyle->OutlineColour.GetAss(false);
 	else if (tag == L"4c")
-		*value = acstyl->BackColour.GetAss(false);
+		*value = currentStyle->BackColour.GetAss(false);
 	else if (tag == L"1a")
-		*value = acstyl->PrimaryColour.GetAlpha();
+		*value = currentStyle->PrimaryColour.GetAlpha();
 	else if (tag == L"2a")
-		*value = acstyl->SecondaryColour.GetAlpha();
+		*value = currentStyle->SecondaryColour.GetAlpha();
 	else if (tag == L"3a")
-		*value = acstyl->OutlineColour.GetAlpha();
+		*value = currentStyle->OutlineColour.GetAlpha();
 	else if (tag == L"4a")
-		*value = acstyl->BackColour.GetAlpha();
+		*value = currentStyle->BackColour.GetAlpha();
 	else if (tag == L"fn")
-		*value = acstyl->Fontname;
+		*value = currentStyle->Fontname;
 	else if (tag == L"b")
-		*value = acstyl->Bold ? L"1" : L"0";
+		*value = currentStyle->Bold ? L"1" : L"0";
 	else if (tag == L"i")
-		*value = acstyl->Italic ? L"1" : L"0";
+		*value = currentStyle->Italic ? L"1" : L"0";
 	else if (tag == L"u")
-		*value = acstyl->Underline ? L"1" : L"0";
+		*value = currentStyle->Underline ? L"1" : L"0";
 	else if (tag == L"s")
-		*value = acstyl->StrikeOut ? L"1" : L"0";
+		*value = currentStyle->StrikeOut ? L"1" : L"0";
 	else if (tag == L"fr" || tag == L"frz")
-		*value = acstyl->Angle;
+		*value = currentStyle->Angle;
 	else
 		return false;
 

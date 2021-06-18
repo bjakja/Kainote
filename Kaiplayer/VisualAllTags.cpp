@@ -166,6 +166,18 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 	//wheel rotation
 	if (event.GetWheelRotation() != 0) {
+		if (event.ShiftDown()) {
+			int step = event.GetWheelRotation() / event.GetWheelDelta();
+			currentTag -= step;
+			if (currentTag < 0)
+				currentTag = tags->size() - 1;
+			else if (currentTag >= tags->size())
+				currentTag = 0;
+			VideoCtrl* vc = tab->Video;
+			vc->GetVideoToolbar()->SetItemToggled(&currentTag);
+			ChangeTool(currentTag);
+			return;
+		}
 		int rot = event.GetWheelRotation() / event.GetWheelDelta();
 		size_t i = 0;
 		firstThumbValue[i] = thumbValue[i];
@@ -359,15 +371,15 @@ void AllTags::SetCurVisual()
 
 void AllTags::FindTagValues()
 {
-	Styles* acstyl = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+	Styles* currentStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
 	if (actualTag.tag == L"fs")
-		actualTag.value = acstyl->GetFontSizeDouble();
+		actualTag.value = currentStyle->GetFontSizeDouble();
 	else if(actualTag.tag == L"bord")
-		actualTag.value = acstyl->GetOtlineDouble();
+		actualTag.value = currentStyle->GetOtlineDouble();
 	else if(actualTag.tag == L"shad")
-		actualTag.value = acstyl->GetShadowDouble();
+		actualTag.value = currentStyle->GetShadowDouble();
 	else if (actualTag.tag == L"fsp")
-		actualTag.value = acstyl->GetSpacingDouble();
+		actualTag.value = currentStyle->GetSpacingDouble();
 
 	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", L"", actualTag.mode)) {
 		const FindData& data = GetResult();
