@@ -67,7 +67,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	valStepSizer->Add(new KaiStaticText(this, -1, _("Przeskok:")), 1, wxALL | wxEXPAND, 4);
 	valStepSizer->Add(step, 1, wxALL | wxEXPAND, 4);
 	wxBoxSizer* modesSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxString modes[] = { _("Wstawiany w każdym miejscu"), _("Wstawiany tylko na początku"), 
+	wxString modes[] = { _("Wstawiany w miejscu kursora"), _("Wstawiany tylko na początku"), 
 		_("Wycinek prostokątny z obsługą animacji")};
 	mode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, modes);
 	mode->SetSelection(currentTag.mode);

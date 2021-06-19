@@ -646,13 +646,18 @@ void Visuals::SetVisual(bool dummy)
 		}
 
 		if (!dummy){
-			tab->Video->SetVisualEdition(true);
+			VideoCtrl* vb = tab->Video;
+			vb->SetVisualEdition(true);
 			if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
+			//using dummy there is no video rendering
 			grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
 				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
 				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : 
-				(Visual == CLIPRECT)? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, true);
+				(Visual == CLIPRECT)? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, true, true);
 			grid->Refresh();
+			if (vb->IsShown() || vb->IsFullScreen()) { vb->OpenSubs(OPEN_DUMMY); }
+			if (vb->GetState() == Paused) 
+				vb->Render();
 		}
 		else{
 			RenderSubs(dtxt);

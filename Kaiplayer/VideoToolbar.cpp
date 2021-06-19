@@ -574,6 +574,8 @@ void AllTagsItem::Synchronize(VisualItem* item)
 	if (ati->tagList) {
 		selection = ati->tagList->GetSelection();
 		tagList->SetSelection(selection);
+		mode = ati->options->GetSelection();
+		options->SetSelection(mode);
 	}
 	else {
 		KaiLog(L"No sychronization, pointers released");
@@ -584,14 +586,23 @@ int AllTagsItem::GetItemToggled()
 {
 	if (tagList)
 		selection = tagList->GetSelection();
-		
-	return selection;
+
+	if (options)
+		mode = options->GetSelection();
+
+	int items = mode;
+	items <<= 20;
+	items += selection;
+
+	return items;
 }
 
 void AllTagsItem::SetItemToggled(int* item)
 {
+	int tool = *item;
 	if (tagList) {
-		selection = *item;
+		selection = tool << 12;
+		selection >>= 12;
 		if (selection < 0)
 			selection = tagList->GetCount() - 1;
 		else if (selection >= tagList->GetCount())
@@ -599,18 +610,27 @@ void AllTagsItem::SetItemToggled(int* item)
 
 		tagList->SetSelection(selection);
 	}
+	if (options) {
+		mode = tool >> 20;
+	}
 }
 
 void AllTagsItem::HideContols()
 {
-	if (tagList || edition) {
-		if (tagList)
+	if (tagList || edition || options) {
+		if (tagList) {
 			selection = tagList->GetSelection();
-
-		tagList->Destroy();
-		edition->Destroy();
+			tagList->Destroy();
+		}
+		if (edition)
+			edition->Destroy();
+		if (options) {
+			mode = options->GetSelection();
+			options->Destroy();
+		}
 		tagList = NULL;
 		edition = NULL;
+		options = NULL;
 	}
 }
 
@@ -623,14 +643,23 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
 	tagList->SetSelection(selection);
-	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
+
+	auto sendItemToggled = [=](wxCommandEvent& evt) {
 		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		event->SetInt(GetItemToggled());
 		wxQueueEvent(vtoolbar, event);
 		wxWindow* grandParent = vtoolbar->GetGrandParent();
 		grandParent->SetFocus();
-		}, ID_TAG_LIST
-	);
+	};
+
+	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_TAG_LIST);
+
+	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż") };
+	options = new KaiChoice(vtoolbar, ID_OPTIONS, wxDefaultPosition, wxDefaultSize, 3, optionsList);
+	options->SetToolTip(_("Opcje zmiany tagów:\nDodaj - zmienia wszystkie tagi dodając ruch z suwaka.\nWstaw - wstawia w miejsce kursora w przypadku jednej linii\nalbo na początku w przypadku wielu linii.\nPomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\npierwsza linia nie jest zmieniana."));
+	options->SetSelection(mode);
+
+	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_OPTIONS);
 
 	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
 	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
@@ -651,12 +680,16 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	);
 	wxSize tlbs = tagList->GetBestSize();
 	wxSize ebs = edition->GetBestSize();
+	wxSize obs = options->GetBestSize();
 	wxSize vts = vtoolbar->GetSize();
 	wxPoint pos(maxWidth - 4 - ebs.x, 1);
 	edition->SetPosition(pos);
 	ebs.y = vts.y - 2;
 	edition->SetSize(ebs);
-	pos.y = 1;
+	pos.x -= obs.x + 4;
+	options->SetPosition(pos);
+	obs.y = vts.y - 2;
+	options->SetSize(obs);
 	pos.x -= tlbs.x + 4;
 	tagList->SetPosition(pos);
 	tlbs.y = vts.y - 2;

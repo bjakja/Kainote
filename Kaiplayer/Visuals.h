@@ -516,6 +516,9 @@ private:
 	bool onThumb[2] = { false, false };
 	bool onSlider[2] = { false, false };
 	int increase = 80;
+	int mode = 0;
+	int subtractCounter = 0;
+	int lastTool = -1;
 };
 
 

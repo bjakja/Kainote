@@ -136,8 +136,12 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	float sliderRange = right - left;
 	float coeff = sliderRange / range;
 	float step = actualTag.step * coeff;
+	if (mode == 2)
+		subtractCounter = 0;
+
 	x = event.GetX();
 	y = event.GetY();
+	bool shift = event.ShiftDown();
 
 	// right holding
 	if (rholding) {
@@ -173,14 +177,18 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				currentTag = tags->size() - 1;
 			else if (currentTag >= tags->size())
 				currentTag = 0;
+			int tool = mode << 20;
+			tool += currentTag;
 			VideoCtrl* vc = tab->Video;
-			vc->GetVideoToolbar()->SetItemToggled(&currentTag);
-			ChangeTool(currentTag);
+			vc->GetVideoToolbar()->SetItemToggled(&tool);
+			ChangeTool(tool);
 			return;
 		}
 		int rot = event.GetWheelRotation() / event.GetWheelDelta();
 		size_t i = 0;
-		firstThumbValue[i] = thumbValue[i];
+		if(mode != 2)
+			firstThumbValue[i] = thumbValue[i];
+
 		thumbValue[i] = rot < 0 ? thumbValue[i] - actualTag.step : thumbValue[i] + actualTag.step;
 		thumbValue[i] = MID(actualTag.rangeMin, thumbValue[i], actualTag.rangeMax);
 
@@ -189,6 +197,8 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			onSlider[i] = false;
 			//set holding before us to know what value use
 			holding[i] = true;
+			if(shift)
+				holding[1] = true;
 			if (tab->Edit->IsCursorOnStart()) {
 				SetVisual(false);
 			}
@@ -197,6 +207,8 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				SetVisual(false);
 			}
 			holding[i] = false;
+			if (shift)
+				holding[1] = false;
 		}
 		return;
 	}
@@ -264,14 +276,20 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			//calculate new thumb value from mouse position
 			thumbValue[i] = ((x - left) / coeff) - thumbposdiff;
 			thumbValue[i] = MID(actualTag.rangeMin, thumbValue[i], actualTag.rangeMax);
-			if (lastThumbValue[i] != thumbValue[i])
-				SetVisual(true);
+			if (lastThumbValue[i] != thumbValue[i]) {
+				if((shift && i > 0) || !shift)
+					SetVisual(true);
+			}
 
 			lastThumbValue[i] = thumbValue[i];
 		}
 
 		if (event.LeftDown() || event.LeftDClick()) {
-			lastThumbValue[i] = firstThumbValue[i] = thumbValue[i];
+			if(mode != 2)
+				lastThumbValue[i] = firstThumbValue[i] = thumbValue[i];
+			else
+				lastThumbValue[i] = thumbValue[i];
+
 			if (onThumb[i]) {
 				thumbState[i] = 2;
 				if (!tab->Video->HasCapture()) {
@@ -279,6 +297,9 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				}
 				tab->Video->Render(false);
 				holding[i] = true;
+				if (shift) {
+					holding[i == 0 ? 1 : 0] = true;
+				}
 			}
 			else if (onSlider[i]) {
 				thumbState[i] = 1;
@@ -286,6 +307,8 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 				thumbValue[i] = MID(actualTag.rangeMin, thumbValue[i], actualTag.rangeMax);
 				//set holding before us to know what value use
 				holding[i] = true;
+				if (shift)
+					holding[i == 0 ? 1 : 0] = true;
 				if (tab->Edit->IsCursorOnStart()) {
 					SetVisual(false);
 				}
@@ -294,6 +317,11 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 					SetVisual(false);
 				}
 				holding[i] = false;
+				if (shift) {
+					holding[i == 0 ? 1 : 0] = false;
+					//no need tu use this function 2 times
+					break;
+				}
 			}
 		}
 
@@ -305,7 +333,12 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			//if(holding[i])
 			SetVisual(false);
 			//lastThumbValue[i] = firstThumbValue[i] = thumbValue[i];
-			holding[i] = false;
+			if (shift) {
+				holding[0] = holding[1] = false;
+			}
+			else {
+				holding[i] = false;
+			}
 		}
 		top += increase;
 		bottom += increase;
@@ -363,9 +396,15 @@ void AllTags::SetCurVisual()
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
 	floatFormat = wxString::Format(L"5.%if", actualTag.DigitsAfterDot);
+	if (mode == 2) {
+		firstThumbValue[0] = thumbValue[0] = actualTag.value;
+		firstThumbValue[1] = thumbValue[1] = actualTag.value2;
+	}
 	FindTagValues();
-	thumbValue[0] = actualTag.value;
-	thumbValue[1] = actualTag.value2;
+	if (mode != 2) {
+		thumbValue[0] = actualTag.value;
+		thumbValue[1] = actualTag.value2;
+	}
 	tab->Video->Render(false);
 }
 
@@ -394,11 +433,13 @@ void AllTags::FindTagValues()
 				if (token.ToCDouble(&val)) {
 					if (i == 0) {
 						actualTag.value = val;
-						CheckRange(val);
+						if(mode != 2)
+							CheckRange(val);
 					}
 					else if (i == 1) {
 						actualTag.value2 = val;
-						CheckRange(val);
+						if (mode != 2)
+							CheckRange(val);
 					}
 				}
 				i++;
@@ -411,7 +452,8 @@ void AllTags::FindTagValues()
 			double val = 0;
 			if (data.finding.ToCDouble(&val)) {
 				actualTag.value = val;
-				CheckRange(val);
+				if (mode != 2)
+					CheckRange(val);
 			}
 		}
 	}
@@ -419,7 +461,14 @@ void AllTags::FindTagValues()
 
 void AllTags::ChangeTool(int _tool)
 {
-	currentTag = _tool;
+	if (lastTool == _tool)
+		return;
+
+	mode = _tool >> 20;
+	replaceTagsInCursorPosition = mode == 1;
+
+	int curtag = _tool << 12;
+	currentTag = curtag >> 12;
 	SetCurVisual();
 }
 
@@ -427,16 +476,30 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 {
 	float value = thumbValue[0];
 	float value2 = thumbValue[1];
-	float valuediff = holding[0]? thumbValue[0] - firstThumbValue[0] : 0;
-	float valuediff2 = holding[1]? thumbValue[1] - firstThumbValue[1] : 0;
+	float valuediff = holding[0] || mode == 2 ? thumbValue[0] - firstThumbValue[0] : 0;
+	float valuediff2 = holding[1] || mode == 2 ? thumbValue[1] - firstThumbValue[1] : 0;
 	wxString strval;
-	if (curValue.empty()) {
-		//value = thumbValue;
-		if (actualTag.has2value) {
-			strval = L"(" + getfloat(value, floatFormat) + L"," +
-				getfloat(value2, floatFormat) + L")";
-		}else
-			strval = getfloat(value, floatFormat);
+	if (curValue.empty() || mode) {
+		//mode 2 for subtract 
+		//mode 1 for paste only one value
+		if (mode == 2) {
+			float val1 = subtractCounter * valuediff;
+			if (actualTag.has2value) {
+				float val2 = subtractCounter * valuediff2;
+				strval = L"(" + getfloat(actualTag.value + val1, floatFormat) + L"," +
+					getfloat(actualTag.value2 + val2, floatFormat) + L")";
+			}
+			else
+				strval = getfloat(actualTag.value + val1, floatFormat);
+		}
+		else {
+			if (actualTag.has2value) {
+				strval = L"(" + getfloat(value, floatFormat) + L"," +
+					getfloat(value2, floatFormat) + L")";
+			}
+			else
+				strval = getfloat(value, floatFormat);
+		}
 	}
 	else if (curValue.StartsWith(L"(")) {
 		//remove brackets;
@@ -473,20 +536,42 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 
 wxPoint AllTags::ChangeVisual(wxString* txt)
 {
-	auto replfunc = [=](const FindData& data, wxString* result) {
-		GetVisualValue(result, data.finding);
-	};
-	ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
-	FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)");
+	if (mode) {
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, actualTag.mode);
+		wxString strValue, strFinding;
+		GetTextResult(&strFinding);
+		GetVisualValue(&strValue, strFinding);
+		Replace(L"\\" + actualTag.tag + strValue, txt);
+		if (mode == 2)
+			subtractCounter++;
+	}
+	else {
+		auto replfunc = [=](const FindData& data, wxString* result) {
+			GetVisualValue(result, data.finding);
+		};
+		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt);
+	}
 	return GetPositionInText();
 }
 
 void AllTags::ChangeVisual(wxString* txt, Dialogue *dial)
 {
-	auto replfunc = [=](const FindData& data, wxString* result) {
-		GetVisualValue(result, data.finding);
-	};
-	ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
+	if (mode) {
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, 1);
+		wxString strValue, strFinding;
+		GetTextResult(&strFinding);
+		GetVisualValue(&strValue, strFinding);
+		Replace(L"\\" + actualTag.tag + strValue, txt);
+		if (mode == 2)
+			subtractCounter++;
+	}
+	else {
+		auto replfunc = [=](const FindData& data, wxString* result) {
+			GetVisualValue(result, data.finding);
+		};
+		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
+	}
 }
 
 void AllTags::CheckRange(float val)
