@@ -1057,3 +1057,53 @@ D3DXVECTOR2 Visuals::GetDrawingSize(const wxString& drawing)
 	}
 	return D3DXVECTOR2(maxx - minx, maxy - miny);
 }
+
+void Visuals::RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
+{
+	float x = point->x - orgpivot.x;
+	float y = point->y - orgpivot.y;
+	point->x = (x * cosOfAngle) - (y * sinOfAngle) + orgpivot.x;
+	point->y = (x * sinOfAngle) + (y * cosOfAngle) + orgpivot.y;
+}
+
+void Visuals::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
+{
+	float x = point->x + orgpivot.x;
+	float y = point->y + orgpivot.y;
+	point->x = (x * cosOfAngle) - (y * sinOfAngle) - orgpivot.x;
+	point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
+}
+
+D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* points)
+{
+	if (alignment == 7 || points->size() < 1) { return D3DXVECTOR2(0, 0); }
+	float offx = 0, offy = 0;
+
+	float minx = FLT_MAX;
+	float miny = FLT_MAX;
+	float maxx = -FLT_MAX;
+	float maxy = -FLT_MAX;
+	for (size_t i = 0; i < points->size(); i++)
+	{
+		ClipPoint p = points->at(i);
+		if (p.x < minx) { minx = p.x; }
+		if (p.y < miny) { miny = p.y; }
+		if (p.x > maxx) { maxx = p.x; }
+		if (p.y > maxy) { maxy = p.y; }
+	}
+	D3DXVECTOR2 sizes((maxx - minx) + offx, (maxy - miny) + offy);
+	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
+	if (alignment % 3 == 2) {
+		result.x = sizes.x / 2.0;
+	}
+	else if (alignment % 3 == 0) {
+		result.x = sizes.x;
+	}
+	if (alignment < 4) {
+		result.y = sizes.y;
+	}
+	else if (alignment < 7) {
+		result.y = sizes.y / 2.0;
+	}
+	return result;
+}

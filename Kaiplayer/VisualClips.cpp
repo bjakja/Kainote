@@ -103,10 +103,10 @@ void DrawingAndClip::DrawVisual(int time)
 			line->End();
 		}
 	}
-	if (Visual == VECTORDRAW && moveValues[6]>2){ 
+	if (Visual == VECTORDRAW && moveValues[6] > 2){ 
 		D3DXVECTOR2 movePos = CalcMovePos(); 
-		_x = movePos.x; 
-		_y = movePos.y; 
+		_x = movePos.x / scale.x;
+		_y = movePos.y / scale.y;
 	}
 	//cannot let to "l" or "b" to be used as missing "m" on start
 	if (Points[0].type != L"m"){ Points[0].type = L"m"; }
@@ -223,7 +223,7 @@ void DrawingAndClip::SetCurVisual()
 		if (FindTag(L"org(\\([^\\)]+)")) {
 			double orx, ory;
 			if (GetTwoValueDouble(&orx, &ory)) {
-				org = D3DXVECTOR2(orx, ory);
+				org = D3DXVECTOR2(orx / scale.x, ory / scale.y);
 			}
 			else { org = D3DXVECTOR2(_x, _y); }
 		}
@@ -234,7 +234,7 @@ void DrawingAndClip::SetCurVisual()
 	GetVectorPoints(clip, &Points);
 
 	if (!Points.empty() && Visual == VECTORDRAW){
-		offsetxy = CalcWH();
+		offsetxy = CalcDrawingSize(alignment, &Points);
 		float rad = 0.01745329251994329576923690768489f;
 		D3DXVECTOR2 orgpivot = { abs(org.x - _x), abs(org.y - _y) };
 		float s = sin(-frz * rad);
@@ -242,7 +242,8 @@ void DrawingAndClip::SetCurVisual()
 		for (size_t i = 0; i < Points.size(); i++){
 			Points[i].x -= offsetxy.x;
 			Points[i].y -= offsetxy.y;
-			RotateDrawing(&Points[i], s, c, orgpivot);
+			if(frz)
+				RotateDrawing(&Points[i], s, c, orgpivot);
 		}
 	}
 	pointArea = 4.f / zoomScale.x;
@@ -266,12 +267,11 @@ void DrawingAndClip::GetVisual(wxString *visual)
 			float s = sin(frz * rad);
 			float c = cos(frz * rad);
 			originalPoints = Points;
-			for (size_t i = 0; i < psize; i++)
-			{
+			for (size_t i = 0; i < psize; i++){
 				RotateDrawing(&Points[i], s, c, orgpivot);
 			}
 		}
-		offsetxy = CalcWH();
+		offsetxy = CalcDrawingSize(alignment, &Points);
 	}
 	else {
 		offsetxy = D3DXVECTOR2(0, 0);
@@ -756,21 +756,21 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	std::vector<D3DXVECTOR2> v4;
 
 	int pts = 3;
-	if (bspline){
+	if (bspline) {
 
 		int acpos = i - 1;
 		int bssize = 1;
 		int spos = i + 1;
-		while (spos < (int)Points.size()){
-			if (Points[spos].start){ break; }
+		while (spos < (int)Points.size()) {
+			if (Points[spos].start) { break; }
 			bssize++; spos++;
 		}
 		pts = bssize;
 		bssize++;
-		for (int k = 0; k < bssize; k++){
+		for (int k = 0; k < bssize; k++) {
 			Curve(acpos, &v4, true, bssize, k);
 		}
-		D3DXVECTOR2 *v2 = new D3DXVECTOR2[pts + 2];
+		D3DXVECTOR2* v2 = new D3DXVECTOR2[pts + 2];
 		for (int j = 0, g = i - 1; j < bssize; j++, g++)
 		{
 			v2[j] = Points[g].GetVector(this);
@@ -778,26 +778,26 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 		v2[bssize] = Points[i - 1].GetVector(this);
 		line->Draw(v2, pts + 2, 0xFFAA33AA);
 		int iplus1 = (i + bssize - 2 < (int)Points.size() - 1) ? i + 1 : 0;
-		if (i - 1 != 0 || iplus1 != 0){
+		if (i - 1 != 0 || iplus1 != 0) {
 			D3DXVECTOR2 v3[3] = { Points[i - 1].GetVector(this), v4[0], Points[iplus1].GetVector(this) };
 			line->Draw(v3, 3, 0xFFBB0000);
 		}
 		delete[] v2;
 	}
-	else{
+	else {
 		ClipPoint tmp = Points[i - 1];
-		if (Points[i - 1].type == L"s"){
+		if (Points[i - 1].type == L"s") {
 			int diff = 2;
 			int j = i - 2;
-			while (j >= 0){
-				if (Points[j].type != L"s"){ break; }
+			while (j >= 0) {
+				if (Points[j].type != L"s") { break; }
 				j--;
 			}
 			diff = (i - j) - 2;
 			Points[i - 1] = Points[i - diff];
 		}
 		Curve(i - 1, &v4, false);
-		D3DXVECTOR2 v2[4] = { Points[i - 1].GetVector(this), Points[i].GetVector(this), 
+		D3DXVECTOR2 v2[4] = { Points[i - 1].GetVector(this), Points[i].GetVector(this),
 			Points[i + 1].GetVector(this), Points[i + 2].GetVector(this) };
 		line->Draw(v2, 2, 0xFF0000FF);
 		line->Draw(&v2[2], 2, 0xFF0000FF);
@@ -805,26 +805,24 @@ int DrawingAndClip::DrawCurve(int i, bool bspline)
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFBB0000);
 	line->End();
-	if (i > 1){ DrawRect(i - 1); }
-	for (int j = 1; j < pts; j++){ DrawCircle(i + j - 1); }
+	if (i > 1) { DrawRect(i - 1); }
+	for (int j = 1; j < pts; j++) { DrawCircle(i + j - 1); }
 	return pts;
 }
 
-
-
-void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints, int acpt)
+void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints, int acpt)
 {
 	float a[4], b[4];
 	float x[4], y[4];
 	for (int g = 0; g < 4; g++)
 	{
-		if (acpt > (spoints - 1)){ acpt = 0; }
+		if (acpt > (spoints - 1)) { acpt = 0; }
 		x[g] = Points[pos + acpt].wx(this, true);
 		y[g] = Points[pos + acpt].wy(this, true);
 		acpt++;
 	}
 
-	if (bspline){
+	if (bspline) {
 		a[3] = (-x[0] + 3 * x[1] - 3 * x[2] + x[3]) / 6.0;
 		a[2] = (3 * x[0] - 6 * x[1] + 3 * x[2]) / 6.0;
 		a[1] = (-3 * x[0] + 3 * x[2]) / 6.0;
@@ -834,7 +832,7 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 		b[1] = (-3 * y[0] + 3 * y[2]) / 6.0;
 		b[0] = (y[0] + 4 * y[1] + y[2]) / 6.0;
 	}
-	else{
+	else {
 		a[3] = -x[0] + 3 * x[1] - 3 * x[2] + x[3];
 		a[2] = 3 * x[0] - 6 * x[1] + 3 * x[2];
 		a[1] = -3 * x[0] + 3 * x[1];
@@ -853,8 +851,8 @@ void DrawingAndClip::Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bsplin
 	float p_x, p_y;
 	for (float t = 0; t < 1.0; t += h)
 	{
-		p_x = a[0] + t*(a[1] + t*(a[2] + t*a[3]));
-		p_y = b[0] + t*(b[1] + t*(b[2] + t*b[3]));
+		p_x = a[0] + t * (a[1] + t * (a[2] + t * a[3]));
+		p_y = b[0] + t * (b[1] + t * (b[2] + t * b[3]));
 		table->push_back(D3DXVECTOR2(p_x, p_y));
 	}
 	p_x = a[0] + a[1] + a[2] + a[3];
@@ -1138,41 +1136,6 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 }
 
 
-
-D3DXVECTOR2 DrawingAndClip::CalcWH()
-{
-	if (alignment == 7 || Points.size() < 1){ return D3DXVECTOR2(0, 0); }
-	float offx = 0, offy = 0;
-	
-	float minx = FLT_MAX;
-	float miny = FLT_MAX;
-	float maxx = -FLT_MAX;
-	float maxy = -FLT_MAX;
-	for (size_t i = 0; i < Points.size(); i++)
-	{
-		ClipPoint p = Points[i];
-		if (p.x < minx){ minx = p.x; }
-		if (p.y < miny){ miny = p.y; }
-		if (p.x > maxx){ maxx = p.x; }
-		if (p.y > maxy){ maxy = p.y; }
-	}
-	D3DXVECTOR2 sizes((maxx - minx) + offx, (maxy - miny) + offy);
-	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
-	if (alignment % 3 == 2){
-		result.x = sizes.x / 2.0;
-	}
-	else if (alignment % 3 == 0){
-		result.x = sizes.x;
-	}
-	if (alignment < 4){
-		result.y = sizes.y;
-	}
-	else if (alignment < 7){
-		result.y = sizes.y / 2.0;
-	}
-	return result;
-}
-
 void DrawingAndClip::SelectPoints(){
 	int x = (selection.x < selection.width) ? selection.x : selection.width,
 		y = (selection.y < selection.height) ? selection.y : selection.height,
@@ -1426,15 +1389,6 @@ void DrawingAndClip::InvertClip()
 	}
 }
 
-void DrawingAndClip::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
-{
-	if (frz != 0) {
-		float x = point->x + orgpivot.x;
-		float y = point->y + orgpivot.y;
-		point->x = (x * cosOfAngle) - (y * sinOfAngle) - orgpivot.x;
-		point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
-	}
-}
 
 void DrawingAndClip::SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale)
 {

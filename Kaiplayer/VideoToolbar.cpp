@@ -43,7 +43,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"clip"), _("Wycinki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"drawing"), _("Rysunki wektorowe")));
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"MOVEAll"), _("Zmieniacz pozycji")));
-		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ALL_TAGS"), _("Zmieniacz pozostałych tagów")));
+		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"ALL_TAGS"), _("Hydra")));
 		//it's inactive but I will not change all position when I plan to make a visual for fax
 		//then I will need it back
 		icons.push_back(new itemdata(PTR_BITMAP_PNG(L"SCALE_ROTATION"), _("Zmieniacz skali i obrotów")));
@@ -309,10 +309,15 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 }
 
 void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
+	if (visualItems[Toggled] && Toggled != vtoolbar->Toggled) {
+		visualItems[Toggled]->HideContols();
+	}
 	Toggled = vtoolbar->Toggled;
 	sel = vtoolbar->sel;
-	if (visualItems[Toggled])
+	if (visualItems[Toggled]) {
+		visualItems[Toggled]->ShowContols(this);
 		visualItems[Toggled]->Synchronize(vtoolbar->visualItems[Toggled]);
+	}
 
 	clicked = vtoolbar->clicked;
 	blockScroll = vtoolbar->blockScroll;
@@ -636,6 +641,9 @@ void AllTagsItem::HideContols()
 
 void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 {
+	if (tagList)
+		return;
+
 	auto tags = VideoToolbar::GetTagsSettings();
 	wxArrayString list;
 	maxWidth = vtoolbar->GetEndDrawPos();

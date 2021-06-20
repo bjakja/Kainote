@@ -109,11 +109,13 @@ public:
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
 	};
 	void GetVectorPoints(const wxString &vector, std::vector<ClipPoint> *points);
-
+	void RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
+	void RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
 	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false);
+	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points);
 	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
@@ -263,29 +265,52 @@ private:
 	int lineStartTime = -1;
 };
 
-struct moveElems
+class moveElems
 {
+public:
+	moveElems(D3DXVECTOR2 element, byte tagtype, std::vector<ClipPoint>* vPoints = NULL) {
+		elem = element;
+		type = tagtype;
+		vectorPoints = vPoints;
+	};
+	moveElems() {}
+	~moveElems() {
+		if (vectorPoints)
+			delete vectorPoints;
+	}
 	D3DXVECTOR2 elem;
 	byte type;
+	std::vector<ClipPoint>* vectorPoints = NULL;
 };
 
 class MoveAll : public Visuals
 {
 public:
 	MoveAll();
+	virtual ~MoveAll() {
+		Clear();
+	};
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	void SetCurVisual();
 	void ChangeInLines(bool all);
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
-	std::vector<moveElems> elems;
+	int DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline);
+	void Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints = 4, int acpt = 0);
+	D3DXVECTOR2 GetVector(const ClipPoint& point);
+	void DrawLine(int i, std::vector<ClipPoint>* vectorPoints);
+	void Clear();
+	std::vector<moveElems *> elems;
 	int numElem;
 	int elemsToMove;
 	byte selectedTags;
 	wxPoint diffs;
 	wxPoint dumplaced;
 	D3DXVECTOR2 beforeMove;
+	D3DXVECTOR2 drawingPos = D3DXVECTOR2(0, 0);
+	D3DXVECTOR2 drawingScale;
+	D3DXVECTOR2 scale;
 };
 
 class Scale : public Visuals
@@ -343,7 +368,6 @@ public:
 	void ChangeTool(int _tool);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
-	void RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	bool isOrg;
 	D3DXVECTOR2 org;
 	D3DXVECTOR2 lastOrg;
@@ -424,8 +448,7 @@ public:
 	void DrawRect(int coord);
 	void DrawCircle(int coord);
 	int DrawCurve(int i, bool bspline = false);
-	void Curve(int pos, std::vector<D3DXVECTOR2> *table, bool bspline, int spoints = 4, int acpt = 0);
-	D3DXVECTOR2 CalcWH();
+	void Curve(int pos, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints = 4, int acpt = 0);
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){
@@ -443,7 +466,6 @@ public:
 	void AppendClipMask(wxString *mask);
 	void CreateClipMask(const wxString &clip, wxString *clipTag = NULL);
 	void InvertClip();
-	void RotateDrawing(ClipPoint *point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale) override;
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;

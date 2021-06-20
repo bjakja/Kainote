@@ -440,11 +440,3 @@ void RotationZ::OnKeyPress(wxKeyEvent &evt)
 		tab->Video->Render(false);
 	}*/
 }
-
-void RotationZ::RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
-{
-	float x = point->x - orgpivot.x;
-	float y = point->y - orgpivot.y;
-	point->x = (x * cosOfAngle) - (y * sinOfAngle) + orgpivot.x;
-	point->y = (x * sinOfAngle) + (y * cosOfAngle) + orgpivot.y;
-}

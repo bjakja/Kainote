@@ -1819,7 +1819,7 @@ done:
 
 void EditBox::OnCursorMoved(wxCommandEvent& event)
 {
-	if (Visual == SCALE || Visual == ROTATEZ || Visual == ROTATEXY || Visual == CLIPRECT){
+	if (Visual == SCALE || Visual == ROTATEZ || Visual == ROTATEXY || Visual == CLIPRECT || Visual == ALL_TAGS){
 		//here grid has nothing to do if someone would want to make effect by visual on this video, 
 		//he can without problems
 		tab->Video->ResetVisual();
