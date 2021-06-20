@@ -231,43 +231,7 @@ void DrawingAndClip::SetCurVisual()
 	}
 
 	Points.clear();
-	wxStringTokenizer tokens(clip, L" ");
-	double tmpx = 0;
-	bool gotx = false;
-	bool start = false;
-	int pointsAfterStart = 1;
-	wxString type = L"m";
-	while (tokens.HasMoreTokens()){
-		wxString token = tokens.GetNextToken();
-		if (token == L"p"){ token = L"s"; }
-		if (token == L"m" || token == L"l" || token == L"b" || token == L"s"){
-			type = token;
-			start = true;
-			pointsAfterStart = 1;
-		}
-		else if (token == L"c"){ start = true; continue; }
-		else if (gotx){
-			double tmpy = 0;
-			if (!token.ToCDouble(&tmpy)){ gotx = false; continue; }
-			Points.push_back(ClipPoint(tmpx, tmpy, type, start));
-			gotx = false;
-			if ((type == L"l" || type == L"m" && pointsAfterStart == 1) || (type == L"b" && pointsAfterStart == 3)){
-				if (type == L"m"){ type = L"l"; }
-				start = true;
-				pointsAfterStart = 0;
-			}
-			else{
-				start = false;
-			}
-			pointsAfterStart++;
-		}
-		else{
-			if (token.ToCDouble(&tmpx)){
-				gotx = true;
-			}
-		}
-
-	}
+	GetVectorPoints(clip, &Points);
 
 	if (!Points.empty() && Visual == VECTORDRAW){
 		offsetxy = CalcWH();

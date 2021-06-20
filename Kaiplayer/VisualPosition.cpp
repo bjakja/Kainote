@@ -532,7 +532,7 @@ void Position::SetPosition()
 			y = recty1 - bordery;
 		}
 		else if (an <= 6) {
-			y += ((recty1 - recty1) + textSize.y + bordery) / 2;
+			y += ((recty1 - recty) + textSize.y + bordery) / 2;
 		}
 		else if (an <= 9) {
 			y += textSize.y + bordery;

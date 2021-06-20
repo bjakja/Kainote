@@ -108,6 +108,7 @@ public:
 	bool IsInPos(wxPoint pos, wxPoint secondPos, int diff){
 		return (abs(pos.x - secondPos.x) < diff && abs(pos.y - secondPos.y) < diff) ? true : false;
 	};
+	void GetVectorPoints(const wxString &vector, std::vector<ClipPoint> *points);
 
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action);

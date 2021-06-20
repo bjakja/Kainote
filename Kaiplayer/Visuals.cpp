@@ -91,42 +91,48 @@ Visuals::~Visuals()
 	SAFE_DELETE(dummytext);
 }
 
+//gets dialogues without position to calculate line coliding position
 void Visuals::GetDialoguesWithoutPosition(Dialogue* dialogue)
 {
 	dialoguesWithoutPosition.clear();
 	int time = tab->Video->Tell();
-	SubsGrid *grid = tab->Grid;
+	if (time >= dialogue->Start.mstime && time < dialogue->End.mstime) {
+		SubsGrid* grid = tab->Grid;
 
-	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
-	bool tlMode = tab->Grid->hasTLMode;
-	int activeLineKey = tab->Grid->currentLine;
+		wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
+		bool tlMode = tab->Grid->hasTLMode;
+		int activeLineKey = tab->Grid->currentLine;
 
-	for (size_t i = 0; i < grid->file->GetCount(); i++){
-		Dialogue *dial = grid->file->GetDialogue(i);
-		if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue){ 
-			continue;
-		}
-
-		if (i == activeLineKey && dialogue == tab->Edit->line)
-			break;
-		if (dial == dialogue)
-			break;
-
-		if (time >= dial->Start.mstime && time < dial->End.mstime){
-			const wxString &text = dial->GetTextNoCopy();
-			if (!pos.Matches(text)){
-				dialoguesWithoutPosition.push_back(dial);
+		for (size_t i = 0; i < grid->file->GetCount(); i++) {
+			Dialogue* dial = grid->file->GetDialogue(i);
+			if (!grid->ignoreFiltered && !dial->isVisible || dial->NonDialogue) {
+				continue;
 			}
+
+			if (i == activeLineKey && dialogue == tab->Edit->line)
+				break;
+			if (dial == dialogue)
+				break;
+
+			if (time >= dial->Start.mstime && time < dial->End.mstime) {
+				const wxString& text = dial->GetTextNoCopy();
+				if (!pos.Matches(text)) {
+					dialoguesWithoutPosition.push_back(dial);
+				}
+			}
+
 		}
-		
 	}
 }
 
+//gets lines coliding position
 D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 {
-	//if (!dialoguesWithoutPosition.size())
 	GetDialoguesWithoutPosition(dialogue);
 	D3DXVECTOR2 result = { 0, 0 };
+	if (!dialoguesWithoutPosition.size())
+		return result;
+
 	size_t dialoguesSize = dialoguesWithoutPosition.size();
 
 	bool tlMode = tab->Grid->hasTLMode;
@@ -458,6 +464,47 @@ D3DXVECTOR2 Visuals::CalcMovePos()
 	}
 	ppos.x = distx, ppos.y = disty;
 	return ppos;
+}
+
+void Visuals::GetVectorPoints(const wxString& vector, std::vector<ClipPoint>* points)
+{
+	wxStringTokenizer tokens(vector, L" ");
+	double tmpx = 0;
+	bool gotx = false;
+	bool start = false;
+	int pointsAfterStart = 1;
+	wxString type = L"m";
+	while (tokens.HasMoreTokens()) {
+		wxString token = tokens.GetNextToken();
+		if (token == L"p") { token = L"s"; }
+		if (token == L"m" || token == L"l" || token == L"b" || token == L"s") {
+			type = token;
+			start = true;
+			pointsAfterStart = 1;
+		}
+		else if (token == L"c") { start = true; continue; }
+		else if (gotx) {
+			double tmpy = 0;
+			if (!token.ToCDouble(&tmpy)) { gotx = false; continue; }
+			points->push_back(ClipPoint(tmpx, tmpy, type, start));
+			gotx = false;
+			if ((type == L"l" || type == L"m" && pointsAfterStart == 1) || (type == L"b" && pointsAfterStart == 3)) {
+				if (type == L"m") { type = L"l"; }
+				start = true;
+				pointsAfterStart = 0;
+			}
+			else {
+				start = false;
+			}
+			pointsAfterStart++;
+		}
+		else {
+			if (token.ToCDouble(&tmpx)) {
+				gotx = true;
+			}
+		}
+
+	}
 }
 
 void Visuals::GetMoveTimes(int *start, int *end)
