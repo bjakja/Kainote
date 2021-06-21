@@ -164,15 +164,18 @@ private:
 
 class PosData{
 public:
-	PosData(Dialogue *_dial, int _numpos, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){
-		dial = _dial; numpos = _numpos; pos = _pos; lastpos = pos; TextPos = _TextPos; putinBracket = _putinBracket;
+	PosData(int _numpos, D3DXVECTOR2 _pos, wxPoint _TextPos, bool _putinBracket){
+		numpos = _numpos; 
+		pos = _pos; 
+		lastpos = pos; 
+		TextPos = _TextPos; 
+		putinBracket = _putinBracket;
 	}
 	D3DXVECTOR2 pos;
 	D3DXVECTOR2 lastpos;
 	wxPoint TextPos;
 	bool putinBracket;
 	int numpos;
-	Dialogue *dial;
 };
 
 class Cross : public Visuals{

@@ -42,8 +42,11 @@ void Position::Draw(int time)
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
+		Dialogue* dial = tab->Grid->GetDialogue(pos.numpos);
+		if (!dial)
+			continue;
 		//don't forget to check if times are in range time >= start && time < end
-		if (time >= pos.dial->Start.mstime && time < pos.dial->End.mstime){
+		if (time >= dial->Start.mstime && time < dial->End.mstime){
 			DrawCross(pos.pos);
 			DrawRect(pos.pos);
 			nothintoshow = false;
@@ -311,14 +314,8 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 wxString Position::GetVisual(int datapos)
 {
-	/*if (hasPositionToRenctangle) {
-		return L"\\pos(" + getfloat(data[datapos].pos.x) + L"," +
-			getfloat(data[datapos].pos.y) + L")";
-	}
-	else {*/
-		return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-			getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
-	//}
+	return L"\\pos(" + getfloat(((data[datapos].pos.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
+		getfloat(((data[datapos].pos.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 }
 
 
@@ -335,7 +332,7 @@ void Position::SetCurVisual()
 		Dialogue *dial = (sels[i] == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
 		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPosition);
-		data.push_back(PosData(dial, sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
+		data.push_back(PosData(sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
 			((pos.y / coeffH) - zoomMove.y)*zoomScale.y), textPosition, putInBracket));
 	}
 
@@ -365,8 +362,11 @@ void Position::ChangeMultiline(bool all)
 	int moveLength = 0;
 	const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
 	for (size_t i = 0; i < data.size(); i++){
+		size_t k = data[i].numpos;
+		Dialogue *Dial = (k == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(k);
+		if (!Dial)
+			continue;
 
-		Dialogue *Dial = data[i].dial;
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 		wxString visual = GetVisual(i);
 

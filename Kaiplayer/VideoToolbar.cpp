@@ -309,7 +309,7 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 }
 
 void VideoToolbar::Synchronize(VideoToolbar *vtoolbar){
-	if (visualItems[Toggled] && Toggled != vtoolbar->Toggled) {
+	if (visualItems[Toggled]) {
 		visualItems[Toggled]->HideContols();
 	}
 	Toggled = vtoolbar->Toggled;
@@ -949,6 +949,8 @@ void PositionItem::Synchronize(VisualItem* item)
 	for (int i = 0; i < numIcons; i++) {
 		Toggled[i] = pi->Toggled[i];
 	}
+	an = pi->an;
+	alignment->SetSelection(an);
 }
 
 void PositionItem::HideContols()
@@ -961,6 +963,9 @@ void PositionItem::HideContols()
 
 void PositionItem::ShowContols(VideoToolbar* vt)
 {
+	if (alignment)
+		return;
+
 	wxString alignments[] = { _("Lewo-dół"), _("Środek-dół"), _("Prawo-dół"),
 		_("Lewo-środek"), _("Środek"), _("Prawo-środek"), 
 		_("Lewo-góra"), _("Środek-góra"), _("Prawo-góra"), 
