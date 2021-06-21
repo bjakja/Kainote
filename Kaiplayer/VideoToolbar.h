@@ -212,7 +212,7 @@ public:
 		//the standard of ass
 		int result = an + 1;
 		for (int i = 0; i < numIcons; i++) {
-			if (Toggled[i]) { result |= (16 << i); }
+			if (Toggled[i]) { result |= (32 << i); }
 		}
 		return result;
 	};

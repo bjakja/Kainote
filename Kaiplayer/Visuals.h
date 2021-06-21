@@ -309,6 +309,7 @@ public:
 	wxPoint dumplaced;
 	D3DXVECTOR2 beforeMove;
 	D3DXVECTOR2 drawingPos = D3DXVECTOR2(0, 0);
+	D3DXVECTOR2 drawingOriginalPos = D3DXVECTOR2(0, 0);
 	D3DXVECTOR2 drawingScale;
 	D3DXVECTOR2 scale;
 };

@@ -963,8 +963,13 @@ void PositionItem::ShowContols(VideoToolbar* vt)
 {
 	wxString alignments[] = { _("Lewo-dół"), _("Środek-dół"), _("Prawo-dół"),
 		_("Lewo-środek"), _("Środek"), _("Prawo-środek"), 
-		_("Lewo-góra"), _("Środek-góra"), _("Prawo-góra") };
-	alignment = new KaiChoice(vt, ID_ALIGNMENT, wxDefaultPosition, wxDefaultSize, 9, alignments);
+		_("Lewo-góra"), _("Środek-góra"), _("Prawo-góra"), 
+		//above options
+		_("Lewo-poniżej"), _("Środek-poniżej"), _("Prawo-poniżej"),
+		_("Lewo-ponad"), _("Środek-ponad"), _("Prawo-ponad"),
+		_("Przed-góra"), _("Przed-środek"), _("Przed-dół"), 
+		_("Za-góra"), _("Za-środek"), _("Za-dół") };
+	alignment = new KaiChoice(vt, ID_ALIGNMENT, wxDefaultPosition, wxDefaultSize, 21, alignments);
 	vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, [=](wxCommandEvent& evt) {
 		wxCommandEvent* evt1 = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		an = alignment->GetSelection();

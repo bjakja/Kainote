@@ -37,14 +37,15 @@ MoveAll::MoveAll()
 void MoveAll::DrawVisual(int time)
 {
 	for (size_t i = 0; i < elems.size(); i++){
-		if (!(selectedTags & elems[i]->type)){ continue; }
-		if (elems[i]->type == TAGPOS || elems[i]->type == TAGMOVES){
+		byte elemtype = elems[i]->type;
+		if (!(selectedTags & elemtype)){ continue; }
+		if (elemtype == TAGPOS || elemtype == TAGMOVES){
 			DrawRect(elems[i]->elem);
 		}
-		else if (elems[i]->type == TAGMOVEE){
+		else if (elemtype == TAGMOVEE){
 			DrawCircle(elems[i]->elem);
 		}
-		else if (elems[i]->type == TAGORG) {
+		else if (elemtype == TAGORG) {
 			DrawCross(elems[i]->elem, 0xFF8800FF);
 		}
 		else{
@@ -88,7 +89,7 @@ void MoveAll::DrawVisual(int time)
 
 				}
 			}
-			D3DXCOLOR col = (elems[i]->type == TAGCLIP) ? 0xFF0000FF : 0xFFFF00FF;
+			D3DXCOLOR col = (elemtype == TAGCLIP) ? 0xFF0000FF : 0xFFFF00FF;
 			DrawCross(elems[i]->elem, col);
 		}
 	}
@@ -108,6 +109,7 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 		if (tab->Video->HasCapture()){
 			tab->Video->ReleaseMouse();
 		}
+		drawingOriginalPos = D3DXVECTOR2(0, 0);
 		if (numElem >= 0){ ChangeInLines(true); }
 		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
 		numElem = -1;
@@ -220,19 +222,27 @@ void MoveAll::SetCurVisual()
 		const FindData& data = GetResult();
 		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems* elem = new moveElems();
+		drawingOriginalPos = D3DXVECTOR2(0, 0);
 		if (re.Matches(data.finding)){
 			elem->elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(data.finding, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
 				((wxAtoi(re.GetMatch(data.finding, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 			std::vector<ClipPoint>* points = new std::vector<ClipPoint>();
 			GetVectorPoints(data.finding, points);
-			if (points->size())
+			
+			if (points->size()) {
+				for (size_t i = 0; i < points->size(); i++) {
+					//calculate points for drawing
+					(*points)[i].x = (((((*points)[i].x) / coeffW) - zoomMove.x) * zoomScale.x);
+					(*points)[i].y = (((((*points)[i].y) / coeffH) - zoomMove.y) * zoomScale.y);
+				}
 				elem->vectorPoints = points;
+			}
 			else
 				delete points;
 		}
 		else{
 			int repl = data.finding.Freq(L',');
-			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)[, ]*(([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
+			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
 			if (repl >= 3 && re.Matches(data.finding)){
 				wxString point1 = re.GetMatch(data.finding, 1);
 				wxString point2 = re.GetMatch(data.finding, 2);
@@ -252,6 +262,7 @@ void MoveAll::SetCurVisual()
 				points->push_back(ClipPoint(pt3, elem->elem.y, "l", true));
 				points->push_back(ClipPoint(pt3, pt4, "l", true));
 				points->push_back(ClipPoint(elem->elem.x, pt4, "l", true));
+				elem->vectorPoints = points;
 			}
 			
 		}
@@ -280,8 +291,13 @@ void MoveAll::SetCurVisual()
 			moveElems* elem = new moveElems();
 			std::vector<ClipPoint>* points = new std::vector<ClipPoint>();
 			GetVectorPoints(res, points);
-			
+			//drawing pos and coeff need division by scale 
+			drawingScale.x = coeffW / scale.x;
+			drawingScale.y = coeffH / scale.y;
+			drawingPos.x /= scale.x;
+			drawingPos.y /= scale.y;
 			if (!points->empty()) {
+				drawingOriginalPos = D3DXVECTOR2(0, 0);
 				//frz to get rotation z
 				float frz = 0;
 				if (FindTag(L"frz?([0-9.-]+)")) {
@@ -295,14 +311,11 @@ void MoveAll::SetCurVisual()
 					actualStyle->Angle.ToDouble(&result);
 					frz = result;
 				}
-				drawingScale.x = coeffW / scale.x;
-				drawingScale.y = coeffH / scale.y;
-				drawingPos.x /= scale.x;
-				drawingPos.y /= scale.y;
-				drawingPos.x = (((drawingPos.x / drawingScale.x) - zoomMove.x) * zoomScale.x);
-				drawingPos.y = (((drawingPos.y / drawingScale.y) - zoomMove.y) * zoomScale.y);
+				
+				//offset for different an than 7
 				D3DXVECTOR2 offsetxy = CalcDrawingSize(alignment, points);
 				float rad = 0.01745329251994329576923690768489f;
+				//org pivot is origin position of frz rotation
 				D3DXVECTOR2 orgpivot = { abs(((float)orx / scale.x) - drawingPos.x), 
 					abs(((float)ory / scale.y) - drawingPos.y) };
 				float s = sin(-frz * rad);
@@ -312,20 +325,27 @@ void MoveAll::SetCurVisual()
 					(*points)[i].y -= offsetxy.y;
 					if(frz)
 						RotateDrawing(&(*points)[i], s, c, orgpivot);
+					//calculate points for drawing
 					(*points)[i].x = (((((*points)[i].x) / drawingScale.x) - zoomMove.x) * zoomScale.x);
 					(*points)[i].y = (((((*points)[i].y) / drawingScale.y) - zoomMove.y) * zoomScale.y);
 				}
-				//drawingPos = D3DXVECTOR2(0, 0);
+				
 			}
 			if (points->size())
 				elem->vectorPoints = points;
 			else
 				delete points;
+			float firstPointx = wxAtof(re.GetMatch(res, 1));
+			float firstPointy = wxAtof(re.GetMatch(res, 2));
 
-			elem->elem = D3DXVECTOR2(((wxAtof(re.GetMatch(res, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
-				((wxAtof(re.GetMatch(res, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
+			elem->elem = D3DXVECTOR2((((firstPointx + drawingPos.x) /
+				drawingScale.x) - zoomMove.x) * zoomScale.x,
+				(((firstPointy + drawingPos.y) /
+					drawingScale.y) - zoomMove.y) * zoomScale.y);
 			elem->type = TAGP;
 			elems.push_back(elem);
+			drawingPos.x = (((drawingPos.x / drawingScale.x) - zoomMove.x) * zoomScale.x);
+			drawingPos.y = (((drawingPos.y / drawingScale.y) - zoomMove.y) * zoomScale.y);
 		}
 
 	}
@@ -355,8 +375,10 @@ void MoveAll::ChangeInLines(bool all)
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem]->elem - beforeMove;
-	drawingPos.x += moving.x;
-	drawingPos.y += moving.y;
+	drawingOriginalPos.x = moving.x/* * scale.x*/;
+	drawingOriginalPos.y = moving.y/* * scale.y*/;
+	//drawingPos.x = drawingOriginalPos.x + (moving.x / scale.x);
+	//drawingPos.y = drawingOriginalPos.y + (moving.y / scale.y);
 	int _time = tab->Video->Tell();
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
@@ -396,6 +418,8 @@ void MoveAll::ChangeInLines(bool all)
 			byte type = selectedTags & (1 << k);
 			if (!type){ continue; }
 			bool vector = type == TAGCLIP || type == TAGP;
+			float newcoeffW = type == TAGP ? coeffW / scale.x : coeffW;
+			float newcoeffH = type == TAGP ? coeffH / scale.y : coeffH;
 			wxString delimiter = (vector) ? L" " : L",";
 			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : 
 				(type == TAGORG) ? L"org(\\([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : 
@@ -420,8 +444,8 @@ void MoveAll::ChangeInLines(bool all)
 					wxString token = tkn.GetNextToken().Trim().Trim(false);
 					double val;
 					if (token.ToDouble(&val)){
-						if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * coeffW); }
-						else{ val += (((moving.y / zoomScale.y)) * coeffH); }
+						if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * newcoeffW); }
+						else{ val += (((moving.y / zoomScale.y)) * newcoeffH); }
 						if (type == TAGMOVES && count > 1){ visual += token + delimiter; continue; }
 						else if (type == TAGMOVEE && count != 2 && count != 3){ visual += token + delimiter; count++; continue; }
 						if (vector){ visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; }
@@ -574,10 +598,10 @@ int MoveAll::DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline
 			vectorPoints->at(i - 1) = vectorPoints->at(i - diff);
 		}
 		Curve(i - 1, vectorPoints, &v4, false);
-		D3DXVECTOR2 v2[4] = { GetVector(vectorPoints->at(i - 1)), GetVector(vectorPoints->at(i)),
+		/*D3DXVECTOR2 v2[4] = { GetVector(vectorPoints->at(i - 1)), GetVector(vectorPoints->at(i)),
 			 GetVector(vectorPoints->at(i + 1)), GetVector(vectorPoints->at(i + 2)) };
 		line->Draw(v2, 2, 0xFF0000FF);
-		line->Draw(&v2[2], 2, 0xFF0000FF);
+		line->Draw(&v2[2], 2, 0xFF0000FF);*/
 		vectorPoints->at(i - 1) = tmp;
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFBB0000);
@@ -592,8 +616,9 @@ void MoveAll::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D
 	for (int g = 0; g < 4; g++)
 	{
 		if (acpt > (spoints - 1)) { acpt = 0; }
-		x[g] = (*vectorPoints)[pos + acpt].x;
-		y[g] = (*vectorPoints)[pos + acpt].y;
+		D3DXVECTOR2 point = GetVector((*vectorPoints)[pos + acpt]);
+		x[g] = point.x;
+		y[g] = point.y;
 		acpt++;
 	}
 
@@ -637,7 +662,7 @@ void MoveAll::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D
 
 D3DXVECTOR2 MoveAll::GetVector(const ClipPoint& point)
 {
-	return D3DXVECTOR2(point.x + drawingPos.x, point.y + drawingPos.y);
+	return D3DXVECTOR2(point.x + drawingPos.x + drawingOriginalPos.x , point.y + drawingPos.y + drawingOriginalPos.y);
 }
 
 void MoveAll::DrawLine(int i, std::vector<ClipPoint>* vectorPoints)

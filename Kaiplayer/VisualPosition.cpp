@@ -91,14 +91,14 @@ void Position::Draw(int time)
 
 void Position::ChangeTool(int _tool)
 {
-	if (!hasPositionToRenctangle && _tool & 16) {
+	if (!hasPositionToRenctangle && _tool & 32) {
 		GetPositioningData();
 		rectangleVisible = false;
 	}
-	hasPositionToRenctangle = _tool & 16;
-	hasPositionX = _tool & 32;
-	hasPositionY = _tool & 64;
-	int reset = 16 | 32 | 64;
+	hasPositionToRenctangle = _tool & 32;
+	hasPositionX = _tool & 64;
+	hasPositionY = _tool & 128;
+	int reset = 32 | 64 | 128;
 	int newalignment = _tool | reset;
 	newalignment ^= reset;
 	if (newalignment != alignment) {
@@ -518,24 +518,58 @@ void Position::SetPosition()
 		float recty1 = PositionRectangle[0].y > PositionRectangle[1].y ?
 			PositionRectangle[0].y : PositionRectangle[1].y;
 		float x = rectx, y = recty;
-		
-		if (an % 3 == 0) {
-			x = rectx1 - (textSize.x + borderx - 2);
+		if (an <= 15) {
+			if (an % 3 == 0) {
+				x = rectx1 - (textSize.x + borderx - 2);
+			}
+			else if (an % 3 == 1) {
+				x += borderx + 2;
+			}
+			else if (an % 3 == 2) {
+				x += (rectx1 - (rectx + textSize.x) + borderx) / 2;
+			}
 		}
-		else if (an % 3 == 1) {
-			x += borderx + 2;
+		//before
+		else if (an <= 18) {
+			x = rectx - (textSize.x + borderx - 2);
 		}
-		else if (an % 3 == 2) {
-			x += (rectx1 - (rectx + textSize.x) + borderx) / 2;
+		//after
+		else if (an <= 21) {
+			x = rectx1;
 		}
+		//bottom
 		if (an <= 3) {
 			y = recty1 - bordery;
 		}
+		//middle
 		else if (an <= 6) {
 			y += ((recty1 - recty) + textSize.y + bordery) / 2;
 		}
+		//top
 		else if (an <= 9) {
 			y += textSize.y + bordery;
+		}
+		//below
+		else if (an <= 12) {
+			y = recty1 + textSize.y;
+		}
+		//above
+		else if (an <= 15) {
+			y = recty;
+		}//before - after
+		else if (an <= 21) {
+			//bottom
+			if (an % 3 == 0) {
+				y = recty1 - bordery;
+			}
+			//middle
+			else if (an % 3 == 2) {
+				y += ((recty1 - recty) + textSize.y + bordery) / 2;
+			}
+			//top
+			else if (an % 3 == 1) {
+				y += textSize.y + bordery;
+			}
 		}
 		
 		for (size_t i = 0; i < data.size(); i++) {
