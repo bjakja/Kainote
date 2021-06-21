@@ -535,7 +535,7 @@ void Position::SetPosition()
 		}
 		//after
 		else if (an <= 21) {
-			x = rectx1;
+			x = rectx1 + borderx;
 		}
 		//bottom
 		if (an <= 3) {
@@ -543,7 +543,7 @@ void Position::SetPosition()
 		}
 		//middle
 		else if (an <= 6) {
-			y += ((recty1 - recty) + textSize.y + bordery) / 2;
+			y += ((recty1 - recty) + textSize.y + border.y) / 2;
 		}
 		//top
 		else if (an <= 9) {
@@ -551,7 +551,7 @@ void Position::SetPosition()
 		}
 		//below
 		else if (an <= 12) {
-			y = recty1 + textSize.y;
+			y = recty1 + textSize.y + bordery;
 		}
 		//above
 		else if (an <= 15) {
@@ -564,7 +564,7 @@ void Position::SetPosition()
 			}
 			//middle
 			else if (an % 3 == 2) {
-				y += ((recty1 - recty) + textSize.y + bordery) / 2;
+				y += ((recty1 - recty) + textSize.y + border.y) / 2;
 			}
 			//top
 			else if (an % 3 == 1) {
@@ -602,9 +602,9 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
 
 void Position::GetPositioningData()
 {
-	textSize = GetTextSize(tab->Edit->line, &border);
-	float bordery = border.y / 2;
+	textSize = GetTextSize(tab->Edit->line, &border, NULL, true);
 	float borderx = border.x / 2;
+	float bordery = border.y / 2;
 	curLinePosition = D3DXVECTOR2(0, 0);
 	GetPosnScale(NULL, &curLineAlingment, moveValues);
 	//make from current line position an7
@@ -615,12 +615,12 @@ void Position::GetPositioningData()
 		curLinePosition.x += (textSize.x) / 2;
 	}
 	if (curLineAlingment <= 3) {
-		//curLinePosition.y = 0;
+		curLinePosition.y -= bordery;
 	}
 	else if (curLineAlingment <= 6) {
-		curLinePosition.y += (textSize.y / 2);
+		curLinePosition.y -= ((textSize.y) / 2) + bordery;
 	}
 	else if (curLineAlingment <= 9) {
-		curLinePosition.y += textSize.y;
+		curLinePosition.y -= (textSize.y + bordery);
 	}
 }
