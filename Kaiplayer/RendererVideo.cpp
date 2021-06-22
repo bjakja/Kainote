@@ -385,6 +385,7 @@ void RendererVideo::ResetZoom()
 	m_MainStreamRect.right = (m_ZoomRect.width - m_BackBufferRect.left) / videoToScreenXX;
 	m_MainStreamRect.bottom = (m_ZoomRect.height - m_BackBufferRect.top) / videoToScreenYY;
 	m_ZoomParcent = size.x / (m_ZoomRect.width - m_ZoomRect.x/* + backBufferRect.left*/);
+	ZoomChanged();
 	Render();
 	videoControl->SetScaleAndZoom();
 }
@@ -409,6 +410,7 @@ void RendererVideo::Zoom(const wxSize &size)
 			m_HasVisualEdition = true;
 		}
 	}
+	ZoomChanged();
 	Render(false);
 	videoControl->SetScaleAndZoom();
 }

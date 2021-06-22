@@ -168,6 +168,7 @@ public:
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
 	virtual bool HasFFMS2(){ return false; };
 	virtual Provider * GetFFMS2(){ return NULL; };
+	virtual void ZoomChanged() {};
 	// Non virtual functions
 	void DrawProgressBar(const wxString &timesString);
 	void Zoom(const wxSize &size);

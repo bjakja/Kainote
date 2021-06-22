@@ -339,6 +339,11 @@ void Position::SetCurVisual()
 	if (hasPositionToRenctangle) {
 		GetPositioningData();
 		//hasPositionToRenctangle = false;
+		if (rectangleVisible) {
+			SortPoints();
+			SetPosition();
+			tab->Video->Render();
+		}
 	}
 }
 
@@ -543,7 +548,7 @@ void Position::SetPosition()
 		}
 		//middle
 		else if (an <= 6) {
-			y += ((recty1 - recty) + textSize.y + bordery) / 2;
+			y += ((recty1 - recty) + textSize.y + bordery - (extlead.x - extlead.y)) / 2;
 		}
 		//top
 		else if (an <= 9) {
@@ -564,7 +569,7 @@ void Position::SetPosition()
 			}
 			//middle
 			else if (an % 3 == 2) {
-				y += ((recty1 - recty) + textSize.y + bordery) / 2;
+				y += ((recty1 - recty) + textSize.y + bordery - (extlead.x - extlead.y)) / 2;
 			}
 			//top
 			else if (an % 3 == 1) {

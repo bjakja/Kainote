@@ -74,6 +74,8 @@ public:
 			Render();
 	}
 private:
+	void SetupVertices();
+	void ZoomChanged();
 	DShowPlayer *m_DirectShowPlayer;
 	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = NULL;
 	LPDIRECT3DTEXTURE9 m_BlitTexture = NULL;

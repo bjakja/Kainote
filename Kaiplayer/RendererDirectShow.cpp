@@ -121,8 +121,8 @@ bool RendererDirectShow::InitRendererDX()
 
 	int windowWidth = m_BackBufferRect.right- m_BackBufferRect.left;
 	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
-	m_WindowWidth = /*windowWidth*/m_Width;
-	m_WindowHeight = /*windowHeight*/m_Height;
+	m_WindowWidth = m_Width;//windowWidth;//
+	m_WindowHeight = m_Height;//windowHeight;//
 	filtering = (windowWidth == m_Width && windowHeight == m_Height) ? D3DTEXF_POINT : D3DTEXF_LINEAR;
 
 	m_LastBufferSize = m_WindowWidth * m_WindowHeight * 4;
@@ -133,30 +133,10 @@ bool RendererDirectShow::InitRendererDX()
 	
 	m_SubsProvider->SetVideoParameters(wxSize(m_WindowWidth, m_WindowHeight), ARGB32, m_SwapFrame);
 
-	HR(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &m_D3DVertex, NULL),
-		"Nie można utworzyć bufora wertex")
-	CUSTOMVERTEX* pVertices;
-	HR(hr = m_D3DVertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora vertex");
-	// looks like it places 1px border that's position is moved by 1
-
-	pVertices[0].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
-	pVertices[0].tu = 0.0f;
-	pVertices[0].tv = 0.0f;
-	pVertices[1].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
-	pVertices[1].tu = 1.0f;
-	pVertices[1].tv = 0.0f;
-	pVertices[2].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left , windowHeight + m_BackBufferRect.top, 0.0f);
-	pVertices[2].tu = 1.0f;
-	pVertices[2].tv = 1.0f;
-	pVertices[3].position = D3DXVECTOR3(m_BackBufferRect.left, windowHeight + m_BackBufferRect.top, 0.0f);
-	pVertices[3].tu = 0.0f;
-	pVertices[3].tv = 1.0f;
-	pVertices[4].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
-	pVertices[4].tu = 0.0f;
-	pVertices[4].tv = 0.0f;
-
-	HR(hr = m_D3DVertex->Unlock(), "Canot unlock vertex buffer");
 	
+
+	SetupVertices();
+
 	
 	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
 		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_SubtitlesTexture, NULL),
@@ -667,6 +647,45 @@ void RendererDirectShow::ClearObject()
 	SAFE_RELEASE(m_SubtitlesTexture);
 	SAFE_RELEASE(m_BlitTexture);
 	SAFE_RELEASE(m_D3DVertex);
+}
+
+void RendererDirectShow::SetupVertices()
+{
+	float width = m_Width;
+	float height = m_Height;
+	int windowWidth = m_BackBufferRect.right - m_BackBufferRect.left;
+	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
+
+	HRN(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &m_D3DVertex, NULL),
+		"Nie można utworzyć bufora wertex")
+	CUSTOMVERTEX* pVertices;
+	HRESULT hr;
+	HRN(hr = m_D3DVertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora vertex");
+	// looks like it places 1px border that's position is moved by 1
+	//m_MainStreamRect.top
+	pVertices[0].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
+	pVertices[0].tu = m_MainStreamRect.left / width;
+	pVertices[0].tv = m_MainStreamRect.top / height;
+	pVertices[1].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
+	pVertices[1].tu = (m_MainStreamRect.right) / width;//1.0f;
+	pVertices[1].tv = m_MainStreamRect.top / height;//0.2f;
+	pVertices[2].position = D3DXVECTOR3(windowWidth + m_BackBufferRect.left, windowHeight + m_BackBufferRect.top, 0.0f);
+	pVertices[2].tu = (m_MainStreamRect.right) / width;//1.0f;
+	pVertices[2].tv = (m_MainStreamRect.bottom) / height;//1.0f;
+	pVertices[3].position = D3DXVECTOR3(m_BackBufferRect.left, windowHeight + m_BackBufferRect.top, 0.0f);
+	pVertices[3].tu = m_MainStreamRect.left / width;//0.2f;
+	pVertices[3].tv = (m_MainStreamRect.bottom) / height;//1.0f;
+	pVertices[4].position = D3DXVECTOR3(m_BackBufferRect.left, m_BackBufferRect.top, 0.0f);
+	pVertices[4].tu = m_MainStreamRect.left / width;//0.2f;
+	pVertices[4].tv = m_MainStreamRect.top / height;//0.2f;
+
+	HRN(hr = m_D3DVertex->Unlock(), "Canot unlock vertex buffer");
+}
+
+void RendererDirectShow::ZoomChanged()
+{
+	SAFE_RELEASE(m_D3DVertex);
+	SetupVertices();
 }
 
 

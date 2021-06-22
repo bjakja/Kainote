@@ -693,18 +693,11 @@ void Visuals::SetVisual(bool dummy)
 		}
 
 		if (!dummy){
-			VideoCtrl* vb = tab->Video;
-			vb->SetVisualEdition(true);
-			if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
-			//using dummy there is no video rendering
-			grid->SetModified((Visual == MOVE) ? VISUAL_MOVE :
-				(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
+			SetModified((Visual == MOVE) ? VISUAL_MOVE :
+				(Visual == SCALE) ? VISUAL_SCALE : 
+				(Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
 				(Visual == ROTATEXY) ? VISUAL_ROTATION_X_Y : 
-				(Visual == CLIPRECT)? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, true, true);
-			grid->Refresh();
-			if (vb->IsShown() || vb->IsFullScreen()) { vb->OpenSubs(OPEN_DUMMY); }
-			if (vb->GetState() == Paused) 
-				vb->Render();
+				(Visual == CLIPRECT)? VISUAL_RECT_CLIP : VISUAL_ALL_TAGS, true);
 		}
 		else{
 			RenderSubs(dtxt);
@@ -823,13 +816,19 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	ChangeText(txt, L"\\org(" + getfloat(orgx + coordx) + L"," + getfloat(orgy + coordy) + L")", !PutinBrackets, strPos);
 }
 
-void Visuals::SetModified(int action)
+void Visuals::SetModified(int action, bool dummy)
 {
 	tab->Video->SetVisualEdition(true);
 	if (tab->Edit->splittedTags){ 
 		tab->Edit->TextEditOrig->SetModified(); 
 	}
-	tab->Grid->SetModified(action);
+	tab->Grid->SetModified(action, true, dummy);
+	if (dummy) {
+		VideoCtrl* vb = tab->Video;
+		if (vb->IsShown() || vb->IsFullScreen()) { vb->OpenSubs(OPEN_DUMMY); }
+		if (vb->GetState() == Paused)
+			vb->Render();
+	}
 	tab->Grid->Refresh();
 }
 

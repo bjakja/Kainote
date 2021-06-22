@@ -112,7 +112,7 @@ public:
 	void RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	void RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	void GetMoveTimes(int *start, int *end);
-	void SetModified(int action);
+	void SetModified(int action, bool dummy = false);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
 	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL);
 	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points);
