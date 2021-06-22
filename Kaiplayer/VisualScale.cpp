@@ -389,6 +389,7 @@ void Scale::ChangeTool(int _tool)
 	hasScaleX = _tool & 2;
 	preserveAspectRatio = _tool & 4;
 	hasScaleY = _tool & 8;
+	bool oldHasOriginalRectangle = hasOriginalRectangle;
 	hasOriginalRectangle = _tool & 16;
 	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = _tool & 32;
@@ -398,7 +399,16 @@ void Scale::ChangeTool(int _tool)
 		SetCurVisual();
 	}
 	else if (oldHasScaleToRenctangle != hasScaleToRenctangle) {
-		originalSize = GetTextSize(tab->Edit->line, &border);
+		originalSize = GetTextSize(tab->Edit->line, &border, NULL, false);
+	}
+	if (oldHasOriginalRectangle != hasOriginalRectangle) {
+		if (hasOriginalRectangle) {
+			if (oldChangeAllTags == changeAllTags)
+				SetCurVisual();
+			SetSecondRectScale();
+		}
+		else
+			originalRectangleVisible = false;
 	}
 	tab->Video->Render(false);
 }
@@ -658,4 +668,36 @@ D3DXVECTOR2 Scale::ScaleToVideo(D3DXVECTOR2 point)
 	float pointx = ((point.x / coeffW) - zoomMove.x) * zoomScale.x,
 		pointy = ((point.y / coeffH) - zoomMove.y) * zoomScale.y;
 	return D3DXVECTOR2(pointx, pointy);
+}
+
+void Scale::SetSecondRectScale()
+{
+	D3DXVECTOR2 activeLinePos = { ((from.x / zoomScale.x) + zoomMove.x) * coeffW,
+		((from.y / zoomScale.y) + zoomMove.y) * coeffH };
+	float borderx = border.x / 2;
+	float bordery = border.y / 2;
+	sizingRectangle[2].x = activeLinePos.x - borderx - 1;
+	sizingRectangle[2].y = activeLinePos.y - bordery - 1;
+	sizingRectangle[3].x = originalSize.x + activeLinePos.x + borderx - 1;
+	sizingRectangle[3].y = originalSize.y + activeLinePos.y + bordery - 1;
+
+	if (AN % 3 == 0) {
+		sizingRectangle[2].x -= originalSize.x;
+		sizingRectangle[3].x -= originalSize.x;
+	}
+	else if (AN % 3 == 2) {
+		float halfsizex = originalSize.x / 2;
+		sizingRectangle[2].x -= halfsizex;
+		sizingRectangle[3].x -= halfsizex;
+	}
+	if (AN < 4) {
+		sizingRectangle[2].y -= originalSize.y;
+		sizingRectangle[3].y -= originalSize.y;
+	}
+	else if (AN < 7) {
+		float halfsizey = originalSize.y / 2;
+		sizingRectangle[2].y -= halfsizey;
+		sizingRectangle[3].y -= halfsizey;
+	}
+	originalRectangleVisible = true;
 }

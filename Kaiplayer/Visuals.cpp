@@ -912,7 +912,7 @@ bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width,
 	return true;
 }
 
-D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, bool keepExtraLead)
+D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, bool keepExtraLead, D3DXVECTOR2* extralead)
 {
 	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", L"bord", L"xbord", L"ybord" };
 	D3DXVECTOR2 result = D3DXVECTOR2(0.f, 0.f);
@@ -938,6 +938,9 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	float maxheight = 0.f;
 	float extlead = 0.f;
 	float descent = 0.f;
+	if (extralead) {
+		*extralead = { 0, 0 };
+	}
 	for (auto tag : presult->tags) {
 		if (tag->tagName == L"p") {
 			if (!tag->value.IsNumber()) {
@@ -979,6 +982,12 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 						maxwidth += fwidth;
 						if(!result.y && !keepExtraLead)
 							fheight -= (extlead - descent);
+						if (extralead) {
+							if (extralead->x < extlead)
+								extralead->x = extlead;
+							if (extralead->y < descent)
+								extralead->y = descent;
+						}
 
 						if (maxheight < fheight)
 							maxheight = fheight;
@@ -1013,6 +1022,12 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 			result.x = maxwidth;
 
 		result.y += maxheight;
+	}
+	if (extralead) {
+		if (extralead->x < extlead)
+			extralead->x = extlead;
+		if (extralead->y < descent)
+			extralead->y = descent;
 	}
 	if (border) {
 		border->x = xbord + xbord1;

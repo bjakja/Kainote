@@ -114,7 +114,7 @@ public:
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
-	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false);
+	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL);
 	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points);
 	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
@@ -223,6 +223,7 @@ private:
 	D3DXVECTOR2 PositionRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f)};
 	D3DXVECTOR2 textSize;
 	D3DXVECTOR2 border;
+	D3DXVECTOR2 extlead;
 	D3DXVECTOR2 diffs;
 	D3DXVECTOR2 curLinePosition;
 	bool hasPositionToRenctangle = false;
@@ -334,6 +335,7 @@ private:
 	void SortPoints();
 	void SetScale();
 	D3DXVECTOR2 ScaleToVideo(D3DXVECTOR2 point);
+	void SetSecondRectScale();
 	byte type;
 	int grabbed;
 	byte AN;
