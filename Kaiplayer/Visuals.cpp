@@ -418,7 +418,7 @@ void Visuals::DrawDashedLine(D3DXVECTOR2 *vector, size_t vectorSize, int dashLen
 void Visuals::Draw(int time)
 {
 	//dont forget checking if times are in range time >= start && time < end
-	if (!(time >= start && time < end) || (notDialogue && Visual != VECTORDRAW)){ 
+	if (!(time >= start && time < end) || (notDialogue && Visual != VECTORDRAW && Visual != VECTORCLIP)){
 		DrawWarning(notDialogue); 
 		blockevents = true; 
 		return; 

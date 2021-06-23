@@ -205,7 +205,7 @@ public:
 	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual(int datapos);
-	void ChangeMultiline(bool all);
+	void ChangeMultiline(bool all, bool dummy = false);
 	void SetCurVisual();
 	void Draw(int time);
 	void ChangeTool(int _tool);
@@ -214,7 +214,7 @@ private:
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
 	void SortPoints();
 	void SetPosition();
-	D3DXVECTOR2 PositionToVideo(D3DXVECTOR2 point);
+	D3DXVECTOR2 PositionToVideo(D3DXVECTOR2 point, bool changeX = true, bool changeY = true);
 	void GetPositioningData();
 	std::vector<PosData> data;
 	wxPoint helperLinePos;
@@ -232,7 +232,7 @@ private:
 	bool rectangleVisible = false;
 	int grabbed = -1;
 	byte alignment = 1;
-	byte curLineAlingment = 1;
+	byte curLineAlingment = -1;
 };
 
 class Move : public Visuals

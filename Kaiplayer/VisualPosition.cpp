@@ -321,6 +321,8 @@ wxString Position::GetVisual(int datapos)
 
 void Position::SetCurVisual()
 {
+	int oldalignment = curLineAlingment;
+	GetPosnScale(NULL, &curLineAlingment, moveValues);
 	data.clear();
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
@@ -339,15 +341,15 @@ void Position::SetCurVisual()
 	if (hasPositionToRenctangle) {
 		GetPositioningData();
 		//hasPositionToRenctangle = false;
-		if (rectangleVisible) {
+		if (rectangleVisible && oldalignment != curLineAlingment && oldalignment != -1) {
 			SortPoints();
 			SetPosition();
-			tab->Video->Render();
+			ChangeMultiline(true, true);
 		}
 	}
 }
 
-void Position::ChangeMultiline(bool all)
+void Position::ChangeMultiline(bool all, bool dummy)
 {
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	wxString *dtxt = NULL;
@@ -407,7 +409,7 @@ void Position::ChangeMultiline(bool all)
 	}
 
 	if (all){
-		SetModified(VISUAL_POSITION);
+		SetModified(VISUAL_POSITION, dummy);
 	}
 	else{
 		RenderSubs(dtxt);
@@ -579,9 +581,11 @@ void Position::SetPosition()
 		
 		for (size_t i = 0; i < data.size(); i++) {
 			if (data[i].numpos == tab->Grid->currentLine) {
-				data[i].pos.x = x + curLinePosition.x;
-				data[i].pos.y = y + curLinePosition.y;
-				data[i].pos = PositionToVideo(data[i].pos);
+				if(hasPositionX)
+					data[i].pos.x = x + curLinePosition.x;
+				if (hasPositionY)
+					data[i].pos.y = y + curLinePosition.y;
+				data[i].pos = PositionToVideo(data[i].pos, hasPositionX, hasPositionY);
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
 				data[i].lastpos = data[i].pos;
 
@@ -598,10 +602,10 @@ void Position::SetPosition()
 	
 }
 
-D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point)
+D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool changeY)
 {
-	float pointx = ((point.x / coeffW) - zoomMove.x) * zoomScale.x,
-		pointy = ((point.y / coeffH) - zoomMove.y) * zoomScale.y;
+	float pointx = changeX? ((point.x / coeffW) - zoomMove.x) * zoomScale.x : point.x,
+		pointy = changeY? ((point.y / coeffH) - zoomMove.y) * zoomScale.y : point.y;
 	return D3DXVECTOR2(pointx, pointy);
 }
 
@@ -609,7 +613,10 @@ void Position::GetPositioningData()
 {
 	textSize = GetTextSize(tab->Edit->line, &border, NULL, true, &extlead);
 	curLinePosition = D3DXVECTOR2(0, 0);
-	GetPosnScale(NULL, &curLineAlingment, moveValues);
+	//no alignment? get it
+	if(curLineAlingment == -1)
+		GetPosnScale(NULL, &curLineAlingment, moveValues);
+
 	//make from current line position an7
 	if (curLineAlingment % 3 == 0) {
 		curLinePosition.x += textSize.x;
