@@ -362,10 +362,11 @@ void MoveAll::SetCurVisual()
 			((moveValues[1] / coeffH) - zoomMove.y) * zoomScale.y);
 		elem->type = TAGMOVES;
 		elems.push_back(elem);
-		elem->type = TAGMOVEE;
-		elem->elem = D3DXVECTOR2(((moveValues[2] / coeffW) - zoomMove.x) * zoomScale.x,
+		moveElems* elem1 = new moveElems();
+		elem1->type = TAGMOVEE;
+		elem1->elem = D3DXVECTOR2(((moveValues[2] / coeffW) - zoomMove.x) * zoomScale.x,
 			((moveValues[3] / coeffH) - zoomMove.y) * zoomScale.y);
-		elems.push_back(elem);
+		elems.push_back(elem1);
 	}
 
 }

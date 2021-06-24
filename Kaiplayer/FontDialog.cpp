@@ -586,6 +586,7 @@ Styles * FontDialog::GetFont()
 FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle, bool changePointToPixel)
 {
 	if (FDialog && FDialog->GetParent() != parent){
+		FontEnum.RemoveClient(FDialog);
 		FDialog->Destroy();
 		FDialog = NULL;
 	}
