@@ -44,6 +44,7 @@ public:
 	virtual void SetItemToggled(int *item){};
 	virtual void HideContols() {};
 	virtual void ShowContols(VideoToolbar* vt) {};
+	virtual void OnSize(VideoToolbar* vt) {};
 
 	int startIconNumber = 0;
 	bool clicked = false;
@@ -87,6 +88,8 @@ public:
 		startIconNumber = 12; 
 		if (!isClip)
 			numIcons = 6;
+
+		isDrawing = !isClip;
 	};
 	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
 	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
@@ -102,9 +105,15 @@ public:
 		else if (toggled >= numIcons)
 			toggled = (*item) = 0;
 	};
+	void HideContols() override;
+	void ShowContols(VideoToolbar* vt) override;
+	void OnSize(VideoToolbar* vt) override;
 	int numIcons = 7;
 	int toggled = 1;
 	bool isNormalButton = false;
+	bool isDrawing = false;
+	static const int ID_SHAPE_LIST = 6789;
+	KaiChoice* shapeList = NULL;
 };
 
 class ScaleRotationItem : public VisualItem
@@ -140,6 +149,7 @@ public:
 	void SetItemToggled(int* item) override;
 	void HideContols() override;
 	void ShowContols(VideoToolbar* vt) override;
+	void OnSize(VideoToolbar* vt) override;
 private:
 	KaiChoice* tagList = NULL;
 	KaiChoice* options = NULL;
@@ -219,6 +229,7 @@ public:
 	void SetItemToggled(int* item) override {};
 	void HideContols() override;
 	void ShowContols(VideoToolbar* vt) override;
+	void OnSize(VideoToolbar* vt) override;
 private:
 	static const int ID_ALIGNMENT = 3452;
 	static const int numIcons = 3;

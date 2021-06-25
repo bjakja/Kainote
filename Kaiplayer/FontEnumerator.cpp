@@ -102,8 +102,8 @@ wxArrayString *FontEnumerator::GetFilteredFonts(const wxWindow *client, std::fun
 	wxMutexLocker lock(enumerateMutex);
 	filter = _filter;
 	if(!FilteredFonts){
-		FilteredFonts=new wxArrayString();
-		FilteredFontsTmp=new wxArrayString();
+		FilteredFonts = new wxArrayString();
+		FilteredFontsTmp = new wxArrayString();
 		EnumerateFonts(false);
 	}
 	if(client && !(observers.find(client) != observers.end())){observers[client] = func;}

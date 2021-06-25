@@ -305,6 +305,8 @@ void VideoToolbar::OnSize(wxSizeEvent &evt)
 	videoPlayAfter->SetSize(size.x - (seekMinWidth + playMinWidth + 3), 1, playMinWidth, height);
 	startDrawPos = 2;//playMinWidth + seekMinWidth + 6;
 	endDrawPos = insufficentPlace? size.x : size.x - (seekMinWidth + playMinWidth + 3);
+	if (visualItems[Toggled])
+		visualItems[Toggled]->OnSize(this);
 	Refresh(false);
 }
 
@@ -478,6 +480,28 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 	}
 }
 
+void VectorItem::HideContols()
+{
+	if (isDrawing && shapeList) {
+		shapeList->Destroy();
+		shapeList = NULL;
+	}
+}
+
+void VectorItem::ShowContols(VideoToolbar* vt)
+{
+	if (isDrawing) {
+		shapeList = new KaiChoice(vt, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, );
+	}
+}
+
+void VectorItem::OnSize(VideoToolbar* vt)
+{
+	if (isDrawing) {
+
+	}
+}
+
 void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 {
 	int startDrawPos = w - (h * numIcons);
@@ -559,7 +583,7 @@ void AllTagsItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt
 
 void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 {
-	if (!tagList || !edition) {
+	/*if (!tagList || !edition) {
 		ShowContols(vt);
 	}
 	else if (maxWidth != vt->GetEndDrawPos()) {
@@ -570,7 +594,7 @@ void AllTagsItem::OnPaint(wxDC& dc, int w, int h, VideoToolbar* vt)
 		pos.y = 1;
 		pos.x -= tlbs.x + 4;
 		tagList->SetPosition(pos);
-	}
+	}*/
 }
 
 void AllTagsItem::Synchronize(VisualItem* item)
@@ -646,7 +670,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 
 	auto tags = VideoToolbar::GetTagsSettings();
 	wxArrayString list;
-	maxWidth = vtoolbar->GetEndDrawPos();
 	GetNames(tags, &list);
 	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
@@ -686,19 +709,28 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 		}
 		}, ID_EDITION
 	);
+	OnSize(vtoolbar);
+}
+
+void AllTagsItem::OnSize(VideoToolbar* vt)
+{
+	if (!tagList)
+		return;
+
+	maxWidth = vt->GetEndDrawPos();
 	wxSize tlbs = tagList->GetBestSize();
 	wxSize ebs = edition->GetBestSize();
 	wxSize obs = options->GetBestSize();
-	wxSize vts = vtoolbar->GetSize();
-	wxPoint pos(maxWidth - 4 - ebs.x, 1);
+	wxSize vts = vt->GetSize();
+	wxPoint pos(maxWidth - 2 - ebs.x, 1);
 	edition->SetPosition(pos);
 	ebs.y = vts.y - 2;
 	edition->SetSize(ebs);
-	pos.x -= obs.x + 4;
+	pos.x -= obs.x + 2;
 	options->SetPosition(pos);
 	obs.y = vts.y - 2;
 	options->SetSize(obs);
-	pos.x -= tlbs.x + 4;
+	pos.x -= tlbs.x + 2;
 	tagList->SetPosition(pos);
 	tlbs.y = vts.y - 2;
 	tagList->SetSize(tlbs);
@@ -983,10 +1015,18 @@ void PositionItem::ShowContols(VideoToolbar* vt)
 		}, ID_ALIGNMENT);
 	alignment->SetSelection(an);
 	alignment->SetToolTip(_("Położenie tekstu, działa podobnie jak w stylach"));
+	OnSize(vt);
+}
+
+void PositionItem::OnSize(VideoToolbar* vt)
+{
+	if (!alignment)
+		return;
+
 	int maxWidth = vt->GetEndDrawPos();
 	wxSize ans = alignment->GetBestSize();
 	wxSize vts = vt->GetSize();
-	wxPoint pos(maxWidth - 4 - ans.x, 1);
+	wxPoint pos(maxWidth - 2 - ans.x, 1);
 	alignment->SetPosition(pos);
 	ans.y = vts.y - 2;
 	alignment->SetSize(ans);

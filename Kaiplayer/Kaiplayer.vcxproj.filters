@@ -458,6 +458,9 @@
     <ClCompile Include="TagFindReplace.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
+    <ClCompile Include="VisualDrawingShapes.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -849,6 +852,9 @@
     </ClInclude>
     <ClInclude Include="TagFindReplace.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualDrawingShapes.h">
+      <Filter>Source Files\Video\Visuals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
