@@ -20,6 +20,16 @@
 #include "config.h"
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
+#include "TabPanel.h"
+
+enum {
+	LEFT = 1,
+	RIGHT,
+	TOP = 4,
+	BOTTOM = 8,
+	INSIDE = 16,
+	OUTSIDE = 32
+};
 
 ShapesEdition::ShapesEdition(wxWindow* parent, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape)
 	: KaiDialog(parent, -1, _("Edycja kszta³tów wektorowych"), pos)
@@ -51,12 +61,25 @@ ShapesEdition::ShapesEdition(wxWindow* parent, const wxPoint& pos, std::vector<S
 	shapeName = new KaiTextCtrl(this, -1, currentShape.name);
 	shapeName->SetMaxLength(20);
 	shapeAsASS = new KaiTextCtrl(this, -1, currentShape.shape, wxDefaultPosition, wxSize(-1, 300), wxTE_MULTILINE);
+	wxBoxSizer* modeSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* scalingModeSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxString modes[] = { _("Zmienna szerokoœæ i wysokoœæ"), _("Wysokoœæ jest równa szerokoœci"), _("Zmienna tylko szerokoœæ") };
+	mode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, modes);
+	wxString scalingModes[] = { _("Zmiana koordynatów rysunku"), _("zmiana skali") };
+	scalingMode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 2, scalingModes);
 	nameSizer->Add(new KaiStaticText(this, -1, _("Nazwa:")), 1, wxALL | wxEXPAND, 4);
 	nameSizer->Add(shapeName, 1, wxALL | wxEXPAND, 4);
+	modeSizer->Add(new KaiStaticText(this, -1, _("Skalowanie wzglêdem kursora:")), 1, wxALL | wxEXPAND, 4);
+	modeSizer->Add(mode, 1, wxALL | wxEXPAND, 4);
+	scalingModeSizer->Add(new KaiStaticText(this, -1, _("Rodzaj skalowania:")), 1, wxALL | wxEXPAND, 4);
+	scalingModeSizer->Add(scalingMode, 1, wxALL | wxEXPAND, 4);
+
 	editionSizer->Add(nameSizer, 1, wxALL | wxEXPAND, 2);
+	editionSizer->Add(modeSizer, 1, wxALL | wxEXPAND, 2);
+	editionSizer->Add(scalingModeSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(new KaiStaticText(this, -1, _("Kszta³t:")), 0, wxALL | wxEXPAND, 6);
-	editionSizer->Add(shapeAsASS, 0, wxALL | wxEXPAND, 2);
-	//dorobiæ jeszcze mode i scale mode
+	editionSizer->Add(shapeAsASS, 0, wxALL | wxEXPAND, 6);
+
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* commit = new MappedButton(this, ID_BUTTON_COMMIT, _("Zastosuj"));
 	MappedButton* OK = new MappedButton(this, ID_BUTTON_OK, L"OK");
@@ -95,6 +118,91 @@ void ShapesEdition::OnResetDefault(wxCommandEvent& evt)
 		shapeList->PutArray(&names);
 		SetShape(shapeList->GetSelection());
 	}
+}
+
+void ShapesEdition::OnAddShape(wxCommandEvent& evt)
+{
+	wxString newShapeNameStr = newShapeName->GetValue();
+	if (newShapeNameStr.empty()) {
+		KaiMessageBox(_("Wpisz nazwê nowego tagu."), _("B³¹d"), wxOK, this);
+		return;
+	}
+	if (shapeList->FindString(newShapeNameStr) != -1) {
+		KaiMessageBox(_("Nowy tag ju¿ istnieje na liœcie, wpisz inn¹ nazwê."), _("B³¹d"), wxOK, this);
+		return;
+	}
+	currentShape = ShapesSetting(newShapeNameStr);
+	shapes.push_back(currentShape);
+	shapeList->Append(currentShape.name);
+	selection = shapes.size() - 1;
+	shapeList->SetSelection(selection);
+	SetShapeFromSettings();
+}
+
+void ShapesEdition::OnRemoveShape(wxCommandEvent& evt)
+{
+	if (selection < 0 || selection >= shapes.size()) {
+		KaiMessageBox(L"Selected tag is out of range of shapeList.", L"Error", wxOK, this);
+		return;
+	}
+	if (shapes.size() <= 1) {
+		KaiMessageBox(_("Nie mo¿na usun¹æ wszystkich kszta³tów z listy"), _("B³¹d"), wxOK, this);
+		return;
+	}
+	shapes.erase(shapes.begin() + selection);
+	shapeList->Delete(selection);
+	if (selection >= shapeList->GetCount()) {
+		shapeList->SetSelection(shapeList->GetCount() - 1);
+	}
+	else
+		shapeList->SetSelection(selection);
+
+	selection = shapeList->GetSelection();
+	//list is empty
+	if (selection < 0) {
+		currentShape = ShapesSetting();
+	}
+	else {
+		currentShape = shapes[selection];
+	}
+	SetShapeFromSettings();
+}
+
+void ShapesEdition::OnListChanged(wxCommandEvent& evt)
+{
+	if (CheckModified()) {
+		if (KaiMessageBox(wxString::Format(_("Zapisaæ zmiany tagu \"%s\"?"),
+			currentShape.shape), _("Potwierdzenie"), wxYES_NO, this) == wxYES) {
+			Save(ID_BUTTON_COMMIT);
+		}
+	}
+	SetShape(shapeList->GetSelection());
+}
+
+void ShapesEdition::UpdateShape()
+{
+	currentShape.name = shapeName->GetValue();
+	currentShape.shape = shapeAsASS->GetValue();
+	currentShape.mode = mode->GetSelection();
+	currentShape.scalingMode = scalingMode->GetSelection();
+}
+
+void ShapesEdition::SetShapeFromSettings()
+{
+	shapeName->SetValue(currentShape.name);
+	shapeAsASS->SetValue(currentShape.shape);
+	mode->SetSelection(currentShape.mode);
+	scalingMode->SetSelection(currentShape.scalingMode);
+}
+
+void ShapesEdition::SetShape(int num)
+{
+	if (num < 0 || num >= shapes.size())
+		num = 0;
+
+	currentShape = shapes[num];
+	selection = num;
+	SetShapeFromSettings();
 }
 
 bool ShapesEdition::CheckModified()
@@ -196,4 +304,298 @@ void SaveSettings(std::vector<ShapesSetting>* shapes)
 			shape.scalingMode << "\n";
 		ow.PartFileWrite(shapeText);
 	}
+}
+
+Shapes* Shapes::shapethis = NULL;
+
+void Shapes::OnMouseEvent(wxMouseEvent& evt)
+{
+	bool click = evt.LeftDown();
+	bool holding = evt.LeftIsDown();
+
+	int x, y;
+	evt.GetPosition(&x, &y);
+	TabPanel* tab = visual->tab;
+	if (evt.ButtonUp()) {
+		if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+		if (rectangleVisible) {
+			if (drawingRectangle[1].y == drawingRectangle[0].y ||
+				drawingRectangle[1].x == drawingRectangle[0].x)
+				rectangleVisible = false;
+
+			SortPoints();
+		}
+		if (rectangleVisible) {
+			SetDrawingScale();
+			visual->SetClip(false);
+		}
+
+		if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+	}
+
+	if (!holding && rectangleVisible) {
+
+		bool setarrow = false;
+		int test = HitTest(D3DXVECTOR2(x, y));
+		if (test < INSIDE) {
+			setarrow = true;
+			tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+				(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
+				(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
+		}
+		if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+	}
+	if (click || evt.LeftDClick()) {
+		if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+		grabbed = OUTSIDE;
+		float pointx = ((x / visual->zoomScale.x) + visual->zoomMove.x) * visual->coeffW,
+			pointy = ((y / visual->zoomScale.y) + visual->zoomMove.y) * visual->coeffH;
+		if (rectangleVisible) {
+			grabbed = HitTest(D3DXVECTOR2(x, y), true);
+			if (grabbed == INSIDE) {
+				if (drawingRectangle[0].x <= pointx &&
+					drawingRectangle[1].x >= pointx &&
+					drawingRectangle[0].y <= pointy &&
+					drawingRectangle[1].y >= pointy) {
+					visual->diffs.x = x;
+					visual->diffs.y = y;
+				}
+			}
+		}
+		if (!rectangleVisible || grabbed == OUTSIDE) {
+			drawingRectangle[0].x = drawingRectangle[1].x = pointx;
+			drawingRectangle[0].y = drawingRectangle[1].y = pointy;
+			grabbed = OUTSIDE;
+			rectangleVisible = true;
+		}
+
+	}
+	else if (holding && grabbed != -1) {
+		if (grabbed < INSIDE) {
+			if (grabbed & LEFT || grabbed & RIGHT) {
+				x = MID(visual->VideoSize.x, x, visual->VideoSize.width);
+				int posInTable = (grabbed & RIGHT) ? 1 : 0;
+				drawingRectangle[posInTable].x =
+					((((x + visual->diffs.x) / visual->zoomScale.x) + visual->zoomMove.x) * visual->coeffW);
+				if (grabbed & LEFT && drawingRectangle[0].x > drawingRectangle[1].x) {
+					drawingRectangle[0].x = drawingRectangle[1].x;
+				}
+				if (grabbed & RIGHT && drawingRectangle[1].x < drawingRectangle[0].x) {
+					drawingRectangle[1].x = drawingRectangle[0].x;
+				}
+			}
+			if (grabbed & TOP || grabbed & BOTTOM) {
+				y = MID(visual->VideoSize.y, y, visual->VideoSize.height);
+				int posInTable = (grabbed & BOTTOM) ? 1 : 0;
+				drawingRectangle[posInTable].y =
+					((((y + visual->diffs.y) / visual->zoomScale.y) + visual->zoomMove.y) * visual->coeffH);
+				if (grabbed & TOP && drawingRectangle[0].y > drawingRectangle[1].y) {
+					drawingRectangle[0].y = drawingRectangle[1].y;
+				}
+				if (grabbed & BOTTOM && drawingRectangle[1].y < drawingRectangle[0].y) {
+					drawingRectangle[1].y = drawingRectangle[0].y;
+				}
+			}
+		}
+		else if (grabbed == INSIDE) {
+			float movex = (((x - visual->diffs.x) / visual->zoomScale.x) * visual->coeffW),
+				movey = (((y - visual->diffs.y) / visual->zoomScale.y) * visual->coeffH);
+			drawingRectangle[0].x += movex;
+			drawingRectangle[0].y += movey;
+			drawingRectangle[1].x += movex;
+			drawingRectangle[1].y += movey;
+			visual->diffs.x = x;
+			visual->diffs.y = y;
+		}
+		else if (grabbed == OUTSIDE) {
+			float pointx = ((x / visual->zoomScale.x) + visual->zoomMove.x) * visual->coeffW,
+				pointy = ((y / visual->zoomScale.y) + visual->zoomMove.y) * visual->coeffH;
+			drawingRectangle[1].x = pointx;
+			drawingRectangle[1].y = pointy;
+		}
+		SetDrawingScale();
+		if (rectangleVisible)
+			visual->SetClip(true);
+		else
+			tab->Video->Render(false);
+	}
+}
+
+void Shapes::OnPaint()
+{
+
+}
+
+void Shapes::SetShape(int curshape)
+{
+	if (!shapes->size() || curshape == shape)
+		return;
+
+	if (curshape <= 0)
+		shape = -1;
+	if (curshape > shapes->size()) {
+		shape = shapes->size() - 1;
+	}
+	currentShape = (*shapes)[shape];
+	visual->GetVectorPoints(currentShape.shape, &points);
+	shapeSize = visual->CalcDrawingSize(visual->alignment, &points, true);
+
+	if (!points.empty()) {
+		D3DXVECTOR2 offsetxy = visual->CalcDrawingSize(visual->alignment, &points);
+		float rad = 0.01745329251994329576923690768489f;
+		D3DXVECTOR2 orgpivot = { abs(visual->org.x - visual->_x), abs(visual->org.y - visual->_y) };
+		float s = sin(-visual->frz * rad);
+		float c = cos(-visual->frz * rad);
+		for (size_t i = 0; i < points.size(); i++) {
+			points[i].x -= offsetxy.x;
+			points[i].y -= offsetxy.y;
+			if (visual->frz)
+				visual->RotateDrawing(&points[i], s, c, orgpivot);
+		}
+	}
+}
+
+void Shapes::GetVisual(wxString* drawing)
+{
+	wxString format = L"6.2f";
+	wxString lasttype;
+	int countB = 0;
+	bool spline = false;
+	size_t psize = points.size();
+	std::vector<ClipPoint> originalPoints;
+
+	if (visual->frz) {
+		float rad = 0.01745329251994329576923690768489f;
+		D3DXVECTOR2 orgpivot = { abs(visual->org.x - visual->_x), abs(visual->org.y - visual->_y) };
+		float s = sin(visual->frz * rad);
+		float c = cos(visual->frz * rad);
+		originalPoints = points;
+		for (size_t i = 0; i < psize; i++) {
+			visual->RotateDrawing(&points[i], s, c, orgpivot);
+		}
+	}
+	D3DXVECTOR2 offsetxy = visual->CalcDrawingSize(visual->alignment, &points);
+
+
+	for (size_t i = 0; i < psize; i++)
+	{
+		ClipPoint pos = points[i];
+		float x = currentShape.mode == ShapesSetting::CHANGE_POINTS? 
+			(pos.x / scale.x) + offsetxy.x :  pos.x + offsetxy.x;
+		float y = currentShape.mode == ShapesSetting::CHANGE_POINTS ? 
+			(pos.y / scale.y) + offsetxy.y : pos.y + offsetxy.y;
+
+		if (countB && !pos.start) {
+			*drawing << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+			countB++;
+		}
+		else {
+			if (spline) { 
+				*drawing << L"c "; 
+				spline = false; 
+			}
+			if (lasttype != pos.type || pos.type == L"m") { 
+				*drawing << pos.type << L" ";
+				lasttype = pos.type; 
+			}
+			*drawing << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+			if (pos.type == L"b" || pos.type == L"s") {
+				countB = 1;
+				if (pos.type == L"s")
+					spline = true;
+			}
+		}
+		//fix for m one after another
+		if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
+			(i < psize - 1 && points[i + 1].type == L"m"))) {
+			*drawing << L"l " << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+		}
+	}
+	if (spline) { *drawing << L"c "; }
+	drawing->Trim();
+	if (originalPoints.size()) {
+		points = originalPoints;
+	}
+}
+
+void Shapes::SetScale(wxString* txt, size_t position)
+{
+	
+}
+
+int Shapes::HitTest(const D3DXVECTOR2& pos, bool diff)
+{
+	int resultX = 0, resultY = 0, resultInside = 0, resultFinal = 0, oldpointx = 0, oldpointy = 0;
+	for (int i = 0; i < 2; i++) {
+		float pointx = ((drawingRectangle[i].x / visual->coeffW) - visual->zoomMove.x) * visual->zoomScale.x,
+			pointy = ((drawingRectangle[i].y / visual->coeffH) - visual->zoomMove.y) * visual->zoomScale.y;
+		//bool hasResult = false;
+		if (abs(pos.x - pointx) < 5) {
+			if (diff) {
+				visual->diffs.x = pointx - pos.x;
+			}
+			resultX |= (i + 1);
+		}
+		if (abs(pos.y - pointy) < 5) {
+			if (diff) {
+				visual->diffs.y = pointy - pos.y;
+			}
+			resultY |= ((i + 1) * 4);
+		}
+		if (i) {
+			resultInside |= (resultX ||
+				(oldpointx <= pointx && oldpointx <= pos.x && pointx >= pos.x) ||
+				(oldpointx >= pointx && oldpointx >= pos.x && pointx <= pos.x)) ? INSIDE : OUTSIDE;
+			resultInside |= (resultY ||
+				(oldpointx <= pointx && oldpointy <= pos.y && pointy >= pos.y) ||
+				(oldpointx >= pointx && oldpointy >= pos.y && pointy <= pos.y)) ? INSIDE : OUTSIDE;
+		}
+		else {
+			oldpointx = pointx;
+			oldpointy = pointy;
+		}
+	}
+
+	resultFinal = (resultInside & OUTSIDE) ? OUTSIDE : INSIDE;
+	if (resultFinal == INSIDE) {
+		resultFinal |= resultX;
+		resultFinal |= resultY;
+		if (resultFinal > INSIDE) { resultFinal ^= INSIDE; }
+	}
+	return resultFinal;
+}
+
+void Shapes::SortPoints()
+{
+	if (drawingRectangle[1].y < drawingRectangle[0].y) {
+		float tmpy = drawingRectangle[0].y;
+		drawingRectangle[0].y = drawingRectangle[1].y;
+		drawingRectangle[1].y = tmpy;
+	}
+	if (drawingRectangle[1].x < drawingRectangle[0].x) {
+		float tmpx = drawingRectangle[0].x;
+		drawingRectangle[0].x = drawingRectangle[1].x;
+		drawingRectangle[1].x = tmpx;
+	}
+}
+
+void Shapes::SetDrawingScale()
+{
+	if (rectangleVisible) {
+		int an = visual->alignment;
+		//float bordery = border.y / 2;
+		//float borderx = border.x / 2;
+		//need to use rectangle[0] > rectangle[1]
+		float rectx = drawingRectangle[0].x < drawingRectangle[1].x ?
+			drawingRectangle[0].x : drawingRectangle[1].x;
+		float recty = drawingRectangle[0].y < drawingRectangle[1].y ?
+			drawingRectangle[0].y : drawingRectangle[1].y;
+		float rectx1 = drawingRectangle[0].x > drawingRectangle[1].x ?
+			drawingRectangle[0].x : drawingRectangle[1].x;
+		float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
+			drawingRectangle[0].y : drawingRectangle[1].y;
+		
+		
+	}
+
 }

@@ -46,6 +46,7 @@ class Dialogue;
 class TabPanel;
 class DrawingAndClip;
 class TextEditor;
+class Shapes;
 
 class ClipPoint
 {
@@ -115,7 +116,7 @@ public:
 	void SetModified(int action, bool dummy = false);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
 	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL);
-	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points);
+	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment = false);
 	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
@@ -432,7 +433,7 @@ public:
 	D3DXVECTOR2 diffs;
 };
 
-class DrawingAndClip : public Visuals
+class DrawingAndClip : public Visuals, Shapes
 {
 public:
 	DrawingAndClip();
@@ -458,11 +459,14 @@ public:
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){
+		shapeSelection = _tool >> 6;
+		int clipTool = _tool << 26;
+		clipTool >>= 26;
 		//invert clip
-		if (_tool == 6) {
+		if (clipTool == 6) {
 			InvertClip();
 		}else
-			tool = _tool;
+			tool = clipTool;
 	};
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
@@ -492,6 +496,7 @@ public:
 	int lastpos;
 	float pointArea;
 	int vectorScale;
+	int shapeSelection = 0;
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;
@@ -528,7 +533,6 @@ private:
 	void CheckRange(float val);
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	std::vector<AllTagsSetting> *tags;
-	//std::vector<AllTagsData *> data;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";
 	bool holding[2] = { false, false };

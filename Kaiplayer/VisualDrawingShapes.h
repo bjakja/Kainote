@@ -19,6 +19,7 @@
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
 #include <vector>
+#include "Visuals.h"
 
 class ShapesSetting
 {
@@ -84,6 +85,42 @@ private:
 	std::vector<ShapesSetting> shapes;
 	ShapesSetting currentShape;
 	int selection = 0;
+};
+
+class Shapes {
+public:
+	Shapes(DrawingAndClip* vis) : visual(vis) { 
+		shapethis = this;
+	};
+	~Shapes() { delete shapes; };
+	static std::vector<ShapesSetting>* GetShapes() { return shapethis->shapes; };
+	static void SetShapes(std::vector<ShapesSetting>* shapes) { 
+		if (shapethis->shapes) {
+			delete shapethis->shapes;
+			shapethis->shapes = NULL;
+		}
+		shapethis->shapes = new std::vector<ShapesSetting>(*shapes); 
+	}
+	void OnMouseEvent(wxMouseEvent& evt);
+	void OnPaint();
+	void SetShape(int shape);
+	void GetVisual(wxString* drawing);
+	void SetScale(wxString* txt, size_t position);
+private:
+	void SortPoints();
+	void SetDrawingScale();
+	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
+	DrawingAndClip* visual = NULL;
+	std::vector<ShapesSetting> *shapes = NULL;
+	int shape = 0;
+	ShapesSetting currentShape;
+	std::vector<ClipPoint> points;
+	static Shapes* shapethis;
+	D3DXVECTOR2 shapeSize;
+	D3DXVECTOR2 scale = D3DXVECTOR2(1.f, 1.f);
+	D3DXVECTOR2 drawingRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
+	bool rectangleVisible = false;
+	int grabbed = -1;
 };
 
 void LoadSettings(std::vector<ShapesSetting>* shapes);

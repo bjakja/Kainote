@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "VideoToolbar.h"
+#include "VisualDrawingShapes.h"
 #include "Config.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
@@ -406,7 +407,10 @@ void MoveAllItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 
 void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 {
-	int startDrawPos = w - (h * numIcons);
+	int startDrawPos = w - (h * numIcons) - shapeListWidth;
+	if (shapeListSelection)
+		return;
+
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
@@ -457,22 +461,23 @@ void VectorItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 
 void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 {
-	int posX = w - (h * numIcons);
+	int posX = w - (h * numIcons) - shapeListWidth;
 	int i = 0;
 	while (i < numIcons){
 		wxBitmap *icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()){
-			if (i == selection){
-				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
-				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
-				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+			if (shapeListSelection) {
+				if (i == selection) {
+					dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+					dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+					dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+				}
+				else if (i == toggled) {
+					dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
+					dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
+					dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
+				}
 			}
-			else if (i == toggled){
-				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
-				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
-				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
-			}
-
 			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2), true);
 			posX += h;
 		}
@@ -483,6 +488,7 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 void VectorItem::HideContols()
 {
 	if (isDrawing && shapeList) {
+		shapeListSelection = shapeList->GetSelection();
 		shapeList->Destroy();
 		shapeList = NULL;
 	}
@@ -491,14 +497,53 @@ void VectorItem::HideContols()
 void VectorItem::ShowContols(VideoToolbar* vt)
 {
 	if (isDrawing) {
-		shapeList = new KaiChoice(vt, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, );
+		auto *shapes = Shapes::GetShapes();
+		wxArrayString list;
+		GetNames(shapes, &list);
+		list.Insert(_("Wybierz"), 0);
+		list.Add(_("Edytuj"));
+		shapeList = new KaiChoice(vt, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, list);
+		shapeList->SetToolTip(_("Lista gotowych rysunków ASS z możliwością edycji.\nPo wybraniu rysunku z listy należy ustawić kursor\nw miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."));
+		shapeList->SetSelection(selection);
+
+		auto sendItemToggled = [=](wxCommandEvent& evt) {
+			int listSelection = shapeList->GetSelection();
+			if (listSelection > shapes->size()) {
+				ShapesEdition se(vt, wxPoint(), shapes, shapeListSelection);
+				if (se.ShowModal() == wxID_OK) {
+					auto *shapes = se.GetShapes();
+					Shapes::SetShapes(shapes);
+					wxArrayString names;
+					GetNames(shapes, &names);
+					shapeList->PutArray(&names);
+					shapeListSelection = shapeList->GetSelection();
+				}
+				else
+					return;
+			}
+			wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+			event->SetInt(GetItemToggled());
+			wxQueueEvent(vt, event);
+			wxWindow* grandParent = vt->GetGrandParent();
+			grandParent->SetFocus();
+		};
+
+		vt->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_SHAPE_LIST);
+		OnSize(vt);
 	}
 }
 
 void VectorItem::OnSize(VideoToolbar* vt)
 {
 	if (isDrawing) {
-
+		int maxWidth = vt->GetEndDrawPos();
+		wxSize ans = shapeList->GetBestSize();
+		wxSize vts = vt->GetSize();
+		wxPoint pos(maxWidth - 2 - ans.x, 1);
+		shapeList->SetPosition(pos);
+		ans.y = vts.y - 2;
+		shapeList->SetSize(ans);
+		shapeListWidth = ans.x + 4;
 	}
 }
 

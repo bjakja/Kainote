@@ -49,7 +49,6 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 }
 
 FontList::~FontList(){
-	FontEnum.RemoveClient(this);
 	if (bmp){ delete bmp; bmp = 0; }
 	if (fonts) { delete fonts; fonts = NULL; }
 }
@@ -557,6 +556,7 @@ FontDialog::~FontDialog()
 		resultStyle = NULL;
 	}
 	FDialog = NULL;
+	FontEnum.RemoveClient(this);
 }
 
 void FontDialog::GetStyles(Styles **inputStyle, Styles **outputStyle)
@@ -586,7 +586,6 @@ Styles * FontDialog::GetFont()
 FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle, bool changePointToPixel)
 {
 	if (FDialog && FDialog->GetParent() != parent){
-		FontEnum.RemoveClient(FDialog);
 		FDialog->Destroy();
 		FDialog = NULL;
 	}

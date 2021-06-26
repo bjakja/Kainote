@@ -97,7 +97,14 @@ public:
 		VectorItem *ci = (VectorItem*)item;
 		toggled = ci->toggled;
 	};
-	int GetItemToggled(){ return toggled; };
+	int GetItemToggled(){ 
+		int value12 = toggled;
+		if (shapeListSelection) {
+			int value2 = shapeListSelection << 6;
+			value12 += value2;
+		}
+		return value12;
+	};
 	void SetItemToggled(int *item){ 
 		toggled = *item;
 		if (toggled < 0)
@@ -114,6 +121,8 @@ public:
 	bool isDrawing = false;
 	static const int ID_SHAPE_LIST = 6789;
 	KaiChoice* shapeList = NULL;
+	int shapeListWidth = 0;
+	int shapeListSelection = 0;
 };
 
 class ScaleRotationItem : public VisualItem

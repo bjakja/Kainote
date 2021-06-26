@@ -1088,10 +1088,9 @@ void Visuals::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle
 	point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
 }
 
-D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* points)
+D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment)
 {
-	if (alignment == 7 || points->size() < 1) { return D3DXVECTOR2(0, 0); }
-	float offx = 0, offy = 0;
+	if ((alignment == 7 && !withoutAlignment) || points->size() < 1) { return D3DXVECTOR2(0, 0); }
 
 	float minx = FLT_MAX;
 	float miny = FLT_MAX;
@@ -1105,7 +1104,10 @@ D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* poin
 		if (p.x > maxx) { maxx = p.x; }
 		if (p.y > maxy) { maxy = p.y; }
 	}
-	D3DXVECTOR2 sizes((maxx - minx) + offx, (maxy - miny) + offy);
+	D3DXVECTOR2 sizes((maxx - minx), (maxy - miny));
+	if (withoutAlignment)
+		return sizes;
+
 	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
 	if (alignment % 3 == 2) {
 		result.x = sizes.x / 2.0;

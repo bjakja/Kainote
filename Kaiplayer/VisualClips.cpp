@@ -18,6 +18,7 @@
 #include <wx/regex.h>
 #include <math.h> 
 #include "KaiMessageBox.h"
+#include "VisualDrawingShapes.h"
 
 
 ClipPoint::ClipPoint()
@@ -65,6 +66,7 @@ float ClipPoint::wy(DrawingAndClip *parent, bool zoomConversion)
 
 DrawingAndClip::DrawingAndClip()
 	:Visuals()
+	, Shapes(this)
 	, drawtxt(false)
 	, invClip(false)
 	, drawSelection(false)
