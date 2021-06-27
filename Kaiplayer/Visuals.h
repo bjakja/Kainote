@@ -46,7 +46,6 @@ class Dialogue;
 class TabPanel;
 class DrawingAndClip;
 class TextEditor;
-class Shapes;
 
 class ClipPoint
 {
@@ -433,14 +432,14 @@ public:
 	D3DXVECTOR2 diffs;
 };
 
-class DrawingAndClip : public Visuals, Shapes
+class DrawingAndClip : public Visuals
 {
 public:
 	DrawingAndClip();
 	~DrawingAndClip();
 	void DrawVisual(int time);
-	void OnMouseEvent(wxMouseEvent &event);
-	void GetVisual(wxString *visual);
+	virtual void OnMouseEvent(wxMouseEvent &event);
+	virtual void GetVisual(wxString *visual);
 	void ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString *visualText);
 	void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true);
 	void SetCurVisual();
@@ -460,6 +459,8 @@ public:
 	void ChangeSelection(bool select = false);
 	void ChangeTool(int _tool){
 		shapeSelection = _tool >> 6;
+		//set shape to Shapes class above
+		SetShape(shapeSelection);
 		int clipTool = _tool << 26;
 		clipTool >>= 26;
 		//invert clip
@@ -477,6 +478,7 @@ public:
 	void CreateClipMask(const wxString &clip, wxString *clipTag = NULL);
 	void InvertClip();
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale) override;
+	virtual void SetShape(int shape) {};
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

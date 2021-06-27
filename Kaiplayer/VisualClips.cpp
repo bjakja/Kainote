@@ -66,7 +66,6 @@ float ClipPoint::wy(DrawingAndClip *parent, bool zoomConversion)
 
 DrawingAndClip::DrawingAndClip()
 	:Visuals()
-	, Shapes(this)
 	, drawtxt(false)
 	, invClip(false)
 	, drawSelection(false)

@@ -87,9 +87,9 @@ private:
 	int selection = 0;
 };
 
-class Shapes {
+class Shapes : public DrawingAndClip {
 public:
-	Shapes(DrawingAndClip* vis) : visual(vis) { 
+	Shapes() { 
 		shapethis = this;
 	};
 	~Shapes() { delete shapes; };
@@ -101,10 +101,10 @@ public:
 		}
 		shapethis->shapes = new std::vector<ShapesSetting>(*shapes); 
 	}
-	void OnMouseEvent(wxMouseEvent& evt);
-	void OnPaint();
-	void SetShape(int shape);
-	void GetVisual(wxString* drawing);
+	void OnMouseEvent(wxMouseEvent& evt) override;
+	void DrawVisual(int time) override;
+	void SetShape(int shape) override;
+	void GetVisual(wxString* drawing) override;
 	void SetScale(wxString* txt, size_t position);
 private:
 	void SortPoints();

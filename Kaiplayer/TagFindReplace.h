@@ -78,6 +78,10 @@ public:
 	int ChangeText(wxString* txt, const wxString& what, bool inbracket, const wxPoint& pos);
 	bool TagValueFromStyle(Styles* style, const wxString& tag, wxString *value);
 	bool TagValueToStyle(Styles* style, const wxString& tag, const wxString& value);
+	void SetFromTo(long _from, long _to) {
+		from = _from;
+		to = _to;
+	};
 private:
 	//bool DoFindNextTag();
 	FindData result;

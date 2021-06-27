@@ -17,6 +17,7 @@
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
+#include "VisualDrawingShapes.h"
 #include <wx/regex.h>
 
 
@@ -50,8 +51,9 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 		visual = new ClipRect();
 		break;
 	case VECTORCLIP:
-	case VECTORDRAW:
 		visual = new DrawingAndClip();
+	case VECTORDRAW:
+		visual = new Shapes();
 		break;
 	/*case SCALE_ROTATION:
 		visual = new ScaleRotation();
