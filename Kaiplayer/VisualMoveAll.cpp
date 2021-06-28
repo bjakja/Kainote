@@ -273,12 +273,11 @@ void MoveAll::SetCurVisual()
 	if (FindTag(L"p([0-9]+)", L"", 1)){
 		wxString tags[] = { L"p" };
 		wxString res;
-		tab->Edit->line->ParseTags(tags, 1);
-		ParseData* pdata = tab->Edit->line->parseData;
+		ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
 		if (pdata->tags.size() >= 2) {
 			size_t i = 1;
 			while (i < pdata->tags.size()) {
-				if (!pdata->tags[i]->value.IsNumber()) {
+				if (pdata->tags[i]->tagName == L"pvector") {
 					res = pdata->tags[1]->value;
 					break;
 				}

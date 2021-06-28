@@ -63,6 +63,7 @@ private:
 	void OnAddShape(wxCommandEvent& evt);
 	void OnRemoveShape(wxCommandEvent& evt);
 	void OnListChanged(wxCommandEvent& evt);
+	void OnGetShapeFromLine(wxCommandEvent& evt);
 	void UpdateShape();
 	void SetShapeFromSettings();
 	void SetShape(int num);
@@ -72,9 +73,10 @@ private:
 		ID_SHAPE_LIST = 7809,
 		ID_BUTTON_ADD_SHAPE,
 		ID_BUTTON_REMOVE_SHAPE,
-		ID_BUTTON_COMMIT,
 		ID_BUTTON_OK,
-		ID_BUTTON_RESET_DEFAULT
+		ID_BUTTON_COMMIT,
+		ID_BUTTON_RESET_DEFAULT,
+		ID_BUTTON_GET_SHAPE_FROM_LINE
 	};
 	KaiChoice* shapeList;
 	KaiChoice* mode;
@@ -89,35 +91,26 @@ private:
 
 class Shapes : public DrawingAndClip {
 public:
-	Shapes() { 
-		shapethis = this;
-	};
-	~Shapes() { delete shapes; };
-	static std::vector<ShapesSetting>* GetShapes() { return shapethis->shapes; };
-	static void SetShapes(std::vector<ShapesSetting>* shapes) { 
-		if (shapethis->shapes) {
-			delete shapethis->shapes;
-			shapethis->shapes = NULL;
-		}
-		shapethis->shapes = new std::vector<ShapesSetting>(*shapes); 
-	}
+	Shapes();
+	//~Shapes() { };
 	void OnMouseEvent(wxMouseEvent& evt) override;
 	void DrawVisual(int time) override;
 	void SetShape(int shape) override;
 	void GetVisual(wxString* drawing) override;
-	void SetScale(wxString* txt, size_t position);
+	void SetScale(wxString* txt, size_t position, int* diff) override;
 private:
 	void SortPoints();
 	void SetDrawingScale();
+	D3DXVECTOR2 PointToVideo(const D3DXVECTOR2& point);
+	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
-	DrawingAndClip* visual = NULL;
 	std::vector<ShapesSetting> *shapes = NULL;
-	int shape = 0;
+	int shape = -1;
 	ShapesSetting currentShape;
 	std::vector<ClipPoint> points;
-	static Shapes* shapethis;
 	D3DXVECTOR2 shapeSize;
 	D3DXVECTOR2 scale = D3DXVECTOR2(1.f, 1.f);
+	//D3DXVECTOR2 position = D3DXVECTOR2(0.f, 0.f);
 	D3DXVECTOR2 drawingRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
 	bool rectangleVisible = false;
 	int grabbed = -1;

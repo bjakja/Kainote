@@ -610,8 +610,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 	{
 		Dialogue *dial = subs->GetDialogue(i);
 		if (dial->IsComment){ continue; }
-		dial->ParseTags(tags, 4, true);
-		ParseData *pdata = dial->parseData;
+		ParseData* pdata = dial->ParseTags(tags, 4, true);
 		if (!pdata){ continue; }
 
 		const wxString &text = dial->GetTextNoCopy();
@@ -629,7 +628,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 		for (size_t j = 0; j < tagsSize; j++)
 		{
 			TagData *tag = pdata->tags[j];
-			if (tag->tagName == L"p"){ continue; }
+			if (tag->tagName == L"p" || tag->tagName == L"pvector"){ continue; }
 
 			if (tag->tagName == L"plain"){
 				textHavingFont += tag->value;

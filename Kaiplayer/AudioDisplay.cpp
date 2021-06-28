@@ -751,7 +751,7 @@ void AudioDisplay::DrawInactiveLines() {
 		if (j == line_n) continue;
 		if (j < 0 || j >= grid->GetCount()) continue;
 		shade = grid->GetDialogue(j);
-		if (!shade->isVisible)
+		if (shade && !shade->isVisible)
 			continue;
 
 		// Get coordinates

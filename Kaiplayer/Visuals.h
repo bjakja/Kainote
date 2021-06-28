@@ -440,7 +440,7 @@ public:
 	void DrawVisual(int time);
 	virtual void OnMouseEvent(wxMouseEvent &event);
 	virtual void GetVisual(wxString *visual);
-	void ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString *visualText);
+	void ChangeVectorVisual(wxString *txt, wxString *visualText, wxPoint *changePos = NULL, wxString *clipMaskTag = NULL);
 	void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true);
 	void SetCurVisual();
 	void SetPos(int x, int y);
@@ -460,7 +460,9 @@ public:
 	void ChangeTool(int _tool){
 		shapeSelection = _tool >> 6;
 		//set shape to Shapes class above
-		SetShape(shapeSelection);
+		if(Visual == VECTORDRAW)
+			SetShape(shapeSelection);
+
 		int clipTool = _tool << 26;
 		clipTool >>= 26;
 		//invert clip
@@ -479,6 +481,7 @@ public:
 	void InvertClip();
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale) override;
 	virtual void SetShape(int shape) {};
+	virtual void SetScale(wxString* txt, size_t position, int *diff) {};
 	std::vector<ClipPoint> Points;
 	ClipPoint acpoint;
 	ClipPoint lastpoint;

@@ -192,12 +192,11 @@ void DrawingAndClip::SetCurVisual()
 		//editor
 		//TextEditor *editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = { L"p" };
-		tab->Edit->line->ParseTags(tags, 1);
-		ParseData *pdata = tab->Edit->line->parseData;
+		ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
 		if (pdata->tags.size() >= 2){
 			size_t i = 1;
 			while (i < pdata->tags.size()){
-				if (!pdata->tags[i]->value.IsNumber()){
+				if (pdata->tags[i]->tagName == L"pvector"){
 					clip = pdata->tags[1]->value;
 					break;
 				}
@@ -347,7 +346,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)) { continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
-			ChangeVectorVisual(&txt, Dial, &clip);
+			ChangeVectorVisual(&txt, &clip);
 			if (!dummy) {
 				grid->CopyDialogue(sels[i])->SetText(txt);
 			}
@@ -391,7 +390,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		}
 		return;
 	}
-	if (clip == L"") {
+	/*if (clip == L"") {
 
 		wxString tmp;
 		wxString txt = editor->GetValue();
@@ -409,7 +408,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		tab->Video->SetVisualEdition(false);
 		RenderSubs(tab->Grid->GetVisible(), redraw);
 		return;
-	}
+	}*/
 	if (dummy) {
 
 		if (!dummytext) {
@@ -424,22 +423,14 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			if (Visual == VECTORCLIP) {
 				wxString tmp = L"clip(";
 				wxString txt = editor->GetValue();
-				bool fv = FindTag(L"(i?clip.)[^)]*\\)", txt, 1);
-				const FindData& data = GetResult();
-				if (fv) {
-					tmp = data.finding;
-				}
-				wxString tmp1 = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
-				wxString tclip = L"\\" + tmp + clip + L")";
-				int posx = data.positionInText.x;
-				posx += tmp.length() + 1 + ChangeText(&txt, tclip, data.inBracket, data.positionInText);
-				int posy = posx + clip.length();
+				wxPoint pos;
+				ChangeVectorVisual(&txt, &clip, &pos, &tmp);
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
 				textplaced.y = txt.length();
-				CreateClipMask(clip, &tmp1);
-				dumplaced.x = posx + textplaced.x;
-				dumplaced.y = posy + textplaced.x;
+				CreateClipMask(clip, &tmp);
+				dumplaced.x = pos.x + textplaced.x;
+				dumplaced.y = pos.y + textplaced.x;
 				if (changeEditorText) {
 					editor->SetTextS(txt, false, true);
 					editor->SetModified();
@@ -447,70 +438,11 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 
 			}
 			else {//vector drawings
-				bool isf;
-				bool hasP1 = true;
 				size_t cliplen = clip.length();
 				wxString txt = editor->GetValue();
-				isf = FindTag(L"p([0-9]+)", txt, 1);
-				if (!isf) {
-					Replace(L"\\p1", &txt);
-					hasP1 = false;
-				}
-				isf = FindTag(L"pos\\(([,. 0-9-]+)\\)", txt, 1);
-				if (!isf) {
-					float xx = _x * scale.x;
-					float yy = _y * scale.y;
-					Replace(L"\\pos(" + getfloat(xx) + L"," + getfloat(yy) + L")", &txt);
-				}
-				isf = FindTag(L"an([0-9])", txt, 1);
-				if (!isf) {
-					Replace(L"\\an" + getfloat(alignment, L"1.0f"), &txt);
-				}
-
-				int bracketPos = 0;
-				while (1) {
-					bracketPos = txt.find(L"}", bracketPos);
-					if (bracketPos < 0 || bracketPos == txt.length() - 1) {
-						break;
-					}
-					bracketPos++;
-					wxString mcheck = txt.Mid(bracketPos, 2);
-					if (!mcheck.StartsWith(L"m ") && !mcheck.StartsWith(L"{")) {
-						txt.insert(bracketPos, L"{");
-						bracketPos++;
-						bracketPos = txt.find(L"{", bracketPos);
-						if (bracketPos < 0) {
-							txt << L"}";
-							break;
-						}
-						txt.insert(bracketPos, L"}");
-					}
-				}
-
-				wxString afterP1 = txt.Mid(GetPositionInText().y);
-				
-				//FIXME: removing first bracket
-				int afterBracket = afterP1.find(L"}") + 1;
-				int Mpos = afterBracket;
-				if (hasP1) {
-					wxString afterP1Brakcet = afterP1.Mid(afterBracket);
-					Mpos = afterP1Brakcet.find(L"m ");
-					if (Mpos == -1)
-						Mpos = afterBracket;
-					else
-						Mpos += afterBracket;
-				}
-				wxString startM = afterP1.Mid(Mpos);
-				int endClip = startM.find(L"{");
-				if (endClip == -1) {
-					if (hasP1) { endClip = startM.length(); }
-					else { endClip = 0; }
-					clip += L"{\\p0}";
-				}
-				else if (!hasP1) {
-					clip += L"{\\p0}";
-				}
-				txt.replace(Mpos + GetPositionInText().y, endClip, clip);
+				wxPoint pos;
+				//pos here has length instead second pos
+				ChangeVectorVisual(&txt, &clip, &pos);
 
 				if (changeEditorText) {
 					editor->SetTextS(txt, false, true);
@@ -519,7 +451,8 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 
 				dummytext->replace(textplaced.x, textplaced.y, txt);
 				textplaced.y = txt.length();
-				dumplaced.x = GetPositionInText().y + Mpos + textplaced.x; dumplaced.y = dumplaced.x + cliplen;
+				dumplaced.x = pos.x + textplaced.x;
+				dumplaced.y = dumplaced.x + cliplen;
 
 			}
 		}
@@ -560,7 +493,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 	}
 }
 
-void DrawingAndClip::ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString *clip)
+void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* changePos, wxString* clipMaskTag)
 {
 
 	if (Visual == VECTORCLIP) {
@@ -573,7 +506,14 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString
 			return;
 		}
 		wxString tclip = L"\\" + tmp + *clip + L")";
-		Replace(tclip, txt);
+		int move = Replace(tclip, txt);
+		if (changePos) {
+			if(clipMaskTag)
+			*clipMaskTag = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
+			changePos->x = GetPositionInText().x;
+			changePos->x += tmp.length() + 1 + move;
+			changePos->y = changePos->x + clip->length();
+		}
 	}
 	else {//vector drawings
 		//wxString tmp = L"";
@@ -638,8 +578,18 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, Dialogue *_dial, wxString
 		else if (!hasP1) {
 			p0 += L"{\\p0}";
 		}
-		txt->replace(Mpos + GetPositionInText().y, endDrawing, *clip + p0);
-
+		size_t startOfDrawing = Mpos + GetPositionInText().y;
+		txt->replace(startOfDrawing, endDrawing, *clip + p0);
+		if (shapeSelection) {
+			int diff = 0;
+			SetScale(txt, startOfDrawing, &diff);
+			startOfDrawing += diff;
+			endDrawing += diff;
+		}
+		if (changePos) {
+			changePos->x = startOfDrawing;
+			changePos->y = endDrawing;
+		}
 	}
 }
 

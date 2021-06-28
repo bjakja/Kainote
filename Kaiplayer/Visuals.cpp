@@ -52,6 +52,7 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 		break;
 	case VECTORCLIP:
 		visual = new DrawingAndClip();
+		break;
 	case VECTORDRAW:
 		visual = new Shapes();
 		break;
@@ -927,8 +928,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	else
 		measuringStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style)->Copy();
 
-	dial->ParseTags(tags, 9, true);
-	ParseData *presult = dial->parseData;
+	ParseData* presult = dial->ParseTags(tags, 9, true);
 	float bord = measuringStyle->GetOtlineDouble();
 	float xbord = bord;
 	float xbord1 = bord;

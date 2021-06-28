@@ -889,8 +889,7 @@ namespace Auto{
 		set_field(L, "text_stripped", "");
 		lua_rawseti(L, -2, kcount++);
 		wxString tags[] = { L"kf", L"ko", L"k", L"K" };
-		e->adial->ParseTags(tags, 4);
-		ParseData *Data = e->adial->parseData;
+		ParseData* Data = e->adial->ParseTags(tags, 4);
 		//wxStringTokenizer ktok(e->adial->Text,"\\",wxTOKEN_STRTOK);
 		const wxString & text = e->adial->Text;
 		size_t lastPosition = 0;

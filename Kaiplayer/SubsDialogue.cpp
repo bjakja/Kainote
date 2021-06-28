@@ -65,7 +65,6 @@ Dialogue::Dialogue()
 	State = 0;
 	NonDialogue = false;
 	IsComment = false;
-	parseData = NULL;
 }
 
 Dialogue::~Dialogue()
@@ -653,9 +652,12 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 
 //Remember parse patterns need "tag1|tag2|..." without slashes.
 //Remember string position is start of the value, position of tag -=tagname.len+1
-void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
+ParseData* Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 {
-	if (parseData){ return; }
+	if (parseData) {
+		delete parseData; 
+		parseData = NULL;
+	}
 	wxString txt = (TextTl != L"") ? TextTl : Text;
 	size_t pos = 0;
 	size_t plainStart = 0;
@@ -664,7 +666,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 	bool tagsBlock = false;
 	parseData = new ParseData();
 	double tmpValue;
-	if (len < 1){ return; }
+	if (len < 1){ return parseData; }
 	while (pos < len){
 		wxUniChar ch = txt[pos];
 		if (ch == L'}'){ tagsBlock = false; plainStart = pos + 1; }
@@ -673,7 +675,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 			if (pos >= len - 1){ pos++; }
 			//to not crash the program when subtract from unsigned 0 just add 1 to plain start
 			if ((plainText || hasDrawing) && plainStart + 1 <= pos){
-				TagData *newTag = new TagData((hasDrawing) ? L"p" : L"plain", plainStart);
+				TagData *newTag = new TagData((hasDrawing) ? L"pvector" : L"plain", plainStart);
 				newTag->PutValue(txt.SubString(plainStart, pos - 1));
 				parseData->AddData(newTag);
 			}
@@ -727,6 +729,7 @@ void Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 		}
 		pos++;
 	}
+	return parseData;
 }
 //adding this time
 void Dialogue::ChangeTimes(int start, int end)

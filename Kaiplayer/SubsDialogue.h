@@ -257,6 +257,7 @@ private:
 	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
 	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
 	//StoreTextHelper Text, TextTl;
+	ParseData* parseData = NULL;
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;
@@ -265,7 +266,6 @@ public:
 	char Format, treeState = 0;
 	bool NonDialogue, IsComment;
 	StoreHelper isVisible;
-	ParseData *parseData;
 
 	char GetState();
 	//it works like XOR
@@ -279,7 +279,10 @@ public:
 	wxString GetCols(int cols, bool tl = false, const wxString &style = L"");
 	void Convert(char type, const wxString &pref = L"");
 	Dialogue *Copy(bool keepstate = false, bool copyIsVisible = true);
-	void ParseTags(wxString *tags, size_t n, bool plainText = false);
+	//Remember parse patterns need "tag1|tag2|..." without slashes.
+	//Remember string position is start of the value, position of tag -=tagname.len+1
+	//vector value has tagName "pvector" to make easier to find and avoid bugs
+	ParseData* ParseTags(wxString *tags, size_t n, bool plainText = false);
 	void ChangeTimes(int start, int end);
 	void ClearParse();
 	void GetTextElement(int element, wxString *elementText, bool appendTextTL = false);

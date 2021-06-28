@@ -21,6 +21,7 @@
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
 #include "VisualAllTagsEdition.h"
+#include "VisualDrawingShapes.h"
 
 class itemdata{
 public:
@@ -311,6 +312,15 @@ public:
 	static void SetTagsSettings(std::vector<AllTagsSetting>* _tags) {
 		tags = *_tags;
 	}
+	static std::vector<ShapesSetting>* GetShapesSettings() {
+		if (!shapes.size()) {
+			LoadSettings(&shapes);
+		}
+		return &shapes;
+	}
+	static void SetShapesSettings(std::vector<ShapesSetting>* _shapes) {
+		shapes = *_shapes;
+	}
 	void DisableVisuals(bool Disable){ 
 		iconsEnabled = !Disable; 
 		Toggled = 0;
@@ -347,6 +357,7 @@ private:
 	wxBitmap *bmp;
 	std::vector<VisualItem*> visualItems;
 	static std::vector<AllTagsSetting> tags;
+	static std::vector<ShapesSetting> shapes;
 	int startDrawPos = 2;
 	int endDrawPos = 162;
 };

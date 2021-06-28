@@ -14,13 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "VideoToolbar.h"
-#include "VisualDrawingShapes.h"
 #include "Config.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
 std::vector<AllTagsSetting> VideoToolbar::tags;
+std::vector<ShapesSetting> VideoToolbar::shapes;
 std::vector<itemdata*> VideoToolbar::icons;
 
 VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &size)
@@ -466,7 +466,7 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 	while (i < numIcons){
 		wxBitmap *icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()){
-			if (shapeListSelection) {
+			if (!shapeListSelection) {
 				if (i == selection) {
 					dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
 					dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
@@ -497,29 +497,37 @@ void VectorItem::HideContols()
 void VectorItem::ShowContols(VideoToolbar* vt)
 {
 	if (isDrawing) {
-		auto *shapes = Shapes::GetShapes();
+		auto *shapes = VideoToolbar::GetShapesSettings();
 		wxArrayString list;
 		GetNames(shapes, &list);
 		list.Insert(_("Wybierz"), 0);
 		list.Add(_("Edytuj"));
 		shapeList = new KaiChoice(vt, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, list);
 		shapeList->SetToolTip(_("Lista gotowych rysunków ASS z możliwością edycji.\nPo wybraniu rysunku z listy należy ustawić kursor\nw miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."));
-		shapeList->SetSelection(selection);
+		shapeList->SetSelection(shapeListSelection);
 
 		auto sendItemToggled = [=](wxCommandEvent& evt) {
 			int listSelection = shapeList->GetSelection();
 			if (listSelection > shapes->size()) {
 				ShapesEdition se(vt, wxPoint(), shapes, shapeListSelection);
-				if (se.ShowModal() == wxID_OK) {
+				bool isOK = se.ShowModal() == wxID_OK;
+				if (isOK) {
 					auto *shapes = se.GetShapes();
-					Shapes::SetShapes(shapes);
+					VideoToolbar::SetShapesSettings(shapes);
 					wxArrayString names;
 					GetNames(shapes, &names);
 					shapeList->PutArray(&names);
-					shapeListSelection = shapeList->GetSelection();
+					//starts from 1, 0 is inactive
+					if (shapeListSelection > shapes->size()) {
+						shapeListSelection = shapes->size();
+					}
 				}
-				else
+				shapeList->SetSelection(shapeListSelection);
+				if (!isOK)
 					return;
+			}
+			else {
+				shapeListSelection = shapeList->GetSelection();
 			}
 			wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 			event->SetInt(GetItemToggled());
@@ -538,6 +546,7 @@ void VectorItem::OnSize(VideoToolbar* vt)
 	if (isDrawing) {
 		int maxWidth = vt->GetEndDrawPos();
 		wxSize ans = shapeList->GetBestSize();
+		ans.x = 70;
 		wxSize vts = vt->GetSize();
 		wxPoint pos(maxWidth - 2 - ans.x, 1);
 		shapeList->SetPosition(pos);

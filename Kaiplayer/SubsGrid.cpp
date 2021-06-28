@@ -1094,8 +1094,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		/*long long replaceMismatch = 0;*/
 		size_t pos = 0;
 
-		diall->ParseTags(tags, 15, false);
-		ParseData *pdata = diall->parseData;
+		ParseData* pdata = diall->ParseTags(tags, 15, false);
 		if (!pdata){ continue; }
 		size_t tagsSize = pdata->tags.size();
 		//if(tagsSize < 1){continue;}
