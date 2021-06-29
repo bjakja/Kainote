@@ -31,8 +31,9 @@ enum {
 	OUTSIDE = 32
 };
 
-ShapesEdition::ShapesEdition(wxWindow* parent, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape)
-	: KaiDialog(parent, -1, _("Edycja kszta³tów wektorowych"), pos)
+ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape)
+	: KaiDialog(_tab, -1, _("Edycja kszta³tów wektorowych"), pos)
+	, tab(_tab)
 {
 	if (curShape < 0 || curShape >= _shapes->size())
 		curShape = 0;
@@ -69,6 +70,7 @@ ShapesEdition::ShapesEdition(wxWindow* parent, const wxPoint& pos, std::vector<S
 	wxString scalingModes[] = { _("Zmiana koordynatów rysunku"), _("zmiana skali") };
 	scalingMode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 2, scalingModes);
 	scalingMode->SetSelection(currentShape.scalingMode);
+	scalingMode->Enable(false);
 	nameSizer->Add(new KaiStaticText(this, -1, _("Nazwa:")), 1, wxALL | wxEXPAND, 4);
 	nameSizer->Add(shapeName, 1, wxALL | wxEXPAND, 4);
 	modeSizer->Add(new KaiStaticText(this, -1, _("Skalowanie wzglêdem kursora:")), 1, wxALL | wxEXPAND, 4);
@@ -187,8 +189,16 @@ void ShapesEdition::OnListChanged(wxCommandEvent& evt)
 
 void ShapesEdition::OnGetShapeFromLine(wxCommandEvent& evt)
 {
-	//wxString tags[] = { L"p" };
-	//ParseData *pdata = 
+	wxString tags[] = { L"p" };
+	ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
+	if (pdata->tags.size()) {
+		for (size_t i = 0; i < pdata->tags.size(); i++) {
+			TagData* tag = pdata->tags[i];
+			if (tag->tagName == L"pvector") {
+				//coœ w stylu podaj nazwê dla rysunku ass
+			}
+		}
+	}
 }
 
 void ShapesEdition::UpdateShape()
@@ -427,7 +437,8 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 		else if (grabbed == OUTSIDE) {
 			drawingRectangle[1] = PointToSubtitles(x, y);
 		}
-		if (currentShape.mode == ShapesSetting::BOTH_SCALE_X && grabbed != INSIDE) {
+		bool bothScaleX = currentShape.mode == ShapesSetting::BOTH_SCALE_X;
+		if ((bothScaleX && !evt.ShiftDown() || !bothScaleX && evt.ShiftDown()) && grabbed != INSIDE) {
 			SetSquareShape(axisX);
 		}
 		SetDrawingScale();

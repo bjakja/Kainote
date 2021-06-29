@@ -15,6 +15,7 @@
 
 #include "VideoToolbar.h"
 #include "Config.h"
+#include "Tabs.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
@@ -509,7 +510,7 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 		auto sendItemToggled = [=](wxCommandEvent& evt) {
 			int listSelection = shapeList->GetSelection();
 			if (listSelection > shapes->size()) {
-				ShapesEdition se(vt, wxPoint(), shapes, shapeListSelection);
+				ShapesEdition se(Notebook::GetTab(), wxPoint(), shapes, shapeListSelection);
 				bool isOK = se.ShowModal() == wxID_OK;
 				if (isOK) {
 					auto *shapes = se.GetShapes();

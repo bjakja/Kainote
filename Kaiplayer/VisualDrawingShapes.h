@@ -54,7 +54,7 @@ public:
 class ShapesEdition : public KaiDialog
 {
 public:
-	ShapesEdition(wxWindow* parent, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape);
+	ShapesEdition(TabPanel *_tab, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape);
 	virtual ~ShapesEdition() {};
 	std::vector<ShapesSetting>* GetShapes() { return &shapes; };
 private:
@@ -87,6 +87,7 @@ private:
 	std::vector<ShapesSetting> shapes;
 	ShapesSetting currentShape;
 	int selection = 0;
+	TabPanel* tab;
 };
 
 class Shapes : public DrawingAndClip {
