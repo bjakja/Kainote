@@ -101,6 +101,7 @@ public:
 private:
 	void SortPoints();
 	void SetDrawingScale();
+	void SetSquareShape(bool axisX = true);
 	D3DXVECTOR2 PointToVideo(const D3DXVECTOR2& point);
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);

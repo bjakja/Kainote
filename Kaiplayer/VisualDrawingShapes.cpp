@@ -263,10 +263,10 @@ void LoadSettings(std::vector<ShapesSetting>* shapes)
 		//write entire setings in plain text
 		//Shape: name, shape, shape mode, scale mode
 		txtSettings = L"Shape: rectangle; m 0 0 l 100 0 100 100 0 100; 0; 0\n"\
-			L"Shape: circle; m -100 -100 b -45 -155 45 -155 100 -100 b 155 -45 155 45 100 100 b 46 155 -45 155 -100 100 b -155 45 -155 -45 -100 -100; 1; 1\n"\
-			L"Shape: rounded square 1; m -100 -25 b -100 -92 -92 -100 -25 -100 l 25 -100 b 92 -100 100 -92 100 -25 l 100 25 b 100 92 92 100 25 100 l -25 100 b -92 100 -100 92 -100 25 l -100 -25; 1; 1\n"\
-			L"Shape: rounded square 2; m -100 -60 b -100 -92 -92 -100 -60 -100 l 60 -100 b 92 -100 100 -92 100 -60 l 100 60 b 100 92 92 100 60 100 l -60 100 b -92 100 -100 92 -100 60 l -100 -60; 1; 1\n"\
-			L"Shape: rounded square 3; m -100 -85 b -100 -96 -96 -100 -85 -100 l 85 -100 b 96 -100 100 -96 100 -85 l 100 85 b 100 96 96 100 85 100 l -85 100 b -96 100 -100 96 -100 85 l -100 -85; 1; 1\n";
+			L"Shape: circle; m -100 -100 b -45 -155 45 -155 100 -100 b 155 -45 155 45 100 100 b 46 155 -45 155 -100 100 b -155 45 -155 -45 -100 -100; 1; 0\n"\
+			L"Shape: rounded square 1; m -100 -25 b -100 -92 -92 -100 -25 -100 l 25 -100 b 92 -100 100 -92 100 -25 l 100 25 b 100 92 92 100 25 100 l -25 100 b -92 100 -100 92 -100 25 l -100 -25; 1; 0\n"\
+			L"Shape: rounded square 2; m -100 -60 b -100 -92 -92 -100 -60 -100 l 60 -100 b 92 -100 100 -92 100 -60 l 100 60 b 100 92 92 100 60 100 l -60 100 b -92 100 -100 92 -100 60 l -100 -60; 1; 0\n"\
+			L"Shape: rounded square 3; m -100 -85 b -100 -96 -96 -100 -85 -100 l 85 -100 b 96 -100 100 -96 100 -85 l 100 85 b 100 96 96 100 85 100 l -85 100 b -96 100 -100 96 -100 85 l -100 -85; 1; 0\n";
 	}
 	wxStringTokenizer tokenzer(txtSettings, "\n", wxTOKEN_STRTOK);
 	while (tokenzer.HasMoreTokens()) {
@@ -386,6 +386,7 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 
 	}
 	else if (holding && grabbed != -1) {
+		bool axisX = true;
 		if (grabbed < INSIDE) {
 			if (grabbed & LEFT || grabbed & RIGHT) {
 				x = MID(VideoSize.x, x, VideoSize.width);
@@ -400,6 +401,7 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 				}
 			}
 			if (grabbed & TOP || grabbed & BOTTOM) {
+				axisX = false;
 				y = MID(VideoSize.y, y, VideoSize.height);
 				int posInTable = (grabbed & BOTTOM) ? 1 : 0;
 				drawingRectangle[posInTable].y =
@@ -424,6 +426,9 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 		}
 		else if (grabbed == OUTSIDE) {
 			drawingRectangle[1] = PointToSubtitles(x, y);
+		}
+		if (currentShape.mode == ShapesSetting::BOTH_SCALE_X && grabbed != INSIDE) {
+			SetSquareShape(axisX);
 		}
 		SetDrawingScale();
 		if (rectangleVisible)
@@ -458,7 +463,7 @@ void Shapes::DrawVisual(int time)
 
 void Shapes::SetShape(int curshape)
 {
-	if (!shapes->size() || curshape == shape)
+	if (!shapes->size() || curshape - 1 == shape)
 		return;
 
 	if (curshape <= 0) {
@@ -473,6 +478,7 @@ void Shapes::SetShape(int curshape)
 		shape = curshape - 1;
 	}
 	currentShape = (*shapes)[shape];
+	points.clear();
 	GetVectorPoints(currentShape.shape, &points);
 	shapeSize = CalcDrawingSize(alignment, &points, true);
 	if (!points.empty()) {
@@ -496,7 +502,7 @@ void Shapes::GetVisual(wxString* drawing)
 		DrawingAndClip::GetVisual(drawing);
 		return;
 	}
-	if (scale.x > 0.f) {
+	if (scale.x > 0.f && rectangleVisible) {
 		wxString format = L"6.2f";
 		wxString lasttype;
 		int countB = 0;
@@ -526,38 +532,29 @@ void Shapes::GetVisual(wxString* drawing)
 			drawingRectangle[0].x : drawingRectangle[1].x;
 		float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
 			drawingRectangle[0].y : drawingRectangle[1].y;
-		if (currentShape.mode == ShapesSetting::CHANGE_POINTS) {
-			offsetxy.x -= ((positionx - rectx) - 1);
-			offsetxy.y -= ((positiony - recty) - 1);
-			if (alignment % 3 == 2) {
-				offsetxy.x += rectx1 - rectx;
-			}
-			else if (alignment % 3 == 0) {
-				offsetxy.x += (rectx1 - rectx) * 2;
-			}
-			if (alignment < 4) {
-				offsetxy.y += (recty1 - recty) * 2;
-			}
-			else if (alignment < 7) {
-				offsetxy.y += recty1 - recty;
-			}
+		
+		offsetxy.x -= ((positionx - rectx) - 1);
+		offsetxy.y -= ((positiony - recty) - 1);
+		if (alignment % 3 == 2) {
+			offsetxy.x += rectx1 - rectx;
 		}
-		else {
-			//offsetxy = CalcDrawingSize(alignment, &points);
-			offsetxy.x -= ((positionx - rectx) - 1);
-			offsetxy.y -= ((positiony - recty) - 1);
-			offsetxy.x -= (shapeSize.x * scale.x);
-			offsetxy.y -= (shapeSize.y * scale.y);
+		else if (alignment % 3 == 0) {
+			offsetxy.x += (rectx1 - rectx) * 2;
 		}
+		if (alignment < 4) {
+			offsetxy.y += (recty1 - recty) * 2;
+		}
+		else if (alignment < 7) {
+			offsetxy.y += recty1 - recty;
+		}
+		
 		
 
 		for (size_t i = 0; i < psize; i++)
 		{
 			ClipPoint pos = points[i];
-			float x = currentShape.mode == ShapesSetting::CHANGE_POINTS ?
-				(pos.x * scale.x) + offsetxy.x : pos.x + offsetxy.x;
-			float y = currentShape.mode == ShapesSetting::CHANGE_POINTS ?
-				(pos.y * scale.y) + offsetxy.y : pos.y + offsetxy.y;
+			float x = (pos.x * scale.x) + offsetxy.x;
+			float y = (pos.y * scale.y) + offsetxy.y;
 
 			if (countB && !pos.start) {
 				*drawing << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
@@ -595,7 +592,7 @@ void Shapes::GetVisual(wxString* drawing)
 
 void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 {
-	if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && scale.x > 0.f) {
+	/*if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && scale.x > 0.f) {
 		SetFromTo(0, position);
 		FindTag(L"fscx([0-9.-]+)", *txt, 3);
 		wxPoint textPos = GetPositionInText();
@@ -613,7 +610,7 @@ void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 				*diff += (textPos.y - textPos.x + 1) - newTag.length();
 			}
 		}
-	}
+	}*/
 }
 
 int Shapes::HitTest(const D3DXVECTOR2& pos, bool diff)
@@ -693,23 +690,45 @@ void Shapes::SetDrawingScale()
 			float rectSizeX = rectx1 - rectx;
 			scale.x = rectSizeX / shapeSize.x;
 		}
-		if (currentShape.mode == ShapesSetting::SEPARATE_SCALE_X_Y) {
-			if (recty >= recty1 - 10) {
-				scale.y = 0.f;
-			}
-			else {
-				float rectSizeY = recty1 - recty;
-				scale.y = rectSizeY / shapeSize.y;
-			}
-		}
-		else if (currentShape.mode == ShapesSetting::BOTH_SCALE_X) {
-			scale.y = scale.x;
+		if (recty >= recty1 - 10) {
+			scale.y = 0.f;
 		}
 		else {
-			scale.y = 1.f;
+			float rectSizeY = recty1 - recty;
+			scale.y = rectSizeY / shapeSize.y;
 		}
 	}
 
+}
+
+void Shapes::SetSquareShape(bool axisX)
+{
+	float rectx = drawingRectangle[0].x < drawingRectangle[1].x ?
+		drawingRectangle[0].x : drawingRectangle[1].x;
+	float rectx1 = drawingRectangle[0].x > drawingRectangle[1].x ?
+		drawingRectangle[0].x : drawingRectangle[1].x;
+	float recty = drawingRectangle[0].y < drawingRectangle[1].y ?
+		drawingRectangle[0].y : drawingRectangle[1].y;
+	float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
+		drawingRectangle[0].y : drawingRectangle[1].y;
+	if (axisX) {
+		float height = recty + (rectx1 - rectx);
+		if (drawingRectangle[0].y > drawingRectangle[1].y) {
+			drawingRectangle[0].y = height;
+		}
+		else {
+			drawingRectangle[1].y = height;
+		}
+	}
+	else {
+		float width = rectx + (recty1 - recty);
+		if (drawingRectangle[0].x > drawingRectangle[1].x) {
+			drawingRectangle[0].x = width;
+		}
+		else {
+			drawingRectangle[1].x = width;
+		}
+	}
 }
 
 D3DXVECTOR2 Shapes::PointToVideo(const D3DXVECTOR2& point)
