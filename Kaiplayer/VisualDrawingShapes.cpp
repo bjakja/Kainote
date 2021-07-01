@@ -80,6 +80,7 @@ ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<Sha
 
 	wxBoxSizer* shapeButtonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* getShapeFromLine = new MappedButton(this, ID_BUTTON_GET_SHAPE_FROM_LINE, _("Pobierz kszta³t z aktywnej linii"));
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShapesEdition::OnGetShapeFromLine, this, ID_BUTTON_GET_SHAPE_FROM_LINE);
 	editionSizer->Add(nameSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(modeSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(scalingModeSizer, 1, wxALL | wxEXPAND, 2);
@@ -195,7 +196,13 @@ void ShapesEdition::OnGetShapeFromLine(wxCommandEvent& evt)
 		for (size_t i = 0; i < pdata->tags.size(); i++) {
 			TagData* tag = pdata->tags[i];
 			if (tag->tagName == L"pvector") {
-				//coœ w stylu podaj nazwê dla rysunku ass
+				//if shape exists then create a new
+				if (!currentShape.shape.empty()) {
+					currentShape = ShapesSetting();
+					shapes.push_back(currentShape);
+				}
+				currentShape.shape = tag->value;
+				shapeAsASS->SetValue(tag->value);
 			}
 		}
 	}
@@ -322,14 +329,14 @@ void SaveSettings(std::vector<ShapesSetting>* shapes)
 		ShapesSetting shapeSetting = (*shapes)[i];
 		wxString shapeText = L"Shape: ";
 		shapeText << shapeSetting.name << "; " << shapeSetting.shape << "; " <<
-			shapeSetting.mode << "; " <<
-			shapeSetting.scalingMode << "\n";
+			(int)shapeSetting.mode << "; " <<
+			(int)shapeSetting.scalingMode << "\n";
 		ow.PartFileWrite(shapeText);
 	}
 }
 
 Shapes::Shapes() {
-	shapes = VideoToolbar::GetShapesSettings();
+	//shapes = VideoToolbar::GetShapesSettings();
 };
 
 void Shapes::OnMouseEvent(wxMouseEvent& evt)
@@ -474,6 +481,7 @@ void Shapes::DrawVisual(int time)
 
 void Shapes::SetShape(int curshape)
 {
+	shapes = VideoToolbar::GetShapesSettings();
 	if (!shapes->size() || curshape - 1 == shape)
 		return;
 
@@ -722,8 +730,9 @@ void Shapes::SetSquareShape(bool axisX)
 		drawingRectangle[0].y : drawingRectangle[1].y;
 	float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
 		drawingRectangle[0].y : drawingRectangle[1].y;
+	float aspectRatio = shapeSize.y == 0 ? 1 : shapeSize.x / shapeSize.y;
 	if (axisX) {
-		float height = recty + (rectx1 - rectx);
+		float height = recty + ((rectx1 - rectx) / aspectRatio);
 		if (drawingRectangle[0].y > drawingRectangle[1].y) {
 			drawingRectangle[0].y = height;
 		}
@@ -732,7 +741,7 @@ void Shapes::SetSquareShape(bool axisX)
 		}
 	}
 	else {
-		float width = rectx + (recty1 - recty);
+		float width = rectx + ((recty1 - recty) * aspectRatio);
 		if (drawingRectangle[0].x > drawingRectangle[1].x) {
 			drawingRectangle[0].x = width;
 		}

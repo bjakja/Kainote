@@ -1346,3 +1346,32 @@ void DrawingAndClip::SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale)
 	Visuals::SetZoom(move, scale);
 	pointArea = 4.f / zoomScale.x;
 }
+
+void DrawingAndClip::ChangeTool(int _tool) {
+	int shapeSelectionNew = _tool >> 6;
+	//set shape to Shapes class above
+	if (Visual == VECTORDRAW) {
+		SetShape(shapeSelectionNew);
+		bool needRefresh = false;
+		if ((shapeSelection == 0 && shapeSelectionNew != 0) ||
+			(shapeSelection != 0 && shapeSelectionNew == 0)) {
+			needRefresh = true;
+		}
+		if (shapeSelectionNew == 0) {
+			SetCurVisual();
+		}
+		shapeSelection = shapeSelectionNew;
+		if (needRefresh) {
+			tab->Video->Render(false);
+		}
+	}
+
+	int clipTool = _tool << 26;
+	clipTool >>= 26;
+	//invert clip
+	if (clipTool == 6) {
+		InvertClip();
+	}
+	else
+		tool = clipTool;
+};

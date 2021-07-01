@@ -457,20 +457,7 @@ public:
 	void Curve(int pos, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints = 4, int acpt = 0);
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
-	void ChangeTool(int _tool){
-		shapeSelection = _tool >> 6;
-		//set shape to Shapes class above
-		if(Visual == VECTORDRAW)
-			SetShape(shapeSelection);
-
-		int clipTool = _tool << 26;
-		clipTool >>= 26;
-		//invert clip
-		if (clipTool == 6) {
-			InvertClip();
-		}else
-			tool = clipTool;
-	};
+	void ChangeTool(int _tool);
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);

@@ -517,6 +517,8 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 					VideoToolbar::SetShapesSettings(shapes);
 					wxArrayString names;
 					GetNames(shapes, &names);
+					names.Insert(_("Wybierz"), 0);
+					names.Add(_("Edytuj"));
 					shapeList->PutArray(&names);
 					//starts from 1, 0 is inactive
 					if (shapeListSelection > shapes->size()) {
@@ -528,7 +530,15 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 					return;
 			}
 			else {
-				shapeListSelection = shapeList->GetSelection();
+				int shapeListSelectionNew = shapeList->GetSelection();
+				bool needRefresh = false;
+				if ((shapeListSelection == 0 && shapeListSelectionNew != 0) ||
+					(shapeListSelection != 0 && shapeListSelectionNew == 0)){
+					needRefresh = true;
+				}
+				shapeListSelection = shapeListSelectionNew;
+				if(needRefresh)
+					vt->Refresh(false);
 			}
 			wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 			event->SetInt(GetItemToggled());
