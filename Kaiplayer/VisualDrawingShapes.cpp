@@ -507,8 +507,8 @@ void Shapes::SetShape(int curshape)
 		float s = sin(-frz * rad);
 		float c = cos(-frz * rad);
 		for (size_t i = 0; i < points.size(); i++) {
-			points[i].x -= offsetxy.x;
-			points[i].y -= offsetxy.y;
+			points[i].x /*-= offsetxy.x*/;
+			points[i].y /*-= offsetxy.y*/;
 			if (frz)
 				RotateDrawing(&points[i], s, c, orgpivot);
 		}
@@ -539,7 +539,7 @@ void Shapes::GetVisual(wxString* drawing)
 				RotateDrawing(&points[i], s, c, orgpivot);
 			}
 		}
-		D3DXVECTOR2 offsetxy = D3DXVECTOR2(0, 0);
+		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);//D3DXVECTOR2(0, 0);//CalcDrawingSize(alignment, &points);
 		float positionx = _x * DrawingAndClip::scale.x,
 			positiony = _y * DrawingAndClip::scale.y;
 		
@@ -555,16 +555,16 @@ void Shapes::GetVisual(wxString* drawing)
 		offsetxy.x -= ((positionx - rectx) - 1);
 		offsetxy.y -= ((positiony - recty) - 1);
 		if (alignment % 3 == 2) {
-			offsetxy.x += rectx1 - rectx;
+			offsetxy.x += (rectx1 - rectx) / 2;
 		}
 		else if (alignment % 3 == 0) {
-			offsetxy.x += (rectx1 - rectx) * 2;
+			offsetxy.x += (rectx1 - rectx)/* * 2*/;
 		}
 		if (alignment < 4) {
-			offsetxy.y += (recty1 - recty) * 2;
+			offsetxy.y += (recty1 - recty)/* * 2*/;
 		}
 		else if (alignment < 7) {
-			offsetxy.y += recty1 - recty;
+			offsetxy.y += (recty1 - recty) / 2;
 		}
 		
 		
@@ -763,4 +763,28 @@ D3DXVECTOR2 Shapes::PointToSubtitles(float x, float y)
 	float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
 		pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
 	return D3DXVECTOR2(pointx, pointy);
+}
+
+D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* points)
+{
+	if (points->size() < 1) { return D3DXVECTOR2(0, 0); }
+
+	float minx = FLT_MAX;
+	float miny = FLT_MAX;
+	float maxx = -FLT_MAX;
+	float maxy = -FLT_MAX;
+	for (size_t i = 0; i < points->size(); i++)
+	{
+		ClipPoint p = points->at(i);
+		p.x *= scale.x; 
+		p.y *= scale.y;
+		if (p.x < minx) { minx = p.x; }
+		if (p.y < miny) { miny = p.y; }
+		if (p.x > maxx) { maxx = p.x; }
+		if (p.y > maxy) { maxy = p.y; }
+	}
+	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
+	result.x = -(minx);
+	result.y = -(miny);
+	return result;
 }
