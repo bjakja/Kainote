@@ -1,4 +1,4 @@
-//  Copyright (c) 2021, Marcin Drob
+ï»¿//  Copyright (c) 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ enum {
 };
 
 ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<ShapesSetting>* _shapes, int curShape)
-	: KaiDialog(_tab, -1, _("Edycja kszta³tów wektorowych"), pos)
+	: KaiDialog(_tab, -1, _("Edycja ksztaÅ‚tÃ³w wektorowych"), pos)
 	, tab(_tab)
 {
 	if (curShape < 0 || curShape >= _shapes->size())
@@ -44,13 +44,13 @@ ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<Sha
 	wxArrayString list;
 	GetNames(&shapes, &list);
 	DialogSizer* main = new DialogSizer(wxVERTICAL);
-	KaiStaticBoxSizer* shapeSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Edytowany kszta³t"));
+	KaiStaticBoxSizer* shapeSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Edytowany ksztaÅ‚t"));
 	shapeList = new KaiChoice(this, ID_SHAPE_LIST, wxDefaultPosition, wxDefaultSize, list);
 	shapeList->SetSelection(selection);
 	Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShapesEdition::OnListChanged, this, ID_SHAPE_LIST);
 	newShapeName = new KaiTextCtrl(this, -1);
-	MappedButton* addShape = new MappedButton(this, ID_BUTTON_ADD_SHAPE, _("Dodaj kszta³t"));
-	MappedButton* removeShape = new MappedButton(this, ID_BUTTON_REMOVE_SHAPE, _("Usuñ kszta³t"));
+	MappedButton* addShape = new MappedButton(this, ID_BUTTON_ADD_SHAPE, _("Dodaj ksztaÅ‚t"));
+	MappedButton* removeShape = new MappedButton(this, ID_BUTTON_REMOVE_SHAPE, _("UsuÅ„ ksztaÅ‚t"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShapesEdition::OnAddShape, this, ID_BUTTON_ADD_SHAPE);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShapesEdition::OnRemoveShape, this, ID_BUTTON_REMOVE_SHAPE);
 	shapeSizer->Add(shapeList, 1, wxALL | wxEXPAND, 4);
@@ -64,27 +64,27 @@ ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<Sha
 	shapeAsASS = new KaiTextCtrl(this, -1, currentShape.shape, wxDefaultPosition, wxSize(-1, 300), wxTE_MULTILINE);
 	wxBoxSizer* modeSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* scalingModeSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxString modes[] = { _("Zmienna szerokoœæ i wysokoœæ"), _("Wysokoœæ jest równa szerokoœci"), _("Zmienna tylko szerokoœæ") };
+	wxString modes[] = { _("Zmienna szerokoÅ›Ä‡ i wysokoÅ›Ä‡"), _("WysokoÅ›Ä‡ jest rÃ³wna szerokoÅ›ci"), _("Zmienna tylko szerokoÅ›Ä‡") };
 	mode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, modes);
 	mode->SetSelection(currentShape.mode);
-	wxString scalingModes[] = { _("Zmiana koordynatów rysunku"), _("zmiana skali") };
+	wxString scalingModes[] = { _("Zmiana koordynatÃ³w rysunku"), _("zmiana skali") };
 	scalingMode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 2, scalingModes);
 	scalingMode->SetSelection(currentShape.scalingMode);
 	scalingMode->Enable(false);
 	nameSizer->Add(new KaiStaticText(this, -1, _("Nazwa:")), 1, wxALL | wxEXPAND, 4);
 	nameSizer->Add(shapeName, 1, wxALL | wxEXPAND, 4);
-	modeSizer->Add(new KaiStaticText(this, -1, _("Skalowanie wzglêdem kursora:")), 1, wxALL | wxEXPAND, 4);
+	modeSizer->Add(new KaiStaticText(this, -1, _("Skalowanie wzglÄ™dem kursora:")), 1, wxALL | wxEXPAND, 4);
 	modeSizer->Add(mode, 1, wxALL | wxEXPAND, 4);
 	scalingModeSizer->Add(new KaiStaticText(this, -1, _("Rodzaj skalowania:")), 1, wxALL | wxEXPAND, 4);
 	scalingModeSizer->Add(scalingMode, 1, wxALL | wxEXPAND, 4);
 
 	wxBoxSizer* shapeButtonSizer = new wxBoxSizer(wxHORIZONTAL);
-	MappedButton* getShapeFromLine = new MappedButton(this, ID_BUTTON_GET_SHAPE_FROM_LINE, _("Pobierz kszta³t z aktywnej linii"));
+	MappedButton* getShapeFromLine = new MappedButton(this, ID_BUTTON_GET_SHAPE_FROM_LINE, _("Pobierz ksztaÅ‚t z aktywnej linii"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShapesEdition::OnGetShapeFromLine, this, ID_BUTTON_GET_SHAPE_FROM_LINE);
 	editionSizer->Add(nameSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(modeSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(scalingModeSizer, 1, wxALL | wxEXPAND, 2);
-	shapeButtonSizer->Add(new KaiStaticText(this, -1, _("Kszta³t:")), 1, wxALL | wxEXPAND, 4);
+	shapeButtonSizer->Add(new KaiStaticText(this, -1, _("KsztaÅ‚t:")), 1, wxALL | wxEXPAND, 4);
 	shapeButtonSizer->Add(getShapeFromLine, 1, wxALL | wxEXPAND, 4);
 	editionSizer->Add(shapeButtonSizer, 1, wxALL | wxEXPAND, 2);
 	editionSizer->Add(shapeAsASS, 0, wxALL | wxEXPAND, 6);
@@ -93,7 +93,7 @@ ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<Sha
 	MappedButton* commit = new MappedButton(this, ID_BUTTON_COMMIT, _("Zastosuj"));
 	MappedButton* OK = new MappedButton(this, ID_BUTTON_OK, L"OK");
 	MappedButton* cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-	MappedButton* resetDefault = new MappedButton(this, ID_BUTTON_RESET_DEFAULT, _("Przywróæ domyœlne"));
+	MappedButton* resetDefault = new MappedButton(this, ID_BUTTON_RESET_DEFAULT, _("PrzywrÃ³Ä‡ domyÅ›lne"));
 	buttonSizer->Add(commit, 1, wxALL, 4);
 	buttonSizer->Add(OK, 1, wxALL, 4);
 	buttonSizer->Add(cancel, 1, wxALL, 4);
@@ -116,7 +116,7 @@ void ShapesEdition::OnSave(wxCommandEvent& evt)
 
 void ShapesEdition::OnResetDefault(wxCommandEvent& evt)
 {
-	if (KaiMessageBox(_("Czy na pewno chcesz przywróciæ ustawienia domyœlne?"),
+	if (KaiMessageBox(_("Czy na pewno chcesz przywrÃ³ciÄ‡ ustawienia domyÅ›lne?"),
 		_("Potwierdzenie"), wxYES_NO, this) == wxYES) {
 		wxString path = Options.pathfull + L"\\Config\\ShapesSettings.txt";
 		_wremove(path.wc_str());
@@ -133,11 +133,11 @@ void ShapesEdition::OnAddShape(wxCommandEvent& evt)
 {
 	wxString newShapeNameStr = newShapeName->GetValue();
 	if (newShapeNameStr.empty()) {
-		KaiMessageBox(_("Wpisz nazwê nowego tagu."), _("B³¹d"), wxOK, this);
+		KaiMessageBox(_("Wpisz nazwÄ™ nowego ksztatÅ‚u."), _("BÅ‚Ä…d"), wxOK, this);
 		return;
 	}
 	if (shapeList->FindString(newShapeNameStr) != -1) {
-		KaiMessageBox(_("Nowy tag ju¿ istnieje na liœcie, wpisz inn¹ nazwê."), _("B³¹d"), wxOK, this);
+		KaiMessageBox(_("Nowy ksztatÅ‚u juÅ¼ istnieje na liÅ›cie, wpisz innÄ… nazwÄ™."), _("BÅ‚Ä…d"), wxOK, this);
 		return;
 	}
 	currentShape = ShapesSetting(newShapeNameStr);
@@ -151,11 +151,11 @@ void ShapesEdition::OnAddShape(wxCommandEvent& evt)
 void ShapesEdition::OnRemoveShape(wxCommandEvent& evt)
 {
 	if (selection < 0 || selection >= shapes.size()) {
-		KaiMessageBox(L"Selected tag is out of range of shapeList.", L"Error", wxOK, this);
+		KaiMessageBox(L"Selected shape is out of range of shapeList.", L"Error", wxOK, this);
 		return;
 	}
 	if (shapes.size() <= 1) {
-		KaiMessageBox(_("Nie mo¿na usun¹æ wszystkich kszta³tów z listy"), _("B³¹d"), wxOK, this);
+		KaiMessageBox(_("Nie moÅ¼na usunÄ…Ä‡ wszystkich ksztaÅ‚tÃ³w z listy"), _("BÅ‚Ä…d"), wxOK, this);
 		return;
 	}
 	shapes.erase(shapes.begin() + selection);
@@ -180,7 +180,7 @@ void ShapesEdition::OnRemoveShape(wxCommandEvent& evt)
 void ShapesEdition::OnListChanged(wxCommandEvent& evt)
 {
 	if (CheckModified()) {
-		if (KaiMessageBox(wxString::Format(_("Zapisaæ zmiany tagu \"%s\"?"),
+		if (KaiMessageBox(wxString::Format(_("ZapisaÄ‡ zmiany ksztaÅ‚tu \"%s\"?"),
 			currentShape.shape), _("Potwierdzenie"), wxYES_NO, this) == wxYES) {
 			Save(ID_BUTTON_COMMIT);
 		}
@@ -199,9 +199,17 @@ void ShapesEdition::OnGetShapeFromLine(wxCommandEvent& evt)
 				//if shape exists then create a new
 				if (!currentShape.shape.empty()) {
 					currentShape = ShapesSetting();
+					currentShape.name = _("Bez nazwy");
+					currentShape.shape = tag->value;
+					shapeName->SetValue(currentShape.name, true);
 					shapes.push_back(currentShape);
+					shapeList->Append(currentShape.name);
+					selection = shapes.size() - 1;
+					shapeList->SetSelection(selection);
 				}
-				currentShape.shape = tag->value;
+				else {
+					currentShape.shape = tag->value;
+				}
 				shapeAsASS->SetValue(tag->value);
 			}
 		}
@@ -251,7 +259,7 @@ void ShapesEdition::Save(int id)
 {
 	UpdateShape();
 	if (currentShape.shape.empty()) {
-		KaiMessageBox(_("Pole \"Tag\" nie mo¿e byæ puste."), _("B³¹d"), wxOK, this);
+		KaiMessageBox(_("Pole \"ksztaÅ‚t\" nie moÅ¼e byÄ‡ puste."), _("BÅ‚Ä…d"), wxOK, this);
 		return;
 	}
 	if (currentShape.name.empty()) {
@@ -259,7 +267,7 @@ void ShapesEdition::Save(int id)
 		shapeName->SetValue(currentShape.name);
 	}
 	if (selection < 0 || selection >= shapes.size()) {
-		KaiMessageBox(L"Selected shape is out of range of tagList.", L"Error", wxOK, this);
+		KaiMessageBox(L"Selected shape is out of range of shapeList.", L"Error", wxOK, this);
 		return;
 	}
 	shapes[selection] = currentShape;
@@ -771,8 +779,6 @@ D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* poi
 
 	float minx = FLT_MAX;
 	float miny = FLT_MAX;
-	float maxx = -FLT_MAX;
-	float maxy = -FLT_MAX;
 	for (size_t i = 0; i < points->size(); i++)
 	{
 		ClipPoint p = points->at(i);
@@ -780,8 +786,6 @@ D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* poi
 		p.y *= scale.y;
 		if (p.x < minx) { minx = p.x; }
 		if (p.y < miny) { miny = p.y; }
-		if (p.x > maxx) { maxx = p.x; }
-		if (p.y > maxy) { maxy = p.y; }
 	}
 	D3DXVECTOR2 result = D3DXVECTOR2(0, 0);
 	result.x = -(minx);
