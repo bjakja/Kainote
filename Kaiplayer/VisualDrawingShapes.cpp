@@ -64,10 +64,10 @@ ShapesEdition::ShapesEdition(TabPanel* _tab, const wxPoint& pos, std::vector<Sha
 	shapeAsASS = new KaiTextCtrl(this, -1, currentShape.shape, wxDefaultPosition, wxSize(-1, 300), wxTE_MULTILINE);
 	wxBoxSizer* modeSizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer* scalingModeSizer = new wxBoxSizer(wxHORIZONTAL);
-	wxString modes[] = { _("Zmienna szerokość i wysokość"), _("Wysokość jest równa szerokości"), _("Zmienna tylko szerokość") };
+	wxString modes[] = { _("Zmienna szerokość i wysokość"), _("Zachowaj proporcje boków"), _("Zmienna tylko szerokość") };
 	mode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 3, modes);
 	mode->SetSelection(currentShape.mode);
-	wxString scalingModes[] = { _("Zmiana koordynatów rysunku"), _("zmiana skali") };
+	wxString scalingModes[] = { _("Zmiana koordynatów rysunku"), _("Zmiana skali") };
 	scalingMode = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, 2, scalingModes);
 	scalingMode->SetSelection(currentShape.scalingMode);
 	scalingMode->Enable(false);
@@ -137,7 +137,7 @@ void ShapesEdition::OnAddShape(wxCommandEvent& evt)
 		return;
 	}
 	if (shapeList->FindString(newShapeNameStr) != -1) {
-		KaiMessageBox(_("Nowy ksztatłu już istnieje na liście, wpisz inną nazwę."), _("Błąd"), wxOK, this);
+		KaiMessageBox(_("Nowy ksztatł już istnieje na liście, wpisz inną nazwę."), _("Błąd"), wxOK, this);
 		return;
 	}
 	currentShape = ShapesSetting(newShapeNameStr);

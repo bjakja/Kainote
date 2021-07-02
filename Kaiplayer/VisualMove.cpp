@@ -1,4 +1,4 @@
-//  Copyright (c) 2016 - 2020, Marcin Drob
+ï»¿//  Copyright (c) 2016 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -384,7 +384,7 @@ bool Move::SetMove()
 	int time = tab->Video->Tell();
 	if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
 		if(time == lineStartTime)
-			KaiLog(_("Wideo musi byæ ustawione minimum jedn¹ klatkê po starcie"));
+			KaiLog(_("Wideo musi byÄ‡ ustawione minimum jednÄ… klatkÄ™ po czasie poczÄ…tkowym linijki"));
 
 		return false;
 	}

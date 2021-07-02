@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-06-21 12:51+0200\n"
-"PO-Revision-Date: 2021-06-21 12:57+0200\n"
+"POT-Creation-Date: 2021-07-02 19:14+0200\n"
+"PO-Revision-Date: 2021-07-02 19:19+0200\n"
 "Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -157,6 +157,8 @@ msgstr "Invalid keyframes format"
 #: VisualAllTagsEdition.cpp:144 VisualAllTagsEdition.cpp:148
 #: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:268
 #: VisualAllTagsEdition.cpp:276 VisualAllTagsEdition.cpp:280
+#: VisualDrawingShapes.cpp:136 VisualDrawingShapes.cpp:140
+#: VisualDrawingShapes.cpp:158 VisualDrawingShapes.cpp:262
 msgid "Błąd"
 msgstr "Error"
 
@@ -196,7 +198,7 @@ msgid "Nie można stworzyć linii D3DX"
 msgstr "Cannot open D3DX line"
 
 #: AudioDisplay.cpp:340 AudioDisplay.cpp:341 AudioDisplay.cpp:342
-#: RendererVideo.cpp:325 RendererVideo.cpp:327 Visuals.cpp:442
+#: RendererVideo.cpp:325 RendererVideo.cpp:327 Visuals.cpp:445
 msgid "Nie można stworzyć czcionki D3DX"
 msgstr "Cannot create D3DX font"
 
@@ -216,7 +218,7 @@ msgstr "Modified"
 msgid "Czas ujemny"
 msgstr "Negative time"
 
-#: AudioDisplay.cpp:1021 RendererDirectShow.cpp:220 RendererDirectShow.cpp:222
+#: AudioDisplay.cpp:1021 RendererDirectShow.cpp:200 RendererDirectShow.cpp:202
 #: RendererFFMS2.cpp:74 RendererFFMS2.cpp:76
 msgid "Nie można zablokować bufora tekstury"
 msgstr "Cannot lock texture buffer"
@@ -256,12 +258,12 @@ msgstr "Open"
 #: AutoSaveOpen.cpp:57 AutomationHotkeysDialog.cpp:145
 #: AutomationProgress.cpp:295 ColorPicker.cpp:629 ColorPicker.cpp:1397
 #: DummyVideo.cpp:102 EditBox.cpp:87 EditBox.cpp:1695 FontCatalogList.cpp:71
-#: FontDialog.cpp:409 KaiMessageBox.cpp:78 MappedButton.cpp:39
+#: FontDialog.cpp:408 KaiMessageBox.cpp:78 MappedButton.cpp:39
 #: NewCatalog.cpp:42 OptionsDialog.cpp:960 ProgressDialog.cpp:39
 #: ScriptInfo.cpp:114 ShiftTimes.cpp:62 StyleChange.cpp:272 Stylelistbox.cpp:29
-#: Stylelistbox.cpp:83 Stylelistbox.cpp:118 SubsFile.cpp:47 SubsGrid.cpp:1301
+#: Stylelistbox.cpp:83 Stylelistbox.cpp:118 SubsFile.cpp:47 SubsGrid.cpp:1300
 #: SubsGridDialogs.cpp:54 SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146
-#: VisualAllTagsEdition.cpp:104
+#: VisualAllTagsEdition.cpp:104 VisualDrawingShapes.cpp:95
 msgid "Anuluj"
 msgstr "Cancel"
 
@@ -501,8 +503,8 @@ msgid "Pełny opis błędu Lua"
 msgstr "Full description of the error Lua"
 
 #: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:280
-#: FontCatalogList.cpp:109 VideoToolbar.cpp:672 stylestore.cpp:82
-#: stylestore.cpp:135
+#: FontCatalogList.cpp:109 VideoToolbar.cpp:505 VideoToolbar.cpp:521
+#: VideoToolbar.cpp:760 stylestore.cpp:82 stylestore.cpp:135
 msgid "Edytuj"
 msgstr "Edit"
 
@@ -582,7 +584,7 @@ msgstr ""
 #: KainoteMain.cpp:953 KainoteMain.cpp:969 KainoteMain.cpp:1076
 #: OptionsDialog.cpp:108 OptionsDialog.cpp:117 OptionsDialog.cpp:465
 #: SpellCheckerDialog.cpp:139 SubsGrid.cpp:996 SubsGridBase.cpp:517
-#: SubsGridBase.cpp:546 Videobox.cpp:287 VisualClips.cpp:1068
+#: SubsGridBase.cpp:546 Videobox.cpp:287 VisualClips.cpp:1019
 msgid "Uwaga"
 msgstr "Warning"
 
@@ -632,7 +634,7 @@ msgstr "dialogues"
 msgid "Nie można dodać linii klasy: %s w pole klasy: %s"
 msgstr "Cannot add line of class: %s in field of class: %s"
 
-#: AutomationToFile.cpp:1060
+#: AutomationToFile.cpp:1059
 msgid "Brakujący wskaźnik napisów"
 msgstr "Missing subtitles pointer"
 
@@ -927,7 +929,7 @@ msgstr "Save tag"
 msgid "Wybór czcionki"
 msgstr "Font selection"
 
-#: EditBox.cpp:169 FontDialog.cpp:398 StyleChange.cpp:121 StyleChange.cpp:690
+#: EditBox.cpp:169 FontDialog.cpp:397 StyleChange.cpp:121 StyleChange.cpp:690
 msgid "Pogrubienie"
 msgstr "Bold"
 
@@ -935,12 +937,12 @@ msgstr "Bold"
 msgid "Pochylenie"
 msgstr "Italic"
 
-#: EditBox.cpp:175 FontDialog.cpp:402 HotkeysNaming.cpp:95 StyleChange.cpp:123
+#: EditBox.cpp:175 FontDialog.cpp:401 HotkeysNaming.cpp:95 StyleChange.cpp:123
 #: StyleChange.cpp:692
 msgid "Podkreślenie"
 msgstr "Underline"
 
-#: EditBox.cpp:178 FontDialog.cpp:404 HotkeysNaming.cpp:94 StyleChange.cpp:124
+#: EditBox.cpp:178 FontDialog.cpp:403 HotkeysNaming.cpp:94 StyleChange.cpp:124
 #: StyleChange.cpp:693
 msgid "Przekreślenie"
 msgstr "Strikethrough"
@@ -1142,9 +1144,10 @@ msgstr "Reached end. Search from the beginning?"
 
 #: FindReplace.cpp:396 FindReplace.cpp:403 FindReplace.cpp:1319
 #: FindReplace.cpp:1323 FontCollector.cpp:512 KainoteMain.cpp:1013
-#: KainoteMain.cpp:1759 SubsGrid.cpp:963 SubsGrid.cpp:1287 SubsGridBase.cpp:536
+#: KainoteMain.cpp:1759 SubsGrid.cpp:963 SubsGrid.cpp:1286 SubsGridBase.cpp:536
 #: SubsGridBase.cpp:1397 Tabs.cpp:1154 Videobox.cpp:824 Videobox.cpp:835
-#: VisualAllTagsEdition.cpp:128 VisualAllTagsEdition.cpp:192 stylestore.cpp:272
+#: VisualAllTagsEdition.cpp:128 VisualAllTagsEdition.cpp:192
+#: VisualDrawingShapes.cpp:120 VisualDrawingShapes.cpp:184 stylestore.cpp:272
 #: stylestore.cpp:304 stylestore.cpp:343 stylestore.cpp:491 stylestore.cpp:636
 msgid "Potwierdzenie"
 msgstr "Confirmation"
@@ -1418,8 +1421,8 @@ msgstr "Catalog"
 msgid "Przykład"
 msgstr "Sample"
 
-#: FontCatalogList.cpp:108 FontDialog.cpp:425 StyleChange.cpp:84
-#: VideoToolbar.cpp:665
+#: FontCatalogList.cpp:108 FontDialog.cpp:424 StyleChange.cpp:84
+#: VideoToolbar.cpp:753
 msgid "Dodaj"
 msgstr "Add"
 
@@ -1600,16 +1603,16 @@ msgstr "Save patch is not valid."
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "The zip file already exists, delete it?"
 
-#: FontCollector.cpp:585 FontCollector.cpp:643
+#: FontCollector.cpp:585 FontCollector.cpp:642
 msgid "Nie znaleziono czcionki \""
 msgstr "Not Found font \""
 
-#: FontCollector.cpp:598 FontCollector.cpp:658
+#: FontCollector.cpp:598 FontCollector.cpp:657
 #, c-format
 msgid "Znaleziono czcionkę \"%s\"\n"
 msgstr "Found font \"%s\"\n"
 
-#: FontCollector.cpp:710
+#: FontCollector.cpp:709
 msgid ""
 "Nie można pobrać rozmiarów i nazw plików czcionek\n"
 "kopiowanie zostaje przerwane.\n"
@@ -1617,7 +1620,7 @@ msgstr ""
 "You can not get the fonts file sizes and names,\n"
 "copying is canceled.\n"
 
-#: FontCollector.cpp:742
+#: FontCollector.cpp:741
 #, c-format
 msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
@@ -1626,11 +1629,11 @@ msgstr ""
 "Taken sizes and names of %i fonts, elapsed %sms.\n"
 "\n"
 
-#: FontCollector.cpp:775
+#: FontCollector.cpp:774
 msgid "Ścieżka jest niedostępna"
 msgstr "Path is not available"
 
-#: FontCollector.cpp:788
+#: FontCollector.cpp:787
 #, c-format
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
@@ -1639,73 +1642,73 @@ msgstr ""
 "Font \"%s\" is from style,\n"
 "that is not used."
 
-#: FontCollector.cpp:797
+#: FontCollector.cpp:796
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
 msgstr "Some fonts do not contain all glyps used in text.\n"
 
-#: FontCollector.cpp:804
+#: FontCollector.cpp:803
 #, c-format
 msgid "Zakończono, %s %s.\n"
 msgstr "Finished, %s %s.\n"
 
-#: FontCollector.cpp:804 FontCollector.cpp:820
+#: FontCollector.cpp:803 FontCollector.cpp:819
 msgid "znaleziono"
 msgstr "found"
 
-#: FontCollector.cpp:804 FontCollector.cpp:820
+#: FontCollector.cpp:803 FontCollector.cpp:819
 msgid "skopiowano"
 msgstr "copied"
 
-#: FontCollector.cpp:805 FontCollector.cpp:821
+#: FontCollector.cpp:804 FontCollector.cpp:820
 msgid "czcionkę"
 msgstr "font"
 
-#: FontCollector.cpp:805 FontCollector.cpp:808 FontCollector.cpp:812
-#: FontCollector.cpp:821
+#: FontCollector.cpp:804 FontCollector.cpp:807 FontCollector.cpp:811
+#: FontCollector.cpp:820
 msgid "czcionki"
 msgstr "fonts"
 
-#: FontCollector.cpp:805 FontCollector.cpp:808 FontCollector.cpp:812
-#: FontCollector.cpp:821
+#: FontCollector.cpp:804 FontCollector.cpp:807 FontCollector.cpp:811
+#: FontCollector.cpp:820
 msgid "czcionek"
 msgstr "fonts"
 
-#: FontCollector.cpp:807
+#: FontCollector.cpp:806
 #, c-format
 msgid "Nie znaleziono %s.\n"
 msgstr "Not found %s.\n"
 
-#: FontCollector.cpp:811
+#: FontCollector.cpp:810
 #, c-format
 msgid "Nie udało się skopiować %s.\n"
 msgstr "Cannot copy %s.\n"
 
-#: FontCollector.cpp:819
+#: FontCollector.cpp:818
 #, c-format
 msgid "Zakończono powodzeniem, %s %s.\n"
 msgstr "Completed Successfully, %s %s.\n"
 
-#: FontCollector.cpp:836
+#: FontCollector.cpp:835
 #, c-format
 msgid "Dodano do archiwum czcionkę \"%s\"."
 msgstr "Added to archive font \"%s\"."
 
-#: FontCollector.cpp:845
+#: FontCollector.cpp:844
 #, c-format
 msgid "Nie można spakować czcionki \"%s\"."
 msgstr "Cannot zip font \"%s\"."
 
-#: FontCollector.cpp:851
+#: FontCollector.cpp:850
 #, c-format
 msgid "Skopiowano czcionkę \"%s\"."
 msgstr "Copied font \"%s\"."
 
-#: FontCollector.cpp:856
+#: FontCollector.cpp:855
 #, c-format
 msgid "Nie można skopiować czcionki \"%s\"."
 msgstr "Cannot copy font \"%s\"."
 
-#: FontCollector.cpp:870
+#: FontCollector.cpp:869
 #, c-format
 msgid ""
 "Wideo: %s\n"
@@ -1714,23 +1717,23 @@ msgstr ""
 "Video: %s\n"
 "\n"
 
-#: FontCollector.cpp:887
+#: FontCollector.cpp:886
 msgid "To wideo nie jest plikiem MKV."
 msgstr "This video is not MKV file."
 
-#: FontCollector.cpp:894
+#: FontCollector.cpp:893
 msgid "Wczytany plik MKV nie ma żadnych czcionek."
 msgstr "Loaded MKV file does not have any fonts."
 
-#: FontCollector.cpp:908
+#: FontCollector.cpp:907
 msgid "Zapisano czcionkę o nazwie \""
 msgstr "Saved a font named \""
 
-#: FontCollector.cpp:912
+#: FontCollector.cpp:911
 msgid "Nie można zapisać czcionki o nazwie \""
 msgstr "You can not save the font named \""
 
-#: FontCollector.cpp:918
+#: FontCollector.cpp:917
 #, c-format
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
@@ -1739,21 +1742,21 @@ msgstr ""
 "Completed, copied %i fonts.\n"
 "Failed to copy %i fonts."
 
-#: FontCollector.cpp:922
+#: FontCollector.cpp:921
 #, c-format
 msgid "Zakończono powodzeniem, skopiowano %i czcionek."
 msgstr "Completed successfully and copied %i fonts."
 
-#: FontCollector.cpp:949
+#: FontCollector.cpp:948
 msgid "Nie można utworzyć folderu."
 msgstr "Cannot create folder."
 
-#: FontCollector.cpp:1031
+#: FontCollector.cpp:1030
 #, c-format
 msgid "Znaleziono czcionkę \"%s\"."
 msgstr "Found font \"%s\"."
 
-#: FontCollector.cpp:1039
+#: FontCollector.cpp:1038
 #, c-format
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
@@ -1762,7 +1765,7 @@ msgstr ""
 "Font \"%s\" is from style,\n"
 "that is not used.%s"
 
-#: FontCollector.cpp:1039
+#: FontCollector.cpp:1038
 msgid ""
 "\n"
 "Nie zostanie skopiowana."
@@ -1770,71 +1773,71 @@ msgstr ""
 "\n"
 "Will not be copied."
 
-#: FontCollector.cpp:1047
+#: FontCollector.cpp:1046
 #, c-format
 msgid "Czcionka \"%s\" nie ma stylu normalnego."
 msgstr "Font \"%s\" is missing normal style."
 
-#: FontCollector.cpp:1050
+#: FontCollector.cpp:1049
 #, c-format
 msgid "Czcionka \"%s\" nie ma pogrubienia z kursywą."
 msgstr "Font \"%s\" is missing bold italics."
 
-#: FontCollector.cpp:1053
+#: FontCollector.cpp:1052
 #, c-format
 msgid "Czcionka \"%s\" nie ma pogrubienia."
 msgstr "Font \"%s\" is missing bold."
 
-#: FontCollector.cpp:1056
+#: FontCollector.cpp:1055
 #, c-format
 msgid "Czcionka \"%s\" nie ma kursywy."
 msgstr "Font \"%s\" is missing italics."
 
-#: FontCollector.cpp:1070
+#: FontCollector.cpp:1069
 #, c-format
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
 msgstr "Cannot check font \"%s\" characters."
 
-#: FontCollector.cpp:1074
+#: FontCollector.cpp:1073
 #, c-format
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
 msgstr "Font \"%s\" not contains characters: \"%s\"."
 
-#: FontCollector.cpp:1086
+#: FontCollector.cpp:1085
 #, c-format
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
 msgstr "Cannot get content of font \"%s\"."
 
-#: FontCollector.cpp:1107
+#: FontCollector.cpp:1106
 #, c-format
 msgid "Nie można otworzyć pliku \"%s\"."
 msgstr "Cannot open file \"%s\"."
 
-#: FontCollector.cpp:1115
+#: FontCollector.cpp:1114
 #, c-format
 msgid "Rozmiar czcionki \"%s\" się różni."
 msgstr "Size of font \"%s\" is different."
 
-#: FontCollector.cpp:1122
+#: FontCollector.cpp:1121
 #, c-format
 msgid "Nie można odczytać czcionki \"%s\" z folderu Fonts."
 msgstr "Could not read \"%s\" font from the Fonts folder."
 
-#: FontCollector.cpp:1128 FontCollector.cpp:1148
+#: FontCollector.cpp:1127 FontCollector.cpp:1147
 #, c-format
 msgid "Znaleziono plik czcionki \"%s\"."
 msgstr "Found \"%s\" font file."
 
-#: FontCollector.cpp:1165
+#: FontCollector.cpp:1164
 #, c-format
 msgid "Nie można znaleźć czcionki \"%s\" w folderze Fonts."
 msgstr "Cannot find \"%s\" font in Fonts folder."
 
-#: FontCollector.cpp:1212
+#: FontCollector.cpp:1211
 msgid "Nie można stworzyć procesu, muxowanie przerwane"
 msgstr "Couldn't create process. Muxing canceled"
 
-#: FontCollector.cpp:1269
+#: FontCollector.cpp:1268
 #, c-format
 msgid ""
 "\n"
@@ -1843,59 +1846,59 @@ msgstr ""
 "\n"
 "Finished in %sms"
 
-#: FontDialog.cpp:373
+#: FontDialog.cpp:372
 msgid "Wybierz czcionkę"
 msgstr "Select a font"
 
-#: FontDialog.cpp:389 StyleChange.cpp:688
+#: FontDialog.cpp:388 StyleChange.cpp:688
 msgid "Czcionka"
 msgstr "Font"
 
-#: FontDialog.cpp:390
+#: FontDialog.cpp:389
 msgid "Podgląd"
 msgstr "Preview"
 
-#: FontDialog.cpp:400 StyleChange.cpp:122
+#: FontDialog.cpp:399 StyleChange.cpp:122
 msgid "Kursywa"
 msgstr "Italic"
 
-#: FontDialog.cpp:422 FontDialog.cpp:461 StyleChange.cpp:81 StyleChange.cpp:102
+#: FontDialog.cpp:421 FontDialog.cpp:460 StyleChange.cpp:81 StyleChange.cpp:102
 msgid "Wszystkie czcionki"
 msgstr "All fonts"
 
-#: FontDialog.cpp:423 FontDialog.cpp:462 StyleChange.cpp:82 StyleChange.cpp:103
+#: FontDialog.cpp:422 FontDialog.cpp:461 StyleChange.cpp:82 StyleChange.cpp:103
 msgid "Bez katalogu"
 msgstr "Without catalog"
 
-#: FontDialog.cpp:426 StyleChange.cpp:85
+#: FontDialog.cpp:425 StyleChange.cpp:85
 msgid "Dodaje czcionki do wcześniej utworzonego katalogu"
 msgstr "Adding fonts to catalog"
 
-#: FontDialog.cpp:427 StyleChange.cpp:86
+#: FontDialog.cpp:426 StyleChange.cpp:86
 msgid "Zarządzaj"
 msgstr "Manage"
 
-#: FontDialog.cpp:428
+#: FontDialog.cpp:427
 msgid "Umorzliwia zarządzanie katalogami stylów"
 msgstr "Manages font catalogs"
 
-#: FontDialog.cpp:430 HotkeysNaming.cpp:151 StyleChange.cpp:88 SubsGrid.cpp:173
+#: FontDialog.cpp:429 HotkeysNaming.cpp:151 StyleChange.cpp:88 SubsGrid.cpp:173
 msgid "Filtruj"
 msgstr "Filter"
 
-#: FontDialog.cpp:431 StyleChange.cpp:89
+#: FontDialog.cpp:430 StyleChange.cpp:89
 msgid "Filtruje czcionki, by zawierały wpisane znaki"
 msgstr "Filter fonts for written characters"
 
-#: FontDialog.cpp:446
+#: FontDialog.cpp:445
 msgid "Filtrowanie i katalogi czcionek"
 msgstr "Filtering and font catalogs"
 
-#: FontEnumerator.cpp:201
+#: FontEnumerator.cpp:205
 msgid "Nie można stworzyć uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Cannot create notification handler for fonts folder."
 
-#: FontEnumerator.cpp:222
+#: FontEnumerator.cpp:226
 msgid ""
 "Nie można stworzyć następnego uchwytu notyfikacji zmian folderu czcionek."
 msgstr "Cannot create next notification handler for fonts folder."
@@ -3568,7 +3571,7 @@ msgstr ""
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "Do you want to load subtitles named %s?"
 
-#: KainoteMain.cpp:1076 Visuals.cpp:264
+#: KainoteMain.cpp:1076 Visuals.cpp:267
 msgid "Nie można otworzyć napisów"
 msgstr "Cannot open subtitle file"
 
@@ -3667,7 +3670,7 @@ msgid "Odczyt napisów z pliku Matroska."
 msgstr "Loading subtitles from Matroska."
 
 #: MappedButton.cpp:40 OptionsDialog.cpp:959 StyleChange.cpp:271
-#: VisualAllTagsEdition.cpp:102
+#: VisualAllTagsEdition.cpp:102 VisualDrawingShapes.cpp:93
 msgid "Zastosuj"
 msgstr "Apply"
 
@@ -5039,28 +5042,28 @@ msgstr "Set default"
 msgid "Informacje o napisach"
 msgstr "Subtitles info"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:42 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:42 SubsGrid.cpp:1290
 msgid "Tytuł"
 msgstr "Title"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:44 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:44 SubsGrid.cpp:1290
 msgid "Autor"
 msgstr "Author"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:46 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:46 SubsGrid.cpp:1290
 msgid "Tłumaczenie"
 msgstr "Translator"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:48 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:48 SubsGrid.cpp:1290
 msgid "Korekta"
 msgstr "Editor"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:50 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:50 SubsGrid.cpp:1290
 msgid "Timing"
 msgstr "Timer"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:52 SubsGrid.cpp:1291
-#: VisualAllTagsEdition.cpp:47
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:52 SubsGrid.cpp:1290
+#: VisualAllTagsEdition.cpp:47 VisualDrawingShapes.cpp:60
 msgid "Edycja"
 msgstr "Updated by"
 
@@ -5169,23 +5172,23 @@ msgstr "Cannot create DXVA processor"
 msgid "Zawiodło któreś z ustawień DirectX vertices"
 msgstr "One of the DirectX vertices settings failed"
 
-#: RendererDirectShow.cpp:163 RendererDirectShow.cpp:167
+#: RendererDirectShow.cpp:143 RendererDirectShow.cpp:147
 msgid "Nie można storzyć tekstury napisów"
 msgstr "Cannot create subtitles texture"
 
-#: RendererDirectShow.cpp:192
+#: RendererDirectShow.cpp:172
 msgid "Brak bufora klatki"
 msgstr "No frame buffer"
 
-#: RendererDirectShow.cpp:203
+#: RendererDirectShow.cpp:183
 msgid "Nie można zablokować bufora tekstury napisów"
 msgstr "Cannot lock subtitles texture buffer"
 
-#: RendererDirectShow.cpp:214
+#: RendererDirectShow.cpp:194
 msgid "Nie można odblokować bufora tekstury napisów"
 msgstr "Cannot unlock subtitles texture buffer"
 
-#: RendererDirectShow.cpp:279 RendererFFMS2.cpp:107
+#: RendererDirectShow.cpp:259 RendererFFMS2.cpp:107
 msgid "Nie można odblokować bufora tekstury"
 msgstr "Cannot unlock texture buffer"
 
@@ -6342,14 +6345,14 @@ msgstr "Save the file before loading the subtitles of MKV?"
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "Cannot open subtitles"
 
-#: SubsGrid.cpp:1131 SubsGrid.cpp:1159 SubsGrid.cpp:1177
+#: SubsGrid.cpp:1130 SubsGrid.cpp:1158 SubsGrid.cpp:1176
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "In line %i can't scale '%s' in tag '%s'"
 
-#: SubsGrid.cpp:1302
+#: SubsGrid.cpp:1301
 msgid "Wyłącz potwierdzenie"
 msgstr "Turn-off warning"
 
@@ -6593,7 +6596,7 @@ msgstr ""
 "Deletes selected line.\n"
 "Moves translation one line up."
 
-#: TLDialog.cpp:30 TLDialog.cpp:38 VideoToolbar.cpp:54
+#: TLDialog.cpp:30 TLDialog.cpp:38 VideoToolbar.cpp:56
 msgid "Dodaj linię"
 msgstr "Add line"
 
@@ -7104,95 +7107,95 @@ msgstr "Play the current line"
 msgid "Pokaż pasek narzędzi"
 msgstr "Show toolbar icons"
 
-#: VideoToolbar.cpp:36
+#: VideoToolbar.cpp:38
 msgid "Wskaźnik pozycji"
 msgstr "Position pointer"
 
-#: VideoToolbar.cpp:37
+#: VideoToolbar.cpp:39
 msgid "Przesuwanie tekstu"
 msgstr "Text positioning"
 
-#: VideoToolbar.cpp:38
+#: VideoToolbar.cpp:40
 msgid "Ruch"
 msgstr "Text moving"
 
-#: VideoToolbar.cpp:39
+#: VideoToolbar.cpp:41
 msgid "Skalowanie"
 msgstr "Text scaling"
 
-#: VideoToolbar.cpp:40
+#: VideoToolbar.cpp:42
 msgid "Obrót wokół osi Z"
 msgstr "Text Z rotation"
 
-#: VideoToolbar.cpp:41
+#: VideoToolbar.cpp:43
 msgid "Obrót wokół osi X / Y"
 msgstr "Text X / Y rotation"
 
-#: VideoToolbar.cpp:42
+#: VideoToolbar.cpp:44
 msgid "Wycinki prostokątne"
 msgstr "Rectangle clipping"
 
-#: VideoToolbar.cpp:43
+#: VideoToolbar.cpp:45
 msgid "Wycinki wektorowe"
 msgstr "Vectorial clipping"
 
-#: VideoToolbar.cpp:44
+#: VideoToolbar.cpp:46
 msgid "Rysunki wektorowe"
 msgstr "Vectorial drawing"
 
-#: VideoToolbar.cpp:45
+#: VideoToolbar.cpp:47
 msgid "Zmieniacz pozycji"
 msgstr "Position shifter"
 
-#: VideoToolbar.cpp:46
+#: VideoToolbar.cpp:48
 msgid "Hydra"
 msgstr "Hydra"
 
-#: VideoToolbar.cpp:49
+#: VideoToolbar.cpp:51
 msgid "Zmieniacz skali i obrotów"
 msgstr "Scale and rotation shifter"
 
-#: VideoToolbar.cpp:53
+#: VideoToolbar.cpp:55
 msgid "Przesuń punkty"
 msgstr "Move points"
 
-#: VideoToolbar.cpp:55
+#: VideoToolbar.cpp:57
 msgid "Dodaj krzywą Beziera"
 msgstr "Add Bézier curve"
 
-#: VideoToolbar.cpp:56
+#: VideoToolbar.cpp:58
 msgid "Dodaj krzywą B-sklejaną"
 msgstr "Add B-spline"
 
-#: VideoToolbar.cpp:57
+#: VideoToolbar.cpp:59
 msgid "Dodaj nowy oddzielny punkt"
 msgstr "Add separate point"
 
-#: VideoToolbar.cpp:58
+#: VideoToolbar.cpp:60
 msgid "Usuń element"
 msgstr "Delete point"
 
-#: VideoToolbar.cpp:59
+#: VideoToolbar.cpp:61
 msgid "Odwróć wycinek"
 msgstr "Invert clip"
 
-#: VideoToolbar.cpp:62
+#: VideoToolbar.cpp:64
 msgid "Przenieś punkty pozycjonowania"
 msgstr "Move position points"
 
-#: VideoToolbar.cpp:63
+#: VideoToolbar.cpp:65
 msgid "Przenieś startowe punkty ruchu"
 msgstr "Change \\move starting points"
 
-#: VideoToolbar.cpp:64
+#: VideoToolbar.cpp:66
 msgid "Przenieś końcowe punkty ruchu"
 msgstr "Change \\move ending points"
 
-#: VideoToolbar.cpp:65
+#: VideoToolbar.cpp:67
 msgid "Przenieś wycinki"
 msgstr "Move clips"
 
-#: VideoToolbar.cpp:66
+#: VideoToolbar.cpp:68
 msgid ""
 "Przenieś rysunki,\n"
 "używać tylko w przypadku,\n"
@@ -7203,11 +7206,11 @@ msgstr ""
 "Use only if you want to move drawing points.\n"
 "Do not use with first three options"
 
-#: VideoToolbar.cpp:67
+#: VideoToolbar.cpp:69
 msgid "Przenieś punkty org"
 msgstr "Move \\org points"
 
-#: VideoToolbar.cpp:70
+#: VideoToolbar.cpp:72
 msgid ""
 "Ustaw kąt z 2 punktów.\n"
 "Po ustawieniu 2 punktów pod tekstem\n"
@@ -7217,69 +7220,82 @@ msgstr ""
 "After setting 2 points below text on video\n"
 "it calculates angle from it."
 
-#: VideoToolbar.cpp:71
+#: VideoToolbar.cpp:73
 msgid "Zmiana wszystkich tagów obrotu wokół osi Z"
 msgstr "Changing all tags rotation Z"
 
-#: VideoToolbar.cpp:72
+#: VideoToolbar.cpp:74
 msgid ""
 "Utrzymanie proporcji, by po obrocie rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
 msgstr ""
+"Preserve proportions, that vector drawings\n"
+"and text don't change its original positions."
 
-#: VideoToolbar.cpp:75
+#: VideoToolbar.cpp:77
 msgid ""
 "Ustaw skalę według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "zeskalowany wg jednej osi badź dwóch."
 msgstr ""
+"Set scale by rectangle.\n"
+"After drawing rectangle text is scaled\n"
+"in two or one axis."
 
-#: VideoToolbar.cpp:76
+#: VideoToolbar.cpp:78
 msgid "Skaluj szerokość"
 msgstr "Scale width"
 
-#: VideoToolbar.cpp:77
+#: VideoToolbar.cpp:79
 msgid "Utrzymuj proporcje"
 msgstr "Preserve aspect ratio"
 
-#: VideoToolbar.cpp:78
+#: VideoToolbar.cpp:80
 msgid "Skaluj wysokość"
 msgstr "Scale height"
 
-#: VideoToolbar.cpp:79
+#: VideoToolbar.cpp:81
 msgid ""
 "Ustaw własny prostokąt dla obecnej skali.\n"
 "W przypadku niepożądanych różnic można ustawić\n"
 "własny prostokąt dla pierwotnej skali."
 msgstr ""
+"Set custom rectangle for current scale.\n"
+"When automatic size calculation not work properly\n"
+"it's possible to set rectangle for origin scale."
 
-#: VideoToolbar.cpp:80
+#: VideoToolbar.cpp:82
 msgid "Zmiana wszystkich tagów skali"
 msgstr "Change all scale tags"
 
-#: VideoToolbar.cpp:81
+#: VideoToolbar.cpp:83
 msgid ""
 "Utrzymanie proporcji, by po skalowaniu rysunki wektorowe i tekst\n"
 "nie poprzestawiały się względem siebie."
 msgstr ""
+"Preserve proportions that vector drawings\n"
+"and text don't change its original positions."
 
-#: VideoToolbar.cpp:84
+#: VideoToolbar.cpp:86
 msgid ""
 "Ustaw pozycję według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "spozycjonowany wg jednej osi badź dwóch\n"
 "dla wybranego położenia"
 msgstr ""
+"Set position by rectangle.\n"
+"After draw a rectangle line will be positioned\n"
+"by one or two axis for chosen alignment."
 
-#: VideoToolbar.cpp:85
+#: VideoToolbar.cpp:87
 msgid "Pozycjonuj w osi X"
 msgstr "Positioning in X axis"
 
-#: VideoToolbar.cpp:86
+#: VideoToolbar.cpp:88
 msgid "Pozycjonuj w osi Y"
 msgstr "Positioning in Y axis"
 
-#: VideoToolbar.cpp:89
+#: VideoToolbar.cpp:91
 msgid ""
 "Ustaw ruch 2 punktów i pozycji wideo.\n"
 "Po ustawieniu pierwszego punktu przed tekstem który się porusza.\n"
@@ -7288,75 +7304,92 @@ msgid ""
 "do którego był ustawiony punkt początkowy.\n"
 "Ruch generuje postawienie drugiego punktu."
 msgstr ""
+"Set move from 2 points and video position.\n"
+"After set first point on video before text that moving,\n"
+"set video to end that many frames,\n"
+"that element of first set point will still visible.\n"
+"\vMove is generated after set second point."
 
-#: VideoToolbar.cpp:92
+#: VideoToolbar.cpp:94
 msgid "Zmiana wszystkich tagów obrotu wokół osi X / Y"
-msgstr ""
+msgstr "Changing all tags of rotation X / Y"
 
-#: VideoToolbar.cpp:122
+#: VideoToolbar.cpp:124
 msgid "Dwukrotnym kliknięciu linii (zawsze włączone)"
 msgstr "Double-clicking line (always On)"
 
-#: VideoToolbar.cpp:122
+#: VideoToolbar.cpp:124
 msgid "Każdej zmianie linii"
 msgstr "Every line change"
 
-#: VideoToolbar.cpp:123
+#: VideoToolbar.cpp:125
 msgid "Kliknięciu linii lub edycji na pauzie"
 msgstr "Clicking line or edition when paused"
 
-#: VideoToolbar.cpp:123
+#: VideoToolbar.cpp:125
 msgid "Kliknięciu linii lub edycji"
 msgstr "Clicking line or edition"
 
-#: VideoToolbar.cpp:124
+#: VideoToolbar.cpp:126
 msgid "Edycji na pauzie"
 msgstr "Editing line when paused"
 
-#: VideoToolbar.cpp:124
+#: VideoToolbar.cpp:126
 msgid "Edycji"
 msgstr "Editing line whenever"
 
-#: VideoToolbar.cpp:125
+#: VideoToolbar.cpp:127
 msgid "Nic"
 msgstr "Nothing"
 
-#: VideoToolbar.cpp:125
+#: VideoToolbar.cpp:127
 msgid "Audio do końca linii"
 msgstr "Audio to the line end time"
 
-#: VideoToolbar.cpp:125
+#: VideoToolbar.cpp:127
 msgid "Wideo do końca linii"
 msgstr "Video and audio to the line end time"
 
-#: VideoToolbar.cpp:126
+#: VideoToolbar.cpp:128
 msgid "Wideo do początku następnej linii"
 msgstr "Video and audio to the next line start time"
 
 # Zły: nie rozumiem
-#: VideoToolbar.cpp:129
+#: VideoToolbar.cpp:131
 msgid "Przesuwaj wideo do aktualnej linii po:"
 msgstr "Move video to selected line on:"
 
-#: VideoToolbar.cpp:133
+#: VideoToolbar.cpp:135
 msgid "Odtwarzaj po zmianie linii:"
 msgstr "On moving to another line play:"
 
-#: VideoToolbar.cpp:652
+#: VideoToolbar.cpp:504 VideoToolbar.cpp:520
+msgid "Wybierz"
+msgstr "Choose"
+
+#: VideoToolbar.cpp:507
+msgid ""
+"Lista gotowych rysunków ASS z możliwością edycji.\n"
+"Po wybraniu rysunku z listy należy ustawić kursor\n"
+"w miejcu początku przytrzymać lewy przycisk myszy i przeciągnąć."
+msgstr ""
+"List of ASS drawings with edit option.\n"
+"After choose drawing from list just set cursor i n place\n"
+"of start of drawing and click left mouse button and drag."
+
+#: VideoToolbar.cpp:740
 msgid "Lista z tagami obsługiwanymi przez narzędzie"
-msgstr ""
+msgstr "List of tags that can edit visual tool"
 
-#: VideoToolbar.cpp:665
-#, fuzzy
-#| msgid "Ustaw"
+#: VideoToolbar.cpp:753
 msgid "Wstaw"
-msgstr "Set"
+msgstr "Insert"
 
-#: VideoToolbar.cpp:665
+#: VideoToolbar.cpp:753
 msgid "Pomnóż"
-msgstr ""
+msgstr "Multiply"
 
-#: VideoToolbar.cpp:667
+#: VideoToolbar.cpp:755
 msgid ""
 "Opcje zmiany tagów:\n"
 "Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
@@ -7365,100 +7398,104 @@ msgid ""
 "Pomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\n"
 "pierwsza linia nie jest zmieniana."
 msgstr ""
+"Options of tag changing:\n"
+"Add - changes all tags adding move on slider.\n"
+"Insert - inserts tag in cursor position when one line \n"
+"or on start of line when multiline.\n"
+"Multiply - multiply move of slider by number od selected line\n"
+"first line is not changes. Made for cascade placing."
 
-#: VideoToolbar.cpp:672
+#: VideoToolbar.cpp:760
 msgid "Edycja tagów z listy oraz tworzenie nowych"
-msgstr ""
+msgstr "Edition list tags or adding a new tags"
 
-#: VideoToolbar.cpp:969
+#: VideoToolbar.cpp:1066
 msgid "Lewo-dół"
-msgstr ""
+msgstr "Left-bottom"
 
-#: VideoToolbar.cpp:969
+#: VideoToolbar.cpp:1066
 msgid "Środek-dół"
-msgstr ""
+msgstr "Center-bottom"
 
-#: VideoToolbar.cpp:969
+#: VideoToolbar.cpp:1066
 msgid "Prawo-dół"
-msgstr ""
+msgstr "Right-bottom"
 
-#: VideoToolbar.cpp:970
+#: VideoToolbar.cpp:1067
 msgid "Lewo-środek"
-msgstr ""
+msgstr "Left-center"
 
-#: VideoToolbar.cpp:970
+#: VideoToolbar.cpp:1067
 msgid "Środek"
-msgstr ""
+msgstr "Center"
 
-#: VideoToolbar.cpp:970
+#: VideoToolbar.cpp:1067
 msgid "Prawo-środek"
-msgstr ""
+msgstr "Right-center"
 
-#: VideoToolbar.cpp:971
+#: VideoToolbar.cpp:1068
 msgid "Lewo-góra"
-msgstr ""
+msgstr "Left-top"
 
-#: VideoToolbar.cpp:971
+#: VideoToolbar.cpp:1068
 msgid "Środek-góra"
-msgstr ""
+msgstr "Center-top"
 
-#: VideoToolbar.cpp:971
+#: VideoToolbar.cpp:1068
 msgid "Prawo-góra"
-msgstr ""
+msgstr "Right-top"
 
-#: VideoToolbar.cpp:973
+#: VideoToolbar.cpp:1070
 msgid "Lewo-poniżej"
-msgstr ""
+msgstr "Left-below"
 
-#: VideoToolbar.cpp:973
+#: VideoToolbar.cpp:1070
 msgid "Środek-poniżej"
-msgstr ""
+msgstr "Center-below"
 
-#: VideoToolbar.cpp:973
+#: VideoToolbar.cpp:1070
 msgid "Prawo-poniżej"
-msgstr ""
+msgstr "Right-below"
 
-#: VideoToolbar.cpp:974
+#: VideoToolbar.cpp:1071
 msgid "Lewo-ponad"
-msgstr ""
+msgstr "Left-above"
 
-#: VideoToolbar.cpp:974
+#: VideoToolbar.cpp:1071
 msgid "Środek-ponad"
-msgstr ""
+msgstr "Center-above"
 
-#: VideoToolbar.cpp:974
+#: VideoToolbar.cpp:1071
 msgid "Prawo-ponad"
-msgstr ""
+msgstr "Right-above"
 
-#: VideoToolbar.cpp:975
+#: VideoToolbar.cpp:1072
 msgid "Przed-góra"
-msgstr ""
+msgstr "Before-top"
 
-#: VideoToolbar.cpp:975
+#: VideoToolbar.cpp:1072
 msgid "Przed-środek"
-msgstr ""
+msgstr "Before-center"
 
-#: VideoToolbar.cpp:975
+#: VideoToolbar.cpp:1072
 msgid "Przed-dół"
-msgstr ""
+msgstr "Before-bottom"
 
-#: VideoToolbar.cpp:976
+#: VideoToolbar.cpp:1073
 msgid "Za-góra"
-msgstr ""
+msgstr "After-top"
 
-#: VideoToolbar.cpp:976
+#: VideoToolbar.cpp:1073
 msgid "Za-środek"
-msgstr ""
+msgstr "After-center"
 
-#: VideoToolbar.cpp:976
+#: VideoToolbar.cpp:1073
 msgid "Za-dół"
-msgstr ""
+msgstr "After-bottom"
 
-#: VideoToolbar.cpp:985
-#, fuzzy
-#| msgid "Położenie tekstu środek - góra"
+#: VideoToolbar.cpp:1082
 msgid "Położenie tekstu, działa podobnie jak w stylach"
-msgstr "Top center"
+msgstr "Text placing works similar like in styles"
 
 #: Videobox.cpp:94 Videobox.cpp:107
 #, c-format
@@ -7546,151 +7583,205 @@ msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "Subtitle files (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
 #: VisualAllTagsEdition.cpp:23
-#, fuzzy
-#| msgid "Edycja stylów"
 msgid "Edycja tagów"
-msgstr "Style edition"
+msgstr "Tag edition"
 
 #: VisualAllTagsEdition.cpp:34
-#, fuzzy
-#| msgid "Edytor nazwy tagów"
 msgid "Edytowany tag"
-msgstr "Editor tag names"
+msgstr "Edited tag"
 
 #: VisualAllTagsEdition.cpp:39
-#, fuzzy
-#| msgid "Dodaj"
 msgid "Dodaj tag"
-msgstr "Add"
+msgstr "Add tag"
 
 #: VisualAllTagsEdition.cpp:40
-#, fuzzy
-#| msgid "Usuń"
 msgid "Usuń tag"
-msgstr "Delete"
+msgstr "Delete tag"
 
-#: VisualAllTagsEdition.cpp:51
-#, fuzzy
-#| msgid "Nazwa"
+#: VisualAllTagsEdition.cpp:51 VisualDrawingShapes.cpp:74
 msgid "Nazwa:"
-msgstr "Name"
+msgstr "Name:"
 
 #: VisualAllTagsEdition.cpp:53
 msgid "Tag:"
-msgstr ""
+msgstr "Tag:"
 
 #: VisualAllTagsEdition.cpp:58
-#, fuzzy
-#| msgid "Wartość:"
 msgid "Minimalna wartość:"
-msgstr "Value:"
+msgstr "Minimal value:"
 
 #: VisualAllTagsEdition.cpp:60
 msgid "Maksymalna wartość:"
-msgstr ""
+msgstr "Maximal value:"
 
 #: VisualAllTagsEdition.cpp:67
 msgid "Przeskok:"
-msgstr ""
+msgstr "Step:"
 
 #: VisualAllTagsEdition.cpp:70
-#, fuzzy
-#| msgid "Tag wstawiany w miejsce kursora"
 msgid "Wstawiany w miejscu kursora"
 msgstr "Tag inserted in place of cursor"
 
 #: VisualAllTagsEdition.cpp:70
-#, fuzzy
-#| msgid "Tag wstawiany na początku tekstu"
 msgid "Wstawiany tylko na początku"
-msgstr "Insert Tag at text beginning"
+msgstr "Insert Tag at text beginning of text"
 
 #: VisualAllTagsEdition.cpp:71
 msgid "Wycinek prostokątny z obsługą animacji"
-msgstr ""
+msgstr "Clip rectangle with \\t animation"
 
 #: VisualAllTagsEdition.cpp:77
 msgid "Liczby po przecinku:"
-msgstr ""
+msgstr "Number after dot:"
 
 #: VisualAllTagsEdition.cpp:82
 msgid "Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"
-msgstr ""
+msgstr "Used only when tag have 2 values or more"
 
 #: VisualAllTagsEdition.cpp:86
-#, fuzzy
-#| msgid "Wartość:"
 msgid "Włącz wartość 2:"
-msgstr "Value:"
+msgstr "Turn on value 2:"
 
 #: VisualAllTagsEdition.cpp:92
-#, fuzzy
-#| msgid "Wartość:"
 msgid "Wartość 2:"
-msgstr "Value:"
+msgstr "Value 2:"
 
-#: VisualAllTagsEdition.cpp:105
-#, fuzzy
-#| msgid "Przywróć skrót domyślny"
+#: VisualAllTagsEdition.cpp:105 VisualDrawingShapes.cpp:96
 msgid "Przywróć domyślne"
-msgstr "Restore default hotkey"
+msgstr "Restore default"
 
-#: VisualAllTagsEdition.cpp:127
-#, fuzzy
-#| msgid "Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"
+#: VisualAllTagsEdition.cpp:127 VisualDrawingShapes.cpp:119
 msgid "Czy na pewno chcesz przywrócić ustawienia domyślne?"
-msgstr "Are you sure you want to move loaded video to recycle bin?"
+msgstr "Are you sure you want to reset to default?"
 
 #: VisualAllTagsEdition.cpp:144
-#, fuzzy
-#| msgid "Podaj nazwę nowego katalogu"
 msgid "Wpisz nazwę nowego tagu."
-msgstr "Enter a name for the new folder"
+msgstr "Enter a name for the new tag."
 
 #: VisualAllTagsEdition.cpp:148
 msgid "Nowy tag już istnieje na liście, wpisz inną nazwę."
-msgstr ""
+msgstr "New tag already exists, enter another name."
 
 #: VisualAllTagsEdition.cpp:166
 msgid "Nie można usunąć wszystkich tagów z listy"
-msgstr ""
+msgstr "Cannot remove all tags from list"
 
 #: VisualAllTagsEdition.cpp:191
 #, c-format
 msgid "Zapisać zmiany tagu \"%s\"?"
-msgstr ""
+msgstr "Save changes of tag \"%s\"?"
 
 #: VisualAllTagsEdition.cpp:268
 msgid "Pole \"Tag\" nie może być puste."
-msgstr ""
+msgstr "Field \"Tag\" cannot be empty."
 
 #: VisualAllTagsEdition.cpp:276
 msgid ""
 "Pole \"Maksymalna wartość\" musi zawierać wartość\n"
 "większą od pola \"Minimalna wartość\"."
 msgstr ""
+"Field \"Maximum value\" have to contain value\n"
+"greater from field \"Minimum value\"."
 
 #: VisualAllTagsEdition.cpp:280
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
-msgstr ""
+msgstr "Field \"Step\" contains number too great for current min - max range."
 
-#: VisualClips.cpp:1067
+#: VisualClips.cpp:1018
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
 msgstr "Double \"m\" was blocked because of Vsfilter bug"
 
-#: VisualMove.cpp:387
-msgid "Wideo musi by ustawione minimum jedn klatk po starcie"
-msgstr ""
+#: VisualDrawingShapes.cpp:35
+msgid "Edycja kształtów wektorowych"
+msgstr "Edition of vector shapes"
 
-#: Visuals.cpp:444
+#: VisualDrawingShapes.cpp:47
+msgid "Edytowany kształt"
+msgstr "Edited shape"
+
+#: VisualDrawingShapes.cpp:52
+msgid "Dodaj kształt"
+msgstr "Add shape"
+
+#: VisualDrawingShapes.cpp:53
+msgid "Usuń kształt"
+msgstr "Delete shape"
+
+#: VisualDrawingShapes.cpp:67
+msgid "Zmienna szerokość i wysokość"
+msgstr "Changed width and height"
+
+#: VisualDrawingShapes.cpp:67
+msgid "Zachowaj proporcje boków"
+msgstr "Preserve aspect ratio"
+
+#: VisualDrawingShapes.cpp:67
+msgid "Zmienna tylko szerokość"
+msgstr "Changed is only width"
+
+#: VisualDrawingShapes.cpp:70
+msgid "Zmiana koordynatów rysunku"
+msgstr "Changing only drawing coordinates"
+
+#: VisualDrawingShapes.cpp:70
+msgid "Zmiana skali"
+msgstr "Scale changing"
+
+#: VisualDrawingShapes.cpp:76
+msgid "Skalowanie względem kursora:"
+msgstr "Scaling via cursor"
+
+#: VisualDrawingShapes.cpp:78
+msgid "Rodzaj skalowania:"
+msgstr "Scaling mode:"
+
+#: VisualDrawingShapes.cpp:82
+msgid "Pobierz kształt z aktywnej linii"
+msgstr "Get shape from active line"
+
+#: VisualDrawingShapes.cpp:87
+msgid "Kształt:"
+msgstr "Shape:"
+
+#: VisualDrawingShapes.cpp:136
+msgid "Wpisz nazwę nowego ksztatłu."
+msgstr "Enter a name for the new shape."
+
+#: VisualDrawingShapes.cpp:140
+msgid "Nowy ksztatł już istnieje na liście, wpisz inną nazwę."
+msgstr "New shape name already exists, enter another name."
+
+#: VisualDrawingShapes.cpp:158
+msgid "Nie można usunąć wszystkich kształtów z listy"
+msgstr "Cannot remove all shapes from the list"
+
+#: VisualDrawingShapes.cpp:183
+#, c-format
+msgid "Zapisać zmiany kształtu \"%s\"?"
+msgstr "Save \"%s\" shape edition?"
+
+#: VisualDrawingShapes.cpp:202 VisualDrawingShapes.cpp:266
+msgid "Bez nazwy"
+msgstr "Untitled"
+
+#: VisualDrawingShapes.cpp:262
+msgid "Pole \"kształt\" nie może być puste."
+msgstr "Field \"shape\" cannot be empty."
+
+#: VisualMove.cpp:387
+msgid ""
+"Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
+msgstr "Video must be set at least one frame after start time of line"
+
+#: Visuals.cpp:447
 msgid ""
 "Narzędzia edycji wizualnej\n"
 "nie działają na komentarzach"
 msgstr "Visual tools not working on comments"
 
-#: Visuals.cpp:445
+#: Visuals.cpp:448
 msgid ""
 "Linia nie jest widoczna na wideo\n"
 "albo ma zerowy czas trwania"
@@ -7698,10 +7789,10 @@ msgstr ""
 "Line is not visible on video\n"
 "or has zero duration"
 
-#: Visuals.cpp:1055
+#: Visuals.cpp:1071
 #, c-format
 msgid "Zła wartość punktu rysunku %s."
-msgstr ""
+msgstr "Bad value of vector drawing coordinate %s."
 
 #: stylestore.cpp:65 stylestore.cpp:80 stylestore.cpp:133
 msgid "Nowy"
@@ -7875,6 +7966,9 @@ msgstr "Copy style from storage to ASS"
 #: stylestore.cpp:780
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "Delete unused ASS styles"
+
+#~ msgid "Wysokość jest równa szerokości"
+#~ msgstr "Preserve aspect ratio"
 
 #, fuzzy
 #~| msgid "Narzędzie zmieniacz skali i obrotów"
