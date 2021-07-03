@@ -417,20 +417,24 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 {
 	wxString tag;
 
+	float Scalex = scale.x / lastScale.x;
+	float Scaley = scale.y / lastScale.y;
+	if (Scalex > Scaley)
+		Scaley = Scalex;
+	else if (Scaley > Scalex)
+		Scalex = Scaley;
 	//Change positions of scaled lines 
 	//that the image before scaling don't change
 	//it distorts when positions are different then first one
 	if (changeAllTags && preserveProportions) {
-		float posScalex = scale.x / lastScale.x;
-		float posScaley = scale.y / lastScale.y;
 		bool putInBracket = false;
 		wxPoint textPos;
 		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPos);
 		//need to restore subtitles position
 		D3DXVECTOR2 activeLinePos = { ((from.x / zoomScale.x) + zoomMove.x) * coeffW,
 		((from.y / zoomScale.y) + zoomMove.y) * coeffH };
-		pos.x = activeLinePos.x + ((pos.x - activeLinePos.x) * posScalex);
-		pos.y = activeLinePos.y + ((pos.y - activeLinePos.y) * posScaley);
+		pos.x = activeLinePos.x + ((pos.x - activeLinePos.x) * Scalex);
+		pos.y = activeLinePos.y + ((pos.y - activeLinePos.y) * Scaley);
 		wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
 		if (moveValues[6] > 2) {
 			D3DXVECTOR2 pos1(moveValues[2] - moveValues[0], moveValues[3] - moveValues[1]);
@@ -445,16 +449,23 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		//maybe everything switch to replace function using length is better
 		if (putInBracket) { posstr = L"{" + posstr + L"}"; }
 		txt->replace(textPos.x, textPos.y, posstr);
+		type = 2;
 	}
-
+	Styles* style = NULL;
+	if (changeAllTags) {
+		style = tab->Grid->GetStyle(0, dial->Style);
+	}
 	if (type != 1){
 		//change all tags fscx that are in line and add first one
 		//when there is no tags
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float scalex = scale.x;
+				float scalex = 1.f * Scalex;
 				if (!data.finding.empty()) {
-					scalex = (wxAtof(data.finding) / 100.f) * (scale.x / lastScale.x);
+					scalex = (wxAtof(data.finding) / 100.f) * Scalex;
+				}
+				else if (style) {
+					scalex = (style->GetScaleXDouble() / 100.f) * Scalex;
 				}
 				*result = getfloat(scalex * 100);
 			};
@@ -472,9 +483,12 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		//when there is no tags
 		if (changeAllTags) {
 			auto replfunc = [=](const FindData& data, wxString* result) {
-				float scaley = scale.y;
+				float scaley = 1.f * Scalex;
 				if (!data.finding.empty()) {
-					scaley = (wxAtof(data.finding) / 100.f) * (scale.y / lastScale.y);
+					scaley = (wxAtof(data.finding) / 100.f) * Scaley;
+				}
+				else if(style){
+					scaley = (style->GetScaleYDouble() / 100.f) * Scaley;
 				}
 				*result = getfloat(scaley * 100);
 			};
