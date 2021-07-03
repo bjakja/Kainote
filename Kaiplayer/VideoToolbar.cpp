@@ -488,7 +488,7 @@ void VectorItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 
 void VectorItem::HideContols()
 {
-	if (isDrawing && shapeList) {
+	if (shapeList) {
 		shapeListSelection = shapeList->GetSelection();
 		shapeList->Destroy();
 		shapeList = NULL;
@@ -554,7 +554,7 @@ void VectorItem::ShowContols(VideoToolbar* vt)
 
 void VectorItem::OnSize(VideoToolbar* vt)
 {
-	if (isDrawing) {
+	if (shapeList) {
 		int maxWidth = vt->GetEndDrawPos();
 		wxSize ans = shapeList->GetBestSize();
 		ans.x = 70;

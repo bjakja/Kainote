@@ -114,9 +114,11 @@ public:
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action, bool dummy = false);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
-	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL);
+	void Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline = false, int nBsplinePoints = 4, int currentPoint = 0);
+	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, 
+		bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL, D3DXVECTOR2* drawingPosition = NULL);
 	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment = false);
-	D3DXVECTOR2 GetDrawingSize(const wxString& drawing);
+	D3DXVECTOR2 GetDrawingSize(const wxString& drawing, D3DXVECTOR2 *position = NULL);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -202,7 +204,6 @@ class Position : public Visuals
 {
 public:
 	Position();
-	//~Position();
 	void OnMouseEvent(wxMouseEvent &event);
 	wxString GetVisual(int datapos);
 	void ChangeMultiline(bool all, bool dummy = false);
@@ -224,6 +225,7 @@ private:
 	D3DXVECTOR2 textSize;
 	D3DXVECTOR2 border;
 	D3DXVECTOR2 extlead;
+	D3DXVECTOR2 drawingPosition;
 	D3DXVECTOR2 diffs;
 	D3DXVECTOR2 curLinePosition;
 	bool hasPositionToRenctangle = false;

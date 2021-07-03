@@ -550,7 +550,7 @@ void Position::SetPosition()
 		}
 		//middle
 		else if (an <= 6) {
-			y += ((recty1 - recty) + textSize.y + bordery - (extlead.x - extlead.y)) / 2;
+			y += (((recty1 - recty) + textSize.y + extlead.y) / 2);
 		}
 		//top
 		else if (an <= 9) {
@@ -571,7 +571,7 @@ void Position::SetPosition()
 			}
 			//middle
 			else if (an % 3 == 2) {
-				y += ((recty1 - recty) + textSize.y + bordery - (extlead.x - extlead.y)) / 2;
+				y += (((recty1 - recty) + textSize.y + extlead.y) / 2);
 			}
 			//top
 			else if (an % 3 == 1) {
@@ -611,8 +611,8 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool chan
 
 void Position::GetPositioningData()
 {
-	textSize = GetTextSize(tab->Edit->line, &border, NULL, true, &extlead);
-	curLinePosition = D3DXVECTOR2(0, 0);
+	textSize = GetTextSize(tab->Edit->line, &border, NULL, true, &extlead, &drawingPosition);
+	curLinePosition = drawingPosition;//PositionToVideo(drawingPosition)/*D3DXVECTOR2(0, 0)*/;
 	//no alignment? get it
 	if(curLineAlingment == -1)
 		GetPosnScale(NULL, &curLineAlingment, moveValues);

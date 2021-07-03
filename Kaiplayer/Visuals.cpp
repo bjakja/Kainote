@@ -914,7 +914,8 @@ bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width,
 	return true;
 }
 
-D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, bool keepExtraLead, D3DXVECTOR2* extralead)
+D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, 
+	bool keepExtraLead, D3DXVECTOR2* extralead, D3DXVECTOR2* drawingPosition)
 {
 	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", L"bord", L"xbord", L"ybord" };
 	D3DXVECTOR2 result = D3DXVECTOR2(0.f, 0.f);
@@ -942,13 +943,16 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	if (extralead) {
 		*extralead = { 0, 0 };
 	}
+	if (drawingPosition) {
+		(*drawingPosition) = D3DXVECTOR2(0, 0);
+	}
 	for (auto tag : presult->tags) {
-		if (tag->tagName == L"p") {
-			if (!tag->value.IsNumber()) {
+		if (tag->tagName == L"p" || tag->tagName == L"pvector") {
+			if (tag->tagName == L"pvector") {
 				drawingText << tag->value;
 			}
 			else if(tag->value == L"0"){
-				D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText);
+				D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText, drawingPosition);
 				result += drawingsize;
 				drawingText.clear();
 			}
@@ -1014,7 +1018,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 		}
 	}
 	if (!drawingText.empty()) {
-		D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText);
+		D3DXVECTOR2 drawingsize = GetDrawingSize(drawingText, drawingPosition);
 		result += drawingsize;
 	}
 	//don't know if it's needed
@@ -1039,37 +1043,56 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	return result;
 }
 
-D3DXVECTOR2 Visuals::GetDrawingSize(const wxString& drawing)
+D3DXVECTOR2 Visuals::GetDrawingSize(const wxString& drawing, D3DXVECTOR2* position)
 {
 	double minx = DBL_MAX;
 	double miny = DBL_MAX;
 	double maxx = -DBL_MAX;
 	double maxy = -DBL_MAX;
-	wxStringTokenizer tokenzr(drawing, L" ");
-	double value;
-	bool isX = true;
-	while (tokenzr.HasMoreTokens()) {
-		wxString token = tokenzr.GetNextToken();
-		if (token == L"m" || token == L"l" || token == L"b" || token == L"s" || token == L"c")
+	std::vector<ClipPoint> vectorDrawing;
+	GetVectorPoints(drawing, &vectorDrawing);
+	size_t i = 0;
+	while(i < vectorDrawing.size())
+	{
+		ClipPoint p = vectorDrawing[i];
+		if (p.type == L"b") {
+			std::vector<D3DXVECTOR2> BezierPoints;
+			ClipPoint tmp = vectorDrawing[i - 1];
+			//bspline have own rules and need to find first point
+			//make it works like in Vsfilter or Libass
+			if (tmp.type == L"s") {
+				int diff = 2;
+				int j = i - 2;
+				while (j >= 0) {
+					if (vectorDrawing[j].type != L"s") { break; }
+					j--;
+				}
+				diff = (i - j) - 2;
+				vectorDrawing[i - 1] = vectorDrawing[i - diff];
+			}
+			Curve(i - 1, &vectorDrawing, &BezierPoints);
+			vectorDrawing[i - 1] = tmp;
+			for (size_t g = 0; g < BezierPoints.size(); g++) {
+				D3DXVECTOR2 point = BezierPoints[g];
+				if (point.x < minx) { minx = point.x; }
+				if (point.y < miny) { miny = point.y; }
+				if (point.x > maxx) { maxx = point.x; }
+				if (point.y > maxy) { maxy = point.y; }
+			}
+			//Bezier have three points + forth i - 1 from last operation
+			i += 3;
 			continue;
-		if (token.EndsWith(L"c"))
-			token = token.Mid(0, token.length() - 1);
+		}
+		if (p.x < minx) { minx = p.x; }
+		if (p.y < miny) { miny = p.y; }
+		if (p.x > maxx) { maxx = p.x; }
+		if (p.y > maxy) { maxy = p.y; }
 
-		if (token.ToDouble(&value)) {
-			if (isX) {
-				if (value < minx) { minx = value; }
-				if (value > maxx) { maxx = value; }
-				isX = false;
-			}
-			else {
-				if (value < miny) { miny = value; }
-				if (value > maxy) { maxy = value; }
-				isX = true;
-			}
-		}
-		else {
-			KaiLog(wxString::Format(_("Zła wartość punktu rysunku %s."), token));
-		}
+		i++;
+	}
+	if (position) {
+		position->x = -minx;
+		position->y = -miny;
 	}
 	return D3DXVECTOR2(maxx - minx, maxy - miny);
 }
@@ -1124,4 +1147,55 @@ D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* poin
 		result.y = sizes.y / 2.0;
 	}
 	return result;
+}
+
+void Visuals::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int nBsplinePoints, int currentPoint)
+{
+	float a[4], b[4];
+	float x[4], y[4];
+	for (int g = 0; g < 4; g++)
+	{
+		if (currentPoint > (nBsplinePoints - 1)) { currentPoint = 0; }
+		ClipPoint point = (*vectorPoints)[pos + currentPoint];
+		x[g] = point.x;
+		y[g] = point.y;
+		currentPoint++;
+	}
+
+	if (bspline) {
+		a[3] = (-x[0] + 3 * x[1] - 3 * x[2] + x[3]) / 6.0;
+		a[2] = (3 * x[0] - 6 * x[1] + 3 * x[2]) / 6.0;
+		a[1] = (-3 * x[0] + 3 * x[2]) / 6.0;
+		a[0] = (x[0] + 4 * x[1] + x[2]) / 6.0;
+		b[3] = (-y[0] + 3 * y[1] - 3 * y[2] + y[3]) / 6.0;
+		b[2] = (3 * y[0] - 6 * y[1] + 3 * y[2]) / 6.0;
+		b[1] = (-3 * y[0] + 3 * y[2]) / 6.0;
+		b[0] = (y[0] + 4 * y[1] + y[2]) / 6.0;
+	}
+	else {
+		a[3] = -x[0] + 3 * x[1] - 3 * x[2] + x[3];
+		a[2] = 3 * x[0] - 6 * x[1] + 3 * x[2];
+		a[1] = -3 * x[0] + 3 * x[1];
+		a[0] = x[0];
+		b[3] = -y[0] + 3 * y[1] - 3 * y[2] + y[3];
+		b[2] = 3 * y[0] - 6 * y[1] + 3 * y[2];
+		b[1] = -3 * y[0] + 3 * y[1];
+		b[0] = y[0];
+	}
+
+	float maxaccel1 = fabs(2 * b[2]) + fabs(6 * b[3]);
+	float maxaccel2 = fabs(2 * a[2]) + fabs(6 * a[3]);
+	float maxaccel = maxaccel1 > maxaccel2 ? maxaccel1 : maxaccel2;
+	float h = 1.0f;
+	if (maxaccel > 4.0f) h = sqrt(4.0f / maxaccel);
+	float p_x, p_y;
+	for (float t = 0; t < 1.0; t += h)
+	{
+		p_x = a[0] + t * (a[1] + t * (a[2] + t * a[3]));
+		p_y = b[0] + t * (b[1] + t * (b[2] + t * b[3]));
+		table->push_back(D3DXVECTOR2(p_x, p_y));
+	}
+	p_x = a[0] + a[1] + a[2] + a[3];
+	p_y = b[0] + b[1] + b[2] + b[3];
+	table->push_back(D3DXVECTOR2(p_x, p_y));
 }

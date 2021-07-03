@@ -587,7 +587,7 @@ int MoveAll::DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline
 	}
 	else {
 		ClipPoint tmp = vectorPoints->at(i - 1);
-		if (vectorPoints->at(i - 1).type == L"s") {
+		if (tmp.type == L"s") {
 			int diff = 2;
 			int j = i - 2;
 			while (j >= 0) {
@@ -598,10 +598,6 @@ int MoveAll::DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline
 			vectorPoints->at(i - 1) = vectorPoints->at(i - diff);
 		}
 		Curve(i - 1, vectorPoints, &v4, false);
-		/*D3DXVECTOR2 v2[4] = { GetVector(vectorPoints->at(i - 1)), GetVector(vectorPoints->at(i)),
-			 GetVector(vectorPoints->at(i + 1)), GetVector(vectorPoints->at(i + 2)) };
-		line->Draw(v2, 2, 0xFF0000FF);
-		line->Draw(&v2[2], 2, 0xFF0000FF);*/
 		vectorPoints->at(i - 1) = tmp;
 	}
 	line->Draw(&v4[0], v4.size(), 0xFFBB0000);
@@ -609,17 +605,17 @@ int MoveAll::DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline
 	return pts;
 }
 
-void MoveAll::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints, int acpt)
+void MoveAll::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int nBsplinePoints, int currentPoint)
 {
 	float a[4], b[4];
 	float x[4], y[4];
 	for (int g = 0; g < 4; g++)
 	{
-		if (acpt > (spoints - 1)) { acpt = 0; }
-		D3DXVECTOR2 point = GetVector((*vectorPoints)[pos + acpt]);
+		if (currentPoint > (nBsplinePoints - 1)) { currentPoint = 0; }
+		D3DXVECTOR2 point = GetVector((*vectorPoints)[pos + currentPoint]);
 		x[g] = point.x;
 		y[g] = point.y;
-		acpt++;
+		currentPoint++;
 	}
 
 	if (bspline) {
