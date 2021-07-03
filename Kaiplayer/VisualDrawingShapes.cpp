@@ -508,19 +508,6 @@ void Shapes::SetShape(int curshape)
 	points.clear();
 	GetVectorPoints(currentShape.shape, &points);
 	shapeSize = CalcDrawingSize(alignment, &points, true);
-	if (!points.empty()) {
-		D3DXVECTOR2 offsetxy = CalcDrawingSize(alignment, &points);
-		float rad = 0.01745329251994329576923690768489f;
-		D3DXVECTOR2 orgpivot = { abs(org.x - _x), abs(org.y - _y) };
-		float s = sin(-frz * rad);
-		float c = cos(-frz * rad);
-		for (size_t i = 0; i < points.size(); i++) {
-			points[i].x /*-= offsetxy.x*/;
-			points[i].y /*-= offsetxy.y*/;
-			if (frz)
-				RotateDrawing(&points[i], s, c, orgpivot);
-		}
-	}
 }
 
 void Shapes::GetVisual(wxString* drawing)
@@ -535,19 +522,9 @@ void Shapes::GetVisual(wxString* drawing)
 		int countB = 0;
 		bool spline = false;
 		size_t psize = points.size();
-		std::vector<ClipPoint> originalPoints;
-
-		if (frz) {
-			float rad = 0.01745329251994329576923690768489f;
-			D3DXVECTOR2 orgpivot = { abs(org.x - _x), abs(org.y - _y) };
-			float s = sin(frz * rad);
-			float c = cos(frz * rad);
-			originalPoints = points;
-			for (size_t i = 0; i < psize; i++) {
-				RotateDrawing(&points[i], s, c, orgpivot);
-			}
-		}
-		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);//D3DXVECTOR2(0, 0);//CalcDrawingSize(alignment, &points);
+		//nothing to do with frz cause drawing already rotated, cannot rotate 
+		//drawing only can make red rectangle to be more on drawing
+		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);
 		float positionx = _x * DrawingAndClip::scale.x,
 			positiony = _y * DrawingAndClip::scale.y;
 		
@@ -566,10 +543,10 @@ void Shapes::GetVisual(wxString* drawing)
 			offsetxy.x += (rectx1 - rectx) / 2;
 		}
 		else if (alignment % 3 == 0) {
-			offsetxy.x += (rectx1 - rectx)/* * 2*/;
+			offsetxy.x += (rectx1 - rectx);
 		}
 		if (alignment < 4) {
-			offsetxy.y += (recty1 - recty)/* * 2*/;
+			offsetxy.y += (recty1 - recty);
 		}
 		else if (alignment < 7) {
 			offsetxy.y += (recty1 - recty) / 2;
@@ -580,11 +557,11 @@ void Shapes::GetVisual(wxString* drawing)
 		for (size_t i = 0; i < psize; i++)
 		{
 			ClipPoint pos = points[i];
-			float x = (pos.x * scale.x) + offsetxy.x;
-			float y = (pos.y * scale.y) + offsetxy.y;
+			pos.x = (pos.x * scale.x) + offsetxy.x;
+			pos.y = (pos.y * scale.y) + offsetxy.y;
 
 			if (countB && !pos.start) {
-				*drawing << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
 				countB++;
 			}
 			else {
@@ -596,7 +573,7 @@ void Shapes::GetVisual(wxString* drawing)
 					*drawing << pos.type << L" ";
 					lasttype = pos.type;
 				}
-				*drawing << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
 				if (pos.type == L"b" || pos.type == L"s") {
 					countB = 1;
 					if (pos.type == L"s")
@@ -606,14 +583,11 @@ void Shapes::GetVisual(wxString* drawing)
 			//fix for m one after another
 			if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
 				(i < psize - 1 && points[i + 1].type == L"m"))) {
-				*drawing << L"l " << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+				*drawing << L"l " << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
 			}
 		}
 		if (spline) { *drawing << L"c "; }
 		drawing->Trim();
-		if (originalPoints.size()) {
-			points = originalPoints;
-		}
 	}
 }
 

@@ -1107,12 +1107,13 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 			double tagValue = 0.0;
 			int ii = 0;
 			wxString resizedTag;
-			if (tag->tagName != L"fsp" && tag->tagName.EndsWith(L'p') && tag->value.find(L'm') != -1){
+			if ((tag->tagName.EndsWith(L"clip") || tag->tagName == L"pvector") && 
+				tag->value.find(L'm') != -1){
 				int mPos = tag->value.find(L'm');
 				resizedTag = tag->value.Left(mPos) + L"m ";
 				wxStringTokenizer tknzr(tag->value.AfterFirst(L'm'), L" ", wxTOKEN_STRTOK);
 				
-				float xscale = (tag->tagName == L"p") ? vectorXScale : xnsize;
+				float xscale = (tag->tagName == L"pvector") ? vectorXScale : xnsize;
 
 				while (tknzr.HasMoreTokens()){
 					wxString tkn = tknzr.NextToken();
