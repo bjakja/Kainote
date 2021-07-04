@@ -200,7 +200,9 @@ void SubsGridBase::Convert(char type)
 		OptionsDialog od(Kai, Kai);
 		od.OptionsTree->ChangeSelection(1);
 		od.okok->SetFocus();
-		if (od.ShowModal() == wxID_CANCEL){ return; }
+		if (od.ShowModal() == wxID_CANCEL){
+			return; 
+		}
 	}
 	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && tab->VideoPath != L""){
 		Options.SetString(CONVERT_FPS, Kai->GetStatusText(4).BeforeFirst(L' '));

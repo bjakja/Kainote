@@ -1007,7 +1007,7 @@ void OptionsDialog::OnSaveClick(wxCommandEvent& event)
 	Hkeys.SaveHkeys(true);
 	if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
 	}*/
-	if (event.GetId() == wxID_OK){ Hide(); }
+	if (event.GetId() == wxID_OK){ EndModal(wxID_OK); }
 }
 
 void OptionsDialog::SetOptions(bool saveall)
