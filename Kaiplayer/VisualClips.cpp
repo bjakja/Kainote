@@ -177,7 +177,11 @@ void DrawingAndClip::SetCurVisual()
 		clip = data.finding;
 		if (found){
 			int rres = clip.Freq(L',');
-			if (rres >= 3) { clip = L""; scale = D3DXVECTOR2(1.f, 1.f); vectorScale = 1; }
+			if (rres >= 3) { 
+				clip = L""; 
+				scale = D3DXVECTOR2(1.f, 1.f); 
+				vectorScale = 1; 
+			}
 			else{ clip = clip.AfterFirst((rres > 0) ? L',' : L'('); }
 		}
 		coeffW /= scale.x;
@@ -1341,13 +1345,13 @@ void DrawingAndClip::InvertClip()
 }
 
 
-void DrawingAndClip::SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale)
+void DrawingAndClip::SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 zoomscale)
 {
-	Visuals::SetZoom(move, scale);
+	Visuals::SetZoom(move, zoomscale);
 	pointArea = 4.f / zoomScale.x;
 }
 
-void DrawingAndClip::ChangeTool(int _tool) {
+void DrawingAndClip::ChangeTool(int _tool, bool blockSetCurVisual) {
 	int shapeSelectionNew = _tool >> 6;
 	//set shape to Shapes class above
 	if (Visual == VECTORDRAW) {
@@ -1357,7 +1361,7 @@ void DrawingAndClip::ChangeTool(int _tool) {
 			(shapeSelection != 0 && shapeSelectionNew == 0)) {
 			needRefresh = true;
 		}
-		if (shapeSelectionNew == 0) {
+		if (shapeSelectionNew == 0 && !blockSetCurVisual) {
 			SetCurVisual();
 		}
 		shapeSelection = shapeSelectionNew;

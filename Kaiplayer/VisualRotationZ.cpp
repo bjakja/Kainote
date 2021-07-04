@@ -411,14 +411,15 @@ wxPoint RotationZ::ChangeVisual(wxString* txt)
 	return GetPositionInText();
 }
 
-void RotationZ::ChangeTool(int _tool) { 
+void RotationZ::ChangeTool(int _tool, bool blockSetCurVisual) {
 	bool twoPointsTool = (_tool & 1) != 0;
 	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = (_tool & 2) != 0;
 	replaceTagsInCursorPosition = !changeAllTags;
 	preserveProportions = (_tool & 4) != 0;
 	if (oldChangeAllTags != changeAllTags) {
-		SetCurVisual();
+		if(!blockSetCurVisual)
+			SetCurVisual();
 		tab->Video->Render(false);
 	}
 	else if (twoPointsTool != hasTwoPoints) {

@@ -92,7 +92,7 @@ public:
 	virtual void Draw(int time);
 	virtual void DrawVisual(int time){};
 	virtual void SetCurVisual(){};
-	virtual void ChangeTool(int _tool){};
+	virtual void ChangeTool(int _tool, bool blockSetCurVisual = false){};
 	virtual void OnMouseEvent(wxMouseEvent &evt){};
 	//function should skip events when not use it;
 	virtual void OnKeyPress(wxKeyEvent &evt){};
@@ -209,7 +209,7 @@ public:
 	void ChangeMultiline(bool all, bool dummy = false);
 	void SetCurVisual();
 	void Draw(int time);
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
@@ -247,7 +247,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
 	//returns true if visual can be set or false if only need to refresh video
@@ -300,7 +300,7 @@ public:
 	void OnMouseEvent(wxMouseEvent &event);
 	void SetCurVisual();
 	void ChangeInLines(bool all);
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 	int DrawCurve(int i, std::vector<ClipPoint>* vectorPoints, bool bspline);
 	void Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints = 4, int acpt = 0);
@@ -330,7 +330,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 	int HitTest(const D3DXVECTOR2& pos, bool originalRect = false, bool diff = false);
 private:
@@ -373,7 +373,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
 	bool isOrg;
@@ -401,7 +401,7 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 	bool isOrg;
 	D3DXVECTOR2 angle;
@@ -424,7 +424,6 @@ public:
 	void ChangeVisual(wxString *txt, Dialogue *_dial);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
-	void ChangeTool(int _tool){};
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
 	void OnKeyPress(wxKeyEvent &evt);
 	D3DXVECTOR2 Corner[2];
@@ -459,7 +458,7 @@ public:
 	void Curve(int pos, std::vector<D3DXVECTOR2>* table, bool bspline, int spoints = 4, int acpt = 0);
 	void SelectPoints();
 	void ChangeSelection(bool select = false);
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	int FindPoint(int pos, wxString type, bool nextStart = false, bool fromEnd = false);
 	ClipPoint FindSnapPoint(const ClipPoint &pos, size_t pointToSkip/*, bool coeff = false*/);
 	void OnKeyPress(wxKeyEvent &evt);
@@ -514,7 +513,7 @@ public:
 	void OnKeyPress(wxKeyEvent& evt);
 	void SetCurVisual();
 	void FindTagValues();
-	void ChangeTool(int _tool);
+	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void GetVisualValue(wxString* visual, const wxString &curValue);
 	wxPoint ChangeVisual(wxString* txt) override;
 	void ChangeVisual(wxString* txt, Dialogue* _dial) override;

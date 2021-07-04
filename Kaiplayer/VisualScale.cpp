@@ -382,7 +382,7 @@ void Scale::SetCurVisual()
 	}
 }
 
-void Scale::ChangeTool(int _tool)
+void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	bool oldHasScaleToRenctangle = hasScaleToRenctangle;
 	hasScaleToRenctangle = _tool & 1;
@@ -395,7 +395,7 @@ void Scale::ChangeTool(int _tool)
 	changeAllTags = _tool & 32;
 	preserveProportions = _tool & 64;
 	replaceTagsInCursorPosition = !changeAllTags;
-	if (oldChangeAllTags != changeAllTags) {
+	if (oldChangeAllTags != changeAllTags && !blockSetCurVisual) {
 		SetCurVisual();
 	}
 	else if (oldHasScaleToRenctangle != hasScaleToRenctangle) {
@@ -403,7 +403,7 @@ void Scale::ChangeTool(int _tool)
 	}
 	if (oldHasOriginalRectangle != hasOriginalRectangle) {
 		if (hasOriginalRectangle) {
-			if (oldChangeAllTags == changeAllTags)
+			if (oldChangeAllTags == changeAllTags && !blockSetCurVisual)
 				SetCurVisual();
 			SetSecondRectScale();
 		}

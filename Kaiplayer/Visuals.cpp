@@ -287,7 +287,7 @@ void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
 	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 	currentLineText = editor->GetValue();
-	ChangeTool(tool);
+	ChangeTool(tool, true);
 	SetCurVisual();
 }
 

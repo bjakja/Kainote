@@ -181,7 +181,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 			tool += currentTag;
 			VideoCtrl* vc = tab->Video;
 			vc->GetVideoToolbar()->SetItemToggled(&tool);
-			ChangeTool(tool);
+			ChangeTool(tool, false);
 			return;
 		}
 		int rot = event.GetWheelRotation() / event.GetWheelDelta();
@@ -459,7 +459,7 @@ void AllTags::FindTagValues()
 	}
 }
 
-void AllTags::ChangeTool(int _tool)
+void AllTags::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	if (lastTool == _tool)
 		return;
@@ -469,7 +469,8 @@ void AllTags::ChangeTool(int _tool)
 
 	int curtag = _tool << 12;
 	currentTag = curtag >> 12;
-	SetCurVisual();
+	if(!blockSetCurVisual)
+		SetCurVisual();
 }
 
 void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)

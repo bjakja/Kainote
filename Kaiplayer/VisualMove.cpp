@@ -400,7 +400,7 @@ bool Move::SetMove()
 	return true;
 }
 
-void Move::ChangeTool(int _tool)
+void Move::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	hasLineToMove = _tool != -1;
 }

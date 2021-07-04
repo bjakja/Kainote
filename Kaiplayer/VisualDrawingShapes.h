@@ -112,7 +112,7 @@ private:
 	ShapesSetting currentShape;
 	std::vector<ClipPoint> points;
 	D3DXVECTOR2 shapeSize;
-	D3DXVECTOR2 scale = D3DXVECTOR2(1.f, 1.f);
+	D3DXVECTOR2 shapeScale = D3DXVECTOR2(1.f, 1.f);
 	//D3DXVECTOR2 position = D3DXVECTOR2(0.f, 0.f);
 	D3DXVECTOR2 drawingRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
 	bool rectangleVisible = false;

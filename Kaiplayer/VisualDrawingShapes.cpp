@@ -516,7 +516,7 @@ void Shapes::GetVisual(wxString* drawing)
 		DrawingAndClip::GetVisual(drawing);
 		return;
 	}
-	if (scale.x > 0.f && rectangleVisible) {
+	if (shapeScale.x > 0.f && rectangleVisible) {
 		wxString format = L"6.2f";
 		wxString lasttype;
 		int countB = 0;
@@ -524,10 +524,9 @@ void Shapes::GetVisual(wxString* drawing)
 		size_t psize = points.size();
 		//nothing to do with frz cause drawing already rotated, cannot rotate 
 		//drawing only can make red rectangle to be more on drawing
+		//get -minx and -miny with scale
 		D3DXVECTOR2 offsetxy = CalcDrawingAnchor(alignment, &points);
-		float positionx = _x * DrawingAndClip::scale.x,
-			positiony = _y * DrawingAndClip::scale.y;
-		
+		//get rectangle x < x1
 		float rectx = drawingRectangle[0].x < drawingRectangle[1].x ?
 			drawingRectangle[0].x : drawingRectangle[1].x;
 		float recty = drawingRectangle[0].y < drawingRectangle[1].y ?
@@ -536,9 +535,11 @@ void Shapes::GetVisual(wxString* drawing)
 			drawingRectangle[0].x : drawingRectangle[1].x;
 		float recty1 = drawingRectangle[0].y > drawingRectangle[1].y ?
 			drawingRectangle[0].y : drawingRectangle[1].y;
-		
-		offsetxy.x -= ((positionx - rectx) - 1);
-		offsetxy.y -= ((positiony - recty) - 1);
+		//subtract diff of position and rect
+		//position is already / by line scale
+		offsetxy.x -= ((_x - rectx) - 1);
+		offsetxy.y -= ((_y - recty) - 1);
+		//add diffs for alignments
 		if (alignment % 3 == 2) {
 			offsetxy.x += (rectx1 - rectx) / 2;
 		}
@@ -553,12 +554,12 @@ void Shapes::GetVisual(wxString* drawing)
 		}
 		
 		
-
+		//get drawing as string
 		for (size_t i = 0; i < psize; i++)
 		{
 			ClipPoint pos = points[i];
-			pos.x = (pos.x * scale.x) + offsetxy.x;
-			pos.y = (pos.y * scale.y) + offsetxy.y;
+			pos.x = (pos.x * shapeScale.x) + offsetxy.x;
+			pos.y = (pos.y * shapeScale.y) + offsetxy.y;
 
 			if (countB && !pos.start) {
 				*drawing << getfloat(pos.x, format) << L" " << getfloat(pos.y, format) << L" ";
@@ -593,11 +594,11 @@ void Shapes::GetVisual(wxString* drawing)
 
 void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 {
-	/*if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && scale.x > 0.f) {
+	/*if (currentShape.scalingMode == ShapesSetting::CHANGE_SCALE && shapeScale.x > 0.f) {
 		SetFromTo(0, position);
 		FindTag(L"fscx([0-9.-]+)", *txt, 3);
 		wxPoint textPos = GetPositionInText();
-		wxString newTag = L"\\fscx" + getfloat(scale.x * 100);
+		wxString newTag = L"\\fscx" + getfloat(shapeScale.x * 100);
 		Replace(newTag, txt);
 		if (diff) {
 			*diff = (textPos.y - textPos.x + 1) - newTag.length();
@@ -605,7 +606,7 @@ void Shapes::SetScale(wxString* txt, size_t position, int* diff)
 		if (currentShape.mode != ShapesSetting::ONLY_SCALE_X) {
 			FindTag(L"fscy([0-9.-]+)", *txt, 3);
 			wxPoint textPos = GetPositionInText();
-			wxString newTag = L"\\fscy" + getfloat(scale.y * 100);
+			wxString newTag = L"\\fscy" + getfloat(shapeScale.y * 100);
 			Replace(newTag, txt);
 			if (diff) {
 				*diff += (textPos.y - textPos.x + 1) - newTag.length();
@@ -685,18 +686,18 @@ void Shapes::SetDrawingScale()
 			drawingRectangle[0].y : drawingRectangle[1].y;
 		
 		if (rectx >= rectx1 - 10) {
-			scale.x = 0.f;
+			shapeScale.x = 0.f;
 		}
 		else {
 			float rectSizeX = rectx1 - rectx;
-			scale.x = rectSizeX / shapeSize.x;
+			shapeScale.x = rectSizeX / shapeSize.x;
 		}
 		if (recty >= recty1 - 10) {
-			scale.y = 0.f;
+			shapeScale.y = 0.f;
 		}
 		else {
 			float rectSizeY = recty1 - recty;
-			scale.y = rectSizeY / shapeSize.y;
+			shapeScale.y = rectSizeY / shapeSize.y;
 		}
 	}
 
@@ -756,8 +757,8 @@ D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* poi
 	for (size_t i = 0; i < points->size(); i++)
 	{
 		ClipPoint p = points->at(i);
-		p.x *= scale.x; 
-		p.y *= scale.y;
+		p.x *= shapeScale.x;
+		p.y *= shapeScale.y;
 		if (p.x < minx) { minx = p.x; }
 		if (p.y < miny) { miny = p.y; }
 	}

@@ -361,13 +361,15 @@ void RotationXY::OnKeyPress(wxKeyEvent &evt)
 
 }
 
-void RotationXY::ChangeTool(int _tool)
+void RotationXY::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	bool oldChangeAllTags = changeAllTags;
 	changeAllTags = _tool == 0;
 	replaceTagsInCursorPosition = !changeAllTags;
 	if (oldChangeAllTags != changeAllTags) {
-		SetCurVisual();
+		if(!blockSetCurVisual)
+			SetCurVisual();
+
 		tab->Video->Render(false);
 	}
 }

@@ -92,10 +92,11 @@ void Position::Draw(int time)
 	}
 }
 
-void Position::ChangeTool(int _tool)
+void Position::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	if (!hasPositionToRenctangle && _tool & 32) {
-		GetPositioningData();
+		if(!blockSetCurVisual)
+			GetPositioningData();
 		rectangleVisible = false;
 	}
 	hasPositionToRenctangle = _tool & 32;

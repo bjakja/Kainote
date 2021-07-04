@@ -501,7 +501,7 @@ void MoveAll::ChangeInLines(bool all)
 
 }
 
-void MoveAll::ChangeTool(int _tool)
+void MoveAll::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	if (selectedTags == _tool)
 		return;
