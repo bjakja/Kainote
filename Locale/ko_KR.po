@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: KaiNote Korea language\n"
-"PO-Revision-Date: 2021-04-27 23:04+0900\n"
+"PO-Revision-Date: 2021-04-30 09:54+0900\n"
 "Last-Translator: labrie <labrie75@naver.com>\n"
 "Language-Team: labrie75@naver.com\n"
 "Language: ko_KR\n"
@@ -126,65 +126,62 @@ msgid ""
 "- Areki, duplex (tłumaczenie anglojęzyczne).\n"
 " \n"
 msgstr ""
-"- Areki, duplex (English translation)\n"
+"- Areki, duplex (영어 현지화)\n"
 " \n"
 
 msgid ""
 "- Atalos (zdebugował wiele crashy).\n"
 " \n"
 msgstr ""
-"- Atalos (debugged many crashes).\n"
+"- Atalos (많은 오류를 찾아내고 수정하였습니다).\n"
 "\n"
 
 msgid ""
 "- Devilkan (crashhunter, ze względu na swój system i przyzwyczajenia "
 "wytropił już wiele crashy,\n"
-msgstr ""
-"- Devilkan (crashhunter, because of his system and habits he made Kainote "
-"crash a lot\n"
+msgstr "- Devilkan (문자 설정 도구를 설정하는데 도움을 주고,\n"
 
 msgid "- Devilkan (ikony do menu i paska narzędzi, obrazki do pomocy).\n"
-msgstr "- Devilkan (menu and toolbar buttons)\n"
+msgstr "- Devilkan (메뉴 및 도구 모음 버튼)\n"
 
 msgid ""
 "- Funki27 (pierwszy tester mający spory wpływ na obecne działanie programu\n"
-msgstr "- Funki27 (first tester, Kainote improved a lot thanks to him,\n"
+msgstr "- Funki27 (첫 번째 테스터, 덕분에 많이 향상되었습니다,\n"
 
 msgid ""
 "- Kostek00 (prawdziwy wynajdywacz błędów, miał duży wpływ na rozwój spektrum "
 "audio \n"
 msgstr ""
-"- Kostek00 (found many bugs, had really big influence over audio spectrum "
-"development\n"
+"- Kostek00 (많은 버그를 발견하고 소리 스펙트럼 개발에 큰 영향을 미쳤습니다.\n"
 
 msgid "- Kostek00 (przyciski do audio i narzędzi wizualnych).\n"
-msgstr "- Kostek00 (audio buttons and visual tools)\n"
+msgstr "- Kostek00 (소리 버튼 및 시각적 도구)\n"
 
 msgid ""
 "- MatiasMovie (wyłapał parę crashy i zaproponował różne usprawnienia, pomaga "
 "w debugowaniu crashy).\n"
 msgstr ""
-"- MatiasMovie (found some crashes and suggessted some improvements, helps "
-"with crash debugging).\n"
+"- MatiasMovie (일부 충돌을 발견하고 몇 가지 개선 사항을 제안했으며 버그 수정"
+"에 도움이 되었습니다).\n"
 
 msgid ""
 "- Sacredus (chyba pierwszy tłumacz używający trybu tłumacza,\n"
 " nieoceniona pomoc przy testowaniu wydajności na słabym komputerze).\n"
 msgstr ""
-"- Sacredus (first translator using translator mode,\n"
-"great help testing Kainote on a slow computer)\n"
+"- Sacredus (번역 모드를 사용하는 첫 번째 사용자입니다,\n"
+"느린 컴퓨터에서 Kainote를 테스트하는데 많은 도움이 되었습니다).\n"
 
 msgid "- Senami (stworzył nowe motywy, a także wyłapał parę błędów).\n"
-msgstr "- Senami (made new themes and found some bugs).\n"
+msgstr "- Senami (새로운 테마를 만들고 몇 가지 버그를 발견했습니다).\n"
 
 msgid "- Xandros (nowe przyciski do wideo).\n"
-msgstr "- Xandros (new video buttons)\n"
+msgstr "- Xandros (새로운 영상 버튼).\n"
 
 msgid "- Zły Los (ikony do skojarzonych plików i do menu).\n"
-msgstr "- Zły Los (icons for file associations and menu).\n"
+msgstr "- Zły Los (파일 연결 및 메뉴 아이콘).\n"
 
 msgid "- mas1904 (wyłapał trochę błędów, pomaga w debugowaniu crashy).\n"
-msgstr "- mas1904 (found some errors and helping with crash debuging).\n"
+msgstr "- mas1904 (오류를 발견하고 충돌 디버깅에 도움을 주었습니다).\n"
 
 msgid "0 - ANSI"
 msgstr "0 - ANSI"
@@ -229,7 +226,7 @@ msgid "186 - Języki Bałtyckie"
 msgstr "186 - 발트어"
 
 msgid "1: Podział co koniec linijki, dzieli tylko \\N"
-msgstr "1: End-of-line wrapping, only \\N breaks"
+msgstr "1: 줄 바꿈에는 \\N만 사용"
 
 msgid "2 - Symbol"
 msgstr "2 - 기호"
@@ -247,7 +244,7 @@ msgid "255 - OEM"
 msgstr "255 - OEM"
 
 msgid "2: Brak podziału, dzieli \\n i \\N"
-msgstr "2: No wrapping, both \\n and \\N break"
+msgstr "2: \\n과 \\N은 다르지 않습니다"
 
 msgid "3: Autopodział, dolna linijka jest szersza"
 msgstr "3: 자동, 하단 더 넓게"
@@ -274,7 +271,7 @@ msgstr ""
 "새 목록를 만듭니다."
 
 msgid "Agresywne (szybkie przy cofaniu)"
-msgstr "적극적인 (빨리 되감기)"
+msgstr "가장 빠름 (빨리 되감기)"
 
 msgid "Akcja"
 msgstr "찾은 후에 할 동작"
@@ -289,7 +286,7 @@ msgid "Aktywuj okno audio po najechaniu"
 msgstr "마우스 오버시 소리 활성화"
 
 msgid "Animacja tekstu"
-msgstr "Text animation"
+msgstr "애니메이션 글자"
 
 msgid "Anulowano."
 msgstr "취소됨."
@@ -307,7 +304,7 @@ msgid "Audio cache"
 msgstr "소리 저장"
 
 msgid "Audio do końca linii"
-msgstr "Audio to the line end time"
+msgstr "소리를 줄 종료 시간 까지"
 
 msgid "Audio echo spektrum"
 msgstr "소리 스펙트럼 에코"
@@ -316,7 +313,7 @@ msgid "Audio i napisy"
 msgstr "소리와 자막"
 
 msgid "Audio klatki kluczowe"
-msgstr "소리 키프레임"
+msgstr "소리 키 프레임"
 
 msgid "Audio kursor"
 msgstr "소리 커서"
@@ -409,13 +406,13 @@ msgid "Brak"
 msgstr "없음"
 
 msgid "Brak IMediaTypes"
-msgstr "No IMediaTypes"
+msgstr "IMediaTypes 없음"
 
 msgid "Brak bufora klatki"
 msgstr "프레임 버퍼 없음"
 
 msgid "Brak informacji o rodzaju ścieżki"
-msgstr "No track type info"
+msgstr "트랙 종류 정보 없음"
 
 msgid ""
 "Brak plików słownika w folderze \"%s\\Dictionary\".\n"
@@ -428,29 +425,29 @@ msgid "Brak wczytanego wideo lub napisów"
 msgstr "불러온 영상 또는 자막이 없습니다"
 
 msgid "Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."
-msgstr "No subtitles loaded. Load subtitles or deselect this option."
+msgstr "불러 온 자막이 없습니다. 자막을 불러오거나 이 옵션을 선택 취소하세요."
 
 msgid "Brakujący wskaźnik napisów"
 msgstr "자막 지점 누락"
 
 msgid "Błąd"
-msgstr "Error"
+msgstr "오류"
 
 msgid "Błąd MatroskaParsera: "
 msgstr "마트료시카 점검 오류: "
 
 msgid "Błąd automatyzacji"
-msgstr "Automation error"
+msgstr "자동화 스크립트에 오류가 있음"
 
 msgid "Błąd inicjalizacji Direct Show"
-msgstr "Failed to initialize Direct Show"
+msgstr "Direct Show를 시작하는 동안 오류가 발생"
 
 msgid ""
 "Błąd inicjalizacji skryptu Lua \"%s\":\n"
 "\n"
 "%s."
 msgstr ""
-"Error initialization script Lua \"%s\":\n"
+"Lua 시작 스크립트: \"%s \"에서 오류 발생\n"
 "\n"
 "%s."
 
@@ -458,20 +455,20 @@ msgid ""
 "Błąd wczytywania skryptu Lua: %s\n"
 "%s"
 msgstr ""
-"Error loading script Lua: %s\n"
+"Lua 스크립트: %s를 불러오는 동안 오류 발생\n"
 "%s"
 
 msgid "Błąd zlib: %s"
-msgstr "Zlib error: %s"
+msgstr "Zlib 오류: %s"
 
 msgid "Błąd, słowo \"%s\" nie zostało dodane."
-msgstr "Error. Word \"%s\" was not added."
+msgstr "\"%s\" 단어가 추가되지 않아 오류 발생."
 
 msgid "Błędne słowo:"
 msgstr "맞춤법 오류 단어:"
 
 msgid "CSRI nie obsługuje tego formatu."
-msgstr "CSRI doesn't support this format."
+msgstr "CSRI는이 형식을 지원하지 않습니다."
 
 msgid "Cień"
 msgstr "그림자"
@@ -509,8 +506,8 @@ msgid ""
 "automatyzacja\n"
 "i kilka innych pojedynczych funkcji wzięte z Aegisuba -\n"
 msgstr ""
-"Color picker, mkv subtitling, audiobox, audio player, automation\n"
-"and several other functions taken from Aegisub -\n"
+"Aegisub에서 가져온 기능 - \n"
+"색상 선택기, mkv자막 muxing, 소리박스, 소리 재생, 자동화\n"
 
 msgid "Czas"
 msgstr "시간"
@@ -572,31 +569,29 @@ msgstr "글꼴"
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany."
-msgstr ""
-"Font \"%s\" is from style,\n"
-"that is not used."
+msgstr "\"%s\" 글꼴은 사용되지 않음."
 
 msgid ""
 "Czcionka \"%s\" należy do stylu,\n"
 "który nie jest wykorzystywany.%s"
 msgstr ""
-"Font \"%s\" is from style,\n"
-"that is not used.%s"
+"글꼴 \"%s\"을(를) 스타일에서 가져옴,\n"
+"%s은(는) 사용되지 않습니다"
 
 msgid "Czcionka \"%s\" nie ma kursywy."
-msgstr "Font \"%s\" is missing italics."
+msgstr "\"%s\" 글꼴에는 기울임 스타일이 없습니다."
 
 msgid "Czcionka \"%s\" nie ma pogrubienia z kursywą."
-msgstr "Font \"%s\" is missing bold italics."
+msgstr "\"%s\" 글꼴에는 굵은 기울임 스타일이 없습니다."
 
 msgid "Czcionka \"%s\" nie ma pogrubienia."
-msgstr "Font \"%s\" is missing bold."
+msgstr "\"%s\" 글꼴에는 굵은 스타일이 없습니다."
 
 msgid "Czcionka \"%s\" nie ma stylu normalnego."
-msgstr "Font \"%s\" is missing normal style."
+msgstr "\"%s\" 글꼴에는 일반 스타일이 없습니다."
 
 msgid "Czcionka \"%s\" nie zawiera znaków: \"%s\"."
-msgstr "Font \"%s\" not contains characters: \"%s\"."
+msgstr "\"%s\"글꼴에 \"%s\" 문자가 없습니다."
 
 msgid "Czcionka i rozmiar:"
 msgstr "글꼴 / 크기:"
@@ -636,7 +631,7 @@ msgid "Czy na pewno chcesz zindeksować następne wideo?"
 msgstr "다음 영상의 색인을 생성 하시겠습니까?"
 
 msgid "Czy na pewno chcesz zindeksować poprzednie wideo?"
-msgstr "이저 영상의 색인을 생성 하시겠습니까?"
+msgstr "이전 영상의 색인을 생성 하시겠습니까?"
 
 msgid ""
 "Czy na pewno dokonać zmian we wszystkich napisach?\n"
@@ -649,7 +644,7 @@ msgid "Czy naprawdę chcesz przesuwać tylko czasy %s?"
 msgstr "정말 %s만 이동 하시겠습니까?"
 
 msgid "Deformacja czcionki"
-msgstr "Distort of font"
+msgstr "글꼴 변형"
 
 msgid "Dialogi"
 msgstr "자막"
@@ -667,10 +662,10 @@ msgid "Dodaj do magazynu"
 msgstr "스타일 목록에 추가"
 
 msgid "Dodaj do magazynu styl z napisów"
-msgstr "Copy 스타일 from ASS to storage"
+msgstr "ASS 파일에서 목록으로 스타일을 복사"
 
 msgid "Dodaj do napisów styl z magazynu"
-msgstr "Copy 스타일 from storage to ASS"
+msgstr "목록에서 ASS 파일로 스타일을 복사합니다"
 
 msgid "Dodaj do słownika"
 msgstr "사전에 추가"
@@ -737,7 +732,7 @@ msgid "Dodanie nowej linii"
 msgstr "줄 추가"
 
 msgid "Dodano do archiwum czcionkę \"%s\"."
-msgstr "Added to archive font \"%s\"."
+msgstr "\"%s\"글꼴이 목록에 추가되었습니다."
 
 msgid "Dodano do zaznaczenia %i linijek."
 msgstr "선택 항목에 % i 줄이 추가되었습니다."
@@ -770,7 +765,7 @@ msgid "Dwudziesty przycisk tagów"
 msgstr "태그 버튼 20"
 
 msgid "Dwukrotnym kliknięciu linii (zawsze włączone)"
-msgstr "두 번 클릭으로 이동 (기본 설정)"
+msgstr "두 번 클릭으로 이동 ()"
 
 msgid "Dwunasty przycisk tagów"
 msgstr "태그 버튼 12"
@@ -812,10 +807,10 @@ msgid "Edycja wielu linii"
 msgstr "여러 줄 편집"
 
 msgid "Edycji"
-msgstr "언제든지 줄 편집"
+msgstr "언제든지 줄 편집[?]"
 
 msgid "Edycji na pauzie"
-msgstr "일시 중지 시 줄 편집"
+msgstr "일시 중지 된 경우 줄 편집[?]"
 
 msgid "Edytor"
 msgstr "일반 설정"
@@ -833,8 +828,9 @@ msgid ""
 "Edytor napisów by Marcin Drob aka Bakura lub Bjakja (bjakja7@gmail.com),\n"
 "wersja %s z dnia %s"
 msgstr ""
-"Subtitles editor by Marcin Drob aka Bakura or Bjakja (bjakja7@gmail.com),\n"
-"version %s from day %s"
+"\"Marcin Drob aka Bakura\" 또는 \"Bjakja\"의 자막 편집기 (bjakja7@gmail."
+"com),\n"
+"버전 %s, 업데이트 %s"
 
 msgid "Edytor nawiasy klamrowe"
 msgstr "편집박스 중괄호 { }"
@@ -964,7 +960,7 @@ msgid "Funkcja"
 msgstr "항목"
 
 msgid "GetVideoProcessorCaps zawiodło"
-msgstr "GetVideoProcessorCaps failed"
+msgstr "비디오 프로세서 캡 가져오기 실패"
 
 msgid "Globalny"
 msgstr "전역"
@@ -1076,8 +1072,7 @@ msgid ""
 "\n"
 msgstr ""
 "버그를 발견했거나 변경 사항이나 새로운 기능에 대한 제안 사항이 있는 경우\n"
-"Github 또는 이메일을 보내세요.\n"
-"\n"
+"Github 또는 이메일을 보내세요.(bjakja7@gmail.com)\n"
 "\n"
 
 msgid "Język (wymaga restartu programu)"
@@ -1129,10 +1124,10 @@ msgid "Klatki na Sekundę"
 msgstr "초당 프레임"
 
 msgid "Kliknięciu linii lub edycji"
-msgstr "Clicking line or edition"
+msgstr "줄 또는 에디션을 클릭[?]"
 
 msgid "Kliknięciu linii lub edycji na pauzie"
-msgstr "Clicking line or edition when paused"
+msgstr "줄 클릭으로 정지[?]"
 
 msgid "Kodowanie tekstu"
 msgstr "글자 인코딩"
@@ -1147,7 +1142,7 @@ msgid "Kolekcjoner czcionek"
 msgstr "글꼴 수집"
 
 msgid "Kolidowanie linijek"
-msgstr "Colliding lines"
+msgstr "중복 줄"
 
 msgid "Kolor"
 msgstr "색상"
@@ -1237,10 +1232,10 @@ msgid "Konwertuje do formatu TMPlayer (niezalecane)"
 msgstr "TMPlayer(권하지 않음)로 변환"
 
 msgid "Konwertuje do formatu microDVD"
-msgstr "microDVD로 변환"
+msgstr "MicroDVD로 변환하기"
 
 msgid "Koordynata Z dla tagów \\frx i \\fry"
-msgstr "Z coordinate for tags \\frx and \\fry"
+msgstr "Z 좌표는 \\frx, \\fry 태그에 사용됩니다"
 
 msgid "Kopia "
 msgstr "복사본 "
@@ -1343,7 +1338,7 @@ msgstr ""
 "%i 줄을 바꿀 수 없습니다."
 
 msgid "Linia %i: "
-msgstr "줄 %i: "
+msgstr "%i 줄: "
 
 msgid ""
 "Linia nie jest widoczna na wideo\n"
@@ -1378,7 +1373,7 @@ msgid "Lista osób pomocnych przy tworzeniu programu"
 msgstr "만든사람들"
 
 msgid "Lista skrótów klawiszowych skryptów automatyzacji"
-msgstr "List of automation shortcuts"
+msgstr "자동화 스크립트 단축키 목록"
 
 msgid "Lista statyczna obramowanie"
 msgstr "고정 메뉴 테두리"
@@ -1399,19 +1394,19 @@ msgid "Listopad"
 msgstr "11월"
 
 msgid "Losowość punktów czcionki"
-msgstr "Random font points"
+msgstr "임의의 글꼴 지저"
 
 msgid "Losowość punktów czcionki oś X"
-msgstr "Random font points X axis"
+msgstr "임의의 글꼴 지점 X 축"
 
 msgid "Losowość punktów czcionki oś Y"
-msgstr "Random font points Y axis"
+msgstr "임의의 글꼴 지점 Y 축"
 
 msgid "Losowość punktów czcionki oś Z"
-msgstr "Random font points Z axis"
+msgstr "임의의 글꼴 지점 Z 축"
 
 msgid "Losowość punktów czcionki seed"
-msgstr "Random font points seed"
+msgstr "임의의 글꼴 지점 seed[?]"
 
 msgid "Luty"
 msgstr "2월"
@@ -1426,16 +1421,16 @@ msgid "M.Pi."
 msgstr "세로."
 
 msgid "Macierz YCbCr"
-msgstr "YCbCr matrix"
+msgstr "YCbCr 매트릭스"
 
 msgid "Maj"
 msgstr "5월"
 
 msgid "Makro"
-msgstr "Macro"
+msgstr "매크로"
 
 msgid "Makro o nazwie '%s' jest już zdefiniowane w skrypcie '%s'"
-msgstr "Macro named '%s' is already defined in the script '%s'"
+msgstr "'%s'인 매크로가 이미 스크립트 '%s'에 정의되어 있습니다.'"
 
 msgid "Maksymalna ilość plików autozapisu"
 msgstr "자동 저장 파일 갯수"
@@ -1444,29 +1439,29 @@ msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie końcowym w milisekundach"
 msgstr ""
-"The maximum shift to a keyframe \n"
-"after the end time in milliseconds"
+"종료 시간(ms) 이후\n"
+"최대 키 프레임 시간 변경"
 
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "po czasie początkowym w milisekundach"
 msgstr ""
-"The maximum shift to a keyframe \n"
-"after the start time in milliseconds"
+"시작 시간(ms) 이후\n"
+"최대 키 프레임 시간 변경"
 
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem końcowym w milisekundach"
 msgstr ""
-"The maximum shift to a keyframe \n"
-"before the end time in milliseconds"
+"종료 시간(ms) 이전 \n"
+"최대 키 프레임 시간 변경"
 
 msgid ""
 "Maksymalne przesunięcie do klatki kluczowej\n"
 "przed czasem początkowym w milisekundach"
 msgstr ""
-"The maximum shift to a keyframe \n"
-"before the start time in milliseconds"
+"시작 시간(ms) 이전\n"
+"최대 키 프레임 시간 변경"
 
 msgid "Mapowanie przycisków"
 msgstr "단축키 설정"
@@ -1535,13 +1530,13 @@ msgid "Motywy"
 msgstr "테마"
 
 msgid "Na dole"
-msgstr "On bottom"
+msgstr "아래로"
 
 msgid "Na liście nie wybrano profilu do usunięcia"
-msgstr "There is no selected profile to remove"
+msgstr "제거할 선택된 프로필이 없습니다"
 
 msgid "Na pewno chcesz nadpisać profil o nazwie %s"
-msgstr "기존 \"%s\" 설정이 있습니다. 덮어쓸까요?"
+msgstr "기존 \"%s\" 설정이 있습니다"
 
 msgid "Na pewno chcesz usunąć profil o nazwie \"%s\""
 msgstr "\"%s\"을 삭제하겠습니까?"
@@ -1633,34 +1628,34 @@ msgstr "편집중이던 자막은 \"Recovery\" 폴더에 저장되었습니다..
 msgid ""
 "Narzędzia edycji wizualnej\n"
 "nie działają na komentarzach"
-msgstr "Visual tools not working on comments"
+msgstr "이 도구는 주석에서 동작하지 않습니다"
 
 msgid "Narzędzie obrotów w osi Z"
-msgstr "Visual tool axis Z rotation"
+msgstr "Z 축 회전 도구"
 
 msgid "Narzędzie obrotów w osiach X i Y"
-msgstr "Visual tool axis X and Y rotation"
+msgstr "X 및 Y 축의 회전 도구"
 
 msgid "Narzędzie pozycjonowania"
-msgstr "Visual tool positioning"
+msgstr "정렬 도구"
 
 msgid "Narzędzie ruchu"
-msgstr "Visual tool moving"
+msgstr "이동 도구"
 
 msgid "Narzędzie rysunków wektorowych"
-msgstr "Visual tool vector drawing"
+msgstr "도형 그리기"
 
 msgid "Narzędzie skalowania"
-msgstr "Visual tool scaling"
+msgstr "도구 크기 조정"
 
 msgid "Narzędzie wycinków prostokątnych"
-msgstr "Visual tool rectangle clipping"
+msgstr "사각 자르기 도구"
 
 msgid "Narzędzie wycinków wektorowych"
-msgstr "Visual tool vector clipping"
+msgstr "도형 자르기 도구"
 
 msgid "Narzędzie zmieniacz pozycji"
-msgstr "Visual tool position shifting"
+msgstr "위치 변경 도구"
 
 msgid "Narzędzie zmieniacz skali i obrotów"
 msgstr "시각적 도구 비율 및 회전 이동"
@@ -1684,7 +1679,7 @@ msgid "Następny plik"
 msgstr "다음 파일"
 
 msgid "Następny rozdział"
-msgstr "Next chapter"
+msgstr "다음 장"
 
 msgid "Nasycenie:"
 msgstr "채도:"
@@ -1756,7 +1751,7 @@ msgid "Nie można odblokować bufora tekstury napisów"
 msgstr "자막 텍스처 버퍼를 잠금 해제 할 수 없음"
 
 msgid "Nie można odczytać czcionki \"%s\" z folderu Fonts."
-msgstr "Could not read \"%s\" font from the Fonts folder."
+msgstr "글꼴 폴더에서 \"%s\" 글꼴을 읽을 수 없습니다."
 
 msgid "Nie można odczytać formatu konwersji słownika."
 msgstr "사전 변환 형식을 읽을 수 없습니다."
@@ -1765,7 +1760,7 @@ msgid "Nie można odczytać pliku."
 msgstr "파일을 읽을 수 없음."
 
 msgid "Nie można odnaleźć elementów linii %i"
-msgstr "Cannot find elements of line %i"
+msgstr "% i 줄의 구성 요소를 찾을 수 없습니다"
 
 msgid "Nie można otworzyć folderu autozapisu"
 msgstr "자동 저장 폴더를 열 수 없음"
@@ -1780,7 +1775,7 @@ msgid "Nie można otworzyć napisów w Libass"
 msgstr "Libass로 자막을 열 수 없습니다"
 
 msgid "Nie można otworzyć pliku \"%s\"."
-msgstr "Cannot open file \"%s\"."
+msgstr "\"%s\" 파일을 열 수 없습니다."
 
 msgid "Nie można otworzyć pliku Matroska."
 msgstr "Matroska(MKV) 파일을 열 수 없음."
@@ -1823,37 +1818,37 @@ msgstr ""
 "복사가 취소되었습니다.\n"
 
 msgid "Nie można pobrać zawartości czcionki \"%s\"."
-msgstr "Cannot get content of font \"%s\"."
+msgstr "\"%s\"글꼴 내용을 가져올 수 없습니다."
 
 msgid "Nie można pobrać ścieżki wideo"
 msgstr "영상 트랙을 불러올 수 없음"
 
 msgid "Nie można połączyć pinu źródła z rendererem audio"
-msgstr "Cannot connect source pin to audio renderer"
+msgstr "소스 핀을 소리 렌더러에 연결할 수 없음"
 
 msgid "Nie można połączyć pinu źródła z rendererem audio1"
-msgstr "Cannot connect source pin to audio1 renderer"
+msgstr "소스 핀을 소리1 렌더러에 연결할 수 없음"
 
 msgid "Nie można połączyć pinu źródła z rendererem wideo"
-msgstr "Cannot connect source pin to video renderer"
+msgstr "소스 핀을 영상 렌더러에 연결할 수 없음"
 
 msgid "Nie można połączyć pinu źródła z rendererem wideo2"
-msgstr "Cannot connect source pin to video2 renderer"
+msgstr "소스 핀을 영상2 렌더러에 연결할 수 없음"
 
 msgid "Nie można przekonwertować wideo na RGBA"
 msgstr "영상를 RGBA로 변환할 수 없음"
 
 msgid "Nie można przywrócić skrótu, bo nie ma domyślnego ustawienia o id %i"
-msgstr "%i id에 대한 기본 설정이 없으므로 단축키를 복원 할 수 없습니다"
+msgstr "%i ID에 대한 기본 설정이 없으므로 단축키를 복원 할 수 없습니다"
 
 msgid "Nie można skopiować czcionki \"%s\"."
-msgstr "Cannot copy font \"%s\"."
+msgstr "\"%s\"글꼴을 복사 할 수 없습니다."
 
 msgid "Nie można spakować czcionki \"%s\"."
 msgstr "글꼴 \"%s\"을(를) 압축 할 수 없습니다."
 
 msgid "Nie można sprawdzić znaków czcionki \"%s\"."
-msgstr "Cannot check font \"%s\" characters."
+msgstr "\"%s\"글꼴 문자를 확인할 수 없습니다."
 
 msgid "Nie można storzyć tekstury napisów"
 msgstr "자막 텍스처를 만들 수 없음"
@@ -1959,42 +1954,44 @@ msgid "Nie można wyliczyć filtrów"
 msgstr "필터를 열거 할 수 없습니다"
 
 msgid "Nie można wyliczyć pinów dsound"
-msgstr "Cannot enumerate Direct Sound pins"
+msgstr "Direct Sound 핀을 계산할 수 없습니다"
 
 msgid "Nie można wyliczyć pinów renderera"
-msgstr "Cannot enumerate renderer pins"
+msgstr "렌더러 핀을 계산할 수 없습니다"
 
 msgid "Nie można wyliczyć pinów splittera"
-msgstr "Cannot enumerate splitter pins"
+msgstr "스플리터 핀을 계산할 수 없습니다"
 
 msgid "Nie można wyliczyć pinów źródła"
-msgstr "Cannot enumerate source pins"
+msgstr "소스 핀을 계산할 수 없습니다"
 
 msgid ""
 "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "자막보기의 높이가 너무 낮아 미리보기를 표시 할 수 없습니다"
 
 msgid "Nie można zablokować bufora tekstury"
-msgstr "Cannot lock texture buffer"
+msgstr "텍스처 버퍼를 잠글 수 없습니다"
 
 msgid "Nie można zablokować bufora tekstury napisów"
-msgstr "Cannot lock subtitles texture buffer"
+msgstr "자막 텍스처 버퍼를 잠글 수 없습니다"
 
 msgid "Nie można zaczytać motywu, zostanie przywrócony domyśny"
 msgstr "테마를 불러 올 수 없음. 기본값으로 재설정"
 
 msgid "Nie można zainicjalizować COM"
-msgstr "Cannot initialize COM"
+msgstr "COM을 시작할 수 없습니다"
 
 msgid "Nie można zainicjalizować sprawdzania pisowni."
 msgstr "철자 검사기를 초기화하지 못했습니다."
 
 msgid ""
 "Nie można zamienić \"%s\" na \"%s\", wykorzystując regułę \"%s\" w linii %i."
-msgstr "Cannot replace \"%s\" to \"%s\", with rule \"%s\" in line %i."
+msgstr ""
+"\"%i\"줄에서 \"%s\"규칙을 사용하여 \"%s\"을(를) \"%s\"(으)로 바꿀 수 없습니"
+"다."
 
 msgid "Nie można zapisać czcionki o nazwie \""
-msgstr "You can not save the font named \""
+msgstr "이름으로 글꼴을 저장할 수 없습니다 \""
 
 msgid "Nie można zapisać do pliku."
 msgstr "파일을 저장할 수 없습니다."
@@ -2003,7 +2000,7 @@ msgid "Nie można zapisać indeksu, wystąpił błąd %s"
 msgstr "색인을 저장할 수 없습니다. 오류 %s이(가) 발생했습니다"
 
 msgid "Nie można zinicjalizować CSRI."
-msgstr "Cannot initialize CSRI."
+msgstr "CSRI를 시작할 수 없습니다."
 
 msgid ""
 "Nie można zmieniać reguł,\n"
@@ -2013,22 +2010,22 @@ msgstr ""
 "규칙을 변경할 수 없음"
 
 msgid "Nie można zmienić macierzy YCbCr"
-msgstr "YCbCr 행렬을 변경할 수 없음"
+msgstr "YCbCr 행렬(매트릭스)을 변경할 수 없음"
 
 msgid "Nie można znaleźć czcionki \"%s\" w folderze Fonts."
-msgstr "Cannot find \"%s\" font in Fonts folder."
+msgstr "글꼴 폴더에서 \"%s\" 글꼴을 찾을 수 없습니다."
 
 msgid "Nie można znaleźć elementu o id %i"
-msgstr "Cannot find element with id %i"
+msgstr "%i ID를 포함하는 항목을 찾을 수 없습니다"
 
 msgid "Nie można znaleźć połączonego pinu źródła"
-msgstr "Cannot find connected source pin"
+msgstr "연결된 소스 핀을 찾을 수 없습니다"
 
 msgid "Nie można zresetować Direct3D"
 msgstr "Direct3D를 재설정 할 수 없음"
 
 msgid "Nie obejmuje zaznaczonych linii"
-msgstr "Don't take into account selected lines"
+msgstr "선택한 라인은 병합 할 수 없습니다"
 
 msgid "Nie odtwarzaj audio po zmianie linijki"
 msgstr "라인 변경 후 소리 재생 안 함"
@@ -2049,29 +2046,33 @@ msgid "Nie rób nic"
 msgstr "아무것도 하지 않음"
 
 msgid "Nie udało się skopiować %s.\n"
-msgstr "Cannot copy %s.\n"
+msgstr "%s를(을) 복사 할 수 없음\n"
 
 msgid ""
 "Nie udało się wczytać opcji.\n"
 "Działanie programu zostanie zakończone."
-msgstr "설정을 읽을 수 없습니다. 프로그램이 종료됩니다."
+msgstr ""
+"설정을 읽을 수 없습니다.\n"
+"프로그램이 종료됩니다."
 
 msgid ""
 "Nie udało się wczytać skrótów.\n"
 "Działanie programu zostanie zakończone."
-msgstr "단축키를 읽을 수 없습니다. 프로그램이 종료됩니다."
+msgstr ""
+"단축키를 읽을 수 없습니다.\n"
+"프로그램이 종료됩니다."
 
 msgid "Nie wybrano stylów do przesunięcia"
 msgstr "이동할 스타일이 없음"
 
 msgid "Nie wypośrodkowuj aktywnej linii w polu napisów"
-msgstr "Don't center vertically active line in subtitles grid"
+msgstr "자막보기의 중앙에 행을 배치하지 마십시오"
 
 msgid "Nie zawiera"
 msgstr "포함하지 않음"
 
 msgid "Nie zaznaczono linii do przesunięcia"
-msgstr "No lines selected for shifting"
+msgstr "이동할 줄이 없습니다"
 
 msgid "Nie zmieniaj"
 msgstr "변경하지 않음"
@@ -2083,19 +2084,19 @@ msgid "Nie zmieniaj zaznaczeń przy duplikacji linii dialogowych"
 msgstr "대화 줄 복제 시 선택 항목 변경 안 함"
 
 msgid "Nie znaleziono %s.\n"
-msgstr "Not found %s.\n"
+msgstr "%s 를 찾을 수 없습니다.\n"
 
 msgid "Nie znaleziono czcionki \""
-msgstr "Not Found font \""
+msgstr "글꼴을 찾을 수 없음 \""
 
 msgid "Nie znaleziono niepewnych"
-msgstr "Not confirmed not found"
+msgstr "검토 할 수 없음"
 
 msgid "Nie znaleziono nieprzetłumaczonych"
-msgstr "Untranslated not found"
+msgstr "번역되지 않은 줄이 없음"
 
 msgid "Nie znaleziono podanej frazy \""
-msgstr "Couldn't find expression \""
+msgstr "문구를 찾을 수 없습니다 \""
 
 msgid "Nie znaleziono więcej błędów pisowni"
 msgstr "철자 오류를 찾을 수 없습니다"
@@ -2107,22 +2108,22 @@ msgid "Niebieski:"
 msgstr "파란색:"
 
 msgid "Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n"
-msgstr "Some fonts do not contain all glyps used in text.\n"
+msgstr "일부 글꼴은 모든 글자가 포함되지 않을 수 있음.\n"
 
 msgid "Niepewne"
-msgstr "Not confirmed"
+msgstr "확인되지 않음"
 
 msgid "Niepoprawny format (plik uszkodzony lub zawiera błędy)"
-msgstr "Invalid format (file may be corrupted or contain errors)"
+msgstr "잘못된 형식(파일이 손상되었거나 오류가 포함되어 있을 수 있음)"
 
 msgid "Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie."
-msgstr "잘못된 프레임입니다. 옵션에서 수정하고 다시 시도하십시오."
+msgstr "잘못된 프레임입니다. 설정에서 수정하고 다시 시도하십시오."
 
 msgid "Nieprawidłowy format klatek kluczowych"
-msgstr "Invalid keyframes format"
+msgstr "잘못된 키 프레임 형식"
 
 msgid "Nieprawidłowy plik sesji"
-msgstr "Session file is corrupt"
+msgstr "잘못된 파일 세션"
 
 msgid "Niewłaściwy fps"
 msgstr "잘못된 프레임"
@@ -2152,7 +2153,7 @@ msgid "Nowy FPS napisów"
 msgstr "새 프레임(FPS)"
 
 msgid "Nowy Styl"
-msgstr "새로우 스타일"
+msgstr "새로운 스타일"
 
 msgid "Nowy katalog stylów"
 msgstr "새로운 스타일 목록"
@@ -2169,37 +2170,36 @@ msgid ""
 "do porównania wklejanych dialogów, później zostaje usunięty.\n"
 "Tłumaczenie - tekst wklejony do napisów z poprawnym timingiem."
 msgstr ""
-"Description:\n"
-"original - subtitles with right timing, you can see it to compare lines, it "
-"will be deleted\n"
-"translation - subtitles you paste into the right timing."
+"설명:\n"
+"원본 - 비교 및 ​​번역에 사용됩니다.나중에 삭제됩니다.\n"
+"번역 - 번역과 수정을 거침."
 
 msgid "Obrót w osi X"
-msgstr "Rotation in X axis"
+msgstr "X 축 회전"
 
 msgid "Obrót w osi Y"
-msgstr "Rotation in Y axis"
+msgstr "Y 축 회전"
 
 msgid "Obrót w osi Z"
-msgstr "Rotation in Z axis"
+msgstr "Z 축 회전"
 
 msgid "Obrót wokół osi X / Y"
-msgstr "X / Y 회전"
+msgstr "X / Y 축 회전"
 
 msgid "Obrót wokół osi Z"
-msgstr "Z 회전"
+msgstr "Z축 회전"
 
 msgid "Obwódka"
 msgstr "테두리"
 
 msgid "Obwódka w osi X"
-msgstr "Border in X axis"
+msgstr "테두리 X 축"
 
 msgid "Obwódka w osi Y"
-msgstr "Border in Y axis"
+msgstr "테두리 Y 축"
 
 msgid "Obwódka w pikselach"
-msgstr "Border size in pixels"
+msgstr "테두리 픽셀 크기"
 
 msgid "Obwódka:"
 msgstr "테두리:"
@@ -2277,7 +2277,7 @@ msgid "Odtwarzaj pierwsze 500ms"
 msgstr "시작 후 0.5초 재생"
 
 msgid "Odtwarzaj po zmianie linii:"
-msgstr "줄 변경 후 재생:"
+msgstr "줄 변경 시 재생 방법:"
 
 msgid "Odtwarzaj po znaczniku"
 msgstr "표시선 이후 재생"
@@ -2334,13 +2334,13 @@ msgid "Odtwórz przed znacznikiem"
 msgstr "표시선 이전 재생"
 
 msgid "Odwrócone"
-msgstr "Reversed"
+msgstr "반대로"
 
 msgid "Odwrócone wycinki wektorowe / prostokątne"
-msgstr "Reverse vector clip or rectangle clip"
+msgstr "도형 클립 또는 직사각형 클립 반전"
 
 msgid "Odwróć wycinek"
-msgstr "Invert clip"
+msgstr "클립 반전"
 
 msgid "Odznacz"
 msgstr "선택 취소"
@@ -2358,10 +2358,10 @@ msgid "Odśwież skrypty autoload"
 msgstr "자동 불러오기 스크립트 새로 고침"
 
 msgid "Okno Logów"
-msgstr "알림"
+msgstr "기록 창"
 
 msgid "Okno elementy ostrzegające"
-msgstr "Window elements warning"
+msgstr "경고 항목"
 
 msgid "Okno najechane zamykanie"
 msgstr "닫기 버튼 마우스 오버"
@@ -2382,7 +2382,7 @@ msgid "Okno obramowanie nieaktywne"
 msgstr "비활성 창 테두리"
 
 msgid "Okno przesuwania dialogów"
-msgstr "Match translation to existing subs"
+msgstr "번역을 기존 자막과 일치시킵니다"
 
 msgid "Okno tekst"
 msgstr "전체 글자"
@@ -2502,10 +2502,10 @@ msgid "Otwieraj wideo przez FFMS2"
 msgstr "FFMS2로 영상 열기"
 
 msgid "Otwieraj wideo z czasem aktywnej linii"
-msgstr "활성 줄 시간이 있는 영상 열기"
+msgstr "파일 열 때 선택되어있는 줄로 영상도 이동"
 
 msgid "Otwieranie napisów nie powiodło się"
-msgstr "Cannot open subtitles"
+msgstr "자막을 열지 못했습니다"
 
 msgid "Otwórz"
 msgstr "열기"
@@ -2622,7 +2622,7 @@ msgid "Pełny ekran\tF"
 msgstr "전체 화면\tF"
 
 msgid "Pełny opis błędu Lua"
-msgstr "Full description of the error Lua"
+msgstr "Lua 오류에 대한 세부 정보"
 
 msgid "Pierwszy"
 msgstr "첫 번째"
@@ -2649,11 +2649,11 @@ msgid ""
 "Plik nie jest poprawnym plikiem wideo albo jest uszkodzony,\n"
 "bądź brakuje kodeków czy też splittera"
 msgstr ""
-"File isn't a correct video file or is corrupted\n"
-"or codecs or splitter might be missing"
+"파일이 유효한 영상 파일이 아니거나 손상되었습니다\n"
+"코덱 또는 전달장치가 없습니다"
 
 msgid "Plik nie ma żadnej ścieżki z napisami."
-msgstr "File doesn't have any subtitles."
+msgstr "파일에 자막이 없습니다."
 
 msgid "Plik nie został otwarty."
 msgstr "파일이 열리지 않았습니다."
@@ -2662,7 +2662,7 @@ msgid "Plik skrótów jest przestarzały zostanie zamieniony domyślnym"
 msgstr "단축키 설정 파일은 더 이상 할 수 없으며 기본값으로 대체됩니다"
 
 msgid "Plik zip już istnieje, usunąć go?"
-msgstr "The zip file already exists, delete it?"
+msgstr "Zip 파일이 이미 있습니다. 삭제 하시겠습니까?"
 
 msgid "Pliki"
 msgstr "파일"
@@ -2674,7 +2674,7 @@ msgid "Pliki audio cache (*.w64)|*.w64"
 msgstr "소리 임시 저장 파일 (*.w64)|*.w64"
 
 msgid "Pliki audio i wideo"
-msgstr "영상 소리 파일"
+msgstr "영상 및 소리 파일"
 
 msgid "Pliki indeksów (*.ffindex)|*.ffindex"
 msgstr "색인 파일 (*.ffindex)|*.ffindex"
@@ -2683,11 +2683,11 @@ msgid ""
 "Pliki klatek kluczowych (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*."
 "stats;*.log|Wszystkie pliki (*.*)|*.*"
 msgstr ""
-"Keyframes file (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
-"All files (*.*)|*.*"
+"키 프레임 파일 (*.txt),(*.pass),(*.stats),(*.log)|*.txt;*.pass;*.stats;*.log|"
+"모든 파일 (*.*)|*.*"
 
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
-msgstr "Subtitle files (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
+msgstr "자막 파일 (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
 msgid ""
 "Pliki napisów (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*."
@@ -2701,13 +2701,13 @@ msgid ""
 "sub;*.txt|Pliki wideo z wbudowanymi napisami (*.mkv)|*.mkv"
 msgstr ""
 "자막 파일 (*.ass),(*.ssa),(*.srt),(*.sub),(*.txt)|*.ass;*.ssa;*.srt;*.sub;*."
-"txt|Video with subtitles (*.mkv)|*.mkv"
+"txt|자막 포함 영상 (*.mkv)|*.mkv"
 
 msgid "Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 msgstr "자막 파일 (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"
 
 msgid "Pliki napisów ASS(*.ass)|*.ass"
-msgstr "ASS 자막 파일s(*.ass)|*.ass"
+msgstr "ASS 자막 파일(*.ass)|*.ass"
 
 msgid "Pliki skryptów (*.lua),(*.moon)|*.lua;*.moon;"
 msgstr "스크립트 파일 (*.lua),(*.moon)|*.lua;*.moon;"
@@ -2722,7 +2722,7 @@ msgid ""
 msgstr ""
 "영상 파일(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|"
-"All files (*.*)|*.*"
+"모든 파일 (*.*)|*.*"
 
 msgid ""
 "Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
@@ -2731,7 +2731,7 @@ msgid ""
 msgstr ""
 "영상 파일 (*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),"
 "(*.3gp),(*.mpg),(*.mpeg),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;"
-"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|All files (*.*)|*.*"
+"*.rm;*.mpg;*.mpeg;*.3gp;*.avs|모든 파일 (*.*)|*.*"
 
 msgid "Po czasie końca"
 msgstr "종료 시간 후"
@@ -2740,10 +2740,10 @@ msgid "Po czasie początku"
 msgstr "시작 시간 후"
 
 msgid "Po lewej"
-msgstr "왼쪽에"
+msgstr "왼쪽"
 
 msgid "Po prawej"
-msgstr "오른쪽에"
+msgstr "오른쪽"
 
 msgid "Pobierz z napisów"
 msgstr "자막에서"
@@ -2755,7 +2755,7 @@ msgid ""
 "Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n"
 "\n"
 msgstr ""
-"Taken sizes and names of %i fonts, elapsed %sms.\n"
+"%i 글꼴의 크기와 이름을 가져 왔으며 %s ms가 걸렸습니다.\n"
 "\n"
 
 msgid "Pochylenie"
@@ -2876,7 +2876,7 @@ msgid "Pomoc (niekompletna, ale jednak)"
 msgstr "도움말 (영어 아님)"
 
 msgid "Pomoc graficzna: (przyciski, obrazki do pomocy itd.)\n"
-msgstr "Graphical help: (buttons, help pictures etc.)\n"
+msgstr "그래픽 지원: (버튼, 이미지 기타 등등..)\n"
 
 msgid "Ponów"
 msgstr "되돌리기"
@@ -2921,7 +2921,7 @@ msgid "Porównaj według stylów"
 msgstr "스타일 비교"
 
 msgid "Porównaj według widocznych linijek"
-msgstr "Compare by visible lines"
+msgstr "보이는 줄과 비교하기"
 
 msgid "Porównaj według wybranych stylów"
 msgstr "선택 스타일 비교"
@@ -3048,26 +3048,26 @@ msgid "Przed czasem początku"
 msgstr "시작 시간 전"
 
 msgid "Przed i po aktywnej"
-msgstr "Before and after the active"
+msgstr "활성화 전/후"
 
 msgid ""
 "Przedział od 0 do 10000, gdzie 0 wyłącza\n"
 "całkowicie usuwanie plików audio cache."
 msgstr ""
-"Range from 0 to 10000, where 0 turns off\n"
-"removing audio cache files."
+"0 ~ 10000을 입력 할 수 있습니다\n"
+"0은 소리 저장 파일 삭제를 비활성화합니다."
 
 msgid "Przejdź do czasu końcowego linii"
-msgstr "시작 시간으로"
+msgstr "종료 시간으로"
 
 msgid "Przejdź do czasu początkowego linii"
 msgstr "시작 시간으로"
 
 msgid "Przejdź do następnej klatki kluczowej"
-msgstr "다음 키프레임"
+msgstr "다음 키 프레임"
 
 msgid "Przejdź do poprzedniej klatki kluczowej"
-msgstr "이전 키프레임"
+msgstr "이전 키 프레임"
 
 msgid "Przejdź do zaznaczenia"
 msgstr "선택 줄로 이동"
@@ -3088,7 +3088,7 @@ msgid "Przenieś na początek"
 msgstr "제일 위로 이동"
 
 msgid "Przenieś punkty org"
-msgstr "Move \\org points"
+msgstr "지점 이동 \\org"
 
 msgid "Przenieś punkty pozycjonowania"
 msgstr "이동 점 표시"
@@ -3119,14 +3119,14 @@ msgid ""
 "Przenoś okno\n"
 "w miejsce wyboru koloru"
 msgstr ""
-"Move window\n"
-"in place of color pick"
+"색상 선택기에서\n"
+"창을 이동합니다"
 
 msgid "Przesunięcie czasów"
 msgstr "시간 이동"
 
 msgid "Przesunięcie punktów wektora w osi Y"
-msgstr "Offset of Y vector points"
+msgstr "도형을 Y축으로 이동"
 
 msgid "Przesunięcie tekstu tłumaczenia"
 msgstr "번역 글자 이동"
@@ -3142,15 +3142,14 @@ msgid ""
 "by ich pozycja na wideo się nie zmieniła\n"
 "(spowalnia przesuwanie czasów)"
 msgstr ""
-"Shift tag  \\move, \\t, \\fad times\n"
-"that its video position don't change.\n"
-"(slow downs shifting times)"
+"\"\\move\", \"\\t\", \"\\fad\" 태그는\n"
+"자막 재생 시간에 영향을 미치지 않습니다."
 
 msgid "Przesuwa napisy o ustawiony czas / klatki"
 msgstr "시간 / 프레임"
 
 msgid "Przesuwaj wideo do aktualnej linii po:"
-msgstr "영상을 선택한 줄로 이동:"
+msgstr "줄 변경 시 영상 이동 방법:"
 
 msgid "Przesuwanie czasów"
 msgstr "시간 조정"
@@ -3168,15 +3167,15 @@ msgid ""
 "Przesuwanie zaznaczonej linijki\n"
 "do czasu wideo ± czas przesunięcia"
 msgstr ""
-"Move the selected line \n"
-"to the time video ± time shift"
+"선택한 줄 이동\n"
+"영상 시간 ± 만큼 지연"
 
 msgid ""
 "Przesuwanie zaznaczonej linijki do czasu\n"
 "znacznika audio ± czas przesunięcia"
 msgstr ""
-"Move the selected lines to\n"
-"mark time audio ± time shift"
+"선택한 줄 이동\n"
+"소리 시간 ± 만큼 지연"
 
 msgid "Przesuń"
 msgstr "적용"
@@ -3228,7 +3227,7 @@ msgid "Przezroczystość całego tekstu"
 msgstr "투명도"
 
 msgid "Przezroczystość koloru cienia"
-msgstr "Transparency of shadow color"
+msgstr "그림자 색상 투명도"
 
 msgid "Przezroczystość koloru cienia, 0 - brak, 255 - przezroczystość"
 msgstr "그림자 색상 투명도, 0-없음, 255-투명"
@@ -3240,19 +3239,19 @@ msgid "Przezroczystość koloru obwódki, 0 - brak, 255 - przezroczystość"
 msgstr "테두리 색상 투명도, 0-없음, 255-투명"
 
 msgid "Przezroczystość koloru podstawowego"
-msgstr "Transparency of primary color"
+msgstr "첫 번째 색상 투명도"
 
 msgid "Przezroczystość koloru podstawowego, 0 - brak, 255 - przezroczystość"
 msgstr "첫 번째 색상 투명도, 0-없음, 255-투명"
 
 msgid "Przezroczystość koloru pomocniczego"
-msgstr "Transparency of secondary color"
+msgstr "두 번째 색상 투명도"
 
 msgid "Przezroczystość koloru zastępczego, 0 - brak, 255 - przezroczystość"
 msgstr "두 번째 색상 투명도, 0-없음, 255-투명"
 
 msgid "Przełącz pełny ekran na %i monitor"
-msgstr "Switch full screen to monitor %i"
+msgstr "%i을(를) 전체 화면으로 전환"
 
 msgid "Przełącznik obramowanie włączonego"
 msgstr "고정된 버튼 테두리"
@@ -3261,16 +3260,16 @@ msgid "Przełącznik tło włączonego"
 msgstr "고정된 버튼 배경"
 
 msgid "Przy otwarciu menu"
-msgstr "메뉴 열기 후"
+msgstr "자동화 메뉴 클릭 후 모두"
 
 msgid "Przy otwarciu menu asynchronicznie"
-msgstr "After open menu asynchronously"
+msgstr "자동화 메뉴 클릭 후 순차적으로"
 
 msgid "Przy starcie programu"
-msgstr "프로그램 시작 후"
+msgstr "프로그램 시작과 동시에"
 
 msgid "Przy starcie programu asynchronicznie"
-msgstr "After program start asynchronously"
+msgstr "프로그램 시작 후"
 
 msgid "Przycisk i lista obramowanie"
 msgstr "버튼 테두리"
@@ -3306,16 +3305,16 @@ msgid "Przyklej start do klatki kluczowej"
 msgstr "시작 시간을 가까운 키 프레임으로"
 
 msgid "Przyklejaj do klatek kluczowych"
-msgstr "키프레임에 맞춤"
+msgstr "키 프레임에 맞춤"
 
 msgid "Przyklejaj do pozostałych linii"
-msgstr "Snap to other lines"
+msgstr "다른 줄로 설정"
 
 msgid "Przyklejenie do klatki kluczowej"
-msgstr "Snapping to keyframe"
+msgstr "키 프레임 연결"
 
 msgid "Przykład"
-msgstr "Sample"
+msgstr "예)"
 
 msgid "Przyspiesza napisy"
 msgstr "자막을 뒤로 이동"
@@ -3358,13 +3357,13 @@ msgid "Pytaj o wczytanie ostatniej sesji przy starcie programu"
 msgstr "프로그램 실행 시 마지막 작업 물어보기"
 
 msgid "Pytanie"
-msgstr "Prompt"
+msgstr "질문"
 
 msgid "Ramka z opisem obramowanie"
 msgstr "고정 메뉴 구분 테두리"
 
 msgid "Reguła \"%s\" jest nieprawidłowa."
-msgstr "Rule \"%s\" is not valid."
+msgstr "\"%s\" 규칙이 유효하지 않습니다."
 
 msgid "Reguła zamień"
 msgstr "규칙 변경"
@@ -3373,10 +3372,10 @@ msgid "Reguła znajdź"
 msgstr "규칙 찾기"
 
 msgid "Reset tagów"
-msgstr "Tags reset"
+msgstr "태그 재설정"
 
 msgid "Rodzaj filtrowania:"
-msgstr "Filtering mode:"
+msgstr "필터 유형 :"
 
 msgid "Rozciągaj"
 msgstr "늘리기"
@@ -3446,10 +3445,10 @@ msgstr ""
 "(좌클릭-시작,우클릭-종료)"
 
 msgid "Ruch po krzywej (3 punkty)"
-msgstr "Curve text movement (3 points)"
+msgstr "글자 곡선 이동 (3 points)"
 
 msgid "Ruch po krzywej (4 punkty)"
-msgstr "Curve text movement (4 points)"
+msgstr "글자 곡선 이동 (4 points)"
 
 msgid "Ruch po okręgu"
 msgstr "원형 글자 이동"
@@ -3810,7 +3809,7 @@ msgid "Szukaj:"
 msgstr "찾기:"
 
 msgid "Szukana fraza (wyrażenia regularne)"
-msgstr "검색 구문 (정규식)"
+msgstr "구문 검색 (정규식)"
 
 msgid "Szukany tekst:"
 msgstr "검색 글자:"
@@ -3819,7 +3818,7 @@ msgid "Szósty przycisk tagów"
 msgstr "태그 버튼 6"
 
 msgid "Słowa dodane do słownika"
-msgstr "Words added to dictionary"
+msgstr "사전에 추가 된 단어"
 
 msgid "Służy do zarządzania stylami ASS"
 msgstr "ASS 스타일 관리창을 엽니다"
@@ -3849,10 +3848,10 @@ msgid "Tekst bez tagów"
 msgstr "태그가 없는 글자"
 
 msgid "Tekst do oryginału"
-msgstr "Text into original"
+msgstr "원본"
 
 msgid "Tekst do tłumaczenia"
-msgstr "Text into translation"
+msgstr "번역본"
 
 msgid "Tekst oryginalny"
 msgstr "원본"
@@ -3864,7 +3863,7 @@ msgid "Tekst tłumaczenia"
 msgstr "번역본"
 
 msgid "Ten format nie jest obsługiwany przez DXVA"
-msgstr "This format is not supported by DXVA"
+msgstr "이 형식은 DXVA에서 지원되지 않습니다"
 
 msgid "Ten plik napisów jest zwykłym tekstem, zostaje otwarty jako napisy ASS"
 msgstr "이 자막 파일은 일반 텍스트이며 ASS 자막으로 열립니다"
@@ -3885,33 +3884,33 @@ msgid ""
 "Ten skrót już istnieje jako skrót do \"%s\".\n"
 "Co zrobić?"
 msgstr ""
-"This hotkey already exists for \"%s\".\n"
-"What to do?"
+"단축키가 \"%s\"에 이미 있습니다.\n"
+"어떻게 할까요?"
 
 msgid ""
 "Ten skrót już istnieje w %s jako skrót do \"%s\".\n"
 "Co zrobić?"
 msgstr ""
-"This shortcut exist in %s as shortcut to \"%s\".\n"
-"What to do?"
+"\"%s\"에서 \"%s\"로 사용중인 단축키 입니다.\n"
+"어떻게 하시겠습니까?"
 
 msgid "Testerzy: (mniej i bardziej wprawieni użytkownicy programu)\n"
-msgstr "Testers:\n"
+msgstr "테스터:\n"
 
 msgid "Timing"
 msgstr "시간"
 
 msgid "Timing karaoke"
-msgstr "Karaoke timing"
+msgstr "노래방 시간"
 
 msgid "Timing karaoke (nieobsługiwane)"
-msgstr "Karaoke timing (not supported)"
+msgstr "노래방 시간 (지원되지 않음)"
 
 msgid "Timing karaoke obwódka"
-msgstr "Karaoke timing border"
+msgstr "노래방 시간 테두리"
 
 msgid "Timing karaoke płynne przejście"
-msgstr "Karaoke timing smooth transition"
+msgstr "노래방 시간 부드러운 전환"
 
 msgid "To wideo nie jest plikiem MKV."
 msgstr "MKV 파일이 아닙니다."
@@ -3934,7 +3933,7 @@ msgid "Trzynasty przycisk tagów"
 msgstr "태그 버튼 13"
 
 msgid "Trzęsienie tekstu"
-msgstr "Text jitter"
+msgstr "글자 차이"
 
 msgid "Tylko napisy"
 msgstr "자막만"
@@ -3952,7 +3951,7 @@ msgid "Tłumaczenie"
 msgstr "번역자"
 
 msgid "U góry"
-msgstr "On top"
+msgstr "위로"
 
 msgid ""
 "UWAGA! Działanie na każdym Windowsie jest inne.\n"
@@ -3965,7 +3964,7 @@ msgstr ""
 msgid ""
 "UWAGA! Przezroczystość działa tylko na wykresie audio,\n"
 "polu tekstowym i polu napisów."
-msgstr "  경고 ! 투명도는 소리 스펙트럼, 글자 및 자막보기에서 동작합니다."
+msgstr "경고 ! 투명도는 소리 스펙트럼, 글자 및 자막보기에서 동작합니다."
 
 msgid "Ukryj / pokaż pasek postępu"
 msgstr "진행 표시 줄 보임/ 숨김"
@@ -4007,7 +4006,7 @@ msgid "Ukryj prawy margines"
 msgstr "오른쪽 여백"
 
 msgid "Ukryj styl"
-msgstr "스타일 숨김"
+msgstr "스타일"
 
 msgid "Ukryj tagi w nawiasach"
 msgstr "태그 숨김"
@@ -4025,19 +4024,19 @@ msgid "Ukryj znaki na sekundę"
 msgstr "초당 문자"
 
 msgid "Ukryj łamania linii"
-msgstr "글자 수 숨김"
+msgstr "글자 수"
 
 msgid "Ukrywa tagi w nawiasach ASS i MDVD"
 msgstr "ASS 및 MDVD에서 태그 숨김"
 
 msgid "Umieść pliki .dic i .aff do folderu \"Dictionary\""
-msgstr "Put files .dic and .aff to \"Dictionary\" folder"
+msgstr ".dic 및 .aff 파일을 \"Dictionary\"폴더에 넣습니다"
 
 msgid "Umorzliwia zarządzanie katalogami czcionek"
 msgstr "글꼴 관리창"
 
 msgid "Umorzliwia zarządzanie katalogami stylów"
-msgstr "Manages font catalogs"
+msgstr "스타일 목록을 관리 할 수 ​​있습니다"
 
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "현재 줄의 스타일을 빠르게 편집할 수 있습니다"
@@ -4055,7 +4054,7 @@ msgid "Uruchom postprocessor"
 msgstr "포스트 프로세서 실행"
 
 msgid "Ustaw"
-msgstr "Set"
+msgstr "선택까지 되돌리기"
 
 msgid "Ustaw FPS z wideo"
 msgstr "영상에서 프레임 가져오기"
@@ -4082,7 +4081,7 @@ msgid "Ustaw jako niepewne i przejdź dalej"
 msgstr "수정하지 않고 다음 줄로 이동"
 
 msgid "Ustaw mimo to"
-msgstr "Set still"
+msgstr "계속 설정"
 
 msgid "Ustaw nazwę drzewka"
 msgstr "트리 이름"
@@ -4103,22 +4102,22 @@ msgid "Ustawienia programu"
 msgstr "프로그램 설정"
 
 msgid "Ustawienie FPSu obliczonego z wideo"
-msgstr "Setting FPS from video"
+msgstr "영상 FPS로 설정"
 
 msgid "Ustawienie czasu końcowego"
-msgstr "Setting end time"
+msgstr "종료 시간 설정"
 
 msgid "Ustawienie czasu początkowego"
-msgstr "Setting start time"
+msgstr "시작 시간 설정"
 
 msgid "Ustawienie czasów linii jako ciągłych"
-msgstr "Setting times as continues"
+msgstr "연속시간으로 설정"
 
 msgid "Ustawienie opisu"
 msgstr "트리 설명 추가"
 
 msgid "Ustawienie własnego FPSu"
-msgstr "Setting custom FPS"
+msgstr "사용자 지정 FPS로 설정"
 
 msgid "Ustawione skróty"
 msgstr "설정된 것만"
@@ -4127,10 +4126,10 @@ msgid "Usunięcie drzewka"
 msgstr "트리 삭제"
 
 msgid "Usunięcie linijek"
-msgstr "줄 삭제중"
+msgstr "줄 삭제 중"
 
 msgid "Usunięcie tekstu"
-msgstr "글자 삭제중"
+msgstr "글자 삭제 중"
 
 msgid ""
 "Usuwa zaznaczoną linijkę.\n"
@@ -4147,16 +4146,16 @@ msgstr ""
 "번역을 한 줄 위로 이동합니다."
 
 msgid "Usuwa ze słownika słowa dodane przez użytkownika."
-msgstr "Remove from dictionary words added by user."
+msgstr "사용자가 추가 한 단어를 사전에서 제거합니다."
 
 msgid "Usuwanie"
-msgstr "삭제중"
+msgstr "삭제 중"
 
 msgid "Usuwanie japońskich zwrotów grzecznościowych"
-msgstr "Removing japanese suffixes"
+msgstr "일본어 접미사 제거"
 
 msgid "Usuwanie podwójnych spacji"
-msgstr "Remove doubled spaces"
+msgstr "두 번 띄어쓰기 제거"
 
 msgid "Usuwanie profilów"
 msgstr "설정 삭제"
@@ -4249,7 +4248,7 @@ msgid "Usuń z wszystkich folderów"
 msgstr "모든 폴더에서 삭제"
 
 msgid "Usuń ze słownika"
-msgstr "Remove from dictionary"
+msgstr "사전에서 제거"
 
 msgid "Utwórz"
 msgstr "만들기"
@@ -4261,7 +4260,7 @@ msgid "Utwórz nowy styl napisów"
 msgstr "새로만들기"
 
 msgid "Uwaga"
-msgstr "Warning"
+msgstr "경고"
 
 msgid "Uwydatnienie częstotliwości głosu na spektrum"
 msgstr "스펙트럼 음성 주파수 향상"
@@ -4289,10 +4288,10 @@ msgstr ""
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
-msgstr "In line %i can't scale '%s' in tag '%s'"
+msgstr "%i 줄에서 '%s'를 조정할 수 없음, 태그:'%s'"
 
 msgid "W linijkach: "
-msgstr "In lines: "
+msgstr "줄에서: "
 
 msgid ""
 "W motywie \"%s\" brakowało część kolorów, zostały doczytane z domyślnego."
@@ -4327,7 +4326,7 @@ msgid "Wartość:"
 msgstr "명도:"
 
 msgid "Warunki skryptu Lua '%s' nie zostały spełnione"
-msgstr "Validation Lua script '%s' failed"
+msgstr "'%s' Lua 스크립트 유효성 검사 실패"
 
 msgid "Wczytaj"
 msgstr "파일에서"
@@ -4357,7 +4356,7 @@ msgid "Wczytaj z folderu"
 msgstr "폴더에 있는 영상 열기"
 
 msgid "Wczytany plik MKV nie ma żadnych czcionek."
-msgstr "Loaded MKV file does not have any fonts."
+msgstr "불러온 MKV 파일에 글꼴이 없습니다."
 
 msgid "Wczytać napisy o nazwie \"%s\"?"
 msgstr "%s 파일도 같이 불러 오겠습니까?"
@@ -4366,16 +4365,16 @@ msgid "Wczytać poprzednią sesję?"
 msgstr "마지막 작업 열기?"
 
 msgid "Wczytuj audio do pamięci RAM"
-msgstr "Load audio into RAM"
+msgstr "램에 소리 불러오기"
 
 msgid "Wczytuje poprzednio zaczytane pliki"
-msgstr "Open files loaded last time"
+msgstr "마지막으로 불러온 파일 열기"
 
 msgid "Wczytuje poprzednio zaczytane pliki przy starcie programu"
-msgstr "Loading last session after program start"
+msgstr "프로그램 시작 후 마지막 세션 로드"
 
 msgid "Wczytywanie autozapisu nie powiodło się"
-msgstr "Could not open auto save folder"
+msgstr "자동 저장 폴더를 열 수 없습니다"
 
 msgid "Wczytywanie posortowanych napisów"
 msgstr "정렬된 자막으로 열기"
@@ -4429,10 +4428,10 @@ msgid "Wideo WMV"
 msgstr "영상 WMV"
 
 msgid "Wideo do końca linii"
-msgstr "Video and audio to the line end time"
+msgstr "영상을 줄 종료까지 재생"
 
 msgid "Wideo do początku następnej linii"
-msgstr "Video and audio to the next line start time"
+msgstr "영상을 다음 줄의 시작 부분까지 재생"
 
 msgid "Wideo i napisy"
 msgstr "영상과 자막"
@@ -4535,10 +4534,10 @@ msgid "Wstaw &przed"
 msgstr "이전에 빈 줄 추가"
 
 msgid "Wstaw czas końcowy z wideo"
-msgstr "영상위치를 종료시간으로"
+msgstr "영상위치->종료시간"
 
 msgid "Wstaw czas początkowy z wideo"
-msgstr "영상위치를 시작시간으로          "
+msgstr "영상위치->시작시간"
 
 msgid "Wstaw kursywę"
 msgstr "기울임 추가"
@@ -4798,7 +4797,7 @@ msgid "Wyrażenia regularne"
 msgstr "정규식"
 
 msgid "Wyrównaj do klatek kluczowych"
-msgstr "키프레임에 맞춤"
+msgstr "키 프레임에 맞춤"
 
 msgid "Wysokość"
 msgstr "세로"
@@ -4807,7 +4806,7 @@ msgid "Wysokość wideo"
 msgstr "영상 세로"
 
 msgid "Wystąpił błąd indeksowania: %s"
-msgstr "인덱싱 오류: %s"
+msgstr "색인 오류: %s"
 
 msgid "Wystąpił błąd konwertowania audio: %s"
 msgstr "소리를 변환 할 때 오류가 발생했습니다.: %s"
@@ -4836,7 +4835,7 @@ msgid "Wyłącz filtrowanie"
 msgstr "필터링 해제"
 
 msgid "Wyłącz ostrzeżenia w narzędziach edycji wizualnej"
-msgstr "시각적 도구 경고를 해제"
+msgstr "시각적도구 사용 시 경고문구 해제"
 
 msgid "Wyłącz ostrzeżenie"
 msgstr "창 끄기"
@@ -4894,7 +4893,7 @@ msgid "Wyświetlaj czas przy kursorze"
 msgstr "커서에 시간 표시"
 
 msgid "Wyświetlaj klatki kluczowe"
-msgstr "키프레임 표시"
+msgstr "키 프레임 표시"
 
 msgid "Wyświetlaj pozycję wideo"
 msgstr "영상 위치 표시"
@@ -4930,7 +4929,7 @@ msgid "Włącz / Wyłącz tworzenie karaoke"
 msgstr "노래방 활성화 / 비활성화"
 
 msgid "Włącz pełny ekran na %i monitorze"
-msgstr "Open in full screen on monitor %i"
+msgstr "모니터 %i에서 전체 화면으로 열기"
 
 msgid "Włącz przenoszenie wartości pola przesuwania czasów"
 msgstr "모든 탭에서 시간 이동 같이 적용"
@@ -4941,9 +4940,7 @@ msgstr "맞춤법 검사"
 msgid ""
 "Włącz szukanie widocznej linii\n"
 "po wyjściu z pełnego ekranu"
-msgstr ""
-"Turn searching of visible line\n"
-"after switching from full screen"
+msgstr "전체 화면 종료 후 영상지점으로 줄 이동"
 
 msgid "Włącza okno poprawiania błędów"
 msgstr "자동 바꾸기 창 열기"
@@ -5006,7 +5003,7 @@ msgid "Zakończono powodzeniem, skopiowano %i czcionek."
 msgstr "성공적으로 %i 글꼴을 복사했습니다."
 
 msgid "Zakończono, %s %s.\n"
-msgstr "Finished, %s %s.\n"
+msgstr "완료, %s %s.\n"
 
 msgid ""
 "Zakończono, skopiowano %i czcionek.\n"
@@ -5043,19 +5040,19 @@ msgid "Zakładki zamknięcie po najechaniu"
 msgstr "탭 닫기 마우스 오버"
 
 msgid "Zamiana \"nie możliwe\" na \"niemożliwe\""
-msgstr "Fixing Polish \"nie mozliwe\""
+msgstr "폴란드어 \"nie mozliwe\""
 
 msgid "Zamiana \"nie ważne\" na \"nieważne\""
-msgstr "Fixing Polish \"nie wazne\""
+msgstr "폴란드어 \"nie wazne\""
 
 msgid "Zamiana \"sie\" na \"się\""
-msgstr "Fixing Polish \"sie\""
+msgstr "폴란드어 \"sie\""
 
 msgid "Zamiana błędów wyrazu \"będę\""
-msgstr "Fixing Polish \"bede\""
+msgstr "폴란드어 \"bede\""
 
 msgid "Zamiana błędów wyrażenia \"w ogóle\""
-msgstr "Fixing Polish \"w ogole\""
+msgstr "폴란드어 \"w ogole\""
 
 msgid "Zamiana linijek"
 msgstr "줄 바꾸기"
@@ -5115,7 +5112,7 @@ msgid "Zamyka audio"
 msgstr "소리를 닫기"
 
 msgid "Zaokrąglenie tekstu"
-msgstr "Round of text"
+msgstr "글자 둘러싸기"
 
 msgid "Zapisano czcionkę o nazwie \""
 msgstr "이름이 \"인 글꼴을 저장"
@@ -5143,7 +5140,7 @@ msgid "Zapisz"
 msgstr "저장"
 
 msgid "Zapisz &jako..."
-msgstr "다른 이름으로 저장[&A]"
+msgstr "다른 이름으로[&A]"
 
 msgid "Zapisz &tłumaczenie"
 msgstr "번역본 저장"
@@ -5221,10 +5218,10 @@ msgid "Zawiera"
 msgstr "포함"
 
 msgid "Zawiodło któreś z ustawień DirectX"
-msgstr "One of the DirectX settings failed"
+msgstr "DirectX 설정에 오류가 있습니다"
 
 msgid "Zawiodło któreś z ustawień DirectX vertices"
-msgstr "One of the DirectX vertices settings failed"
+msgstr "DirectX 설정 중 하나가 실패했습니다"
 
 msgid "Zawsze pytaj o zmianę informacji o napisach"
 msgstr ""
@@ -5259,7 +5256,7 @@ msgid "Zaznacz wszystko"
 msgstr "모두 선택"
 
 msgid "Zaznacza linijki wg danej frazy tekstu"
-msgstr "Selects lines by expressions"
+msgstr "주어진 텍스트 구문으로 선택한 줄을 만듭니다"
 
 msgid ""
 "Zaznaczaj linijkę z czasem aktywnej\n"
@@ -5278,7 +5275,7 @@ msgstr "%i 줄이 선택되었습니다."
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
-msgstr "Double \"m\" was blocked because of Vsfilter bug"
+msgstr "Vsfilter 오류로 인해 이중 삽입 \"m\"이 차단되었습니다"
 
 msgid "Zero całkowicie wyłącza zapis przy edycji"
 msgstr "0으로 하면 저장하지 않음"
@@ -5293,7 +5290,7 @@ msgid "Zmiana \"....\" i więcej na wielokropek"
 msgstr "Replace more then three dots to suspension point"
 
 msgid "Zmiana braku spacji po przecinku czy kropce"
-msgstr "Replace missing spaces after dot or comma"
+msgstr "쉼표 또는 마침표 뒤에 누락 된 공백을 바꿉니다"
 
 msgid "Zmiana czasu na wykresie audio"
 msgstr "소리 스펙트럼의 시간 변경"
@@ -5311,7 +5308,7 @@ msgid "Zmieniacz skali i obrotów"
 msgstr "크기 및 회전"
 
 msgid "Zmieniaj aktywną linię przy zaznaczaniu"
-msgstr "선택 항목에 추가 한 후 활성 줄 변경"
+msgstr "여러 줄 선택시 마지막 선택을 활성 줄로"
 
 msgid "Zmieniaj na tekst pisany małą literą"
 msgstr "소문자로 변경"
@@ -5425,13 +5422,13 @@ msgid "Znaki na sekundę: 0<=15"
 msgstr "초당 문자 : 0 <= 15"
 
 msgid "Znaleziono czcionkę \"%s\"\n"
-msgstr "Found font \"%s\"\n"
+msgstr "찾은 글꼴 \"%s\"\n"
 
 msgid "Znaleziono czcionkę \"%s\"."
-msgstr "Found font \"%s\"."
+msgstr "찾은 글꼴 \"%s\"."
 
 msgid "Znaleziono plik czcionki \"%s\"."
-msgstr "Found \"%s\" font file."
+msgstr "\"%s\" 글꼴을 찾았습니다."
 
 msgid "Zostaną zamknięte wszystkie zakładki, kontynuować?"
 msgstr "모든 탭이 닫힙니다. 계속하시겠습니까?"
@@ -5493,10 +5490,10 @@ msgid ""
 "i głównego pola tekstowego, stworzył ciemny i jasny motyw, a także część "
 "ikon).\n"
 msgstr ""
-"and main text field, created dark and light theme and part of icons).\n"
+"그리고 기본 자막보기, 어둡고 밝은 테마 및 아이콘의 일부를 만들었습니다).\n"
 
 msgid "i najbardziej narzekający na wszystko).\n"
-msgstr "complained a lot)\n"
+msgstr "불평이 많았다).\n"
 
 msgid "innych oknach"
 msgstr "다른 창"
@@ -5517,7 +5514,8 @@ msgid ""
 "pomógł w poprawie działania narzędzi do typesettingu, wymyślił wiele innych "
 "usprawnień).\n"
 msgstr ""
-"helped with typesetting tools and came up with many more improvements).\n"
+"그의 시스템과 습관으로 인해 많은 버그를 추적하고 오류를 수정할 수 있었습니"
+"다).\n"
 
 msgid "skopiowano"
 msgstr "복사"
@@ -5541,7 +5539,7 @@ msgid "zamknięciem zakładki"
 msgstr "탭 닫기"
 
 msgid "znaleziono"
-msgstr "found"
+msgstr "찾기"
 
 msgid "Ósmy przycisk tagów"
 msgstr "태그 버튼 8"
