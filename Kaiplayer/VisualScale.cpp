@@ -449,6 +449,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
 		//maybe everything switch to replace function using length is better
 		if (putInBracket) { posstr = L"{" + posstr + L"}"; }
 		txt->replace(textPos.x, textPos.y, posstr);
+		ChangeClipScale(txt, activeLinePos, Scalex, Scaley);
 		type = 2;
 	}
 	Styles* style = NULL;
@@ -714,4 +715,81 @@ void Scale::SetSecondRectScale()
 		sizingRectangle[3].y -= halfsizey;
 	}
 	originalRectangleVisible = true;
+}
+
+void Scale::ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, float Scalex, float Scaley)
+{
+	if (FindTag(L"(i?clip[^)]+\\))", *txt, 1)) {
+		wxString clip;
+		GetTextResult(&clip);
+		std::vector<ClipPoint> points;
+		if (clip.Freq(L',') >= 3) {
+			wxStringTokenizer tokenzr(clip, L",", wxTOKEN_STRTOK);
+			double value;
+			float xy[4] = { 0,0,0,0 };
+			int counter = 0;
+			bool isBad = false;
+			while (tokenzr.HasMoreTokens()) {
+				wxString token = tokenzr.GetNextToken();
+				if (token.ToDouble(&value)) {
+					xy[counter] = value;
+					counter++;
+				}
+				else
+					isBad = true;
+			}
+			if (!isBad) {
+				points.push_back(ClipPoint(xy[0], xy[1], "m", true));
+				points.push_back(ClipPoint(xy[2], xy[1], "l", true));
+				points.push_back(ClipPoint(xy[2], xy[3], "l", true));
+				points.push_back(ClipPoint(xy[0], xy[3], "l", true));
+			}
+			else {
+				KaiLog(_("Nie mo¿na pobraæ wartoœci clipa prostok¹tnego."));
+			}
+		}
+		else {
+			GetVectorPoints(clip, &points);
+		}
+		size_t psize = points.size();
+		if (psize) {
+			wxString newclip;
+			wxString format = L"5.2f";
+			wxString lasttype;
+			int countB = 0;
+			bool spline = false;
+			for (size_t i = 0; i < psize; i++)
+			{
+				ClipPoint pos = points[i];
+				float x = activeLinePos.x + ((pos.x - activeLinePos.x) * Scalex);
+				float y = activeLinePos.y + ((pos.y - activeLinePos.y) * Scaley);
+
+				if (countB && !pos.start) {
+					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+					countB++;
+				}
+				else {
+					if (spline) { newclip << L"c "; spline = false; }
+					if (lasttype != pos.type || pos.type == L"m") {
+						newclip << pos.type << L" ";
+						lasttype = pos.type;
+					}
+					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+					if (pos.type == L"b" || pos.type == L"s") {
+						countB = 1;
+						if (pos.type == L"s")
+							spline = true;
+					}
+				}
+				//fix for m one after another
+				if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
+					(i < psize - 1 && points[i + 1].type == L"m"))) {
+					newclip << L"l " << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+				}
+			}
+			if (spline) { newclip << L"c "; }
+			newclip.Trim();
+			Replace(newclip, txt);
+		}
+	}
 }

@@ -338,6 +338,7 @@ private:
 	void SetScale();
 	D3DXVECTOR2 ScaleToVideo(D3DXVECTOR2 point);
 	void SetSecondRectScale();
+	void ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, float Scalex, float scaley);
 	byte type;
 	int grabbed;
 	byte AN;
