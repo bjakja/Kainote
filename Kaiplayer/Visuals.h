@@ -377,6 +377,7 @@ public:
 	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void OnKeyPress(wxKeyEvent &evt);
 private:
+	void ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, float sinus, float cosinus);
 	bool isOrg;
 	D3DXVECTOR2 org;
 	D3DXVECTOR2 lastOrg;

@@ -336,6 +336,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
 			}
 			if (putInBracket) { posstr = L"{" + posstr + L"}"; }
 			txt->replace(textPos.x, textPos.y, posstr);
+			ChangeClipRotationZ(txt, orgpivot, s, c);
 		}
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			float newangle = angle;
@@ -440,4 +441,93 @@ void RotationZ::OnKeyPress(wxKeyEvent &evt)
 		selection[1] = true;
 		tab->Video->Render(false);
 	}*/
+}
+
+void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, float sinus, float cosinus)
+{
+	if (FindTag(L"(i?clip[^)]+\\))", *txt, 1)) {
+		wxString clip1, clip;
+		GetTextResult(&clip1);
+		std::vector<ClipPoint> points;
+		wxString newclip = L"\\" + clip1.BeforeFirst(L'(', &clip) + L"(";
+		int vectorScale = 1;
+		int clipFreq = clip.Freq(L',');
+		if (clipFreq >= 3) {
+			wxStringTokenizer tokenzr(clip, L",", wxTOKEN_STRTOK);
+			double value;
+			float xy[4] = { 0,0,0,0 };
+			int counter = 0;
+			bool isBad = false;
+			while (tokenzr.HasMoreTokens()) {
+				wxString token = tokenzr.GetNextToken();
+				if (token.ToDouble(&value)) {
+					xy[counter] = value;
+					counter++;
+				}
+				else
+					isBad = true;
+			}
+			if (!isBad) {
+				points.push_back(ClipPoint(xy[0], xy[1], "m", true));
+				points.push_back(ClipPoint(xy[2], xy[1], "l", true));
+				points.push_back(ClipPoint(xy[2], xy[3], "l", true));
+				points.push_back(ClipPoint(xy[0], xy[3], "l", true));
+			}
+			else {
+				KaiLog(_("Nie mo¿na pobraæ wartoœci clipa prostok¹tnego."));
+			}
+		}
+		else {
+			if (clipFreq >= 1) {
+				wxString vscale = clip.BeforeFirst(L',', &clip);
+				int vscaleint = wxAtoi(vscale);
+				if (vscaleint > 0)
+					vectorScale = vscaleint;
+			}
+			GetVectorPoints(clip, &points);
+		}
+		size_t psize = points.size();
+		if (psize) {
+			wxString format = L"5.0f";
+			wxString lasttype;
+			int countB = 0;
+			bool spline = false;
+			if (vectorScale > 1) {
+				newclip << vectorScale << L",";
+			}
+			for (size_t i = 0; i < psize; i++)
+			{
+				ClipPoint pos = points[i];
+				D3DXVECTOR2 posxy = D3DXVECTOR2(pos.x, pos.y);
+				RotateZ(&posxy, sinus, cosinus, orgPivot);
+				float x = posxy.x, y = posxy.y;
+
+				if (countB && !pos.start) {
+					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+					countB++;
+				}
+				else {
+					if (spline) { newclip << L"c "; spline = false; }
+					if (lasttype != pos.type || pos.type == L"m") {
+						newclip << pos.type << L" ";
+						lasttype = pos.type;
+					}
+					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+					if (pos.type == L"b" || pos.type == L"s") {
+						countB = 1;
+						if (pos.type == L"s")
+							spline = true;
+					}
+				}
+				//fix for m one after another
+				if (pos.type == L"m" && psize > 1 && ((i >= psize - 1) ||
+					(i < psize - 1 && points[i + 1].type == L"m"))) {
+					newclip << L"l " << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
+				}
+			}
+			if (spline) { newclip << L"c "; }
+			newclip.Trim();
+			Replace(newclip, txt);
+		}
+	}
 }

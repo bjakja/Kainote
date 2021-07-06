@@ -720,10 +720,13 @@ void Scale::SetSecondRectScale()
 void Scale::ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, float Scalex, float Scaley)
 {
 	if (FindTag(L"(i?clip[^)]+\\))", *txt, 1)) {
-		wxString clip;
-		GetTextResult(&clip);
+		wxString clip1, clip;
+		GetTextResult(&clip1);
 		std::vector<ClipPoint> points;
-		if (clip.Freq(L',') >= 3) {
+		wxString newclip = L"\\" + clip1.BeforeFirst(L'(', &clip) + L"(";
+		int vectorScale = 1;
+		int clipFreq = clip.Freq(L',');
+		if (clipFreq >= 3) {
 			wxStringTokenizer tokenzr(clip, L",", wxTOKEN_STRTOK);
 			double value;
 			float xy[4] = { 0,0,0,0 };
@@ -749,20 +752,28 @@ void Scale::ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, flo
 			}
 		}
 		else {
+			if (clipFreq >= 1) {
+				wxString vscale = clip.BeforeFirst(L',', &clip);
+				int vscaleint = wxAtoi(vscale);
+				if (vscaleint > 0)
+					vectorScale = vscaleint;
+			}
 			GetVectorPoints(clip, &points);
 		}
 		size_t psize = points.size();
 		if (psize) {
-			wxString newclip;
-			wxString format = L"5.2f";
+			wxString format = L"5.0f";
 			wxString lasttype;
 			int countB = 0;
 			bool spline = false;
+			if (vectorScale > 1) {
+				newclip << vectorScale << L",";
+			}
 			for (size_t i = 0; i < psize; i++)
 			{
 				ClipPoint pos = points[i];
-				float x = activeLinePos.x + ((pos.x - activeLinePos.x) * Scalex);
-				float y = activeLinePos.y + ((pos.y - activeLinePos.y) * Scaley);
+				float x = activeLinePos.x + ((pos.x - activeLinePos.x) * Scalex) + 0.5f;
+				float y = activeLinePos.y + ((pos.y - activeLinePos.y) * Scaley) + 0.5f;
 
 				if (countB && !pos.start) {
 					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";

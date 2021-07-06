@@ -168,7 +168,10 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 			int reps = regex.ReplaceAll(&ftag, L"\\1");
 			if (reps > 0) {
 				//maybe better for fix fn bug would be ftag.Freq(L')') > ftag.Freq(L'(') cause it also can prevent it for another tags
-				if (ftag.EndsWith(L")") && !isFN && (!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || ftag.EndsWith(L"}")) {
+				if (ftag.EndsWith(L")") && !isFN && 
+					(!ftag.StartsWith(L"(") || ftag.Freq(L')') >= 2) || 
+					ftag.EndsWith(L"}")) 
+				{
 					ftag.RemoveLast(1);
 					lslash--;
 				}

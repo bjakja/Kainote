@@ -259,6 +259,7 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	if (Visual == VECTORCLIP && vectorScale > 1){
 		*visual << vectorScale << L",";
 	}
+	int vscale = pow(2, (vectorScale - 1));
 	wxString lasttype;
 	int countB = 0;
 	bool spline = false;
@@ -285,8 +286,8 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	for (size_t i = 0; i < psize; i++)
 	{
 		ClipPoint pos = Points[i];
-		float x = pos.x + offsetxy.x;
-		float y = pos.y + offsetxy.y;
+		float x = (pos.x * vscale) + offsetxy.x;
+		float y = (pos.y * vscale) + offsetxy.y;
 		
 		if (countB && !pos.start){
 			*visual << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
