@@ -479,10 +479,12 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 		}
 		else {
 			if (clipFreq >= 1) {
-				wxString vscale = clip.BeforeFirst(L',', &clip);
+				wxString vscale = clip.BeforeFirst(L',', &clip1);
 				int vscaleint = wxAtoi(vscale);
 				if (vscaleint > 0)
 					vectorScale = vscaleint;
+
+				clip = clip1;
 			}
 			GetVectorPoints(clip, &points);
 		}
@@ -492,15 +494,17 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 			wxString lasttype;
 			int countB = 0;
 			bool spline = false;
+			int vscale = pow(2, (vectorScale - 1));
 			if (vectorScale > 1) {
 				newclip << vectorScale << L",";
 			}
 			for (size_t i = 0; i < psize; i++)
 			{
 				ClipPoint pos = points[i];
-				D3DXVECTOR2 posxy = D3DXVECTOR2(pos.x, pos.y);
+				D3DXVECTOR2 posxy = D3DXVECTOR2(pos.x / vscale, pos.y / vscale);
 				RotateZ(&posxy, sinus, cosinus, orgPivot);
-				float x = posxy.x, y = posxy.y;
+				float x = (posxy.x * vscale) + 0.5, 
+					  y = (posxy.y * vscale) + 0.5;
 
 				if (countB && !pos.start) {
 					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";

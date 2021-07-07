@@ -182,7 +182,18 @@ void DrawingAndClip::SetCurVisual()
 				scale = D3DXVECTOR2(1.f, 1.f); 
 				vectorScale = 1; 
 			}
-			else{ clip = clip.AfterFirst((rres > 0) ? L',' : L'('); }
+			else{ 
+				clip = clip.AfterFirst(L'('); 
+				if (rres >= 1) {
+					wxString clip1;
+					wxString vscale = clip.BeforeFirst(L',', &clip1);
+					int vscaleint = wxAtoi(vscale);
+					if (vscaleint > 0)
+						vectorScale = vscaleint;
+
+					clip = clip1;
+				}
+			}
 		}
 		coeffW /= scale.x;
 		coeffH /= scale.y;
@@ -200,8 +211,15 @@ void DrawingAndClip::SetCurVisual()
 		if (pdata->tags.size() >= 2){
 			size_t i = 1;
 			while (i < pdata->tags.size()){
-				if (pdata->tags[i]->tagName == L"pvector"){
-					clip = pdata->tags[1]->value;
+				TagData* tdata = pdata->tags[i];
+				if (tdata->tagName == L"p") {
+					int vscale = wxAtoi(tdata->value);
+					if (vscale > 0) {
+						vectorScale = vscale;
+					}
+				}
+				else if (tdata->tagName == L"pvector"){
+					clip = tdata->value;
 					break;
 				}
 				i++;
@@ -236,6 +254,7 @@ void DrawingAndClip::SetCurVisual()
 
 	Points.clear();
 	GetVectorPoints(clip, &Points);
+	int vscale = pow(2, (vectorScale - 1));
 
 	if (!Points.empty() && Visual == VECTORDRAW){
 		offsetxy = CalcDrawingSize(alignment, &Points);
@@ -244,10 +263,18 @@ void DrawingAndClip::SetCurVisual()
 		float s = sin(-frz * rad);
 		float c = cos(-frz * rad);
 		for (size_t i = 0; i < Points.size(); i++){
-			Points[i].x -= offsetxy.x;
-			Points[i].y -= offsetxy.y;
+			//divide points by scale to get original subtitle position
+			Points[i].x = (Points[i].x / vscale) - offsetxy.x;
+			Points[i].y = (Points[i].y / vscale) - offsetxy.y;
 			if(frz)
 				RotateDrawing(&Points[i], s, c, orgpivot);
+		}
+	}
+	else if (vscale > 1 && !Points.empty() && Visual == VECTORCLIP) {
+		for (size_t i = 0; i < Points.size(); i++) {
+			//divide points by scale to get original subtitle position
+			Points[i].x /= vscale;
+			Points[i].y /= vscale;
 		}
 	}
 	pointArea = 4.f / zoomScale.x;

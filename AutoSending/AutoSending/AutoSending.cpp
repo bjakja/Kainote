@@ -86,6 +86,7 @@ int _tmain(int argc, TCHAR* argv[])
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\ua.HYDRA.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\ua.Recalculator.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Autoload\\skew gradient.lua\0");
+	filenames.push_back(L"\\Automation\\automation\\Autoload\\BezierToText.lua\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\a-mo\\ConfigHandler.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\a-mo\\DataHandler.moon\0");
 	filenames.push_back(L"\\Automation\\automation\\Include\\a-mo\\DataWrapper.moon\0");
