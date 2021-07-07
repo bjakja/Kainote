@@ -175,6 +175,10 @@ void DrawingAndClip::SetCurVisual()
 		bool found = FindTag(L"(i?clip[^)]+\\))", L"", 1);
 		const FindData& data = GetResult();
 		clip = data.finding;
+		coeffW /= scale.x;
+		coeffH /= scale.y;
+		_x = 0;
+		_y = 0;
 		if (found){
 			int rres = clip.Freq(L',');
 			if (rres >= 3) { 
@@ -191,14 +195,13 @@ void DrawingAndClip::SetCurVisual()
 					if (vscaleint > 0)
 						vectorScale = vscaleint;
 
+					CreateClipMask(clip);
 					clip = clip1;
+					goto done;
 				}
 			}
 		}
-		coeffW /= scale.x;
-		coeffH /= scale.y;
-		_x = 0;
-		_y = 0;
+		
 		CreateClipMask(clip);
 	}
 	else{
@@ -252,10 +255,11 @@ void DrawingAndClip::SetCurVisual()
 		else { org = D3DXVECTOR2(_x, _y); }
 	}
 
+done:
+
 	Points.clear();
 	GetVectorPoints(clip, &Points);
-	int vscale = pow(2, (vectorScale - 1));
-
+	
 	if (!Points.empty() && Visual == VECTORDRAW){
 		offsetxy = CalcDrawingSize(alignment, &Points);
 		float rad = 0.01745329251994329576923690768489f;
@@ -264,17 +268,10 @@ void DrawingAndClip::SetCurVisual()
 		float c = cos(-frz * rad);
 		for (size_t i = 0; i < Points.size(); i++){
 			//divide points by scale to get original subtitle position
-			Points[i].x = (Points[i].x / vscale) - offsetxy.x;
-			Points[i].y = (Points[i].y / vscale) - offsetxy.y;
+			Points[i].x -= offsetxy.x;
+			Points[i].y -= offsetxy.y;
 			if(frz)
 				RotateDrawing(&Points[i], s, c, orgpivot);
-		}
-	}
-	else if (vscale > 1 && !Points.empty() && Visual == VECTORCLIP) {
-		for (size_t i = 0; i < Points.size(); i++) {
-			//divide points by scale to get original subtitle position
-			Points[i].x /= vscale;
-			Points[i].y /= vscale;
 		}
 	}
 	pointArea = 4.f / zoomScale.x;
@@ -286,7 +283,6 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	if (Visual == VECTORCLIP && vectorScale > 1){
 		*visual << vectorScale << L",";
 	}
-	int vscale = pow(2, (vectorScale - 1));
 	wxString lasttype;
 	int countB = 0;
 	bool spline = false;
@@ -313,8 +309,8 @@ void DrawingAndClip::GetVisual(wxString *visual)
 	for (size_t i = 0; i < psize; i++)
 	{
 		ClipPoint pos = Points[i];
-		float x = (pos.x * vscale) + offsetxy.x;
-		float y = (pos.y * vscale) + offsetxy.y;
+		float x = pos.x + offsetxy.x;
+		float y = pos.y + offsetxy.y;
 		
 		if (countB && !pos.start){
 			*visual << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
@@ -422,25 +418,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		}
 		return;
 	}
-	/*if (clip == L"") {
-
-		wxString tmp;
-		wxString txt = editor->GetValue();
-		clipMask.Empty();
-		if (FindTag(L"(i?clip.)[^)]*\\)", txt, 1)) {
-			Replace(L"", &txt);
-			txt.Replace(L"{}", L"");
-			if (changeEditorText) {
-				editor->SetTextS(txt, false, true);
-				editor->SetModified();
-				edit->Send(VISUAL_VECTOR_CLIP, false);
-			}
-			return;
-		}
-		tab->Video->SetVisualEdition(false);
-		RenderSubs(tab->Grid->GetVisible(), redraw);
-		return;
-	}*/
+	
 	if (dummy) {
 
 		if (!dummytext) {
@@ -1389,7 +1367,10 @@ void DrawingAndClip::ChangeTool(int _tool, bool blockSetCurVisual) {
 			(shapeSelection != 0 && shapeSelectionNew == 0)) {
 			needRefresh = true;
 		}
-		if (shapeSelectionNew == 0 && !blockSetCurVisual) {
+		if (shapeSelectionNew == 0 && shapeSelection != 0 && !blockSetCurVisual) {
+			//set a new values of coeffs to prevent second divide by scale
+			coeffW = ((float)SubsSize.x / (float)(VideoSize.width - VideoSize.x));
+			coeffH = ((float)SubsSize.y / (float)(VideoSize.height - VideoSize.y));
 			SetCurVisual();
 		}
 		shapeSelection = shapeSelectionNew;

@@ -501,10 +501,10 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 			for (size_t i = 0; i < psize; i++)
 			{
 				ClipPoint pos = points[i];
-				D3DXVECTOR2 posxy = D3DXVECTOR2(pos.x / vscale, pos.y / vscale);
+				D3DXVECTOR2 posxy = D3DXVECTOR2(pos.x, pos.y);
 				RotateZ(&posxy, sinus, cosinus, orgPivot);
-				float x = (posxy.x * vscale) + 0.5, 
-					  y = (posxy.y * vscale) + 0.5;
+				float x = posxy.x + 0.5, 
+					  y = posxy.y + 0.5;
 
 				if (countB && !pos.start) {
 					newclip << getfloat(x, format) << L" " << getfloat(y, format) << L" ";
