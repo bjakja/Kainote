@@ -514,8 +514,10 @@ void Position::SetPosition()
 {
 	if(hasPositionToRenctangle && rectangleVisible) {
 		int an = alignment;
-		float bordery = border.y / 2;
-		float borderx = border.x / 2;
+		float bordery = border[0].y;
+		float borderx = border[0].x;
+		float bordery1 = border[1].y;
+		float borderx1 = border[1].x;
 		//need to use rectangle[0] > rectangle[1]
 		float rectx = PositionRectangle[0].x < PositionRectangle[1].x ? 
 			PositionRectangle[0].x : PositionRectangle[1].x;
@@ -526,9 +528,10 @@ void Position::SetPosition()
 		float recty1 = PositionRectangle[0].y > PositionRectangle[1].y ?
 			PositionRectangle[0].y : PositionRectangle[1].y;
 		float x = rectx, y = recty;
+		//x coordinate
 		if (an <= 15) {
 			if (an % 3 == 0) {
-				x = rectx1 - (textSize.x + borderx - 2);
+				x = rectx1 - (textSize.x + borderx1 - 2);
 			}
 			else if (an % 3 == 1) {
 				x += borderx + 2;
@@ -539,12 +542,13 @@ void Position::SetPosition()
 		}
 		//before
 		else if (an <= 18) {
-			x = rectx - (textSize.x + borderx - 2);
+			x = rectx - (textSize.x + borderx1 - 2);
 		}
 		//after
 		else if (an <= 21) {
 			x = rectx1 + borderx;
 		}
+		//y coordinate
 		//bottom
 		if (an <= 3) {
 			y = recty1 - bordery;
@@ -555,7 +559,7 @@ void Position::SetPosition()
 		}
 		//top
 		else if (an <= 9) {
-			y += textSize.y + bordery - (extlead.x - extlead.y);
+			y += textSize.y + bordery1 - (extlead.x - extlead.y);
 		}
 		//below
 		else if (an <= 12) {
@@ -576,7 +580,7 @@ void Position::SetPosition()
 			}
 			//top
 			else if (an % 3 == 1) {
-				y += textSize.y + bordery - (extlead.x - extlead.y);
+				y += textSize.y + bordery1 - (extlead.x - extlead.y);
 			}
 		}
 		
@@ -612,7 +616,7 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool chan
 
 void Position::GetPositioningData()
 {
-	textSize = GetTextSize(tab->Edit->line, &border, NULL, true, &extlead, &drawingPosition);
+	textSize = GetTextSize(tab->Edit->line, NULL, NULL, true, &extlead, &drawingPosition, border);
 	curLinePosition = drawingPosition;//PositionToVideo(drawingPosition)/*D3DXVECTOR2(0, 0)*/;
 	//no alignment? get it
 	if(curLineAlingment == -1)

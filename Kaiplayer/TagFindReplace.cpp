@@ -103,7 +103,14 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 	int lastTag = -1;
 	wxString found[2];
 	wxPoint fpoints[2];
-	if (bracketEnd == txt.length()) { bracketEnd--; }
+	size_t txtlen = txt.length();
+	if (bracketEnd == txtlen) { bracketEnd--; }
+	if (bracketEnd > txtlen) {
+		bracketEnd = txtlen - 1u;
+	}
+	if (bracketStart > txtlen) {
+		bracketStart = txtlen - 1u;
+	}
 
 	for (int i = bracketEnd; i >= 0; i--) {
 		wxUniChar ch = txt[i];
@@ -123,7 +130,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 					endT = lslash - 1;
 				}
 				else if (ftag.Freq(L')') > ftag.Freq(L'(')){
-					wxString textToCheck = txt.Mid(i);
+					wxString textToCheck = txt.Mid(0, lslash);
 					size_t lastT = FindFromEnd(txt, L"\\t(");
 					size_t lastBS = textToCheck.Find(L'(', true);
 					size_t lastBE = textToCheck.Find(L')', true);
@@ -323,7 +330,7 @@ int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 	}
 
 	if (pos.x < pos.y) {
-		if (pos.y + 1 >= text->length())
+		if (pos.y + 1u >= text->length())
 			text->erase(text->begin() + pos.x, text->end());
 		else
 			text->erase(text->begin() + pos.x, text->begin() + pos.y + 1);
@@ -502,7 +509,7 @@ int TagFindReplace::ChangeText(wxString* txt, const wxString& what, bool inbrack
 	}
 
 	if (pos.x < pos.y) {
-		if (pos.y + 1 >= txt->length())
+		if (pos.y + 1u >= txt->length())
 			txt->erase(txt->begin() + pos.x, txt->end());
 		else
 			txt->erase(txt->begin() + pos.x, txt->begin() + pos.y + 1);
@@ -664,7 +671,7 @@ wxPoint FindBrackets(const wxString& text, long from)
 	// no need to correct it, end bracket without start is displayed as text
 
 	// no first bracket after block {cursor...}{...
-	if (haveEndBracket && i >= len && endBrakcetPos + 1 < len)
+	if (haveEndBracket && i >= len && endBrakcetPos + 1u < len)
 		endBrakcetPos = len - 1;
 	// no end bracket
 	if (startBrakcetPos != -1 && endBrakcetPos == -1)

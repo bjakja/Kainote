@@ -734,8 +734,8 @@ void RendererVideo::ResetVisual()
 {
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
-	SAFE_DELETE(m_Visual->dummytext);
-	m_Visual->SetCurVisual();
+	int tool = tab->Video->GetVideoToolbar()->GetItemToggled();
+	m_Visual->SetVisual(tab->Edit->line, tool);
 	m_HasVisualEdition = true;
 	Render();
 }

@@ -915,9 +915,10 @@ bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width,
 }
 
 D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* style, 
-	bool keepExtraLead, D3DXVECTOR2* extralead, D3DXVECTOR2* drawingPosition)
+	bool keepExtraLead, D3DXVECTOR2* extralead, D3DXVECTOR2* drawingPosition, D3DXVECTOR2* bordshad)
 {
-	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", L"bord", L"xbord", L"ybord" };
+	wxString tags[] = { L"p", L"fscx", L"fscy", L"fsp", L"fs", L"fn", 
+		L"bord", L"xbord", L"ybord", L"b", L"i", L"shad", L"xshad", L"yshad" };
 	D3DXVECTOR2 result = D3DXVECTOR2(0.f, 0.f);
 	const wxString& text = dial->GetTextNoCopy();
 	if (!text.length())
@@ -929,11 +930,16 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	else
 		measuringStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style)->Copy();
 
-	ParseData* presult = dial->ParseTags(tags, 9, true);
+	ParseData* presult = dial->ParseTags(tags, 14, true);
 	float bord = measuringStyle->GetOtlineDouble();
 	float xbord = bord;
 	float xbord1 = bord;
 	float ybord1 = bord;
+	float shad = measuringStyle->GetShadowDouble();
+	float xshad = 0.f;
+	float xshad1 = shad;
+	float yshad = 0.f;
+	float yshad1 = shad;
 	wxString drawingText;
 	bool wasPlain = false;
 	float maxwidth = 0.f;
@@ -972,7 +978,36 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 				//last bord in last bracket
 				ybord1 = bord;
 			}
-		}//plain text for measuring
+		}
+		else if (tag->tagName.EndsWith(L"shad")) {
+			bool isx = tag->tagName[0] != L'y';
+			bool isy = tag->tagName[0] != L'x';
+			float shad = wxAtof(tag->value);
+
+			if (isx) {
+				//xshad takes only minus values
+				//when shad is move to left from text
+				if (shad < xshad) {
+					xshad = shad;
+				}
+				else {
+					//last shad in last bracket
+					xshad1 = shad;
+				}
+			}
+			if (isy) {
+				//xshad takes only minus values
+				//when shad is move to left from text
+				if (shad < yshad) {
+					yshad = shad;
+				}
+				else {
+					//last shad in last bracket
+					yshad1 = shad;
+				}
+			}
+		}
+		//plain text for measuring
 		else if (tag->tagName == L"plain") {
 			if (!tag->value.empty()) {
 				wasPlain = true;
@@ -1037,6 +1072,24 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	if (border) {
 		border->x = xbord + xbord1;
 		border->y = ybord1 * 2;
+		//need to change minus to plus
+		if (xshad)
+			border->x -= xshad;
+		if (yshad)
+			border->y -= yshad;
+
+		if (xshad1)
+			border->x += xshad1;
+		if (yshad1)
+			border->y += yshad1;
+	}
+
+	if (bordshad) {
+		//xshad and yshad is negative
+		bordshad[0].x = xbord - xshad;
+		bordshad[0].y = ybord1 - yshad;
+		bordshad[1].x = xbord1 + xshad1;
+		bordshad[1].y = ybord1 + yshad1;
 	}
 	dial->ClearParse();
 	delete measuringStyle;

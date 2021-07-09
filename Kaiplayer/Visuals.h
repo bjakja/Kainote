@@ -115,8 +115,10 @@ public:
 	void SetModified(int action, bool dummy = false);
 	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
 	void Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline = false, int nBsplinePoints = 4, int currentPoint = 0);
+	//bordshad must be 2 elements table
 	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, 
-		bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL, D3DXVECTOR2* drawingPosition = NULL);
+		bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL, 
+		D3DXVECTOR2* drawingPosition = NULL, D3DXVECTOR2* bordshad = NULL);
 	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment = false);
 	D3DXVECTOR2 GetDrawingSize(const wxString& drawing, D3DXVECTOR2 *position = NULL);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
@@ -223,7 +225,7 @@ private:
 	bool movingHelperLine = false;
 	D3DXVECTOR2 PositionRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f)};
 	D3DXVECTOR2 textSize;
-	D3DXVECTOR2 border;
+	D3DXVECTOR2 border[2];
 	D3DXVECTOR2 extlead;
 	D3DXVECTOR2 drawingPosition;
 	D3DXVECTOR2 diffs;

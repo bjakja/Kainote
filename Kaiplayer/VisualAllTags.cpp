@@ -492,6 +492,10 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			}
 			else
 				strval = getfloat(actualTag.value + val1, floatFormat);
+
+			if (curValue.EndsWith(")")) {
+				strval << ")";
+			}
 		}
 		else {
 			if (actualTag.has2value) {
@@ -526,9 +530,17 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		double val = 0;
 		wxString trimed = curValue;
 		trimed.Trim(false).Trim();
+		//bug when tag is in \t
+		bool hasEndBracked = false;
+		if (trimed.EndsWith(")")) {
+			trimed = trimed.Mid(0, trimed.length() - 1);
+			hasEndBracked = true;
+		}
 		if (trimed.ToCDouble(&val)) {
 			val += valuediff;
 			strval = getfloat(val, floatFormat);
+			if (hasEndBracked)
+				strval << L")";
 		}
 	}
 	

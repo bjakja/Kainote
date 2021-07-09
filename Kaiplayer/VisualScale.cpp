@@ -378,7 +378,7 @@ void Scale::SetCurVisual()
 	to.y = from.y + (scale.y * arrowLengths.y);
 
 	if (hasScaleToRenctangle) {
-		originalSize = GetTextSize(tab->Edit->line, &border);
+		originalSize = GetTextSize(tab->Edit->line, &border, NULL, false);
 	}
 }
 
@@ -398,18 +398,19 @@ void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 	if (oldChangeAllTags != changeAllTags && !blockSetCurVisual) {
 		SetCurVisual();
 	}
-	else if (oldHasScaleToRenctangle != hasScaleToRenctangle) {
+	else if(hasScaleToRenctangle){
 		originalSize = GetTextSize(tab->Edit->line, &border, NULL, false);
 	}
-	if (oldHasOriginalRectangle != hasOriginalRectangle) {
+	if (oldHasOriginalRectangle != hasOriginalRectangle || hasOriginalRectangle) {
 		if (hasOriginalRectangle) {
-			if (oldChangeAllTags == changeAllTags && !blockSetCurVisual)
+			if (oldChangeAllTags == changeAllTags)
 				SetCurVisual();
 			SetSecondRectScale();
 		}
 		else
 			originalRectangleVisible = false;
 	}
+	
 	tab->Video->Render(false);
 }
 
