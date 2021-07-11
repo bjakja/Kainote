@@ -2111,7 +2111,10 @@ void TextEditor::SetSelection(int start, int end, bool noEvent)
 	int len = MText.length();
 	end = MID(0, end, len);
 	start = MID(0, start, len);
-	if ((Cursor.x != end || Selend.x != start) && !noEvent){ wxCommandEvent evt(CURSOR_MOVED, GetId()); AddPendingEvent(evt); }
+	if ((Cursor.x != end || Selend.x != start) && !noEvent){ 
+		wxCommandEvent evt(CURSOR_MOVED, GetId()); 
+		AddPendingEvent(evt); 
+	}
 	Cursor.x = end;
 	Selend.x = start;
 	Selend.y = FindY(Selend.x);

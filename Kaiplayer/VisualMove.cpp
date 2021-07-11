@@ -347,10 +347,11 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
 		moveStartTime = wxAtoi(t1);
 		moveEndTime = wxAtoi(t2);
 	}
-	wxString tag = L"\\move(" + getfloat(textPosition.x - ((moveFrom.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-		getfloat(textPosition.y - ((moveFrom.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
-		getfloat(textPosition.x + (((moveDistance.x - moveTo.x) / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
-		getfloat(textPosition.y + (((moveDistance.y - moveTo.y) / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
+	//it's distance, zoomMove not needed
+	wxString tag = L"\\move(" + getfloat(textPosition.x - (moveFrom.x / zoomScale.x) * coeffW) + L"," +
+		getfloat(textPosition.y - (moveFrom.y / zoomScale.y) * coeffH) + L"," +
+		getfloat(textPosition.x + ((moveDistance.x - moveTo.x) / zoomScale.x) * coeffW) + L"," +
+		getfloat(textPosition.y + ((moveDistance.y - moveTo.y) / zoomScale.y) * coeffH) + L"," +
 		std::to_wstring(moveStartTime) + L"," +
 		std::to_wstring(moveEndTime) + L")";
 	//positions returns length that need to add start
