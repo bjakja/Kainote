@@ -55,8 +55,8 @@ void MoveAll::DrawVisual(int time)
 				size_t size = vectorPoints->size();
 				if (elems[i]->type == TAGP && moveValues[6] > 2) {
 					D3DXVECTOR2 movePos = CalcMovePos();
-					drawingPos.x = (((movePos.x / drawingScale.x) - zoomMove.x) * zoomScale.x);
-					drawingPos.y = (((movePos.y / drawingScale.y) - zoomMove.y) * zoomScale.y);
+					drawingPos.x = (((movePos.x / drawingScale.x)/* - zoomMove.x*/) * zoomScale.x);
+					drawingPos.y = (((movePos.y / drawingScale.y)/* - zoomMove.y*/) * zoomScale.y);
 				}
 				//cannot let to "l" or "b" to be used as missing "m" on start
 				if (vectorPoints->at(0).type != L"m") { vectorPoints->at(0).type = L"m"; }
@@ -223,17 +223,25 @@ void MoveAll::SetCurVisual()
 		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems* elem = new moveElems();
 		drawingOriginalPos = D3DXVECTOR2(0, 0);
+		int repl = data.finding.Freq(L',');
 		if (re.Matches(data.finding)){
 			elem->elem = D3DXVECTOR2(((wxAtoi(re.GetMatch(data.finding, 1)) / coeffW) - zoomMove.x) * zoomScale.x,
 				((wxAtoi(re.GetMatch(data.finding, 2)) / coeffH) - zoomMove.y) * zoomScale.y);
 			std::vector<ClipPoint>* points = new std::vector<ClipPoint>();
+			if (repl > 0) {
+				wxString clipWithoutScale;
+				wxString vscalestr = data.finding.BeforeFirst(L',', &clipWithoutScale);
+				int vscale = wxAtoi(vscalestr.AfterFirst(L'('));
+				if (vscale > 1)
+					vectorClipScale = pow(2, (vscale - 1));
+			}
 			GetVectorPoints(data.finding, points);
 			
 			if (points->size()) {
 				for (size_t i = 0; i < points->size(); i++) {
 					//calculate points for drawing
-					(*points)[i].x = (((((*points)[i].x) / coeffW) - zoomMove.x) * zoomScale.x);
-					(*points)[i].y = (((((*points)[i].y) / coeffH) - zoomMove.y) * zoomScale.y);
+					(*points)[i].x = (((((*points)[i].x) / coeffW) - zoomMove.x) * zoomScale.x) / vectorClipScale;
+					(*points)[i].y = (((((*points)[i].y) / coeffH) - zoomMove.y) * zoomScale.y) / vectorClipScale;
 				}
 				elem->vectorPoints = points;
 			}
@@ -241,7 +249,6 @@ void MoveAll::SetCurVisual()
 				delete points;
 		}
 		else{
-			int repl = data.finding.Freq(L',');
 			wxRegEx re(L"\\(([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)[, ]*([0-9.-]+)", wxRE_ADVANCED);
 			if (repl >= 3 && re.Matches(data.finding)){
 				wxString point1 = re.GetMatch(data.finding, 1);
@@ -277,6 +284,12 @@ void MoveAll::SetCurVisual()
 		if (pdata->tags.size() >= 2) {
 			size_t i = 1;
 			while (i < pdata->tags.size()) {
+				if (pdata->tags[i]->tagName == L"p") {
+					int vscale = wxAtoi(pdata->tags[i]->value);
+					if (vscale > 1) {
+						vectorDrawScale = pow(2, (vscale - 1));
+					}
+				}
 				if (pdata->tags[i]->tagName == L"pvector") {
 					res = pdata->tags[1]->value;
 					break;
@@ -325,8 +338,8 @@ void MoveAll::SetCurVisual()
 					if(frz)
 						RotateDrawing(&(*points)[i], s, c, orgpivot);
 					//calculate points for drawing
-					(*points)[i].x = (((((*points)[i].x) / drawingScale.x) - zoomMove.x) * zoomScale.x);
-					(*points)[i].y = (((((*points)[i].y) / drawingScale.y) - zoomMove.y) * zoomScale.y);
+					(*points)[i].x = (((((*points)[i].x) / drawingScale.x) - zoomMove.x) * zoomScale.x) / vectorClipScale;
+					(*points)[i].y = (((((*points)[i].y) / drawingScale.y) - zoomMove.y) * zoomScale.y) / vectorClipScale;
 				}
 				
 			}
@@ -343,8 +356,8 @@ void MoveAll::SetCurVisual()
 					drawingScale.y) - zoomMove.y) * zoomScale.y);
 			elem->type = TAGP;
 			elems.push_back(elem);
-			drawingPos.x = (((drawingPos.x / drawingScale.x) - zoomMove.x) * zoomScale.x);
-			drawingPos.y = (((drawingPos.y / drawingScale.y) - zoomMove.y) * zoomScale.y);
+			drawingPos.x = (((drawingPos.x / drawingScale.x)/* - zoomMove.x*/) * zoomScale.x);
+			drawingPos.y = (((drawingPos.y / drawingScale.y)/* - zoomMove.y*/) * zoomScale.y);
 		}
 
 	}
@@ -375,10 +388,7 @@ void MoveAll::ChangeInLines(bool all)
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem]->elem - beforeMove;
-	drawingOriginalPos.x = moving.x/* * scale.x*/;
-	drawingOriginalPos.y = moving.y/* * scale.y*/;
-	//drawingPos.x = drawingOriginalPos.x + (moving.x / scale.x);
-	//drawingPos.y = drawingOriginalPos.y + (moving.y / scale.y);
+	drawingOriginalPos = moving;
 	int _time = tab->Video->Tell();
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
@@ -420,6 +430,7 @@ void MoveAll::ChangeInLines(bool all)
 			bool vector = type == TAGCLIP || type == TAGP;
 			float newcoeffW = type == TAGP ? coeffW / scale.x : coeffW;
 			float newcoeffH = type == TAGP ? coeffH / scale.y : coeffH;
+			float vectorScale = 1.f;
 			wxString delimiter = (vector) ? L" " : L",";
 			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : 
 				(type == TAGORG) ? L"org(\\([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : 
@@ -427,12 +438,20 @@ void MoveAll::ChangeInLines(bool all)
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch = 0, lenMatch = 0;
 			if (re.Matches(txt)){
+				//reseting vector scale
+				moving = drawingOriginalPos;
 				wxString visual;
 				tmp = re.GetMatch(txt, 1);
 				if (type == TAGCLIP){
 					int replacements = tmp.Freq(L',');
 					if (replacements == 1){
-						tmp = tmp.After(L',');
+						wxString vectorclip = tmp;
+						//set a scale 
+						wxString clipScale = vectorclip.BeforeFirst(L',', &tmp);
+						visual = clipScale + L",";
+						int cscale = wxAtoi(clipScale);
+						vectorScale = pow(2, (cscale - 1));
+						moving = drawingOriginalPos * vectorScale;
 					}
 					else if (replacements > 1){
 						delimiter = L",";
@@ -446,10 +465,21 @@ void MoveAll::ChangeInLines(bool all)
 					if (token.ToDouble(&val)){
 						if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * newcoeffW); }
 						else{ val += (((moving.y / zoomScale.y)) * newcoeffH); }
-						if (type == TAGMOVES && count > 1){ visual += token + delimiter; continue; }
-						else if (type == TAGMOVEE && count != 2 && count != 3){ visual += token + delimiter; count++; continue; }
-						if (vector){ visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; }
-						else{ visual += getfloat(val) + delimiter; }
+						if (type == TAGMOVES && count > 1){ 
+							visual += token + delimiter; 
+							continue; 
+						}
+						else if (type == TAGMOVEE && count != 2 && count != 3){ 
+							visual += token + delimiter; 
+							count++; 
+							continue; 
+						}
+						if (vector){ 
+							visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; 
+						}
+						else{ 
+							visual += getfloat(val) + delimiter; 
+						}
 						count++;
 					}
 					else{
@@ -658,7 +688,7 @@ void MoveAll::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D
 
 D3DXVECTOR2 MoveAll::GetVector(const ClipPoint& point)
 {
-	return D3DXVECTOR2(point.x + drawingPos.x + drawingOriginalPos.x , point.y + drawingPos.y + drawingOriginalPos.y);
+	return D3DXVECTOR2(point.x + drawingPos.x + drawingOriginalPos.x, point.y + drawingPos.y + drawingOriginalPos.y);
 }
 
 void MoveAll::DrawLine(int i, std::vector<ClipPoint>* vectorPoints)

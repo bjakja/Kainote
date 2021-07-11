@@ -320,6 +320,8 @@ public:
 	D3DXVECTOR2 drawingOriginalPos = D3DXVECTOR2(0, 0);
 	D3DXVECTOR2 drawingScale;
 	D3DXVECTOR2 scale;
+	float vectorClipScale = 1.f;
+	float vectorDrawScale = 1.f;
 };
 
 class Scale : public Visuals
