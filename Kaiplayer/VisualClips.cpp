@@ -172,7 +172,7 @@ void DrawingAndClip::SetCurVisual()
 	bool isDrawing = false;
 	wxString clip;
 	if (Visual != VECTORDRAW){
-		bool found = FindTag(L"(i?clip[^)]+\\))", L"", 1);
+		bool found = FindTag(L"(i?clip\\(.*m[^)]*)\\)", L"", 1);
 		const FindData& data = GetResult();
 		clip = data.finding;
 		coeffW /= scale.x;
@@ -181,6 +181,7 @@ void DrawingAndClip::SetCurVisual()
 		_y = 0;
 		if (found){
 			int rres = clip.Freq(L',');
+			//it should not possible but sanity check is not too bad
 			if (rres >= 3) { 
 				clip = L""; 
 				scale = D3DXVECTOR2(1.f, 1.f); 
@@ -508,18 +509,28 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* 
 
 	if (Visual == VECTORCLIP) {
 		wxString tmp = L"clip(";
-		bool fv = FindTag(L"(i?clip.)[^)]*\\)", *txt, 1);
+		bool fv = FindTag(L"(i?clip\\(.*m[^)]*)\\)", *txt, 1);
 		GetTextResult(&tmp);
 		if (clip->empty() && fv) {
 			Replace(L"", txt);
 			txt->Replace(L"{}", L"");
 			return;
 		}
-		wxString tclip = L"\\" + tmp + *clip + L")";
+		wxString restClip;
+		wxString clipName = tmp.BeforeFirst(L'(', &restClip) + L"(";
+		/*if (restClip.Freq(L',') >= 3) {
+			wxPoint newpos;
+			bool inBracket = txt->StartsWith(L'{');
+			newpos.x = inBracket ? 1 : 0;
+			newpos.y = newpos.y;
+			SetPositionInText(newpos, inBracket? 1 : 0);
+		}*/
+
+		wxString tclip = L"\\" + clipName + *clip + L")";
 		int move = Replace(tclip, txt);
 		if (changePos) {
 			if(clipMaskTag)
-			*clipMaskTag = (tmp[0] == L'c') ? L"iclip(" : L"clip(";
+			*clipMaskTag = (clipName[0] == L'c') ? L"iclip(" : L"clip(";
 			changePos->x = GetPositionInText().x;
 			changePos->x += tmp.length() + 1 + move;
 			changePos->y = changePos->x + clip->length();

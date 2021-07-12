@@ -173,7 +173,7 @@ int Styles::GetAlignment()
 
 double Styles::GetScaleXDouble()
 {
-	double scalex = 0.;
+	double scalex = 100.;
 	if (!ScaleX.ToDouble(&scalex))
 		scalex = wxAtoi(ScaleX);
 
@@ -182,7 +182,7 @@ double Styles::GetScaleXDouble()
 
 double Styles::GetScaleYDouble()
 {
-	double scaley = 0.;
+	double scaley = 100.;
 	if (!ScaleY.ToDouble(&scaley))
 		scaley = wxAtoi(ScaleY);
 

@@ -346,7 +346,7 @@ private:
 	byte type;
 	int grabbed;
 	byte AN;
-	D3DXVECTOR2 scale;
+	D3DXVECTOR2 scale = D3DXVECTOR2(1.f, 1.f);
 	D3DXVECTOR2 lastScale;
 	D3DXVECTOR2 originalScale;
 	D3DXVECTOR2 diffs/* = D3DXVECTOR2(0.f, 0.f)*/;
@@ -499,7 +499,7 @@ public:
 	byte alignment;
 	wxPoint diffs;
 	wxRect selection;
-	D3DXVECTOR2 scale;
+	D3DXVECTOR2 scale = D3DXVECTOR2(1.f, 1.f);
 	// _x and _y points of move of drawings
 	float _x, _y;
 	D3DXVECTOR2 offsetxy;

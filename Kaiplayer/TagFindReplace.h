@@ -68,7 +68,7 @@ public:
 	bool GetTextResult(wxString* rettext);
 	wxPoint GetPositionInText();
 	//when need to change position for using tag placing functions
-	void SetPositionInText(const wxPoint &pos);
+	void SetPositionInText(const wxPoint &pos, int inBracket = -1);
 	//editbox function, put tag in text and reset it when selected
 	//that's need reset tag that is given when seeking
 	//full tag with value and full reset tag with value

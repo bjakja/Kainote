@@ -284,14 +284,15 @@ void MoveAll::SetCurVisual()
 		if (pdata->tags.size() >= 2) {
 			size_t i = 1;
 			while (i < pdata->tags.size()) {
-				if (pdata->tags[i]->tagName == L"p") {
-					int vscale = wxAtoi(pdata->tags[i]->value);
+				TagData* tag = pdata->tags[i];
+				if (tag->tagName == L"p") {
+					int vscale = wxAtoi(tag->value);
 					if (vscale > 1) {
 						vectorDrawScale = pow(2, (vscale - 1));
 					}
 				}
-				if (pdata->tags[i]->tagName == L"pvector") {
-					res = pdata->tags[1]->value;
+				if (tag->tagName == L"pvector") {
+					res = tag->value;
 					break;
 				}
 				i++;
@@ -356,6 +357,7 @@ void MoveAll::SetCurVisual()
 					drawingScale.y) - zoomMove.y) * zoomScale.y);
 			elem->type = TAGP;
 			elems.push_back(elem);
+			//zoomMove is not needed cause it's already subtract from points
 			drawingPos.x = (((drawingPos.x / drawingScale.x)/* - zoomMove.x*/) * zoomScale.x);
 			drawingPos.y = (((drawingPos.y / drawingScale.y)/* - zoomMove.y*/) * zoomScale.y);
 		}

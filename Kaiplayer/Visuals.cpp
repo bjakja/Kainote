@@ -586,10 +586,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	double fscx = 100.0, fscy = 100.0;
 	if (!(FindTag(L"fscx([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscx))){
-		currentStyle->ScaleX.ToDouble(&fscx);
+		fscx = currentStyle->GetScaleXDouble();
 	}
 	if (!(FindTag(L"fscy([.0-9-]+)", txt, !beforeCursor) && GetDouble(&fscy))){
-		currentStyle->ScaleY.ToDouble(&fscy);
+		fscy = currentStyle->GetScaleYDouble();
 	}
 	if (scale){
 		scale->x = fscx / 100.f;
@@ -599,7 +599,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		wxRegEx drawscale;
 		if (Visual == VECTORCLIP){
 			*scale = D3DXVECTOR2(1.f, 1.f);
-			drawscale.Compile(L"\\\\i?clip\\(([0-9]+),", wxRE_ADVANCED);
+			drawscale.Compile(L"\\\\i?clip\\(([0-9]+)[, ]*m", wxRE_ADVANCED);
 		}
 		else{
 			drawscale.Compile(L"\\\\p([0-9]+)", wxRE_ADVANCED);
@@ -608,7 +608,10 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 		if (drawscale.Matches(txt)){
 			((DrawingAndClip*)this)->vectorScale = dscale = wxAtoi(drawscale.GetMatch(txt, 1));
 		}
-		dscale = pow(2.f, (dscale - 1.f));
+		if (dscale > 1)
+			dscale = pow(2.f, (dscale - 1.f));
+		else
+			dscale = 1;
 		scale->x /= dscale;
 		scale->y /= dscale;
 	}
@@ -1016,7 +1019,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 				float fwidth = 0;
 				float fheight = 0;
 				while (i != -1) {
-					i = tag->value.find(L"\\N", (i > 0)? i + 2 : i);
+					i = tag->value.find(L"\\N", g);
 					wxString pltext = tag->value.Mid(g, i - g);
 					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
 						maxwidth += fwidth;

@@ -532,9 +532,11 @@ wxPoint TagFindReplace::GetPositionInText()
 	return result.positionInText;
 }
 
-void TagFindReplace::SetPositionInText(const wxPoint& pos)
+void TagFindReplace::SetPositionInText(const wxPoint& pos, int inBracket)
 {
 	result.positionInText = pos;
+	if (inBracket >= 0)
+		result.inBracket = inBracket == 1;
 }
 
 void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag, bool focus, bool restoreSelection)
