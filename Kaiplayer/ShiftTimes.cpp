@@ -520,7 +520,7 @@ void ShiftTimesWindow::DoTooltips(bool normal /*= true*/)
 {
 	WhichLines->SetToolTip(_("Wybór linijek do przesunięcia"));
 	AddStyles->SetToolTip(_("Wybierz style z listy"));
-	Stylestext->SetToolTip(_("Przesuń według następujących stylów (oddzielone średnikiem)"));
+	Stylestext->SetToolTip(_("Przesuń według następujących stylów (oddzielone przecinkiem)"));
 	if (normal){
 		TimeText->SetToolTip(_("Czas przesunięcia"));
 		MoveToVideoTime->SetToolTip(_("Przesuwanie zaznaczonej linijki\ndo czasu wideo ± czas przesunięcia"));
