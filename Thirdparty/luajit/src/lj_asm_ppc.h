@@ -1,6 +1,6 @@
 /*
 ** PPC IR assembler (SSA IR -> machine code).
-** Copyright (C) 2005-2020 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2021 Mike Pall. See Copyright Notice in luajit.h
 */
 
 /* -- Register allocator extensions --------------------------------------- */
@@ -894,7 +894,7 @@ static void asm_fload(ASMState *as, IRIns *ir)
   int32_t ofs;
   if (ir->op1 == REF_NIL) {  /* FLOAD from GG_State with offset. */
     idx = RID_JGL;
-    ofs = (ir->op2 << 2) - 32768;
+    ofs = (ir->op2 << 2) - 32768 - GG_OFS(g);
   } else {
     idx = ra_alloc1(as, ir->op1, RSET_GPR);
     if (ir->op2 == IRFL_TAB_ARRAY) {

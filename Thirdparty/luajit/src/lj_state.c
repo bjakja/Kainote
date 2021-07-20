@@ -1,6 +1,6 @@
 /*
 ** State and stack handling.
-** Copyright (C) 2005-2020 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2021 Mike Pall. See Copyright Notice in luajit.h
 **
 ** Portions taken verbatim or adapted from the Lua interpreter.
 ** Copyright (C) 1994-2008 Lua.org, PUC-Rio. See Copyright Notice in lua.h
@@ -156,6 +156,7 @@ static TValue *cpluaopen(lua_State *L, lua_CFunction dummy, void *ud)
   fixstring(lj_err_str(L, LJ_ERR_ERRMEM));  /* Preallocate memory error msg. */
   g->gc.threshold = 4*g->gc.total;
   lj_trace_initstate(g);
+  lj_err_verify();
   return NULL;
 }
 

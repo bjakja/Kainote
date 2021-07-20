@@ -207,7 +207,7 @@ void MoveAll::SetCurVisual()
 	
 	Clear();
 
-	double orx = 0, ory = 0;
+	double orx = drawingPos.x, ory = drawingPos.y;
 	if (FindTag(L"org(\\([^\\)]+)")){
 		
 		if (GetTwoValueDouble(&orx, &ory)) {
@@ -240,8 +240,9 @@ void MoveAll::SetCurVisual()
 			if (points->size()) {
 				for (size_t i = 0; i < points->size(); i++) {
 					//calculate points for drawing
-					(*points)[i].x = (((((*points)[i].x) / coeffW) - zoomMove.x) * zoomScale.x) / vectorClipScale;
-					(*points)[i].y = (((((*points)[i].y) / coeffH) - zoomMove.y) * zoomScale.y) / vectorClipScale;
+					//weird but zoomMove have to be last
+					(*points)[i].x = ((((*points)[i].x / coeffW) * zoomScale.x) / vectorClipScale) - zoomMove.x;
+					(*points)[i].y = ((((*points)[i].y / coeffH) * zoomScale.y) / vectorClipScale) - zoomMove.y;
 				}
 				elem->vectorPoints = points;
 			}
