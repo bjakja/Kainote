@@ -290,7 +290,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	if (click || wasUsedShift != evt.ShiftDown()){
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
-		if (middlec || (leftc && evt.ShiftDown())){ type = 2; }
+		if (middlec || (leftc && evt.ShiftDown()) || preserveProportions){ type = 2; }
 		if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ grabbed = 0; type = 0; }
 		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ grabbed = 1; type = 1; }
 		else if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ grabbed = 2; type = 2; }
@@ -299,7 +299,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		if (type == 0) { tab->Video->SetCursor(wxCURSOR_SIZEWE); }
 		if (type == 1) { tab->Video->SetCursor(wxCURSOR_SIZENS); }
 		if (type == 2) { tab->Video->SetCursor(wxCURSOR_SIZING); }
-		if ((leftc || evt.LeftIsDown()) && evt.ShiftDown()){
+		if (((leftc || evt.LeftIsDown()) && evt.ShiftDown()) || preserveProportions){
 			tab->Video->SetCursor(wxCURSOR_SIZING);
 			type = 2;
 			diffs.x = x;
@@ -317,7 +317,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		lastScale = scale;
 	}
 	else if (holding){
-		if (evt.ShiftDown()){
+		if (evt.ShiftDown() || preserveProportions){
 			int diffx = abs(x - diffs.x);
 			int diffy = abs(diffs.y - y);
 			int move = (diffx > diffy) ? x - diffs.x : diffs.y - y;

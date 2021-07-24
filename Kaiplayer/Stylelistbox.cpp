@@ -25,7 +25,31 @@ Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString 
 	KaiStaticBoxSizer *sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles) ? _("Wybierz style") : _("Wybierz kolumny"));
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	CheckListBox = new KaiListCtrl(this, -1, numelem, arr, wxDefaultPosition, wxSize(200, 300), style);
-	OK = new MappedButton(this, wxID_OK, L"Ok");
+	OK = new MappedButton(this, wxID_OK, L"OK");
+	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
+	sizer->Add(OK, 1, wxALL, 2);
+	sizer->Add(Cancel, 1, wxALL, 2);
+	sizer1->Add(CheckListBox, 0, wxEXPAND);
+	Main->Add(sizer1, 0, wxEXPAND | wxALL, 2);
+	Main->Add(sizer, 0, wxEXPAND | wxALL, 4);
+	SetSizerAndFit(Main);
+	MoveToMousePosition(this);
+}
+
+Stylelistbox::Stylelistbox(wxWindow* parent, const wxArrayString& arr, bool styles, const wxPoint& pos, int style)
+	: KaiDialog(parent, -1, (styles) ? _("Wybór stylów") : _("Wybór kolumn"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+{
+	DialogSizer* Main = new DialogSizer(wxVERTICAL);
+	KaiStaticBoxSizer* sizer1 = new KaiStaticBoxSizer(wxVERTICAL, this, (styles) ? _("Wybierz style") : _("Wybierz kolumny"));
+	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
+	size_t arrsize = arr.size();
+	wxString* theList = new wxString[arrsize];
+	for (size_t i = 0; i < arrsize; i++) {
+		theList[i] = arr[i];
+	}
+	CheckListBox = new KaiListCtrl(this, -1, arr.size(), theList, wxDefaultPosition, wxSize(200, 300), style);
+	delete[] theList;
+	OK = new MappedButton(this, wxID_OK, L"OK");
 	Cancel = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
 	sizer->Add(OK, 1, wxALL, 2);
 	sizer->Add(Cancel, 1, wxALL, 2);

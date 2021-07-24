@@ -884,7 +884,7 @@ bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width,
 
 	if (spacing != 0) {
 		fwidth = 0;
-		for (unsigned int i = 0; i < thetextlen; i++) {
+		for (size_t i = 0; i < thetextlen; i++) {
 			GetTextExtentPoint32(thedc, &thetext[i], 1, &sz);
 			fwidth += sz.cx + spacing;
 			fheight = sz.cy;
@@ -1020,7 +1020,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 				float fheight = 0;
 				while (i != -1) {
 					i = tag->value.find(L"\\N", g);
-					wxString pltext = tag->value.Mid(g, i - g);
+					wxString pltext = tag->value.Mid(g, i - g).Trim().Trim(false);
 					if (GetTextExtents(pltext, measuringStyle, &fwidth, &fheight, &extlead, &descent)) {
 						maxwidth += fwidth;
 						if(!result.y && !keepExtraLead)

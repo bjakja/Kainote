@@ -492,10 +492,16 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 	}
 	else if (Format == SRT){
 		txttl.Replace(L"\\N", L"\r\n");
-		line << Start.raw() << L" --> " << End.raw() << L"\r\n" << txttl << L"\r\n";
 		if (cols & 2){ line << Start.raw(); }
-		if (cols & 4){ line << L" --> " << End.raw() << L"\r\n"; }
-		if (cols & 1024){ line << txttl << L"\r\n"; }
+		if (cols & 4) { 
+			if (cols & 2)
+				line << L" --> ";
+
+			line << End.raw(); 
+			if(cols & 1024)
+				line << L"\r\n";
+		}
+		if (cols & 1024){ line << txttl; }
 	}
 
 	line << L"\r\n";

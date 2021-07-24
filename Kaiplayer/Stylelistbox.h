@@ -26,6 +26,8 @@ class Stylelistbox: public KaiDialog
 
 		Stylelistbox(wxWindow* parent, bool styles = true, int numelem = 0, 
 			wxString *arr = 0, const wxPoint& pos = wxDefaultPosition, int style = 0);
+		Stylelistbox(wxWindow* parent, const wxArrayString & arr, bool styles = true, 
+			const wxPoint& pos = wxDefaultPosition, int style = 0);
 		virtual ~Stylelistbox();
 
 		

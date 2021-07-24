@@ -429,15 +429,57 @@ void SubsGrid::OnPaste(int id)
 	SaveSelections(id != GRID_PASTE_COLUMNS);
 	int collumns = 0;
 	if (id == GRID_PASTE_COLUMNS){
-		int numCollumns = (hasTLMode) ? 11 : 10;
-		wxString pasteText = (hasTLMode) ? _("Tekst do oryginału") : _("Tekst");
-		wxString arr[11] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
-			_("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), 
-			_("Margines pionowy"), _("Efekt"), pasteText, _("Tekst do tłumaczenia") };
-		int vals[11] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
-		Stylelistbox slx(this, false, numCollumns, arr);
+		wxArrayString arr;
+		wxArrayInt vals;
+		if (subsFormat == ASS) {
+			arr.Add(_("Warstwa"));
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Czas końcowy"));
+			arr.Add(_("Aktor"));
+			arr.Add(_("Styl"));
+			arr.Add(_("Margines lewy"));
+			arr.Add(_("Margines prawy"));
+			arr.Add(_("Margines pionowy"));
+			arr.Add(_("Efekt"));
+			if (hasTLMode) {
+				arr.Add(_("Tekst do oryginału"));
+				arr.Add(_("Tekst do tłumaczenia"));
+			}
+			else {
+				arr.Add(_("Tekst"));
+			}
+			
+			vals.Add(LAYER);
+			vals.Add(START);
+			vals.Add(END);
+			vals.Add(ACTOR);
+			vals.Add(STYLE);
+			vals.Add(MARGINL);
+			vals.Add(MARGINR);
+			vals.Add(MARGINV);
+			vals.Add(EFFECT);
+			vals.Add(TXT);
+			if (hasTLMode) {
+				vals.Add(TXTTL);
+			}
+		}
+		else if (subsFormat == TMP) {
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Tekst"));
+			vals.Add(START);
+			vals.Add(TXT);
+		}
+		else {
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Tekst"));
+			vals.Add(START);
+			vals.Add(END);
+			vals.Add(TXT);
+		}
+		Stylelistbox slx(this, arr, false);
 		int PasteCollumnsSelections = Options.GetInt(PASTE_COLUMNS_SELECTION);
-		for (int j = 0; j < numCollumns; j++){
+		for (int j = 0; j < vals.size(); j++){
 			if (PasteCollumnsSelections & vals[j]){
 				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
 				if (checkBox)
@@ -537,13 +579,53 @@ void SubsGrid::CopyRows(int id)
 {
 	int cols = 0;
 	if (id == GRID_COPY_COLUMNS){
-		wxString arr[] = { _("Warstwa"), _("Czas początkowy"), _("Czas końcowy"), 
-			_("Aktor"), _("Styl"), _("Margines lewy"), _("Margines prawy"), 
-			_("Margines pionowy"), _("Efekt"), _("Tekst"), _("Tekst bez tagów") };
-		int vals[] = { LAYER, START, END, ACTOR, STYLE, MARGINL, MARGINR, MARGINV, EFFECT, TXT, TXTTL };
-		Stylelistbox slx(this, false, 11, arr);
+		wxArrayString arr;
+		wxArrayInt vals;
+		if (subsFormat == ASS) {
+			arr.Add(_("Warstwa"));
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Czas końcowy"));
+			arr.Add(_("Aktor"));
+			arr.Add(_("Styl"));
+			arr.Add(_("Margines lewy"));
+			arr.Add(_("Margines prawy"));
+			arr.Add(_("Margines pionowy"));
+			arr.Add(_("Efekt"));
+			arr.Add(_("Tekst"));
+			arr.Add(_("Tekst bez tagów"));
+			vals.Add(LAYER);
+			vals.Add(START);
+			vals.Add(END);
+			vals.Add(ACTOR);
+			vals.Add(STYLE);
+			vals.Add(MARGINL);
+			vals.Add(MARGINR);
+			vals.Add(MARGINV);
+			vals.Add(EFFECT);
+			vals.Add(TXT);
+			vals.Add(TXTTL);
+		}
+		else if (subsFormat == TMP) {
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Tekst"));
+			//arr.Add(_("Tekst bez tagów"));
+			vals.Add(START);
+			vals.Add(TXT);
+			//vals.Add(TXTTL);
+		}
+		else{
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Czas początkowy"));
+			arr.Add(_("Tekst"));
+			//arr.Add(_("Tekst bez tagów"));
+			vals.Add(START);
+			vals.Add(END);
+			vals.Add(TXT);
+			//vals.Add(TXTTL);
+		}
+		Stylelistbox slx(this, arr, false);
 		int PasteCollumnsSelections = Options.GetInt(COPY_COLLUMS_SELECTIONS);
-		for (int j = 0; j < 11; j++){
+		for (int j = 0; j < vals.size(); j++) {
 			if (PasteCollumnsSelections & vals[j]){
 				Item * checkBox = slx.CheckListBox->GetItem(j, 0);
 				if (checkBox)

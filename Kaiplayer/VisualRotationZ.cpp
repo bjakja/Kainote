@@ -1,4 +1,4 @@
-//  Copyright (c) 2016 - 2020, Marcin Drob
+ï»¿//  Copyright (c) 2016 - 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -474,7 +474,7 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 				points.push_back(ClipPoint(xy[0], xy[3], "l", true));
 			}
 			else {
-				KaiLog(_("Nie mo¿na pobraæ wartoœci clipa prostok¹tnego."));
+				KaiLog(_("Nie moÅ¼na pobraÄ‡ wartoÅ›ci clipa prostokÄ…tnego."));
 			}
 		}
 		else {

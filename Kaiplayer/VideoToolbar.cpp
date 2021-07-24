@@ -880,7 +880,13 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 	int elem = ((x - startDrawPos) / h);
-	bool isGrayed = ((elem > 0 && elem < 5) && !Toggled[0]) || (elem == 1 || elem == 3) && Toggled[2] || elem == 5 && Toggled[6];
+	//block elements 1-4 when rectangle to scale is off
+	bool isGrayed = ((elem > 0 && elem < 5) && !Toggled[0]) || 
+		//block untoggle axis x and y when link both axis is on
+		(elem == 1 || elem == 3) && Toggled[2] || 
+		//block turn off uncheck changing all values 
+		//when preserve proportions or rectangle to scale is on
+		elem == 5 && (Toggled[6] || Toggled[0]);
 	if (evt.Leaving() || elem < 0 || x < startDrawPos) {
 		selection = -1;
 		clicked = false;
@@ -911,7 +917,9 @@ void ScaleItem::OnMouseEvent(wxMouseEvent& evt, int w, int h, VideoToolbar* vt)
 		if (elem == 2 && Toggled[elem]) {
 			Toggled[1] = true;
 		}
-		if (elem == 6 && Toggled[elem]) {
+		//when preserve aspect ratio or rectangle to scale is on 
+		//then changing all values also have to be on 
+		if ((elem == 6 && Toggled[elem]) || (elem == 0 && Toggled[elem])) {
 			Toggled[5] = true;
 		}
 		clicked = true;
