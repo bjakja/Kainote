@@ -1255,7 +1255,7 @@ void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 
 void VideoCtrl::RefreshTime()
 {
-	if (!renderer)
+	if (!renderer && GetState() != None)
 		return;
 
 	STime videoTime;

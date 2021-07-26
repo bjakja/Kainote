@@ -409,7 +409,7 @@ void RendererFFMS2::SetFFMS2Position(int _time, bool starttime){
 
 int RendererFFMS2::GetDuration()
 {
-	return m_FFMS2->m_duration * 1000.0;
+	return m_FFMS2 ? m_FFMS2->m_duration * 1000.0 : 0;
 }
 
 int RendererFFMS2::GetFrameTime(bool start)
