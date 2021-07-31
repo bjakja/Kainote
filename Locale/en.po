@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2021-07-23 18:23+0200\n"
-"PO-Revision-Date: 2021-07-23 19:54+0200\n"
+"POT-Creation-Date: 2021-07-31 13:37+0200\n"
+"PO-Revision-Date: 2021-07-31 13:41+0200\n"
 "Last-Translator: Marcin Drob <bjajka7@gmail.com>\n"
 "Language-Team: \n"
 "Language: en\n"
@@ -584,7 +584,7 @@ msgstr ""
 #: Hotkeys.cpp:470 Hotkeys.cpp:480 OptionsDialog.cpp:108 OptionsDialog.cpp:117
 #: OptionsDialog.cpp:465 SpellCheckerDialog.cpp:139 SubsGrid.cpp:1078
 #: SubsGridBase.cpp:519 SubsGridBase.cpp:548 Videobox.cpp:287
-#: VisualClips.cpp:1036 kainoteApp.cpp:156 kainoteApp.cpp:200
+#: VisualClips.cpp:1053 kainoteApp.cpp:156 kainoteApp.cpp:200
 #: kainoteMain.cpp:953 kainoteMain.cpp:969 kainoteMain.cpp:1076
 msgid "Uwaga"
 msgstr "Warning"
@@ -6328,7 +6328,7 @@ msgid ""
 "Ustaw pozycję według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "spozycjonowany wg jednej osi badź dwóch\n"
-"dla wybranego położenia"
+"dla wybranego położenia."
 msgstr ""
 "Set position by rectangle.\n"
 "After draw a rectangle line will be positioned\n"
@@ -6456,91 +6456,91 @@ msgstr ""
 msgid "Edycja tagów z listy oraz tworzenie nowych"
 msgstr "Edition list tags or adding a new tags"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1074
 msgid "Lewo-dół"
 msgstr "Left-bottom"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1074
 msgid "Środek-dół"
 msgstr "Center-bottom"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1074
 msgid "Prawo-dół"
 msgstr "Right-bottom"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1075
 msgid "Lewo-środek"
 msgstr "Left-center"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1075
 msgid "Środek"
 msgstr "Center"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1075
 msgid "Prawo-środek"
 msgstr "Right-center"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1076
 msgid "Lewo-góra"
 msgstr "Left-top"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1076
 msgid "Środek-góra"
 msgstr "Center-top"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1076
 msgid "Prawo-góra"
 msgstr "Right-top"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1078
 msgid "Lewo-poniżej"
 msgstr "Left-below"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1078
 msgid "Środek-poniżej"
 msgstr "Center-below"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1078
 msgid "Prawo-poniżej"
 msgstr "Right-below"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1079
 msgid "Lewo-ponad"
 msgstr "Left-above"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1079
 msgid "Środek-ponad"
 msgstr "Center-above"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1079
 msgid "Prawo-ponad"
 msgstr "Right-above"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1080
 msgid "Przed-góra"
 msgstr "Before-top"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1080
 msgid "Przed-środek"
 msgstr "Before-center"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1080
 msgid "Przed-dół"
 msgstr "Before-bottom"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1081
 msgid "Za-góra"
 msgstr "After-top"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1081
 msgid "Za-środek"
 msgstr "After-center"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1081
 msgid "Za-dół"
 msgstr "After-bottom"
 
-#: VideoToolbar.cpp:1082
+#: VideoToolbar.cpp:1090
 msgid "Położenie tekstu, działa podobnie jak w stylach"
 msgstr "Text placing works similar like in styles"
 
@@ -6742,7 +6742,7 @@ msgstr ""
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
 msgstr "Field \"Step\" contains number too great for current min - max range."
 
-#: VisualClips.cpp:1035
+#: VisualClips.cpp:1052
 msgid ""
 "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie "
 "została zablokowana"
@@ -6786,7 +6786,7 @@ msgstr "Scale changing"
 
 #: VisualDrawingShapes.cpp:76
 msgid "Skalowanie względem kursora:"
-msgstr "Scaling via cursor"
+msgstr "Scaling via cursor:"
 
 #: VisualDrawingShapes.cpp:78
 msgid "Rodzaj skalowania:"
@@ -6830,7 +6830,11 @@ msgid ""
 "Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
 msgstr "Video must be set at least one frame after start time of line"
 
-#: VisualRotationZ.cpp:477 VisualScale.cpp:752
+#: VisualRotationZ.cpp:477
+msgid "Nie można pobrać wartości clipa prostokątnego."
+msgstr "Cannot read clip rectangle values."
+
+#: VisualScale.cpp:752
 msgid "Nie mona pobra wartoci clipa prostoktnego."
 msgstr "Cannot get content of font \"%s\"."
 

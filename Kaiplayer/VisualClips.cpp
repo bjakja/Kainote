@@ -419,7 +419,23 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		}
 		return;
 	}
-	
+	if (clip == L"" && Visual == VECTORCLIP) {
+		wxString txt = editor->GetValue();
+		clipMask.Empty();
+		if (FindTag(L"(i?clip\\(.*m[^)]*)\\)", txt, 1)) {
+			Replace(L"", &txt);
+			txt.Replace(L"{}", L"");
+			if (changeEditorText) {
+				editor->SetTextS(txt, false, true);
+				editor->SetModified();
+				edit->Send(VISUAL_VECTOR_CLIP, false);
+			}
+			return;
+		}
+		tab->Video->SetVisualEdition(false);
+		RenderSubs(tab->Grid->GetVisible(), redraw);
+		return;
+	}
 	if (dummy) {
 
 		if (!dummytext) {
@@ -513,6 +529,7 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* 
 		//not used cause it can be along with vector clip in one line
 		bool fv = FindTag(L"(i?clip\\(.*m[^)]*)\\)", *txt, 1);
 		GetTextResult(&tmp);
+		//probably not used, but better to leave it as is to avoid some rare cases.
 		if (clip->empty() && fv) {
 			Replace(L"", txt);
 			txt->Replace(L"{}", L"");

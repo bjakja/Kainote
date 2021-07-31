@@ -712,7 +712,6 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 {
 	char form = grid->subsFormat;
 	Styles *mstyle = (form < SRT) ? grid->GetStyle(0, line->Style)->Copy() : new Styles();
-	actualStyle = Styles(*mstyle);
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 		wxString tmp;
@@ -741,6 +740,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 			mstyle->Fontname = tmp; 
 		}
 	}
+	actualStyle = Styles(*mstyle);
 	FontDialog *FD = FontDialog::Get(this, mstyle);
 	FD->Bind(FONT_CHANGED, &EditBox::OnFontChange, this, FD->GetId());
 	if (FD->ShowModal() == wxID_OK) {

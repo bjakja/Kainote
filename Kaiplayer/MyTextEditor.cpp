@@ -2883,8 +2883,10 @@ void TextEditor::SetState(int _state, bool refresh){
 
 bool TextEditor::SetFont(const wxFont &_font)
 {
-	wxWindow::SetFont(_font);
-	font = _font;
+	int fontSize = Options.GetInt(TEXT_EDITOR_FONT_SIZE);
+	font = wxFont(*Options.GetFont(fontSize - 10));
+	wxWindow::SetFont(font);
+	
 	int fw, fh;
 	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
 	fontHeight = fh;
