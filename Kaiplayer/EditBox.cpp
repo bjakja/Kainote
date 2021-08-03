@@ -1171,8 +1171,6 @@ void EditBox::DoTooltips()
 	TlMode->SetToolTip(_("Tryb tłumacza wyświetla i zapisuje zarówno tekst obcojęzyczny, jak i tekst tłumaczenia"));
 	Bcpall->SetToolTip(_("Kopiuje cały tekst obcojęzyczny do pola z tłumaczeniem"));
 	Bcpsel->SetToolTip(_("Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"));
-	//TextEdit->SetToolTip(_("Tekst linijki / tekst tłumaczenia, gdy tryb tłumacza jest włączony."));
-	//TextEditOrig->SetToolTip(_("tekst obcojęzyczny."));
 	Comment->SetToolTip(_("Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"));
 	LayerEdit->SetToolTip(_("Warstwa linijki, wyższe warstwy są na wierzchu"));
 	StartEdit->SetToolTip(_("Czas początkowy linijki"));
@@ -1457,7 +1455,8 @@ void EditBox::OnPasteDifferents(wxCommandEvent& event)
 
 void EditBox::OnEdit(wxCommandEvent& event)
 {
-	//subs preview will switch grid to preview grid that's why we need to change its video, we dont want to change subtitles
+	//subs preview will switch grid to preview grid that's 
+	//why we need to change its video, we dont want to change subtitles
 	bool startEndFocus = StartEdit->HasFocus() || EndEdit->HasFocus();
 	bool durFocus = DurEdit->HasFocus();
 	
@@ -1562,27 +1561,21 @@ void EditBox::OnColorChange(ColorEvent& event)
 			PutTagInText(L"\\" + colorNumber + L"c" + choosenColorAsString + L"&", 
 				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
-		//else if (found)
-			//PutTagInText(L"", L"", false);
 
 		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
 			GetTextResult(&colorString);
 			if (!colorString.StartsWith(colorNumber + L"a&")){
-				//colorString = colorString.Mid(5);
 				wxPoint pos = GetPositionInText();
 				pos.y++;
 				pos.x = pos.y;
 				SetPositionInText(pos);
 			}
-			//col.SetAlphaString(colorString);
 		}
 
 		if (actualColor.a != choosenColor.a){
 			PutTagInText(L"\\" + colorNumber + wxString::Format(L"a&H%02X&", choosenColor.a), 
 				L"\\" + colorNumber + wxString::Format(L"a&H%02X&", actualColor.a), false);
 		}
-		//else if (found)
-			//PutTagInText(L"", L"", false);
 
 	}
 	else{ PutinNonass(L"C:" + choosenColorAsString.Mid(2), L"C:([^}]*)"); }
@@ -1612,7 +1605,8 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		}
 		if (!found){ findtag = tag.AfterFirst(L'\\'); }
 		wxString result;
-		//fn and r do not have number value we have to treat it special \r works good only when return itself as a value
+		//fn and r do not have number value we have to treat it special 
+		//\r works good only when return itself as a value
 		//we did not need this value at all.
 		bool isFN = findtag.StartsWith(L"fn");
 		bool isR = findtag.StartsWith(L"r");
@@ -2158,9 +2152,6 @@ bool EditBox::SetFont(const wxFont &font)
 	MarginREdit->SetMinSize(wxSize(fw, fh));
 	MarginVEdit->SetMinSize(wxSize(fw, fh));
 
-	/*if (ABox){
-		ABox->Layout();
-	}*/
 	Layout();
 	return true;
 }

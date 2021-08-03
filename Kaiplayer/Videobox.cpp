@@ -1447,44 +1447,6 @@ void VideoCtrl::ChangeStream()
 	
 }
 
-//BOOL CALLBACK MonitorEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
-//{
-//	std::vector<RECT> * MonRects = (std::vector<RECT>*)dwData;
-//	WinStruct<MONITORINFO> monitorinfo;
-//	if (!GetMonitorInfo(hMonitor, &monitorinfo)){
-//		KaiLog(_("Nie można pobrać informacji o monitorze"));
-//		return TRUE;
-//	}
-//	// Main monitor have to be put as first
-//	if (monitorinfo.dwFlags == MONITORINFOF_PRIMARY){
-//		MonRects->insert(MonRects->begin(), monitorinfo.rcMonitor);
-//		return TRUE;
-//	}
-//	MonRects->push_back(monitorinfo.rcMonitor);
-//	return TRUE;
-//}
-//
-//wxRect VideoCtrl::GetMonitorRect(int wmonitor){
-//	MonRects.clear();
-//	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc, (LPARAM)&MonRects);
-//	wxRect rt(MonRects[0].left, MonRects[0].top, abs(MonRects[0].right - MonRects[0].left), abs(MonRects[0].bottom - MonRects[0].top));
-//	if (wmonitor == -1 || MonRects.size() == 1){ return rt; }
-//	else if (wmonitor == 0){
-//		wxRect rect = Kai->GetRect();
-//		int x = (rect.width / 2) + rect.x;
-//		int y = (rect.height / 2) + rect.y;
-//		for (size_t i = 0; i < MonRects.size(); i++){
-//			if (MonRects[i].left <= x && x < MonRects[i].right && MonRects[i].top <= y && y < MonRects[i].bottom){
-//				return wxRect(MonRects[i].left, MonRects[i].top, abs(MonRects[i].right - MonRects[i].left), abs(MonRects[i].bottom - MonRects[i].top));
-//			}
-//		}
-//	}
-//	else{
-//		return wxRect(MonRects[wmonitor].left, MonRects[wmonitor].top, abs(MonRects[wmonitor].right - MonRects[wmonitor].left), abs(MonRects[wmonitor].bottom - MonRects[wmonitor].top));
-//	}
-//	return rt;
-//}
-
 void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 {
 	if (!renderer)
@@ -1492,8 +1454,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 	EditBox *eb = tab->Edit;
 	int vis = evt.GetInt();
-	//VideoToolbar *vTB = (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
-
+	
 	if (vis == eb->Visual){ return; }
 	if (vis == 0){
 		renderer->RemoveVisual();
@@ -1502,8 +1463,6 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 		if (renderer->m_HasZoom){ renderer->SetZoom(); }
 		eb->Visual = vis;
 		renderer->SetVisual();
-		//if (vis >= VECTORCLIP || (vis >= CHANGEPOS && vis <= ROTATEXY) ){
-			//renderer->VisualChangeTool(vTB->GetItemToggled()); }
 		if (!HasArrow()){ SetCursor(wxCURSOR_ARROW); }
 		SetFocus();
 	}
