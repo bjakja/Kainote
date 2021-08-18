@@ -231,7 +231,8 @@ void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
 
 void Fullscreen::OnPaint(wxPaintEvent& evt)
 {
-	vb->Refresh(false);
+	VideoCtrl* vc = (VideoCtrl*)vb;
+	vc->OnPaint(evt);
 }
 
 BEGIN_EVENT_TABLE(Fullscreen, wxFrame)

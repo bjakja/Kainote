@@ -37,6 +37,7 @@ class VideoCtrl : public wxWindow
 	friend class RendererDirectShow;
 	friend class RendererDummyVideo;
 	friend class RendererFFMS2;
+	friend class Fullscreen;
 public:
 
 	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);

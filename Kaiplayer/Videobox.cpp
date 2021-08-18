@@ -1124,6 +1124,9 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 		}
 		if (del){ delete framebuf; }
 	}
+	else {
+		Kai->OnMenuSelected(event);
+	}
 }
 
 
