@@ -77,26 +77,34 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	modesSizer->Add(new KaiStaticText(this, -1, _("Liczby po przecinku:")), 1, wxALL | wxEXPAND, 4);
 	modesSizer->Add(digitAfterDot, 1, wxALL | wxEXPAND, 4);
 
-	wxBoxSizer* value2Sizer = new wxBoxSizer(wxHORIZONTAL);
-	value2 = new NumCtrl(this, -1, currentTag.value2, -10000, 10000, false);
-	value2->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
-	if (!currentTag.has2value)
-		value2->Enable(false);
+	wxBoxSizer* valuesSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxString values[4] = { _("Brak dodatkowych wartości"), 
+		_("jedna dodatkowa wartość"), 
+		_("dwie dodatkowe wartości"), 
+		_("trzy dodatkowe wartości") };
+	numOfAdditionalValues = new KaiChoice(this, ID_ADDITIONAL_VALUES_LIST, wxDefaultPosition, wxDefaultSize, 4, values);
+	numOfAdditionalValues->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
+	for (int i = 0; i < 3; i++) {
+		additionalValues[i] = new NumCtrl(this, -1, currentTag.additionalValues[i], -10000, 10000, false);
+		additionalValues[i]->SetToolTip(wxString::Format(_("Wartość %i"), i + 2));
+	}
 
-	has2Value = new KaiCheckBox(this, ID_2VALUE_CHECKBOX, _("Włącz wartość 2:"));
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent& evt) {
-		bool ischecked = has2Value->GetValue();
-		value2->Enable(ischecked);
-		}, ID_2VALUE_CHECKBOX);
-	value2Sizer->Add(has2Value, 2, wxALL | wxEXPAND, 4);
-	value2Sizer->Add(new KaiStaticText(this, -1, _("Wartość 2:")), 1, wxALL | wxEXPAND, 4);
-	value2Sizer->Add(value2, 1, wxALL | wxEXPAND, 4);
+		int numAdditionalValues = numOfAdditionalValues->GetSelection();
+		for (int i = 0; i < 3; i++) {
+			additionalValues[i]->Enable(numAdditionalValues > i);
+		}
+		}, ID_ADDITIONAL_VALUES_LIST);
+	valuesSizer->Add(new KaiStaticText(this, -1, _("Dodatkowe wartości:")), 1, wxALL | wxEXPAND, 4);
+	for (int i = 0; i < 3; i++) {
+		valuesSizer->Add(additionalValues[i], 1, wxALL | wxEXPAND, 4);
+	}
 
 	editionSizer->Add(nameTagSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(minMaxSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(valStepSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(modesSizer, 0, wxEXPAND, 0);
-	editionSizer->Add(value2Sizer, 0, wxEXPAND, 0);
+	editionSizer->Add(valuesSizer, 0, wxEXPAND, 0);
 
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton* commit = new MappedButton(this, ID_BUTTON_COMMIT, _("Zastosuj"));
@@ -205,13 +213,14 @@ void AllTagsEdition::UpdateTag()
 	currentTag.value = (float)value->GetDouble();
 	currentTag.step = (float)step->GetDouble();
 	currentTag.mode = mode->GetSelection();
-	currentTag.value2 = (float)value2->GetDouble();
 	currentTag.DigitsAfterDot = digitAfterDot->GetInt();
-	currentTag.has2value = has2Value->GetValue();
-	/*if (currentTag.value2 || currentTag.name == L"fad" || currentTag.name == L"pos" ||
-		currentTag.name == L"move" || currentTag.name == L"clip" || currentTag.name == L"iclip") {
-		currentTag.has2value = true;
-	}*/
+	currentTag.numOfAdditionalValues = numOfAdditionalValues->GetSelection();
+	if (currentTag.numOfAdditionalValues) {
+		numOfAdditionalValues->SetSelection(currentTag.numOfAdditionalValues);
+		for (int i = 0; i < currentTag.numOfAdditionalValues && additionalValues[i]; i++) {
+			currentTag.additionalValues[i] = (float)additionalValues[i]->GetDouble();
+		}
+	}
 }
 
 void AllTagsEdition::SetTagFromSettings()
@@ -223,13 +232,11 @@ void AllTagsEdition::SetTagFromSettings()
 	value->SetDouble(currentTag.value);
 	step->SetDouble(currentTag.step);
 	mode->SetSelection(currentTag.mode);
-	if (currentTag.has2value)
-		value2->SetDouble(currentTag.value2);
-	else
-		value2->SetDouble(0);
-	if (currentTag.has2value != has2Value->GetValue()) {
-		has2Value->SetValue(currentTag.has2value);
-		value2->Enable(currentTag.has2value);
+	if (currentTag.numOfAdditionalValues) {
+		numOfAdditionalValues->SetSelection(currentTag.numOfAdditionalValues);
+		for (int i = 0; i < currentTag.numOfAdditionalValues && additionalValues[i]; i++) {
+			additionalValues[i]->SetDouble(currentTag.additionalValues[i]);
+		}
 	}
 }
 
@@ -254,11 +261,17 @@ bool AllTagsEdition::CheckModified()
 		currentTag.step != (float)step->GetDouble() ||
 		currentTag.mode != mode->GetSelection() ||
 		currentTag.DigitsAfterDot != digitAfterDot->GetInt() ||
-		currentTag.has2value != has2Value->GetValue())
+		currentTag.numOfAdditionalValues != numOfAdditionalValues->GetSelection())
 	{
 		return true;
 	}
-	return currentTag.has2value ? currentTag.value2 != (float)value2->GetDouble() : false;
+	for (int i = 0; i < currentTag.numOfAdditionalValues; i++) {
+		if (additionalValues[i] && 
+			currentTag.additionalValues[i] != (float)additionalValues[i]->GetDouble()) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void AllTagsEdition::Save(int id)
@@ -299,20 +312,22 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 	wxString txtSettings;
 	if (!ow.FileOpen(path, &txtSettings, false)) {
 		//write entire setings in plain text
-		//Tag: name, tag, min, max, value, step, num digits after dot, mode, [valuey]
-		txtSettings = L"Tag: blur, blur, 0, 100, 0, 0.5, 1, 0\n"\
-			L"Tag: border, bord, 0, 50, 0, 1, 1, 0\n"\
-			L"Tag: blur edge, be, 0, 100, 0, 1, 1, 0\n"\
-			L"Tag: fading, fad, 0, 2000, 0, 5, 0, 1, 0\n"\
-			L"Tag: fax, fax, -10, 10, 0, 0.05, 3, 0\n"\
-			L"Tag: fay, fay, -10, 10, 0, 0.05, 3, 0\n"\
-			L"Tag: font size, fs, 20, 300, 70, 1, 0, 0\n"\
-			L"Tag: spacing, fsp, -100, 100, 0, 1, 1, 0\n"\
-			L"Tag: shadow, shad, 0, 80, 0, 1, 1, 0\n"\
-			L"Tag: xborder, xbord, 0, 80, 0, 1, 1, 0\n"\
-			L"Tag: yborder, ybord, 0, 80, 0, 1, 1, 0\n"\
-			L"Tag: xshadow, xshad, -80, 80, 0, 1, 1, 0\n"\
-			L"Tag: yshadow, yshad, -80, 80, 0, 1, 1, 0\n";
+		//Tag: name, tag, min, max, value, step, num digits after dot, paste mode, tag mode, [valuey], [valuex1],[valuex1]
+		txtSettings = L"HYDRA2.0"
+					L"Tag: blur, blur,     0, 100,  0,  0.5,  1, 0\n"\
+					L"Tag: border, bord,     0, 50,   0,  1,    1, 0\n"\
+					L"Tag: blur edge, be,    0, 100,  0,  1,    1, 0\n"\
+					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 0\n"\
+					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0\n"\
+					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0\n"\
+					L"Tag: font size, fs,   20, 300,  70, 1,    0, 0\n"\
+					L"Tag: spacing, fsp,  -100, 100,  0,  1,    1, 0\n"\
+					L"Tag: shadow, shad,     0, 80,   0,  1,    1, 0\n"\
+					L"Tag: xborder, xbord,   0, 80,   0,  1,    1, 0\n"\
+					L"Tag: yborder, ybord,   0, 80,   0,  1,    1, 0\n"\
+					L"Tag: xshadow, xshad, -80, 80,   0,  1,    1, 0\n"\
+					L"Tag: yshadow, yshad, -80, 80,   0,  1,    1, 0\n"\
+					L"Tag: position, pos,    0, 100,  0,  1,    1, 0\n";
 	}
 	wxStringTokenizer tokenzer(txtSettings, "\n", wxTOKEN_STRTOK);
 	while (tokenzer.HasMoreTokens()) {
@@ -352,10 +367,13 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 			if (!tkzer.HasMoreTokens())
 				continue;
 			tmp.mode = wxAtoi(tkzer.GetNextToken().Trim(false));
-			if (tkzer.HasMoreTokens()) {
+			if (!tkzer.HasMoreTokens())
+				continue;
+			tmp.tagMode = wxAtoi(tkzer.GetNextToken().Trim(false));
+			for (int i = 0; tkzer.HasMoreTokens(); i++) {
 				if (tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval)) {
-					tmp.value2 = tmpval;
-					tmp.has2value = true;
+					tmp.additionalValues[i] = tmpval;
+					tmp.numOfAdditionalValues = i + 1;
 				}
 			}
 			tags->push_back(tmp);
@@ -381,8 +399,10 @@ void SaveSettings(std::vector<AllTagsSetting>* tags)
 		tagText << tag.name << ", " << tag.tag << ", " << tag.rangeMin << ", " <<
 			tag.rangeMax << ", " << tag.value << ", " << tag.step << ", " <<
 			(int)tag.DigitsAfterDot << ", " << (int)tag.mode;
-		if (tag.has2value) {
-			tagText << ", " << tag.value2;
+		if (tag.numOfAdditionalValues) {
+			for (int i = 0; i < tag.numOfAdditionalValues; i++) {
+				tagText << ", " << tag.additionalValues[i];
+			}
 		}
 		tagText << "\n";
 		ow.PartFileWrite(tagText);

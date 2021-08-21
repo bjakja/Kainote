@@ -24,13 +24,19 @@
 #include "NumCtrl.h"
 #include <vector>
 
+enum TagMode {
+	IS_HEX_ALPHA = 1,
+	IS_HEX_COLOR = 2,
+	IS_VECTOR = 4,
+};
+
 class AllTagsSetting
 {
 public:
 	AllTagsSetting() {};
 	AllTagsSetting(const wxString& _name, const wxString& _tag,
 		float _rangeMin, float _rangeMax, float _value,
-		float _step, unsigned char numDigitsAfterDot, unsigned char _mode = 0) {
+		float _step, unsigned char numDigitsAfterDot, unsigned char _mode = 0, int _tagMode = 0) {
 		name = _name;
 		tag = _tag;
 		rangeMin = _rangeMin;
@@ -39,6 +45,7 @@ public:
 		step = _step;
 		DigitsAfterDot = numDigitsAfterDot;
 		mode = _mode;
+		tagMode = _tagMode;
 	};
 	AllTagsSetting(const wxString& _name) {
 		name = _name; 
@@ -52,10 +59,11 @@ public:
 	float rangeMax = 0.f;
 	float value = 0.f;
 	float step = 0.f;
-	float value2 = 0.f;
-	bool has2value = false;
+	float additionalValues[3] = { 0.f, 0.f, 0.f };
 	unsigned char mode = 0;
 	unsigned char DigitsAfterDot = 0;
+	unsigned char numOfAdditionalValues = 0;
+	int tagMode = 0;
 };
 
 class AllTagsEdition : public KaiDialog
@@ -77,7 +85,7 @@ private:
 	void Save(int id);
 	enum {
 		ID_TAG_LIST = 7809,
-		ID_2VALUE_CHECKBOX,
+		ID_ADDITIONAL_VALUES_LIST,
 		ID_BUTTON_REMOVE_TAG,
 		ID_BUTTON_ADD_TAG,
 		ID_BUTTON_OK,
@@ -94,8 +102,8 @@ private:
 	NumCtrl* step;
 	KaiChoice* mode;
 	NumCtrl* digitAfterDot;
-	NumCtrl* value2;
-	KaiCheckBox* has2Value;
+	NumCtrl* additionalValues[3] = { NULL, NULL, NULL };
+	KaiChoice* numOfAdditionalValues;
 	std::vector<AllTagsSetting> tags;
 	AllTagsSetting currentTag;
 	int selection = 0;

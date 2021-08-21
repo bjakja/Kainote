@@ -411,15 +411,12 @@ void AllTags::SetCurVisual()
 void AllTags::FindTagValues()
 {
 	Styles* currentStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
-	if (actualTag.tag == L"fs")
-		actualTag.value = currentStyle->GetFontSizeDouble();
-	else if(actualTag.tag == L"bord")
-		actualTag.value = currentStyle->GetOtlineDouble();
-	else if(actualTag.tag == L"shad")
-		actualTag.value = currentStyle->GetShadowDouble();
-	else if (actualTag.tag == L"fsp")
-		actualTag.value = currentStyle->GetSpacingDouble();
-
+	wxString value;
+	TagValueFromStyle(currentStyle, actualTag.tag, &value);
+	double doubleValue = 0.;
+	if (!value.ToDouble(&doubleValue))
+		doubleValue = wxAtoi(value);
+	
 	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", L"", actualTag.mode)) {
 		const FindData& data = GetResult();
 		if (data.finding.StartsWith(L"(")) {
