@@ -78,15 +78,22 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	modesSizer->Add(digitAfterDot, 1, wxALL | wxEXPAND, 4);
 
 	wxBoxSizer* valuesSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* valuesAndInsertModeSizer = new wxBoxSizer(wxHORIZONTAL);
+	wxString insertModes[6] = { _("Dodaj"), _("Wstaw"), _("Pomnóż"), _("Pomnóż+"), _("Gradient tekst"), _("Gradient linia") };
 	wxString values[4] = { _("Brak dodatkowych wartości"), 
 		_("jedna dodatkowa wartość"), 
 		_("dwie dodatkowe wartości"), 
 		_("trzy dodatkowe wartości") };
 	numOfAdditionalValues = new KaiChoice(this, ID_ADDITIONAL_VALUES_LIST, wxDefaultPosition, wxDefaultSize, 4, values);
 	numOfAdditionalValues->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
+	numOfAdditionalValues->SetSelection(currentTag.numOfAdditionalValues);
+	tagInsertMode = new KaiChoice(this, ID_INSERT_MODES_LIST, wxDefaultPosition, wxDefaultSize, 6, insertModes);
+	tagInsertMode->SetToolTip(_("Opcje zmiany tagów"));
+	tagInsertMode->SetSelection(currentTag.tagMode);
 	for (int i = 0; i < 3; i++) {
 		additionalValues[i] = new NumCtrl(this, -1, currentTag.additionalValues[i], -10000, 10000, false);
 		additionalValues[i]->SetToolTip(wxString::Format(_("Wartość %i"), i + 2));
+		additionalValues[i]->Enable(currentTag.numOfAdditionalValues > i);
 	}
 
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent& evt) {

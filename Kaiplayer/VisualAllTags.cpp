@@ -43,7 +43,7 @@ void AllTags::DrawVisual(int time)
 	float coeff = sliderRange / range;
 	float step = actualTag.step * coeff;
 	float thumbposdiff = -actualTag.rangeMin;
-	int numOfLoops = actualTag.has2value ? 2 : 1;
+	int numOfLoops = actualTag.numOfAdditionalValues + 1;
 	for (size_t i = 0; i < numOfLoops; i++) {
 		float thumbtop = top - 10;
 		float thumbbottom = bottom + 10;
@@ -137,7 +137,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	float coeff = sliderRange / range;
 	float step = actualTag.step * coeff;
 	if (mode == 2)
-		subtractCounter = 0;
+		multiplyCounter = 0;
 
 	x = event.GetX();
 	y = event.GetY();
@@ -212,7 +212,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 		}
 		return;
 	}
-	int numOfLoops = actualTag.has2value ? 2 : 1;
+	int numOfLoops = actualTag.numOfAdditionalValues + 1;
 	for (size_t i = 0; i < numOfLoops; i++) {
 
 		float thumbpos = ((thumbValue[i] + thumbposdiff) * coeff) + left;
@@ -398,12 +398,12 @@ void AllTags::SetCurVisual()
 	floatFormat = wxString::Format(L"5.%if", actualTag.DigitsAfterDot);
 	if (mode == 2) {
 		firstThumbValue[0] = thumbValue[0] = actualTag.value;
-		firstThumbValue[1] = thumbValue[1] = actualTag.value2;
+		firstThumbValue[1] = thumbValue[1] = actualTag.additionalValues[0];
 	}
 	FindTagValues();
-	if (mode != 2) {
+	if (mode < 2) {
 		thumbValue[0] = actualTag.value;
-		thumbValue[1] = actualTag.value2;
+		thumbValue[1] = actualTag.additionalValues[0];
 	}
 	tab->Video->Render(false);
 }
@@ -428,19 +428,17 @@ void AllTags::FindTagValues()
 				wxString token = toknzr.GetNextToken().Trim(false).Trim();
 				double val = 0;
 				if (token.ToCDouble(&val)) {
-					if (i == 0) {
+					if (i % 4 == 1) {
 						actualTag.value = val;
-						if(mode != 2)
-							CheckRange(val);
 					}
-					else if (i == 1) {
-						actualTag.value2 = val;
-						if (mode != 2)
-							CheckRange(val);
+					else{
+						actualTag.additionalValues[i - 1] = val;
 					}
+					if (mode < 2)
+						CheckRange(val);
 				}
 				i++;
-				if (i >= 2)
+				if (i >= (actualTag.numOfAdditionalValues + 1))
 					break;
 			}
 
@@ -478,14 +476,14 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	float valuediff2 = holding[1] || mode == 2 ? thumbValue[1] - firstThumbValue[1] : 0;
 	wxString strval;
 	if (curValue.empty() || mode) {
-		//mode 2 for subtract 
+		//mode 2 for multiply
 		//mode 1 for paste only one value
 		if (mode == 2) {
-			float val1 = subtractCounter * valuediff;
-			if (actualTag.has2value) {
-				float val2 = subtractCounter * valuediff2;
+			float val1 = multiplyCounter * valuediff;
+			if (actualTag.numOfAdditionalValues) {
+				float val2 = multiplyCounter * valuediff2;
 				strval = L"(" + getfloat(actualTag.value + val1, floatFormat) + L"," +
-					getfloat(actualTag.value2 + val2, floatFormat) + L")";
+					getfloat(actualTag.additionalValues[0] + val2, floatFormat) + L")";
 			}
 			else
 				strval = getfloat(actualTag.value + val1, floatFormat);
@@ -495,7 +493,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			}
 		}
 		else {
-			if (actualTag.has2value) {
+			if (actualTag.numOfAdditionalValues) {
 				strval = L"(" + getfloat(value, floatFormat) + L"," +
 					getfloat(value2, floatFormat) + L")";
 			}
@@ -553,7 +551,7 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
 		if (mode == 2)
-			subtractCounter++;
+			multiplyCounter++;
 	}
 	else {
 		auto replfunc = [=](const FindData& data, wxString* result) {
@@ -574,7 +572,7 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial)
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
 		if (mode == 2)
-			subtractCounter++;
+			multiplyCounter++;
 	}
 	else {
 		auto replfunc = [=](const FindData& data, wxString* result) {

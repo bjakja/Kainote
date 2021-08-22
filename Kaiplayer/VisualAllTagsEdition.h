@@ -86,6 +86,7 @@ private:
 	enum {
 		ID_TAG_LIST = 7809,
 		ID_ADDITIONAL_VALUES_LIST,
+		ID_INSERT_MODES_LIST,
 		ID_BUTTON_REMOVE_TAG,
 		ID_BUTTON_ADD_TAG,
 		ID_BUTTON_OK,
@@ -104,6 +105,7 @@ private:
 	NumCtrl* digitAfterDot;
 	NumCtrl* additionalValues[3] = { NULL, NULL, NULL };
 	KaiChoice* numOfAdditionalValues;
+	KaiChoice* tagInsertMode;
 	std::vector<AllTagsSetting> tags;
 	AllTagsSetting currentTag;
 	int selection = 0;

@@ -549,7 +549,7 @@ private:
 	bool onSlider[2] = { false, false };
 	int increase = 80;
 	int mode = 0;
-	int subtractCounter = 0;
+	int multiplyCounter = 0;
 	int lastTool = -1;
 };
 

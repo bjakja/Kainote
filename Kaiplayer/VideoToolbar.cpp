@@ -750,7 +750,7 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_TAG_LIST);
 
-	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż") };
+	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż"), _("Pomnóż+"), _("Gradient tekst"), _("Gradient linia") };
 	options = new KaiChoice(vtoolbar, ID_OPTIONS, wxDefaultPosition, wxDefaultSize, 3, optionsList);
 	options->SetToolTip(_("Opcje zmiany tagów:\nDodaj - zmienia wszystkie tagi dodając ruch z suwaka.\nWstaw - wstawia w miejsce kursora w przypadku jednej linii\nalbo na początku w przypadku wielu linii.\nPomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\npierwsza linia nie jest zmieniana."));
 	options->SetSelection(mode);
