@@ -445,8 +445,18 @@ void SelectLines::AddRecent(){
 void SelectLines::OnChooseStyles(wxCommandEvent& event)
 {
 	wxString styles = GetCheckedElements(Kai);
+	styles.Replace(L"\\", L"\\\\");
+	styles.Replace(L"|", L"\\|");
 	int numreps = styles.Replace(L",", L"|");
+	styles.Replace(L"[", L"\\[");
+	styles.Replace(L"]", L"\\]");
+	styles.Replace(L"(", L"\\(");
+	styles.Replace(L")", L"\\)");
+	styles.Replace(L"*", L"\\*");
+	styles.Replace(L"+", L"\\+");
+	styles.Replace(L".", L"\\.");
 	styles = L"^" + styles + L"$";
+	
 	CollumnStyle->SetValue(true);
 	RegEx->SetValue(true);
 	FindText->SetValue(styles);
