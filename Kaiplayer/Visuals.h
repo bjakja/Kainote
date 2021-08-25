@@ -551,6 +551,7 @@ private:
 	int mode = 0;
 	int multiplyCounter = 0;
 	int lastTool = -1;
+	int tagMode = 0;
 };
 
 

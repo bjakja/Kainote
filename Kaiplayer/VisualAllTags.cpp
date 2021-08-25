@@ -472,33 +472,43 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 {
 	float value = thumbValue[0];
 	float value2 = thumbValue[1];
+	//change it here aswell
+	float value3 = thumbValue[0];
+	float value4 = thumbValue[1];
 	float valuediff = holding[0] || mode == 2 ? thumbValue[0] - firstThumbValue[0] : 0;
 	float valuediff2 = holding[1] || mode == 2 ? thumbValue[1] - firstThumbValue[1] : 0;
+	//after rewrite sliders add right holdings
+	float valuediff3 = holding[0] || mode == 2 ? thumbValue[0] - firstThumbValue[0] : 0;
+	float valuediff4 = holding[1] || mode == 2 ? thumbValue[1] - firstThumbValue[1] : 0;
 	wxString strval;
 	if (curValue.empty() || mode) {
 		//mode 2 for multiply
 		//mode 1 for paste only one value
-		if (mode == 2) {
-			float val1 = multiplyCounter * valuediff;
-			if (actualTag.numOfAdditionalValues) {
-				float val2 = multiplyCounter * valuediff2;
-				strval = L"(" + getfloat(actualTag.value + val1, floatFormat) + L"," +
-					getfloat(actualTag.additionalValues[0] + val2, floatFormat) + L")";
-			}
-			else
-				strval = getfloat(actualTag.value + val1, floatFormat);
+		float val1 = (mode == 2) ?
+			actualTag.value + (multiplyCounter * valuediff) : value;
+		float val2 = (mode == 2) ?
+			actualTag.additionalValues[0] + (multiplyCounter * valuediff2) : value2;
+		float val3 = (mode == 2) ?
+			actualTag.additionalValues[1] + (multiplyCounter * valuediff3) : value3;
 
-			if (curValue.EndsWith(")")) {
-				strval << ")";
-			}
+		if (actualTag.numOfAdditionalValues) {
+			strval = L"(" + getfloat(val1, floatFormat) + L"," +
+				getfloat(val2, floatFormat) + L")";
 		}
-		else {
-			if (actualTag.numOfAdditionalValues) {
-				strval = L"(" + getfloat(value, floatFormat) + L"," +
-					getfloat(value2, floatFormat) + L")";
-			}
-			else
-				strval = getfloat(value, floatFormat);
+		else if (tagMode & IS_HEX_ALPHA) {
+			strval = wxString::Format(L"&H%02X&", MID(0, val1, 255));
+		}
+		else if (tagMode & IS_HEX_COLOR) {
+			strval = wxString::Format(L"&H%02X%02X%02X&",
+				MID(0, val1, 255),
+				MID(0, val2, 255),
+				MID(0, val3, 255));
+		}
+		else
+			strval = getfloat(val1, floatFormat);
+
+		if (curValue.EndsWith(")")) {
+			strval << ")";
 		}
 	}
 	else if (curValue.StartsWith(L"(")) {
@@ -531,12 +541,31 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			trimed = trimed.Mid(0, trimed.length() - 1);
 			hasEndBracked = true;
 		}
-		if (trimed.ToCDouble(&val)) {
+		if (tagMode & IS_HEX_ALPHA) {
+			AssColor col;
+			col.SetAlphaString(trimed);
+			float vala = col.a + valuediff;
+			strval = wxString::Format(L"&H%02X&", MID(0, vala, 255));
+		}
+		else if (tagMode & IS_HEX_COLOR) {
+			AssColor col(trimed);
+			float valr = col.r + valuediff;
+			float valg = col.g + valuediff2;
+			float valb = col.b + valuediff3;
+			strval = wxString::Format(L"&H%02X%02X%02X&",
+				MID(0, valb, 255),
+				MID(0, valg, 255),
+				MID(0, valr, 255));
+		}
+		else if (trimed.ToCDouble(&val)) {
 			val += valuediff;
 			strval = getfloat(val, floatFormat);
-			if (hasEndBracked)
-				strval << L")";
 		}
+		else//dont add a bracket when value not set
+			hasEndBracked = false;
+
+		if (hasEndBracked)
+			strval << L")";
 	}
 	
 	*visual = strval;
