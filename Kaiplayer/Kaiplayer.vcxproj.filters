@@ -461,6 +461,9 @@
     <ClCompile Include="VisualDrawingShapes.cpp">
       <Filter>Source Files\Video\Visuals</Filter>
     </ClCompile>
+    <ClCompile Include="VisualAllTagsControls.cpp">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -854,6 +857,9 @@
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
     <ClInclude Include="VisualDrawingShapes.h">
+      <Filter>Source Files\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualAllTagsControls.h">
       <Filter>Source Files\Video\Visuals</Filter>
     </ClInclude>
   </ItemGroup>

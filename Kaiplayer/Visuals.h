@@ -26,6 +26,7 @@
 #include <map>
 #include "VisualAllTagsEdition.h"
 #include "TagFindReplace.h"
+#include "VisualAllTagsControls.h"
 
 
 enum{
@@ -510,6 +511,7 @@ public:
 
 class AllTags : public Visuals
 {
+	friend class AllTagsSlider;
 public:
 	AllTags();
 	~AllTags() {
@@ -531,22 +533,16 @@ private:
 	};
 	void CheckRange(float val);
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
+	void SetupSlidersPosition(int _sliderPositionY = 40);
 	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";
-	bool holding[2] = { false, false };
+	AllTagsSlider slider[4];
 	bool rholding = false;
 	//bool changeMoveDiff = false;
-	float thumbValue[2] = { 0.f, 0.f };
-	float firstThumbValue[2] = { 0.f, 0.f };
-	float lastThumbValue[2] = { 0.f, 0.f };
-	float x = 0, y = 0;
-	int thumbState[2] = { 0, 0 };
 	int currentTag = 0;
 	int sliderPositionY = 40;
 	int sliderPositionDiff = 0;
-	bool onThumb[2] = { false, false };
-	bool onSlider[2] = { false, false };
 	int increase = 80;
 	int mode = 0;
 	int multiplyCounter = 0;
