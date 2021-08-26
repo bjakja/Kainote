@@ -532,6 +532,7 @@ private:
 		THUMB_PUSHED
 	};
 	void CheckRange(float val);
+	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	void SetupSlidersPosition(int _sliderPositionY = 40);
 	std::vector<AllTagsSetting> *tags;

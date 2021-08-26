@@ -33,7 +33,7 @@ AllTags::AllTags()
 
 void AllTags::DrawVisual(int time)
 {
-	int numOfLoops = actualTag.numOfAdditionalValues + 1;
+	int numOfLoops = actualTag.numOfValues + 1;
 	for (size_t i = 0; i < numOfLoops; i++) {
 		slider[i].OnDraw();
 	}
@@ -120,6 +120,27 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 	}
 }
 
+void AllTags::CheckTag()
+{
+	if (actualTag.tag == L"1a" || actualTag.tag == L"2a" ||
+		actualTag.tag == L"3a" || actualTag.tag == L"4a" ||
+		actualTag.tag == L"alpha") 
+	{
+		tagMode = IS_HEX_ALPHA;
+	}
+	else if (actualTag.tag == L"1c" || actualTag.tag == L"2c" ||
+		actualTag.tag == L"3c" || actualTag.tag == L"4c" ||
+		actualTag.tag == L"c")
+	{
+		tagMode = IS_HEX_COLOR;
+	}
+	else if (actualTag.tag == L"p" || actualTag.tag == L"clip" ||
+		actualTag.tag == L"iclip")
+	{
+		tagMode = IS_VECTOR;
+	}
+}
+
 void AllTags::SetupSlidersPosition(int _sliderPositionY)
 {
 	sliderPositionY = _sliderPositionY;
@@ -140,13 +161,14 @@ void AllTags::SetCurVisual()
 	if (currentTag < 0 || currentTag >= tags->size())
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
-	floatFormat = wxString::Format(L"5.%if", actualTag.DigitsAfterDot);
+	floatFormat = wxString::Format(L"5.%if", actualTag.digitsAfterDot);
 	if (mode == 2) {
 		slider[0].SetFirstThumbValue(actualTag.value);
 		slider[1].SetFirstThumbValue(actualTag.additionalValues[0]);
 		slider[2].SetFirstThumbValue(actualTag.additionalValues[1]);
 		slider[3].SetFirstThumbValue(actualTag.additionalValues[2]);
 	}
+	CheckTag();
 	FindTagValues();
 	if (mode < 2) {
 		slider[0].SetThumbValue(actualTag.value);
@@ -187,18 +209,32 @@ void AllTags::FindTagValues()
 						CheckRange(val);
 				}
 				i++;
-				if (i >= (actualTag.numOfAdditionalValues + 1))
+				if (i >= (actualTag.numOfValues + 1))
 					break;
 			}
 
 		}
 		else {
 			double val = 0;
-			if (data.finding.ToCDouble(&val)) {
-				actualTag.value = val;
-				if (mode != 2)
-					CheckRange(val);
+			if (tagMode & IS_HEX_ALPHA) {
+				AssColor col;
+				col.SetAlphaString(data.finding);
+				actualTag.value = col.a;
 			}
+			else if (tagMode & IS_HEX_COLOR) {
+				AssColor col(data.finding);
+				actualTag.value = col.r;
+				actualTag.additionalValues[0] = col.g;
+				actualTag.additionalValues[1] = col.b;
+			}
+			else if (data.finding.ToCDouble(&val)) {
+				actualTag.value = val;
+			}
+			else
+				return;
+
+			if (mode != 2)
+				CheckRange(val);
 		}
 	}
 }
@@ -247,15 +283,15 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 				MID(0, val2, 255),
 				MID(0, val3, 255));
 		}
-		else if (actualTag.numOfAdditionalValues) {
+		else if (actualTag.numOfValues) {
 			float val4 = (mode == 2) ?
 				actualTag.additionalValues[2] + (multiplyCounter * valuediff4) : value4;
 			strval = L"(" + getfloat(val1, floatFormat) + L"," +
 				getfloat(val2, floatFormat);
-			if (actualTag.numOfAdditionalValues >= 2) {
+			if (actualTag.numOfValues >= 2) {
 				strval << L"," << getfloat(val3, floatFormat);
 			}
-			if (actualTag.numOfAdditionalValues == 3) {
+			if (actualTag.numOfValues == 3) {
 				strval << L"," << getfloat(val4, floatFormat);
 			}
 

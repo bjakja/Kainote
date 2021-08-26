@@ -24,7 +24,7 @@
 #include "NumCtrl.h"
 #include <vector>
 
-enum TagMode {
+enum TagType {
 	IS_HEX_ALPHA = 1,
 	IS_HEX_COLOR = 2,
 	IS_VECTOR = 4,
@@ -41,9 +41,9 @@ public:
 		tag = _tag;
 		rangeMin = _rangeMin;
 		rangeMax = _rangeMax;
-		value = _value;
+		values[0] = _value;
 		step = _step;
-		DigitsAfterDot = numDigitsAfterDot;
+		digitsAfterDot = numDigitsAfterDot;
 		mode = _mode;
 		tagMode = _tagMode;
 	};
@@ -57,12 +57,11 @@ public:
 	wxString tag;
 	float rangeMin = 0.f;
 	float rangeMax = 0.f;
-	float value = 0.f;
 	float step = 0.f;
-	float additionalValues[3] = { 0.f, 0.f, 0.f };
+	float values[4] = { 0.f, 0.f, 0.f , 0.f };
 	unsigned char mode = 0;
-	unsigned char DigitsAfterDot = 0;
-	unsigned char numOfAdditionalValues = 0;
+	unsigned char digitsAfterDot = 0;
+	unsigned char numOfValues = 1;
 	int tagMode = 0;
 };
 
@@ -99,12 +98,11 @@ private:
 	KaiTextCtrl* tagWithoutSlash;
 	NumCtrl* minValue;
 	NumCtrl* maxValue;
-	NumCtrl* value;
 	NumCtrl* step;
 	KaiChoice* mode;
 	NumCtrl* digitAfterDot;
-	NumCtrl* additionalValues[3] = { NULL, NULL, NULL };
-	KaiChoice* numOfAdditionalValues;
+	NumCtrl* values[4] = { NULL, NULL, NULL, NULL };
+	KaiChoice* numOfValues;
 	KaiChoice* tagInsertMode;
 	std::vector<AllTagsSetting> tags;
 	AllTagsSetting currentTag;
