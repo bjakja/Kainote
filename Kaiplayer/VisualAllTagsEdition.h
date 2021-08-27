@@ -28,6 +28,16 @@ enum TagType {
 	IS_HEX_ALPHA = 1,
 	IS_HEX_COLOR = 2,
 	IS_VECTOR = 4,
+	IS_T_ANIMATION = 8,
+};
+
+enum TagPasteMode {
+	ADD = 0,
+	INSERT,
+	MULTIPLY,
+	MULTIPLY_PLUS,
+	GRADIENT_TEXT,
+	GRADIENT_LINE
 };
 
 class AllTagsSetting

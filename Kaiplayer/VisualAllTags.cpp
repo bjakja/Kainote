@@ -40,7 +40,7 @@ void AllTags::DrawVisual(int time)
 
 void AllTags::OnMouseEvent(wxMouseEvent& event)
 {
-	if (mode >= 2)
+	if (mode >= MULTIPLY)
 		multiplyCounter = 0;
 
 	float x = event.GetX();
@@ -81,7 +81,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 void AllTags::OnKeyPress(wxKeyEvent& evt)
 {
-	if (actualTag.tag != L"fad")
+	if (actualTag.tag != L"fad" || tagMode & IS_T_ANIMATION)
 		return;
 
 	int key = evt.GetKeyCode();
@@ -98,7 +98,7 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 			vidtime > tab->Edit->line->End.mstime) {
 			wxBell(); return;
 		}
-		int diff = (hkeystart) ?
+		int diff = (hkeystart || tagMode & IS_T_ANIMATION) ?
 			vidtime - ZEROIT(tab->Edit->line->Start.mstime) :
 			abs(vidtime - ZEROIT(tab->Edit->line->End.mstime));
 		if (hkeystart) {
@@ -138,6 +138,12 @@ void AllTags::CheckTag()
 	{
 		tagMode = IS_VECTOR;
 	}
+	else if (actualTag.tag == L"t") {
+		tagMode = IS_T_ANIMATION;
+	}
+	else {
+		tagMode = 0;
+	}
 }
 
 void AllTags::SetupSlidersPosition(int _sliderPositionY)
@@ -161,14 +167,14 @@ void AllTags::SetCurVisual()
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
 	floatFormat = wxString::Format(L"5.%if", actualTag.digitsAfterDot);
-	if (mode >= 2) {
+	if (mode >= MULTIPLY) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[0].SetFirstThumbValue(actualTag.values[i]);
 		}
 	}
 	CheckTag();
 	FindTagValues();
-	if (mode < 2) {
+	if (mode < MULTIPLY) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[0].SetThumbValue(actualTag.values[i]);
 		}
@@ -197,7 +203,7 @@ void AllTags::FindTagValues()
 				double val = 0;
 				if (token.ToCDouble(&val)) {
 					actualTag.values[i] = val;
-					if (mode < 2)
+					if (mode < MULTIPLY)
 						CheckRange(val);
 				}
 				i++;
@@ -225,7 +231,7 @@ void AllTags::FindTagValues()
 			else
 				return;
 
-			if (mode < 2)
+			if (mode < MULTIPLY)
 				CheckRange(val);
 		}
 	}
@@ -237,7 +243,7 @@ void AllTags::ChangeTool(int _tool, bool blockSetCurVisual)
 		return;
 
 	mode = _tool >> 20;
-	replaceTagsInCursorPosition = mode == 1;
+	replaceTagsInCursorPosition = mode == INSERT;
 
 	int curtag = _tool << 12;
 	currentTag = curtag >> 12;
@@ -256,14 +262,14 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	float valuediff3 = slider[2].GetDiffValue();
 	float valuediff4 = slider[3].GetDiffValue();
 	wxString strval;
-	if (curValue.empty() || mode == 2) {
+	if (curValue.empty() || mode == MULTIPLY) {
 		//mode 2 for multiply
 		//mode 1 for paste only one value
-		float val1 = (mode >= 2) ?
+		float val1 = (mode >= MULTIPLY) ?
 			actualTag.values[0] + (multiplyCounter * valuediff) : value;
-		float val2 = (mode >= 2) ?
+		float val2 = (mode >= MULTIPLY) ?
 			actualTag.values[1] + (multiplyCounter * valuediff2) : value2;
-		float val3 = (mode >= 2) ?
+		float val3 = (mode >= MULTIPLY) ?
 			actualTag.values[2] + (multiplyCounter * valuediff3) : value3;
 
 		if (tagMode & IS_HEX_ALPHA) {
@@ -276,7 +282,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 				MID(0, val3, 255));
 		}
 		else if (actualTag.numOfValues > 1) {
-			float val4 = (mode >= 2) ?
+			float val4 = (mode >= MULTIPLY) ?
 				actualTag.values[3] + (multiplyCounter * valuediff4) : value4;
 			strval = L"(" + getfloat(val1, floatFormat) + L"," +
 				getfloat(val2, floatFormat);
@@ -311,7 +317,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 				float valdiff = (counter % 2 == 0)? valuediff : 
 					(counter % 2 == 1) ? valuediff2 :
 					(counter % 2 == 2) ? valuediff3 : valuediff4;
-				if (mode > 2) {
+				if (mode > MULTIPLY) {
 					valdiff *= multiplyCounter;
 				}
 				strval << getfloat(val + valdiff, floatFormat) << L",";
@@ -336,17 +342,17 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		if (tagMode & IS_HEX_ALPHA) {
 			AssColor col;
 			col.SetAlphaString(trimed);
-			float vala = (mode > 2)? col.a + (valuediff * multiplyCounter) :
+			float vala = (mode > MULTIPLY)? col.a + (valuediff * multiplyCounter) :
 				col.a + valuediff;
 			strval = wxString::Format(L"&H%02X&", MID(0, vala, 255));
 		}
 		else if (tagMode & IS_HEX_COLOR) {
 			AssColor col(trimed);
-			float valr = (mode > 2) ? col.r + (valuediff * multiplyCounter) : 
+			float valr = (mode > MULTIPLY) ? col.r + (valuediff * multiplyCounter) :
 				col.r + valuediff;
-			float valg = (mode > 2) ? col.g + (valuediff * multiplyCounter) : 
+			float valg = (mode > MULTIPLY) ? col.g + (valuediff * multiplyCounter) :
 				col.g + valuediff2;
-			float valb = (mode > 2) ? col.b + (valuediff * multiplyCounter) : 
+			float valb = (mode > MULTIPLY) ? col.b + (valuediff * multiplyCounter) :
 				col.b + valuediff3;
 			strval = wxString::Format(L"&H%02X%02X%02X&",
 				MID(0, valb, 255),
@@ -354,7 +360,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 				MID(0, valr, 255));
 		}
 		else if (trimed.ToCDouble(&val)) {
-			val += (mode > 2) ? (valuediff * multiplyCounter) : valuediff;
+			val += (mode > MULTIPLY) ? (valuediff * multiplyCounter) : valuediff;
 			strval = getfloat(val, floatFormat);
 		}
 		else//dont add a bracket when value not set
@@ -396,7 +402,7 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 
 void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections)
 {
-	if (mode == 4) {
+	if (mode == GRADIENT_TEXT) {
 		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
 			GetVisualValue(result, data.finding);
 			multiplyCounter += (1.f / (numOfCharacters - 1));
@@ -409,9 +415,9 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
-		if (mode >= 2)
+		if (mode >= MULTIPLY)
 			multiplyCounter++;
-		else if (mode >= 3) {
+		else if (mode >= MULTIPLY_PLUS) {
 			multiplyCounter += (1.f / (numOfSelections - 1));
 		}
 	}
