@@ -311,7 +311,7 @@ wxPoint ClipRect::ChangeVisual(wxString* txt)
 	return GetPositionInText();
 }
 
-void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial)
+void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 {
 	int x1, x2, y1, y2;
 	if (Corner[0].x < Corner[1].x){

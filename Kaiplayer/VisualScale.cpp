@@ -414,7 +414,7 @@ void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 	tab->Video->Render(false);
 }
 
-void Scale::ChangeVisual(wxString *txt, Dialogue *dial)
+void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 {
 	wxString tag;
 

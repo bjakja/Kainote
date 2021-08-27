@@ -58,6 +58,7 @@ public:
 	//no need to put in bracket function do it when needed
 	//replace that's was captured don't put all tag when it was not taptured
 	int ReplaceAll(const wxString& pattern, const wxString& tag, wxString *text, std::function<void (const FindData &, wxString *)> func, bool returnPosWhenNoTags = false);
+	int ReplaceAllByChar(const wxString& pattern, const wxString& tag, wxString* text, std::function<void(const FindData&, wxString*, size_t numOfChars)> func);
 	int Replace(const wxString& replaceTxt, wxString* txt);
 	//int ReplaceFromFindData(const wxString& replaceTxt, const FindData& data);
 	const FindData& GetResult() { return result; };
@@ -83,10 +84,10 @@ public:
 		to = _to;
 	};
 private:
-	//bool DoFindNextTag();
+	int ReplaceValue(wxString* txt, const wxString& what, const FindData& fdata);
 	FindData result;
 	wxRegEx regex;
-	TabPanel* currentTab;
+	TabPanel* currentTab = NULL;
 	wxString lastPattern;
 	wxPoint lastSelection;
 	long from = 0, to = 0;

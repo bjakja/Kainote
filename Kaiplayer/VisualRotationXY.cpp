@@ -247,7 +247,7 @@ void RotationXY::SetCurVisual()
 
 }
 
-void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial)
+void RotationXY::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 {
 	if (isOrg){
 		ChangeOrg(txt, dial, (((org.x - lastOrg.x) / zoomScale.x) + zoomMove.x)*coeffW,

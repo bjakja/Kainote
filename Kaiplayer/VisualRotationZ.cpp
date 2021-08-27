@@ -284,7 +284,7 @@ void RotationZ::SetCurVisual()
 	}
 }
 
-void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial)
+void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 {
 	if (hasTwoPoints && (!visibility[0] || !visibility[1]))
 		return;

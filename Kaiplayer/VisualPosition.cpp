@@ -617,7 +617,7 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool chan
 void Position::GetPositioningData()
 {
 	textSize = GetTextSize(tab->Edit->line, NULL, NULL, true, &extlead, &drawingPosition, border);
-	curLinePosition = drawingPosition;//PositionToVideo(drawingPosition)/*D3DXVECTOR2(0, 0)*/;
+	curLinePosition = drawingPosition;
 	//no alignment? get it
 	if(curLineAlingment == -1)
 		GetPosnScale(NULL, &curLineAlingment, moveValues);

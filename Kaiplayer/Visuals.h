@@ -99,7 +99,7 @@ public:
 	virtual void OnKeyPress(wxKeyEvent &evt){};
 	virtual void OnMouseCaptureLost(wxMouseCaptureLostEvent &evt){}
 	//virtual void GetVisual(wxString *visual){};
-	virtual void ChangeVisual(wxString *txt, Dialogue *_dial){};
+	virtual void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections){};
 	virtual wxPoint ChangeVisual(wxString* txt) { return wxPoint(0, 0); };
 	virtual void AppendClipMask(wxString *mask) {};
 	void DrawWarning(bool comment);
@@ -247,7 +247,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool, bool blockSetCurVisual);
@@ -332,7 +332,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool, bool blockSetCurVisual);
@@ -376,7 +376,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool, bool blockSetCurVisual);
@@ -405,7 +405,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	void ChangeTool(int _tool, bool blockSetCurVisual);
@@ -428,7 +428,7 @@ public:
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
 	//void GetVisual(wxString *visual);
-	void ChangeVisual(wxString *txt, Dialogue *_dial);
+	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
@@ -524,13 +524,13 @@ public:
 	void ChangeTool(int _tool, bool blockSetCurVisual);
 	void GetVisualValue(wxString* visual, const wxString &curValue);
 	wxPoint ChangeVisual(wxString* txt) override;
-	void ChangeVisual(wxString* txt, Dialogue* _dial) override;
+	void ChangeVisual(wxString* txt, Dialogue* _dial, size_t numOfSelections) override;
 private:
-	enum {
+	/*enum {
 		THUMB_RELEASED = 0,
 		THUMB_HOVER,
 		THUMB_PUSHED
-	};
+	};*/
 	void CheckRange(float val);
 	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
@@ -546,7 +546,7 @@ private:
 	int sliderPositionDiff = 0;
 	int increase = 80;
 	int mode = 0;
-	int multiplyCounter = 0;
+	float multiplyCounter = 0;
 	int lastTool = -1;
 	int tagMode = 0;
 };

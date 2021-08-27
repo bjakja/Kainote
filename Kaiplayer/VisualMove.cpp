@@ -327,7 +327,7 @@ void Move::SetCurVisual()
 
 }
 
-void Move::ChangeVisual(wxString *txt, Dialogue *_dial)
+void Move::ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections)
 {
 	bool putinbracket = false;
 	wxPoint tagPos;

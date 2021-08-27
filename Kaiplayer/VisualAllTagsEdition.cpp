@@ -316,20 +316,20 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 		//write entire setings in plain text
 		//Tag: name, tag, min, max, value, step, num digits after dot, paste mode, tag mode, [valuey], [valuex1],[valuex1]
 		txtSettings = L"HYDRA2.0"
-					L"Tag: blur, blur,       0, 100,  0,  0.5,  1, 0\n"\
-					L"Tag: border, bord,     0, 50,   0,  1,    1, 0\n"\
-					L"Tag: blur edge, be,    0, 100,  0,  1,    1, 0\n"\
-					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 0\n"\
-					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0\n"\
-					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0\n"\
-					L"Tag: font size, fs,   20, 300,  70, 1,    0, 0\n"\
-					L"Tag: spacing, fsp,  -100, 100,  0,  1,    1, 0\n"\
-					L"Tag: shadow, shad,     0, 80,   0,  1,    1, 0\n"\
-					L"Tag: xborder, xbord,   0, 80,   0,  1,    1, 0\n"\
-					L"Tag: yborder, ybord,   0, 80,   0,  1,    1, 0\n"\
-					L"Tag: xshadow, xshad, -80, 80,   0,  1,    1, 0\n"\
-					L"Tag: yshadow, yshad, -80, 80,   0,  1,    1, 0\n"\
-					L"Tag: position, pos,    0, 100,  0,  1,    1, 1, 0\n";
+					L"Tag: blur, blur,       0, 100,  0,  0.5,  1, 0, 1\n"\
+					L"Tag: border, bord,     0, 50,   0,  1,    1, 0, 0\n"\
+					L"Tag: blur edge, be,    0, 100,  0,  1,    1, 0, 1\n"\
+					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 1, 0\n"\
+					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0, 0\n"\
+					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0, 0\n"\
+					L"Tag: font size, fs,   20, 300,  70, 1,    0, 0, 0\n"\
+					L"Tag: spacing, fsp,  -100, 100,  0,  1,    1, 0, 1\n"\
+					L"Tag: shadow, shad,     0, 80,   0,  1,    1, 0, 0\n"\
+					L"Tag: xborder, xbord,   0, 80,   0,  1,    1, 0, 0\n"\
+					L"Tag: yborder, ybord,   0, 80,   0,  1,    1, 0, 0\n"\
+					L"Tag: xshadow, xshad, -80, 80,   0,  1,    1, 0, 0\n"\
+					L"Tag: yshadow, yshad, -80, 80,   0,  1,    1, 0, 0\n"\
+					L"Tag: position, pos,    0, 100,  0,  1,    1, 1, 2, 0\n";
 	}
 	wxStringTokenizer tokenzer(txtSettings, "\n", wxTOKEN_STRTOK);
 	tokenzer.GetNextToken();
@@ -359,7 +359,7 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 				continue;
 			if (!tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval))
 				continue;
-			tmp.value = tmpval;
+			tmp.values[0] = tmpval;
 			if (!tkzer.HasMoreTokens())
 				continue;
 			if (!tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval))
@@ -374,10 +374,10 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 			if (!tkzer.HasMoreTokens())
 				continue;
 			tmp.tagMode = wxAtoi(tkzer.GetNextToken().Trim(false));
-			for (int i = 0; tkzer.HasMoreTokens(); i++) {
+			for (int i = 1; tkzer.HasMoreTokens(); i++) {
 				if (tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval)) {
-					tmp.additionalValues[i] = tmpval;
-					tmp.numOfValues = i + 1;
+					tmp.values[i] = tmpval;
+					tmp.numOfValues = i;
 				}
 			}
 			tags->push_back(tmp);
@@ -401,11 +401,11 @@ void SaveSettings(std::vector<AllTagsSetting>* tags)
 		AllTagsSetting tag = (*tags)[i];
 		wxString tagText = L"Tag: ";
 		tagText << tag.name << ", " << tag.tag << ", " << tag.rangeMin << ", " <<
-			tag.rangeMax << ", " << tag.value << ", " << tag.step << ", " <<
+			tag.rangeMax << ", " << tag.values[0] << ", " << tag.step << ", " <<
 			(int)tag.digitsAfterDot << ", " << (int)tag.mode;
 		if (tag.numOfValues) {
-			for (int i = 0; i < tag.numOfValues; i++) {
-				tagText << ", " << tag.additionalValues[i];
+			for (int i = 1; i <= tag.numOfValues; i++) {
+				tagText << ", " << tag.values[i];
 			}
 		}
 		tagText << "\n";

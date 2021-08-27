@@ -33,15 +33,14 @@ AllTags::AllTags()
 
 void AllTags::DrawVisual(int time)
 {
-	int numOfLoops = actualTag.numOfValues + 1;
-	for (size_t i = 0; i < numOfLoops; i++) {
+	for (size_t i = 0; i < actualTag.numOfValues; i++) {
 		slider[i].OnDraw();
 	}
 }
 
 void AllTags::OnMouseEvent(wxMouseEvent& event)
 {
-	if (mode == 2)
+	if (mode >= 2)
 		multiplyCounter = 0;
 
 	float x = event.GetX();
@@ -162,19 +161,17 @@ void AllTags::SetCurVisual()
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
 	floatFormat = wxString::Format(L"5.%if", actualTag.digitsAfterDot);
-	if (mode == 2) {
-		slider[0].SetFirstThumbValue(actualTag.value);
-		slider[1].SetFirstThumbValue(actualTag.additionalValues[0]);
-		slider[2].SetFirstThumbValue(actualTag.additionalValues[1]);
-		slider[3].SetFirstThumbValue(actualTag.additionalValues[2]);
+	if (mode >= 2) {
+		for (size_t i = 0; i < actualTag.numOfValues; i++) {
+			slider[0].SetFirstThumbValue(actualTag.values[i]);
+		}
 	}
 	CheckTag();
 	FindTagValues();
 	if (mode < 2) {
-		slider[0].SetThumbValue(actualTag.value);
-		slider[1].SetThumbValue(actualTag.additionalValues[0]);
-		slider[2].SetThumbValue(actualTag.additionalValues[1]);
-		slider[3].SetThumbValue(actualTag.additionalValues[2]);
+		for (size_t i = 0; i < actualTag.numOfValues; i++) {
+			slider[0].SetThumbValue(actualTag.values[i]);
+		}
 	}
 	tab->Video->Render(false);
 }
@@ -199,17 +196,12 @@ void AllTags::FindTagValues()
 				wxString token = toknzr.GetNextToken().Trim(false).Trim();
 				double val = 0;
 				if (token.ToCDouble(&val)) {
-					if (i % 4 == 1) {
-						actualTag.value = val;
-					}
-					else{
-						actualTag.additionalValues[i - 1] = val;
-					}
+					actualTag.values[i] = val;
 					if (mode < 2)
 						CheckRange(val);
 				}
 				i++;
-				if (i >= (actualTag.numOfValues + 1))
+				if (i >= (actualTag.numOfValues))
 					break;
 			}
 
@@ -219,21 +211,21 @@ void AllTags::FindTagValues()
 			if (tagMode & IS_HEX_ALPHA) {
 				AssColor col;
 				col.SetAlphaString(data.finding);
-				actualTag.value = col.a;
+				actualTag.values[0] = col.a;
 			}
 			else if (tagMode & IS_HEX_COLOR) {
 				AssColor col(data.finding);
-				actualTag.value = col.r;
-				actualTag.additionalValues[0] = col.g;
-				actualTag.additionalValues[1] = col.b;
+				actualTag.values[0] = col.r;
+				actualTag.values[1] = col.g;
+				actualTag.values[2] = col.b;
 			}
 			else if (data.finding.ToCDouble(&val)) {
-				actualTag.value = val;
+				actualTag.values[0] = val;
 			}
 			else
 				return;
 
-			if (mode != 2)
+			if (mode < 2)
 				CheckRange(val);
 		}
 	}
@@ -264,15 +256,15 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	float valuediff3 = slider[2].GetDiffValue();
 	float valuediff4 = slider[3].GetDiffValue();
 	wxString strval;
-	if (curValue.empty() || mode) {
+	if (curValue.empty() || mode == 2) {
 		//mode 2 for multiply
 		//mode 1 for paste only one value
-		float val1 = (mode == 2) ?
-			actualTag.value + (multiplyCounter * valuediff) : value;
-		float val2 = (mode == 2) ?
-			actualTag.additionalValues[0] + (multiplyCounter * valuediff2) : value2;
-		float val3 = (mode == 2) ?
-			actualTag.additionalValues[1] + (multiplyCounter * valuediff3) : value3;
+		float val1 = (mode >= 2) ?
+			actualTag.values[0] + (multiplyCounter * valuediff) : value;
+		float val2 = (mode >= 2) ?
+			actualTag.values[1] + (multiplyCounter * valuediff2) : value2;
+		float val3 = (mode >= 2) ?
+			actualTag.values[2] + (multiplyCounter * valuediff3) : value3;
 
 		if (tagMode & IS_HEX_ALPHA) {
 			strval = wxString::Format(L"&H%02X&", MID(0, val1, 255));
@@ -283,15 +275,15 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 				MID(0, val2, 255),
 				MID(0, val3, 255));
 		}
-		else if (actualTag.numOfValues) {
-			float val4 = (mode == 2) ?
-				actualTag.additionalValues[2] + (multiplyCounter * valuediff4) : value4;
+		else if (actualTag.numOfValues > 1) {
+			float val4 = (mode >= 2) ?
+				actualTag.values[3] + (multiplyCounter * valuediff4) : value4;
 			strval = L"(" + getfloat(val1, floatFormat) + L"," +
 				getfloat(val2, floatFormat);
-			if (actualTag.numOfValues >= 2) {
+			if (actualTag.numOfValues >= 3) {
 				strval << L"," << getfloat(val3, floatFormat);
 			}
-			if (actualTag.numOfValues == 3) {
+			if (actualTag.numOfValues == 4) {
 				strval << L"," << getfloat(val4, floatFormat);
 			}
 
@@ -305,8 +297,10 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		}
 	}
 	else if (curValue.StartsWith(L"(")) {
+		bool hasLastBracket = curValue.EndsWith(L")");
 		//remove brackets;
-		wxStringTokenizer toknzr(curValue.Mid(1, curValue.length() - 2), L",", wxTOKEN_STRTOK);
+		wxStringTokenizer toknzr(curValue.Mid(1, hasLastBracket? curValue.length() - 2 : 
+			curValue.length() - 2), L",", wxTOKEN_STRTOK);
 		strval = L"(";
 		int counter = 0;
 		while (toknzr.HasMoreTokens())
@@ -314,15 +308,20 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			wxString token = toknzr.GetNextToken().Trim(false).Trim();
 			double val = 0;
 			if (token.ToCDouble(&val)) {
-				val += (counter % 2 == 0)? valuediff : valuediff2;
-				strval << getfloat(val, floatFormat) << L",";
+				float valdiff = (counter % 2 == 0)? valuediff : 
+					(counter % 2 == 1) ? valuediff2 :
+					(counter % 2 == 2) ? valuediff3 : valuediff4;
+				if (mode > 2) {
+					valdiff *= multiplyCounter;
+				}
+				strval << getfloat(val + valdiff, floatFormat) << L",";
 			}
 			counter++;
 		}
 		if (strval.EndsWith(L","))
 			strval = strval.Mid(0, strval.length() - 1);
-
-		strval << L")";
+		if(hasLastBracket)
+			strval << L")";
 	}
 	else {
 		double val = 0;
@@ -337,21 +336,25 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 		if (tagMode & IS_HEX_ALPHA) {
 			AssColor col;
 			col.SetAlphaString(trimed);
-			float vala = col.a + valuediff;
+			float vala = (mode > 2)? col.a + (valuediff * multiplyCounter) :
+				col.a + valuediff;
 			strval = wxString::Format(L"&H%02X&", MID(0, vala, 255));
 		}
 		else if (tagMode & IS_HEX_COLOR) {
 			AssColor col(trimed);
-			float valr = col.r + valuediff;
-			float valg = col.g + valuediff2;
-			float valb = col.b + valuediff3;
+			float valr = (mode > 2) ? col.r + (valuediff * multiplyCounter) : 
+				col.r + valuediff;
+			float valg = (mode > 2) ? col.g + (valuediff * multiplyCounter) : 
+				col.g + valuediff2;
+			float valb = (mode > 2) ? col.b + (valuediff * multiplyCounter) : 
+				col.b + valuediff3;
 			strval = wxString::Format(L"&H%02X%02X%02X&",
 				MID(0, valb, 255),
 				MID(0, valg, 255),
 				MID(0, valr, 255));
 		}
 		else if (trimed.ToCDouble(&val)) {
-			val += valuediff;
+			val += (mode > 2) ? (valuediff * multiplyCounter) : valuediff;
 			strval = getfloat(val, floatFormat);
 		}
 		else//dont add a bracket when value not set
@@ -366,14 +369,20 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 
 wxPoint AllTags::ChangeVisual(wxString* txt)
 {
-	if (mode) {
+	if (mode == 4) {
+		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
+			GetVisualValue(result, data.finding);
+			multiplyCounter += (1.f / (numOfCharacters - 1));
+		};
+		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc);
+	}
+	else if (mode) {
 		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, actualTag.mode);
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
-		if (mode == 2)
-			multiplyCounter++;
+		//if there is one line there's no need to count it
 	}
 	else {
 		auto replfunc = [=](const FindData& data, wxString* result) {
@@ -385,16 +394,26 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 	return GetPositionInText();
 }
 
-void AllTags::ChangeVisual(wxString* txt, Dialogue *dial)
+void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections)
 {
-	if (mode) {
+	if (mode == 4) {
+		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
+			GetVisualValue(result, data.finding);
+			multiplyCounter += (1.f / (numOfCharacters - 1));
+		};
+		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc);
+	}
+	else if (mode) {
 		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, 1);
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
-		if (mode == 2)
+		if (mode >= 2)
 			multiplyCounter++;
+		else if (mode >= 3) {
+			multiplyCounter += (1.f / (numOfSelections - 1));
+		}
 	}
 	else {
 		auto replfunc = [=](const FindData& data, wxString* result) {

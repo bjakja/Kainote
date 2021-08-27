@@ -321,6 +321,108 @@ int TagFindReplace::ReplaceAll(const wxString& pattern, const wxString& tag, wxS
 	return replaces;
 }
 
+int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& tag, wxString* text, std::function<void(const FindData&, wxString*, size_t numOfChars)> func)
+{
+	int replaces = 0;
+	//regex.Compile(L"\\\\" + pattern, wxRE_ADVANCED);
+	size_t len = text->length();
+	bool block = false;
+	size_t numOfChars = 0;
+	size_t i = 0;
+	//count chars
+	while (i < len) {
+		wxUniCharRef ch = (*text)[i];
+		if (ch == L'{') {
+			block = true;
+		}
+		else if (ch == L'}') {
+			block = false;
+		}
+		else if (ch == L'\\') {
+			if (i < len - 1) {
+				wxUniCharRef nch = (*text)[i + 1];
+				if (nch == L'h') {
+					//\h is one character
+					numOfChars++;
+					i++;
+				}//skip \n and \N
+				else if (nch == L'N' || nch == L'n') {
+					i++;
+				}
+				else {
+					numOfChars++;
+				}
+			}
+		}
+		else if (!block) {
+			numOfChars++;
+		}
+		i++;
+	}
+	//iterate every character
+	i = 0;
+	size_t lastTagBlockStart = 0;
+	int replaceDiff = 0;
+	while (i < len) {
+		wxUniCharRef ch = (*text)[i];
+		if (ch == L'{') {
+			block = true;
+			lastTagBlockStart = i;
+		}
+		else if (ch == L'}') {
+			block = false;
+			wxString tagsBlock = text->Mid(lastTagBlockStart, i - lastTagBlockStart);
+			FindData res;
+			if (FindTag(pattern, tagsBlock, 1)) {
+				res = result;
+				res.positionInText.y -= res.positionInText.x;
+				res.positionInText.x += lastTagBlockStart;
+			}
+			else {
+				FindData res(L"", wxPoint(i, 0), true, false);
+			}
+			wxString changedValue;
+			func(res, &changedValue, numOfChars);
+			changedValue.Prepend(L"\\" + tag);
+			i += ReplaceValue(text, changedValue, res);
+		}
+		else if (ch == L'\\') {
+			if (i < len - 1) {
+				wxUniCharRef nch = (*text)[i + 1];
+				if (nch == L'h') {
+					//\h is one character
+					FindData res(L"", wxPoint(i, 0), false, false);
+					wxString changedValue;
+					func(res, &changedValue, numOfChars);
+					changedValue.Prepend(L"\\" + tag);
+					i += ReplaceValue(text, changedValue, res);
+					i++;
+				}//skip \n and \N
+				else if (nch == L'N' || nch == L'n') {
+					i++;
+				}
+				else {
+					FindData res(L"", wxPoint(i, 0), false, false);
+					wxString changedValue;
+					func(res, &changedValue, numOfChars);
+					changedValue.Prepend(L"\\" + tag);
+					i += ReplaceValue(text, changedValue, res);
+				}
+			}
+		}
+		else if (!block) {
+			FindData res(L"", wxPoint(i, 0), false, false);
+			wxString changedValue;
+			func(res, &changedValue, numOfChars);
+			changedValue.Prepend(L"\\" + tag);
+			i += ReplaceValue(text, changedValue, res);
+		}
+		i++;
+	}
+
+	return replaces;
+}
+
 int TagFindReplace::Replace(const wxString& replaceTxt, wxString* text)
 {
 	const wxPoint& pos = result.positionInText;
@@ -386,6 +488,22 @@ bool TagFindReplace::TagValueFromStyle(Styles* style, const wxString& tag, wxStr
 		return false;
 
 	return true;
+}
+
+int TagFindReplace::ReplaceValue(wxString* txt, const wxString& what, const FindData& fdata)
+{
+	wxString changedValue = what;
+	if (!fdata.inBracket) {
+		changedValue = L"{" + changedValue + L"}";
+	}
+	if (fdata.positionInText.y) {
+		txt->erase(txt->begin() + fdata.positionInText.x,
+			txt->begin() + fdata.positionInText.x + fdata.positionInText.y);
+	}
+	if (!changedValue.empty()) {
+		txt->insert(fdata.positionInText.x, changedValue);
+	}
+	return changedValue.length() - fdata.positionInText.y;
 }
 
 bool TagFindReplace::TagValueToStyle(Styles* style, const wxString& tag, const wxString& value)

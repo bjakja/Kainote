@@ -649,13 +649,14 @@ void Visuals::SetVisual(bool dummy)
 		wxArrayInt sels;
 		grid->file->GetSelections(sels);
 		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
-		if (dummy && (!dummytext || selPositions.size() != sels.size())){
+		size_t selsSize = sels.size();
+		if (dummy && (!dummytext || selPositions.size() != selsSize)){
 			bool visible = false;
 			selPositions.clear();
 			//need to check if can delete when sizes are different dummytext is valid pointer
 			SAFE_DELETE(dummytext);
 			dummytext = grid->GetVisible(&visible, 0, &selPositions);
-			if (selPositions.size() != sels.size()){
+			if (selPositions.size() != selsSize){
 				//KaiLog(L"Sizes mismatch");
 				return;
 			}
@@ -670,7 +671,7 @@ void Visuals::SetVisual(bool dummy)
 			if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
 
 			wxString txt = Dial->GetTextNoCopy();
-			ChangeVisual(&txt, Dial);
+			ChangeVisual(&txt, Dial, selsSize);
 			if (!dummy){
 				grid->CopyDialogue(sels[i])->SetText(txt);
 			}
