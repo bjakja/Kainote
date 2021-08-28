@@ -746,9 +746,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	options->SetSelection(mode);
 
 	auto sendItemToggled = [=](wxCommandEvent& evt) {
-		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
-		event->SetInt(GetItemToggled());
-		wxQueueEvent(vtoolbar, event);
 		if (evt.GetId() == ID_TAG_LIST) {
 			int sel = tagList->GetSelection();
 			if (sel < tags->size() && sel >= 0) {
@@ -756,6 +753,9 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 				options->SetSelection(setting.tagMode);
 			}
 		}
+		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
+		event->SetInt(GetItemToggled());
+		wxQueueEvent(vtoolbar, event);
 		wxWindow* grandParent = vtoolbar->GetGrandParent();
 		grandParent->SetFocus();
 	};
@@ -766,7 +766,6 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 
 	edition = new MappedButton(vtoolbar, ID_EDITION, _("Edytuj"), _("Edycja tagów z listy oraz tworzenie nowych"), wxDefaultPosition, wxDefaultSize, -1);
 	vtoolbar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent& evt) {
-		//wxPoint Pos = edition->GetPosition();
 		AllTagsEdition edit(vtoolbar, wxPoint(), tags, tagList->GetSelection());
 		if (edit.ShowModal() == wxID_OK) {
 			auto tags = edit.GetTags();

@@ -82,7 +82,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 void AllTags::OnKeyPress(wxKeyEvent& evt)
 {
-	if (actualTag.tag != L"fad" || tagMode & IS_T_ANIMATION)
+	if (actualTag.tag != L"fad" || !(tagMode & IS_T_ANIMATION))
 		return;
 
 	int key = evt.GetKeyCode();
@@ -153,10 +153,10 @@ void AllTags::SetupSlidersPosition(int _sliderPositionY)
 		return;
 
 	sliderPositionY = sliderPositionY == -1 ? 40 : _sliderPositionY;
-	float left = 20;
-	float right = VideoSize.width - 40;
+	float left = 30;
+	float right = VideoSize.width - 30;
 	float bottom = sliderPositionY;
-	float top = sliderPositionY - 8;
+	float top = sliderPositionY - 6;
 	for (size_t i = 0; i < 4; i++) {
 		slider[i].SetPosition(left, top, right, bottom);
 		top += increase;
@@ -174,14 +174,14 @@ void AllTags::SetCurVisual()
 	SetupSlidersPosition(sliderPositionY);
 	if (mode >= MULTIPLY) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
-			slider[0].SetFirstThumbValue(actualTag.values[i]);
+			slider[i].SetFirstThumbValue(actualTag.values[i]);
 		}
 	}
 	CheckTag();
 	FindTagValues();
 	if (mode < MULTIPLY) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
-			slider[0].SetThumbValue(actualTag.values[i]);
+			slider[i].SetThumbValue(actualTag.values[i]);
 		}
 	}
 	tab->Video->Render(false);
@@ -193,9 +193,22 @@ void AllTags::FindTagValues()
 	wxString value;
 	TagValueFromStyle(currentStyle, actualTag.tag, &value);
 	double doubleValue = 0.;
-	if (!value.ToDouble(&doubleValue))
-		doubleValue = wxAtoi(value);
-	actualTag.values[0] = doubleValue;
+	if (tagMode & IS_HEX_ALPHA) {
+		AssColor col;
+		col.SetAlphaString(value);
+		actualTag.values[0] = col.a;
+	}
+	else if (tagMode & IS_HEX_COLOR) {
+		AssColor col(value);
+		actualTag.values[0] = col.r;
+		actualTag.values[1] = col.g;
+		actualTag.values[2] = col.b;
+	}
+	else {
+		if (!value.ToDouble(&doubleValue))
+			doubleValue = wxAtoi(value);
+		actualTag.values[0] = doubleValue;
+	}
 
 	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", L"", actualTag.mode)) {
 		const FindData& data = GetResult();
@@ -282,10 +295,11 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			strval = wxString::Format(L"&H%02X&", MID(0, (int)(val1 + 0.5), 255));
 		}
 		else if (tagMode & IS_HEX_COLOR) {
+			//bgr but sliders is rgb
 			strval = wxString::Format(L"&H%02X%02X%02X&",
-				MID(0, (int)(val1 + 0.5), 255),
+				MID(0, (int)(val3 + 0.5), 255),
 				MID(0, (int)(val2 + 0.5), 255),
-				MID(0, (int)(val3 + 0.5), 255));
+				MID(0, (int)(val1 + 0.5), 255));
 		}
 		else if (actualTag.numOfValues > 1) {
 			float val4 = (mode >= MULTIPLY) ?
@@ -298,21 +312,24 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			if (actualTag.numOfValues == 4) {
 				strval << L"," << getfloat(val4, floatFormat);
 			}
+			if (tagMode & IS_T_ANIMATION) {
+				strval << L",";
+			}
 
-			strval << L")";
+			if (curValue.empty() || curValue.EndsWith(")")) {
+				strval << ")";
+			}
 		}
 		else
 			strval = getfloat(val1, floatFormat);
 
-		if (curValue.EndsWith(")")) {
-			strval << ")";
-		}
+		
 	}
 	else if (curValue.StartsWith(L"(")) {
 		bool hasLastBracket = curValue.EndsWith(L")");
 		//remove brackets;
 		wxStringTokenizer toknzr(curValue.Mid(1, hasLastBracket? curValue.length() - 2 : 
-			curValue.length() - 2), L",", wxTOKEN_STRTOK);
+			curValue.length() - 1), L",", wxTOKEN_STRTOK);
 		strval = L"(";
 		int counter = 0;
 		while (toknzr.HasMoreTokens())
@@ -330,7 +347,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			}
 			counter++;
 		}
-		if (strval.EndsWith(L","))
+		if (strval.EndsWith(L",") && !(tagMode & IS_T_ANIMATION))
 			strval = strval.Mid(0, strval.length() - 1);
 		if(hasLastBracket)
 			strval << L")";
@@ -356,9 +373,9 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			AssColor col(trimed);
 			float valr = (mode > MULTIPLY) ? col.r + (valuediff * multiplyCounter) :
 				col.r + valuediff;
-			float valg = (mode > MULTIPLY) ? col.g + (valuediff * multiplyCounter) :
+			float valg = (mode > MULTIPLY) ? col.g + (valuediff2 * multiplyCounter) :
 				col.g + valuediff2;
-			float valb = (mode > MULTIPLY) ? col.b + (valuediff * multiplyCounter) :
+			float valb = (mode > MULTIPLY) ? col.b + (valuediff3 * multiplyCounter) :
 				col.b + valuediff3;
 			strval = wxString::Format(L"&H%02X%02X%02X&",
 				MID(0, (int)(valb + 0.5), 255),

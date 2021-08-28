@@ -544,7 +544,7 @@ private:
 	int currentTag = 0;
 	int sliderPositionY = -1;
 	int sliderPositionDiff = 0;
-	int increase = 80;
+	int increase = 70;
 	int mode = 0;
 	float multiplyCounter = 0;
 	int lastTool = -1;

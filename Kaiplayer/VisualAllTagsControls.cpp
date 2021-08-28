@@ -196,8 +196,8 @@ void AllTagsSlider::OnDraw()
 	float coeff = sliderRange / range;
 	float step = parent->actualTag.step * coeff;
 	float thumbposdiff = -parent->actualTag.rangeMin;
-	float thumbtop = top - 10;
-	float thumbbottom = bottom + 10;
+	float thumbtop = top - 7;
+	float thumbbottom = bottom + 7;
 
 	D3DCOLOR fill = 0xAA121150;
 	VERTEX v9[9];
@@ -222,13 +222,13 @@ void AllTagsSlider::OnDraw()
 		abs(parent->actualTag.rangeMin) > 999) ? 15 : 10;
 	for (float i = left; i <= rightend; i += step) {
 		if (i - lastPos > distance) {
-			D3DXVECTOR2 linepoints[] = { D3DXVECTOR2(i, top - 6), D3DXVECTOR2(i, top + 8 + 6) };
+			D3DXVECTOR2 linepoints[] = { D3DXVECTOR2(i, top - 5), D3DXVECTOR2(i, top + 10) };
 			parent->line->Draw(linepoints, 2, 0xFFBB0000);
 			lastPos = i;
 			float thumbOnSliderValue = ((i - left) / coeff) - thumbposdiff;
 			bool ismod0 = j % 4 == 0;
 			if (j % 4 == 2 || ismod0) {
-				RECT rect = { (long)i - 50, ismod0 ? (long)thumbbottom + 2 : (long)thumbtop - 60, (long)i + 50, ismod0 ? (long)thumbbottom + 60 : (long)thumbtop - 2 };
+				RECT rect = { (long)i - 50, ismod0 ? (long)thumbbottom + 2 : (long)thumbtop - 54, (long)i + 50, ismod0 ? (long)thumbbottom + 54 : (long)thumbtop - 2 };
 				int align = ismod0 ? DT_CENTER : DT_CENTER | DT_BOTTOM;
 				DRAWOUTTEXT(parent->font, getfloat(thumbOnSliderValue, L"5.1f"), rect, align, 0xFFFFFFFF);
 			}

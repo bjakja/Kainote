@@ -86,7 +86,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 		_("trzy dodatkowe wartości") };
 	numOfValues = new KaiChoice(this, ID_ADDITIONAL_VALUES_LIST, wxDefaultPosition, wxDefaultSize, 4, valuesStr);
 	numOfValues->SetToolTip(_("Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"));
-	numOfValues->SetSelection(currentTag.numOfValues);
+	numOfValues->SetSelection(currentTag.numOfValues - 1);
 	tagInsertMode = new KaiChoice(this, ID_INSERT_MODES_LIST, wxDefaultPosition, wxDefaultSize, 6, insertModes);
 	tagInsertMode->SetToolTip(_("Opcje zmiany tagów"));
 	tagInsertMode->SetSelection(currentTag.tagMode);
@@ -101,7 +101,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, [=](wxCommandEvent& evt) {
 		int numAdditionalValues = numOfValues->GetSelection();
 		for (int i = 1; i < 4; i++) {
-			values[i]->Enable(numAdditionalValues >= i);
+			values[i]->Enable(numAdditionalValues > i);
 		}
 		}, ID_ADDITIONAL_VALUES_LIST);
 	valuesSizer->Add(new KaiStaticText(this, -1, _("Dodatkowe wartości:")), 1, wxALL | wxEXPAND, 4);
@@ -223,9 +223,10 @@ void AllTagsEdition::UpdateTag()
 	currentTag.step = (float)step->GetDouble();
 	currentTag.mode = mode->GetSelection();
 	currentTag.digitsAfterDot = digitAfterDot->GetInt();
-	currentTag.numOfValues = numOfValues->GetSelection();
+	currentTag.numOfValues = numOfValues->GetSelection() + 1;
+	currentTag.tagMode = tagInsertMode->GetSelection();
 	numOfValues->SetSelection(currentTag.numOfValues - 1);
-	for (int i = 0; i <= currentTag.numOfValues && values[i]; i++) {
+	for (int i = 0; i < currentTag.numOfValues; i++) {
 		currentTag.values[i] = (float)values[i]->GetDouble();
 	}
 
@@ -239,9 +240,14 @@ void AllTagsEdition::SetTagFromSettings()
 	maxValue->SetDouble(currentTag.rangeMax);
 	step->SetDouble(currentTag.step);
 	mode->SetSelection(currentTag.mode);
+	digitAfterDot->SetInt(currentTag.digitsAfterDot);
 	numOfValues->SetSelection(currentTag.numOfValues - 1);
-	for (int i = 0; i <= currentTag.numOfValues && values[i]; i++) {
+	tagInsertMode->SetSelection(currentTag.tagMode);
+	for (int i = 0; i < currentTag.numOfValues; i++) {
 		values[i]->SetDouble(currentTag.values[i]);
+	}
+	for (int i = 1; i < 4; i++) {
+		values[i]->Enable(currentTag.numOfValues > i);
 	}
 }
 
@@ -265,13 +271,13 @@ bool AllTagsEdition::CheckModified()
 		currentTag.step != (float)step->GetDouble() ||
 		currentTag.mode != mode->GetSelection() ||
 		currentTag.digitsAfterDot != digitAfterDot->GetInt() ||
-		currentTag.numOfValues != numOfValues->GetSelection())
+		currentTag.numOfValues != (numOfValues->GetSelection() + 1) ||
+		currentTag.tagMode != tagInsertMode->GetSelection())
 	{
 		return true;
 	}
-	for (int i = 0; i <= currentTag.numOfValues; i++) {
-		if (values[i] && 
-			currentTag.values[i] != (float)values[i]->GetDouble()) {
+	for (int i = 0; i < currentTag.numOfValues; i++) {
+		if (currentTag.values[i] != (float)values[i]->GetDouble()) {
 			return true;
 		}
 	}
@@ -410,12 +416,12 @@ void SaveSettings(std::vector<AllTagsSetting>* tags)
 	OpenWrite ow(path);
 	for (size_t i = 0; i < tags->size(); i++) {
 		AllTagsSetting tag = (*tags)[i];
-		wxString tagText = L"Tag: ";
+		wxString tagText = i == 0 ? L"HYDRA2.0\nTag: " : L"Tag: ";
 		tagText << tag.name << ", " << tag.tag << ", " << tag.rangeMin << ", " <<
 			tag.rangeMax << ", " << tag.values[0] << ", " << tag.step << ", " <<
-			(int)tag.digitsAfterDot << ", " << (int)tag.mode;
+			(int)tag.digitsAfterDot << ", " << (int)tag.mode << ", " << (int)tag.tagMode;
 		if (tag.numOfValues > 1) {
-			for (int i = 1; i <= tag.numOfValues; i++) {
+			for (int i = 1; i < tag.numOfValues; i++) {
 				tagText << ", " << tag.values[i];
 			}
 		}
