@@ -534,7 +534,7 @@ private:
 	void CheckRange(float val);
 	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
-	void SetupSlidersPosition(int _sliderPositionY = 40);
+	void SetupSlidersPosition(int _sliderPositionY);
 	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";
@@ -542,7 +542,7 @@ private:
 	bool rholding = false;
 	//bool changeMoveDiff = false;
 	int currentTag = 0;
-	int sliderPositionY = 40;
+	int sliderPositionY = -1;
 	int sliderPositionDiff = 0;
 	int increase = 80;
 	int mode = 0;

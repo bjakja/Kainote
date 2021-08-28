@@ -24,7 +24,6 @@ AllTags::AllTags()
 	for (size_t i = 0; i < 4; i++) {
 		slider[i].SetAllTags(this);
 	}
-	SetupSlidersPosition();
 	tags = VideoToolbar::GetTagsSettings();
 	if (!tags->size()) {
 		LoadSettings(tags);
@@ -53,7 +52,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	if (rholding) {
 		SetupSlidersPosition(y + sliderPositionDiff);
 		tab->Video->Render(false);
-		for (size_t i = 0; i < 4; i++) {
+		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[i].ResetOnThumbAndSlider();
 		}
 		if (!event.RightUp()) {
@@ -76,7 +75,9 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 		rholding = false;
 	}
 
-	
+	for (size_t i = 0; i < actualTag.numOfValues; i++) {
+		slider[i].OnMouseEvent(event);
+	}
 }
 
 void AllTags::OnKeyPress(wxKeyEvent& evt)
@@ -148,7 +149,10 @@ void AllTags::CheckTag()
 
 void AllTags::SetupSlidersPosition(int _sliderPositionY)
 {
-	sliderPositionY = _sliderPositionY;
+	if (sliderPositionY == _sliderPositionY && sliderPositionY != -1)
+		return;
+
+	sliderPositionY = sliderPositionY == -1 ? 40 : _sliderPositionY;
 	float left = 20;
 	float right = VideoSize.width - 40;
 	float bottom = sliderPositionY;
@@ -167,6 +171,7 @@ void AllTags::SetCurVisual()
 		currentTag = 0;
 	actualTag = (*tags)[currentTag];
 	floatFormat = wxString::Format(L"5.%if", actualTag.digitsAfterDot);
+	SetupSlidersPosition(sliderPositionY);
 	if (mode >= MULTIPLY) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[0].SetFirstThumbValue(actualTag.values[i]);
@@ -190,8 +195,9 @@ void AllTags::FindTagValues()
 	double doubleValue = 0.;
 	if (!value.ToDouble(&doubleValue))
 		doubleValue = wxAtoi(value);
-	
-	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", L"", actualTag.mode)) {
+	actualTag.values[0] = doubleValue;
+
+	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", L"", actualTag.mode)) {
 		const FindData& data = GetResult();
 		if (data.finding.StartsWith(L"(")) {
 			//remove brackets;
@@ -273,13 +279,13 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			actualTag.values[2] + (multiplyCounter * valuediff3) : value3;
 
 		if (tagMode & IS_HEX_ALPHA) {
-			strval = wxString::Format(L"&H%02X&", MID(0, val1, 255));
+			strval = wxString::Format(L"&H%02X&", MID(0, (int)(val1 + 0.5), 255));
 		}
 		else if (tagMode & IS_HEX_COLOR) {
 			strval = wxString::Format(L"&H%02X%02X%02X&",
-				MID(0, val1, 255),
-				MID(0, val2, 255),
-				MID(0, val3, 255));
+				MID(0, (int)(val1 + 0.5), 255),
+				MID(0, (int)(val2 + 0.5), 255),
+				MID(0, (int)(val3 + 0.5), 255));
 		}
 		else if (actualTag.numOfValues > 1) {
 			float val4 = (mode >= MULTIPLY) ?
@@ -344,7 +350,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			col.SetAlphaString(trimed);
 			float vala = (mode > MULTIPLY)? col.a + (valuediff * multiplyCounter) :
 				col.a + valuediff;
-			strval = wxString::Format(L"&H%02X&", MID(0, vala, 255));
+			strval = wxString::Format(L"&H%02X&", MID(0, (int)(vala + 0.5), 255));
 		}
 		else if (tagMode & IS_HEX_COLOR) {
 			AssColor col(trimed);
@@ -355,9 +361,9 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 			float valb = (mode > MULTIPLY) ? col.b + (valuediff * multiplyCounter) :
 				col.b + valuediff3;
 			strval = wxString::Format(L"&H%02X%02X%02X&",
-				MID(0, valb, 255),
-				MID(0, valg, 255),
-				MID(0, valr, 255));
+				MID(0, (int)(valb + 0.5), 255),
+				MID(0, (int)(valg + 0.5), 255),
+				MID(0, (int)(valr + 0.5), 255));
 		}
 		else if (trimed.ToCDouble(&val)) {
 			val += (mode > MULTIPLY) ? (valuediff * multiplyCounter) : valuediff;
@@ -380,10 +386,10 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 			GetVisualValue(result, data.finding);
 			multiplyCounter += (1.f / (numOfCharacters - 1));
 		};
-		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc);
+		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc);
 	}
 	else if (mode) {
-		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, actualTag.mode);
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", *txt, actualTag.mode);
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
@@ -394,8 +400,8 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			GetVisualValue(result, data.finding);
 		};
-		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
-		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt);
+		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc, true);
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", *txt);
 	}
 	return GetPositionInText();
 }
@@ -407,10 +413,10 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 			GetVisualValue(result, data.finding);
 			multiplyCounter += (1.f / (numOfCharacters - 1));
 		};
-		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc);
+		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc);
 	}
 	else if (mode) {
-		FindTag(actualTag.tag + L"([-0-9.,\\(\\) ]+)", *txt, 1);
+		FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", *txt, 1);
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
@@ -425,7 +431,7 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			GetVisualValue(result, data.finding);
 		};
-		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) ]+)", actualTag.tag, txt, replfunc, true);
+		ReplaceAll(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc, true);
 	}
 }
 

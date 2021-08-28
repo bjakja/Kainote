@@ -324,7 +324,6 @@ int TagFindReplace::ReplaceAll(const wxString& pattern, const wxString& tag, wxS
 int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& tag, wxString* text, std::function<void(const FindData&, wxString*, size_t numOfChars)> func)
 {
 	int replaces = 0;
-	//regex.Compile(L"\\\\" + pattern, wxRE_ADVANCED);
 	size_t len = text->length();
 	bool block = false;
 	size_t numOfChars = 0;
@@ -338,7 +337,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 		else if (ch == L'}') {
 			block = false;
 		}
-		else if (ch == L'\\') {
+		else if (ch == L'\\' && !block) {
 			if (i < len - 1) {
 				wxUniCharRef nch = (*text)[i + 1];
 				if (nch == L'h') {
@@ -363,7 +362,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 	i = 0;
 	size_t lastTagBlockStart = 0;
 	int replaceDiff = 0;
-	while (i < len) {
+	while (i < text->length()) {
 		wxUniCharRef ch = (*text)[i];
 		if (ch == L'{') {
 			block = true;
@@ -375,7 +374,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 			FindData res;
 			if (FindTag(pattern, tagsBlock, 1)) {
 				res = result;
-				res.positionInText.y -= res.positionInText.x;
+				res.positionInText.y -= (res.positionInText.x - 1);
 				res.positionInText.x += lastTagBlockStart;
 			}
 			else {
@@ -385,9 +384,11 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 			func(res, &changedValue, numOfChars);
 			changedValue.Prepend(L"\\" + tag);
 			i += ReplaceValue(text, changedValue, res);
+			//prevent to go as normal character
+			i++;
 		}
-		else if (ch == L'\\') {
-			if (i < len - 1) {
+		else if (ch == L'\\' && !block) {
+			if (i < text->length() - 1) {
 				wxUniCharRef nch = (*text)[i + 1];
 				if (nch == L'h') {
 					//\h is one character
@@ -397,7 +398,8 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 					changedValue.Prepend(L"\\" + tag);
 					i += ReplaceValue(text, changedValue, res);
 					i++;
-				}//skip \n and \N
+				}
+				//skip \n and \N
 				else if (nch == L'N' || nch == L'n') {
 					i++;
 				}

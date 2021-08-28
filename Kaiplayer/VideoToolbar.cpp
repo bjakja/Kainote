@@ -739,21 +739,28 @@ void AllTagsItem::ShowContols(VideoToolbar* vtoolbar)
 	tagList = new KaiChoice(vtoolbar, ID_TAG_LIST, wxDefaultPosition, wxDefaultSize, list);
 	tagList->SetToolTip(_("Lista z tagami obsługiwanymi przez narzędzie"));
 	tagList->SetSelection(selection);
+	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż"), _("Pomnóż+"), _("Gradient tekst"), _("Gradient linia") };
+	wxSize wsize = vtoolbar->GetTextExtent(_("Pomnóż+"));
+	options = new KaiChoice(vtoolbar, ID_OPTIONS, wxDefaultPosition, wxSize(wsize.x + 26, -1), 6, optionsList);
+	options->SetToolTip(_("Opcje zmiany tagów:\nDodaj - zmienia wszystkie tagi dodając ruch z suwaka.\nWstaw - wstawia w miejsce kursora w przypadku jednej linii\nalbo na początku w przypadku wielu linii.\nPomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\npierwsza linia nie jest zmieniana."));
+	options->SetSelection(mode);
 
 	auto sendItemToggled = [=](wxCommandEvent& evt) {
 		wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		event->SetInt(GetItemToggled());
 		wxQueueEvent(vtoolbar, event);
+		if (evt.GetId() == ID_TAG_LIST) {
+			int sel = tagList->GetSelection();
+			if (sel < tags->size() && sel >= 0) {
+				AllTagsSetting setting = (*tags)[sel];
+				options->SetSelection(setting.tagMode);
+			}
+		}
 		wxWindow* grandParent = vtoolbar->GetGrandParent();
 		grandParent->SetFocus();
 	};
 
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_TAG_LIST);
-
-	wxString optionsList[] = { _("Dodaj"), _("Wstaw"), _("Pomnóż"), _("Pomnóż+"), _("Gradient tekst"), _("Gradient linia") };
-	options = new KaiChoice(vtoolbar, ID_OPTIONS, wxDefaultPosition, wxDefaultSize, 3, optionsList);
-	options->SetToolTip(_("Opcje zmiany tagów:\nDodaj - zmienia wszystkie tagi dodając ruch z suwaka.\nWstaw - wstawia w miejsce kursora w przypadku jednej linii\nalbo na początku w przypadku wielu linii.\nPomnóż - mnoży ruch suwaka przez numer zaznaczonej linijki\npierwsza linia nie jest zmieniana."));
-	options->SetSelection(mode);
 
 	vtoolbar->Bind(wxEVT_COMMAND_CHOICE_SELECTED, sendItemToggled, ID_OPTIONS);
 
@@ -785,7 +792,9 @@ void AllTagsItem::OnSize(VideoToolbar* vt)
 	maxWidth = vt->GetEndDrawPos();
 	wxSize tlbs = tagList->GetBestSize();
 	wxSize ebs = edition->GetBestSize();
-	wxSize obs = options->GetBestSize();
+	wxSize obs = vt->GetTextExtent(_("Pomnóż+"));
+	obs.x += 26;
+	obs.y = tlbs.y;
 	wxSize vts = vt->GetSize();
 	wxPoint pos(maxWidth - 2 - ebs.x, 1);
 	edition->SetPosition(pos);

@@ -90,7 +90,9 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	tagInsertMode = new KaiChoice(this, ID_INSERT_MODES_LIST, wxDefaultPosition, wxDefaultSize, 6, insertModes);
 	tagInsertMode->SetToolTip(_("Opcje zmiany tagów"));
 	tagInsertMode->SetSelection(currentTag.tagMode);
-	for (int i = 0; i < 4; i++) {
+	valuesAndInsertModeSizer->Add(numOfValues, 1, wxEXPAND | wxALL, 4);
+	valuesAndInsertModeSizer->Add(tagInsertMode, 1, wxEXPAND | wxALL, 4);
+	for (int i = 1; i < 4; i++) {
 		values[i] = new NumCtrl(this, -1, currentTag.values[i], -10000, 10000, false);
 		values[i]->SetToolTip(wxString::Format(_("Wartość %i"), i + 2));
 		values[i]->Enable(currentTag.numOfValues > i);
@@ -103,7 +105,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 		}
 		}, ID_ADDITIONAL_VALUES_LIST);
 	valuesSizer->Add(new KaiStaticText(this, -1, _("Dodatkowe wartości:")), 1, wxALL | wxEXPAND, 4);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 1; i < 4; i++) {
 		valuesSizer->Add(values[i], 1, wxALL | wxEXPAND, 4);
 	}
 
@@ -111,6 +113,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	editionSizer->Add(minMaxSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(valStepSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(modesSizer, 0, wxEXPAND, 0);
+	editionSizer->Add(valuesAndInsertModeSizer, 0, wxEXPAND, 0);
 	editionSizer->Add(valuesSizer, 0, wxEXPAND, 0);
 
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -313,12 +316,15 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 	wxString txtSettings;
 	//go inside when used pravious version of hydra
 	if (!ow.FileOpen(path, &txtSettings, false) || !txtSettings.StartsWith(L"HYDRA2.0")) {
+		bool writeSettings = !txtSettings.empty();
 		//write entire setings in plain text
 		//Tag: name, tag, min, max, value, step, num digits after dot, paste mode, tag mode, [valuey], [valuex1],[valuex1]
-		txtSettings = L"HYDRA2.0"
+		txtSettings = L"HYDRA2.0\n"\
 					L"Tag: blur, blur,       0, 100,  0,  0.5,  1, 0, 1\n"\
 					L"Tag: border, bord,     0, 50,   0,  1,    1, 0, 0\n"\
 					L"Tag: blur edge, be,    0, 100,  0,  1,    1, 0, 1\n"\
+					L"Tag: alpha, alpha,     0, 255,  0,  1,    0, 0, 1\n"\
+					L"Tag: color1, 1c,       0, 255,  0,  1,    0, 0, 1, 0, 0\n"\
 					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 1, 0\n"\
 					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0, 0\n"\
 					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0, 0\n"\
@@ -329,7 +335,12 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 					L"Tag: yborder, ybord,   0, 80,   0,  1,    1, 0, 0\n"\
 					L"Tag: xshadow, xshad, -80, 80,   0,  1,    1, 0, 0\n"\
 					L"Tag: yshadow, yshad, -80, 80,   0,  1,    1, 0, 0\n"\
-					L"Tag: position, pos,    0, 100,  0,  1,    1, 1, 2, 0\n";
+					L"Tag: position, pos,    0, 100,  0,  1,    0, 1, 2, 0\n"\
+					L"Tag: tanimation, t,    0, 9999, 0,  10,   0, 1, 1, 0\n";
+
+		if (writeSettings) {
+			ow.FileWrite(path, txtSettings);
+		}
 	}
 	wxStringTokenizer tokenzer(txtSettings, "\n", wxTOKEN_STRTOK);
 	tokenzer.GetNextToken();
@@ -377,7 +388,7 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 			for (int i = 1; tkzer.HasMoreTokens(); i++) {
 				if (tkzer.GetNextToken().Trim(false).ToCDouble(&tmpval)) {
 					tmp.values[i] = tmpval;
-					tmp.numOfValues = i;
+					tmp.numOfValues = i + 1;
 				}
 			}
 			tags->push_back(tmp);
@@ -403,7 +414,7 @@ void SaveSettings(std::vector<AllTagsSetting>* tags)
 		tagText << tag.name << ", " << tag.tag << ", " << tag.rangeMin << ", " <<
 			tag.rangeMax << ", " << tag.values[0] << ", " << tag.step << ", " <<
 			(int)tag.digitsAfterDot << ", " << (int)tag.mode;
-		if (tag.numOfValues) {
+		if (tag.numOfValues > 1) {
 			for (int i = 1; i <= tag.numOfValues; i++) {
 				tagText << ", " << tag.values[i];
 			}
