@@ -438,11 +438,10 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
 		Replace(L"\\" + actualTag.tag + strValue, txt);
-		if (mode >= MULTIPLY)
-			multiplyCounter++;
-		else if (mode >= MULTIPLY_PLUS) {
+		if (mode == GRADIENT_LINE)
 			multiplyCounter += (1.f / (numOfSelections - 1));
-		}
+		else if (mode >= MULTIPLY)
+			multiplyCounter++;
 	}
 	else {
 		auto replfunc = [=](const FindData& data, wxString* result) {

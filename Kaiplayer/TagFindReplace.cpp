@@ -342,7 +342,11 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				wxUniCharRef nch = (*text)[i + 1];
 				if (nch == L'h') {
 					//\h is one character
-					numOfChars++;
+					//when \h is on start, tag is before \h but it takes also first visible char
+					//thats why we do not count it
+					/*if (i == 0) {
+						numOfChars++;
+					}*/
 					i++;
 				}//skip \n and \N
 				else if (nch == L'N' || nch == L'n') {
@@ -353,7 +357,9 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				}
 			}
 		}
-		else if (!block) {
+		else if (!block && (ch != L' '/* || i == 0*/)) {
+			//when space is on start, tag is before space but it takes also first visible char
+			//thats why we do not count it
 			numOfChars++;
 		}
 		i++;
@@ -392,11 +398,15 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				wxUniCharRef nch = (*text)[i + 1];
 				if (nch == L'h') {
 					//\h is one character
-					FindData res(L"", wxPoint(i, 0), false, false);
-					wxString changedValue;
-					func(res, &changedValue, numOfChars);
-					changedValue.Prepend(L"\\" + tag);
-					i += ReplaceValue(text, changedValue, res);
+					if (i == 0) {
+						FindData res(L"", wxPoint(i, 0), false, false);
+						wxString changedValue;
+						func(res, &changedValue, numOfChars);
+						changedValue.Prepend(L"\\" + tag);
+						i += ReplaceValue(text, changedValue, res);
+						//when \h is on start then it takes next visible character
+						i++;
+					}
 					i++;
 				}
 				//skip \n and \N
@@ -412,12 +422,15 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				}
 			}
 		}
-		else if (!block) {
+		else if (!block && (ch != L' ' || i == 0)) {
 			FindData res(L"", wxPoint(i, 0), false, false);
 			wxString changedValue;
 			func(res, &changedValue, numOfChars);
 			changedValue.Prepend(L"\\" + tag);
 			i += ReplaceValue(text, changedValue, res);
+			if (i == 0 && ch == L' ') {
+				i++;
+			}
 		}
 		i++;
 	}

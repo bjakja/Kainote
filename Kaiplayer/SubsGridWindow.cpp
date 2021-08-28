@@ -334,8 +334,10 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 				if (hideOverrideTags) {
 					wxRegEx reg(subsFormat == SRT? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
-					reg.ReplaceAll(&txt, chtag);
-					if (showOriginal) { reg.ReplaceAll(&txttl, chtag); }
+					if (!showOriginal && !isTl)
+						reg.ReplaceAll(&txt, chtag);
+					if ((!showOriginal && isTl) || showOriginal)
+						reg.ReplaceAll(&txttl, chtag);
 				}
 
 				if (txt.length() > 1000){ txt = txt.SubString(0, 1000) + L"..."; }
@@ -723,8 +725,10 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			
 			if (hideOverrideTags) {
 				wxRegEx reg(subsFormat == SRT ? L"\\<[^\\<]*\\>" : L"\\{[^\\{]*\\}", wxRE_ADVANCED);
-				reg.ReplaceAll(&txt, chtag);
-				if (showOriginal) { reg.ReplaceAll(&txttl, chtag); }
+				if (!showOriginal && !isTl)
+					reg.ReplaceAll(&txt, chtag);
+				if ((!showOriginal && isTl) || showOriginal)
+					reg.ReplaceAll(&txttl, chtag);
 			}
 
 			if (txt.length() > maxTextLength){ txt = txt.SubString(0, maxTextLength) + L"..."; }
