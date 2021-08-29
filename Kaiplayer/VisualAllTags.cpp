@@ -120,6 +120,32 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 	}
 }
 
+wxString AllTags::GetSelectedTag(wxString* txt)
+{
+	TextEditor *editor = tab->Edit->GetEditor();
+	long start = 0, long end = 0;
+	editor->GetSelection(&start, &end);
+	if (start != end) {
+		wxString tag = txt->Mid(start, (end - start + 1));
+		if (tag.StartsWith(L"\\")) {
+			if (end + 1 < txt->length() &&tag.Freq(L'\\') == 1) {
+				if (!((*txt)[end + 1] == L'\\' || (*txt)[end + 1] == L'}')) {
+					size_t slash = txt->find(L'\\', end);
+					size_t endBracket = txt->find(L'}', end);
+					if (slash != -1 || endBracket != -1) {
+						size_t endPos = (slash < endBracket) ? slash : endBracket;
+						wxString tag = txt->Mid(start, (endPos - start + 1));
+					}
+				}
+				else {
+					return tag;
+				}
+			}
+		}
+	}
+	return L"";
+}
+
 void AllTags::CheckTag()
 {
 	if (actualTag.tag == L"1a" || actualTag.tag == L"2a" ||
@@ -410,6 +436,12 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
+		if (tagMode & IS_T_ANIMATION) {
+			wxString selectedTag = GetSelectedTag(txt);
+			if (strValue.EndsWith(L")")) {
+				strValue.insert(strValue.length() - 2, selectedTag);
+			}
+		}
 		Replace(L"\\" + actualTag.tag + strValue, txt);
 		//if there is one line there's no need to count it
 	}
@@ -437,6 +469,12 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 		wxString strValue, strFinding;
 		GetTextResult(&strFinding);
 		GetVisualValue(&strValue, strFinding);
+		if (tagMode & IS_T_ANIMATION) {
+			wxString selectedTag = GetSelectedTag(txt);
+			if (strValue.EndsWith(L")")) {
+				strValue.insert(strValue.length() - 2, selectedTag);
+			}
+		}
 		Replace(L"\\" + actualTag.tag + strValue, txt);
 		if (mode == GRADIENT_LINE)
 			multiplyCounter += (1.f / (numOfSelections - 1));

@@ -526,15 +526,11 @@ public:
 	wxPoint ChangeVisual(wxString* txt) override;
 	void ChangeVisual(wxString* txt, Dialogue* _dial, size_t numOfSelections) override;
 private:
-	/*enum {
-		THUMB_RELEASED = 0,
-		THUMB_HOVER,
-		THUMB_PUSHED
-	};*/
 	void CheckRange(float val);
 	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	void SetupSlidersPosition(int _sliderPositionY);
+	wxString GetSelectedTag(wxString* txt);
 	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";

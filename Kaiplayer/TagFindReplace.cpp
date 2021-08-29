@@ -111,6 +111,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 	if (bracketStart > txtlen) {
 		bracketStart = txtlen - 1u;
 	}
+	bool findTTag = pattern.StartsWith(L"t");
 
 	for (int i = bracketEnd; i >= 0; i--) {
 		wxUniChar ch = txt[i];
@@ -123,7 +124,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 			if (ftag == L"r") {
 				hasR = true;
 			}
-			if (ftag.EndsWith(L")")) {
+			if (ftag.EndsWith(L")") && !findTTag) {
 				//fixes \fn(name)
 				if (ftag.StartsWith(L"t(")) {
 					isT = true;
@@ -140,7 +141,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 					}
 				}
 			}
-			if (ftag.StartsWith(L"t(")) {
+			if (ftag.StartsWith(L"t(") && !findTTag) {
 				if (endT == -1)
 					endT = lastT;
 
