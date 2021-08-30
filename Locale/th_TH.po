@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Kainote\n"
-"POT-Creation-Date: 2021-07-22 02:27+0700\n"
-"PO-Revision-Date: 2021-07-22 02:28+0700\n"
+"POT-Creation-Date: 2021-08-29 16:16+0700\n"
+"PO-Revision-Date: 2021-08-29 16:19+0700\n"
 "Last-Translator: Bakura, Areki, duplex, Kostek00, Sacredus\n"
 "Language-Team: Altinat\n"
 "Language: th_TH\n"
@@ -151,9 +151,9 @@ msgstr "รูปแบบคีย์เฟรมไม่ถูกต้อง
 
 #: AudioBox.cpp:266 Automation.cpp:1197 Automation.cpp:1244 OptionsDialog.cpp:279
 #: OptionsDialog.cpp:600 Provider.cpp:175 ProviderFFMS2.cpp:27 VideoFfmpeg.cpp:52
-#: VideoFfmpeg.cpp:991 VisualAllTagsEdition.cpp:144 VisualAllTagsEdition.cpp:148
-#: VisualAllTagsEdition.cpp:166 VisualAllTagsEdition.cpp:268 VisualAllTagsEdition.cpp:276
-#: VisualAllTagsEdition.cpp:280 VisualDrawingShapes.cpp:136 VisualDrawingShapes.cpp:140
+#: VideoFfmpeg.cpp:991 VisualAllTagsEdition.cpp:162 VisualAllTagsEdition.cpp:166
+#: VisualAllTagsEdition.cpp:184 VisualAllTagsEdition.cpp:291 VisualAllTagsEdition.cpp:299
+#: VisualAllTagsEdition.cpp:303 VisualDrawingShapes.cpp:136 VisualDrawingShapes.cpp:140
 #: VisualDrawingShapes.cpp:158 VisualDrawingShapes.cpp:262 kainoteMain.cpp:618 kainoteMain.cpp:622
 #: kainoteMain.cpp:1796 kainoteMain.cpp:1797 kainoteMain.cpp:2209 kainoteMain.cpp:2235
 #: kainoteMain.cpp:2239
@@ -251,13 +251,13 @@ msgid "Otwórz"
 msgstr "เปิด"
 
 #: AutoSaveOpen.cpp:57 AutomationHotkeysDialog.cpp:145 AutomationProgress.cpp:295
-#: ColorPicker.cpp:629 ColorPicker.cpp:1397 DummyVideo.cpp:102 EditBox.cpp:87 EditBox.cpp:1695
+#: ColorPicker.cpp:629 ColorPicker.cpp:1397 DummyVideo.cpp:102 EditBox.cpp:87 EditBox.cpp:1689
 #: FontCatalogList.cpp:71 FontDialog.cpp:408 KaiMessageBox.cpp:78 MappedButton.cpp:39
 #: NewCatalog.cpp:42 OptionsDialog.cpp:960 ProgressDialog.cpp:39 ScriptInfo.cpp:114
-#: ShiftTimes.cpp:62 StyleChange.cpp:272 Stylelistbox.cpp:29 Stylelistbox.cpp:83
-#: Stylelistbox.cpp:118 SubsFile.cpp:47 SubsGrid.cpp:1301 SubsGridDialogs.cpp:54
-#: SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146 VisualAllTagsEdition.cpp:104
-#: VisualDrawingShapes.cpp:95
+#: ShiftTimes.cpp:62 StyleChange.cpp:272 Stylelistbox.cpp:29 Stylelistbox.cpp:53
+#: Stylelistbox.cpp:107 Stylelistbox.cpp:142 SubsFile.cpp:47 SubsGrid.cpp:1383
+#: SubsGridDialogs.cpp:54 SubsGridDialogs.cpp:85 SubsResampleDialog.cpp:146
+#: VisualAllTagsEdition.cpp:122 VisualDrawingShapes.cpp:95
 msgid "Anuluj"
 msgstr "ยกเลิก"
 
@@ -490,7 +490,7 @@ msgid "Pełny opis błędu Lua"
 msgstr "รายละเอียดของข้อผิดพลาด Lua"
 
 #: Automation.cpp:1204 Automation.cpp:1251 EditBox.cpp:280 FontCatalogList.cpp:109
-#: VideoToolbar.cpp:505 VideoToolbar.cpp:521 VideoToolbar.cpp:760 stylestore.cpp:82
+#: VideoToolbar.cpp:505 VideoToolbar.cpp:521 VideoToolbar.cpp:767 stylestore.cpp:82
 #: stylestore.cpp:135
 msgid "Edytuj"
 msgstr "แก้ไข"
@@ -564,9 +564,9 @@ msgstr ""
 
 #: AutomationHotkeysDialog.cpp:237 AutomationHotkeysDialog.cpp:246 Hotkeys.cpp:470 Hotkeys.cpp:480
 #: OptionsDialog.cpp:108 OptionsDialog.cpp:117 OptionsDialog.cpp:465 SpellCheckerDialog.cpp:139
-#: SubsGrid.cpp:996 SubsGridBase.cpp:519 SubsGridBase.cpp:548 Videobox.cpp:287 VisualClips.cpp:1036
-#: kainoteApp.cpp:156 kainoteApp.cpp:200 kainoteMain.cpp:953 kainoteMain.cpp:969
-#: kainoteMain.cpp:1076
+#: SubsGrid.cpp:1078 SubsGridBase.cpp:519 SubsGridBase.cpp:548 Videobox.cpp:287
+#: VisualClips.cpp:1053 kainoteApp.cpp:156 kainoteApp.cpp:200 kainoteMain.cpp:953
+#: kainoteMain.cpp:969 kainoteMain.cpp:1076
 msgid "Uwaga"
 msgstr "คำเตือน"
 
@@ -855,14 +855,14 @@ msgstr "ย้ายแท็ก"
 msgid "Komentarz"
 msgstr "ความคิดเห็น"
 
-#: EditBox.cpp:284 FindReplaceDialog.cpp:129 SelectLines.cpp:69 SubsGrid.cpp:435 SubsGrid.cpp:541
-#: SubsGridWindow.cpp:250 SubsGridWindow.cpp:633 SubsGridWindow.cpp:1083 SubsGridWindow.cpp:1249
+#: EditBox.cpp:284 FindReplaceDialog.cpp:129 SelectLines.cpp:69 SubsGrid.cpp:438 SubsGrid.cpp:588
+#: SubsGridWindow.cpp:250 SubsGridWindow.cpp:635 SubsGridWindow.cpp:1087 SubsGridWindow.cpp:1253
 #: kainoteMain.cpp:153
 msgid "Aktor"
 msgstr "แอคเตอร์"
 
-#: EditBox.cpp:290 FindReplaceDialog.cpp:132 SelectLines.cpp:70 SubsGrid.cpp:436 SubsGrid.cpp:542
-#: SubsGridWindow.cpp:254 SubsGridWindow.cpp:637 SubsGridWindow.cpp:1096 SubsGridWindow.cpp:1262
+#: EditBox.cpp:290 FindReplaceDialog.cpp:132 SelectLines.cpp:70 SubsGrid.cpp:443 SubsGrid.cpp:593
+#: SubsGridWindow.cpp:254 SubsGridWindow.cpp:639 SubsGridWindow.cpp:1100 SubsGridWindow.cpp:1266
 #: kainoteMain.cpp:154
 msgid "Efekt"
 msgstr "เอฟเฟกต์"
@@ -897,57 +897,57 @@ msgstr "คัดลอกข้อความภาษาต่างประ
 msgid "Kopiuje zaznaczony tekst obcojęzyczny do pola z tłumaczeniem"
 msgstr "คัดลอกข้อความภาษาต่างประเทศที่เลือกไปยังฟิลด์การแปล"
 
-#: EditBox.cpp:1176
+#: EditBox.cpp:1174
 msgid "Ustawia linijkę jako komentarz. Komentarze nie są wyświetlane"
 msgstr "กำหนดค่าบรรทัดเป็นความคิดเห็น ความคิดเห็นจะไม่แสดงให้เห็น"
 
-#: EditBox.cpp:1177
+#: EditBox.cpp:1175
 msgid "Warstwa linijki, wyższe warstwy są na wierzchu"
 msgstr "ชั้นบรรทัด ชั้นที่มากกว่าอยู่ด้านบน"
 
-#: EditBox.cpp:1178
+#: EditBox.cpp:1176
 msgid "Czas początkowy linijki"
 msgstr "เวลาเริ่มต้นของบรรทัด"
 
-#: EditBox.cpp:1179
+#: EditBox.cpp:1177
 msgid "Czas końcowy linijki"
 msgstr "เวลาสิ้นสุดของบรรทัด"
 
-#: EditBox.cpp:1180
+#: EditBox.cpp:1178
 msgid "Czas trwania linijki"
 msgstr "ระยะเวลาของบรรทัด"
 
-#: EditBox.cpp:1181
+#: EditBox.cpp:1179
 msgid "Styl linijki"
 msgstr "สไตล์ของบรรทัด"
 
-#: EditBox.cpp:1182
+#: EditBox.cpp:1180
 msgid "Umożliwia szybką edycję stylu linijki"
 msgstr "สามารถแก้ไขสไตล์ของบรรทัดบัจจุบันอย่างรวดเร็ว"
 
-#: EditBox.cpp:1183
+#: EditBox.cpp:1181
 msgid "Oznaczenie aktora linijki. Nie wpływa na wygląd napisów"
 msgstr "แอคเตอร์หรือตัวละคร ไม่ได้ส่งผลกระทบต่อสไตล์ที่ปรากฏของคำบรรยาย"
 
-#: EditBox.cpp:1184
+#: EditBox.cpp:1182
 msgid "Margines lewy linijki"
 msgstr "ระยะขอบซ้ายของบรรทัด"
 
-#: EditBox.cpp:1185
+#: EditBox.cpp:1183
 msgid "Margines prawy linijki"
 msgstr "ระยะขอบขวาของบรรทัด"
 
-#: EditBox.cpp:1186
+#: EditBox.cpp:1184
 msgid "Margines górny i dolny linijki"
 msgstr "ระยะขอบบนและล่างของบรรทัด"
 
-#: EditBox.cpp:1187
+#: EditBox.cpp:1185
 msgid ""
 "Efekt linijki. Służy do oznaczania linijek, na których zastosowane ma być karaoke bądź efekty "
 "VSFiltra"
 msgstr "บรรทัดเอฟเฟกต์ ใช้เพื่อทำคาราโอเกะหรือเอฟเฟกต์ VSFilter"
 
-#: EditBox.cpp:1188
+#: EditBox.cpp:1186
 msgid ""
 "Ilość znaków w każdej linijce.\n"
 "Nie więcej niż 43 znaki na linijkę (maksymalnie 2 linijki)"
@@ -955,7 +955,7 @@ msgstr ""
 "จำนวนอักขระในแต่ละบรรทัด\n"
 "ไม่ควรเกิน 43 อักขระต่อบรรทัด (และไม่เกิน 2 บรรทัด)"
 
-#: EditBox.cpp:1189
+#: EditBox.cpp:1187
 msgid ""
 "Znaki na sekundę.\n"
 "Nie powinny przekraczać 15 znaków na sekundę"
@@ -963,19 +963,19 @@ msgstr ""
 "อักขระต่อวินาที\n"
 "ไม่ควรเกิน 15 ตัวอักขระต่อวินาที"
 
-#: EditBox.cpp:1689 EditBox.cpp:1988
+#: EditBox.cpp:1683 EditBox.cpp:1982
 msgid "Zmień ilość przycisków"
 msgstr "เปลี่ยนจำนวนปุ่ม"
 
-#: EditBox.cpp:1925
+#: EditBox.cpp:1919
 msgid "Nie znaleziono niepewnych"
 msgstr "ไม่พบที่ต้องตรวจทาน"
 
-#: EditBox.cpp:1947
+#: EditBox.cpp:1941
 msgid "Nie znaleziono nieprzetłumaczonych"
 msgstr "ไม่พบบรรทัดที่ยังไม่ได้แปล"
 
-#: EditBox.cpp:1990
+#: EditBox.cpp:1984
 msgid "Zarządzaj przyciskami tagów"
 msgstr "จัดการปุ่มแท็ก"
 
@@ -1045,13 +1045,13 @@ msgstr "ข้ามข้อความ"
 msgid "W polu"
 msgstr "ประเภท"
 
-#: FindReplaceDialog.cpp:118 SelectLines.cpp:67 SubsGrid.cpp:433 SubsGrid.cpp:542
-#: SubsGridWindow.cpp:258 SubsGridWindow.cpp:643
+#: FindReplaceDialog.cpp:118 SelectLines.cpp:67 SubsGrid.cpp:449 SubsGrid.cpp:468 SubsGrid.cpp:475
+#: SubsGrid.cpp:594 SubsGrid.cpp:610 SubsGrid.cpp:619 SubsGridWindow.cpp:258 SubsGridWindow.cpp:645
 msgid "Tekst"
 msgstr "ข้อความ"
 
-#: FindReplaceDialog.cpp:123 SelectLines.cpp:68 SubsGrid.cpp:435 SubsGrid.cpp:541
-#: SubsGridWindow.cpp:249 SubsGridWindow.cpp:632 SubsGridWindow.cpp:1077 SubsGridWindow.cpp:1243
+#: FindReplaceDialog.cpp:123 SelectLines.cpp:68 SubsGrid.cpp:439 SubsGrid.cpp:589
+#: SubsGridWindow.cpp:249 SubsGridWindow.cpp:634 SubsGridWindow.cpp:1081 SubsGridWindow.cpp:1247
 msgid "Styl"
 msgstr "สไตล์"
 
@@ -1188,7 +1188,8 @@ msgstr "แคตตาล็อก"
 msgid "Przykład"
 msgstr "ตัวอย่าง"
 
-#: FontCatalogList.cpp:108 FontDialog.cpp:424 StyleChange.cpp:84 VideoToolbar.cpp:753
+#: FontCatalogList.cpp:108 FontDialog.cpp:424 StyleChange.cpp:84 VideoToolbar.cpp:742
+#: VisualAllTagsEdition.cpp:82
 msgid "Dodaj"
 msgstr "เพิ่ม"
 
@@ -1364,9 +1365,9 @@ msgstr "ไดเรกเทอรีที่บันทึกไม่ถู
 msgid "Plik zip już istnieje, usunąć go?"
 msgstr "มีแฟ้มซิปอยู่แล้วต้องการลบออกไหม"
 
-#: FontCollector.cpp:512 SubsGrid.cpp:963 SubsGrid.cpp:1287 SubsGridBase.cpp:538
+#: FontCollector.cpp:512 SubsGrid.cpp:1045 SubsGrid.cpp:1369 SubsGridBase.cpp:538
 #: SubsGridBase.cpp:1399 Tabs.cpp:1154 Videobox.cpp:824 Videobox.cpp:835
-#: VisualAllTagsEdition.cpp:128 VisualAllTagsEdition.cpp:192 VisualDrawingShapes.cpp:120
+#: VisualAllTagsEdition.cpp:146 VisualAllTagsEdition.cpp:210 VisualDrawingShapes.cpp:120
 #: VisualDrawingShapes.cpp:184 findreplace.cpp:396 findreplace.cpp:403 findreplace.cpp:1319
 #: findreplace.cpp:1323 kainoteMain.cpp:1013 kainoteMain.cpp:1759 stylestore.cpp:272
 #: stylestore.cpp:304 stylestore.cpp:343 stylestore.cpp:491 stylestore.cpp:636
@@ -2592,7 +2593,7 @@ msgstr "ข้อผิดพลาด Zlib: %s"
 msgid "Odczyt napisów z pliku Matroska."
 msgstr "กำลังโหลดคำบรรยายจากแฟ้ม Matroska"
 
-#: MappedButton.cpp:40 OptionsDialog.cpp:959 StyleChange.cpp:271 VisualAllTagsEdition.cpp:102
+#: MappedButton.cpp:40 OptionsDialog.cpp:959 StyleChange.cpp:271 VisualAllTagsEdition.cpp:120
 #: VisualDrawingShapes.cpp:93
 msgid "Zastosuj"
 msgstr "นำไปใช้"
@@ -3995,27 +3996,27 @@ msgstr "คืนค่าเริ่มต้น"
 msgid "Informacje o napisach"
 msgstr "ข้อมูลเกี่ยวกับคำบรรยาย"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:42 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:42 SubsGrid.cpp:1373
 msgid "Tytuł"
 msgstr "ชื่อเรื่อง"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:44 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:44 SubsGrid.cpp:1373
 msgid "Autor"
 msgstr "ผู้เขียน"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:46 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:46 SubsGrid.cpp:1373
 msgid "Tłumaczenie"
 msgstr "ผู้แปล"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:48 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:48 SubsGrid.cpp:1373
 msgid "Korekta"
 msgstr "ผู้ตรวจสอบ"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:50 SubsGrid.cpp:1291
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:50 SubsGrid.cpp:1373
 msgid "Timing"
 msgstr "ผู้จัดเวลา"
 
-#: OptionsPanels.cpp:31 ScriptInfo.cpp:52 SubsGrid.cpp:1291 VisualAllTagsEdition.cpp:47
+#: OptionsPanels.cpp:31 ScriptInfo.cpp:52 SubsGrid.cpp:1373 VisualAllTagsEdition.cpp:47
 #: VisualDrawingShapes.cpp:60
 msgid "Edycja"
 msgstr "แก้ไขโดย"
@@ -4379,8 +4380,8 @@ msgstr "เลื่อนตามวิดีโอ / เสียง"
 msgid "Początek"
 msgstr "เริ่มต้น"
 
-#: ShiftTimes.cpp:317 SubsGridWindow.cpp:246 SubsGridWindow.cpp:629 SubsGridWindow.cpp:1064
-#: SubsGridWindow.cpp:1071 SubsGridWindow.cpp:1230 SubsGridWindow.cpp:1237
+#: ShiftTimes.cpp:317 SubsGridWindow.cpp:246 SubsGridWindow.cpp:631 SubsGridWindow.cpp:1068
+#: SubsGridWindow.cpp:1075 SubsGridWindow.cpp:1234 SubsGridWindow.cpp:1241
 msgid "Koniec"
 msgstr "สิ้นสุด"
 
@@ -4408,11 +4409,12 @@ msgstr "เลื่อนเวลาไหนบ้าง"
 msgid "Obydwa czasy"
 msgstr "ทั้งสองเวลา"
 
-#: ShiftTimes.cpp:340 SubsGrid.cpp:434 SubsGrid.cpp:540 kainoteMain.cpp:150
+#: ShiftTimes.cpp:340 SubsGrid.cpp:436 SubsGrid.cpp:467 SubsGrid.cpp:473 SubsGrid.cpp:474
+#: SubsGrid.cpp:586 SubsGrid.cpp:609 SubsGrid.cpp:617 SubsGrid.cpp:618 kainoteMain.cpp:150
 msgid "Czas początkowy"
 msgstr "เวลาเริ่มต้น"
 
-#: ShiftTimes.cpp:341 SubsGrid.cpp:434 SubsGrid.cpp:540 kainoteMain.cpp:151
+#: ShiftTimes.cpp:341 SubsGrid.cpp:437 SubsGrid.cpp:587 kainoteMain.cpp:151
 msgid "Czas końcowy"
 msgstr "เวลาสิ้นสุด"
 
@@ -4900,11 +4902,11 @@ msgstr "ระยะห่างระหว่างตัวอักษรเ
 msgid "Prostokątna obwódka"
 msgstr "ตั้งฉากเส้นขอบ"
 
-#: StyleChange.cpp:709 SubsGrid.cpp:435 SubsGrid.cpp:541
+#: StyleChange.cpp:709 SubsGrid.cpp:441 SubsGrid.cpp:591
 msgid "Margines prawy"
 msgstr "ระยะขอบขวา"
 
-#: StyleChange.cpp:710 SubsGrid.cpp:435 SubsGrid.cpp:541
+#: StyleChange.cpp:710 SubsGrid.cpp:440 SubsGrid.cpp:590
 msgid "Margines lewy"
 msgstr "ขอบซ้าย"
 
@@ -4952,19 +4954,19 @@ msgstr "มุมบนขวา"
 msgid "Kodowanie tekstu"
 msgstr "เข้ารหัสอักขระข้อความ"
 
-#: Stylelistbox.cpp:22
+#: Stylelistbox.cpp:22 Stylelistbox.cpp:40
 msgid "Wybór stylów"
 msgstr "เลือกสไตล์"
 
-#: Stylelistbox.cpp:22
+#: Stylelistbox.cpp:22 Stylelistbox.cpp:40
 msgid "Wybór kolumn"
 msgstr "เลือกคอลัมน์"
 
-#: Stylelistbox.cpp:25
+#: Stylelistbox.cpp:25 Stylelistbox.cpp:43
 msgid "Wybierz style"
 msgstr "เลือกสไตล์"
 
-#: Stylelistbox.cpp:25
+#: Stylelistbox.cpp:25 Stylelistbox.cpp:43
 msgid "Wybierz kolumny"
 msgstr "เลือกคอลัมน์"
 
@@ -5277,50 +5279,50 @@ msgstr "เปลี่ยนคำอธิบาย"
 msgid "Zaznacz linie drzewka"
 msgstr "เลือกรายการแผนภูมิ"
 
-#: SubsGrid.cpp:433
-msgid "Tekst do oryginału"
-msgstr "ข้อความต้นฉบับ"
-
-#: SubsGrid.cpp:434 SubsGrid.cpp:540 kainoteMain.cpp:155
+#: SubsGrid.cpp:435 SubsGrid.cpp:585 kainoteMain.cpp:155
 msgid "Warstwa"
 msgstr "ชั้น"
 
-#: SubsGrid.cpp:436 SubsGrid.cpp:542
+#: SubsGrid.cpp:442 SubsGrid.cpp:592
 msgid "Margines pionowy"
 msgstr "ระยะขอบแนวตั้ง"
 
-#: SubsGrid.cpp:436
+#: SubsGrid.cpp:445
+msgid "Tekst do oryginału"
+msgstr "ข้อความต้นฉบับ"
+
+#: SubsGrid.cpp:446
 msgid "Tekst do tłumaczenia"
 msgstr "ข้อความที่จะแปล"
 
-#: SubsGrid.cpp:542
+#: SubsGrid.cpp:595
 msgid "Tekst bez tagów"
 msgstr "ข้อความที่ไม่มีแท็ก"
 
-#: SubsGrid.cpp:770 Videobox.cpp:1020 kainoteMain.cpp:686
+#: SubsGrid.cpp:852 Videobox.cpp:1020 kainoteMain.cpp:686
 msgid "Wybierz plik napisów"
 msgstr "เลือกแฟ้มคำบรรยาย"
 
-#: SubsGrid.cpp:772
+#: SubsGrid.cpp:854
 msgid "Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 msgstr "แฟ้มคำบรรยาย (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"
 
-#: SubsGrid.cpp:962
+#: SubsGrid.cpp:1044
 msgid "Zapisać plik przed wczytaniem napisów z MKV?"
 msgstr "ต้องการบันทึกแฟ้มก่อนจะโหลดคำบรรยายจาก MKV หรือไม่?"
 
-#: SubsGrid.cpp:996
+#: SubsGrid.cpp:1078
 msgid "Otwieranie napisów nie powiodło się"
 msgstr "ไม่สามารถเปิดคำบรรยาย"
 
-#: SubsGrid.cpp:1131 SubsGrid.cpp:1159 SubsGrid.cpp:1177
+#: SubsGrid.cpp:1213 SubsGrid.cpp:1241 SubsGrid.cpp:1259
 #, c-format
 msgid ""
 "W linii %i nie można przeskalować wartości '%s'\n"
 "w tagu '%s'"
 msgstr "ไม่สามารถปรับขนาดของบรรทัด %i ด้วยขนาด '%s' ในแท็ก '%s'"
 
-#: SubsGrid.cpp:1302
+#: SubsGrid.cpp:1384
 msgid "Wyłącz potwierdzenie"
 msgstr "ปิดคำเตือน"
 
@@ -5393,44 +5395,44 @@ msgstr "ตั้งชื่อไดเรกทอรีทรี"
 msgid "Zmień nazwę drzewka"
 msgstr "เปลี่ยนชื่อไดเรกทอรีทรี"
 
-#: SubsGridWindow.cpp:242 SubsGridWindow.cpp:625 SubsGridWindow.cpp:1057 SubsGridWindow.cpp:1223
+#: SubsGridWindow.cpp:242 SubsGridWindow.cpp:627 SubsGridWindow.cpp:1061 SubsGridWindow.cpp:1227
 msgid "W."
 msgstr "ชั้น"
 
-#: SubsGridWindow.cpp:244 SubsGridWindow.cpp:627 SubsGridWindow.cpp:1057 SubsGridWindow.cpp:1064
-#: SubsGridWindow.cpp:1223 SubsGridWindow.cpp:1230
+#: SubsGridWindow.cpp:244 SubsGridWindow.cpp:629 SubsGridWindow.cpp:1061 SubsGridWindow.cpp:1068
+#: SubsGridWindow.cpp:1227 SubsGridWindow.cpp:1234
 msgid "Start"
 msgstr "เริ่มต้น"
 
-#: SubsGridWindow.cpp:251 SubsGridWindow.cpp:634
+#: SubsGridWindow.cpp:251 SubsGridWindow.cpp:636
 msgid "M.L."
 msgstr "ซ้าย"
 
-#: SubsGridWindow.cpp:252 SubsGridWindow.cpp:635
+#: SubsGridWindow.cpp:252 SubsGridWindow.cpp:637
 msgid "M.P."
 msgstr "ขวา"
 
-#: SubsGridWindow.cpp:253 SubsGridWindow.cpp:636 SubsGridWindow.cpp:1089 SubsGridWindow.cpp:1255
+#: SubsGridWindow.cpp:253 SubsGridWindow.cpp:638 SubsGridWindow.cpp:1093 SubsGridWindow.cpp:1259
 msgid "M.Pi."
 msgstr "แนวตั้ง"
 
-#: SubsGridWindow.cpp:256 SubsGridWindow.cpp:640 SubsGridWindow.cpp:1103 SubsGridWindow.cpp:1269
+#: SubsGridWindow.cpp:256 SubsGridWindow.cpp:642 SubsGridWindow.cpp:1107 SubsGridWindow.cpp:1273
 msgid "ZNS"
 msgstr "อักขระต่อวินาที"
 
-#: SubsGridWindow.cpp:257 SubsGridWindow.cpp:642 SubsGridWindow.cpp:1108 SubsGridWindow.cpp:1274
+#: SubsGridWindow.cpp:257 SubsGridWindow.cpp:644 SubsGridWindow.cpp:1112 SubsGridWindow.cpp:1278
 msgid "Łamania"
 msgstr "ยกคำ"
 
-#: SubsGridWindow.cpp:258 SubsGridWindow.cpp:643
+#: SubsGridWindow.cpp:258 SubsGridWindow.cpp:645
 msgid "Tekst oryginalny"
 msgstr "ข้อความต้นฉบับ"
 
-#: SubsGridWindow.cpp:259 SubsGridWindow.cpp:644 TLDialog.cpp:42
+#: SubsGridWindow.cpp:259 SubsGridWindow.cpp:646 TLDialog.cpp:42
 msgid "Tekst tłumaczenia"
 msgstr "ข้อความแปล"
 
-#: SubsGridWindow.cpp:1999
+#: SubsGridWindow.cpp:2003
 msgid "Nie można wyświetlić podglądu, ponieważ wielkość okna napisów jest zbyt mała"
 msgstr "ไม่สามารถแสดงตัวอย่างได้เนื่องจากหน้าต่างคำบรรยายเล็กเกินไป"
 
@@ -6250,11 +6252,12 @@ msgid ""
 "Ustaw pozycję według prostokąta.\n"
 "Po narysowaniu prostokąta tekst zostanie\n"
 "spozycjonowany wg jednej osi badź dwóch\n"
-"dla wybranego położenia"
+"dla wybranego położenia."
 msgstr ""
 "วางตำแหน่งตามสี่เหลี่ยมผืนผ้า\n"
 "หลังจากวาดรูปสี่เหลี่ยมผืนผ้าแล้ว\n"
-"ข้อความจะถูกจัดตำแหน่งตามแกนหนึ่งหรือสองแกนที่เลือกไว้"
+"ข้อความจะถูกจัดตำแหน่งตาม\n"
+"แกนหนึ่งหรือสองแกนที่เลือกไว้"
 
 #: VideoToolbar.cpp:87
 msgid "Pozycjonuj w osi X"
@@ -6349,15 +6352,27 @@ msgstr ""
 msgid "Lista z tagami obsługiwanymi przez narzędzie"
 msgstr "รายการแท็กที่เครื่องมือสนับสนุน"
 
-#: VideoToolbar.cpp:753
+#: VideoToolbar.cpp:742 VisualAllTagsEdition.cpp:82
 msgid "Wstaw"
 msgstr "แทรก"
 
-#: VideoToolbar.cpp:753
+#: VideoToolbar.cpp:742 VisualAllTagsEdition.cpp:82
 msgid "Pomnóż"
 msgstr "คูณ"
 
-#: VideoToolbar.cpp:755
+#: VideoToolbar.cpp:742 VideoToolbar.cpp:743 VideoToolbar.cpp:794 VisualAllTagsEdition.cpp:82
+msgid "Pomnóż+"
+msgstr "คูณ+"
+
+#: VideoToolbar.cpp:742 VisualAllTagsEdition.cpp:82
+msgid "Gradient tekst"
+msgstr "ไล่ระดับสีข้อความ"
+
+#: VideoToolbar.cpp:742 VisualAllTagsEdition.cpp:82
+msgid "Gradient linia"
+msgstr "ไล่ระดับสีขอบ"
+
+#: VideoToolbar.cpp:745
 msgid ""
 "Opcje zmiany tagów:\n"
 "Dodaj - zmienia wszystkie tagi dodając ruch z suwaka.\n"
@@ -6373,95 +6388,95 @@ msgstr ""
 "คูณ - คูณการเคลื่อนไหวของตัวขยับด้วยจำนวนที่ตั้งไว้\n"
 "บรรทัดแรกจะไม่เปลี่ยนแปลง"
 
-#: VideoToolbar.cpp:760
+#: VideoToolbar.cpp:767
 msgid "Edycja tagów z listy oraz tworzenie nowych"
 msgstr "การแก้ไขแท็กจากรายการและสร้างแท็กใหม่"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1082
 msgid "Lewo-dół"
 msgstr "ซ้าย-ล่าง"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1082
 msgid "Środek-dół"
 msgstr "กลาง-ล่าง"
 
-#: VideoToolbar.cpp:1066
+#: VideoToolbar.cpp:1082
 msgid "Prawo-dół"
 msgstr "ขวา-ล่าง"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1083
 msgid "Lewo-środek"
 msgstr "ซ้าย-กลาง"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1083
 msgid "Środek"
 msgstr "กลาง"
 
-#: VideoToolbar.cpp:1067
+#: VideoToolbar.cpp:1083
 msgid "Prawo-środek"
 msgstr "กลาง-ขวา"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1084
 msgid "Lewo-góra"
 msgstr "ซ้าย-บน"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1084
 msgid "Środek-góra"
 msgstr "กลาง-บน"
 
-#: VideoToolbar.cpp:1068
+#: VideoToolbar.cpp:1084
 msgid "Prawo-góra"
 msgstr "ขวา-บน"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1086
 msgid "Lewo-poniżej"
 msgstr "ซ้าย-ใต้"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1086
 msgid "Środek-poniżej"
 msgstr "กลาง-ใต้"
 
-#: VideoToolbar.cpp:1070
+#: VideoToolbar.cpp:1086
 msgid "Prawo-poniżej"
 msgstr "ขวา-ใต้"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1087
 msgid "Lewo-ponad"
 msgstr "ซ้าย-เหนือ"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1087
 msgid "Środek-ponad"
 msgstr "กลาง-เหนือ"
 
-#: VideoToolbar.cpp:1071
+#: VideoToolbar.cpp:1087
 msgid "Prawo-ponad"
 msgstr "ขวา-เหนือ"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1088
 msgid "Przed-góra"
 msgstr "ก่อน-บน"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1088
 msgid "Przed-środek"
 msgstr "ก่อน-กลาง"
 
-#: VideoToolbar.cpp:1072
+#: VideoToolbar.cpp:1088
 msgid "Przed-dół"
 msgstr "ก่อน-ลง"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1089
 msgid "Za-góra"
 msgstr "ก่อน-บน"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1089
 msgid "Za-środek"
 msgstr "ก่อน-กลาง"
 
-#: VideoToolbar.cpp:1073
+#: VideoToolbar.cpp:1089
 msgid "Za-dół"
 msgstr "ก่อน-ลง"
 
-#: VideoToolbar.cpp:1082
+#: VideoToolbar.cpp:1098
 msgid "Położenie tekstu, działa podobnie jak w stylach"
 msgstr "การวางตำแหน่งข้อความคล้ายกับในสไตล์"
 
@@ -6608,48 +6623,69 @@ msgstr "สนิปสี่เหลี่ยมที่สนับสนุ
 msgid "Liczby po przecinku:"
 msgstr "เลขทศนิยม:"
 
-#: VisualAllTagsEdition.cpp:82
+#: VisualAllTagsEdition.cpp:83
+msgid "Brak dodatkowych wartości"
+msgstr "ไม่มีค่าเพิ่มเติม"
+
+#: VisualAllTagsEdition.cpp:84
+msgid "jedna dodatkowa wartość"
+msgstr "มีค่าเพิ่มเติม 1 ค่า"
+
+#: VisualAllTagsEdition.cpp:85
+msgid "dwie dodatkowe wartości"
+msgstr "มีค่าเพิ่มเติม 2 ค่า"
+
+#: VisualAllTagsEdition.cpp:86
+msgid "trzy dodatkowe wartości"
+msgstr "มีค่าเพิ่มเติม 3 ค่า"
+
+#: VisualAllTagsEdition.cpp:88
 msgid "Używane tylko w przypadku gdy tag ma 2 wartości bądź więcej"
 msgstr "ใช้เฉพาะเมื่อแท็กมี 2 ค่าขึ้นไป"
 
-#: VisualAllTagsEdition.cpp:86
-msgid "Włącz wartość 2:"
-msgstr "เปิดใช้งานค่า 2:"
+#: VisualAllTagsEdition.cpp:91
+msgid "Opcje zmiany tagów"
+msgstr "ตัวเลือกเปลี่ยนแท็ก"
 
-#: VisualAllTagsEdition.cpp:92
-msgid "Wartość 2:"
-msgstr "ค่า 2:"
+#: VisualAllTagsEdition.cpp:97
+#, c-format
+msgid "Wartość %i"
+msgstr "ค่า %i"
 
-#: VisualAllTagsEdition.cpp:105 VisualDrawingShapes.cpp:96
+#: VisualAllTagsEdition.cpp:107
+msgid "Dodatkowe wartości:"
+msgstr "ค่าเพิ่มเติม:"
+
+#: VisualAllTagsEdition.cpp:123 VisualDrawingShapes.cpp:96
 msgid "Przywróć domyślne"
 msgstr "เรียกคืนค่าเริ่มต้น"
 
-#: VisualAllTagsEdition.cpp:127 VisualDrawingShapes.cpp:119
+#: VisualAllTagsEdition.cpp:145 VisualDrawingShapes.cpp:119
 msgid "Czy na pewno chcesz przywrócić ustawienia domyślne?"
 msgstr "แน่ใจหรือไม่ว่าต้องการคืนค่าเริ่มต้น?"
 
-#: VisualAllTagsEdition.cpp:144
+#: VisualAllTagsEdition.cpp:162
 msgid "Wpisz nazwę nowego tagu."
 msgstr "ป้อนชื่อแท็กใหม่"
 
-#: VisualAllTagsEdition.cpp:148
+#: VisualAllTagsEdition.cpp:166
 msgid "Nowy tag już istnieje na liście, wpisz inną nazwę."
 msgstr "มีแท็กชื่อนี้อยู่ในรายการแล้ว โปรดป้อนชื่ออื่น"
 
-#: VisualAllTagsEdition.cpp:166
+#: VisualAllTagsEdition.cpp:184
 msgid "Nie można usunąć wszystkich tagów z listy"
 msgstr "ไม่สามารถลบแท็กทั้งหมดออกจากรายการได้"
 
-#: VisualAllTagsEdition.cpp:191
+#: VisualAllTagsEdition.cpp:209
 #, c-format
 msgid "Zapisać zmiany tagu \"%s\"?"
 msgstr "บันทึกการเปลี่ยนแปลงแท็ก \"%s\"?"
 
-#: VisualAllTagsEdition.cpp:268
+#: VisualAllTagsEdition.cpp:291
 msgid "Pole \"Tag\" nie może być puste."
 msgstr "ฟิลด์ \"แท็ก\" ต้องไม่เว้นว่าง"
 
-#: VisualAllTagsEdition.cpp:276
+#: VisualAllTagsEdition.cpp:299
 msgid ""
 "Pole \"Maksymalna wartość\" musi zawierać wartość\n"
 "większą od pola \"Minimalna wartość\"."
@@ -6657,11 +6693,11 @@ msgstr ""
 "ฟิลด์ \"ค่าสูงสุด\" ต้องมีค่า\n"
 "มากกว่าฟิลด์ \"ค่าต่ำสุด\""
 
-#: VisualAllTagsEdition.cpp:280
+#: VisualAllTagsEdition.cpp:303
 msgid "Pole \"Przeskok\" zawiera liczbę zbyt wysoką dla danego przedziału."
 msgstr "ฟิลด์ \"ลำดับ\" มีตัวเลขที่สูงเกินไปสำหรับค่าช่วงที่กำหนด"
 
-#: VisualClips.cpp:1035
+#: VisualClips.cpp:1052
 msgid "Ze względu na błędy Vsfiltra możliwość wstawiania dwóch \"m\" po sobie została zablokowana"
 msgstr "การแทรกดับเบิล \"m\" ถูกบล็อกเนื่องจากข้อผิดพลาด Vsfilter"
 
@@ -6746,7 +6782,11 @@ msgstr "ฟิลด์ \"รูปร่าง\" ต้องไม่ว่า
 msgid "Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"
 msgstr "วิดีโอต้องตั้งค่าอย่างน้อยหนึ่งเฟรมหลังจากเวลาเริ่มต้นที่กำหนดไว้"
 
-#: VisualRotationZ.cpp:477 VisualScale.cpp:752
+#: VisualRotationZ.cpp:477
+msgid "Nie można pobrać wartości clipa prostokątnego."
+msgstr "ไม่สามารถรับค่าคลิปสี่เหลี่ยมได้"
+
+#: VisualScale.cpp:752
 msgid "Nie mona pobra wartoci clipa prostoktnego."
 msgstr "ไม่สามารถรับค่าของคลิปสี่เหลี่ยมได้"
 
@@ -7854,6 +7894,9 @@ msgstr "คัดลอกสไตล์จากที่เก็บข้อ
 #: stylestore.cpp:780
 msgid "Oczyść napisy z nieużywanych stylów"
 msgstr "ลบสไตล์ในแฟ้ม ASS ที่ไม่ได้ใช้"
+
+#~ msgid "Włącz wartość 2:"
+#~ msgstr "เปิดใช้งานค่า 2:"
 
 #~ msgid "Nie można oblokować bufora tekstury"
 #~ msgstr "ไม่สามารถล็อคการบัฟเฟอร์พื้นผิว"
