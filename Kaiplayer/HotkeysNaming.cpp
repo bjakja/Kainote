@@ -259,4 +259,6 @@ void HotkeysNaming::CreateNamesMap()
 	names[GLOBAL_STYLE_MANAGER_CLEAN_STYLE] = _("Oczyść style pliku ASS");
 	names[GLOBAL_MISSPELLS_REPLACER] = _("Popraw drobne błędy (eksperymentalne)");
 	names[VIDEO_FULL_SCREEN] = _("Pełny ekran");
+	names[GLOBAL_FIND_NEXT] = _("Znajdź następny"); 
+	names[GLOBAL_LOAD_LAST_SESSION] = _("Wczytaj ostatnią sesję");
 }

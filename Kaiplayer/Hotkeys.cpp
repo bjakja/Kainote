@@ -154,8 +154,9 @@ void Hotkeys::LoadDefault(std::map<idAndType, hdata> &_hkeys, bool Audio)
 		_hkeys[idAndType(GLOBAL_NEXT_FRAME, GLOBAL_HOTKEY)] = hdata(_("Klatka w przód"), L"Right");
 		_hkeys[idAndType(GLOBAL_PREVIOUS_LINE, GLOBAL_HOTKEY)] = hdata(_("Poprzednia linijka"), L"Ctrl-Up");//góra
 		_hkeys[idAndType(GLOBAL_NEXT_LINE, GLOBAL_HOTKEY)] = hdata(_("Następna linijka"), L"Ctrl-Down");//dół
-		_hkeys[idAndType(GLOBAL_JOIN_WITH_PREVIOUS, GLOBAL_HOTKEY)] = hdata(_("Scal z poprzednią linijką"), L"F3");
-		_hkeys[idAndType(GLOBAL_JOIN_WITH_NEXT, GLOBAL_HOTKEY)] = hdata(_("Scal z następną linijką"), L"F4");
+		_hkeys[idAndType(GLOBAL_FIND_NEXT, GLOBAL_HOTKEY)] = hdata(_("Znajdź następny"), L"F3");
+		_hkeys[idAndType(GLOBAL_JOIN_WITH_PREVIOUS, GLOBAL_HOTKEY)] = hdata(_("Scal z poprzednią linijką"), L"F4");
+		_hkeys[idAndType(GLOBAL_JOIN_WITH_NEXT, GLOBAL_HOTKEY)] = hdata(_("Scal z następną linijką"), L"F5");
 		_hkeys[idAndType(GLOBAL_SNAP_WITH_START, GLOBAL_HOTKEY)] = hdata(_("Przyklej start do klatki kluczowej"), L"Shift-Left");//lewo
 		_hkeys[idAndType(GLOBAL_SNAP_WITH_END, GLOBAL_HOTKEY)] = hdata(_("Przyklej koniec do klatki kluczowej"), L"Shift-Right");//prawo
 		_hkeys[idAndType(GLOBAL_NEXT_TAB, GLOBAL_HOTKEY)] = hdata(_("Następna karta"), L"Ctrl-PgDn");

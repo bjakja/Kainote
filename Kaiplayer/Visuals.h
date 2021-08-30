@@ -530,7 +530,7 @@ private:
 	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	void SetupSlidersPosition(int _sliderPositionY);
-	wxString GetSelectedTag(wxString* txt);
+	wxString GetSelectedTag(wxString* txt, FindData *result);
 	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";

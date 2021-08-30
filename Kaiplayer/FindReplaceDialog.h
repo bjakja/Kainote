@@ -73,6 +73,7 @@ public:
 	void SaveOptions();
 	void Reset();
 	TabWindow *GetTab();
+	void FindNext();
 private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);

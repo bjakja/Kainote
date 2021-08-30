@@ -75,6 +75,8 @@ public:
 	bool onlyOption;
 	bool searchInOriginal;
 	bool find = false;
+	bool selectedLines = false;
+	bool allLines = false;
 	long dialogueColumn;
 
 	//int tabTextPosition;

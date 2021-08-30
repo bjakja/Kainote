@@ -562,6 +562,13 @@ TabWindow * FindReplaceDialog::GetTab()
 	return (TabWindow *)findReplaceTabs->GetTab();
 }
 
+void FindReplaceDialog::FindNext()
+{
+	if (!FR->findString.empty()) {
+		FR->Find(NULL);
+	}
+}
+
 void FindReplaceDialog::Reset()
 {
 	FR->fromstart = true;

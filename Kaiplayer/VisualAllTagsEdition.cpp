@@ -330,7 +330,12 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 					L"Tag: border, bord,     0, 50,   0,  1,    1, 0, 0\n"\
 					L"Tag: blur edge, be,    0, 100,  0,  1,    1, 0, 1\n"\
 					L"Tag: alpha, alpha,     0, 255,  0,  1,    0, 0, 1\n"\
+					L"Tag: 1a, 1a,           0, 255,  0,  1,    0, 0, 1\n"\
+					L"Tag: 3a, 3a,           0, 255,  0,  1,    0, 0, 1\n"\
+					L"Tag: 4a, 4a,           0, 255,  0,  1,    0, 0, 1\n"\
 					L"Tag: color1, 1c,       0, 255,  0,  1,    0, 0, 1, 0, 0\n"\
+					L"Tag: color3, 3c,       0, 255,  0,  1,    0, 0, 1, 0, 0\n"\
+					L"Tag: color4, 4c,       0, 255,  0,  1,    0, 0, 1, 0, 0\n"\
 					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 1, 0\n"\
 					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0, 0\n"\
 					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0, 0\n"\

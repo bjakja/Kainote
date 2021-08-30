@@ -83,6 +83,9 @@ public:
 		from = _from;
 		to = _to;
 	};
+	void SetResult(const FindData& res) {
+		result = res;
+	}
 private:
 	int ReplaceValue(wxString* txt, const wxString& what, const FindData& fdata);
 	FindData result;

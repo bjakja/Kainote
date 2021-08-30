@@ -248,12 +248,12 @@ int FindReplace::ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *rep
 
 void FindReplace::Find(TabWindow *window)
 {
-	if (window->windowType == WINDOW_FIND_IN_SUBS){
+	if (window && window->windowType == WINDOW_FIND_IN_SUBS){
 		KaiLogDebug(L"chujnia replace all wywołane z okna find in subs");
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
-	if (UpdateValues(window))
+	if (window && UpdateValues(window))
 		return;
 
 	if (findString != oldfind){ 
@@ -275,14 +275,12 @@ seekFromStart:
 	if (fromstart){
 		linePosition = tab->Grid->FirstSelection();
 		//is it possible to get it -1 if id exists, key also should exist
-		linePosition = (!window->AllLines->GetValue() && linePosition != -1) ? linePosition : 0;
+		linePosition = (!allLines && linePosition != -1) ? linePosition : 0;
 		textPosition = 0;
 	}
-	if (CheckStyles(window, tab))
+	if (window && CheckStyles(window, tab))
 		return;
 	bool styles = !stylesAsText.empty();
-		
-	bool onlysel = window->SelectedLines->GetValue();
 	SubsFile *Subs = tab->Grid->file;
 	bool tlmode = tab->Grid->hasTLMode;
 
@@ -291,9 +289,9 @@ seekFromStart:
 		Dialogue *Dial = Subs->GetDialogue(linePosition);
 		if (!Dial->isVisible || (skipComments && Dial->IsComment)){ linePosition++; textPosition = 0; continue; }
 		
-		if ((!styles && !onlysel) ||
+		if ((!styles && !selectedLines) ||
 			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(onlysel && tab->Grid->file->IsSelected(linePosition))){
+			(selectedLines && tab->Grid->file->IsSelected(linePosition))){
 			Dial->GetTextElement(dialogueColumn, &txt, tlmode);
 
 			foundPosition = -1;
@@ -343,10 +341,10 @@ seekFromStart:
 				findstart = foundPosition;
 				findend = textPosition;
 				lastActive = reprow = linePosition;
-				if (!onlysel){ tab->Grid->SelectRow(linePosition, false, true); }
+				if (!selectedLines){ tab->Grid->SelectRow(linePosition, false, true); }
 				tab->Edit->SetLine(linePosition);
 				tab->Grid->ScrollTo(linePosition, true);
-				if (onlysel){ tab->Grid->Refresh(false); }
+				if (selectedLines){ tab->Grid->Refresh(false); }
 				if (dialogueColumn == STYLE){
 					//pan->Edit->StyleChoice->SetFocus();
 				}
@@ -400,11 +398,15 @@ seekFromStart:
 			}
 		}
 		else{
-			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + window->FindText->GetValue() + L"\".", _("Potwierdzenie"));
+			KaiMessageBox(_("Nie znaleziono podanej frazy \"") + findString + L"\".", _("Potwierdzenie"));
 			wasResetToStart = false;
 		}
 	}
-	if (fromstart){ AddRecent(window); fromstart = false; }
+	if (fromstart){ 
+		if(window)
+			AddRecent(window); 
+		fromstart = false; 
+	}
 }
 
 void FindReplace::OnFind(TabWindow *window)
@@ -1449,6 +1451,8 @@ bool FindReplace::UpdateValues(TabWindow *window)
 	onlyText = window->OnlyText->GetValue();
 	bool onlyTags = window->OnlyTags->GetValue();
 	onlyOption = onlyText || onlyTags;
+	allLines = window->AllLines->GetValue();
+	selectedLines = window->SelectedLines->GetValue();
 
 	findString = window->FindText->GetValue();
 	replaceString = (window->ReplaceText)? window->ReplaceText->GetValue() : L"";

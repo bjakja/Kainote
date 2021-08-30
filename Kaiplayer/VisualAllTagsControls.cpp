@@ -143,7 +143,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 	}
 
 	if (evt.LeftDown() || evt.LeftDClick()) {
-		if (parent->mode != 2)
+		if (parent->mode != MULTIPLY)
 			lastThumbValue = firstThumbValue = thumbValue;
 		else
 			lastThumbValue = thumbValue;
@@ -228,9 +228,13 @@ void AllTagsSlider::OnDraw()
 			float thumbOnSliderValue = ((i - left) / coeff) - thumbposdiff;
 			bool ismod0 = j % 4 == 0;
 			if (j % 4 == 2 || ismod0) {
-				RECT rect = { (long)i - 50, ismod0 ? (long)thumbbottom + 2 : (long)thumbtop - 54, (long)i + 50, ismod0 ? (long)thumbbottom + 54 : (long)thumbtop - 2 };
+				RECT rect = { (long)i - 50, 
+					ismod0 ? (long)thumbbottom + 2 : (long)thumbtop - 54, 
+					(long)i + 50, 
+					ismod0 ? (long)thumbbottom + 54 : (long)thumbtop - 2 };
 				int align = ismod0 ? DT_CENTER : DT_CENTER | DT_BOTTOM;
-				DRAWOUTTEXT(parent->font, getfloat(thumbOnSliderValue, L"5.1f"), rect, align, 0xFFFFFFFF);
+				wxString strFormat = parent->actualTag.digitsAfterDot > 0 ? L"5.1f" : L"5.0f";
+				DRAWOUTTEXT(parent->font, getfloat(thumbOnSliderValue, strFormat), rect, align, 0xFFFFFFFF);
 			}
 			j++;
 		}

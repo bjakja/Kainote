@@ -144,6 +144,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	EditMenu->AppendTool(Toolbar, GLOBAL_HISTORY, _("&Historia"), _("Historia"), PTR_BITMAP_PNG(L"history"), true);
 	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_REPLACE, _("Znajdź i za&mień"), _("Szuka i podmienia dane frazy tekstu"), PTR_BITMAP_PNG(L"findreplace"));
 	EditMenu->AppendTool(Toolbar, GLOBAL_SEARCH, _("Z&najdź"), _("Szuka dane frazy tekstu"), PTR_BITMAP_PNG(L"search"));
+	EditMenu->AppendTool(Toolbar, GLOBAL_FIND_NEXT, _("Znajdź następny"), _("Znajduje kolejne wystąpięnie frazy w tekście"), PTR_BITMAP_PNG(L"search"));
 	Menu *SortMenu[2];
 	for (int i = 0; i < 2; i++){
 		SortMenu[i] = new Menu();
@@ -664,6 +665,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_SHIFT_TIMES){
 		tab->ShiftTimes->OnOKClick(event);
+	}
+	else if (id == GLOBAL_FIND_NEXT){
+		FR->FindNext();
 	}
 }
 //elements of menu all time enabled

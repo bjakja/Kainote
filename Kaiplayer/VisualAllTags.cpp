@@ -82,7 +82,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 
 void AllTags::OnKeyPress(wxKeyEvent& evt)
 {
-	if (actualTag.tag != L"fad" || !(tagMode & IS_T_ANIMATION))
+	if (!(actualTag.tag == L"fad" || tagMode & IS_T_ANIMATION))
 		return;
 
 	int key = evt.GetKeyCode();
@@ -120,24 +120,33 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 	}
 }
 
-wxString AllTags::GetSelectedTag(wxString* txt)
+wxString AllTags::GetSelectedTag(wxString* txt, FindData* result)
 {
 	TextEditor *editor = tab->Edit->GetEditor();
-	long start = 0, long end = 0;
+	long start = 0, end = 0;
 	editor->GetSelection(&start, &end);
 	if (start != end) {
-		wxString tag = txt->Mid(start, (end - start + 1));
+		if((*txt) != editor->GetValue())
+			return L"";
+
+		wxString tag = txt->Mid(start, (end - start));
 		if (tag.StartsWith(L"\\")) {
 			if (end + 1 < txt->length() &&tag.Freq(L'\\') == 1) {
-				if (!((*txt)[end + 1] == L'\\' || (*txt)[end + 1] == L'}')) {
+				result->inBracket = true;
+				if (!((*txt)[end] == L'\\' || (*txt)[end] == L'}')) {
 					size_t slash = txt->find(L'\\', end);
 					size_t endBracket = txt->find(L'}', end);
 					if (slash != -1 || endBracket != -1) {
 						size_t endPos = (slash < endBracket) ? slash : endBracket;
-						wxString tag = txt->Mid(start, (endPos - start + 1));
+						wxString fulltag = txt->Mid(start, (endPos - start + 1));
+						result->positionInText.x = start;
+						result->positionInText.y = endPos;
+						return fulltag;
 					}
 				}
 				else {
+					result->positionInText.x = start;
+					result->positionInText.y = end - 1;
 					return tag;
 				}
 			}
@@ -307,7 +316,7 @@ void AllTags::GetVisualValue(wxString* visual, const wxString& curValue)
 	float valuediff3 = slider[2].GetDiffValue();
 	float valuediff4 = slider[3].GetDiffValue();
 	wxString strval;
-	if (curValue.empty() || mode == MULTIPLY) {
+	if (curValue.empty() || mode == MULTIPLY || mode == INSERT) {
 		//mode 2 for multiply
 		//mode 1 for paste only one value
 		float val1 = (mode >= MULTIPLY) ?
@@ -433,13 +442,19 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 	}
 	else if (mode) {
 		FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", *txt, actualTag.mode);
-		wxString strValue, strFinding;
-		GetTextResult(&strFinding);
-		GetVisualValue(&strValue, strFinding);
+		wxString strValue;
+		FindData res = GetResult();
+		GetVisualValue(&strValue, res.finding);
 		if (tagMode & IS_T_ANIMATION) {
-			wxString selectedTag = GetSelectedTag(txt);
-			if (strValue.EndsWith(L")")) {
-				strValue.insert(strValue.length() - 2, selectedTag);
+			wxString selectedTag = GetSelectedTag(txt, &res);
+			if (!selectedTag.empty()) {
+				if (strValue.EndsWith(L")")) {
+					strValue.insert(strValue.length() - 1, selectedTag);
+				}
+				else {
+					strValue << selectedTag;
+				}
+				SetResult(res);
 			}
 		}
 		Replace(L"\\" + actualTag.tag + strValue, txt);
@@ -466,13 +481,19 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 	}
 	else if (mode) {
 		FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", *txt, 1);
-		wxString strValue, strFinding;
-		GetTextResult(&strFinding);
-		GetVisualValue(&strValue, strFinding);
+		wxString strValue;
+		FindData res = GetResult();
+		GetVisualValue(&strValue, res.finding);
 		if (tagMode & IS_T_ANIMATION) {
-			wxString selectedTag = GetSelectedTag(txt);
-			if (strValue.EndsWith(L")")) {
-				strValue.insert(strValue.length() - 2, selectedTag);
+			wxString selectedTag = GetSelectedTag(txt, &res);
+			if (!selectedTag.empty()) {
+				if (strValue.EndsWith(L")")) {
+					strValue.insert(strValue.length() - 1, selectedTag);
+				}
+				else {
+					strValue << selectedTag;
+				}
+				SetResult(res);
 			}
 		}
 		Replace(L"\\" + actualTag.tag + strValue, txt);
