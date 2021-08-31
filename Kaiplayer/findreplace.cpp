@@ -1451,8 +1451,8 @@ bool FindReplace::UpdateValues(TabWindow *window)
 	onlyText = window->OnlyText->GetValue();
 	bool onlyTags = window->OnlyTags->GetValue();
 	onlyOption = onlyText || onlyTags;
-	allLines = window->AllLines->GetValue();
-	selectedLines = window->SelectedLines->GetValue();
+	allLines = window->AllLines? window->AllLines->GetValue() : false;
+	selectedLines = window->SelectedLines? window->SelectedLines->GetValue() : false;
 
 	findString = window->FindText->GetValue();
 	replaceString = (window->ReplaceText)? window->ReplaceText->GetValue() : L"";
