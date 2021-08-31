@@ -207,14 +207,15 @@ void AllTags::SetCurVisual()
 	actualTag = (*tags)[currentTag];
 	floatFormat = wxString::Format(L"5.%if", actualTag.digitsAfterDot);
 	SetupSlidersPosition(sliderPositionY);
-	if (mode >= MULTIPLY) {
+	if (mode >= MULTIPLY && mode <= MULTIPLY_PLUS) {
+		AllTagsSetting tmp = (*tags)[currentTag];
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
-			slider[i].SetFirstThumbValue(actualTag.values[i]);
+			slider[i].SetFirstThumbValue(tmp.values[i]);
 		}
 	}
 	CheckTag();
 	FindTagValues();
-	if (mode < MULTIPLY) {
+	if (mode < MULTIPLY || mode > MULTIPLY_PLUS) {
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[i].SetThumbValue(actualTag.values[i]);
 		}

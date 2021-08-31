@@ -346,7 +346,7 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 					L"Tag: yborder, ybord,   0, 80,   0,  1,    1, 0, 0\n"\
 					L"Tag: xshadow, xshad, -80, 80,   0,  1,    1, 0, 0\n"\
 					L"Tag: yshadow, yshad, -80, 80,   0,  1,    1, 0, 0\n"\
-					L"Tag: position, pos,    0, 100,  0,  1,    0, 1, 2, 0\n"\
+					L"Tag: position, pos,    0, 100,  0,  0.1,  3, 1, 2, 0\n"\
 					L"Tag: tanimation, t,    0, 9999, 0,  10,   0, 1, 1, 0\n";
 
 		if (writeSettings) {
