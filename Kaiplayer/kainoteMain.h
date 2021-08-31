@@ -115,6 +115,7 @@ private:
 	void OnDelete(wxCommandEvent& event);
 	void OnClose1(wxCloseEvent& event);
 	void OnActivate(wxActivateEvent &evt);
+	void OnExternalSession(int id);
 
 	Menu* ConvMenu;
 	Menu* FileMenu;

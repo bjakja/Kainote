@@ -115,6 +115,8 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	SubsRecMenu = new Menu();
 	Menu *lastSession = new Menu();
 	lastSession->AppendTool(Toolbar, GLOBAL_LOAD_LAST_SESSION, _("Wczytaj ostatnią sesję"), _("Wczytuje poprzednio zaczytane pliki"), PTR_BITMAP_PNG(L"OPEN_LAST_SESSION"));
+	lastSession->Append(GLOBAL_LOAD_EXTERNAL_SESSION, _("Wczytaj sesję z pliku"), _("Wczytuje sesję z wcześniej zapisanego pliku sesji"));
+	lastSession->Append(GLOBAL_SAVE_EXTERNAL_SESSION, _("Zapisz sesję do pliku"), _("Zapisuje sesję do pliku"));
 	int lastSessionConfig = Options.GetInt(LAST_SESSION_CONFIG);
 	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, _("Pytaj o wczytanie ostatniej sesji przy starcie programu"), NULL, _("Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
 	lastSession->Append(GLOBAL_LOAD_LAST_SESSION_ON_START, _("Wczytaj ostatnią sesję przy starcie programu"), NULL, _("Wczytuje poprzednio zaczytane pliki przy starcie programu"), ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 2);
@@ -648,6 +650,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION){
 		Tabs->LoadLastSession();
+	}
+	else if (id == GLOBAL_LOAD_EXTERNAL_SESSION || id == GLOBAL_SAVE_EXTERNAL_SESSION) {
+		OnExternalSession(id);
 	}
 	else if (id == GLOBAL_LOAD_LAST_SESSION_ON_START){
 		// 0 nothing 1 ask for load 2 load on start
@@ -2112,6 +2117,34 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 	}
 	if (evt.GetActive()){
 		sendFocus.Start(50, true);
+	}
+}
+
+void KainoteFrame::OnExternalSession(int id)
+{
+	if (id == GLOBAL_LOAD_EXTERNAL_SESSION) {
+		wxFileDialog FileDialog(this, _("Wybierz plik sesji"),
+			Options.configPath,
+			L"", _("Plik sesji (*.kls),|*.kls"),
+			wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+		if (FileDialog.ShowModal() == wxID_OK) {
+			Tabs->LoadLastSession(false, FileDialog.GetPath());
+		}
+	}
+	else if (id == GLOBAL_SAVE_EXTERNAL_SESSION) {
+	repeatOpening:
+		wxFileDialog saveFileDialog(this, _("Zapisz plik sesji"),
+			Options.configPath, L"", _("Plik sesji (*.kls),|*.kls"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+
+		if (saveFileDialog.ShowModal() == wxID_OK) {
+			wxString path = saveFileDialog.GetPath();
+			DWORD attributes = ::GetFileAttributesW(path.wc_str());
+			if (attributes != -1 && attributes & FILE_ATTRIBUTE_READONLY) {
+				KaiMessageBox(_("Wybrany plik jest tylko do odczytu,\nproszę zapisać pod inną nazwą lub zmienić atrybuty pliku."), _("Uwaga"), 4L, this);
+				goto repeatOpening;
+			}
+			Tabs->SaveLastSession(false, false, path);
+		}
 	}
 }
 

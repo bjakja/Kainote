@@ -1259,7 +1259,7 @@ TabPanel *Notebook::GetTab()
 	}
 }
 
-void Notebook::SaveLastSession(bool beforeClose, bool recovery)
+void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &externalPath)
 {
 	wxString result = L"[" + Options.progname + L"]\r\n";
 	if (beforeClose)
@@ -1297,15 +1297,17 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery)
 		numtab++;
 	}
 	OpenWrite op;
-	op.FileWrite(Options.configPath + L"\\LastSession.txt", result);
+	wxString sessionPath = externalPath.empty() ? Options.configPath + L"\\LastSession.txt" : externalPath;
+	op.FileWrite(sessionPath, result);
 
 }
 
-void Notebook::LoadLastSession(bool loadCrashSession)
+void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPath)
 {
 	wxString riddenSession;
+	wxString sessionPath = externalPath.empty() ? Options.configPath + L"\\LastSession.txt" : externalPath;
 	OpenWrite op;
-	if (op.FileOpen(Options.configPath + L"\\LastSession.txt", &riddenSession, false) && !riddenSession.empty()){
+	if (op.FileOpen(sessionPath, &riddenSession, false) && !riddenSession.empty()){
 		wxStringTokenizer tokenizer(riddenSession, L"\n", wxTOKEN_STRTOK);
 		wxString header = tokenizer.GetNextToken();
 		if (!header.StartsWith(L"[Kainote")){
