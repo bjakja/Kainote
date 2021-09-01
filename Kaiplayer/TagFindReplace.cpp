@@ -377,7 +377,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 		}
 		else if (ch == L'}') {
 			block = false;
-			wxString tagsBlock = text->Mid(lastTagBlockStart, i - lastTagBlockStart);
+			wxString tagsBlock = text->Mid(lastTagBlockStart, (i - lastTagBlockStart) + 1);
 			FindData res;
 			if (FindTag(pattern, tagsBlock, 1)) {
 				res = result;
@@ -385,7 +385,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				res.positionInText.x += lastTagBlockStart;
 			}
 			else {
-				FindData res(L"", wxPoint(i, 0), true, false);
+				res = FindData(L"", wxPoint(i, 0), true, false);
 			}
 			wxString changedValue;
 			func(res, &changedValue, numOfChars);

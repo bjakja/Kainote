@@ -437,7 +437,8 @@ wxPoint AllTags::ChangeVisual(wxString* txt)
 	if (mode == 4) {
 		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
 			GetVisualValue(result, data.finding);
-			multiplyCounter += (1.f / (numOfCharacters - 1));
+			if(numOfCharacters > 1)
+				multiplyCounter += (1.f / (numOfCharacters - 1));
 		};
 		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc);
 	}
@@ -476,7 +477,8 @@ void AllTags::ChangeVisual(wxString* txt, Dialogue *dial, size_t numOfSelections
 	if (mode == GRADIENT_TEXT) {
 		auto replfunc = [=](const FindData& data, wxString* result, size_t numOfCharacters) {
 			GetVisualValue(result, data.finding);
-			multiplyCounter += (1.f / (numOfCharacters - 1));
+			if (numOfCharacters > 1)
+				multiplyCounter += (1.f / (numOfCharacters - 1));
 		};
 		ReplaceAllByChar(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", actualTag.tag, txt, replfunc);
 	}

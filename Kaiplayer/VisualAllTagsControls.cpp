@@ -294,7 +294,7 @@ void AllTagsSlider::SetThumbValue(float value, bool setFirstThumbValue)
 
 void AllTagsSlider::SetFirstThumbValue(float value)
 {
-	firstThumbValue = thumbState = value;
+	firstThumbValue = thumbValue = value;
 }
 
 void AllTagsSlider::SetHolding(bool _holding)
