@@ -126,25 +126,15 @@ public:
 	int shapeListSelection = 0;
 };
 
-class ScaleRotationItem : public VisualItem
+class ClipRectangleItem : public VisualItem
 {
 public:
-	ScaleRotationItem() : VisualItem() { startIconNumber = 3; };
+	ClipRectangleItem() : VisualItem() { startIconNumber = 18; };
 	void OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt);
 	void OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt);
-	void Synchronize(VisualItem * item){
-		ScaleRotationItem *sri = (ScaleRotationItem*)item;
-		toggled = sri->toggled;
-	};
+	//just one button for change clip for iclip 
 	int GetItemToggled(){ return toggled; };
-	void SetItemToggled(int *item){ 
-		toggled = (*item); 
-		if (toggled < 0)
-			toggled = (*item) = numIcons - 1;
-		else if (toggled >= numIcons)
-			toggled = (*item) = 0;
-	};
-	int numIcons = 3;
+	int numIcons = 1;
 	int toggled = 0;
 };
 
@@ -166,7 +156,7 @@ private:
 	MappedButton* edition = NULL;
 	int maxWidth = -1;
 	int selection = 0;
-	int mode = 0;
+	int mode = 1;
 	enum {
 		ID_TAG_LIST = 12378,
 		ID_OPTIONS,
@@ -373,7 +363,6 @@ enum{
 	ID_VECTOR_TOOLBAR_EVENT,
 	ID_VECTOR_TOOLBAR_NORMAL_BUTTON,
 	ID_MOVE_TOOLBAR_EVENT,
-	ID_SCALE_ROTATE_TOOLBAR_EVENT,
 	ID_SEEK_AFTER=22222,
 	ID_PLAY_AFTER
 };

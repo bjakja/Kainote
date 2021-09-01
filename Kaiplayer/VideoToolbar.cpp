@@ -101,7 +101,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	visualItems.push_back(new ScaleItem());
 	visualItems.push_back(new RotationZItem());
 	visualItems.push_back(new RotationXYItem());//rotation xy
-	visualItems.push_back(NULL);//clip rectangle
+	visualItems.push_back(new ClipRectangleItem());//clip rectangle
 	//clip
 	visualItems.push_back(new VectorItem(true));
 	//drawing
@@ -110,7 +110,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	visualItems.push_back(new AllTagsItem());
 	//for safty there is still scale rotation item
 	//in future replaced for fax visual
-	visualItems.push_back(new ScaleRotationItem());
+	//visualItems.push_back(new ScaleRotationItem());
 
 	Connect(wxEVT_PAINT, (wxObjectEventFunction)&VideoToolbar::OnPaint);
 	Connect(wxEVT_SIZE, (wxObjectEventFunction)&VideoToolbar::OnSize);
@@ -567,7 +567,7 @@ void VectorItem::OnSize(VideoToolbar* vt)
 	}
 }
 
-void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
+void ClipRectangleItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolbar *vt)
 {
 	int startDrawPos = w - (h * numIcons);
 	int x, y;
@@ -583,16 +583,6 @@ void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolb
 	if (elem >= numIcons)
 		return;
 
-	if (evt.GetWheelRotation() != 0) {
-		if (vt->blockScroll){ evt.Skip(); return; }
-		int step = evt.GetWheelRotation() / evt.GetWheelDelta();
-		toggled -= step;
-		if (toggled < 0){ toggled = numIcons - 1; }
-		else if (toggled >= numIcons){ toggled = 0; }
-		vt->Refresh(false);
-		return;
-	}
-
 	if (elem != selection){
 		selection = elem;
 		vt->SetToolTip(vt->icons[elem + startIconNumber]->help);
@@ -606,13 +596,13 @@ void ScaleRotationItem::OnMouseEvent(wxMouseEvent &evt, int w, int h, VideoToolb
 	if (evt.LeftUp()){
 		clicked = false;
 		vt->Refresh(false);
-		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_SCALE_ROTATE_TOOLBAR_EVENT);
+		wxCommandEvent *evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, ID_MOVE_TOOLBAR_EVENT);
 		evt->SetInt(toggled);
 		wxQueueEvent(vt, evt);
 	}
 }
 
-void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
+void ClipRectangleItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 {
 	int posX = w - (h * numIcons);
 	int i = 0;
@@ -620,17 +610,17 @@ void ScaleRotationItem::OnPaint(wxDC &dc, int w, int h, VideoToolbar *vt)
 		wxBitmap *icon = vt->icons[i + startIconNumber]->icon;
 		if (icon->IsOk()){
 			if (i == selection){
-				dc.SetBrush(wxBrush(Options.GetColour((toggled == i || clicked) ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
-				dc.SetPen(wxPen(Options.GetColour((toggled == i || clicked) ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
+				dc.SetBrush(wxBrush(Options.GetColour(clicked ? BUTTON_BACKGROUND_PUSHED : BUTTON_BACKGROUND_HOVER)));
+				dc.SetPen(wxPen(Options.GetColour(clicked ? BUTTON_BORDER_PUSHED : BUTTON_BORDER_HOVER)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
 			}
-			else if (i == toggled){
+			/*else if (i == toggled){
 				dc.SetBrush(wxBrush(Options.GetColour(BUTTON_BACKGROUND_PUSHED)));
 				dc.SetPen(wxPen(Options.GetColour(BUTTON_BORDER_PUSHED)));
 				dc.DrawRoundedRectangle(posX, 1, h - 2, h - 2, 2.0);
-			}
+			}*/
 
-			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2));
+			dc.DrawBitmap(*icon, posX + ((h - icon->GetHeight()) / 2) - 1, ((h - icon->GetWidth()) / 2), true);
 			posX += h;
 		}
 		i++;

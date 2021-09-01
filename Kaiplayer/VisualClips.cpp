@@ -1327,14 +1327,27 @@ void DrawingAndClip::InvertClip()
 	Dialogue* cdial = grid->GetDialogue(grid->currentLine);
 	const wxString& ctxt = cdial->GetTextNoCopy();
 	wxString clip;
-	if (re.Matches(ctxt)) {
-		wxString curclip = re.GetMatch(ctxt, 1);
-		if (curclip.StartsWith(L"i"))
-			clip = L"clip";
+	size_t movement = 0;
+	while (1) {
+		wxString clippedTxt = ctxt.Mid(movement);
+		if (re.Matches(clippedTxt)) {
+			size_t start = 0, len = 0;
+			if (re.GetMatch(&start, &len, 2)) {
+				wxString clipBody = ctxt.Mid(movement + start, len);
+				if (clipBody.find(L'm') != -1) {
+					wxString curclip = re.GetMatch(clippedTxt, 1);
+					if (curclip.StartsWith(L"i"))
+						clip = L"clip";
+					else
+						clip = L"iclip";
+				}
+			}
+			movement += start + len;
+		}
 		else
-			clip = L"iclip";
+			break;
 	}
-	else
+	if (clip.empty())
 		return;
 
 	bool changed = false;
@@ -1366,7 +1379,8 @@ void DrawingAndClip::InvertClip()
 				}
 				movement += start + len;
 			}
-			break;
+			else
+				break;
 		}
 	}
 	if (changed) {

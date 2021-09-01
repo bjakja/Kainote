@@ -370,3 +370,75 @@ void ClipRect::OnKeyPress(wxKeyEvent &evt)
 	evt.Skip();
 }
 
+void ClipRect::InvertClip()
+{
+	SubsGrid* grid = tab->Grid;
+	wxArrayInt sels;
+	grid->file->GetSelections(sels);
+	wxRegEx re(L"\\\\(i?clip)\\(([^)]*)\\)", wxRE_ADVANCED);
+	if (!re.IsValid())
+		return;
+
+	Dialogue* cdial = grid->GetDialogue(grid->currentLine);
+	const wxString& ctxt = cdial->GetTextNoCopy();
+	wxString clip;
+	size_t movement = 0;
+	while (1) {
+		wxString clippedTxt = ctxt.Mid(movement);
+		if (re.Matches(clippedTxt)) {
+			size_t start = 0, len = 0;
+			if (re.GetMatch(&start, &len, 2)) {
+				wxString clipBody = ctxt.Mid(movement + start, len);
+				if (clipBody.Freq(L',') >= 3) {
+					wxString curclip = re.GetMatch(clippedTxt, 1);
+					if (curclip.StartsWith(L"i"))
+						clip = L"clip";
+					else
+						clip = L"iclip";
+				}
+			}
+			movement += start + len;
+		}
+		else
+			break;
+	}
+	if (clip.empty())
+		return;
+
+	bool changed = false;
+	for (size_t i = 0; i < sels.size(); i++) {
+
+		Dialogue* Dialc = grid->CopyDialogue(sels[i]);
+		wxString& txt = Dialc->GetText();
+		size_t movement = 0;
+		while (1) {
+			wxString clippedTxt = txt.Mid(movement);
+			if (re.Matches(clippedTxt)) {
+				size_t start = 0, len = 0;
+				if (re.GetMatch(&start, &len, 2)) {
+					wxString clipBody = txt.Mid(movement + start, len);
+					if (clipBody.Freq(L',') >= 3) {
+						size_t start1 = 0, end1 = 0;
+						if (re.GetMatch(&start, &len, 1)) {
+							txt.replace(movement + start, len, clip);
+							changed = true;
+						}
+					}
+				}
+				else {
+					start = clippedTxt.find(L"clip");
+					if (start == -1)
+						break;
+
+					len = 4;
+				}
+				movement += start + len;
+			}
+			else
+				break;
+		}
+	}
+	if (changed) {
+		grid->SetModified(VISUAL_VECTOR_CLIP);
+	}
+}

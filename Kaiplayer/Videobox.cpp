@@ -161,9 +161,6 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 		renderer->VisualChangeTool(evt.GetInt());
 	}, ID_MOVE_TOOLBAR_EVENT);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
-		renderer->VisualChangeTool(evt.GetInt());
-	}, ID_SCALE_ROTATE_TOOLBAR_EVENT);
-	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
 	}, ID_REFRESH_TIME);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);

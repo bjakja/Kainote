@@ -427,12 +427,16 @@ public:
 	ClipRect();
 	void DrawVisual(int time);
 	void OnMouseEvent(wxMouseEvent &event);
-	//void GetVisual(wxString *visual);
+	void ChangeTool(int _tool, bool blockSetCurVisual) {
+		if (!blockSetCurVisual)
+			InvertClip();
+	};
 	void ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections);
 	wxPoint ChangeVisual(wxString* txt);
 	void SetCurVisual();
 	int HitTest(D3DXVECTOR2 pos, bool diff = true);
 	void OnKeyPress(wxKeyEvent &evt);
+	void InvertClip();
 	D3DXVECTOR2 Corner[2];
 	bool invClip;
 	bool showClip;
