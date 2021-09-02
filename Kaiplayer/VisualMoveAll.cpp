@@ -241,8 +241,8 @@ void MoveAll::SetCurVisual()
 				for (size_t i = 0; i < points->size(); i++) {
 					//calculate points for drawing
 					//weird but zoomMove have to be last
-					(*points)[i].x = ((((*points)[i].x / coeffW) * zoomScale.x) / vectorClipScale) - zoomMove.x;
-					(*points)[i].y = ((((*points)[i].y / coeffH) * zoomScale.y) / vectorClipScale) - zoomMove.y;
+					(*points)[i].x = ((((*points)[i].x / coeffW) * zoomScale.x) / vectorClipScale) - (zoomMove.x * zoomScale.x);
+					(*points)[i].y = ((((*points)[i].y / coeffH) * zoomScale.y) / vectorClipScale) - (zoomMove.y * zoomScale.y);
 				}
 				elem->vectorPoints = points;
 			}
