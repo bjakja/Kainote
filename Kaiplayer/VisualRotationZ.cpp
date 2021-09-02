@@ -340,11 +340,9 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelectio
 		}
 		auto replfunc = [=](const FindData& data, wxString* result) {
 			float newangle = angle;
-			if (!data.finding.empty()) {
-				float oldangle = std::stof(data.finding.ToStdString());
-				newangle = oldangle - (lastAngle - angle);
-				newangle = fmodf(newangle + 360.f, 360.f);
-			}
+			float oldangle = data.finding.empty()? 0 : std::stof(data.finding.ToStdString());
+			newangle = oldangle - (lastAngle - angle);
+			newangle = fmodf(newangle + 360.f, 360.f);
 			if (isfirst) {
 				lastmove.y = newangle;
 				isfirst = false;
