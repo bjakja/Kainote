@@ -185,6 +185,8 @@ private:
 	//bool m_HasArrow;
 	int m_LastCursor = wxCURSOR_ARROW;
 	int m_LastFullScreenCursor = wxCURSOR_ARROW;
+	int m_LastActiveLineStartTime = -1;
+	int m_LastActiveLineStartFrame = -1;
 	bool m_ShownKeyframe;
 	//wxString oldpath;
 	wxString m_KeyframesFileName;

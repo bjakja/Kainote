@@ -321,8 +321,8 @@ done:
 				m_filename.utf8_str(),
 				videotrack,
 				m_index,
-				sysinfo.dwNumberOfProcessors * 2,
-				Options.GetInt(FFMS2_VIDEO_SEEKING),//FFMS_SEEK_NORMAL, // FFMS_SEEK_UNSAFE/*FFMS_SEEK_AGGRESSIVE*/
+				sysinfo.dwNumberOfProcessors,
+				Options.GetInt(FFMS2_VIDEO_SEEKING),
 				&m_errInfo);
 		}
 		catch (...) {}

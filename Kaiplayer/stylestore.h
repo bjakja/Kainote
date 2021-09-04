@@ -16,9 +16,6 @@
 #pragma once
 
 
-#include <wx/stattext.h>
-#include <wx/filedlg.h>
-#include <wx/dialog.h>
 #include "StyleList.h"
 #include "Styles.h"
 #include "MappedButton.h"

@@ -1268,9 +1268,15 @@ void VideoCtrl::RefreshTime()
 		if (m_FullScreenWindow->panel->IsShown()){
 			wxString times;
 			times << videoTime.raw(SRT) << L";  ";
+			Dialogue* line = tab->Edit->line;
 			if (!m_IsDirectShow){
 				times << renderer->m_Frame << L";  ";
 				if (renderer->HasFFMS2()){
+					if (m_LastActiveLineStartTime != line->Start.mstime) {
+						m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
+						m_LastActiveLineStartTime = line->Start.mstime;
+					}
+					times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
 					if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
 						m_ShownKeyframe = true;
 						m_FullScreenWindow->mstimes->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
@@ -1282,7 +1288,6 @@ void VideoCtrl::RefreshTime()
 				}
 			}
 			if (tab->editor){
-				Dialogue *line = tab->Edit->line;
 				int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
 				int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 				times << sdiff << L" ms, " << ediff << L" ms";
@@ -1300,9 +1305,15 @@ void VideoCtrl::RefreshTime()
 		m_SeekingSlider->Update();
 		wxString times;
 		times << videoTime.raw(SRT) << L";  ";
+		Dialogue* line = tab->Edit->line;
 		if (!m_IsDirectShow){
 			times << renderer->m_Frame << L";  ";
 			if (renderer->HasFFMS2()){
+				if (m_LastActiveLineStartTime != line->Start.mstime) {
+					m_LastActiveLineStartFrame = renderer->GetFFMS2()->GetFramefromMS(line->Start.mstime);
+					m_LastActiveLineStartTime = line->Start.mstime;
+				}
+				times << (renderer->m_Frame - m_LastActiveLineStartFrame) << L";  ";
 				if (renderer->GetFFMS2()->GetKeyframes().Index(renderer->m_Time) != -1){
 					m_ShownKeyframe = true;
 					m_TimesTextField->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
@@ -1314,7 +1325,6 @@ void VideoCtrl::RefreshTime()
 			}
 		}
 		if (tab->editor){
-			Dialogue *line = tab->Edit->line;
 			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
 			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 			times << sdiff << L" ms, " << ediff << L" ms";
