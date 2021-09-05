@@ -1000,13 +1000,20 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	wxMutexLocker lock(blockOpen);
 	wxString ext = filename.AfterLast(L'.').Lower();
 	if (ext == L"exe" || ext == L"zip" || ext == L"rar" || ext == L"7z"){ return false; }
+	TabPanel* tab = GetTab();
 	if (ext == L"lua" || ext == L"moon"){
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		Auto->Add(filename);
 		return true;
 	}
-	TabPanel *tab = GetTab();
+	else if (ext == L"pass" || (ext == L"txt" && filename.EndsWith(L"_keyframes.txt")) || 
+		ext == L"stats" || ext == L"log") {
+		tab->KeyframesPath = filename;
+		tab->Video->OpenKeyframes(filename);
+		SetRecent(3);
+		return true;
+	}
 
 	bool found = false;
 	bool nonewtab = true;
