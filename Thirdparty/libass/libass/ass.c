@@ -820,7 +820,7 @@ static unsigned char *decode_chars(const unsigned char *src,
                                    unsigned char *dst, size_t cnt_in)
 {
     uint32_t value = 0;
-    for (int i = 0; i < cnt_in; i++)
+    for (size_t i = 0; i < cnt_in; i++)
         value |= (uint32_t) ((src[i] - 33u) & 63) << 6 * (3 - i);
 
     *dst++ = value >> 16;
@@ -850,14 +850,14 @@ static int decode_font(ASS_Track *track)
     size_t dsize;                  // decoded size
     unsigned char *buf = 0;
 
-    ass_msg(track->library, MSGL_V, "Font: %d bytes encoded data",
+    ass_msg(track->library, MSGL_V, "Font: %zu bytes encoded data",
             track->parser_priv->fontdata_used);
     size = track->parser_priv->fontdata_used;
     if (size % 4 == 1) {
         ass_msg(track->library, MSGL_ERR, "Bad encoded data size");
         goto error_decode_font;
     }
-    buf = malloc(size / 4 * 3 + FFMAX(size % 4 - 1, 0));
+    buf = malloc(size / 4 * 3 + FFMAX(size % 4, 1) - 1);
     if (!buf)
         goto error_decode_font;
     q = buf;
@@ -871,7 +871,7 @@ static int decode_font(ASS_Track *track)
         q = decode_chars(p, q, 3);
     }
     dsize = q - buf;
-    assert(dsize == size / 4 * 3 + FFMAX(size % 4 - 1, 0));
+    assert(dsize == size / 4 * 3 + FFMAX(size % 4, 1) - 1);
 
     if (track->library->extract_fonts) {
         ass_add_font(track->library, track->parser_priv->fontname,

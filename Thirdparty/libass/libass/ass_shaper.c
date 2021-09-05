@@ -638,10 +638,10 @@ shape_harfbuzz_process_run(GlyphInfo *glyphs, hb_buffer_t *buf, int offset)
         // set position and advance
         info->skip = false;
         info->glyph_index = glyph_info[j].codepoint;
-        info->offset.x    = pos[j].x_offset * info->scale_x;
-        info->offset.y    = -pos[j].y_offset * info->scale_y;
-        info->advance.x   = pos[j].x_advance * info->scale_x;
-        info->advance.y   = -pos[j].y_advance * info->scale_y;
+        info->offset.x    = lrint(pos[j].x_offset * info->scale_x);
+        info->offset.y    = lrint(-pos[j].y_offset * info->scale_y);
+        info->advance.x   = lrint(pos[j].x_advance * info->scale_x);
+        info->advance.y   = lrint(-pos[j].y_advance * info->scale_y);
 
         // accumulate advance in the root glyph
         root->cluster_advance.x += info->advance.x;
@@ -665,7 +665,7 @@ static bool shape_harfbuzz(ASS_Shaper *shaper, GlyphInfo *glyphs, size_t len)
         glyphs[i].skip = true;
 
     for (i = 0; i < len; i++) {
-        if (glyphs[i].drawing_text) {
+        if (glyphs[i].drawing_text.str) {
             glyphs[i].skip = false;
             continue;
         }
@@ -805,7 +805,7 @@ void ass_shaper_find_runs(ASS_Shaper *shaper, ASS_Renderer *render_priv,
     // find appropriate fonts for the shape runs
     for (i = 0; i < len; i++) {
         GlyphInfo *info = glyphs + i;
-        if (!info->drawing_text) {
+        if (!info->drawing_text.str) {
             // set size and get glyph index
             ass_font_get_index(render_priv->fontselect, info->font,
                     info->symbol, &info->face_index, &info->glyph_index);
@@ -1017,6 +1017,11 @@ FriBidiStrIndex *ass_shaper_reorder(ASS_Shaper *shaper, TextInfo *text_info)
             return NULL;
     }
 
+    return shaper->cmap;
+}
+
+FriBidiStrIndex *ass_shaper_get_reorder_map(ASS_Shaper *shaper)
+{
     return shaper->cmap;
 }
 

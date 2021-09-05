@@ -87,7 +87,7 @@ static void scan_fonts(FcConfig *config, ASS_FontProvider *provider)
 {
     int i;
     FcFontSet *fonts;
-    ASS_FontProviderMetaData meta;
+    ASS_FontProviderMetaData meta = {0};
 
     // get list of fonts
     fonts = FcConfigGetFonts(config, FcSetSystem);
@@ -166,17 +166,17 @@ static void scan_fonts(FcConfig *config, ASS_FontProvider *provider)
 
         // read family names
         meta.n_family = 0;
-        while (FcPatternGetString(pat, FC_FAMILY, meta.n_family,
-                    (FcChar8 **)&families[meta.n_family]) == FcResultMatch
-                    && meta.n_family < MAX_NAME)
+        while (meta.n_family < MAX_NAME &&
+                FcPatternGetString(pat, FC_FAMILY, meta.n_family,
+                    (FcChar8 **)&families[meta.n_family]) == FcResultMatch)
             meta.n_family++;
         meta.families = families;
 
         // read fullnames
         meta.n_fullname = 0;
-        while (FcPatternGetString(pat, FC_FULLNAME, meta.n_fullname,
-                    (FcChar8 **)&fullnames[meta.n_fullname]) == FcResultMatch
-                    && meta.n_fullname < MAX_NAME)
+        while (meta.n_fullname < MAX_NAME &&
+                FcPatternGetString(pat, FC_FULLNAME, meta.n_fullname,
+                    (FcChar8 **)&fullnames[meta.n_fullname]) == FcResultMatch)
             meta.n_fullname++;
         meta.fullnames = fullnames;
 
@@ -220,7 +220,8 @@ static void cache_fallbacks(ProviderPrivate *fc)
     FcPatternDestroy(pat);
 }
 
-static char *get_fallback(void *priv, const char *family, uint32_t codepoint)
+static char *get_fallback(void *priv, ASS_Library *lib,
+                          const char *family, uint32_t codepoint)
 {
     ProviderPrivate *fc = (ProviderPrivate *)priv;
     FcResult result;
@@ -317,7 +318,7 @@ static ASS_FontProviderFuncs fontconfig_callbacks = {
 
 ASS_FontProvider *
 ass_fontconfig_add_provider(ASS_Library *lib, ASS_FontSelector *selector,
-                            const char *config)
+                            const char *config, FT_Library ftlib)
 {
     int rc;
     ProviderPrivate *fc = NULL;

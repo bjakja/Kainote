@@ -672,7 +672,8 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->ShiftTimes->OnOKClick(event);
 	}
 	else if (id == GLOBAL_FIND_NEXT){
-		FR->FindNext();
+		if(FR)
+			FR->FindNext();
 	}
 }
 //elements of menu all time enabled

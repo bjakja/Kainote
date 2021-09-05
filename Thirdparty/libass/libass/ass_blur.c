@@ -282,8 +282,7 @@ static inline void blur_horz(int16_t *dst, const int16_t *src,
     int16_t *ptr = buf + 2 * STRIPE_WIDTH;
     for (uintptr_t x = 0; x < dst_width; x += STRIPE_WIDTH) {
         for (uintptr_t y = 0; y < src_height; y++) {
-													//changed from 1u to avoid build error
-            for (int i = -((2 * n + STRIPE_WIDTH - 1L) / STRIPE_WIDTH); i <= 0; i++)
+            for (int i = -((2 * n + STRIPE_WIDTH - 1) / STRIPE_WIDTH); i <= 0; i++)
                 copy_line(ptr + i * STRIPE_WIDTH, src, offs + i * step, size);
             int32_t acc[STRIPE_WIDTH];
             for (int k = 0; k < STRIPE_WIDTH; k++)
@@ -408,7 +407,7 @@ static void calc_gauss(double *res, int n, double r2)
 {
     double alpha = 0.5 / r2;
     double mul = exp(-alpha), mul2 = mul * mul;
-    double cur = sqrt(alpha / M_PI);
+    double cur = sqrt(alpha / ASS_PI);
 
     res[0] = cur;
     cur *= mul;

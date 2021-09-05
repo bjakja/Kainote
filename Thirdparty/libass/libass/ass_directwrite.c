@@ -21,15 +21,13 @@
 #include "ass_compat.h"
 
 #include <initguid.h>
-#include <ole2.h>
-#include <shobjidl.h>
+#include <wchar.h>
 
 #include "dwrite_c.h"
 
 #include "ass_directwrite.h"
 #include "ass_utils.h"
 
-#define NAME_MAX_LENGTH 256
 #define FALLBACK_DEFAULT_FONT L"Arial"
 
 static const ASS_FontMapping font_substitutions[] = {
@@ -38,18 +36,49 @@ static const ASS_FontMapping font_substitutions[] = {
     {"monospace", "Courier New"}
 };
 
+typedef struct ASS_SharedHDC ASS_SharedHDC;
+
+#if ASS_WINAPI_DESKTOP
+
+struct ASS_SharedHDC {
+    HDC hdc;
+    unsigned ref_count;
+};
+
+static ASS_SharedHDC *hdc_retain(ASS_SharedHDC *shared_hdc)
+{
+    shared_hdc->ref_count++;
+    return shared_hdc;
+}
+
+static void hdc_release(ASS_SharedHDC *shared_hdc)
+{
+    if (!--shared_hdc->ref_count) {
+        DeleteDC(shared_hdc->hdc);
+        free(shared_hdc);
+    }
+}
+
+#endif
+
 /*
  * The private data stored for every font, detected by this backend.
  */
 typedef struct {
+#if ASS_WINAPI_DESKTOP
+    ASS_SharedHDC *shared_hdc;
+#endif
     IDWriteFont *font;
     IDWriteFontFace *face;
     IDWriteFontFileStream *stream;
 } FontPrivate;
 
 typedef struct {
+#if ASS_WINAPI_DESKTOP
     HMODULE directwrite_lib;
+#endif
     IDWriteFactory *factory;
+    IDWriteGdiInterop *gdi_interop;
 } ProviderPrivate;
 
 /**
@@ -376,9 +405,17 @@ static bool check_glyph(void *data, uint32_t code)
     if (code == 0)
         return true;
 
-    hr = IDWriteFont_HasCharacter(priv->font, code, &exists);
-    if (FAILED(hr))
-        return false;
+    if (priv->font) {
+        hr = IDWriteFont_HasCharacter(priv->font, code, &exists);
+        if (FAILED(hr))
+            return false;
+    } else {
+        uint16_t glyph_index;
+        hr = IDWriteFontFace_GetGlyphIndices(priv->face, &code, 1, &glyph_index);
+        if (FAILED(hr))
+            return false;
+        exists = !!glyph_index;
+    }
 
     return exists;
 }
@@ -389,8 +426,11 @@ static bool check_glyph(void *data, uint32_t code)
 static void destroy_provider(void *priv)
 {
     ProviderPrivate *provider_priv = (ProviderPrivate *)priv;
+    provider_priv->gdi_interop->lpVtbl->Release(provider_priv->gdi_interop);
     provider_priv->factory->lpVtbl->Release(provider_priv->factory);
+#if ASS_WINAPI_DESKTOP
     FreeLibrary(provider_priv->directwrite_lib);
+#endif
     free(provider_priv);
 }
 
@@ -403,11 +443,16 @@ static void destroy_font(void *data)
 {
     FontPrivate *priv = (FontPrivate *) data;
 
-    IDWriteFont_Release(priv->font);
+    if (priv->font != NULL)
+        IDWriteFont_Release(priv->font);
     if (priv->face != NULL)
         IDWriteFontFace_Release(priv->face);
     if (priv->stream != NULL)
         IDWriteFontFileStream_Release(priv->stream);
+
+#if ASS_WINAPI_DESKTOP
+    hdc_release(priv->shared_hdc);
+#endif
 
     free(priv);
 }
@@ -424,7 +469,45 @@ static int encode_utf16(wchar_t *chars, uint32_t codepoint)
     }
 }
 
-static char *get_fallback(void *priv, const char *base, uint32_t codepoint)
+static char *get_utf8_name(IDWriteLocalizedStrings *names, int k)
+{
+    wchar_t *temp_name = NULL;
+    char *mbName = NULL;
+
+    UINT32 length;
+    HRESULT hr = IDWriteLocalizedStrings_GetStringLength(names, k, &length);
+    if (FAILED(hr))
+        goto cleanup;
+
+    if (length >= (UINT32) -1 || length + (size_t) 1 > SIZE_MAX / sizeof(wchar_t))
+        goto cleanup;
+
+    temp_name = (wchar_t *) malloc((length + 1) * sizeof(wchar_t));
+    if (!temp_name)
+        goto cleanup;
+
+    hr = IDWriteLocalizedStrings_GetString(names, k, temp_name, length + 1);
+    if (FAILED(hr))
+        goto cleanup;
+
+    int size_needed =
+        WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, NULL, 0, NULL, NULL);
+    if (!size_needed)
+        goto cleanup;
+
+    mbName = (char *) malloc(size_needed);
+    if (!mbName)
+        goto cleanup;
+
+    WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, mbName, size_needed, NULL, NULL);
+
+cleanup:
+    free(temp_name);
+    return mbName;
+}
+
+static char *get_fallback(void *priv, ASS_Library *lib,
+                          const char *base, uint32_t codepoint)
 {
     HRESULT hr;
     ProviderPrivate *provider_priv = (ProviderPrivate *)priv;
@@ -469,8 +552,18 @@ static char *get_fallback(void *priv, const char *base, uint32_t codepoint)
     IDWriteTextLayout_Release(text_layout);
     IDWriteTextFormat_Release(text_format);
 
-    // Now, just extract the first family name
+    // DirectWrite may not have found a valid fallback, so check that
+    // the selected font actually has the requested glyph.
     BOOL exists = FALSE;
+    if (codepoint > 0) {
+        hr = IDWriteFont_HasCharacter(font, codepoint, &exists);
+        if (FAILED(hr) || !exists) {
+            IDWriteFont_Release(font);
+            return NULL;
+        }
+    }
+
+    // Now, just extract the first family name
     IDWriteLocalizedStrings *familyNames = NULL;
     hr = IDWriteFont_GetInformationalStrings(font,
             DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES,
@@ -480,29 +573,7 @@ static char *get_fallback(void *priv, const char *base, uint32_t codepoint)
         return NULL;
     }
 
-    wchar_t temp_name[NAME_MAX_LENGTH];
-    hr = IDWriteLocalizedStrings_GetString(familyNames, 0, temp_name, NAME_MAX_LENGTH);
-    if (FAILED(hr)) {
-        IDWriteLocalizedStrings_Release(familyNames);
-        IDWriteFont_Release(font);
-        return NULL;
-    }
-    temp_name[NAME_MAX_LENGTH-1] = 0;
-
-    // DirectWrite may not have found a valid fallback, so check that
-    // the selected font actually has the requested glyph.
-    if (codepoint > 0) {
-        hr = IDWriteFont_HasCharacter(font, codepoint, &exists);
-        if (FAILED(hr) || !exists) {
-            IDWriteLocalizedStrings_Release(familyNames);
-            IDWriteFont_Release(font);
-            return NULL;
-        }
-    }
-
-    int size_needed = WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, NULL, 0,NULL, NULL);
-    char *family = (char *) malloc(size_needed);
-    WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, family, size_needed, NULL, NULL);
+    char *family = get_utf8_name(familyNames, 0);
 
     IDWriteLocalizedStrings_Release(familyNames);
     IDWriteFont_Release(font);
@@ -526,118 +597,223 @@ static int map_width(enum DWRITE_FONT_STRETCH stretch)
     }
 }
 
+#define FONT_TYPE IDWriteFontFace3
+#include "ass_directwrite_info_template.h"
+#undef FONT_TYPE
+
+static void add_font_face(IDWriteFontFace *face, ASS_FontProvider *provider,
+                          ASS_SharedHDC *shared_hdc)
+{
+    ASS_FontProviderMetaData meta = {0};
+
+    IDWriteFontFace3 *face3;
+    HRESULT hr = IDWriteFontFace_QueryInterface(face, &IID_IDWriteFontFace3,
+                                                (void **) &face3);
+    if (SUCCEEDED(hr) && face3) {
+        bool success = get_font_info_IDWriteFontFace3(face3, &meta);
+        IDWriteFontFace3_Release(face3);
+        if (!success)
+            goto cleanup;
+    }
+
+    FontPrivate *font_priv = (FontPrivate *) calloc(1, sizeof(*font_priv));
+    if (!font_priv)
+        goto cleanup;
+
+    font_priv->face = face;
+    face = NULL;
+
+#if ASS_WINAPI_DESKTOP
+    font_priv->shared_hdc = hdc_retain(shared_hdc);
+#endif
+
+    ass_font_provider_add_font(provider, &meta, NULL, 0, font_priv);
+
+cleanup:
+    if (meta.families) {
+        for (int k = 0; k < meta.n_family; k++)
+            free(meta.families[k]);
+        free(meta.families);
+    }
+
+    if (meta.fullnames) {
+        for (int k = 0; k < meta.n_fullname; k++)
+            free(meta.fullnames[k]);
+        free(meta.fullnames);
+    }
+
+    free(meta.postscript_name);
+
+    if (face)
+        IDWriteFontFace_Release(face);
+}
+
+#if ASS_WINAPI_DESKTOP
+
+struct font_enum_priv {
+    ASS_FontProvider *provider;
+    IDWriteGdiInterop *gdi_interop;
+    ASS_SharedHDC *shared_hdc;
+};
+
+/*
+ * Windows has three similar functions: EnumFonts, EnumFontFamilies
+ * and EnumFontFamiliesEx, which were introduced at different times.
+ * Each takes a callback, and the declared callback type is the same
+ * for all three. However, the actual arguments passed to the callback
+ * have also changed over time. Some changes match the introduction
+ * of new EnumFont... variants, and some don't. Documentation has
+ * changed over the years, too, so it can be hard to figure out what
+ * types, and when, are safe for the callback to take.
+ *
+ * In the header files, FONTENUMPROC is declared to take:
+ *     CONST LOGFONT *, CONST TEXTMETRIC *
+ * These are the baseline structs dating back to 16-bit Windows EnumFont.
+ *
+ * As of 2021, current versions of Microsoft's docs
+ * for the EnumFontFamiliesEx callback use the same:
+ *     const LOGFONT *, const TEXTMETRIC *
+ * and for the EnumFontFamilies callback use:
+ *     ENUMLOGFONT *, NEWTEXTMETRIC *
+ * and mention that the first "can be cast as" ENUMLOGFONTEX or ENUMLOGFONTEXDV
+ * while the second "can be an ENUMTEXTMETRIC structure" but for
+ * non-TrueType fonts "is a pointer to a TEXTMETRIC structure".
+ *
+ * Docs from the 2000s (which include Win95/98/Me/NT/2000/XP details) use
+ *     ENUMLOGFONTEX *, NEWTEXTMETRICEX *
+ * in the EnumFontFamiliesEx callback's definition:
+ *     https://web.archive.org/web/20050907052149
+ *         /http://msdn.microsoft.com/library/en-us/gdi/fontext_9rmr.asp
+ * and highlight these two extended struct types as advantages over
+ * the EnumFontFamilies callback, suggesting that the actual arguments
+ * to the EnumFontFamiliesEx callback have always been these two extended
+ * structs. This is also reflected in the callback's parameter names
+ * (which have stayed unchanged in the current docs).
+ * EnumFontFamiliesEx itself was added in Windows NT 4.0 and 95.
+ *
+ * Similarly, the EnumFontFamilies callback's parameter names support
+ * the idea that they have always used ENUMLOGFONT and NEWTEXTMETRIC.
+ *
+ * It seems the extra fields in NEWTEXTMETRIC[EX] compared to TEXTMETRIC
+ * are merely zero-filled when they are irrelevant, rather than nonexistent
+ * or inaccessible. This is further supported by the fact the later-still
+ * struct ENUMTEXTMETRIC extends NEWTEXTMETRICEX even though the former
+ * is/was (upon introduction) relevant only to PostScript fonts
+ * while the latter is (supposedly) relevant only to TrueType fonts.
+ *
+ * Docs from the 2000s for ENUMLOGFONTEXDV and ENUMTEXTMETRIC:
+ *     https://web.archive.org/web/20050306200105
+ *         /http://msdn.microsoft.com/library/en-us/gdi/fontext_15gy.asp
+ * seem to assert that the callback receives these two further-extended
+ * structs *if and only if* running on Windows 2000 or newer.
+ * We don't need them, but if we did, we'd have to check (or assume)
+ * Windows version, because this extension does not seem to have
+ * an associated feature check. Moreover, these structs are given
+ * to the callbacks of all three EnumFont... function variants.
+ * So even EnumFonts actually uses the extended structs in 21st-century
+ * Windows, but the declared callback type can no longer be changed
+ * without breaking existing C++ code due to its strongly-typed pointers.
+ * When targeting modern Windows, though, it seems safe for consumer
+ * code to take the newest structs and cast the function pointer
+ * to the declared callback type.
+ */
+static int CALLBACK font_enum_proc(const ENUMLOGFONTW *lpelf,
+                                   const NEWTEXTMETRICW *lpntm,
+                                   DWORD FontType, LPARAM lParam)
+{
+    struct font_enum_priv *priv = (struct font_enum_priv *) lParam;
+    HFONT hFont = NULL;
+    HRESULT hr;
+
+    if (FontType & RASTER_FONTTYPE)
+        goto cleanup;
+
+    hFont = CreateFontIndirectW(&lpelf->elfLogFont);
+    if (!hFont)
+        goto cleanup;
+
+    HDC hdc = priv->shared_hdc->hdc;
+    if (!SelectObject(hdc, hFont))
+        goto cleanup;
+
+    wchar_t selected_name[LF_FACESIZE];
+    if (!GetTextFaceW(hdc, LF_FACESIZE, selected_name))
+        goto cleanup;
+    if (wcsncmp(selected_name, lpelf->elfLogFont.lfFaceName, LF_FACESIZE)) {
+        // A different font was selected. This can happen if the requested
+        // name is subject to charset-specific font substitution while
+        // EnumFont... enumerates additional charsets contained in the font.
+        // Alternatively, the font may have disappeared in the meantime.
+        // Either way, there's no use looking at this font any further.
+        goto cleanup;
+    }
+
+    // For single-font files, we could also use GetFontData, but for font
+    // collection files, GDI does not expose the current font index.
+    // CreateFontFaceFromHdc is able to find it out using a private API;
+    // and it may also be more efficient if it doesn't copy the data.
+    // The downside is that we must keep the HDC alive, at least on Windows 7,
+    // to prevent the font from being deleted and breaking the IDWriteFontFace.
+    IDWriteFontFace *face = NULL;
+    hr = IDWriteGdiInterop_CreateFontFaceFromHdc(priv->gdi_interop,
+                                                 hdc, &face);
+    if (FAILED(hr) || !face)
+        goto cleanup;
+
+    add_font_face(face, priv->provider, priv->shared_hdc);
+
+cleanup:
+    if (hFont)
+        DeleteObject(hFont);
+
+    return 1 /* continue enumerating */;
+}
+
+#else
+
+static void add_font_set(IDWriteFontSet *fontSet, ASS_FontProvider *provider)
+{
+    UINT32 n = IDWriteFontSet_GetFontCount(fontSet);
+    for (UINT32 i = 0; i < n; i++) {
+        HRESULT hr;
+
+        IDWriteFontFaceReference *faceRef;
+        hr = IDWriteFontSet_GetFontFaceReference(fontSet, i, &faceRef);
+        if (FAILED(hr) || !faceRef)
+            continue;
+
+        if (IDWriteFontFaceReference_GetLocality(faceRef) != DWRITE_LOCALITY_LOCAL)
+            goto cleanup;
+
+        // Simulations for bold or oblique are sometimes synthesized by
+        // DirectWrite. We are only interested in physical fonts.
+        if (IDWriteFontFaceReference_GetSimulations(faceRef) != 0)
+            goto cleanup;
+
+        IDWriteFontFace3 *face;
+        hr = IDWriteFontFaceReference_CreateFontFace(faceRef, &face);
+        if (FAILED(hr) || !face)
+            goto cleanup;
+
+        add_font_face((IDWriteFontFace *) face, provider, NULL);
+
+cleanup:
+        IDWriteFontFaceReference_Release(faceRef);
+    }
+}
+
+#define FONT_TYPE IDWriteFont
+#define FAMILY_AS_ARG
+#include "ass_directwrite_info_template.h"
+#undef FONT_TYPE
+#undef FAMILY_AS_ARG
+
 static void add_font(IDWriteFont *font, IDWriteFontFamily *fontFamily,
                      ASS_FontProvider *provider)
 {
-    HRESULT hr;
-    BOOL exists;
-    wchar_t temp_name[NAME_MAX_LENGTH];
-    int size_needed;
     ASS_FontProviderMetaData meta = {0};
-
-    meta.weight = IDWriteFont_GetWeight(font);
-    meta.width = map_width(IDWriteFont_GetStretch(font));
-
-    DWRITE_FONT_STYLE style = IDWriteFont_GetStyle(font);
-    meta.slant = (style == DWRITE_FONT_STYLE_NORMAL) ? FONT_SLANT_NONE :
-                 (style == DWRITE_FONT_STYLE_OBLIQUE)? FONT_SLANT_OBLIQUE :
-                 (style == DWRITE_FONT_STYLE_ITALIC) ? FONT_SLANT_ITALIC : FONT_SLANT_NONE;
-
-    IDWriteLocalizedStrings *psNames;
-    hr = IDWriteFont_GetInformationalStrings(font,
-            DWRITE_INFORMATIONAL_STRING_POSTSCRIPT_NAME, &psNames, &exists);
-    if (FAILED(hr))
+    if (!get_font_info_IDWriteFont(font, fontFamily, &meta))
         goto cleanup;
-
-    if (exists) {
-        hr = IDWriteLocalizedStrings_GetString(psNames, 0, temp_name, NAME_MAX_LENGTH);
-        if (FAILED(hr)) {
-            IDWriteLocalizedStrings_Release(psNames);
-            goto cleanup;
-        }
-
-        temp_name[NAME_MAX_LENGTH-1] = 0;
-        size_needed = WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, NULL, 0, NULL, NULL);
-        char *mbName = (char *) malloc(size_needed);
-        if (!mbName) {
-            IDWriteLocalizedStrings_Release(psNames);
-            goto cleanup;
-        }
-        WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, mbName, size_needed, NULL, NULL);
-        meta.postscript_name = mbName;
-
-        IDWriteLocalizedStrings_Release(psNames);
-    }
-
-    IDWriteLocalizedStrings *fontNames;
-    hr = IDWriteFont_GetInformationalStrings(font,
-            DWRITE_INFORMATIONAL_STRING_FULL_NAME, &fontNames, &exists);
-    if (FAILED(hr))
-        goto cleanup;
-
-    if (exists) {
-        meta.n_fullname = IDWriteLocalizedStrings_GetCount(fontNames);
-        meta.fullnames = (char **) calloc(meta.n_fullname, sizeof(char *));
-        if (!meta.fullnames) {
-            IDWriteLocalizedStrings_Release(fontNames);
-            goto cleanup;
-        }
-        for (int k = 0; k < meta.n_fullname; k++) {
-            hr = IDWriteLocalizedStrings_GetString(fontNames, k,
-                                                   temp_name,
-                                                   NAME_MAX_LENGTH);
-            if (FAILED(hr)) {
-                IDWriteLocalizedStrings_Release(fontNames);
-                goto cleanup;
-            }
-
-            temp_name[NAME_MAX_LENGTH-1] = 0;
-            size_needed = WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, NULL, 0, NULL, NULL);
-            char *mbName = (char *) malloc(size_needed);
-            if (!mbName) {
-                IDWriteLocalizedStrings_Release(fontNames);
-                goto cleanup;
-            }
-            WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, mbName, size_needed, NULL, NULL);
-            meta.fullnames[k] = mbName;
-        }
-        IDWriteLocalizedStrings_Release(fontNames);
-    }
-
-    IDWriteLocalizedStrings *familyNames;
-    hr = IDWriteFont_GetInformationalStrings(font,
-            DWRITE_INFORMATIONAL_STRING_WIN32_FAMILY_NAMES, &familyNames, &exists);
-    if (FAILED(hr) || !exists)
-        hr = IDWriteFontFamily_GetFamilyNames(fontFamily, &familyNames);
-    if (FAILED(hr))
-        goto cleanup;
-
-    meta.n_family = IDWriteLocalizedStrings_GetCount(familyNames);
-    meta.families = (char **) calloc(meta.n_family, sizeof(char *));
-    if (!meta.families) {
-        IDWriteLocalizedStrings_Release(familyNames);
-        goto cleanup;
-    }
-    for (int k = 0; k < meta.n_family; k++) {
-        hr = IDWriteLocalizedStrings_GetString(familyNames, k,
-                                               temp_name,
-                                               NAME_MAX_LENGTH);
-        if (FAILED(hr)) {
-            IDWriteLocalizedStrings_Release(familyNames);
-            goto cleanup;
-        }
-
-        temp_name[NAME_MAX_LENGTH-1] = 0;
-        size_needed = WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, NULL, 0, NULL, NULL);
-        char *mbName = (char *) malloc(size_needed);
-        if (!mbName) {
-            IDWriteLocalizedStrings_Release(familyNames);
-            goto cleanup;
-        }
-        WideCharToMultiByte(CP_UTF8, 0, temp_name, -1, mbName, size_needed, NULL, NULL);
-        meta.families[k] = mbName;
-    }
-    IDWriteLocalizedStrings_Release(familyNames);
 
     FontPrivate *font_priv = (FontPrivate *) calloc(1, sizeof(*font_priv));
     if (!font_priv)
@@ -666,34 +842,149 @@ cleanup:
         IDWriteFont_Release(font);
 }
 
-/*
- * Scan every system font on the current machine and add it
- * to the libass lookup. Stores the FontPrivate as private data
- * for later memory reading
- */
-static void scan_fonts(IDWriteFactory *factory,
-                       ASS_FontProvider *provider)
-{
-    HRESULT hr = S_OK;
-    IDWriteFontCollection *fontCollection = NULL;
-    IDWriteFont *font = NULL;
-    hr = IDWriteFactory_GetSystemFontCollection(factory, &fontCollection, FALSE);
+#endif
 
-    if (FAILED(hr) || !fontCollection)
+/*
+ * When a new font name is requested, called to load that font from Windows
+ */
+static void match_fonts(void *priv, ASS_Library *lib,
+                        ASS_FontProvider *provider, char *name)
+{
+    ProviderPrivate *provider_priv = (ProviderPrivate *)priv;
+    LOGFONTW lf = {0};
+
+    // lfFaceName can hold up to LF_FACESIZE wchars; truncate longer names
+    MultiByteToWideChar(CP_UTF8, 0, name, -1, lf.lfFaceName, LF_FACESIZE-1);
+
+#if ASS_WINAPI_DESKTOP
+    struct font_enum_priv enum_priv;
+
+    enum_priv.shared_hdc = calloc(1, sizeof(ASS_SharedHDC));
+    if (!enum_priv.shared_hdc)
         return;
 
-    UINT32 familyCount = IDWriteFontCollection_GetFontFamilyCount(fontCollection);
+    // Keep this HDC alive to keep the fonts alive. This seems to be necessary
+    // on Windows 7, where the fonts can't be deleted as long as the DC lives
+    // and where the converted IDWriteFontFaces only work as long as the fonts
+    // aren't deleted, although not on Windows 10, where fonts can be deleted
+    // even if the DC still lives but IDWriteFontFaces keep working even if
+    // the fonts are deleted.
+    //
+    // But beware of threading: docs say CreateCompatibleDC(NULL) creates a DC
+    // that is bound to the current thread and is deleted when the thread dies.
+    // It's not forbidden to call libass functions from multiple threads
+    // over the lifetime of a font provider, so this doesn't work for us.
+    // Practical tests suggest that the docs are wrong and the DC actually
+    // persists after its creating thread dies, but let's not rely on that.
+    // The workaround is to do a longer dance that is effectively equivalent to
+    // CreateCompatibleDC(NULL) but isn't specifically CreateCompatibleDC(NULL).
+    HDC screen_dc = GetDC(NULL);
+    if (!screen_dc) {
+        free(enum_priv.shared_hdc);
+        return;
+    }
+    HDC hdc = CreateCompatibleDC(screen_dc);
+    ReleaseDC(NULL, screen_dc);
+    if (!hdc) {
+        free(enum_priv.shared_hdc);
+        return;
+    }
 
-    for (UINT32 i = 0; i < familyCount; ++i) {
+    enum_priv.provider = provider;
+    enum_priv.gdi_interop = provider_priv->gdi_interop;
+    enum_priv.shared_hdc->hdc = hdc;
+    enum_priv.shared_hdc->ref_count = 1;
+
+    // EnumFontFamilies gives each font once, plus repeats for charset-specific
+    // aliases. EnumFontFamiliesEx gives each charset of each font separately,
+    // so it repeats each font as many times as it has charsets, regardless
+    // of whether they have aliases. Other than this, the two functions are
+    // equivalent. There's no reliable way to distinguish when two items
+    // enumerated by either function refer to the same font (but different
+    // aliases or charsets) or actually distinct fonts, so we add every item
+    // as a separate font to our database and simply prefer the enumeration
+    // function that tends to give fewer duplicates. Generally, many fonts
+    // cover multiple charsets while very few have aliases, so we prefer
+    // EnumFontFamilies.
+    //
+    // Furthermore, the requested name might be an empty string. In this case,
+    // EnumFontFamilies will give us only fonts with empty names, whereas
+    // EnumFontFamiliesEx would give us a list of all installed font families.
+    EnumFontFamiliesW(hdc, lf.lfFaceName,
+                      (FONTENUMPROCW) font_enum_proc, (LPARAM) &enum_priv);
+
+    hdc_release(enum_priv.shared_hdc);
+#else
+    HRESULT hr;
+    IDWriteFactory3 *factory3;
+    hr = IDWriteFactory_QueryInterface(provider_priv->factory,
+                                       &IID_IDWriteFactory3, (void **) &factory3);
+    if (SUCCEEDED(hr) && factory3) {
+        IDWriteFontSet *fontSet;
+        hr = IDWriteFactory3_GetSystemFontSet(factory3, &fontSet);
+        IDWriteFactory3_Release(factory3);
+        if (FAILED(hr) || !fontSet)
+            return;
+
+        DWRITE_FONT_PROPERTY_ID property_ids[] = {
+            DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME,
+            DWRITE_FONT_PROPERTY_ID_FULL_NAME,
+            DWRITE_FONT_PROPERTY_ID_POSTSCRIPT_NAME,
+        };
+        for (int i = 0; i < sizeof property_ids / sizeof *property_ids; i++) {
+            DWRITE_FONT_PROPERTY property = {
+                property_ids[i],
+                lf.lfFaceName,
+                L"",
+            };
+
+            IDWriteFontSet *filteredSet;
+            hr = IDWriteFontSet_GetMatchingFonts(fontSet, &property,
+                                                 1, &filteredSet);
+            if (FAILED(hr) || !filteredSet)
+                continue;
+
+            add_font_set(filteredSet, provider);
+
+            IDWriteFontSet_Release(filteredSet);
+        }
+
+        IDWriteFontSet_Release(fontSet);
+    } else {
+        // We must be in Windows 8 WinRT. IDWriteFontSet is not yet
+        // supported, but GDI calls are forbidden. Our only options are
+        // FindFamilyName, CreateFontFromLOGFONT, and eager preloading
+        // of all fonts. The two lazy options are similar, with the
+        // difference that FindFamilyName searches by WWS_FAMILY_NAME
+        // whereas CreateFontFromLOGFONT searches by WIN32_FAMILY_NAME.
+        // The latter is what GDI uses, so pick that. In at least some
+        // versions of Windows, it also searches by FULL_NAME, which is
+        // even better, but it's unclear whether this includes Windows 8.
+        // It never searches by POSTSCRIPT_NAME. This means we won't
+        // find CFF-outline fonts by their PostScript name and may not
+        // find TrueType fonts by their full name; but we can't fix this
+        // without loading the entire font list.
+        lf.lfWeight = FW_DONTCARE;
+        lf.lfCharSet = DEFAULT_CHARSET;
+        lf.lfOutPrecision = OUT_TT_PRECIS;
+        lf.lfClipPrecision = CLIP_DEFAULT_PRECIS;
+        lf.lfQuality = ANTIALIASED_QUALITY;
+        lf.lfPitchAndFamily = DEFAULT_PITCH | FF_DONTCARE;
+        IDWriteFont *font = NULL;
+        hr = IDWriteGdiInterop_CreateFontFromLOGFONT(provider_priv->gdi_interop,
+                                                     &lf, &font);
+        if (FAILED(hr) || !font)
+            return;
+
         IDWriteFontFamily *fontFamily = NULL;
+        hr = IDWriteFont_GetFontFamily(font, &fontFamily);
+        IDWriteFont_Release(font);
+        if (FAILED(hr) || !fontFamily)
+            return;
 
-        hr = IDWriteFontCollection_GetFontFamily(fontCollection, i, &fontFamily);
-        if (FAILED(hr))
-            continue;
-
-        UINT32 fontCount = IDWriteFontFamily_GetFontCount(fontFamily);
-        for (UINT32 j = 0; j < fontCount; ++j) {
-            hr = IDWriteFontFamily_GetFont(fontFamily, j, &font);
+        UINT32 n = IDWriteFontFamily_GetFontCount(fontFamily);
+        for (UINT32 i = 0; i < n; i++) {
+            hr = IDWriteFontFamily_GetFont(fontFamily, i, &font);
             if (FAILED(hr))
                 continue;
 
@@ -709,8 +1000,7 @@ static void scan_fonts(IDWriteFactory *factory,
 
         IDWriteFontFamily_Release(fontFamily);
     }
-
-    IDWriteFontCollection_Release(fontCollection);
+#endif
 }
 
 static void get_substitutions(void *priv, const char *name,
@@ -730,12 +1020,21 @@ static ASS_FontProviderFuncs directwrite_callbacks = {
     .check_glyph        = check_glyph,
     .destroy_font       = destroy_font,
     .destroy_provider   = destroy_provider,
+    .match_fonts        = match_fonts,
     .get_substitutions  = get_substitutions,
     .get_fallback       = get_fallback,
     .get_font_index     = get_font_index,
 };
 
-typedef HRESULT (WINAPI *DWriteCreateFactoryFn)(
+#if ASS_WINAPI_DESKTOP
+typedef HRESULT (WINAPI *DWriteCreateFactoryFn)
+#else
+// LoadLibrary is forbidden in WinRT/UWP apps, so use DirectWrite directly.
+// These apps cannot run on older Windows that lacks DirectWrite,
+// so we lose nothing.
+HRESULT WINAPI DWriteCreateFactory
+#endif
+(
     DWRITE_FACTORY_TYPE factoryType,
     REFIID              iid,
     IUnknown            **factory
@@ -749,29 +1048,41 @@ typedef HRESULT (WINAPI *DWriteCreateFactoryFn)(
  */
 ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
                                                ASS_FontSelector *selector,
-                                               const char *config)
+                                               const char *config,
+                                               FT_Library ftlib)
 {
     HRESULT hr = S_OK;
     IDWriteFactory *dwFactory = NULL;
+    IDWriteGdiInterop *dwGdiInterop = NULL;
     ASS_FontProvider *provider = NULL;
-    DWriteCreateFactoryFn DWriteCreateFactoryPtr = NULL;
     ProviderPrivate *priv = NULL;
 
+#if ASS_WINAPI_DESKTOP
     HMODULE directwrite_lib = LoadLibraryW(L"Dwrite.dll");
     if (!directwrite_lib)
         goto cleanup;
 
-    DWriteCreateFactoryPtr = (DWriteCreateFactoryFn)GetProcAddress(directwrite_lib,
-                                                                   "DWriteCreateFactory");
-    if (!DWriteCreateFactoryPtr)
+    DWriteCreateFactoryFn DWriteCreateFactory =
+        (DWriteCreateFactoryFn)(void *)GetProcAddress(directwrite_lib,
+                                                      "DWriteCreateFactory");
+    if (!DWriteCreateFactory)
         goto cleanup;
+#endif
 
-    hr = DWriteCreateFactoryPtr(DWRITE_FACTORY_TYPE_SHARED,
-                                &IID_IDWriteFactory,
-                                (IUnknown **) (&dwFactory));
+    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED,
+                             &IID_IDWriteFactory,
+                             (IUnknown **) (&dwFactory));
     if (FAILED(hr) || !dwFactory) {
         ass_msg(lib, MSGL_WARN, "Failed to initialize directwrite.");
         dwFactory = NULL;
+        goto cleanup;
+    }
+
+    hr = IDWriteFactory_GetGdiInterop(dwFactory,
+                                      &dwGdiInterop);
+    if (FAILED(hr) || !dwGdiInterop) {
+        ass_msg(lib, MSGL_WARN, "Failed to get IDWriteGdiInterop.");
+        dwGdiInterop = NULL;
         goto cleanup;
     }
 
@@ -779,22 +1090,29 @@ ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
     if (!priv)
         goto cleanup;
 
+#if ASS_WINAPI_DESKTOP
     priv->directwrite_lib = directwrite_lib;
+#endif
     priv->factory = dwFactory;
+    priv->gdi_interop = dwGdiInterop;
+
     provider = ass_font_provider_new(selector, &directwrite_callbacks, priv);
     if (!provider)
         goto cleanup;
 
-    scan_fonts(dwFactory, provider);
     return provider;
 
 cleanup:
 
     free(priv);
+    if (dwGdiInterop)
+        dwGdiInterop->lpVtbl->Release(dwGdiInterop);
     if (dwFactory)
         dwFactory->lpVtbl->Release(dwFactory);
+#if ASS_WINAPI_DESKTOP
     if (directwrite_lib)
         FreeLibrary(directwrite_lib);
+#endif
 
     return NULL;
 }

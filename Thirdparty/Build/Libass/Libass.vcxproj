@@ -32,7 +32,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <ImportGroup Label="Targets">
-    <Import Project="$(ProjectDir)yasm.targets" />
+    <Import Project="$(ProjectDir)nasm.targets" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
@@ -55,8 +55,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionSettings" />
   <ImportGroup Label="Shared">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -94,7 +93,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;CONFIG_SOURCEVERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\harfbuzz\src;$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass</AdditionalIncludeDirectories>
       <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
@@ -105,9 +104,9 @@
       <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <Yasm>
+    <Nasm>
       <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0 -Dprivate_prefix=ass</Config>
-    </Yasm>
+    </Nasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
@@ -129,9 +128,9 @@
       <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <Yasm>
+    <Nasm>
       <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0 -Dprivate_prefix=ass</Config>
-    </Yasm>
+    </Nasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
@@ -145,7 +144,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>inline=__inline;FRIBIDI_ENTRY=;HB_USE_ATEXIT;_MBCS;CONFIG_SOURCEVERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\harfbuzz\src;$(SolutionDir)Thirdparty\FreeType2\include;$(SolutionDir)Thirdparty\build\Fribidi;$(SolutionDir)Thirdparty\fribidi\lib;$(SolutionDir)Thirdparty\libass\libass;$(SolutionDir)Thirdparty\Build\libass</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -153,9 +152,9 @@
       <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\fribidi\Fribidi\x64\$(Configuration);$(SolutionDir)Thirdparty\freetype2\FreeType2\x64\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <Yasm>
+    <Nasm>
       <Config>%(Config) -DARCH_X86_64=1 -DHAVE_ALIGNED_STACK=1 -DHAVE_CPUNOP=0 -Dprivate_prefix=ass</Config>
-    </Yasm>
+    </Nasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
@@ -181,9 +180,9 @@
       <AdditionalDependencies>fribidi.lib;freetype2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\freetype2\FreeType2\Win32\$(Configuration);$(SolutionDir)Thirdparty\fribidi\Fribidi\Win32\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
-    <Yasm>
+    <Nasm>
       <Config>%(Config) -DARCH_X86_64=0 -DPREFIX -DHAVE_ALIGNED_STACK=0 -Dprivate_prefix=ass</Config>
-    </Yasm>
+    </Nasm>
     <Lib>
       <AdditionalDependencies>FreeType2.lib;Fribidi.lib;HarfBuzz.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
@@ -192,13 +191,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Yasm Include="..\..\libass\libass\x86\be_blur.asm">
+    <Nasm Include="..\..\libass\libass\x86\be_blur.asm">
       <ExcludeFromBuild Condition="'$(Platform)'!='x64'">true</ExcludeFromBuild>
-    </Yasm>
-    <Yasm Include="..\..\libass\libass\x86\blend_bitmaps.asm" />
-    <Yasm Include="..\..\libass\libass\x86\blur.asm" />
-    <Yasm Include="..\..\libass\libass\x86\cpuid.asm" />
-    <Yasm Include="..\..\libass\libass\x86\rasterizer.asm" />
+    </Nasm>
+    <Nasm Include="..\..\libass\libass\x86\blend_bitmaps.asm" />
+    <Nasm Include="..\..\libass\libass\x86\blur.asm" />
+    <Nasm Include="..\..\libass\libass\x86\cpuid.asm" />
+    <Nasm Include="..\..\libass\libass\x86\rasterizer.asm" />
     <None Include="..\..\libass\libass\x86\x86inc.asm" />
   </ItemGroup>
   <ItemGroup>
@@ -255,6 +254,5 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
+  <ImportGroup Label="ExtensionTargets" />
 </Project>

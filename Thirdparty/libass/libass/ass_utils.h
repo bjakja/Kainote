@@ -46,16 +46,33 @@
 #define FFMIN(a,b) ((a) > (b) ? (b) : (a))
 #define FFMINMAX(c,a,b) FFMIN(FFMAX(c, a), b)
 
+#define ASS_PI 3.14159265358979323846
+
 #if (defined(__i386__) || defined(__x86_64__)) && CONFIG_ASM
 int has_sse2(void);
 int has_avx(void);
 int has_avx2(void);
 #endif
 
-#ifndef HAVE_STRNDUP
-char *ass_strndup(const char *s, size_t n);
-#define strndup ass_strndup
-#endif
+typedef struct {
+    const char *str;
+    size_t len;
+} ASS_StringView;
+
+static inline char *ass_copy_string(ASS_StringView src)
+{
+    char *buf = (char*) malloc(src.len + 1);
+    if (buf) {
+        memcpy(buf, src.str, src.len);
+        buf[src.len] = '\0';
+    }
+    return buf;
+}
+
+static inline bool ass_string_equal(ASS_StringView str1, ASS_StringView str2)
+{
+    return str1.len == str2.len && !memcmp(str1.str, str2.str, str1.len);
+}
 
 void *ass_aligned_alloc(size_t alignment, size_t size, bool zero);
 void ass_aligned_free(void *ptr);
@@ -87,6 +104,11 @@ int numpad2align(int val);
 unsigned ass_utf8_get_char(char **str);
 unsigned ass_utf8_put_char(char *dest, uint32_t ch);
 void ass_utf16be_to_utf8(char *dst, size_t dst_size, uint8_t *src, size_t src_size);
+#if defined(__MINGW32__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 4))
+    __attribute__ ((format (gnu_printf, 3, 4)))
+#elif defined(__GNUC__)
+    __attribute__ ((format (printf, 3, 4)))
+#endif
 void ass_msg(ASS_Library *priv, int lvl, const char *fmt, ...);
 int lookup_style(ASS_Track *track, char *name);
 ASS_Style *lookup_style_strict(ASS_Track *track, char *name, size_t len);
@@ -141,7 +163,7 @@ static inline double d6_to_double(int x)
 }
 static inline int double_to_d6(double x)
 {
-    return (int) (x * 64);
+    return lrint(x * 64);
 }
 static inline double d16_to_double(int x)
 {
@@ -149,7 +171,7 @@ static inline double d16_to_double(int x)
 }
 static inline int double_to_d16(double x)
 {
-    return (int) (x * 0x10000);
+    return lrint(x * 0x10000);
 }
 static inline double d22_to_double(int x)
 {
@@ -157,15 +179,18 @@ static inline double d22_to_double(int x)
 }
 static inline int double_to_d22(double x)
 {
-    return (int) (x * 0x400000);
+    return lrint(x * 0x400000);
 }
 
 #define FNV1_32A_INIT 0x811c9dc5U
 #define FNV1_32A_PRIME 16777619U
 
-static inline uint32_t fnv_32a_buf(void *buf, size_t len, uint32_t hval)
+static inline uint32_t fnv_32a_buf(const void *buf, size_t len, uint32_t hval)
 {
-    unsigned char *bp = (unsigned char *) buf;
+    if (!len)
+        return hval;
+
+    const uint8_t *bp = (uint8_t *)buf;
     size_t n = (len + 3) / 4;
 
     switch (len % 4) {
@@ -176,15 +201,6 @@ static inline uint32_t fnv_32a_buf(void *buf, size_t len, uint32_t hval)
                } while (--n > 0);
     }
 
-    return hval;
-}
-static inline uint32_t fnv_32a_str(const char *str, uint32_t hval)
-{
-    unsigned char *s = (unsigned char *) str;
-    while (*s) {
-        hval ^= *s++;
-        hval *= FNV1_32A_PRIME;
-    }
     return hval;
 }
 

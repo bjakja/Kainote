@@ -15,20 +15,25 @@
 #include <unknwn.h>
 
 typedef struct IDWriteFactory IDWriteFactory;
+typedef struct IDWriteFactory3 IDWriteFactory3;
 typedef struct IDWriteFont IDWriteFont;
 typedef struct IDWriteFontCollection IDWriteFontCollection;
 typedef struct IDWriteFontFace IDWriteFontFace;
+typedef struct IDWriteFontFace3 IDWriteFontFace3;
+typedef struct IDWriteFontFaceReference IDWriteFontFaceReference;
 typedef struct IDWriteFontFamily IDWriteFontFamily;
 typedef struct IDWriteFontList IDWriteFontList;
 typedef struct IDWriteFontFile IDWriteFontFile;
 typedef struct IDWriteFontFileLoader IDWriteFontFileLoader;
 typedef struct IDWriteFontFileStream IDWriteFontFileStream;
+typedef struct IDWriteFontSet IDWriteFontSet;
 typedef struct IDWriteInlineObject IDWriteInlineObject;
 typedef struct IDWriteLocalizedStrings IDWriteLocalizedStrings;
 typedef struct IDWritePixelSnapping IDWritePixelSnapping;
 typedef struct IDWriteTextFormat IDWriteTextFormat;
 typedef struct IDWriteTextLayout IDWriteTextLayout;
 typedef struct IDWriteTextRenderer IDWriteTextRenderer;
+typedef struct IDWriteGdiInterop IDWriteGdiInterop;
 
 #include <dcommon.h>
 
@@ -70,6 +75,24 @@ typedef enum DWRITE_FONT_FACE_TYPE {
   DWRITE_FONT_FACE_TYPE_RAW_CFF
 } DWRITE_FONT_FACE_TYPE;
 
+typedef enum DWRITE_FONT_PROPERTY_ID {
+  DWRITE_FONT_PROPERTY_ID_NONE = 0,
+  DWRITE_FONT_PROPERTY_ID_WEIGHT_STRETCH_STYLE_FAMILY_NAME,
+  DWRITE_FONT_PROPERTY_ID_TYPOGRAPHIC_FAMILY_NAME,
+  DWRITE_FONT_PROPERTY_ID_WEIGHT_STRETCH_STYLE_FACE_NAME,
+  DWRITE_FONT_PROPERTY_ID_FULL_NAME,
+  DWRITE_FONT_PROPERTY_ID_WIN32_FAMILY_NAME,
+  DWRITE_FONT_PROPERTY_ID_POSTSCRIPT_NAME,
+  DWRITE_FONT_PROPERTY_ID_DESIGN_SCRIPT_LANGUAGE_TAG,
+  DWRITE_FONT_PROPERTY_ID_SUPPORTED_SCRIPT_LANGUAGE_TAG,
+  DWRITE_FONT_PROPERTY_ID_SEMANTIC_TAG,
+  DWRITE_FONT_PROPERTY_ID_WEIGHT,
+  DWRITE_FONT_PROPERTY_ID_STRETCH,
+  DWRITE_FONT_PROPERTY_ID_STYLE,
+  DWRITE_FONT_PROPERTY_ID_TYPOGRAPHIC_FACE_NAME,
+  /* rest dropped */
+} DWRITE_FONT_PROPERTY_ID;
+
 typedef enum DWRITE_FONT_SIMULATIONS {
   DWRITE_FONT_SIMULATIONS_NONE      = 0x0000,
   DWRITE_FONT_SIMULATIONS_BOLD      = 0x0001,
@@ -101,6 +124,12 @@ typedef enum DWRITE_FONT_WEIGHT {
   /* rest dropped */
 } DWRITE_FONT_WEIGHT;
 
+typedef enum DWRITE_LOCALITY {
+  DWRITE_LOCALITY_REMOTE = 0,
+  DWRITE_LOCALITY_PARTIAL,
+  DWRITE_LOCALITY_LOCAL
+} DWRITE_LOCALITY;
+
 typedef struct DWRITE_FONT_METRICS {
   UINT16 designUnitsPerEm;
   UINT16 ascent;
@@ -113,6 +142,12 @@ typedef struct DWRITE_FONT_METRICS {
   INT16  strikethroughPosition;
   UINT16 strikethroughThickness;
 } DWRITE_FONT_METRICS;
+
+typedef struct DWRITE_FONT_PROPERTY {
+  DWRITE_FONT_PROPERTY_ID propertyId;
+  const WCHAR *propertyValue;
+  const WCHAR *localeName;
+} DWRITE_FONT_PROPERTY;
 
 typedef struct DWRITE_GLYPH_OFFSET DWRITE_GLYPH_OFFSET;
 
@@ -191,7 +226,9 @@ DECLARE_INTERFACE_(IDWriteFactory,IUnknown)
         IDWriteTextFormat **textFormat) PURE;
 
     STDMETHOD(dummy12)(THIS);
-    STDMETHOD(dummy13)(THIS);
+
+    STDMETHOD(GetGdiInterop)(THIS_
+        IDWriteGdiInterop **gdiInterop) PURE;
 
     STDMETHOD(CreateTextLayout)(THIS_
         WCHAR const *string,
@@ -211,6 +248,100 @@ DECLARE_INTERFACE_(IDWriteFactory,IUnknown)
 #define IDWriteFactory_GetSystemFontCollection(This,fontCollection,checkForUpdates) (This)->lpVtbl->GetSystemFontCollection(This,fontCollection,checkForUpdates)
 #define IDWriteFactory_CreateTextFormat(This,fontFamilyName,fontCollection,fontWeight,fontStyle,fontStretch,fontSize,localeName,textFormat) (This)->lpVtbl->CreateTextFormat(This,fontFamilyName,fontCollection,fontWeight,fontStyle,fontStretch,fontSize,localeName,textFormat)
 #define IDWriteFactory_CreateTextLayout(This,string,stringLength,textFormat,maxWidth,maxHeight,textLayout) (This)->lpVtbl->CreateTextLayout(This,string,stringLength,textFormat,maxWidth,maxHeight,textLayout)
+#define IDWriteFactory_GetGdiInterop(This,gdiInterop) (This)->lpVtbl->GetGdiInterop(This,gdiInterop)
+#endif /*COBJMACROS*/
+
+#undef  INTERFACE
+#define INTERFACE IDWriteFactory3
+DECLARE_INTERFACE_(IDWriteFactory3,IDWriteFactory)
+{
+    BEGIN_INTERFACE
+
+#ifndef __cplusplus
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
+    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
+    STDMETHOD_(ULONG, Release)(THIS) PURE;
+
+    /* IDWriteFactory methods */
+    STDMETHOD(GetSystemFontCollection)(THIS_
+        IDWriteFontCollection **fontCollection,
+        BOOL checkForUpdates __MINGW_DEF_ARG_VAL(FALSE)) PURE;
+
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+    STDMETHOD(dummy3)(THIS);
+    STDMETHOD(dummy4)(THIS);
+    STDMETHOD(dummy5)(THIS);
+    STDMETHOD(dummy6)(THIS);
+    STDMETHOD(dummy7)(THIS);
+    STDMETHOD(dummy8)(THIS);
+    STDMETHOD(dummy9)(THIS);
+    STDMETHOD(dummy10)(THIS);
+    STDMETHOD(dummy11)(THIS);
+
+    STDMETHOD(CreateTextFormat)(THIS_
+        WCHAR const *fontFamilyName,
+        IDWriteFontCollection *fontCollection,
+        DWRITE_FONT_WEIGHT fontWeight,
+        DWRITE_FONT_STYLE fontStyle,
+        DWRITE_FONT_STRETCH fontStretch,
+        FLOAT fontSize,
+        WCHAR const *localeName,
+        IDWriteTextFormat **textFormat) PURE;
+
+    STDMETHOD(dummy12)(THIS);
+
+    STDMETHOD(GetGdiInterop)(THIS_
+        IDWriteGdiInterop **gdiInterop) PURE;
+
+    STDMETHOD(CreateTextLayout)(THIS_
+        WCHAR const *string,
+        UINT32 stringLength,
+        IDWriteTextFormat *textFormat,
+        FLOAT maxWidth,
+        FLOAT maxHeight,
+        IDWriteTextLayout **textLayout) PURE;
+#endif
+
+    STDMETHOD(dummy13)(THIS);
+    STDMETHOD(dummy14)(THIS);
+    STDMETHOD(dummy15)(THIS);
+    STDMETHOD(dummy16)(THIS);
+    STDMETHOD(dummy17)(THIS);
+
+    /* IDWriteFactory1 methods */
+    STDMETHOD(dummy18)(THIS);
+    STDMETHOD(dummy19)(THIS);
+
+    /* IDWriteFactory2 methods */
+    STDMETHOD(dummy20)(THIS);
+    STDMETHOD(dummy21)(THIS);
+    STDMETHOD(dummy22)(THIS);
+    STDMETHOD(dummy23)(THIS);
+    STDMETHOD(dummy24)(THIS);
+
+    /* IDWriteFactory3 methods */
+    STDMETHOD(dummy25)(THIS);
+    STDMETHOD(dummy26)(THIS);
+    STDMETHOD(dummy27)(THIS);
+    STDMETHOD(dummy28)(THIS);
+
+    STDMETHOD(GetSystemFontSet)(THIS_
+        IDWriteFontSet **fontSet) PURE;
+
+    /* rest dropped */
+    END_INTERFACE
+};
+#ifdef COBJMACROS
+#define IDWriteFactory3_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteFactory3_AddRef(This) (This)->lpVtbl->AddRef(This)
+#define IDWriteFactory3_Release(This) (This)->lpVtbl->Release(This)
+#define IDWriteFactory3_GetSystemFontCollection(This,fontCollection,checkForUpdates) (This)->lpVtbl->GetSystemFontCollection(This,fontCollection,checkForUpdates)
+#define IDWriteFactory3_CreateTextFormat(This,fontFamilyName,fontCollection,fontWeight,fontStyle,fontStretch,fontSize,localeName,textFormat) (This)->lpVtbl->CreateTextFormat(This,fontFamilyName,fontCollection,fontWeight,fontStyle,fontStretch,fontSize,localeName,textFormat)
+#define IDWriteFactory3_CreateTextLayout(This,string,stringLength,textFormat,maxWidth,maxHeight,textLayout) (This)->lpVtbl->CreateTextLayout(This,string,stringLength,textFormat,maxWidth,maxHeight,textLayout)
+#define IDWriteFactory3_GetGdiInterop(This,gdiInterop) (This)->lpVtbl->GetGdiInterop(This,gdiInterop)
+#define IDWriteFactory3_GetSystemFontSet(This,fontSet) (This)->lpVtbl->GetSystemFontSet(This,fontSet)
 #endif /*COBJMACROS*/
 
 #undef  INTERFACE
@@ -337,14 +468,166 @@ DECLARE_INTERFACE_(IDWriteFontFace,IUnknown)
 
     STDMETHOD_(UINT32, GetIndex)(THIS) PURE;
 
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+    STDMETHOD(dummy3)(THIS);
+    STDMETHOD(dummy4)(THIS);
+    STDMETHOD(dummy5)(THIS);
+
+    STDMETHOD(GetGlyphIndices)(THIS_
+        UINT32 const *codePoints,
+        UINT32 codePointCount,
+        UINT16 *glyphIndices) PURE;
+
     /* rest dropped */
     END_INTERFACE
 };
 #ifdef COBJMACROS
+#define IDWriteFontFace_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteFontFace_AddRef(This) (This)->lpVtbl->AddRef(This)
 #define IDWriteFontFace_Release(This) (This)->lpVtbl->Release(This)
 #define IDWriteFontFace_GetType(This) (This)->lpVtbl->GetType(This)
-#define IDWriteFontFace_GetFiles(This,fontFiles,b) (This)->lpVtbl->GetFiles(This,fontFiles,b)
+#define IDWriteFontFace_GetFiles(This,numberOfFiles,fontFiles) (This)->lpVtbl->GetFiles(This,numberOfFiles,fontFiles)
 #define IDWriteFontFace_GetIndex(This) (This)->lpVtbl->GetIndex(This)
+#define IDWriteFontFace_GetGlyphIndices(This,codePoints,codePointCount,glyphIndices) (This)->lpVtbl->GetGlyphIndices(This,codePoints,codePointCount,glyphIndices)
+#endif /*COBJMACROS*/
+
+#undef  INTERFACE
+#define INTERFACE IDWriteFontFace3
+DECLARE_INTERFACE_(IDWriteFontFace3,IDWriteFontFace)
+{
+    BEGIN_INTERFACE
+
+#ifndef __cplusplus
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
+    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
+    STDMETHOD_(ULONG, Release)(THIS) PURE;
+
+    /* IDWriteFontFace methods */
+    STDMETHOD_(DWRITE_FONT_FACE_TYPE, GetType)(THIS) PURE;
+
+    STDMETHOD(GetFiles)(THIS_
+        UINT32 *numberOfFiles,
+        IDWriteFontFile **fontFiles) PURE;
+
+    STDMETHOD_(UINT32, GetIndex)(THIS) PURE;
+
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+    STDMETHOD(dummy3)(THIS);
+    STDMETHOD(dummy4)(THIS);
+    STDMETHOD(dummy5)(THIS);
+
+    STDMETHOD(GetGlyphIndices)(THIS_
+        UINT32 const *codePoints,
+        UINT32 codePointCount,
+        UINT16 *glyphIndices) PURE;
+
+    STDMETHOD(dummy6)(THIS);
+    STDMETHOD(dummy7)(THIS);
+    STDMETHOD(dummy8)(THIS);
+    STDMETHOD(dummy9)(THIS);
+    STDMETHOD(dummy10)(THIS);
+    STDMETHOD(dummy11)(THIS);
+#endif
+
+    /* IDWriteFontFace1 methods */
+    STDMETHOD(dummy12)(THIS);
+    STDMETHOD(dummy13)(THIS);
+    STDMETHOD(dummy14)(THIS);
+    STDMETHOD(dummy15)(THIS);
+    STDMETHOD(dummy16)(THIS);
+    STDMETHOD(dummy17)(THIS);
+    STDMETHOD(dummy18)(THIS);
+    STDMETHOD(dummy19)(THIS);
+    STDMETHOD(dummy20)(THIS);
+    STDMETHOD(dummy21)(THIS);
+    STDMETHOD(dummy22)(THIS);
+    STDMETHOD(dummy23)(THIS);
+
+    /* IDWriteFontFace2 methods */
+    STDMETHOD(dummy24)(THIS);
+    STDMETHOD(dummy25)(THIS);
+    STDMETHOD(dummy26)(THIS);
+    STDMETHOD(dummy27)(THIS);
+    STDMETHOD(dummy28)(THIS);
+
+    /* IDWriteFontFace3 methods */
+    STDMETHOD(dummy29)(THIS);
+    STDMETHOD(dummy30)(THIS);
+
+    STDMETHOD_(DWRITE_FONT_WEIGHT, GetWeight)(THIS) PURE;
+    STDMETHOD_(DWRITE_FONT_STRETCH, GetStretch)(THIS) PURE;
+    STDMETHOD_(DWRITE_FONT_STYLE, GetStyle)(THIS) PURE;
+
+    STDMETHOD(GetFamilyNames)(THIS_
+        IDWriteLocalizedStrings **names) PURE;
+
+    STDMETHOD(dummy31)(THIS);
+
+    STDMETHOD(GetInformationalStrings)(THIS_
+        DWRITE_INFORMATIONAL_STRING_ID informationalStringID,
+        IDWriteLocalizedStrings **informationalStrings,
+        BOOL *exists) PURE;
+
+    /* rest dropped */
+    END_INTERFACE
+};
+#ifdef COBJMACROS
+#define IDWriteFontFace3_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteFontFace3_AddRef(This) (This)->lpVtbl->AddRef(This)
+#define IDWriteFontFace3_Release(This) (This)->lpVtbl->Release(This)
+#define IDWriteFontFace3_GetType(This) (This)->lpVtbl->GetType(This)
+#define IDWriteFontFace3_GetFiles(This,numberOfFiles,fontFiles) (This)->lpVtbl->GetFiles(This,numberOfFiles,fontFiles)
+#define IDWriteFontFace3_GetIndex(This) (This)->lpVtbl->GetIndex(This)
+#define IDWriteFontFace3_GetGlyphIndices(This,codePoints,codePointCount,glyphIndices) (This)->lpVtbl->GetGlyphIndices(This,codePoints,codePointCount,glyphIndices)
+#define IDWriteFontFace3_GetWeight(This) (This)->lpVtbl->GetWeight(This)
+#define IDWriteFontFace3_GetStretch(This) (This)->lpVtbl->GetStretch(This)
+#define IDWriteFontFace3_GetStyle(This) (This)->lpVtbl->GetStyle(This)
+#define IDWriteFontFace3_GetFamilyNames(This,names) (This)->lpVtbl->GetFamilyNames(This,names)
+#define IDWriteFontFace3_GetInformationalStrings(This,informationalStringID,informationalStrings,exists) (This)->lpVtbl->GetInformationalStrings(This,informationalStringID,informationalStrings,exists)
+#endif /*COBJMACROS*/
+
+#undef  INTERFACE
+#define INTERFACE IDWriteFontFaceReference
+DECLARE_INTERFACE_(IDWriteFontFaceReference,IUnknown)
+{
+    BEGIN_INTERFACE
+
+#ifndef __cplusplus
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
+    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
+    STDMETHOD_(ULONG, Release)(THIS) PURE;
+#endif
+
+    STDMETHOD(CreateFontFace)(THIS_
+        IDWriteFontFace3 **fontFace) PURE;
+
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+    STDMETHOD(dummy3)(THIS);
+
+    STDMETHOD_(DWRITE_FONT_SIMULATIONS, GetSimulations)(THIS) PURE;
+
+    STDMETHOD(dummy4)(THIS);
+    STDMETHOD(dummy5)(THIS);
+    STDMETHOD(dummy6)(THIS);
+    STDMETHOD(dummy7)(THIS);
+
+    STDMETHOD_(DWRITE_LOCALITY, GetLocality)(THIS) PURE;
+
+    /* rest dropped */
+    END_INTERFACE
+};
+#ifdef COBJMACROS
+#define IDWriteFontFaceReference_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteFontFaceReference_AddRef(This) (This)->lpVtbl->AddRef(This)
+#define IDWriteFontFaceReference_Release(This) (This)->lpVtbl->Release(This)
+#define IDWriteFontFaceReference_CreateFontFace(This,fontFace) (This)->lpVtbl->CreateFontFace(This,fontFace)
+#define IDWriteFontFaceReference_GetSimulations(This) (This)->lpVtbl->GetSimulations(This)
+#define IDWriteFontFaceReference_GetLocality(This) (This)->lpVtbl->GetLocality(This)
 #endif /*COBJMACROS*/
 
 #undef  INTERFACE
@@ -485,6 +768,51 @@ DECLARE_INTERFACE_(IDWriteFontFileStream,IUnknown)
 #endif /*COBJMACROS*/
 
 #undef  INTERFACE
+#define INTERFACE IDWriteFontSet
+DECLARE_INTERFACE_(IDWriteFontSet,IUnknown)
+{
+    BEGIN_INTERFACE
+
+#ifndef __cplusplus
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
+    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
+    STDMETHOD_(ULONG, Release)(THIS) PURE;
+#endif
+
+    /* IDWriteFontSet methods */
+    STDMETHOD_(UINT32, GetFontCount)(THIS) PURE;
+
+    STDMETHOD(GetFontFaceReference)(THIS_
+        UINT32 listIndex,
+        IDWriteFontFaceReference **fontFaceReference) PURE;
+
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+    STDMETHOD(dummy3)(THIS);
+    STDMETHOD(dummy4)(THIS);
+    STDMETHOD(dummy5)(THIS);
+    STDMETHOD(dummy6)(THIS);
+    STDMETHOD(dummy7)(THIS);
+
+    STDMETHOD(GetMatchingFonts)(THIS_
+        DWRITE_FONT_PROPERTY const *properties,
+        UINT32 propertyCount,
+        IDWriteFontSet **filteredSet) PURE;
+
+    /* rest dropped */
+    END_INTERFACE
+};
+#ifdef COBJMACROS
+#define IDWriteFontSet_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteFontSet_AddRef(This) (This)->lpVtbl->AddRef(This)
+#define IDWriteFontSet_Release(This) (This)->lpVtbl->Release(This)
+#define IDWriteFontSet_GetFontCount(This) (This)->lpVtbl->GetFontCount(This)
+#define IDWriteFontSet_GetFontFaceReference(This,listIndex,fontFaceReference) (This)->lpVtbl->GetFontFaceReference(This,listIndex,fontFaceReference)
+#define IDWriteFontSet_GetMatchingFonts(This,properties,propertyCount,filteredSet) (This)->lpVtbl->GetMatchingFonts(This,properties,propertyCount,filteredSet)
+#endif /*COBJMACROS*/
+
+#undef  INTERFACE
 #define INTERFACE IDWriteLocalizedStrings
 DECLARE_INTERFACE_(IDWriteLocalizedStrings,IUnknown)
 {
@@ -503,8 +831,10 @@ DECLARE_INTERFACE_(IDWriteLocalizedStrings,IUnknown)
     STDMETHOD(dummy1)(THIS);
     STDMETHOD(dummy2)(THIS);
     STDMETHOD(dummy3)(THIS);
-    STDMETHOD(dummy4)(THIS);
 
+    STDMETHOD(GetStringLength)(THIS_
+        UINT32 index,
+        UINT32 *length) PURE;
     STDMETHOD(GetString)(THIS_
         UINT32 index,
         WCHAR *stringBuffer,
@@ -515,6 +845,7 @@ DECLARE_INTERFACE_(IDWriteLocalizedStrings,IUnknown)
 #ifdef COBJMACROS
 #define IDWriteLocalizedStrings_Release(This) (This)->lpVtbl->Release(This)
 #define IDWriteLocalizedStrings_GetCount(This) (This)->lpVtbl->GetCount(This)
+#define IDWriteLocalizedStrings_GetStringLength(This,index,length) (This)->lpVtbl->GetStringLength(This,index,length)
 #define IDWriteLocalizedStrings_GetString(This,index,stringBuffer,size) (This)->lpVtbl->GetString(This,index,stringBuffer,size)
 #endif /*COBJMACROS*/
 
@@ -680,7 +1011,43 @@ DECLARE_INTERFACE_(IDWriteTextRenderer,IDWritePixelSnapping)
     END_INTERFACE
 };
 
+#undef  INTERFACE
+#define INTERFACE IDWriteGdiInterop
+DECLARE_INTERFACE_(IDWriteGdiInterop,IUnknown)
+{
+    BEGIN_INTERFACE
+
+#ifndef __cplusplus
+    /* IUnknown methods */
+    STDMETHOD(QueryInterface)(THIS_ REFIID riid, void **ppvObject) PURE;
+    STDMETHOD_(ULONG, AddRef)(THIS) PURE;
+    STDMETHOD_(ULONG, Release)(THIS) PURE;
+#endif
+
+    STDMETHOD(CreateFontFromLOGFONT)(THIS_
+                                     LOGFONTW const *logFont,
+                                     IDWriteFont **font) PURE;
+
+    STDMETHOD(dummy1)(THIS);
+    STDMETHOD(dummy2)(THIS);
+
+    STDMETHOD(CreateFontFaceFromHdc)(THIS_
+                                     HDC hdc,
+                                     IDWriteFontFace **fontFace) PURE;
+    /* rest dropped */
+    END_INTERFACE
+};
+#ifdef COBJMACROS
+#define IDWriteGdiInterop_QueryInterface(This,riid,ppvObject) (This)->lpVtbl->QueryInterface(This,riid,ppvObject)
+#define IDWriteGdiInterop_AddRef(This) (This)->lpVtbl->AddRef(This)
+#define IDWriteGdiInterop_Release(This) (This)->lpVtbl->Release(This)
+#define IDWriteGdiInterop_CreateFontFromLOGFONT(This,logFont,font) (This)->lpVtbl->CreateFontFromLOGFONT(This,logFont,font)
+#define IDWriteGdiInterop_CreateFontFaceFromHdc(This,hdc,fontFace) (This)->lpVtbl->CreateFontFaceFromHdc(This,hdc,fontFace)
+#endif /*COBJMACROS*/
+
 DEFINE_GUID(IID_IDWriteFactory, 0xb859ee5a,0xd838,0x4b5b,0xa2,0xe8,0x1a,0xdc,0x7d,0x93,0xdb,0x48);
+DEFINE_GUID(IID_IDWriteFactory3, 0x9a1b41c3,0xd3bb,0x466a,0x87,0xfc,0xfe,0x67,0x55,0x6a,0x3b,0x65);
+DEFINE_GUID(IID_IDWriteFontFace3, 0xd37d7598,0x09be,0x4222,0xa2,0x36,0x20,0x81,0x34,0x1c,0xc1,0xf2);
 DEFINE_GUID(IID_IDWritePixelSnapping, 0xeaf3a2da,0xecf4,0x4d24,0xb6,0x44,0xb3,0x4f,0x68,0x42,0x02,0x4b);
 DEFINE_GUID(IID_IDWriteTextRenderer, 0xef8a8135,0x5cc6,0x45fe,0x88,0x25,0xc5,0xa0,0x72,0x4e,0xb8,0x19);
 

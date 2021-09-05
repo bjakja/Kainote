@@ -534,32 +534,31 @@ wxString Styles::GetRaw()
 
 Styles *Styles::Copy()
 {
-	Styles *styl = new Styles();
-	//if(!styl){return NULL;}
-	styl->Alignment = Alignment;
-	styl->Angle = Angle;
-	styl->BackColour = BackColour;
-	styl->Bold = Bold;
-	styl->BorderStyle = BorderStyle;
-	styl->Encoding = Encoding;
-	styl->Fontname = Fontname;
-	styl->Fontsize = Fontsize;
-	styl->Italic = Italic;
-	styl->MarginL = MarginL;
-	styl->MarginR = MarginR;
-	styl->MarginV = MarginV;
-	styl->Name = Name;
-	styl->Outline = Outline;
-	styl->OutlineColour = OutlineColour;
-	styl->PrimaryColour = PrimaryColour;
-	styl->ScaleX = ScaleX;
-	styl->ScaleY = ScaleY;
-	styl->SecondaryColour = SecondaryColour;
-	styl->Shadow = Shadow;
-	styl->Spacing = Spacing;
-	styl->StrikeOut = StrikeOut;
-	styl->Underline = Underline;
-	return styl;
+	Styles *style = new Styles();
+	style->Alignment = Alignment;
+	style->Angle = Angle;
+	style->BackColour = BackColour;
+	style->Bold = Bold;
+	style->BorderStyle = BorderStyle;
+	style->Encoding = Encoding;
+	style->Fontname = Fontname;
+	style->Fontsize = Fontsize;
+	style->Italic = Italic;
+	style->MarginL = MarginL;
+	style->MarginR = MarginR;
+	style->MarginV = MarginV;
+	style->Name = Name;
+	style->Outline = Outline;
+	style->OutlineColour = OutlineColour;
+	style->PrimaryColour = PrimaryColour;
+	style->ScaleX = ScaleX;
+	style->ScaleY = ScaleY;
+	style->SecondaryColour = SecondaryColour;
+	style->Shadow = Shadow;
+	style->Spacing = Spacing;
+	style->StrikeOut = StrikeOut;
+	style->Underline = Underline;
+	return style;
 }
 
 
@@ -576,10 +575,8 @@ SInfo::SInfo()
 SInfo *SInfo::Copy()
 {
 	SInfo *inf = new SInfo();
-	//if(!inf){return NULL;}
 	inf->Name = Name;
 	inf->Val = Val;
-	//inf->Scomment=Scomment;
 	return inf;
 }
 

@@ -25,7 +25,6 @@
 #include FT_OUTLINE_H
 
 typedef struct ass_font ASS_Font;
-typedef struct ass_font_desc ASS_FontDesc;
 
 #include "ass.h"
 #include "ass_types.h"
@@ -38,13 +37,6 @@ typedef struct ass_font_desc ASS_FontDesc;
 #define DECO_UNDERLINE     1
 #define DECO_STRIKETHROUGH 2
 #define DECO_ROTATE        4
-
-struct ass_font_desc {
-    char *family;
-    unsigned bold;
-    unsigned italic;
-    int vertical;               // @font vertical layout
-};
 
 struct ass_font {
     ASS_FontDesc desc;
@@ -70,5 +62,10 @@ uint32_t ass_font_index_magic(FT_Face face, uint32_t symbol);
 FT_Glyph ass_font_get_glyph(ASS_Font *font, int face_index, int index,
                             ASS_Hinting hinting, int deco);
 void ass_font_clear(ASS_Font *font);
+
+FT_Face ass_face_open(ASS_Library *lib, FT_Library ftlib, const char *path,
+                      const char *postscript_name, int index);
+FT_Face ass_face_stream(ASS_Library *lib, FT_Library ftlib, const char *name,
+                        const ASS_FontStream *stream, int index);
 
 #endif                          /* LIBASS_FONT_H */

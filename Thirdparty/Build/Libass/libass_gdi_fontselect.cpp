@@ -109,7 +109,7 @@ size_t GdiFont::GetData(unsigned char *data, size_t offset, size_t len) {
 	return len;
 }
 bool hasFont = false;
-char *get_fallback(void *provider, const char *search_family, uint32_t code)
+char *get_fallback(void* priv, ASS_Library* lib, const char *search_family, uint32_t code)
 {
 	std::shared_ptr<HDC__> dc(CreateCompatibleDC(nullptr), [](HDC dc) { DeleteDC(dc); });
 	
@@ -139,7 +139,7 @@ char *get_fallback(void *provider, const char *search_family, uint32_t code)
 }
 
 
-void match_fonts(ASS_Library *lib, ASS_FontProvider *provider, char *name) {
+void match_fonts(void* priv, ASS_Library *lib, ASS_FontProvider *provider, char *name) {
 	std::shared_ptr<HDC__> dc(CreateCompatibleDC(nullptr), [](HDC dc) { DeleteDC(dc); });
 	if (!g_lib)
 		g_lib = lib;
@@ -217,6 +217,7 @@ ASS_FontProvider *ass_directwrite_add_provider(ASS_Library *lib,
 		&match_fonts,
 		nullptr, // get_substitution
 		&get_fallback,
+		nullptr
 	};
 	return ass_font_provider_new(selector, &callbacks, nullptr);
 }

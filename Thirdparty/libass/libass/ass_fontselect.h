@@ -27,6 +27,7 @@
 typedef struct ass_shaper_font_data ASS_ShaperFontData;
 typedef struct font_selector ASS_FontSelector;
 typedef struct font_info ASS_FontInfo;
+typedef struct ass_font_stream ASS_FontStream;
 
 #include "ass_types.h"
 #include "ass.h"
@@ -101,11 +102,13 @@ typedef void    (*DestroyProviderFunc)(void *priv);
  * This is called by fontselect whenever a new logical font is created. The
  * font provider set as default is used.
  *
+ * \param priv font provider private data
  * \param lib ASS_Library instance
  * \param provider font provider instance
  * \param name font name (as specified in script)
  */
-typedef void    (*MatchFontsFunc)(ASS_Library *lib,
+typedef void    (*MatchFontsFunc)(void *priv,
+                                  ASS_Library *lib,
                                   ASS_FontProvider *provider,
                                   char *name);
 
@@ -130,7 +133,7 @@ typedef void    (*SubstituteFontFunc)(void *priv, const char *name,
                                       ASS_FontProviderMetaData *meta);
 
 /**
- * Get an appropriate fallback font for a given codepoint.
+ * Get an appropriate fallback extended font family for a given codepoint.
  *
  * This is called by fontselect whenever a glyph is not found in the
  * physical font list of a logical font. fontselect will try to add the
@@ -142,12 +145,14 @@ typedef void    (*SubstituteFontFunc)(void *priv, const char *name,
  * fallbacks.
  *
  * \param priv font provider private data
+ * \param lib ASS_Library instance
  * \param family original font family name (try matching a similar font) (never NULL)
  * \param codepoint Unicode codepoint (UTF-32)
- * \return output font family, allocated with malloc(), must be freed
+ * \return output extended font family, allocated with malloc(), must be freed
  *         by caller.
  */
 typedef char   *(*GetFallbackFunc)(void *priv,
+                                   ASS_Library *lib,
                                    const char *family,
                                    uint32_t codepoint);
 
@@ -166,23 +171,37 @@ typedef struct font_provider_funcs {
 /*
  * Basic font metadata. All strings must be encoded with UTF-8.
  * At minimum one family is required.
+ * If no family names are present, ass_font_provider_add_font
+ * will open the font file and read metadata from there,
+ * replacing everything but extended_family.
  */
 struct ass_font_provider_meta_data {
     /**
-     * List of localized font family names, e.g. "Arial".
+     * List of localized font family names,
+     * e.g. "Arial", "Arial Narrow" or "Arial Black".
      */
     char **families;
 
     /**
-     * List of localized full names, e.g. "Arial Bold".
+     * List of localized full names, e.g. "Arial Bold",
+     * "Arial Narrow Bold", "Arial Black" or "Arial Black Normal".
      * The English name should be listed first to speed up typical matching.
      */
     char **fullnames;
 
     /**
-     * The PostScript name, e.g. "Arial-BoldMT".
+     * The PostScript name, e.g. "Arial-BoldMT",
+     * "ArialNarrow-Bold" or "Arial-Black".
      */
     char *postscript_name;
+
+    /**
+     * Any name that identifies an extended font family, e.g. "Arial".
+     * This could be the full designer-named typographic family or (perhaps
+     * even better) a (sub)family limited to weight/width/slant variations.
+     * Names returned by get_fallback are matched against this field.
+     */
+    char *extended_family;
 
     int n_family;       // Number of localized family names
     int n_fullname;     // Number of localized full names
@@ -193,8 +212,6 @@ struct ass_font_provider_meta_data {
     int width;          // Font weight in percent, normally 100
                         // See FONT_WIDTH_*
 };
-
-typedef struct ass_font_stream ASS_FontStream;
 
 struct ass_font_stream {
     // GetDataFunc
@@ -225,11 +242,10 @@ void ass_map_font(const ASS_FontMapping *map, int len, const char *name,
                   ASS_FontProviderMetaData *meta);
 
 ASS_FontSelector *
-ass_fontselect_init(ASS_Library *library,
-                    FT_Library ftlibrary, const char *family,
-                    const char *path, const char *config,
+ass_fontselect_init(ASS_Library *library, FT_Library ftlibrary, size_t *num_emfonts,
+                    const char *family, const char *path, const char *config,
                     ASS_DefaultFontProvider dfp);
-char *ass_font_select(ASS_FontSelector *priv, ASS_Library *library,
+char *ass_font_select(ASS_FontSelector *priv,
                       ASS_Font *font, int *index, char **postscript_name,
                       int *uid, ASS_FontStream *data, uint32_t code);
 void ass_fontselect_free(ASS_FontSelector *priv);
@@ -267,24 +283,15 @@ ass_font_provider_add_font(ASS_FontProvider *provider,
                            int index, void *data);
 
 /**
- * \brief Read a font's parameters
- * \param lib a FT_Library to use (need not be the global one)
- * \param path the path to the font file to read
- * \param postscript_name the PS name of the specific face to read (set either this or index)
- * \param index the face index to read, or -1 if not applicable
- * \param info the struct to store results into
- * \return success
- *
- */
-bool ass_get_font_info(ASS_Library *lib, FT_Library ftlib, const char *path,
-                       const char *postscript_name, int index,
-                       ASS_FontProviderMetaData *info);
-
-/**
  * \brief Free font provider and associated fonts.
  * \param provider the font provider
  *
  */
 void ass_font_provider_free(ASS_FontProvider *provider);
+
+/**
+ * \brief Update embedded and memory fonts
+ */
+size_t ass_update_embedded_fonts(ASS_FontSelector *selector, size_t num_loaded);
 
 #endif                          /* LIBASS_FONTSELECT_H */
