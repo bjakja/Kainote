@@ -240,6 +240,13 @@ void AllTags::FindTagValues()
 		actualTag.values[1] = col.g;
 		actualTag.values[2] = col.b;
 	}
+	else if (actualTag.tag == L"pos") {
+		bool putInBracket = false;
+		wxPoint textPosition;
+		D3DXVECTOR2 pos = GetPosition(tab->Edit->line, &putInBracket, &textPosition);
+		actualTag.values[0] = pos.x;
+		actualTag.values[1] = pos.y;
+	}
 	else {
 		if (!value.ToDouble(&doubleValue))
 			doubleValue = wxAtoi(value);
