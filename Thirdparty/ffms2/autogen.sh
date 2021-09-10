@@ -1,0 +1,6 @@
+#! /bin/sh
+mkdir -p src/config
+echo Running autoreconf...
+autoreconf -ivf
+echo Running configure...
+./configure "$@"

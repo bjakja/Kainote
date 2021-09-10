@@ -47,7 +47,11 @@
 #include <wx/filedlg.h>
 
 #include <boost/locale/generator.hpp>
-
+#if TEST_FFMPEG
+extern "C" {
+#include <libavformat/avformat.h>
+}
+#endif
 #undef IsMaximized
 #if _DEBUG
 #define logging 5
@@ -265,6 +269,64 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
+#if TEST_FFMPEG
+
+		TabPanel* tab = GetTab();
+		if (!tab) {
+			KaiLog(L"no tab");
+			return;
+		}
+		if (tab->VideoPath.empty()) {
+			KaiLog(L"no video");
+			return;
+		}
+
+		AVFormatContext* FormatContext = nullptr;
+		if (avformat_open_input(&FormatContext, tab->VideoPath.utf8_str(), nullptr, nullptr) != 0) {
+			KaiLog(L"cannot open video");
+			return;
+		}
+		if (avformat_find_stream_info(FormatContext, nullptr) < 0) {
+			avformat_close_input(&FormatContext);
+			KaiLog(L"cannot read info");
+		}
+		for (unsigned int i = 0; i < FormatContext->nb_streams; i++) {
+			if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+				KaiLog(wxString::Format(L"found video track %i", i));
+			}
+			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+				KaiLog(wxString::Format(L"found audio track %i", i));
+			}
+			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
+				KaiLog(wxString::Format(L"found subtitle track %i", i));
+			}
+			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_ATTACHMENT) {
+				KaiLog(wxString::Format(L"found atachment track %i", i));
+			}
+			else
+				continue;
+			auto* codec = avcodec_find_decoder(FormatContext->streams[i]->codecpar->codec_id);
+			if (codec) {
+				KaiLog(L"found codec name " + wxString(codec->name, wxConvUTF8));
+			}
+			AVDictionary *d = FormatContext->streams[i]->metadata;
+			AVDictionaryEntry* t = NULL;
+			while (t = av_dict_get(d, "", t, AV_DICT_IGNORE_SUFFIX)) {
+				KaiLog(wxString::Format(L"found entry key %s value %s", t->key, t->value));
+			}
+
+			
+		}
+		
+		for (int i = 0; i < FormatContext->nb_chapters; i++) {
+			AVChapter *chapter = FormatContext->chapters[i];
+			KaiLog(wxString::Format(L"start %llu, end %llu", chapter->start, chapter->end));
+			AVDictionaryEntry* e = av_dict_get(chapter->metadata, "title", NULL, 0);
+			KaiLog(wxString::Format(L"chapter title %s", e ? wxString(e->value, wxConvUTF8) : L""));
+		}
+
+		avformat_close_input(&FormatContext);
+#endif
 	}, 9989);
 
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);

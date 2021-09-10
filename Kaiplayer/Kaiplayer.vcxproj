@@ -171,7 +171,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;C:\ffmpeg\ffmpeg;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -186,12 +186,12 @@
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;libass.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\msvc\Win32\Debug\libhunspell;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Vfw32.lib;advapi32.lib;comctl32.lib;comdlg32.lib;Usp10.lib;gdi32.lib;kernel32.lib;ole32.lib;oleaut32.lib;opengl32.lib;rpcrt4.lib;shell32.lib;user32.lib;uuid.lib;wsock32.lib;winspool.lib;odbc32.lib;odbccp32.lib;Dbghelp.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;wxzlib.lib;winmm.lib;strmbasd.lib;ffms2.lib;LuaJit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;libass.lib;libavformat.a;libavutil.a;libavcodec.a;libswresample.a;bcrypt.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Lib\x86;..\Thirdparty\BaseClasses\Debug;..\Thirdparty\Hunspell\msvc\Win32\Debug\libhunspell;..\Thirdparty\wxWidgets\build\msw\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaJit\$(Platform)\$(Configuration);..\Thirdparty\Build\LuaBins\$(Platform)\$(Configuration);..\Thirdparty\Build\Boost\$(Platform)\Debug;%(AdditionalLibraryDirectories);..\Thirdparty\Build\Libass\$(Platform)\Debug;C:\ffmpeg\ffmpeg\libavutil;C:\ffmpeg\ffmpeg\libavformat;C:\ffmpeg\ffmpeg\libavcodec;C:\ffmpeg\ffmpeg\libswresample;C:\ffmpeg\ffmpeg\libswscale</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.LIB;libboost_locale-vc141-mt-x32-1_73.lib;libboost_regex-vc141-mt-x32-1_73.lib;libboost_filesystem-vc141-mt-x32-1_73.lib;libboost_system-vc141-mt-x32-1_73.libs;</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.LIB;libboost_system-vc141-mt-x32-1_73.libs;libboost_filesystem-vc142-mt-gd-x32-1_73.lib;libboost_regex-vc142-mt-gd-x32-1_73.lib;libboost_locale-vc142-mt-gd-x32-1_73.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>

@@ -20,6 +20,7 @@
 #include "kainoteApp.h"
 #include <wx/dir.h>
 
+
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* _success)
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
@@ -198,50 +199,46 @@ int ProviderFFMS2::Init()
 						m_chapters.push_back(ch);
 					}
 				}
-				if (hasMoreAudioTracks) {
-					wxArrayString enabled;
-					Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
-					int enabledSize = enabled.GetCount();
-					int lowestIndex = enabledSize;
-					for (size_t j = 0; j < audiotable.GetCount(); j++) {
-						TrackInfo* ti = mkv_GetTrackInfo(mw.file, audiotable[j]);
-						if (!ti)
-							continue;
-						if (enabledSize) {
-							int index = enabled.Index(ti->Language, false);
-							if (index > -1 && index < lowestIndex) {
-								lowestIndex = index;
-								audiotrack = audiotable[j];
-								continue;
-							}
-						}
-						wxString all;
-						char* description = (ti->Name) ? ti->Name : ti->Language;
-						wxString codec = wxString(ti->CodecID, wxConvUTF8);
-						if (codec.StartsWith(L"A_"))
-							codec = codec.Mid(2);
-						all << audiotable[j] << L": " << wxString(description, wxConvUTF8) <<
-							L" (" << codec << L")";
-						tracks.Add(all);
-					}
-					if (lowestIndex < enabledSize) {
-						tracks.Clear();
-						hasMoreAudioTracks = false;
-						mw.Close();
-						goto done;
-					}
-				}
 				mw.Close();
 			}
 			if (!hasMoreAudioTracks) { audiotrack = (audiotable.size() > 0) ? audiotable[0] : -1; goto done; }
 		}
-		if (!tracks.size() && hasMoreAudioTracks) {
-			for (size_t j = 0; j < audiotable.size(); j++) {
+		if (/*!tracks.size() && */hasMoreAudioTracks) {
+			wxArrayString enabled;
+			Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
+			int enabledSize = enabled.GetCount();
+			int lowestIndex = enabledSize;
+			for (size_t j = 0; j < audiotable.GetCount(); j++) {
+				const char* name = FFMS_GetTrackName(Indexer, audiotable[j]);
+				const char* language = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
+				if (language) {
+					if (enabledSize) {
+						int index = enabled.Index(language, false);
+						if (index > -1 && index < lowestIndex) {
+							lowestIndex = index;
+							audiotrack = audiotable[j];
+							continue;
+						}
+					}
+				}
+				const char* description = name != NULL? name : language;
+				wxString all;
+				wxString codecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
+				all << audiotable[j] << L": " << wxString(description, wxConvUTF8) <<
+					L" (" << codecName << L")";
+				tracks.Add(all);
+			}
+			if (lowestIndex < enabledSize) {
+				tracks.Clear();
+				hasMoreAudioTracks = false;
+				goto done;
+			}
+			/*for (size_t j = 0; j < audiotable.size(); j++) {
 				wxString CodecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
 				wxString all;
 				all << audiotable[j] << L": " << CodecName;
 				tracks.Add(all);
-			}
+			}*/
 		}
 		audiotrack = progress->ShowSecondaryDialog([=]() {
 			kainoteApp* Kaia = (kainoteApp*)wxTheApp;

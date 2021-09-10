@@ -24,7 +24,9 @@
 #include "OpennWrite.h"
 
 #pragma comment(lib, "Dxva2.lib")
-const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02 } };//
+#ifndef TEST_FFMPEG
+const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02 }};
+#endif
 
 RendererDirectShow::RendererDirectShow(VideoCtrl *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
@@ -53,7 +55,7 @@ bool RendererDirectShow::InitRendererDX()
 	DXVA2_VideoDesc videoDesc;
 	videoDesc.SampleWidth = m_Width;
 	videoDesc.SampleHeight = m_Height;
-	videoDesc.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_Unknown;
+	videoDesc.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
 	videoDesc.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
 	videoDesc.SampleFormat.VideoTransferMatrix = m_VideoMatrix;
 	videoDesc.SampleFormat.VideoLighting = DXVA2_VideoLighting_dark;
@@ -318,8 +320,9 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	blt.BackgroundColor = color;
 
 	// DXVA2_VideoProcess_YUV2RGBExtended
-	blt.DestFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_Unknown;
-	blt.DestFormat.NominalRange = DXVA2_NominalRange_0_255;
+	blt.DestFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
+	//big wtf looks like bad enumerator name and it used video range
+	blt.DestFormat.NominalRange = DXVA2_NominalRange_16_235;
 	blt.DestFormat.VideoTransferMatrix = m_VideoMatrix;
 	blt.DestFormat.VideoLighting = DXVA2_VideoLighting_dark;
 	blt.DestFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;
@@ -332,8 +335,9 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	samples.End = end_100ns;
 
 	// DXVA2_VideoProcess_YUV2RGBExtended
-	samples.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_Unknown;
-	samples.SampleFormat.NominalRange = DXVA2_NominalRange_0_255;
+	samples.SampleFormat.VideoChromaSubsampling = DXVA2_VideoChromaSubsampling_MPEG2;
+	//big wtf looks like bad enumerator name and it used video range
+	samples.SampleFormat.NominalRange = DXVA2_NominalRange_16_235;
 	samples.SampleFormat.VideoTransferMatrix = m_VideoMatrix;
 	samples.SampleFormat.VideoLighting = DXVA2_VideoLighting_dark;
 	samples.SampleFormat.VideoPrimaries = DXVA2_VideoPrimaries_BT709;

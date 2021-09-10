@@ -4,7 +4,6 @@ Dependency/
 Dependency-DMv0.4.0-rqffiv0.1.2/
 LAVFilters-0.68.1/
 LuaJIT1/
-Icu1/
 SubInspector-0.5.1/
 Video rendering/
 objs/
@@ -21,7 +20,7 @@ wxWidgets2/
 luajit2/
 LuaJITbeta/
 LuaJITbeta3/
-zlib-1.2.8/
+zlib-1.2.11/
 ffms2000/
 VSFilterMod-r5.2/
 xy-VSFilter-master/src/filters/transform/vsfilter/csri2.h
