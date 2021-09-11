@@ -559,7 +559,7 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* 
 			Replace(L"\\p1", txt);
 			hasP1 = false;
 		}
-		isf = FindTag(L"pos\\(([,. 0-9-]+)\\)", *txt, 1);
+		isf = FindTag(L"pos|move\\(([,. 0-9-]+)\\)", *txt, 1);
 		if (!isf) {
 			float xx = _x * scale.x;
 			float yy = _y * scale.y;
