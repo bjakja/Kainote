@@ -101,8 +101,13 @@ public:
     FFMS_TrackType GetTrackType(int Track);
     const char *GetTrackCodec(int Track);
     const char *GetFormatName();
+    //Kainote functions
     const char *GetTrackName(int Track);
     const char *GetTrackLanguage(int Track);
+	FFMS_Chapters* GetChapters();
+	FFMS_Attachment* GetAttachment(int Track);
+	void GetSubtitles(int Track, GetSubtitlesCallback IC, void* ICPrivate);
+    const char* GetSubtitleExtradata(int Track);
 };
 
 

@@ -44,7 +44,7 @@ AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
 	tagSizer->Add(newTagName, 1, wxALL | wxEXPAND, 4);
 	tagSizer->Add(addTag, 1, wxALL | wxEXPAND, 4);
 	tagSizer->Add(removeTag, 1, wxALL | wxEXPAND, 4);
-	KaiStaticBoxSizer* editionSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja"));
+	KaiStaticBoxSizer* editionSizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Edycja tagu"));
 	wxBoxSizer* nameTagSizer = new wxBoxSizer(wxHORIZONTAL);
 	tagName = new KaiTextCtrl(this, -1, currentTag.name);
 	tagWithoutSlash = new KaiTextCtrl(this, -1, currentTag.tag);

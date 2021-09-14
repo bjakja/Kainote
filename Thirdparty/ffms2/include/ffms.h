@@ -465,6 +465,29 @@ FFMS_API(int) FFMS_WriteIndex(const char *IndexFile, FFMS_Index *Index, FFMS_Err
 FFMS_API(int) FFMS_WriteIndexToBuffer(uint8_t **BufferPtr, size_t *Size, FFMS_Index *Index, FFMS_ErrorInfo *ErrorInfo);
 FFMS_API(void) FFMS_FreeIndexBuffer(uint8_t **BufferPtr);
 FFMS_API(int) FFMS_GetPixFmt(const char *Name);
+//Kainote functions
 FFMS_API(const char*) FFMS_GetTrackName(FFMS_Indexer* Indexer, int Track);
 FFMS_API(const char*) FFMS_GetTrackLanguage(FFMS_Indexer* Indexer, int Track);
+typedef struct FFMS_Chapter {
+    const char* Title;
+    int64_t Start;
+    int64_t End;
+} FFMS_Chapter;
+typedef struct FFMS_Chapters {
+    FFMS_Chapter* Chapters;
+    int NumOfChapters;
+} FFMS_Chapters;
+FFMS_API(FFMS_Chapters *) FFMS_GetChapters(FFMS_Indexer* Indexer);
+FFMS_API(void) FFMS_FreeChapters(FFMS_Chapters** Chapters);
+typedef struct FFMS_Attachment {
+    const char* Filename;
+    const char* Mimetype;
+    const uint8_t* Data;
+    int DataSize;
+} FFMS_Attachment;
+FFMS_API(FFMS_Attachment*) FFMS_GetAttachment(FFMS_Indexer* Indexer, int Track);
+FFMS_API(void) FFMS_FreeAttachment(FFMS_Attachment** Attachment);
+typedef int (FFMS_CC* GetSubtitlesCallback)(int64_t Start, int64_t Duration, int64_t Total, const char* Line, void* ICPrivate);
+FFMS_API(void) FFMS_GetSubtitles(FFMS_Indexer* Indexer, int Track, GetSubtitlesCallback IC, void* ICPrivate);
+FFMS_API(const char*) FFMS_GetSubtitleExtradata(FFMS_Indexer* Indexer, int Track);
 #endif

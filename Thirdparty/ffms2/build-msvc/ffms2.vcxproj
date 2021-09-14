@@ -137,14 +137,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;WIN32;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\ffmpeg\ffmpeg;H:\Kainote\Thirdparty\wxWidgets2\src\zlib;C:\Avisynth\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\ffmpeg\ffmpeg;$(SolutionDir)..\..\wxWidgets\src\zlib;$(SolutionDir)..\src\avisynth\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;wxzlib.lib;ws2_32.lib;secur32.lib;bcrypt.lib;Mfplat.lib;Mfuuid.lib;Strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\ffmpeg\ffmpeg\libswscale;C:\ffmpeg\ffmpeg\libswresample;C:\ffmpeg\ffmpeg\libavutil;C:\ffmpeg\ffmpeg\libavformat;C:\ffmpeg\ffmpeg\libavcodec;H:\Kainote\Thirdparty\wxWidgets2\lib\vc_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\ffmpeg\ffmpeg\libswscale;C:\ffmpeg\ffmpeg\libswresample;C:\ffmpeg\ffmpeg\libavutil;C:\ffmpeg\ffmpeg\libavformat;C:\ffmpeg\ffmpeg\libavcodec;$(SolutionDir)..\..\wxWidgets\Build\msw\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -159,14 +159,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>C:\ffmpeg1\ffmpeg;H:\Kainote\Thirdparty\wxWidgets2\src\zlib;C:\Avisynth\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\ffmpeg1\ffmpeg;$(SolutionDir)..\..\wxWidgets\src\zlib;$(SolutionDir)..\src\avisynth\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;wxzlib.lib;ws2_32.lib;secur32.lib;bcrypt.lib;Mfplat.lib;Mfuuid.lib;Strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\ffmpeg1\ffmpeg\libswscale;C:\ffmpeg1\ffmpeg\libswresample;C:\ffmpeg1\ffmpeg\libavutil;C:\ffmpeg1\ffmpeg\libavformat;C:\ffmpeg1\ffmpeg\libavcodec;H:\Kainote\Thirdparty\wxWidgets2\lib\vc_x64_lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\ffmpeg1\ffmpeg\libswscale;C:\ffmpeg1\ffmpeg\libswresample;C:\ffmpeg1\ffmpeg\libavutil;C:\ffmpeg1\ffmpeg\libavformat;C:\ffmpeg1\ffmpeg\libavcodec;$(SolutionDir)..\..\wxWidgets\Build\msw\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

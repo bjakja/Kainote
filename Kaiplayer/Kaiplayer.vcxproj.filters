@@ -464,6 +464,9 @@
     <ClCompile Include="VisualAllTagsControls.cpp">
       <Filter>Source Files\Video\Visuals</Filter>
     </ClCompile>
+    <ClCompile Include="Demux.cpp">
+      <Filter>Source Files\Utils &amp; Config</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AudioBox.h">
@@ -861,6 +864,9 @@
     </ClInclude>
     <ClInclude Include="VisualAllTagsControls.h">
       <Filter>Source Files\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="Demux.h">
+      <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -180,66 +180,50 @@ int ProviderFFMS2::Init()
 	bool ismkv = (ext == L"mkv");
 	bool hasMoreAudioTracks = audiotable.size() > 1;
 
-	if (hasMoreAudioTracks || ismkv) {
+	FFMS_Chapters* chapters = FFMS_GetChapters(Indexer);
+	if (chapters && m_renderer) {
+		for (int j = 0; j < chapters->NumOfChapters; j++) {
+			chapter ch;
+			ch.name = wxString(chapters->Chapters[j].Title, wxConvUTF8);
+			ch.time = (int)(chapters->Chapters[j].Start / 1000000.0);
+			m_chapters.push_back(ch);
+		}
+		FFMS_FreeChapters(&chapters);
+	}
+
+	if (hasMoreAudioTracks) {
 
 		wxArrayString tracks;
-
-		if (ismkv) {
-			MatroskaWrapper mw;
-			if (mw.Open(m_filename, false)) {
-				Chapter* chap = NULL;
-				UINT nchap = 0;
-				mkv_GetChapters(mw.file, &chap, &nchap);
-
-				if (chap && nchap && m_renderer) {
-					for (int i = 0; i < (int)chap->nChildren; i++) {
-						chapter ch;
-						ch.name = wxString(chap->Children[i].Display->String, wxConvUTF8);
-						ch.time = (int)(chap->Children[i].Start / 1000000.0);
-						m_chapters.push_back(ch);
+		wxArrayString enabled;
+		Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
+		int enabledSize = enabled.GetCount();
+		int lowestIndex = enabledSize;
+		for (size_t j = 0; j < audiotable.GetCount(); j++) {
+			const char* name = FFMS_GetTrackName(Indexer, audiotable[j]);
+			const char* language = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
+			if (language) {
+				if (enabledSize) {
+					int index = enabled.Index(language, false);
+					if (index > -1 && index < lowestIndex) {
+						lowestIndex = index;
+						audiotrack = audiotable[j];
+						continue;
 					}
 				}
-				mw.Close();
 			}
-			if (!hasMoreAudioTracks) { audiotrack = (audiotable.size() > 0) ? audiotable[0] : -1; goto done; }
+			const char* description = name != NULL? name : language;
+			wxString all;
+			wxString codecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
+			all << audiotable[j] << L": " << wxString(description, wxConvUTF8) <<
+				L" (" << codecName << L")";
+			tracks.Add(all);
 		}
-		if (/*!tracks.size() && */hasMoreAudioTracks) {
-			wxArrayString enabled;
-			Options.GetTableFromString(ACCEPTED_AUDIO_STREAM, enabled, L";");
-			int enabledSize = enabled.GetCount();
-			int lowestIndex = enabledSize;
-			for (size_t j = 0; j < audiotable.GetCount(); j++) {
-				const char* name = FFMS_GetTrackName(Indexer, audiotable[j]);
-				const char* language = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
-				if (language) {
-					if (enabledSize) {
-						int index = enabled.Index(language, false);
-						if (index > -1 && index < lowestIndex) {
-							lowestIndex = index;
-							audiotrack = audiotable[j];
-							continue;
-						}
-					}
-				}
-				const char* description = name != NULL? name : language;
-				wxString all;
-				wxString codecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
-				all << audiotable[j] << L": " << wxString(description, wxConvUTF8) <<
-					L" (" << codecName << L")";
-				tracks.Add(all);
-			}
-			if (lowestIndex < enabledSize) {
-				tracks.Clear();
-				hasMoreAudioTracks = false;
-				goto done;
-			}
-			/*for (size_t j = 0; j < audiotable.size(); j++) {
-				wxString CodecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
-				wxString all;
-				all << audiotable[j] << L": " << CodecName;
-				tracks.Add(all);
-			}*/
+		if (lowestIndex < enabledSize) {
+			tracks.Clear();
+			hasMoreAudioTracks = false;
+			goto done;
 		}
+		
 		audiotrack = progress->ShowSecondaryDialog([=]() {
 			kainoteApp* Kaia = (kainoteApp*)wxTheApp;
 

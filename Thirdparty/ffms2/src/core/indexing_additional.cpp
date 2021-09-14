@@ -21,10 +21,6 @@
 #include "indexing.h"
 #include "../../include/ffms.h"
 
-extern "C" {
-#include <libavutil/avutil.h>
-#include <libavutil/sha.h>
-}
 
 const char* FFMS_Indexer::GetTrackName(int Track)
 {
@@ -46,10 +42,109 @@ const char* FFMS_Indexer::GetTrackLanguage(int Track)
 	return nullptr;
 }
 
+FFMS_Chapters* FFMS_Indexer::GetChapters()
+{
+	if (!FormatContext->nb_chapters)
+		return nullptr;
+
+	FFMS_Chapters *Chapters = new FFMS_Chapters;
+	Chapters->Chapters = new FFMS_Chapter[FormatContext->nb_chapters];
+	Chapters->NumOfChapters = FormatContext->nb_chapters;
+	for (int i = 0; i < FormatContext->nb_chapters; i++) {
+		AVChapter* chapter = FormatContext->chapters[i];
+		Chapters->Chapters[i].Start = chapter->start;
+		Chapters->Chapters[i].End = chapter->end;
+		AVDictionaryEntry* e = av_dict_get(chapter->metadata, "title", nullptr, 0);
+		Chapters->Chapters[i].Title = (e) ? e->value : nullptr;
+	}
+	return Chapters;
+}
+
+FFMS_Attachment* FFMS_Indexer::GetAttachment(int Track)
+{
+	if (FormatContext->streams[Track]->codecpar->codec_type == AVMEDIA_TYPE_ATTACHMENT) {
+		FFMS_Attachment* Attachment = new FFMS_Attachment();
+		AVStream* stream = FormatContext->streams[Track];
+		AVDictionary* d = stream->metadata;
+		AVDictionaryEntry* tf = av_dict_get(d, "filename", 0, 0);
+		AVDictionaryEntry* tm = av_dict_get(d, "mimetype", 0, 0);
+		Attachment->Filename = (tf) ? tf->value : nullptr;
+		Attachment->Mimetype = (tm) ? tm->value : nullptr;
+		Attachment->DataSize = stream->codecpar->extradata_size;
+		Attachment->Data = stream->codecpar->extradata;
+		return Attachment;
+	}
+	return nullptr;
+}
+
+void FFMS_Indexer::GetSubtitles(int Track, GetSubtitlesCallback IC, void* ICPrivate)
+{
+	if (FormatContext->streams[Track]->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
+		AVPacket* Packet = av_packet_alloc();
+		if (Packet) {
+			av_seek_frame(FormatContext, Track, 0, 0);
+			while (av_read_frame(FormatContext, Packet) >= 0) {
+				if (Packet->stream_index == Track) {
+					if (IC(Packet->pts, Packet->duration,
+						FormatContext->streams[Track]->duration,
+						(char*)Packet->data, ICPrivate) == 1)
+						break;
+				}
+				av_packet_unref(Packet);
+			}
+			av_packet_unref(Packet);
+			av_packet_free(&Packet);
+		}
+	}
+}
+
+const char* FFMS_Indexer::GetSubtitleExtradata(int Track)
+{
+	AVStream* stream = FormatContext->streams[Track];
+	if (stream->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
+		if (stream->codecpar->extradata_size) {
+			return (char*)stream->codecpar->extradata;
+		}
+	}
+	return nullptr;
+}
+
 FFMS_API(const char*) FFMS_GetTrackLanguage(FFMS_Indexer* Indexer, int Track) 
 {
 	return Indexer->GetTrackLanguage(Track);
 }
+
+FFMS_API(FFMS_Chapters*) FFMS_GetChapters(FFMS_Indexer* Indexer)
+{
+	return Indexer->GetChapters();
+}
+
+FFMS_API(void) FFMS_FreeChapters(FFMS_Chapters** Chapters)
+{
+	delete[](*Chapters)->Chapters;
+	delete (*Chapters);
+}
+
+FFMS_API(FFMS_Attachment*) FFMS_GetAttachment(FFMS_Indexer* Indexer, int Track)
+{
+	return Indexer->GetAttachment(Track);
+}
+
+FFMS_API(void) FFMS_FreeAttachment(FFMS_Attachment** Attachment)
+{
+	delete (*Attachment);
+}
+
+FFMS_API(const char*) FFMS_GetSubtitleExtradata(FFMS_Indexer* Indexer, int Track)
+{
+	return Indexer->GetSubtitleExtradata(Track);
+}
+
+FFMS_API(void) FFMS_GetSubtitles(FFMS_Indexer* Indexer, int Track, GetSubtitlesCallback IC, void* ICPrivate)
+{
+	return Indexer->GetSubtitles(Track, IC, ICPrivate);
+}
+
 FFMS_API(const char*) FFMS_GetTrackName(FFMS_Indexer* Indexer, int Track)
 {
 	return Indexer->GetTrackName(Track);

@@ -47,9 +47,10 @@
 #include <wx/filedlg.h>
 
 #include <boost/locale/generator.hpp>
-#if TEST_FFMPEG
+#ifdef TEST_FFMPEG
 extern "C" {
 #include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
 }
 #endif
 #undef IsMaximized
@@ -269,7 +270,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
-#if TEST_FFMPEG
+#ifdef TEST_FFMPEG
 
 		TabPanel* tab = GetTab();
 		if (!tab) {
@@ -290,30 +291,84 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 			avformat_close_input(&FormatContext);
 			KaiLog(L"cannot read info");
 		}
+		//wxArrayInt tracks;
 		for (unsigned int i = 0; i < FormatContext->nb_streams; i++) {
-			if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
-				KaiLog(wxString::Format(L"found video track %i", i));
-			}
-			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
-				KaiLog(wxString::Format(L"found audio track %i", i));
-			}
-			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
+			if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
 				KaiLog(wxString::Format(L"found subtitle track %i", i));
+				AVCodecID codecId = FormatContext->streams[i]->codecpar->codec_id;
+				if (codecId == AV_CODEC_ID_SUBRIP) {
+					KaiLog(L"Subtitles SRT");
+				}
+				else if (codecId == AV_CODEC_ID_SSA) {
+					KaiLog(L"Subtitles SSA");
+				}
+				else if (codecId == AV_CODEC_ID_ASS) {
+					KaiLog(L"Subtitles ASS");
+				}
+				else if (codecId == AV_CODEC_ID_TEXT) {
+					KaiLog(L"Subtitles raw text");
+				}
+				else {
+					KaiLog(wxString::Format(L"Subtitles format %i", (int)codecId));
+					continue;
+				}
+				
+				AVDictionary* d = FormatContext->streams[i]->metadata;
+				AVDictionaryEntry* tt = av_dict_get(d, "title", 0, 0);
+				if (tt)
+					KaiLog(wxString::Format(L"name %s", wxString(tt->value, wxConvUTF8)));
+				if (FormatContext->streams[i]->codecpar->extradata_size) {
+					char* buf = (char*)FormatContext->streams[i]->codecpar->extradata;
+					wxString line = wxString(buf, wxConvUTF8, FormatContext->streams[i]->codecpar->extradata_size);
+					KaiLog(line);
+				}
+				AVPacket* Packet = av_packet_alloc();
+				if (Packet) {
+					av_seek_frame(FormatContext, i, 0, 0);
+					while (av_read_frame(FormatContext, Packet) >= 0) {
+						if (Packet->stream_index == i) {
+							KaiLog(wxString::Format(L"track %i", Packet->stream_index));
+
+							char* buf = (char*)Packet->data;
+							wxString line = wxString(buf, wxConvUTF8);
+							KaiLog(line);
+
+						}
+						av_packet_unref(Packet);
+
+					}
+					av_packet_unref(Packet);
+					av_packet_free(&Packet);
+				}
+				else
+					KaiLog("no packet");
+
 			}
 			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_ATTACHMENT) {
 				KaiLog(wxString::Format(L"found atachment track %i", i));
+				AVDictionary* d = FormatContext->streams[i]->metadata;
+				AVDictionaryEntry* tf = av_dict_get(d, "filename", 0, 0);
+				AVDictionaryEntry* tm = av_dict_get(d, "mimetype", 0, 0);
+				if(tf)
+					KaiLog(wxString::Format(L"filename %s", wxString(tf->value, wxConvUTF8)));
+				if (tm)
+					KaiLog(wxString::Format(L"type %s", wxString(tm->value, wxConvUTF8)));
+				/*int extradataSize = FormatContext->streams[i]->codecpar->extradata_size;
+				if (extradataSize) {
+					KaiLog(wxString::Format(L"type %i", extradataSize));
+					wxFile file;
+					file.Create(Options.pathfull + L"\\" + wxString(tf->value, wxConvUTF8), true, wxS_DEFAULT);
+					if (file.IsOpened()) {
+						file.Write(FormatContext->streams[i]->codecpar->extradata, extradataSize);
+						file.Close();
+					}
+					else { KaiLog(L"Cannot open font file"); }
+				}*/
+				
 			}
 			else
 				continue;
-			auto* codec = avcodec_find_decoder(FormatContext->streams[i]->codecpar->codec_id);
-			if (codec) {
-				KaiLog(L"found codec name " + wxString(codec->name, wxConvUTF8));
-			}
-			AVDictionary *d = FormatContext->streams[i]->metadata;
-			AVDictionaryEntry* t = NULL;
-			while (t = av_dict_get(d, "", t, AV_DICT_IGNORE_SUFFIX)) {
-				KaiLog(wxString::Format(L"found entry key %s value %s", t->key, t->value));
-			}
+
 
 			
 		}
@@ -324,6 +379,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 			AVDictionaryEntry* e = av_dict_get(chapter->metadata, "title", NULL, 0);
 			KaiLog(wxString::Format(L"chapter title %s", e ? wxString(e->value, wxConvUTF8) : L""));
 		}
+		
 
 		avformat_close_input(&FormatContext);
 #endif

@@ -98,15 +98,8 @@ mv /usr/bin/link.exe /usr/bin/link.exe.bak
 - when shows list of codecs type make
 - after build type make install
 
-- download ffms2 from https://github.com/FFMS/ffms2/archive/refs/heads/master.zip
 - download avisynth from https://github.com/AviSynth/AviSynthPlus/archive/refs/heads/master.zip
-- download zlib from https://zlib.net/zlib1211.zip
-zlib there is in wxwidgets/src/zlib folder but unfortunately not working. 
-When there are problem with build with makefile you can change it in wxwidgets folder and build it there.
 
-- paste in visual studio paths for includes ffmpeg, avisynth.h and zlib.
-- paste in visual studio paths for libraries, ffmpeg that needs 5 paths for libavcodec.a, libavformat.a,
-libavswresample.a, libavswscale.a and libavutil.a or just place it in one folder. 
 - build FFMS2 in Visual Studio 19.
 
 --------------------- Polski - Polish --------------------------

@@ -191,7 +191,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>LIBCMTD.LIB;libboost_system-vc141-mt-x32-1_73.libs;libboost_filesystem-vc142-mt-gd-x32-1_73.lib;libboost_regex-vc142-mt-gd-x32-1_73.lib;libboost_locale-vc142-mt-gd-x32-1_73.lib</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;LIBCMTD.LIB;libboost_system-vc141-mt-x32-1_73.libs;libboost_filesystem-vc142-mt-gd-x32-1_73.lib;libboost_regex-vc142-mt-gd-x32-1_73.lib;libboost_locale-vc142-mt-gd-x32-1_73.lib</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>
@@ -524,6 +524,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Demux.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
@@ -742,6 +743,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Demux.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
     <ClInclude Include="KaiGauge.h" />
