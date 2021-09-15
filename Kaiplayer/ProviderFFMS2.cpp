@@ -16,9 +16,9 @@
 #include "ProviderFFMS2.h"
 #include "KaiMessageBox.h"
 #include "Videobox.h"
-#include "MKVWrap.h"
 #include "kainoteApp.h"
 #include <wx/dir.h>
+#include <wx/filename.h>
 
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* _success)
@@ -199,9 +199,16 @@ int ProviderFFMS2::Init()
 		int enabledSize = enabled.GetCount();
 		int lowestIndex = enabledSize;
 		for (size_t j = 0; j < audiotable.GetCount(); j++) {
-			const char* name = FFMS_GetTrackName(Indexer, audiotable[j]);
-			const char* language = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
-			if (language) {
+			const char* namec = FFMS_GetTrackName(Indexer, audiotable[j]);
+			const char* languagec = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
+			wxString name = (namec) ? wxString(namec, wxConvUTF8) : L"";
+			wxString language = (languagec) ? wxString(languagec, wxConvUTF8) : L"";
+			if (languagec || !languagec && namec && name.Find(L'[', true) != -1 && name.Find(L']', true) != -1) {
+				if (language.empty()) {
+					size_t startBracket = name.Find(L'[', true);
+					size_t endBracket = name.Find(L']', true);
+					language = name.Mid(startBracket + 1, endBracket - (startBracket + 3));
+				}
 				if (enabledSize) {
 					int index = enabled.Index(language, false);
 					if (index > -1 && index < lowestIndex) {
@@ -211,10 +218,23 @@ int ProviderFFMS2::Init()
 					}
 				}
 			}
-			const char* description = name != NULL? name : language;
+			wxString description;
+			if (namec) {
+				description = name;
+			}
+			if (languagec) {
+				if (namec)
+					description << L" [";
+				description << language;
+				if (namec)
+					description << L"]";
+			}
+			if (description.empty())
+				description = _("Bez nazwy");
+
 			wxString all;
 			wxString codecName(FFMS_GetCodecNameI(Indexer, audiotable[j]), wxConvUTF8);
-			all << audiotable[j] << L": " << wxString(description, wxConvUTF8) <<
+			all << audiotable[j] << L": " << description <<
 				L" (" << codecName << L")";
 			tracks.Add(all);
 		}

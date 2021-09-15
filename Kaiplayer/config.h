@@ -573,4 +573,4 @@ size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignore
 
 extern config Options;
 
-#define TEST_FFMPEG
+//#define TEST_FFMPEG

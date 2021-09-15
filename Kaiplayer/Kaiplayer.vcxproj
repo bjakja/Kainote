@@ -660,8 +660,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsGrid.cpp" />
     <ClCompile Include="Hotkeys.cpp" />
     <ClCompile Include="KaraokeSplitting.cpp" />
-    <ClCompile Include="MatroskaParser.c" />
-    <ClCompile Include="MKVWrap.cpp" />
     <ClCompile Include="MyTextEditor.cpp" />
     <ClCompile Include="NewCatalog.cpp" />
     <ClCompile Include="NumCtrl.cpp" />
@@ -824,8 +822,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VersionKainote.h" />
     <ClInclude Include="Hotkeys.h" />
     <ClInclude Include="KaraokeSplitting.h" />
-    <ClInclude Include="MatroskaParser.h" />
-    <ClInclude Include="MKVWrap.h" />
     <ClInclude Include="MyTextEditor.h" />
     <ClInclude Include="NewCatalog.h" />
     <ClInclude Include="NumCtrl.h" />

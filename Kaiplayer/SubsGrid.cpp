@@ -23,7 +23,7 @@
 #include "Hotkeys.h"
 #include "OpennWrite.h"
 #include "TLDialog.h"
-#include "MKVWrap.h"
+#include "Demux.h"
 #include "Stylelistbox.h"
 #include "Menu.h"
 #include <wx/regex.h>
@@ -783,8 +783,14 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_FILTER:
 	case GRID_FILTER_BY_NOTHING:
 		Filter(id); break;
-	case GRID_PASTE_TRANSLATION: if (subsFormat < SRT && tab->SubsPath != L""){ OnPasteTextTl(); } break;
-	case GRID_SUBS_FROM_MKV: if (tab->VideoName.EndsWith(L".mkv")){ OnMkvSubs(event); } break;
+	case GRID_PASTE_TRANSLATION: 
+		if (subsFormat < SRT && tab->SubsPath != L"")
+			OnPasteTextTl();
+		break;
+	case GRID_SUBS_FROM_MKV: 
+		if (tab->VideoName.EndsWith(L".mkv") || tab->VideoName.EndsWith(L".ogm")) 
+			OnMkvSubs(event); 
+		break;
 	case GRID_SET_NEW_FPS: OnSetNewFPS(); break;
 	case GRID_SHOW_PREVIEW:
 		if (Notebook::GetTabs()->Size() > 1 && !preview)
@@ -1048,10 +1054,10 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 	}
 	wxString mkvpath = (idd == GRID_SUBS_FROM_MKV) ? tab->VideoPath : event.GetString();
 
-	MatroskaWrapper mw;
-	if (!mw.Open(mkvpath, false)){ return; }
-	int isgood = (int)mw.GetSubtitles(this);
-	mw.Close();
+	Demux dmx;
+	if (!dmx.Open(mkvpath)){ return; }
+	bool isgood = dmx.GetSubtitles(this);
+	dmx.Close();
 
 	if (isgood){
 		if (hasTLMode){ 

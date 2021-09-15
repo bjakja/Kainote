@@ -33,6 +33,10 @@ public:
 	bool SaveFont(int i, const wxString& path, wxZipOutputStream* zip = NULL);
 
 private:
+	static int __stdcall GetSubtitles(int64_t Start, int64_t Duration, int64_t Total, const char* Line, void* ICPrivate);
 	FFMS_Indexer* indexer = NULL;
 	std::vector<FFMS_Attachment*> attachments;
+	ProgressSink* progress = NULL;
+	int codecType = 0;
+	std::vector<wxString> subtitleList;
 };

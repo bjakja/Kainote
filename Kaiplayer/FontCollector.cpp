@@ -17,7 +17,7 @@
 #include "FontCollector.h"
 #include "KainoteApp.h"
 #include "Config.h"
-#include "MKVWrap.h"
+#include "Demux.h"
 #include "FontEnumerator.h"
 #include <wx/wfstream.h>
 #include <wx/dir.h>
@@ -886,42 +886,44 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 		SendMessageD(_("To wideo nie jest plikiem MKV."), fcd->warning);
 		return;
 	}
-	MatroskaWrapper mw;
-	mw.Open(mkvpath);
-	std::map<int, wxString> names = mw.GetFontList();
-	if (names.size() < 1){
+	Demux dmx;
+	dmx.Open(mkvpath);
+	wxArrayString list;
+	dmx.GetFontList(&list);
+	if (list.size() < 1){
 		SendMessageD(_("Wczytany plik MKV nie ma żadnych czcionek."), fcd->warning);
 		return;
 	}
 
-	size_t cpfonts = names.size();
+	size_t cpfonts = list.size();
 	if (cpfonts) {
 		if (!MakeDirectory(operation & AS_ZIP)) {
 			return;
 		}
 	}
 
-	for (auto fontI : names){
-		if (mw.SaveFont(fontI.first, fcd->copypath.BeforeLast(L'\\') + L"\\" + fontI.second, zip))
+	for (size_t k = 0; k < list.size(); k++) {
+		wxString name = list[k];
+		if (dmx.SaveFont(k, fcd->copypath.BeforeLast(L'\\') + L"\\" + name, zip))
 		{
-			SendMessageD(_("Zapisano czcionkę o nazwie \"") + fontI.second + L"\".\n \n", fcd->normal);
+			SendMessageD(_("Zapisano czcionkę o nazwie \"") + name + L"\".\n \n", fcd->normal);
 		}
 		else
 		{
-			SendMessageD(_("Nie można zapisać czcionki o nazwie \"") + fontI.second + L"\".\n \n", fcd->warning);
+			SendMessageD(_("Nie można zapisać czcionki o nazwie \"") + name + L"\".\n \n", fcd->warning);
 			cpfonts--;
 		}
 	}
 
-	if (cpfonts < names.size()){
+	if (cpfonts < list.size()){
 		SendMessageD(wxString::Format(_("Zakończono, skopiowano %i czcionek.\nNie udało się skopiować %i czcionek."), 
-			(int)cpfonts, (int)(names.size() - cpfonts)), fcd->warning);
+			(int)cpfonts, (int)(list.size() - cpfonts)), fcd->warning);
 	}
 	else{
 		SendMessageD(wxString::Format(_("Zakończono powodzeniem, skopiowano %i czcionek."), (int)cpfonts), wxColour(L"#008000"));
 	}
 
-	mw.Close();
+	dmx.Close();
 }
 
 

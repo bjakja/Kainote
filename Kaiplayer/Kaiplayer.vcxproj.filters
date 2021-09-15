@@ -296,12 +296,6 @@
     <ClCompile Include="HotkeysNaming.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
-    <ClCompile Include="MatroskaParser.c">
-      <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClCompile>
-    <ClCompile Include="MKVWrap.cpp">
-      <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClCompile>
     <ClCompile Include="OpennWrite.cpp">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClCompile>
@@ -677,12 +671,6 @@
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
     <ClInclude Include="LogHandler.h">
-      <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="MatroskaParser.h">
-      <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="MKVWrap.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
     </ClInclude>
     <ClInclude Include="OpennWrite.h">
