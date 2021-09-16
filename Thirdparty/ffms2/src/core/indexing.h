@@ -108,6 +108,7 @@ public:
 	FFMS_Attachment* GetAttachment(int Track);
 	void GetSubtitles(int Track, GetSubtitlesCallback IC, void* ICPrivate);
     const char* GetSubtitleExtradata(int Track);
+    const char* GetSubtitleFormat(int Track);
 };
 
 

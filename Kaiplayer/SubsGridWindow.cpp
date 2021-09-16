@@ -425,7 +425,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				tdc.SetBrush(wxBrush((j == 0 && !isHeadline) ? label : kol));
 				if (unknownStyle && j == 4 ||
 					shorttime && (j == 10 || (j == 3 && subsFormat != ASS && subsFormat != TMP)) ||
-					badWraps && (j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP && subsFormat != ASS))) {
+					badWraps && (j == 11 || (j == 4 && subsFormat > ASS && subsFormat != TMP) || (j == 2 && subsFormat == TMP))) {
 					tdc.SetBrush(wxBrush(SpelcheckerCol));
 				}
 
@@ -822,7 +822,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			gc->SetBrush(wxBrush((j == 0 && !isHeadline) ? label : col));
 			if (unknownStyle && j == 4 || 
 				shorttime && (j == 10 || (j == 3 && subsFormat != ASS && subsFormat != TMP)) ||
-				badWraps && (j == 11 || (j == 4 && subsFormat > ASS) || (j == 2 && subsFormat != TMP && subsFormat != ASS))){
+				badWraps && (j == 11 || (j == 4 && subsFormat > ASS && subsFormat != TMP) || (j == 2 && subsFormat == TMP))){
 				gc->SetBrush(wxBrush(SpelcheckerCol));
 			}
 

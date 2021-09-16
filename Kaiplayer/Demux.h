@@ -20,7 +20,9 @@
 #include <wx/zipstrm.h>
 #include "include/ffms.h"
 #include <vector>
+
 class SubsGrid;
+class ProgressSink;
 
 class Demux {
 public:

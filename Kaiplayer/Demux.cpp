@@ -36,8 +36,8 @@ bool Demux::Open(const wxString& filename)
 	errInfo.ErrorType = FFMS_ERROR_SUCCESS;
 	errInfo.SubType = FFMS_ERROR_SUCCESS;
 
-	FFMS_Indexer* Indexer = FFMS_CreateIndexer(filename.utf8_str(), &errInfo);
-	if (!Indexer) {
+	indexer = FFMS_CreateIndexer(filename.utf8_str(), &errInfo);
+	if (!indexer) {
 		KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"), errInfo.Buffer)); return false;
 	}
 	return true;
@@ -49,10 +49,13 @@ void Demux::Close()
 		for (auto attachment : attachments) {
 			FFMS_FreeAttachment(&attachment);
 		}
+		attachments.clear();
 	}
 
-	if (indexer)
+	if (indexer) {
 		FFMS_CancelIndexing(indexer);
+		indexer = NULL;
+	}
 }
 
 bool Demux::GetSubtitles(SubsGrid* target)
@@ -63,10 +66,11 @@ bool Demux::GetSubtitles(SubsGrid* target)
 	wxArrayInt trackList;
 	for (int i = 0; i < numTracks; i++){
 		if (FFMS_GetTrackTypeI(indexer, i) == FFMS_TYPE_SUBTITLE) {
-			wxString codecName = wxString(FFMS_GetCodecNameI(indexer, i), wxConvUTF8);
+			wxString codecName = wxString(FFMS_GetSubtitleFormat(indexer, i), wxConvUTF8);
 			wxString trackName = wxString(FFMS_GetTrackName(indexer, i), wxConvUTF8);
 			wxString trackLanguage = wxString(FFMS_GetTrackLanguage(indexer, i), wxConvUTF8);
-			if (codecName == L"ass" || codecName == L"ssa" || codecName == L"subrip" || codecName == L"text") {
+			if (codecName == L"ass" || codecName == L"ssa" || codecName == L"subrip" || 
+				codecName == L"srt" || codecName == L"text") {
 				trackList.Add(i);
 				trackNameList.Add(wxString::Format(L"%i ", i) + trackName + L" (" + trackLanguage + L", " + codecName + L")");
 			}
@@ -99,7 +103,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 	if (trackToRead != -1) {
 		// to force saving to show choose name dialog
 		target->originalFormat = -1;
-		wxString codecName = wxString(FFMS_GetCodecNameI(indexer, trackToRead), wxConvUTF8);
+		wxString codecName = wxString(FFMS_GetSubtitleFormat(indexer, trackToRead), wxConvUTF8);
 		if (codecName == L"ass")
 			codecType = 0;
 		else if (codecName == L"ssa")
@@ -107,7 +111,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 		else
 			codecType = 2;
 
-		ProgressSink* progress = new ProgressSink(target->GetParent(), _("Odczyt napisów z pliku Matroska."));
+		progress = new ProgressSink(target->GetParent(), _("Odczyt napisów z pliku Matroska."));
 		progress->SetAndRunTask([=]() {
 			FFMS_GetSubtitles(indexer, trackToRead, GetSubtitles, (void*)this);
 			if (progress->WasCancelled()) {
@@ -225,11 +229,12 @@ int __stdcall Demux::GetSubtitles(int64_t Start, int64_t Duration, int64_t Total
 	wxString blockString(Line, wxConvUTF8);
 
 	// Get start and end times
-	int64_t timecodeScaleLow = 1000000;
 	STime subStart, subEnd;
-	int startTime = Start / timecodeScaleLow;
-	int endTime = startTime + (Duration / timecodeScaleLow);
+	int startTime = Start;
+	int endTime = startTime + Duration;
 	if (demux->codecType < 2) {
+		startTime += 5;
+		endTime += 5;
 		startTime = ZEROIT(startTime);
 		endTime = ZEROIT(endTime);
 	}

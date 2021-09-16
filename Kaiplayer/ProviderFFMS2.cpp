@@ -185,7 +185,7 @@ int ProviderFFMS2::Init()
 		for (int j = 0; j < chapters->NumOfChapters; j++) {
 			chapter ch;
 			ch.name = wxString(chapters->Chapters[j].Title, wxConvUTF8);
-			ch.time = (int)(chapters->Chapters[j].Start / 1000000.0);
+			ch.time = (int)(chapters->Chapters[j].Start);
 			m_chapters.push_back(ch);
 		}
 		FFMS_FreeChapters(&chapters);
@@ -203,11 +203,14 @@ int ProviderFFMS2::Init()
 			const char* languagec = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
 			wxString name = (namec) ? wxString(namec, wxConvUTF8) : L"";
 			wxString language = (languagec) ? wxString(languagec, wxConvUTF8) : L"";
-			if (languagec || !languagec && namec && name.Find(L'[', true) != -1 && name.Find(L']', true) != -1) {
-				if (language.empty()) {
-					size_t startBracket = name.Find(L'[', true);
-					size_t endBracket = name.Find(L']', true);
-					language = name.Mid(startBracket + 1, endBracket - (startBracket + 3));
+			if (languagec) {
+				if (language.Find(L'[', true) != -1 && language.Find(L']', true) != -1) {
+					size_t startBracket = language.Find(L'[', true);
+					size_t endBracket = language.Find(L']', true);
+					if (name.empty() && startBracket > 1) {
+						name = language.Mid(0, startBracket);
+					}
+					language = language.Mid(startBracket + 1, endBracket - (startBracket + 1));
 				}
 				if (enabledSize) {
 					int index = enabled.Index(language, false);

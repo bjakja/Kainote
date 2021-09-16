@@ -887,7 +887,10 @@ void FontCollector::CopyMKVFontsFromTab(const wxString &mkvpath)
 		return;
 	}
 	Demux dmx;
-	dmx.Open(mkvpath);
+	if (!dmx.Open(mkvpath)) {
+		SendMessageD(_("Nie można otworzyć pliku MKV"), fcd->warning);
+		return;
+	}
 	wxArrayString list;
 	dmx.GetFontList(&list);
 	if (list.size() < 1){

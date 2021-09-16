@@ -324,11 +324,20 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 				}
 				AVPacket* Packet = av_packet_alloc();
 				if (Packet) {
+					AVStream* stream = FormatContext->streams[i];
 					av_seek_frame(FormatContext, i, 0, 0);
 					while (av_read_frame(FormatContext, Packet) >= 0) {
 						if (Packet->stream_index == i) {
-							KaiLog(wxString::Format(L"track %i", Packet->stream_index));
+							if (Packet->size < 2) {
+								av_packet_unref(Packet);
+								continue;
+							}
 
+							KaiLog(wxString::Format(L"track %i", Packet->stream_index));
+							STime start, end;
+							start.NewTime(Packet->pts);
+							end.NewTime((Packet->duration) + start.mstime);
+							KaiLog(wxString::Format(L"times %s %s", start.GetFormatted(ASS), end.GetFormatted(ASS)));
 							char* buf = (char*)Packet->data;
 							wxString line = wxString(buf, wxConvUTF8);
 							KaiLog(line);
