@@ -1,4 +1,4 @@
-//  Copyright (c) 2021, Marcin Drob
+ï»¿//  Copyright (c) 2021, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ bool Demux::Open(const wxString& filename)
 
 	indexer = FFMS_CreateIndexer(filename.utf8_str(), &errInfo);
 	if (!indexer) {
-		KaiLog(wxString::Format(_("Wyst¹pi³ b³¹d indeksowania: %s"), errInfo.Buffer)); return false;
+		KaiLog(wxString::Format(_("WystÄ…piÅ‚ bÅ‚Ä…d indeksowania: %s"), errInfo.Buffer)); return false;
 	}
 	return true;
 }
@@ -79,7 +79,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 	// No tracks found
 	if (trackList.Count() == 0) {
 		Close();
-		KaiMessageBox(_("Plik nie ma ¿adnej œcie¿ki z napisami."));
+		KaiMessageBox(_("Plik nie ma Å¼adnej Å›cieÅ¼ki z napisami."));
 		return false;
 	}
 
@@ -90,8 +90,8 @@ bool Demux::GetSubtitles(SubsGrid* target)
 
 	// Pick a track
 	else {
-		KaiListBox tracks(target->GetParent(), trackNameList, _("Wybierz œcie¿kê napisów"), true);
-		//int choice = wxGetSingleChoiceIndex(_("Wybierz œcie¿kê do wczytania:"), _("Znaleziono kilka œcie¿ek z napisami"), tracksNames);
+		KaiListBox tracks(target->GetParent(), trackNameList, _("Wybierz Å›cieÅ¼kÄ™ napisÃ³w"), true);
+		//int choice = wxGetSingleChoiceIndex(_("Wybierz Å›cieÅ¼kÄ™ do wczytania:"), _("Znaleziono kilka Å›cieÅ¼ek z napisami"), tracksNames);
 		if (tracks.ShowModal() != wxID_OK) {
 			Close();
 			return false;
@@ -111,7 +111,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 		else
 			codecType = 2;
 
-		progress = new ProgressSink(target->GetParent(), _("Odczyt napisów z pliku Matroska."));
+		progress = new ProgressSink(target->GetParent(), _("Odczyt napisÃ³w z pliku Matroska."));
 		progress->SetAndRunTask([=]() {
 			FFMS_GetSubtitles(indexer, trackToRead, GetSubtitles, (void*)this);
 			if (progress->WasCancelled()) {

@@ -61,7 +61,7 @@ typedef struct {
 
 static inline char *ass_copy_string(ASS_StringView src)
 {
-    char *buf = (char*) malloc(src.len + 1);
+    char *buf = (char*)malloc(src.len + 1);
     if (buf) {
         memcpy(buf, src.str, src.len);
         buf[src.len] = '\0';
@@ -190,7 +190,7 @@ static inline uint32_t fnv_32a_buf(const void *buf, size_t len, uint32_t hval)
     if (!len)
         return hval;
 
-    const uint8_t *bp = (uint8_t *)buf;
+    const uint8_t *bp = (uint8_t*)buf;
     size_t n = (len + 3) / 4;
 
     switch (len % 4) {

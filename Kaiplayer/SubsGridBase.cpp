@@ -362,7 +362,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 		{
 			Dialogue *dial = file->GetDialogue(i);
 			if (!ignoreFiltered && !dial->isVisible || dial->NonDialogue){ continue; }
-			//a tu trzeba w przypadku ebrow pobrać editbox line
+			//when i == editbox line get the last changes
 			if (i == currentLine){ dial = Edit->line; };
 
 			if (tlmodeOn){
@@ -633,8 +633,8 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 
 	}//loop for
 
-	// tu jeszcze należy poprawić uwzględniając linijkę z czasem przed tablicą i czasem po niej
-	// a może to w ogóle nie jest potrzebne?
+	// add to table also lines with times before and after lines in table
+	// maybe it's not needed?
 	if (correctEndTimes > 0 || PostprocessorOptions > 16){
 		bool hasend = false;
 		int newstarttime = -1;
@@ -691,20 +691,12 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 			if (PostprocessorOptions & 1) {
 				dialc->Start.Change(-LeadIn);
 				//no need to correct
-				/*if (dialc->Start < it->first->End && cur != tmpmap.begin()) {
-					dialc->Start = it->first->End;
-				}
-				if (oldStart != dialc->Start.mstime)*/
-					numOfStartModifications++;
+				numOfStartModifications++;
 			}
 			if (PostprocessorOptions & 2) {
 				dialc->End.Change(LeadOut);
 				//no need to correct
-				/*if (dialc->End > itplus->first->Start) {
-					dialc->End = itplus->first->Start;
-				}
-				if (oldEnd != dialc->End.mstime)*/
-					numOfEndModifications++;
+				numOfEndModifications++;
 			}
 
 			//Keyframes goes first and rest cannot apply when keyframe was set
@@ -815,9 +807,6 @@ void SubsGridBase::ChangeTimes(bool byFrame)
 	markedLine = tmpMarked;
 	if (subsFormat > TMP){ RefreshColumns(START | END); }
 	else{ Refresh(false); }
-#if _DEBUG
-	//wxBell();
-#endif
 }
 
 
@@ -1130,10 +1119,9 @@ size_t SubsGridBase::FirstSelection(size_t *firstSelectionId /*= NULL*/)
 	return file->FirstSelection();
 }
 
-
-//Uważaj na dodawanie do niszczarki, 
-//bo brak dodania gdy trzeba to wycieki pamięci,
-//a podwójne dodanie to krasz przy niszczeniu obiektu.
+// Warning for adding to destroy
+// no adding makes memory leaks
+// two addings makes crash when object is destroyed.
 void SubsGridBase::InsertRows(int Row,
 	const std::vector<Dialogue *> &RowsTable, bool AddToDestroy)
 {
@@ -1146,9 +1134,9 @@ void SubsGridBase::InsertRows(int Row,
 	}
 }
 
-//Uważaj na dodawanie do niszczarki, 
-//bo brak dodania gdy trzeba to wycieki pamięci,
-//a podwójne dodanie to krasz przy niszczeniu obiektu.
+// Warning for adding to destroy
+// no adding makes memory leaks
+// two addings makes crash when object is destroyed.
 void SubsGridBase::InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy, bool Save)
 {
 	file->InsertRows(Row, NumRows, Dialog, AddToDestroy, Save);
@@ -1277,7 +1265,9 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 		Edit->SetTlMode(hasTLMode);
 		Kai->Menubar->Enable(GLOBAL_SAVE_TRANSLATION, hasTLMode);
 	}
-	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ showOriginal = true; }
+	if (hasTLMode && (GetSInfo(L"TLMode Showtl") == L"Yes" || Options.GetBool(TL_MODE_SHOW_ORIGINAL))){ 
+		showOriginal = true; 
+	}
 
 
 	if (subsFormat == MDVD || subsFormat == MPL2){

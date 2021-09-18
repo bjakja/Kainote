@@ -114,7 +114,7 @@ public:
 	virtual void ChangePositionByFrame(int cpos){};
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
-	virtual byte *GetFramewithSubs(bool subs, bool *del, void *converter){ return NULL; };
+	virtual byte *GetFramewithSubs(bool subs, bool *del){ return NULL; };
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
@@ -191,6 +191,7 @@ public:
 	bool HasVisual(bool hasDefault = false);
 	Visuals *GetVisual();
 	void SetAudioPlayer(AudioDisplay *player);
+	void SaveFrame(int id);
 	
 private:
 

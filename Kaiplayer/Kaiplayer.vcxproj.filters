@@ -233,9 +233,6 @@
     <ClCompile Include="DshowRenderer.cpp">
       <Filter>Source Files\Video</Filter>
     </ClCompile>
-    <ClCompile Include="ColorSpaceConverter.cpp">
-      <Filter>Source Files\Video</Filter>
-    </ClCompile>
     <ClCompile Include="ColorPicker.cpp">
       <Filter>Source Files\Windows &amp; Dialogs</Filter>
     </ClCompile>
@@ -690,9 +687,6 @@
     </ClInclude>
     <ClInclude Include="VersionKainote.h">
       <Filter>Source Files\Utils &amp; Config</Filter>
-    </ClInclude>
-    <ClInclude Include="ColorSpaceConverter.h">
-      <Filter>Source Files\Video</Filter>
     </ClInclude>
     <ClInclude Include="CsriMod.h">
       <Filter>Source Files\Video</Filter>

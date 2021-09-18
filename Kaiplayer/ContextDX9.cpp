@@ -1,4 +1,4 @@
-//  Copyright (c) 2020, Marcin Drob
+ï»¿//  Copyright (c) 2020, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -193,7 +193,7 @@ int ContextDX9::CreateFont(const wxString &fontName, int height, bool bold, bool
 		OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, fontName.wc_str(), &D3DFont);
 
 	if (FAILED(hr)) {
-		KaiLogSilent(_("Nie mo¿na stworzyæ czcionki D3DX"));
+		KaiLogSilent(_("Nie moÅ¼na stworzyÄ‡ czcionki D3DX"));
 		return size - 1;
 	}
 	m_D3DFonts.push_back(D3DFont);

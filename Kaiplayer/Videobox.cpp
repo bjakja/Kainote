@@ -25,7 +25,6 @@
 #include "Videobox.h"
 #include "KainoteMain.h"
 #include "Hotkeys.h"
-#include "ColorSpaceConverter.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
@@ -1083,43 +1082,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 	}
 	else if (id == VIDEO_DELETE_FILE){ OnDeleteVideo(); }
 	else if (id >= VIDEO_SAVE_FRAME_TO_PNG && id <= VIDEO_COPY_SUBBED_FRAME_TO_CLIPBOARD && GetState() == Paused){
-		CColorSpaceConverter conv(renderer->m_Format, renderer->m_Width, renderer->m_Height);
-		bool del = false;
-		byte *framebuf = renderer->GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del, &conv);
-		if (id == VIDEO_SAVE_FRAME_TO_PNG || id == VIDEO_SAVE_SUBBED_FRAME_TO_PNG){
-			wxString path;
-			int num = 1;
-			wxArrayString paths;
-			wxString filespec;
-			wxString dirpath = tab->VideoPath.BeforeLast(L'\\', &filespec);
-			wxDir kat(dirpath);
-			path = tab->VideoPath;
-			if (kat.IsOpened()){
-				kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast(L'.') << L"_*_*.png", wxDIR_FILES);
-			}
-			for (wxString &file : paths){
-				if (file.find(L"_" + std::to_string(num) + L"_") == wxNOT_FOUND){
-					break;
-				}
-				num++;
-			}
-			path = tab->VideoPath.BeforeLast(L'.');
-			STime currentTime;
-			currentTime.mstime = renderer->m_Time;
-			wxString timestring = currentTime.raw(SRT);
-			timestring.Replace(L":", L";");
-			//path.Replace(L",", L".");
-			path << L"_" << num << L"_" << timestring << L".png";
-
-			if (wxFileExists(path)){
-				bool thisisbad = true;
-			}
-			conv.SavePNG(path, framebuf);
-		}
-		else{
-			conv.SavetoClipboard(framebuf);
-		}
-		if (del){ delete framebuf; }
+		renderer->SaveFrame(id);
 	}
 	else {
 		Kai->OnMenuSelected(event);

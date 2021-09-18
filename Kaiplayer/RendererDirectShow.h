@@ -55,7 +55,7 @@ public:
 	void ChangePositionByFrame(int cpos);
 	void ChangeVobsub(bool vobsub = false);
 	wxArrayString GetStreams();
-	byte *GetFramewithSubs(bool subs, bool *del, void *converter);
+	byte *GetFramewithSubs(bool subs, bool *del) override;
 	
 	bool EnumFilters(Menu *menu);
 	bool FilterConfig(wxString name, int idx, wxPoint pos);

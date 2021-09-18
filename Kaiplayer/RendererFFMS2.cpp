@@ -535,20 +535,18 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 
 }
 
-byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del, void *converter)
+byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
 {
-	bool ffnsubs = (!subs);
 	byte *cpy1;
-	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
 	int all = m_Height * m_Pitch;
-	if (ffnsubs){
+	if (!subs){
 		*del = true;
 		byte *cpy = new byte[all];
 		cpy1 = cpy;
 		m_FFMS2->GetFrame(m_Time, cpy1);
 	}
 	else{ *del = false; }
-	return (ffnsubs) ? cpy1 : m_FrameBuffer;
+	return (!subs) ? cpy1 : m_FrameBuffer;
 }
 
 void RendererFFMS2::GoToNextKeyframe()

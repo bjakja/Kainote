@@ -55,7 +55,7 @@ public:
 	//it's safe to not exist visual
 	//returns true if removed
 	//bool RemoveVisual(bool noRefresh = false);
-	byte *GetFramewithSubs(bool subs, bool *del, void *converter);
+	byte *GetFramewithSubs(bool subs, bool *del) override;
 	void DeleteAudioCache(){ if (m_FFMS2){ m_FFMS2->DeleteOldAudioCache(); } }
 	void SetColorSpace(const wxString& matrix, bool render = true){
 		if (m_FFMS2){

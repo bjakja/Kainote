@@ -19,6 +19,8 @@
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
+#include <wx/dir.h>
+#include <wx/clipbrd.h>
 
 
 #if byvertices
@@ -755,97 +757,6 @@ bool RendererVideo::RemoveVisual(bool noRefresh, bool disable)
 	return true;
 }
 
-//bool RendererVideo::DrawTexture(byte *nframe, bool copy)
-//{
-//
-//	wxCriticalSectionLocker lock(m_MutexRendering);
-//	byte *fdata = NULL;
-//	byte *texbuf;
-//	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
-//	
-//	D3DLOCKED_RECT d3dlr;
-//
-//	if (nframe){
-//		fdata = nframe;
-//		if (copy){
-//			byte *cpy = (byte*)m_FrameBuffer;
-//			memcpy(cpy, fdata, m_Height * m_Pitch);
-//		}
-//	}
-//	else{
-//		KaiLog(_("Brak bufora klatki")); return false;
-//	}
-//
-//
-//	m_SubsProvider->Draw(fdata, m_Time);
-//
-//
-//#ifdef byvertices
-//	HR(m_MainSurface->LockRect(&d3dlr, 0, 0), _("Nie można zablokować bufora tekstury"));//D3DLOCK_NOSYSLOCK
-//#else
-//	HR(m_MainSurface->LockRect(&d3dlr, 0, D3DLOCK_NOSYSLOCK), _("Nie można zablokować bufora tekstury"));
-//#endif
-//	texbuf = static_cast<byte *>(d3dlr.pBits);
-//
-//	diff = d3dlr.Pitch - (m_Width*bytes);
-//	if (m_SwapFrame){
-//		int framePitch = m_Width * bytes;
-//		byte * reversebyte = fdata + (framePitch * m_Height) - framePitch;
-//		for (int j = 0; j < m_Height; ++j){
-//			memcpy(texbuf, reversebyte, framePitch);
-//			texbuf += framePitch + diff;
-//			reversebyte -= framePitch;
-//		}
-//	}
-//	else if (!diff){
-//		memcpy(texbuf, fdata, (m_Height * m_Pitch));
-//	}
-//	else if (diff > 0){
-//
-//		if (m_Format >= YV12){
-//			for (int i = 0; i < m_Height; ++i){
-//				memcpy(texbuf, fdata, m_Width);
-//				texbuf += (m_Width + diff);
-//				fdata += m_Width;
-//			}
-//			int hheight = m_Height / 2;
-//			int fwidth = (m_Format == NV12) ? m_Width : m_Width / 2;
-//			int fdiff = (m_Format == NV12) ? diff : diff / 2;
-//
-//			for (int i = 0; i < hheight; i++){
-//				memcpy(texbuf, fdata, fwidth);
-//				texbuf += (fwidth + fdiff);
-//				fdata += fwidth;
-//			}
-//			if (m_Format < NV12){
-//				for (int i = 0; i < hheight; ++i){
-//					memcpy(texbuf, fdata, fwidth);
-//					texbuf += (fwidth + fdiff);
-//					fdata += fwidth;
-//				}
-//			}
-//		}
-//		else
-//		{
-//			int fwidth = m_Width * bytes;
-//			for (int i = 0; i < m_Height; i++){
-//				memcpy(texbuf, fdata, fwidth);
-//				texbuf += (fwidth + diff);
-//				fdata += fwidth;
-//			}
-//		}
-//
-//	}
-//	else{
-//		KaiLog(wxString::Format(L"bad pitch diff %i pitch %i dxpitch %i", diff, m_Pitch, d3dlr.Pitch));
-//	}
-//
-//	m_MainSurface->UnlockRect();
-//
-//	return true;
-//}
-
-
 int RendererVideo::GetCurrentPosition()
 {
 	return m_Time;
@@ -878,4 +789,60 @@ Visuals *RendererVideo::GetVisual()
 void RendererVideo::SetAudioPlayer(AudioDisplay *player)
 {
 	m_AudioPlayer = player;
+}
+
+void RendererVideo::SaveFrame(int id)
+{
+	bool del = false;
+	byte* framebuf = GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
+	if (!framebuf)
+		return;
+
+	size_t rgb32size = m_Height * m_Width * 4;
+	size_t rgb24size = m_Height * m_Width * 3;
+	byte* rgb24 = (byte*)malloc(rgb24size);
+	memset(rgb24, 0, rgb24size);
+	byte* buff = rgb24;
+	for (size_t i = 0; i < rgb32size; i += 4) {
+		*buff++ = framebuf[i + 2];
+		*buff++ = framebuf[i + 1];
+		*buff++ = framebuf[i + 0];
+	}
+	wxImage frame(m_Width, m_Height, false);
+	frame.SetData(rgb24);
+
+	if (id == VIDEO_SAVE_FRAME_TO_PNG || id == VIDEO_SAVE_SUBBED_FRAME_TO_PNG) {
+		wxString path;
+		int num = 1;
+		wxArrayString paths;
+		wxString filespec;
+		wxString dirpath = tab->VideoPath.BeforeLast(L'\\', &filespec);
+		wxDir kat(dirpath);
+		path = tab->VideoPath;
+		if (kat.IsOpened()) {
+			kat.GetAllFiles(dirpath, &paths, filespec.BeforeLast(L'.') << L"_*_*.png", wxDIR_FILES);
+		}
+		for (wxString& file : paths) {
+			if (file.find(L"_" + std::to_string(num) + L"_") == wxNOT_FOUND) {
+				break;
+			}
+			num++;
+		}
+		path = tab->VideoPath.BeforeLast(L'.');
+		STime currentTime;
+		currentTime.mstime = m_Time;
+		wxString timestring = currentTime.raw(SRT);
+		timestring.Replace(L":", L";");
+		//path.Replace(L",", L".");
+		path << L"_" << num << L"_" << timestring << L".png";
+		frame.SaveFile(path, wxBITMAP_TYPE_PNG);
+	}
+	else {
+		if (wxTheClipboard->Open())
+		{
+			wxTheClipboard->SetData(new wxBitmapDataObject(frame));
+			wxTheClipboard->Close();
+		}
+	}
+	if (del) { delete[] framebuf; }
 }

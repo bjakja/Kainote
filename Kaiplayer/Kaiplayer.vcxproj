@@ -650,7 +650,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="VisualMoveAll.cpp" />
     <ClCompile Include="VisualClipRect.cpp" />
     <ClCompile Include="StyleChange.cpp" />
-    <ClCompile Include="ColorSpaceConverter.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="DropFiles.cpp" />
     <ClCompile Include="DshowRenderer.cpp" />
@@ -796,7 +795,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SpellCheckerDialog.h" />
     <ClInclude Include="MisspellReplacer.h" />
     <ClInclude Include="StyleChange.h" />
-    <ClInclude Include="ColorSpaceConverter.h" />
     <ClInclude Include="ColorPicker.h" />
     <ClInclude Include="DropFiles.h" />
     <ClInclude Include="DshowRenderer.h" />

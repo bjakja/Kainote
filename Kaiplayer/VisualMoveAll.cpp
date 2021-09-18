@@ -440,62 +440,71 @@ void MoveAll::ChangeInLines(bool all)
 				(type == TAGP) ? L"p[0-9-]+[^}]*} ?m ([^{]+)" : L"move\\(([^\\)]+)";
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch = 0, lenMatch = 0;
-			if (re.Matches(txt)){
+			size_t textPosition = 0;
+			while (re.Matches(txt.Mid(textPosition))){
 				//reseting vector scale
 				moving = drawingOriginalPos;
 				wxString visual;
-				tmp = re.GetMatch(txt, 1);
-				if (type == TAGCLIP){
-					int replacements = tmp.Freq(L',');
-					if (replacements == 1){
-						wxString vectorclip = tmp;
-						//set a scale 
-						wxString clipScale = vectorclip.BeforeFirst(L',', &tmp);
-						visual = clipScale + L",";
-						int cscale = wxAtoi(clipScale);
-						vectorScale = pow(2, (cscale - 1));
-						moving = drawingOriginalPos * vectorScale;
-					}
-					else if (replacements > 1){
-						delimiter = L",";
-					}
-				}
-				wxStringTokenizer tkn(tmp, delimiter, wxTOKEN_STRTOK);
-				int count = 0;
-				while (tkn.HasMoreTokens()){
-					wxString token = tkn.GetNextToken().Trim().Trim(false);
-					double val;
-					if (token.ToDouble(&val)){
-						if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * newcoeffW); }
-						else{ val += (((moving.y / zoomScale.y)) * newcoeffH); }
-						if (type == TAGMOVES && count > 1){ 
-							visual += token + delimiter; 
-							continue; 
+				//tmp = re.GetMatch(txt, 1);
+				if (re.GetMatch(&startMatch, &lenMatch, 1)) {
+					tmp = txt.Mid(startMatch + textPosition, lenMatch);
+					if (type == TAGCLIP){
+						int replacements = tmp.Freq(L',');
+						if (replacements == 1){
+							wxString vectorclip = tmp;
+							//set a scale 
+							wxString clipScale = vectorclip.BeforeFirst(L',', &tmp);
+							visual = clipScale + L",";
+							int cscale = wxAtoi(clipScale);
+							vectorScale = pow(2, (cscale - 1));
+							moving = drawingOriginalPos * vectorScale;
 						}
-						else if (type == TAGMOVEE && count != 2 && count != 3){ 
-							visual += token + delimiter; 
-							count++; 
-							continue; 
+						else if (replacements > 1){
+							delimiter = L",";
 						}
-						if (vector){ 
-							visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; 
-						}
-						else{ 
-							visual += getfloat(val) + delimiter; 
-						}
-						count++;
 					}
-					else{
-						visual += token + delimiter;
-						if (!vector){ count++; }
+					wxStringTokenizer tkn(tmp, delimiter, wxTOKEN_STRTOK);
+					int count = 0;
+					while (tkn.HasMoreTokens()){
+						wxString token = tkn.GetNextToken().Trim().Trim(false);
+						double val;
+						if (token.ToDouble(&val)){
+							if (count % 2 == 0){ val += (((moving.x / zoomScale.x)) * newcoeffW); }
+							else{ val += (((moving.y / zoomScale.y)) * newcoeffH); }
+							if (type == TAGMOVES && count > 1){ 
+								visual += token + delimiter; 
+								continue; 
+							}
+							else if (type == TAGMOVEE && count != 2 && count != 3){ 
+								visual += token + delimiter; 
+								count++; 
+								continue; 
+							}
+							if (vector){ 
+								visual << getfloat(val, (type == TAGCLIP) ? L"6.0f" : L"6.2f") << delimiter; 
+							}
+							else{ 
+								visual += getfloat(val) + delimiter; 
+							}
+							count++;
+						}
+						else{
+							visual += token + delimiter;
+							if (!vector){ count++; }
+						}
 					}
-				}
-				if (re.GetMatch(&startMatch, &lenMatch, 1)){
+			
 					visual.RemoveLast();
-					if (lenMatch){ txt.erase(txt.begin() + startMatch, txt.begin() + startMatch + lenMatch); }
-					txt.insert(startMatch, visual);
+					if (lenMatch){ txt.erase(txt.begin() + startMatch + textPosition, txt.begin() + startMatch + lenMatch + textPosition); }
+					txt.insert(startMatch + textPosition, visual);
 
 				}
+				else {
+					//if cannot get positions the loop will be looping forever
+					//to prevent just increase text position
+					textPosition++;
+				}
+				textPosition += startMatch + lenMatch;
 			}
 
 		}
