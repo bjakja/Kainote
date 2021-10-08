@@ -815,6 +815,10 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		return;
 	}
 
+	MenuItem* item = Menubar->FindItem(id);
+	if (item && !item->enabled)
+		return;
+
 	if (Options.CheckLastKeyEvent(id))
 		return;
 

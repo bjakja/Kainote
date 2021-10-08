@@ -534,10 +534,11 @@ private:
 	void CheckTag();
 	void OnMouseCaptureLost(wxMouseCaptureLostEvent& evt);
 	void SetupSlidersPosition(int _sliderPositionY);
-	wxString GetSelectedTag(wxString* txt, FindData *result);
+	wxString GetSelectedTag(FindData *result);
 	std::vector<AllTagsSetting> *tags;
 	AllTagsSetting actualTag;
 	wxString floatFormat = L"5.3f";
+	wxString selectedTag;
 	AllTagsSlider slider[4];
 	bool rholding = false;
 	//bool changeMoveDiff = false;

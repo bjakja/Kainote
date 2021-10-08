@@ -240,38 +240,12 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 		return true;
 	}
 	else if (lastTag >= 0 && result.inBracket && !placedInT) {
-		result.positionInText.x = lastTag;
-		result.positionInText.y = lastTag;
+		result.positionInText.x = findTTag ? bracketEnd : lastTag;
+		result.positionInText.y = findTTag ? bracketEnd : lastTag;
 	}
 
 	return false;
 }
-
-//void TagFindReplace::FindAllTags(const wxString& pattern, const wxString& text, std::function<void(const FindData&)> func, bool returnPosWhenNoTags)
-//{
-//	regex.Compile(L"^" + pattern, wxRE_ADVANCED);
-//
-//	int pos = result.positionInText.x + result.positionInText.y;
-//	size_t startMatch = 0, lenMatch = 0;
-//	size_t textPosition = 0;
-//	wxString tmp;
-//	bool findMatch = false;
-//	while (regex.Matches(text.Mid(textPosition))) {
-//		regex.GetMatch(&startMatch, &lenMatch, 1);
-//		int position = textPosition + startMatch;
-//		tmp = text.Mid(position, lenMatch);
-//		FindData res(tmp, wxPoint(position, lenMatch), true, false);
-//		func(res);
-//		textPosition += startMatch + lenMatch;
-//		findMatch = true;
-//	}
-//	if (returnPosWhenNoTags && !findMatch) {
-//		int pos = (text.StartsWith("{")) ? 1 : 0;
-//		FindData res(L"", wxPoint(pos, pos), false, false);
-//		func(res);
-//	}
-//}
-
 
 int TagFindReplace::ReplaceAll(const wxString& pattern, const wxString& tag, wxString * text, std::function< void(const FindData&, wxString*)> func, bool returnPosWhenNoTags)
 {
@@ -569,12 +543,6 @@ bool TagFindReplace::TagValueToStyle(Styles* style, const wxString& tag, const w
 
 	return true;
 }
-
-//int TagFindReplace::ReplaceFromFindData(const wxString& replaceTxt, const FindData& data)
-//{
-//	
-//	return 0;
-//}
 
 bool TagFindReplace::GetDouble(double* retval)
 {

@@ -339,7 +339,7 @@ void LoadSettings(std::vector<AllTagsSetting>* tags)
 					L"Tag: fading, fad,      0, 2000, 0,  5,    0, 1, 1, 0\n"\
 					L"Tag: fax, fax,       -10, 10,   0,  0.01, 3, 0, 0\n"\
 					L"Tag: fay, fay,       -10, 10,   0,  0.01, 3, 0, 0\n"\
-					L"Tag: font size, fs,   20, 300,  70, 1,    0, 0, 0\n"\
+					L"Tag: font size, fs,   20, 300,  70, 1,    1, 0, 0\n"\
 					L"Tag: spacing, fsp,  -100, 100,  0,  1,    1, 0, 1\n"\
 					L"Tag: shadow, shad,     0, 80,   0,  1,    1, 0, 0\n"\
 					L"Tag: xborder, xbord,   0, 80,   0,  1,    1, 0, 0\n"\

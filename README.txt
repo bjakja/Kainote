@@ -97,9 +97,6 @@ mv /usr/bin/link.exe /usr/bin/link.exe.bak
  
 - when shows list of codecs type make
 - after build type make install
-
-- download avisynth from https://github.com/AviSynth/AviSynthPlus/archive/refs/heads/master.zip
-
 - build FFMS2 in Visual Studio 19.
 
 --------------------- Polski - Polish --------------------------
@@ -169,6 +166,10 @@ https://boostorg.jfrog.io/artifactory/main/release/1.73.0/source/boost_1_73_0.7z
 
 Icu
 https://github.com/unicode-org/icu/releases/download/release-60-3/icu4c-60_3-src.zip
+
+libass wymaga instalacji Nasm c:/nasm
+
+
 
 Zmienić w projekcie Kainote ścieżki do zainstalowanych windows SDK i Direct X, 
 jeśli nie są zaintalowane na dysku C.
