@@ -261,7 +261,8 @@ bool kainoteApp::OnInit()
 			Frame->CenterOnScreen();
 
 		bool opevent = false;
-		if (paths.GetCount() > 0){
+		bool hasPaths = paths.GetCount() > 0;
+		if (hasPaths){
 			if (Options.GetBool(VIDEO_FULL_SCREEN_ON_START)){
 				Frame->OpenFiles(paths, false, true);
 				Frame->GetTab()->Video->Layout();
@@ -285,14 +286,14 @@ bool kainoteApp::OnInit()
 		bool loadSession = true;
 #else
 		int session = Options.GetInt(LAST_SESSION_CONFIG);
-		bool loadSession = (session == 2) || Options.HasCrashed();
-		if (session == 1){
+		bool loadSession = (session == 2 || Options.HasCrashed()) && !hasPaths;
+		if (session == 1 && !hasPaths){
 			if (KaiMessageBox(_("Wczytać poprzednią sesję?"), _("Pytanie"), wxYES_NO, Frame) == wxYES){
 				loadSession = true;
 			}
 		}
 		//Check if program was bad close or crashed
-		if (!loadSession && Notebook::CheckLastSession() == 2) {
+		if (!hasPaths && !loadSession && Notebook::CheckLastSession() == 2) {
 			if (KaiMessageBox(_("Program się skraszował albo został zamknięty w niewłaściwy sposób,\nwczytać poprzednią sesję wraz z najnowszymi napisami z autozapisu?"), _("Pytanie"), wxYES_NO, Frame) == wxYES) {
 				loadCrashSession = loadSession = true;
 			}
@@ -300,11 +301,7 @@ bool kainoteApp::OnInit()
 #endif
 		if (loadSession){
 			debugtimer.SetOwner(this, 2299);
-//#if _DEBUG
-//			debugtimer.Start(400, true);
-//#else
 			debugtimer.Start(100, true);
-//#endif
 			Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 				Frame->Tabs->LoadLastSession(loadCrashSession);
 			}, 2299);
