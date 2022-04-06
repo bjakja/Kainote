@@ -2165,6 +2165,8 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 								citem->Enable(tempEnable);
 							}
 						}
+						//fix for enabling tlmode, if converted tlmode have to change its state
+						tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
 					}
 					sitem->Enable(editor);
 				}
@@ -2201,9 +2203,6 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			}
 		}
 	}
-
-	//specjalna poprawka do zapisywania w trybie tłumacza, jeśli jest tlmode, to zawsze ma działać.
-	//tab->Edit->TlMode->Enable((editor && form == ASS && tab->SubsPath != L""));
 
 }
 

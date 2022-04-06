@@ -232,7 +232,7 @@ void RotationXY::SetCurVisual()
 		GetDouble(&result);
 		oldAngle.x = result;
 	}
-	if (FindTag(L"org(\\([^\\)]+)", currentLineText)){
+	if (FindTag(L"org\\(([^\\)]+)", currentLineText)){
 		double orx, ory;
 		if (GetTwoValueDouble(&orx, &ory)) {
 			org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
@@ -301,7 +301,7 @@ wxPoint RotationXY::ChangeVisual(wxString* txt)
 {
 	if (isOrg) {
 		//org is placed only on time in line
-		FindTag(L"org(\\([^\\)]+)", *txt, 1);
+		FindTag(L"org\\(([^\\)]+)", *txt, 1);
 		wxString visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 

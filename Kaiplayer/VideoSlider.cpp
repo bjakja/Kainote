@@ -22,6 +22,7 @@
 #include <wx/dcclient.h>
 //#include "Config.h"
 //#include "Utils.h"
+#include "UtilsWindows.h"
 
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 	: wxWindow(parent, id, pos, size, style, name)
@@ -153,16 +154,10 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 		if (left_up && holding) {
 			holding = false;
 			if (block){
-				//if (VB->VFF){
-					//while (VB->VFF->isBusy){
-						//Sleep(10);
-					//}
-				//}
 				SendTime(msTimePosition);
 				block = false;
 			}
 			ReleaseMouse();
-			//return;
 		}
 		//hover on thumb
 		if (!onslider && isOnSlider){
@@ -243,8 +238,23 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	if (event.ButtonDown()) {
 		SetFocus();
 	}
-
-
+	
+	if (event.GetWheelRotation() != 0 && VB->HasFFMS2()) {
+#include "UtilsWindows.h"
+		
+		if (eventCounter == newEventCounter) {
+			int step = event.GetWheelRotation() / event.GetWheelDelta();
+			if (step > 0) {
+				VB->GoToNextKeyframe();
+			}
+			else {
+				VB->GoToPrevKeyframe();
+			}
+			eventCounter++;
+		}
+		newEventCounter++;
+		return;
+	}
 	
 	if (event.GetWheelRotation() != 0){ event.Skip(); }
 

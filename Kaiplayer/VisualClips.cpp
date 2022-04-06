@@ -1073,8 +1073,8 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		//drawtxt=true;
 		zx = MID(0, zx, VideoSize.width - VideoSize.x);
 		zy = MID(0, zy, VideoSize.height - VideoSize.y);
-		Points[grabbed].x = ((zx + diffs.x)*coeffW) - _x;
-		Points[grabbed].y = ((zy + diffs.y)*coeffH) - _y;
+		Points[grabbed].x = ((zx + diffs.x) * coeffW) - _x;
+		Points[grabbed].y = ((zy + diffs.y) * coeffH) - _y;
 		//new feature snapping to other points
 		//add some method to turn it on
 		if (event.AltDown())

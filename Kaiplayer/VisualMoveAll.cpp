@@ -208,7 +208,7 @@ void MoveAll::SetCurVisual()
 	Clear();
 
 	double orx = drawingPos.x, ory = drawingPos.y;
-	if (FindTag(L"org(\\([^\\)]+)")){
+	if (FindTag(L"org\\(([^\\)]+)")){
 		
 		if (GetTwoValueDouble(&orx, &ory)) {
 			moveElems* orgelem = new moveElems(
@@ -436,7 +436,7 @@ void MoveAll::ChangeInLines(bool all)
 			float vectorScale = 1.f;
 			wxString delimiter = (vector) ? L" " : L",";
 			wxString tagpattern = (type == TAGPOS) ? L"pos\\(([^\\)]+)" : 
-				(type == TAGORG) ? L"org(\\([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : 
+				(type == TAGORG) ? L"org\\(([^\\)]+)" : (type == TAGCLIP) ? L"i?clip\\(([^\\)]+)" : 
 				(type == TAGP) ? L"p[0-9-]+[^}]*} ?m ([^{]+)" : L"move\\(([^\\)]+)";
 			wxRegEx re(tagpattern, wxRE_ADVANCED);
 			size_t startMatch = 0, lenMatch = 0;

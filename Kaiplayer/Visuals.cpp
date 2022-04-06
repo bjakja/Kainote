@@ -798,7 +798,7 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 	double orgx = 0, orgy = 0;
 	bool PutinBrackets = false;
 	wxPoint strPos;
-	if (FindTag(L"org(\\(.+)\\)", *txt, 1)){
+	if (FindTag(L"org\\((.+)\\)", *txt, 1)){
 		const FindData& data = GetResult();
 		GetTwoValueDouble(&orgx, &orgy);
 		PutinBrackets = false;

@@ -266,7 +266,7 @@ void RotationZ::SetCurVisual()
 		lastmove.y = result;
 		lastmove.x += lastmove.y;
 	}
-	if (FindTag(L"org(\\([^\\)]+)", currentLineText)){
+	if (FindTag(L"org\\(([^\\)]+)", currentLineText)){
 		double orx, ory;
 		if (GetTwoValueDouble(&orx, &ory)) {
 			org.x = ((orx / coeffW) - zoomMove.x) * zoomScale.x;
@@ -316,7 +316,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelectio
 			float rad = 0.01745329251994329576923690768489f;
 			D3DXVECTOR2 orgpivot = { ((org.x / zoomScale.x) + zoomMove.x) * coeffW,
 			((org.y / zoomScale.y) + zoomMove.y) * coeffH };
-			if (FindTag(L"org(\\([^\\)]+)")) {
+			if (FindTag(L"org\\(([^\\)]+)")) {
 				double orx, ory;
 				if (GetTwoValueDouble(&orx, &ory)) {
 					orgpivot = { (float)orx, (float)ory };
@@ -367,7 +367,7 @@ wxPoint RotationZ::ChangeVisual(wxString* txt)
 	}
 
 	if (isOrg) {
-		FindTag(L"org(\\([^\\)]+)", *txt, 1);
+		FindTag(L"org\\(([^\\)]+)", *txt, 1);
 		wxString visual = L"\\org(" + getfloat(((org.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 			getfloat(((org.y / zoomScale.y) + zoomMove.y) * coeffH) + L")";
 

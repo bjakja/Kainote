@@ -576,9 +576,21 @@ void Scale::OnKeyPress(wxKeyEvent &evt)
 		
 		to.x += directionX;
 		to.y += directionY;
-		scale.x = abs((to.x - from.x) / arrowLengths.x);
-		scale.y = abs((to.y - from.y) / arrowLengths.y);
-		
+		if (changeAllTags && preserveProportions) {
+			lastScale.x = scale.x > scale.y ? scale.x : scale.y;
+			lastScale.y = scale.y > scale.x ? scale.y : scale.x;
+			scale.x = directionX ? abs((to.x - from.x) / arrowLengths.x) : abs((to.y - from.y) / arrowLengths.y);
+			scale.y = directionY ? abs((to.y - from.y) / arrowLengths.y) : abs((to.x - from.x) / arrowLengths.x);
+			if (directionX)
+				to.y += directionX;
+			else
+				to.x += directionY;
+		}
+		else {
+			scale.x = abs((to.x - from.x) / arrowLengths.x);
+			scale.y = abs((to.y - from.y) / arrowLengths.y);
+		}
+
 		SetVisual(true);
 		SetVisual(false);
 		return;
