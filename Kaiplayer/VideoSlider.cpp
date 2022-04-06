@@ -16,7 +16,7 @@
 
 #include "Videobox.h"
 #include "SubsTime.h"
-//#include <wx/msw/winundef.h>
+#include "UtilsWindows.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
@@ -240,19 +240,8 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 	}
 	
 	if (event.GetWheelRotation() != 0 && VB->HasFFMS2()) {
-#include "UtilsWindows.h"
-		
-		if (eventCounter == newEventCounter) {
-			int step = event.GetWheelRotation() / event.GetWheelDelta();
-			if (step > 0) {
-				VB->GoToNextKeyframe();
-			}
-			else {
-				VB->GoToPrevKeyframe();
-			}
-			eventCounter++;
-		}
-		newEventCounter++;
+		int step = event.GetWheelRotation() / event.GetWheelDelta();
+		VB->ChangePositionByFrame((step > 0) ? 1 : -1);
 		return;
 	}
 	
