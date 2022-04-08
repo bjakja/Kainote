@@ -146,14 +146,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>FFMS_EXPORTS;_CRT_SECURE_NO_WARNINGS;__STDC_CONSTANT_MACROS;NDEBUG;_WINDOWS;_USRDLL;FFMS2_EXPORTS;AVS_STATIC_LIB;BUILDING_AVSCORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(SolutionDir)..\..\AviSynthPlus\avs_core\core;C:\ffmpeg;$(SolutionDir)..\..\wxWidgets\src\zlib;$(SolutionDir)..\..\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\AviSynthPlus\avs_core\core;C:\ffmpeg;$(SolutionDir)..\..\zlib-1.2.12;$(SolutionDir)..\..\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;libz.a;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>H:\Kainote\Thirdparty\ffmpeg\libavutil;H:\Kainote\Thirdparty\ffmpeg\libswscale;H:\Kainote\Thirdparty\ffmpeg\libswresample;H:\Kainote\Thirdparty\ffmpeg\libavformat;H:\Kainote\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)..\..\zlib-1.2.12;$(SolutionDir)..\..\Build\AvisynthPlus\avs_core\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>H:\Kainote\Thirdparty\ffmpeg\libavutil;H:\Kainote\Thirdparty\ffmpeg\libswscale;H:\Kainote\Thirdparty\ffmpeg\libswresample;H:\Kainote\Thirdparty\ffmpeg\libavformat;H:\Kainote\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)..\..\Build\AvisynthPlus\avs_core\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

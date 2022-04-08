@@ -160,7 +160,7 @@ int ProviderFFMS2::Init()
 
 	FFMS_Indexer* Indexer = FFMS_CreateIndexer(m_filename.utf8_str(), &m_errInfo);
 	if (!Indexer) {
-		KaiLog(wxString::Format(_("Wystąpił błąd indeksowania: %s"), m_errInfo.Buffer)); return 0;
+		KaiLogDebug(wxString::Format(_("Wystąpił błąd indeksowania: %s"), m_errInfo.Buffer)); return 0;
 	}
 
 	int NumTracks = FFMS_GetNumTracksI(Indexer);
@@ -308,7 +308,7 @@ done:
 		}
 		if (FFMS_WriteIndex(m_indexPath.utf8_str(), m_index, &m_errInfo))
 		{
-			KaiLog(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), m_errInfo.Buffer));
+			KaiLogDebug(wxString::Format(_("Nie można zapisać indeksu, wystąpił błąd %s"), m_errInfo.Buffer));
 			//FFMS_DestroyIndex(index);
 			//FFMS_CancelIndexing(Indexer);
 			//return 0;
