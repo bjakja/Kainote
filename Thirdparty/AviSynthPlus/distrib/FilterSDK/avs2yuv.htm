@@ -1,0 +1,189 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type" />
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>avs2yuv - AviSynth</title></head>
+<body><h1><span style="text-decoration: none;">avs2yuv</span></h1>
+
+<div id="body"><p>avs2yuv reads a script and outputs raw video (YUV or RGB). It's a stripped down version of the famous avs2yuv.
+</p><p>Here's avs2yuv.cpp:
+</p>
+<pre>#include &lt;stdio.h&gt;<br />#include &lt;Windows.h&gt;<br />#include "avisynth.h"<br /><br />#define MY_VERSION "Avs2YUV 0.24"<br /><br />const AVS_Linkage *AVS_linkage = 0;<br /><br />int __cdecl main(int argc, const char* argv[])<br />{<br />const char* infile = NULL;<br />const char* outfile = NULL;<br />FILE* out_fh;<br />	<br />if (!strcmp(argv[1], "-h")) {<br />   fprintf(stderr, MY_VERSION "\n"<br />           "Usage: avs2yuv.exe in.avs out.raw\n");<br />   return 2;<br />} else {<br />   infile = argv[1];<br />   outfile = argv[2];<br />}<br /><br />try {<br />   char* colorformat;<br />   typedef IScriptEnvironment* (__stdcall *DLLFUNC)(int);<br />   IScriptEnvironment* env;<br />   HMODULE avsdll = LoadLibrary("avisynth.dll");<br />   if (!avsdll) {<br />      fprintf(stderr, "failed to load avisynth.dll\n");<br />      return 2;<br />   }<br /><br />   DLLFUNC CreateEnv = (DLLFUNC)GetProcAddress(avsdll, "CreateScriptEnvironment");<br />   if (!CreateEnv) {<br />      fprintf(stderr, "failed to load CreateScriptEnvironment()\n");<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /><br />   env = CreateEnv(AVISYNTH_INTERFACE_VERSION);<br /><br />   AVS_linkage = env-&gt;GetAVSLinkage();<br />   AVSValue arg(infile);<br />   AVSValue res = env-&gt;Invoke("Import", AVSValue(&amp;arg, 1));<br />   if (!res.IsClip()) {<br />      fprintf(stderr, "Error: '%s' didn't return a video clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /><br />   PClip clip = res.AsClip();<br /><br />   if (clip-&gt;GetVersion() &lt; 5) {<br />      fprintf(stderr, "Error: too old version ('%d') of avisynth.dll loaded.\nplease install v2.60 or later.\n",<br />                      clip-&gt;GetVersion());<br />      return 1;<br />   }<br /><br />   VideoInfo vi = clip-&gt;GetVideoInfo();<br /><br />   if (!vi.HasVideo()) {<br />      fprintf(stderr, "Error: '%s' audio only clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /><br />   fprintf(stderr, "&nbsp;%s:\n", infile);<br />   fprintf(stderr, "&nbsp;%dx%d,\n", vi.width, vi.height);<br />   fprintf(stderr, "&nbsp;%d/%d fps,\n", vi.fps_numerator, vi.fps_denominator);<br />   fprintf(stderr, "&nbsp;%d frames,\n", vi.num_frames);<br />   if (vi.IsYUV()) {<br />      colorformat = "YUV";<br />   } else {<br />      colorformat = "RGB";<br />   }<br />   fprintf(stderr, "&nbsp;%s color format", colorformat);<br /><br />   out_fh = fopen(outfile, "wb");<br />   if (!out_fh) {<br />      fprintf(stderr, "fopen(\"%s\") failed", outfile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /><br />   static const int planes[] = {PLANAR_Y, PLANAR_U, PLANAR_V};<br /><br />   for (int frm = 0; frm &lt; vi.num_frames; ++frm) {<br />      PVideoFrame f = clip-&gt;GetFrame(frm, env);<br /><br />      for (int p=0; p&lt;3; p++) { // for interleaved formats only the first plane (being the whole frame) is written<br />         int height = f-&gt;GetHeight(planes[p]);<br />         int rowsize = f-&gt;GetRowSize(planes[p]);<br />         int pitch = f-&gt;GetPitch(planes[p]);<br />         const BYTE* data = f-&gt;GetReadPtr(planes[p]);<br />         for (int y=0; y&lt;height; y++) {<br />            fwrite(data, 1, rowsize, out_fh);<br />            data += pitch;<br />         }<br />      }<br />   }<br /><br />   env-&gt;DeleteScriptEnvironment();<br />   FreeLibrary(avsdll);<br />   AVS_linkage = 0;<br /><br />} catch(AvisynthError err) {<br />   fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);<br />   return 1;<br />}<br /><br />fclose(out_fh);<br />return 0;<br />}<br /></pre>
+<p>Compile this file into an EXE named avs2yuv.exe. See <a href="CompilingAvisynthPlugins.htm" title="Filter SDK/Compiling instructions">compiling instructions</a>.
+ Now open the command line and go to the folder where avs2yuv.exe and
+your script (called example.avs here) are located. Our script:
+</p>
+<pre>ColorBars()<br />ConvertToYV12()<br />Trim(0,4)<br />Showframenumber()<br /></pre>
+<p>Type the following on the command line (the name of the output clip can be arbitrary in our application):
+</p>
+<pre>avs2yuv.exe example.avs output.raw<br /></pre>
+<p>So the output file will contain five frames of YV12 data (640x480). The raw stream can be played with <a rel="nofollow" class="external text" href="http://www.yuvtoolkit.com/">YUVtoolkit</a> for example. You can also import it in AviSynth using the plugin RawSource.
+</p>
+<h3><span class="editsection"></span><span class="mw-headline" id="Line_by_line_breakdown">&nbsp;Line by line breakdown </span></h3>
+<p>Here's a line-by-line breakdown of avs2yuv.cpp.
+</p>
+<pre>#include &lt;stdio.h&gt;<br /></pre>
+<p>The header stdio.h contains objects like <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/stderr/">stderr</a> (a pointer to a FILE object) and functions like <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/fprintf/">fprintf</a>, <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/fopen/">fopen</a> and <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/fwrite/">fwrite</a>. Those will be used later on.
+</p><p>The standard error stream (<i>stderr</i>) is the default
+destination for error messages and other diagnostic warnings. Like
+stdout, it is usually also directed by default to the text console
+(generally, on the screen).
+</p><p><i>fprintf</i> writes formatted data to stream.
+</p><p><i>fopen</i> opens the file whose name is specified in the
+parameter filename and associates it with a stream that can be
+identified in future operations by the FILE pointer returned.
+</p><p><i>fwrite</i> writes data to a file which is opened bij <i>fopen</i>.
+</p>
+<pre>#include &lt;Windows.h&gt;<br /></pre>
+<pre>#include "avisynth.h"<br /></pre>
+<p>This header declares all the classes and miscellaneous constants that you might need when accessing avisynth.dll.
+</p>
+<pre>#define MY_VERSION "Avs2YUV 0.24"<br /></pre>
+<p>Defines the version number which will be printed (using the "-h" option) later on.
+</p>
+<pre>const AVS_Linkage *AVS_linkage = 0;<br /></pre>
+<p>This declares and initializes the server pointers static storage <a href="AVSLinkage.html" title="Filter SDK/AVS Linkage">AVS_Linkage</a>.
+</p>
+<pre>int __cdecl main(int argc, const char* argv[])<br /></pre>
+<p>argv and argc are how command line arguments are passed to main() in C
+ and C++ (you can name them the way you want to). argc will be the
+number of strings pointed to by the array argv. This will be one plus
+the number of arguments, with the first one being the name of the
+application. Thus when using the command line "avs2yuv.exe in.avs
+out.raw" we have argv[0]="avs2yuv.exe", argv[1]="in.avs",
+argv[2]="out.raw" and argc=2.
+</p>
+<pre>const char* infile = NULL;<br />const char* outfile = NULL;<br /></pre>
+<p>initialize infile and outfile as null pointers by setting them to <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstddef/NULL/">NULL</a>. We could have set them to 0 too since that's the same in C/C++.
+</p>
+<pre>FILE* out_fh;<br /></pre>
+<p>out_fh is declared as a pointer to a <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/FILE/">FILE object</a>.
+</p>
+<pre>if (!strcmp(argv[1], "-h")) {<br />   fprintf(stderr, MY_VERSION "\n"<br />           "Usage: avs2yuv.exe in.avs out.raw\n");<br />   return 2;<br /></pre>
+<p>When using the command line "avs2yuv.exe -h" it will print to the
+console how the application should be used ('h' from help). The <a rel="nofollow" class="external text" href="http://www.cplusplus.com/doc/tutorial/functions/">return</a>
+ terminates the function main() (and thus the application). returning 0
+means that your program executed without errors and returning a
+different int means it executed with errors.
+</p><p>"Avs2YUV 0.24" (followed by an enter)
+"Usage: avs2yuv.exe in.avs out.raw" (followed by an enter)
+</p>
+<pre>} else {<br />   infile = argv[1];<br />   outfile = argv[2];<br />}<br /></pre>
+<p>When the second argument (argv[1]) is not '-h' it will set infile to
+the name of the input file (being argv[1]) and outfile to the name of
+the output file (being argv[2]).
+</p>
+<pre>try {<br />   char* colorformat;<br />   IScriptEnvironment* env;<br /></pre>
+<p>env returns a pointer to the <a href="Cplusplus_api.htm#IScriptEnvironment" title="Cplusplus API">IScriptEnvironment</a> interface.
+</p>
+<pre>   HMODULE avsdll = LoadLibrary("avisynth.dll");<br /></pre>
+<p><a rel="nofollow" class="external text" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms684175%28v=vs.85%29.aspx">LoadLibrary</a>
+ loads the specified module (which is avisynth.dll here) into the
+address space of the process (the process being avs2yuv.exe here). When
+successful avsdll will be the handle to the module, else it will be
+NULL.
+</p>
+<pre>   if (!avsdll) {<br />      fprintf(stderr, "failed to load avisynth.dll\n");<br />      return 2;<br />   }<br /></pre>
+<p>When avsdll is NULL (thus 0),&nbsp;!avsdll evaluates to one, and the
+error "failed to load avisynth.dll" is printed to the console.
+</p>
+<pre>   typedef IScriptEnvironment* (__stdcall *DLLFUNC)(int);<br />   DLLFUNC CreateEnv = (DLLFUNC)GetProcAddress(avsdll, "CreateScriptEnvironment");<br /></pre>
+<p><a href="Cplusplus_api.htm#CreateScriptEnvironment" title="Cplusplus API">CreateScriptEnvironment</a> is exported by avisynth.dll and it is a pointer to the <a href="Cplusplus_api.htm#IScriptEnvironment" title="Cplusplus API">IScriptEnvironment</a> interface. <a rel="nofollow" class="external text" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms683212%28v=vs.85%29.aspx">GetProcAddress</a> will retrieve the address of the exported function (when failing it will return NULL).
+</p><p>In order to do so you must declare a function pointer (called
+'DLLFUNC' here) with *exactly* the same prototype as the function it is
+supposed to represent. This is done in the first line (note that <a href="Cplusplus_api.htm#CreateScriptEnvironment" title="Cplusplus API">CreateScriptEnvironment</a> has one parameter of type 'int')
+</p>
+<pre>   typedef IScriptEnvironment* (__stdcall *DLLFUNC)(int);<br /></pre>
+<p>The <a rel="nofollow" class="external text" href="http://www.cplusplus.com/doc/tutorial/other_data_types/">typedef declaration</a>
+ is used to construct shorter or more meaningful names (like 'DLLFUNC'
+here) for types that are already defined (like 'IScriptEnvironment*'
+here).
+</p><p>In the second line the value of GetProcAddress is cast to the correct function pointer type.
+</p>
+<pre>   ... = (DLLFUNC)GetProcAddress(...);<br /></pre>
+<p>We could also have used
+</p>
+<pre>   IScriptEnvironment* (__stdcall *CreateEnv)(int) = NULL;<br />   CreateEnv = (IScriptEnvironment* (__stdcall *)(int))GetProcAddress(avsdll, "CreateScriptEnvironment");<br /></pre>
+<p>or shorter and less readable
+</p>
+<pre>   IScriptEnvironment* (__stdcall *CreateEnv)(int) = (IScriptEnvironment* (__stdcall *)(int))GetProcAddress(avsdll, "CreateScriptEnvironment");<br /></pre>
+<pre>   if (!CreateEnv) {<br />      fprintf(stderr, "failed to load CreateScriptEnvironment()\n");<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /></pre>
+<p>When CreateEnv is NULL (so GetProcAddress failed to retrieve the exported function) an error is written to the console. <a rel="nofollow" class="external text" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms683152%28v=vs.85%29.aspx">FreeLibrary</a> frees the module from your memory.
+</p>
+<pre>   env = CreateEnv(AVISYNTH_INTERFACE_VERSION);<br /></pre>
+<p>This creates the script environment. Its members can be accessed by <a href="Cplusplus_api.htm#IScriptEnvironment" title="Cplusplus API">env-&gt;...</a>.
+</p>
+<pre>   AVS_linkage = env-&gt;GetAVSLinkage();<br /></pre>
+<p>This gets the server pointers static storage <a href="AVSLinkage.html" title="Filter SDK/AVS Linkage">AVS_Linkage</a>.
+</p>
+<pre>   AVSValue arg(infile);<br />   AVSValue res = env-&gt;Invoke("Import", AVSValue(&amp;arg, 1));<br /></pre>
+<p>This calls the <a href="http://avisynth.nl/index.php/Import" title="Import">Import</a> function on the input file infile. So the script is loaded.
+</p>
+<pre>   if (!res.IsClip()) {<br />      fprintf(stderr, "Error: '%s' didn't return a video clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }</pre>
+<p>f the return value of the script is not a clip an error is written to the console.
+</p>
+<pre>   PClip clip = res.AsClip();<br /><br />   if (clip-&gt;GetVersion() &lt; 5) {<br />      fprintf(stderr, "Error: too old version ('%d') of avisynth.dll loaded.\nplease install v2.60 or later.\n",<br />                      clip-&gt;GetVersion());<br />      return 1;<br />   }<br /></pre>
+<p>If the loaded avisynth.dll has an api version earlier than 5 an error
+ is thrown. This is needed if you used functionality which doesn't exist
+ in older versions. Like using DeleteScriptEnvironment down the road to
+delete the script environment (yes it is easy to make it compatible with
+ older api versions, but this is just for illustration). So it can be
+used to force a specific version.
+</p>
+<pre>   VideoInfo vi = clip-&gt;GetVideoInfo();<br /></pre>
+<p><a href="Cplusplus_api.htm#GetVideoInfo" title="Cplusplus API">GetVideoInfo</a> returns a <a href="VideoInfo.htm" title="Cplusplus API/VideoInfo">VideoInfo</a> structure of the clip.
+</p>
+<pre>   if (!vi.HasVideo()) {<br />      fprintf(stderr, "Error: '%s' audio only clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /></pre>
+<p>Returns an error if the clip doesn't contain video (in case it contains only audio for example).
+</p>
+<pre>   fprintf(stderr, "&nbsp;%s:\n", infile);<br />   fprintf(stderr, "&nbsp;%dx%d,\n", vi.width, vi.height);<br />   fprintf(stderr, "&nbsp;%d/%d fps,\n", vi.fps_numerator, vi.fps_denominator);<br />   fprintf(stderr, "&nbsp;%d frames,\n", vi.num_frames);<br />   if (vi.IsYUV()) {<br />      colorformat = "YUV";<br />   } else {<br />      colorformat = "RGB";<br />   }<br />   fprintf(stderr, "&nbsp;%s color format", colorformat);</pre>
+<p>Some information about the clip is written to the console.
+</p>
+<pre>   out_fh = fopen(outfile, "wb");<br /></pre>
+<p>Creates an empty binary file and opens it for writing. It returns a
+file pointer called 'out_fh' here. Nb, 'wb' means write mode and binary.
+</p>
+<pre>   if (!out_fh) {<br />      fprintf(stderr, "fopen(\"%s\") failed", outfile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />   }<br /></pre>
+<p>When failing (thus when out_fh is NULL) an error is written to the console.
+</p>
+<pre>   static const int planes[] = {PLANAR_Y, PLANAR_U, PLANAR_V};<br /></pre>
+<p>All three planes will be processed. For interleaved formats,
+automatically, only the first plane (being the whole frame) will be
+written to the output file.
+</p>
+<pre>   for (int frm = 0; frm &lt; vi.num_frames; ++frm) {<br /></pre>
+<p>Run to all frames in the input file.
+</p>
+<pre>      PVideoFrame f = clip-&gt;GetFrame(frm, env);<br /></pre>
+<p>Gets frame 'frm'.
+</p>
+<pre>      for (int p=0; p&lt;3; p++) {<br />         int height = f-&gt;GetHeight(planes[p]);<br />         int rowsize = f-&gt;GetRowSize(planes[p]);<br />         int pitch = f-&gt;GetPitch(planes[p]);<br />         const BYTE* data = f-&gt;GetReadPtr(planes[p]);<br /></pre>
+<p>Gets the height, rowsize, pitch and a read pointer 'data' to the plane. See <a href="InvertNeg.htm" title="Filter SDK/InvertNeg">InvertNeg</a> for more information.
+</p>
+<pre>         for (int y=0; y&lt;height; y++) {<br />            fwrite(data, 1, rowsize, out_fh);<br /></pre>
+<p>Writes 'rowsize' bytes from the block of memory pointed by 'data' to the current position in the file pointer 'out_fh'.
+</p>
+<pre>            data += pitch;<br /></pre>
+<p>Move the read pointer to the next line.
+</p>
+<pre>   env-&gt;DeleteScriptEnvironment();<br /></pre>
+<p>When all frames are processed the script environment is deleted.
+</p>
+<pre>   FreeLibrary(avsdll);<br /></pre>
+<p>Frees the library (avisynth.dll) from memory.
+</p>
+<pre>   AVS_linkage = 0;<br /></pre>
+<pre>} catch(AvisynthError err) {<br />   fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);<br />   return 1;<br /></pre>
+<p>If a runtime error occurs, the <a href="http://avisynth.nl/index.php/Control_structures" title="Control structures">try-catch statement</a> catches the error, and it is written to the console.
+</p>
+<pre>fclose(out_fh);<br /></pre>
+<p>Closes the file.
+</p>
+<pre>return 0;<br /></pre>
+<p>The application executed succesfully, so we return zero.
+</p><p><br />
+todo - static and dynamic linking (see above) - <a rel="nofollow" class="external free" href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms685090%28v=vs.85%29.aspx">http://msdn.microsoft.com/en-us/library/windows/desktop/ms685090%28v=vs.85%29.aspx</a>
+<a rel="nofollow" class="external free" href="http://msdn.microsoft.com/en-us/library/d14wsce5.aspx">http://msdn.microsoft.com/en-us/library/d14wsce5.aspx</a>
+
+</p><hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a></div>
+<p><kbd>$Date: 2014/10/27 22:04:54 $</kbd></p>
+</body></html>

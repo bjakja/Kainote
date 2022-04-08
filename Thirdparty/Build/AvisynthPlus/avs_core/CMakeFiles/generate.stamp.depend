@@ -1,0 +1,19 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.23/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/FindGit.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.23/Modules/Platform/Windows-MSVC.cmake
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/CMakeLists.txt
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/Files.cmake
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/TargetArch.cmake
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/avisynth.pc.in
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/avisynth_conf.h.in
+H:/Kainote/Thirdparty/AviSynthPlus/avs_core/core/arch.h.in
+H:/Kainote/Thirdparty/Build/AvisynthPlus/CMakeFiles/3.23.0/CMakeCCompiler.cmake
+H:/Kainote/Thirdparty/Build/AvisynthPlus/arch.c

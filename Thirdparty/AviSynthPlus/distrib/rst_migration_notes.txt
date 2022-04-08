@@ -1,0 +1,202 @@
+
+(no this file is not in RST format, there's no need)
+
+Treatment of index.htm
+----------------------
+
+index.htm doesn't get moved to .rst because .rst doesn't
+support frames.  index.htm also doesn't do anything except
+load overview.htm in the left pane and syntax.htm (default)
+in the right pane.
+
+So index.htm is preserved in HTML form and gets special
+treatment so the frame-based display of the original docs
+is kept after the installation process runs rst2html. On
+Github it means nothing.
+
+For pure .rst documentation it's not needed, though it may
+come in handy when rst2html and/or rst2pdf get used.
+
+
+Conversion of HTML to RST
+-------------------------
+
+To convert the HTML files in a directory to RST, do the
+following in bash:
+
+for n in *.htm ; do
+    iconv -f <codepage> -t utf-8 "$n" | pandoc --from=html --to=rst - -o "${n%.*}.rst"
+done
+
+Replace <codepage> in the iconv command with the codepage of the
+original docs' language.  The old .htm files can be deleted since
+backups already exist in docs/htm/.  Keeping the old docs as
+reference while proof-checking the .rst versions is an option,
+but remember to remove them when everything's done so that the
+only HTML copies remaining are the backups in docs/htm/.
+
+To not worry about the encoding of the .rst file, it's advisable
+to do this under Linux. The above works on Windows (provided you
+have bash and iconv installed), but the user must be aware of/use
+text editors that acknowledge UTF-8 encoded text files without a
+BOM (in other words, not Notepad). Also, restview is annoying to
+worry about installing on Windows, so it's probably best not to
+even try.
+
+
+Be aware that pandoc can be finicky in regard to what text it
+actually converts: during the process of checking faq.rst, I
+realized that it hadn't converted entire blocks of text, and
+had deleted them from the output file.  So make sure to check
+against the original HTML version to make sure all the text
+is actually there.
+
+Why use pandoc then?  Because unfortunately, html2rst (which
+doesn't seem to have this particular problem) can't handle
+non-English text (or perhaps more precisely, non-CP1252 text),
+even if the text encoding of the file itself is UTF-8. It ends
+up mangling non-CP1252 text into an unrecognizable mess of ???s,
+if it converts at all.  pandoc doesn't have this problem, and
+can correctly handle this.  It also tends to be more readily-
+correct syntactically than html2rst, but it's more verbose
+(lots of unnecessary syntax elements for things).
+
+I actually used html2rst to do the initial conversions of
+like, 99% of the English and FilterSDK documentation, because
+I simply didn't realize pandoc existed at the time. The upside
+of this is that I actually had to get a firmer grasp of RST
+syntax.
+
+
+Generating HTML docs from RST
+-----------------------------
+
+When generating rst docs to html, use:
+
+rst2html --stylesheet=<filename> --link-stylesheet "$n"
+
+where <filename> is the name of the .css stylesheet that was
+linked to in the old documentation.
+
+
+
+Some basic style guidelines:
+----------------------------
+
+Links
+-----
+
+Links that consist only of a URL should look like:
+`<url>`__
+
+RST actually will *probably* parse plain urls as urls
+without needing the `<>`__ stuff, but it's better to
+be explicit about it.
+
+The __ format also resolves 'duplicate explicit name'
+errors from rst2html when more than one tag uses the
+same name, so they're preferred everywhere a link occurs
+(the only reason the English docs don't strictly adhere
+to this is because most of it was converted before I
+noticed that feature, so the tags themselves were changed
+in order to avoid the error).
+
+Try to avoid the use of footnote markup for links.
+Thankfully, pandoc seems to adhere to this idea, and
+doesn't generate them, instead putting links inline
+(but it will do `url <url>`__, which needs simplifying).
+The reason the English docs use the footnote markup is
+because they weren't generated with pandoc (mostly), and
+html2rst *does* use the footnote style.
+
+
+Tables of contents
+------------------
+
+If a table of contents is present in the HTML, use
+
+.. contents:: Table of contents
+    :depth: 3
+
+to automatically generate a table of contents from the section
+headers, and delete the original. A depth of 3 isn't necessarily
+needed, just make sure all the items from the original TOC are
+present in the auto-generated one.
+
+
+Section numbering
+-----------------
+
+If the TOC's contents were numbered, use
+
+.. sectnum::
+    :depth: 3
+    :suffix: .
+
+to automatically number the section headers and TOC contents.
+Like the previous caveat, a depth of 3 isn't necessarily needed.
+The suffix, however, is, since the section numbering in the
+AviSynth docs were almost always of the form: 1.1.2.
+
+
+Tables
+------
+
+Tables should always use the grid style. It may be more verbose,
+but it's more flexible on possible customization and more strict
+on syntax.
+
+Tables should use top-header style in the subject row, ex.
+
++---+---+
+| 1 | 2 |
++===+===+
+| A | B |
++---+---+
+| C | D |
++---+---+
+| E | F |
++---+---+
+
+Subdividing a subject row (ex: corefilters/crop.rst) is allowed
+to use normal ** ** emphasis on the subject lines that would
+not get bolded by the ====.
+
++-------+-------+
+| **1** | **2** |
++-------+---+---+
+|       | 3 | 4 |
++=======+===+===+
+| A     | B | C |
++-------+---+---+
+| D     | E | F |
++-------+---+---+
+| G     | H | I |
++-------+---+---+
+
+
+Section headers
+---------------
+
+Section headers follow in the order:
+====
+----
+
+The following may or may not be recognized
+~~~~
+^^^^
+....
+::::
+
+Use ==== on all top-headers, and generally no-where else,
+with exception for multiple heading sections that are all
+packed in the same file; this is mostly a concern for the
+filter-specific docs (ex: corefilters/conditionalfilter.rst).
+The others get used with discretion.  It's a good idea to
+use :::: or .... to make .. contents:: ignore the 'Abstract'
+in the externalfilters docs.
+
+Otherwise, try to stick close to what the original docs used
+for particular sections in regard to bold, italic,
+newline/paragraphs, indentation, and such.  Or just match the
+English RST documentation (that's probably easier).

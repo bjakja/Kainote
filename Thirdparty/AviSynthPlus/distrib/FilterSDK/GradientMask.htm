@@ -1,0 +1,241 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta content="text/html; charset=windows-1252" http-equiv="Content-Type">
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css"><title>InvertNeg - AviSynth</title></head>
+<body>
+<h2><span style="text-decoration: none;">GradientMask</span></h2>
+<p>I'll start off with a simple source filter. It's called "GradientMask", and it produces a gradient.
+</p>
+<p>Here's GradientMask.cpp
+</p>
+<pre>#include &lt;windows.h&gt;
+#include "avisynth.h"
+
+class GradientMask&nbsp;: public IClip {
+public:
+  GradientMask(int _w, int _h, int _color, IScriptEnvironment* env);
+  PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+  void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) {};
+  bool __stdcall GetParity(int n) { return false; };
+  int __stdcall SetCacheHints(int cachehints, int frame_range) { return 0; };
+  const VideoInfo&amp; __stdcall GetVideoInfo() { return vi; };
+private:
+  int w;
+  int h;
+  int color;
+  VideoInfo vi;
+  PVideoFrame frame;
+};
+
+GradientMask::GradientMask(int _w, int _h, int _color, IScriptEnvironment* env)&nbsp;:
+                           w(_w), h(_h), color(_color) {
+  memset(&amp;vi, 0, sizeof(VideoInfo));
+  vi.width = w;
+  vi.height = h;
+  vi.fps_numerator = 30000;
+  vi.fps_denominator = 1001;
+  vi.num_frames = 1;
+  vi.pixel_type = VideoInfo::CS_BGR24;
+
+  frame = env-&gt;NewVideoFrame(vi);
+
+  int y, i;
+  BYTE* p;
+  int fpitch, fheight, fwidth;
+  float red, green, blue, luma;
+
+  static const int col[] = {(color &gt;&gt; 16) &amp; 0xff, (color &gt;&gt; 8) &amp; 0xff, (color &gt;&gt; 0) &amp; 0xff};
+  luma = float((col[0]+col[1]+col[2])/3.0);
+
+  blue = max(col[2] - luma,0);
+  green = max(col[1] - luma,0);
+  red = max(col[0] - luma,0);
+
+  p = frame-&gt;GetWritePtr();
+  fpitch = frame-&gt;GetPitch();
+  fwidth = frame-&gt;GetRowSize(); // in bytes
+  fheight = frame-&gt;GetHeight(); // in pixels
+
+  for (y=0; y&lt;fheight; y++) {
+    for (i=0; i&lt;fwidth; i+=3) {
+      p[i] = int(min(i * 255.0/float(fwidth) + blue,255));
+      p[i+1] = int(min(i * 255.0/float(fwidth) + green,255));
+      p[i+2] = int(min(i * 255.0/float(fwidth) + red,255));
+    }
+    p += fpitch;
+  }
+}
+
+PVideoFrame __stdcall GradientMask::GetFrame(int n, IScriptEnvironment* env) { return frame; }
+
+static AVSValue __cdecl Create_GradientMask(AVSValue args, void* user_data, IScriptEnvironment* env) {
+  return new GradientMask(args[0].AsInt(640), args[1].AsInt(480), args[2].AsInt(0), env);
+}
+
+const AVS_Linkage *AVS_linkage = 0;
+
+extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScriptEnvironment* env, const AVS_Linkage* const vectors) {
+  AVS_linkage = vectors;
+  env-&gt;AddFunction("GradientMask", "[width]i[height]i[color]i", Create_GradientMask, 0);
+  return "GradientMask sample plugin";
+}</pre>
+<p>Compile this file into a DLL named GradientMask.dll. See <a href="CompilingAvisynthPlugins.htm" title="Filter SDK/Compiling instructions">compiling
+instructions</a>. Now create an Avisynth script which looks
+something like this:
+</p>
+<pre>LoadPlugin("d:\path\GradientMask.dll")<br># GradientMask(width=1024, height=768)<br>GradientMask(color=$FF0000)<br></pre>
+<h3><span class="editsection"></span><span class="mw-headline" id="Line_by_line_breakdown">&nbsp;Line
+by line breakdown </span></h3>
+<p>Here's a line-by-line breakdown of GradientMask.cpp.
+</p>
+<p>As explained in the <a href="InvertNeg.htm" title="Filter SDK/InvertNeg">InvertNeg</a>
+ filter, an Avisynth filter is simply a C++ class implementing the IClip
+ interface. The class GenericVideoFilter is a simple do-nothing filter
+defined in avisynth.h. It derives from IClip and implements all four
+methods (being being GetFrame, GetAudio, GetParity and SetCacheHints).
+Filters that have a parent clip and thus can inherit from
+GenericVideoFilter rather than directly from IClip; this saves you from
+having to implement methods that you don't care about. Source filters
+don't have a parent clip and need to derive them from IClip.
+</p>
+<p>Since we are developing a source filter we need to derive from
+IClip, fill out a VideoInfo and implement all four methods (instead of
+overriding the ones we need).
+</p>
+<p>In the example below a gradientmask is created. It fades from a
+fully saturated color to white. The gradientmask will be created in the
+constructor and returned only once.
+</p>
+
+<pre>class GradientMask&nbsp;: public IClip {
+</pre>
+
+<p>As stated we need to inherit from IClip directly ...
+</p>
+
+<pre>public:
+  GradientMask(int _w, int _h, int _color, IScriptEnvironment* env);
+</pre>
+
+<p>This filter has three input parameters (being the width, height and color).
+</p>
+
+<pre>  PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);
+</pre>
+
+<p>GetFrame will be overridden below and will be filled with our Gradient.
+</p>
+
+<pre>  void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) {};
+</pre>
+
+<p>Our filter will not return any audio. Have a look at the internal filter <a href="http://avisynth.nl/index.php/Tone" title="Tone">Tone</a> how this is done.
+</p>
+
+<pre>  bool __stdcall GetParity(int n) { return false; };
+</pre>
+
+<p>GetParity will return false.
+</p>
+
+<pre>  int __stdcall SetCacheHints(int cachehints, int frame_range) { return 0; };
+</pre>
+
+<p>SetCacheHints will return 0.
+</p>
+
+<pre>  const VideoInfo&amp; __stdcall GetVideoInfo() { return vi; };
+</pre>
+
+<p>vi needs to be filled in the constructor.
+</p>
+
+<pre>private:
+  int w;
+  int h;
+  int color;
+  VideoInfo vi;
+  PVideoFrame frame;
+};
+
+GradientMask::GradientMask(int _w, int _h, int _color, IScriptEnvironment* env)&nbsp;:
+                           w(_w), h(_h), color(_color) {
+  memset(&amp;vi, 0, sizeof(VideoInfo));
+  vi.width = w;
+  vi.height = h;
+  vi.fps_numerator = 30000;
+  vi.fps_denominator = 1001;
+  vi.num_frames = 1;
+  vi.pixel_type = VideoInfo::CS_BGR24;
+</pre>
+
+<p>First memory is allocated for VideoInfo and then the video parameters
+ of vi are filled. In our example, the width and height are taken from
+the input parameters and the remaining ones are given default values. So
+ an one-frame RGB24 gradient will be returned with width 'w' and height
+'h'.
+</p>
+<p>In our example, the frame is filled here in the constructor since the clip consists of only one frame.
+If it would have multiple different frames you should fill them in GetFrame().
+</p>
+
+<pre>  frame = env-&gt;NewVideoFrame(vi);
+
+  int y, i;
+  BYTE* p;
+  int fpitch, fheight, fwidth;
+  float red, green, blue, luma;
+
+  static const int col[] = {(color &gt;&gt; 16) &amp; 0xff, (color &gt;&gt; 8) &amp; 0xff, (color &gt;&gt; 0) &amp; 0xff};
+  luma = float((col[0]+col[1]+col[2])/3.0);
+
+  blue = max(col[2] - luma,0);
+  green = max(col[1] - luma,0);
+  red = max(col[0] - luma,0);
+</pre>
+
+<p>First we calculate the luma (being the average of the color
+components and subtract it from the color components. So we get the
+fully saturated color.
+</p>
+
+<pre>  p = frame-&gt;GetWritePtr();
+  fpitch = frame-&gt;GetPitch();
+  fwidth = frame-&gt;GetRowSize(); // in bytes
+  fheight = frame-&gt;GetHeight(); // in pixels
+</pre>
+
+<p>The gradients runs from the fully saturated color ((red,green,blue; for i=0) to white ((255,255,255) for i=fwidht):
+</p>
+
+<pre>  for (y=0; y&lt;fheight; y++) {
+    for (i=0; i&lt;fwidth; i+=3) {
+      p[i] = int(min(i * 255.0/float(fwidth) + blue,255));
+      p[i+1] = int(min(i * 255.0/float(fwidth) + green,255));
+      p[i+2] = int(min(i * 255.0/float(fwidth) + red,255));
+    }
+    p += fpitch;
+  }
+}
+
+PVideoFrame __stdcall GradientMask::GetFrame(int n, IScriptEnvironment* env) { return frame; }
+</pre>
+
+<p>Here our gradient frame is returned.
+</p>
+
+<pre>static AVSValue __cdecl Create_GradientMask(AVSValue args, void* user_data, IScriptEnvironment* env) {
+  return new GradientMask(args[0].AsInt(640), args[1].AsInt(480), args[2].AsInt(0), env);
+}
+
+const AVS_Linkage *AVS_linkage = 0;
+
+extern "C" __declspec(dllexport) const char* __stdcall AvisynthPluginInit3(IScriptEnvironment* env, const AVS_Linkage* const vectors) {
+  AVS_linkage = vectors;
+  env-&gt;AddFunction("GradientMask", "[width]i[height]i[color]i", Create_GradientMask, 0);
+  return "GradientMask sample plugin";
+}
+</pre>
+<hr style="width: 100%; height: 2px;">Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a><br>
+<p><kbd>$Date: 2015/09/14 20:23:59 $</kbd></p>
+</body></html>

@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>ChangeFrameSize - AviSynth</title></head>
+<body><div id="body">
+
+<h1><span style="text-decoration: none;">
+    ChangeFrameSize</span>
+	</h1>
+
+<p>The following example code shows how to double the width of the destination frame</p>
+
+<pre>public:<br />	ShowPixelValues(PClip _child, IScriptEnvironment* env) :<br />	GenericVideoFilter(_child)<br />	{<br />	// constructor code	<br /> <br />        vi.width = vi.width*2; // width is doubled here<br />        vi.height = vi.height * 2;  // height is also multiplied by 2<br />	}<br />    PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env);<br />};<br /><br />PVideoFrame __stdcall ShowPixelValues::GetFrame(int n, IScriptEnvironment* env) {<br /><br />		PVideoFrame src = child-&gt;GetFrame(n, env);<br />		PVideoFrame dst = env-&gt;NewVideoFrame(vi); // new frame is double the size of src<br />...<br /></pre>
+
+<p>A Similar approach has to be used for changing colorspace, framerate etc.
+There is a bit more information at <a href="WorkingWithImages.htm">WorkingWithImages</a>.
+
+</p><hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+
+</div>
+<p><kbd>$Date: 2014/10/27 22:04:54 $<br /><a href="http://www.avisynth.org/ChangeFrameSize"></a>
+</kbd></p>
+</body></html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>EnvSaveString - AviSynth</title></head>
+
+<body>
+
+<div id="body">
+
+<h1><a href="http://www.avisynth.org/EnvSaveString" style="text-decoration: none;">
+    EnvSaveString</a>
+	</h1>
+
+<p><strong>env-&gt;SaveString</strong> is given to allow users to pass strings to AVSValue,
+and ensure that they are being deallocated on unload.</p>
+
+
+<p>An Example:</p>
+
+<pre>      fnpluginnew = new char[string_len];<br /><br />      strcpy(fnpluginnew, fnplugin.AsString());<br />      strcat(fnpluginnew, " ");<br />      strcat(fnpluginnew, name);<br />      <br />      env-&gt;SetGlobalVar("$PluginFunctions$", AVSValue(env-&gt;SaveString(fnpluginnew, string_len)));<br /><br />      // Since fnpluginnew has now been saved it can safely be deleted.<br /><br />      delete[] fnpluginnew;<br /></pre>
+
+<p>But you must still remember that these strings are not deallocated until the filter is unloaded.</p>
+
+<p>So in general if you don't want your filter to be allocating more memory on each load,
+try avoiding using non-const strings.
+
+</p><hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a></div><p><kbd>Date: 2006/11/24 18:21:26 $<br /><a href="http://www.avisynth.org/EnvSaveString"></a>
+</kbd></p>
+</body></html>

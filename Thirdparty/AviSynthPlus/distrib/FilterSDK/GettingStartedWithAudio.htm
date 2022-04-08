@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>Getting Started With Audio - AviSynth</title></head>
+<body>
+
+<div id="body">
+
+<h1>Getting started with audio</h1>
+
+<p>The best filters to take a look at if you are searching for a way to get
+  started with an audio filter is the
+  <a href="http://avisynth2.cvs.sourceforge.net/avisynth2/avisynth/src/audio/">internal audio filters</a>
+  of AviSynth. Mainly
+  <a href="http://avisynth2.cvs.sourceforge.net/avisynth2/avisynth/src/audio/audio.cpp?view=markup"><code>audio.cpp</code></a>
+  is interesting.</p>
+
+<p>Basically you override GetAudio(...) instead of GetFrame, and fill the
+  buffer with data. A simple filter could look like this:</p>
+<h4>Filter creation - skip if no audio:</h4>
+<pre>AVSValue __cdecl HalfVolume::Create(AVSValue args, void*, IScriptEnvironment* env) {
+  if (!args[0].AsClip()-&gt;GetVideoInfo().HasAudio())
+      return args[0];
+
+  // Auto convert audio to a compatible format.
+  AVSValue CA_args[3] = { args[0], SAMPLE_INT16 | SAMPLE_FLOAT, SAMPLE_FLOAT };
+  PClip clip = env-&gt;Invoke("ConvertAudio", AVSValue(CA_args, 3)).AsClip();
+
+  return new HalfVolume(clip);
+}</pre>
+<p>What <code>ConvertAudio()</code> does is, that you tell it that your filter supports
+   SAMPLE_INT16 and SAMPLE_FLOAT, and that it prefers SAMPLE_FLOAT. If the input isn't
+   16 bit or float, it'll be converted to float, otherwise the original PClip is returned.</p>
+<h4>Constructor:</h4>
+<pre>HalfVolume::HalfVolume(PClip _child)
+    : GenericVideoFilter(_child) { // Provide null GetFrame, GetParity, etc
+} </pre>
+<h4>GetAudio override:</h4>
+<pre>void __stdcall HalfVolume::GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) {
+  child-&gt;GetAudio(buf, start, count, env);
+  int channels = vi.AudioChannels();
+
+  if (vi.SampleType() == SAMPLE_INT16) {
+    short* samples = (short*)buf;
+    for (int i=0; i&lt; count; i++) {
+      for(int j=0;j&lt; channels;j++) {
+         samples[i*channels+j] += 1; // Round
+         samples[i*channels+j] /= 2; // Halve
+      }
+    }
+  } else if (vi.SampleType() == SAMPLE_FLOAT) {
+    SFLOAT* samples = (SFLOAT*)buf;
+    for (int i=0; i&lt; count; i++) {
+      for(int j=0;j&lt; channels;j++) {
+         samples[i*channels+j] /= 2.0f; // Halve, rounding not needed
+      }
+    }
+  }
+}</pre>
+<p>Implementation of a half volume filter. Very explicit, so it isn't going to
+  be the fastest possible, but it should serve the purpose. Furthermore have a look
+  <a href="http://forum.doom9.org/showthread.php?s=&amp;threadid=72760&amp;highlight=ConvertAudiohere">discussion here</a>
+  and look also at
+  <a href="http://avisynth2.cvs.sourceforge.net/avisynth2/avisynth/src/audio/audio.cpp?view=markup"><code>audio.cpp</code></a>
+  for a bunch of more advanced stuff. A lot of technical details are also to be
+  found in <a href="AviSynthTwoFiveAudio.htm">AviSynth Two-Five Audio</a>.
+</p><hr style="width: 100%; height: 2px;" />
+
+<p>Since we are invoking ConvertAudio() you might wonder whether it is possible to call it in a script.
+That is indeed possible, but not documented since it is not very practical to do so. You need to know
+that SAMPLE_INT8 = 1b = 1, SAMPLE_INT16 = 10b = 2, SAMPLE_INT24 = 100b = 4, SAMPLE_INT32 = 1000b = 8 and
+SAMPLE_FLOAT = 10000b = 16 (although these values might change some day).</p>
+
+<p>In the example above we call ConvertAudio() with SAMPLE_INT16 | SAMPLE_FLOAT = 10b | 10000b = 10010b = 18,
+so you need to call it as ConvertAudio(clip, 18, 16).</p>
+
+<p>You should realise that float audio will be converted to 16 bit when feeding it to the encoder. At least unless you have set
+<a href="http://avisynth.nl/index.php/Internal_functions#OPT_AllowFloatAudio">global OPT_AllowFloatAudio = True</a> in your script.</p>
+
+<hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+</div>
+<p><kbd>
+    $Date: 2015/09/14 20:23:59 $
+    <a href="http://www.avisynth.org/GettingStartedWithAudio"></a>
+  </kbd></p>
+</body></html>

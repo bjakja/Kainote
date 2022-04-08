@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>SDKNecessaries</title></head>
+<body>
+
+<h1>SDKNecessaries</h1><h2><span class="mw-headline" id="You_must_have_some_compatible_development_tool">You must have some compatible development tool </span></h2>
+<ul><li> Microsoft Visual C/C++ 6 (1998), 7.0 (2002), 7.1 (2003), 8 (2005), 9 (2008), 10 (2010), 11 (2012), or 12 (2013)
+</li><li> Microsoft Visual C++ Toolkit 2003 (free, try search vctoolkitsetup.exe) with some IDE (e.g. free CodeBlocks)
+</li><li> Microsoft Visual C++ 2005 Express edition (requires W2KSP4; has a converter for upgrading VC6 projects)
+</li><li> Microsoft Visual C++ 2008 Express edition (requires WinXPSP3; has a converter for upgrading VC6 projects) (free download <a rel="nofollow" class="external autonumber" href="http://www.google.nl/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;ved=0CCoQFjAA&amp;url=http%3A%2F%2Fgo.microsoft.com%2F%3Flinkid%3D7729279&amp;ei=HfWhUuTjL8Og0wW7wYDwBw&amp;usg=AFQjCNEulTGchEeozkLGRH8LZELiTKlC5A&amp;sig2=Mi7Rwn_jNL5Qffi7LiGS3w&amp;bvm=bv.57752919,d.d2k">[1]</a>)
+</li><li> Microsoft Visual C++ 2010 Express edition (free download <a rel="nofollow" class="external autonumber" href="http://www.visualstudio.com/downloads/download-visual-studio-vs#DownloadFamilies_4">[2]</a> <a rel="nofollow" class="external text" href="http://go.microsoft.com/?linkid=9709949">direct link</a>; requires WinXPSP3)
+</li><li> Microsoft Visual C++ 2013 Express edition (free download <a rel="nofollow" class="external autonumber" href="http://www.visualstudio.com/en-us/downloads/">[3]</a> (web version is fine); requires Win7)
+</li><li> Intel ICL Compiler v7 (?), up to to ICL10.1
+</li></ul>
+<p>Notes
+</p>
+<ul><li> Visual C/C++ 6, 7, 7.1 Standard Edition (and NET 1.1 SDK) lack
+in optimizing compiler (only expensive Professional or Enterprise
+Edition included it). As a partial workaround you can add free Visual
+C++ Toolkit 2003 optimizing compiler to your Standard Edition IDE (by
+setting directories properly) or use Visual C++ 2005 (any edition).
+</li><li> None of the express editions have a resource editor.
+</li><li> Starting from Express 2012 there is support 64-bit applications. For earlier versions it is included in the Platform SDK (?).
+</li><li> Free registration is mandatory to use this product beyond 30 days.
+</li></ul>
+<h2><span class="editsection"><a href="http://avisynth.nl/index.php?title=Filter_SDK/SDK_necessaries&amp;action=edit&amp;section=2" title="Edit section: You also need in Microsoft Platform SDK (if it is not included with compiler)"></a></span><span class="mw-headline" id="You_also_need_in_Microsoft_Platform_SDK_.28if_it_is_not_included_with_compiler.29">You also need in Microsoft Platform SDK (if it is not included with compiler) </span></h2>
+<p>When using VC6.0, you will need the February 2003 Edition <a rel="nofollow" class="external autonumber" href="http://social.msdn.microsoft.com/Forums/windowsdesktop/en-US/ad4e4015-6867-4ff1-845e-143e6052834e/windows-platform-sdk-feb-2003?forum=windowssdk">[4]</a>, or the Windows Server 2003 SP1 Platform SDK edition <a rel="nofollow" class="external autonumber" href="http://www.microsoft.com/en-us/download/details.aspx?id=15656">[5]</a> <a rel="nofollow" class="external autonumber" href="http://download.cnet.com/Windows-Server-2003-R2-Platform-SDK-ISO-Download/3000-10248_4-10731094.html">[6]</a>.
+</p><p>For MS VC++ 2005 you can use the latest Platform SDK: <a rel="nofollow" class="external autonumber" href="http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB">[7]</a>.
+</p><p>For MS VC++ 2008 or more recent it is included in the compiler (?) (and it is called Windows PSK).
+</p><p>For some very special plugins (GPU) you might need the DirectX SDK t00 (when compiling AviSynth itself you will need it).
+</p>
+<h2><span class="editsection"></span><span class="mw-headline" id="Finally.2C_you_must_include_small_header_file_.27avisynth.h.27">&nbsp;Finally, you must include small header file 'avisynth.h' </span></h2>
+<p>You can get it with this FilterSDK, download with AviSynth source
+code, or take from some plugin source package. There are several
+versions of this header file from various AviSynth versions.
+</p><p>Header file avisynth.h from v1.0.x to v2.0.x have
+AVISYNTH_INTERFACE_VERSION = 1. Plugins compiled with them will be not
+(natively) compatible with AviSynth 2.5.x.
+</p><p>Header file avisynth.h from v2.5.0 to v2.5.5 have
+AVISYNTH_INTERFACE_VERSION = 2. Plugins compiled with them will
+(generally) work in AviSynth v2.5.0 to v2.5.7 (and above). But
+avisynth.h files from versions v2.5.0 - v2.5.5 (and betas) are not
+identical. We recommend to use avisynth.h from versions 2.5.5 or later.
+Previous versions of avisynth.h are obsolete and have some bugs.
+</p><p><a href="http://avisynth.nl/images/Avisynth.h-2.5.8.avs" class="internal" title="Avisynth.h-2.5.8.avs">Header file avisynth.h</a>
+ from v2.5.6 to v2.5.8 are almost identical and have
+AVISYNTH_INTERFACE_VERSION = 3. Plugins compiled with them will work in
+v2.5.6 and up, and v2.5.5 and below if you do not use new interface
+features and do not call env-&gt;CheckVersion function.
+</p><p>Now being developed, AviSynth version 2.6.x will use <a href="http://avisynth.nl/images/Avisynth.h-2.6.0.avs" class="internal" title="Avisynth.h-2.6.0.avs">new header avisynth.h</a>,
+ currently with AVISYNTH_INTERFACE_VERSION = 6. Plugins compiled with
+AviSynth v2.5.x header will work in AviSynth 2.6.x too, but plugins
+compiled with new AviSynth v2.6.x header will probably not work in AviSynth v2.5.x.
+</p><p>Generally good start is to take some similar plugin source code
+as a draft for improving or own development. Attention: there are many
+old plugins source code packages with older avisynth.h included. Simply replace it by new one.
+</p>
+<h2><span class="editsection"></span><span class="mw-headline" id="Compiling_options">&nbsp;Compiling options</span></h2>
+<p>Plugin CPP source code must be compiled as Win32 DLL (multi-threaded or multi-threaded DLL) without MFC.
+</p><p>Notes. If you use Visual C++ Toolkit 2003 itself (without VC++
+7), you can not build plugin as multi-treaded DLL: the toolkit missed
+some libraries, in particular msvcrt.lib. You can get additional libs
+with MS .NET 1.1 SDK (free download) or simply use multi-treaded option
+(IMHO it is better - no need in MSVCRT71.DLL).
+</p><p>Of course, use Release build with optimization. Typical compiler switches are /MT /O2 and /dll /nologo for linker
+</p><p>See step by step <a href="CompilingAvisynthPlugins.htm" title="Filter SDK/Compiling instructions">compiling instructions</a>.
+</p>
+<h2><span class="editsection"></span><span class="mw-headline" id="Other_compilers">&nbsp;Other compilers </span></h2>
+<p>Since v2.5.7, AviSynth includes an updated version of Kevin
+Atkinson's AviSynth C API you can use to create "C-Plugins" with
+compilers such as GNU C++, Visual Basic and Delphi.
+</p><p>You can NOT use the C++ API with compilers like GNU C++ to create plugins, because of <a href="CompilingAvisynthPlugins.htm#Introduction">binary incompatibilities</a>.
+</p><p><br />
+There is also <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?t=98327">Pascal conversion of avisynth_c.h</a> by Myrsloik
+</p><p>Some info about <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?t=125370">Using in Visual Basic</a>
+</p><p><a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?t=126530">PureBasic port of the Avisynth C Interface</a> by Inc
+</p><p>There is also <a rel="nofollow" class="external text" href="http://www.codeplex.com/AvsFilterNet">AvsFilterNet</a> wrapper for Avisynth in .NET (any .NET language) by SAPikachu, see <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?t=144663">discussion</a>
+</p><hr style="width: 100%; height: 2px;" />Back to <a href="FilterSDK.htm">FilterSDK</a>
+
+<p><kbd>$Date: 2015/03/30 06:08:10 $</kbd></p>
+</body></html>

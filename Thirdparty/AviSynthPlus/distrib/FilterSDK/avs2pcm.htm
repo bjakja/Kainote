@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type" />
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>avs2pcm - AviSynth</title></head>
+<body><h1><span style="text-decoration: none;">avs2pcm</span></h1>
+
+<div id="body"><p>avs2pcm reads a script and outputs raw audio (<a rel="nofollow" class="external text" href="http://wiki.multimedia.cx/index.php?title=PCM">lpcm</a>,
+ that is lineair pcm). The byte order will be little endian, the sign
+(signed or unsiged) will depend on the bith depth and the channels will
+be interleaved.
+</p><p>Here's avs2pcm.cpp:
+</p>
+<pre>#include &lt;stdio.h&gt;<br />#include &lt;Windows.h&gt;<br />#include "avisynth.h"<br /><br />#define MY_VERSION "Avs2PCM 0.01"<br /><br />const AVS_Linkage *AVS_linkage = 0;<br /><br />int __cdecl main(int argc, const char* argv[])<br />{<br />  const char* infile = NULL;<br />  const char* outfile = NULL;<br />  FILE* out_fh;<br /><br />  if (!strcmp(argv[1], "-h")) {<br />    fprintf(stderr, MY_VERSION "\n"<br />    "Usage: avs2pcm in.avs out.pcm\n");<br />    return 2;<br />  } else {<br />    infile = argv[1];<br />    outfile = argv[2];<br />  }<br /><br />  try {<br />    char* sample_type;<br />    typedef IScriptEnvironment* (__stdcall *DLLFUNC)(int);<br />    IScriptEnvironment* env;<br />    HMODULE avsdll = LoadLibrary("avisynth.dll");<br />    if (!avsdll) {<br />      fprintf(stderr, "failed to load avisynth.dll\n");<br />      return 2;<br />    }<br /><br />    DLLFUNC CreateEnv = (DLLFUNC)GetProcAddress(avsdll, "CreateScriptEnvironment");<br />    if (!CreateEnv) {<br />      fprintf(stderr, "failed to load CreateScriptEnvironment()\n");<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    env = CreateEnv(AVISYNTH_INTERFACE_VERSION);<br />    AVS_linkage = env-&gt;GetAVSLinkage();<br />    AVSValue arg(infile);<br />    AVSValue res = env-&gt;Invoke("Import", AVSValue(&amp;arg, 1));<br />    if (!res.IsClip()) {<br />      fprintf(stderr, "Error: '%s' didn't return a video clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    PClip clip = res.AsClip();<br /><br />    if (clip-&gt;GetVersion() &lt; 5) {<br />      fprintf(stderr, "Error: too old version ('%d') of avisynth.dll loaded.\nplease install v2.60 or later.\n",<br />              clip-&gt;GetVersion());<br />      return 1;<br />    }<br /><br />    VideoInfo vi = clip-&gt;GetVideoInfo();<br /><br />    if (!vi.HasAudio()) {<br />      fprintf(stderr, "Error: '%s' video only clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    fprintf(stderr, "&nbsp;%s:\n", infile);<br />    fprintf(stderr, "&nbsp;%d Herz,\n", vi.audio_samples_per_second);<br />    fprintf(stderr, "&nbsp;%d channels,\n", vi.nchannels);<br />    fprintf(stderr, "&nbsp;%I64d audio samples,\n", vi.num_audio_samples);<br /><br />    switch(vi.SampleType()) {<br />    case SAMPLE_INT8&nbsp;: sample_type = "8 bit";<br />      break;<br />    case SAMPLE_INT16&nbsp;: sample_type = "16 bit";<br />      break;<br />    case SAMPLE_INT24&nbsp;: sample_type = "24 bit";<br />      break;<br />    case SAMPLE_INT32&nbsp;:<br />    case SAMPLE_FLOAT&nbsp;: sample_type = "32 bit";<br />      break;<br />    default: sample_type = "unknown sample type";<br />      break;<br />    }<br /><br />    fprintf(stderr, "&nbsp;%s", sample_type);<br /><br />    out_fh = fopen(outfile, "wb");<br />    if (!out_fh) {<br />      fprintf(stderr, "fopen(\"%s\") failed", outfile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    const __int64 start = 0;<br />    const __int64 count = vi.num_audio_samples;<br />    const int channels = vi.AudioChannels();<br />    __int64 bytes = vi.BytesFromAudioSamples(count);<br />    int BlockAlign = vi.AudioChannels() * vi.BytesPerAudioSample();<br /><br />    unsigned char* samples = new unsigned char[BlockAlign*count];<br />    clip-&gt;GetAudio(samples, start, count, env);<br />    fwrite(samples, bytes, 1, out_fh);<br /><br />    delete[] samples;<br />    env-&gt;DeleteScriptEnvironment();<br />    FreeLibrary(avsdll);<br />    AVS_linkage = 0;<br /><br />  } catch(AvisynthError err) {<br />    fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);<br />    return 1;<br />  }<br /><br />  fclose(out_fh);<br />  return 0;<br />}<br /></pre>
+<p>Compile this file into an EXE named avs2pcm.exe. See <a href="CompilingAvisynthPlugins.htm" title="Filter SDK/Compiling instructions">compiling instructions</a>.
+ Now open the command line and go to the folder where avs2pcm.exe and
+your script (called example.avs here) are located. Our script:
+</p>
+<pre>Tone(length=1, frequency=2, samplerate=48000, channels=1, type="square", level=1.0) # float<br />ConvertAudioTo16Bit()<br /></pre>
+<p>Type the following on the command line (the name of the output clip can be arbitrary in our application):
+</p>
+<pre>avs2pcm.exe example.avs output.pcm<br /></pre>
+<p>So the output file will contain 48000 samples of 16-bit data (at 48
+kHz, one channel). You can import it in AviSynth using the plugin
+NicAudio:
+</p>
+<pre>v = Blankclip(1000)<br />a = RaWavSource("D:\AviSynth\Plugins\avs2pcm\output.pcm", 48000, 16, 1) # little-endian<br />Audiodub(v,a).ConvertAudioTo16Bit().GetChannels(1) # Audiograph doesn't support 24/32bit nor multichannel<br />Audiograph(20)<br /></pre>
+<h3><span class="editsection"></span><span class="mw-headline" id="Line_by_line_breakdown">&nbsp;Line by line breakdown </span></h3>
+<p>Here's a line-by-line breakdown of avs2pcm.cpp:
+</p>
+<pre>#include &lt;stdio.h&gt;<br />#include &lt;Windows.h&gt;<br />#include "avisynth.h"<br /><br />#define MY_VERSION "Avs2PCM 0.01"<br /><br />const AVS_Linkage *AVS_linkage = 0;<br /><br />int __cdecl main(int argc, const char* argv[])<br />{<br />  const char* infile = NULL;<br />  const char* outfile = NULL;<br />  FILE* out_fh;<br /><br />  if (!strcmp(argv[1], "-h")) {<br />    fprintf(stderr, MY_VERSION "\n"<br />    "Usage: avs2pcm in.avs out.pcm\n");<br />    return 2;<br />  } else {<br />    infile = argv[1];<br />    outfile = argv[2];<br />  }<br /><br />  try {<br />    char* sample_type;<br />    typedef IScriptEnvironment* (__stdcall *DLLFUNC)(int);<br />    IScriptEnvironment* env;<br />    HMODULE avsdll = LoadLibrary("avisynth.dll");<br />    if (!avsdll) {<br />      fprintf(stderr, "failed to load avisynth.dll\n");<br />      return 2;<br />    }<br /><br />    DLLFUNC CreateEnv = (DLLFUNC)GetProcAddress(avsdll, "CreateScriptEnvironment");<br />    if (!CreateEnv) {<br />      fprintf(stderr, "failed to load CreateScriptEnvironment()\n");<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    env = CreateEnv(AVISYNTH_INTERFACE_VERSION);<br />    AVS_linkage = env-&gt;GetAVSLinkage();<br />    AVSValue arg(infile);<br />    AVSValue res = env-&gt;Invoke("Import", AVSValue(&amp;arg, 1));<br />    if (!res.IsClip()) {<br />      fprintf(stderr, "Error: '%s' didn't return a clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /><br />    PClip clip = res.AsClip();<br /><br />    if (clip-&gt;GetVersion() &lt; 5) {<br />      fprintf(stderr, "Error: too old version ('%d') of avisynth.dll loaded.\nplease install v2.60 or later.\n",<br />              clip-&gt;GetVersion());<br />      return 1;<br />    }<br /><br />    VideoInfo vi = clip-&gt;GetVideoInfo();<br /></pre>
+<p>The lines above are explained in <a href="avs2yuv.htm" title="Filter SDK/avs2yuv">avs2yuv</a>, so they won't be repeated here.
+</p>
+<pre>    if (!vi.HasAudio()) {<br />      fprintf(stderr, "Error: '%s' video only clip.\n", infile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /></pre>
+<p>Returns an error if the clip doesn't contain audio.
+</p>
+<pre>    fprintf(stderr, "&nbsp;%s:\n", infile);<br />    fprintf(stderr, "&nbsp;%d Herz,\n", vi.audio_samples_per_second);<br />    fprintf(stderr, "&nbsp;%d channels,\n", vi.nchannels);<br />    fprintf(stderr, "&nbsp;%I64d audio samples,\n", vi.num_audio_samples);<br /><br />    switch(vi.SampleType()) {<br />    case SAMPLE_INT8&nbsp;: sample_type = "8 bit";<br />      break;<br />    case SAMPLE_INT16&nbsp;: sample_type = "16 bit";<br />      break;<br />    case SAMPLE_INT24&nbsp;: sample_type = "24 bit";<br />      break;<br />    case SAMPLE_INT32&nbsp;:<br />    case SAMPLE_FLOAT&nbsp;: sample_type = "32 bit";<br />      break;<br />    default: sample_type = "unknown sample type";<br />      break;<br />    }<br /><br />    fprintf(stderr, "&nbsp;%s", sample_type);<br /></pre>
+<p>Some information about the clip is written to the console.
+</p>
+<pre>    out_fh = fopen(outfile, "wb");<br /></pre>
+<p>Creates an empty binary file and opens it for writing. It returns a
+file pointer called 'out_fh' here. Nb, 'wb' means write mode and binary.
+
+</p>
+<pre>    if (!out_fh) {<br />      fprintf(stderr, "fopen(\"%s\") failed", outfile);<br />      FreeLibrary(avsdll);<br />      return 1;<br />    }<br /></pre>
+<p>When failing (thus when out_fh is NULL) an error is written to the console.
+</p>
+<pre>    const __int64 start = 0;<br />    const __int64 count = vi.num_audio_samples;<br /></pre>
+<p>This gives the number of audio samples in our stream.
+</p>
+<pre>    const int channels = vi.AudioChannels();<br /></pre>
+<p>This gives the number of audio channels of our stream.
+</p>
+<pre>    __int64 bytes = vi.BytesFromAudioSamples(count);<br /></pre>
+<p>We will use <a rel="nofollow" class="external text" href="http://www.cplusplus.com/reference/cstdio/fwrite/">fwrite</a> to write 'count' audio samples to a file. So we will need to know the corresponding number of bytes which needs to be written. <a href="VideoInfo.htm" title="Cplusplus API/VideoInfo">BytesFromAudioSamples</a> gives the number of bytes and it is calculated internally as follows:
+</p>
+<table style="height: 100px;" border="1" cellpadding="4">
+<tbody><tr>
+<th width="25%"> function
+</th>
+<th width="75%"> value
+</th></tr>
+<tr>
+<td> BytesPerChannelSample()
+</td>
+<td> = sizeof(unsigned char) = 1 byte [for 8 bit audio], <br />
+<p>= sizeof(signed short) = 2 bytes [for 16 bit audio], <br />
+= 3 bytes [for 24 bit audio], <br />
+= sizeof(signed int) = 4 bytes [for 32 bit audio], <br />
+= sizeof(SFLOAT) = 4 bytes [for float audio; this is also 32 bit audio]
+</p>
+</td></tr>
+<tr>
+<td> BytesPerAudioSample()
+</td>
+<td> AudioChannels() * BytesPerChannelSample()
+</td></tr>
+<tr>
+<td> BytesFromAudioSamples()
+</td>
+<td> num_audio_samples * BytesPerAudioSample()
+</td></tr></tbody></table>
+<pre>    int BlockAlign = vi.BytesPerAudioSample();<br /><br />    unsigned char* samples = new unsigned char[BlockAlign*count];<br />    clip-&gt;GetAudio(samples, start, count, env);<br />    fwrite(samples, bytes, 1, out_fh);<br />    delete[] samples;<br /></pre>
+<p>There are a few ways to write audio to a file. The simpliest one is
+the one above. Let's look at what happens with our data with an example:
+</p>
+<pre>Tone(length=1, frequency=2, samplerate=48000, channels=1, type="square", level=1.0) # float<br />ConvertAudioTox() // x = 8Bit, 16Bit, 24Bit, 32Bit and Float<br /></pre>
+<p>The samples are always written to the pcm file as <a rel="nofollow" class="external text" href="http://en.wikipedia.org/wiki/Endianness">little endian</a>.
+ So this means the bytes are written in reversed order (thus the least
+significant byte first and the most significant byte last).
+</p>
+<table style="height: 100px;" border="1" cellpadding="4">
+<tbody><tr>
+<th width="20%"> type (x)
+</th>
+<th width="40%"> value of samples
+</th>
+<th width="40%"> bytes written in file
+</th></tr>
+<tr>
+<td> 8Bit (samples between 0 and 2^8-1)
+</td>
+<td> s[0] = 255; s[count-1] = 0
+</td>
+<td> FF .. 00 ..
+</td></tr>
+<tr>
+<td> 16Bit (samples between -2^15 and 2^15-1)
+</td>
+<td> s[1]*256+s[0] = 127*256+255 = 32767; s[count-1]*256+s[count-2] = 128*256+0 = 32768 (= -32768)
+</td>
+<td> FF 7F .. 00 80 ..
+</td></tr>
+<tr>
+<td> 24Bit (samples between -2^23 and 2^23-1)
+</td>
+<td> s[2]*16^4+s[1]*16^2+s[0] = 8388607; s[count-1]*16^4+s[count-2]*16^2+s[count-3] = 8388608 (= -8388608)
+</td>
+<td> FF FF 7F .. 00 00 80 ..
+</td></tr>
+<tr>
+<td> 32Bit (samples between -2^31 and 2^31-1)
+</td>
+<td> s[3]*16^6+s[2]*16^4+s[1]*16^2+s[0] = 2147483647;
+s[count-1]*16^6+s[count-2]*16^4+s[count-3]*16^2+s[count-4] = 2147483648
+(= -2147483648)
+</td>
+<td> FF FF FF 7F .. 00 00 00 80 ..
+</td></tr>
+<tr>
+<td> <a href="http://avisynth.nl/index.php/Float" title="Float">Float</a> (samples between -1.00000 and 1.000000)
+</td>
+<td> s[3]*16^6+s[2]*16^4+s[1]*16^2+s[0] = 63*16^6+128*16^4+0*16^2+0 =
+106535321; s[count-1]*16^6+s[count-2]*16^4+s[count-3]*16^2+s[count-4] =
+191*16^6+128*16^4+0*16^2+0 = 3212836864
+</td>
+<td> 00 00 80 3F .. 00 00 80 BF ..
+</td></tr></tbody></table>
+<p>Above the samples are declared as unsigned char (regardless of the
+number of bits in a sample), but they are filled by GetAudio as
+explained above. Thus an audio sample is stored in multiple samples
+(each sample having the size of a byte). This is the simpliest and
+cleanest way to do, but you could also have done the following instead:
+</p>
+<pre>int BlockAlign = vi.BytesPerAudioSample();<br /><br />switch (vi.SampleType()) {<br />case SAMPLE_INT8&nbsp;: {<br />  unsigned char* samples = new unsigned char[BlockAlign*count];<br />  clip-&gt;GetAudio(samples, start, count, env);<br />  fwrite(samples, bytes, 1, out_fh);<br />  delete[] samples;<br />  break;<br />}<br />case SAMPLE_INT16&nbsp;: {<br />  signed short* samples = new signed short[channels*count];<br />  clip-&gt;GetAudio(samples, start, count, env);<br />  fwrite(samples, bytes, 1, out_fh);<br />  delete[] samples;<br />  break;<br />}<br />case SAMPLE_INT24&nbsp;: {<br />  unsigned char* samples = new unsigned char[3*channels*count];<br />  clip-&gt;GetAudio(samples, start, count, env);<br />  fwrite(samples, bytes, 1, out_fh);<br />  delete[] samples;<br />  break;<br />}<br />case SAMPLE_INT32&nbsp;: {<br />  signed int* samples = new signed int[channels*count];<br />  clip-&gt;GetAudio(samples, start, count, env);<br />  fwrite(samples, bytes, 1, out_fh);<br />  delete[] samples;<br />  break;<br />}<br />case SAMPLE_FLOAT&nbsp;: {<br />  SFLOAT* samples = new SFLOAT[channels*count];<br />  clip-&gt;GetAudio(samples, start, count, env);<br />  fwrite(samples, bytes, 1, out_fh);<br />  delete[] samples;<br />  break;<br />}<br />}<br /></pre>
+<p>Here an audio sample is stored in one sample (having the size of a
+multiple bytes), but fwrite will write the same bytes to the file as
+earlier.
+</p><p>At first glance it seems possible to simplify the code above by
+moving the lines "clip .. delete[] samples" outside the switch
+statement, but that's not possible. The reason is that each code-block
+corresponding to a label has its own scope. So the variable samples
+doesn't exist outside the switch statement and can't be used there for
+further processing. See <a rel="nofollow" class="external text" href="http://stackoverflow.com/questions/92396/why-cant-variables-be-declared-in-a-switch-statement">here</a> for more information.
+</p>
+<pre>    env-&gt;DeleteScriptEnvironment();<br />    FreeLibrary(avsdll);<br />    AVS_linkage = 0;<br /><br />    } catch(AvisynthError err) {<br />      fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);<br />      return 1;<br />    }<br /><br />    fclose(out_fh);<br />    return 0;<br />}<br /></pre>
+<p>The remaining lines above are explained in <a href="avs2yuv.htm" title="Filter SDK/avs2yuv">avs2yuv</a>, so they won't be repeated here.
+
+</p><hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a></div>
+<p><kbd>$Date: 2014/10/27 22:04:54 $</kbd></p>
+</body></html>

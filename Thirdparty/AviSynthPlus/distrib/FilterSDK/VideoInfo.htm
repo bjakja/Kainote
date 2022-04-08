@@ -1,0 +1,390 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>VideoInfo - AviSynth</title></head>
+
+<body>
+
+<h1>VideoInfo</h1>
+
+<a name="Getting_information_from_VideoInfo"></a>
+<p>
+The VideoInfo structure holds global information about a clip
+(i.e. information that does not depend on the frame number). The
+GetVideoInfo method in IClip returns this structure. Below is a
+description of it (for AVISYNTH_INTERFACE_VERSION=6).
+</p>
+<h2>Table of Contents</h2>
+<ol id="mozToc"><!--mozToc h2 1 h3 2 h4 3 h5 4 h6 5-->
+<li><a href="#mozTocId526675">Properties and constants</a></li>
+<li><a href="#mozTocId711628">Functions [need to add examples]</a>
+  <ol>
+  <li><a href="#mozTocId438815">HasVideo</a></li>
+  <li><a href="#mozTocId687866">IsRGB / IsRGB24 / IsRGB32</a></li>
+  <li><a href="#mozTocId166884">IsYUV / IsYUY2 / IsYV24 / IsYV16 / IsYV12 / IsYV411 / IsY8</a></li>
+  <li><a href="#mozTocId422021">IsColorSpace / IsSameColorspace / IsPlanar</a></li>
+  <li><a href="#mozTocId225788">Is / IsFieldBased / IsParityKnown / IsBFF / IsTFF</a></li>
+  <li><a href="#mozTocId656057">SetFieldBased / Set / Clear</a></li>
+  <li><a href="#mozTocId36555">BitsPerPixel</a></li>
+  <li><a href="#mozTocId674711">SetFPS / MulDivFPS</a></li>
+  <li><a href="#mozTocId449446">BytesFromPixels</a></li>
+  <li><a href="#mozTocId369830">RowSize / BMPSize</a></li>
+  <li><a href="#mozTocId989700">GetPlaneWidthSubsampling / GetPlaneHeightSubsampling</a></li>
+  <li><a href="#mozTocId638578">HasAudio</a></li>
+  <li><a href="#mozTocId102450">AudioChannels / SampleType</a></li>
+  <li><a href="#mozTocId513403">IsSampleType </a></li>
+  <li><a href="#mozTocId246568">SamplesPerSecond / BytesPerAudioSample / BytesPerChannelSample</a></li>
+  <li><a href="#mozTocId162902">AudioSamplesFromFrames / FramesFromAudioSamples
+    / AudioSamplesFromBytes / BytesFromAudioSamples</a></li>
+  </ol>
+</li>
+</ol>
+<h2><a class="mozTocH2" name="mozTocId526675"></a>Properties and constants</h2>
+<p><b>General properties:</b></p>
+<pre>
+int width, height; // width=0 means no video
+unsigned fps_numerator, fps_denominator;
+int num_frames; // max. num_frames = 2,147,483,647 (signed int32)
+int audio_samples_per_second; // audio_samples_per_second=0 means no audio
+int sample_type; // samples types are defined in avisynth.h
+__int64 num_audio_samples;
+int nchannels;
+</pre>
+<p><b>Colorspace properties and constants:</b></p>
+<pre>
+int pixel_type;
+
+enum {
+ CS_BGR = 1&lt;&lt;28,
+ CS_YUV = 1&lt;&lt;29,
+ CS_INTERLEAVED = 1&lt;&lt;30,
+ CS_PLANAR = 1&lt;&lt;31,
+
+ // added in v5
+ CS_Shift_Sub_Width = 0,
+ CS_Shift_Sub_Height = 8,
+ CS_Shift_Sample_Bits = 16,
+
+ CS_Sub_Width_Mask = 7 &lt;&lt; CS_Shift_Sub_Width,
+ CS_Sub_Width_1 = 3 &lt;&lt; CS_Shift_Sub_Width, // YV24
+ CS_Sub_Width_2 = 0 &lt;&lt; CS_Shift_Sub_Width, // YV12, I420, YV16
+ CS_Sub_Width_4 = 1 &lt;&lt; CS_Shift_Sub_Width, // YUV9, YV411
+
+ CS_VPlaneFirst = 1 &lt;&lt; 3, // YV12, YV16, YV24, YV411, YUV9
+ CS_UPlaneFirst = 1 &lt;&lt; 4, // I420
+
+ CS_Sub_Height_Mask = 7 &lt;&lt; CS_Shift_Sub_Height,
+ CS_Sub_Height_1 = 3 &lt;&lt; CS_Shift_Sub_Height, // YV16, YV24, YV411
+ CS_Sub_Height_2 = 0 &lt;&lt; CS_Shift_Sub_Height, // YV12, I420
+ CS_Sub_Height_4 = 1 &lt;&lt; CS_Shift_Sub_Height, // YUV9
+
+ CS_Sample_Bits_Mask = 7 &lt;&lt; CS_Shift_Sample_Bits,
+ CS_Sample_Bits_8 = 0 &lt;&lt; CS_Shift_Sample_Bits,
+ CS_Sample_Bits_16 = 1 &lt;&lt; CS_Shift_Sample_Bits,
+ CS_Sample_Bits_32 = 2 &lt;&lt; CS_Shift_Sample_Bits,
+
+ CS_PLANAR_MASK = CS_PLANAR | CS_INTERLEAVED | CS_YUV | CS_BGR | CS_Sample_Bits_Mask | CS_Sub_Height_Mask | CS_Sub_Width_Mask,
+ CS_PLANAR_FILTER = ~( CS_VPlaneFirst | CS_UPlaneFirst ),
+};
+</pre>
+<p><b>Colorformat constants:</b></p>
+<pre>
+enum {
+ CS_UNKNOWN = 0,
+ CS_BGR24 = 1&lt;&lt;0 | CS_BGR | CS_INTERLEAVED,
+ CS_BGR32 = 1&lt;&lt;1 | CS_BGR | CS_INTERLEAVED,
+ CS_YUY2 = 1&lt;&lt;2 | CS_YUV | CS_INTERLEAVED,
+ CS_YV12 = 1&lt;&lt;3 | CS_YUV | CS_PLANAR, // y-v-u, 4:2:0 planar // only in v3
+ CS_I420 = 1&lt;&lt;4 | CS_YUV | CS_PLANAR, // y-u-v, 4:2:0 planar // only in v3
+ CS_IYUV = 1&lt;&lt;4 | CS_YUV | CS_PLANAR, // same as above // only in v3
+
+ // added in v5
+ CS_RAW32 = 1&lt;&lt;5 | CS_INTERLEAVED,
+ CS_YV24 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_VPlaneFirst | CS_Sub_Height_1 | CS_Sub_Width_1, // YUV 4:4:4 planar
+ CS_YV16 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_VPlaneFirst | CS_Sub_Height_1 | CS_Sub_Width_2, // YUV 4:2:2 planar
+ CS_YV12 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_VPlaneFirst | CS_Sub_Height_2 | CS_Sub_Width_2, // y-v-u, 4:2:0 planar
+ CS_I420 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_UPlaneFirst | CS_Sub_Height_2 | CS_Sub_Width_2, // y-u-v, 4:2:0 planar
+ CS_IYUV = CS_I420,
+ CS_YUV9 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_VPlaneFirst | CS_Sub_Height_4 | CS_Sub_Width_4, // YUV 4:1:0 planar
+ CS_YV411 = CS_PLANAR | CS_YUV | CS_Sample_Bits_8 | CS_VPlaneFirst | CS_Sub_Height_1 | CS_Sub_Width_4, // YUV 4:1:1 planar
+
+ CS_Y8 = CS_PLANAR | CS_INTERLEAVED | CS_YUV | CS_Sample_Bits_8, // Y 4:0:0 planar
+};
+</pre>
+<p><b>Image_type properties and constants:</b></p>
+<pre>
+int image_type;
+
+enum {
+ IT_BFF = 1&lt;&lt;0,
+ IT_TFF = 1&lt;&lt;1,
+ IT_FIELDBASED = 1&lt;&lt;2
+};
+</pre>
+<p><b>Chroma placement constants (bits 20 -&gt; 23):</b></p>
+<pre>
+enum { // added in v5
+ CS_UNKNOWN_CHROMA_PLACEMENT = 0 &lt;&lt; 20,
+ CS_MPEG1_CHROMA_PLACEMENT = 1 &lt;&lt; 20,
+ CS_MPEG2_CHROMA_PLACEMENT = 2 &lt;&lt; 20,
+ CS_YUY2_CHROMA_PLACEMENT = 3 &lt;&lt; 20,
+ CS_TOPLEFT_CHROMA_PLACEMENT = 4 &lt;&lt; 20
+};
+</pre>
+<h2><a class="mozTocH2" name="mozTocId711628"></a>Functions [need to add examples]</h2>
+<h3><a class="mozTocH3" name="mozTocId438815"></a>HasVideo</h3>
+<a name="Video-related_information"></a>
+<pre>bool HasVideo();</pre>
+<p>This will return true if there is any video in the given clip.</p>
+<h3><a class="mozTocH3" name="mozTocId687866"></a>IsRGB / IsRGB24 / IsRGB32</h3>
+<pre>bool IsRGB();<br />bool IsRGB24();<br />bool IsRGB32();<br /></pre>
+<p>This will return true if the colorspace is <a href="http://avisynth.org/mediawiki/RGB" title="RGB">RGB</a>
+(in any way). The first two return true if the clip has the specific RGB
+colorspace (<a href="ColorSpaces.htm" title="RGB24">RGB24</a> and <a href="ColorSpaces.htm" title="RGB32">RGB32</a>).
+The third returns true for any RGB colorspace; future formats could also apply.</p>
+<h3><a class="mozTocH3" name="mozTocId166884"></a>IsYUV / IsYUY2 / IsYV24 / IsYV16 / IsYV12 / IsYV411 / IsY8</h3>
+<pre>bool IsYUV() const;<br />bool IsYUY2() const;<br />bool IsYV24() const; // v5<br />bool IsYV16() const; // v5<br />bool IsYV12() const;<br />bool IsYV411() const; // v5<br />bool IsY8() const; // v5</pre>
+<p>This will return true if the colorspace is <a href="ColorSpaces.htm" title="YUV">YUV</a>
+(in any way). The first two return true if the clip has the specific YUV
+colorspace (<a href="ColorSpaces.htm" title="YUY2">YUY2</a> and <a href="ColorSpaces.htm" title="YV12">YV12</a>).
+The third returns true for any YUV colorspace; future formats could also apply.
+Note that I420 is also reported as YV12, because planes are automatically
+swapped.</p>
+<h3><a class="mozTocH3" name="mozTocId422021"></a>IsColorSpace / IsSameColorspace / IsPlanar</h3>
+<pre>bool IsColorSpace(int c_space);</pre>
+<p>This function will check if the colorspace (VideoInfo.pixel_type) is the same
+as given c_space (or more general it checks for a <a href="ColorspaceProperties.htm" title="Colorspace property">Colorspace
+property</a> (see avisynth.h)).</p>
+<pre>bool IsSameColorspace(const VideoInfo&amp; vi2);</pre>
+<p>This function will compare two VideoInfos, and check if the colorspace is the
+same. Note: It does not check imagesize or similar properties.</p>
+<pre>bool IsPlanar();</pre>
+<p>This will return true if the video is planar.
+See the <a href="PlanarImageFormat.htm" title="Planar">Planar</a>
+image format.</p>
+<h3><a class="mozTocH3" name="mozTocId225788"></a>Is / IsFieldBased / IsParityKnown / IsBFF / IsTFF</h3>
+<pre>bool Is(int property);</pre>
+<p>From v6 this will return true if the image type
+(VideoInfo.image_type) is the same as the given property (being IT_BFF,
+IT_TFF or IT_FIELDBASED).</p>
+<pre>bool IsFieldBased();</pre>
+<p>This will return true if the video has been through a <a href="../../Docs/English/corefilters/separatefields.htm" title="SeparateFields">SeparateFields</a>,
+and the video has not been <a href="../../Docs/English/corefilters/weave.htm" title="Weave">weaved</a>
+yet. Otherwise it will return false.</p>
+<pre>bool IsParityKnown();</pre>
+<p>This will return true if the video parity is known.</p>
+<pre>bool IsBFF();<br />bool IsTFF();</pre>
+<p>This will return true if the video is bottom-field-first or top-field-first
+respectively.</p>
+<h3><a class="mozTocH3" name="mozTocId656057"></a>SetFieldBased / Set / Clear</h3>
+<pre> void SetFieldBased(bool isfieldbased);</pre>
+<p>This will set the field-based property to true (respectively false) if
+isfieldbased=true (respectively false).</p>
+<pre> void Set(int property);<br /> void Clear(int property);</pre>
+<p>This sets respectively clears an image_type property like: IT_BFF, IT_TFF or
+IT_FIELDBASED. See field.h for examples.</p>
+<h3><a class="mozTocH3" name="mozTocId36555"></a>BitsPerPixel</h3>
+<pre> int BitsPerPixel();</pre>
+<p>This will return the number of bits per pixel. This can be:</p>
+<table border="1" cellpadding="4">
+  <tbody>
+    <tr>
+      <th width="50%">pixel_type</th>
+      <th width="50%">nr of bits</th>
+    </tr>
+    <tr>
+      <td>CS_BGR24</td>
+      <td>24</td>
+    </tr>
+    <tr>
+      <td>CS_BGR32</td>
+      <td>32</td>
+    </tr>
+    <tr>
+      <td>CS_YUY2</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>CS_YV12, CS_I420</td>
+      <td>12</td>
+    </tr>
+  </tbody>
+</table>
+<h3><a class="mozTocH3" name="mozTocId674711"></a>SetFPS / MulDivFPS</h3>
+<pre> void SetFPS(unsigned numerator, unsigned denominator);</pre>
+<p>This will set the framerate.</p>
+<pre> void MulDivFPS(unsigned multiplier, unsigned divisor);</pre>
+<p>This will multiply the denominator by <i>multiplier</i> and scale the
+numerator and modified denominator.</p>
+<p>There is some other useful information in VideoInfo structure (width, height,
+fps_numerator, fps_denominator, num_frames, pixel_type and image_type). See
+'avisynth.h' header file.</p>
+<h3><a class="mozTocH3" name="mozTocId449446"></a>BytesFromPixels</h3>
+<pre>int BytesFromPixels(int pixels) const;<br /></pre>
+<p>For interleaved formats it will return the number of bytes
+from the specified number of pixels. For planar formats it will do the
+same except it operates on the first plane.</p>
+<h3><a class="mozTocH3" name="mozTocId369830"></a>RowSize / BMPSize</h3>
+<pre>int RowSize(int plane=0) const;<br /></pre>
+<p>For interleaved formats it will return the width of the frame
+in bytes. For planar formats it will return the width of the specified
+plane in bytes.</p>
+<p>examples:</p>
+<p>640x480 RGB24: RowSize() = 3*640 = 1920</p>
+<p>640x480 YV12: RowSize(PLANAR_Y) = 640 <br />
+640x480 YV12: RowSize(PLANAR_U) = 320</p>
+<pre>int BMPSize() const;<br /></pre>
+<p>For interleaved formats it will return the size of the frame in bytes where
+the width is rounded up to a multiple of 4 bytes. For planar formats it will do
+the same for the luma plane then add the two chroma planes scaled by the
+subsampling. So, it's the number of bytes of a frame as if it was a
+<a rel="nofollow" class="external text" href="http://en.wikipedia.org/wiki/BMP_file_format">BMP frame</a>.</p>
+<p>examples:</p>
+<p>640x480 RGB24: BMPSize() = 480 * 3*640 = 921600<br />
+643x480 RGB24: BMPSize() = 480 * 3*644 = 927360</p>
+<p>640x480 YV12: BMPSize() = 480 * 640 * (1+2*0.25) = 460800<br />
+640x480 YV16: BMPSize() = 480 * 640 * (1+2*0.5) = 614400<br />
+640x480 YV24: BMPSize() = 480 * 640 * (1+2*1) = 921600<br />
+643x480 YV24: BMPSize() = 480 * 644 * (1+2*1) = 927360</p>
+<h3><a class="mozTocH3" name="mozTocId989700"></a>GetPlaneWidthSubsampling / GetPlaneHeightSubsampling</h3>
+<pre>int GetPlaneWidthSubsampling(int plane) const; // v5<br /></pre>
+<p>This will return the subsampling of the width in bitshifts.</p>
+<p>examples:</p>
+<p>YV24: GetPlaneWidthSubsampling(PLANAR_U) = 0 // since there is
+no horizontal subsampling on a chroma plane <br />
+YV16: GetPlaneWidthSubsampling(PLANAR_U) = 0 // since there is no
+horizontal subsampling on a chroma plane</p>
+<pre>int GetPlaneHeightSubsampling(int plane) const; // v5<br /></pre>
+<p>This will return the subsampling of the height in bitshifts.</p>
+<p>examples:</p>
+<p>YV24: GetPlaneHeightSubsampling(PLANAR_U) = 0 // since there
+is no vertical subsampling on a chroma plane <br />
+YV16: GetPlaneHeightSubsampling(PLANAR_U) = 1 // since vertically there
+are two times less samples on a chroma plane compared to a plane which
+is not subsampled</p>
+<table border="1">
+  <tbody>
+    <tr>
+      <td> color format </td>
+      <td> GetPlaneWidthSubsampling(PLANAR_U) </td>
+      <td> GetPlaneHeightSubsampling(PLANAR_U) </td>
+    </tr>
+    <tr>
+      <td> YV24 </td>
+      <td> 0 </td>
+      <td> 0 </td>
+    </tr>
+    <tr>
+      <td> YV16/YUY2 </td>
+      <td> 1 </td>
+      <td> 0 </td>
+    </tr>
+    <tr>
+      <td> YV12 </td>
+      <td> 1 </td>
+      <td> 1 </td>
+    </tr>
+    <tr>
+      <td> YV411 </td>
+      <td> 2 </td>
+      <td> 1 </td>
+    </tr>
+    <tr>
+      <td> Y8 </td>
+      <td> Error thrown </td>
+      <td> Error thrown </td>
+    </tr>
+  </tbody>
+</table>
+<h3><a class="mozTocH3" name="mozTocId638578"></a>HasAudio</h3>
+<pre>bool HasAudio();</pre>
+<p>This will return true if there is any audio in the given clip.</p>
+<h3><a class="mozTocH3" name="mozTocId102450"></a>AudioChannels / SampleType</h3>
+<pre> int AudioChannels();</pre>
+<p>This will return the number of audio channels.</p>
+<pre> int SampleType();</pre>
+<p>This will return the sampletype. This can be:</p>
+<table border="1" cellpadding="4">
+  <tbody>
+    <tr>
+      <th width="50%">pixel_type</th>
+      <th width="50%">nr of bits</th>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT8</td>
+      <td>1&lt;&lt;0</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT16</td>
+      <td>1&lt;&lt;1</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT24</td>
+      <td>1&lt;&lt;2</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT32</td>
+      <td>1&lt;&lt;3</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_FLOAT</td>
+      <td>1&lt;&lt;4</td>
+    </tr>
+  </tbody>
+</table>
+<h3><a class="mozTocH3" name="mozTocId513403"></a>IsSampleType </h3>
+<pre> bool IsSampleType(int testtype);</pre>
+<p>This function will check if the sampletype (VideoInfo.sample_type) is the
+same as testtype.</p>
+<h3><a class="mozTocH3" name="mozTocId246568"></a>SamplesPerSecond / BytesPerAudioSample / BytesPerChannelSample</h3>
+<pre> int SamplesPerSecond();</pre>
+<p>This will return the number of bytes per second.</p>
+<pre> int BytesPerAudioSample();</pre>
+<p>This will return the number of bytes per sample:</p>
+<pre> int BytesPerChannelSample()</pre>
+<p>This will return the number of bytes per channel-sample. This can be:</p>
+<table border="1" cellpadding="4">
+  <tbody>
+    <tr>
+      <th width="50%">sample</th>
+      <th width="50%">nr of bytes</th>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT8</td>
+      <td>sizeof(signed char)</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT16</td>
+      <td>sizeof(signed short)</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT24</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_INT32</td>
+      <td>sizeof(signed int)</td>
+    </tr>
+    <tr>
+      <td>SAMPLE_FLOAT</td>
+      <td>sizeof(SFLOAT)</td>
+    </tr>
+  </tbody>
+</table>
+<h3><a class="mozTocH3" name="mozTocId162902"></a>AudioSamplesFromFrames / FramesFromAudioSamples / AudioSamplesFromBytes / BytesFromAudioSamples</h3>
+<pre> __int64 AudioSamplesFromFrames(__int64 frames);</pre>
+<p>This returns the number of audiosamples from the first <i>frames</i> frames.</p>
+<pre> int FramesFromAudioSamples(__int64 samples);</pre>
+<p>This returns the number of frames from the first <i>samples</i> audiosamples.</p>
+<pre> __int64 AudioSamplesFromBytes(__int64 bytes);</pre>
+<p>This returns the number of audiosamples from the first <i>bytes</i> bytes.</p>
+<pre> __int64 BytesFromAudioSamples(__int64 samples);</pre>
+<p>This returns the number of bytes from the first <i>samples</i> audiosamples.</p>
+<p>There is some other useful information in VideoInfo structure
+(audio_samples_per_second, sample_type, num_audio_samples and nchannels). See
+'avisynth.h' header file.</p>
+
+<hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+<p><kbd>$Date: 2015/01/13 00:24:50 $<br />
+</kbd></p>
+</body></html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" />
+<title>SimpleMmxOptimization - AviSynth</title></head>
+<body>
+
+<div id="body">
+
+<h1><span style="text-decoration: none;">
+    SimpleMmxOptimization</span>
+	</h1>
+
+<p>This will cover some basics in assembler optimization,
+and the syntax to use in Visual Studio C++ for inline assembler.</p>
+
+
+<p>This will cover a basic routine in C++, and how it is converted to MMX.
+The example is from an actual filter in AviSynth, with only minor changes.</p>
+
+
+<p>Consider the following C-routing:</p>
+
+
+<p><tt>void Limiter::c_limiter(BYTE* p, int row_size, int height, int modulo, int cmin, int cmax) {  </tt></p>
+
+<dl><dd><tt>  for(y = 0; y &lt; height; y++) {</tt>
+<dl><dd><tt>    for(int x = 0; x &lt; row_size; x++) {</tt>
+<dl><dd><tt>      if(p[x] &lt; cmin)</tt>
+<dl><dd><tt>        p[x] = cmin;</tt>
+</dd>
+</dl>
+</dd>
+<dd><tt>      else if(p[x] &gt; cmax)</tt>
+<dl><dd><tt>        p[x] = cmax;</tt>
+</dd>
+</dl>
+</dd>
+<dd><tt>    }</tt>
+</dd>
+</dl>
+</dd>
+<dd><tt>    p += row_size+modulo;</tt>
+</dd>
+</dl>
+</dd>
+<dd><tt>  }</tt>
+</dd>
+</dl>
+<tt>}</tt>
+
+<p>The parameters of this routine is:</p>
+
+<ul><li> <em>p</em> - a pointer to the information being processed.</li>
+<li> <em>row_size</em> - the width of a row in bytes.</li>
+<li> <em>height</em> - the height of the image in bytes.</li>
+<li> <em>modulo</em> - the difference between the pitch and the rowsize (pitch - rowsize).</li>
+<li> <em>cmin, cmax</em> - the maximum and minimum values of a pixel.</li>
+</ul>
+
+<p>When converting to <a href="MMX.htm">MMX</a> and <a href="IntegerSSE.htm">IntegerSSE</a>
+it is a good thing to look at which commands are available for the task needed.
+In this case we choose to focus on <a href="IntegerSSE.htm">IntegerSSE</a>,
+because it contains pminub and pmaxub, which selects the minimum and maximum bytes of two packed registers.
+It is always a good idea to support plain MMX, since there are still many machines out there,
+that only support these instructions.</p>
+
+
+<p>An important aspect of MMX is parallel processing. That means processing several bytes at once.
+The MMX instructions all work on 8 bytes at the time, but in many cases,
+you have to unpack these bytes to words (8 to 16 bits) to be able to do things like additions, etc.)</p>
+
+
+<p>The equivalent of the routine above in <a href="IntegerSSE.htm">IntegerSSE</a> looks like this:</p>
+
+
+<p><tt>void Limiter::isse_limiter_mod8(BYTE* p, int row_size, int height, int modulo, int cmin, int cmax) {</tt></p>
+
+<dl><dd><tt>cmax|=(cmax&lt;&lt;8);</tt>
+</dd>
+<dd><tt>cmin|=(cmin&lt;&lt;8);</tt>
+</dd>
+<dd><tt>  __asm {</tt>
+</dd>
+<dd><tt>    mov eax, [height]</tt>
+</dd>
+<dd><tt>    mov ebx, p</tt>
+</dd>
+<dd><tt>    mov ecx, [modulo]</tt>
+</dd>
+<dd><tt>    movd mm7,[cmax]</tt>
+</dd>
+<dd><tt>    movd mm6,[cmin]</tt>
+</dd>
+<dd><tt>    pshufw mm7,mm7,0</tt>
+</dd>
+<dd><tt>    pshufw mm6,mm6,0</tt>
+</dd>
+</dl>
+<tt>yloop:</tt>
+<dl><dd><tt>    mov edx,[row_size]</tt>
+</dd>
+<dd><tt>    align 16</tt>
+</dd>
+</dl>
+<tt>xloop:</tt>
+<dl><dd><tt>    movq mm0,[ebx]</tt>
+</dd>
+<dd><tt>    pminub mm0,mm7</tt>
+</dd>
+<dd><tt>    pmaxub mm0,mm6</tt>
+</dd>
+<dd><tt>    movq [ebx],mm0</tt>
+</dd>
+<dd><tt>    add ebx,8</tt>
+</dd>
+<dd><tt>    sub edx,8</tt>
+</dd>
+<dd><tt>    jnz xloop</tt>
+</dd>
+<dd><tt>    add ebx,ecx;</tt>
+</dd>
+<dd><tt>    dec eax</tt>
+</dd>
+<dd><tt>    jnz yloop</tt>
+</dd>
+<dd><tt>    emms</tt>
+</dd>
+<dd><tt>  }</tt>
+</dd>
+</dl>
+<tt>}</tt>
+
+<p>This routine performs the same task as the routine above.
+The filter requires mod8 rowsize, because it processes 8 pixels in parallel.</p>
+
+
+<p>Let's go through the code, line by line.</p>
+
+
+<dl><dd><code><tt>cmax|=(cmax&lt;&lt;8);</tt></code>
+</dd>
+<dd><code><tt>cmin|=(cmin&lt;&lt;8);</tt></code>
+</dd>
+</dl>
+This is code is plain C, and can be seen as preparation for the assembler.
+Writing the same code is of course possible in assembler, but there is no speed gain at all,
+since this is only used once.
+
+<dl><dd><code><tt>  __asm {</tt></code>
+</dd>
+</dl>
+This shows MSVC, that an assembler block is coming.
+When you enter an assembler block you have to assume that all your registers contain garbage.
+There are 6 general purpose 32-bit registers, that can be used freely within the assembler block,
+these are <em>eax, ebx, ecx, edx, esi</em> and <em>edi</em>.
+
+<dl><dd><code><tt>    mov eax, [height]</tt></code>
+</dd>
+<dd><code><tt>    mov ebx, p</tt></code>
+</dd>
+<dd><code><tt>    mov ecx, [modulo]</tt></code>
+</dd>
+</dl>
+In these lines we put data into the registers. eax contains the height,
+ebx contains a pointer to the plane we are processing, ecx contains the modulo information.
+Note that the destination is always written FIRST. So the first line translates to "move height into eax".
+
+<dl><dd><code><tt>    movd mm7,[cmax]</tt></code>
+</dd>
+<dd><code><tt>    movd mm6,[cmin]</tt></code>
+</dd>
+</dl>
+These two lines move data into the mmx registers - there are 8 mmx registers, named from mm0 to mm7.
+<p>mm7 now contains "0x0000|0000|0000|cmcm" (| on inserted for readability).
+Remember we duplicated the max and min values in the C-part.</p>
+
+
+<dl><dd><code><tt>    pshufw mm7,mm7,0</tt></code>
+</dd>
+<dd><code><tt>    pshufw mm6,mm6,0</tt></code>
+</dd>
+</dl>
+These commands are <a href="IntegerSSE.htm">IntegerSSE</a> commands.
+They can shuffle around words in the mmx registers, based on the last number.
+<p>In this example it results in mm7 containing "0xcmcm|cmcm|cmcm|cmcm".
+So basically cmax and cmin are now placed in all 8 bytes in the mm6 and mm7 registers.</p>
+
+
+<p><code><tt>yloop:</tt></code></p>
+
+<p>This is a jump destination for a jump routine.</p>
+
+
+<dl><dd><code><tt>    mov edx,[row_size]</tt></code>
+</dd>
+</dl>
+Every time we are looping on y, the rowsize is moved into edx.
+
+<dl><dd><code><tt>    align 16</tt></code>
+</dd>
+</dl>
+<code><tt>xloop:</tt></code>
+<p>The "align 16" is to be used before any loop destination, that will be frequently used.
+It inserts commands that doesn't do anything, and ensures that the xloop destination
+will be aligned on a 16 byte boundary.</p>
+
+
+<dl><dd><code><tt>    movq mm0,[ebx]</tt></code>
+</dd>
+</dl>
+This command moves 8 bytes from the memory location in ebx into the mm0 register.
+<p>mm0 now contains 0xp8p7|p6p5|p4p3|p2p1, where p1 is the leftmost pixel onscreen.
+This may look a bit backwards at first, but you'll get used to it.</p>
+
+
+<dl><dd><code><tt>    pminub mm0,mm7</tt></code>
+</dd>
+<dd><code><tt>    pmaxub mm0,mm6</tt></code>
+</dd>
+</dl>
+These commands compares each byte, and take the minimum and maximum and place it in mm0.
+(Remember - result is always placed in the first register).
+
+<dl><dd><code><tt>    movq [ebx],mm0</tt></code>
+</dd>
+</dl>
+This will put back the new values into the memory location that ebx points to.
+
+<dl><dd><code><tt>    add ebx,8</tt></code>
+</dd>
+</dl>
+This command will add 8 to the pointer in ebx - making it move on to the next 8 pixels.
+Remember: This is only the pointer we are incrementing - we are not actually reading it,
+so even if this values gets out of bounds nothing will happend here.
+
+<dl><dd><code><tt>    sub edx,8</tt></code>
+</dd>
+<dd><code><tt>    jnz xloop</tt></code>
+</dd>
+</dl>
+Here we subtract 8 from edx, and jump to the xloop location if the values in edx isn't 0 (jump if not zero).
+
+<dl><dd><code><tt>    add ebx,ecx;</tt></code>
+</dd>
+<dd><code><tt>    dec eax</tt></code>
+</dd>
+<dd style="color: rgb(105, 0, 51);"><tt>    jnz yloop</tt>
+</dd>
+</dl>
+This is the code that gets executed whenever the xloop is finished.
+Here we add modulo to the ebx-pointer, decrements height
+and jumps to the yloop as long as there are still pixels left to process.
+
+<dl><dd><code><tt>    emms</tt></code>
+</dd>
+</dl>
+This instruction must be placed after all mmx code. It reenabled float point code, which is disabled by mmx code.<code></code>
+
+
+<hr style="width: 100%; height: 2px;" />Back to <a href="AssemblerOptimizing.htm">AssemblerOptimizing</a>
+
+</div>
+<p><kbd>$Date: 2014/10/27 22:04:54 $<br /><a href="http://www.avisynth.org/SimpleMmxOptimization"></a>
+</kbd></p>
+</body></html>

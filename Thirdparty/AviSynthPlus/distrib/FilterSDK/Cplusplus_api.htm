@@ -1,0 +1,772 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type" />
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" /><title>C++ API - AviSynth</title>
+
+</head>
+<body>
+<h1 id="firstHeading" class="firstHeading"><a class="mozTocH1" name="mozTocId395752"></a>Cplusplus
+API</h1>
+The header, avisynth.h, declares all the classes, structures and
+miscellaneous constants of the C++ API that you might need when writing
+a plugin. All external plugins should #include it:
+<br />
+<pre>#include "avisynth.h"<br /></pre>
+<p>Note, sometimes there is a reference to a version number of
+the plugin api (for example v3 or v6). This refers to the value of <a href="AviSynthInterfaceVersion.htm" title="Filter SDK/AVISYNTH INTERFACE VERSION">AVISYNTH_INTERFACE_VERSION</a>.
+The classes and miscellaneous constants are described below.&nbsp;</p>
+<h1><a class="mozTocH1" name="mozTocId715677"></a>Table of contents</h1>
+<ol id="mozToc">
+<!--mozToc h2 1 h3 2 h4 3 h5 4 h5 5 h6 6--><li><a href="#mozTocId385022">CreateScriptEnvironment</a></li>
+<li><a href="#mozTocId115658">Classes</a>
+<ol>
+<li><a href="#mozTocId933538">AvisynthError </a></li>
+<li><a href="#mozTocId445688">VideoFrameBuffer
+</a></li>
+<li><a href="#mozTocId66933">VideoFrame </a>
+<ol>
+<li><a href="#mozTocId512196">GetPitch </a></li>
+<li><a href="#mozTocId122035">GetRowSize </a></li>
+<li><a href="#mozTocId165020">GetHeight </a></li>
+<li><a href="#mozTocId844490">GetReadPtr </a></li>
+<li><a href="#mozTocId835830">GetWritePtr </a></li>
+<li><a href="#mozTocId663968">IsWritable </a></li>
+</ol>
+</li>
+<li><a href="#mozTocId442030">AlignPlanar </a></li>
+<li><a href="#mozTocId609544">FillBorder </a></li>
+<li><a href="#mozTocId304654">ConvertAudio </a></li>
+<li><a href="#mozTocId248459">IScriptEnvironment
+</a>
+<ol>
+<li><a href="#mozTocId856375">ThrowError </a></li>
+<li><a href="#mozTocId463454">GetCPUFlags </a></li>
+<li><a href="#mozTocId102098">SaveString </a></li>
+<li><a href="#mozTocId612994">Sprintf
+and VSprintf </a></li>
+<li><a href="#mozTocId966202">Invoke </a></li>
+<li><a href="#mozTocId821804">BitBlt </a></li>
+<li><a href="#mozTocId876781">AtExit </a></li>
+<li><a href="#mozTocId581024">AddFunction </a></li>
+<li><a href="#mozTocId960954">MakeWritable
+</a></li>
+<li><a href="#mozTocId81037">FunctionExists
+</a></li>
+<li><a href="#mozTocId772315">GetVar </a></li>
+<li><a href="#mozTocId478991">GetVarDef, v6 </a></li>
+<li><a href="#mozTocId416701">SetVar </a></li>
+<li><a href="#mozTocId460780">SetGlobalVar
+</a></li>
+<li><a href="#mozTocId983652">PushContext </a></li>
+<li><a href="#mozTocId98526">PopContext </a></li>
+<li><a href="#mozTocId592836">PopContextGlobal
+</a></li>
+<li><a href="#mozTocId568658">NewVideoFrame
+</a></li>
+<li><a href="#mozTocId464076">CheckVersion
+</a></li>
+<li><a href="#mozTocId33928">Subframe </a></li>
+<li><a href="#mozTocId791821">SubframePlanar
+</a></li>
+<li><a href="#mozTocId762789">SetMemoryMax
+</a></li>
+<li><a href="#mozTocId809126">SetWorkingDir
+</a></li>
+<li><a href="#mozTocId683781">DeleteScriptEnvironment,
+v5 </a></li>
+<li><a href="#mozTocId589127">ApplyMessage,
+v5 </a></li>
+<li><a href="#mozTocId265758">GetAVSLinkage , v5</a></li>
+</ol>
+</li>
+<li><a href="#mozTocId854503">PVideoFrame </a></li>
+<li><a href="#mozTocId424948">IClip </a>
+<ol>
+<li><a href="#mozTocId408956">GetVersion </a></li>
+<li><a href="#mozTocId805125">GetFrame </a></li>
+<li><a href="#mozTocId30883">GetParity </a></li>
+<li><a href="#mozTocId366590">GetAudio </a></li>
+<li><a href="#mozTocId587850">SetCacheHints
+</a></li>
+<li><a href="#mozTocId953363">GetVideoInfo
+</a></li>
+</ol>
+</li>
+<li><a href="#mozTocId951499">PClip </a></li>
+<li><a href="#mozTocId56890">AVSValue </a></li>
+</ol>
+</li>
+<li><a href="#mozTocId876946">Structures </a></li>
+<li><a href="#mozTocId562064">Constants </a></li>
+</ol>
+<h2><a class="mozTocH1" name="mozTocId385022"></a><span class="mw-headline" id="CreateScriptEnvironment">CreateScriptEnvironment</span></h2>
+<pre> IScriptEnvironment* __stdcall CreateScriptEnvironment(int version = AVISYNTH_INTERFACE_VERSION);<br /></pre>
+<p>AviSynth exports this. It enables you to use AviSynth as a
+library, without writing an AviSynth script or without going through
+AVIFile. [todo add link]
+</p>
+<h2><a class="mozTocH1" name="mozTocId115658"></a><span class="editsection"></span><span class="mw-headline" id="Classes">Classes</span></h2>
+<h3><a class="mozTocH2" name="mozTocId933538"></a><span class="editsection"></span><span class="mw-headline" id="AvisynthError">AvisynthError </span></h3>
+<p>AvisynthError(const char* _msg)
+</p>
+<p>Wrap your code in try/catch statements to enable exception
+handling. AvisynthError will tell you what's wrong.
+</p>
+<pre>try <br />{ <br /> Val = Env-&gt;Invoke("Import", Args, 0);<br /> Clip = Val.AsClip();<br /> VidInfo = Clip-&gt;GetVideoInfo();<br /> Frame = Clip-&gt;GetFrame( 1, Env);<br />}<br /> catch (AvisynthError err) <br />{<br /> printf("%s\n", err.msg);<br /> return 1;<br />}<br /></pre>
+<h3><a class="mozTocH2" name="mozTocId445688"></a><span class="editsection"></span><span class="mw-headline" id="VideoFrameBuffer">VideoFrameBuffer
+</span></h3>
+<p>VideoFrameBuffer (VFB) holds information about a memory block
+which is used for video data. For efficiency, instances of this class
+are not deleted when the refcount reaches zero; instead they are stored
+in a linked list to be reused. The instances are deleted when the
+corresponding AVS file is closed. Or more accurately, a
+VideoFrameBuffer once new'd generally is not released until the
+IScriptEnvironment is deleted, except if SetMemoryMax is exceeded by
+too much then not in use VideoFrameBuffer's are forcible deleted until
+SetMemoryMax is satisfied.
+</p>
+<h3><a class="mozTocH2" name="mozTocId66933"></a><span class="editsection"></span><span class="mw-headline" id="VideoFrame">VideoFrame </span></h3>
+<p>VideoFrame holds a "window" into a VideoFrameBuffer. Operator
+new is overloaded to recycle class instances. Its members can be called
+by:
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />src-&gt;GetReadPtr(..)<br /></pre>
+<p>VideoFrame has the following members: GetPitch, GetRowSize,
+GetHeight, GetReadPtr, GetWritePtr and IsWritable.
+</p>
+<p>All those filters (except IsWritable) will give you a property
+(pitch, rowsize, etc ...) of a plane (of the frame it points to). The
+interleaved formats (BGR(A) or YUY2) consist of one plane, and the
+planar formats consists of one (Y) or three (YUV) planes. The default
+plane is just the first plane (which is plane Y for the planar
+formats).
+</p>
+<h4><a class="mozTocH3" name="mozTocId512196"></a><span class="editsection"></span><span class="mw-headline" id="GetPitch">GetPitch </span></h4>
+<pre> int GetPitch(int plane=0) const;<br /></pre>
+<p>The "pitch" (also called stride) of a frame buffer is the offset (in bytes) from
+the beginning of one scan line to the beginning of the next. The source
+and destination buffers won't necessarily have the same pitch. The
+pitch can vary among frames in a clip, and it can differ from the width
+of the clip. [todo add link]
+</p>
+<p>
+The scan line will be padded to a multiple of 8 (if necessary) due to
+speed reasons, so the pitch will always be a multiple of 8.
+Image processing is expensive, so SIMD instructions are used
+to speed tasks up:
+<br />
+SSE uses 128 bit = 16 byte registers, so 8 YUY2 pixels can be processed
+the same time.
+<br />
+AVX uses 256 bit = 32 byte registers, so 16 YUY2 pixels can be
+processed the same time.
+</p>
+<p>
+NOTE that the pitch can change anytime, so in most use cases you must
+request the pitch dynamically.
+</p>
+<p>Usage:
+</p>
+<p>GetPitch must be used on every plane (interleaved like YUY2
+means 1 plane...) of every PVideoFrame that you want to read or write
+to. It is the only way to get the size of the Video Buffer (e.g. get
+the size of PVideoFrame):
+</p>
+<pre>int buffer_size = src-&gt;GetPitch() * src-&gt;GetHeight(); //YUY2, interleaved<br /></pre>
+<p>This will give you the pitch of the U-plane (it will be zero
+if the plane doesn't exist):
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />const int src_pitchUV = src-&gt;GetPitch(PLANAR_U);<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId122035"></a><span class="editsection"></span><span class="mw-headline" id="GetRowSize">GetRowSize </span></h4>
+<pre> int GetRowSize(int plane=0) const;<br /></pre>
+<p>GetRowSize gives the length of each row in bytes (thus not in
+pixels). It's usually equal to the pitch or slightly less, but it may
+be significantly less if the frame in question has been through Crop.
+This will give you the rowsize of a frame for the interleaved formats,
+or the rowsize of the Y-plane for the planar formats (being the default
+plane).
+</p>
+<pre>const int src_width = src-&gt;GetRowSize();<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId165020"></a><span class="editsection"></span><span class="mw-headline" id="GetHeight">GetHeight </span></h4>
+<pre> int GetHeight(int plane=0) const;<br /></pre>
+<p>GetHeight gives the height of the plane in pixels.
+</p>
+<h4><a class="mozTocH3" name="mozTocId844490"></a><span class="editsection"></span><span class="mw-headline" id="GetReadPtr">GetReadPtr </span></h4>
+<pre> const BYTE* GetReadPtr(int plane=0) const;<br /></pre>
+<p>GetReadPtr gives you a read pointer to a plane. This will give
+a read pointer to the default plane:
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />const unsigned char* srcp = src-&gt;GetReadPtr()<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId835830"></a><span class="editsection"></span><span class="mw-headline" id="GetWritePtr">GetWritePtr </span></h4>
+<pre> BYTE* GetWritePtr(int plane=0) const;<br /></pre>
+<p>GetWritePtr gives you a write pointer to a plane.
+</p>
+<p>Any buffer you get from NewVideoFrame is guaranteed to be
+writable (as long as you only assign it to one PVideoFrame). Our
+filter's dst came from NewVideoFrame, so we can safely call
+dst-&gt;GetWritePtr(). However, frames you get from other clips via
+GetFrame may not be writable, in which case GetWritePtr() will return a
+null pointer.
+</p>
+<pre>PVideoFrame dst = env-&gt;NewVideoFrame(vi); <br />unsigned char* dstp = dst-&gt;GetWritePtr();<br /></pre>
+<p>If you want to write a frame which is not new (the source
+frame for example), you will have to call MakeWritable first:
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />env-&gt;MakeWritable(&amp;src);<br />unsigned char* srcp = src-&gt;GetWritePtr(PLANAR_Y);<br /></pre>
+<p>See IsWritable for more details.
+</p>
+<h4><a class="mozTocH3" name="mozTocId663968"></a><span class="editsection"></span><span class="mw-headline" id="IsWritable">IsWritable </span></h4>
+<pre> bool IsWritable() const;<br /></pre>
+<p>All frame buffers are readable, but not all are writable. This
+method can be used to find out if a buffer is writable or not, and
+there's a MakeWritable callback (described below) to ensure that it is.
+</p>
+<p>The rule about writability is this: A buffer is writable if
+and only if there is exactly one PVideoFrame pointing to it. In other
+words, you can only write to a buffer if no one else might be reading
+it. This rule guarantees that as long as you hold on to a PVideoFrame
+and don't write to it yourself, that frame will remain unchanged. The
+only drawback is that you can't have two PVideoFrames pointing to a
+writable buffer.
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />if (src-&gt;IsWritetable()) {...}<br /></pre>
+<h3><a class="mozTocH2" name="mozTocId442030"></a><span class="editsection"></span><span class="mw-headline" id="AlignPlanar">AlignPlanar </span></h3>
+<pre> AlignPlanar(PClip _clip);<br /></pre>
+<p>AlignPlanar does nothing, if the pitch of a frame is at least
+mod16 (16 bytes, being the default frame alignment for luma and
+chroma). Otherwise it realigns the image, by blitting it to a larger
+buffer.
+</p>
+<p>Filters can enforce a lower pitch, but they must always apply
+the AlignPlanar filter after itself, if they intend to return a frame
+with a lower pitch. VFW delivers a 4 byte alignment for example, so the
+AlignPlanar filters needs to be applied on all frames when using
+AviSource.
+</p>
+<h3><a class="mozTocH2" name="mozTocId609544"></a><span class="editsection"></span><span class="mw-headline" id="FillBorder">FillBorder </span></h3>
+<pre> FillBorder(PClip _clip);<br /></pre>
+<p>This function fills up the right side of the picture on planar
+images with duplicates of the rightmost pixel if the planes are not
+aligned. That is, if src-&gt;GetRowSize(PLANAR_Y)&nbsp;!=
+src-&gt;GetRowSize(PLANAR_Y_ALIGNED).
+</p>
+<h3><a class="mozTocH2" name="mozTocId304654"></a><span class="editsection"></span><span class="mw-headline" id="ConvertAudio">ConvertAudio </span></h3>
+<pre> ConvertAudio(PClip _clip, int prefered_format);<br /></pre>
+<p>ConvertAudio converts the sample type of the audio to one of
+the following sample types: SAMPLE_INT8 (8 bits), SAMPLE_INT16 (16
+bits), SAMPLE_INT24 (24 bits), SAMPLE_INT32 (32 bits) or SAMPLE_FLOAT
+(float).
+</p>
+<p>The following example converts the sample type of the clip
+child to SAMPLE_INT16 (16 bit) if the input isn&#8217;t 16 bit.
+</p>
+<pre>ConvertAudio(child, SAMPLE_INT16);<br /></pre>
+<h3><a class="mozTocH2" name="mozTocId248459"></a><span class="editsection"></span><span class="mw-headline" id="IScriptEnvironment">IScriptEnvironment
+</span></h3>
+<p>AviSynth exports an IScriptEnvironment interface. It enables
+you to use AviSynth as a library, without writing an AVS script or
+without going through AVIFile. Its members can be called by:
+</p>
+<pre>IScriptEnvironment* env<br />env-&gt;Invoke(..)<br /></pre>
+<p>IScriptEnvironment has the following members: ThrowError,
+GetCPUFlags, SaveString, Sprintf, VSprintf, Invoke, BitBlt, AtExit,
+AddFunction, MakeWritable, FunctionExists, GetVar, GetVarDef, SetVar,
+SetGlobalVar, PushContext, PopContext, NewVideoFrame, CheckVersion,
+Subframe, SubframePlanar, SetMemoryMax, SetWorkingDir,
+DeleteScriptEnvironment and ApplyMessage. They are described in the
+following subsections.
+</p>
+<h4><a class="mozTocH3" name="mozTocId856375"></a><span class="editsection"></span><span class="mw-headline" id="ThrowError">ThrowError </span></h4>
+<pre> __declspec(noreturn) virtual void __stdcall ThrowError(const char* fmt, ...) = 0;<br /></pre>
+<p>ThrowError throws an exception (of type AvisynthError).
+Usually, your error message will end up being displayed on the user's
+screen in lieu of the video clip they were expecting:
+</p>
+<pre>if (!vi.IsRGB()) {<br /> env-&gt;ThrowError("RGBAdjust requires RGB input");<br />}<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId463454"></a><span class="editsection"></span><span class="mw-headline" id="GetCPUFlags">GetCPUFlags </span></h4>
+<pre> virtual long GetCPUFlags();<br /></pre>
+<p>GetCPUFlags returns the instruction set of your CPU. To find
+out if you're running for example on a CPU that supports MMX, test:
+</p>
+<pre>env-&gt;GetCPUFlags() &amp; CPUF_MMX<br /></pre>
+<p>There's a complete list of flags in avisynth.h.
+</p>
+<h4><a class="mozTocH3" name="mozTocId102098"></a><span class="editsection"></span><span class="mw-headline" id="SaveString">SaveString </span></h4>
+<pre> virtual char* SaveString(const char* s, int length = -1);<br /></pre>
+<p>This function copies its argument to a safe "permanent"
+location and returns a pointer to the new location. Each
+ScriptEnvironment instance has a buffer set aside for storing strings,
+which is expanded as needed. The strings are not deleted until the
+ScriptEnvironment instance goes away (when the script file is closed,
+usually). This is usually all the permanence that is needed, since all
+related filter instances will already be gone by then. The returned
+pointer is not const-qualified, and you're welcome to write to it, as
+long as you don't stray beyond the bounds of the string.
+</p>
+<p>Example usage (converting a string to upper case):
+</p>
+<pre>AVSValue UCase(AVSValue args, void*, IScriptEnvironment* env) {<br /> return _strupr(env-&gt;SaveString(args[0].AsString()));<br />}<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId612994"></a><span class="editsection"></span><span class="mw-headline" id="Sprintf_and_VSprintf">Sprintf
+and VSprintf </span></h4>
+<pre> virtual char* Sprintf(const char* fmt, ...);<br /> virtual char* VSprintf(const char* fmt, char* val);<br /></pre>
+<p>These store strings away in the same way as SaveString, but
+they treat their arguments like printf and vprintf. Currently there's a
+size limit of 4096 characters on strings created this way. (The
+implementation uses _vsnprintf, so you don't need to worry about buffer
+overrun.) </p>
+<h4><a class="mozTocH3" name="mozTocId966202"></a><span class="editsection"></span><span class="mw-headline" id="Invoke">Invoke </span></h4>
+<pre> virtual AVSValue Invoke(const char* name, const AVSValue args, const char** arg_names=0);<br /></pre>
+<p>You can use this to call a script function. There are many
+script functions which can be useful from other filters; for example,
+the Bob filter uses SeparateFields, and several source filters use
+UnalignedSplice. Some functions, like Weave, are implemented entirely
+in terms of other functions. If you're calling a function taking
+exactly one argument, you can simply pass it in the args parameter;
+Invoke will convert it into an array for you. In order to call a
+function taking multiple arguments, you will need to create the array
+yourself; it can be done like this: </p>
+<pre>AVSValue up_args[3] = {child, 384, 288}; <br />PClip resized = env-&gt;Invoke("LanczosResize", AVSValue(up_args,3)).AsClip();<br /></pre>
+<p>In this case LanczosResize would need to have a parameter-type
+string like "cii". </p>
+<p>The arg_names parameter can be used to specify named
+arguments. Named arguments can also be given positionally, if you
+prefer. </p>
+<p>Invoke throws IScriptEnvironment::NotFound if it can't find a
+matching function prototype. You should be prepared to catch this
+unless you know that the function exists and will accept the given
+arguments. </p>
+<h4><a class="mozTocH3" name="mozTocId821804"></a><span class="editsection"></span><span class="mw-headline" id="BitBlt">BitBlt </span></h4>
+<pre> virtual void BitBlt(unsigned char* dstp, int dst_pitch, const unsigned char* srcp, int src_pitch, int row_size, int height);<br /></pre>
+<p>This brilliantly-named function does a line-by-line copy from
+the source to the destination. It's useful for quite a number of
+things; the built-in filters DoubleWeave, FlipVertical, AddBorders,
+PeculiarBlend, StackVertical, StackHorizontal, and ShowFiveVersions all
+use it to do their dirty work.
+</p>
+<p>In AddBorders it&#8217;s to copy the Y-plane from the source to the
+destination frame (for planar formats):
+</p>
+<pre>const int initial_black = top*dst_pitch + vi.BytesFromPixels(left);<br />if (vi.IsPlanar()) {<br /> BitBlt(dstp+initial_black, dst_pitch, srcp, src_pitch, src_row_size, src_height);<br /> ...<br />}<br /></pre>
+<p>left is the number of pixels which is added to the left, top
+the number which is added to the top. So the first source pixel,
+srcp[0], is copied to its new location dstp[x], and so on. The
+remaining bytes are zeroed and can be refilled later on.
+</p>
+<h4><a class="mozTocH3" name="mozTocId876781"></a><span class="editsection"></span><span class="mw-headline" id="AtExit">AtExit </span></h4>
+<pre> virtual void AtExit(ShutdownFunc function, void* user_data);<br /></pre>
+<p>When IScriptEnvironment is deleted on script close the AtExit
+functions get run. When you register the function you can optionally
+provide some user data. When the function is finally called this data
+will be provided as the argument to the procedure.
+</p>
+<p>The example below (thanks to tsp) loads a library and
+automatically unloads it (by using AtExit) after the script is closed.
+It can be useful when your plugin depends on a library and you want to
+load the library in your script (the plugin fft3dfilter.dll depends on
+the library fftw3.dll for example):
+</p>
+<pre>void __cdecl UnloadDll(void* hinst, IScriptEnvironment* env) {<br /> if (hinst)<br /> FreeLibrary(static_cast&lt;HMODULE&gt;(hinst)); <br />}<br /><br />AVSValue __cdecl LoadDll(AVSValue args, void* user_data, IScriptEnvironment* env){<br /> HMODULE hinst = 0;<br /> hinst = LoadLibrary(args[0].AsString()); // loads a library<br /> env-&gt;AtExit(UnloadDll, hinst); // calls UnloadDll to unload the library upon script exit<br /> return hinst!=NULL;<br />}<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId581024"></a><span class="editsection"></span><span class="mw-headline" id="AddFunction">AddFunction </span></h4>
+<pre> virtual void __stdcall AddFunction(const char* name, const char* params, ApplyFunc apply, void* user_data) = 0; <br /></pre>
+<p>The main purpose of the AvisynthPluginInit2 (or
+AvisynthPluginInit3) function is to call env-&gt;AddFunction.
+</p>
+<pre>env-&gt;AddFunction("Sepia", "c[color]i[mode]s", Create_Sepia, 0);<br /></pre>
+<p>AddFunction is called to let Avisynth know of the existence of
+our filter. It just registers a function with Avisynth's internal
+function table. This function takes four arguments: the name of the new
+script function; the parameter-type string; the C++ function
+implementing the script function; and the user_data cookie.
+</p>
+<p>The added function is of type AVSValue and can therefore
+return any AVSValue. Here are a few options how to return from the
+"added" function:
+</p>
+<pre>AVSValue __cdecl returnSomething(AVSValue args, void* user_data, IScriptEnvironment* env){<br /> <br /> char *strlit = "AnyOldName";<br /> int len = strlen(strlit);<br /> char *s = new char[len+1];<br /> if (s==NULL)<br /> env-&gt;ThrowError("Cannot allocate string mem");<br /> strcpy(s, strlit); // duplicate<br /> char *e = s+len; // point at null<br /> // make safe copy of string (memory is freed on Avisynth closure)<br /> AVSValue ret = env-&gt;SaveString(s,e-s); // e-s is text len only (excl null) {SaveString uses memcpy)<br /> // AVSValue ret = env-&gt;SaveString(s); // alternative, Avisynth uses strlen to ascertain length<br /> delete []s; // delete our temp s buffer<br /> return ret; // return saved string as AVSValue<br /> // return strlit; // alternative to MOST of above code char* converted to AVSValue.<br /> // return "AnyOldName"; // alternative to ALL of above code char* converted to AVSValue.<br /> // String literals are read only and at constant address and so need not be saved.<br />}<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId960954"></a><span class="editsection"></span><span class="mw-headline" id="MakeWritable">MakeWritable </span></h4>
+<pre> virtual bool __stdcall MakeWritable(PVideoFrame* pvf) = 0;<br /></pre>
+<p>MakeWritable only copies the active part of the frame to a
+completely new frame with a default pitch. You need this to recieve a
+valid write pointer to an existing frame. </p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br />env-&gt;MakeWritable(&amp;src);<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId81037"></a><span class="editsection"></span><span class="mw-headline" id="FunctionExists">FunctionExists
+</span></h4>
+<pre> virtual bool __stdcall FunctionExists(const char* name) = 0;<br /></pre>
+<p>FunctionExists returns true if the specified filter exists,
+otherwise returns false: </p>
+<pre>if (env-&gt;FunctionExists("Import")) {<br /> env-&gt;ThrowError("Yes, the IMPORT function exist.");<br />} else {<br /> env-&gt;ThrowError("No, the IMPORT function don't exist.");<br />}<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId772315"></a><span class="editsection"></span><span class="mw-headline" id="GetVar">GetVar </span></h4>
+<pre> virtual AVSValue __stdcall GetVar(const char* name) = 0;<br /></pre>
+<p>GetVar can be used to access AviSynth variables.
+It will throw an error if the variable doesn't exist.
+</p>
+<p>Internal and external (plugin) functions are, for example,
+exported as AviSynth variables:
+</p>
+<ul>
+<li> $InternalFunctions$ Should contain a string consisting of
+function names of all internal functions.
+</li>
+<li> $InternalFunctions!Functionname!Param$ Should contain all
+parameters for each internal function.
+</li>
+<li> $PluginFunctions$ Should contain a string of all plugins
+in your autoloading plugin folder.
+</li>
+<li> $Plugin!Functionname!Param$ Should contain all parameters.
+</li>
+</ul>
+<p>Use env-&gt;GetVar() to access them. This example returns
+a string consisting of all parameters of ConvertToYV12:
+</p>
+<pre>const char* plugin_dir;<br />plugin_dir = env-&gt;GetVar("$Plugin!ConverttoYV12!Param$").AsString();<br /></pre>
+<p>This example returns the plugin folder which is used to
+autoload your plugins (and returns an error if it&#8217;s not set):
+</p>
+<pre>try {<br /> const char* plugin_dir;<br /> plugin_dir = env-&gt;GetVar("$PluginDir$").AsString();<br /> env-&gt;ThrowError(plugin_dir);<br />} catch(...) {<br /> env-&gt;ThrowError("Plugin directory not set.");<br />}<br /></pre>
+<p>If you are making a conditional filter you can use it to get
+the current framenumber:
+</p>
+<pre>// Get current frame number<br />AVSValue cf = env-&gt;GetVar("current_frame");<br />if (!cf.IsInt())<br /> env-&gt;ThrowError("MinMaxAudio: This filter can only be used within ConditionalFilter");<br />int n = cf.AsInt();<br />PVideoFrame src = child-&gt;GetFrame(n, env);<br /></pre>
+<h4><a class="mozTocH4" name="mozTocId478991"></a><span class="mw-headline" id="GetVar">GetVarDef, v6 </span></h4>
+<pre>  virtual AVSValue __stdcall GetVarDef(const char* name, const AVSValue&amp; def=AVSValue()) = 0;</pre>
+<p>
+GetVarDef can be used to access AviSynth variables. It will return 'def' if the
+variable doesn't exist (instead of throwing an error):
+</p>
+<pre> int error;
+ AVSValue error = env-&gt;GetVarDef("VarUnknown", AVSValue(-1)); // returns -1 when 'VarUnknown' doesn't exist
+ if (error==-1)
+   env-&gt;ThrowError("Plugin: The variable 'VarUnknown' doesn't exist!");</pre>
+<h4><a class="mozTocH3" name="mozTocId416701"></a><span class="mw-headline" id="SetVar">SetVar </span></h4>
+<pre> virtual bool __stdcall SetVar(const char* name, const AVSValue&amp; val) = 0;<br /></pre>
+It will return true if the variable was created and filled with the
+given value. It will return false in case the variable was already there
+ and we just updated its value.
+<p>SetVar can be used to set/create AviSynth variables. The
+created variables are only visible in the local scope, e.g. script
+functions have a new scope.
+</p>
+<p>
+This example sets the autoloading plugin folder to &#8220;C:\\&#8221;
+</p>
+<pre>if (env-&gt;SetVar("$PluginDir$", AVSValue("C:\\"))) {<br /> //variable was created<br />} else {<br /> //variable was already existing and updated<br />}<br /></pre>
+<p>This example sets variables in GetFrame which can be accessed
+later on in a script within the conditional environment:
+</p>
+<pre>// saves the blue value of a pixel<br />int BlueValue;<br />BlueValue = srcp[x];<br />env-&gt;SetVar("BlueValue", AVSValue(BlueValue));<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId460780"></a><span class="editsection"></span><span class="mw-headline" id="SetGlobalVar">SetGlobalVar </span></h4>
+<pre> virtual bool __stdcall SetGlobalVar(const char* name, const AVSValue&amp; val) = 0;<br /></pre>
+<p>Usage:
+</p>
+<p>SetGlobalVar can be used to create or set AviSynth variables
+that are visible within global scope. It is possible that a single
+filter may want to use SetVar in order to exchange signals to possible
+other instances of itself.
+</p>
+<p>There are at least 4 different components that make use of
+Set(Global)Var functions:
+</p>
+<ul>
+<li> the core itself
+</li>
+<li> the user within the avs script
+</li>
+<li> filters/plugins
+</li>
+<li> a custom application that invoked the environment
+</li>
+</ul>
+<p>All of above may have their own requirements for the SetVar
+function. Some may want to be visible globally, others may not.
+</p>
+<h4><a class="mozTocH3" name="mozTocId983652"></a><span class="editsection"></span><span class="mw-headline" id="PushContext">PushContext </span></h4>
+<pre> virtual void __stdcall PushContext(int level=0) = 0;<br /></pre>
+<p>// TODO - see (also similar functions) <a rel="nofollow" class="external free" href="http://forum.doom9.org/showthread.php?p=1595750#post1595750">http://forum.doom9.org/showthread.php?p=1595750#post1595750</a>
+</p>
+<h4><a class="mozTocH3" name="mozTocId98526"></a><span class="editsection"></span><span class="mw-headline" id="PopContext">PopContext </span></h4>
+<pre> virtual void __stdcall PopContext() = 0;<br /></pre>
+<p>?
+</p>
+<h4><a class="mozTocH3" name="mozTocId592836"></a><span class="editsection"></span><span class="mw-headline" id="PopContextGlobal">PopContextGlobal
+</span></h4>
+<pre> virtual void __stdcall PopContextGlobal() = 0;<br /></pre>
+<p>?
+</p>
+<h4><a class="mozTocH3" name="mozTocId568658"></a><span class="editsection"></span><span class="mw-headline" id="NewVideoFrame">NewVideoFrame </span></h4>
+<pre> virtual PVideoFrame __stdcall NewVideoFrame(const VideoInfo&amp; vi, int align=FRAME_ALIGN) = 0; // default align is 16<br /></pre>
+<p>The NewVideoFrame callback allocates space for a video frame
+of the supplied size. (In this case it will hold our filter's output.)
+The frame buffer is uninitialized raw memory (except that in the debug
+build it gets filled with the repeating byte pattern 0A 11 0C A7 ED,
+which is easy to recognize because it looks like "ALLOCATED"). "vi" is
+a protected member of GenericVideoFilter. It is a structure of type
+VideoInfo, which contains information about the clip (like frame size,
+frame rate, pixel format, audio sample rate, etc.). NewVideoFrame uses
+the information in this structure to return a frame buffer of the
+appropriate size.
+</p>
+<p>The following example creates a new VideoInfo structure and
+creates a new video frame from it:
+</p>
+<pre> VideoInfo vi;<br /> PVideoFrame frame;<br /> memset(&amp;vi, 0, sizeof(VideoInfo));<br /> vi.width = 640;<br /> vi.height = 480;<br /> vi.fps_numerator = 30000;<br /> vi.fps_denominator = 1001;<br /> vi.num_frames = 107892; // 1 hour<br /> vi.pixel_type = VideoInfo::CS_BGR32;<br /> vi.sample_type = SAMPLE_FLOAT;<br /> vi.nchannels = 2;<br /> vi.audio_samples_per_second = 48000;<br /> vi.num_audio_samples = vi.AudioSamplesFromFrames(vi.num_frames);<br /> frame = env-&gt;NewVideoFrame(vi);<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId464076"></a><span class="editsection"></span><span class="mw-headline" id="CheckVersion">CheckVersion </span></h4>
+<pre> virtual void __stdcall CheckVersion(int version = AVISYNTH_INTERFACE_VERSION) = 0;<br /></pre>
+<p>CheckVersion checks the interface version (avisynth.h). It
+throws an error if &#8216;version&#8217; is bigger than the used interface version.
+The following interface versions are in use:
+</p>
+<p>AVISYNTH_INTERFACE_VERSION = 1 (v1.0-v2.0.8), 2
+(v2.5.0-v2.5.5), 3 (v2.5.6-v2.5.8), 5 (v2.6.0a1-v2.6.0a5), or 6 (v2.6.0) [version 4 doesn&#8217;t
+exist].
+</p>
+<p>This example will throw an error if v2.5x or an older AviSynth
+version is being used:
+</p>
+<pre>env-&gt;CheckVersion(5)<br /></pre>
+<p>This can be used in a plugin, for example, if it needs at
+least a certain interface version for it to work.
+</p>
+<h4><a class="mozTocH3" name="mozTocId33928"></a><span class="editsection"></span><span class="mw-headline" id="Subframe">Subframe </span></h4>
+<pre> virtual PVideoFrame __stdcall Subframe(PVideoFrame src, int rel_offset, int new_pitch, int new_row_size, int new_height) = 0;<br /></pre>
+<p>Subframe (for interleaved formats) extracts a part of a video
+frame. For planar formats use SubframePlanar. For examples see
+SubframePlanar.
+</p>
+<h4><a class="mozTocH3" name="mozTocId791821"></a><span class="editsection"></span><span class="mw-headline" id="SubframePlanar">SubframePlanar
+</span></h4>
+<pre> virtual PVideoFrame __stdcall SubframePlanar(PVideoFrame src, int rel_offset, int new_pitch, int new_row_size, int new_height, int rel_offsetU, int rel_offsetV, int new_pitchUV) = 0;<br /></pre>
+<p>SubframePlanar (for planar formats) extracts a part of a video
+frame. The example below returns the first field of a frame:
+</p>
+<pre>vi.height &gt;&gt;= 1; // sets new height in the constructor<br /><br />PVideoFrame frame = child-&gt;GetFrame(n, env);<br />if (vi.IsPlanar()) { // SubframePlanar works on planar formats only<br /> const int frame_pitch = frame-&gt;GetPitch(PLANAR_Y);<br /> const int frame_width = frame-&gt;GetRowSize(PLANAR_Y);<br /> const int frame_height = frame-&gt;GetHeight(PLANAR_Y);<br /> const int frame_pitchUV = frame-&gt;GetPitch(PLANAR_U);<br /> return env-&gt;SubframePlanar(frame, 0, 2*frame_pitch, frame_width, frame_height&gt;&gt;1, 0, 0, 2*frame_pitchUV);<br />}<br /></pre>
+<p>Note that it copies the first row of pixels and moves on to
+the third row (by moving the offset by &#8216;2*frame_pitch&#8217;). After
+frame_height/2 it stops reading.
+</p>
+<p>The following example keeps the left 100 pixels of a clip (it
+leaves the height unaltered) and throws away the rest:
+</p>
+<pre>vi.width = 100; // sets new width in the constructor<br /><br />PVideoFrame frame = child-&gt;GetFrame(n, env);<br />if (vi.IsPlanar()) { // SubframePlanar works on planar formats only<br /> const int frame_pitch = frame-&gt;GetPitch(PLANAR_Y);<br /> const int frame_height = frame-&gt;GetHeight(PLANAR_Y);<br /> const int frame_pitchUV = frame-&gt;GetPitch(PLANAR_U);<br /> return env-&gt;SubframePlanar(frame, 0, frame_pitch, 100, frame_height, 0, 0, frame_pitchUV);<br />}<br /></pre>
+<p>Note that it copies 100 pixels and moves on to the next row
+(by moving the offset by &#8216;frame_pitch&#8217;).
+</p>
+<p>You need to check somewhere that the source frames is more
+than 100 pixels wide, otherwise throw an error.
+</p>
+<h4><a class="mozTocH3" name="mozTocId762789"></a><span class="editsection"></span><span class="mw-headline" id="SetMemoryMax">SetMemoryMax </span></h4>
+<pre> virtual int __stdcall SetMemoryMax(int mem) = 0;<br /></pre>
+<p>There is a builtin cache automatically inserted in between all
+filters. You can use SetmemoryMax to increase the size.
+</p>
+<p>SetMemoryMax only sets the size of the frame buffer cache. It
+is independent of any other memory allocation. Memory usage due to the
+frame cache should ramp up pretty quickly to the limited value and stay
+there. Setting a lower SetMemoryMax value will make more memory
+available for other purposes and provide less cache buffer frames. It
+is pointless having more buffers available than are needed by the
+scripts temporal requirements. If each and every frame generated at
+each and every stage of a script is only ever used once then the cache
+is entirely useless. By definition a cache is only useful if a
+generated element is needed a second or subsequent time.
+</p>
+<h4><a class="mozTocH3" name="mozTocId809126"></a><span class="editsection"></span><span class="mw-headline" id="SetWorkingDir">SetWorkingDir </span></h4>
+<pre> virtual int __stdcall SetWorkingDir(const char * newdir) = 0;<br /></pre>
+<p>Sets the default directory for AviSynth.
+</p>
+<h4><a class="mozTocH3" name="mozTocId683781"></a><span class="editsection"></span><span class="mw-headline" id="DeleteScriptEnvironment.2C_v5">DeleteScriptEnvironment,
+v5 </span></h4>
+<pre> virtual void __stdcall DeleteScriptEnvironment() = 0;<br /></pre>
+<p>Provides a method to delete the ScriptEnvironment which is
+created with CreateScriptEnvironment.
+</p>
+<h4><a class="mozTocH3" name="mozTocId589127"></a><span class="editsection"></span><span class="mw-headline" id="ApplyMessage.2C_v5">ApplyMessage,
+v5 </span></h4>
+<pre> virtual void _stdcall ApplyMessage(PVideoFrame* frame, const VideoInfo&amp; vi, const char* message, int size, int textcolor, int halocolor, int bgcolor) = 0;<br /></pre>
+<p>ApplyMessage writes text on a frame. For example:
+</p>
+<pre>char BUF[256];<br />PVideoFrame src = child-&gt;GetFrame(n, env);<br />env-&gt;MakeWritable(&amp;src);<br />sprintf(BUF, "Filter: Frame&nbsp;%d is processed.", n);<br />env-&gt;ApplyMessage(&amp;src, vi, BUF, vi.width/4, 0xf0f080, 0, 0);<br /></pre>
+<h4><a class="mozTocH4" name="mozTocId265758"></a><span class="mw-headline" id="GetAVSLinkage_.2C_v5">GetAVSLinkage , v5</span></h4>
+<pre><span class="mw-headline" id="GetAVSLinkage_.2C_v5"></span>&nbsp;virtual const AVS_Linkage* const __stdcall GetAVSLinkage() = 0;</pre>
+Returns the <a href="AVSLinkage.html">AVSLinkage</a>.
+<p>
+todo: how and when to use that ...
+</p>
+<h3><a class="mozTocH2" name="mozTocId854503"></a><span class="editsection"></span><span class="mw-headline" id="PVideoFrame">PVideoFrame </span></h3>
+<p>PVideoFrame is a smart pointer to VideoFrame.
+</p>
+<p>In this example it gives a pointer to frame &#8216;n&#8217; from child:
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(n, env);<br /></pre>
+<p>"child" is a protected member of GenericVideoFilter, of type
+PClip. It contains the clip that was passed to the constructor. For our
+filter to produce frame n we need the corresponding frame of the input.
+If you need a different frame from the input, all you have to do is
+pass a different frame number to child-&gt;GetFrame.
+</p>
+<p>In this example it gives a pointer to a new created VideoFrame
+from vi (which is a VideoInfo structure):
+</p>
+<pre>PVideoFrame dst = env-&gt;NewVideoFrame(vi);<br /></pre>
+<p>"vi" is another protected member of GenericVideoFilter (the
+only other member, actually). It is a structure of type VideoInfo,
+which contains information about the clip (like frame size, frame rate,
+pixel format, audio sample rate, etc.). NewVideoFrame uses the
+information in this struct to return a frame buffer of the appropriate
+size.
+</p>
+<h3><a class="mozTocH2" name="mozTocId424948"></a><span class="editsection"></span><span class="mw-headline" id="IClip">IClip </span></h3>
+<p>An Avisynth filter is simply a C++ class implementing the
+IClip interface. IClip has four pure virtual methods: GetVideoInfo,
+GetFrame, GetParity, and GetAudio. The class GenericVideoFilter is a
+simple do-nothing filter defined in avisynth.h. It derives from IClip
+and implements all four methods. Most filters can inherit from
+GenericVideoFilter rather than directly from IClip; this saves you from
+having to implement methods that you don't care about, like GetAudio. </p>
+<p>IClip has the following members: GetVersion, GetFrame,
+GetParity, GetAudio, SetCacheHints and GetVideoInfo. They are described
+in the following subsections.
+</p>
+<h4><a class="mozTocH3" name="mozTocId408956"></a><span class="editsection"></span><span class="mw-headline" id="GetVersion">GetVersion </span></h4>
+<pre> virtual int __stdcall GetVersion() { return AVISYNTH_INTERFACE_VERSION; }<br /></pre>
+<p>GetVersion returns the interface version of the loaded
+avisynth.dll:
+</p>
+<p>AVISYNTH_INTERFACE_VERSION = 1 (v1.0-v2.0.8), 2
+(v2.5.0-v2.5.5), 3 (v2.5.6-v2.5.8), or 5 (v2.6.0) [version 4 doesn&#8217;t
+exist].
+</p>
+<h4><a class="mozTocH3" name="mozTocId805125"></a><span class="editsection"></span><span class="mw-headline" id="GetFrame">GetFrame </span></h4>
+<pre> virtual PVideoFrame __stdcall GetFrame(int n, IScriptEnvironment* env) = 0;<br /></pre>
+<p>GetFrame returns a video frame. In this example, the even
+frames (0, 2, 4, ...) of &#8216;child&#8217; are returned:
+</p>
+<pre>PVideoFrame src = child-&gt;GetFrame(2*n, env);<br /></pre>
+<p>You should do all the GetFrame() calls BEFORE you get any
+pointers and start manipulating any data.
+</p>
+<h4><a class="mozTocH3" name="mozTocId30883"></a><span class="editsection"></span><span class="mw-headline" id="GetParity">GetParity </span></h4>
+<pre> virtual bool __stdcall GetParity(int n) = 0;<br /></pre>
+<p>GetParity returns the field parity if the clip is field-based,
+otherwise it returns the parity of first field of a frame. In other
+words, it distinguishes between top field first (TFF) and bottom field
+first (BFF). When it returns true, it means that this frame should be
+considered TFF, otherwise it should be considered BFF.
+</p>
+<h4><a class="mozTocH3" name="mozTocId366590"></a><span class="editsection"></span><span class="mw-headline" id="GetAudio">GetAudio </span></h4>
+<pre> virtual void __stdcall GetAudio(void* buf, __int64 start, __int64 count, IScriptEnvironment* env) = 0;<br /></pre>
+<p>Audio processing is handled through the GetAudio method. You
+must fill in the buffer with count samples beginning at the sample
+start. A sample may vary from one to four bytes, depending on whether
+the audio is 8, 16, 24 or 32-bit (float is also 32-bit). The flag
+vi.SampleType() will tell you this. </p>
+<p>If you cannot do your audio processing in-place, you must
+allocate your own buffer for the source audio using new or malloc.
+</p>
+<p>In this example, the audio of frame &#8216;n&#8217; is returned (in the
+buffer &#8216;samples&#8217;):
+</p>
+<pre>VideoInfo vi = child-&gt;GetVideoInfo();<br />PVideoFrame src = child-&gt;GetFrame(n, env);<br />const __int64 start = vi.AudioSamplesFromFrames(n);<br />const __int64 count = vi.AudioSamplesFromFrames(1);<br />SFLOAT* samples = new SFLOAT[count*vi.AudioChannels()];<br />child-&gt;GetAudio(samples, max(0,start), count, env);<br /></pre>
+<h4><a class="mozTocH3" name="mozTocId587850"></a><span class="editsection"></span><span class="mw-headline" id="SetCacheHints">SetCacheHints </span></h4>
+<pre> void __stdcall SetCacheHints(int cachehints, int frame_range) = 0&nbsp;; // We do not pass cache requests upwards, only to the next filter.<br /></pre>
+<p>// int __stdcall SetCacheHints(int cachehints, int
+frame_range) = 0&nbsp;; // We do not pass cache requests upwards,
+only to the next filter.
+</p>
+<p>SetCacheHints should be used in filters that request multiple
+frames from any single PClip source per input GetFrame call.
+frame_range is maximal 21.
+</p>
+<p>The possible values of cachehints are:
+</p>
+<pre>CACHE_NOTHING=0 // Filter requested no caching.<br />CACHE_RANGE=1 // An explicit cache of "frame_range" frames around the current frame.<br />CACHE_ALL=2 // This is default operation, a simple LRU cache.<br />CACHE_AUDIO=3 // Audio caching.<br />CACHE_AUDIO_NONE=4 // Filter requested no audio caching.<br />CACHE_AUDIO_AUTO=5 // Audio caching (difference with CACHE_AUDIO?).<br /></pre>
+<p>When caching video frames (cachehints=0, 1, 2), frame_range is
+the radius around the current frame. When caching audio samples
+(cachehints=3, 4, 5), the value 0 creates a default buffer of 64kb and
+positive values allocate frame_range bytes for the cache.
+</p>
+<p>E.g. If you have a single PClip source, i.e. child and you get
+asked for frame 100 and you in turn then ask for frames 98, 99, 100,
+101 and 102 then you need to call CACHE_RANGE with frame_range set to
+3:
+</p>
+<pre>child-&gt;SetCacheHints(CACHE_RANGE, 3);<br /></pre>
+<p>Frames outside the specified radius are candidate for normal
+LRU caching.
+</p>
+<p>// TODO - describe input and output for v5
+// <a rel="nofollow" class="external free" href="http://forum.doom9.org/showthread.php?p=1595750#post1595750">http://forum.doom9.org/showthread.php?p=1595750#post1595750</a>
+</p>
+<h4><a class="mozTocH3" name="mozTocId953363"></a><span class="editsection"></span><span class="mw-headline" id="GetVideoInfo">GetVideoInfo </span></h4>
+<pre> virtual const VideoInfo&amp; __stdcall GetVideoInfo() = 0;<br /></pre>
+<p>GetVideoInfo returns a <a href="VideoInfo.htm" title="Filter SDK/Cplusplus API/VideoInfo">VideoInfo</a>
+structure.
+</p>
+<h3><a class="mozTocH2" name="mozTocId951499"></a><span class="editsection"></span><span class="mw-headline" id="PClip">PClip </span></h3>
+<p>PClip is a smart pointer to an IClip, and IClip is a generic
+abstract class.. It maintains a reference count on the IClip object and
+automagically deletes it when the last PClip referencing it goes away.
+For obvious reasons, you should always use PClip rather than IClip* to
+refer to clips. </p>
+<p>Like a genuine pointer, a PClip is only four bytes long, so
+you can pass it around by value. Also like a pointer, a PClip can be
+assigned a null value (0), which is often useful as a sentinel. Unlike
+a pointer, </p>
+<p>PClip is initialized to 0 by default. </p>
+<p>You'll need to make sure your class doesn't contain any
+circular PClip references, or any PClips sitting in dynamically
+allocated memory that you forget to delete. Other than that, you don't
+have to worry about the reference-counting machinery. </p>
+<p>AviSynth filters have a standardized output channel via IClip,
+but (unlike VirtualDub filters) no standardized input channel. Each
+filter is responsible for obtaining its own source material -- usually
+(as in this case) from another clip, but sometimes from several
+different clips, or from a file. </p>
+<p>The clip functionality must be provided by some concrete
+subclass of IClip which implements the functions GetFrame(), etc. So
+you cannot create a PClip without having an appropriate IClip subclass.
+For most filters, the GenericVideoFilter class provides the basis for
+this, but 'source' filters (which is basically what you have) do not
+have a parent clip and so GenericVideoFilter is not appropriate.
+</p>
+<h3><a class="mozTocH2" name="mozTocId56890"></a><span class="editsection"></span><span class="mw-headline" id="AVSValue">AVSValue </span></h3>
+<p>AVSValue is a variant type which can hold any one of the
+following types: a boolean value (true/false); an integer; a
+floating-point number; a string; a video clip (PClip); an array of
+AVSValues; or nothing ("undefined").
+</p>
+<p>It holds an array of AVSValues in the following way:
+</p>
+<p>AVSValue(const AVSValue* a, int size) { type = 'a'; array = a;
+array_size = size; }
+</p>
+<p>For example:
+</p>
+<pre>AVSValue up_args[3] = {child, 384, 288}; <br />PClip resized = env-&gt;Invoke("LanczosResize", AVSValue(up_args,3)).AsClip();<br /></pre>
+<p>Note that
+</p>
+<pre>AVSValue(up_args,3)<br /></pre>
+<p>returns the following: {'a'; {child, 384, 288}; 3}.
+</p>
+<p>Also Invoke returns an AVSValue (see its declaration) which in
+that case is a PClip.
+</p>
+<h2><a class="mozTocH1" name="mozTocId876946"></a><span class="editsection"></span><span class="mw-headline" id="Structures">Structures </span></h2>
+<p>The following structure is available: VideoInfo structure. It
+holds global information about a clip (i.e. information that does not
+depend on the framenumber). The GetVideoInfo method in IClip returns
+this structure. A description (for AVISYNTH_INTERFACE_VERSION=6) of it
+can be found <a href="VideoInfo.htm" title="Filter SDK/Cplusplus API/VideoInfo">here</a>.
+</p>
+<h2><a class="mozTocH1" name="mozTocId562064"></a><span class="editsection"></span><span class="mw-headline" id="Constants">Constants </span></h2>
+<p>The following constants are defined in avisynth.h:
+</p>
+<pre>// Audio Sample information<br />typedef float SFLOAT;<br /></pre>
+<pre>enum { // sample types<br /> SAMPLE_INT8 = 1&lt;&lt;0,<br /> SAMPLE_INT16 = 1&lt;&lt;1,<br /> SAMPLE_INT24 = 1&lt;&lt;2,<br /> SAMPLE_INT32 = 1&lt;&lt;3,<br /> SAMPLE_FLOAT = 1&lt;&lt;4<br />};<br /></pre>
+<pre>enum { // plane types<br /> PLANAR_Y = 1&lt;&lt;0,<br /> PLANAR_U = 1&lt;&lt;1,<br /> PLANAR_V = 1&lt;&lt;2,<br /> PLANAR_ALIGNED = 1&lt;&lt;3,<br /> PLANAR_Y_ALIGNED = PLANAR_Y | PLANAR_ALIGNED,<br /> PLANAR_U_ALIGNED = PLANAR_U | PLANAR_ALIGNED,<br /> PLANAR_V_ALIGNED = PLANAR_V | PLANAR_ALIGNED,<br /> PLANAR_A = 1&lt;&lt;4, // v5<br /> PLANAR_R = 1&lt;&lt;5, // v5<br /> PLANAR_G = 1&lt;&lt;6, // v5<br /> PLANAR_B = 1&lt;&lt;7, // v5<br /> PLANAR_A_ALIGNED = PLANAR_A | PLANAR_ALIGNED, // v5<br /> PLANAR_R_ALIGNED = PLANAR_R | PLANAR_ALIGNED, // v5<br /> PLANAR_G_ALIGNED = PLANAR_G | PLANAR_ALIGNED, // v5<br /> PLANAR_B_ALIGNED = PLANAR_B | PLANAR_ALIGNED, // v5<br />};<br /></pre>
+<pre>enum { // cache types<br /> // Old 2.5 poorly defined cache hints (v3).<br /> // Reserve values used by 2.5 API<br /> // Do not use in new filters<br /> CACHE_25_NOTHING = 0, // Filter requested no caching.<br /> CACHE_25_RANGE = 1, // An explicit cache of "frame_range" frames around the current frame.<br /> CACHE_25_ALL = 2, // This is default operation, a simple LRU cache.<br /> CACHE_25_AUDIO = 3, // Audio caching.<br /> CACHE_25_AUDIO_NONE = 4, // Filter requested no audio caching.<br /> CACHE_25_AUDIO_AUTO = 5, // Audio caching (difference with CACHE_AUDIO?).<br /><br /> // New 2.6 explicitly defined cache hints (v5).<br /> CACHE_NOTHING = 10, // Do not cache video.<br /> CACHE_WINDOW = 11, // Hard protect upto X frames within a range of X from the current frame N.<br /> CACHE_GENERIC = 12, // LRU cache upto X frames.<br /> CACHE_FORCE_GENERIC = 13, // LRU cache upto X frames, override any previous CACHE_WINDOW.<br /><br /> CACHE_GET_POLICY = 30, // Get the current policy.<br /> CACHE_GET_WINDOW = 31, // Get the current window h_span.<br /> CACHE_GET_RANGE = 32, // Get the current generic frame range.<br /><br /> CACHE_AUDIO = 50, // Explicitly do cache audio, X byte cache.<br /> CACHE_AUDIO_NOTHING = 51, // Explicitly do not cache audio.<br /> CACHE_AUDIO_NONE = 52, // Audio cache off (auto mode), X byte intial cache.<br /> CACHE_AUDIO_AUTO = 53, // Audio cache on (auto mode), X byte intial cache.<br /><br /> CACHE_GET_AUDIO_POLICY = 70, // Get the current audio policy.<br /> CACHE_GET_AUDIO_SIZE = 71, // Get the current audio cache size.<br /><br /> CACHE_PREFETCH_FRAME = 100, // Queue request to prefetch frame N.<br /> CACHE_PREFETCH_GO = 101, // Action video prefetches.<br /><br /> CACHE_PREFETCH_AUDIO_BEGIN = 120, // Begin queue request transaction to prefetch audio (take critical section).<br /> CACHE_PREFETCH_AUDIO_STARTLO = 121, // Set low 32 bits of start.<br /> CACHE_PREFETCH_AUDIO_STARTHI = 122, // Set high 32 bits of start.<br /> CACHE_PREFETCH_AUDIO_COUNT = 123, // Set low 32 bits of length.<br /> CACHE_PREFETCH_AUDIO_COMMIT = 124, // Enqueue request transaction to prefetch audio (release critical section).<br /> CACHE_PREFETCH_AUDIO_GO = 125, // Action audio prefetches.<br /><br /> CACHE_GETCHILD_CACHE_MODE = 200, // Cache ask Child for desired video cache mode.<br /> CACHE_GETCHILD_CACHE_SIZE = 201, // Cache ask Child for desired video cache size.<br /> CACHE_GETCHILD_AUDIO_MODE = 202, // Cache ask Child for desired audio cache mode.<br /> CACHE_GETCHILD_AUDIO_SIZE = 203, // Cache ask Child for desired audio cache size.<br /><br /> CACHE_GETCHILD_COST = 220, // Cache ask Child for estimated processing cost.<br /> CACHE_COST_ZERO = 221, // Child response of zero cost (ptr arithmetic only).<br /> CACHE_COST_UNIT = 222, // Child response of unit cost (less than or equal 1 full frame blit).<br /> CACHE_COST_LOW = 223, // Child response of light cost. (Fast)<br /> CACHE_COST_MED = 224, // Child response of medium cost. (Real time)<br /> CACHE_COST_HI = 225, // Child response of heavy cost. (Slow)<br /><br /> CACHE_GETCHILD_THREAD_MODE = 240, // Cache ask Child for thread safetyness.<br /> CACHE_THREAD_UNSAFE = 241, // Only 1 thread allowed for all instances. 2.5 filters default!<br /> CACHE_THREAD_CLASS = 242, // Only 1 thread allowed for each instance. 2.6 filters default!<br /> CACHE_THREAD_SAFE = 243, // Allow all threads in any instance.<br /> CACHE_THREAD_OWN = 244, // Safe but limit to 1 thread, internally threaded.<br /><br /> CACHE_GETCHILD_ACCESS_COST = 260, // Cache ask Child for preferred access pattern.<br /> CACHE_ACCESS_RAND = 261, // Filter is access order agnostic.<br /> CACHE_ACCESS_SEQ0 = 262, // Filter prefers sequential access (low cost)<br /> CACHE_ACCESS_SEQ1 = 263, // Filter needs sequential access (high cost)<br />};<br /></pre>
+<pre>enum { // For GetCPUFlags. These are backwards-compatible with those in VirtualDub.<br /> /* oldest CPU to support extension */<br /> CPUF_FORCE = 0x01, // N/A<br /> CPUF_FPU = 0x02, // 386/486DX<br /> CPUF_MMX = 0x04, // P55C, K6, PII<br /> CPUF_INTEGER_SSE = 0x08, // PIII, Athlon<br /> CPUF_SSE = 0x10, // PIII, Athlon XP/MP<br /> CPUF_SSE2 = 0x20, // PIV, K8<br /> CPUF_3DNOW = 0x40, // K6-2<br /> CPUF_3DNOW_EXT = 0x80, // Athlon<br /> CPUF_X86_64 = 0xA0, // Hammer (note: equiv. to 3DNow + SSE2, which only Hammer will have anyway)<br /> CPUF_SSE3 = 0x100, // PIV+, K8 Venice<br /><br /> // Additional CPU flags in 2.6 (v5).<br /> CPUF_SSSE3 = 0x200, // Core 2<br /> CPUF_SSE4 = 0x400, // Penryn, Wolfdale, Yorkfield<br /> CPUF_SSE4_1 = 0x400,<br /> CPUF_SSE4_2 = 0x1000,   //  Nehalem (note this was 0x800 in v5)<br />};<br /></pre>
+<hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+<p><kbd>$Date: 2015/01/13 00:24:50 $<br />
+</kbd></p>
+</body></html>

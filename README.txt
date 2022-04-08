@@ -92,7 +92,7 @@ mv /usr/bin/link.exe /usr/bin/link.exe.bak
 - get code of ffmpeg from https://github.com/FFmpeg/FFmpeg/archive/refs/heads/master.zip
 - unpack it somewhere on c disc with short path for example c:/ffmpeg
 - set path to ffmpeg cd /c/path_to_ffmpeg/
-- type in msys console (for x64 remove --arch=x86): ./configure --toolchain=msvc --arch=x86 --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters \
+- type in msys console (for x64 remove --arch=x86 --arch=x86_64): ./configure --toolchain=msvc --enable-gpl --enable-version3 --disable-encoders --disable-programs --disable-filters \
  --disable-network --disable-doc --disable-avdevice --disable-postproc --disable-avfilter
  
 - when shows list of codecs type make

@@ -1,0 +1,16 @@
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text eol=lf
+
+distrib/* linguist-documentation
+
+# Denote all files that are truly binary and should not be modified.
+*.bmp binary
+*.dll binary
+*.exe binary
+*.gif binary
+*.ico binary
+*.jpg binary
+*.lib binary
+*.png binary
+*.ps1 binary
+*.svg binary

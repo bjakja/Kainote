@@ -22,7 +22,7 @@
 #define FFMS_H
 
 // Version format: major - minor - micro - bump
-#define FFMS_VERSION ((3 << 24) | (0 << 16) | (0 << 8) | 0)
+#define FFMS_VERSION ((3 << 24) | (0 << 16) | (1 << 8) | 0)
 
 #include <stdint.h>
 #include <stddef.h>
@@ -338,6 +338,9 @@ typedef struct FFMS_Frame {
     int HasContentLightLevel; /* Non-zero if the 2 fields below are valid */
     unsigned int ContentLightLevelMax;
     unsigned int ContentLightLevelAverage;
+    /* Introduced in FFMS_VERSION ((3 << 24) | (0 << 16) | (1 << 8) | 0) */
+    uint8_t *DolbyVisionRPU;
+    int DolbyVisionRPUSize;
 } FFMS_Frame;
 
 typedef struct FFMS_TrackTimeBase {
@@ -477,7 +480,7 @@ typedef struct FFMS_Chapters {
     FFMS_Chapter* Chapters;
     int NumOfChapters;
 } FFMS_Chapters;
-FFMS_API(FFMS_Chapters *) FFMS_GetChapters(FFMS_Indexer* Indexer);
+FFMS_API(FFMS_Chapters*) FFMS_GetChapters(FFMS_Indexer* Indexer);
 FFMS_API(void) FFMS_FreeChapters(FFMS_Chapters** Chapters);
 typedef struct FFMS_Attachment {
     const char* Filename;

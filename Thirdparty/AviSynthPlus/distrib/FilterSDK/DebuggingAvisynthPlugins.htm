@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type" />
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" /><title>Debugging AviSynth plugins</title></head>
+<body><h1><a class="mozTocH1" name="mozTocId561555"></a>Debugging instructions</h1><ol id="mozToc"><!--mozToc h2 1 h3 2 h4 3--><li><a href="#mozTocId258281">How to debug AviSynth </a></li><li><a href="#mozTocId109555">How to debug AviSynth plugins </a><ol><li><a href="#mozTocId474809">How to debug AviSynth plugins (the short way) </a></li><li><a href="#mozTocId64774">How to debug Avisynth plugins (for MS VC++ 6.0) </a></li><li><a href="#mozTocId203121">How to debug Avisynth plugins (for MS VC++ 2010) </a></li><li><a href="#mozTocId699109">How to debug Avisynth console applications (for MS VC++ 2010) </a></li></ol></li><li><a href="#mozTocId883323">Debug info from MAP file </a></li></ol><h2><a class="mozTocH2" name="mozTocId258281"></a><span class="mw-headline" id="How_to_debug_AviSynth">How to debug AviSynth </span></h2>
+<p>xx
+</p>
+<h2><a class="mozTocH2" name="mozTocId109555"></a><span class="editsection"></span><span class="mw-headline" id="How_to_debug_AviSynth_plugins">How to debug AviSynth plugins </span></h2>
+<p>Two ways are described to debug your plugin. An easy way using
+DebugView and the use of VC++6's debugger. In both cases, the sample code
+ <a href="SimpleSample.htm" title="Filter SDK/Simple sample 1.6">SimpleSample</a> is used.
+</p>
+<h3><a class="mozTocH3" name="mozTocId474809"></a><span class="editsection"></span><span class="mw-headline" id="How_to_debug_AviSynth_plugins_.28the_short_way.29">How to debug AviSynth plugins (the short way) </span></h3>
+<p>An easy way to debug AviSynth plugin is to use a utility called <a rel="nofollow" class="external text" href="http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx">DebugView for Windows</a>
+ which captures OutputDebugString's output from your code
+(OutputDebugString sends a string to your debugger). It's a bit limited.
+ So, if this is not sufficient, you should use a debugger as described
+in the next section.
+</p><p>1) Open Dbgview.exe. Make sure that 'Capture Win32' under the Capture tab is selected.
+</p><p>2) Add the following line at the start of your code:
+</p>
+<pre>#include &lt;stdio.h&gt; /* for using sprintf */<br /></pre>
+<p>Add, for example, the following lines in your code to check whether
+certain parameters are passed to the code path which comes after it:
+</p>
+<pre>char BUF[256];<br />sprintf(BUF, "framenr&nbsp;%d, text&nbsp;%s, height&nbsp;%d, pi&nbsp;%f\n", n, "hey", src_height, 3.14);<br />OutputDebugString(BUF);<br /></pre>
+<p>Thus:
+</p><p><span class="image"><img style="border: 0px solid ; width: 706px; height: 388px;" alt="Debugging plugins1a.png" src="Pictures/debugging_plugins1a.png" /></span>
+</p><p>Nb,&nbsp;%d means integer,&nbsp;%s means string and&nbsp;%f means float/double. \n means add a new line.
+</p><p>3) Compile a release build of your plugin.
+</p><p>4) Open your script and scroll through it. You will see the following output in DebugView:
+</p><p><span class="image"><img style="border: 0px solid ; width: 1010px; height: 468px;" alt="Debugging plugins1b.png" src="Pictures/debugging_plugins1b.png" /></span>
+</p><p>In the example the script is loaded in line 26. After that some
+AviSynth output is captured. In the lines 57 and 58 the output of
+OutputDebugString is written.
+</p><p>If your script crashes somewhere, you should put these lines just
+ before the crash (it may take a few attempts to find that point). Then
+you should pass the values of the relevant parameters and check whether
+they are correct. Apparently there is some parameter whose value is
+empty or invalid.
+</p>
+<h3><a class="mozTocH3" name="mozTocId64774"></a><span class="editsection"></span><span class="mw-headline" id="How_to_debug_Avisynth_plugins_.28for_MS_VC.2B.2B_6.0.29">How to debug Avisynth plugins (for MS VC++ 6.0) </span></h3>
+<p>These are the steps to debug an AviSynth plugin in VC++ 6:
+</p><p>1. Go to the build tab and set the Active configuration to the Debug version of your plugin.
+</p><p>2. Build the debug version of your plugin. Thus go to the build tab and Build (...).
+</p><p>3. We will use VirtualDub.exe to debug your plugin. Go to Project
+ tab, then select Settings -&gt; Debug -&gt; General -&gt; Executable
+for debug session -&gt; browse to a version of VirtualDub.exe and
+specify that:
+</p><p><a href="http://avisynth.nl/index.php/File:Debugging_plugins2.png" class="image"><img style="border: 0px solid ; width: 577px; height: 372px;" alt="Debugging plugins2.png" src="Pictures/debugging_plugins2.png" /></a>
+</p><p>4. Go to Project tab, then select Settings -&gt; Debug -&gt;
+Additional DLLs, and browse to the filter DLL in the Debug directory:
+</p><p><span class="image"><img style="border: 0px solid ; width: 577px; height: 372px;" alt="Debugging plugins3.png" src="Pictures/debugging_plugins3.png" /></span>
+</p><p>5. Make an AviSynth script that loads and uses your filter. Make
+sure to load the Debug version of your plugin! Thus for example:
+</p>
+<pre>LoadPlugin("F:\CompilingPlugins\SimpleSample\Debug\simplesample.dll")<br /><br />Colorbars().Trim(0,1)<br />ConvertTORGB24()<br />SimpleSample(100)<br /></pre>
+<p>6. Set breakpoints as required. You can do this by clicking with the
+right mouse button next to a statement in your code (in the grey
+section). For example:
+</p><p><span class="image"><img style="border: 0px solid ; width: 334px; height: 348px;" alt="Debugging plugins4.png" src="Pictures/debugging_plugins4.png" /></span>
+</p><p>Select the option: Insert/Remove Breakpoint:
+</p><p><span class="image"><img style="border: 0px solid ; width: 766px; height: 452px;" alt="Debugging plugins5.png" src="Pictures/debugging_plugins5.png" /></span>
+</p><p>7. Go to the Build tab, and select Start Debug -&gt; Go (or the
+shortcut F5). VirtualDub will execute. Open the AviSynth script in that
+VirtualDub instance. The code will execute up to your first breakpoint
+(at least if it follows that code path):
+</p><p><span class="image"><img style="border: 0px solid ; width: 629px; height: 729px;" alt="Debugging plugins6.png" src="Pictures/debugging_plugins6.png" /></span>
+</p><p>You will see a yellow arrow through your breakpoint.
+</p><p>Above I also opened the 'variables output window'. It is under
+the View tab -&gt; Debug Windows -&gt; Variables. You can view the value
+ of the variables when stepping through your code. Use Debug -&gt; Step
+Into (or the shortcut F11) to step through your code. Use Debug -&gt;
+Step Over (or the shortcut F10) to step over function calls.
+</p><p>When moving your mouse over a variable, you can also see the value of it:
+</p><p><span class="image"><img style="border: 0px solid ; width: 941px; height: 338px;" alt="Debugging plugins7.png" src="Pictures/debugging_plugins7.png" /></span>
+</p><p>If you want to set a breakpoint somewhere else, just remove the
+existing one (by right clicking on it). Put a new one somewhere and
+press F5.
+</p><p>If you want to stop debugging, go to the Debug tab -&gt; Stop Debugging.
+</p>
+<h3><a class="mozTocH3" name="mozTocId203121"></a><span class="editsection"></span><span class="mw-headline" id="How_to_debug_Avisynth_plugins_.28for_MS_VC.2B.2B_2010.29">How to debug Avisynth plugins (for MS VC++ 2010) </span></h3>
+<p>Open your project. Select the debug build and build it. Make sure that you load the debug build in your script.
+</p><p>Open Virtualdub and attach is to the debugger:
+</p><p>Debug &gt; Attach to Process
+</p><p><span class="image"><img style="border: 0px solid ; width: 464px; height: 385px;" alt="Debugging plugins msvc2010 001.jpg" src="Pictures/Debugging_plugins_msvc2010_001.jpg" /></span>
+</p><p>Select VirtualDub.exe and press attach:
+</p><p><span class="image"><img style="border: 0px solid ; width: 735px; height: 503px;" alt="Debugging plugins msvc2010 002.jpg" src="Pictures/Debugging_plugins_msvc2010_002.jpg" /></span>
+</p><p>Set a breakpoint somewhere. You can do this by clicking with the
+right mouse button next to a statement in your code (in the grey
+section):
+</p><p><span class="image"><img style="border: 0px solid ; width: 564px; height: 211px;" alt="Debugging plugins msvc2010 004.jpg" src="Pictures/Debugging_plugins_msvc2010_004.jpg" /></span>
+</p><p>Open the script in Virtualdub and the code will be executed up to point where you set the breakpoint.
+</p><p><span class="image"><img style="border: 0px solid ; width: 738px; height: 336px;" alt="Debugging plugins msvc2010 005.jpg" src="Pictures/Debugging_plugins_msvc2010_005.jpg" /></span>
+</p><p>Instead of attaching Virtualdub to the debugger every time, you can also do the following:
+</p><p>Right click on the project name (Kuwahara in our case) &gt; Properties &gt; Configuration Properties &gt; Debug
+</p><p>Enter the location of Virtualdub in the debug command:
+</p><p><span class="image"><img style="border: 0px solid ; width: 752px; height: 531px;" alt="Debugging plugins msvc2010 003.jpg" src="Pictures/Debugging_plugins_msvc2010_003.jpg" /></span>
+</p><p>If you set a breakpoint somewhere and start the debugger:
+</p><p>Debug &gt; Start Debugging
+</p><p>It will open Virtualdub and you can open your script to start the debugging session.
+</p>
+<h3><a class="mozTocH3" name="mozTocId699109"></a><span class="editsection"></span><span class="mw-headline" id="How_to_debug_Avisynth_console_applications_.28for_MS_VC.2B.2B_2010.29">How to debug Avisynth console applications (for MS VC++ 2010) </span></h3>
+<p>Open your project. Select the debug build and build it. Make sure that you load the debug build in your script.
+</p><p>Right click on the project name (Kuwahara in our case) &gt; Properties &gt; Configuration Properties &gt; Debug
+</p><p>Enter the location of your console application and its arguments
+in the debug command (in our case: avs2yuv.exe example.avs clip.raw):
+</p><p><span class="image"><img style="border: 0px solid ; width: 965px; height: 343px;" alt="Debugging con applications msvc2010 001.jpg" src="Pictures/Debugging_con_applications_msvc2010_001.jpg" /></span>
+<span class="image"><img style="border: 0px solid ; width: 359px; height: 181px;" alt="Debugging con applications msvc2010 002.jpg" src="Pictures/Debugging_con_applications_msvc2010_002.jpg" /></span>
+</p><p>Set a breakpoint somewhere and start the debugger:
+</p><p>Debug &gt; Start Debugging
+</p><p>It will open the command prompt and start the console application. The script will be executed to start the debugging session.
+</p>
+<h2><a class="mozTocH2" name="mozTocId883323"></a><span class="editsection"></span><span class="mw-headline" id="Debug_info_from_MAP_file">Debug info from MAP file </span></h2>
+<p>IanB <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?p=1041578#post1041578">wrote</a>:
+ Recent versions of Avisynth now ship with an avisynth.map! You can use
+this accurately get routine addresses. Avisynth preferably loads at
+0x10000000, use the debugger loaded module display to check this.
+</p><p>Build your plugin in debug mode. If you can, build yourself a
+Debug or Relsym avisynth.dll and debug it, if not the use the .map file
+provided to interprete the Call stack addresses.
+</p><hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+<p><kbd>$Date: 2014/10/27 22:04:54 $<br />
+</kbd></p>
+</body></html>

@@ -1,0 +1,594 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" /><title>Compiling AviSynth Plugins</title></head>
+<body>
+<h1>CompilingAviSynthPlugins</h1>
+<ol id="mozToc">
+<li><a href="#mozTocId876320">Introduction </a></li>
+<li><a href="#mozTocId198403">Compiling AviSynth
+Plugins step by step
+instructions (for MS VC++ 6.0)</a></li>
+<li><a href="#mozTocId243337">How to debug
+AviSynth plugins</a>
+<ol>
+<li><a href="#mozTocId623198">How to debug
+AviSynth plugins (the short way)</a></li>
+<li><a href="#mozTocId747939">How to debug
+Avisynth plugins (for MS VC++ 6.0)</a></li>
+</ol>
+</li>
+<li><a href="#mozTocId931418">Debug info from MAP
+file</a></li>
+<li><a href="#mozTocId649872">Compiling AviSynth
+Plugins step by step
+instructions (for MS VC++ 2005 Express Edition)</a>
+<ol>
+<li><a href="#mozTocId609535">Setup VC++ 2005
+Express Edition environment</a></li>
+<li><a href="#mozTocId357170">How to compile
+existant (old MS VC 6.0) plugin
+with MS VC++ 2005</a></li>
+<li><a href="#mozTocId501085">How to create
+new plugin from scratch with MS VC++
+2005</a></li>
+</ol>
+</li>
+<li><a href="#mozTocId923209">Compiling AviSynth
+Plugins step by step
+instructions (for MS VC++ 2008 Professional Edition)</a></li>
+<li><a href="#mozTocId956951">Compiling AviSynth
+Plugins or Console Applications step by step instructions (for MS VC++
+2010 Express and Professional Edition) </a>
+<ol style="list-style-type: decimal;">
+<li><a href="#mozTocId147453">Creating a new
+project </a></li>
+<li><a href="#mozTocId845399">General settings
+</a></li>
+<li><a href="#mozTocId603900"> Building the
+plugin or console application </a></li>
+
+</ol>
+</li>
+</ol>
+<h2><a class="mozTocH2" name="mozTocId876320"></a><span class="mw-headline" id="Introduction">Introduction </span></h2>
+<p>The Avisynth API is a C++ API, but that doesn't mean that you
+can use every C++ compiler to compile your plugin. Unfortunately
+compilers have different ideas about what the C++ ABI should look like.
+In practice, this means that if you want things to work 100% as
+expected, you must compile your plugin with the same compiler that was
+used to compile AviSynth. That's MSVC 6.0 for official builds. Later
+versions of MSVC will kinda sorta work, as will ICL (up to ICL10.1),
+but there are caveats (for example, you must never allow any C++
+exceptions to escape your plugin ever - use ThrowError() instead - and
+you must always make sure memory allocated by AviSynth is freed by
+AviSynth itself and not by your plugin). So unfortunately it matters
+what C++ compiler will be used to compile a plugin.
+</p>
+<p>An application binary interface (<a rel="nofollow" class="external text" href="http://en.wikipedia.org/wiki/Application_binary_interface">ABI</a>)
+specifies how software components should interact with each other at
+the binary level (in this case AviSynth and a plugin). ABIs cover
+details such as the sizes, layout, and alignment of data types, the
+calling convention of functions' arguments that are passed and
+returned. It standardizes details such as the <a rel="nofollow" class="external text" href="http://en.wikipedia.org/wiki/Name_mangling#Name_mangling_in_C.2B.2B">C++
+name mangling</a> and exception propagation. The problem is that
+there are different C++ ABIs.
+</p>
+<p>Microsoft set their general C++ ABI with their first C++
+compilers, and it has had some changes along the years and versions of
+their compiler suite. Intel and Borland, among others, support the
+Microsoft ABI, and thus things built with the other generally work,
+just like with Linux and the ABI used by GCC. Enter MinGW.
+</p>
+<p>Instead of implementing the Microsoft ABI, the people at GCC
+and MinGW decided to just use the same C++ ABI on Windows as they use
+everywhere else. And thus we have two groups of compilers that use a
+different ABI, and thus we have problems. If you try to load a
+mingw-built C++ API DLL from a MSVC-built Avisynth. The opposite will
+not work, either. The C interface was made exactly for this reason, as
+pretty much by chance the ABI for C is (more or less) set, and thus it
+is generally OK to mix binaries created by different C compilers.
+</p>
+<p>This is why the Avisynth C API exists: if you want a portable
+API, you want a C API. C++ API's are more or less by definition
+unportable.
+</p>
+<p>If you want extra reading regarding calling conventions and
+name mangling and such ABI-related things, you can read the following
+PDF that lists quite a few things of various implementations. Available
+<a rel="nofollow" class="external text" href="http://www.agner.org/optimize/calling_conventions.pdf">here</a>.
+Basically these things in general are not fixable by a mere header, you
+would have to patch a compiler for the other calling convention, as
+well as handle exceptions so that the other side would understand it as
+well. And so forth, and so forth. (source: Doom9 forum posts: <a rel="nofollow" class="external autonumber" href="http://forum.doom9.org/showthread.php?p=1653392#post1653392">[1]</a>,
+<a rel="nofollow" class="external autonumber" href="http://forum.doom9.org/showthread.php?p=1653737#post1653737">[2]</a>.)
+</p>
+<h2><a class="mozTocH2" name="mozTocId198403"></a><span class="mw-headline">Compiling AviSynth Plugins step by step
+instructions (for MS VC++ 6.0)</span></h2>
+<p>Be sure to start with the <a href="SDKNecessaries.htm" title="Filter SDK/SDK necessaries">necessary
+software</a>.</p>
+<p>Open VC++. Select a new project: Go to the File tab -&gt;
+New. Select a Win32
+Dynamic-Link Library in the Projects tab:</p>
+<p><img src="Pictures/compiling_plugins.png" border="0" height="400" width="561" /></p>
+<p>Add the location of your project and the Project Name. The
+location is the
+project folder where the source of your project will be.</p>
+<p>Select "An empty DLL project":</p>
+<p><img src="Pictures/compiling_plugins2.png" border="0" height="384" width="477" /></p>
+<p>Copy existing source files (*.cpp), headers (*.h) and
+avisynth.h in your
+project folder. If you started from scratch, you only need to copy
+avisynth.h in
+your project folder.</p>
+<p>Go to the Project tab -&gt; Add To Project -&gt; Files:</p>
+<p><img src="Pictures/compiling_plugins3.png" border="0" height="196" width="522" /></p>
+<p>Add the existing source files (*.cpp), headers (*.h) and
+avisynth.h to your
+project. If you start from scratch, you need to a new files to your
+project:</p>
+<p>Go to the Project tab -&gt; Add To project -&gt; New:</p>
+<p>1) Select C++ source file, and give it a name. 2) Select C/C++
+header file
+(if you are going to use one), and give it a name.</p>
+<p>Go to the Build tab -&gt; Set Active Configuration
+-&gt; select the release
+build.</p>
+<p>If you go to the Project tab again -&gt; Settings. Then
+you should see
+something similar as this:</p>
+<p><img src="Pictures/compiling_plugins4.png" border="0" height="372" width="577" /></p>
+<p>Save your workspace: File -&gt; Save Workspace.</p>
+<p>Finally, code your source/header files, and compile your
+plugin. Go to the
+Build tab -&gt; Build (...)</p>
+<p><img src="Pictures/compiling_plugins5.png" border="0" height="318" width="450" /></p>
+<a name="How_to_debug_AviSynth_plugins"></a>
+<h2><a class="mozTocH2" name="mozTocId243337"></a><span class="mw-headline">How to debug AviSynth plugins</span></h2>
+<p>Two ways are described to debug your plugin. An easy way using
+DebugView and
+the use of VC++6's debugger. In both case, the sample code <a href="SimpleSample16.htm" title="Filter SDK/Simple sample 1.6">SimpleSample
+v1.6</a> is used.</p>
+<a name="How_to_debug_AviSynth_plugins_.28the_short_way.29"></a>
+<h3><a class="mozTocH3" name="mozTocId623198"></a><span class="mw-headline">How to debug AviSynth plugins (the short
+way)</span></h3>
+<p>An easy way to debug AviSynth plugin is to use a utility
+called <a href="http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx" class="external text" title="http://technet.microsoft.com/en-us/sysinternals/bb896647.aspx" rel="nofollow">DebugView
+for Windows</a> which captures OutputDebugString's output from
+your code
+(OutputDebugString sends a string to your debugger). It's a bit
+limited. So, if
+this is not sufficient, you should use a debugger as described in the
+next
+section.</p>
+<p>1) Open Dbgview.exe. Make sure that 'Capture Win32' under the
+Capture tab is
+selected.</p>
+<p>2) Add the following line at the start of your code:</p>
+<pre>#include &lt;stdio.h&gt; /* for using sprintf */<br /></pre>
+<p>Add, for example, the following lines in your code to check
+whether certain
+parameters are passed to the code path which comes after it:</p>
+<pre>char BUF[256];<br />sprintf(BUF, "framenr&nbsp;%d, text&nbsp;%s, height&nbsp;%d, pi&nbsp;%f\n", n, "hey", src_height, 3.14);<br />OutputDebugString(BUF);<br /></pre>
+<p>Thus:</p>
+<p><img src="Pictures/Debugging_plugins1a.png" border="0" height="388" width="706" /></p>
+<p>Nb,&nbsp;%d means integer,&nbsp;%s means string
+and&nbsp;%f means
+float/double. \n means add a new line.</p>
+<p>3) Compile a release build of your plugin.</p>
+<p>4) Open your script and scroll through it. You will see the
+following output
+in DebugView:</p>
+<p><img src="Pictures/Debugging_plugins1b.png" border="0" height="468" width="1010" /></p>
+<p>In the example the script is loaded in line 26. After that
+some AviSynth
+output is captured. In the lines 57 and 58 the output of
+OutputDebugString is
+written.</p>
+<p>If your script crashes somewhere, you should put these lines
+just before the
+crash (it may take a few attempts to find that point). Then you should
+pass the
+values of the relevant parameters and check whether they are correct.
+Apparently
+there is some parameter whose value is empty or invalid.</p>
+<a name="How_to_debug_Avisynth_plugins_.28for_MS_VC.2B.2B_6.0.29"></a>
+<h3><a class="mozTocH3" name="mozTocId747939"></a><span class="mw-headline">How to debug Avisynth plugins (for MS
+VC++ 6.0)</span></h3>
+<p>These are the steps to debug an AviSynth plugin in VC++ 6:</p>
+<p>1. Go to the build tab and set the Active configuration to the
+Debug version
+of your plugin.</p>
+<p>2. Build the debug version of your plugin. Thus go to the
+build tab and Build
+(...).</p>
+<p>3. We will use VirtualDub.exe to debug your plugin. Go to
+Project tab, then
+select Settings -&gt; Debug -&gt; General -&gt; Executable
+for debug session
+-&gt; browse to a version of VirtualDub.exe and specify that:</p>
+<p><img src="Pictures/Debugging_plugins2.png" border="0" height="372" width="577" /></p>
+<p>4. Go to Project tab, then select Settings -&gt; Debug
+-&gt; Additional DLLs,
+and browse to the filter DLL in the Debug directory:</p>
+<p><img src="Pictures/Debugging_plugins3.png" border="0" height="372" width="577" /></p>
+<p>5. Make an AviSynth script that loads and uses your filter.
+Make sure to load
+the Debug version of your plugin! Thus for example:</p>
+<pre>LoadPlugin("F:\CompilingPlugins\SimpleSample\Debug\simplesample.dll")<br /><br />Colorbars().Trim(0,1)<br />ConvertTORGB24()<br />SimpleSample(100)</pre>
+<p>6. Set breakpoints as required. You can do this by clicking
+with the right
+mouse button next to a statement in your code (in the grey section).
+For
+example:</p>
+<p><img src="Pictures/Debugging_plugins4.png" border="0" height="348" width="334" /></p>
+<p>Select the option: Insert/Remove Breakpoint:</p>
+<p><img src="Pictures/Debugging_plugins5.png" border="0" height="452" width="766" /></p>
+<p>7. Go to the Build tab, and select Start Debug -&gt; Go
+(or the shortcut F5).
+VirtualDub will execute. Open the AviSynth script in that VirtualDub
+instance.
+The code will execute up to your first breakpoint (at least if it
+follows that
+code path):</p>
+<p><img src="Pictures/Debugging_plugins6.png" border="0" height="729" width="629" /></p>
+<p>You will see a yellow arrow through your breakpoint.</p>
+<p>Above I also opened the 'variables output window'. It is under
+the View tab
+-&gt; Debug Windows -&gt; Variables. You can view the value of
+the variables
+when stepping through your code. Use Debug -&gt; Step Into (or the
+shortcut F11)
+to step through your code. Use Debug -&gt; Step Over (or the
+shortcut F10) to
+step over function calls.</p>
+<p>When moving your mouse over a variable, you can also see the
+value of it:</p>
+<p><img src="Pictures/Debugging_plugins7.png" border="0" height="338" width="941" /></p>
+<p>If you want to set a breakpoint somewhere else, just remove
+the existing one
+(by right clicking on it). Put a new one somewhere and press F5.</p>
+<p>If you want to stop debugging, go to the Debug tab -&gt;
+Stop Debugging.</p>
+<h2><a class="mozTocH2" name="mozTocId931418"></a><span class="mw-headline">Debug info from MAP file</span></h2>
+<p>IanB <a href="http://forum.doom9.org/showthread.php?p=1041578#post1041578" class="external text" title="http://forum.doom9.org/showthread.php?p=1041578#post1041578" rel="nofollow">wrote</a>:
+Recent versions of Avisynth now ship with an avisynth.map! You can use
+this
+accurately get routine addresses. Avisynth preferably loads at
+0x10000000, use
+the debugger loaded module display to check this.</p>
+<p>Build your plugin in debug mode. If you can, build yourself a
+Debug or Relsym
+avisynth.dll and debug it, if not the use the .map file provided to
+interprete
+the Call stack addresses.</p>
+<a name="Compiling_AviSynth_Plugins_step_by_step_instructions_.28for_MS_VC.2B.2B_2005_Express_Edition.29"></a>
+<h2><a class="mozTocH2" name="mozTocId649872"></a><span class="mw-headline">Compiling AviSynth Plugins step by step
+instructions (for MS VC++ 2005 Express Edition)</span></h2>
+<a name="Setup_VC.2B.2B_2005_Express_Edition_environment"></a>
+<h3><a class="mozTocH3" name="mozTocId609535"></a><span class="mw-headline">Setup VC++ 2005 Express Edition
+environment</span></h3>
+<ul>
+<li>Install MS VC++ 2005 Express Edition.</li>
+</ul>
+<p><a href="http://www.microsoft.com/express/2005/" class="external free" title="http://www.microsoft.com/express/2005/" rel="nofollow">http://www.microsoft.com/express/2005/</a>
+It is web-based install, but you need to register (which you can do
+freely).</p>
+<p>I prefer manual installation with full CD image download. It
+may be used on
+computer without Internet access. <a href="http://go.microsoft.com/fwlink/?linkid=57034" class="external free" title="http://go.microsoft.com/fwlink/?linkid=57034" rel="nofollow">http://go.microsoft.com/fwlink/?linkid=57034</a></p>
+<p>Run it at least once before installing the SDK</p>
+<ul>
+<li>Install Microsoft Platform SDK</li>
+</ul>
+<p>Last version is at <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB" class="external free" title="http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB" rel="nofollow">http://www.microsoft.com/downloads/details.aspx?FamilyId=0BAF2B35-C656-4969-ACE8-E4C0C0716ADB</a></p>
+<p>Previous versions works fine too (and older February 2003).</p>
+<p><a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/" class="external free" title="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/" rel="nofollow">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/</a></p>
+<p><a href="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdk-full.htm" class="external free" title="http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdk-full.htm" rel="nofollow">http://www.microsoft.com/msdownload/platformsdk/sdkupdate/psdk-full.htm</a></p>
+<p>It seems, you need install Core component only with Web
+install, but you may
+prefer full or ISO download for offline computer.</p>
+<ul>
+<li>Update the Visual C++ directories in the Projects and
+Solutions section in the Options dialog box.</li>
+</ul>
+<p>Add the paths to the appropriate subsection (change 'Microsoft
+Platform SDK
+for Windows Server 2003 R2' in following strings by your real path of
+installed
+version of Microsoft SDK):</p>
+<p>Add to Executable files: C:\Program Files\Microsoft Platform
+SDK for Windows
+Server 2003 R2\Bin</p>
+<p>Add to Include files: C:\Program Files\Microsoft Platform SDK
+for Windows
+Server 2003 R2\Include</p>
+<p>Add to Library files: C:\Program Files\Microsoft Platform SDK
+for Windows
+Server 2003 R2\Lib</p>
+<p>See <a href="http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/" class="external free" title="http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/" rel="nofollow">http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/</a></p>
+<ul>
+<li>Update the corewin_express.vsprops file.</li>
+</ul>
+<p>To make the Win32 template work in Visual C++ Express you need
+to edit the
+corewin_express.vsprops file (found in C:\Program Files\Microsoft
+Visual Studio
+8\VC\VCProjectDefaults) and change the string that reads:</p>
+<p>AdditionalDependencies="kernel32.lib" to</p>
+<p>AdditionalDependencies="kernel32.lib user32.lib gdi32.lib
+winspool.lib
+comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib"</p>
+<p>This step is usually not needed for most AviSynth plugins
+(kernel.lib is
+enough), but sometimes you may need in some other library, in
+particular
+User.Lib for debug.</p>
+<ul>
+<li>Enable Win32 Windows Application type in the Win32
+Application Wizard.</li>
+</ul>
+<p>To enable that type, you need to edit the file AppSettings.htm
+file located
+in the folder &#8220;%ProgramFiles%\Microsoft Visual Studio
+8\VC\VCWizards\AppWiz\Generic\Application\html\1033\".</p>
+<p>In a text editor comment out lines 441 - 444 by putting a //
+in front of them
+as shown here:</p>
+<p>// WIN_APP.disabled = true;</p>
+<p>// WIN_APP_LABEL.disabled = true;</p>
+<p>// DLL_APP.disabled = true;</p>
+<p>// DLL_APP_LABEL.disabled = true;</p>
+<p>Save and close the file and open Visual C++ Express.</p>
+<p>This step is optional if you have project file for plugin (new
+or old C++
+version) and do not create new plugin from scratch.</p>
+<a name="How_to_compile_existant_.28old_MS_VC_6.0.29_plugin_with_MS_VC.2B.2B_2005"></a>
+<h3><a class="mozTocH3" name="mozTocId357170"></a><span class="mw-headline">How to compile existant (old MS VC 6.0)
+plugin
+with MS VC++ 2005</span></h3>
+<ul>
+<li>Start VC++ 2005, go to folder with old plugin (e.g. <a href="SimpleSample.htm" title="Filter SDK/Simple sample">SimpleSample</a>)
+unpacked zip file with full source codes and project files, and open
+plugin workspace file SimpleSample.dsw.</li>
+</ul>
+<ul>
+<li>Agree in dialog to convert and open this project.</li>
+</ul>
+<ul>
+<li>Go to menu Build -&gt; Configuration Manager, Set
+active solution configuration to Release (or Debug if you want firsly
+debug it).</li>
+</ul>
+<ul>
+<li>Go to Build -&gt; Build Solution (F7) to compile and
+create SimpleSample.dll</li>
+</ul>
+<ul>
+<li>If you get fatal error LNK1181: cannot open input file
+'odbc32.lib', then go to menu Project -&gt; SimpleSample
+Properties. Select Configuration Properties -&gt; Linker -&gt;
+Input -&gt; Additional Dependencies, and remove extra unneeded
+libraries like odbc32.lib, odbccp32.lib.</li>
+</ul>
+<ul>
+<li>Also check Linker -&gt; Output File option there and
+set approriate pathname (or Inherit From Process default).</li>
+</ul>
+<ul>
+<li>You can make some changes (edit) of source codes if you
+want.</li>
+</ul>
+<ul>
+<li>Repeat command Build -&gt; Build Solution (F7) to
+compile and create SimpleSample.dll</li>
+</ul>
+<a name="How_to_create_new_plugin_from_scratch_with_MS_VC.2B.2B_2005"></a>
+<h3><a class="mozTocH3" name="mozTocId501085"></a><span class="mw-headline">How to create new plugin from scratch
+with MS VC++
+2005</span></h3>
+<ul>
+<li>Start VC++2005.</li>
+<li>Menu: fiIe -&gt; Create new project.</li>
+<li>Select Win32 console appication.</li>
+<li>Enter name of your new project and press OK.</li>
+<li>You will in Win32 Appcilation Wizard. Press Application
+Settings (left panel).</li>
+<li>Select Application Type as DLL (but it may be console too).</li>
+<li>At Additional options select "Empty project"</li>
+<li>Copy files to project folder with Explorer.</li>
+<li>Add header file avisynth.h to the project: Menu Project
+-&gt; Add existent item. Also add existant (e.g. simplesample.cpp)
+or create new CPP files by Project -&gt; Add new item.</li>
+<li>Go to menu Build -&gt; Configuration Manager, Set
+active solution configuration to Release (or Debug if you want firsly
+debug it).</li>
+<li>Make some changes (edit) of source codes to implement your
+algorithm. See <a href="SimpleSample.htm" title="Filter SDK/Simple sample">SimpleSample</a> or
+some other open source plugin source code and Avisynth <a href="FilterSDK.htm" title="Filter SDK">Filter SDK</a>
+for details.</li>
+<li>Go to Build -&gt; Build Solution (F7) to compile and
+create plugin SimpleSample.dll</li>
+</ul>
+<h2><a class="mozTocH2" name="mozTocId923209"></a><span class="mw-headline">Compiling AviSynth Plugins step by step
+instructions (for MS VC++ 2008 Professional Edition)</span></h2>
+<ul>
+<li>In this guide, we will compile the Example plugin from CPP
+for C programmers, from <a href="http://forum.doom9.org/showthread.php?p=1538557#post1538557" class="external free" title="http://forum.doom9.org/showthread.php?p=1538557#post1538557" rel="nofollow">http://forum.doom9.org/showthread.php?p=1538557#post1538557</a>
+or directly from <a href="http://www.mediafire.com/download.php?tc61m9otustmy29" class="external free" title="http://www.mediafire.com/download.php?tc61m9otustmy29" rel="nofollow">http://www.mediafire.com/download.php?tc61m9otustmy29</a></li>
+<li>Start Microsoft Visual Studio 2008</li>
+<li>Upon first start, you are asked to set up your environment.
+You may choose the typical Visual C++ option</li>
+<li>Choose File-&gt;New-&gt;Project or click the New
+Project icon</li>
+<li>On the left pane, under Project Types, expand Visual C++
+and select Win32</li>
+<li>On the right pane, choose Win32 Console Application</li>
+<li>Enter a name for your project (in this example we will use
+Example), click OK</li>
+<li>You may get an error: An error has occurred in this dialog,
+Error: 54, Unspecified Error. This may be because you installed some
+windows updates but didn't reboot yet. Click OK.</li>
+<li>You are shown the current project settings. Click Next.</li>
+<li>Under Application Type, click the DLL option. Under
+Additional options, check the Empty project box.</li>
+<li>A new directory is created, My Documents\Visual Studio
+2008\Projects\Example</li>
+<li>You need to extract the files from our example plugin into
+My Documents\Visual Studio 2008\Projects\Example\Example</li>
+<li>In the default layout, there is a Solution Explorer pane on
+the left side. Right click Header Files, and select
+Add-&gt;Existing Item, select avisynth.h and click Add</li>
+<li>Continue to add the other files, Info.h and InfoF.h</li>
+<li>Right click Source Files, select Add-&gt;Existing Item,
+and select Example.cpp</li>
+<li>Click Build-&gt;Build Solution (this will give errors!)</li>
+<li>There's a lot of errors about OutputDebugStringW. To fix
+this, select Project-&gt;Example Properties</li>
+<li>In the left pane, Expand Configuration Properties, select
+General</li>
+<li>In the right pane, click Character Set. Use the drop-down
+to select Use Multi-Byte Character Set. Click OK.</li>
+<li>Click Build-&gt;Build Solution (this may give errors!)</li>
+<li>In the version 0.3 of the plugin, there was an error,
+'example.cpp(610)&nbsp;: error C4430: missing type specifier - int
+assumed'. To fix this, double-click that error line to highlight it's
+location in the example.cpp source file. Change 'const wstep =
+(vi.IsRGB24())&nbsp;? 3&nbsp;: 4; // 3 bytes for RGB24,
+&amp; 4 for RGB32.' to 'const int wstep = (vi.IsRGB24())&nbsp;?
+3&nbsp;: 4; // 3 bytes for RGB24, &amp; 4 for RGB32.'</li>
+<li>Click Build-&gt;Build Solution</li>
+<li>If you get an error 'unresolved external symbol _main
+referenced in function ___tmainCRTStartup', then you're trying to build
+an .exe. Use Project-&gt;Example Properties, Configuration
+Properties, General, set Configuration Type to Dynamic Library (.dll)</li>
+<li>By default, a debug version is made. To change this,
+Build-&gt;Configuration Manager, select Release in the left
+drop-down</li>
+<li>You will have to re-apply the configuration changes:
+Project-&gt;Example Properties, Configuration Properties, General,
+Configuration Type=Dynamic Library (.dll) and Character Set=Use
+Multi-Byte Character Set</li>
+<li>The following file should appear: My Documents\Visual
+Studio 2008\Projects\Example\Release\Example.dll. Note that there is
+also a directory My Documents\Visual Studio
+2008\Projects\Example\Example\Release which contains only tempory
+files, but not the dll. This is set under Project-&gt;Example
+Properties, General, Output
+Directory=$(SolutionDir)$(ConfigurationName), Intermediate
+Directory=$(ConfigurationName). In this case $(SolutionDir)=My
+Documents\Visual Studio 2008\Projects\Example,
+$(ConfigurationName)=Release.</li>
+<li>You need to copy Example.dll to your Avisynth plugins
+directory, and then test it with the Example.avs file.</li>
+<li>If everything worked, you can proceed to modify the example
+by following the comments, or also using the SimnpleSample included in
+the Avisynth distribution.</li>
+</ul>
+<h2><a class="mozTocH2" name="mozTocId956951"></a><span class="mw-headline" id="Compiling_AviSynth_Plugins_or_Console_Applications_step_by_step_instructions_.28for_MS_VC.2B.2B_2010_Express_and_Professional_Edition.29">Compiling
+AviSynth Plugins or Console Applications step by step instructions (for
+MS VC++ 2010 Express and Professional Edition) </span></h2>
+<p>These instructions are also valid for the 2008 editions. Be
+sure to start with the <a href="SDKNecessaries.htm" title="Filter SDK/SDK necessaries">necessary software</a>.
+</p>
+<h3><a class="mozTocH3" name="mozTocId147453"></a><span class="editsection"></span><span class="mw-headline" id="Creating_a_new_project">Creating
+a new project </span></h3>
+<p>Open MSVC++ 2010. Select a new project: </p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_001.jpg" class="image"><img style="border: 0px solid ; width: 969px; height: 546px;" alt="Compiling plugins msvc2010 001.jpg" src="Pictures/Compiling_plugins_msvc2010_001.jpg" /></a></p>
+<p>Select a Win32 Console Application. Add the location of your
+project and the project name. The Location\Name will be the project
+folder (or Solution Directory as MSVC++ 2010 calls it) where the source
+of your project will be. If the folder "Name" already exists the
+'Create directory for solution' box should be left unchecked, otherwise
+it will create as a subfolder regardless.
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_002.jpg" class="image"><img style="border: 0px solid ; width: 955px; height: 549px;" alt="Compiling plugins msvc2010 002.jpg" src="Pictures/Compiling_plugins_msvc2010_002.jpg" /></a></p>
+<p>Select application settings. When creating a plugin check the
+application type 'DLL' and when creating a console application (such as
+avs2wav.exe for example) check the application type 'Console
+application'. Also check the additional option 'Empty project' boxes.
+Click on finish:
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_003.jpg" class="image"><img style="border: 0px solid ; width: 548px; height: 306px;" alt="Compiling plugins msvc2010 003.jpg" src="Pictures/Compiling_plugins_msvc2010_003.jpg" /></a></p>
+<p>In the Solution Explorer window, the solution has the
+'folders' External Dependencies, Header Files, Resource Files and
+Source Files:
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_004.jpg" class="image"><img style="border: 0px solid ; width: 588px; height: 330px;" alt="Compiling plugins msvc2010 004.jpg" src="Pictures/Compiling_plugins_msvc2010_004.jpg" /></a></p>
+<p>Copy existing source files (*.cpp), headers (*.h) and
+avisynth.h in your project folder. If you started from scratch, you
+only need to copy avisynth.h in your project folder.
+</p>
+<p>You can add the source and header files to your project by
+right-clicking on a 'folder' (say Header Files as in the screenshot
+below), select Add and Existing Item (or New Item if you start from
+scratch):
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_005.jpg" class="image"><img style="border: 0px solid ; width: 754px; height: 268px;" alt="Compiling plugins msvc2010 005.jpg" src="Pictures/Compiling_plugins_msvc2010_005.jpg" /></a></p>
+<p>Select the release build, since we are building the release
+build.
+</p>
+<h3><a class="mozTocH3" name="mozTocId845399"></a><span class="editsection"></span><span class="mw-headline" id="General_settings">General settings </span></h3>
+<p>If it's your first time you need to select the expert settings
+to make the build tab visible:
+</p>
+<p>Tools &gt; Settings &gt; Expert Settings
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_006.jpg" class="image"><img style="border: 0px solid ; width: 782px; height: 342px;" alt="Compiling plugins msvc2010 006.jpg" src="Pictures/Compiling_plugins_msvc2010_006.jpg" /></a></p>
+<p>In the property page you can see (and change) the location of
+the DLL that will be build:
+</p>
+<p>Right click on the project name (InvertNeg in our case)
+&gt; Properties &gt; Configuration Properties &gt; General
+</p>
+<p>The default location is $(SolutionDir)$(Configuration)\. You
+have set the 'SolutionDir' when defining the project
+(D:\AviSynth\Plugins|InvertNeg in our case). 'Configuration' will be
+the Release or Debug folder depending on which configuration you have
+selected.
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_07.jpg" class="image"><img style="border: 0px solid ; width: 1085px; height: 512px;" alt="Compiling plugins msvc2010 07.jpg" src="Pictures/Compiling_plugins_msvc2010_007.jpg" /></a></p>
+<p>Next you need to be aware of the VC++ Directories and change
+them if necessary:
+</p>
+<p>Right click on the project name (InvertNeg in our case)
+&gt; Properties &gt; Configuration Properties &gt; VC++
+Directories
+</p>
+<p>Here you will find the location of the 'Include Directories'
+and others. $(VCInstallDir)include points to the include folder of
+MSVC++ 2010 and $(WindowsSdkDir)include to the include folder of the
+Microsoft Platform SDK. When including headers (such as windows.h) in
+your project they will be searched for in the include folders (unless
+you explicitly add its location when including them). So both of them
+should point to the correct folders. </p>
+<p>Note that in general windows.h should be included in your
+project. It is the header file for accessing the Win32 API through
+C/C++ and it is located in the include folder of the Microsoft Platform
+SDK.
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_008.jpg" class="image"><img style="border: 0px solid ; width: 752px; height: 531px;" alt="Compiling plugins msvc2010 008.jpg" src="Pictures/Compiling_plugins_msvc2010_008.jpg" /></a></p>
+<p>You can see the values of VCInstallDir and WindowsSdkDir when
+opening the VS command prompt:
+</p>
+<p>Tools &gt; Visual Studio &gt; Command Prompt
+</p>
+<p>The VS command prompt will be loaded. Type set and you will
+see the variables. They will be set when starting MSVC++ 2010 (by
+vsvars32.bat which is located in your
+&lt;VisualStudioInstallDir&gt;\Common7\Tools folder).
+</p>
+<h3><a class="mozTocH3" name="mozTocId603900"></a><span class="editsection"></span><span class="mw-headline" id="Building_the_plugin_or_console_application"> Building
+the plugin or console application </span></h3>
+<p>Now you are ready to build you DLL/EXE. Go to
+</p>
+<p>Build &gt; Build Solution
+</p>
+<p>And you will find your compiled plugin in the
+Location\Name\Folder.
+</p>
+<p><a href="http://avisynth.nl/index.php/File:Compiling_plugins_msvc2010_009.jpg" class="image"><img style="border: 0px solid ; width: 800px; height: 665px;" alt="Compiling plugins msvc2010 009.jpg" src="Pictures/Compiling_plugins_msvc2010_009.jpg" /></a></p>
+<hr style="width: 100%; height: 2px;" /><p>Back
+to <a href="FilterSDK.htm">FilterSDK</a></p>
+
+<p><kbd>$Date: 2014/10/27 22:04:54 $</kbd></p>
+</body></html>

@@ -191,10 +191,14 @@ const VSFrame *VS_CC VSVideoSource4::GetVSFrame(int n, VSCore *core, const VSAPI
         vsapi->mapSetFloat(Props, "ContentLightLevelAverage", Frame->ContentLightLevelAverage, maReplace);
     }
 
+    if (Frame->DolbyVisionRPU && Frame->DolbyVisionRPUSize) {
+        vsapi->mapSetData(Props, "DolbyVisionRPU", (const char *) Frame->DolbyVisionRPU, Frame->DolbyVisionRPUSize, dtBinary, maReplace);
+    }
 
     OutputFrame(Frame, Dst, vsapi);
     if (OutputAlpha) {
         VSFrame *AlphaDst = vsapi->newVideoFrame(&VI[1].format, VI[1].width, VI[1].height, nullptr, core);
+        vsapi->mapSetInt(vsapi->getFramePropertiesRW(AlphaDst), "_ColorRange", 0, maReplace);
         OutputAlphaFrame(Frame, VI[0].format.numPlanes, AlphaDst, vsapi);
         vsapi->mapConsumeFrame(Props, "_Alpha", AlphaDst, maReplace);
     }

@@ -1,0 +1,4 @@
+LIBRARY AviSynth.lib
+EXPORTS
+  DllGetClassObject PRIVATE
+  DllCanUnloadNow PRIVATE

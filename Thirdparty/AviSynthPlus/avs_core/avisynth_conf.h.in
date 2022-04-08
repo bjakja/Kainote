@@ -1,0 +1,11 @@
+#ifndef _AVS_CONF_H_
+#define _AVS_CONF_H_
+
+#include <avs/config.h>
+
+#ifdef AVS_POSIX
+#define user_avs_plugindir_configurable "@USER_AVS_PLUGINDIR_LOCATION@"
+#define system_avs_plugindir "@CMAKE_INSTALL_PREFIX@/@CMAKE_INSTALL_LIBDIR@/avisynth"
+#endif
+
+#endif // _AVS_CONF_H_

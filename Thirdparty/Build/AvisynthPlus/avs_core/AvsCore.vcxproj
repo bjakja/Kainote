@@ -1,0 +1,656 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A8CCD949-1A70-322E-9918-FC9EA0BF3A26}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>AvsCore</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AvsCore.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AviSynth</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AvsCore.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AviSynth</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AvsCore.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AviSynth</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.dll</TargetExt>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;RELEASE_TARBALL;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="Debug";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;RELEASE_TARBALL;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR=\"Debug\";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+      <Command>setlocal
+xcopy /Y "$(TargetPath)" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.exp" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.lib" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>uuid.lib;winmm.lib;vfw32.lib;msacm32.lib;gdi32.lib;user32.lib;advapi32.lib;ole32.lib;imagehlp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/Debug/AviSynth.lib</ImportLibrary>
+      <ModuleDefinitionFile>H:/Kainote/Thirdparty/AviSynthPlus/avs_core/core/avisynth64.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/Debug/AviSynth.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <ConformanceMode>true</ConformanceMode>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <OmitFramePointers>true</OmitFramePointers>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="Release";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR=\"Release\";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+      <Command>setlocal
+xcopy /Y "$(TargetPath)" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.exp" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.lib" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>uuid.lib;winmm.lib;vfw32.lib;msacm32.lib;gdi32.lib;user32.lib;advapi32.lib;ole32.lib;imagehlp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/Release/AviSynth.lib</ImportLibrary>
+      <ModuleDefinitionFile>H:/Kainote/Thirdparty/AviSynthPlus/avs_core/core/avisynth64.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/Release/AviSynth.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+    <Lib>
+      <AdditionalDependencies>MSAcm32.Lib;ImageHlp.Lib;WinMM.Lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ConformanceMode>true</ConformanceMode>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <UseFullPaths>false</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="RelWithDebInfo";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;RELEASE_TARBALL;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR=\"RelWithDebInfo\";AvsCore_EXPORTS</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+      <Command>setlocal
+xcopy /Y "$(TargetPath)" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.exp" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+setlocal
+xcopy /Y "$(TargetDir)AviSynth.lib" "H:/Kainote/Thirdparty/Build/AvisynthPlus/Output/c_api"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Link>
+      <AdditionalDependencies>uuid.lib;winmm.lib;vfw32.lib;msacm32.lib;gdi32.lib;user32.lib;advapi32.lib;ole32.lib;imagehlp.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <ImportLibrary>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/RelWithDebInfo/AviSynth.lib</ImportLibrary>
+      <ModuleDefinitionFile>H:/Kainote/Thirdparty/AviSynthPlus/avs_core/core/avisynth64.def</ModuleDefinitionFile>
+      <ProgramDataBaseFile>H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/RelWithDebInfo/AviSynth.pdb</ProgramDataBaseFile>
+      <SubSystem>Console</SubSystem>
+    </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule H:/Kainote/Thirdparty/AviSynthPlus/avs_core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SH:/Kainote/Thirdparty/AviSynthPlus -BH:/Kainote/Thirdparty/Build/AvisynthPlus --check-stamp-file H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\Files.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\TargetArch.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth.pc.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth_conf.h.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\arch.h.in;H:\Kainote\Thirdparty\Build\AvisynthPlus\CMakeFiles\3.23.0\CMakeCCompiler.cmake;H:\Kainote\Thirdparty\Build\AvisynthPlus\arch.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule H:/Kainote/Thirdparty/AviSynthPlus/avs_core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SH:/Kainote/Thirdparty/AviSynthPlus -BH:/Kainote/Thirdparty/Build/AvisynthPlus --check-stamp-file H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\Files.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\TargetArch.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth.pc.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth_conf.h.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\arch.h.in;H:\Kainote\Thirdparty\Build\AvisynthPlus\CMakeFiles\3.23.0\CMakeCCompiler.cmake;H:\Kainote\Thirdparty\Build\AvisynthPlus\arch.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule H:/Kainote/Thirdparty/AviSynthPlus/avs_core/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SH:/Kainote/Thirdparty/AviSynthPlus -BH:/Kainote/Thirdparty/Build/AvisynthPlus --check-stamp-file H:/Kainote/Thirdparty/Build/AvisynthPlus/avs_core/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Compiler\MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.23\Modules\Platform\Windows-MSVC.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\Files.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\TargetArch.cmake;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth.pc.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\avisynth_conf.h.in;H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\arch.h.in;H:\Kainote\Thirdparty\Build\AvisynthPlus\CMakeFiles\3.23.0\CMakeCCompiler.cmake;H:\Kainote\Thirdparty\Build\AvisynthPlus\arch.c;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_audio.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_audio.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_audio_c.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_bits.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_bits.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_helper.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_helper.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_matrix.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_matrix.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_planar.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_planar.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_rgb.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_rgb.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_yuy2.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\convert_yuy2.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\AVSMap.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\AviHelper.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\AviHelper.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\BufferPool.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\BufferPool.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\DeviceManager.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\DeviceManager.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\FilterConstructor.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\FilterConstructor.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\FilterGraph.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\FilterGraph.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\InternalEnvironment.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\LruCache.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\MTGuard.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\MTGuard.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\MappedList.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\ObjectPool.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\PluginManager.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\PluginManager.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\Prefetcher.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\Prefetcher.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\ScriptEnvironmentTLS.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\SimpleLruCache.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\ThreadPool.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\ThreadPool.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\alignplanar.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\alignplanar.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\arch.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\audio.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\audio.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\avisynth.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\avisynth_c.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\bitblt.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\bitblt.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\cache.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\cache.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\clip_info.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\cpuid.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\exception.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\exception.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\findfirst.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\fonts\fixedfonts.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\fonts\fixedfonts.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\function.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\info.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\info.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\initguid.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\interface.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\internal.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\main.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\memcpy_amd.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\memcpy_amd.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\mpmc_bounded_queue.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\expression.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\expression.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\script.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\script.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\scriptparser.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\scriptparser.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\tokenizer.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\parser\tokenizer.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\strings.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\strings.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\vartable.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\version.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\color.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\color.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\combine.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\combine.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_functions.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_functions.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_reader.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_reader.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\convolution.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\convolution.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\debug.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\debug.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\edit.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\edit.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\exprfilter\exprfilter.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\exprfilter\exprfilter.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\exprfilter\jitasm.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\field.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\field.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\focus.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\focus.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\fps.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\fps.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\greyscale.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\greyscale.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\histogram.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\histogram.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\layer.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\layer.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\levels.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\levels.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\limiter.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\limiter.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\merge.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\merge.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\misc.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\misc.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_add.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_blend.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_darken.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_difference.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_exclusion.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_lighten.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_lumachroma.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_multiply.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_softhardlight.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\OF_subtract.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\blend_common.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\blend_common.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\imghelpers.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\overlay.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\overlay.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\overlayfunctions.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\planeswap.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\planeswap.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resample.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resample.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resample_functions.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resample_functions.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resize.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\resize.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\source.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\text-overlay.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\text-overlay.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\transform.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\transform.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\turn.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\turn.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avisynth.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avisynth_c.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\alignment.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\capi.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\config.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\cpuid.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\filesystem.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\minmax.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\posix.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\types.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include\avs\win.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\intel\conditional_functions_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\conditional\intel\conditional_functions_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_audio_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_audio_sse.cpp" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_yuy2_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_yuy2_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\greyscale_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\greyscale_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\layer_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\layer_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\limiter_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\limiter_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\planeswap_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\planeswap_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resize_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\resize_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\text-overlay_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\text-overlay_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\turn_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\intel\turn_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\444convert_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\444convert_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_avx2.cpp">
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_avx2.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_sse.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_sse.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIIndex.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIIndex.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIReadHandler.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIReadHandler.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AudioSource.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AudioSource.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\DubSource.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\DubSource.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\Error.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\FastReadStream.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\FastReadStream.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\File64.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\File64.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\Fixes.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\VD_Audio.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\VD_Audio.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\avi_source.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\avi_source.h" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\clip_info.h" />
+    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\list.cpp" />
+    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\list.h" />
+    <None Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\avisynth64.def" />
+    <ResourceCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\avs_core\core\avisynth.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\ZERO_CHECK.vcxproj">
+      <Project>{C4663E97-B7D0-354B-9901-2CA64BC2CCCB}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\VersionGen.vcxproj">
+      <Project>{2FE9F465-0208-3D87-A805-6D442DE1420C}</Project>
+      <Name>VersionGen</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

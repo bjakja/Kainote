@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta content="text/html;charset=ISO-8859-1" http-equiv="Content-Type" />
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" /><title>C API - AviSynth</title>
+
+</head>
+<body>
+<h1 id="firstHeading" class="firstHeading">C API</h1>
+The header, avisynth_c.h, declares
+all the classes, structures and miscellaneous constants that you might
+need when writing a plugin. All external plugins should #include it:
+<pre>#include "avisynth_c.h"</pre>
+<p>source: <a rel="nofollow" class="external free" href="http://forum.doom9.org/showthread.php?p=1464911#post1464911">http://forum.doom9.org/showthread.php?p=1464911#post1464911</a>
+</p>
+<p>compiling plugins: <a rel="nofollow" class="external free" href="http://forum.doom9.org/showthread.php?p=1092380#post1092380">http://forum.doom9.org/showthread.php?p=1092380#post1092380</a>
+</p>
+<p>example: <a rel="nofollow" class="external free" href="http://forum.doom9.org/showthread.php?p=1001260#post1001260">http://forum.doom9.org/showthread.php?p=1001260#post1001260</a>
+</p>
+<p>
+For now the api is described here:
+<a rel="nofollow" class="external free" href="http://www.kevina.org/avisynth_c/api.html">http://www.kevina.org/avisynth_c/api.html</a>.
+An example is given here:
+<a rel="nofollow" class="external free" href="http://www.kevina.org/avisynth_c/example.html">http://www.kevina.org/avisynth_c/example.html</a>.
+</p>
+<p>
+In v2.60 (AVISYNTH_INTERFACE_VERSION = 6) the following functions are added to the C interface:
+</p>
+<pre> avs_is_yv24
+ avs_is_yv16
+ avs_is_yv12
+ avs_is_yv411
+ avs_is_y8
+ avs_is_color_space
+ avs_get_plane_width_subsampling
+ avs_get_plane_height_subsampling
+ avs_bits_per_pixel
+ avs_bytes_from_pixels
+ avs_row_size
+ avs_bmp_size
+ avs_get_row_size_p
+ avs_get_height_p
+</pre><p>
+</p>
+<hr style="width: 100%; height: 2px;" />Back to&nbsp;<a href="FilterSDK.htm">FilterSDK</a>
+<p><kbd>$Date: 2015/01/13 00:24:50 $
+</kbd></p>
+</body></html>

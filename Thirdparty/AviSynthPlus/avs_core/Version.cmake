@@ -1,0 +1,13 @@
+if (EXISTS ${REPO}/.git)
+EXECUTE_PROCESS(
+    COMMAND "${GIT}" --git-dir=${REPO}/.git  rev-list --count HEAD
+    OUTPUT_VARIABLE AVS_SEQREV
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+EXECUTE_PROCESS(
+    COMMAND "${GIT}" --git-dir=${REPO}/.git  rev-parse --abbrev-ref HEAD
+    OUTPUT_VARIABLE AVS_BRANCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+endif()
+CONFIGURE_FILE(${SRC} ${DST} @ONLY)

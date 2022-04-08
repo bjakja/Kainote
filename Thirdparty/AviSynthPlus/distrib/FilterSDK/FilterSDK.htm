@@ -1,0 +1,330 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<link rel="STYLESHEET" href="filtersdk.css" type="text/css" /><title>FilterSDK - AviSynth</title>
+
+</head>
+<body>
+<h1><a href="http://www.avisynth.nl/index.php/Filter_SDK"> AviSynth FilterSDK</a>
+</h1>
+<p>AviSynth external Filter SDK is a package for developers to
+create your own filters (plugins and console applications) for AviSynth.
+</p>
+<p>The package consists of:
+</p>
+<ul>
+<li> this documentation text files (in HTML or Wiki format);
+</li>
+<li> the header file 'avisynth.h' (recent version) with all
+declarations to include in plugin source code;
+</li>
+<li>several plugin and console application source codes;
+</li>
+<li>some extra files in 'Extra' folder.</li>
+</ul>
+<h1>Table of contents</h1>
+<ol id="mozToc">
+<!--mozToc h2 1 h3 2 h4 3 h5 4--><li><a href="#mozTocId633792">Necessary
+software</a></li>
+<li><a href="#mozTocId313528">Writing
+a plugin</a>
+<ol>
+<li><a href="#mozTocId995443">&nbsp;Processing
+video </a></li>
+<li><a href="#mozTocId756919">&nbsp;Processing
+audio </a></li>
+<li><a href="#mozTocId484468">&nbsp;Runtime
+functions </a></li>
+<li><a href="#mozTocId850963">&nbsp;Source
+filters </a></li>
+<li><a href="#mozTocId520970">&nbsp;Speeding
+up your plugin using assembler </a></li>
+<li><a href="#mozTocId755428">&nbsp;Making
+dual plugins </a></li>
+</ol>
+</li>
+<li><a href="#mozTocId873007">Writing console
+applications that access AviSynth </a></li>
+<li><a href="#mozTocId82006">Compiling plugins and
+console applications that access
+AviSynth</a></li>
+<li><a href="#mozTocId112505">Debugging plugins
+and console applications that access
+AviSynth</a></li>
+<li><a href="#mozTocId352960">AviSynth
+and its plugin api's </a></li>
+<li><a href="#mozTocId450057">What's
+new in the 2.6 api </a></li>
+<li><a href="#mozTocId831440">Some
+history </a></li>
+<li><a href="#mozTocId318109">Other
+sources&nbsp;??? </a></li>
+<li><a href="#mozTocId988187">License
+terms </a></li>
+</ol>
+<h2><a class="mozTocH2" name="mozTocId633792"></a><span class="editsection"></span><span class="mw-headline" id="Necessary_software">Necessary
+software</span></h2>
+<p>You must have some <a href="SDKNecessaries.htm" title="Filter SDK/SDK necessaries">necessary software</a>.
+</p>
+<h2><a class="mozTocH2" name="mozTocId313528"></a><span class="editsection"></span><span class="mw-headline" id="Writing_a_plugin">Writing
+a plugin</span></h2>
+<p>We will start by writing some simple plugins to show you the
+basics.
+</p>
+<h3><a class="mozTocH3" name="mozTocId995443"></a><span class="editsection"></span><span class="mw-headline" id="Processing_video">&nbsp;Processing
+video </span></h3>
+<ul>
+<li> <a href="InvertNeg.htm" title="Filter SDK/InvertNeg">InvertNeg</a> produces a
+photo-negative of the input clip.
+</li>
+<li> <a href="SimpleSample.htm" title="Filter SDK/SimpleSample">SimpleSample</a> has
+some very simple examples covering development of a filter that draws a
+variable sized square, in the middle of the screen. It does so for all
+color formats.
+</li>
+</ul>
+<p>One thing not covered in the examples, is how to <a href="ChangeFrameSize.htm" title="Filter SDK/Change frame size">change
+frame size</a>
+in a filter.
+</p>
+<h3><a class="mozTocH3" name="mozTocId756919"></a><span class="editsection"></span><span class="mw-headline" id="Processing_audio">&nbsp;Processing
+audio </span></h3>
+<ul>
+<li> xxx
+</li>
+</ul>
+<p>Also have a look at <a href="GettingStartedWithAudio.htm" title="Filter SDK/Getting started with audio">Getting
+started with Audio</a>.
+</p>
+<h3><a class="mozTocH3" name="mozTocId484468"></a><span class="editsection"></span><span class="mw-headline" id="Runtime_functions">&nbsp;Runtime
+functions </span></h3>
+<p>See <a href="Non-ClipSample.htm" title="Filter SDK/Non-clip sample">Non-clip sample</a>
+how to create runtime AviSynth functions.
+</p>
+<h3><a class="mozTocH3" name="mozTocId850963"></a><span class="editsection"></span><span class="mw-headline" id="Source_filters">&nbsp;Source
+filters </span></h3>
+<ul>
+<li> <a href="GradientMask.htm" title="Filter SDK/GradientMask">GradientMask</a> creates
+a simple Gradient. The example explains a few things how source filters work.
+</li>
+</ul>
+<h3><a class="mozTocH3" name="mozTocId520970"></a><span class="editsection"></span><span class="mw-headline" id="Speeding_up_your_plugin_using_assembler">&nbsp;Speeding
+up your plugin using assembler </span></h3>
+<p>You can also browse various topic on <a href="AssemblerOptimizing.htm" title="Filter SDK/Assembler optimizing">Assembler Optimizing</a>.
+</p>
+<h3><a class="mozTocH3" name="mozTocId755428"></a><span class="editsection"></span><span class="mw-headline" id="Making_dual_plugins">&nbsp;Making
+dual plugins </span></h3>
+<p>One of the features of AviSynth 2.6 is that 2.5 plugins
+(plugins compiled with plugin api v3) can still be used in AviSynth
+2.6, although you need to make sure you use it properly since it
+doesn't know about the new features in AviSynth 2.6. So when processing
+a clip (with say color format YV16) with a 2.5 plugin you will get a
+messed up clip at best, and a crash at worst, since YV16 is not
+supported in the v3 api.
+</p>
+<p>There are several ways to make 2.6 plugins (plugins compiled
+with plugin api v5 or higher) also work with AviSynth 2.5. They are
+described <a href="DualPlugins.htm" title="Filter SDK/DualPlugins">here</a>.
+</p>
+<h2><a class="mozTocH2" name="mozTocId873007"></a><span class="editsection"></span><span class="mw-headline" id="Writing_utilities_that_access_AviSynth">Writing console
+applications that access AviSynth </span></h2>
+<p>When writing console applications (commandline programs) it is
+possible to access AviSynth in two ways. </p>
+<p>The first one is to use the VfW api (using the <a rel="nofollow" class="external text" href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd756808%28v=vs.85%29.aspx">AVIFile
+library</a>) like is done in avs2avi (see <a rel="nofollow" class="external autonumber" href="http://forum.doom9.org/showthread.php?t=71493">[1]</a>
+or <a rel="nofollow" class="external autonumber" href="http://www.avisynth.info/?%A5%A2%A1%BC%A5%AB%A5%A4%A5%D6#t952b3b1">[2]</a>),
+avs2yuv (<a rel="nofollow" class="external text" href="http://komisar.gin.by/tools/avs2yuv/avs2yuv-0.24bm2.zip">using
+the C api</a>, or <a rel="nofollow" class="external text" href="http://kemuri9.net/dev/avs/avs2yuv/avs2yuv.zip">using
+the C++ api</a>), or <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?p=1502613#post1502613">avs2wav</a>
+for example. See also <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?p=589781#post589781">here</a>
+to get you going.
+</p>
+<p>The second one is to call AviSynth directly like is done in <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?t=160383">avs2pipe</a>
+for example (it uses the C api). It's a tool to output y4m video or wav
+audio to stdout. The way to do this is importing avisynth.dll via
+loadlibrary() and getprocaddress(). Then creating a scriptenvironment
+and importing a script using invoke(). At that point you will have a
+clip from which you can call getframe() to access the video and
+getaudio() to access the audio.
+</p>
+<p>Below are some examples that have a script as input and raw
+video or audio as output:
+</p>
+<ul>
+<li> <a href="avs2yuv.htm" title="Filter SDK/avs2yuv">avs2yuv</a>
+reads a script
+and outputs raw video.
+</li>
+<li> <a href="avs2pcm.htm" title="Filter SDK/avs2pcm">avs2pcm</a>
+reads a script
+and outputs raw audio.
+</li>
+</ul>
+<h2><a class="mozTocH2" name="mozTocId82006"></a>Compiling
+plugins and console applications that access
+AviSynth</h2>
+How to compile plugins and console applications that access
+AviSynth is described <a href="CompilingAvisynthPlugins.htm">here</a>.
+<br />
+<h2><a class="mozTocH2" name="mozTocId112505"></a>Debugging
+plugins and console applications that access
+AviSynth</h2>
+How to debug plugins and console applications that access
+AviSynth is described <a href="DebuggingAvisynthPlugins.htm">here</a>.
+<h2><a class="mozTocH2" name="mozTocId352960"></a><span class="editsection"></span><span class="mw-headline" id="AviSynth_and_its_plugin_api.27s">AviSynth
+and its plugin api's </span></h2>
+<p>AviSynth exists as an instance of the ScriptEnvironment class,
+that implements the IScriptEnvironment interface. The
+IScriptEnvironment interface is defined in avisynth.h (and
+avisynth_c.h) and it is the only way for plugins and external
+applications to communicate with AviSynth. A pointer to
+ScriptEnvironment object is passed along to all plugins, so that they
+can use AviSynth facilities. Plugins are forbidden from storing this
+pointer. AviSynth creates one ScriptEnvironment object when Windows
+attempts to use AviSynth to open a script via AVIFile API.
+</p>
+<p>When ScriptEnvironment is created, it checks for CPU
+extensions (to provide this information to filters that are able to use
+CPU extensions), sets up memory limits for itself and performs
+pre-scanning of all plugins.
+</p>
+<p>AviSynth has the capability to load third-party libraries that
+include their own video and audio filters. It comes with two language
+interfaces (or plugin api's):
+</p>
+<ul>
+<li> C++ API (through avisynth.h) - The classes and
+miscellaneous constants are described in <a href="Cplusplus_api.htm" title="Cplusplus API">here</a>.
+</li>
+<li> C API (through avisynth_c.h) - The classes and
+miscellaneous constants are described in <a href="C_api.htm" title="C API">here</a>.
+</li>
+</ul>
+<p>The built-in filters use the C++ API. This Filter SDK (or
+Source Development Kit) describes how to create plugins using both
+interfaces. </p>
+<p>Although not included in AviSynth itself, several people wrote
+other language interfaces in Delphi, Purebasic, NET and Java. They can
+be found <a rel="nofollow" class="external text" href="http://forum.doom9.org/showthread.php?p=566904#post566904">here</a>.
+</p>
+<p>...
+</p>
+<p>There are several different Colorspaces in AviSynth. See more
+information about <a href="ColorSpaces.htm" title="Color spaces">Color spaces</a> and <a href="WorkingWithImages.htm" title="Filter SDK/Working with images">Working with Images</a>.
+</p>
+<p>Read more about the <a href="InternalFunctions.htm" title="Filter SDK/Internal functions">Internal Functions</a>
+in AviSynth.
+</p>
+<p>...</p>
+<h2><a class="mozTocH2" name="mozTocId450057"></a><span class="editsection"></span><span class="mw-headline" id="What.27s_new_in_the_2.6_api">What's
+new in the 2.6 api</span></h2>
+<ul>
+<li>
+C++ API (AVISYNTH_INTERFACE_VERSION = 6):
+  <ul>
+  <li>
+  Plugin api v3 and older contained
+  <a href="AVSLinkage.html" title="Filter SDK/AVS Linkage">baked code</a>
+  meaning code that is "baked" into all and every plugin instead being called
+  from avisynth.dll. Starting from 2.6 the version 2.5 plugins are supported
+  directly (with current baked code; meaning that plugins compiled for 2.5 can
+  be loaded when using 2.6) and all the baked code from 2.6+ plugins is removed
+  and the plugins are still source compatible. Note that the baked code is moved
+  to interface.cpp, where also the structure
+  <a href="AVSLinkage.html" title="Filter SDK/AVS Linkage">AVS_Linkage</a>
+  is defined.
+  </li>
+  <li>
+  The <a href="Cplusplus_api.htm#mozTocId248459" title="Filter SDK/Cplusplus API">IScriptEnvironment</a>
+  interface has several new members:
+    <ul>
+    <li>
+    <a href="Cplusplus_api.htm#mozTocId589127" title="Filter SDK/Cplusplus API">ApplyMessage</a>
+    writes text on a frame.
+    </li>
+    <li>
+    <a href="Cplusplus_api.htm#mozTocId683781" title="Filter SDK/Cplusplus API">DeleteScriptEnvironment</a>
+    provides a method to delete the ScriptEnvironment which is created with CreateScriptEnvironment.
+    </li>
+    <li>
+    <a href="Cplusplus_api.htm#mozTocId265758" title="Filter SDK/Cplusplus API">GetAVSLinkage</a>
+	returns the AVSLinkage.
+    </li>
+    <li>
+    <a href="Cplusplus_api.htm#mozTocId478991" title="Filter SDK/Cplusplus API">GetVarDef</a>
+	can be used to access AviSynth variables. It will not throw an error if the
+	variable doesn't exist.
+    </li>
+    </ul>
+  </li>
+  <li>
+  It uses size_t for things that are memory sizes, ready for 64 bit port.
+  </li>
+  <li>
+  New colorformats are added: Y8, YV411, YV16 and YV24.
+  </li>
+  <li>
+  <a href="VideoInfo.htm" title="Filter SDK/Cplusplus API/VideoInfo">VideoInfo</a>
+  has several new constants and functions (the ones relating to the new
+  colorformats, the chroma placement constants, GetPlaneHeightSubsampling,
+  GetPlaneWidthSubsampling).
+  </li>
+  <li>
+  Some new cache and cpu constants for GetCPUFlags (the v5/v6 ones).
+  </li>
+  <li>
+  SetCacheHints changed from void to int.
+  </li>
+  </ul>
+</li>
+</ul>
+
+<ul>
+<li>
+C API (AVISYNTH_INTERFACE_VERSION = 6):
+  <ul>
+  <li>
+  The following functions are added to the interface: avs_is_yv24, avs_is_yv16,
+  avs_is_yv12, avs_is_yv411, avs_is_y8, avs_is_color_space,
+  avs_get_plane_width_subsampling, avs_get_plane_height_subsampling,
+  avs_bits_per_pixel, avs_bytes_from_pixels, avs_row_size, avs_bmp_size,
+  avs_get_row_size_p, avs_get_height_p and
+  avs_delete_script_environment.
+  </li>
+  </ul>
+</li>
+</ul>
+
+<h2><a class="mozTocH2" name="mozTocId831440"></a><span class="editsection"></span><span class="mw-headline" id="Some_history">Some
+history </span></h2>
+<p><a href="BensAviSynthDocs.htm" title="Filter SDK/Ben docs">Ben's
+AviSynth Docs</a> is
+the documentation written for AviSynth 1.0 by Ben Rudiak-Gould, in its
+original form.
+</p>
+<p>See more about the modifications for AviSynth 2.5 in the <a href="AviSynthTwoFiveSDK.htm">AviSynth Two-Five SDK</a>.
+</p>
+<p>Please read AviSynth <a href="SDKHistory.htm" title="Filter SDK/SDK history">SDK History</a>.
+---
+</p>
+<h2><a class="mozTocH2" name="mozTocId318109"></a><span class="editsection"></span><span class="mw-headline" id="Other_sources_.3F.3F.3F">Other
+sources&nbsp;??? </span></h2>
+<p>Once you've got the basics down on AVS development (Ben's text
+is quite good), the <a rel="nofollow" class="external text" href="http://virtualdub.org/filtersdk">SDK</a> for <a href="http://avisynth.nl/index.php/VirtualDub" title="VirtualDub">VirtualDub</a> is also a good read.
+Good news is you won't have to worry about writing <a rel="nofollow" class="external text" href="http://function-pointer.org/">function
+pointers</a> and <a rel="nofollow" class="external text" href="http://www.charlespetzold.com/pw5/index.html">raw Win32</a>;
+meanwhile, Avery knows his stuff when it comes to video &amp; CPU
+optimization techniques, so you better pay attention.
+</p>
+<p>Some video related ebooks (PDF) can be downloaded freely from <a rel="nofollow" class="external text" href="http://www.snellwilcox.com/reference.html">Snell
+&amp; Wilcox</a>. edit - <a rel="nofollow" class="external free" href="http://www.snellgroup.com/support/documentation/engineering-guides">http://www.snellgroup.com/support/documentation/engineering-guides</a>
+this???
+</p>
+<h2><a class="mozTocH2" name="mozTocId988187"></a><span class="editsection"></span><span class="mw-headline" id="License_terms">License
+terms </span></h2>
+<p>Note: Avisynth Filter SDK parts are under specific <a href="SDKLicense.htm" title="Filter SDK/SDK license">SDK
+license terms</a>.
+</p>
+<p><kbd>$Date: 2015/09/14 20:23:59 $<br />
+Latest online mediaWiki version is at <a href="http://avisynth.nl/Filter_SDK">http://avisynth.nl/Filter_SDK</a>
+</kbd></p>
+</body></html>
