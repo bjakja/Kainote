@@ -76,7 +76,7 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>../include;../../AviSynthPlus/avs_core/include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\Ffms2\include;$(SolutionDir)\Thirdparty\FFmpeg;$(SolutionDir)\Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -88,7 +88,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <IncludePath>../include;../../AviSynthPlus/avs_core/include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\Ffms2\include;$(SolutionDir)\Thirdparty\FFmpeg;$(SolutionDir)\Thirdparty\zlib-1.2.12;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -196,8 +196,8 @@
     <ClInclude Include="..\..\ffms2\src\vapoursynth\VSHelper4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvisynthPlus\avs_core\AvsCore.vcxproj">
-      <Project>{a8ccd949-1a70-322e-9918-fc9ea0bf3a26}</Project>
+    <ProjectReference Include="..\..\..\AvisynthCore\AvisynthCore.vcxproj">
+      <Project>{2ac41f68-e271-4a29-9b99-1c1b27674c08}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Zlib\Zlib.vcxproj">
       <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>

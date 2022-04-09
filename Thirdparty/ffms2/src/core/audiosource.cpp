@@ -433,7 +433,7 @@ void FFMS_AudioSource::GetAudio(void *Buf, int64_t Start, int64_t Count) {
 
             // The block we want is now in the cache immediately before it
             --it;
-            
+            //fix unlimited loop
             if (it == OldIt) {
                 throw FFMS_Exception(FFMS_ERROR_SEEKING, FFMS_ERROR_CODEC, "Audio stream is looping");
             }

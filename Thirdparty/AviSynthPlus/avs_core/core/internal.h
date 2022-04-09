@@ -108,9 +108,9 @@ class _PixelClip {
   BYTE lut[256+buffer*2];
 public:
   _PixelClip() {
-    memset(lut, 0, buffer);
-    for (int i=0; i<256; ++i) lut[i+buffer] = (BYTE)i;
-    memset(lut+buffer+256, 255, buffer);
+	memset(lut, 0, buffer);
+	for (int i=0; i<256; ++i) lut[i+buffer] = (BYTE)i;
+	memset(lut+buffer+256, 255, buffer);
   }
   BYTE operator()(int i) const { return lut[i+buffer]; }
 };
@@ -195,7 +195,7 @@ public:
 }
 
 [[maybe_unused]] static AVS_FORCEINLINE uint16_t ScaledPixelClip(int64_t i) {
-    return (uint16_t)clamp((i + 32768) >> 16, (int64_t)0, (int64_t)65535);
+	return (uint16_t)clamp((i + 32768) >> 16, (int64_t)0, (int64_t)65535);
 }
 
 [[maybe_unused]] static AVS_FORCEINLINE uint16_t ScaledPixelClipEx(int64_t i, int max_value) {
@@ -283,8 +283,8 @@ public:
 
 #ifndef MAKEFOURCC
 #define MAKEFOURCC(ch0, ch1, ch2, ch3)                              \
-                ((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |   \
-                ((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
+				((DWORD)(BYTE)(ch0) | ((DWORD)(BYTE)(ch1) << 8) |   \
+				((DWORD)(BYTE)(ch2) << 16) | ((DWORD)(BYTE)(ch3) << 24 ))
 #endif
 
 class GlobalVarFrame
@@ -292,10 +292,10 @@ class GlobalVarFrame
    InternalEnvironment* env;
 public:
    GlobalVarFrame(InternalEnvironment* env) : env(env) {
-      env->PushContextGlobal();
+	  env->PushContextGlobal();
    }
    ~GlobalVarFrame() {
-      env->PopContextGlobal();
+	  env->PopContextGlobal();
    }
 };
 

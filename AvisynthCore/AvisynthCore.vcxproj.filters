@@ -668,5 +668,8 @@
     <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\parser\tokenizer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\include\avs\filesystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -118,59 +118,59 @@ void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironm
 {
 
   if (start != next_sample) {  // Reset on seek
-    sampler->clear();
-    next_sample = start;
-    inputReadOffset = (int64_t)(sample_multiplier * start);  // Reset at new read position (NOT sample exact :( ).
-    dst_samples_filled=0;
+	sampler->clear();
+	next_sample = start;
+	inputReadOffset = (int64_t)(sample_multiplier * start);  // Reset at new read position (NOT sample exact :( ).
+	dst_samples_filled=0;
   }
 
   bool buffer_full = false;
   int samples_filled = 0;
 
   do {
-    // Empty buffer if something is still left.
-    if (dst_samples_filled) {
-      int copysamples = min((int)count-samples_filled, dst_samples_filled);
-      // Copy finished samples
-      if (copysamples) {
-        memcpy((BYTE*)buf+vi.BytesFromAudioSamples(samples_filled), (BYTE*)dstbuffer, (size_t)vi.BytesFromAudioSamples(copysamples));
-        samples_filled += copysamples;
+	// Empty buffer if something is still left.
+	if (dst_samples_filled) {
+	  int copysamples = min((int)count-samples_filled, dst_samples_filled);
+	  // Copy finished samples
+	  if (copysamples) {
+		memcpy((BYTE*)buf+vi.BytesFromAudioSamples(samples_filled), (BYTE*)dstbuffer, (size_t)vi.BytesFromAudioSamples(copysamples));
+		samples_filled += copysamples;
 
-        dst_samples_filled -= copysamples;
-        // Move non-used samples
-        memcpy(dstbuffer, &dstbuffer[copysamples*vi.AudioChannels()], (size_t)vi.BytesFromAudioSamples(dst_samples_filled));
-      }
-      if (samples_filled >= count)
-        buffer_full = true;
-    }
+		dst_samples_filled -= copysamples;
+		// Move non-used samples
+		memcpy(dstbuffer, &dstbuffer[copysamples*vi.AudioChannels()], (size_t)vi.BytesFromAudioSamples(dst_samples_filled));
+	  }
+	  if (samples_filled >= count)
+		buffer_full = true;
+	}
 
-    // If buffer empty - refill
-    if (dst_samples_filled==0) {
-      // Read back samples from filter
-      int samples_out = 0;
-      int gotsamples = 0;
-      do {
-        gotsamples = sampler->receiveSamples(&dstbuffer[vi.BytesFromAudioSamples(samples_out)], BUFFERSIZE - samples_out);
-        samples_out += gotsamples;
-      } while (gotsamples > 0);
+	// If buffer empty - refill
+	if (dst_samples_filled==0) {
+	  // Read back samples from filter
+	  int samples_out = 0;
+	  int gotsamples = 0;
+	  do {
+		gotsamples = sampler->receiveSamples(&dstbuffer[vi.BytesFromAudioSamples(samples_out)], BUFFERSIZE - samples_out);
+		samples_out += gotsamples;
+	  } while (gotsamples > 0);
 
-      dst_samples_filled = samples_out;
+	  dst_samples_filled = samples_out;
 
-      if (!dst_samples_filled) {  // We didn't get any samples
-          // Feed new samples to filter
-        child->GetAudio(dstbuffer, inputReadOffset, BUFFERSIZE, env);
-        inputReadOffset += BUFFERSIZE;
-        sampler->putSamples(dstbuffer, BUFFERSIZE);
-      } // End if no samples
-    } // end if empty buffer
+	  if (!dst_samples_filled) {  // We didn't get any samples
+		  // Feed new samples to filter
+		child->GetAudio(dstbuffer, inputReadOffset, BUFFERSIZE, env);
+		inputReadOffset += BUFFERSIZE;
+		sampler->putSamples(dstbuffer, BUFFERSIZE);
+	  } // End if no samples
+	} // end if empty buffer
   } while (!buffer_full);
   next_sample += count;
 }
 
 ~AVSsoundtouch()
 {
-    delete[] dstbuffer;
-    delete sampler;
+	delete[] dstbuffer;
+	delete sampler;
 }
 
 
@@ -179,7 +179,7 @@ void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironm
 AVSValue __cdecl Create_SoundTouch(AVSValue args, void*, IScriptEnvironment* env)
 {
 	try {	// HIDE DAMN SEH COMPILER BUG!!!
-    // 2021?? Probably for VS2005 or so
+	// 2021?? Probably for VS2005 or so
 
 		PClip clip = args[0].AsClip();
 
@@ -201,7 +201,7 @@ AVSValue __cdecl Create_SoundTouch(AVSValue args, void*, IScriptEnvironment* env
 	}
   catch (const std::runtime_error &error)
   {
-    env->ThrowError("TimeStretch: %s ",error.what());
+	env->ThrowError("TimeStretch: %s ",error.what());
   }
 	catch (...) { throw; }
   return AVSValue(); // n/a
