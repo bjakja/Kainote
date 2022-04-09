@@ -122,7 +122,7 @@ struct FFMS_AudioSource {
     int SeekOffset = 0;
     
     // Fix for audio infinite loop
-    std::list<AudioBlock>::iterator *OldIt = new std::list<AudioBlock>::iterator();
+    std::list<AudioBlock>::iterator OldIt;
     // Buffer which audio is decoded into
     AVFrame *DecodeFrame = nullptr;
     FFMS_Track Frames;

@@ -377,6 +377,8 @@ void FFMS_AudioSource::GetAudio(void *Buf, int64_t Start, int64_t Count) {
     }
 
     auto it = Cache.begin();
+    OldIt = Cache.begin();
+    
 
     while (Count > 0) {
         // Find first useful cache block
@@ -431,10 +433,11 @@ void FFMS_AudioSource::GetAudio(void *Buf, int64_t Start, int64_t Count) {
 
             // The block we want is now in the cache immediately before it
             --it;
-            if (OldIt == &it) {
-                break;
+            
+            if (it == OldIt) {
+                throw FFMS_Exception(FFMS_ERROR_SEEKING, FFMS_ERROR_CODEC, "Audio stream is looping");
             }
-            OldIt == &it;
+            OldIt = it;
         }
     }
 }

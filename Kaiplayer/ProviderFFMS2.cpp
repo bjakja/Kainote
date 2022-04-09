@@ -564,7 +564,7 @@ void ProviderFFMS2::GetAudio(void* buf, int64_t start, int64_t count)
 	}
 	wxCriticalSectionLocker lock(m_blockAudio);
 	if (FFMS_GetAudio(m_audioSource, buf, start, count, &m_errInfo)) {
-		KaiLog(L"error audio" + wxString(m_errInfo.Buffer));
+		KaiLogDebug(L"error audio" + wxString(m_errInfo.Buffer));
 	}
 
 }
