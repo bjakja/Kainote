@@ -431,6 +431,10 @@ void FFMS_AudioSource::GetAudio(void *Buf, int64_t Start, int64_t Count) {
 
             // The block we want is now in the cache immediately before it
             --it;
+            if (OldIt == &it) {
+                break;
+            }
+            OldIt == &it;
         }
     }
 }

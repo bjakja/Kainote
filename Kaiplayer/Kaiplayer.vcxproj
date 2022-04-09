@@ -861,11 +861,11 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\BaseClasses\BaseClasses.vcxproj">
-      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
       <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
+      <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
       <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
@@ -890,9 +890,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </ProjectReference>
     <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxregex.vcxproj">
       <Project>{56a4b526-bb81-5d01-aaa9-16d23bbb169d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\wx_vc9_wxzlib.vcxproj">
-      <Project>{8b867186-a0b5-5479-b824-e176edd27c40}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -806,7 +806,7 @@ PVideoFrame __stdcall ConvertYUV444ToRGB::GetFrame(int n, IScriptEnvironment* en
     BYTE *dstpR = dst->GetWritePtr(PLANAR_R);
 
     // copy or fill alpha
-    BYTE *dstpA;
+    BYTE *dstpA = NULL;
     if (targetHasAlpha) {
       dstpA = dst->GetWritePtr(PLANAR_A);
       int heightA = dst->GetHeight(PLANAR_A);

@@ -8,6 +8,10 @@
 #include <limits.h>
 #include <time.h>
 #include <avs/types.h>
+#include <Windows.h>
+#ifndef PATH_MAX
+    #define PATH_MAX MAX_PATH
+#endif
 
 char* _strrev(char *str);
 char* _strupr(char *str);

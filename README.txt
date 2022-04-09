@@ -3,6 +3,9 @@ Subtitles editor that can play video using FFMS2 (for typesetting,
 timing and more advanced edition) or DirectShow (for playback 
 or minor subtitles edition).
 
+I invite to new discord server https://discord.gg/TCec88t86X
+Languages Polish and English
+
 Features:
 
 - Supported formats: ASS, SSA (loaded convert to ASS), SRT, 

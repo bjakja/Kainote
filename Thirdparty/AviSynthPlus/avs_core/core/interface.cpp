@@ -863,7 +863,7 @@ void AVSValue::Assign2(const AVSValue* src, bool init, bool c_arrays) {
   bool prevIsArray = IsArray();
   bool nextIsArray = src->IsArray();
 
-  AVSValue* tmp;
+  AVSValue* tmp = NULL;
 
   // save existing
   short tmp_type = src->type;

@@ -3195,8 +3195,8 @@ VideoFrame* ScriptEnvironment::GetFrameFromRegistry(size_t vfb_size, Device* dev
       if (device == vfb->device && 0 == vfb->refcount) // vfb device and refcount check
       {
         size_t videoFrameListSize = it2.second.size();
-        VideoFrame *frame_found;
-        AVSMap* properties_found;
+        VideoFrame *frame_found = NULL;
+        AVSMap* properties_found = NULL;
         bool found = false;
         for (VideoFrameArrayType::iterator it3 = it2.second.begin(), end_it3 = it2.second.end();
           it3 != end_it3;

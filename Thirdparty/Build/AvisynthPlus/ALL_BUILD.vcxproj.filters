@@ -3,6 +3,4 @@
   <ItemGroup>
     <CustomBuild Include="H:\Kainote\Thirdparty\AviSynthPlus\CMakeLists.txt" />
   </ItemGroup>
-  <ItemGroup>
-  </ItemGroup>
 </Project>

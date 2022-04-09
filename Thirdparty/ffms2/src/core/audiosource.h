@@ -120,7 +120,9 @@ struct FFMS_AudioSource {
     // Number of packets which the demuxer requires to know where it is
     // If -1, seeking is assumed to be impossible
     int SeekOffset = 0;
-
+    
+    // Fix for audio infinite loop
+    std::list<AudioBlock>::iterator *OldIt = new std::list<AudioBlock>::iterator();
     // Buffer which audio is decoded into
     AVFrame *DecodeFrame = nullptr;
     FFMS_Track Frames;

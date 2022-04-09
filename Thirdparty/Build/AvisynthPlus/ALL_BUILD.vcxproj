@@ -139,48 +139,30 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\BaseClasses\BaseClasses.vcxproj">
+    <ProjectReference Include="..\BaseClasses\BaseClasses.vcxproj">
       <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
-    </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\ZERO_CHECK.vcxproj">
-      <Project>{C4663E97-B7D0-354B-9901-2CA64BC2CCCB}</Project>
-      <Name>ZERO_CHECK</Name>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
     <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\avs_core\AvsCore.vcxproj">
       <Project>{A8CCD949-1A70-322E-9918-FC9EA0BF3A26}</Project>
       <Name>AvsCore</Name>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\ConvertStacked\PluginConvertStacked.vcxproj">
-      <Project>{7E6F736F-B76B-37DE-977F-AA7A9BB50612}</Project>
-      <Name>PluginConvertStacked</Name>
+    <ProjectReference Include="plugins\ConvertStacked\PluginConvertStacked.vcxproj">
+      <Project>{7e6f736f-b76b-37de-977f-aa7a9bb50612}</Project>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\DirectShowSource\PluginDirectShowSource.vcxproj">
-      <Project>{48BC8766-E60D-394A-9A35-4EC6C79A4DD1}</Project>
-      <Name>PluginDirectShowSource</Name>
+    <ProjectReference Include="plugins\DirectShowSource\PluginDirectShowSource.vcxproj">
+      <Project>{48bc8766-e60d-394a-9a35-4ec6c79a4dd1}</Project>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\ImageSeq\PluginImageSeq.vcxproj">
-      <Project>{3BC832A7-7D09-324B-9D46-CD00180CE759}</Project>
-      <Name>PluginImageSeq</Name>
+    <ProjectReference Include="plugins\ImageSeq\PluginImageSeq.vcxproj">
+      <Project>{3bc832a7-7d09-324b-9d46-cd00180ce759}</Project>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\Shibatch\PluginShibatch.vcxproj">
-      <Project>{C449C7D2-F379-3A12-BE57-93438407DA89}</Project>
-      <Name>PluginShibatch</Name>
+    <ProjectReference Include="plugins\Shibatch\PluginShibatch.vcxproj">
+      <Project>{c449c7d2-f379-3a12-be57-93438407da89}</Project>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\TimeStretch\PluginTimeStretch.vcxproj">
-      <Project>{CE919824-ADD0-3987-B576-2F86B798DB81}</Project>
-      <Name>PluginTimeStretch</Name>
+    <ProjectReference Include="plugins\TimeStretch\PluginTimeStretch.vcxproj">
+      <Project>{ce919824-add0-3987-b576-2f86b798db81}</Project>
     </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\VDubFilter\PluginVDubFilter.vcxproj">
-      <Project>{DC203E7F-4D6E-31D1-BA76-73DF89D0CE1F}</Project>
-      <Name>PluginVDubFilter</Name>
-    </ProjectReference>
-    <ProjectReference Include="H:\Kainote\Thirdparty\Build\AvisynthPlus\plugins\TimeStretch\SoundTouch\SoundTouch.vcxproj">
-      <Project>{29CF01A2-F270-3BD5-B0F1-13E082361434}</Project>
-      <Name>SoundTouch</Name>
+    <ProjectReference Include="plugins\VDubFilter\PluginVDubFilter.vcxproj">
+      <Project>{dc203e7f-4d6e-31d1-ba76-73df89d0ce1f}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
