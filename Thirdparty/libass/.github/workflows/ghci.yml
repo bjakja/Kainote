@@ -11,27 +11,39 @@ jobs:
     name: build(${{ matrix.msystem || matrix.docker_image || matrix.os }},
       ${{ matrix.cc }}${{ matrix.api && ', ' }}${{ matrix.api }})
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-18.04, macos-10.15]
+        os: [ubuntu-latest, macos-10.15]
         cc: [gcc, clang]
+        docker_image: ['']
         exclude:
           - os: macos-10.15
             cc: gcc
         include:
           # Enable distcheck for one build
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             cc: gcc
             do_distc: yes
           # Run Coverity on a clang build; Coverity's gcc causes issues
-          - os: ubuntu-18.04
+          - os: ubuntu-latest
             cc: clang
             do_coverity: yes
-          # Build in an Alpine Docker image
+          # Add a tcc build
+          - os: ubuntu-latest
+            cc: tcc
+            ld: tcc
+          # Add docker-build on Alpine
           - os: ubuntu-latest
             cc: gcc
             docker_image: alpine:latest
             shell: '/usr/bin/docker exec dockerciimage sh -e {0}'
-          # Add an additional Windows build (MinGW-gcc via MSYS2) with no extras
+          # Add docker-build with minimum version of dependencies
+          - os: ubuntu-latest
+            cc: gcc
+            docker_image: oldlibs
+            docker_pullprefix: 'ghcr.io/theoneric/libass-containers/'
+            shell: '/usr/bin/docker exec dockerciimage sh -e {0}'
+          # Add a Windows build (MinGW-gcc via MSYS2) with no extras
           - os: windows-2019
             msystem: MINGW32
             cc: gcc
@@ -59,11 +71,13 @@ jobs:
         if: matrix.docker_image
         shell: bash
         run: |
-          # Note: With this setup everything inside the container will be run as root
-          docker pull "${{ matrix.docker_image }}"
+          # Note: Many containers default to the root user
+          docker pull "${{ matrix.docker_pullprefix }}${{ matrix.docker_image }}"
           docker create --name dockerciimage \
             -v "/home/runner/work:/home/runner/work" --workdir "$PWD"  \
-            --entrypoint "tail" "${{ matrix.docker_image }}" "-f" "/dev/null"
+            --entrypoint "tail" \
+            "${{ matrix.docker_pullprefix }}${{ matrix.docker_image }}" \
+            "-f" "/dev/null"
           docker start dockerciimage
 
       - name: Setup MSys2
@@ -86,8 +100,8 @@ jobs:
             windows-*)
               pre="${{ matrix.package_prefix }}"
               pacman --noconfirm -S \
-                      automake autoconf nasm make \
-                      $pre-libtool $pre-pkg-config $pre-gcc \
+                      automake autoconf libtool nasm make \
+                      $pre-pkg-config $pre-gcc \
                       $pre-fribidi $pre-freetype $pre-harfbuzz $pre-fontconfig
               ;;
             alpine:*)
@@ -95,9 +109,13 @@ jobs:
                       make automake autoconf libtool pkgconf \
                       fontconfig-dev freetype-dev fribidi-dev harfbuzz-dev
               ;;
+            oldlibs)
+              : # Everything is preinstalled
+              ;;
             *)
               sudo apt-get update #&& sudo apt-get upgrade
-              sudo apt-get install -y \
+              sudo apt-get install -y --no-install-recommends \
+                   autoconf automake make libtool \
                    libfontconfig1-dev libfreetype6-dev libfribidi-dev \
                    libharfbuzz-dev nasm ${{ matrix.cc }}
               ;;
@@ -115,6 +133,7 @@ jobs:
         env:
           CC: "${{ matrix.cc }}\
             ${{ matrix.extra_cflags && ' ' }}${{ matrix.extra_cflags }}"
+          LD: "${{ matrix.ld }}"
         run: ./autogen.sh && ./configure
 
       - name: compile

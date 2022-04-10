@@ -314,6 +314,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>$(SolutionDir)bin\$(Ronfig)\$(Release)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_wxregex.bsc</OutputFile>
@@ -378,6 +379,9 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_wxregex.bsc</OutputFile>

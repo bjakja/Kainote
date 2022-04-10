@@ -155,7 +155,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>H:\Kainote\Thirdparty\ffmpeg\libavutil;H:\Kainote\Thirdparty\ffmpeg\libswscale;H:\Kainote\Thirdparty\ffmpeg\libswresample;H:\Kainote\Thirdparty\ffmpeg\libavformat;H:\Kainote\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)Thirdparty\Build\Zlib\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -299,6 +299,7 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)</AdditionalDependencies>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_core.bsc</OutputFile>
@@ -336,6 +337,9 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_core.bsc</OutputFile>
@@ -371,6 +375,8 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>$(SolutionDir)bin\$(Configuration)\$(Platform)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>zlib.lib</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_core.bsc</OutputFile>
@@ -406,6 +412,9 @@
     </ResourceCompile>
     <Lib>
       <SuppressStartupBanner>true</SuppressStartupBanner>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(Configuration)\$(Platform);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
       <OutputFile>..\..\lib\vc_lib\wx_vc9_core.bsc</OutputFile>
