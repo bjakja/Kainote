@@ -131,6 +131,9 @@
     <ClCompile Include="..\..\libass\libass\ass_outline.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libass\libass\ass_filesystem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Nasm Include="..\..\libass\libass\x86\be_blur.asm">

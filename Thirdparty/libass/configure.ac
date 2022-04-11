@@ -1,5 +1,4 @@
-m4_define([LIBASS_VERSION], [0.15.2])
-AC_INIT(libass, LIBASS_VERSION)
+AC_INIT(libass, 0.15.2)
 AM_INIT_AUTOMAKE([foreign])
 AC_CONFIG_MACRO_DIR([m4])
 # Disable Fortran checks
@@ -26,7 +25,7 @@ AC_ARG_ENABLE([compare], AS_HELP_STRING([--enable-compare],
 AC_ARG_ENABLE([profile], AS_HELP_STRING([--enable-profile],
     [enable profiling program @<:@default=no@:>@]))
 AC_ARG_ENABLE([fontconfig], AS_HELP_STRING([--disable-fontconfig],
-    [disable fontconfig support @<:@default=enabled@:>@]))
+    [disable fontconfig support @<:@default=check@:>@]))
 AC_ARG_ENABLE([directwrite], AS_HELP_STRING([--disable-directwrite],
     [disable DirectWrite support (Windows only) @<:@default=check@:>@]))
 AC_ARG_ENABLE([coretext], AS_HELP_STRING([--disable-coretext],
@@ -65,20 +64,23 @@ AC_SEARCH_LIBS([lrint], [m], [
 ])
 pkg_libs="$LIBS"
 
-## Check for libraries via pkg-config
-PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.10.3], [
+## Check for libraries via pkg-config and add to pkg_requires as needed
+PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.17.3], [
+    pkg_requires="freetype2 >= 9.17.3"
     CFLAGS="$CFLAGS $FREETYPE_CFLAGS"
     LIBS="$LIBS $FREETYPE_LIBS"
     AC_DEFINE(CONFIG_FREETYPE, 1, [found freetype2 via pkg-config])
 ])
 
-PKG_CHECK_MODULES([FRIBIDI], [fribidi >= 0.19.0], [
+PKG_CHECK_MODULES([FRIBIDI], [fribidi >= 0.19.1], [
+    pkg_requires="fribidi >= 0.19.1, ${pkg_requires}"
     CFLAGS="$CFLAGS $FRIBIDI_CFLAGS"
     LIBS="$LIBS $FRIBIDI_LIBS"
     AC_DEFINE(CONFIG_FRIBIDI, 1, [found fribidi via pkg-config])
 ])
 
 PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.2.3], [
+    pkg_requires="harfbuzz >= 1.2.3, ${pkg_requires}"
     CFLAGS="$CFLAGS $HARFBUZZ_CFLAGS"
     LIBS="$LIBS $HARFBUZZ_LIBS"
     AC_DEFINE(CONFIG_HARFBUZZ, 1, [found harfbuzz via pkg-config])
@@ -87,6 +89,7 @@ PKG_CHECK_MODULES([HARFBUZZ], [harfbuzz >= 1.2.3], [
 libpng=false
 AS_IF([test "x$enable_test" = xyes || test "x$enable_compare" = xyes], [
     PKG_CHECK_MODULES([LIBPNG], [libpng >= 1.2.0], [
+        # Only used for test programs, must not be used for distribution
         CFLAGS="$CFLAGS $LIBPNG_CFLAGS"
         AC_DEFINE(CONFIG_LIBPNG, 1, [found libpng via pkg-config])
         libpng=true
@@ -97,12 +100,16 @@ AS_IF([test "x$enable_test" = xyes || test "x$enable_compare" = xyes], [
 ### Fontconfig
 AS_IF([test "x$enable_fontconfig" != xno], [
     PKG_CHECK_MODULES([FONTCONFIG], [fontconfig >= 2.10.92], [
+        pkg_requires="fontconfig >= 2.10.92, ${pkg_requires}"
         CFLAGS="$CFLAGS $FONTCONFIG_CFLAGS"
         LIBS="$LIBS $FONTCONFIG_LIBS"
         AC_DEFINE(CONFIG_FONTCONFIG, 1, [found fontconfig via pkg-config])
         fontconfig=true
     ], [
         fontconfig=false
+        AS_IF([test "x$enable_fontconfig" = xyes], [
+            AC_MSG_ERROR([fontconfig support was requested, but it was not found.])
+        ])
     ])
 ])
 
@@ -118,6 +125,7 @@ AS_IF([test "x$enable_coretext" != xno], [
             [[CTFontDescriptorCopyAttribute(NULL, kCTFontURLAttribute);]]
         )
     ], [
+        pkg_libs="$pkg_libs -framework ApplicationServices -framework CoreFoundation"
         LIBS="$LIBS -framework ApplicationServices -framework CoreFoundation"
         AC_DEFINE(CONFIG_CORETEXT, 1, [found CoreText in ApplicationServices framework])
         coretext=true
@@ -129,6 +137,7 @@ AS_IF([test "x$enable_coretext" != xno], [
                 [[CTFontDescriptorCopyAttribute(NULL, kCTFontURLAttribute);]]
             )
         ], [
+            pkg_libs="$pkg_libs -framework CoreText -framework CoreFoundation"
             LIBS="$LIBS -framework CoreText -framework CoreFoundation"
             AC_DEFINE(CONFIG_CORETEXT, 1, [found CoreText framework])
             coretext=true
@@ -136,6 +145,9 @@ AS_IF([test "x$enable_coretext" != xno], [
         ], [
             coretext=false
             AC_MSG_RESULT([no])
+            AS_IF([test "x$enable_coretext" = xyes], [
+                AC_MSG_ERROR([CoreText support was requested, but it was not found.])
+            ])
         ])
     ])
 ])
@@ -160,12 +172,14 @@ AS_IF([test "x$enable_directwrite" != xno], [
         ], [
             # WinRT/UWP/app build: GDI and LoadLibrary are
             # unavailable, but DirectWrite is always present
+            pkg_libs="$pkg_libs -ldwrite"
             LIBS="$LIBS -ldwrite"
             AC_DEFINE(CONFIG_DIRECTWRITE, 1, [found DirectWrite (WinRT/UWP)])
             AC_MSG_RESULT([no])
         ], [
             # Win32/desktop build: GDI is always present;
             # DirectWrite is optional but can be loaded via LoadLibrary
+            pkg_libs="$pkg_libs -lgdi32"
             LIBS="$LIBS -lgdi32"
             AC_DEFINE(CONFIG_DIRECTWRITE, 1, [found DirectWrite and GDI (Win32)])
             AC_MSG_RESULT([yes])
@@ -173,6 +187,9 @@ AS_IF([test "x$enable_directwrite" != xno], [
     ], [
         directwrite=false
         AC_MSG_RESULT([no])
+        AS_IF([test "x$enable_directwrite" = xyes], [
+            AC_MSG_ERROR([DirectWrite support was requested, but it was not found.])
+        ])
     ])
 ])
 
@@ -191,20 +208,12 @@ AS_IF([test "x$enable_require_system_font_provider" != xno  dnl
     ))
 ])
 
-## Now add packages to pkg_requires
-pkg_requires="freetype2 >= 9.10.3"
-pkg_requires="fribidi >= 0.19.0, ${pkg_requires}"
-pkg_requires="harfbuzz >= 1.2.3, ${pkg_requires}"
-AS_IF([test "x$fontconfig" = xtrue], [
-    pkg_requires="fontconfig >= 2.10.92, ${pkg_requires}"
-])
-
 
 # Locate and configure Assembler appropriately
+can_asm=false
 AS_IF([test "x$enable_asm" != xno], [
     AS_CASE([$host],
         [i?86-*], [
-            INTEL=true
             AS=nasm
             X86=true
             BITS=32
@@ -213,30 +222,30 @@ AS_IF([test "x$enable_asm" != xno], [
         ],
         [x86_64-*-gnux32|amd64-*-gnux32], [
             AS=nasm
-            INTEL=true
-            X64=true
+            X86=true
+            X86_64=true
             BITS=64
             BITTYPE=x32
             ASFLAGS="$ASFLAGS -DARCH_X86_64=1"
         ],
         [x86_64-*|amd64-*], [
             AS=nasm
-            INTEL=true
-            X64=true
+            X86=true
+            X86_64=true
             BITS=64
             BITTYPE=64
             ASFLAGS="$ASFLAGS -DARCH_X86_64=1"
         ],
         [ # default
-            INTEL=false
+            X86=false
+            AC_MSG_NOTICE([Assembly optimizations are not yet supported on this architecture; disabling.])
         ]
     )
-    AS_IF([test "x$INTEL" = xtrue], [
+    AS_IF([test "x$X86" = xtrue], [
         AC_CHECK_PROG([nasm_check], [$AS], [yes])
         AS_IF([test "x$nasm_check" != xyes], [
             AC_MSG_WARN(nasm was not found; ASM functions are disabled.)
             AC_MSG_WARN(Install nasm for a significantly faster libass build.)
-            enable_asm=no
         ], [
             AS_CASE([$host],
                 [*darwin*], [
@@ -265,23 +274,25 @@ AS_IF([test "x$enable_asm" != xno], [
                     ))
                 ]
             )
-            ASFLAGS="$ASFLAGS -Dprivate_prefix=ass"
             AC_MSG_CHECKING([if $AS supports vpmovzxwd])
             echo "vpmovzxwd ymm0, xmm0" > conftest.asm
             AS_IF([$AS conftest.asm $ASFLAGS -o conftest.o >conftest.log 2>&1], [
                 AC_MSG_RESULT([yes])
+                can_asm=true
             ], [
                 AC_MSG_RESULT([no])
                 VER=`($AS --version || echo no assembler) 2>/dev/null | head -n 1`
                 AC_MSG_WARN([nasm is too old (found $VER); ASM functions are disabled.])
                 AC_MSG_WARN([Install nasm-2.10 or later for a significantly faster libass build.])
-                enable_asm=no
             ])
             rm conftest.asm conftest.o > /dev/null 2>&1
         ])
     ])
 ])
 
+AS_IF([test x"$enable_asm" = xyes && test x"$can_asm" != xtrue], [
+    AC_MSG_ERROR([Assembly was requested, but cannot be built; see prior messages.])
+])
 
 # Relay config results to output files
 
@@ -294,10 +305,9 @@ AC_SUBST([PKG_LIBS_PRIVATE], [${pkg_libs}])
 AC_SUBST([PKG_REQUIRES_PRIVATE], [${pkg_requires}])
 
 ## Setup conditionals for use in Makefiles
-AM_CONDITIONAL([ASM], [test "x$enable_asm" != xno])
-AM_CONDITIONAL([INTEL], [test "x$INTEL" = xtrue])
+AM_CONDITIONAL([ASM], [test "x$can_asm" = xtrue])
 AM_CONDITIONAL([X86], [test "x$X86" = xtrue])
-AM_CONDITIONAL([X64], [test "x$X64" = xtrue])
+AM_CONDITIONAL([X86_64], [test "x$X86_64" = xtrue])
 
 AM_CONDITIONAL([ENABLE_LARGE_TILES], [test "x$enable_large_tiles" = xyes])
 
@@ -312,6 +322,9 @@ AM_CONDITIONAL([DIRECTWRITE], [test "x$directwrite" = xtrue])
 ## Define C Macros not relating to libraries
 AM_COND_IF([ASM], [
     AC_DEFINE(CONFIG_ASM, 1, [ASM enabled])
+    AM_COND_IF([X86], [
+        AC_DEFINE(ARCH_X86, 1, [targeting a 32- or 64-bit x86 host architecture])
+    ])
 ], [
     AC_DEFINE(CONFIG_ASM, 0, [ASM enabled])
 ])
@@ -323,16 +336,19 @@ AM_COND_IF([ENABLE_LARGE_TILES], [
 ])
 
 ## Make a guess about the source code version
-AS_IF([test -d "${srcdir}/.git"], [
+AS_IF([test -e "${srcdir}/.git"], [
     AC_PATH_PROG([git_bin], [git])
     AS_IF([test -n "$git_bin"], [
-        srcversion_string="commit: $("$git_bin" -C "$srcdir" describe --tags --long --always --dirty --broken --abbrev=40)"
+        tmp="$("$git_bin" -C "$srcdir" describe --tags --long --always --broken --abbrev=40 2>/dev/null)" \
+        || tmp="$("$git_bin" -C "$srcdir" describe --tags --long --always --dirty --abbrev=40 2>/dev/null)" \
+        || tmp="failed to determine (>= AC_PACKAGE_VERSION)"
+        srcversion_string="commit: $tmp"
     ], [
-        srcversion_string="custom after: LIBASS_VERSION"
+        srcversion_string="custom after: AC_PACKAGE_VERSION"
     ])
 ], [
     dnl# Hope no one creates custom tarballs without adjusting the version
-    srcversion_string="tarball: LIBASS_VERSION"
+    srcversion_string="tarball: AC_PACKAGE_VERSION"
 ])
 AC_DEFINE_UNQUOTED([CONFIG_SOURCEVERSION], ["$srcversion_string"],
                    [string containing info about the used source])

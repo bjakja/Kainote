@@ -17,9 +17,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Header Files">
       <UniqueIdentifier>{8F338C21-DA7C-35C7-AF5F-3A4DE1769F93}</UniqueIdentifier>
     </Filter>

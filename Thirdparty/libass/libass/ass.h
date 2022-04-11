@@ -24,14 +24,18 @@
 #include <stdarg.h>
 #include "ass_types.h"
 
-#define LIBASS_VERSION 0x01502000
+#define LIBASS_VERSION 0x01502002
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if (defined(__GNUC__) && ((__GNUC__ > 3) || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))) || defined(__clang__)
-    #define ASS_DEPRECATED(msg) __attribute__((deprecated(msg)))
+    #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 5) || defined(__clang__)
+        #define ASS_DEPRECATED(msg) __attribute__((deprecated(msg)))
+    #else
+        #define ASS_DEPRECATED(msg) __attribute__((deprecated))
+    #endif
     #if __GNUC__ > 5 || defined(__clang__)
         #define ASS_DEPRECATED_ENUM(msg) __attribute__((deprecated(msg)))
     #else
@@ -203,6 +207,7 @@ int ass_library_version(void);
  * NONE don't use any default font provider for font lookup
  * AUTODETECT use the first available font provider
  * CORETEXT force a CoreText based font provider (OS X only)
+ * DIRECTWRITE force a DirectWrite based font provider (Microsoft Win32 only)
  * FONTCONFIG force a Fontconfig based font provider
  *
  * libass uses the best shaper available by default.
@@ -238,6 +243,26 @@ typedef enum {
      */
     ASS_FEATURE_BIDI_BRACKETS,
 
+    /**
+     * When this feature is disabled, text is split into VSFilter-compatible
+     * segments and text in each segment is processed in isolation.
+     * Notably, this includes running the Unicode Bidirectional
+     * Algorithm and shaping the text within each run separately.
+     * The individual runs are then laid out left-to-right,
+     * even if they contain right-to-left text.
+     *
+     * When this feature is enabled, each event's text is processed as a whole
+     * (as far as possible). In particular, the Unicode Bidirectional
+     * Algorithm is run on the whole text, and text is shaped across
+     * override tags.
+     *
+     * This is incompatible with VSFilter and disabled by default.
+     *
+     * libass extensions to ASS such as Encoding -1 can cause individual
+     * events to be always processed as if this feature is enabled.
+     */
+    ASS_FEATURE_WHOLE_TEXT_LAYOUT,
+
     // New enum values can be added here in new ABI-compatible library releases.
 } ASS_Feature;
 
@@ -255,9 +280,14 @@ void ass_library_done(ASS_Library *priv);
 
 /**
  * \brief Set additional fonts directory.
- * Optional directory that will be scanned for fonts recursively.  The fonts
+ * Optional directory that will be scanned for fonts.  The fonts
  * found are used for font lookup.
  * NOTE: A valid font directory is not needed to support embedded fonts.
+ * On Microsoft Windows, when using WIN32-APIs, fonts_dir must be in either
+ * UTF-8 mixed with lone or paired UTF-16 surrogates encoded like in CESU-8
+ * or the encoding accepted by fopen with the former taking precedence
+ * if both versions are valid and exist.
+ * On all other systems there is no need for special considerations like that.
  *
  * \param priv library handle
  * \param fonts_dir directory with additional fonts
@@ -310,6 +340,11 @@ void ass_set_message_cb(ASS_Library *priv, void (*msg_cb)
  * \brief Initialize the renderer.
  * \param priv library handle
  * \return renderer handle or NULL if failed
+ *
+ * NOTE: before rendering starts the renderer should also be
+ *       configured with at least ass_set_storage_size(),
+ *       ass_set_frame_size() and ass_set_fonts();
+ *       see respective docs.
  */
 ASS_Renderer *ass_renderer_init(ASS_Library *);
 
@@ -323,26 +358,36 @@ void ass_renderer_done(ASS_Renderer *priv);
  * \brief Set the frame size in pixels, including margins.
  * The renderer will never return images that are outside of the frame area.
  * The value set with this function can influence the pixel aspect ratio used
- * for rendering. If the frame size doesn't equal to the video size, you may
- * have to use ass_set_pixel_aspect().
+ * for rendering.
+ * If after compensating for configured margins the frame size
+ * is not an isotropicly scaled version of the video display size,
+ * you may have to use ass_set_pixel_aspect().
  * @see ass_set_pixel_aspect()
  * @see ass_set_margins()
  * \param priv renderer handle
  * \param w width
  * \param h height
+ *
+ * NOTE: frame size must be configured before an ASS_Renderer can be used.
  */
 void ass_set_frame_size(ASS_Renderer *priv, int w, int h);
 
 /**
  * \brief Set the source image size in pixels.
- * This is used to calculate the source aspect ratio and the blur scale.
+ * This affects some ASS tags like e.g. 3D transforms and
+ * is used to calculate the source aspect ratio and blur scale.
  * The source image size can be reset to default by setting w and h to 0.
  * The value set with this function can influence the pixel aspect ratio used
  * for rendering.
+ * The values must be the actual storage size of the video stream,
+ * without any anamorphic de-squeeze applied.
  * @see ass_set_pixel_aspect()
  * \param priv renderer handle
  * \param w width
  * \param h height
+ *
+ * NOTE: storage size must be configured to get correct results,
+ *       otherwise libass is forced to make a fallible guess.
  */
 void ass_set_storage_size(ASS_Renderer *priv, int w, int h);
 
@@ -371,10 +416,6 @@ void ass_set_shaper(ASS_Renderer *priv, ASS_ShapingLevel level);
  * the bottom "black bar" between video bottom screen border when playing 16:9
  * video on a 4:3 screen.)
  *
- * When using this function, it is recommended to calculate and set your own
- * aspect ratio with ass_set_pixel_aspect(), as the defaults won't make any
- * sense.
- * @see ass_set_pixel_aspect()
  * \param priv renderer handle
  * \param t top margin
  * \param b bottom margin
@@ -394,16 +435,15 @@ void ass_set_use_margins(ASS_Renderer *priv, int use);
  * \brief Set pixel aspect ratio correction.
  * This is the ratio of pixel width to pixel height.
  *
- * Generally, this is (s_w / s_h) / (d_w / d_h), where s_w and s_h is the
+ * Generally, this is (d_w / d_h) / (s_w / s_h), where s_w and s_h is the
  * video storage size, and d_w and d_h is the video display size. (Display
  * and storage size can be different for anamorphic video, such as DVDs.)
  *
  * If the pixel aspect ratio is 0, or if the aspect ratio has never been set
  * by calling this function, libass will calculate a default pixel aspect ratio
  * out of values set with ass_set_frame_size() and ass_set_storage_size(). Note
- * that this is useful only if the frame size corresponds to the video display
- * size. Keep in mind that the margins set with ass_set_margins() are ignored
- * for aspect ratio calculations as well.
+ * that this default assumes the frame size after compensating for margins
+ * corresponds to an isotropicly scaled version of the video display size.
  * If the storage size has not been set, a pixel aspect ratio of 1 is assumed.
  * \param priv renderer handle
  * \param par pixel aspect ratio (1.0 means square pixels, 0 means default)
@@ -418,7 +458,8 @@ void ass_set_pixel_aspect(ASS_Renderer *priv, double par);
  * \param dar display aspect ratio (DAR), prescaled for output PAR
  * \param sar storage aspect ratio (SAR)
  */
-ASS_DEPRECATED("use 'ass_set_pixel_aspect' instead") void ass_set_aspect_ratio(ASS_Renderer *priv, double dar, double sar);
+ASS_DEPRECATED("use 'ass_set_pixel_aspect' instead")
+void ass_set_aspect_ratio(ASS_Renderer *priv, double dar, double sar);
 
 /**
  * \brief Set a fixed font scaling factor.
@@ -465,8 +506,8 @@ void ass_get_available_font_providers(ASS_Library *priv,
 /**
  * \brief Set font lookup defaults.
  * \param default_font path to default font to use. Must be supplied if
- * fontconfig is disabled or unavailable.
- * \param default_family fallback font family for fontconfig, or NULL
+ * all system fontproviders are disabled or unavailable.
+ * \param default_family fallback font family, or NULL
  * \param dfp which font provider to use (one of ASS_DefaultFontProvider). In
  * older libass version, this could be 0 or 1, where 1 enabled fontconfig.
  * Newer relases also accept 0 (ASS_FONTPROVIDER_NONE) and 1
@@ -474,7 +515,7 @@ void ass_get_available_font_providers(ASS_Library *priv,
  * If the requested fontprovider does not exist or fails to initialize, the
  * behavior is the same as when ASS_FONTPROVIDER_NONE was passed.
  * \param config path to fontconfig configuration file, or NULL.  Only relevant
- * if fontconfig is used.
+ * if fontconfig is used. The encoding must match the one accepted by fontconfig.
  * \param update whether fontconfig cache should be built/updated now.  Only
  * relevant if fontconfig is used.
  *
@@ -517,7 +558,8 @@ void ass_set_selective_style_override(ASS_Renderer *priv, ASS_Style *style);
  * \param priv renderer handle
  * \return success
  */
-ASS_DEPRECATED("it does nothing") int ass_fonts_update(ASS_Renderer *priv);
+ASS_DEPRECATED("it does nothing")
+int ass_fonts_update(ASS_Renderer *priv);
 
 /**
  * \brief Set hard cache limits.  Do not set, or set to zero, for reasonable
@@ -536,7 +578,7 @@ void ass_set_cache_limits(ASS_Renderer *priv, int glyph_max,
  * \param track subtitle track
  * \param now video timestamp in milliseconds
  * \param detect_change compare to the previous call and set to 1
- * if positions changed, or set to 2 if content changed.
+ * if positions may have changed, or set to 2 if content may have changed.
  */
 ASS_Image *ass_render_frame(ASS_Renderer *priv, ASS_Track *track,
                             long long now, int *detect_change);
@@ -664,6 +706,11 @@ void ass_flush_events(ASS_Track *track);
  * \param fname file name
  * \param codepage encoding (iconv format)
  * \return newly allocated track or NULL on failure
+ * NOTE: On Microsoft Windows, when using WIN32-APIs, fname must be in either
+ * UTF-8 mixed with lone or paired UTF-16 surrogates encoded like in CESU-8
+ * or the encoding accepted by fopen with the former taking precedence
+ * if both versions are valid and exist.
+ * On all other systems there is no need for special considerations like that.
 */
 ASS_Track *ass_read_file(ASS_Library *library, char *fname,
                          char *codepage);
@@ -683,6 +730,11 @@ ASS_Track *ass_read_memory(ASS_Library *library, char *buf,
  * \param fname file name
  * \param codepage encoding (iconv format)
  * \return 0 on success
+ * NOTE: On Microsoft Windows, when using WIN32-APIs, fname must be in either
+ * UTF-8 mixed with lone or paired UTF-16 surrogates encoded like in CESU-8
+ * or the encoding accepted by fopen with the former taking precedence
+ * if both versions are valid and exist.
+ * On all other systems there is no need for special considerations like that.
  */
 int ass_read_styles(ASS_Track *track, char *fname, char *codepage);
 
@@ -714,6 +766,9 @@ void ass_clear_fonts(ASS_Library *library);
  * \return timeshift in milliseconds
  */
 long long ass_step_sub(ASS_Track *track, long long now, int movement);
+
+#undef ASS_DEPRECATED
+#undef ASS_DEPRECATED_ENUM
 
 #ifdef __cplusplus
 }

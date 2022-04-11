@@ -1,0 +1,879 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Audio\Automation">
+      <UniqueIdentifier>{77863e87-4c84-4249-9eca-806b5b2186f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Controls">
+      <UniqueIdentifier>{b913423d-0f3b-4696-8f09-a77c680f511e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Fonts">
+      <UniqueIdentifier>{2aa0ce92-2f1d-4249-8938-447ea9815327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Styles">
+      <UniqueIdentifier>{07738255-568b-4ad8-8b64-cbe97baff05e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Subs">
+      <UniqueIdentifier>{a4ccacb4-daa6-43c9-88d5-df284ec78ce7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Utils &amp; Config">
+      <UniqueIdentifier>{89c49d1b-58a6-409b-9d6c-52398a806332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Windows &amp; Dialogs">
+      <UniqueIdentifier>{14a881b7-3a0c-4171-b788-67dfa736e531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Video">
+      <UniqueIdentifier>{8ba4449e-7f5d-4750-a60d-35678ae8751b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\Video\Visuals">
+      <UniqueIdentifier>{030b31e5-8731-43d9-934f-2623a961ec52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Audio\NewFilter1">
+      <UniqueIdentifier>{9cba9609-21c0-457e-9642-41f8d55fa230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Automation">
+      <UniqueIdentifier>{4b3b08df-9fc9-4b00-a51f-8e015bd1130f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Automation\Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="KaiCheckBox.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiDialog.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiFrame.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiListCtrl.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiMessageBox.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiRadioButton.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiScrollbar.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiSlider.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStaticBoxSizer.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStaticText.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStatusBar.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTabBar.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTextCtrl.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTextValidator.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTreeBook.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapButton.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="MappedButton.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="MyTextEditor.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="NumCtrl.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Toolbar.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeCtrl.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="FontCollector.cpp">
+      <Filter>Audio\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="FontDialog.cpp">
+      <Filter>Audio\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="FontEnumerator.cpp">
+      <Filter>Audio\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleChange.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleList.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="Stylelistbox.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="StylePreview.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="Styles.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="StyleStore.cpp">
+      <Filter>Audio\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsDialogue.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsFile.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGrid.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridBase.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridDialogs.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridFiltering.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridPreview.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsGridWindow.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsLoader.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsResampleDialog.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubsTime.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="Videobox.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoFullscreen.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoSlider.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoToolbar.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="DShowPlayer.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="DshowRenderer.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPicker.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="EditBox.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplace.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteApp.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteMain.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCatalog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsPanels.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptInfo.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectLines.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="SpellCheckerDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="TabPanel.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="Tabs.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="TLDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSpace.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="DropFiles.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Hotkeys.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="HotkeysNaming.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="OpennWrite.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="SpellChecker.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceResultsDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ListControls.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyframesLoader.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="LogHandler.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiWindowResizer.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="MispellReplacerDialog.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="MisspellReplacer.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="CsriMod.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="TextEditorTagList.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsD2D.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ShiftTimes.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiGauge.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="Languages.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="UtilsWindows.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigConverter.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererFFMS2.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererDirectShow.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererVideo.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesVSFilter.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesLibass.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesProviderManager.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClipRect.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualClips.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualCross.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMove.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualMoveAll.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualPosition.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationXY.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualRotationZ.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="Visuals.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualScale.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextDX9.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="ContextVulkan.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Context.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="LineParse.cpp">
+      <Filter>Audio\Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="FontCatalogList.cpp">
+      <Filter>Audio\Fonts</Filter>
+    </ClCompile>
+    <ClCompile Include="BidiConversion.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoSaveOpen.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoSavesRemoving.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="ProviderDummy.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Provider.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="ProviderFFMS2.cpp">
+      <Filter>Audio\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyVideo.cpp">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiPanel.cpp">
+      <Filter>Audio\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTags.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTagsEdition.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="TagFindReplace.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualDrawingShapes.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="VisualAllTagsControls.cpp">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="Demux.cpp">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioBox.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDeviceEnumeration.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDisplay.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioPlayerDSound.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSpectrum.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="GFFT\GFFT.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="KaraokeSplitting.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Automation.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationDialog.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationFileSystem.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationHotkeysDialog.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationLPeg.c">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationProgress.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationScriptReader.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationToFile.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationUtils.cpp">
+      <Filter>Automation</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BitmapButton.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiCheckBox.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiDialog.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiFrame.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiGauge.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiListCtrl.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiMessageBox.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiRadioButton.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiScrollbar.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiSlider.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticBoxSizer.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticText.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStatusBar.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTabBar.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextCtrl.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextValidator.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTreebook.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiWindowResizer.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ListControls.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MappedButton.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="MyTextEditor.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="NumCtrl.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="TextEditorTagList.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeCtrl.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Toolbar.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCollector.h">
+      <Filter>Audio\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="FontDialog.h">
+      <Filter>Audio\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="FontEnumerator.h">
+      <Filter>Audio\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleChange.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleList.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="Stylelistbox.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StylePreview.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="Styles.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="StyleStore.h">
+      <Filter>Audio\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsDialogue.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsFile.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGrid.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridBase.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridDialogs.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridFiltering.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridPreview.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsGridWindow.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsLoader.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsResampleDialog.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubsTime.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpace.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DInit.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFiles.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumFactory.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsD2D.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Hotkeys.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="HotkeysNaming.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="LogHandler.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="OpennWrite.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellChecker.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilsWindows.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="VersionKainote.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="CsriMod.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DShowPlayer.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DshowRenderer.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyframesLoader.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Videobox.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoFullscreen.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoSlider.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoToolbar.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="EditBox.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplace.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceResultsDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteApp.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteMain.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MispellReplacerDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="MisspellReplacer.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCatalog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsPanels.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptInfo.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectLines.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ShiftTimes.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="SpellCheckerDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="TabPanel.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="Tabs.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="TLDialog.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigConverter.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFFMS2.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererDirectShow.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererVideo.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProvider.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProviderManager.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Visuals.h">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextDX9.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="ContextVulkan.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Context.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="LineParse.h">
+      <Filter>Audio\Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCatalogList.h">
+      <Filter>Audio\Fonts</Filter>
+    </ClInclude>
+    <ClInclude Include="BidiConversion.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSaveOpen.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSavesRemoving.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="ProviderDummy.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Provider.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="ProviderFFMS2.h">
+      <Filter>Audio\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyVideo.h">
+      <Filter>Audio\Windows &amp; Dialogs</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiPanel.h">
+      <Filter>Audio\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualAllTagsEdition.h">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="TagFindReplace.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualDrawingShapes.h">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="VisualAllTagsControls.h">
+      <Filter>Audio\Video\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="Demux.h">
+      <Filter>Audio\Utils &amp; Config</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioBox.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDeviceEnumeration.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDisplay.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioPlayerDSound.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSpectrum.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="GFFT\GFFT.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="KaraokeSplitting.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Automation.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationDialog.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationHotkeysDialog.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationLPeg.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationProgress.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationScriptReader.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationToFile.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationUtils.h">
+      <Filter>Automation</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc">
+      <Filter>Automation\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="kai.ico">
+      <Filter>Automation\Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\blank.cur">
+      <Filter>Automation\Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\button_link.bmp">
+      <Filter>Automation\Resource Files</Filter>
+    </None>
+    <None Include="Bitmaps\eyedropper.cur">
+      <Filter>Automation\Resource Files</Filter>
+    </None>
+    <None Include="bitmaps\rcdata1.bin">
+      <Filter>Automation\Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>
