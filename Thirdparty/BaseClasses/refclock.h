@@ -71,6 +71,11 @@ inline LONGLONG WINAPI ConvertToMilliseconds(const REFERENCE_TIME& RT)
  * Keeping track of advises is taken care of by the CAMSchedule class.
  */
 
+#pragma once
+
+#include <streams.h>
+#include <limits.h>
+
 class CBaseReferenceClock
 : public CUnknown, public IReferenceClock, public CCritSec, public IReferenceClockTimerControl 
 {

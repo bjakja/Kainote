@@ -63,15 +63,15 @@
 #ifndef _WAVEFORMATEXTENSIBLE_
 #define _WAVEFORMATEXTENSIBLE_
 typedef struct {
-    WAVEFORMATEX    Format;
-    union {
-        WORD wValidBitsPerSample;       /* bits of precision  */
-        WORD wSamplesPerBlock;          /* valid if wBitsPerSample==0 */
-        WORD wReserved;                 /* If neither applies, set to zero. */
-    } Samples;
-    DWORD           dwChannelMask;      /* which channels are */
-                                        /* present in stream  */
-    GUID            SubFormat;
+	WAVEFORMATEX    Format;
+	union {
+		WORD wValidBitsPerSample;       /* bits of precision  */
+		WORD wSamplesPerBlock;          /* valid if wBitsPerSample==0 */
+		WORD wReserved;                 /* If neither applies, set to zero. */
+	} Samples;
+	DWORD           dwChannelMask;      /* which channels are */
+										/* present in stream  */
+	GUID            SubFormat;
 } WAVEFORMATEXTENSIBLE, *PWAVEFORMATEXTENSIBLE;
 #endif // !_WAVEFORMATEXTENSIBLE_
 
@@ -83,9 +83,9 @@ typedef struct {
   #define GetWindowLongPtrA   GetWindowLongA
   #define GetWindowLongPtrW   GetWindowLongW
   #ifdef UNICODE
-    #define GetWindowLongPtr  GetWindowLongPtrW
+	#define GetWindowLongPtr  GetWindowLongPtrW
   #else
-    #define GetWindowLongPtr  GetWindowLongPtrA
+	#define GetWindowLongPtr  GetWindowLongPtrA
   #endif // !UNICODE
 #endif // !GetWindowLongPtr
 
@@ -93,9 +93,9 @@ typedef struct {
   #define SetWindowLongPtrA   SetWindowLongA
   #define SetWindowLongPtrW   SetWindowLongW
   #ifdef UNICODE
-    #define SetWindowLongPtr  SetWindowLongPtrW
+	#define SetWindowLongPtr  SetWindowLongPtrW
   #else
-    #define SetWindowLongPtr  SetWindowLongPtrA
+	#define SetWindowLongPtr  SetWindowLongPtrA
   #endif // !UNICODE
 #endif // !SetWindowLongPtr
 
@@ -132,7 +132,7 @@ typedef struct {
 template <class T>
 T _GetWindowLongPtr(HWND hwnd, int nIndex)
 {
-    return (T)GetWindowLongPtr(hwnd, nIndex);
+	return (T)GetWindowLongPtr(hwnd, nIndex);
 }
 
 // _SetWindowLongPtr
@@ -140,7 +140,7 @@ T _GetWindowLongPtr(HWND hwnd, int nIndex)
 template <class T>
 LONG_PTR _SetWindowLongPtr(HWND hwnd, int nIndex, T p)
 {
-    return SetWindowLongPtr(hwnd, nIndex, (LONG_PTR)p);
+	return SetWindowLongPtr(hwnd, nIndex, (LONG_PTR)p);
 }
 #pragma warning(pop)
 
@@ -195,8 +195,8 @@ LONG_PTR _SetWindowLongPtr(HWND hwnd, int nIndex, T p)
 
 
 #else
-    #ifdef DEBUG
-    #pragma message("STREAMS.H included TWICE")
-    #endif
+	#ifdef DEBUG
+	#pragma message("STREAMS.H included TWICE")
+	#endif
 #endif // __STREAMS__
 
