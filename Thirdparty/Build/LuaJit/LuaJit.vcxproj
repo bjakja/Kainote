@@ -327,7 +327,7 @@
   </ItemDefinitionGroup>
   <!-- BuildVM stuff -->
   <PropertyGroup>
-    <BuildVMCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua</BuildVMCommand>
+    <BuildVMCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua $(solutionDir)\pack.lua w</BuildVMCommand>
     <BuildCompileTargets>
       BuildVM;
       ComputeLibDefNames;
