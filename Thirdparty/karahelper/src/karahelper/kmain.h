@@ -5,7 +5,7 @@
 #include "kRenderer.h"
 #include "windowsx.h" // selectfont
 extern "C" {
-#include <lua.hpp>
+#include <L:/Kainote/thirdparty/luajit\include\lua.hpp>
 }
 
 #define EXTERNC extern "C"

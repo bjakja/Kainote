@@ -199,6 +199,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\core;$(SolutionDir)Thirdparty\ffmpeg;$(SolutionDir)Thirdparty\zlib;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

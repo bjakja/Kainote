@@ -327,7 +327,7 @@
   </ItemDefinitionGroup>
   <!-- BuildVM stuff -->
   <PropertyGroup>
-    <BuildVMCommand>$(SolutionDir)ThirdParty\build\LuaJitBuild\$(Platform)\$(Configuration)\LuaJitBuild</BuildVMCommand>
+    <BuildVMCommand>$(SolutionDir)bin\$(Platform)\$(Configuration)\minilua</BuildVMCommand>
     <BuildCompileTargets>
       BuildVM;
       ComputeLibDefNames;
@@ -369,11 +369,11 @@
   </PropertyGroup>
   <Target Name="BuildVM" Inputs="..\..\LuaJIT\src\host\buildvm.c;..\..\LuaJIT\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Platform)\$(Configuration)\lj_folddef.h">
     <Message Text="luajit-buildvm peobj" Importance="High" />
-    <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
+    <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="$(SolutionDir)bin\$(Platform)\$(Configuration)" />
     <Message Text="luajit-buildvm folddef" Importance="High" />
-    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" />
+    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="$(SolutionDir)\bin$(Platform)\$(Configuration)" />
     <ItemGroup>
-      <Lib Include="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj" />
+      <Lib Include="$(SolutionDir)bin\$(Platform)\$(Configuration)\lj_vm.obj" />
     </ItemGroup>
   </Target>
   <Target Name="ComputeLibDefNames">

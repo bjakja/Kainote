@@ -7,8 +7,8 @@
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Исключите редко используемые компоненты из заголовков Windows
-// Файлы заголовков Windows:
+#define WIN32_LEAN_AND_MEAN             
+
 #include <windows.h>
 #include <string>
 #include <algorithm>
@@ -21,4 +21,4 @@
 #include "windowsx.h" // selectfont
 #include "kStyle.h"
 
-// TODO. Установите здесь ссылки на дополнительные заголовки, требующиеся для программы
+

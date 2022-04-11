@@ -373,6 +373,7 @@
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <DebugInformationFormat>
       </DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Release\";PluginDirectShowSource_EXPORTS</PreprocessorDefinitions>

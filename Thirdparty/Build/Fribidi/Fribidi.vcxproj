@@ -274,6 +274,7 @@ _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>FRIBIDI_ENTRY=;
 _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
