@@ -6,7 +6,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp">
+    <ClCompile Include="..\..\..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

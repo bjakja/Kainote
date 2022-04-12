@@ -90,7 +90,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VDubFilter</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">VDubFilter</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">VDubFilter</TargetName>
@@ -116,7 +116,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -137,10 +137,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Debug\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -169,7 +169,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -195,10 +195,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Release\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -227,7 +227,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -252,10 +252,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Release\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -284,7 +284,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -309,10 +309,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Release\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -341,7 +341,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -367,10 +367,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"Release\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -399,7 +399,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ConformanceMode>true</ConformanceMode>
@@ -419,10 +419,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;CMAKE_INTDIR=\"RelWithDebInfo\";PluginVDubFilter_EXPORTS</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -457,13 +457,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\VDubFilter.cpp" />
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\GetCPUFlags.cpp" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\ScriptInterpreter.h" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\ScriptValue.h" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\VBitmap.h" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\vdplugin.h" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\VDubFilter\vdvideofilt.h" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\VDubFilter.cpp" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\GetCPUFlags.cpp" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\ScriptInterpreter.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\ScriptValue.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\VBitmap.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\vdplugin.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\VDubFilter\vdvideofilt.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

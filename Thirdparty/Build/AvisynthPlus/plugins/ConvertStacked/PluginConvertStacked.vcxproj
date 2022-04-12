@@ -30,7 +30,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp" />
+    <ClCompile Include="..\..\..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{7E6F736F-B76B-37DE-977F-AA7A9BB50612}</ProjectGuid>
@@ -93,7 +93,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ConvertStacked</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">ConvertStacked</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">ConvertStacked</TargetName>
@@ -119,7 +119,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -173,7 +173,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -232,7 +232,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -290,7 +290,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -348,7 +348,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -407,7 +407,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ConformanceMode>true</ConformanceMode>

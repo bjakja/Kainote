@@ -1,19 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\DirectShowSource\directshow_source.cpp">
+    <ClCompile Include="..\..\..\..\AviSynthPlus\plugins\DirectShowSource\directshow_source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\DirectShowSource\directshow_source.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\..\..\AviSynthPlus\plugins\DirectShowSource\directshow_source.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{8F338C21-DA7C-35C7-AF5F-3A4DE1769F93}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files">
       <UniqueIdentifier>{5D0F7A8D-3ECC-3284-9C83-5DA6800E3B56}</UniqueIdentifier>
     </Filter>

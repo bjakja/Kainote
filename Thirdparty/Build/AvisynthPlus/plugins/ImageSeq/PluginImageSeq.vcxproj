@@ -90,7 +90,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(Platform)\obj\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ImageSeq</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">ImageSeq</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">ImageSeq</TargetName>
@@ -116,7 +116,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -169,7 +169,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -227,7 +227,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -284,7 +284,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -341,7 +341,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BufferSecurityCheck>false</BufferSecurityCheck>
@@ -399,7 +399,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>H:\Kainote\Thirdparty\AviSynthPlus\avs_core\include;H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;H:\Kainote\Thirdparty\AviSynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(solutionDir)Thirdparty\AviSynthPlus\avs_core;</AdditionalIncludeDirectories>
       <AdditionalOptions>%(AdditionalOptions) /Zc:__cplusplus</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ConformanceMode>true</ConformanceMode>
@@ -456,12 +456,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
     </ProjectReference>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageSeq.cpp" />
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageSeq.h" />
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageReader.cpp" />
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageWriter.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

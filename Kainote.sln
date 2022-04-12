@@ -23,7 +23,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Minilua", "Thirdparty\Build
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libhunspell", "Thirdparty\Hunspell\msvc\libhunspell.vcxproj", "{53609BB3-D874-465C-AF7B-DF626DB0D89B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependences", "Dependences", "{08D6E0E0-50D9-4BF0-80AE-FDB0264D0C23}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ZDependences", "ZDependences", "{08D6E0E0-50D9-4BF0-80AE-FDB0264D0C23}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxregex", "Thirdparty\wxWidgets\Build\msw\wx_vc9_wxregex.vcxproj", "{56A4B526-BB81-5D01-AAA9-16D23BBB169D}"
 EndProject

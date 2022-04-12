@@ -207,6 +207,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\ffmpeg\libavutil;$(SolutionDir)Thirdparty\ffmpeg\libswscale;$(SolutionDir)Thirdparty\ffmpeg\libswresample;$(SolutionDir)Thirdparty\ffmpeg\libavformat;$(SolutionDir)Thirdparty\ffmpeg\libavcodec;$(SolutionDir)ffms2\build-msvc\x64\Release;$(SolutionDir)Thirdparty\Build\AvisynthPlus\Output;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>ImageSeq.dll</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
