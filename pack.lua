@@ -20,8 +20,7 @@ local function try_open(filename, mode)
   local file, err = io.open(filename, mode)
   if not file then
     io.stdout:write(string.format('Failed to open "%s": %s\n', filename, err))
-	--log("cant open file " .. filename )
-    os.exit(155)
+	os.exit(155)
   end
   return file
 end

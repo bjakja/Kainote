@@ -23,6 +23,7 @@
 #include "SubsTime.h"
 #include <wx/colour.h>
 #include <vector>
+#niclude <wx>
 
 //isVisible helper class
 class StoreHelper {

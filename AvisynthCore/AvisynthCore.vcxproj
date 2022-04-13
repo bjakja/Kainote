@@ -291,9 +291,10 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_SECURE_SCL=0;_CRTDBG_MAP_ALLOC;__SSE2__;INTEL_INTRINSICS;BUILDING_AVSCORE;CMAKE_INTDIR="Release";AvsCore_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -387,6 +388,11 @@
       <AdditionalDependencies>Msacm32.lib;Imagehlp.lib;Winmm.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\Shibatch\SoundTouch\SoundTouch.vcxproj">
+      <Project>{7c1ccf2d-300e-4494-9843-81c59cad1bed}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert.cpp" />
     <ClCompile Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_audio.cpp" />
@@ -503,129 +509,41 @@
     <ClCompile Include="..\Thirdparty\AviSynthPlus\avs_core\filters\text-overlay.cpp" />
     <ClCompile Include="..\Thirdparty\AviSynthPlus\avs_core\filters\transform.cpp" />
     <ClCompile Include="..\Thirdparty\AviSynthPlus\avs_core\filters\turn.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\DirectShowSource\directshow_source.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageReader.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageSeq.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\ImageSeq\ImageWriter.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\dbesi0.c" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\mem_block.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\shibatch.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc-convert.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\supereq.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\AAFilter.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\BPMDetect.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\cpu_detect_x86.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\FIFOSampleBuffer.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\FIRFilter.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\InterpolateCubic.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\InterpolateLinear.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\InterpolateShannon.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\PeakFinder.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\RateTransposer.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\SoundTouch.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\sse_optimized.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\SoundTouch\TDStretch.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\TimeStretch\TimeStretch.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\VDubFilter\GetCPUFlags.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\VDubFilter\VDubFilter.cpp" />
+    <ClCompile Include="..\Thirdparty\AviSynthPlus\plugins\VFAPIFilter\VFAPIFilter.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_audio.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_bits.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_helper.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_matrix.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_planar.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_rgb.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\convert_yuy2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_bits_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_planar_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_rgb_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\convert\intel\convert_yuy2_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\alignplanar.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\arch.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\audio.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\AviHelper.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\AVSMap.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\bitblt.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\BufferPool.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\cache.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\clip_info.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\DeviceManager.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\exception.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\FilterConstructor.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\FilterGraph.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\findfirst.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\fonts\fixedfonts.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\function.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\info.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\internal.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\InternalEnvironment.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\LruCache.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\MappedList.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\memcpy_amd.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\mpmc_bounded_queue.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\MTGuard.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\ObjectPool.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\parser\expression.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\parser\script.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\parser\scriptparser.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\parser\tokenizer.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\PluginManager.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\Prefetcher.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\ScriptEnvironmentTLS.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\SimpleLruCache.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\strings.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\ThreadPool.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\vartable.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\core\version.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AudioSource.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIIndex.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\AVIReadHandler.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\avi_source.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\clip_info.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\DubSource.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\Error.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\FastReadStream.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\File64.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\Fixes.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\list.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\AviSource\VD_Audio.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_functions.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\conditional\conditional_reader.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\conditional\intel\conditional_functions_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\exprfilter\exprfilter.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\exprfilter\jitasm.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\focus_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\greyscale_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\layer_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\limiter_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\merge_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\planeswap_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\resample_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\resize_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\text-overlay_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\intel\turn_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\444convert.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\blend_common.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\imghelpers.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\444convert_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\blend_common_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_avx2.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\intel\OF_multiply_sse.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\overlay.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\overlay\overlayfunctions.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\resample.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\resample_functions.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\resize.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\text-overlay.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\transform.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\filters\turn.h" />
-    <ClInclude Include="..\Thirdparty\AviSynthPlus\avs_core\include\avs\filesystem.h" />
+    <None Include="..\Thirdparty\AviSynthPlus\avs_core\core\avisynth.def" />
+    <None Include="..\Thirdparty\AviSynthPlus\avs_core\core\avisynth64.def" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\ConvertStacked\PluginConvertStacked.vcxproj">
-      <Project>{7e6f736f-b76b-37de-977f-aa7a9bb50612}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\DirectShowSource\PluginDirectShowSource.vcxproj">
-      <Project>{48bc8766-e60d-394a-9a35-4ec6c79a4dd1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\ImageSeq\PluginImageSeq.vcxproj">
-      <Project>{3bc832a7-7d09-324b-9d46-cd00180ce759}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\Shibatch\PluginShibatch.vcxproj">
-      <Project>{c449c7d2-f379-3a12-be57-93438407da89}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\Shibatch\SoundTouch\SoundTouch.vcxproj">
-      <Project>{7c1ccf2d-300e-4494-9843-81c59cad1bed}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\AvisynthPlus\plugins\VDubFilter\PluginVDubFilter.vcxproj">
-      <Project>{dc203e7f-4d6e-31d1-ba76-73df89d0ce1f}</Project>
-    </ProjectReference>
+    <ResourceCompile Include="..\Thirdparty\AviSynthPlus\avs_core\core\avisynth.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

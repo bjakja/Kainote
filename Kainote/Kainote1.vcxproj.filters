@@ -1,0 +1,587 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AudioBox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AudioDeviceEnumeration.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AudioDisplay.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AudioPlayerDSound.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AudioSpectrum.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Automation.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationFileSystem.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationHotkeysDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationLPeg.c">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationProgress.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationScriptReader.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationToFile.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutomationUtils.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutoSaveOpen.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\AutoSavesRemoving.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\BidiConversion.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\BitmapButton.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ColorPicker.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\colorspace.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\config.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ConfigConverter.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Context.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ContextDX9.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ContextVulkan.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\CsriMod.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Demux.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\DropFiles.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\dshowplayer.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\DshowRenderer.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\DummyVideo.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\EditBox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\findreplace.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FindReplaceDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FindReplaceResultsDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FontCatalogList.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FontCollector.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FontDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\FontEnumerator.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\GFFT\GFFT.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\GraphicsD2D.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Hotkeys.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\HotkeysNaming.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiCheckBox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiFrame.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiGauge.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiListCtrl.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiMessageBox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\kainoteApp.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\kainoteMain.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiPanel.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiRadioButton.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiScrollbar.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiSlider.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiStaticBoxSizer.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiStaticText.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiStatusBar.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiTabBar.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiTextCtrl.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiTextValidator.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiTreeBook.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaiWindowResizer.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KaraokeSplitting.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\KeyframesLoader.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Languages.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\LineParse.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ListControls.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\LogHandler.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\MappedButton.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Menu.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\MenuButton.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\MispellReplacerDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\MisspellReplacer.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\MyTextEditor.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\NewCatalog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\NumCtrl.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\OpennWrite.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\OptionsDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\OptionsPanels.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ProgressDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Provider.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ProviderDummy.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ProviderFFMS2.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Registry.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\RendererDirectShow.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\RendererFFMS2.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\RendererVideo.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ScriptInfo.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SelectLines.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\ShiftTimes.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SpellChecker.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SpellCheckerDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\StyleChange.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\StyleList.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Stylelistbox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\StylePreview.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\styles.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\stylestore.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsDialogue.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsFile.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGrid.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGridBase.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGridDialogs.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGridFiltering.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGridPreview.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsGridWindow.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsLoader.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsResampleDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubsTime.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubtitlesLibass.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubtitlesProviderManager.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\SubtitlesVSFilter.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\TabPanel.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Tabs.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\TagFindReplace.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\TextEditorTagList.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\TimeCtrl.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\TLDialog.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Toolbar.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\UpdateChecker.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\UtilsWindows.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Videobox.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VideoFfmpeg.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VideoFullscreen.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VideoSlider.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VideoToolbar.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualAllTags.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualAllTagsControls.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualAllTagsEdition.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualClipRect.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualClips.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualCross.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualDrawingShapes.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualMove.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualMoveAll.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualPosition.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualRotationXY.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualRotationZ.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\Visuals.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Kainote\Kainote\VisualScale.cpp">
+      <Filter>Dependencies</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\Kainote\Kainote\AudioBox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AudioDeviceEnumeration.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AudioDisplay.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AudioPlayerDSound.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AudioSpectrum.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Automation.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationHotkeysDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationLPeg.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationProgress.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationScriptReader.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationToFile.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutomationUtils.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutoSaveOpen.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\AutoSavesRemoving.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\BidiConversion.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\BitmapButton.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ColorPicker.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\colorspace.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\config.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ConfigConverter.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Context.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ContextDX9.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ContextVulkan.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\csri.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\CsriMod.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\D2DInit.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Demux.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\DropFiles.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\dshowplayer.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\DshowRenderer.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\DummyVideo.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\EditBox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\EnumFactory.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FindReplace.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FindReplaceDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FindReplaceResultsDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FontCatalogList.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FontCollector.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FontDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\FontEnumerator.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\AssocVector.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\Factory.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\GFFT.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\LokiTypeInfo.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\NullType.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\Typelist.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GFFT\TypeManip.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\gitparams.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\GraphicsD2D.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Hotkeys.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\HotkeysNaming.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\include\ffms.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\include\ffmscompat.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiCheckBox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiFrame.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiGauge.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiListCtrl.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiMessageBox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\kainoteApp.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\kainoteMain.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiPanel.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiRadioButton.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiScrollbar.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiSlider.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiStaticBoxSizer.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiStaticText.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiStatusBar.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiTabBar.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiTextCtrl.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiTextValidator.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiTreebook.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaiWindowResizer.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KaraokeSplitting.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\KeyframesLoader.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\LineParse.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ListControls.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\LogHandler.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\MappedButton.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Menu.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\MenuButton.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\MispellReplacerDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\MisspellReplacer.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\MyTextEditor.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\NewCatalog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\NumCtrl.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\OpennWrite.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\OptionsDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\OptionsPanels.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ProgressDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Provider.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ProviderDummy.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ProviderFFMS2.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Registry.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\RendererDirectShow.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\RendererFFMS2.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\RendererVideo.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\resource.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ScriptInfo.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SelectLines.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\ShiftTimes.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SpellChecker.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SpellCheckerDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\StyleChange.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\StyleList.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Stylelistbox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\StylePreview.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\styles.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\stylestore.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsDialogue.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsFile.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGrid.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGridBase.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGridDialogs.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGridFiltering.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGridPreview.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsGridWindow.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsLoader.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsResampleDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubsTime.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubtitlesProvider.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\SubtitlesProviderManager.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\TabPanel.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Tabs.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\TagFindReplace.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\TextEditorTagList.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\TimeCtrl.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\TLDialog.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Toolbar.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\UpdateChecker.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\UtilsWindows.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VersionKainote.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Videobox.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VideoFfmpeg.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VideoFullscreen.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VideoSlider.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VideoToolbar.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VisualAllTagsControls.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VisualAllTagsEdition.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\VisualDrawingShapes.h" />
+    <ClInclude Include="..\..\..\Kainote\Kainote\Visuals.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\Kainote\Kainote\resource.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

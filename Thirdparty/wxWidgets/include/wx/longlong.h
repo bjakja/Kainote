@@ -1059,7 +1059,7 @@ inline bool operator<(unsigned long l, const wxULongLong& ull) { return ull > l;
 inline bool operator>(unsigned long l, const wxULongLong& ull) { return ull < l; }
 inline bool operator<=(unsigned long l, const wxULongLong& ull) { return ull >= l; }
 inline bool operator>=(unsigned long l, const wxULongLong& ull) { return ull <= l; }
-inline bool operator==(unsigned long l, const wxULongLong& ull) { return ull == l; }
+inline bool operator==(unsigned long l, const wxULongLong & ull) { return ull == l; }
 inline bool operator!=(unsigned long l, const wxULongLong& ull) { return ull != l; }
 
 inline wxULongLong operator+(unsigned long l, const wxULongLong& ull) { return ull + l; }

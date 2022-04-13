@@ -185,8 +185,8 @@
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)AVX\$(Configuration)</OutDir>
-    <IntDir>$(SolutionDirobj\$(Platform)AVX\$(Configuration)</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -283,6 +283,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\freetype2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;FT2_BUILD_LIBRARY;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -356,14 +357,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\FreeType2\include\freetype\config\ftconfig.h" />
-    <ClInclude Include="..\..\FreeType2\include\freetype\config\ftheader.h" />
-    <ClInclude Include="..\..\FreeType2\include\freetype\config\ftmodule.h" />
-    <ClInclude Include="..\..\FreeType2\include\freetype\config\ftoption.h" />
-    <ClInclude Include="..\..\FreeType2\include\freetype\config\ftstdlib.h" />
-    <ClInclude Include="..\..\FreeType2\include\ft2build.h" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\freetype2\builds\windows\ftdebug.c" />
     <ClCompile Include="..\..\FreeType2\src\autofit\autofit.c" />

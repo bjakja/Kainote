@@ -34,7 +34,8 @@
 
 class WXDLLIMPEXP_FWD_BASE wxCStrData;
 class WXDLLIMPEXP_FWD_BASE wxString;
-
+namespace std{
+namespace tr{
 // ----------------------------------------------------------------------------
 // WX_DEFINE_VARARG_FUNC* macros
 // ----------------------------------------------------------------------------
@@ -346,7 +347,7 @@ struct wxFormatStringSpecifier
 #ifdef HAVE_TYPE_TRAITS
     typedef std::is_enum<T> is_enum;
 #elif defined HAVE_TR1_TYPE_TRAITS
-    typedef std::tr1::is_enum<T> is_enum;
+    typedef is_enum<T> is_enum;
 #endif
     enum { value = wxFormatStringSpecifierNonPodType<is_enum::value>::value };
 };
@@ -1218,7 +1219,8 @@ private:
          name(_WX_VARARG_WATCOM_UNPACK(numfixed, convfixed),                  \
                      _WX_VARARG_JOIN(N, _WX_VARARG_PASS_WATCOM));             \
     }
-
+}
+}
 #endif // __WATCOMC__
 
 #endif // _WX_STRVARARG_H_

@@ -16,7 +16,7 @@
 #pragma once
 
 #include "SubsGridWindow.h"
-
+#include <wx/window.h>
 
 class KainoteFrame;
 

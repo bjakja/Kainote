@@ -276,7 +276,8 @@
     #define wxCRT_PrintfNative wxCRT_PrintfA
     #define wxCRT_FprintfNative wxCRT_FprintfA
 #endif
-
+#define WX_DEFINE_VARARG_FUNC_SANS_N0;
+#define WX_DEFINE_VARARG_FUNC_SANS_N0
 
 WX_DEFINE_VARARG_FUNC_SANS_N0(int, wxPrintf, 1, (const wxFormatString&),
                               wxCRT_PrintfNative, wxCRT_PrintfA)
