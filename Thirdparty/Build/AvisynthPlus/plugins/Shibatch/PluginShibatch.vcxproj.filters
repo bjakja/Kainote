@@ -1,41 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc-convert.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\supereq.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\mem_block.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\shibatch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc.cpp" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc-convert.cpp" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\supereq.cpp" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\mem_block.cpp" />
+    <ClCompile Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\shibatch.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\fft.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\paramlist.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc-convert.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\supereq.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="H:\Kainote\Thirdparty\AviSynthPlus\plugins\Shibatch\mem_block.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\fft.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\paramlist.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\ssrc-convert.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\supereq.h" />
+    <ClInclude Include="$(solutionDir)Thirdparty\AviSynthPlus\plugins\Shibatch\mem_block.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

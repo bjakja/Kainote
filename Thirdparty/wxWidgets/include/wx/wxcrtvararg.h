@@ -276,17 +276,17 @@
     #define wxCRT_PrintfNative wxCRT_PrintfA
     #define wxCRT_FprintfNative wxCRT_FprintfA
 #endif
-#define WX_DEFINE_VARARG_FUNC_SANS_N0;
+//#define WX_DEFINE_VARARG_FUNC_SANS_N0;
 #define WX_DEFINE_VARARG_FUNC_SANS_N0
 
-WX_DEFINE_VARARG_FUNC_SANS_N0(int, wxPrintf, 1, (const wxFormatString&),
+WX_DEFINE_VARARG_FUNC_SANS_N0(int unused, wxPrintf, 1, (const wxFormatString&),
                               wxCRT_PrintfNative, wxCRT_PrintfA)
 inline int wxPrintf(const wxFormatString& s)
 {
     return wxPrintf("%s", s.InputAsString());
 }
 
-WX_DEFINE_VARARG_FUNC_SANS_N0(int, wxFprintf, 2, (FILE*, const wxFormatString&),
+WX_DEFINE_VARARG_FUNC_SANS_N0(int unused, wxFprintf, 2, (FILE*, const wxFormatString&),
                               wxCRT_FprintfNative, wxCRT_FprintfA)
 inline int wxFprintf(FILE *f, const wxFormatString& s)
 {
@@ -339,7 +339,7 @@ int WXDLLIMPEXP_BASE wxDoSprintfWchar(char *str, const wxChar *format, ...);
 #if wxUSE_UNICODE_UTF8
 int WXDLLIMPEXP_BASE wxDoSprintfUtf8(char *str, const char *format, ...);
 #endif
-WX_DEFINE_VARARG_FUNC(int, wxSprintf, 2, (char*, const wxFormatString&),
+WX_DEFINE_VARARG_FUNC(int unused, wxSprintf, 2, (char*, const wxFormatString&),
                       wxDoSprintfWchar, wxDoSprintfUtf8)
 
 int WXDLLIMPEXP_BASE
@@ -351,7 +351,7 @@ int WXDLLIMPEXP_BASE wxDoSnprintfWchar(char *str, size_t size, const wxChar *for
 #if wxUSE_UNICODE_UTF8
 int WXDLLIMPEXP_BASE wxDoSnprintfUtf8(char *str, size_t size, const char *format, ...);
 #endif
-WX_DEFINE_VARARG_FUNC(int, wxSnprintf, 3, (char*, size_t, const wxFormatString&),
+WX_DEFINE_VARARG_FUNC(int unused, wxSnprintf, 3, (char*, size_t, const wxFormatString&),
                       wxDoSnprintfWchar, wxDoSnprintfUtf8)
 
 int WXDLLIMPEXP_BASE
@@ -365,7 +365,7 @@ int WXDLLIMPEXP_BASE wxDoSprintfWchar(wchar_t *str, const wxChar *format, ...);
 #if wxUSE_UNICODE_UTF8
 int WXDLLIMPEXP_BASE wxDoSprintfUtf8(wchar_t *str, const char *format, ...);
 #endif
-WX_DEFINE_VARARG_FUNC(int, wxSprintf, 2, (wchar_t*, const wxFormatString&),
+WX_DEFINE_VARARG_FUNC(int unused, wxSprintf, 2, (wchar_t*, const wxFormatString&),
                       wxDoSprintfWchar, wxDoSprintfUtf8)
 
 int WXDLLIMPEXP_BASE
@@ -377,7 +377,7 @@ int WXDLLIMPEXP_BASE wxDoSnprintfWchar(wchar_t *str, size_t size, const wxChar *
 #if wxUSE_UNICODE_UTF8
 int WXDLLIMPEXP_BASE wxDoSnprintfUtf8(wchar_t *str, size_t size, const char *format, ...);
 #endif
-WX_DEFINE_VARARG_FUNC(int, wxSnprintf, 3, (wchar_t*, size_t, const wxFormatString&),
+WX_DEFINE_VARARG_FUNC(int unused, wxSnprintf, 3, (wchar_t*, size_t, const wxFormatString&),
                       wxDoSnprintfWchar, wxDoSnprintfUtf8)
 
 int WXDLLIMPEXP_BASE

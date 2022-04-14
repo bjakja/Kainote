@@ -56,17 +56,17 @@ public:
   bool __stdcall GetParity(int n) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    switch (cachehints) {
-    case CACHE_DONT_CACHE_ME:
-      return cache ? 0 : 1; // adaptively cache-able
-    case CACHE_GET_MTMODE:
-      return MT_NICE_FILTER;
-    case CACHE_GET_DEV_TYPE:
-      return (child->GetVersion() >= 5) ? child->SetCacheHints(CACHE_GET_DEV_TYPE, 0) : 0;
-    default:
-      return 0;
-    }
+	AVS_UNUSED(frame_range);
+	switch (cachehints) {
+	case CACHE_DONT_CACHE_ME:
+	  return cache ? 0 : 1; // adaptively cache-able
+	case CACHE_GET_MTMODE:
+	  return MT_NICE_FILTER;
+	case CACHE_GET_DEV_TYPE:
+	  return (child->GetVersion() >= 5) ? child->SetCacheHints(CACHE_GET_DEV_TYPE, 0) : 0;
+	default:
+	  return 0;
+	}
   }
 
   static AVSValue __cdecl Create(AVSValue args, void* mode, IScriptEnvironment* env);
@@ -92,8 +92,8 @@ public:
   bool __stdcall GetParity(int n) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
+	AVS_UNUSED(frame_range);
+	return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -116,8 +116,8 @@ public:
   bool __stdcall GetParity(int n) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
+	AVS_UNUSED(frame_range);
+	return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -140,8 +140,8 @@ public:
   bool __stdcall GetParity(int n) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
+	AVS_UNUSED(frame_range);
+	return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -245,8 +245,8 @@ public:
   void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
+	AVS_UNUSED(frame_range);
+	return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
 
   static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);
@@ -266,8 +266,8 @@ public:
   void __stdcall GetAudio(void* buf, int64_t start, int64_t count, IScriptEnvironment* env) override;
 
   int __stdcall SetCacheHints(int cachehints, int frame_range) override {
-    AVS_UNUSED(frame_range);
-    return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
+	AVS_UNUSED(frame_range);
+	return cachehints == CACHE_GET_MTMODE ? MT_NICE_FILTER : 0;
   }
 
 	static AVSValue __cdecl Create(AVSValue args, void*, IScriptEnvironment* env);

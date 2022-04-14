@@ -1,4 +1,0 @@
-^L:\KAINOTE\W\INCLUDE\WX\MSW\GENRCDEFS.H
-cl /EP /nologo "L:\Kainote\w\include\wx\msw\genrcdefs.h" > "..\..\lib\vc_x64_lib\mswud\wx\msw\rcdefs.h"
-^L:\KAINOTE\W\INCLUDE\WX\MSW\SETUP.H
-copy "L:\Kainote\w\include\wx\msw\setup.h" ..\..\lib\vc_x64_lib\mswud\wx\setup.h

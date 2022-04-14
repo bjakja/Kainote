@@ -51,7 +51,7 @@ public:
         CUnknown(pName,pUnk),
         m_pDirectDraw(NULL) { };
 
-    virtual CAggDirectDraw::~CAggDirectDraw() { };
+    virtual ~CAggDirectDraw() { };
 
     // Set the object we should be aggregating
     void SetDirectDraw(__inout LPDIRECTDRAW pDirectDraw) {
@@ -102,7 +102,7 @@ public:
         CUnknown(pName,pUnk),
         m_pDirectDrawSurface(NULL) { };
 
-    virtual ~CAggDrawSurface() { };
+    virtual CAggDrawSurface::~CAggDrawSurface() { };
 
     // Set the object we should be aggregating
     void SetDirectDrawSurface(__inout LPDIRECTDRAWSURFACE pDirectDrawSurface) {

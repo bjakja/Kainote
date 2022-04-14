@@ -164,7 +164,7 @@ char* PrintGUID(const GUID *g) {
 }
 
 // Format a state for printing
-char* PrintState(FILTER_STATE state) {
+const char* PrintState(FILTER_STATE state) {
   switch (state) {
     case State_Stopped: return "State_Stopped";
     case State_Paused:  return "State_Paused";
@@ -192,7 +192,7 @@ char* PrintFourCC(const int fccType) {
   return fcc;
 }
 
-char* PrintAudioType(const int type) {
+const char* PrintAudioType(const int type) {
   switch (type) {
     case SAMPLE_INT8:  return "Int8";
     case SAMPLE_INT16: return "Int16";
@@ -208,7 +208,7 @@ char* PrintAudioType(const int type) {
   return buf;
 }
 
-char* PrintPixelType(int pixel_type) {
+const char* PrintPixelType(int pixel_type) {
   switch (pixel_type) {
     case VideoInfo::CS_BGR24:    return "RGB24";
     case VideoInfo::CS_BGR32:    return "RGB32";
