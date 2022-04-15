@@ -253,6 +253,9 @@
     <ProjectReference Include="..\..\..\AvisynthCore\AvisynthCore.vcxproj">
       <Project>{2ac41f68-e271-4a29-9b99-1c1b27674c08}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\BaseClasses\baseclasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Zlib\Zlib.vcxproj">
       <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>
     </ProjectReference>

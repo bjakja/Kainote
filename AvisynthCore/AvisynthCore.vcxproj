@@ -47,7 +47,7 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2ac41f68-e271-4a29-9b99-1c1b27674c08}</ProjectGuid>
     <RootNamespace>AvisynthCore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>Avisynth</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -539,6 +539,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Thirdparty\AviSynthPlus\avs_core\core\avisynth.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Thirdparty\AviSynthPlus\plugins\Shibatch\fft.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

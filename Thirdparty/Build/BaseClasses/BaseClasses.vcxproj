@@ -114,7 +114,7 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -238,6 +238,7 @@
     <ClCompile Include="../../BaseClasses/wxdebug.cpp" />
     <ClCompile Include="../../BaseClasses/wxlist.cpp" />
     <ClCompile Include="../../BaseClasses/wxutil.cpp" />
+    <ClCompile Include="..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../BaseClasses/amextra.h" />

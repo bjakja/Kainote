@@ -35,6 +35,7 @@
 #include <avisynth.h>
 #include <avs/win.h>
 #include <avs/minmax.h>
+#include <edit.h>
 
 /********************************************************************
 * VFAPI plugin support

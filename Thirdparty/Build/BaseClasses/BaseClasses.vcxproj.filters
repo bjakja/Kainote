@@ -108,6 +108,9 @@
     <ClCompile Include="../../BaseClasses/wxutil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../BaseClasses/amextra.h">

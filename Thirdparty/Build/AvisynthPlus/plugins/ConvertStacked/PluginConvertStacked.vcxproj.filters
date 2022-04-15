@@ -5,9 +5,4 @@
       <UniqueIdentifier>{5D0F7A8D-3ECC-3284-9C83-5DA6800E3B56}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
 </Project>
