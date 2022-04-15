@@ -16,8 +16,7 @@
 // Last update: October 10, 2002
 //Reference
 
-#ifndef TYPELIST_INC_
-#define TYPELIST_INC_
+#pragma once
 
 #include "NullType.h"
 #include "TypeManip.h"
@@ -799,4 +798,4 @@ namespace Loki
 // Oct  10, 2002: added MakeTypelist (SGB/MKH)
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // TYPELIST_INC_
+

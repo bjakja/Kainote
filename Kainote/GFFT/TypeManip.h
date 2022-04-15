@@ -15,8 +15,7 @@
 
 // Last update: November 22, 2001
 
-#ifndef TYPEMANIP_INC_
-#define TYPEMANIP_INC_
+#pragma once
 
 namespace Loki
 {
@@ -234,4 +233,4 @@ struct SuperSubclassStrict
 //     call from function declaration. T.S.
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // TYPEMANIP_INC_
+//#endif // TYPEMANIP_INC_

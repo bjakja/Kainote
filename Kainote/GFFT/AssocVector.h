@@ -13,8 +13,7 @@
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef ASSOCVECTOR_INC_
-#define ASSOCVECTOR_INC_
+#pragma once
 
 #include <algorithm>
 #include <functional>
@@ -105,8 +104,8 @@ namespace Loki
         typedef typename Base::const_reverse_iterator const_reverse_iterator;
 
         class value_compare
-            : public binary_function<value_type, value_type, bool>
-            , private key_compare
+            : /*public std::binary_function<value_type, value_type, bool>*/
+            /*, */private key_compare
         {
             friend class AssocVector;
         
@@ -333,4 +332,4 @@ namespace Loki
 // February 2, 2003: fixed dependent names - credit due to Rani Sharoni
 ////////////////////////////////////////////////////////////////////////////////
 
-#endif // ASSOCVECTOR_INC_
+
