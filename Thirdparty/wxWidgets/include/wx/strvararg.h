@@ -346,7 +346,7 @@ struct wxFormatStringSpecifier
 #ifdef HAVE_TYPE_TRAITS
     typedef std::is_enum<T> is_enum;
 #elif defined HAVE_TR1_TYPE_TRAITS
-    typedef std::tr1::is_enum<T> is_enum;
+    typedef std/*::tr1*/::is_enum<T> is_enum;
 #endif
     enum { value = wxFormatStringSpecifierNonPodType<is_enum::value>::value };
 };

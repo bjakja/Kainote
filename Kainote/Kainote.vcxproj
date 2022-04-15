@@ -540,6 +540,12 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Demux.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
+    <ClInclude Include="GFFT\AssocVector.h" />
+    <ClInclude Include="GFFT\Factory.h" />
+    <ClInclude Include="GFFT\LokiTypeInfo.h" />
+    <ClInclude Include="GFFT\NullType.h" />
+    <ClInclude Include="GFFT\Typelist.h" />
+    <ClInclude Include="GFFT\TypeManip.h" />
     <ClInclude Include="KaiGauge.h" />
     <ClInclude Include="KaiPanel.h" />
     <ClInclude Include="LineParse.h" />
