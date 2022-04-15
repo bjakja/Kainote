@@ -4293,15 +4293,15 @@ inline size_t operator-(const wchar_t *p, const wxCStrData& cs)
 // ----------------------------------------------------------------------------
 
 // FIXME-UTF8: move this to buffer.h
-//inline wxCharBuffer::wxCharBuffer(const wxCStrData& cstr)
-//                    : wxCharTypeBufferBase(cstr.AsCharBuf())
-//{
-//}
+inline wxCharBuffer::wxCharBuffer(const wxCStrData& cstr)
+                    : wxCharTypeBufferBase(cstr.AsCharBuf())
+{
+}
 
-//inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
-//                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
-//{
-//}
+inline wxWCharBuffer::wxWCharBuffer(const wxCStrData& cstr)
+                    : wxCharTypeBufferBase(cstr.AsWCharBuf())
+{
+}
 
 #if wxUSE_UNICODE_UTF8
 // ----------------------------------------------------------------------------

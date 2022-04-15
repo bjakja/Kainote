@@ -747,14 +747,14 @@ class WXDLLIMPEXP_BASE wxLogStream : public wxLog
 {
 public:
     // redirect log output to an ostream
-    wxLogStream(ostream *ostr = (ostream *) NULL);
+    wxLogStream(wxSTD ostream *ostr = (wxSTD ostream *) NULL);
 
 protected:
     // implement sink function
     virtual void DoLogText(const wxString& msg);
 
     // using ptr here to avoid including <iostream.h> from this file
-    ostream *m_ostr;
+    wxSTD ostream *m_ostr;
 };
 
 #endif // wxUSE_STD_IOSTREAM

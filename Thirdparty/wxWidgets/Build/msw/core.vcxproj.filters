@@ -2755,9 +2755,6 @@
     <ClInclude Include="..\..\include\wx\xpmhand.h">
       <Filter>Common Headers</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\Bakura\Desktop\setup.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\include\wx\msw\setup.h">

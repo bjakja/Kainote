@@ -35,7 +35,7 @@
 #ifndef __Image_Sequence_H__
 #define __Image_Sequence_H__
 
-#include "il.h"
+#include <il.h>
 #include <avs/config.h>
 #ifdef AVS_WINDOWS
 #include <avs/win.h>

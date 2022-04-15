@@ -301,7 +301,7 @@ public:
   void assign(Iterator first, Iterator last)
   {
       clear();
-      reserve(distance(first, last));
+      reserve(std::distance(first, last));
       for(; first != last; ++first)
           push_back(*first);
   }

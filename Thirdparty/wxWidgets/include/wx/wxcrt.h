@@ -12,7 +12,6 @@
 
 #ifndef _WX_WXCRT_H_
 #define _WX_WXCRT_H_
-#undef UNICODE
 
 #include "wx/wxcrtbase.h"
 #include "wx/string.h"
