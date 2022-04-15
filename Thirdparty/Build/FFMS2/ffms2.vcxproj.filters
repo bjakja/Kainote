@@ -19,9 +19,6 @@
     <Filter Include="Vapoursynth">
       <UniqueIdentifier>{8cc15f2a-6612-4e85-96b3-d3abfe15ddab}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Avisynth">
-      <UniqueIdentifier>{95efeead-393a-4518-b1f2-9b8b6bb8c3d6}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\ffms2\src\core\ffms.cpp">
@@ -29,12 +26,6 @@
     </ClCompile>
     <ClCompile Include="..\..\ffms2\src\core\audiosource.cpp">
       <Filter>Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ffms2\src\avisynth\avisynth.cpp">
-      <Filter>Avisynth</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\ffms2\src\avisynth\avssources.cpp">
-      <Filter>Avisynth</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ffms2\src\core\filehandle.cpp">
       <Filter>Utils</Filter>
@@ -79,9 +70,6 @@
     </ClInclude>
     <ClInclude Include="..\..\ffms2\src\core\audiosource.h">
       <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\ffms2\src\avisynth\avssources.h">
-      <Filter>Avisynth</Filter>
     </ClInclude>
     <ClInclude Include="..\..\ffms2\include\ffmscompat.h">
       <Filter>API</Filter>

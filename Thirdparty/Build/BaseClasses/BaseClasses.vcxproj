@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
@@ -238,7 +238,6 @@
     <ClCompile Include="../../BaseClasses/wxdebug.cpp" />
     <ClCompile Include="../../BaseClasses/wxlist.cpp" />
     <ClCompile Include="../../BaseClasses/wxutil.cpp" />
-    <ClCompile Include="..\..\AviSynthPlus\plugins\ConvertStacked\ConvertStacked.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="../../BaseClasses/amextra.h" />

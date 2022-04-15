@@ -130,7 +130,9 @@
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>libavutil.a;libavcodec.a;libavformat.a;libswscale.a;libswresample.a;Zlib.lib;AviSynth.lib;psapi.lib;uuid.lib;oleaut32.lib;shlwapi.lib;gdi32.lib;vfw32.lib;secur32.lib;ws2_32.lib;mfplat.lib;mfuuid.lib;strmiids.lib;ole32.lib;user32.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\Thirdparty\ffmpeg\libavutil;$(SolutionDir)\Thirdparty\ffmpeg\libswscale;$(SolutionDir)\Thirdparty\ffmpeg\libswresample;$(SolutionDir)\Thirdparty\ffmpeg\libavformat;$(SolutionDir)\Thirdparty\ffmpeg\libavcodec;$(SolutionDir)bin\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>/NODEFAULTLIB:library</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -213,8 +215,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\ffms2\src\avisynth\avisynth.cpp" />
-    <ClCompile Include="..\..\ffms2\src\avisynth\avssources.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\audiosource.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\ffms.cpp" />
     <ClCompile Include="..\..\ffms2\src\core\filehandle.cpp" />
@@ -233,7 +233,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\ffms2\include\ffms.h" />
     <ClInclude Include="..\..\ffms2\include\ffmscompat.h" />
-    <ClInclude Include="..\..\ffms2\src\avisynth\avssources.h" />
     <ClInclude Include="..\..\ffms2\src\core\audiosource.h" />
     <ClInclude Include="..\..\ffms2\src\core\filehandle.h" />
     <ClInclude Include="..\..\ffms2\src\core\indexing.h" />
