@@ -351,7 +351,7 @@ public:
 	void OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
 	void SetAccels(bool all = false);
 	wxString GetName(const idAndType itype);
-	const std::map<int, const wxString> &GetNamesTable();
+	const std::map<int, wxString> &GetNamesTable();
 	const wxString &GetName(int id);
 	int GetType(int id);
 	const std::map<idAndType, hdata> &GetHotkeysMap(){ return hkeys; }

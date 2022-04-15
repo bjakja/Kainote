@@ -901,7 +901,7 @@ wxFont *config::GetFont(int offset)
 
 const wxString &config::FindLanguage(const wxString & symbol)
 {
-	auto &it = Languages.find(symbol);
+	const auto &it = Languages.find(symbol);
 	if (it != Languages.end())
 		return it->second;
 

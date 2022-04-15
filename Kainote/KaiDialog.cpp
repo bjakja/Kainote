@@ -396,7 +396,8 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 	if (w < 1 || h < 1){ return; }
 	wxPaintDC dc(this);
 	wxMemoryDC mdc;
-	mdc.SelectObject(wxBitmap(w, h));
+	wxBitmap kaiDialogBitmap(w, h);
+	mdc.SelectObject(kaiDialogBitmap);
 	mdc.SetFont(GetFont());
 	wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
 	mdc.SetBrush(bg);

@@ -20,6 +20,8 @@
 #include <vector>
 #include <utility>
 
+
+
 namespace Loki
 {
 ////////////////////////////////////////////////////////////////////////////////
@@ -32,7 +34,8 @@ namespace Loki
         template <class Value, class C>
         class AssocVectorCompare : public C
         {
-            typedef typename C::first_argument_type first_argument_type;
+            typename C::first_argument_type;
+            typedef const C::first_argument_type first_argument_type;
             typedef std::pair<typename C::first_argument_type, Value>
                 Data;
             
@@ -48,11 +51,11 @@ namespace Loki
                 const first_argument_type& rhs) const
             { return C::operator()(lhs, rhs); }
             
-            bool operator()(const Data& lhs, const Data& rhs) const
+            bool operator()(const Data& lhs, const Data& rhs)
             { return operator()(lhs.first, rhs.first); }
             
             bool operator()(const Data& lhs, 
-                const first_argument_type& rhs) const
+                const first_argument_type& rhs)
             { return operator()(lhs.first, rhs); }
             
             bool operator()(const first_argument_type& lhs,
@@ -105,8 +108,8 @@ namespace Loki
         typedef typename Base::const_reverse_iterator const_reverse_iterator;
 
         class value_compare
-            : /*public std::binary_function<value_type, value_type, bool>*/
-            /*, */private key_compare
+            : public std::binary_function<key_type>
+            , private key_compare
         {
             friend class AssocVector;
         

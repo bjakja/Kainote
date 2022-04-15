@@ -224,16 +224,16 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	int Modifiers = 0;
 	int id = menu->GetPopupMenuSelection(pos, this, &Modifiers);
 
-	if (id < 0){ goto done; }
+	if (id < 0){ delete menu; }
 
 	if (Modifiers == wxMOD_SHIFT){
-		if (id < 4000){ goto done; }
+		if (id < 4000){ delete menu; }
 		Hkeys.OnMapHkey(id, emptyString, this, GRID_HOTKEY);
-		goto done;
+		delete menu;
 	}
 	wxCommandEvent commandEvent(wxEVT_COMMAND_MENU_SELECTED, id);
 	OnAccelerator(commandEvent);
-done:
+
 	delete menu;
 	//VB->m_blockRender = false;
 }
@@ -978,7 +978,8 @@ void SubsGrid::MoveTextTL(char mode)
 				//Mode wher it merge all collided lines in one line
 				if (mode == 1){
 					if (nextDial){
-						wxString mid = (GetDialogue(firstSelected)->TextTl != emptyString && nextDial->TextTl != emptyString) ? L"\\N" : emptyString;
+						wxString mid = (GetDialogue(firstSelected)->TextTl != emptyString && 
+							nextDial->TextTl != emptyString) ? wxString(L"\\N") : emptyString;
 						CopyDialogue(firstSelected)->TextTl << mid << nextDial->TextTl;
 						if (i != firstSelected && lastDial){ CopyDialogue(i)->TextTl = lastDial->TextTl; }
 					}

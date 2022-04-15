@@ -272,7 +272,7 @@ void MisspellReplacer::FillRulesList()
 	while (tokenizer.HasMoreTokens())
 	{
 		wxString token = tokenizer.GetNextToken();
-		wxString OnOff = (tokenizerOnOff.HasMoreTokens()) ? tokenizerOnOff.GetNextToken() : L"0";
+		wxString OnOff = (tokenizerOnOff.HasMoreTokens()) ? tokenizerOnOff.GetNextToken() : wxString(L"0");
 		Rule newRule(token);
 		rules.push_back(newRule);
 

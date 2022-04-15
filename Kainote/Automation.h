@@ -192,7 +192,7 @@ namespace Auto {
 		void ReloadMacro(int script, bool autoload = false);
 		void ReloadScripts(bool first = false);
 		bool AddFromSubs();
-		static void OnEdit(wxString &Filename);
+		static void OnEdit(const wxString &Filename);
 		bool CheckChanges();
 		// make menu with all macros or error message
 		void BuildMenu(Menu **bar, bool all = false);

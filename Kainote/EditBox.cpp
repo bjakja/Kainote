@@ -1610,7 +1610,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		//we did not need this value at all.
 		bool isFN = findtag.StartsWith(L"fn");
 		bool isR = findtag.StartsWith(L"r");
-		wxString pattern = (isFN) ? L"fn(.*)" :
+		wxString pattern = (isFN) ? wxString(L"fn(.*)") :
 			(isR) ? wxString(L"(r.*)") : findtag + L"([0-9\\(&-].*)";
 		bool onceInText = type == L"1";
 		if (FindTag(pattern, emptyString, onceInText, !onceInText)) {

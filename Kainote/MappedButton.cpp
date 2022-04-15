@@ -452,7 +452,7 @@ void MappedButton::CalculateSize(int *w, int *h)
 	int resultw = 0, resulth = 0;
 	wxArrayString namewraps = wxStringTokenize(name, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (auto &token : namewraps){
-		GetTextExtent((token == emptyString) ? L"T" : token, &fw, &fh);
+		GetTextExtent((token == emptyString) ? wxString(L"T") : token, &fw, &fh);
 		resulth += fh;
 		if (resultw < fw)
 			resultw = fw;
@@ -721,7 +721,7 @@ void ToggleButton::CalculateSize(int *w, int *h)
 	int resultw = 0, resulth = 0;
 	wxArrayString namewraps = wxStringTokenize(name, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (auto &token : namewraps){
-		GetTextExtent((token == emptyString) ? L"T" : token, &fw, &fh);
+		GetTextExtent((token == emptyString) ? wxString(L"T") : token, &fw, &fh);
 		resulth += fh;
 		if (resultw < fw)
 			resultw = fw;

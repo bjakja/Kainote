@@ -51,7 +51,8 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 	textHeight = 0;
 	int textLineHeight = 0;
 	if (text.empty()) {
-		GetTextExtent(L"|", &fullw, &textHeight, 0, 0, &GetFont());
+		wxFont KaiStaticTextFont = GetFont();
+		GetTextExtent(L"|", &fullw, &textHeight, 0, 0, &KaiStaticTextFont);
 		textLineHeight = textHeight;
 	}
 	else{
@@ -67,7 +68,7 @@ void KaiStaticText::CalculateSize(int *w, int *h)
 			size_t nfound = text.find(wxUniChar(L'\n'), i);
 			i = (nfound != -1) ? nfound : text.length() - 1;
 			wxString stringToMesure = text.Mid(currentPosition, i - currentPosition + 1);
-			GetTextExtent((stringToMesure.length()) ? stringToMesure : L"|", &fw, &fh);
+			GetTextExtent((stringToMesure.length()) ? stringToMesure : wxString(L"|"), &fw, &fh);
 			if (!textLineHeight)
 				textLineHeight = fh;
 			if (fw > mesureSize){
@@ -194,7 +195,8 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 
 
 	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w, h));
+	wxBitmap KaiStaticTextBitmap(w, h);
+	tdc.SelectObject(KaiStaticTextBitmap);
 	/*GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext *gc = renderer->CreateContext(tdc);
 	if (!gc){*/

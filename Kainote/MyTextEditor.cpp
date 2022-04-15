@@ -222,7 +222,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 			continue;
 		}
 		
-		auto &it = fontGDISizes.find(ch);
+		const auto &it = fontGDISizes.find(ch);
 		if (it != fontGDISizes.end()) {
 			widthCount += it->second;
 		}
@@ -281,7 +281,7 @@ void TextEditor::CalcWrapsD2D(GraphicsContext *gc, int windowWidth)
 			continue;
 		}
 
-		auto &it = fontSizes.find(ch);
+		const auto &it = fontSizes.find(ch);
 		if (it != fontSizes.end()){
 			widthCount += it->second;
 		}

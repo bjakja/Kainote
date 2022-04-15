@@ -34,7 +34,7 @@ const std::map<int, wxString> & HotkeysNaming::GetNamesTable()
 
 const wxString & HotkeysNaming::GetName(int id)
 {
-	auto & it = names.find(id);
+	const auto & it = names.find(id);
 	if (it != names.end())
 		return it->second;
 

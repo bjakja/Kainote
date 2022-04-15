@@ -96,8 +96,9 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	if (w == 0 || h == 0){ return; }
 
 	bool enabled = IsThisEnabled();
-	wxString secondName = (enabled && value) ? L"_selected" : (enabled) ? emptyString : (value) ? L"_selected_inactive" : L"_inactive";
-	wxString bitmapName = (isCheckBox) ? L"checkbox" + secondName : L"radio" + secondName;
+	wxString secondName = (enabled && value) ? wxString(L"_selected") : 
+		(enabled) ? emptyString : (value) ? wxString(L"_selected_inactive") : wxString(L"_inactive");
+	wxString bitmapName = (isCheckBox) ? wxString(L"checkbox") + secondName : wxString("Lradio") + secondName;
 	wxBitmap checkboxBmp = wxBITMAP_PNG(bitmapName);
 	if (enter){ BlueUp(&checkboxBmp); }
 
@@ -217,7 +218,7 @@ bool KaiCheckBox::SetFont(const wxFont &font)
 	wxArrayString lines = wxStringTokenize(label, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (size_t i = 0; i < lines.size(); i++){
 		int fw, fh;
-		GetTextExtent((lines[i].empty()) ? L"|" : lines[i], &fw, &fh);
+		GetTextExtent((lines[i].empty()) ? wxString(L"|") : lines[i], &fw, &fh);
 		fontHeight += fh;
 		if (fullw < fw){ fullw = fw; }
 	}

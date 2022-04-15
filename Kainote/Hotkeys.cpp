@@ -351,7 +351,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 	if (accel == emptyString){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
 	int modif = GetModifier(accel);
 
-	wxString akey = (accel.EndsWith(L"-")) ? L"-" : accel.AfterLast(L'-');
+	wxString akey = (accel.EndsWith(L"-")) ? wxString(L"-") : accel.AfterLast(L'-');
 	int key = 0;
 
 	std::map<int, wxString>::iterator cur;

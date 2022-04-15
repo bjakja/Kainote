@@ -20,6 +20,7 @@
 #include "SubsGrid.h"
 #include "ProgressDialog.h"
 
+
 Demux::~Demux()
 {
 	if (indexer)

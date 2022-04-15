@@ -98,7 +98,8 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	if (w < 1 || h < 1){ return; }
 	
 	wxMemoryDC mdc;
-	mdc.SelectObject(wxBitmap(w, h));
+	wxBitmap KaiFrameBitmap(w, h);
+	mdc.SelectObject(KaiFrameBitmap);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
 	GraphicsContext* gc = NULL;//renderer->CreateContext(mdc);

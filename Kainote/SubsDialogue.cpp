@@ -717,7 +717,7 @@ ParseData* Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 						else{
 							if (tagName != L"fn" && !tagValue.ToCDouble(&tmpValue)){
 								wxString newTagValue;
-								for (auto & ch : tagValue){
+								for (const auto & ch : tagValue){
 									if (!wxIsdigit(ch) && ch != L'.' && ch != L'-' && ch != L'+')
 										break;
 									newTagValue += ch;

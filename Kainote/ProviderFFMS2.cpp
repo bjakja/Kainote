@@ -250,9 +250,9 @@ int ProviderFFMS2::Init()
 		audiotrack = progress->ShowSecondaryDialog([=]() {
 			kainoteApp* Kaia = (kainoteApp*)wxTheApp;
 
-			KaiListBox tracks(Kaia->Frame, tracks, _("Wybierz ścieżkę"), true);
-			if (tracks.ShowModal() == wxID_OK) {
-				int result = wxAtoi(tracks.GetSelection().BeforeFirst(':'));
+			KaiListBox tracks1(Kaia->Frame, tracks, _("Wybierz ścieżkę"), true);
+			if (tracks1.ShowModal() == wxID_OK) {
+				int result = wxAtoi(tracks1.GetSelection().BeforeFirst(':'));
 				return result;
 			}
 			return -1;

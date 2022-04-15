@@ -340,7 +340,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Demux.cpp" />
-    <ClCompile Include="AssocVector.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
@@ -665,23 +664,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
-      <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
-      <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
-      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Zlib\Zlib.vcxproj">
       <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\base.vcxproj">
-      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\core.vcxproj">
-      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

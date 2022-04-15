@@ -341,7 +341,7 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 	{
 		const wxUniChar &ch = KText[i];
 
-		auto &it = fontGDISizes.find(ch);
+		const auto &it = fontGDISizes.find(ch);
 		if (it != fontGDISizes.end()) {
 			widthCount += it->second;
 		}
@@ -417,7 +417,7 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 	{
 		const wxUniChar &ch = KText[i];
 		
-		auto &it = fontSizes.find(ch);
+		const auto &it = fontSizes.find(ch);
 		if (it != fontSizes.end()) {
 			widthCount += it->second;
 		}
@@ -1743,7 +1743,7 @@ bool KaiTextCtrl::SetFont(const wxFont &_font)
 {
 	font = _font;
 	int fw, fh;
-	GetTextExtent(multiline ? L"#TWFfGH" : KText.empty()? L"T" : KText, &fw, &fh);
+	GetTextExtent(multiline ? wxString(L"#TWFfGH") : KText.empty()? wxString(L"T") : KText, &fw, &fh);
 	Fheight = fh;
 	wxSize minSize = GetMinSize();
 	minSize.y = fh + 10;

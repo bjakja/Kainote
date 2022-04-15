@@ -98,7 +98,7 @@ void FontLogContent::DoLog(FontCollector *fc){
 	if (styles.size())
 		messageText << _("W stylach:\n");
 	stylesArea.x = fc->currentTextPosition + messageText.length();
-	for (auto &cur = styles.begin(); cur != styles.end(); cur++){
+	for (std::map<wxString, wxArrayInt>::iterator cur = styles.begin(); cur != styles.end(); cur++) {
 		messageText << L" - " << cur->first;
 		//if (cur->second.GetCount() > 1){
 			messageText << _(" zakładki: ");
@@ -112,7 +112,7 @@ void FontLogContent::DoLog(FontCollector *fc){
 	if (lines.size())
 		messageText << _("W linijkach: ");
 	linesArea.x = fc->currentTextPosition + messageText.length();
-	for (auto &cur = lines.begin(); cur != lines.end(); cur++){
+	for (std::map<int, wxArrayInt>::iterator cur = lines.begin(); cur != lines.end(); cur++){
 		messageText << (cur->first + 1) << L", ";
 	}
 	if (lines.size()){

@@ -134,8 +134,8 @@ protected:
 	wxArrayInt positioning;
 	std::vector<TextStyle> textStyles;
 	//std::vector<int> charmap;
-	std::map<wxUniChar, double> fontSizes;
-	std::map<wxUniChar, int> fontGDISizes;
+	std::map<const wxUniChar, double> fontSizes;
+	std::map<const wxUniChar, int> fontGDISizes;
 	wxMutex mutex;
 	wxSize lastSize;
 	long style;

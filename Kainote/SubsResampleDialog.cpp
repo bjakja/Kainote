@@ -117,7 +117,8 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		destinedResolutionX->SetInt(videoSize.x);
 		destinedResolutionY->SetInt(videoSize.y);
 		fromVideo->Enable(false);
-		OnChangedVideoResolution(wxCommandEvent());
+		wxCommandEvent cmdEvt;
+		OnChangedVideoResolution(cmdEvt);
 	}, 26548);
 
 	mainSizer->Add(subsResolutionStaticSizer, 1, wxALL | wxEXPAND, 2);

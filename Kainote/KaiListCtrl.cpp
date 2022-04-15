@@ -512,7 +512,8 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	tdc.SetTextForeground(enabled ? txt : inactivetxt);
 	tdc.SetFont(GetFont());
 	if (isFiltered){
-		fdc.SelectObject(wxBitmap(13, h));
+		wxBitmap liscCtrlBitmap(13, h);
+		fdc.SelectObject(liscCtrlBitmap);
 		fdc.SetBrush(wxBrush(enabled ? Options.GetColour(STATICLIST_BACKGROUND) : Options.GetColour(WINDOW_BACKGROUND_INACTIVE)));
 		fdc.SetPen(wxPen(border));
 		fdc.DrawRectangle(0, 0, 13, h);

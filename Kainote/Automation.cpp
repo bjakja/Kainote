@@ -32,7 +32,7 @@
 /// @brief Lua 5.1-based scripting engine
 /// @ingroup scripting
 ///
-#include "config.h"
+//#include "config.h"
 #include "Automation.h"
 #include "Hotkeys.h"
 
@@ -1109,7 +1109,7 @@ namespace Auto{
 		return true;
 	}
 
-	void Automation::OnEdit(wxString &Filename)
+	void Automation::OnEdit(const wxString &Filename)
 	{
 		wxString editor = Options.GetString(AUTOMATION_SCRIPT_EDITOR);
 		if (editor == emptyString || wxGetKeyState(WXK_SHIFT)){

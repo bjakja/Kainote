@@ -39,7 +39,7 @@
 //#include "Utils.h"
 #include "AudioBox.h"
 #include "KainoteMain.h"
-#include "Config.h"
+//#include "Config.h"
 #include "MappedButton.h"
 #include <math.h>
 #include "KeyframesLoader.h"

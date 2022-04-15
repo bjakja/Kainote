@@ -156,17 +156,22 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				theList->ScrollTo(pos);
 				theList->SetSelection(pos);
 				OptionsDialog::hotkeysCopy[idAndType(hotkeyId.id, hkd.type)] = hdata(name, hkd.hotkey);
-				goto done;
+				theList->SetModified(true);
+				theList->PushHistory();
 			}
+			
 			ItemHotkey* item = (ItemHotkey*)theList->CopyRow(nitem, 1);
 			item->accel = hkd.hotkey;
 			item->modified = true;
 			ItemText* textitem = (ItemText*)theList->GetItem(nitem, 0);
 			textitem->modified = true;
+			
 			theList->ScrollTo(nitem + 1);
 			theList->SetSelection(nitem);
 			OptionsDialog::hotkeysCopy[idAndType(hotkeyId.id, hkd.type)] = hdata(name, hkd.hotkey);
-			goto done;
+			theList->SetModified(true);
+			theList->PushHistory();
+			
 		}
 		ItemHotkey* item = (ItemHotkey*)theList->CopyRow(y, 1);
 		item->accel = hkd.hotkey;
@@ -175,7 +180,6 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 		textitem->modified = true;
 		theList->Refresh(false);
 		OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, hkd.hotkey);
-	done:
 		theList->SetModified(true);
 		theList->PushHistory();
 	}
@@ -1310,7 +1314,7 @@ void OptionsDialog::OnResetDefault(wxCommandEvent& event)
 void OptionsDialog::AddHotkeysOnList()
 {
 	std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
-	const std::map<int, const wxString> &hkeysNames = Hkeys.GetNamesTable();
+	const std::map<int, wxString> &hkeysNames = Hkeys.GetNamesTable();
 
 	int lastType = -1;
 
@@ -1336,7 +1340,7 @@ void OptionsDialog::AddHotkeysOnList()
 				}
 
 				wxString windowName = windowNames[curmhk->first.Type] + L" ";
-				auto & it = hkeysNames.find(curmhk->first.id);
+				const auto & it = hkeysNames.find(curmhk->first.id);
 				if (it != hkeysNames.end()){
 					name = it->second;
 				}
@@ -1359,7 +1363,7 @@ void OptionsDialog::AddHotkeysOnList()
 
 		name = windowNames[htype] + L" " + cur->second;
 		//seeking for mapped hotkey
-		auto & it = mappedhkeys.find(idAndType(cur->first, htype));
+		const auto & it = mappedhkeys.find(idAndType(cur->first, htype));
 		if (it != mappedhkeys.end()){
 			accel = it->second.Accel;
 			mappedhkeys.erase(it);

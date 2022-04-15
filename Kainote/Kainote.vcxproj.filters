@@ -455,9 +455,6 @@
     <ClCompile Include="AutomationUtils.cpp">
       <Filter>Automation</Filter>
     </ClCompile>
-    <ClCompile Include="AssocVector.cpp">
-      <Filter>Audio</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BitmapButton.h">

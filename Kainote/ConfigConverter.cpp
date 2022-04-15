@@ -516,7 +516,7 @@ bool ConfigConverter::ConvertConfig(wxString *rawConfig)
 		wxString token = tokenize.GetNextToken();
 		if (configrx.Matches(token)){
 			wxString match = configrx.GetMatch(token, 1);
-			auto &it = convertConfig.find(match);
+			const auto &it = convertConfig.find(match);
 			if (it != convertConfig.end()){
 				if (token.StartsWith(L"ToolbarIDs")){
 					wxString vals = token.AfterFirst(L'=');
@@ -524,7 +524,7 @@ bool ConfigConverter::ConvertConfig(wxString *rawConfig)
 					wxStringTokenizer idsTokenizer(vals, L"|", wxTOKEN_STRTOK);
 					while (idsTokenizer.HasMoreTokens()){
 						wxString idToken = idsTokenizer.GetNextToken();
-						auto &itID = convertHotkeys.find(idToken);
+						const auto &itID = convertHotkeys.find(idToken);
 						if (itID != convertHotkeys.end()){
 							token += L"\t" + itID->second + L"\n";
 						}
@@ -566,7 +566,7 @@ bool ConfigConverter::ConvertColors(wxString *rawColors)
 		wxString token = tokenize.GetNextToken();
 		if (configrx.Matches(token)){
 			wxString match = configrx.GetMatch(token, 1);
-			auto &it = convertColors.find(match);
+			const auto &it = convertColors.find(match);
 			if (it != convertColors.end()){
 				size_t reps = configrx.ReplaceFirst(&token, it->second);
 				if (reps)
@@ -592,10 +592,10 @@ bool ConfigConverter::ConvertHotkeys(wxString *rawHotkeys)
 		wxString token = tokenize.GetNextToken();
 		if (configrx.Matches(token)){
 			wxString match = configrx.GetMatch(token, 1);
-			auto &it = convertHotkeys.find(match);
+			const auto &it = convertHotkeys.find(match);
 			if (it != convertHotkeys.end()){
 				wxString match = configrx.GetMatch(token, 2);
-				wxString mark = match == L'N' ? L"S" : match == L'W' ? L"V" : match;
+				wxString mark = match == L'N' ? wxString(L"S") : match == L'W' ? wxString(L"V") : match;
 				wxString replace = it->second + L" " + mark + L"=";
 				size_t reps = configrx.ReplaceFirst(&token, replace);
 				if (reps)

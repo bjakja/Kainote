@@ -353,128 +353,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	Connect(30000, 30079, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&KainoteFrame::OnRecent);
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &event){
 		LogHandler::ShowLogWindow();
-#ifdef TEST_FFMPEG
-
-		TabPanel* tab = GetTab();
-		if (!tab) {
-			KaiLog(L"no tab");
-			return;
-		}
-		if (tab->VideoPath.empty()) {
-			KaiLog(L"no video");
-			return;
-		}
-
-		AVFormatContext* FormatContext = nullptr;
-		if (avformat_open_input(&FormatContext, tab->VideoPath.utf8_str(), nullptr, nullptr) != 0) {
-			KaiLog(L"cannot open video");
-			return;
-		}
-		if (avformat_find_stream_info(FormatContext, nullptr) < 0) {
-			avformat_close_input(&FormatContext);
-			KaiLog(L"cannot read info");
-		}
-		//wxArrayInt tracks;
-		for (unsigned int i = 0; i < FormatContext->nb_streams; i++) {
-			if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_SUBTITLE) {
-				KaiLog(wxString::Format(L"found subtitle track %i", i));
-				AVCodecID codecId = FormatContext->streams[i]->codecpar->codec_id;
-				if (codecId == AV_CODEC_ID_SUBRIP) {
-					KaiLog(L"Subtitles SRT");
-				}
-				else if (codecId == AV_CODEC_ID_SSA) {
-					KaiLog(L"Subtitles SSA");
-				}
-				else if (codecId == AV_CODEC_ID_ASS) {
-					KaiLog(L"Subtitles ASS");
-				}
-				else if (codecId == AV_CODEC_ID_TEXT) {
-					KaiLog(L"Subtitles raw text");
-				}
-				else {
-					KaiLog(wxString::Format(L"Subtitles format %i", (int)codecId));
-					continue;
-				}
-				
-				AVDictionary* d = FormatContext->streams[i]->metadata;
-				AVDictionaryEntry* tt = av_dict_get(d, "title", 0, 0);
-				if (tt)
-					KaiLog(wxString::Format(L"name %s", wxString(tt->value, wxConvUTF8)));
-				if (FormatContext->streams[i]->codecpar->extradata_size) {
-					char* buf = (char*)FormatContext->streams[i]->codecpar->extradata;
-					wxString line = wxString(buf, wxConvUTF8, FormatContext->streams[i]->codecpar->extradata_size);
-					KaiLog(line);
-				}
-				AVPacket* Packet = av_packet_alloc();
-				if (Packet) {
-					AVStream* stream = FormatContext->streams[i];
-					av_seek_frame(FormatContext, i, 0, 0);
-					while (av_read_frame(FormatContext, Packet) >= 0) {
-						if (Packet->stream_index == i) {
-							if (Packet->size < 2) {
-								av_packet_unref(Packet);
-								continue;
-							}
-
-							KaiLog(wxString::Format(L"track %i", Packet->stream_index));
-							STime start, end;
-							start.NewTime(Packet->pts);
-							end.NewTime((Packet->duration) + start.mstime);
-							KaiLog(wxString::Format(L"times %s %s", start.GetFormatted(ASS), end.GetFormatted(ASS)));
-							char* buf = (char*)Packet->data;
-							wxString line = wxString(buf, wxConvUTF8);
-							KaiLog(line);
-
-						}
-						av_packet_unref(Packet);
-
-					}
-					av_packet_unref(Packet);
-					av_packet_free(&Packet);
-				}
-				else
-					KaiLog("no packet");
-
-			}
-			else if (FormatContext->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_ATTACHMENT) {
-				KaiLog(wxString::Format(L"found atachment track %i", i));
-				AVDictionary* d = FormatContext->streams[i]->metadata;
-				AVDictionaryEntry* tf = av_dict_get(d, "filename", 0, 0);
-				AVDictionaryEntry* tm = av_dict_get(d, "mimetype", 0, 0);
-				if(tf)
-					KaiLog(wxString::Format(L"filename %s", wxString(tf->value, wxConvUTF8)));
-				if (tm)
-					KaiLog(wxString::Format(L"type %s", wxString(tm->value, wxConvUTF8)));
-				/*int extradataSize = FormatContext->streams[i]->codecpar->extradata_size;
-				if (extradataSize) {
-					KaiLog(wxString::Format(L"type %i", extradataSize));
-					wxFile file;
-					file.Create(Options.pathfull + L"\\" + wxString(tf->value, wxConvUTF8), true, wxS_DEFAULT);
-					if (file.IsOpened()) {
-						file.Write(FormatContext->streams[i]->codecpar->extradata, extradataSize);
-						file.Close();
-					}
-					else { KaiLog(L"Cannot open font file"); }
-				}*/
-				
-			}
-			else
-				continue;
-
-
-			
-		}
-		
-		for (int i = 0; i < FormatContext->nb_chapters; i++) {
-			AVChapter *chapter = FormatContext->chapters[i];
-			KaiLog(wxString::Format(L"start %llu, end %llu", chapter->start, chapter->end));
-			AVDictionaryEntry* e = av_dict_get(chapter->metadata, "title", NULL, 0);
-			KaiLog(wxString::Format(L"chapter title %s", e ? wxString(e->value, wxConvUTF8) : emptyString));
-		}
-		
-
-		avformat_close_input(&FormatContext);
-#endif
 	}, 9989);
 
 	Bind(wxEVT_ACTIVATE, &KainoteFrame::OnActivate, this);
@@ -516,8 +394,23 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		//it's not needed here
 		//change focus only when main window was activated via frame bar
 		//or when tab changed
-		if (this->HasFocus() || this->Tabs->HasFocus() || this->Menubar->HasFocus())
-			focusFunction(wxFocusEvent());
+		if (this->HasFocus() || this->Tabs->HasFocus() || this->Menubar->HasFocus()) {
+			wxFocusEvent fevt;
+			TabPanel* tab = GetTab();
+			if (tab->lastFocusedWindowId) {
+				wxWindow* win = FindWindowById(tab->lastFocusedWindowId, tab);
+				if (win) {
+					win->SetFocus();
+					return;
+				}
+			}
+			if (tab->Grid->IsShown()) {
+				tab->Grid->SetFocus();
+			}//test why it was disabled or fix this bug
+			else if (tab->Video->IsShown()) {
+				tab->Video->SetFocus();
+			}
+		}
 
 	}, 6789);
 

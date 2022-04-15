@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "Config.h"
+#include <wx/string.h>
 #include <map>
 #include <utility>
 
@@ -30,8 +30,8 @@ private:
 	ConfigConverter(){};
 	~ConfigConverter(){};
 	ConfigConverter(const ConfigConverter &copy) = delete;
-	std::map<wxString, wxString> convertColors;
-	std::map<wxString, std::pair<wxString, wxString>> convertConfig;
-	std::map<wxString, wxString> convertHotkeys;
+	std::map<const wxString, wxString> convertColors;
+	std::map<const wxString, std::pair<wxString, wxString>> convertConfig;
+	std::map<const wxString, wxString> convertHotkeys;
 	static ConfigConverter ccthis;
 };
