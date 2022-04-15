@@ -35,13 +35,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Fribidi", "Thirdparty\Build
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Avisynth", "AvisynthCore\AvisynthCore.vcxproj", "{2AC41F68-E271-4A29-9B99-1C1B27674C08}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "Thirdparty\wxWidgets\Build\msw\wx_vc9_base.vcxproj", "{3FCC50C2-81E9-5DB2-B8D8-2129427568B1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "Thirdparty\wxWidgets\Build\msw\base.vcxproj", "{3FCC50C2-81E9-5DB2-B8D8-2129427568B1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core", "Thirdparty\wxWidgets\Build\msw\wx_vc9_core.vcxproj", "{6744DAD8-9C70-574A-BFF2-9F8DDDB24A75}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core", "Thirdparty\wxWidgets\Build\msw\core.vcxproj", "{6744DAD8-9C70-574A-BFF2-9F8DDDB24A75}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxpng", "Thirdparty\wxWidgets\Build\msw\wx_vc9_wxpng.vcxproj", "{8ACC122A-CA6A-5AA6-9C97-9CDD2E533DB0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxpng", "Thirdparty\wxWidgets\Build\msw\wxpng.vcxproj", "{8ACC122A-CA6A-5AA6-9C97-9CDD2E533DB0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxregex", "Thirdparty\wxWidgets\Build\msw\wx_vc9_wxregex.vcxproj", "{56A4B526-BB81-5D01-AAA9-16D23BBB169D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wxregex", "Thirdparty\wxWidgets\Build\msw\wxregex.vcxproj", "{56A4B526-BB81-5D01-AAA9-16D23BBB169D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PluginVDubFilter", "Thirdparty\Build\AvisynthPlus\plugins\VDubFilter\PluginVDubFilter.vcxproj", "{DC203E7F-4D6E-31D1-BA76-73DF89D0CE1F}"
 EndProject

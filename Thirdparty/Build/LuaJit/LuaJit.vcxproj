@@ -45,7 +45,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BA804678-E98B-4026-8D33-A8C5263C669E}</ProjectGuid>
     <RootNamespace>LuaJit</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.20348.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -57,7 +57,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -162,7 +162,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;LUAJIT_ENABLE_LUA52COMPAT;LUAJIT_DISABLE_BUFFER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Thirdparty\build\LuaJitBuild\$(Platform)\$(Configuration);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -269,11 +269,11 @@
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <Target Name="BuildVM" Inputs="..\..\LuaJIT\src\host\buildvm.c;..\..\LuaJIT\src\lj_opt_fold.c" Outputs="..\LuaJitBuild\$(Platform)\$(Configuration)\lj_vm.obj;..\LuaJitBuild\$(Platform)\$(Configuration)\lj_folddef.h">
+  <Target Name="BuildVM" Inputs="..\..\LuaJIT\src\host\buildvm.c;..\..\LuaJIT\src\lj_opt_fold.c" Outputs="$(SolutionDir)obj\$(Platform)\$(Configuration)\lj_vm.obj;$(SolutionDir)obj\$(Platform)\$(Configuration)\lj_folddef.h">
     <Message Text="luajit-buildvm peobj" Importance="High" />
     <Exec Command="$(BuildVMCommand) -m peobj -o lj_vm.obj" WorkingDirectory="$(SolutionDir)bin\$(Platform)\$(Configuration)" />
     <Message Text="luajit-buildvm folddef" Importance="High" />
-    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="$(SolutionDir)\bin$(Platform)\$(Configuration)" />
+    <Exec Command="$(BuildVMCommand) -m folddef -o lj_folddef.h $(SolutionDir)ThirdParty\luajit\src\lj_opt_fold.c" WorkingDirectory="$(SolutionDir)bin\$(Platform)\$(Configuration)" />
     <ItemGroup>
       <Lib Include="$(SolutionDir)bin\$(Platform)\$(Configuration)\lj_vm.obj" />
     </ItemGroup>
@@ -286,7 +286,7 @@
   </Target>
   <Target Name="BuildLibDefs" Inputs="@(LuajitLibSource)" Outputs="@(LuajitLibDefname -> '..\..\LuaJIT\src\lj_%(Identity).h')">
     <Message Text="luajit-buildvm %(LuajitLibDefname.Identity)" Importance="High" Condition="'%(LuajitLibDefname.Identity)' != ''" />
-    <Exec Command="$(BuildVMCommand) -m %(LuajitLibDefname.Identity) -o lj_%(LuajitLibDefname.Identity).h @(LuajitLibSource->'$(SolutionDir)ThirdParty\luajit\src\%(filename)%(extension)',' ')" WorkingDirectory="..\LuaJitBuild\$(Platform)\$(Configuration)" Condition="'%(LuajitLibDefname.Identity)' != ''" />
+    <Exec Command="$(BuildVMCommand) -m %(LuajitLibDefname.Identity) -o lj_%(LuajitLibDefname.Identity).h @(LuajitLibSource->'$(SolutionDir)ThirdParty\luajit\src\%(filename)%(extension)',' ')" WorkingDirectory="$(SolutionDir)bin\$(Platform)\$(Configuration)" Condition="'%(LuajitLibDefname.Identity)' != ''" />
   </Target>
   <!-- Source files -->
   <ItemGroup>
@@ -364,11 +364,11 @@
     <ClInclude Include="..\..\LuaJIT\src\lj_udata.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vm.h" />
     <ClInclude Include="..\..\LuaJIT\src\lj_vmevent.h" />
-    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_bcdef.h" />
-    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_ffdef.h" />
-    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_folddef.h" />
-    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_libdef.h" />
-    <ClInclude Include="..\LuaJitBuild\x64\Release\lj_recdef.h" />
+    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_bcdef.h" />
+    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_ffdef.h" />
+    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_folddef.h" />
+    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_libdef.h" />
+    <ClInclude Include="$(SolutionDir)bin\$(Platform)\$(configuration)\lj_recdef.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\LuaJIT\src\jit\bc.lua" />

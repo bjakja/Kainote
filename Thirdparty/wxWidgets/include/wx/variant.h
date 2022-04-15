@@ -64,11 +64,11 @@ public:
     virtual bool Eq(wxVariantData& data) const = 0;
 
 #if wxUSE_STD_IOSTREAM
-    virtual bool Write(wxSTD ostream& WXUNUSED(str)) const { return false; }
+    virtual bool Write(ostream& WXUNUSED(str)) const { return false; }
 #endif
     virtual bool Write(wxString& WXUNUSED(str)) const { return false; }
 #if wxUSE_STD_IOSTREAM
-    virtual bool Read(wxSTD istream& WXUNUSED(str)) { return false; }
+    virtual bool Read(istream& WXUNUSED(str)) { return false; }
 #endif
     virtual bool Read(wxString& WXUNUSED(str)) { return false; }
     // What type is it? Return a string name.
@@ -231,12 +231,12 @@ public:
     wxString GetString() const;
 
 #if wxUSE_STD_STRING
-    wxVariant(const std::string& val, const wxString& name = wxEmptyString);
-    bool operator==(const std::string& value) const
+    wxVariant(const string& val, const wxString& name = wxEmptyString);
+    bool operator==(const string& value) const
         { return operator==(wxString(value)); }
-    bool operator!=(const std::string& value) const
+    bool operator!=(const string& value) const
         { return operator!=(wxString(value)); }
-    wxVariant& operator=(const std::string& value)
+    wxVariant& operator=(const string& value)
         { return operator=(wxString(value)); }
     operator std::string() const { return (operator wxString()).ToStdString(); }
 

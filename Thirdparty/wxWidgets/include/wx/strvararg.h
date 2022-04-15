@@ -35,7 +35,7 @@
 class WXDLLIMPEXP_FWD_BASE wxCStrData;
 class WXDLLIMPEXP_FWD_BASE wxString;
 namespace std{
-namespace tr{
+///*namespace tr*/{
 // ----------------------------------------------------------------------------
 // WX_DEFINE_VARARG_FUNC* macros
 // ----------------------------------------------------------------------------

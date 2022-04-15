@@ -578,7 +578,7 @@ public:
     // ------------------------------------------------------------------------
 
         // default ctor does not initialize the object, use Set()!
-    wxDateTime() { m_time = wxLongLong(wxINT32_MIN, 0); }
+    wxDateTime() { m_time = long long(wxINT32_MIN, 0); }
 
         // from time_t: seconds since the Epoch 00:00:00 UTC, Jan 1, 1970)
 #if (!(defined(__VISAGECPP__) && __IBMCPP__ >= 400))
@@ -1255,10 +1255,10 @@ public:
     // ------------------------------------------------------------------------
 
         // construct from internal representation
-    wxDateTime(const wxLongLong& time) { m_time = time; }
+    wxDateTime(const long long& time) { m_time = time; }
 
         // get the internal representation
-    inline wxLongLong GetValue() const;
+    inline long long GetValue() const;
 
     // a helper function to get the current time_t
     static time_t GetTimeNow() { return time(NULL); }
@@ -1291,7 +1291,7 @@ private:
     // the internal representation of the time is the amount of milliseconds
     // elapsed since the origin which is set by convention to the UNIX/C epoch
     // value: the midnight of January 1, 1970 (UTC)
-    wxLongLong m_time;
+    long long m_time;
 };
 
 // ----------------------------------------------------------------------------
@@ -1307,11 +1307,11 @@ public:
     // ------------------------------------------------------------------------
 
         // return the timespan for the given number of milliseconds
-    static wxTimeSpan Milliseconds(wxLongLong ms) { return wxTimeSpan(0, 0, 0, ms); }
+    static wxTimeSpan Milliseconds(long long ms) { return wxTimeSpan(0, 0, 0, ms); }
     static wxTimeSpan Millisecond() { return Milliseconds(1); }
 
         // return the timespan for the given number of seconds
-    static wxTimeSpan Seconds(wxLongLong sec) { return wxTimeSpan(0, 0, sec); }
+    static wxTimeSpan Seconds(long long sec) { return wxTimeSpan(0, 0, sec); }
     static wxTimeSpan Second() { return Seconds(1); }
 
         // return the timespan for the given number of minutes
@@ -1338,8 +1338,8 @@ public:
         // milliseconds)
     inline wxTimeSpan(long hours,
                       long minutes = 0,
-                      wxLongLong seconds = 0,
-                      wxLongLong milliseconds = 0);
+                      long long seconds = 0,
+                      long long milliseconds = 0);
 
         // default copy ctor is ok
 
@@ -1462,9 +1462,9 @@ public:
         // get the max number of minutes in this timespan
     inline int GetMinutes() const;
         // get the max number of seconds in this timespan
-    inline wxLongLong GetSeconds() const;
+    inline long long GetSeconds() const;
         // get the number of milliseconds in this timespan
-    wxLongLong GetMilliseconds() const { return m_diff; }
+    long long GetMilliseconds() const { return m_diff; }
 
     // conversion to text
     // ------------------------------------------------------------------------
@@ -1481,14 +1481,14 @@ public:
     // ------------------------------------------------------------------------
 
         // construct from internal representation
-    wxTimeSpan(const wxLongLong& diff) { m_diff = diff; }
+    wxTimeSpan(const long long& diff) { m_diff = diff; }
 
         // get the internal representation
-    wxLongLong GetValue() const { return m_diff; }
+    long long GetValue() const { return m_diff; }
 
 private:
     // the (signed) time span in milliseconds
-    wxLongLong m_diff;
+    long long m_diff;
 };
 
 // ----------------------------------------------------------------------------
@@ -1844,7 +1844,7 @@ inline wxDateTime::wxDateTime(wxDateTime_t day,
 // wxDateTime accessors
 // ----------------------------------------------------------------------------
 
-inline wxLongLong wxDateTime::GetValue() const
+inline long long wxDateTime::GetValue() const
 {
     wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
 
@@ -2091,8 +2091,8 @@ wxDateTime::FromTimezone(const wxDateTime::TimeZone& tz, bool noDST) const
 
 inline wxTimeSpan::wxTimeSpan(long hours,
                               long minutes,
-                              wxLongLong seconds,
-                              wxLongLong milliseconds)
+                              long long seconds,
+                              long long milliseconds)
 {
     // assign first to avoid precision loss
     m_diff = hours;
@@ -2108,7 +2108,7 @@ inline wxTimeSpan::wxTimeSpan(long hours,
 // wxTimeSpan accessors
 // ----------------------------------------------------------------------------
 
-inline wxLongLong wxTimeSpan::GetSeconds() const
+inline long long wxTimeSpan::GetSeconds() const
 {
     return m_diff / 1000l;
 }
