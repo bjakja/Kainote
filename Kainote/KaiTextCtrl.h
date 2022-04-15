@@ -20,7 +20,7 @@
 #include <wx/textctrl.h>
 #include "KaiTextValidator.h"
 #include "KaiScrollbar.h"
-//#include "config.h"
+#include "config.h"
 #include <vector>
 #include <map>
 enum COLOR;
@@ -40,9 +40,9 @@ class GraphicsContext;
 class KaiTextCtrl : public KaiScrolledWindow
 {
 public:
-	KaiTextCtrl(wxWindow *parent, int id, const wxString &text = L"", const wxPoint& pos = wxDefaultPosition,
+	KaiTextCtrl(wxWindow *parent, int id, const wxString &text = emptyString, const wxPoint& pos = wxDefaultPosition,
 		const wxSize& size = wxDefaultSize, long style = 0,
-		const wxValidator & validator = wxDefaultValidator, const wxString & name = L"");
+		const wxValidator & validator = wxDefaultValidator, const wxString & name = emptyString);
 	virtual ~KaiTextCtrl();
 	void SetValue(const wxString &text, bool modif = false, bool newSel = true);
 	bool Modified();

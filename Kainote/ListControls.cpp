@@ -219,7 +219,7 @@ KaiChoice::~KaiChoice()
 
 void KaiChoice::SetToolTip(const wxString &tooltip)
 {
-	if (tooltip != L""){ toolTip = tooltip; }
+	if (tooltip != emptyString){ toolTip = tooltip; }
 	wxString tt = (choice >= 0 || (choiceText && !choiceText->GetValue().empty())) ?
 		toolTip + L"\n" + GetString(choice) : tooltip;
 	if (tt.length() > 1000){
@@ -290,7 +290,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 			int fh = 0, fw = w, ex = 0, et = 0;
 			wxString txt = (txtchoice.IsEmpty()) ? (*list)[choice] : txtchoice;
 			int removed = 0;
-			while (fw > w - 22 && txt != L""){
+			while (fw > w - 22 && txt != emptyString){
 				tdc.GetTextExtent(txt, &fw, &fh, &ex, &et/*, &font*/);
 				txt = txt.RemoveLast();
 				removed++;
@@ -448,13 +448,13 @@ void KaiChoice::SetSelection(int sel, bool changeText)
 {
 	if (sel >= (int)list->size()){ return; }
 	choice = sel;
-	txtchoice = (sel < 0) ? L"" : (*list)[sel];
+	txtchoice = (sel < 0) ? emptyString : (*list)[sel];
 
 	if (itemList && itemList->IsShown()){
 		itemList->SetSelection(choice);
 	}
 	if (choiceText && changeText){
-		wxString txt = (sel < 0) ? L"" : (*list)[sel];
+		wxString txt = (sel < 0) ? emptyString : (*list)[sel];
 		choiceText->SetValue(txt);
 	}
 	Refresh(false);
@@ -490,12 +490,12 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	if (!arr)
 		return;
 
-	wxString ce = (choice >= 0 && choice < (int)list->size()) ? (*list)[choice] : L"";
+	wxString ce = (choice >= 0 && choice < (int)list->size()) ? (*list)[choice] : emptyString;
 	if (list){ delete list; }
 	list = new wxArrayString(*arr);
-	if (list->size() < 1){ choice = -1; ce = L""; }
+	if (list->size() < 1){ choice = -1; ce = emptyString; }
 	if (itemList){ itemList->Destroy(); itemList = NULL; }
-	if (ce != L""){
+	if (ce != emptyString){
 		if (choice >= (int)list->size()){
 			SetSelection(0);
 		}
@@ -566,7 +566,7 @@ void KaiChoice::SetSelectionByPartialName(const wxString &PartialName, bool setT
 	wxString PrtName = PartialName.Lower();
 	size_t k = 0;
 	int lastMatch = 0;
-	if (PartialName == L""){
+	if (PartialName == emptyString){
 		goto done;
 	}
 	for (size_t i = 0; i < list->size(); i++){
@@ -667,7 +667,7 @@ wxString KaiChoice::GetString(int pos){
 		return choiceText->GetValue();
 	}
 	else if (pos < 0 || pos >= (int)list->size()){
-		return L"";
+		return emptyString;
 	}
 	return (*list)[pos];
 }

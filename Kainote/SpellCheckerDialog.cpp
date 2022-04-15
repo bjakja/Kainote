@@ -38,7 +38,7 @@ SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)
 	ignoreComments = new KaiCheckBox(this, -1, _("Ignoruj komentarze"));
 	ignoreUpper = new KaiCheckBox(this, -1, _("Ignoruj słowa całe pisane\nwielką literą"));
 	//wxString misspellWord = FindNextMisspell();
-	misSpell = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
+	misSpell = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY);
 	replaceWord = new KaiTextCtrl(this, -1);
 
 	misspellSizer->Add(new KaiStaticText(this, -1, _("Błędne słowo:")), 1, wxEXPAND | wxALL, 2);
@@ -124,7 +124,7 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		}
 		lastLine = i;
 	}
-	return L"";
+	return emptyString;
 }
 
 void SpellCheckerDialog::SetNextMisspell()
@@ -135,7 +135,7 @@ void SpellCheckerDialog::SetNextMisspell()
 		//mamy brak błędów trzeba poinformować użyszkodnika i zablokować jakiekolwiek akcje.
 		suggestionsList->SetTextArray(wxArrayString());
 		blockOnActive = true;
-		replaceWord->SetValue(L"", true);
+		replaceWord->SetValue(emptyString, true);
 		KaiMessageBox(_("Nie znaleziono więcej błędów pisowni"), _("Uwaga"), wxOK, this);
 		return;
 	}
@@ -143,7 +143,7 @@ void SpellCheckerDialog::SetNextMisspell()
 		wxArrayString suggestions;
 		SpellChecker::Get()->Suggestions(misspellWord, suggestions);
 		suggestionsList->SetTextArray(suggestions);
-		replaceWord->SetValue((suggestions.GetCount()) ? suggestions[0] : L"", true);
+		replaceWord->SetValue((suggestions.GetCount()) ? suggestions[0] : emptyString, true);
 	}
 	tab = Kai->GetTab();
 	if (lastActiveLine != lastLine){
@@ -202,7 +202,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	for (size_t i = 0; i < tab->Grid->GetCount(); i++){
 		Dialogue *Dial = tab->Grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
-		wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
+		wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 		text = lineText.Lower();
 		if (text.find(misspellTxtLower) != -1) {
 			std::vector<MisspellData> misspells;

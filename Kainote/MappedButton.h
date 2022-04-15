@@ -30,10 +30,10 @@ public:
 	MappedButton(wxWindow *parent, int id, const wxString& label, const wxString& tooltip,
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, int window = EDITBOX_HOTKEY, long style = 0);
 	MappedButton(wxWindow *parent, int id, const wxString& tooltip, const wxBitmap& bitmap, const wxPoint& pos,
-		const wxSize& size = wxDefaultSize, int window = AUDIO_HOTKEY, long style = 0, const wxString &text = L"");
+		const wxSize& size = wxDefaultSize, int window = AUDIO_HOTKEY, long style = 0, const wxString &text = emptyString);
 	void SetTwoHotkeys(){ twoHotkeys = true; }
 	virtual ~MappedButton();
-	void SetToolTip(const wxString &toolTip = L"");
+	void SetToolTip(const wxString &toolTip = emptyString);
 	void SetBitmap(const wxBitmap & bitmap){ icon = bitmap; Refresh(false); };
 	bool SetBackgroundColour(const wxColour &color){
 		isColorButton = true;

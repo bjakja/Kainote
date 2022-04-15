@@ -348,7 +348,7 @@ void Menu::Check(int id, bool check)
 
 void Menu::AppendSeparator()
 {
-	MenuItem *item = new MenuItem(-2, L"", L"", false, 0, 0, ITEM_SEPARATOR);
+	MenuItem *item = new MenuItem(-2, emptyString, emptyString, false, 0, 0, ITEM_SEPARATOR);
 	items.push_back(item);
 }
 
@@ -368,9 +368,9 @@ MenuItem *Menu::SetAccMenu(int id, const wxString &txt, const wxString &help, bo
 {
 	idAndType itype(id, wnd);
 	wxString txtcopy = txt;
-	txtcopy.Replace(L"&", L"");
+	txtcopy.Replace(L"&", emptyString);
 	wxString hkey = Hkeys.GetStringHotkey(itype, txtcopy);
-	wxString mtext = (hkey != L"") ? txt.BeforeFirst(L'\t') + L"\t" + hkey : txt;
+	wxString mtext = (hkey != emptyString) ? txt.BeforeFirst(L'\t') + L"\t" + hkey : txt;
 	return Append(id, mtext, help, enable, 0, 0, kind);
 }
 
@@ -386,7 +386,8 @@ MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 		}
 	}
 
-	if (id){ menuitem->SetAccel(&Hkeys.GetHKey(id));/*menuitem->id=id;*/ }
+	wxAcceleratorEntry entry = Hkeys.GetHKey(id);
+	if (id){ menuitem->SetAccel(&entry);/*menuitem->id=id;*/ }
 	return Append(menuitem);
 }
 
@@ -527,7 +528,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 		}
 		if (sel != submenuToHide){ sel = -1; Refresh(false); }
 		KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-		frame->SetStatusText(L"", 0);
+		frame->SetStatusText(emptyString, 0);
 		return;
 	}
 	else if (evt.Entering()){
@@ -707,7 +708,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 		}
 		else{ hasMnemonics = false; }
 
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		int find = desc.find(L"\t");
 		//tdc.SetPen(wxPen("#497CB0"));
 		if (find != -1){
@@ -746,7 +747,7 @@ void MenuDialog::HideMenus(int id)
 {
 	if (!ParentMenu){ return; }
 	KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
-	frame->SetStatusText(L"", 0);
+	frame->SetStatusText(emptyString, 0);
 	MenuBar::Menubar->md = NULL;
 	int subMenu = ParentMenu->submenuToHide;
 	Menu *menu = ParentMenu->parent;
@@ -883,7 +884,7 @@ void MenuBar::ShowMenu(){
 	for (int i = 0; i < shownMenu; i++){
 		Menu *menu = Menus[i];
 		wxString desc = menu->GetTitle();
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		wxSize te = GetTextExtent(desc);
 		posX += te.x + menuIndent;
 	}
@@ -1000,7 +1001,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 		}
 		else{ hasMnemonics = false; }
 
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		wxSize te = tdc.GetTextExtent(desc);
 
 		if (i == sel){
@@ -1042,7 +1043,7 @@ int MenuBar::CalcMousePos(wxPoint *pos)
 	for (size_t i = 0; i < Menus.size(); i++){
 		Menu *menu = Menus[i];
 		wxString desc = menu->GetTitle();
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		wxSize te = GetTextExtent(desc);
 		if (pos->x > posX && (posX + te.x + menuIndent) > pos->x){
 			pos->x = posX, pos->y = posX + te.x + halfIndent;

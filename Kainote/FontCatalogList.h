@@ -137,8 +137,8 @@ public:
 	//cannot load catalogs from here, cause options is not initialized
 	FontCatalogManagement() {};
 	~FontCatalogManagement();
-	void LoadCatalogs(const wxString &external = L"");
-	void SaveCatalogs(const wxString& external = L"");
+	void LoadCatalogs(const wxString &external = emptyString);
+	void SaveCatalogs(const wxString& external = emptyString);
 	void DestroyCatalogs();
 	wxArrayString* GetCatalogNames();
 	wxString FindCatalogByFont(const wxString& font);

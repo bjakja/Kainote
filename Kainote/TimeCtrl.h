@@ -26,7 +26,7 @@ class TimeCtrl : public KaiTextCtrl
 public:
 	TimeCtrl(wxWindow* parent, const long int id, const wxString& val = L"0:00:00.00", 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, 
-		long style = 0, const wxValidator& validator = wxDefaultValidator, const wxString& name = L"");
+		long style = 0, const wxValidator& validator = wxDefaultValidator, const wxString& name = emptyString);
 	virtual ~TimeCtrl();
 	void SetVideoCtrl(VideoCtrl *_vb){ vb = _vb; };
 	//0 dont setup frame, 1 start frame, 2 end frame,

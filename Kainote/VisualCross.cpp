@@ -81,16 +81,16 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	float zy = (y / zoomScale.y) + zoomMove.y;
 	int posx = (float)zx * coeffX;
 	int posy = (float)zy * coeffY;
-	coords = L"";
+	coords = emptyString;
 	coords << posx << L", " << posy;
 	DrawLines(wxPoint(x, y));
 
 	if (event.MiddleDown() || (event.LeftDown() && event.ControlDown())){
 		Dialogue *aline = tab->Edit->line;
-		bool istl = (tab->Grid->hasTLMode && aline->TextTl != L"");
+		bool istl = (tab->Grid->hasTLMode && aline->TextTl != emptyString);
 		wxString ltext = (istl) ? aline->TextTl : aline->Text;
 		wxRegEx posmov(L"\\\\(pos|move)([^\\\\}]+)", wxRE_ADVANCED);
-		posmov.ReplaceAll(&ltext, L"");
+		posmov.ReplaceAll(&ltext, emptyString);
 
 		wxString postxt;
 		float zx = (x / zoomScale.x) + zoomMove.x;

@@ -103,7 +103,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	// extended filtering has less performance
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++){
 		int id = cur->first.id;
-		if (cur->second.Accel == L"" || cur->first.Type == GLOBAL_HOTKEY ){
+		if (cur->second.Accel == emptyString || cur->first.Type == GLOBAL_HOTKEY ){
 			continue;
 		}
 		auto itype = cur->first;

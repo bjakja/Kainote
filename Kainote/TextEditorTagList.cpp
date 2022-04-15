@@ -129,9 +129,9 @@ void PopupWindow::OnMouseEvent(wxMouseEvent &evt)
 	else if (evt.RightUp()){
 		int options = Options.GetInt(TEXT_EDITOR_TAG_LIST_OPTIONS);
 		Menu listMenu;
-		listMenu.Append(ID_SHOW_DESCRIPTION, _("Pokaż opis"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
-		listMenu.Append(ID_SHOW_ALL_TAGS, _("Pokaż wszystkie tagi"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
-		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("Pokaż tagi VSFiltermoda"), NULL, L"", ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
+		listMenu.Append(ID_SHOW_DESCRIPTION, _("Pokaż opis"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
+		listMenu.Append(ID_SHOW_ALL_TAGS, _("Pokaż wszystkie tagi"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
+		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("Pokaż tagi VSFiltermoda"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
 		
 		int id = listMenu.GetPopupMenuSelection(evt.GetPosition(), this);
 		if (id < 1)

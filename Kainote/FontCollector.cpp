@@ -182,7 +182,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	fromMKV->SetValue(Options.GetBool(FONT_COLLECTOR_FROM_MKV));
 
 	Connect(7998, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnChangeOpt);
-	console = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(500, 400), wxTE_MULTILINE | wxTE_READONLY);
+	console = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxSize(500, 400), wxTE_MULTILINE | wxTE_READONLY);
 	console->Bind(wxEVT_LEFT_DCLICK, &FontCollectorDialog::OnConsoleDoubleClick, this);
 	//console->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	bok = new MappedButton(this, 9879, _("Rozpocznij"));
@@ -421,7 +421,7 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 	else{
 		destdir = wxFileSelector(_("Wybierz nazwę archiwum"), (path->GetValue().EndsWith(L"zip")) ? 
 			path->GetValue().BeforeLast(L'\\') : path->GetValue(),
-			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast(L'\\') : L"",
+			(path->GetValue().EndsWith(L"zip")) ? path->GetValue().AfterLast(L'\\') : emptyString,
 			L"zip", _("Pliki archiwum (*.zip)|*.zip"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 	}
 	Options.SetString(FONT_COLLECTOR_DIRECTORY, destdir);
@@ -431,7 +431,7 @@ void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
 
 void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 {
-	console->SetValue(L"");
+	console->SetValue(emptyString);
 	EnableControls(false);
 	
 	int operation = (fromMKV->GetValue() && fromMKV->IsEnabled()) ? FontCollector::COPY_MKV_FONTS :
@@ -450,24 +450,24 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		bool subsfromMkv = fromMKV->GetValue();
 		bool subsDirectory = subsdir->GetValue();
 		Options.SetString(FONT_COLLECTOR_DIRECTORY, path->GetValue());
-		if (opts->GetSelection() == 3 && (Notebook::GetTab()->VideoPath == L"" || Notebook::GetTab()->SubsPath == L"")){
-			KaiMessageBox(_("Brak wczytanego wideo lub napisów"), L"", 4L, this);
+		if (opts->GetSelection() == 3 && (Notebook::GetTab()->VideoPath == emptyString || Notebook::GetTab()->SubsPath == emptyString)){
+			KaiMessageBox(_("Brak wczytanego wideo lub napisów"), emptyString, 4L, this);
 			EnableControls();
 			return;
 		}
-		if (path->GetValue() == L"" && !subsDirectory){
-			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"), L"", 4L, this);
+		if (path->GetValue() == emptyString && !subsDirectory){
+			KaiMessageBox(_("Wybierz folder, gdzie mają zostać skopiowane czcionki"), emptyString, 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
 		}
-		if (!subsfromMkv && subsDirectory && Notebook::GetTab()->SubsPath == L""){
-			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."), L"", 4L, this);
+		if (!subsfromMkv && subsDirectory && Notebook::GetTab()->SubsPath == emptyString){
+			KaiMessageBox(_("Brak wczytanych napisów, wczytaj napisy albo odznacz tę opcję."), emptyString, 4L, this);
 			EnableControls();
 			return;
 		}
 		if (opts->GetSelection() == 2 && path->GetValue().EndsWith(L"\\") && !subsdir->GetValue()){
-			KaiMessageBox(_("Wybierz nazwę dla archiwum"), L"", 4L, this);
+			KaiMessageBox(_("Wybierz nazwę dla archiwum"), emptyString, 4L, this);
 			EnableControls();
 			path->SetFocus();
 			return;
@@ -482,7 +482,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			copypath = path->GetValue();
 			wxFileName fname(copypath);
 			if (!fname.IsOk() || fname.GetVolume().length() != 1){
-				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."), L"", 4L, this);
+				KaiMessageBox(_("Wybrana ścieżka zapisu jest niepoprawna."), emptyString, 4L, this);
 				EnableControls();
 				return;
 			}
@@ -494,7 +494,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 			if (extt == L".zip"){ copypath = copypath.BeforeLast(L'\\') + L"\\"; }
 			/*if (!wxDir::Exists(copypath)){
 				if (!wxDir::Make(copypath, 511, wxPATH_MKDIR_FULL)){
-					KaiMessageBox(_("Nie można utworzyć folderu."), L"", 4L, this);
+					KaiMessageBox(_("Nie można utworzyć folderu."), emptyString, 4L, this);
 					EnableControls();
 					return;
 				}
@@ -503,7 +503,7 @@ void FontCollectorDialog::OnButtonStart(wxCommandEvent &event)
 		else{
 			/*if (!wxDir::Exists(copypath.BeforeLast(L'\\'))){
 				if (!wxDir::Make(copypath.BeforeLast(L'\\'), 511, wxPATH_MKDIR_FULL)){
-					KaiMessageBox(_("Nie można utworzyć folderu."), L"", 4L, this);
+					KaiMessageBox(_("Nie można utworzyć folderu."), emptyString, 4L, this);
 					EnableControls();
 					return;
 				}
@@ -617,7 +617,7 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 
 		Styles *lstyle = stylesfonts[dial->Style];
 
-		wxString ifont = (lstyle) ? lstyle->Fontname : L"";
+		wxString ifont = (lstyle) ? lstyle->Fontname : emptyString;
 		int bold = (lstyle) ? (int)lstyle->Bold : 0;
 		int italic = (lstyle) ? (int)lstyle->Italic : 0;
 		bool newFont = false;
@@ -663,8 +663,8 @@ void FontCollector::GetAssFonts(SubsFile *subs, int tab)
 				}
 				//we add all texts to check if even not found font is even needed
 				//when is not needed leave only info cause not inform on the end.
-				textHavingFont.Replace(L"\\N", L"");
-				textHavingFont.Replace(L"\\n", L"");
+				textHavingFont.Replace(L"\\N", emptyString);
+				textHavingFont.Replace(L"\\n", emptyString);
 				textHavingFont.Replace(L"\\h", L" ");
 				PutChars(textHavingFont, ifont);
 				textHavingFont.clear();
@@ -793,7 +793,7 @@ void FontCollector::CheckOrCopyFonts()
 	
 	CloseZip();
 
-	wxString noglyphs = (allglyphs) ? L"" : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n");
+	wxString noglyphs = (allglyphs) ? emptyString : _("Niektóre czcionki nie mają wszystkich znaków użytych w tekście.\n");
 
 	bool checkFonts = (operation & CHECK_FONTS);
 
@@ -1040,7 +1040,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		CharMap &ch = FontMap[fn];
 		if (!ch.size()){
 			if(isNewFont)
-				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany.%s"), fn, (copyFonts) ? _("\nNie zostanie skopiowana.") : L""));
+				flc->AppendWarnings(wxString::Format(_("Czcionka \"%s\" należy do stylu,\nktóry nie jest wykorzystywany.%s"), fn, (copyFonts) ? _("\nNie zostanie skopiowana.") : emptyString));
 			
 			continue;
 			//no goto cause font is not created yet

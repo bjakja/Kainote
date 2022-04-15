@@ -252,7 +252,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
 			m_AudioPlayer = tab->Edit->ABox->audioDisplay;
 		}
-		else if (m_AudioPlayer){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L""); }
+		else if (m_AudioPlayer){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, emptyString); }
 	}
 	if (!m_FFMS2 || m_FFMS2->m_width < 0){
 		return false;

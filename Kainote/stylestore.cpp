@@ -400,7 +400,7 @@ void StyleStore::StylesWindow(wxString newname)
 	if (selnum < 0){ tab = new Styles(); }
 	else if (ASSStyle){ tab = grid->GetStyle(selnum)->Copy(); }
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
-	if (newname != L""){ tab->Name = newname; }
+	if (newname != emptyString){ tab->Name = newname; }
 	oldname = tab->Name;
 	cc->UpdateValues(tab, !dummy, (ASSStyle && ASSList->GetNumSelections() > 1) || 
 		(!ASSStyle && Store->GetNumSelections() > 1));

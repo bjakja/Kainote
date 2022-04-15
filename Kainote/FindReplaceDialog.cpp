@@ -34,7 +34,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 
 	//find list and description
 	wxBoxSizer* frsbsizer = new wxBoxSizer(wxHORIZONTAL);
-	FindText = new KaiChoice(this, ID_FIND_TEXT, L"", wxDefaultPosition, wxSize(276, -1), FR->findRecent);
+	FindText = new KaiChoice(this, ID_FIND_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->findRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
 	FindText->SetSelection(0);
@@ -46,7 +46,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (tabNum != WINDOW_FIND){
 		//replace list and description blocked on window find
 		wxBoxSizer *ReplaceStaticSizer = new wxBoxSizer(wxHORIZONTAL);
-		ReplaceText = new KaiChoice(this, ID_REPLACE_TEXT, L"", wxDefaultPosition, wxSize(276, -1), FR->replaceRecent);
+		ReplaceText = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->replaceRecent);
 		ReplaceText->SetToolTip(_("Zamień na:"));
 		ReplaceText->SetMaxLength(MAXINT);
 		ReplaceText->SetSelection(0);
@@ -58,7 +58,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 	if (tabNum == WINDOW_FIND_IN_SUBS){
 		//find in subs filters and path
 		wxBoxSizer *SubsFilterStaticSizer = new wxBoxSizer(wxHORIZONTAL);
-		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, L"", wxDefaultPosition, wxSize(276, -1), FR->subsFindingFilters);
+		FindInSubsPattern = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(276, -1), FR->subsFindingFilters);
 		FindInSubsPattern->SetToolTip(_("Filtry wyszukiwania Windowsa pooddzielane średnikami np \"*.ass;*.srt\".\nZe względu na dużą wagę plików wideo\nszukanie wszystkiego \"*.*\" zostaje zmieniane na *.ass"));
 		FindInSubsPattern->SetMaxLength(1000);
 		FindInSubsPattern->SetSelection(0);
@@ -69,7 +69,7 @@ TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
 
 		wxBoxSizer *FindInSubsPathStaticSizer = new wxBoxSizer(wxHORIZONTAL);
 		wxBoxSizer *FindInSubsPathAndChooseSizer = new wxBoxSizer(wxHORIZONTAL);
-		FindInSubsPath = new KaiChoice(this, ID_REPLACE_TEXT, L"", wxDefaultPosition, wxSize(236, -1), FR->subsFindingPaths);
+		FindInSubsPath = new KaiChoice(this, ID_REPLACE_TEXT, emptyString, wxDefaultPosition, wxSize(236, -1), FR->subsFindingPaths);
 		FindInSubsPath->SetToolTip(_("Katalog szukania napisów:"));
 		FindInSubsPath->SetMaxLength(MAXINT);
 		FindInSubsPath->SetSelection(0);

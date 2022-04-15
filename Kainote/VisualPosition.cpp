@@ -387,7 +387,7 @@ void Position::ChangeMultiline(bool all, bool dummy)
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
-			if (Dial->TextTl != L"" && tab->Grid->hasTLMode) {
+			if (Dial->TextTl != emptyString && tab->Grid->hasTLMode) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				if (showOriginalOnVideo)

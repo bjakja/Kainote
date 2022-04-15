@@ -15,7 +15,7 @@
 
 
 #pragma once
-
+#include "config.h"
 #include <wx/window.h>
 #include <wx/timer.h>
 #include <wx/dialog.h>
@@ -64,8 +64,8 @@ public:
 	static Notebook *sthis;
 	static TabPanel *GetTab();
 	static void RefreshVideo(bool reloadLibass = false);
-	static void SaveLastSession(bool beforeClose = false, bool recovery = false, const wxString &externalPath = L"");
-	static void LoadLastSession(bool loadCrashSession = false, const wxString &externalPath = L"");
+	static void SaveLastSession(bool beforeClose = false, bool recovery = false, const wxString &externalPath = emptyString);
+	static void LoadLastSession(bool loadCrashSession = false, const wxString &externalPath = emptyString);
 	//changes last session subs path to path from auto save
 	//if no auto save leaves unchanged
 	static void FindAutoSaveSubstitute(wxString* path, int tab);

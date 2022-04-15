@@ -473,8 +473,8 @@ namespace Auto{
 		}
 
 		if (buttons.size() == 0) {
-			buttons.emplace_back(wxID_OK, L"");
-			buttons.emplace_back(wxID_CANCEL, L"");
+			buttons.emplace_back(wxID_OK, emptyString);
+			buttons.emplace_back(wxID_CANCEL, emptyString);
 		}
 
 		auto bs = new wxBoxSizer(wxHORIZONTAL);

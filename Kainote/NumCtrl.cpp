@@ -228,9 +228,9 @@ void NumCtrl::OnNumWrite(wxCommandEvent& event)
 	GetSelection(&from, &to);
 	wxString val = GetValue();
 	val.Replace(L",", L".");
-	if (val == L"-" || val == L""){}
-	else if (val.EndsWith(L".")){ if (val.Replace(L".", L"") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
-	else if (val.StartsWith(L".")){ if (val.Replace(L".", L"") > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
+	if (val == L"-" || val == emptyString){}
+	else if (val.EndsWith(L".")){ if (val.Replace(L".", emptyString) > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
+	else if (val.StartsWith(L".")){ if (val.Replace(L".", emptyString) > 1){ KaiTextCtrl::SetValue(oldval); wxBell(); } }
 	else if (!val.ToCDouble(&value) || value > rto || value < rfrom){
 		/*SetValue(oldval);wxBell();*/
 		//if(!isbad){SetForegroundColour(*wxRED);isbad=true;}

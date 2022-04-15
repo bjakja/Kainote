@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include "config.h"
 #include <wx/string.h>
 #include <wx/statbmp.h>
 
@@ -32,7 +32,7 @@ private:
 	wxImage img;
 	bool enter;
 	void OnLeftDown(wxMouseEvent& event);
-	void SetToolTip(const wxString &_toolTip = L"");
+	void SetToolTip(const wxString &_toolTip = emptyString);
 	wxString name;
 	int window;
 	int hotkeyId;

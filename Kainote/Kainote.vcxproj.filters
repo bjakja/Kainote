@@ -5,9 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Audio\Automation">
-      <UniqueIdentifier>{77863e87-4c84-4249-9eca-806b5b2186f7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Audio\Controls">
       <UniqueIdentifier>{b913423d-0f3b-4696-8f09-a77c680f511e}</UniqueIdentifier>
     </Filter>
@@ -31,9 +28,6 @@
     </Filter>
     <Filter Include="Audio\Video\Visuals">
       <UniqueIdentifier>{030b31e5-8731-43d9-934f-2623a961ec52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Audio\NewFilter1">
-      <UniqueIdentifier>{9cba9609-21c0-457e-9642-41f8d55fa230}</UniqueIdentifier>
     </Filter>
     <Filter Include="Automation">
       <UniqueIdentifier>{4b3b08df-9fc9-4b00-a51f-8e015bd1130f}</UniqueIdentifier>

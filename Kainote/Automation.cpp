@@ -63,7 +63,7 @@ namespace Auto{
 	int get_file_name(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab && tab->SubsPath != L"")
+		if (tab && tab->SubsPath != emptyString)
 			push_value(L, tab->SubsName);
 		else
 			lua_pushnil(L);
@@ -208,14 +208,21 @@ namespace Auto{
 		path.Replace(L'/', L'\\');
 		wxString firstAutomation = Options.pathfull + "\\Automation";
 		if (path[0] == L'?'){
-			if (path[1] == L'a' && path[4] == L'i') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
-			else if (path[1] == L'd' && path[4] == L'a') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'd' && path[4] == L't') path.replace(0, 11, Options.pathfull + L"\\Dictionary");
-			else if (path[1] == L'l' && path[4] == L'a') path.replace(0, 6, firstAutomation);
-			else if (path[1] == L's' && path[4] == L'i') path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : L"");
-			else if (path[1] == L't' && path[4] == L'p') path.replace(0, 5, firstAutomation + L"\\temp");
-			else if (path[1] == L'u' && path[4] == L'r') path.replace(0, 5, firstAutomation);
-			else if (path[1] == L'v' && path[4] == L'e') path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : L"");
+			if (path[1] == wxString(L'a') && path[4] == wxString(L'i')) path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(emptyString));
+			else if (path[1] == wxString(L'd') && path[4] == wxString(L'a')) 
+				path.replace(0, 5, firstAutomation);
+			else if (path[1] == wxString(L'd') && path[4] == wxString(L't')) 
+				path.replace(0, 11, Options.pathfull + wxString(L"\\Dictionary"));
+			else if (path[1] == wxString(L'l') && path[4] == wxString(L'a')) 
+				path.replace(0, 6, firstAutomation);
+			else if (path[1] == wxString(L's') && path[4] == wxString(L'i')) 
+				path.replace(0, 7, (tab) ? tab->SubsPath.BeforeLast(L'\\') : wxString(emptyString));
+			else if (path[1] == wxString(L't') && path[4] == wxString(L'p')) 
+				path.replace(0, 5, firstAutomation + wxString(L"\\temp"));
+			else if (path[1] == wxString(L'u') && path[4] == wxString(L'r')) 
+				path.replace(0, 5, firstAutomation);
+			else if (path[1] == wxString(L'v') && path[4] == wxString(L'e')) 
+				path.replace(0, 6, (tab) ? tab->VideoPath.BeforeLast(L'\\') : wxString(emptyString));
 		}
 		push_value(L, path);
 		return 1;
@@ -641,7 +648,7 @@ namespace Auto{
 
 
 		lua_gc(L, LUA_GCCOLLECT, 0);
-		if (ps->Log == L"" && !hasMessage){ ps->lpd->closedialog = true; }
+		if (ps->Log == emptyString && !hasMessage){ ps->lpd->closedialog = true; }
 		else{ ps->lpd->finished = true; }
 
 		if (failed){ return (wxThread::ExitCode) 1; }
@@ -1027,7 +1034,7 @@ namespace Auto{
 
 
 		wxString fn;
-		wxFileName script_path(AutoloadPath, L"");
+		wxFileName script_path(AutoloadPath, emptyString);
 		bool more = dir.GetFirst(&fn, wxEmptyString, wxDIR_FILES);
 
 		while (more) {
@@ -1070,7 +1077,7 @@ namespace Auto{
 	{
 		wxString paths = Notebook::GetTab()->Grid->GetSInfo(L"Automation Scripts");
 
-		if (paths == L""){ return false; }
+		if (paths == emptyString){ return false; }
 		if (paths == scriptpaths && ASSScripts.size() > 0){ return false; }
 		paths.Trim(false);
 		wxStringTokenizer token(paths, L"|~$", wxTOKEN_RET_EMPTY_ALL);
@@ -1105,8 +1112,8 @@ namespace Auto{
 	void Automation::OnEdit(wxString &Filename)
 	{
 		wxString editor = Options.GetString(AUTOMATION_SCRIPT_EDITOR);
-		if (editor == L"" || wxGetKeyState(WXK_SHIFT)){
-			editor = wxFileSelector(_("Wybierz edytor skryptów"), L"",
+		if (editor == emptyString || wxGetKeyState(WXK_SHIFT)){
+			editor = wxFileSelector(_("Wybierz edytor skryptów"), emptyString,
 				L"C:\\Windows\\Notepad.exe", L"exe", _("Programy (*.exe)|*.exe|Wszystkie pliki (*.*)|*.*"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 			if (!wxFileExists(editor)){ return; }
 			Options.SetString(AUTOMATION_SCRIPT_EDITOR, editor);
@@ -1192,7 +1199,7 @@ namespace Auto{
 			}
 			if (macros.size() < 1){
 				wxString strippedbug = script->GetDescription();
-				strippedbug.Replace(L"\n", L"");
+				strippedbug.Replace(L"\n", emptyString);
 				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
 				submenu->Append(start, strippedbug, _("Błąd"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {
@@ -1239,7 +1246,7 @@ namespace Auto{
 			}
 			if (macros.size() < 1){
 				wxString strippedbug = script->GetDescription();
-				strippedbug.Replace(L"\n", L"");
+				strippedbug.Replace(L"\n", emptyString);
 				if (strippedbug.Len() > 100){ strippedbug = strippedbug.SubString(0, 100) + L"..."; }
 				submenu->Append(start, strippedbug, _("Błąd"));
 				Kai->Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt) {

@@ -50,7 +50,8 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w, h));
+	wxBitmap videoSliderBitmap(w, h);
+	tdc.SelectObject(videoSliderBitmap);
 	tdc.SetFont(*Options.GetFont());
 	wxColour background = GetParent()->GetBackgroundColour();
 	tdc.SetBrush(wxBrush(background));

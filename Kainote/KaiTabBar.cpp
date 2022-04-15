@@ -117,7 +117,7 @@ wxString KaiTabBar::GetTabName(int i /*= -1*/)
 	if (i < 0)
 		i = currentTab;
 	if (i < 0 || i >= tabs.size())
-		return L"";
+		return emptyString;
 
 	return tabs[i]->tabName;
 }
@@ -158,7 +158,8 @@ void KaiTabBar::OnPaint(wxPaintEvent& event)
 	GetClientSize(&w, &h);
 	if (w == 0 || h == 0){ return; }
 	wxMemoryDC tdc;
-	tdc.SelectObject(wxBitmap(w, tabHeader));
+	wxBitmap bmp = wxBitmap(w, tabHeader);
+	tdc.SelectObject(bmp);
 	tdc.SetFont(GetFont());
 	const wxColour & tabsBarBackground = Options.GetColour(TABS_BACKGROUND_INACTIVE);
 	const wxColour & tabsBarBackgroundHover = Options.GetColour(TABS_BACKGROUND_INACTIVE_HOVER);

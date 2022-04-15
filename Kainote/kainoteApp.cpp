@@ -164,12 +164,12 @@ bool kainoteApp::OnInit()
 		locale = NULL;
 		wxString lang = Options.GetString(PROGRAM_LANGUAGE);
 		if (lang == L"0"){
-			lang = L""; Options.SetString(PROGRAM_LANGUAGE, lang);
+			lang = emptyString; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
 		if (lang == L"1"){
 			lang = L"en"; Options.SetString(PROGRAM_LANGUAGE, lang);
 		}
-		if (lang != L"" && lang != L"pl"){
+		if (lang != emptyString && lang != L"pl"){
 			locale = new wxLocale();
 			const  wxLanguageInfo * li = locale->FindLanguageInfo(lang);
 			if (!li)

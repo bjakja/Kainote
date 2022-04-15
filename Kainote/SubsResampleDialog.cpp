@@ -90,7 +90,8 @@ SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize,
 		subsResolutionX->SetInt(subsSize.x);
 		subsResolutionY->SetInt(subsSize.y);
 		fromSubs->Enable(false);
-		OnChangedResolution(wxCommandEvent());
+		wxCommandEvent event;
+		OnChangedResolution(event);
 	}, 26547);
 
 	auto OnChangedVideoResolution = [=](wxCommandEvent &evt)->void{

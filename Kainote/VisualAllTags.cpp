@@ -151,7 +151,7 @@ wxString AllTags::GetSelectedTag(FindData* result)
 			}
 		}
 	}
-	return L"";
+	return emptyString;
 }
 
 void AllTags::CheckTag()
@@ -252,7 +252,7 @@ void AllTags::FindTagValues()
 		actualTag.values[0] = doubleValue;
 	}
 
-	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", L"", mode == INSERT? actualTag.mode : 1)) {
+	if (FindTag(actualTag.tag + L"([-0-9.,\\(\\) &A-FH]+)", emptyString, mode == INSERT? actualTag.mode : 1)) {
 		const FindData& data = GetResult();
 		if (data.finding.StartsWith(L"(")) {
 			//remove brackets;

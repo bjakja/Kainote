@@ -344,14 +344,14 @@ public:
 	void SaveHkeys(bool Audio = false);
 	void SetHKey(const idAndType &itype, wxString name, wxString hotkey);
 	wxAcceleratorEntry GetHKey(const idAndType itype, const hdata *hkey = 0);
-	wxString GetStringHotkey(const idAndType &itype, const wxString &name = L"");
+	wxString GetStringHotkey(const idAndType &itype, const wxString &name = emptyString);
 	void FillTable();
 	void ResetKey(const idAndType *itype, int id = 0, char type = GLOBAL_HOTKEY);
 	wxString GetDefaultKey(const idAndType &itype);
 	void OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow = GLOBAL_HOTKEY, bool showWindowSelection = true);
 	void SetAccels(bool all = false);
 	wxString GetName(const idAndType itype);
-	const std::map<int, wxString> &GetNamesTable();
+	const std::map<int, const wxString> &GetNamesTable();
 	const wxString &GetName(int id);
 	int GetType(int id);
 	const std::map<idAndType, hdata> &GetHotkeysMap(){ return hkeys; }

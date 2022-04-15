@@ -62,7 +62,7 @@ CatalogEdition::CatalogEdition(wxWindow* parent, wxArrayString* catalogs, const 
 	KaiStaticBoxSizer* descriptionSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wprowadź nową nazwę katalogu"));
 	currentCatalog = new KaiChoice(this, -1, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
 	currentCatalog->SetSelection(selectCatalog != -1? selectCatalog : 0);
-	newCatalog = new KaiTextCtrl(this, -1, L"");
+	newCatalog = new KaiTextCtrl(this, -1, emptyString);
 	descriptionSizer->Add(currentCatalog, 1, wxALL | wxEXPAND, 2);
 	descriptionSizer->Add(new KaiStaticText(this, -1, _("Zamień na:")), 0, wxALL | wxEXPAND, 2);
 	descriptionSizer->Add(newCatalog, 1, wxALL | wxEXPAND, 2);
@@ -111,8 +111,8 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	MappedButton* loadCatalogs = new MappedButton(this, ID_LOAD_CATALOGS, _("Wczytaj"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FontCatalogList::OnLoadCatalogs, this, ID_LOAD_CATALOGS);
 	wxArrayString* catalogList = FCManagement.GetCatalogNames();
-	catalog = new KaiChoice(this, -1, L"", wxDefaultPosition, wxDefaultSize, *catalogList);
-	fontSeek = new KaiTextCtrl(this, ID_FONT_SEEK, L"", wxDefaultPosition);
+	catalog = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, *catalogList);
+	fontSeek = new KaiTextCtrl(this, ID_FONT_SEEK, emptyString, wxDefaultPosition);
 	wxString fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	fontFilter = new KaiTextCtrl(this, -1, fontFilterText);
 	MappedButton* saveFilter = new MappedButton(this, ID_SAVE_FILTER, _("Zapisz Filtr"));
@@ -209,7 +209,7 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 		}, ID_EDIT_TIMER);
 	autoSaveTimerRemove.SetOwner(this, ID_EDIT_TIMER_REMOVE);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent& evt) {
-		status->SetLabelText(0, L"");
+		status->SetLabelText(0, emptyString);
 		}, ID_EDIT_TIMER_REMOVE);
 	RefreshPreview();
 }
@@ -266,7 +266,7 @@ void FontCatalogList::SetSelectionByPartialName(const wxString& PartialName)
 	wxString PrtName = PartialName.Lower();
 	size_t k = 0;
 	int lastMatch = 0;
-	if (PartialName == L"") {
+	if (PartialName == emptyString) {
 		goto done;
 	}
 	for (size_t i = 0; i < fontList->GetCount(); i++) {
@@ -311,8 +311,8 @@ done:
 
 void FontCatalogList::OnLoadCatalogs(wxCommandEvent& evt)
 {
-	wxFileDialog* FileDialog = new wxFileDialog(this, _("Wybierz plik wideo"), L"",
-		L"", _("Pliki tekstowe (*.txt)|*.txt"),
+	wxFileDialog* FileDialog = new wxFileDialog(this, _("Wybierz plik wideo"), emptyString,
+		emptyString, _("Pliki tekstowe (*.txt)|*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog->ShowModal() == wxID_OK) {
 		FCManagement.LoadCatalogs(FileDialog->GetPath());
@@ -389,7 +389,7 @@ void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Kai
 		int i = 0;
 		for (auto& catalog : *catalogList) {
 			bool checked = FCManagement.IsFontInCatalog(catalog, thisItem->name);
-			menuList.Append(3000 + i, catalog, NULL, L"", ITEM_CHECK_AND_HIDE)->Check(checked);
+			menuList.Append(3000 + i, catalog, NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
 			i++;
 		}
 		menuList.SelectOnStart(choice);
@@ -428,7 +428,7 @@ void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Kai
 						FCManagement.RemoveCatalogFont(name, item->name);
 					item->modified = false;
 					if (item1) {
-						item1->name = addFont? name : L"";
+						item1->name = addFont? name : wxString(emptyString);
 					}
 				}
 			}
@@ -682,7 +682,7 @@ void FontCatalogManagement::AddToCatalog(const wxString& font, const wxPoint& po
 	int i = 0;
 	for (auto& catalog : fontCatalogsNames) {
 		bool checked = IsFontInCatalog(catalog, font);
-		menuList.Append(3000 + i, catalog, NULL, L"", ITEM_CHECK_AND_HIDE)->Check(checked);
+		menuList.Append(3000 + i, catalog, NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
 		checkTable.push_back(checked);
 		i++;
 	}

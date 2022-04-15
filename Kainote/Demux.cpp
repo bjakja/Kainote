@@ -154,7 +154,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 				target->AddLine(new Dialogue(subtitleList[i]));
 			}
 			const wxString& matrix = target->GetSInfo(L"YCbCr Matrix");
-			if ((matrix == L"" || matrix == L"None") && codecType < 1) 
+			if ((matrix == emptyString || matrix == L"None") && codecType < 1) 
 				target->AddSInfo(L"YCbCr Matrix", L"TV.601");
 
 			target->file->EndLoad(OPEN_SUBTITLES, 0, true);
@@ -257,7 +257,7 @@ int __stdcall Demux::GetSubtitles(int64_t Start, int64_t Duration, int64_t Total
 			layerString.ToLong(&layer);
 			blockString = blockString.Mid(pos + 1);
 		}
-		if (blockString == L"") { blockString << L"Default,,0000,0000,0000,,"; }
+		if (blockString == emptyString) { blockString << L"Default,,0000,0000,0000,,"; }
 		// Assemble final
 		if (!blockString.StartsWith(L",")) { blockString.Prepend(L","); }
 		blockString = wxString::Format(L"Dialogue: %li,", layer) + subStart.raw() +

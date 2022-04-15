@@ -32,12 +32,12 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	DialogSizer *mainsizer = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer *StaticBox1 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Informacje o napisach"));
 	wxGridSizer *GridSizer = new wxGridSizer(2, 5, 5);
-	title = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	script = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	translation = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	editing = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	timing = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-	update = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	title = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	script = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	translation = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	editing = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	timing = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	update = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 
 	GridSizer->Add(new KaiStaticText(this, -1, _("Tytuł")), 0, wxEXPAND);
 	GridSizer->Add(title, 0, wxEXPAND);
@@ -57,8 +57,8 @@ ScriptInfo::ScriptInfo(wxWindow* parent, int w, int h)
 	KaiStaticBoxSizer *StaticBox2 = new KaiStaticBoxSizer(wxVERTICAL, this, _("Rozdzielczość"));
 	wxBoxSizer *boxsizer = new wxBoxSizer(wxHORIZONTAL);
 
-	width = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
-	height = new NumCtrl(this, -1, L"", 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
+	width = new NumCtrl(this, -1, emptyString, 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
+	height = new NumCtrl(this, -1, emptyString, 100, 10000, true, wxDefaultPosition, wxSize(60, -1), wxTE_PROCESS_ENTER);
 	resolutionFromVideo = new MappedButton(this, 25456, _("Z wideo"), -1, wxDefaultPosition, wxSize(70, -1));
 	resolutionFromVideo->Enable(w > 0);
 
@@ -137,7 +137,7 @@ void ScriptInfo::OnVideoRes(wxCommandEvent& event)
 {
 	wxString tmp;
 	width->SetValue(tmp << res.x);
-	tmp = L"";
+	tmp = emptyString;
 	height->SetValue(tmp << res.y);
 	width->SetModified(true);
 	height->SetModified(true);

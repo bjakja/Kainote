@@ -164,7 +164,7 @@ void KaiToolbar::OnMouseEvent(wxMouseEvent &event)
 	else if (sel != elem && tools[elem]->type < 3 && !event.LeftIsDown()){
 		wxString shkeyadd;
 		wxString shkey = Hkeys.GetStringHotkey(tools[elem]->id);
-		if (shkey != L""){ shkeyadd << L" (" << shkey << L")"; }
+		if (shkey != emptyString){ shkeyadd << L" (" << shkey << L")"; }
 		SetToolTip(tools[elem]->label + shkeyadd);
 		sel = elem;
 		//RefreshRect(wxRect(0,elem*iconsize,iconsize,(elem+1)*iconsize),false);
@@ -442,7 +442,7 @@ EVT_MENU(32566, KaiToolbar::OnToolbarOpts)
 END_EVENT_TABLE()
 
 ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &size, int height)
-	: wxDialog(_parent, -1, L"", pos, size, wxBORDER_NONE)
+	: wxDialog(_parent, -1, emptyString, pos, size, wxBORDER_NONE)
 	, sel(-1)
 	, scPos(0)
 	, parent(_parent)
@@ -529,7 +529,8 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 		int wh = (toolbarrows + 1) * parent->thickness;
 		int maxxwh = (vertical) ? w : h;
 		if (maxxwh != wh){
-			parent->OnSize(wxSizeEvent());
+			wxSizeEvent sizeEvent;
+			parent->OnSize(sizeEvent);
 			wxPoint toolbarPos = GetPosition();
 			if (vertical){
 				toolbarPos.x += parent->alignment == 0 ? (wh - maxxwh) : (maxxwh - wh);
@@ -600,7 +601,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 
 		tdc.DrawBitmap(item->GetBitmap(), fh + 8, posY + (fh - item->icon->GetHeight()) / 2);
 		wxString desc = item->GetLabel();
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		size_t reps = desc.Replace(L"\t", L" (");
 		wxString accel;
 		wxString label = desc;

@@ -131,7 +131,7 @@ wxString DummyVideo::GetDummyText()
 	AssColor fcolor = color->GetColor();
 	wxString result = wxString::Format("?dummy:%f:%i:%i:%i:%i:%i:%i:%s",
 		(float)fps, frames, videoResolutionWidth->GetInt(), videoResolutionHeight->GetInt(),
-		fcolor.r, fcolor.g, fcolor.b, pattern->GetValue()? L"c" : L"");
+		fcolor.r, fcolor.g, fcolor.b, pattern->GetValue()? wxString(L"c") : emptyString);
 
 	return result;
 }

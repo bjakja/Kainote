@@ -56,9 +56,9 @@ void AssColor::SetAss(wxString color)
 		color.Upper();
 		bool ishtml = color.StartsWith(L"#");
 		wxString astr, rstr, gstr, bstr;
-		color.Replace(L"&", L"");
-		color.Replace(L"H", L"");
-		color.Replace(L"#", L"");
+		color.Replace(L"&", emptyString);
+		color.Replace(L"H", emptyString);
+		color.Replace(L"#", emptyString);
 		if (color.length() > 7){ astr = color.SubString(0, 1); astr.ToLong(&a, 16); color = color.Mid(2); }
 		rstr = color.SubString(4, 5), gstr = color.SubString(2, 3), bstr = color.SubString(0, 1);
 		if (ishtml){ wxString tmp = rstr; rstr = bstr; bstr = tmp; }
@@ -71,8 +71,8 @@ void AssColor::SetAss(wxString color)
 
 void AssColor::SetAlphaString(wxString alpha)
 {
-	alpha.Replace(L"&", L"");
-	alpha.Replace(L"H", L"");
+	alpha.Replace(L"&", emptyString);
+	alpha.Replace(L"H", emptyString);
 	alpha.ToLong(&a, 16);
 }
 void AssColor::SetWX(const wxColour &kolor, int alpha)

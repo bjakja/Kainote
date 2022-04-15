@@ -147,7 +147,7 @@ public:
 	void AddStyle(Styles *nstyl);
 	void ChangeStyle(Styles *nstyl, size_t i);
 	size_t StylesSize();
-	Styles *GetStyle(size_t i, const wxString &name = L"");
+	Styles *GetStyle(size_t i, const wxString &name = emptyString);
 	std::vector<Styles*> *GetStyleTable();
 
 	//multiplication must be set to 0

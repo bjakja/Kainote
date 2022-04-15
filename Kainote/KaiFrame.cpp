@@ -123,7 +123,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 			//mdc.DrawIcon(icons.GetIconByIndex(0), 4, 4);
 			//}
 		}
-		if (GetTitle() != L""){
+		if (GetTitle() != emptyString){
 			int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 			int maxWidth = w - 75 - maximizeDiff - startX;
 			mdc.DrawText(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
@@ -215,7 +215,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 //		//gc->DrawIcon(icons.GetIconByIndex(0), 4, 4);
 //		//}
 //	}
-//	if (GetTitle() != L""){
+//	if (GetTitle() != emptyString){
 //		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
 //		int maxWidth = w - 75 - maximizeDiff - startX;
 //		gc->DrawTextU(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);

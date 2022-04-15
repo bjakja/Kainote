@@ -474,7 +474,7 @@ WX_STRCMP_FUNC(wxStricmp, wxCRT_StricmpA, wxCRT_StricmpW, wxStricmp_String)
 #ifdef wxNEEDS_DECL_BEFORE_TEMPLATE
 template<typename T>
 inline int wxStrcoll_String(const wxString& s1, const T& s2);
-WX_STRCMP_FUNC(wxStrcoll, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
+WX_STRCMP_FUNC(wxStrcoll_String, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
 #endif // wxNEEDS_DECL_BEFORE_TEMPLATE
 
 template<typename T>
@@ -485,16 +485,16 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
     //     wc_str() even if wxUSE_UNICODE_UTF8; the (const wchar_t*) cast is
     //     there just as optimization to avoid going through
     //     wxStrcoll<wxScopedWCharBuffer>:
-    return wxStrcoll((const wchar_t*)s1.wc_str(), s2);
+    return wxStrcoll_String((const wchar_t*)s1.wc_str(), s2);
 #else
-    return wxStrcoll((const char*)s1.mb_str(), s2);
+    return wxStrcoll_String((const char*)s1.mb_str(), s2);
 #endif
 }
 
 #ifndef wxNEEDS_DECL_BEFORE_TEMPLATE
 // this is exactly the same WX_STRCMP_FUNC line as above, insde the
 // wxNEEDS_DECL_BEFORE_TEMPLATE case
-WX_STRCMP_FUNC(wxStrcoll, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
+WX_STRCMP_FUNC(wxStrcoll_String, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
 #endif
 
 #endif // defined(wxCRT_Strcoll[AW])

@@ -27,8 +27,8 @@
 class KaiFrame : public wxTopLevelWindow
 {
 public:
-	KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title = L"", 
-		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString &name = L"");
+	KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title = emptyString, 
+		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0, const wxString &name = emptyString);
 	virtual ~KaiFrame();
 	void SetLabel(const wxString &text);
 	virtual void SetStatusText(const wxString &label, int field){};

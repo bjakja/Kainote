@@ -204,16 +204,16 @@ bool Dialogue::EndsWith(const wxString &text, wxUniChar ch, size_t *pos)
 
 const wxString & Dialogue::GetTextNoCopy()
 {
-	return (TextTl != L"") ? TextTl : Text;
+	return (TextTl != emptyString) ? TextTl : Text;
 }
 wxString & Dialogue::GetText()
 {
-	return Text.CheckTlRef(TextTl, TextTl != L"");
+	return Text.CheckTlRef(TextTl, TextTl != emptyString);
 }
 
 void Dialogue::SetText(const wxString &text)
 {
-	if (TextTl != L"")
+	if (TextTl != emptyString)
 		TextTl = text;
 	else
 		Text = text;
@@ -301,17 +301,17 @@ void Dialogue::SetRaw(const wxString &ldial)
 			Style = assdal.GetNextToken();
 			Actor = assdal.GetNextToken();
 			if (Actor->StartsWith(L"[")){
-				if (Actor->Replace(L"[bookmark]", L"")){
+				if (Actor->Replace(L"[bookmark]", emptyString)){
 					State |= 8;
 				}
-				else if (Actor->Replace(L"[tree_closed]", L"")){
+				else if (Actor->Replace(L"[tree_closed]", emptyString)){
 					treeState = TREE_CLOSED;
 					isVisible = NOT_VISIBLE;
 				}
-				else if (Actor->Replace(L"[tree_opened]", L"")){
+				else if (Actor->Replace(L"[tree_opened]", emptyString)){
 					treeState = TREE_OPENED;
 				}
-				else if (Actor->Replace(L"[tree_description]", L"")){
+				else if (Actor->Replace(L"[tree_description]", emptyString)){
 					treeState = TREE_DESCRIPTION;
 				}
 			}
@@ -342,7 +342,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		eend = eend.AfterFirst(L' ');
 		End.SetRaw(eend.BeforeFirst(L'\n', &ttext).Trim(), Format);
 		Text = ttext;
-		Text->Replace(L"\r", L"");
+		Text->Replace(L"\r", emptyString);
 		Text->Replace(L"\n", L"\\N");
 		NonDialogue = false;
 		IsComment = false;
@@ -396,7 +396,7 @@ void Dialogue::SetRaw(const wxString &ldial)
 		IsComment = false;
 		Style = L"Default";
 		Text = ldial;
-		Text->Replace(L"\r", L"");
+		Text->Replace(L"\r", emptyString);
 		Text->Replace(L"\n", L"\\N");
 		Text.Trim(true);
 	}
@@ -410,15 +410,15 @@ void Dialogue::GetRaw(wxString *txt, bool tl/*=false*/, const wxString &style/*=
 		if (NonDialogue){ (*txt) << Text << L"\r\n"; return; }
 		if (IsComment || hideOriginalOnVideo){ line = L"Comment: "; }
 		else{ line = L"Dialogue: "; }
-		bool styleTl = style != L"";
+		bool styleTl = style != emptyString;
 		const wxString &Styletl = (styleTl) ? style : Style;
 		const wxString &EffectTl = (State & 4 && styleTl) ? wxString(L"\fD") : Effect;
 		// state 8 - bookmarks
 		wxString ActorWithStates = (State & 8) ? L"[bookmark]" + Actor : Actor;
 		if (treeState){
-			ActorWithStates.Prepend((treeState == TREE_DESCRIPTION) ? L"[tree_description]" :
-				(treeState == TREE_OPENED) ? L"[tree_opened]" :
-				(treeState == TREE_CLOSED) ? L"[tree_closed]" : L"");
+			ActorWithStates.Prepend((treeState == TREE_DESCRIPTION) ? wxString(L"[tree_description]") :
+				(treeState == TREE_OPENED) ? wxString(L"[tree_opened]") :
+				(treeState == TREE_CLOSED) ? wxString(L"[tree_closed]") : emptyString);
 		}
 		line << Layer << L","
 			<< Start.raw(Format) << L","
@@ -458,11 +458,11 @@ wxString Dialogue::GetCols(int cols, bool tl, const wxString &style)
 	wxString txttl = (tl) ? TextTl : Text;
 	if (cols & 2048){
 		wxRegEx reg(L"\\{[^\\{]*\\}", wxRE_ADVANCED);
-		reg.ReplaceAll(&txttl, L"");
+		reg.ReplaceAll(&txttl, emptyString);
 		cols |= 1024;
 	}
 	if (Format < SRT){
-		wxString Styletl = (style != L"") ? style : Style;
+		wxString Styletl = (style != emptyString) ? style : Style;
 		if (cols & 1){ line << Layer << L","; }
 		if (cols & 2){ line << Start.raw() << L","; }
 		if (cols & 4){ line << End.raw() << L","; }
@@ -517,11 +517,11 @@ void Dialogue::Convert(char type, const wxString &prefix)
 	if (type < SRT){
 		Layer = 0;
 		Style = Options.GetString(CONVERT_STYLE);
-		Actor = L"";
+		Actor = emptyString;
 		MarginL = 0;
 		MarginR = 0;
 		MarginV = 0;
-		Effect = L"";
+		Effect = emptyString;
 		wxString tmp = Text;
 		if (Format != SRT){
 			wxRegEx regib(L"\\{y[:+]([ib])\\}", wxRE_ADVANCED | wxRE_ICASE);
@@ -530,26 +530,26 @@ void Dialogue::Convert(char type, const wxString &prefix)
 			wxRegEx regc(L"\\{c:\\$([^}]*)\\}", wxRE_ADVANCED | wxRE_ICASE);
 			
 			regib.ReplaceAll(&tmp, L"{\\\\\\1\t1}");
-			tmp.Replace(L"\t", L"");
+			tmp.Replace(L"\t", emptyString);
 			regf.ReplaceAll(&tmp, L"{\\\\fn\\1}");
 			regs.ReplaceAll(&tmp, L"{\\\\fs\\1}");
 			regc.ReplaceAll(&tmp, L"{\\\\1c\\&H\\1\\&}");
 			//tmp.Replace(L"|", L"\\N");
-			//size_t il = tmp.Replace(L"/", L"");
+			//size_t il = tmp.Replace(L"/", emptyString);
 			//Text = pref;
 			//if (il > 0){ Text << wxString(L"{\\i1}"); }
 			Text = tmp;
 			ReplaceSlashesToItalics();
 			AddResetOnMDVDWraps(prefix);
 			Text->Replace(L"|", L"\\N");
-			Text->Replace(L"}{", L"");
+			Text->Replace(L"}{", emptyString);
 		}
 		else{
 			wxRegEx regibu(L"\\<([ibu])\\>", wxRE_ADVANCED);
 			wxRegEx regibu0(L"\\</([ibu])\\>", wxRE_ADVANCED);
 			regibu.ReplaceAll(&tmp, L"{\\\\\\1\t1}");
 			regibu0.ReplaceAll(&tmp, L"{\\\\\\1\t0}");
-			tmp.Replace(L"\t", L"");
+			tmp.Replace(L"\t", emptyString);
 			tmp.Replace(L"<br>", L"\\N");
 			Text = prefix + tmp;
 		}
@@ -559,7 +559,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 		wxString tmp = Text;
 		tmp.Replace(L"\\h", L" ");
 		wxRegEx regp(L"\\\\p[0-9]+", wxRE_ADVANCED);
-		if (regp.Matches(tmp)){ Text = L""; Format = type; return; }
+		if (regp.Matches(tmp)){ Text = emptyString; Format = type; return; }
 		if (type == SRT){
 			wxRegEx regibu(L"\\\\([ibu])1", wxRE_ADVANCED);
 			wxRegEx regibu0(L"\\\\([ibu])0", wxRE_ADVANCED);
@@ -567,7 +567,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 			regibu0.ReplaceAll(&tmp, L"}</\\1>{");
 		}
 		wxRegEx reg(L"\\{[^}]*\\}", wxRE_ADVANCED);
-		reg.ReplaceAll(&tmp, L"");
+		reg.ReplaceAll(&tmp, emptyString);
 		if (type != SRT){
 			tmp.Replace(L"\\N", L"|");
 		}
@@ -586,7 +586,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 			tmp.Replace(L"<i>", L"/");
 		}
 		wxRegEx reg(L"\\<[^>]*\\>", wxRE_ADVANCED);
-		reg.ReplaceAll(&tmp, L"");
+		reg.ReplaceAll(&tmp, emptyString);
 		Text = tmp;
 	}
 	else if (type == SRT){
@@ -596,7 +596,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 			tmp.Replace(L"{y:i}", L"<i>");
 			tmp.Replace(L"{y:b}", L"<b>");
 			wxRegEx reg(L"\\{[^}]*\\}", wxRE_ADVANCED);
-			reg.ReplaceAll(&tmp, L"");
+			reg.ReplaceAll(&tmp, emptyString);
 		}
 		else if (type == MPL2){
 			tmp.Replace(L"/", L"<i>");
@@ -607,7 +607,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 		wxString tmp = Text;
 		tmp.Replace(L"{y:i}", L"/");
 		wxRegEx reg(L"\\{[^}]*\\}", wxRE_ADVANCED);
-		reg.ReplaceAll(&tmp, L"");
+		reg.ReplaceAll(&tmp, emptyString);
 		Text = tmp;
 	}
 	else if (Format == MPL2 && type == MDVD){
@@ -617,11 +617,11 @@ void Dialogue::Convert(char type, const wxString &prefix)
 		if (Format == MDVD){
 			wxString tmp = Text;
 			wxRegEx reg(L"\\{[^}]*\\}", wxRE_ADVANCED);
-			reg.ReplaceAll(&tmp, L"");
+			reg.ReplaceAll(&tmp, emptyString);
 			Text = tmp;
 		}
 		else if (Format == MPL2){
-			Text->Replace(L"/", L"");
+			Text->Replace(L"/", emptyString);
 		}
 	}
 
@@ -664,7 +664,7 @@ ParseData* Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 		delete parseData; 
 		parseData = NULL;
 	}
-	wxString txt = (TextTl != L"") ? TextTl : Text;
+	wxString txt = (TextTl != emptyString) ? TextTl : Text;
 	size_t pos = 0;
 	size_t plainStart = 0;
 	bool hasDrawing = false;
@@ -774,7 +774,7 @@ void Dialogue::ChangeTimes(int start, int end)
 			wxString timesString;
 			timesString << t1 << L"," << t2;
 			replaceMismatch += totalLen - timesString.length();
-			if (TextTl != L""){
+			if (TextTl != emptyString){
 				TextTl->replace(t1Pos, totalLen, timesString);
 			}
 			else{

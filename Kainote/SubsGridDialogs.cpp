@@ -41,9 +41,9 @@ FPSDialog::FPSDialog(wxWindow *parent)
 	valid.SetIncludes(includes);
 
 	fpsy.Add(L"23.976"); fpsy.Add(L"24"); fpsy.Add(L"25"); fpsy.Add(L"29.97"); fpsy.Add(L"30"); fpsy.Add(L"60");
-	oldfps = new KaiChoice(this, -1, L"", wxDefaultPosition, wxDefaultSize, fpsy, 0, valid);
+	oldfps = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, fpsy, 0, valid);
 	oldfps->SetSelection(0);
-	newfps = new KaiChoice(this, -1, L"", wxDefaultPosition, wxSize(80, -1), fpsy, 0, valid);
+	newfps = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxSize(80, -1), fpsy, 0, valid);
 	newfps->SetSelection(2);
 	sizer->Add(new KaiStaticText(this, -1, _("FPS napisów")), 0, wxALIGN_CENTER_VERTICAL | wxALL, 4);
 	sizer->Add(oldfps, 0, wxEXPAND | wxALL, 4);

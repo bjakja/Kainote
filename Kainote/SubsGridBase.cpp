@@ -98,7 +98,7 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& p
 	//reset autosave on statusbar
 	nullifyTimer.SetOwner(this, 27890);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
-		Kai->SetStatusText(L"", 0);
+		Kai->SetStatusText(emptyString, 0);
 	}, 27890);
 }
 
@@ -204,7 +204,7 @@ void SubsGridBase::Convert(char type)
 			return; 
 		}
 	}
-	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && tab->VideoPath != L""){
+	if (Options.GetBool(CONVERT_FPS_FROM_VIDEO) && tab->VideoPath != emptyString){
 		Options.SetString(CONVERT_FPS, Kai->GetStatusText(4).BeforeFirst(L' '));
 	}
 	if (Options.GetFloat(CONVERT_FPS) < 1){ KaiMessageBox(_("Nieprawidłowy FPS. Popraw opcje i spróbuj ponownie.")); return; }
@@ -249,8 +249,8 @@ void SubsGridBase::Convert(char type)
 		LoadDefault(false, true, false);
 		wxString resx = Options.GetString(CONVERT_RESOLUTION_WIDTH);
 		wxString resy = Options.GetString(CONVERT_RESOLUTION_HEIGHT);
-		if (resx == L""){ resx = L"1280"; }
-		if (resy == L""){ resx = L"720"; }
+		if (resx == emptyString){ resx = L"1280"; }
+		if (resy == emptyString){ resx = L"720"; }
 		AddSInfo(L"PlayResX", resx, false);
 		AddSInfo(L"PlayResY", resy, false);
 		AddSInfo(L"YCbCr Matrix", L"TV.601", false);
@@ -288,7 +288,7 @@ void SubsGridBase::Convert(char type)
 				lastDialogue = actualDialogue;
 				continue;
 			}
-			else if (actualDialogue->Text == L""){
+			else if (actualDialogue->Text == emptyString){
 				file->DeleteDialogues(i, i + 1);
 				continue;
 			}
@@ -321,7 +321,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 	wxString txt;
 	const wxString &tlmode = GetSInfo(L"TLMode");
 	bool translated = tlmode == L"Translated";
-	bool tlmodeOn = tlmode != L"";
+	bool tlmodeOn = tlmode != emptyString;
 
 	OpenWrite ow(filename, true);
 
@@ -366,7 +366,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 			if (i == currentLine){ dial = Edit->line; };
 
 			if (tlmodeOn){
-				bool hasTextTl = dial->TextTl != L"";
+				bool hasTextTl = dial->TextTl != emptyString;
 				if (!translated && (hasTextTl || dial->IsDoubtful())){
 					if (showOriginalOnVideo)
 						dial->GetRaw(&raw, false, txt);
@@ -396,7 +396,7 @@ void SubsGridBase::SaveFile(const wxString &filename, bool normalSave, bool load
 			Dialogue *dial = file->GetDialogue(i);
 
 			if (tlmodeOn){
-				bool hasTextTl = dial->TextTl != L"";
+				bool hasTextTl = dial->TextTl != emptyString;
 				if (!translated && (hasTextTl || dial->IsDoubtful())){
 					dial->GetRaw(&raw, false, txt, !showOriginalOnVideo);
 					dial->GetRaw(&raw, true);
@@ -962,7 +962,7 @@ void SubsGridBase::DeleteText()
 	wxArrayInt sels;
 	file->GetSelections(sels);
 	for (auto i : sels){
-		CopyDialogue(i)->Text = L"";
+		CopyDialogue(i)->Text = emptyString;
 	}
 	SetModified(GRID_DELETE_TEXT);
 	Refresh(false);
@@ -1363,7 +1363,7 @@ void SubsGridBase::SetEndTime(int etime)
 bool SubsGridBase::SetTlMode(bool mode)
 {
 	if (mode){
-		if (GetSInfo(L"TLMode") == L""){
+		if (GetSInfo(L"TLMode") == emptyString){
 			
 			int ssize = file->StylesSize();
 			if (ssize > 0){
@@ -1407,11 +1407,11 @@ bool SubsGridBase::SetTlMode(bool mode)
 		{
 			Dialogue *dial = file->GetDialogue(i);
 			Dialogue *dialc = NULL;
-			if (dial->TextTl != L"")
+			if (dial->TextTl != emptyString)
 			{
 				dialc = file->CopyDialogue(i);
 				dialc->Text = dialc->TextTl;
-				dialc->TextTl = L"";
+				dialc->TextTl = emptyString;
 			}
 			if (dial->IsDoubtful()){
 				if (!dialc){ dialc = CopyDialogue(i); }
@@ -1446,8 +1446,8 @@ void SubsGridBase::NextLine(int direction)
 		int eend = tmp->End.mstime;
 		tmp->Start.NewTime(eend);
 		tmp->End.NewTime(eend + 5000);
-		tmp->Text = L"";
-		tmp->TextTl = L"";
+		tmp->Text = emptyString;
+		tmp->TextTl = emptyString;
 		AddLine(tmp);
 		SetModified(GRID_APPEND_LINE, false);
 		AdjustWidths(subsFormat > TMP ? (START | END) : 0);
@@ -1594,13 +1594,13 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 			continue;
 		}
 		if ((toEnd && _time <= dial->Start.mstime) || (_time >= dial->Start.mstime && _time < dial->End.mstime) || allSubs){
-			if (isTlmode && dial->TextTl != L""){
+			if (isTlmode && dial->TextTl != emptyString){
 				if (showOriginalOnVideo)
 					dial->GetRaw(txt, false, tlStyle);
 
 				dial->GetRaw(txt, true);
 			}
-			else if(dial->Text != L""){
+			else if(dial->Text != emptyString){
 				if (subsFormat == SRT){
 					(*txt) << j << L"\r\n";
 					j++;
@@ -1609,7 +1609,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 			}
 			if (point && i == currentLine){
 				
-				int len = (isTlmode && dial->TextTl != L"") ?
+				int len = (isTlmode && dial->TextTl != emptyString) ?
 					dial->TextTl.Len() : dial->Text.Len();
 				if (!len) {
 					dial->GetRaw(txt);
@@ -1748,8 +1748,8 @@ void SubsGridBase::SubsComparison()
 
 			compareData & firstCompare = CG1->Comparison->at(i);
 			compareData & secondCompare = CG2->Comparison->at(j);
-			CompareTexts(firstCompare, secondCompare, (CG1->hasTLMode && dial1->TextTl != L"") ? dial1->TextTl : dial1->Text,
-				(CG2->hasTLMode && dial2->TextTl != L"") ? dial2->TextTl : dial2->Text);
+			CompareTexts(firstCompare, secondCompare, (CG1->hasTLMode && dial1->TextTl != emptyString) ? dial1->TextTl : dial1->Text,
+				(CG2->hasTLMode && dial2->TextTl != emptyString) ? dial2->TextTl : dial2->Text);
 			firstCompare.secondComparedLine = j;
 			secondCompare.secondComparedLine = i;
 			lastJ = j + 1;

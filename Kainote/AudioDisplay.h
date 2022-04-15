@@ -68,10 +68,10 @@ class AudioDisplay : public wxWindow {
 	friend class AudioBox;
 private:
 	int line_n = 0;
-	Dialogue *dialogue;
+	Dialogue *dialogue = nullptr;
 
 
-	AudioSpectrum *spectrumRenderer;
+	AudioSpectrum *spectrumRenderer = nullptr;
 	wxSize LastSize;
 	volatile float curpos;
 
@@ -108,31 +108,31 @@ private:
 
 	int holdSyl;
 
-	int *peak;
-	int *min;
+	int *peak = nullptr;
+	int *min = nullptr;
 
 	wxCriticalSection mutex;
 	wxCriticalSection mutexUpdate;
-	int currentSyllable;
-	int currentCharacter;
-	int syllableHover;
-	LPDIRECT3D9 d3dObject;
-	LPDIRECT3DDEVICE9 d3dDevice;
-	LPDIRECT3DSURFACE9 backBuffer;
-	LPDIRECT3DSURFACE9 spectrumSurface;
+	int currentSyllable = 0;
+	int currentCharacter = 0;
+	int syllableHover = 0;
+	LPDIRECT3D9 d3dObject = nullptr;
+	LPDIRECT3DDEVICE9 d3dDevice = nullptr;
+	LPDIRECT3DSURFACE9 backBuffer = nullptr;
+	LPDIRECT3DSURFACE9 spectrumSurface = nullptr;
 
-	ID3DXLine *d3dLine;
-	LPD3DXFONT d3dFontTahoma13;
-	LPD3DXFONT d3dFontTahoma8;
-	LPD3DXFONT d3dFontVerdana11;
-	bool deviceLost;
+	ID3DXLine *d3dLine = nullptr;
+	LPD3DXFONT d3dFontTahoma13 = nullptr;
+	LPD3DXFONT d3dFontTahoma8 = nullptr;
+	LPD3DXFONT d3dFontVerdana11 = nullptr;
+	bool deviceLost = false;
 	bool needToReset = false;
 	//config
-	int selWidth;
-	int shadeType;
-	int timelineHeight;
-	bool drawVideoPos;
-	bool spectrumOn;
+	int selWidth = 0;
+	int shadeType = 0;
+	int timelineHeight = 0;
+	bool drawVideoPos = false;
+	bool spectrumOn = false;
 	bool drawSelectionBackground;
 	bool drawKeyframes;
 	bool drawBoundaryLines;
@@ -190,12 +190,12 @@ private:
 	void DoUpdateImage(bool weak);
 
 public:
-	SubsGrid *grid;
-	EditBox *Edit;
-	TabPanel *tab;
-	Provider *provider;
-	DirectSoundPlayer2 *player;
-	Karaoke *karaoke;
+	SubsGrid *grid = nullptr;
+	EditBox *Edit = nullptr;
+	TabPanel *tab = nullptr;
+	Provider *provider = nullptr;
+	DirectSoundPlayer2 *player = nullptr;
+	Karaoke *karaoke = nullptr;
 
 	bool hasKara;
 	bool karaAuto;
@@ -211,10 +211,10 @@ public:
 	int w, h;
 	int w1 = 500;
 	wxRect screenRect;
-	AudioBox *box;
-	KaiScrollbar *ScrollBar;
+	AudioBox *box = nullptr;
+	KaiScrollbar *ScrollBar = nullptr;
 	wxTimer ProgressTimer;
-	HANDLE UpdateTimerHandle = NULL;
+	HANDLE UpdateTimerHandle = nullptr;
 	HANDLE PlayEvent;
 	HANDLE DestroyEvent;
 	float lastProgress = -1.f;

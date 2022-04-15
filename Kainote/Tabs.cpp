@@ -337,7 +337,8 @@ void Notebook::CalcSizes(bool makeActiveVisible)
 	if (newHeight != TabHeight){
 		TabHeight = newHeight;
 		//OnSize have all that needed after changing font size on tabs bar
-		OnSize(wxSizeEvent());
+		wxSizeEvent sizeEvent;
+		OnSize(sizeEvent);
 	}
 }
 
@@ -378,7 +379,7 @@ void Notebook::OnMouseEvent(wxMouseEvent& event)
 			CaptureMouse();
 			int px = x, py = 2;
 			ClientToScreen(&px, &py);
-			sline = new wxDialog(this, -1, L"", wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
+			sline = new wxDialog(this, -1, emptyString, wxPoint(px, py), wxSize(3, h - 27), wxSTAY_ON_TOP | wxBORDER_NONE);
 			sline->SetBackgroundColour(L"#000000");
 			sline->Show();
 			splitLineHolding = true;
@@ -625,7 +626,8 @@ void Notebook::OnPaint(wxPaintEvent& event)
 	//h-=TabHeight;
 	wxClientDC cdc(this);
 	wxMemoryDC dc;
-	dc.SelectObject(wxBitmap(w, TabHeight));
+	wxBitmap notebookBitmap(w, TabHeight);
+	dc.SelectObject(notebookBitmap);
 	dc.SetFont(font);
 	//dc.SetPen(*wxTRANSPARENT_PEN);
 	//dc.SetBrush(wxBrush(Options.GetColour("Menu Bar Background 2")));
@@ -834,7 +836,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 
 	for (int g = 0; g < Size(); g++)
 	{
-		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, L"", true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
+		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, emptyString, true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	tabsMenu.AppendSeparator();
 	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
@@ -869,7 +871,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		wxArrayString optionsCompareStyles;
 		Options.GetTable(SUBS_COMPARISON_STYLES, optionsCompareStyles);
 		for (size_t i = 0; i < availableStyles.size(); i++){
-			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], L"", true, NULL, NULL, ITEM_CHECK);
+			MenuItem * styleItem = styleComparisonMenu->Append(4448, availableStyles[i], emptyString, true, NULL, NULL, ITEM_CHECK);
 			if (optionsCompareStyles.Index(availableStyles[i]) != -1){ 
 				styleItem->Check(); 
 				SubsGridBase::compareStyles.Add(availableStyles[i]); 
@@ -878,11 +880,11 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	}
 	int compareBy = Options.GetInt(SUBS_COMPARISON_TYPE);
 	Menu *comparisonMenu = new Menu();
-	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, L"", ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
-	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, L"", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, L"", ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, L"", ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
-	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, L"", ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
+	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), NULL, emptyString, ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
+	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), NULL, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), NULL, emptyString, ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), NULL, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
 	comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
 	comparisonMenu->Append(MENU_COMPARE - 1, _("Wyłącz porównanie"))->Enable(SubsGridBase::hasCompare);
 	tabsMenu.Append(MENU_COMPARE + 6, _("Porównanie napisów"), comparisonMenu, _("Porównanie napisów"))->Enable(canCompare || SubsGridBase::hasCompare);
@@ -1287,10 +1289,10 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 		result << L"\r\nActive: " << tab->Grid->currentLine <<
 			L"\r\nScroll: " << tab->Grid->GetScrollPosition() <<
 			L"\r\nEditor: " << tab->editor << L"\r\n";
-		if (tab->AudioPath != L"" && tab->AudioPath != tab->VideoPath) {
+		if (tab->AudioPath != emptyString && tab->AudioPath != tab->VideoPath) {
 			result << L"Audio: " << tab->AudioPath << L"\r\n";
 		}
-		if (tab->KeyframesPath != L"") {
+		if (tab->KeyframesPath != emptyString) {
 			result << L"Keyframes: " << tab->KeyframesPath << L"\r\n";
 		}
 
@@ -1390,7 +1392,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 						if (!hasEditor)
 							sthis->Kai->HideEditor();
 	
-						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor, false, false, audio != L"");
+						sthis->LoadVideo(tab, video, videoPosition, isFFMS2, hasEditor, false, false, audio != emptyString);
 					}
 					if (!audio.empty()) {
 						sthis->Kai->OpenAudioInTab(tab, 30040, audio);
@@ -1398,14 +1400,14 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 					
 					sthis->Kai->Label();
 					tab->ShiftTimes->Contents();
-					video = L"";
+					video = emptyString;
 					videoPosition = 0;
-					subtitles = L"";
+					subtitles = emptyString;
 					activeLine = 0;
 					scrollPosition = 0;
 					isFFMS2 = true;
 					hasEditor = true;
-					keyframes = L"";
+					keyframes = emptyString;
 				}
 			}
 			if (hasnotMoreTokens)

@@ -310,7 +310,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (previewGrid->subsFormat != TMP){
-					frame = L"";
+					frame = emptyString;
 					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
@@ -332,12 +332,12 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			}
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
-			bool isTl = (previewGrid->hasTLMode && txttl != L"");
+			bool isTl = (previewGrid->hasTLMode && txttl != emptyString);
 
 			if (!isComment) {
 				//here are generated misspells table, chars table, and wraps;
 				//on original do not use spellchecking only calculating wraps and cps;
-				bool originalInTLMode = previewGrid->hasTLMode && txttl == L"";
+				bool originalInTLMode = previewGrid->hasTLMode && txttl == emptyString;
 				Misspells.Init((isTl) ? txttl : txt,
 					SpellCheckerOn && !originalInTLMode, previewGrid->subsFormat,
 					previewGrid->hideOverrideTags ? chtagLen : -1);
@@ -348,7 +348,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				shorttime = chtime > 15;
 			}
 			else {
-				strings.push_back(L"");
+				strings.push_back(emptyString);
 				shorttime = false;
 			}
 			if (!isComment && !(WRAPS & previewGrid->visibleColumns)) {
@@ -356,7 +356,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				badWraps = Misspells.badWraps;
 			}
 			else {
-				strings.push_back(L"");
+				strings.push_back(emptyString);
 				badWraps = false;
 			}
 
@@ -432,7 +432,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						wxString cmp = strings[j].SubString(previewGrid->Comparison->at(key)[c],
 							previewGrid->Comparison->at(key)[c + 1]);
 
-						if (cmp == L""){ continue; }
+						if (cmp == emptyString){ continue; }
 						if (cmp == L" "){ cmp = L"_"; }
 						wxString bcmp;
 						if (previewGrid->Comparison->at(key)[c]>0){
@@ -929,7 +929,7 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	for (int i = 0; i < previewData.size(); i++){
 		wxString name = previewData[i].tab->SubsName + L" (" + std::to_wstring(previewData[i].lineRangeStart) +
 			L" " + std::to_wstring(previewData[i].lineRangeLen) + L")";
-		MenuItem * Item = menu->Append(4880 + i, name, L"", true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
+		MenuItem * Item = menu->Append(4880 + i, name, emptyString, true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	int result = menu->GetPopupMenuSelection(pos, this);
 	delete menu;

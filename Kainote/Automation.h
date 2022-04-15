@@ -147,9 +147,9 @@ namespace Auto {
 		LuaScript(wxString const& filename);
 		~LuaScript() { Destroy(); }
 
-		wxString GetFilename() const { return filename; }
+		const wxString &GetFilename() { return filename; }
 		/// The script's file name without path
-		wxString GetPrettyFilename() const { return filename.AfterLast(L'\\'); }
+		const wxString GetPrettyFilename() { return filename.AfterLast(L'\\'); }
 		/// The script's name. Not required to be unique.
 
 		void RegisterCommand(LuaCommand *command);

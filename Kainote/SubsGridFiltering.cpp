@@ -165,8 +165,8 @@ void SubsGridFiltering::MakeTree()
 				treeStart->IsComment = true;
 				treeStart->isVisible = VISIBLE;
 				treeStart->treeState = TREE_DESCRIPTION;
-				treeStart->Text = L"";
-				treeStart->TextTl = L"";
+				treeStart->Text = emptyString;
+				treeStart->TextTl = emptyString;
 				grid->InsertRows(i + treeDiff, 1, treeStart, true, false);
 				treeDiff++;
 				startSelection = false;

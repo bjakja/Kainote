@@ -44,8 +44,8 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 	if (multiline){ maxSize = MAXINT; }
 	else{
 		style |= wxALIGN_CENTER_VERTICAL; maxSize = 1000;
-		KText.Replace(L"\r", L"");
-		KText.Replace(L"\n", L"");
+		KText.Replace(L"\r", emptyString);
+		KText.Replace(L"\n", emptyString);
 	}
 	SetCursor(wxCURSOR_IBEAM);
 	wxAcceleratorEntry entries[38];
@@ -151,8 +151,8 @@ void KaiTextCtrl::SetValue(const wxString &text, bool modif, bool newSel)
 	if (modif){ modified = modif; }
 	KText = text;
 	if (!multiline){
-		KText.Replace(L"\r", L"");
-		KText.Replace(L"\n", L"");
+		KText.Replace(L"\r", emptyString);
+		KText.Replace(L"\n", emptyString);
 	}
 	textStyles.clear();
 	CalcWrap(false);
@@ -177,8 +177,8 @@ void KaiTextCtrl::AppendText(const wxString &text)
 		KText << text;
 	}
 	if (!multiline){
-		KText.Replace(L"\r", L"");
-		KText.Replace(L"\n", L"");
+		KText.Replace(L"\r", emptyString);
+		KText.Replace(L"\n", emptyString);
 	}
 	CalcWrap(false, (len < 1) ? 0 : (KText[len - 1] == L'\n') ? len : len - 1);
 	Cursor.x = Selend.x = KText.length() - 1;
@@ -278,7 +278,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 
 	int w, h, fw = 0, fh = 0;
 	GetSize(&w, &h);
-	if (KText != L"" && multiline){
+	if (KText != emptyString && multiline){
 		if (wraps.size() == 0){
 			wraps.push_back(0);
 			positioning.push_back(0);
@@ -1016,8 +1016,8 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 						else{ fww = 0; }
 						dc.SetTextForeground(fg);
 						wxString normalText = line.SubString((lastto < linefrom) ? 0 : lastto - linefrom, newto);
-						normalText.Replace(L"\r", L"");
-						normalText.Replace(L"\n", L"");
+						normalText.Replace(L"\r", emptyString);
+						normalText.Replace(L"\n", emptyString);
 						normalText.Replace(L"\t", L"        ");
 						dc.DrawText(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
 					}
@@ -1027,8 +1027,8 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 				else{ drawX = 0; }
 				dc.SetTextForeground(textStyles[k].color);
 				wxString colorizedText = line.SubString((from < linefrom) ? 0 : from - linefrom, (to < lineto) ? to - linefrom : line.length() - 1);
-				colorizedText.Replace(L"\r", L"");
-				colorizedText.Replace(L"\n", L"");
+				colorizedText.Replace(L"\r", emptyString);
+				colorizedText.Replace(L"\n", emptyString);
 				colorizedText.Replace(L"\t", L"        ");
 				dc.DrawText(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
 				drawed = true;
@@ -1058,15 +1058,15 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 				else{ drawX = 0; }
 				dc.SetTextForeground(fg);
 				wxString normalText = line.SubString(lastto >= linefrom ? lastto - linefrom : 0, line.length() - 1);
-				normalText.Replace(L"\r", L"");
-				normalText.Replace(L"\n", L"");
+				normalText.Replace(L"\r", emptyString);
+				normalText.Replace(L"\n", emptyString);
 				normalText.Replace(L"\t", L"        ");
 				dc.DrawText(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
 			}
 		}
 		else{
-			line.Replace(L"\r", L"");
-			line.Replace(L"\n", L"");
+			line.Replace(L"\r", emptyString);
+			line.Replace(L"\n", emptyString);
 			line.Replace(L"\t", L"        ");
 			dc.SetTextForeground((enabled) ? fg : textInactive);
 			size_t tlen = line.length();
@@ -1211,8 +1211,8 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 						else{ fww = 0; }
 						gc->SetFont(font, fg);
 						wxString normalText = line.SubString((lastto < linefrom) ? 0 : lastto - linefrom, newto);
-						normalText.Replace(L"\r", L"");
-						normalText.Replace(L"\n", L"");
+						normalText.Replace(L"\r", emptyString);
+						normalText.Replace(L"\n", emptyString);
 						normalText.Replace(L"\t", L"        ");
 						gc->DrawTextU(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
 					}
@@ -1222,8 +1222,8 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 				else{ drawX = 0; }
 				gc->SetFont(font, textStyles[k].color);
 				wxString colorizedText = line.SubString((from < linefrom) ? 0 : from - linefrom, (to < lineto) ? to - linefrom : line.length() - 1);
-				colorizedText.Replace(L"\r", L"");
-				colorizedText.Replace(L"\n", L"");
+				colorizedText.Replace(L"\r", emptyString);
+				colorizedText.Replace(L"\n", emptyString);
 				colorizedText.Replace(L"\t", L"        ");
 				gc->DrawTextU(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
 				drawed = true;
@@ -1253,15 +1253,15 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 				else{ drawX = 0; }
 				gc->SetFont(font, fg);
 				wxString normalText = line.SubString(lastto >= linefrom ? lastto - linefrom : 0, line.length() - 1);
-				normalText.Replace(L"\r", L"");
-				normalText.Replace(L"\n", L"");
+				normalText.Replace(L"\r", emptyString);
+				normalText.Replace(L"\n", emptyString);
 				normalText.Replace(L"\t", L"        ");
 				gc->DrawTextU(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
 			}
 		}
 		else{
-			line.Replace(L"\r", L"");
-			line.Replace(L"\n", L"");
+			line.Replace(L"\r", emptyString);
+			line.Replace(L"\n", emptyString);
 			line.Replace(L"\t", L"        ");
 			gc->SetFont(font, (enabled) ? fg : textInactive);
 			size_t tlen = line.length();
@@ -1545,7 +1545,7 @@ void KaiTextCtrl::Paste()
 			//whatpaste.Replace("\t"," ");
 			if (!multiline){
 				whatpaste.Replace(L"\n", L" ");
-				whatpaste.Replace(L"\r", L"");
+				whatpaste.Replace(L"\r", emptyString);
 			}
 
 			if (KText.length() >= maxSize){
@@ -1643,8 +1643,8 @@ void KaiTextCtrl::OnScroll(wxScrollWinEvent& event)
 void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, int *textHeight)
 {
 	wxString txt = textToMesure;
-	txt.Replace(L"\r", L"");
-	txt.Replace(L"\n", L"");
+	txt.Replace(L"\r", emptyString);
+	txt.Replace(L"\n", emptyString);
 	txt.Replace(L"\t", L"        ");
 	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
@@ -1652,8 +1652,8 @@ void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, in
 void KaiTextCtrl::GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight)
 {
 	wxString txt = textToMesure;
-	txt.Replace(L"\r", L"");
-	txt.Replace(L"\n", L"");
+	txt.Replace(L"\r", emptyString);
+	txt.Replace(L"\n", emptyString);
 	txt.Replace(L"\t", L"        ");
 	gc->GetTextExtent(txt, textWidth, textHeight);
 }

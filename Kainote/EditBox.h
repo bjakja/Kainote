@@ -142,7 +142,7 @@ public:
 	void SetGrid1(SubsGrid* _grid) { grid = _grid; };
 	bool LoadAudio(const wxString &audioFileName, bool fromVideo);
 	void CloseAudio();
-	TextEditor *GetEditor(const wxString &text = L"");
+	TextEditor *GetEditor(const wxString &text = emptyString);
 	bool SetFont(const wxFont &font);
 	void OnAccelerator(wxCommandEvent& event);
 	int GetFormat();

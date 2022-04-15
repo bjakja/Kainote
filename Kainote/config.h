@@ -29,9 +29,9 @@
 #include <wx/bitmap.h>
 #include "Styles.h"
 #include "LogHandler.h"
-//#include <wx/wx.h>
-//#include "Utils.h"
+#include "config.h"
 
+wxString emptyString = wxString(L"");
 
 //Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \
@@ -439,14 +439,14 @@ public:
 	void GetRawOptions(wxString &options, bool Audio = false);
 	void AddStyle(Styles *styl);
 	void ChangeStyle(Styles *styl, int i);
-	Styles *GetStyle(int i, const wxString &name = L"", Styles* styl = NULL);
+	Styles *GetStyle(int i, const wxString &name = emptyString, Styles* styl = NULL);
 	int FindStyle(const wxString &name, int *multiplication = NULL);
 	void DelStyle(int i);
 	int StoreSize();
 	void CatchValsLabs(const wxString &rawoptions);
 	bool SetRawOptions(const wxString &textconfig);
 	int LoadOptions();
-	void LoadColors(const wxString &themeName = L"");
+	void LoadColors(const wxString &themeName = emptyString);
 	//if you want to use defaultOptions alocate table for configSize
 	//use with AudioConfig
 	void LoadDefaultConfig(wxString * defaultOptions = NULL);
@@ -459,7 +459,7 @@ public:
 	void ResetDefault();
 	void SaveAudioOpts();
 	void SaveOptions(bool cfg = true, bool style = true, bool crashed = false);
-	void SaveColors(const wxString &path = L"");
+	void SaveColors(const wxString &path = emptyString);
 	void LoadStyles(const wxString &katalog);
 	void clearstyles();
 	void Sortstyles();
@@ -566,7 +566,7 @@ wxImage CreateImageFromPngResource(const wxString& t_name);
 void MoveToMousePosition(wxWindow* win);
 wxString MakePolishPlural(int num, const wxString& normal, const wxString& plural24, const wxString& pluralRest);
 
-static const wxString emptyString;
+
 bool IsNumber(const wxString& txt);
 void DrawDashedLine(wxDC* dc, wxPoint* vector, size_t vectorSize, int dashLen, const wxColour& color);
 size_t FindFromEnd(const wxString& text, const wxString& whatToFind, bool ignoreCase = false);

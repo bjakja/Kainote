@@ -55,18 +55,18 @@ public:
 	DialogSizer *Mainall;
 	StyleChange* cc;
 	bool ChangeStyle(Styles *cstyl, int cellsToChange = -1);
-	void StylesWindow(wxString newname = L"");
+	void StylesWindow(wxString newname = emptyString);
 	void LoadStylesS(bool ass);
 	//void StyleonVideo(Styles *styl, bool fullskreen=false);
 	void DoTooltips();
-	void LoadAssStyles(const wxString &styleName = L"");
+	void LoadAssStyles(const wxString &styleName = emptyString);
 	void ReloadFonts();
 	bool SetForegroundColour(const wxColour &col);
 	bool SetBackgroundColour(const wxColour &col);
 	void OnCleanStyles(wxCommandEvent& event);
 	bool HaveMultiEdition();
 	static void ShowStore();
-	static void ShowStyleEdit(const wxString &styleName = L"");
+	static void ShowStyleEdit(const wxString &styleName = emptyString);
 	static StyleStore *Get();
 	static void DestroyStore();
 	static bool HasStore(){ return (SS != NULL); }

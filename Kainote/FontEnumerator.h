@@ -45,7 +45,7 @@ private:
 	void RefreshClientsFonts();
 	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
 		DWORD WXUNUSED(dwStyle), LPARAM lParam);
-	static DWORD FontEnumerator::CheckFontsProc(int *threadNum);
+	static DWORD CheckFontsProc(int *threadNum);
 	wxArrayString *Fonts;
 	wxArrayString *FontsTmp;
 	wxArrayString *FilteredFonts;

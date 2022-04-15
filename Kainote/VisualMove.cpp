@@ -335,7 +335,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections)
 	D3DXVECTOR2 moveFrom = lastFrom - from;
 	D3DXVECTOR2 moveTo = lastTo - to;
 	int moveStartTime = 0, moveEndTime = 0;
-	wxString tagBefore = putinbracket ? L"" : txt->Mid(tagPos.x, tagPos.y);
+	wxString tagBefore = putinbracket ? emptyString : txt->Mid(tagPos.x, tagPos.y);
 	wxArrayString values = wxStringTokenize(tagBefore, L",", wxTOKEN_STRTOK);
 	if (putinbracket || values.size() < 6){
 		GetMoveTimes(&moveStartTime, &moveEndTime);
@@ -343,7 +343,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections)
 	else{
 		wxString t2 = values[5];
 		wxString t1 = values[4];
-		t2.Replace(L")", L"");
+		t2.Replace(L")", emptyString);
 		moveStartTime = wxAtoi(t1);
 		moveEndTime = wxAtoi(t2);
 	}

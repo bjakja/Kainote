@@ -106,7 +106,7 @@ bool SpellChecker::Initialize()
 
 	//wxString pathhh = Options.pathfull + L"\\Dictionary\\";
 	wxString name = Options.GetString(DICTIONARY_LANGUAGE);
-	if (name == L""){ name = L"pl"; }
+	if (name == emptyString){ name = L"pl"; }
 	wxString dic = dictionaryPath + name + L".dic";
 	wxString aff = dictionaryPath + name + L".aff";
 	isRTL = (name.StartsWith(L"ar") || name.StartsWith(L"he"));
@@ -415,7 +415,7 @@ void SpellChecker::CheckTextAndBrackets(const wxString &text, TextData *errs, bo
 				}
 				else{
 					//replace for \n
-					wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
+					const wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
 					bool splitSecond = nch == L'N' || nch == L'n';
 					if (splitSecond || nch == L'h')
 						checkText += L"  ";
@@ -516,7 +516,7 @@ void SpellChecker::CheckText(const wxString &text, std::vector<MisspellData> *er
 				}
 				else {
 					//replace for \n
-					wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
+					const wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
 					bool splitSecond = nch == L'N' || nch == L'n';
 					if (splitSecond || nch == L'h')
 						checkText += L"  ";
@@ -605,7 +605,7 @@ bool SpellChecker::FindMisspells(const wxString & text, const wxString &textToFi
 				}
 				else {
 					//replace for \n
-					wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
+					const wxUniChar &nch = text[(i + 1 < textLen) ? i + 1 : i];
 					bool splitSecond = nch == L'N' || nch == L'n';
 					if (splitSecond || nch == L'h')
 						checkText += L"  ";

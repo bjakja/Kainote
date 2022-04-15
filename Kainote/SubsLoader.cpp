@@ -144,13 +144,13 @@ bool SubsLoader::LoadASS(const wxString &text)
 		}
 		else if (token.StartsWith(L"[Eve")){
 			tlmode = (grid->GetSInfo(L"TLMode") == L"Yes");
-			if (tlmode){ tlstyle = grid->GetSInfo(L"TLMode Style"); if (tlstyle == L""){ tlmode = false; } }
+			if (tlmode){ tlstyle = grid->GetSInfo(L"TLMode Style"); if (tlstyle == emptyString){ tlmode = false; } }
 			section = 3;
 		}
 	}
 	grid->hasTLMode = tlmode;
 	const wxString &matrix = grid->GetSInfo(L"YCbCr Matrix");
-	if (matrix == L"" || matrix == L"None"){ grid->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
+	if (matrix == emptyString || matrix == L"None"){ grid->AddSInfo(L"YCbCr Matrix", L"TV.601"); }
 	return grid->GetCount() > 0;
 }
 
@@ -163,17 +163,17 @@ bool SubsLoader::LoadSRT(const wxString &text)
 	while (tokenizer.HasMoreTokens()){
 		wxString text = tokenizer.GetNextToken().Trim();
 		if (IsNumber(text)){
-			if (text1 != L""){
+			if (text1 != emptyString){
 				grid->AddLine(new Dialogue(text1.Trim()));
-				text1 = L"";
+				text1 = emptyString;
 			}
 		}
 		else{ text1 << text << L"\r\n"; }
 	}
 
-	if (text1 != L""){
+	if (text1 != emptyString){
 		grid->AddLine(new Dialogue(text1.Trim()));
-		text1 = L"";
+		text1 = emptyString;
 	}
 	return grid->GetCount() > 0;
 }

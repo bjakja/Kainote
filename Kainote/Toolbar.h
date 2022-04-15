@@ -24,7 +24,7 @@
 class toolitem
 {
 public:
-	toolitem::toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
+	toolitem(wxBitmap *_icon, const wxString& _label, short _id, bool _enable, byte _type, bool _toggled)
 	{
 		icon = _icon; label = _label; id = _id; enabled = _enable; type = _type; size = 24;
 		if (type == 2){ toggled = _toggled; }

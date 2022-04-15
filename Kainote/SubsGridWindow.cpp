@@ -280,7 +280,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 					strings.push_back(frame);
 					if (subsFormat != TMP){
-						frame = L"";
+						frame = emptyString;
 						frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 						strings.push_back(frame);
 					}
@@ -302,7 +302,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				}
 				wxString txt = Dial->Text;
 				wxString txttl = Dial->TextTl;
-				bool isTl = (hasTLMode && txttl != L"");
+				bool isTl = (hasTLMode && txttl != emptyString);
 				wxString& checkingText = (isTl) ? txttl : txt;
 				if (CheckRTL(&checkingText)) {
 					ConvertToRTLCharsSpellchecker(&checkingText, &convertedText);
@@ -311,7 +311,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 				if (!isComment) {
 					//here are generated misspells table, chars table, and wraps;
 					//on original do not use spellchecking only calculating wraps and cps;
-					bool originalInTLMode = hasTLMode && txttl == L"";
+					bool originalInTLMode = hasTLMode && txttl == emptyString;
 					Misspells.Init(isRTL ? convertedText : checkingText, SpellCheckerOn && !originalInTLMode,
 						subsFormat, hideOverrideTags ? chtagLen : -1);
 				}
@@ -321,7 +321,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					shorttime = chtime > 15;
 				}
 				else if (subsFormat != TMP) {
-					strings.push_back(L"");
+					strings.push_back(emptyString);
 					shorttime = false;
 				}
 				if (!isComment && !(WRAPS & visibleColumns)) {
@@ -329,7 +329,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					badWraps = Misspells.badWraps;
 				}
 				else {
-					strings.push_back(L"");
+					strings.push_back(emptyString);
 					badWraps = false;
 				}
 				if (hideOverrideTags) {
@@ -440,7 +440,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 						for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
 							wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);
 
-							if (cmp == L""){ continue; }
+							if (cmp == emptyString){ continue; }
 							if (cmp == L" "){ cmp = L"_"; }
 							wxString bcmp;
 							if (Comparison->at(key)[c]>0){
@@ -666,7 +666,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
 				if (subsFormat != TMP){
-					frame = L"";
+					frame = emptyString;
 					frame << FFMS2->GetFramefromMS(Dial->End.mstime) - 1;
 					strings.push_back(frame);
 				}
@@ -689,7 +689,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 
 			wxString txt = Dial->Text;
 			wxString txttl = Dial->TextTl;
-			bool isTl = (hasTLMode && txttl != L"");
+			bool isTl = (hasTLMode && txttl != emptyString);
 			wxString& checkingText = (isTl) ? txttl : txt;
 			if (CheckRTL(&checkingText)) {
 				ConvertToRTLCharsSpellchecker(&checkingText, &convertedText);
@@ -699,7 +699,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (!isComment) {
 				//here are generated misspells table, chars table, and wraps;
 				//on original do not use spellchecking only calculating wraps and cps;
-				bool originalInTLMode = hasTLMode && txttl == L"";
+				bool originalInTLMode = hasTLMode && txttl == emptyString;
 				Misspells.Init(isRTL? convertedText : checkingText, SpellCheckerOn && !originalInTLMode,
 					subsFormat, hideOverrideTags ? chtagLen : -1);
 			}
@@ -710,7 +710,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				shorttime = chtime > 15;
 			}
 			else if (subsFormat != TMP) {
-				strings.push_back(L"");
+				strings.push_back(emptyString);
 				shorttime = false;
 			}
 			if (!isComment && !(WRAPS & visibleColumns)) {
@@ -718,7 +718,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				badWraps = Misspells.badWraps;
 			}
 			else {
-				strings.push_back(L"");
+				strings.push_back(emptyString);
 				badWraps = false;
 			}
 			
@@ -839,7 +839,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 					for (size_t c = 1; c < Comparison->at(key).size(); c += 2){
 						wxString cmp = text.SubString(Comparison->at(key)[c], Comparison->at(key)[c + 1]);
 
-						if (cmp == L""){ continue; }
+						if (cmp == emptyString){ continue; }
 						if (cmp == L" "){ cmp = L"_"; }
 						wxString bcmp;
 						if (Comparison->at(key)[c]>0){
@@ -1015,11 +1015,11 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 				gc->GetTextExtent(dial->Style, &fw, &fh);
 				if (fw + 10 > syw){ syw = fw + 10; }
 			}
-			if ((ACTOR & cell) && dial->Actor != L""){
+			if ((ACTOR & cell) && dial->Actor != emptyString){
 				gc->GetTextExtent(dial->Actor, &fw, &fh);
 				if (fw + 10 > acw){ acw = fw + 10; }
 			}
-			if ((EFFECT & cell) && dial->Effect != L""){
+			if ((EFFECT & cell) && dial->Effect != emptyString){
 				gc->GetTextExtent(dial->Effect, &fw, &fh);
 				if (fw + 10 > efw){ efw = fw + 10; }
 			}
@@ -1181,11 +1181,11 @@ void SubsGridWindow::AdjustWidths(int cell)
 				dc.GetTextExtent(dial->Style, &fw, &fh);
 				if (fw + 10 > syw){ syw = fw + 10; }
 			}
-			if ((ACTOR & cell) && dial->Actor != L""){
+			if ((ACTOR & cell) && dial->Actor != emptyString){
 				dc.GetTextExtent(dial->Actor, &fw, &fh);
 				if (fw + 10 > acw){ acw = fw + 10; }
 			}
-			if ((EFFECT & cell) && dial->Effect != L""){
+			if ((EFFECT & cell) && dial->Effect != emptyString){
 				dc.GetTextExtent(dial->Effect, &fw, &fh);
 				if (fw + 10 > efw){ efw = fw + 10; }
 			}
@@ -1920,7 +1920,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 		if (!dial->isVisible)
 			continue;
 
-		if (!dial->IsComment && (dial->Text != L"" || dial->TextTl != L"")){
+		if (!dial->IsComment && (dial->Text != emptyString || dial->TextTl != emptyString)){
 			if (time >= dial->Start.mstime && time <= dial->End.mstime)
 			{
 				Edit->SetLine(i); 

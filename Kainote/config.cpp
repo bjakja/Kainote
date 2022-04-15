@@ -118,7 +118,7 @@ bool config::SetRawOptions(const wxString &textconfig)
 				textBlock << token;
 				block = false;
 				CatchValsLabs(textBlock);
-				textBlock = L"";
+				textBlock = emptyString;
 				g++;
 			}else
 				textBlock << token << L"\n";
@@ -214,7 +214,7 @@ void config::SetColor(COLOR opt, AssColor &copt)
 void config::SetInt(CONFIG opt, int iopt)
 {
 	if (opt >= 0 && opt < configSize){
-		wxString iopt1 = L"";
+		wxString iopt1 = emptyString;
 		stringConfig[opt] = iopt1 << iopt;
 	}
 }
@@ -222,7 +222,7 @@ void config::SetInt(CONFIG opt, int iopt)
 void config::SetFloat(CONFIG opt, float fopt)
 {
 	if (opt >= 0 && opt < configSize){
-		wxString fopt1 = L"";
+		wxString fopt1 = emptyString;
 		fopt1 << fopt;
 		fopt1.Replace(L",", L".");
 		stringConfig[opt] = fopt1;
@@ -259,7 +259,7 @@ void config::AddStyle(Styles *styl)
 
 Styles *config::GetStyle(int i, const wxString &name, Styles* _styl)
 {
-	if (name != L""){
+	if (name != emptyString){
 		for (unsigned int j = 0; j < assstore.size(); j++){
 			if (name == assstore[j]->Name){ if (_styl){ _styl = assstore[j]; } return assstore[j]; }
 		}
@@ -360,7 +360,7 @@ void config::LoadDefaultConfig(wxString * defaultOptions)
 	configTable[CONVERT_SHOW_SETTINGS] = L"false";
 	configTable[SHIFT_TIMES_ON] = L"true";
 	configTable[SHIFT_TIMES_WHICH_TIMES] = L"0";
-	configTable[SHIFT_TIMES_STYLES] = L"";
+	configTable[SHIFT_TIMES_STYLES] = emptyString;
 	configTable[CONVERT_TIME_PER_CHARACTER] = L"110";
 	configTable[VIDEO_INDEX] = L"true";
 	configTable[VIDEO_PROGRESS_BAR] = L"true";
@@ -436,13 +436,13 @@ void config::LoadDefaultColors(bool dark, wxColour *table)
 	colours[AUDIO_LINE_BOUNDARY_MARK].Set(L"#FFFFFF");
 	colours[AUDIO_LINE_BOUNDARY_INACTIVE_LINE].Set(L"#00D77D");
 	colours[AUDIO_PLAY_CURSOR].Set(L"#8791FD");
-	colours[AUDIO_SECONDS_BOUNDARIES].Set(0xF4, 0xF4, 0xF4, 0x37);//#37F4F4F4//wxColour((dark)? L"#9B0B8A9F" : L"");
+	colours[AUDIO_SECONDS_BOUNDARIES].Set(0xF4, 0xF4, 0xF4, 0x37);//#37F4F4F4//wxColour((dark)? L"#9B0B8A9F" : emptyString);
 	colours[AUDIO_KEYFRAMES].Set(L"#F4F4F4");
 	colours[AUDIO_SYLLABLE_BOUNDARIES].Set(L"#202225");
 	colours[AUDIO_SYLLABLE_TEXT].Set(L"#8791FD");
-	colours[AUDIO_SELECTION_BACKGROUND].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? L"#37FFFFFF" : L"");
-	colours[AUDIO_SELECTION_BACKGROUND_MODIFIED].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? L"#37D60000" : L"");
-	colours[AUDIO_INACTIVE_LINES_BACKGROUND].Set(0x00, 0x00, 0x00, 0x55);//wxColour((dark)? L"#55373564" : L"");
+	colours[AUDIO_SELECTION_BACKGROUND].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? L"#37FFFFFF" : emptyString);
+	colours[AUDIO_SELECTION_BACKGROUND_MODIFIED].Set(0xFF, 0xFF, 0xFF, 0x37);//wxColour((dark)? L"#37D60000" : emptyString);
+	colours[AUDIO_INACTIVE_LINES_BACKGROUND].Set(0x00, 0x00, 0x00, 0x55);//wxColour((dark)? L"#55373564" : emptyString);
 	colours[AUDIO_WAVEFORM].Set(L"#202225");
 	colours[AUDIO_WAVEFORM_INACTIVE].Set(L"#2F3136");
 	colours[AUDIO_WAVEFORM_MODIFIED].Set(L"#FF6968");
@@ -547,7 +547,7 @@ int config::LoadOptions()
 	}
 
 	actualStyleDir = L"Default";
-	path = L"";
+	path = emptyString;
 	path << pathfull << L"\\Catalog\\";
 	wxDir kat(path);
 	if (!kat.IsOpened()){
@@ -556,7 +556,7 @@ int config::LoadOptions()
 		AddStyle(new Styles()); dirs.Add(actualStyleDir);
 	}
 	else{
-		wxArrayString tmp; kat.GetAllFiles(path, &tmp, L"", wxDIR_FILES);
+		wxArrayString tmp; kat.GetAllFiles(path, &tmp, emptyString, wxDIR_FILES);
 		for (size_t i = 0; i < tmp.GetCount(); i++){
 			wxString fullpath = tmp[i].AfterLast(L'\\');
 			if (fullpath.EndsWith(L".sty")){ dirs.Add(fullpath.BeforeLast(L'.')); }
@@ -656,7 +656,7 @@ void config::clearstyles()
 
 void config::SetCoords(CONFIG opt, int coordx, int coordy)
 {
-	wxString iopt1 = L"";
+	wxString iopt1 = emptyString;
 	stringConfig[opt] = iopt1 << coordx << L"," << coordy;
 }
 
@@ -731,7 +731,7 @@ void config::GetIntTable(CONFIG opt, wxArrayInt &tbl, int mode)
 void config::GetTableFromString(CONFIG opt, wxArrayString &tbl, wxString split, int mode)
 {
 	wxString strtbl = stringConfig[opt];
-	if (strtbl != L""){
+	if (strtbl != emptyString){
 		wxStringTokenizer cfgtable(strtbl, split, (wxStringTokenizerMode)mode);
 		while (cfgtable.HasMoreTokens()){
 			tbl.Add(cfgtable.NextToken());

@@ -200,7 +200,7 @@ private:
 	float coeffX, coeffY;
 	int diffX = 0, diffY = 0;
 	bool isOnVideo = true;
-	LPD3DXFONT calcfont;
+	LPD3DXFONT calcfont = nullptr;
 };
 
 class Position : public Visuals

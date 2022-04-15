@@ -62,7 +62,7 @@ public:
 	int FindStyle(const wxString &name, int *multiplication = NULL);
 	void GetStyles(wxString &stylesText, bool tld = false);
 	//this function is safe, do not return NULL, when failed returns i
-	Styles *GetStyle(size_t i, const wxString &name = L"");
+	Styles *GetStyle(size_t i, const wxString &name = emptyString);
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
 
@@ -84,8 +84,8 @@ public:
 	//Warning!! Adding the same dialogue pointer to destroyer cause crash
 	//not adding it when needed cause memory leaks.
 	void InsertRows(int Row, int NumRows, Dialogue *Dialog, bool AddToDestroy = true, bool Save = false);
-	void SetSubsFormat(wxString ext = L"");
-	void AddSInfo(const wxString &SI, wxString val = L"", bool save = true);
+	void SetSubsFormat(wxString ext = emptyString);
+	void AddSInfo(const wxString &SI, wxString val = emptyString, bool save = true);
 	void SetModified(unsigned char editionType, bool redit = true, bool dummy = false, int SetEditBoxLine = -1, bool Scroll = true);
 	void UpdateUR(bool tolbar = true);
 	void GetSInfos(wxString &textSinfo, bool tld = false);

@@ -178,7 +178,7 @@ void AutoSavesRemoving::ClearSelected(int id)
 		_("Pliki audio cache (*.w64)|*.w64");
 
 	wxFileDialog* FileDialog = new wxFileDialog(this, _("Wybierz plik i do usunięcia"), path,
-		L"", description,
+		emptyString, description,
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
 
 	if (FileDialog->ShowModal() == wxID_OK) {

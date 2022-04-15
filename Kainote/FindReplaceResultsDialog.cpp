@@ -24,7 +24,7 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
 	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
-	resultsList->InsertColumn(0, L"", TYPE_TEXT, -1);
+	resultsList->InsertColumn(0, emptyString, TYPE_TEXT, -1);
 	resultsList->SetHeaderHeight(0);
 	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);
 	Bind(CHOOSE_RESULT, [=](wxCommandEvent &evt){

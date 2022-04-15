@@ -251,7 +251,7 @@ void AutomationHotkeysDialog::OnMapHkey(wxCommandEvent &evt)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				if (result == wxYES){ hotkey = L""; }
+				if (result == wxYES){ hotkey = emptyString; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
@@ -286,10 +286,10 @@ void AutomationHotkeysDialog::OnDeleteHkey(wxCommandEvent &evt)
 	if (id < 0)
 		return;
 
-	ChangeHotkey(inum, id, L"");
+	ChangeHotkey(inum, id, emptyString);
 	hotkeysList->SetModified(true);
 	hotkeysList->PushHistory();
-	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, L"");
+	allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, emptyString);
 }
 
 void AutomationHotkeysDialog::ChangeHotkey(int row, int id, const wxString &hotkey)

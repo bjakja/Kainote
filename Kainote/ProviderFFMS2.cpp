@@ -201,8 +201,8 @@ int ProviderFFMS2::Init()
 		for (size_t j = 0; j < audiotable.GetCount(); j++) {
 			const char* namec = FFMS_GetTrackName(Indexer, audiotable[j]);
 			const char* languagec = FFMS_GetTrackLanguage(Indexer, audiotable[j]);
-			wxString name = (namec) ? wxString(namec, wxConvUTF8) : L"";
-			wxString language = (languagec) ? wxString(languagec, wxConvUTF8) : L"";
+			wxString name = (namec) ? wxString(namec, wxConvUTF8) : emptyString;
+			wxString language = (languagec) ? wxString(languagec, wxConvUTF8) : emptyString;
 			if (languagec) {
 				if (language.Find(L'[', true) != -1 && language.Find(L']', true) != -1) {
 					size_t startBracket = language.Find(L'[', true);
@@ -431,7 +431,7 @@ done:
 		}
 		if (m_renderer && !m_renderer->videoControl->GetKeyFramesFileName().empty()) {
 			OpenKeyframes(m_renderer->videoControl->GetKeyFramesFileName());
-			m_renderer->videoControl->SetKeyFramesFileName(L"");
+			m_renderer->videoControl->SetKeyFramesFileName(emptyString);
 		}
 	}
 audio:
@@ -515,7 +515,7 @@ int FFMS_CC ProviderFFMS2::UpdateProgress(int64_t Current, int64_t Total, void* 
 void ProviderFFMS2::AudioLoad(ProviderFFMS2* vf, bool newIndex, int audiotrack)
 {
 	if (vf->m_discCache) {
-		vf->m_diskCacheFilename = L"";
+		vf->m_diskCacheFilename = emptyString;
 		vf->m_diskCacheFilename << Options.pathfull << L"\\AudioCache\\" <<
 			vf->m_filename.AfterLast(L'\\').BeforeLast(L'.') << L"_track" << audiotrack << L".w64";
 		if (!vf->DiskCache(newIndex)) { goto done; }
@@ -764,7 +764,7 @@ void ProviderFFMS2::DeleteOldAudioCache()
 	wxDir kat(path);
 	wxArrayString audioCaches;
 	if (kat.IsOpened()) {
-		kat.GetAllFiles(path, &audioCaches, L"", wxDIR_FILES);
+		kat.GetAllFiles(path, &audioCaches, emptyString, wxDIR_FILES);
 	}
 	if (audioCaches.size() <= maxAudio) { return; }
 	FILETIME ft;

@@ -82,7 +82,7 @@ void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 		CaptureMouse();
 		int px = 2, py = newPosition;
 		ClientToScreen(&px, &py);
-		splitLine = new wxDialog(this, -1, L"", wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
+		splitLine = new wxDialog(this, -1, emptyString, wxPoint(px, py), wxSize(GetSize().GetWidth(), 2), wxSTAY_ON_TOP | wxBORDER_NONE);
 		splitLine->SetBackgroundColour(Options.GetColour(WINDOW_TEXT));
 		splitLine->Show();
 	}

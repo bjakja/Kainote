@@ -263,7 +263,7 @@ void FontList::SetSelectionByName(wxString name)
 
 void FontList::SetSelectionByPartialName(wxString PartialName)
 {
-	if (PartialName == L""){ SetSelection(0); return; }
+	if (PartialName == emptyString){ SetSelection(0); return; }
 	int newSelection = -1;
 	PartialName = PartialName.Lower();
 
@@ -309,7 +309,7 @@ done:
 
 wxString FontList::GetString(int line)
 {
-	if (line < 0 || line >= (int)fonts->size()) return L"";
+	if (line < 0 || line >= (int)fonts->size()) return emptyString;
 	return (*fonts)[line];
 }
 

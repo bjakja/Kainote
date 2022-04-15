@@ -218,7 +218,7 @@ void MoveAll::SetCurVisual()
 			elems.push_back(orgelem);
 		}
 	}
-	if (FindTag(L"(i?clip[^\\)]+)", L"", 1)){
+	if (FindTag(L"(i?clip[^\\)]+)", emptyString, 1)){
 		const FindData& data = GetResult();
 		wxRegEx re(L"m ([0-9.-]+) ([0-9.-]+)", wxRE_ADVANCED);
 		moveElems* elem = new moveElems();
@@ -278,7 +278,7 @@ void MoveAll::SetCurVisual()
 		elems.push_back(elem);
 		drawingPos = D3DXVECTOR2(0, 0);
 	}
-	if (FindTag(L"p([0-9]+)", L"", 1)){
+	if (FindTag(L"p([0-9]+)", emptyString, 1)){
 		wxString tags[] = { L"p" };
 		wxString res;
 		ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
@@ -413,7 +413,7 @@ void MoveAll::ChangeInLines(bool all)
 	}
 	bool skipInvisible = !all && tab->Video->GetState() != Playing;
 	wxString tmp;
-	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()==L"");
+	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()==emptyString);
 	//MTextEditor *GLOBAL_EDITOR=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
 	//wxString origText=GLOBAL_EDITOR->GetValue();
 	const wxString &tlModeStyle = tab->Grid->GetSInfo(L"TLMode Style");
@@ -424,7 +424,7 @@ void MoveAll::ChangeInLines(bool all)
 		Dialogue *Dial = tab->Grid->GetDialogue(sels[i]);
 
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
-		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != L"");
+		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != emptyString);
 		txt = (istexttl) ? Dial->TextTl : Dial->Text;
 
 		for (int k = 0; k < 6; k++){

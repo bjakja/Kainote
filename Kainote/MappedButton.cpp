@@ -58,7 +58,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 {
 	name = label;
 	if (name.IsEmpty()){ name = AddText(id); }
-	name.Replace(L"&", L"");
+	name.Replace(L"&", emptyString);
 	wxSize newSize = size;
 	wxWindow::SetFont(parent->GetFont());
 	int fw;
@@ -97,7 +97,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, cons
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
 	SetAcceleratorTable(caccel);
-	if (toolTip != L""){ SetToolTip(toolTip); }
+	if (toolTip != emptyString){ SetToolTip(toolTip); }
 	//SetForegroundColour(parent->GetForegroundColour());
 
 }
@@ -115,7 +115,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& label, int 
 {
 	name = label;
 	if (name.IsEmpty()){ name = AddText(id); }
-	name.Replace(L"&", L"");
+	name.Replace(L"&", emptyString);
 	wxSize newSize = size;
 	wxWindow::SetFont(parent->GetFont());
 	int fw;
@@ -185,7 +185,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 		newSize.y = textHeight + 10;
 	}
 	else{
-		if (text != L""){
+		if (text != emptyString){
 			name = text;
 			CalculateSize(&fw, &textHeight);
 			fw += 15;
@@ -220,7 +220,7 @@ MappedButton::MappedButton(wxWindow *parent, int id, const wxString& tooltip, co
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
 	SetAcceleratorTable(caccel);
-	if (tooltip != L""){ SetToolTip(tooltip); }
+	if (tooltip != emptyString){ SetToolTip(tooltip); }
 	wxWindow::SetFont(parent->GetFont());
 	//SetForegroundColour(parent->GetForegroundColour());
 }
@@ -233,7 +233,7 @@ MappedButton::~MappedButton()
 void MappedButton::SetToolTip(const wxString &_toolTip)
 {
 	if (Window >= 0){
-		wxString toolTip = (_toolTip == L"") ? GetToolTipText().BeforeFirst(L'(').BeforeFirst(L'\n').Trim() : _toolTip;
+		wxString toolTip = (_toolTip == emptyString) ? GetToolTipText().BeforeFirst(L'(').BeforeFirst(L'\n').Trim() : _toolTip;
 		wxString desc = name;
 		if (toolTip.empty()){ toolTip = desc; }
 		if (desc.empty()){ desc = toolTip; }
@@ -246,7 +246,7 @@ void MappedButton::SetToolTip(const wxString &_toolTip)
 		}
 
 
-		if (key != L"")
+		if (key != emptyString)
 		{
 			toolTip = toolTip + L" (" + key + L")";
 		}
@@ -370,7 +370,7 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 		tdc.GetTextExtent(name, &fw, &fh);
 		if (icon.IsOk()){
 			iw = icon.GetWidth();
-			if (name != L""){
+			if (name != emptyString){
 				fw += iw + 5;
 			}
 			else{
@@ -386,7 +386,7 @@ void MappedButton::PaintGDI(wxDC &tdc, int w, int h){
 		tdc.SetTextForeground((enabled && changedForeground) ? GetForegroundColour() :
 			(enabled) ? Options.GetColour(WINDOW_TEXT) :
 			Options.GetColour(WINDOW_TEXT_INACTIVE));
-		if (name != L""){
+		if (name != emptyString){
 			if (iw){
 				tdc.DrawText(name, ((w - fw) / 2) + iw + 5, ((h - textHeight) / 2));
 			}
@@ -419,7 +419,7 @@ void MappedButton::OnMouseEvent(wxMouseEvent &event)
 		//maybe it will be slower but, it prevents to remove hotkeys
 		int id = GetId();
 		if (event.ControlDown()){ id -= 10; }
-		Hkeys.OnMapHkey(GetId(), L"", this, Window, false);
+		Hkeys.OnMapHkey(GetId(), emptyString, this, Window, false);
 		SetToolTip();
 		SetFocus();
 		return;
@@ -452,7 +452,7 @@ void MappedButton::CalculateSize(int *w, int *h)
 	int resultw = 0, resulth = 0;
 	wxArrayString namewraps = wxStringTokenize(name, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (auto &token : namewraps){
-		GetTextExtent((token == L"") ? L"T" : token, &fw, &fh);
+		GetTextExtent((token == emptyString) ? L"T" : token, &fw, &fh);
 		resulth += fh;
 		if (resultw < fw)
 			resultw = fw;
@@ -496,7 +496,7 @@ bool MappedButton::SetFont(const wxFont &font)
 	int fw;
 	CalculateSize(&fw, &textHeight);
 	wxSize minSize = GetMinSize();
-	if (icon.IsOk() && name != L""){
+	if (icon.IsOk() && name != emptyString){
 		fw += icon.GetWidth();
 	}
 	if (minSize.x != fw + 16 || minSize.y != (textHeight + 10)){
@@ -520,7 +520,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 {
 	name = label;
 	if (name.IsEmpty()){ name = AddText(id); }
-	name.Replace(L"&", L"");
+	name.Replace(L"&", emptyString);
 	wxSize newSize = size;
 	wxWindow::SetFont(parent->GetFont());
 	int fw;
@@ -558,7 +558,7 @@ ToggleButton::ToggleButton(wxWindow *parent, int id, const wxString& label, cons
 	centries[0].Set(wxACCEL_NORMAL, WXK_RETURN, GetId());
 	wxAcceleratorTable caccel(1, centries);
 	SetAcceleratorTable(caccel);
-	if (tooltip != L""){ SetToolTip(tooltip); }
+	if (tooltip != emptyString){ SetToolTip(tooltip); }
 	//SetForegroundColour(parent->GetForegroundColour());
 }
 
@@ -721,7 +721,7 @@ void ToggleButton::CalculateSize(int *w, int *h)
 	int resultw = 0, resulth = 0;
 	wxArrayString namewraps = wxStringTokenize(name, L"\n", wxTOKEN_RET_EMPTY_ALL);
 	for (auto &token : namewraps){
-		GetTextExtent((token == L"") ? L"T" : token, &fw, &fh);
+		GetTextExtent((token == emptyString) ? L"T" : token, &fw, &fh);
 		resulth += fh;
 		if (resultw < fw)
 			resultw = fw;
@@ -739,7 +739,7 @@ bool ToggleButton::SetFont(const wxFont &font)
 	wxWindow::SetFont(font);
 	int fw;
 	CalculateSize(&fw, &textHeight);
-	if (icon.IsOk() && name != L""){
+	if (icon.IsOk() && name != emptyString){
 		fw += icon.GetWidth();
 	}
 	wxSize minSize = GetMinSize();

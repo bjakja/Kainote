@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "config.h"
 #include "Registry.h"
 #include "LogHandler.h"
 #include <wx/stdpaths.h>
@@ -59,7 +60,7 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 	if (!regHKey) return;
 
 	const wchar_t *data = value.wc_str();
-	LONG nError = RegSetValueExW(regHKey, (strKey != L"")? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
+	LONG nError = RegSetValueExW(regHKey, (strKey != emptyString)? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
 	if (nError){
 		KaiLog(wxString::Format(L"cannot create key %s", strKey));
 	}
@@ -71,7 +72,7 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	DWORD type = REG_SZ;
 	wchar_t data[20048];
 	DWORD size = 20048;
-	LONG nError = RegQueryValueExW(regHKey, (strKey != L"") ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
+	LONG nError = RegQueryValueExW(regHKey, (strKey != emptyString) ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
 	if (nError){
 		return false;
 	}
@@ -88,26 +89,26 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 	bool success = false;//HKEY_CURRENT_USER//HKEY_LOCAL_MACHINE
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
 	if (success){
-		reg.SetStringValue(L"", progName + extension);
+		reg.SetStringValue(emptyString, progName + extension);
 		reg.CloseRegistry();
 	}
 	else{ KaiLog(wxString::Format(L"Can not create extension %s", extension)); return false; }
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension, true)){
-		reg.SetStringValue(L"", extName);
+		reg.SetStringValue(emptyString, extName);
 		reg.CloseRegistry();
 	}
 	else{
 		KaiLog(L"Can not open extension class"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\DefaultIcon", true)){
-		reg.SetStringValue(L"", pathfull.BeforeLast(L'\\') + L"\\Icons.dll," + std::to_wstring(icon));
+		reg.SetStringValue(emptyString, pathfull.BeforeLast(L'\\') + L"\\Icons.dll," + std::to_wstring(icon));
 		reg.CloseRegistry();
 	}
 	else{
 		KaiLog(L"Can not add icon"); return false;
 	}
 	if (reg.OpenNewRegistry(HKEY_CURRENT_USER, mainPath + progName + extension + L"\\Shell\\Open\\Command", true)){
-		reg.SetStringValue(L"", L"\""+pathfull + L"\" \"%1\"");
+		reg.SetStringValue(emptyString, L"\""+pathfull + L"\" \"%1\"");
 		reg.CloseRegistry();
 	}
 	else{
@@ -123,7 +124,7 @@ bool Registry::RemoveFileAssociation(const wxString &extension)
 	bool success = false;
 	Registry reg(HKEY_CURRENT_USER, mainPath + extension, success, true);
 	if (success){
-		reg.SetStringValue(L"", L"");
+		reg.SetStringValue(emptyString, emptyString);
 		reg.CloseRegistry();
 	}
 	else{ KaiLog(wxString::Format(L"Can not remove extension %s", extension)); return false; }
@@ -142,7 +143,7 @@ void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std:
 		Registry reg(HKEY_CURRENT_USER, mainPath + extensions[i], success, false);
 		if (success){
 			wxString out;
-			reg.GetStringValue(L"", out);
+			reg.GetStringValue(emptyString, out);
 			if (out == progName + extensions[i]){
 				output.push_back(true);
 			}

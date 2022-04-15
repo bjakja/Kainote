@@ -64,7 +64,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	KaiStaticBoxSizer *stylename = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Nazwa stylu:"));
 	wxTextValidator valid(wxFILTER_EXCLUDE_CHAR_LIST);
 	valid.SetCharExcludes(L",");
-	styleName = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
+	styleName = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, valid);
 	styleName->SetMaxLength(500);
 	stylename->Add(styleName, 1, wxEXPAND | wxALL, 2);
 
@@ -74,7 +74,7 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxBoxSizer *biussizer = new wxBoxSizer(wxHORIZONTAL);
 	fontFilterText = Options.GetString(STYLE_EDIT_FILTER_TEXT);
 	bool fontFilterOn = Options.GetBool(STYLE_EDIT_FILTER_TEXT_ON);
-	styleFont = new KaiChoice(this, ID_FONTNAME, L"", wxDefaultPosition, wxDefaultSize, wxArrayString(), KAI_FONT_LIST);
+	styleFont = new KaiChoice(this, ID_FONTNAME, emptyString, wxDefaultPosition, wxDefaultSize, wxArrayString(), KAI_FONT_LIST);
 	fontSize = new NumCtrl(this, ID_TOUTLINE, L"32", 1, 10000, false, wxDefaultPosition, wxSize(66, -1), wxTE_PROCESS_ENTER);
 	FCManagement.LoadCatalogs();
 	fontCatalog = new KaiChoice(this, ID_FONT_CATALOG_LIST, wxDefaultPosition, wxDefaultSize, *FCManagement.GetCatalogNames());
@@ -172,10 +172,10 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxString labels[] = { _("Obwódka:"), _("Cień:"), _("Skala X:"), _("Skala Y:") };
 	KaiStaticBoxSizer *styleattr = new KaiStaticBoxSizer(wxHORIZONTAL, this, 4, labels);
 
-	outline = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	shadow = new NumCtrl(this, ID_TOUTLINE, L"", 0, 1000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	scaleX = new NumCtrl(this, ID_TOUTLINE, L"", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
-	scaleY = new NumCtrl(this, ID_TOUTLINE, L"", 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	outline = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 1000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	shadow = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 1000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	scaleX = new NumCtrl(this, ID_TOUTLINE, emptyString, 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
+	scaleY = new NumCtrl(this, ID_TOUTLINE, emptyString, 1, 10000000, false, wxDefaultPosition, wxSize(83, -1), wxTE_PROCESS_ENTER);
 
 	styleattr->Add(outline, 1, wxEXPAND | wxALL, 2);
 	styleattr->Add(shadow, 1, wxEXPAND | wxALL, 2);
@@ -187,8 +187,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxString labels1[] = { _("Kąt:"), _("Odstępy:"), _("Typ obwódki:") };
 	KaiStaticBoxSizer *styleattr1 = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels1);
 
-	angle = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	spacing = new NumCtrl(this, ID_TOUTLINE, L"", -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	angle = new NumCtrl(this, ID_TOUTLINE, emptyString, -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	spacing = new NumCtrl(this, ID_TOUTLINE, emptyString, -1000000, 1000000, false, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 	borderStyle = new KaiCheckBox(this, ID_CBOLD, _("Prost. obw."));
 
 	styleattr1->Add(angle, 1, wxEXPAND | wxALL, 2);
@@ -197,9 +197,9 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	wxString labels2[] = { _("Margines lewy:"), _("Prawy:"), _("Pionowy:") };
 	KaiStaticBoxSizer *stylemargs = new KaiStaticBoxSizer(wxHORIZONTAL, this, 3, labels2);
 
-	leftMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	rightMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
-	verticalMargin = new NumCtrl(this, ID_TOUTLINE, L"", 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	leftMargin = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	rightMargin = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
+	verticalMargin = new NumCtrl(this, ID_TOUTLINE, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(65, -1), wxTE_PROCESS_ENTER);
 
 	stylemargs->Add(leftMargin, 1, wxEXPAND | wxALL, 2);
 	stylemargs->Add(rightMargin, 1, wxEXPAND | wxALL, 2);

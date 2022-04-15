@@ -43,7 +43,7 @@ void STime::ParseMS(wxString raw)
 {
 
 	int csec1 = 0, sec1, min1, godz1;
-	if (raw.Trim() == L""){ mstime = 0; orgframe = 0; }
+	if (raw.Trim() == emptyString){ mstime = 0; orgframe = 0; }
 	else if (form < MDVD){
 		wxString csec, sec, min, godz;
 		size_t godz11 = raw.find(L":", 0);

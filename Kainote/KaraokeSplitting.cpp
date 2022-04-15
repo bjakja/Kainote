@@ -44,7 +44,7 @@ void Karaoke::Split()
 	bool Everyn = Options.GetBool(AUDIO_MERGE_EVERY_N_WITH_SYLLABLE);
 	bool block = false;
 	Dialogue *dial = AD->dialogue;
-	wxString Text = (dial->TextTl != L"") ? dial->TextTl : dial->Text;
+	wxString Text = (dial->TextTl != emptyString) ? dial->TextTl : dial->Text;
 	int len = Text.length();
 	int stime = dial->Start.mstime;
 
@@ -85,7 +85,7 @@ void Karaoke::Split()
 				if (nch == L'}' || nch == L'\\'){
 					stime += (wxAtoi(kres) * 10);
 					syltimes.Add(stime);
-					kres = L"";
+					kres = emptyString;
 					kpart = false;
 					syll = true;
 					continue;
@@ -207,7 +207,7 @@ bool Karaoke::GetSylAtX(int x, int *result)
 void Karaoke::Join(int line)
 {
 	syls[line] << syls[line + 1];
-	syls[line].Replace(L"{}", L"");
+	syls[line].Replace(L"{}", emptyString);
 	syls.RemoveAt(line + 1);
 	syltimes[line] = syltimes[line + 1];
 	syltimes.RemoveAt(line + 1);
@@ -316,7 +316,7 @@ void Karaoke::GetLetters(int line, int nletters, wxString &first, wxString &seco
 	const wxString & sylText = syls[line];
 	size_t len = sylText.length();
 	if (nletters == 0){
-		first = L"";
+		first = emptyString;
 		second = sylText;
 		return;
 	}
@@ -364,7 +364,7 @@ void Karaoke::GetTextStripped(int line, wxString &textStripped)
 	if (block && lastBlock < len - 1){
 		textStripped += sylText.Mid(lastBlock);
 	}
-	//textStripped.Replace(L"\\N", L"");
-	//textStripped.Replace(L"\\n", L"");
-	//textStripped.Replace(L"\\h", L"");
+	//textStripped.Replace(L"\\N", emptyString);
+	//textStripped.Replace(L"\\n", emptyString);
+	//textStripped.Replace(L"\\h", emptyString);
 }

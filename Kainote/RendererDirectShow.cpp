@@ -451,7 +451,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 		(m_Format == YUY2) ? D3DFMT_YUY2 : D3DFMT_X8R8G8B8;
 
 	m_SwapFrame = (m_Format == RGB32 && !m_DirectShowPlayer->HasVobsub());
-	Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, L"");
+	Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, emptyString);
 
 	diff = 0;
 	m_FrameDuration = (1000.0f / videoControl->m_FPS);

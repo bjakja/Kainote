@@ -29,7 +29,8 @@ KaiGauge::KaiGauge(wxWindow *parent, int id, const wxPoint &pos, const wxSize &s
 	}
 	if (size.y < 1){
 		int fw, fh;
-		GetTextExtent(L"TEX{}", &fw, &fh, NULL, NULL, &parent->GetFont());
+		wxFont parentFont = parent->GetFont();
+		GetTextExtent(L"TEX{}", &fw, &fh, NULL, NULL, &parentFont);
 		newSize.y = fh + 6;
 		sizeChanged = true;
 	}
@@ -56,7 +57,8 @@ void KaiGauge::OnPaint(wxPaintEvent &evt)
 	int progressLength = (w - 2) * progress;
 
 	wxMemoryDC dc;
-	dc.SelectObject(wxBitmap(w, h));
+	wxBitmap bmp(w, h);
+	dc.SelectObject(bmp);
 
 	dc.SetPen(wxPen(Options.GetColour(WINDOW_BORDER)));
 	dc.SetBrush(wxBrush(Options.GetColour(WINDOW_BACKGROUND)));

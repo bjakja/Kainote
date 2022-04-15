@@ -184,7 +184,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 					lslash--;
 				}
 
-				if (found[0] == L"" && !isT) {
+				if (found[0] == emptyString && !isT) {
 					found[0] = ftag;
 					fpoints[0].x = (i < lastTag) ? lastTag : i;
 					fpoints[0].y = (i < lastTag) ? lastTag : lslash - 1;
@@ -196,7 +196,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 				}
 				//block break till i <= from cause of test if cursor is in \t tag
 				//else it will fail if there is value without \t on the end
-				if (!isT && found[0] != L"" && i <= from) {
+				if (!isT && found[0] != emptyString && i <= from) {
 					break;
 				}
 			}
@@ -230,7 +230,7 @@ bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int 
 
 	}
 
-	if (!isT && found[0] != L"") {
+	if (!isT && found[0] != emptyString) {
 		//In bracket here blocks changing position of tag putting in plain text
 		//inbrkt here changing value when plain text is on start, not use it here
 		if (result.inBracket && !placedInT) {
@@ -282,7 +282,7 @@ int TagFindReplace::ReplaceAll(const wxString& pattern, const wxString& tag, wxS
 	}
 	if (returnPosWhenNoTags && needFirstReplace) {
 		int pos = (text->StartsWith("{")) ? 1 : 0;
-		FindData res(L"", wxPoint(pos, pos), pos == 1, false);
+		FindData res(emptyString, wxPoint(pos, pos), pos == 1, false);
 		wxString changedValue;
 		func(res, &changedValue);
 		changedValue.Prepend(L"\\" + tag);
@@ -359,7 +359,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				res.positionInText.x += lastTagBlockStart;
 			}
 			else {
-				res = FindData(L"", wxPoint(i, 0), true, false);
+				res = FindData(emptyString, wxPoint(i, 0), true, false);
 			}
 			wxString changedValue;
 			func(res, &changedValue, numOfChars);
@@ -374,7 +374,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 				if (nch == L'h') {
 					//\h is one character
 					if (i == 0) {
-						FindData res(L"", wxPoint(i, 0), false, false);
+						FindData res(emptyString, wxPoint(i, 0), false, false);
 						wxString changedValue;
 						func(res, &changedValue, numOfChars);
 						changedValue.Prepend(L"\\" + tag);
@@ -389,7 +389,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 					i++;
 				}
 				else {
-					FindData res(L"", wxPoint(i, 0), false, false);
+					FindData res(emptyString, wxPoint(i, 0), false, false);
 					wxString changedValue;
 					func(res, &changedValue, numOfChars);
 					changedValue.Prepend(L"\\" + tag);
@@ -398,7 +398,7 @@ int TagFindReplace::ReplaceAllByChar(const wxString& pattern, const wxString& ta
 			}
 		}
 		else if (!block && (ch != L' ' || i == 0)) {
-			FindData res(L"", wxPoint(i, 0), false, false);
+			FindData res(emptyString, wxPoint(i, 0), false, false);
 			wxString changedValue;
 			func(res, &changedValue, numOfChars);
 			changedValue.Prepend(L"\\" + tag);
@@ -653,7 +653,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 		long whre;
 		wxString txt = edit->TextEdit->GetValue();
 		TextEditor* editor = edit->TextEdit;
-		if (grid->hasTLMode && txt == L"") {
+		if (grid->hasTLMode && txt == emptyString) {
 			txt = edit->TextEditOrig->GetValue();
 			editor = edit->TextEditOrig;
 		}
@@ -675,7 +675,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 			txt.insert(result.positionInText.x, tag);
 		}
 		if (tag.empty()) { 
-			txt.Replace(L"{}", L""); 
+			txt.Replace(L"{}", emptyString); 
 			whre--;
 		}
 		editor->SetTextS(txt, true);
@@ -691,8 +691,8 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 			lastSelection = wxPoint(from, to);
 			from = to;
 
-			FindTag(lastPattern, L"", 3);
-			PutTagInText(resettag, L"", focus, true);
+			FindTag(lastPattern, emptyString, 3);
+			PutTagInText(resettag, emptyString, focus, true);
 			return;
 		}
 		if (restoreSelection)
@@ -709,7 +709,7 @@ void TagFindReplace::PutTagInText(const wxString& tag, const wxString& resettag,
 			wxString txt = dialc->GetTextNoCopy();
 			FindTag(lastPattern, txt, 1);
 
-			if (result.inBracket && txt != L"") {
+			if (result.inBracket && txt != emptyString) {
 				if (result.positionInText.x < result.positionInText.y) { 
 					txt.erase(txt.begin() + result.positionInText.x, 
 						txt.begin() + result.positionInText.y + 1);

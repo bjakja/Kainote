@@ -26,7 +26,7 @@ AutoSaveOpen::AutoSaveOpen(KainoteFrame* _Kai)
 
 	DialogSizer* mainSizer = new DialogSizer(wxVERTICAL);
 	KaiStaticBoxSizer* seekingSizer = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Wyszukaj pliki"));
-	seekingText = new KaiTextCtrl(this, ID_AUTO_SAVE_SEEKING_TEXT, L"", 
+	seekingText = new KaiTextCtrl(this, ID_AUTO_SAVE_SEEKING_TEXT, emptyString, 
 		wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	filterList = new MappedButton(this, ID_AUTO_SAVE_FILTER, _("Filtruj listę"));
 	seekAllWords = new KaiCheckBox(this, -1, _("Wszystkie słowa"));

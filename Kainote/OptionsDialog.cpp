@@ -122,7 +122,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 				result = msg.ShowModal();
 			}
 			if (result == wxYES || result == wxOK){
-				if (result == wxYES){ hotkey = L""; }
+				if (result == wxYES){ hotkey = emptyString; }
 				for (auto &idtype : idtypes){
 					if (doubledHotkey && idtype->first.Type != hkd.type)
 						continue;
@@ -202,12 +202,12 @@ void ItemHotkey::OnDeleteHotkey(KaiListCtrl *theList, int y)
 	if (OptionsDialog::hotkeysCopy.size() == 0)
 		OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 	ItemHotkey *itemKey = (ItemHotkey*)theList->CopyRow(y, 1);
-	itemKey->accel = L"";
+	itemKey->accel = emptyString;
 	itemKey->modified = true;
 	theList->SetModified(true);
 	theList->Refresh(false);
 	theList->PushHistory();
-	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, L"");
+	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, emptyString);
 }
 
 void ItemHotkey::Save()
@@ -231,7 +231,7 @@ void ItemHotkey::OnChangeHistory(){
 int ItemHotkey::OnVisibilityChange(int mode){
 	switch (mode){
 	case 1:
-		return (accel != L"") ? VISIBLE : NOT_VISIBLE;
+		return (accel != emptyString) ? VISIBLE : NOT_VISIBLE;
 	case 2:
 		return (hotkeyId.Type == GLOBAL_HOTKEY) ? VISIBLE : NOT_VISIBLE;
 	case 3:
@@ -788,7 +788,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		KaiChoice *themeList = new KaiChoice(Themes, 14567, wxDefaultPosition, wxDefaultSize, choices);
 		themeList->SetSelection(themeList->FindString(programTheme));
 		themeList->SetToolTip(_("Nazwa motywu:"));
-		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, L"");
+		KaiTextCtrl *newTheme = new KaiTextCtrl(Themes, -1, emptyString);
 		newTheme->SetToolTip(_("Nazwa kopiowanego motywu.\nMotywów domyślnych: DarkSentro i LightSentro\nnie można edytować, należy je skopiować."));
 		MappedButton *copyTheme = new MappedButton(Themes, 14566, _("Kopiuj"));
 
@@ -839,7 +839,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 			}
 			Options.SetString(PROGRAM_THEME, themeName);
 			if (!List->IsEnabled()){ List->Enable(false); }
-			newTheme->SetValue(L"");
+			newTheme->SetValue(emptyString);
 			int size = themeList->Append(themeName);
 			themeList->SetSelection(size);
 		}, 14566);
@@ -1310,7 +1310,7 @@ void OptionsDialog::OnResetDefault(wxCommandEvent& event)
 void OptionsDialog::AddHotkeysOnList()
 {
 	std::map<idAndType, hdata> mappedhkeys = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
-	const std::map<int, wxString> &hkeysNames = Hkeys.GetNamesTable();
+	const std::map<int, const wxString> &hkeysNames = Hkeys.GetNamesTable();
 
 	int lastType = -1;
 

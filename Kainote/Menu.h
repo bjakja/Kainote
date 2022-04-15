@@ -22,6 +22,7 @@
 #include <wx/msw/popupwin.h>
 #include <vector>
 #include <map>
+#include "config.h"
 
 
 class MenuEvent;
@@ -67,7 +68,7 @@ class MenuItem
 {
 	//friend class MenuBar;
 public:
-	MenuItem(int _id, const wxString& _label, const wxString& _help = L"", bool _enable = true, wxBitmap *_icon = NULL, Menu *Submenu = 0, byte _type = 0);
+	MenuItem(int _id, const wxString& _label, const wxString& _help = emptyString, bool _enable = true, wxBitmap *_icon = NULL, Menu *Submenu = 0, byte _type = 0);
 	~MenuItem();
 	bool Enable(bool enable);
 	wxBitmap GetBitmap();
@@ -79,7 +80,7 @@ public:
 	}
 	wxString GetLabelText(){
 		wxString desc = label;
-		desc.Replace(L"&", L"");
+		desc.Replace(L"&", emptyString);
 		if (desc.find(L"\t") != -1){ desc = desc.BeforeFirst(L'\t'); }
 		return desc;
 	}
@@ -105,7 +106,7 @@ public:
 		disableMapping = disable;
 	}
 	wxString GetAccel();
-	void SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel = L"");
+	void SetAccel(wxAcceleratorEntry *entry, const wxString &stringAccel = emptyString);
 	wxBitmap *icon;
 	wxString label;
 	wxString help;
@@ -183,18 +184,18 @@ public:
 	};
 	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help,
 		wxBitmap *bitmap, bool enable = true, Menu *SubMenu = 0);
-	MenuItem *Append(int _id, const wxString& _label, const wxString& _help = L"",
+	MenuItem *Append(int _id, const wxString& _label, const wxString& _help = emptyString,
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
-	MenuItem *Append(int _id, const wxString& _label, Menu* Submenu, const wxString& _help = L"",
+	MenuItem *Append(int _id, const wxString& _label, Menu* Submenu, const wxString& _help = emptyString,
 		byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
 	MenuItem *Append(MenuItem *item);
-	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = L"",
+	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = emptyString,
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Prepend(MenuItem *item);
-	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = L"",
+	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = emptyString,
 		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
 	MenuItem *Insert(int position, MenuItem *item);
-	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = L"", bool enable = true, int kind = 0);
+	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = emptyString, bool enable = true, int kind = 0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
 	void Delete(int position);
 	void Clear(){

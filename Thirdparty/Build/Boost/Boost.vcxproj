@@ -239,7 +239,7 @@
       <PreprocessorDefinitions>BOOST_LOCALE_WITH_ICU=1;BOOST_LOCALE_NO_STD_BACKEND=1;BOOST_LOCALE_NO_WINAPI_BACKEND=1;BOOST_LOCALE_NO_POSIX_BACKEND=1;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;UCONFIG_NO_TRANSLITERATION=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION</PreprocessorDefinitions>
       <FloatingPointModel>Precise</FloatingPointModel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -249,7 +249,7 @@
       <IgnoreSpecificDefaultLibraries>boost_system-vc120-mt-gd-1_61.lib;boost_date_time-vc120-mt-gd-1_61.lib;boost_chrono-vc120-mt-gd-1_61.lib;libboost_regex-vc120-mt-gd-1_61.lib;boost_locale-vc120-mt-gd-1_61.lib</IgnoreSpecificDefaultLibraries>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)Thirdparty\build\Icu\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)bin\$(platform)\$(configuration)%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>icu.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -478,22 +478,10 @@
     <ClCompile Include="..\..\Boost\libs\locale\src\util\default_locale.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\util\info.cpp" />
     <ClCompile Include="..\..\Boost\libs\locale\src\util\locale_data.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\c_regex_traits.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\cpp_regex_traits.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\cregex.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\fileiter.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\icu.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\instances.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\posix_api.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\regex.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\regex_raw_buffer.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\regex_traits_defaults.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\static_mutex.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\usinstances.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\w32_regex_traits.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\wc_regex_traits.cpp" />
     <ClCompile Include="..\..\Boost\libs\regex\src\wide_posix_api.cpp" />
-    <ClCompile Include="..\..\Boost\libs\regex\src\winstances.cpp" />
     <ClCompile Include="..\..\Boost\libs\system\src\error_code.cpp" />
     <ClCompile Include="..\..\Boost\libs\thread\src\tss_null.cpp" />
     <ClCompile Include="..\..\Boost\libs\thread\src\win32\thread.cpp" />

@@ -284,7 +284,7 @@ void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 
 	//set copy of editbox text that every dummy edition have the same text
 	//not changed by other dummy editions to avoid mismatches when moving
-	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
+	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == emptyString);
 	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 	currentLineText = editor->GetValue();
 	ChangeTool(tool, true);
@@ -543,7 +543,7 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 	SubsGrid *grid = tab->Grid;
 	wxString txt = edit->TextEdit->GetValue();
 	TextEditor *editor = edit->TextEdit;
-	if (grid->hasTLMode && txt == L""){ 
+	if (grid->hasTLMode && txt == emptyString){ 
 		txt = edit->TextEditOrig->GetValue(); 
 		editor = edit->TextEditOrig; 
 	}
@@ -639,7 +639,7 @@ void Visuals::SetVisual(bool dummy)
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
 
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
+	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == emptyString);
 	//Get editor
 	TextEditor *editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	//two stages, stage first selected lines
@@ -677,7 +677,7 @@ void Visuals::SetVisual(bool dummy)
 			}
 			else{
 				Dialogue Cpy = Dialogue(*Dial);
-				if (Dial->TextTl != L"" && grid->hasTLMode) {
+				if (Dial->TextTl != emptyString && grid->hasTLMode) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					if (showOriginalOnVideo)
@@ -771,7 +771,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 		}
 	}
 
-	if (txt != L"" && txt[0] == L'{'){
+	if (txt != emptyString && txt[0] == L'{'){
 		TextPos->x = 1;
 		TextPos->y = 0;
 	}

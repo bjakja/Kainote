@@ -25,7 +25,7 @@ wxDEFINE_EVENT(EVT_CREATE_SECONDARY_DIALOG, wxThreadEvent);
 wxDEFINE_EVENT(EVT_END_MODAL, wxThreadEvent);
 
 ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxPoint &pos, const wxSize &size, int style)
-	: wxDialog(_parent, 31555, L"", pos, size, style)
+	: wxDialog(_parent, 31555, emptyString, pos, size, style)
 {
 	RegisterWindowMessage(L"TaskbarButtonCreated");
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));

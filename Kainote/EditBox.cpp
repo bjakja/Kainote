@@ -25,7 +25,7 @@
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
-	:KaiChoice(parent, id, L"", wxDefaultPosition, size, wxArrayString(), 0, validator)
+	:KaiChoice(parent, id, emptyString, wxDefaultPosition, size, wxArrayString(), 0, validator)
 {
 	description = desc;
 	choiceText->Bind(wxEVT_SET_FOCUS, &ComboBoxCtrl::OnFocus, this);
@@ -34,7 +34,7 @@ ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const w
 
 void ComboBoxCtrl::ChangeValue(const wxString &val)
 {
-	if (val == L"" && !choiceText->HasFocus()){
+	if (val == emptyString && !choiceText->HasFocus()){
 		SetForegroundColour(WINDOW_TEXT_INACTIVE);
 		SetValue(description);
 		Refresh(false);
@@ -49,14 +49,14 @@ void ComboBoxCtrl::ChangeValue(const wxString &val)
 void ComboBoxCtrl::OnFocus(wxFocusEvent &evt)
 {
 	if (choiceText->GetForegroundColour() == WINDOW_TEXT_INACTIVE){
-		SetValue(L"");
+		SetValue(emptyString);
 		SetForegroundColour(WINDOW_TEXT);
 	}
 	evt.Skip();
 }
 void ComboBoxCtrl::OnKillFocus(wxFocusEvent &evt)
 {
-	if (GetValue() == L""){
+	if (GetValue() == emptyString){
 		SetForegroundColour(WINDOW_TEXT_INACTIVE);
 		SetValue(description);
 	}
@@ -93,12 +93,12 @@ TagButtonDialog::TagButtonDialog(wxWindow *parent, int id, const wxString &txtt,
 wxDEFINE_EVENT(TAG_BUTTON_EDITION, wxCommandEvent);
 
 TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxString &_tag, int _type, const wxSize &size)
-	: MappedButton(parent, id, _name, L"", wxDefaultPosition, size, EDITBOX_HOTKEY)
+	: MappedButton(parent, id, _name, emptyString, wxDefaultPosition, size, EDITBOX_HOTKEY)
 {
 	wxString rest;
 	type = _type;
 	tag = _tag;
-	if (tag != L""){
+	if (tag != emptyString){
 		SetToolTip(tag);
 	}
 	name = _name;
@@ -108,7 +108,7 @@ TagButton::TagButton(wxWindow *parent, int id, const wxString &_name, const wxSt
 
 void TagButton::OnMouseEvent(wxMouseEvent& event)
 {
-	if (event.RightUp() || (tag == L"" && event.LeftUp())){
+	if (event.RightUp() || (tag == emptyString && event.LeftUp())){
 		wxCommandEvent evt(TAG_BUTTON_EDITION, GetId());
 		ProcessEvent(evt);
 		SetFocus();
@@ -163,34 +163,34 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	ans.Add(L"an9");
 
 
-	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, L"", _("Wybór czcionki"), 
+	Bfont = new MappedButton(this, EDITBOX_CHANGE_FONT, emptyString, _("Wybór czcionki"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bfont->SetBitmap(wxBITMAP_PNG(L"FONTS"));
-	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, L"", _("Pogrubienie"),
+	Bbold = new MappedButton(this, EDITBOX_INSERT_BOLD, emptyString, _("Pogrubienie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bbold->SetBitmap(wxBITMAP_PNG(L"BOLD"));
-	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, L"", _("Pochylenie"),
+	Bital = new MappedButton(this, EDITBOX_INSERT_ITALIC, emptyString, _("Pochylenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bital->SetBitmap(wxBITMAP_PNG(L"ITALIC"));
-	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, L"", _("Podkreślenie"),
+	Bund = new MappedButton(this, EDITBOX_CHANGE_UNDERLINE, emptyString, _("Podkreślenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bund->SetBitmap(wxBITMAP_PNG(L"UNDER"));
-	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, L"", _("Przekreślenie"),
+	Bstrike = new MappedButton(this, EDITBOX_CHANGE_STRIKEOUT, emptyString, _("Przekreślenie"),
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bstrike->SetBitmap(wxBITMAP_PNG(L"STRIKE"));
-	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, L"", _("Kolor podstawowy"), 
+	Bcol1 = new MappedButton(this, EDITBOX_CHANGE_COLOR_PRIMARY, emptyString, _("Kolor podstawowy"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol1->SetBitmap(wxBITMAP_PNG(L"Kolor1"));
 	Bcol1->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, L"", _("Kolor zastępczy do karaoke"), 
+	Bcol2 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SECONDARY, emptyString, _("Kolor zastępczy do karaoke"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol2->SetBitmap(wxBITMAP_PNG(L"Kolor2"));
 	Bcol2->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, L"", _("Kolor obwódki"), 
+	Bcol3 = new MappedButton(this, EDITBOX_CHANGE_COLOR_OUTLINE, emptyString, _("Kolor obwódki"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol3->SetBitmap(wxBITMAP_PNG(L"Kolor3"));
 	Bcol3->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
-	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, L"", _("Kolor cienia"), 
+	Bcol4 = new MappedButton(this, EDITBOX_CHANGE_COLOR_SHADOW, emptyString, _("Kolor cienia"), 
 		wxDefaultPosition, wxDefaultSize, EDITBOX_HOTKEY, MAKE_SQUARE_BUTTON);
 	Bcol4->SetBitmap(wxBITMAP_PNG(L"Kolor4"));
 	Bcol4->Bind(wxEVT_RIGHT_UP, &EditBox::OnColorRightClick, this);
@@ -267,13 +267,13 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	TextEditOrig->Hide();
 	Comment = new KaiCheckBox(this, ID_COMMENT, _("Komentarz")/*, wxDefaultPosition, wxSize(82, -1)*/);
 	Comment->SetValue(false);
-	LayerEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
+	LayerEdit = new NumCtrl(this, ID_NUM_CONTROL, emptyString, -10000000, 10000000, true, wxDefaultPosition, wxSize(50, -1));
 	int fw, fh;
 	GetTextExtent(L"00:00:00,000", &fw, &fh);
 	fw += 6;
-	StartEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTER);
-	EndEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	DurEdit = new TimeCtrl(this, ID_NUM_CONTROL, L"", wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	StartEdit = new TimeCtrl(this, ID_NUM_CONTROL, emptyString, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTER);
+	EndEdit = new TimeCtrl(this, ID_NUM_CONTROL, emptyString, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	DurEdit = new TimeCtrl(this, ID_NUM_CONTROL, emptyString, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
 	wxArrayString styles;
 	styles.Add(L"Default");
 	StyleChoice = new KaiChoice(this, ID_STYLE, wxDefaultPosition, wxSize(100, -1), styles);//wxSize(145,-1)
@@ -284,9 +284,9 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	ActorEdit = new ComboBoxCtrl(this, ID_COMBO_BOX_CTRL, wxSize(90, -1), _("Aktor"), valid);
 	GetTextExtent(L"0000", &fw, &fh);
 	fw += 10;
-	MarginLEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	MarginREdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
-	MarginVEdit = new NumCtrl(this, ID_NUM_CONTROL, L"", 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginLEdit = new NumCtrl(this, ID_NUM_CONTROL, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginREdit = new NumCtrl(this, ID_NUM_CONTROL, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
+	MarginVEdit = new NumCtrl(this, ID_NUM_CONTROL, emptyString, 0, 9999, true, wxDefaultPosition, wxSize(fw, -1), wxTE_CENTRE);
 	EffectEdit = new ComboBoxCtrl(this, ID_COMBO_BOX_CTRL, wxSize(90, -1), _("Efekt"), valid);
 
 	BoxSizer2 = new wxBoxSizer(wxHORIZONTAL);
@@ -487,8 +487,8 @@ void EditBox::UpdateChars()
 {
 
 	if (line->IsComment){
-		Chars->SetLabelText(L"");
-		Chtime->SetLabelText(L"");
+		Chars->SetLabelText(emptyString);
+		Chtime->SetLabelText(emptyString);
 	}
 	else{
 		TextEditor * editor = GetEditor();
@@ -555,7 +555,7 @@ void EditBox::Send(unsigned char editionType, bool gotoNextLine, bool dummy, boo
 	}
 
 	wxString checkstyle = StyleChoice->GetString(StyleChoice->GetSelection());
-	if (line->Style != checkstyle && checkstyle != L"" || StyleChoice->HasFocus()){
+	if (line->Style != checkstyle && checkstyle != emptyString || StyleChoice->HasFocus()){
 		line->Style = checkstyle;
 		cellm |= STYLE;
 	}
@@ -694,7 +694,7 @@ void EditBox::PutinNonass(const wxString &text, const wxString &tag)
 			if (txt.StartsWith(chars))
 			{
 				wxRegEx rex(chars + tag + chare, wxRE_ADVANCED | wxRE_ICASE);
-				rex.ReplaceAll(&txt, L"");
+				rex.ReplaceAll(&txt, emptyString);
 				dialc->Text = chars + text + chare + txt;
 			}
 			else
@@ -715,27 +715,27 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	int tmpIter = grid->file->Iter();
 	if (form < SRT){
 		wxString tmp;
-		if (FindTag(L"b(0|1)", L"", 0, true)){
+		if (FindTag(L"b(0|1)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Bold = tmp == L"1";
 		}
-		if (FindTag(L"i(0|1)", L"", 0, true)){
+		if (FindTag(L"i(0|1)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Italic = tmp == L"1";
 		}
-		if (FindTag(L"u(0|1)", L"", 0, true)){
+		if (FindTag(L"u(0|1)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Underline = tmp == L"1";
 		}
-		if (FindTag(L"s(0|1)", L"", 0, true)){
+		if (FindTag(L"s(0|1)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->StrikeOut = tmp == L"1";
 		}
-		if (FindTag(L"fs([0-9.]+)", L"", 0, true)){
+		if (FindTag(L"fs([0-9.]+)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->SetFontSizeString(tmp); 
 		}
-		if (FindTag(L"fn(.*)", L"", 0, true)){
+		if (FindTag(L"fn(.*)", emptyString, 0, true)){
 			GetTextResult(&tmp);
 			mstyle->Fontname = tmp; 
 		}
@@ -746,7 +746,7 @@ void EditBox::OnFontClick(wxCommandEvent& event)
 	if (FD->ShowModal() == wxID_OK) {
 		wxString txt = TextEdit->GetValue();
 		TextEditor * editor = TextEdit;
-		if (grid->hasTLMode && txt == L""){
+		if (grid->hasTLMode && txt == emptyString){
 			editor = TextEditOrig;
 			txt = TextEditOrig->GetValue();
 		}
@@ -782,7 +782,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontname != editedStyle->Fontname)
 	{
 		if (form < SRT){
-			FindTag(L"fn(.*)", L"", 0, true);
+			FindTag(L"fn(.*)", emptyString, 0, true);
 			PutTagInText(L"\\fn" + retStyle->Fontname, L"\\fn" + actualStyle.Fontname, false);
 		}
 		else{ PutinNonass(L"F:" + retStyle->Fontname, L"f:([^}]*)"); }
@@ -790,7 +790,7 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 	if (retStyle->Fontsize != editedStyle->Fontsize)
 	{
 		if (form < SRT){
-			FindTag(L"fs([0-9]+)", L"", 0, true);
+			FindTag(L"fs([0-9]+)", emptyString, 0, true);
 			PutTagInText(L"\\fs" + retStyle->Fontsize, L"\\fs" + actualStyle.Fontsize, false);
 		}
 		else{ PutinNonass(L"S:" + retStyle->Fontname, L"s:([^}]*)"); }
@@ -800,31 +800,31 @@ void EditBox::ChangeFont(Styles *retStyle, Styles *editedStyle)
 		if (form < SRT){
 			wxString bld = (retStyle->Bold) ? L"1" : L"0";
 			wxString bld1 = (actualStyle.Bold) ? L"1" : L"0";
-			FindTag(L"b(0|1)", L"", 0, true);
+			FindTag(L"b(0|1)", emptyString, 0, true);
 			PutTagInText(L"\\b" + bld, L"\\b" + bld1, false);
 		}
-		else{ PutinNonass(L"y:b", (retStyle->Bold) ? L"Y:b" : L""); }
+		else{ PutinNonass(L"y:b", (retStyle->Bold) ? wxString(L"Y:b") : emptyString); }
 	}
 	if (retStyle->Italic != editedStyle->Italic)
 	{
 		if (form < SRT){
 			wxString ital = (retStyle->Italic) ? L"1" : L"0";
 			wxString ital1 = (actualStyle.Italic) ? L"1" : L"0";
-			FindTag(L"i(0|1)", L"", 0, true);
+			FindTag(L"i(0|1)", emptyString, 0, true);
 			PutTagInText(L"\\i" + ital, L"\\i" + ital1, false);
 		}
-		else{ PutinNonass(L"y:i", (retStyle->Italic) ? L"Y:i" : L""); }
+		else{ PutinNonass(L"y:i", (retStyle->Italic) ? wxString(L"Y:i") : emptyString); }
 	}
 	if (retStyle->Underline != editedStyle->Underline)
 	{
-		FindTag(L"u(0|1)", L"", 0, true);
+		FindTag(L"u(0|1)", emptyString, 0, true);
 		wxString under = (retStyle->Underline) ? L"1" : L"0";
 		wxString under1 = (actualStyle.Underline) ? L"1" : L"0";
 		PutTagInText(L"\\u" + under, L"\\u" + under1, false);
 	}
 	if (retStyle->StrikeOut != editedStyle->StrikeOut)
 	{
-		FindTag(L"s(0|1)", L"", 0, true);
+		FindTag(L"s(0|1)", emptyString, 0, true);
 		wxString strike = (retStyle->StrikeOut) ? L"1" : L"0";
 		wxString strike1 = (actualStyle.StrikeOut) ? L"1" : L"0";
 		PutTagInText(L"\\s" + strike, L"\\s" + strike1, false);
@@ -840,7 +840,7 @@ void EditBox::AllColorClick(int numColor, bool leftClick /*= true*/)
 	wxString tmptext = TextEdit->GetValue();
 	TextEditor *editor = TextEdit;
 	int tmpIter = grid->file->Iter();
-	if (grid->hasTLMode && tmptext == L""){
+	if (grid->hasTLMode && tmptext == emptyString){
 		tmptext = TextEditOrig->GetValue();
 		editor = TextEditOrig;
 	}
@@ -913,12 +913,12 @@ void EditBox::GetColor(AssColor *actualColor, int numColor)
 			(numColor == 2) ? style->SecondaryColour :
 			(numColor == 3) ? style->OutlineColour :
 			style->BackColour;
-		if (FindTag(colorNumber + tag, L"", 0, true)){
+		if (FindTag(colorNumber + tag, emptyString, 0, true)){
 			GetTextResult(&retTag);
 			actualColor->Copy(AssColor(L"&" + retTag));
 		}
 		//when knowing about alpha tag will be needed You must change it like in method OnColorChange
-		if (FindTag(colorNumber + L"a&|alpha(.*)", L"", 0, true)){
+		if (FindTag(colorNumber + L"a&|alpha(.*)", emptyString, 0, true)){
 			GetTextResult(&retTag);
 			actualColor->SetAlphaString(retTag); 
 		}
@@ -978,7 +978,7 @@ void EditBox::OnBoldClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString value = (mstyle->Bold) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Bold) ? L"0" : L"1";
-		if (FindTag(L"b(0|1)", L"", 0, true)){ 
+		if (FindTag(L"b(0|1)", emptyString, 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
 		}
@@ -994,7 +994,7 @@ void EditBox::OnItalicClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString value = (mstyle->Italic) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Italic) ? L"0" : L"1";
-		if (FindTag(L"i(0|1)", L"", 0, true)){ 
+		if (FindTag(L"i(0|1)", emptyString, 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
 		}
@@ -1011,7 +1011,7 @@ void EditBox::OnUnderlineClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString value = (mstyle->Underline) ? L"1" : L"0";
 		wxString nvalue = (mstyle->Underline) ? L"0" : L"1";
-		if (FindTag(L"u(0|1)", L"", 0, true)){ 
+		if (FindTag(L"u(0|1)", emptyString, 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
 		}
@@ -1026,7 +1026,7 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 		Styles *mstyle = grid->GetStyle(0, line->Style);
 		wxString value = (mstyle->StrikeOut) ? L"1" : L"0";
 		wxString nvalue = (mstyle->StrikeOut) ? L"0" : L"1";
-		if (FindTag(L"s(0|1)", L"", 0, true)){ 
+		if (FindTag(L"s(0|1)", emptyString, 0, true)){ 
 			GetTextResult(&value);
 			nvalue = (value == L"1") ? L"0" : L"1";
 		}
@@ -1037,8 +1037,8 @@ void EditBox::OnStrikeClick(wxCommandEvent& event)
 
 void EditBox::OnAnChoice(wxCommandEvent& event)
 {
-	FindTag(L"an([0-9])", L"", 1);
-	PutTagInText(L"\\" + Ban->GetString(Ban->GetSelection()), L"", true);
+	FindTag(L"an([0-9])", emptyString, 1);
+	PutTagInText(L"\\" + Ban->GetString(Ban->GetSelection()), emptyString, true);
 }
 
 void EditBox::OnTlMode(wxCommandEvent& event)
@@ -1408,7 +1408,7 @@ void EditBox::ClearErrs(bool spellcheckerOnOff/*=false*/, bool enableSpellchecke
 void EditBox::OnSplit(wxCommandEvent& event)
 {
 	wxString Splitchar = (grid->subsFormat <= SRT) ? L"\\N" : L"|";
-	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == L"" && !TextEdit->HasFocus());
+	bool isOriginal = (grid->hasTLMode && TextEdit->GetValue() == emptyString && !TextEdit->HasFocus());
 	//text editor
 	TextEditor *tedit = (isOriginal) ? TextEditOrig : TextEdit;
 	wxString txt = tedit->GetValue();
@@ -1553,7 +1553,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 		wxString tag = (intColorNumber == 1) ? L"?c&(.*)&" : L"c&(.*)&";
 		Styles *style = grid->GetStyle(0, line->Style);
 
-		bool found = FindTag(colorNumber + tag, L"", 0, true);
+		bool found = FindTag(colorNumber + tag, emptyString, 0, true);
 		//check only colors, not aplha
 		if (actualColor.r != choosenColor.r || actualColor.g != choosenColor.g || 
 			actualColor.b != choosenColor.b){
@@ -1562,7 +1562,7 @@ void EditBox::OnColorChange(ColorEvent& event)
 				L"\\" + colorNumber + L"c" + actualColorstr + L"&", false);
 		}
 
-		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", L"", 0, true)){
+		if (found = FindTag(L"(" + colorNumber + L"a&|alpha.*)", emptyString, 0, true)){
 			GetTextResult(&colorString);
 			if (!colorString.StartsWith(colorNumber + L"a&")){
 				wxPoint pos = GetPositionInText();
@@ -1611,17 +1611,17 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		bool isFN = findtag.StartsWith(L"fn");
 		bool isR = findtag.StartsWith(L"r");
 		wxString pattern = (isFN) ? L"fn(.*)" :
-			(isR) ? L"(r.*)" : findtag + L"([0-9\\(&-].*)";
+			(isR) ? wxString(L"(r.*)") : findtag + L"([0-9\\(&-].*)";
 		bool onceInText = type == L"1";
-		if (FindTag(pattern, L"", onceInText, !onceInText)) {
+		if (FindTag(pattern, emptyString, onceInText, !onceInText)) {
 			GetTextResult(&result);
 		}
 		else if(!isR){
-			wxString tagTofind = (isFN) ? L"fn" : findtag;
+			wxString tagTofind = (isFN) ? wxString(L"fn") : findtag;
 			if (!TagValueFromStyle(NULL, tagTofind, &result))
 				result = L"0";
 		}
-		wxString resetTag = result.empty() ? L"" : (isFN) ? L"\\fn" + result : (isR) ? L"\\" + result : L"\\" + findtag + result;
+		wxString resetTag = result.empty() ? emptyString : (isFN) ? L"\\fn" + result : (isR) ? L"\\" + result : L"\\" + findtag + result;
 		PutTagInText(tag, resetTag);
 	}
 	else{
@@ -1630,7 +1630,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		long from, to;
 		wxString txt = TextEdit->GetValue();
 		TextEditor *editor = TextEdit;
-		if (grid->hasTLMode && txt == L""){ 
+		if (grid->hasTLMode && txt == emptyString){ 
 			txt = TextEditOrig->GetValue(); 
 			editor = TextEditOrig; 
 		}
@@ -1732,7 +1732,7 @@ void EditBox::OnEditTag(wxCommandEvent &event)
 		Options.SetString((CONFIG)(id - EDITBOX_TAG_BUTTON1 + EDITBOX_TAG_BUTTON_VALUE1),
 			svtag << L"\n\t" << tb->type << L"\n\t" << tb->name << L"\n}");
 		Options.SaveOptions(true, false);
-		if (tb->tag != L""){ tb->SetToolTip(tb->tag); }
+		if (tb->tag != emptyString){ tb->SetToolTip(tb->tag); }
 	}
 
 }
@@ -1746,9 +1746,9 @@ void EditBox::OnAutoMoveTags(wxCommandEvent& event)
 
 void EditBox::SetTextWithTags(bool RefreshVideo)
 {
-	if (grid->hasTLMode && line->TextTl == L"" && AutoMoveTags->GetValue() && Visual <= CROSS){
+	if (grid->hasTLMode && line->TextTl == emptyString && AutoMoveTags->GetValue() && Visual <= CROSS){
 		wxString Text = line->Text;
-		Text.Replace(L"}{", L"");
+		Text.Replace(L"}{", emptyString);
 		int getr = Text.Find(L'}');
 		if (getr > -1){
 			int brackets = Text.find(L"{");
@@ -1930,7 +1930,7 @@ SeekUntranslated:
 		if (!dial->isVisible)
 			continue;
 
-		if (dial->TextTl == L""/* && !dial->IsComment*/){
+		if (dial->TextTl == emptyString/* && !dial->IsComment*/){
 			SetLine(i);
 			grid->SelectRow(i);
 			grid->ScrollTo(i, true);
@@ -2113,7 +2113,7 @@ TextEditor * EditBox::GetEditor(const wxString &text)
 
 		return TextEdit;
 	}
-	else if (grid->hasTLMode && TextEdit->GetValue() == L"")
+	else if (grid->hasTLMode && TextEdit->GetValue() == emptyString)
 		return TextEditOrig;
 
 	return TextEdit;

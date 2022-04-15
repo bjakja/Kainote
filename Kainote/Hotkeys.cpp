@@ -289,7 +289,7 @@ int Hotkeys::LoadHkeys(bool Audio)
 		int type = wxString(L"GSEVA").find(Values[0]);
 		Values = Values.Remove(0, 2);
 		wxString Labels = token.BeforeFirst(L' ').Trim(false).Trim(true);
-		if (Values != L""){
+		if (Values != emptyString){
 			if (Labels.IsNumber()){
 				hkeys[idAndType(wxAtoi(Labels), type)] = Values;
 			}
@@ -322,7 +322,7 @@ void Hotkeys::SaveHkeys(bool Audio)
 		if (cur->first >= 30100){ Texthk << cur->second.Name << L"=" << cur->second.Accel << L"\r\n"; }
 		else{
 			wxString idstring = GetString((Id)cur->first.id);
-			if (idstring == L""){ idstring << cur->first.id; }
+			if (idstring == emptyString){ idstring << cur->first.id; }
 			Texthk << idstring << L" " << gseva[cur->first.Type] << L"=" << cur->second.Accel << L"\r\n";
 		}
 	}
@@ -348,7 +348,7 @@ wxAcceleratorEntry Hotkeys::GetHKey(const idAndType itype, const hdata *data)
 
 
 
-	if (accel == L""){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
+	if (accel == emptyString){ return accelkey;/*ResetKey(itemid);accel=hkeys[idAndType(itemid];*/ }
 	int modif = GetModifier(accel);
 
 	wxString akey = (accel.EndsWith(L"-")) ? L"-" : accel.AfterLast(L'-');
@@ -379,8 +379,8 @@ void Hotkeys::SetHKey(const idAndType &itype, wxString name, wxString hotkey)
 wxString Hotkeys::GetStringHotkey(const idAndType &itype, const wxString &name)
 {
 	auto it = hkeys.find(itype);
-	if (it != hkeys.end()){ if (name != L""){ it->second.Name = name; } return it->second.Accel; }
-	return L"";
+	if (it != hkeys.end()){ if (name != emptyString){ it->second.Name = name; } return it->second.Accel; }
+	return emptyString;
 }
 
 void Hotkeys::ResetKey(const idAndType *itype, int id, char type)
@@ -408,7 +408,7 @@ wxString Hotkeys::GetDefaultKey(const idAndType &itype)
 	{
 		return it->second.Accel;
 	}
-	return L"";
+	return emptyString;
 }
 
 void Hotkeys::OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWindow /*= GLOBAL_HOTKEY*/, bool showWindowSelection/*=true*/)
@@ -493,11 +493,11 @@ void Hotkeys::OnMapHkey(int id, wxString name, wxWindow *parent, char hotkeyWind
 
 					if (result == wxOK){
 						auto finditer = hkeys.find(idAndType(id, hkd->type));
-						idtype->second.Accel = L"";
-						idtype->second.Accel = (finditer != hkeys.end()) ? finditer->second.Accel : L"";
+						idtype->second.Accel = emptyString;
+						idtype->second.Accel = (finditer != hkeys.end()) ? finditer->second.Accel : emptyString;
 					}
 					else if (result == wxYES){
-						idtype->second.Accel = L"";
+						idtype->second.Accel = emptyString;
 					}
 				}
 			}
@@ -526,7 +526,7 @@ wxString Hotkeys::GetName(const idAndType itype)
 		return it->second.Name;
 	}
 
-	return L"";
+	return emptyString;
 }
 
 const wxString & Hotkeys::GetName(int id)
@@ -623,14 +623,14 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 	if (global) {
 		type = global->GetSelection();
 	}
-	hotkey = L"";
+	hotkey = emptyString;
 	if (key != WXK_SHIFT && key != WXK_ALT && key != WXK_CONTROL){
 
 		if (event.AltDown()){ hotkey << L"Alt-"; }
 		if (event.ControlDown()){ hotkey << L"Ctrl-"; }
 		if (event.ShiftDown()){ hotkey << L"Shift-"; }
 
-		if (hotkey == L"" && (type == GLOBAL_HOTKEY || type == EDITBOX_HOTKEY) && (key > 30 && key < 127 /*|| key>313 && key<318*/))
+		if (hotkey == emptyString && (type == GLOBAL_HOTKEY || type == EDITBOX_HOTKEY) && (key > 30 && key < 127 /*|| key>313 && key<318*/))
 		{
 			KaiMessageBox(_("Skróty globalne i edytora muszą zawierać modyfikatory (Shift, Ctrl lub Alt).")); return;
 		}
@@ -642,7 +642,7 @@ void HkeysDialog::OnKeyPress(wxKeyEvent& event)
 		}
 
 		wxString keytxt = Hkeys.keys[key];
-		if (keytxt == L""){
+		if (keytxt == emptyString){
 			if (key >= 36 && key <= 96)
 				keytxt = wchar_t(key);
 			else

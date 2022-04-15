@@ -30,7 +30,7 @@
 
 #pragma once
 
-//#include <wx/wx.h>
+#include "config.h"
 #include "KaiDialog.h"
 #include <memory>
 #include <vector>
@@ -66,7 +66,7 @@ namespace Auto{
 
 		/// Serialize the control's current value so that it can be stored
 		/// in the script
-		virtual wxString SerialiseValue() const { return L""; }
+		virtual wxString SerialiseValue() const { return emptyString; }
 
 		/// Restore the control's value from a saved value in the script
 		virtual void UnserialiseValue(const wxString &serialised) { }

@@ -67,7 +67,7 @@ MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	RuleEdition->Add(PhrasesOptionsSizer1, 0, wxEXPAND);
 	RuleEdition->Add(PhrasesOptionsSizer2, 0, wxEXPAND);
 	RulesList = new KaiListCtrl(this, ID_RULES_LIST, wxDefaultPosition, wxSize(320, 300));
-	RulesList->InsertColumn(0, L"", TYPE_CHECKBOX, 20);
+	RulesList->InsertColumn(0, emptyString, TYPE_CHECKBOX, 20);
 	RulesList->InsertColumn(1, _("Opis"), TYPE_TEXT, 290);
 	RulesList->InsertColumn(2, _("Reguła znajdź"), TYPE_TEXT, 100);
 	RulesList->InsertColumn(3, _("Reguła zamień"), TYPE_TEXT, 100);
@@ -276,7 +276,7 @@ void MisspellReplacer::FillRulesList()
 		Rule newRule(token);
 		rules.push_back(newRule);
 
-		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == L"1", L""));
+		int row = RulesList->AppendItem(new ItemCheckBox(OnOff == L"1", emptyString));
 		RulesList->SetItem(row, 1, new ItemText(newRule.description));
 		RulesList->SetItem(row, 2, new ItemText(newRule.findRule));
 		RulesList->SetItem(row, 3, new ItemText(newRule.replaceRule));
@@ -320,7 +320,7 @@ void MisspellReplacer::AddRule()
 	//phraseToFind = L"\\m" + phraseToFind + L"\\M";
 
 	rules.push_back(Rule(RuleDescription->GetValue(), phraseToFind, phraseToReplace, GetRuleOptions()));
-	int row = RulesList->AppendItem(new ItemCheckBox(false, L""));
+	int row = RulesList->AppendItem(new ItemCheckBox(false, emptyString));
 	RulesList->SetItem(row, 1, new ItemText(RuleDescription->GetValue()));
 	RulesList->SetItem(row, 2, new ItemText(phraseToFind));
 	RulesList->SetItem(row, 3, new ItemText(phraseToReplace));
@@ -395,7 +395,7 @@ void MisspellReplacer::SeekOnTab(TabPanel *tab)
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelected(tabLinePosition))){
-			const wxString & lineText = (Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
+			const wxString & lineText = (Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 
 			for (size_t k = 0; k < rxrules.size(); k++){
 
@@ -518,7 +518,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 		if ((!selectedOption) ||
 			(selectedOption == 3 && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
 			(selectedOption == 1 && tab->Grid->file->IsSelected(tabLinePosition))){
-			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != L"");
+			const wxString & lineText = Dial->Text.CheckTl(Dial->TextTl, Dial->TextTl != emptyString);
 			wxString stringChanged = lineText;
 			bool changed = false;
 			for (size_t k = 0; k < rxrules.size(); k++){
@@ -559,7 +559,7 @@ void MisspellReplacer::ReplaceOnTab(TabPanel *tab)
 			}
 			if (changed){
 				Dialogue *Dialc = tab->Grid->file->CopyDialogue(tabLinePosition);
-				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"") = stringChanged;
+				Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != emptyString) = stringChanged;
 				changedAnything = true;
 			}
 		}
@@ -596,7 +596,7 @@ bool MisspellReplacer::ReplaceBlock(std::vector<ReplacerSeekResults *> &results,
 
 	Dialogue *Dialc = results[0]->tab->Grid->file->CopyDialogue(results[0]->keyLine, true, true);
 
-	wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != L"");
+	wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, Dialc->TextTl != emptyString);
 	//method maybe not too good but even if there is a 6 replaces in one place then 
 	//one of it should be changed.
 	//It means that dialogue will be changed and no need to read and change if needed

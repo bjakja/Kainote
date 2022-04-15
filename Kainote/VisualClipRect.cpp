@@ -305,7 +305,7 @@ wxPoint ClipRect::ChangeVisual(wxString* txt)
 		y2 = Corner[0].y;
 	}
 	wxString val;
-	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
+	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? wxString(L"i") : emptyString, x1, y1, x2, y2);
 	FindTag(L"i?clip(.+)", *txt, 2);
 	Replace(tag, txt);
 	return GetPositionInText();
@@ -331,7 +331,7 @@ void ClipRect::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelection
 		y2 = Corner[0].y;
 	}
 	wxString val;
-	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? L"i" : L"", x1, y1, x2, y2);
+	wxString tag = wxString::Format(L"\\%sclip(%i,%i,%i,%i)", (invClip) ? wxString(L"i") : emptyString, x1, y1, x2, y2);
 	FindTag(L"i?clip(.+)", *txt, 1);
 	Replace(tag, txt);
 }

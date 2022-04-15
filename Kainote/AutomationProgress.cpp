@@ -281,7 +281,7 @@ namespace Auto{
 
 
 	LuaProgressDialog::LuaProgressDialog(wxWindow *parent, lua_State *_L)
-		:wxDialog(parent, -1, L"", wxDefaultPosition, wxDefaultSize, 0)
+		:wxDialog(parent, -1, emptyString, wxDefaultPosition, wxDefaultSize, 0)
 		, cancelled(false)
 		, finished(false)
 		, closedialog(false)
@@ -290,10 +290,10 @@ namespace Auto{
 		SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 		SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 		progress_display = new KaiGauge(this, -1, wxDefaultPosition, wxSize(600, 20));
-		title_display = new KaiStaticText(this, -1, L"");
-		task_display = new KaiStaticText(this, -1, L"");
+		title_display = new KaiStaticText(this, -1, emptyString);
+		task_display = new KaiStaticText(this, -1, emptyString);
 		cancel_button = new MappedButton(this, wxID_CANCEL, _("Anuluj"));
-		debug_output = new KaiTextCtrl(this, -1, L"", wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE | wxTE_READONLY);
+		debug_output = new KaiTextCtrl(this, -1, emptyString, wxDefaultPosition, wxSize(600, 220), wxTE_MULTILINE | wxTE_READONLY);
 		//debug_output->Hide();
 		// put it in a sizer
 		sizer = new wxBoxSizer(wxVERTICAL);

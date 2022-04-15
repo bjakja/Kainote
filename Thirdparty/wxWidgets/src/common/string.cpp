@@ -219,10 +219,10 @@ wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedCharBuffer& str)
 }
 
 #ifndef __BORLANDC__
-wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
-{
-    return os << str.data();
-}
+//wxSTD ostream& operator<<(wxSTD ostream& os, const wxScopedWCharBuffer& str)
+//{
+//    return os << str.data();
+//}
 #endif
 
 #if wxUSE_UNICODE && defined(HAVE_WOSTREAM)

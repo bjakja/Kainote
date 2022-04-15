@@ -641,7 +641,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 					if (noMoreTokens)
 						token << text << L"\r\n";
 
-					if (token != L""){
+					if (token != emptyString){
 						token.Trim();
 						if (!plainText)
 							dial = new Dialogue(token);
@@ -876,7 +876,7 @@ void FindReplace::FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel 
 			}
 			if (dialogueColumn < TXT){
 				FRRD->SetResults(*onlyString + L"  ->  " + dial->GetTextNoCopy(), wxPoint(foundPosition, foundLength), tab,
-					linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
+					linePosId + 1, linePos, (tab) ? emptyString : subsPath, thread);
 			}
 			else{
 				if (hasTlMode && onlyString->Find(L'\n') != -1){
@@ -891,11 +891,11 @@ void FindReplace::FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel 
 						lineText = onlyString->Mid(0, nPos);
 
 					FRRD->SetResults(lineText, txtPos, tab,
-						linePosId + 1, linePos, (tab) ? L"" : subsPath, thread, isTextTl);
+						linePosId + 1, linePos, (tab) ? emptyString : subsPath, thread, isTextTl);
 				}
 				else{
 					FRRD->SetResults(*onlyString, wxPoint(foundPosition, foundLength), tab,
-						linePosId + 1, linePos, (tab) ? L"" : subsPath, thread);
+						linePosId + 1, linePos, (tab) ? emptyString : subsPath, thread);
 				}
 			}
 
@@ -1333,7 +1333,7 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 			window->ChoosenStyleText->SetValue(foundStyles.RemoveLast());
 		}
 		else if (result == wxYES){
-			stylesAsText = L"";
+			stylesAsText = emptyString;
 			window->ChoosenStyleText->SetValue(stylesAsText);
 		}
 		else if (result == wxNO){
@@ -1455,7 +1455,7 @@ bool FindReplace::UpdateValues(TabWindow *window)
 	selectedLines = window->SelectedLines? window->SelectedLines->GetValue() : false;
 
 	findString = window->FindText->GetValue();
-	replaceString = (window->ReplaceText)? window->ReplaceText->GetValue() : L"";
+	replaceString = (window->ReplaceText)? window->ReplaceText->GetValue() : emptyString;
 
 	if (startLine && regEx){
 		findString = L"^" + findString;
@@ -1532,7 +1532,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 				if (noMoreTokens)
 					token << text << L"\r\n";
 
-				if (token != L""){
+				if (token != emptyString){
 					token.Trim();
 				}
 				else{
@@ -1561,12 +1561,12 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 				replacedText << L"\r\n";
 
 			lineNum++;
-			token = L"";
+			token = emptyString;
 			continue;
 		}
 		
 		dial = new Dialogue(token);
-		token = L"";
+		token = emptyString;
 		if (!dial){
 			continue;
 		}

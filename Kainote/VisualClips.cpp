@@ -172,7 +172,7 @@ void DrawingAndClip::SetCurVisual()
 	bool isDrawing = false;
 	wxString clip;
 	if (Visual != VECTORDRAW){
-		bool found = FindTag(L"(i?clip\\(.*m[^)]*)\\)", L"", 1);
+		bool found = FindTag(L"(i?clip\\(.*m[^)]*)\\)", emptyString, 1);
 		const FindData& data = GetResult();
 		clip = data.finding;
 		coeffW /= scale.x;
@@ -183,7 +183,7 @@ void DrawingAndClip::SetCurVisual()
 			int rres = clip.Freq(L',');
 			//it should not possible but sanity check is not too bad
 			if (rres >= 3) { 
-				clip = L""; 
+				clip = emptyString; 
 				scale = D3DXVECTOR2(1.f, 1.f); 
 				vectorScale = 1; 
 			}
@@ -207,7 +207,7 @@ void DrawingAndClip::SetCurVisual()
 	}
 	else{
 		isDrawing = true;
-		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == L"");
+		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == emptyString);
 		//editor
 		//TextEditor *editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
 		wxString tags[] = { L"p" };
@@ -345,7 +345,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 
 	EditBox *edit = tab->Edit;
 	SubsGrid *grid = tab->Grid;
-	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == L"");
+	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == emptyString);
 	//GLOBAL_EDITOR
 	TextEditor *editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
 	wxString clip;
@@ -381,7 +381,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			}
 			else {
 				Dialogue Cpy = Dialogue(*Dial);
-				if (Dial->TextTl != L"" && grid->hasTLMode) {
+				if (Dial->TextTl != emptyString && grid->hasTLMode) {
 					Cpy.TextTl = txt;
 					wxString tlLines;
 					if (showOriginalOnVideo)
@@ -419,12 +419,12 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		}
 		return;
 	}
-	if (clip == L"" && Visual == VECTORCLIP) {
+	if (clip == emptyString && Visual == VECTORCLIP) {
 		wxString txt = editor->GetValue();
 		clipMask.Empty();
 		if (FindTag(L"(i?clip\\(.*m[^)]*)\\)", txt, 1)) {
-			Replace(L"", &txt);
-			txt.Replace(L"{}", L"");
+			Replace(emptyString, &txt);
+			txt.Replace(L"{}", emptyString);
 			if (changeEditorText) {
 				editor->SetTextS(txt, false, true);
 				editor->SetModified();
@@ -531,8 +531,8 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* 
 		GetTextResult(&tmp);
 		//probably not used, but better to leave it as is to avoid some rare cases.
 		if (clip->empty() && fv) {
-			Replace(L"", txt);
-			txt->Replace(L"{}", L"");
+			Replace(emptyString, txt);
+			txt->Replace(L"{}", emptyString);
 			return;
 		}
 		wxString restClip;
@@ -550,7 +550,7 @@ void DrawingAndClip::ChangeVectorVisual(wxString *txt, wxString *clip, wxPoint* 
 		}
 	}
 	else {//vector drawings
-		//wxString tmp = L"";
+		//wxString tmp = emptyString;
 		bool isf;
 		bool hasP1 = true;
 		size_t cliplen = clip->length();
@@ -1301,7 +1301,7 @@ void DrawingAndClip::CreateClipMask(const wxString& clip, wxString * clipTag)
 
 	if (!clip.empty() && (clipTag || 
 		(FindTag(L"(i?clip.)[^)]*\\)", maskDialogue->GetTextNoCopy(), 1)) && GetTextResult(&tmp))) {
-		wxString tmp1 = clipTag? *clipTag : (tmp[0] == L'c') ? L"iclip(" : L"clip(";
+		wxString tmp1 = clipTag? *clipTag : (tmp[0] == L'c') ? wxString(L"iclip(") : wxString(L"clip(");
 		wxString text;
 		text << L"{\\p1\\bord0\\shad0\\fscx100\\fscy100\\frz0\\1c&H000000&\\1a&H77&\\pos(0,0)\\an7\\" << tmp1 << clip << L")}m 0 0 l " <<
 			nx << L" 0 " << nx << L" " << ny << L" 0 " << ny << L"\r\n";

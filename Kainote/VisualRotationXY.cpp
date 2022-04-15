@@ -56,11 +56,14 @@ void RotationXY::DrawVisual(int time)
 	}
 
 	D3DXMATRIX matView;    // the view transform matrix
+	D3DXVECTOR3 matrixVector(0.0f, 0.0f, -17.2f);
+	D3DXVECTOR3 matrixVector1(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 matrixVector2(0.0f, 1.0f, 0.0f);
 
 	D3DXMatrixLookAtLH(&matView,
-		&D3DXVECTOR3(0.0f, 0.0f, -17.2f),    // the camera position default -17.2
-		&D3DXVECTOR3(0.0f, 0.0f, 0.0f),    // the look-at position
-		&D3DXVECTOR3(0.0f, 1.0f, 0.0f));    // the up direction
+		&matrixVector,    // the camera position default -17.2
+		&matrixVector1,    // the look-at position
+		&matrixVector2);    // the up direction
 
 	device->SetTransform(D3DTS_VIEW, &matView);    // set the view transform to matView
 
@@ -73,7 +76,8 @@ void RotationXY::DrawVisual(int time)
 		10000.0f);    // the far view-plane
 
 	D3DXMatrixTranslation(&matTramsate, xxx, -yyy, 0.0f);
-	device->SetTransform(D3DTS_PROJECTION, &(matProjection * matTramsate));    // set the projection
+	D3DXMATRIX matrixTranslate(matProjection * matTramsate);
+	device->SetTransform(D3DTS_PROJECTION, &matrixTranslate);    // set the projection
 
 	device->SetTransform(D3DTS_WORLD, &matRotate);
 

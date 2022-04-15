@@ -36,7 +36,7 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 
 	for (int i = 0; i < numFields; i++){
 		KaiTextCtrl *field = new KaiTextCtrl(this, -1, Options.GetString(fieldValues[i]), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-		KaiCheckBox *fieldOn = new KaiCheckBox(this, -1, L"", wxDefaultPosition, wxSize(18, -1));
+		KaiCheckBox *fieldOn = new KaiCheckBox(this, -1, emptyString, wxDefaultPosition, wxSize(18, -1));
 		fieldOn->SetValue(Options.GetBool(fieldOnValues[i]));
 		wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 		sizer->Add(new KaiStaticText(this, -1, fieldNames[i]), 2, wxEXPAND);

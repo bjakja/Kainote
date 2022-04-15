@@ -409,11 +409,11 @@ void KaiDialog::OnPaint(wxPaintEvent &evt)
 		mdc.DrawIcon(icon.GetIconByIndex(0), 6, (topBorder - 16) / 2);
 	}
 	wxString title = GetTitle();
-	if (title != L""){
+	if (title != emptyString){
 		int start = icon.GetIconCount() ? 28 : 8;
 		int removed = 0, fw = 0, fh = 0;
 		mdc.GetTextExtent(title, &fw, &fh);
-		while (fw > w - 22 - start && title != L""){
+		while (fw > w - 22 - start && title != emptyString){
 			mdc.GetTextExtent(title, &fw, &fh);
 			title = title.RemoveLast();
 			removed++;

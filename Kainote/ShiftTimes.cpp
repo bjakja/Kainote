@@ -55,7 +55,7 @@ ProfileEdition::ProfileEdition(wxWindow* parent, const wxArrayString &profiles, 
 	excludes.Add(L"|");
 	excludes.Add(L"\f");
 	valid.SetExcludes(excludes);
-	profilesList = new KaiChoice(this, -1, L"", wxDefaultPosition, wxDefaultSize, profiles, 0, valid);
+	profilesList = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxDefaultSize, profiles, 0, valid);
 	profilesList->SetMaxLength(25);
 	wxBoxSizer *buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	MappedButton *OK = new MappedButton(this, wxID_OK, L"OK");
@@ -196,7 +196,7 @@ void ShiftTimesWindow::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
-	if (result != L""){ 
+	if (result != emptyString){ 
 		WhichLines->SetSelection(5); 
 		OnEdition(event);
 	}
@@ -264,8 +264,8 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 	WhichLines = new KaiChoice(panel, 22888, wxDefaultPosition, wxDefaultSize, choices, KAI_SCROLL_ON_FOCUS);
 
 	wxBoxSizer *stylesizer = new wxBoxSizer(wxHORIZONTAL);
-	AddStyles = new MappedButton(panel, ID_BSTYLE, L"+", L"", wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
-	Stylestext = new KaiTextCtrl(panel, -1, L"", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	AddStyles = new MappedButton(panel, ID_BSTYLE, L"+", emptyString, wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
+	Stylestext = new KaiTextCtrl(panel, -1, emptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	stylesizer->Add(AddStyles, 0, wxALL, 2);
 	stylesizer->Add(Stylestext, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 2);
 

@@ -235,7 +235,7 @@ namespace Auto{
 			lua_setfield(L, -2, "effect");
 
 			bool isTl = false;
-			const StoreTextHelper & text = (isTl = adial->TextTl != L"") ? adial->TextTl : adial->Text;
+			const StoreTextHelper & text = (isTl = adial->TextTl != emptyString) ? adial->TextTl : adial->Text;
 			lua_pushstring(L, text.mb_str(wxConvUTF8).data());
 			lua_setfield(L, -2, "text");
 
@@ -392,29 +392,29 @@ namespace Auto{
 			e->astyle->Italic = italic;
 			e->astyle->Underline = underline;
 			e->astyle->StrikeOut = strikeout;
-			e->astyle->ScaleX = L"";
+			e->astyle->ScaleX = emptyString;
 			e->astyle->ScaleX << scale_x;
-			e->astyle->ScaleY = L"";
+			e->astyle->ScaleY = emptyString;
 			e->astyle->ScaleY << scale_y;
-			e->astyle->Spacing = L"";
+			e->astyle->Spacing = emptyString;
 			e->astyle->Spacing << spacing;
-			e->astyle->Angle = L"";
+			e->astyle->Angle = emptyString;
 			e->astyle->Angle << angle;
 			e->astyle->BorderStyle = (borderstyle == -3);
-			e->astyle->Outline = L"";
+			e->astyle->Outline = emptyString;
 			e->astyle->Outline << outline;
-			e->astyle->Shadow = L"";
+			e->astyle->Shadow = emptyString;
 			e->astyle->Shadow << shadow;
-			e->astyle->Alignment = L"";
+			e->astyle->Alignment = emptyString;
 			e->astyle->Alignment << align;
-			e->astyle->MarginL = L"";
+			e->astyle->MarginL = emptyString;
 			e->astyle->MarginL << margin_l;
-			e->astyle->MarginR = L"";
+			e->astyle->MarginR = emptyString;
 			e->astyle->MarginR << margin_r;
-			e->astyle->MarginV = L"";
+			e->astyle->MarginV = emptyString;
 			int marg = (margin_t > margin_b) ? margin_t : margin_b;
 			e->astyle->MarginV << marg;
-			e->astyle->Encoding = L"";
+			e->astyle->Encoding = emptyString;
 			e->astyle->Encoding << encoding;
 
 		}
@@ -602,8 +602,8 @@ namespace Auto{
 				}
 				else
 				{
-					wxString fclass = (e->lclass == L"info") ? L"info" : (e->lclass == L"style") ? _("stylów") : _("dialogów");
-					wxString sclass = (i < sinfo) ? L"info" : (i < styles) ? _("stylów") : _("dialogów");
+					wxString fclass = (e->lclass == wxString(L"info")) ? wxString(L"info") : (e->lclass == L"style") ? _("stylów") : _("dialogów");
+					wxString sclass = (i < sinfo) ? wxString(L"info") : (i < styles) ? _("stylów") : _("dialogów");
 					wxString all = wxString::Format(_("Nie można dodać linii klasy: %s w pole klasy: %s"), fclass, sclass);
 					SAFE_DELETE(e);
 					lua_pushstring(L, all.mb_str(wxConvUTF8).data());
@@ -876,9 +876,9 @@ namespace Auto{
 		int kcount = 0;
 		int kdur = 0;
 		int ktime = 0;
-		wxString ktag = L"";
-		wxString ktext = L"";
-		wxString ktext_stripped = L"";
+		wxString ktag = emptyString;
+		wxString ktext = emptyString;
+		wxString ktext_stripped = emptyString;
 
 		lua_createtable(L, 0, 6);
 		set_field(L, "duration", 0);
@@ -924,15 +924,15 @@ namespace Auto{
 			kdur = wxAtoi(tdata->value);
 			kdur *= 10;
 			if (nextKstart < 0)
-				ktext = L"";
+				ktext = emptyString;
 			else{
 				ktext = text.Mid(lastPosition, tdata->startTextPos - lastPosition - tdata->tagName.length() - 1);
 				size_t newStart = tdata->startTextPos + tdata->value.length();
 				ktext += text.Mid(newStart, nextKstart - newStart + 1);
-				ktext.Replace(L"{}", L"");
+				ktext.Replace(L"{}", emptyString);
 			}
 			ktext_stripped = ktext;
-			reg.ReplaceAll(&ktext_stripped, L"");
+			reg.ReplaceAll(&ktext_stripped, emptyString);
 			lua_createtable(L, 0, 6);
 			set_field(L, "duration", kdur);
 			set_field(L, "start_time", ktime);

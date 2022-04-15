@@ -141,8 +141,8 @@ public:
 	float m_FrameDuration;
 	float m_ZoomParcent;
 	wxString m_ProgressBarTime;
-	ID3DXLine *m_D3DLine;
-	LPD3DXFONT m_D3DFont;
+	ID3DXLine *m_D3DLine = NULL;
+	LPD3DXFONT m_D3DFont = NULL;
 	LPD3DXFONT m_D3DCalcFont = NULL;
 	wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;

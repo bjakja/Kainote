@@ -20,7 +20,7 @@
 
 
 Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
-	: wxFrame(parent, -1, L"", pos, size, wxWANTS_CHARS | wxBORDER_NONE | wxSTAY_ON_TOP)
+	: wxFrame(parent, -1, emptyString, pos, size, wxWANTS_CHARS | wxBORDER_NONE | wxSTAY_ON_TOP)
 {
 	SetFont(*Options.GetFont());
 	vb = parent;
@@ -60,11 +60,11 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 	volslider = new VolSlider(panel, ID_VOL, Options.GetInt(VIDEO_VOLUME), wxPoint(size.x - 110, toolBarHeight - 5), wxSize(110, 25));
 	showToolbar = new KaiCheckBox(panel, 7777, _("Pokaż pasek narzędzi"), wxPoint(180, toolBarHeight - 4), wxSize(-1, -1));
 	showToolbar->SetValue(!vc->IsDirectShow());
-	mstimes = new KaiTextCtrl(panel, -1, L"", wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);
+	mstimes = new KaiTextCtrl(panel, -1, emptyString, wxPoint(340, toolBarHeight - 6), wxSize(300, 26), wxTE_READONLY);
 	mstimes->SetWindowStyle(wxBORDER_NONE);
 	mstimes->SetCursor(wxCURSOR_ARROW);
 	mstimes->SetBackgroundColour(WINDOW_BACKGROUND);
-	Videolabel = new KaiStaticText(panel, -1, L"", wxPoint(644, toolBarHeight - 6), wxSize(1200, 26));
+	Videolabel = new KaiStaticText(panel, -1, emptyString, wxPoint(644, toolBarHeight - 6), wxSize(1200, 26));
 	Videolabel->Bind(wxEVT_LEFT_DOWN, [=](wxMouseEvent &evt){
 		panel->SetFocus();
 		evt.Skip();
@@ -195,7 +195,7 @@ void Fullscreen::SetAccels()
 	for (auto cur = hkeys.begin(); cur != hkeys.end(); cur++) {
 		//if (cur->first.Type != GLOBAL_HOTKEY) { continue; }
 		int id = cur->first.id;
-		bool emptyAccel = cur->second.Accel == L"";
+		bool emptyAccel = cur->second.Accel == emptyString;
 		if (id >= 5000 && id < 5150) {
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &Fullscreen::OnUseWindowHotkey, this, id);
 			wxAcceleratorEntry accel = Hkeys.GetHKey(cur->first, &cur->second);

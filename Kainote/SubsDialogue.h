@@ -19,7 +19,7 @@
 #define ZEROIT(a) ((a/10)*10)
 #endif
 
-
+#include "config.h"
 #include "SubsTime.h"
 #include <wx/colour.h>
 #include <vector>
@@ -275,9 +275,9 @@ public:
 	void ChangeDialogueState(char state);
 	bool IsDoubtful(){ return (State & 4) > 0; };
 	void SetRaw(const wxString &ldial);
-	void GetRaw(wxString *txt, bool tl = false, const wxString &style = L"", bool hideOriginalOnVideo = false);
-	wxString GetCols(int cols, bool tl = false, const wxString &style = L"");
-	void Convert(char type, const wxString &pref = L"");
+	void GetRaw(wxString *txt, bool tl = false, const wxString &style = emptyString, bool hideOriginalOnVideo = false);
+	wxString GetCols(int cols, bool tl = false, const wxString &style = emptyString);
+	void Convert(char type, const wxString &pref = emptyString);
 	Dialogue *Copy(bool keepstate = false, bool copyIsVisible = true);
 	//Remember parse patterns need "tag1|tag2|..." without slashes.
 	//Remember string position is start of the value, position of tag -=tagname.len+1
@@ -292,7 +292,7 @@ public:
 	wxString & GetText();
 	void SetText(const wxString &text);
 	Dialogue();
-	Dialogue(const wxString &ldial, const wxString &txttl = L"");
+	Dialogue(const wxString &ldial, const wxString &txttl = emptyString);
 	~Dialogue();
 };
 

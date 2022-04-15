@@ -19,6 +19,7 @@
 #include <wx/popupwin.h>
 #include <wx/msw/popupwin.h>
 #include <wx/object.h>
+#include "config.h"
 
 class KaiTextCtrl;
 class KaiScrollbar;
@@ -97,7 +98,7 @@ public:
 	void PutArray(wxArrayString *arr);
 	void GetArray(wxArrayString *arr){ if (arr) *arr = *list; }
 	void Delete(int num, int nRemove = 1);
-	void SetToolTip(const wxString &tooltip = L"");
+	void SetToolTip(const wxString &tooltip = emptyString);
 	void Sort();
 	bool SetBackgroundColour(COLOR col);
 	bool SetForegroundColour(COLOR col);

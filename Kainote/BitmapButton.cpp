@@ -84,7 +84,7 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 	if (event.LeftDown()){
 		if (event.ShiftDown()){
 			//wxString buttonName = (name!="")? name : GetToolTipText().BeforeFirst('(').Trim();
-			Hkeys.OnMapHkey(hotkeyId, L"", this, window);
+			Hkeys.OnMapHkey(hotkeyId, emptyString, this, window);
 			SetToolTip();
 			//Hkeys.SetAccels(true);
 			//Hkeys.SaveHkeys();
@@ -103,13 +103,13 @@ void BitmapButton::OnLeftDown(wxMouseEvent& event)
 
 void BitmapButton::SetToolTip(const wxString &_toolTip)
 {
-	wxString toolTip = (_toolTip == L"") ? name : _toolTip;
+	wxString toolTip = (_toolTip == emptyString) ? name : _toolTip;
 	if (!_toolTip.empty()){ name = _toolTip; }
 
 	idAndType itype(hotkeyId, window);
 	wxString key = Hkeys.GetStringHotkey(itype);
 
-	if (key != L"")
+	if (key != emptyString)
 	{
 		toolTip = toolTip + L" (" + key + L")";
 	}

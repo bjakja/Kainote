@@ -137,7 +137,7 @@ void config::InitLanguagesTable()
 	Languages[L"rw"] = L"Kinyarwanda";
 	Languages[L"ky"] = L"Kirghiz";
 	Languages[L"rn"] = L"Kirundi";
-	//Languages[L""] = L"Konkani";
+	//Languages[emptyString] = L"Konkani";
 	Languages[L"ko_KR"] = L"한국어";//L"Korean";
 	Languages[L"ku_TR"] = L"Kurdish";
 	Languages[L"lo"] = L"Laothian";
@@ -152,7 +152,7 @@ void config::InitLanguagesTable()
 	Languages[L"ms_BN"] = L"Malay (Brunei Darussalam)";
 	Languages[L"ms_MY"] = L"Malay (Malaysia)";
 	Languages[L"mt_MT"] = L"Maltese";
-	//Languages[L""] = L"Manipuri";
+	//Languages[emptyString] = L"Manipuri";
 	Languages[L"mi"] = L"Maori";
 	Languages[L"mr_IN"] = L"मराठी";//L"Marathi";
 	Languages[L"mo"] = L"Moldavian";

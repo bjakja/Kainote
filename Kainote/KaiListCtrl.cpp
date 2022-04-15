@@ -253,7 +253,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
 	SetFont(*Options.GetFont(-1));//wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT));
-	InsertColumn(0, L"", TYPE_CHECKBOX, -1);
+	InsertColumn(0, emptyString, TYPE_CHECKBOX, -1);
 	int maxwidth = -1;
 	for (int i = 0; i < numelem; i++){
 		AppendItem(new ItemCheckBox(false, list[i]));
@@ -290,7 +290,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, co
 	SetForegroundColour(parent->GetForegroundColour());
 	SetMinSize(size);
 	SetFont(*Options.GetFont(-1));
-	InsertColumn(0, L"", TYPE_TEXT, -1);
+	InsertColumn(0, emptyString, TYPE_TEXT, -1);
 	int maxwidth = -1;
 	for (size_t i = 0; i < list.size(); i++){
 		AppendItem(new ItemText(list[i]));

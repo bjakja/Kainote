@@ -32,9 +32,10 @@ namespace Loki
         template <class Value, class C>
         class AssocVectorCompare : public C
         {
+            typedef typename C::first_argument_type first_argument_type;
             typedef std::pair<typename C::first_argument_type, Value>
                 Data;
-            typedef typename C::first_argument_type first_argument_type;
+            
 
         public:
             AssocVectorCompare()

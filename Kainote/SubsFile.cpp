@@ -113,7 +113,7 @@ SubsFile::SubsFile(wxMutex * editionGuard)
 {
 	historyNames = new wxString[AUTOMATION_SCRIPT + 1]{
 		//first element is not used but is to sacure from number 0
-		L"",
+		emptyString,
 			_("Otwarcie napisów"),
 			_("Nowe napisy"),
 			_("Edycja linii"),
@@ -737,9 +737,9 @@ size_t SubsFile::StylesSize()
 	return subs->styles.size();
 }
 
-Styles *SubsFile::GetStyle(size_t i, const wxString &name/* = L""*/)
+Styles *SubsFile::GetStyle(size_t i, const wxString &name/* = emptyString*/)
 {
-	if (name != L""){
+	if (name != emptyString){
 		for (size_t j = 0; j < subs->styles.size(); j++)
 		{
 			if (name == subs->styles[j]->Name){ return subs->styles[j]; }
@@ -889,7 +889,7 @@ void SubsFile::SwapRows(int frst, int scnd)
 void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
 {
 	wxString key;
-	if (val == L""){
+	if (val == emptyString){
 		key = SI.BeforeFirst(L':');
 		key.Trim(false);
 		key.Trim(true);

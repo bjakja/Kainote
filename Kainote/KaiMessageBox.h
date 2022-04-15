@@ -17,6 +17,7 @@
 
 #include "KaiDialog.h"
 #include "KaiCheckBox.h"
+#include "config.h"
 
 class KaiMessageDialog : public KaiDialog
 {
@@ -33,7 +34,7 @@ public:
 };
 
 //position set 0 to center position -1 not works
-int KaiMessageBox(const wxString& msg, const wxString &caption = L"", long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition, long buttonWithFocus = -1);
+int KaiMessageBox(const wxString& msg, const wxString &caption = emptyString, long elems = wxOK, wxWindow *parent = 0, const wxPoint &pos = wxDefaultPosition, long buttonWithFocus = -1);
 
 #define wxYES_TO_ALL 64
 #define ASK_ONCE 0x40000000

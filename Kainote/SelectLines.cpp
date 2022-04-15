@@ -44,7 +44,7 @@ SelectLines::SelectLines(KainoteFrame* kfparent)
 
 	KaiStaticBoxSizer* slsbsizer = new KaiStaticBoxSizer(wxVERTICAL, this, _("Znajdź"));
 	wxBoxSizer *sltpsizer = new wxBoxSizer(wxHORIZONTAL);
-	FindText = new KaiChoice(this, -1, L"", wxDefaultPosition, wxSize(-1, -1), selsRecent);
+	FindText = new KaiChoice(this, -1, emptyString, wxDefaultPosition, wxSize(-1, -1), selsRecent);
 	FindText->SetToolTip(_("Szukany tekst:"));
 	FindText->SetMaxLength(MAXINT);
 	ChooseStyles = new MappedButton(this, ID_CHOOSE_STYLES, L"+", -1/*, wxDefaultPosition, wxSize(-1, -1)*/);
@@ -306,7 +306,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			txt = Dial->Style;
 		}
 		else if (selectColumn == TXT){
-			txt = (tab->Grid->hasTLMode && Dial->TextTl != L"") ? Dial->TextTl : Dial->Text;
+			txt = (tab->Grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 		}
 		else if (selectColumn == ACTOR){
 			txt = Dial->Actor;
@@ -324,7 +324,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		bool isfound = false;
 
 
-		if (txt != L"" && find != L""){
+		if (txt != emptyString && find != emptyString){
 			if (regex){
 				if (rgx.Matches(txt)) {
 					isfound = true;
@@ -336,7 +336,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 
 			}
 		}
-		else if (find == L"" && txt == L""){ isfound = true; }
+		else if (find == emptyString && txt == emptyString){ isfound = true; }
 
 		if (((isfound && contain) || (!isfound && !contain))
 			&& ((selectDialogues && !Dial->IsComment) || (selectComments && Dial->IsComment))){
@@ -354,7 +354,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		}
 
 		if (tab->Grid->file->IsSelected(i) && action != 0){
-			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != L""); }
+			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != emptyString); }
 			else if (action < 5){
 				Dialogue *copydial = Dial->Copy();
 				//Dial->ChangeDialogueState(1);

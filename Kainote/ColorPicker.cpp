@@ -499,23 +499,23 @@ DialogColorPicker::DialogColorPicker(wxWindow *parent, AssColor initial_color, i
 	wxSize textinput_labelsize(45, -1);
 
 	wxSizer *rgb_box = new KaiStaticBoxSizer(wxHORIZONTAL, this, _("Kolor RGB"));
-	rgb_input[0] = new NumCtrl(this, SELECTOR_RGB_R, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	rgb_input[1] = new NumCtrl(this, SELECTOR_RGB_G, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	rgb_input[2] = new NumCtrl(this, SELECTOR_RGB_B, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
+	rgb_input[0] = new NumCtrl(this, SELECTOR_RGB_R, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	rgb_input[1] = new NumCtrl(this, SELECTOR_RGB_G, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	rgb_input[2] = new NumCtrl(this, SELECTOR_RGB_B, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
 
 	wxSizer *hsl_box = new KaiStaticBoxSizer(wxVERTICAL, this, _("Kolor HSL"));
-	hsl_input[0] = new NumCtrl(this, SELECTOR_HSL_H, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	hsl_input[1] = new NumCtrl(this, SELECTOR_HSL_S, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	hsl_input[2] = new NumCtrl(this, SELECTOR_HSL_L, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsl_input[0] = new NumCtrl(this, SELECTOR_HSL_H, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsl_input[1] = new NumCtrl(this, SELECTOR_HSL_S, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsl_input[2] = new NumCtrl(this, SELECTOR_HSL_L, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
 
 	wxSizer *hsv_box = new KaiStaticBoxSizer(wxVERTICAL, this, _("Kolor HSV"));
-	hsv_input[0] = new NumCtrl(this, SELECTOR_HSV_H, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	hsv_input[1] = new NumCtrl(this, SELECTOR_HSV_S, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
-	hsv_input[2] = new NumCtrl(this, SELECTOR_HSV_V, L"", 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsv_input[0] = new NumCtrl(this, SELECTOR_HSV_H, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsv_input[1] = new NumCtrl(this, SELECTOR_HSV_S, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
+	hsv_input[2] = new NumCtrl(this, SELECTOR_HSV_V, emptyString, 0, 255, true, wxDefaultPosition, colorinput_size);
 
-	ass_input = new KaiTextCtrl(this, SELECTOR_ASS_INPUT, L"", wxDefaultPosition, textinput_size);
-	html_input = new KaiTextCtrl(this, SELECTOR_HTML_INPUT, L"", wxDefaultPosition, textinput_size);
-	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, L"", 0, 255, true, wxDefaultPosition, textinput_size);
+	ass_input = new KaiTextCtrl(this, SELECTOR_ASS_INPUT, emptyString, wxDefaultPosition, textinput_size);
+	html_input = new KaiTextCtrl(this, SELECTOR_HTML_INPUT, emptyString, wxDefaultPosition, textinput_size);
+	alpha_input = new NumCtrl(this, SELECTOR_ALPHA_INPUT, emptyString, 0, 255, true, wxDefaultPosition, textinput_size);
 
 	preview_bitmap = wxBitmap(40, 40, 24);
 	preview_box = new wxStaticBitmap(this, -1, preview_bitmap, wxDefaultPosition, wxSize(40, 40), wxBORDER_NONE);
@@ -738,7 +738,7 @@ void DialogColorPicker::AddRecent(const AssColor &color)
 	else{
 		wxString recentString = Options.GetString(COLORPICKER_RECENT_COLORS);
 		wxString stringColor = color.GetAss(true);
-		size_t reps = recentString.Replace(stringColor, L"");
+		size_t reps = recentString.Replace(stringColor, emptyString);
 		if (reps){
 			recentString.Replace(L"  ", L" ");
 		}

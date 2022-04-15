@@ -155,7 +155,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Options.GetTable(GRID_FILTER_STYLES, optionsFilterStyles);
 	filterStyles.clear();
 	for (size_t i = 0; i < StylesSize(); i++){
-		MenuItem * styleItem = stylesMenu->Append(ID_FILTERING_STYLES, (*styles)[i]->Name, L"", true, NULL, NULL, ITEM_CHECK);
+		MenuItem * styleItem = stylesMenu->Append(ID_FILTERING_STYLES, (*styles)[i]->Name, emptyString, true, NULL, NULL, ITEM_CHECK);
 		if (optionsFilterStyles.Index((*styles)[i]->Name) != -1){ styleItem->Check(); filterStyles.Add((*styles)[i]->Name); }
 	}
 	//filter submenu
@@ -204,14 +204,14 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	menu->Append(4444, _("Ukryj kolumny"), hidemenu);
 	menu->SetAccMenu(GRID_HIDE_SELECTED, _("Ukryj zaznaczone linijki"))->Enable(sels > 0);
 	menu->Append(4445, _("Filtrowanie"), filterMenu);
-	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), L"", true, ITEM_CHECK)->
+	menu->SetAccMenu(GRID_FILTER_IGNORE_IN_ACTIONS, _("Ignoruj filtrowanie przy akcjach"), emptyString, true, ITEM_CHECK)->
 		Check(ignoreFiltered); 
 	menu->SetAccMenu(GRID_TREE_MAKE, _("Stwórz drzewko"))->Enable(sels > 0);
 	menu->SetAccMenu(GRID_SHOW_PREVIEW, _("Pokaż podgląd napisów"))->Enable(Notebook::GetTabs()->Size() > 1 && !preview);
 	menu->SetAccMenu(GRID_SET_NEW_FPS, _("Ustaw nowy FPS"));
 	menu->SetAccMenu(GRID_SET_FPS_FROM_VIDEO, _("Ustaw FPS z wideo"))->Enable(tab->Video->GetState() != None && sels == 2);
 	menu->SetAccMenu(GRID_PASTE_TRANSLATION, _("Wklej tekst tłumaczenia"))->
-		Enable(subsFormat < SRT && tab->SubsPath != L"");
+		Enable(subsFormat < SRT && tab->SubsPath != emptyString);
 	menu->SetAccMenu(GRID_TRANSLATION_DIALOG, _("Okno przesuwania dialogów"))->Enable(GetSInfo("TLMode Showtl") == L"Yes");
 	menu->AppendSeparator();
 
@@ -228,10 +228,11 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 
 	if (Modifiers == wxMOD_SHIFT){
 		if (id < 4000){ goto done; }
-		Hkeys.OnMapHkey(id, L"", this, GRID_HOTKEY);
+		Hkeys.OnMapHkey(id, emptyString, this, GRID_HOTKEY);
 		goto done;
 	}
-	OnAccelerator(wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, id));
+	wxCommandEvent commandEvent(wxEVT_COMMAND_MENU_SELECTED, id);
+	OnAccelerator(commandEvent);
 done:
 	delete menu;
 	//VB->m_blockRender = false;
@@ -278,8 +279,8 @@ void SubsGrid::OnInsertBefore()
 	SaveSelections(true);
 	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
-	dialog->Text = L"";
-	dialog->TextTl = L"";
+	dialog->Text = emptyString;
+	dialog->TextTl = emptyString;
 	dialog->End = dialog->Start;
 	Dialogue *previousDialogue = GetDialogueWithOffset(rw, -1);
 	if (previousDialogue && previousDialogue->End > dialog->Start){
@@ -295,8 +296,8 @@ void SubsGrid::OnInsertAfter()
 	SaveSelections(true);
 	int rw = currentLine;
 	Dialogue *dialog = CopyDialogue(rw, false);
-	dialog->Text = L"";
-	dialog->TextTl = L"";
+	dialog->Text = emptyString;
+	dialog->TextTl = emptyString;
 	dialog->Start = dialog->End;
 	Dialogue *nextDialogue = GetDialogueWithOffset(rw, +1);
 	if (nextDialogue && nextDialogue->Start > dialog->End){
@@ -377,14 +378,14 @@ void SubsGrid::OnJoin(wxCommandEvent &event)
 	int start = INT_MAX, end = 0;
 	for (size_t i = 0; i < selections.size(); i++)
 	{
-		wxString en = (i == 0) ? L"" : en1;
+		wxString en = (i == 0) ? emptyString : en1;
 		Dialogue *dial = GetDialogue(selections[i]);
 		if (dial->Start.mstime < start){ start = dial->Start.mstime; }
 		if (dial->End.mstime > end){ end = dial->End.mstime; }
-		if (ntext == L""){ ntext = dial->Text; }
-		else if (dial->Text != L""){ ntext << en << dial->Text; }
-		if (ntltext == L""){ ntltext = dial->TextTl; }
-		else if (dial->TextTl != L""){ ntltext << en << dial->TextTl; }
+		if (ntext == emptyString){ ntext = dial->Text; }
+		else if (dial->Text != emptyString){ ntext << en << dial->Text; }
+		if (ntltext == emptyString){ ntltext = dial->TextTl; }
+		else if (dial->TextTl != emptyString){ ntltext << en << dial->TextTl; }
 	}
 
 	DeleteRow(selections[1], selections[selections.size() - 1] - selections[1] + 1);
@@ -511,7 +512,7 @@ void SubsGrid::OnPaste(int id)
 			whatpaste = data.GetText();
 		}
 		wxTheClipboard->Close();
-		if (whatpaste == L""){ Thaw(); return; }
+		if (whatpaste == emptyString){ Thaw(); return; }
 	}
 	wxStringTokenizer wpaste(whatpaste, L"\n\r", wxTOKEN_STRTOK);
 	int cttkns = wpaste.CountTokens();
@@ -656,10 +657,10 @@ void SubsGrid::CopyRows(int id)
 				whatcopy << (selections[i] + 1) << L"\r\n";
 
 			Dialogue *dial = GetDialogue(selections[i]);
-			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != L"");
+			dial->GetRaw(&whatcopy, hasTLMode && dial->TextTl != emptyString);
 		}
 		else{
-			whatcopy << GetDialogue(selections[i])->GetCols(cols, hasTLMode && GetDialogue(selections[i])->TextTl != L"");
+			whatcopy << GetDialogue(selections[i])->GetCols(cols, hasTLMode && GetDialogue(selections[i])->TextTl != emptyString);
 		}
 	}
 	if (wxTheClipboard->Open())
@@ -709,8 +710,8 @@ void SubsGrid::InsertWithVideoTime(bool before, bool frameTime /*= false*/)
 		int rw = currentLine;
 		file->EraseSelection(rw);
 		Dialogue* dialog = CopyDialogue(rw, false);
-		dialog->Text = L"";
-		dialog->TextTl = L"";
+		dialog->Text = emptyString;
+		dialog->TextTl = emptyString;
 		int time = tab->Video->GetFrameTime();
 		dialog->Start.NewTime(ZEROIT(time));
 		int endtime = time + 4000;
@@ -784,7 +785,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	case GRID_FILTER_BY_NOTHING:
 		Filter(id); break;
 	case GRID_PASTE_TRANSLATION: 
-		if (subsFormat < SRT && tab->SubsPath != L"")
+		if (subsFormat < SRT && tab->SubsPath != emptyString)
 			OnPasteTextTl();
 		break;
 	case GRID_SUBS_FROM_MKV: 
@@ -856,7 +857,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 void SubsGrid::OnPasteTextTl()
 {
 	wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz plik napisów"), 
-		tab->SubsPath.BeforeLast(L'\\'), L"", 
+		tab->SubsPath.BeforeLast(L'\\'), emptyString, 
 		_("Pliki napisów (*.ass),(*.srt),(*.sub),(*.txt)|*.ass;*.srt;*.sub;*.txt"), 
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 	if (FileDialog1->ShowModal() == wxID_OK){
@@ -880,7 +881,7 @@ void SubsGrid::OnPasteTextTl()
 			{
 				wxString text = tokenizer.GetNextToken().Trim();
 				if (IsNumber(text)){
-					if (text1 != L""){
+					if (text1 != emptyString){
 						Dialogue diall = Dialogue(text1.Trim());
 						if (iline < lastKey){
 							diall.Convert(subsFormat);
@@ -892,12 +893,12 @@ void SubsGrid::OnPasteTextTl()
 							diall.End.NewTime(0);
 							diall.Style = styleName;
 							diall.TextTl = diall.Text;
-							diall.Text = L"";
+							diall.Text = emptyString;
 							AddLine(diall.Copy());
 						}
 						// get next visible key
 						iline = (ignoreFiltered) ? iline + 1 : GetKeyFromPosition(iline, 1);
-						text1 = L"";
+						text1 = emptyString;
 					}
 				}
 				else{ text1 << text << L"\r\n"; }
@@ -922,7 +923,7 @@ void SubsGrid::OnPasteTextTl()
 						diall.End.NewTime(0);
 						diall.Style = styleName;
 						diall.TextTl = diall.Text;
-						diall.Text = L"";
+						diall.Text = emptyString;
 						AddLine(diall.Copy());
 					}
 					iline = (ignoreFiltered) ? iline + 1 : GetKeyFromPosition(iline, 1);
@@ -961,7 +962,7 @@ void SubsGrid::MoveTextTL(char mode)
 		//mode 2 where are added empty lines and text pl is unchanged
 		if (mode == 2){
 			Dialogue *insertDial = GetDialogue(firstSelected)->Copy();
-			insertDial->Text = L"";
+			insertDial->Text = emptyString;
 			InsertRows(firstSelected, numSelected, insertDial);
 		}
 		file->InsertSelection(firstSelected);
@@ -977,7 +978,7 @@ void SubsGrid::MoveTextTL(char mode)
 				//Mode wher it merge all collided lines in one line
 				if (mode == 1){
 					if (nextDial){
-						wxString mid = (GetDialogue(firstSelected)->TextTl != L"" && nextDial->TextTl != L"") ? L"\\N" : L"";
+						wxString mid = (GetDialogue(firstSelected)->TextTl != emptyString && nextDial->TextTl != emptyString) ? L"\\N" : emptyString;
 						CopyDialogue(firstSelected)->TextTl << mid << nextDial->TextTl;
 						if (i != firstSelected && lastDial){ CopyDialogue(i)->TextTl = lastDial->TextTl; }
 					}
@@ -989,7 +990,7 @@ void SubsGrid::MoveTextTL(char mode)
 			else if (lastDial){
 				CopyDialogue(i)->TextTl = lastDial->TextTl;
 			}
-			else if (dial->Text != L""){ numSelected--; }
+			else if (dial->Text != emptyString){ numSelected--; }
 
 		}
 
@@ -1015,7 +1016,7 @@ void SubsGrid::MoveTextTL(char mode)
 
 			if (i < firstSelected + numSelected){
 				if (mode == 3){
-					CopyDialogue(i)->TextTl = L"";
+					CopyDialogue(i)->TextTl = emptyString;
 				}
 				else if (mode == 4 || mode == 5){
 					if (mode == 4){
@@ -1130,15 +1131,15 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 		Styles *resized = file->CopyStyle(i);
 		int ml = wxAtoi(resized->MarginL);
 		ml *= xnsize;
-		resized->MarginL = L"";
+		resized->MarginL = emptyString;
 		resized->MarginL << ml;
 		int mr = wxAtoi(resized->MarginR);
 		mr *= xnsize;
-		resized->MarginR = L"";
+		resized->MarginR = emptyString;
 		resized->MarginR << mr;
 		int mv = wxAtoi(resized->MarginV);
 		mv *= ynsize;
-		resized->MarginV = L"";
+		resized->MarginV = emptyString;
 		resized->MarginV << mv;
 		if (resizeScale == 1){
 			double fscx = 100;
@@ -1543,7 +1544,7 @@ void SubsGrid::TreeCopy(int treeLine)
 		Dialogue *dial = file->GetDialogue(i);
 		if (!dial->treeState || (dial->treeState == TREE_DESCRIPTION && i != treeLine))
 			break;
-		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != L"");
+		dial->GetRaw(&whattocopy, hasTLMode && dial->TextTl != emptyString);
 	}
 	if(wxTheClipboard->Open())
 	{

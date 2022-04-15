@@ -79,25 +79,11 @@ int64_t abs64(int64_t input) {
 // Constructor
 AudioDisplay::AudioDisplay(wxWindow *parent)
 	: wxWindow(parent, -1, wxDefaultPosition, wxSize(100, 100), 0/*wxWANTS_CHARS*/, _T("Audio Display"))
-	, spectrumSurface(NULL)
-	, d3dDevice(NULL)
-	, d3dObject(NULL)
-	, d3dLine(NULL)
-	, d3dFontTahoma13(NULL)
-	, d3dFontTahoma8(NULL)
-	, d3dFontVerdana11(NULL)
-	, backBuffer(NULL)
 	, PlayEvent(CreateEvent(0, FALSE, FALSE, 0))
 	, DestroyEvent(CreateEvent(0, FALSE, FALSE, 0))
 {
 	// Set variables
 	deviceLost = false;
-	spectrumRenderer = NULL;
-	ScrollBar = NULL;
-	karaoke = NULL;
-	peak = NULL;
-	min = NULL;
-	dialogue = NULL;
 	cursorPaint = false;
 	defCursor = true;
 	karaAuto = Options.GetBool(AUDIO_KARAOKE_SPLIT_MODE);
@@ -118,8 +104,6 @@ AudioDisplay::AudioDisplay(wxWindow *parent)
 	PositionSample = 0;
 	oldCurPos = 0;
 	scale = 1.0f;
-	provider = NULL;
-	player = NULL;
 	hold = 0;
 	samples = 0;
 	samplesPercent = 100;
@@ -2512,7 +2496,10 @@ void AudioDisplay::Commit(bool moveToEnd)
 		CommitChanges(false, false, moveToEnd);//UpdateImage(true);
 		return;
 	}
-	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){ Edit->OnEdit(wxCommandEvent()); }
+	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){ 
+		wxCommandEvent evt;
+		Edit->OnEdit(evt); 
+	}
 }
 
 //////////////////
