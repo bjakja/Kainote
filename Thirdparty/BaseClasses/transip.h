@@ -214,7 +214,7 @@ public:
 
 protected:
 
-    __out_opt IMediaSample * CTransInPlaceFilter::Copy(IMediaSample *pSource);
+    IMediaSample * /*CTransInPlaceFilter::*/Copy(IMediaSample *pSource);
 
 #ifdef PERF
     int m_idTransInPlace;                 // performance measuring id
@@ -226,11 +226,11 @@ protected:
     friend class CTransInPlaceInputPin;
     friend class CTransInPlaceOutputPin;
 
-    __out CTransInPlaceInputPin  *InputPin() const
+    CTransInPlaceInputPin  *InputPin() const
     {
         return (CTransInPlaceInputPin *)m_pInput;
     };
-    __out CTransInPlaceOutputPin *OutputPin() const
+    CTransInPlaceOutputPin *OutputPin() const
     {
         return (CTransInPlaceOutputPin *)m_pOutput;
     };

@@ -118,7 +118,7 @@
       <AdditionalIncludeDirectories>..\Thirdparty\wxWidgets\src\zlib;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;wxUSE_GUI;wxUSE_STL_BASED_WXSTRING 1;wxUSE_STL_BASED_WXSTRING;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -663,29 +663,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="Bitmaps\eyedropper.cur" />
     <None Include="bitmaps\rcdata1.bin" />
     <None Include="kai.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Thirdparty\Build\Boost\Boost.vcxproj">
-      <Project>{c91e1d87-614c-47e8-9587-393568d41738}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
-      <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\LuaBins\LuaBins.vcxproj">
-      <Project>{af5cd8a9-c5dc-4780-ba28-5ed5ef9a3536}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\LuaJit\LuaJit.vcxproj">
-      <Project>{ba804678-e98b-4026-8d33-a8c5263c669e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\Build\Zlib\Zlib.vcxproj">
-      <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\base.vcxproj">
-      <Project>{3fcc50c2-81e9-5db2-b8d8-2129427568b1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Thirdparty\wxWidgets\Build\msw\core.vcxproj">
-      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

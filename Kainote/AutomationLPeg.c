@@ -369,7 +369,7 @@ typedef struct Stack {
 #define getstackbase(L, ptop)	((Stack *)lua_touserdata(L, stackidx(ptop)))
 
 
-static int runtimecap (lua_State *L, Capture *close, Capture *ocap,
+static __int64 runtimecap (lua_State *L, Capture *close, Capture *ocap,
                        const char *o, const char *s, int ptop);
 
 
@@ -387,7 +387,7 @@ static Capture *doublecap (lua_State *L, Capture *cap, int captop, int ptop) {
 static Stack *doublestack (lua_State *L, Stack **stacklimit, int ptop) {
   Stack *stack = getstackbase(L, ptop);
   Stack *newstack;
-  int n = *stacklimit - stack;
+  __int64 n = *stacklimit - stack;
   int max, newn;
   lua_getfield(L, LUA_REGISTRYINDEX, MAXSTACKIDX);
   max = lua_tointeger(L, -1);
@@ -2010,7 +2010,7 @@ static int functioncap (CapState *cs) {
 }
 
 
-static int runtimecap (lua_State *L, Capture *close, Capture *ocap,
+static __int64 runtimecap (lua_State *L, Capture *close, Capture *ocap,
                        const char *o, const char *s, int ptop) {
   CapState cs;
   int n;

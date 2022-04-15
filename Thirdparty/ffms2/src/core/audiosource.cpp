@@ -18,6 +18,7 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
+
 #include "audiosource.h"
 
 #include "indexing.h"
@@ -202,6 +203,8 @@ void FFMS_AudioSource::CacheBeginning() {
     CacheNoDelete = Cache.end();
     --CacheNoDelete;
 }
+
+
 
 void FFMS_AudioSource::SetOutputFormat(FFMS_ResampleOptions const& opt) {
     if (opt.SampleRate != AP.SampleRate)

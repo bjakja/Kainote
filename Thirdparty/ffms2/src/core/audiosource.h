@@ -18,8 +18,10 @@
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 //  THE SOFTWARE.
 
-#ifndef FFAUDIOSOURCE_H
-#define FFAUDIOSOURCE_H
+#pragma once
+#ifdef SetOutputFormat
+#undef SetOutputFormat
+#endif
 
 #include "utils.h"
 #include "track.h"
@@ -149,4 +151,4 @@ public:
     static size_t GetSeekablePacketNumber(FFMS_Track const& Frames, size_t PacketNumber);
 };
 
-#endif
+

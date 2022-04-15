@@ -479,7 +479,7 @@ HRESULT CTransInPlaceFilter::DecideBufferSize
 // Copy
 //
 // return a pointer to an identical copy of pSample
-__out_opt IMediaSample * CTransInPlaceFilter::Copy(IMediaSample *pSource)
+IMediaSample * CTransInPlaceFilter::Copy(IMediaSample *pSource)
 {
     IMediaSample * pDest;
 
