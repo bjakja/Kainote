@@ -31,7 +31,7 @@
 #include "LogHandler.h"
 #include "config.h"
 
-wxString emptyString = wxString(L"");
+const wxString emptyString;
 
 //Dont change enumeration config and colors from 1 to last, zero for non exist trash
 #define CFG(CG) \

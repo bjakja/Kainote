@@ -56,8 +56,8 @@ wxTimer::~wxTimer()
 
 void wxTimer::Init()
 {
-    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
-    m_impl = traits ? traits->CreateTimerImpl(this) : NULL;
+    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
+    m_impl = traits ? traits->CreateTimerImpl(this) : nullptr;
     if ( !m_impl )
     {
         wxFAIL_MSG( wxT("No timer implementation for this platform") );
@@ -78,7 +78,7 @@ void wxTimer::SetOwner(wxEvtHandler *owner, int timerid)
 
 wxEvtHandler *wxTimer::GetOwner() const
 {
-    wxCHECK_MSG( m_impl, NULL, wxT("uninitialized timer") );
+    wxCHECK_MSG( m_impl, nullptr, wxT("uninitialized timer") );
 
     return m_impl->GetOwner();
 }

@@ -162,7 +162,7 @@ static void PNGLINKAGEMODE wx_PNG_stream_writer( png_structp png_ptr, png_bytep 
 static void
 PNGLINKAGEMODE wx_png_warning(png_structp png_ptr, png_const_charp message)
 {
-    wxPNGInfoStruct *info = png_ptr ? WX_PNG_INFO(png_ptr) : NULL;
+    wxPNGInfoStruct *info = png_ptr ? WX_PNG_INFO(png_ptr) : nullptr;
     if ( !info || info->verbose )
     {
         wxLogWarning( wxString::FromAscii(message) );
@@ -174,7 +174,7 @@ PNGLINKAGEMODE wx_png_warning(png_structp png_ptr, png_const_charp message)
 static void
 PNGLINKAGEMODE wx_png_error(png_structp png_ptr, png_const_charp message)
 {
-    wx_png_warning(NULL, message);
+    wx_png_warning(nullptr, message);
 
     // we're not using libpng built-in jump buffer (see comment before
     // wxPNGInfoStruct above) so we have to return ourselves, otherwise libpng
@@ -319,8 +319,8 @@ void CopyDataFromPNG(wxImage *image,
 {
     Transparency transparency = Transparency_None;
 
-    // only non NULL if transparency == Transparency_Alpha
-    unsigned char *alpha = NULL;
+    // only non nullptr if transparency == Transparency_Alpha
+    unsigned char *alpha = nullptr;
 
     // RGB of the mask colour if transparency == Transparency_Mask
     // (but init them anyhow to avoid compiler warnings)
@@ -505,8 +505,8 @@ wxPNGHandler::LoadFile(wxImage *image,
     // VZ: as this function uses setjmp() the only fool-proof error handling
     //     method is to use goto (setjmp is not really C++ dtors friendly...)
 
-    unsigned char **lines = NULL;
-    png_infop info_ptr = (png_infop) NULL;
+    unsigned char **lines = nullptr;
+    png_infop info_ptr = (png_infop) nullptr;
     wxPNGInfoStruct wxinfo;
 
     png_uint_32 i, width, height = 0;
@@ -520,7 +520,7 @@ wxPNGHandler::LoadFile(wxImage *image,
     png_structp png_ptr = png_create_read_struct
                           (
                             PNG_LIBPNG_VER_STRING,
-                            NULL,
+                            nullptr,
                             wx_png_error,
                             wx_png_warning
                           );
@@ -539,7 +539,7 @@ wxPNGHandler::LoadFile(wxImage *image,
         goto error;
 
     png_read_info( png_ptr, info_ptr );
-    png_get_IHDR( png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, NULL, NULL );
+    png_get_IHDR( png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, &interlace_type, nullptr, nullptr );
 
     if (color_type == PNG_COLOR_TYPE_PALETTE)
         png_set_expand( png_ptr );
@@ -559,7 +559,7 @@ wxPNGHandler::LoadFile(wxImage *image,
     if (!image->IsOk())
         goto error;
 
-    // initialize all line pointers to NULL to ensure that they can be safely
+    // initialize all line pointers to nullptr to ensure that they can be safely
     // free()d if an error occurs before all of them could be allocated
     lines = (unsigned char **)calloc(height, sizeof(unsigned char *));
     if ( !lines )
@@ -567,7 +567,7 @@ wxPNGHandler::LoadFile(wxImage *image,
 
     for (i = 0; i < height; i++)
     {
-        if ((lines[i] = (unsigned char *)malloc( (size_t)(width * (sizeof(unsigned char) * 4)))) == NULL)
+        if ((lines[i] = (unsigned char *)malloc( (size_t)(width * (sizeof(unsigned char) * 4)))) == nullptr)
             goto error;
     }
 
@@ -577,7 +577,7 @@ wxPNGHandler::LoadFile(wxImage *image,
 #if wxUSE_PALETTE
     if (color_type == PNG_COLOR_TYPE_PALETTE)
     {
-        png_colorp palette = NULL;
+        png_colorp palette = nullptr;
         int numPalette = 0;
 
         (void) png_get_PLTE(png_ptr, info_ptr, &palette, &numPalette);
@@ -641,7 +641,7 @@ wxPNGHandler::LoadFile(wxImage *image,
     }
 
 
-    png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) NULL );
+    png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) nullptr );
 
     // loaded successfully, now init wxImage with this data
     CopyDataFromPNG(image, lines, width, height, color_type);
@@ -675,11 +675,11 @@ error:
     {
         if ( info_ptr )
         {
-            png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) NULL );
+            png_destroy_read_struct( &png_ptr, &info_ptr, (png_infopp) nullptr );
             free(info_ptr);
         }
         else
-            png_destroy_read_struct( &png_ptr, (png_infopp) NULL, (png_infopp) NULL );
+            png_destroy_read_struct( &png_ptr, (png_infopp) nullptr, (png_infopp) nullptr );
     }
     return false;
 }
@@ -736,7 +736,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
     png_structp png_ptr = png_create_write_struct
                           (
                             PNG_LIBPNG_VER_STRING,
-                            NULL,
+                            nullptr,
                             wx_png_error,
                             wx_png_warning
                           );
@@ -750,9 +750,9 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
     }
 
     png_infop info_ptr = png_create_info_struct(png_ptr);
-    if (info_ptr == NULL)
+    if (info_ptr == nullptr)
     {
-        png_destroy_write_struct( &png_ptr, (png_infopp)NULL );
+        png_destroy_write_struct( &png_ptr, (png_infopp)nullptr );
         if (verbose)
         {
            wxLogError(_("Couldn't save PNG image."));
@@ -762,7 +762,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
 
     if (setjmp(wxinfo.jmpbuf))
     {
-        png_destroy_write_struct( &png_ptr, (png_infopp)NULL );
+        png_destroy_write_struct( &png_ptr, (png_infopp)nullptr );
         if (verbose)
         {
            wxLogError(_("Couldn't save PNG image."));
@@ -772,7 +772,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
 
     // NB: please see the comment near wxPNGInfoStruct declaration for
     //     explanation why this line is mandatory
-    png_set_write_fn( png_ptr, &wxinfo, wx_PNG_stream_writer, NULL);
+    png_set_write_fn( png_ptr, &wxinfo, wx_PNG_stream_writer, nullptr);
 
     const int iHeight = image->GetHeight();
     const int iWidth = image->GetWidth();
@@ -857,11 +857,11 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
             {
                 wxASSERT(PaletteFind(palette, mask) == 0);
                 png_trans[0] = 0;
-                png_set_tRNS(png_ptr, info_ptr, png_trans, 1, NULL);
+                png_set_tRNS(png_ptr, info_ptr, png_trans, 1, nullptr);
             }
             else if (pAlpha && !bHasMask)
             {
-                png_set_tRNS(png_ptr, info_ptr, png_trans, palette.size(), NULL);
+                png_set_tRNS(png_ptr, info_ptr, png_trans, palette.size(), nullptr);
             }
         }
     }
@@ -980,12 +980,12 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
         data = (unsigned char *)malloc( image->GetWidth() * iElements );
     if ( !data )
     {
-        png_destroy_write_struct( &png_ptr, (png_infopp)NULL );
+        png_destroy_write_struct( &png_ptr, (png_infopp)nullptr );
         return false;
     }
 
     const unsigned char *
-        pAlpha = (const unsigned char *)(bHasAlpha ? image->GetAlpha() : NULL);
+        pAlpha = (const unsigned char *)(bHasAlpha ? image->GetAlpha() : nullptr);
 
     const unsigned char *pColors = image->GetData();
 
@@ -1086,7 +1086,7 @@ bool wxPNGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbos
 {
     // The version string seems to always have a leading space and a trailing
     // new line, get rid of them both.
-    wxString str = png_get_header_version(NULL) + 1;
+    wxString str = png_get_header_version(nullptr) + 1;
     str.Replace("\n", "");
 
     return wxVersionInfo("libpng",

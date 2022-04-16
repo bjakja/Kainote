@@ -53,9 +53,9 @@ void wxProcess::Init(wxEvtHandler *parent, int id, int flags)
     m_redirect   = (flags & wxPROCESS_REDIRECT) != 0;
 
 #if wxUSE_STREAMS
-    m_inputStream  = NULL;
-    m_errorStream  = NULL;
-    m_outputStream = NULL;
+    m_inputStream  = nullptr;
+    m_errorStream  = nullptr;
+    m_outputStream = nullptr;
 #endif // wxUSE_STREAMS
 }
 
@@ -69,7 +69,7 @@ wxProcess *wxProcess::Open(const wxString& cmd, int flags)
     {
         // couldn't launch the process
         delete process;
-        return NULL;
+        return nullptr;
     }
 
     process->SetPid(pid);
@@ -108,7 +108,7 @@ void wxProcess::Detach()
     if (m_nextHandler)
         m_nextHandler->SetPreviousHandler(m_previousHandler);
 
-    m_nextHandler = NULL;
+    m_nextHandler = nullptr;
 }
 
 // ----------------------------------------------------------------------------

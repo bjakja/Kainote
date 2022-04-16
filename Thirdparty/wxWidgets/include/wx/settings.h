@@ -9,13 +9,12 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_SETTINGS_H_BASE_
-#define _WX_SETTINGS_H_BASE_
+#pragma once
 
 #include "wx/colour.h"
 #include "wx/font.h"
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
+class wxWindow;
 
 // possible values for wxSystemSettings::GetFont() parameter
 //
@@ -217,6 +216,5 @@ public:
 
 };
 
-#endif
-    // _WX_SETTINGS_H_BASE_
+
 

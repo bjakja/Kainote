@@ -157,7 +157,7 @@ int wxMemStruct::Append ()
 
     if (wxDebugContext::GetHead () == 0) {
         if (wxDebugContext::GetTail () != 0) {
-            ErrorMsg ("Null list should have a null tail pointer");
+            ErrorMsg ("nullptr list should have a nullptr tail pointer");
             return 0;
         }
         (void) wxDebugContext::SetHead (this);
@@ -439,13 +439,13 @@ int wxMemStruct::ValidateNode ()
   The wxDebugContext class.
 */
 
-wxMemStruct *wxDebugContext::m_head = NULL;
-wxMemStruct *wxDebugContext::m_tail = NULL;
+wxMemStruct *wxDebugContext::m_head = nullptr;
+wxMemStruct *wxDebugContext::m_tail = nullptr;
 
 bool wxDebugContext::m_checkPrevious = false;
 int wxDebugContext::debugLevel = 1;
 bool wxDebugContext::debugOn = true;
-wxMemStruct *wxDebugContext::checkPoint = NULL;
+wxMemStruct *wxDebugContext::checkPoint = nullptr;
 
 // For faster alignment calculation
 static wxMarkerType markerCalc[2];
@@ -557,7 +557,7 @@ void wxDebugContext::TraverseList (PmSFV func, wxMemStruct *from)
   if (!from)
     from = wxDebugContext::GetHead ();
 
-  wxMemStruct * st = NULL;
+  wxMemStruct * st = nullptr;
   for (st = from; st != 0; st = st->m_next)
   {
       void* data = st->GetActualData();
@@ -575,7 +575,7 @@ void wxDebugContext::TraverseList (PmSFV func, wxMemStruct *from)
   */
 bool wxDebugContext::PrintList (void)
 {
-  TraverseList ((PmSFV)&wxMemStruct::PrintNode, (checkPoint ? checkPoint->m_next : NULL));
+  TraverseList ((PmSFV)&wxMemStruct::PrintNode, (checkPoint ? checkPoint->m_next : nullptr));
 
   return true;
 }
@@ -597,7 +597,7 @@ bool wxDebugContext::Dump(void)
     }
   }
 
-  TraverseList ((PmSFV)&wxMemStruct::Dump, (checkPoint ? checkPoint->m_next : NULL));
+  TraverseList ((PmSFV)&wxMemStruct::Dump, (checkPoint ? checkPoint->m_next : nullptr));
 
   OutputDumpLine(wxEmptyString);
   OutputDumpLine(wxEmptyString);
@@ -621,7 +621,7 @@ static wxDebugStatsStruct *FindStatsStruct(wxDebugStatsStruct *st, wxChar *name)
       return st;
     st = st->next;
   }
-  return NULL;
+  return nullptr;
 }
 
 static wxDebugStatsStruct *InsertStatsStruct(wxDebugStatsStruct *head, wxDebugStatsStruct *st)
@@ -654,9 +654,9 @@ bool wxDebugContext::PrintStatistics(bool detailed)
   long noObjectNodes = 0;
   long totalSize = 0;
 
-  wxDebugStatsStruct *list = NULL;
+  wxDebugStatsStruct *list = nullptr;
 
-  wxMemStruct *from = (checkPoint ? checkPoint->m_next : NULL );
+  wxMemStruct *from = (checkPoint ? checkPoint->m_next : nullptr );
   if (!from)
     from = wxDebugContext::GetHead ();
 
@@ -775,7 +775,7 @@ bool wxDebugContext::PrintClasses(void)
 void wxDebugContext::SetCheckpoint(bool all)
 {
   if (all)
-    checkPoint = NULL;
+    checkPoint = nullptr;
   else
     checkPoint = m_tail;
 }
@@ -785,7 +785,7 @@ int wxDebugContext::Check(bool checkAll)
 {
   int nFailures = 0;
 
-  wxMemStruct *from = (checkPoint ? checkPoint->m_next : NULL );
+  wxMemStruct *from = (checkPoint ? checkPoint->m_next : nullptr );
   if (!from || checkAll)
     from = wxDebugContext::GetHead ();
 
@@ -806,7 +806,7 @@ int wxDebugContext::CountObjectsLeft(bool sinceCheckpoint)
 {
   int n = 0;
 
-  wxMemStruct *from = NULL;
+  wxMemStruct *from = nullptr;
   if (sinceCheckpoint && checkPoint)
     from = checkPoint->m_next;
   else
@@ -896,7 +896,7 @@ void * operator new (size_t size, wxChar * fileName, int lineNum)
 
 void * operator new (size_t size)
 {
-    return wxDebugAlloc(size, NULL, 0, false);
+    return wxDebugAlloc(size, nullptr, 0, false);
 }
 
 void operator delete (void * buf)
@@ -907,7 +907,7 @@ void operator delete (void * buf)
 #if wxUSE_ARRAY_MEMORY_OPERATORS
 void * operator new[] (size_t size)
 {
-    return wxDebugAlloc(size, NULL, 0, false, true);
+    return wxDebugAlloc(size, nullptr, 0, false, true);
 }
 
 void * operator new[] (size_t size, wxChar * fileName, int lineNum)

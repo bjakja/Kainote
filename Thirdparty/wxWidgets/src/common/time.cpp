@@ -91,13 +91,13 @@ const int MICROSECONDS_PER_SECOND = 1000*1000;
 struct tm *wxLocaltime_r(const time_t *t, struct tm* tm)
 {
     __time64_t t64 = *t;
-    return _localtime64_s(tm, &t64) == 0 ? tm : NULL;
+    return _localtime64_s(tm, &t64) == 0 ? tm : nullptr;
 }
 
 struct tm *wxGmtime_r(const time_t* t, struct tm* tm)
 {
     __time64_t t64 = *t;
-    return _gmtime64_s(tm, &t64) == 0 ? tm : NULL;
+    return _gmtime64_s(tm, &t64) == 0 ? tm : nullptr;
 }
 
 #else // !wxWinCE with VC8
@@ -118,12 +118,12 @@ struct tm *wxLocaltime_r(const time_t* ticks, struct tm* temp)
   // Borland CRT crashes when passed 0 ticks for some reason, see SF bug 1704438
 #ifdef __BORLANDC__
   if ( !*ticks )
-      return NULL;
+      return nullptr;
 #endif
 
   const tm * const t = localtime(ticks);
   if ( !t )
-      return NULL;
+      return nullptr;
 
   memcpy(temp, t, sizeof(struct tm));
   return temp;
@@ -141,12 +141,12 @@ struct tm *wxGmtime_r(const time_t* ticks, struct tm* temp)
 
 #ifdef __BORLANDC__
   if ( !*ticks )
-      return NULL;
+      return nullptr;
 #endif
 
   const tm * const t = gmtime(ticks);
   if ( !t )
-      return NULL;
+      return nullptr;
 
   memcpy(temp, gmtime(ticks), sizeof(struct tm));
   return temp;
@@ -169,7 +169,7 @@ int wxGetTimeZone()
     {
         // just call wxLocaltime_r() instead of figuring out whether this
         // system supports tzset(), _tzset() or something else
-        time_t t = time(NULL);
+        time_t t = time(nullptr);
         struct tm tm;
 
         wxLocaltime_r(&t, &tm);
@@ -254,7 +254,7 @@ long wxGetLocalTime()
 // Get UTC time as seconds since 00:00:00, Jan 1st 1970
 long wxGetUTCTime()
 {
-    return (long)time(NULL);
+    return (long)time(nullptr);
 }
 
 #if wxUSE_LONGLONG

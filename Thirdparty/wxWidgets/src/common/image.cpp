@@ -77,7 +77,7 @@ public:
     bool            m_hasMask;
     unsigned char   m_maskRed,m_maskGreen,m_maskBlue;
 
-    // alpha channel data, may be NULL for the formats without alpha support
+    // alpha channel data, may be nullptr for the formats without alpha support
     unsigned char  *m_alpha;
 
     bool            m_ok;
@@ -104,7 +104,7 @@ wxImageRefData::wxImageRefData()
     m_height = 0;
     m_type = wxBITMAP_TYPE_INVALID;
     m_data =
-    m_alpha = (unsigned char *) NULL;
+    m_alpha = (unsigned char *) nullptr;
 
     m_maskRed = 0;
     m_maskGreen = 0;
@@ -176,7 +176,7 @@ bool wxImage::Create( int width, int height, unsigned char* data, bool static_da
 {
     UnRef();
 
-    wxCHECK_MSG( data, false, wxT("NULL data in wxImage::Create") );
+    wxCHECK_MSG( data, false, wxT("nullptr data in wxImage::Create") );
 
     m_refData = new wxImageRefData();
 
@@ -193,7 +193,7 @@ bool wxImage::Create( int width, int height, unsigned char* data, unsigned char*
 {
     UnRef();
 
-    wxCHECK_MSG( data, false, wxT("NULL data in wxImage::Create") );
+    wxCHECK_MSG( data, false, wxT("nullptr data in wxImage::Create") );
 
     m_refData = new wxImageRefData();
 
@@ -226,7 +226,7 @@ wxObjectRefData* wxImage::CreateRefData() const
 wxObjectRefData* wxImage::CloneRefData(const wxObjectRefData* that) const
 {
     const wxImageRefData* refData = static_cast<const wxImageRefData*>(that);
-    wxCHECK_MSG(refData->m_ok, NULL, wxT("invalid image") );
+    wxCHECK_MSG(refData->m_ok, nullptr, wxT("invalid image") );
 
     wxImageRefData* refData_new = new wxImageRefData;
     refData_new->m_width = refData->m_width;
@@ -237,7 +237,7 @@ wxObjectRefData* wxImage::CloneRefData(const wxObjectRefData* that) const
     refData_new->m_hasMask = refData->m_hasMask;
     refData_new->m_ok = true;
     unsigned size = unsigned(refData->m_width) * unsigned(refData->m_height);
-    if (refData->m_alpha != NULL)
+    if (refData->m_alpha != nullptr)
     {
         refData_new->m_alpha = (unsigned char*)malloc(size);
         memcpy(refData_new->m_alpha, refData->m_alpha, size);
@@ -570,7 +570,7 @@ wxImage wxImage::ResampleBox(int width, int height) const
     const unsigned char* src_data = M_IMGDATA->m_data;
     const unsigned char* src_alpha = M_IMGDATA->m_alpha;
     unsigned char* dst_data = ret_image.GetData();
-    unsigned char* dst_alpha = NULL;
+    unsigned char* dst_alpha = nullptr;
 
     if ( src_alpha )
     {
@@ -644,7 +644,7 @@ wxImage wxImage::ResampleBilinear(int width, int height) const
     const unsigned char* src_data = M_IMGDATA->m_data;
     const unsigned char* src_alpha = M_IMGDATA->m_alpha;
     unsigned char* dst_data = ret_image.GetData();
-    unsigned char* dst_alpha = NULL;
+    unsigned char* dst_alpha = nullptr;
 
     if ( src_alpha )
     {
@@ -774,7 +774,7 @@ wxImage wxImage::ResampleBicubic(int width, int height) const
     const unsigned char* src_data = M_IMGDATA->m_data;
     const unsigned char* src_alpha = M_IMGDATA->m_alpha;
     unsigned char* dst_data = ret_image.GetData();
-    unsigned char* dst_alpha = NULL;
+    unsigned char* dst_alpha = nullptr;
 
     if ( src_alpha )
     {
@@ -1246,7 +1246,7 @@ wxImage wxImage::Mirror( bool horizontally ) const
             }
         }
 
-        if (alpha != NULL)
+        if (alpha != nullptr)
         {
             // src_alpha starts at the first pixel and increases by 1 after each step
             // (a step here is the copy of the alpha value of one pixel)
@@ -1313,7 +1313,7 @@ wxImage wxImage::GetSubImage( const wxRect &rect ) const
     const unsigned char *src_data = GetData();
     const unsigned char *src_alpha = M_IMGDATA->m_alpha;
     unsigned char *subdata = image.GetData();
-    unsigned char *subalpha = NULL;
+    unsigned char *subalpha = nullptr;
 
     wxCHECK_MSG( subdata, image, wxT("unable to create image") );
 
@@ -1330,14 +1330,14 @@ wxImage wxImage::GetSubImage( const wxRect &rect ) const
     const int pixsoff = rect.GetLeft() + width * rect.GetTop();
 
     src_data += 3 * pixsoff;
-    src_alpha += pixsoff; // won't be used if was NULL, so this is ok
+    src_alpha += pixsoff; // won't be used if was nullptr, so this is ok
 
     for (long j = 0; j < subheight; ++j)
     {
         memcpy( subdata, src_data, 3 * subwidth );
         subdata += 3 * subwidth;
         src_data += 3 * width;
-        if (subalpha != NULL) {
+        if (subalpha != nullptr) {
             memcpy( subalpha, src_alpha, subwidth );
             subalpha += subwidth;
             src_alpha += width;
@@ -1711,7 +1711,7 @@ void wxImage::SetRGB( const wxRect& rect_, unsigned char r, unsigned char g, uns
         x2 = rect.GetRight() + 1,
         y2 = rect.GetBottom() + 1;
 
-    unsigned char *data wxDUMMY_INITIALIZE(NULL);
+    unsigned char *data wxDUMMY_INITIALIZE(nullptr);
     int x, y, width = GetWidth();
     for (y = y1; y < y2; y++)
     {
@@ -1765,7 +1765,7 @@ bool wxImage::IsOk() const
 
 unsigned char *wxImage::GetData() const
 {
-    wxCHECK_MSG( IsOk(), (unsigned char *)NULL, wxT("invalid image") );
+    wxCHECK_MSG( IsOk(), (unsigned char *)nullptr, wxT("invalid image") );
 
     return M_IMGDATA->m_data;
 }
@@ -1849,7 +1849,7 @@ unsigned char wxImage::GetAlpha(int x, int y) const
 bool
 wxImage::ConvertColourToAlpha(unsigned char r, unsigned char g, unsigned char b)
 {
-    SetAlpha(NULL);
+    SetAlpha(nullptr);
 
     const int w = M_IMGDATA->m_width;
     const int h = M_IMGDATA->m_height;
@@ -1891,7 +1891,7 @@ void wxImage::SetAlpha( unsigned char *alpha, bool static_data )
 
 unsigned char *wxImage::GetAlpha() const
 {
-    wxCHECK_MSG( IsOk(), (unsigned char *)NULL, wxT("invalid image") );
+    wxCHECK_MSG( IsOk(), (unsigned char *)nullptr, wxT("invalid image") );
 
     return M_IMGDATA->m_alpha;
 }
@@ -1939,7 +1939,7 @@ void wxImage::ClearAlpha()
     if ( !M_IMGDATA->m_staticAlpha )
         free( M_IMGDATA->m_alpha );
 
-    M_IMGDATA->m_alpha = NULL;
+    M_IMGDATA->m_alpha = nullptr;
 }
 
 
@@ -2142,7 +2142,7 @@ bool wxImage::ConvertAlphaToMask(unsigned char mr,
     if ( !M_IMGDATA->m_staticAlpha )
         free(M_IMGDATA->m_alpha);
 
-    M_IMGDATA->m_alpha = NULL;
+    M_IMGDATA->m_alpha = nullptr;
     M_IMGDATA->m_staticAlpha = false;
 
     return true;
@@ -2739,7 +2739,7 @@ wxImageHandler *wxImage::FindHandler( const wxString& name )
 
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxImageHandler *wxImage::FindHandler( const wxString& extension, wxBitmapType bitmapType )
@@ -2757,7 +2757,7 @@ wxImageHandler *wxImage::FindHandler( const wxString& extension, wxBitmapType bi
         }
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxImageHandler *wxImage::FindHandler(wxBitmapType bitmapType )
@@ -2769,7 +2769,7 @@ wxImageHandler *wxImage::FindHandler(wxBitmapType bitmapType )
         if (handler->GetType() == bitmapType) return handler;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxImageHandler *wxImage::FindHandlerMime( const wxString& mimetype )
@@ -2781,7 +2781,7 @@ wxImageHandler *wxImage::FindHandlerMime( const wxString& mimetype )
         if (handler->GetMimeType().IsSameAs(mimetype, false)) return handler;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 void wxImage::InitStandardHandlers()
@@ -3069,7 +3069,7 @@ bool wxImageHandler::CallDoCanRead(wxInputStream& stream)
 wxImageResolution
 wxImageHandler::GetResolutionFromOptions(const wxImage& image, int *x, int *y)
 {
-    wxCHECK_MSG( x && y, wxIMAGE_RESOLUTION_NONE, wxT("NULL pointer") );
+    wxCHECK_MSG( x && y, wxIMAGE_RESOLUTION_NONE, wxT("nullptr pointer") );
 
     if ( image.HasOption(wxIMAGE_OPTION_RESOLUTIONX) &&
          image.HasOption(wxIMAGE_OPTION_RESOLUTIONY) )
@@ -3191,7 +3191,7 @@ unsigned long wxImage::CountColours( unsigned long stopafter ) const
         b = *(p++);
         key = wxImageHistogram::MakeKey(r, g, b);
 
-        if (h.Get(key) == NULL)
+        if (h.Get(key) == nullptr)
         {
             h.Put(key, &dummy);
             nentries++;
@@ -3276,7 +3276,7 @@ wxImage wxImage::Rotate(double angle,
         data[i] = data[i - 1] + (3 * w);
 
     // Same for alpha channel
-    unsigned char ** alpha = NULL;
+    unsigned char ** alpha = nullptr;
     if (has_alpha)
     {
         alpha = new unsigned char * [h];
@@ -3311,7 +3311,7 @@ wxImage wxImage::Rotate(double angle,
     if (has_alpha)
         rotated.SetAlpha();
 
-    if (offset_after_rotation != NULL)
+    if (offset_after_rotation != nullptr)
     {
         *offset_after_rotation = wxPoint (x1a, y1a);
     }
@@ -3320,7 +3320,7 @@ wxImage wxImage::Rotate(double angle,
     // pointer, there is no need for pointer-based arrays here
     unsigned char *dst = rotated.GetData();
 
-    unsigned char *alpha_dst = has_alpha ? rotated.GetAlpha() : NULL;
+    unsigned char *alpha_dst = has_alpha ? rotated.GetAlpha() : nullptr;
 
     // if the original image has a mask, use its RGB values as the blank pixel,
     // else, fall back to default (black).

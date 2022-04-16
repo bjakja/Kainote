@@ -59,7 +59,7 @@ wxMemoryInputStream::wxMemoryInputStream(const wxMemoryOutputStream& stream)
     const wxFileOffset lenFile = stream.GetLength();
     if ( lenFile == wxInvalidOffset )
     {
-        m_i_streambuf = NULL;
+        m_i_streambuf = nullptr;
         m_lasterror = wxSTREAM_EOF;
         return;
     }
@@ -83,7 +83,7 @@ wxMemoryInputStream::InitFromStream(wxInputStream& stream, wxFileOffset lenFile)
 
     if ( lenFile == wxInvalidOffset )
     {
-        m_i_streambuf = NULL;
+        m_i_streambuf = nullptr;
         m_lasterror = wxSTREAM_EOF;
         return;
     }

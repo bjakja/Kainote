@@ -322,11 +322,11 @@ bool RendererVideo::InitDX()
 
 	wxFont *font12 = Options.GetFont(4);
 	wxSize pixelSize = font12->GetPixelSize();
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
+	//HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+	//	DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
+	//HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		//DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
+	//HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
 
 	return true;
 }

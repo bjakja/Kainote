@@ -262,7 +262,7 @@ wxMenuItemBase::wxMenuItemBase(wxMenu *parentMenu,
             m_id = itemid;
     }
 
-    // notice that parentMenu can be NULL: the item can be attached to the menu
+    // notice that parentMenu can be nullptr: the item can be attached to the menu
     // later with SetMenu()
 
     m_parentMenu  = parentMenu;
@@ -347,12 +347,12 @@ bool wxMenuBase::ms_locked = true;
 
 void wxMenuBase::Init(long style)
 {
-    m_menuBar = NULL;
-    m_menuParent = NULL;
+    m_menuBar = nullptr;
+    m_menuParent = nullptr;
 
-    m_invokingWindow = NULL;
+    m_invokingWindow = nullptr;
     m_style = style;
-    m_clientData = NULL;
+    m_clientData = nullptr;
     m_eventHandler = this;
 }
 
@@ -367,14 +367,14 @@ wxMenuBase::~wxMenuBase()
 
 void wxMenuBase::AddSubMenu(wxMenu *submenu)
 {
-    wxCHECK_RET( submenu, wxT("can't add a NULL submenu") );
+    wxCHECK_RET( submenu, wxT("can't add a nullptr submenu") );
 
     submenu->SetParent((wxMenu *)this);
 }
 
 wxMenuItem* wxMenuBase::DoAppend(wxMenuItem *item)
 {
-    wxCHECK_MSG( item, NULL, wxT("invalid item in wxMenu::Append()") );
+    wxCHECK_MSG( item, nullptr, wxT("invalid item in wxMenu::Append()") );
 
     m_items.Append(item);
     item->SetMenu((wxMenu*)this);
@@ -388,7 +388,7 @@ wxMenuItem* wxMenuBase::DoAppend(wxMenuItem *item)
 
 wxMenuItem* wxMenuBase::Insert(size_t pos, wxMenuItem *item)
 {
-    wxCHECK_MSG( item, NULL, wxT("invalid item in wxMenu::Insert") );
+    wxCHECK_MSG( item, nullptr, wxT("invalid item in wxMenu::Insert") );
 
     if ( pos == GetMenuItemCount() )
     {
@@ -396,7 +396,7 @@ wxMenuItem* wxMenuBase::Insert(size_t pos, wxMenuItem *item)
     }
     else
     {
-        wxCHECK_MSG( pos < GetMenuItemCount(), NULL,
+        wxCHECK_MSG( pos < GetMenuItemCount(), nullptr,
                      wxT("invalid index in wxMenu::Insert") );
 
         return DoInsert(pos, item);
@@ -405,10 +405,10 @@ wxMenuItem* wxMenuBase::Insert(size_t pos, wxMenuItem *item)
 
 wxMenuItem* wxMenuBase::DoInsert(size_t pos, wxMenuItem *item)
 {
-    wxCHECK_MSG( item, NULL, wxT("invalid item in wxMenu::Insert()") );
+    wxCHECK_MSG( item, nullptr, wxT("invalid item in wxMenu::Insert()") );
 
     wxMenuItemList::compatibility_iterator node = m_items.Item(pos);
-    wxCHECK_MSG( node, NULL, wxT("invalid index in wxMenu::Insert()") );
+    wxCHECK_MSG( node, nullptr, wxT("invalid index in wxMenu::Insert()") );
 
     m_items.Insert(node, item);
     item->SetMenu((wxMenu*)this);
@@ -422,7 +422,7 @@ wxMenuItem* wxMenuBase::DoInsert(size_t pos, wxMenuItem *item)
 
 wxMenuItem *wxMenuBase::Remove(wxMenuItem *item)
 {
-    wxCHECK_MSG( item, NULL, wxT("invalid item in wxMenu::Remove") );
+    wxCHECK_MSG( item, nullptr, wxT("invalid item in wxMenu::Remove") );
 
     return DoRemove(item);
 }
@@ -432,18 +432,18 @@ wxMenuItem *wxMenuBase::DoRemove(wxMenuItem *item)
     wxMenuItemList::compatibility_iterator node = m_items.Find(item);
 
     // if we get here, the item is valid or one of Remove() functions is broken
-    wxCHECK_MSG( node, NULL, wxT("bug in wxMenu::Remove logic") );
+    wxCHECK_MSG( node, nullptr, wxT("bug in wxMenu::Remove logic") );
 
     // we detach the item, but we do delete the list node (i.e. don't call
     // DetachNode() here!)
     m_items.Erase(node);
 
     // item isn't attached to anything any more
-    item->SetMenu(NULL);
+    item->SetMenu(nullptr);
     wxMenu *submenu = item->GetSubMenu();
     if ( submenu )
     {
-        submenu->SetParent(NULL);
+        submenu->SetParent(nullptr);
         if ( submenu->IsAttached() )
             submenu->Detach();
     }
@@ -464,7 +464,7 @@ bool wxMenuBase::DoDelete(wxMenuItem *item)
     wxCHECK_MSG( item2, false, wxT("failed to delete menu item") );
 
     // don't delete the submenu
-    item2->SetSubMenu(NULL);
+    item2->SetSubMenu(nullptr);
 
     delete item2;
 
@@ -524,9 +524,9 @@ int wxMenuBase::FindItem(const wxString& text) const
 wxMenuItem *wxMenuBase::FindItem(int itemId, wxMenu **itemMenu) const
 {
     if ( itemMenu )
-        *itemMenu = NULL;
+        *itemMenu = nullptr;
 
-    wxMenuItem *item = NULL;
+    wxMenuItem *item = nullptr;
     for ( wxMenuItemList::compatibility_iterator node = m_items.GetFirst();
           node && !item;
           node = node->GetNext() )
@@ -545,7 +545,7 @@ wxMenuItem *wxMenuBase::FindItem(int itemId, wxMenu **itemMenu) const
         else
         {
             // don't exit the loop
-            item = NULL;
+            item = nullptr;
         }
     }
 
@@ -555,7 +555,7 @@ wxMenuItem *wxMenuBase::FindItem(int itemId, wxMenu **itemMenu) const
 // non recursive search
 wxMenuItem *wxMenuBase::FindChildItem(int itemid, size_t *ppos) const
 {
-    wxMenuItem *item = NULL;
+    wxMenuItem *item = nullptr;
     wxMenuItemList::compatibility_iterator node = GetMenuItems().GetFirst();
 
     size_t pos;
@@ -582,7 +582,7 @@ wxMenuItem *wxMenuBase::FindChildItem(int itemid, size_t *ppos) const
 // find by position
 wxMenuItem* wxMenuBase::FindItemByPosition(size_t position) const
 {
-    wxCHECK_MSG( position < m_items.GetCount(), NULL,
+    wxCHECK_MSG( position < m_items.GetCount(), nullptr,
                  wxT("wxMenu::FindItemByPosition(): invalid menu index") );
 
     return m_items.Item( position )->GetData();
@@ -593,7 +593,7 @@ wxMenuItem* wxMenuBase::FindItemByPosition(size_t position) const
 // ----------------------------------------------------------------------------
 
 // Update a menu and all submenus recursively. source is the object that has
-// the update event handlers defined for it. If NULL, the menu or associated
+// the update event handlers defined for it. If nullptr, the menu or associated
 // window will be used.
 void wxMenuBase::UpdateUI(wxEvtHandler* source)
 {
@@ -675,7 +675,7 @@ wxMenuBar* wxMenuBase::GetMenuBar() const
 void wxMenuBase::Attach(wxMenuBarBase *menubar)
 {
     // use Detach() instead!
-    wxASSERT_MSG( menubar, wxT("menu can't be attached to NULL menubar") );
+    wxASSERT_MSG( menubar, wxT("menu can't be attached to nullptr menubar") );
 
     // use IsAttached() to prevent this from happening
     wxASSERT_MSG( !m_menuBar, wxT("attaching menu twice?") );
@@ -688,7 +688,7 @@ void wxMenuBase::Detach()
     // use IsAttached() to prevent this from happening
     wxASSERT_MSG( m_menuBar, wxT("detaching unattached menu?") );
 
-    m_menuBar = NULL;
+    m_menuBar = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -707,7 +707,7 @@ void wxMenuBase::SetInvokingWindow(wxWindow *win)
 
 wxWindow *wxMenuBase::GetWindow() const
 {
-    // only the top level menus have non-NULL invoking window or a pointer to
+    // only the top level menus have non-nullptr invoking window or a pointer to
     // the menu bar so recurse upwards until we find it
     const wxMenuBase *menu = this;
     while ( menu->GetParent() )
@@ -802,7 +802,7 @@ wxString wxMenuBase::GetHelpString( int itemid ) const
 wxMenuBarBase::wxMenuBarBase()
 {
     // not attached yet
-    m_menuBarFrame = NULL;
+    m_menuBarFrame = nullptr;
 }
 
 wxMenuBarBase::~wxMenuBarBase()
@@ -818,14 +818,14 @@ wxMenuBarBase::~wxMenuBarBase()
 wxMenu *wxMenuBarBase::GetMenu(size_t pos) const
 {
     wxMenuList::compatibility_iterator node = m_menus.Item(pos);
-    wxCHECK_MSG( node, NULL, wxT("bad index in wxMenuBar::GetMenu()") );
+    wxCHECK_MSG( node, nullptr, wxT("bad index in wxMenuBar::GetMenu()") );
 
     return node->GetData();
 }
 
 bool wxMenuBarBase::Append(wxMenu *menu, const wxString& title)
 {
-    wxCHECK_MSG( menu, false, wxT("can't append NULL menu") );
+    wxCHECK_MSG( menu, false, wxT("can't append nullptr menu") );
     wxCHECK_MSG( !title.empty(), false, wxT("can't append menu with empty title") );
 
     m_menus.Append(menu);
@@ -843,7 +843,7 @@ bool wxMenuBarBase::Insert(size_t pos, wxMenu *menu,
     }
     else // not at the end
     {
-        wxCHECK_MSG( menu, false, wxT("can't insert NULL menu") );
+        wxCHECK_MSG( menu, false, wxT("can't insert nullptr menu") );
 
         wxMenuList::compatibility_iterator node = m_menus.Item(pos);
         wxCHECK_MSG( node, false, wxT("bad index in wxMenuBar::Insert()") );
@@ -858,10 +858,10 @@ bool wxMenuBarBase::Insert(size_t pos, wxMenu *menu,
 wxMenu *wxMenuBarBase::Replace(size_t pos, wxMenu *menu,
                                const wxString& WXUNUSED(title))
 {
-    wxCHECK_MSG( menu, NULL, wxT("can't insert NULL menu") );
+    wxCHECK_MSG( menu, nullptr, wxT("can't insert nullptr menu") );
 
     wxMenuList::compatibility_iterator node = m_menus.Item(pos);
-    wxCHECK_MSG( node, NULL, wxT("bad index in wxMenuBar::Replace()") );
+    wxCHECK_MSG( node, nullptr, wxT("bad index in wxMenuBar::Replace()") );
 
     wxMenu *menuOld = node->GetData();
     node->SetData(menu);
@@ -875,7 +875,7 @@ wxMenu *wxMenuBarBase::Replace(size_t pos, wxMenu *menu,
 wxMenu *wxMenuBarBase::Remove(size_t pos)
 {
     wxMenuList::compatibility_iterator node = m_menus.Item(pos);
-    wxCHECK_MSG( node, NULL, wxT("bad index in wxMenuBar::Remove()") );
+    wxCHECK_MSG( node, nullptr, wxT("bad index in wxMenuBar::Remove()") );
 
     wxMenu *menu = node->GetData();
     m_menus.Erase(node);
@@ -919,7 +919,7 @@ void wxMenuBarBase::Detach()
 {
     wxASSERT_MSG( IsAttached(), wxT("detaching unattached menubar") );
 
-    m_menuBarFrame = NULL;
+    m_menuBarFrame = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -929,9 +929,9 @@ void wxMenuBarBase::Detach()
 wxMenuItem *wxMenuBarBase::FindItem(int itemid, wxMenu **menu) const
 {
     if ( menu )
-        *menu = NULL;
+        *menu = nullptr;
 
-    wxMenuItem *item = NULL;
+    wxMenuItem *item = nullptr;
     size_t count = GetMenuCount(), i;
     wxMenuList::const_iterator it;
     for ( i = 0, it = m_menus.begin(); !item && (i < count); i++, it++ )
@@ -1043,8 +1043,8 @@ void wxMenuBarBase::UpdateMenus()
     for (int n = 0; n < nCount; n++)
     {
         menu = GetMenu( n );
-        if (menu != NULL)
-            menu->UpdateUI( NULL );
+        if (menu != nullptr)
+            menu->UpdateUI( nullptr );
     }
 }
 

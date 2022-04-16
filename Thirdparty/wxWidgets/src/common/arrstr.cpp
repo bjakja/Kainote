@@ -72,7 +72,7 @@ void wxArrayString::Init(bool autoSort)
 {
   m_nSize  =
   m_nCount = 0;
-  m_pItems = NULL;
+  m_pItems = nullptr;
   m_autoSort = autoSort;
 }
 
@@ -392,7 +392,7 @@ void wxArrayString::Remove(const wxString& sz)
 // ----------------------------------------------------------------------------
 
 // we need an adaptor as our predicates use qsort() convention and so return
-// negative, null or positive value depending on whether the first item is less
+// negative, nullptr or positive value depending on whether the first item is less
 // than, equal to or greater than the other one while we need a real boolean
 // predicate now that we use std::sort()
 struct wxSortPredicateAdaptor

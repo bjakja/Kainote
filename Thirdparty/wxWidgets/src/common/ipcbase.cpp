@@ -31,7 +31,7 @@ wxConnectionBase::wxConnectionBase(void *buffer, size_t bytes)
       m_deletebufferwhendone(false),
       m_connected(true)
 {
-  if ( buffer == NULL )
+  if ( buffer == nullptr )
   { // behave like next constructor
     m_buffersize = 0;
     m_deletebufferwhendone = true;
@@ -39,7 +39,7 @@ wxConnectionBase::wxConnectionBase(void *buffer, size_t bytes)
 }
 
 wxConnectionBase::wxConnectionBase()
-    : m_buffer(NULL),
+    : m_buffer(nullptr),
       m_buffersize(0),
       m_deletebufferwhendone(true),
       m_connected(true)
@@ -126,6 +126,6 @@ void *wxConnectionBase::GetBufferAtLeast( size_t bytes )
       return m_buffer;
     } // user-supplied buffer, fail
     else
-      return NULL;
+      return nullptr;
   }
 }

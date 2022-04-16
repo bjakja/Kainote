@@ -179,10 +179,10 @@ public:
                                       : FILE_WRITE_ATTRIBUTES,
                      FILE_SHARE_READ |              // sharing mode
                      FILE_SHARE_WRITE,              // (allow everything)
-                     NULL,                          // no secutity attr
+                     nullptr,                          // no secutity attr
                      OPEN_EXISTING,                 // creation disposition
                      flags,                         // flags
-                     NULL                           // no template file
+                     nullptr                           // no template file
                     );
 
         if ( m_hFile == INVALID_HANDLE_VALUE )
@@ -812,8 +812,8 @@ static int wxOpenWithDeleteOnClose(const wxString& filename)
     DWORD attributes = FILE_ATTRIBUTE_TEMPORARY |
                        FILE_FLAG_DELETE_ON_CLOSE;
 
-    HANDLE h = ::CreateFile(filename.t_str(), access, 0, NULL,
-                            disposition, attributes, NULL);
+    HANDLE h = ::CreateFile(filename.t_str(), access, 0, nullptr,
+                            disposition, attributes, nullptr);
 
     return wxOpenOSFHandle(h, wxO_BINARY);
 }
@@ -868,10 +868,10 @@ static bool wxTempOpen(wxFFile *file, const wxString& path, bool *deleteOnClose)
 static wxString wxCreateTempImpl(
         const wxString& prefix,
         WXFILEARGS(wxFile *fileTemp, wxFFile *ffileTemp),
-        bool *deleteOnClose = NULL)
+        bool *deleteOnClose = nullptr)
 {
 #if wxUSE_FILE && wxUSE_FFILE
-    wxASSERT(fileTemp == NULL || ffileTemp == NULL);
+    wxASSERT(fileTemp == nullptr || ffileTemp == nullptr);
 #endif
     wxString path, dir, name;
     bool wantDeleteOnClose = false;
@@ -889,7 +889,7 @@ static wxString wxCreateTempImpl(
     }
 
     // use the directory specified by the prefix
-    wxFileName::SplitPath(prefix, &dir, &name, NULL /* extension */);
+    wxFileName::SplitPath(prefix, &dir, &name, nullptr /* extension */);
 
     if (dir.empty())
     {
@@ -1107,13 +1107,13 @@ static void wxAssignTempImpl(
 
 void wxFileName::AssignTempFileName(const wxString& prefix)
 {
-    wxAssignTempImpl(this, prefix, WXFILEARGS(NULL, NULL));
+    wxAssignTempImpl(this, prefix, WXFILEARGS(nullptr, nullptr));
 }
 
 /* static */
 wxString wxFileName::CreateTempFileName(const wxString& prefix)
 {
-    return wxCreateTempImpl(prefix, WXFILEARGS(NULL, NULL));
+    return wxCreateTempImpl(prefix, WXFILEARGS(nullptr, nullptr));
 }
 
 #endif // wxUSE_FILE || wxUSE_FFILE
@@ -1125,19 +1125,19 @@ wxString wxCreateTempFileName(const wxString& prefix,
                               wxFile *fileTemp,
                               bool *deleteOnClose)
 {
-    return wxCreateTempImpl(prefix, WXFILEARGS(fileTemp, NULL), deleteOnClose);
+    return wxCreateTempImpl(prefix, WXFILEARGS(fileTemp, nullptr), deleteOnClose);
 }
 
 bool wxCreateTempFile(const wxString& prefix,
                       wxFile *fileTemp,
                       wxString *name)
 {
-    return wxCreateTempImpl(prefix, WXFILEARGS(fileTemp, NULL), name);
+    return wxCreateTempImpl(prefix, WXFILEARGS(fileTemp, nullptr), name);
 }
 
 void wxFileName::AssignTempFileName(const wxString& prefix, wxFile *fileTemp)
 {
-    wxAssignTempImpl(this, prefix, WXFILEARGS(fileTemp, NULL));
+    wxAssignTempImpl(this, prefix, WXFILEARGS(fileTemp, nullptr));
 }
 
 /* static */
@@ -1156,20 +1156,20 @@ wxString wxCreateTempFileName(const wxString& prefix,
                               wxFFile *fileTemp,
                               bool *deleteOnClose)
 {
-    return wxCreateTempImpl(prefix, WXFILEARGS(NULL, fileTemp), deleteOnClose);
+    return wxCreateTempImpl(prefix, WXFILEARGS(nullptr, fileTemp), deleteOnClose);
 }
 
 bool wxCreateTempFile(const wxString& prefix,
                       wxFFile *fileTemp,
                       wxString *name)
 {
-    return wxCreateTempImpl(prefix, WXFILEARGS(NULL, fileTemp), name);
+    return wxCreateTempImpl(prefix, WXFILEARGS(nullptr, fileTemp), name);
 
 }
 
 void wxFileName::AssignTempFileName(const wxString& prefix, wxFFile *fileTemp)
 {
-    wxAssignTempImpl(this, prefix, WXFILEARGS(NULL, fileTemp));
+    wxAssignTempImpl(this, prefix, WXFILEARGS(nullptr, fileTemp));
 }
 
 /* static */
@@ -1308,7 +1308,7 @@ bool wxFileName::Rmdir(const wxString& dir, int flags)
 #ifdef __WINDOWS__
     if ( flags & wxPATH_RMDIR_RECURSIVE )
     {
-        // SHFileOperation needs double null termination string
+        // SHFileOperation needs double nullptr termination string
         // but without separator at the end of the path
         wxString path(dir);
         if ( path.Last() == wxFILE_SEP_PATH )
@@ -1627,7 +1627,7 @@ bool wxFileName::GetShortcutTarget(const wxString& shortcutPath,
         return false;
 
     // create a ShellLink object
-    hres = CoCreateInstance(CLSID_ShellLink, NULL, CLSCTX_INPROC_SERVER,
+    hres = CoCreateInstance(CLSID_ShellLink, nullptr, CLSCTX_INPROC_SERVER,
                             IID_IShellLink, (LPVOID*) &psl);
 
     if (SUCCEEDED(hres))
@@ -1649,9 +1649,9 @@ bool wxFileName::GetShortcutTarget(const wxString& shortcutPath,
                 wxChar buf[2048];
                 // Wrong prototype in early versions
 #if defined(__MINGW32__) && !wxCHECK_W32API_VERSION(2, 2)
-                psl->GetPath((CHAR*) buf, 2048, NULL, SLGP_UNCPRIORITY);
+                psl->GetPath((CHAR*) buf, 2048, nullptr, SLGP_UNCPRIORITY);
 #else
-                psl->GetPath(buf, 2048, NULL, SLGP_UNCPRIORITY);
+                psl->GetPath(buf, 2048, nullptr, SLGP_UNCPRIORITY);
 #endif
                 targetFilename = wxString(buf);
                 success = (shortcutPath != targetFilename);
@@ -1969,7 +1969,7 @@ void wxFileName::RemoveDir(size_t pos)
 
 void wxFileName::SetFullName(const wxString& fullname)
 {
-    SplitPath(fullname, NULL /* no volume */, NULL /* no path */,
+    SplitPath(fullname, nullptr /* no volume */, nullptr /* no path */,
                         &m_name, &m_ext, &m_hasExt);
 }
 
@@ -2106,7 +2106,7 @@ wxString wxFileName::GetShortPath() const
     wxString path(GetFullPath());
 
 #if defined(__WINDOWS__) && defined(__WIN32__) && !defined(__WXMICROWIN__) && !defined(__WXWINCE__)
-    DWORD sz = ::GetShortPathName(path.t_str(), NULL, 0);
+    DWORD sz = ::GetShortPathName(path.t_str(), nullptr, 0);
     if ( sz != 0 )
     {
         wxString pathOut;
@@ -2138,7 +2138,7 @@ wxString wxFileName::GetLongPath() const
 
     // this is MT-safe as in the worst case we're going to resolve the function
     // twice -- but as the result is the same in both threads, it's ok
-    static GET_LONG_PATH_NAME s_pfnGetLongPathName = NULL;
+    static GET_LONG_PATH_NAME s_pfnGetLongPathName = nullptr;
     if ( !s_pfnGetLongPathName )
     {
         static bool s_triedToLoad = false;
@@ -2170,7 +2170,7 @@ wxString wxFileName::GetLongPath() const
 
     if ( s_pfnGetLongPathName )
     {
-        DWORD dwSize = (*s_pfnGetLongPathName)(path.t_str(), NULL, 0);
+        DWORD dwSize = (*s_pfnGetLongPathName)(path.t_str(), nullptr, 0);
         if ( dwSize > 0 )
         {
             if ( (*s_pfnGetLongPathName)
@@ -2538,9 +2538,9 @@ bool wxFileName::SetTimes(const wxDateTime *dtAccess,
     if ( fh.IsOk() )
     {
         if ( ::SetFileTime(fh,
-                           dtCreate ? &ftCreate : NULL,
-                           dtAccess ? &ftAccess : NULL,
-                           dtMod ? &ftWrite : NULL) )
+                           dtCreate ? &ftCreate : nullptr,
+                           dtAccess ? &ftAccess : nullptr,
+                           dtMod ? &ftWrite : nullptr) )
         {
             return true;
         }
@@ -2555,7 +2555,7 @@ bool wxFileName::SetTimes(const wxDateTime *dtAccess,
     }
 
     // if dtAccess or dtMod is not specified, use the other one (which must be
-    // non NULL because of the test above) for both times
+    // non nullptr because of the test above) for both times
     utimbuf utm;
     utm.actime = dtAccess ? dtAccess->GetTicks() : dtMod->GetTicks();
     utm.modtime = dtMod ? dtMod->GetTicks() : dtAccess->GetTicks();
@@ -2578,8 +2578,8 @@ bool wxFileName::SetTimes(const wxDateTime *dtAccess,
 bool wxFileName::Touch() const
 {
 #if defined(__UNIX_LIKE__)
-    // under Unix touching file is simple: just pass NULL to utime()
-    if ( utime(GetFullPath().fn_str(), NULL) == 0 )
+    // under Unix touching file is simple: just pass nullptr to utime()
+    if ( utime(GetFullPath().fn_str(), nullptr) == 0 )
     {
         return true;
     }
@@ -2590,7 +2590,7 @@ bool wxFileName::Touch() const
 #else // other platform
     wxDateTime dtNow = wxDateTime::Now();
 
-    return SetTimes(&dtNow, &dtNow, NULL /* don't change create time */);
+    return SetTimes(&dtNow, &dtNow, nullptr /* don't change create time */);
 #endif // platforms
 }
 
@@ -2622,9 +2622,9 @@ bool wxFileName::GetTimes(wxDateTime *dtAccess,
         if ( fh.IsOk() )
         {
             ok = ::GetFileTime(fh,
-                               dtCreate ? &ftCreate : NULL,
-                               dtAccess ? &ftAccess : NULL,
-                               dtMod ? &ftWrite : NULL) != 0;
+                               dtCreate ? &ftCreate : nullptr,
+                               dtAccess ? &ftAccess : nullptr,
+                               dtMod ? &ftWrite : nullptr) != 0;
         }
         else
         {
@@ -2845,7 +2845,7 @@ bool wxFileName::MacSetTypeAndCreator( wxUint32 type , wxUint32 creator )
 
     if ( wxMacPathToFSRef( GetFullPath() , &fsRef ) == noErr )
     {
-        if ( FSGetCatalogInfo (&fsRef, kFSCatInfoFinderInfo, &catInfo, NULL, NULL, NULL) == noErr )
+        if ( FSGetCatalogInfo (&fsRef, kFSCatInfoFinderInfo, &catInfo, nullptr, nullptr, nullptr) == noErr )
         {
             finfo = (FileInfo*)&catInfo.finderInfo;
             finfo->fileType = type ;
@@ -2865,7 +2865,7 @@ bool wxFileName::MacGetTypeAndCreator( wxUint32 *type , wxUint32 *creator ) cons
 
     if ( wxMacPathToFSRef( GetFullPath() , &fsRef ) == noErr )
     {
-        if ( FSGetCatalogInfo (&fsRef, kFSCatInfoFinderInfo, &catInfo, NULL, NULL, NULL) == noErr )
+        if ( FSGetCatalogInfo (&fsRef, kFSCatInfoFinderInfo, &catInfo, nullptr, nullptr, nullptr) == noErr )
         {
             finfo = (FileInfo*)&catInfo.finderInfo;
             *type = finfo->fileType ;

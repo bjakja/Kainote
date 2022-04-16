@@ -73,7 +73,7 @@ public:
                             int imageId = NO_IMAGE);
     virtual int SetSelection(size_t n) { return DoSetSelection(n, SetSelection_SendEvent); }
     virtual int ChangeSelection(size_t n) { return DoSetSelection(n); }
-    virtual int HitTest(const wxPoint& pt, long *flags = NULL) const;
+    virtual int HitTest(const wxPoint& pt, long *flags = nullptr) const;
     virtual void SetImageList(wxImageList *imageList);
 
     virtual bool DeleteAllPages();

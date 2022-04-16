@@ -473,7 +473,7 @@ void wxSVGFileDCImpl::DoGetTextExtent(const wxString& string, wxCoord *w, wxCoor
     wxScreenDC sDC;
 
     sDC.SetFont (m_font);
-    if ( font != NULL ) sDC.SetFont ( *font );
+    if ( font != nullptr ) sDC.SetFont ( *font );
     sDC.GetTextExtent(string, w,  h, descent, externalLeading );
 }
 
@@ -617,7 +617,7 @@ void wxSVGFileDCImpl::DoDrawBitmap(const class wxBitmap & bmp, wxCoord x, wxCoor
     if (m_graphics_changed) NewGraphics();
 
     wxString sTmp, s, sPNG;
-    if ( wxImage::FindHandler(wxBITMAP_TYPE_PNG) == NULL )
+    if ( wxImage::FindHandler(wxBITMAP_TYPE_PNG) == nullptr )
         wxImage::AddHandler(new wxPNGHandler);
 
 // create suitable file name

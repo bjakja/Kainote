@@ -94,7 +94,7 @@ private:
     DECLARE_DYNAMIC_CLASS(wxSharedDCBufferManager)
 };
 
-wxBitmap* wxSharedDCBufferManager::ms_buffer = NULL;
+wxBitmap* wxSharedDCBufferManager::ms_buffer = nullptr;
 bool wxSharedDCBufferManager::ms_usingSharedBuffer = false;
 
 IMPLEMENT_DYNAMIC_CLASS(wxSharedDCBufferManager, wxModule)
@@ -159,7 +159,7 @@ void wxBufferedDC::UnMask()
     }
 
     m_dc->Blit(0, 0, width, height, this, -x, -y);
-    m_dc = NULL;
+    m_dc = nullptr;
 
     if ( m_style & wxBUFFER_USES_SHARED_BUFFER )
         wxSharedDCBufferManager::ReleaseBuffer(m_buffer);

@@ -99,7 +99,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
         if(!pClassInfo || !DoCreate(pClassInfo, parent, id,
                                     pos, size, style, validator, name))
         {
-            m_imp = NULL;
+            m_imp = nullptr;
             return false;
         }
 
@@ -121,7 +121,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
 
         const wxClassInfo* classInfo;
 
-        while((classInfo = NextBackend(&it)) != NULL)
+        while((classInfo = NextBackend(&it)) != nullptr)
         {
             if(!DoCreate(classInfo, parent, id,
                          pos, size, style, validator, name))
@@ -144,7 +144,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
             }
         }
 
-        m_imp = NULL;
+        m_imp = nullptr;
         return false;
     }
 }
@@ -164,7 +164,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
         if(!pClassInfo || !DoCreate(pClassInfo, parent, id,
                                     pos, size, style, validator, name))
         {
-            m_imp = NULL;
+            m_imp = nullptr;
             return false;
         }
 
@@ -183,7 +183,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
 
         const wxClassInfo* classInfo;
 
-        while((classInfo = NextBackend(&it)) != NULL)
+        while((classInfo = NextBackend(&it)) != nullptr)
         {
             if(!DoCreate(classInfo, parent, id,
                          pos, size, style, validator, name))
@@ -198,7 +198,7 @@ bool wxMediaCtrl::Create(wxWindow* parent, wxWindowID id,
                 delete m_imp;
         }
 
-        m_imp = NULL;
+        m_imp = nullptr;
         return false;
     }
 }
@@ -259,7 +259,7 @@ const wxClassInfo* wxMediaCtrl::NextBackend(wxClassInfo::const_iterator* it)
     //
     // Nope - couldn't successfully find one... fail
     //
-    return NULL;
+    return nullptr;
 }
 
 

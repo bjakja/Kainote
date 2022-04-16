@@ -399,7 +399,7 @@ static CharType *wxDoRealPath (CharType *path)
                         path[1] = wxT('\0');
                       }
 #if defined(__WINDOWS__) || defined(__OS2__)
-                    /* Check that path[2] is NULL! */
+                    /* Check that path[2] is nullptr! */
                     else if (path[1] == wxT(':') && !path[2])
                       {
                         path[2] = SEP;
@@ -441,7 +441,7 @@ wxString wxRealPath(const wxString& path)
 wxChar *wxCopyAbsolutePath(const wxString& filename)
 {
     if (filename.empty())
-        return NULL;
+        return nullptr;
 
     if (! wxIsAbsolutePath(wxExpandPath(wxFileFunctionsBuffer, filename)))
     {
@@ -512,11 +512,11 @@ static CharType *wxDoExpandPath(CharType *buf, const wxString& name)
     CharType *nm_tmp = nm;
 
     /* Skip leading whitespace and cr */
-    while (wxStrchr(trimchars, *nm) != NULL)
+    while (wxStrchr(trimchars, *nm) != nullptr)
         nm++;
     /* And strip off trailing whitespace and cr */
     s = nm + (q = wxStrlen(nm)) - 1;
-    while (q-- && wxStrchr(trimchars, *s) != NULL)
+    while (q-- && wxStrchr(trimchars, *s) != nullptr)
         *s = wxT('\0');
 
     s = nm;
@@ -610,7 +610,7 @@ static CharType *wxDoExpandPath(CharType *buf, const wxString& name)
             {
                 // Empty
             }
-            int was_sep; /* MATTHEW: Was there a separator, or NULL? */
+            int was_sep; /* MATTHEW: Was there a separator, or nullptr? */
             was_sep = (*s == SEP);
             nnm = *s ? s + 1 : s;
             *s = 0;
@@ -619,7 +619,7 @@ static CharType *wxDoExpandPath(CharType *buf, const wxString& name)
             {
                 if (was_sep) /* replace only if it was there: */
                     *s = SEP;
-                s = NULL;
+                s = nullptr;
             }
             else
             {
@@ -630,7 +630,7 @@ static CharType *wxDoExpandPath(CharType *buf, const wxString& name)
     }
 
     d = buf;
-    if (s && *s) { /* MATTHEW: s could be NULL if user '~' didn't exist */
+    if (s && *s) { /* MATTHEW: s could be nullptr if user '~' didn't exist */
         /* Copy home dir */
         while (wxT('\0') != (*d++ = *s++))
           /* loop */;
@@ -674,7 +674,7 @@ wxContractPath (const wxString& filename,
   static wxChar dest[_MAXPATHLEN];
 
   if (filename.empty())
-    return NULL;
+    return nullptr;
 
   wxStrcpy (dest, filename);
 #ifdef __WINDOWS__
@@ -686,7 +686,7 @@ wxContractPath (const wxString& filename,
 #ifndef __WXWINCE__
   wxChar *tcp;
   if (!envname.empty() && !(val = wxGetenv (envname)).empty() &&
-     (tcp = wxStrstr (dest, val)) != NULL)
+     (tcp = wxStrstr (dest, val)) != nullptr)
     {
         wxStrcpy (wxFileFunctionsBuffer, tcp + val.length());
         *tcp++ = wxT('$');
@@ -734,7 +734,7 @@ wxString wxFileNameFromPath (const wxString& path)
     return wxFileName(path).GetFullName();
 }
 
-// Return just the directory, or NULL if no directory
+// Return just the directory, or nullptr if no directory
 wxChar *
 wxPathOnly (wxChar *path)
 {
@@ -778,10 +778,10 @@ wxPathOnly (wxChar *path)
         }
 #endif
     }
-    return NULL;
+    return nullptr;
 }
 
-// Return just the directory, or NULL if no directory
+// Return just the directory, or nullptr if no directory
 wxString wxPathOnly (const wxString& path)
 {
     if (!path.empty())
@@ -841,14 +841,14 @@ wxString wxPathOnly (const wxString& path)
 wxString wxMacFSRefToPath( const FSRef *fsRef , CFStringRef additionalPathComponent )
 {
     CFURLRef fullURLRef;
-    fullURLRef = CFURLCreateFromFSRef(NULL, fsRef);
-    if ( fullURLRef == NULL)
+    fullURLRef = CFURLCreateFromFSRef(nullptr, fsRef);
+    if ( fullURLRef == nullptr)
         return wxEmptyString;
     
     if ( additionalPathComponent )
     {
         CFURLRef parentURLRef = fullURLRef ;
-        fullURLRef = CFURLCreateCopyAppendingPathComponent(NULL, parentURLRef,
+        fullURLRef = CFURLCreateCopyAppendingPathComponent(nullptr, parentURLRef,
             additionalPathComponent,false);
         CFRelease( parentURLRef ) ;
     }
@@ -861,11 +861,11 @@ wxString wxMacFSRefToPath( const FSRef *fsRef , CFStringRef additionalPathCompon
 OSStatus wxMacPathToFSRef( const wxString&path , FSRef *fsRef )
 {
     OSStatus err = noErr ;
-    CFMutableStringRef cfMutableString = CFStringCreateMutableCopy(NULL, 0, wxCFStringRef(path));
+    CFMutableStringRef cfMutableString = CFStringCreateMutableCopy(nullptr, 0, wxCFStringRef(path));
     CFStringNormalize(cfMutableString,kCFStringNormalizationFormD);
     CFURLRef url = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, cfMutableString , kDefaultPathStyle, false);
     CFRelease( cfMutableString );
-    if ( NULL != url )
+    if ( nullptr != url )
     {
         if ( CFURLGetFSRef(url, fsRef) == false )
             err = fnfErr ;
@@ -903,7 +903,7 @@ void wxMacFilename2FSSpec( const wxString& path , FSSpec *spec )
     OSStatus err = noErr;
     FSRef fsRef;
     wxMacPathToFSRef( path , &fsRef );
-    err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, spec, NULL);
+    err = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, nullptr, nullptr, spec, nullptr);
     verify_noerr( err );
 }
 #endif
@@ -1222,7 +1222,7 @@ bool wxMkdir(const wxString& dir, int perm)
   #endif
 #elif defined(__OS2__)
     wxUnusedVar(perm);
-    if (::DosCreateDir(dir.c_str(), NULL) != 0) // enhance for EAB's??
+    if (::DosCreateDir(dir.c_str(), nullptr) != 0) // enhance for EAB's??
 #elif defined(__DOS__)
     const wxChar *dirname = dir.c_str();
   #if defined(__WATCOMC__)
@@ -1236,7 +1236,7 @@ bool wxMkdir(const wxString& dir, int perm)
 #else  // !MSW, !DOS and !OS/2 VAC++
     wxUnusedVar(perm);
   #ifdef __WXWINCE__
-    if ( CreateDirectory(dir.fn_str(), NULL) == 0 )
+    if ( CreateDirectory(dir.fn_str(), nullptr) == 0 )
   #else
     if ( wxMkDir(dir.fn_str()) != 0 )
   #endif
@@ -1283,7 +1283,7 @@ wxChar *wxGetTempFileName(const wxString& prefix, wxChar *buf)
 {
     wxString filename;
     if ( !wxGetTempFileName(prefix, filename) )
-        return NULL;
+        return nullptr;
 
     if ( buf )
         wxStrcpy(buf, filename);
@@ -1311,18 +1311,18 @@ bool wxGetTempFileName(const wxString& prefix, wxString& buf)
 
 // Get first file name matching given wild card.
 
-static wxDir *gs_dir = NULL;
+static wxDir *gs_dir = nullptr;
 static wxString gs_dirPath;
 
 wxString wxFindFirstFile(const wxString& spec, int flags)
 {
-    wxFileName::SplitPath(spec, &gs_dirPath, NULL, NULL);
+    wxFileName::SplitPath(spec, &gs_dirPath, nullptr, nullptr);
     if ( gs_dirPath.empty() )
         gs_dirPath = wxT(".");
     if ( !wxEndsWithPathSeparator(gs_dirPath ) )
         gs_dirPath << wxFILE_SEP_PATH;
 
-    delete gs_dir; // can be NULL, this is ok
+    delete gs_dir; // can be nullptr, this is ok
     gs_dir = new wxDir(gs_dirPath);
 
     if ( !gs_dir->IsOpened() )
@@ -1368,7 +1368,7 @@ wxString wxFindNextFile()
 
 
 // Get current working directory.
-// If buf is NULL, allocates space using new, else copies into buf.
+// If buf is nullptr, allocates space using new, else copies into buf.
 // wxGetWorkingDirectory() is obsolete, use wxGetCwd()
 // wxDoGetCwd() is their common core to be moved
 // to wxGetCwd() once wxGetWorkingDirectory() will be removed.
@@ -1403,10 +1403,10 @@ wxChar *wxDoGetCwd(wxChar *buf, int sz)
         #if wxUSE_UNICODE_MSLU
             if ( wxGetOsVersion() != wxOS_WINDOWS_9X )
         #else
-            char *cbuf = NULL; // never really used because needsANSI will always be false
+            char *cbuf = nullptr; // never really used because needsANSI will always be false
         #endif
             {
-                ok = _wgetcwd(buf, sz) != NULL;
+                ok = _wgetcwd(buf, sz) != nullptr;
                 needsANSI = false;
             }
     #endif
@@ -1415,7 +1415,7 @@ wxChar *wxDoGetCwd(wxChar *buf, int sz)
 #endif // wxUSE_UNICODE
     {
     #if defined(_MSC_VER) || defined(__MINGW32__)
-        ok = _getcwd(cbuf, sz) != NULL;
+        ok = _getcwd(cbuf, sz) != nullptr;
     #elif defined(__OS2__)
         APIRET rc;
         ULONG ulDriveNum = 0;
@@ -1435,7 +1435,7 @@ wxChar *wxDoGetCwd(wxChar *buf, int sz)
             ok = rc == 0;
         }
     #else // !Win32/VC++ !Mac !OS2
-        ok = getcwd(cbuf, sz) != NULL;
+        ok = getcwd(cbuf, sz) != nullptr;
     #endif // platform
 
     #if wxUSE_UNICODE
@@ -1450,8 +1450,8 @@ wxChar *wxDoGetCwd(wxChar *buf, int sz)
 
         // VZ: the old code used to return "." on error which didn't make any
         //     sense at all to me - empty string is a better error indicator
-        //     (NULL might be even better but I'm afraid this could lead to
-        //     problems with the old code assuming the return is never NULL)
+        //     (nullptr might be even better but I'm afraid this could lead to
+        //     problems with the old code assuming the return is never nullptr)
         buf[0] = wxT('\0');
     }
     else // ok, but we might need to massage the path into the right format
@@ -1637,7 +1637,7 @@ void WXDLLIMPEXP_BASE wxSplitPath(const wxString& fileName,
 time_t WXDLLIMPEXP_BASE wxFileModificationTime(const wxString& filename)
 {
     wxDateTime mtime;
-    if ( !wxFileName(filename).GetTimes(NULL, &mtime, NULL) )
+    if ( !wxFileName(filename).GetTimes(nullptr, &mtime, nullptr) )
         return (time_t)-1;
 
     return mtime.GetTicks();
@@ -1784,12 +1784,12 @@ static bool wxCheckWin32Permission(const wxString& path, DWORD access)
                     path.t_str(),
                     access,
                     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                    NULL,
+                    nullptr,
                     OPEN_EXISTING,
                     dwAttr & FILE_ATTRIBUTE_DIRECTORY
                         ? FILE_FLAG_BACKUP_SEMANTICS
                         : 0,
-                    NULL
+                    nullptr
                  );
     if ( h != INVALID_HANDLE_VALUE )
         CloseHandle(h);
@@ -1955,8 +1955,8 @@ bool wxMatchWild( const wxString& pat, const wxString& text, bool dot_special )
 
     const wxChar *m = pat.c_str(),
     *n = text.c_str(),
-    *ma = NULL,
-    *na = NULL;
+    *ma = nullptr,
+    *na = nullptr;
     int just = 0,
     acount = 0,
     count = 0;
@@ -2007,11 +2007,11 @@ bool wxMatchWild( const wxString& pat, const wxString& text, bool dot_special )
                 goto not_matched;
             }
             /*
-            * We could check for *n == NULL at this point, but
+            * We could check for *n == nullptr at this point, but
             * since it's more common to have a character there,
             * check to see if they match first (m and n) and
             * then if they don't match, THEN we can check for
-            * the NULL of n
+            * the nullptr of n
             */
             just = 0;
             if (*m == *n)
@@ -2028,7 +2028,7 @@ bool wxMatchWild( const wxString& pat, const wxString& text, bool dot_special )
                 /*
                 * If there are no more characters in the
                 * string, but we still need to find another
-                * character (*m != NULL), then it will be
+                * character (*m != nullptr), then it will be
                 * impossible to match it
                 */
                 if (!*n)

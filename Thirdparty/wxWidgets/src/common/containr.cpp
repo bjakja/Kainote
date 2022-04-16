@@ -131,7 +131,7 @@ bool wxControlContainerBase::SetFocusToChild()
 
 wxControlContainer::wxControlContainer()
 {
-    m_winLastFocused = NULL;
+    m_winLastFocused = nullptr;
 }
 
 void wxControlContainer::SetLastFocus(wxWindow *win)
@@ -186,11 +186,11 @@ void wxControlContainer::SetLastFocus(wxWindow *win)
 wxRadioButton* wxGetPreviousButtonInGroup(wxRadioButton *btn)
 {
     if ( btn->HasFlag(wxRB_GROUP) || btn->HasFlag(wxRB_SINGLE) )
-        return NULL;
+        return nullptr;
 
     const wxWindowList& siblings = btn->GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(btn);
-    wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
+    wxCHECK_MSG( nodeThis, nullptr, wxT("radio button not a child of its parent?") );
 
     // Iterate over all previous siblings until we find the next radio button
     wxWindowList::compatibility_iterator nodeBefore = nodeThis->GetPrevious();
@@ -207,7 +207,7 @@ wxRadioButton* wxGetPreviousButtonInGroup(wxRadioButton *btn)
     if (!prevBtn || prevBtn->HasFlag(wxRB_SINGLE))
     {
         // no more buttons in group
-        return NULL;
+        return nullptr;
     }
 
     return prevBtn;
@@ -216,11 +216,11 @@ wxRadioButton* wxGetPreviousButtonInGroup(wxRadioButton *btn)
 wxRadioButton* wxGetNextButtonInGroup(wxRadioButton *btn)
 {
     if (btn->HasFlag(wxRB_SINGLE))
-        return NULL;
+        return nullptr;
 
     const wxWindowList& siblings = btn->GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(btn);
-    wxCHECK_MSG( nodeThis, NULL, wxT("radio button not a child of its parent?") );
+    wxCHECK_MSG( nodeThis, nullptr, wxT("radio button not a child of its parent?") );
 
     // Iterate over all previous siblings until we find the next radio button
     wxWindowList::compatibility_iterator nodeNext = nodeThis->GetNext();
@@ -237,7 +237,7 @@ wxRadioButton* wxGetNextButtonInGroup(wxRadioButton *btn)
     if ( !nextBtn || nextBtn->HasFlag(wxRB_GROUP) || nextBtn->HasFlag(wxRB_SINGLE) )
     {
         // no more buttons or the first button of the next group
-        return NULL;
+        return nullptr;
     }
 
     return nextBtn;
@@ -274,7 +274,7 @@ wxRadioButton* wxGetSelectedButtonInGroup(wxRadioButton *btn)
         return btn;
 
     if (btn->HasFlag(wxRB_SINGLE))
-        return NULL;
+        return nullptr;
 
     wxRadioButton *selBtn;
 
@@ -288,7 +288,7 @@ wxRadioButton* wxGetSelectedButtonInGroup(wxRadioButton *btn)
         if (selBtn->GetValue())
             return selBtn;
 
-    return NULL;
+    return nullptr;
 }
 
 #endif // __WXMSW__
@@ -305,7 +305,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
 {
     // for a TLW we shouldn't involve the parent window, it has nothing to do
     // with keyboard navigation inside this TLW
-    wxWindow *parent = m_winParent->IsTopLevel() ? NULL
+    wxWindow *parent = m_winParent->IsTopLevel() ? nullptr
                                                  : m_winParent->GetParent();
 
     // the event is propagated downwards if the event emitter was our parent
@@ -323,7 +323,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
     if ( event.IsWindowChange() && !goingDown )
     {
         // check if we have a unique notebook-like child
-        wxWindow *bookctrl = NULL;
+        wxWindow *bookctrl = nullptr;
         for ( wxWindowList::const_iterator i = children.begin(),
                                          end = children.end();
               i != end;
@@ -337,7 +337,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
                     // this is the second book-like control already so don't do
                     // anything as we don't know which one should have its page
                     // changed
-                    bookctrl = NULL;
+                    bookctrl = nullptr;
                     break;
                 }
 
@@ -385,7 +385,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
     {
         // just to be sure it's not used (normally this is not necessary, but
         // doesn't hurt neither)
-        m_winLastFocused = NULL;
+        m_winLastFocused = nullptr;
 
         // start from first or last depending on where we're going
         node = forward ? children.GetFirst() : children.GetLast();
@@ -435,7 +435,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
         node = forward ? start_node->GetNext() : start_node->GetPrevious();
     }
 
-    // we want to cycle over all elements passing by NULL
+    // we want to cycle over all elements passing by nullptr
     for ( ;; )
     {
         // don't go into infinite loop
@@ -594,7 +594,7 @@ void wxControlContainer::HandleOnNavigationKey( wxNavigationKeyEvent& event )
 void wxControlContainer::HandleOnWindowDestroy(wxWindowBase *child)
 {
     if ( child == m_winLastFocused )
-        m_winLastFocused = NULL;
+        m_winLastFocused = nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -618,7 +618,7 @@ void wxControlContainer::HandleOnFocus(wxFocusEvent& event)
 
 bool wxControlContainer::SetFocusToChild()
 {
-    return wxSetFocusToChild(m_winParent, NULL);
+    return wxSetFocusToChild(m_winParent, nullptr);
 }
 
 
@@ -633,7 +633,7 @@ bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
 {
     wxCHECK_MSG( win, false, wxT("wxSetFocusToChild(): invalid window") );
     //    wxCHECK_MSG( childLastFocused, false,
-    //             wxT("wxSetFocusToChild(): NULL child poonter") );
+    //             wxT("wxSetFocusToChild(): nullptr child poonter") );
 
     if ( childLastFocused && *childLastFocused )
     {
@@ -642,7 +642,7 @@ bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
         {
             // And it also could have become hidden in the meanwhile
             // We want to focus on the deepest widget visible
-            wxWindow *deepestVisibleWindow = NULL;
+            wxWindow *deepestVisibleWindow = nullptr;
 
             while ( *childLastFocused )
             {
@@ -652,7 +652,7 @@ bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
                         deepestVisibleWindow = *childLastFocused;
                 }
                 else
-                    deepestVisibleWindow = NULL;
+                    deepestVisibleWindow = nullptr;
 
                 *childLastFocused = (*childLastFocused)->GetParent();
             }
@@ -674,7 +674,7 @@ bool wxSetFocusToChild(wxWindow *win, wxWindow **childLastFocused)
         else
         {
             // it doesn't count as such any more
-            *childLastFocused = NULL;
+            *childLastFocused = nullptr;
         }
     }
 

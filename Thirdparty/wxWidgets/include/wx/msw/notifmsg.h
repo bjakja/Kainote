@@ -23,7 +23,7 @@ public:
     wxNotificationMessage() { Init(); }
     wxNotificationMessage(const wxString& title,
                           const wxString& message = wxString(),
-                          wxWindow *parent = NULL,
+                          wxWindow *parent = nullptr,
                           int flags = wxICON_INFORMATION)
         : wxNotificationMessageBase(title, message, parent, flags)
     {
@@ -42,10 +42,10 @@ public:
     // icon to which it attaches the notification, if there is an existing
     // taskbar icon object in the application you may want to call this method
     // to attach the notification to it instead (we won't take ownership of it
-    // and you can also pass NULL to not use the icon for notifications any
+    // and you can also pass nullptr to not use the icon for notifications any
     // more)
     //
-    // returns the task bar icon which was used previously (may be NULL)
+    // returns the task bar icon which was used previously (may be nullptr)
     static wxTaskBarIcon *UseTaskBarIcon(wxTaskBarIcon *icon);
 
     // call this to always use the generic implementation, even if the system
@@ -57,7 +57,7 @@ public:
 
 private:
     // common part of all ctors
-    void Init() { m_impl = NULL; }
+    void Init() { m_impl = nullptr; }
 
 
     // flag indicating whether we should always use generic implementation

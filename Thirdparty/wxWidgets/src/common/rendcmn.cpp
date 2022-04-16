@@ -58,18 +58,18 @@ public:
             DoInit();
         }
 
-        return get() != NULL;
+        return get() != nullptr;
     }
 
     // return the global and unique wxRendererPtr
     static wxRendererPtr& Get();
 
 private:
-    wxRendererPtr() : wxRendererPtrBase(NULL) { m_initialized = false; }
+    wxRendererPtr() : wxRendererPtrBase(nullptr) { m_initialized = false; }
 
     void DoInit()
     {
-        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
+        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
         if ( traits )
         {
             // ask the traits object to create a renderer for us
@@ -173,7 +173,7 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
 
     wxDynamicLibrary dll(fullname);
     if ( !dll.IsLoaded() )
-        return NULL;
+        return nullptr;
 
     // each theme DLL must export a wxCreateRenderer() function with this
     // signature
@@ -181,12 +181,12 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
 
     wxDYNLIB_FUNCTION(wxCreateRenderer_t, wxCreateRenderer, dll);
     if ( !pfnwxCreateRenderer )
-        return NULL;
+        return nullptr;
 
     // create a renderer object
     wxRendererNative *renderer = (*pfnwxCreateRenderer)();
     if ( !renderer )
-        return NULL;
+        return nullptr;
 
     // check that its version is compatible with ours
     wxRendererVersion ver = renderer->GetVersion();
@@ -196,7 +196,7 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
                    name.c_str(), ver.version, ver.age);
         delete renderer;
 
-        return NULL;
+        return nullptr;
     }
 
     // finally wrap the renderer in an object which will delete it and unload

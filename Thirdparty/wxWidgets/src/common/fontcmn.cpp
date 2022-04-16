@@ -1110,7 +1110,7 @@ wxString wxToString(const wxFontBase& font)
 
 bool wxFromString(const wxString& str, wxFontBase *font)
 {
-    wxCHECK_MSG( font, false, wxT("NULL output parameter") );
+    wxCHECK_MSG( font, false, wxT("nullptr output parameter") );
 
     if ( str.empty() )
     {

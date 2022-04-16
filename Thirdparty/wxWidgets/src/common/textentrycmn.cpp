@@ -332,7 +332,7 @@ bool wxTextEntryBase::SetHint(const wxString& hint)
     {
         // Setting empty hint removes any currently set one.
         delete m_hintData;
-        m_hintData = NULL;
+        m_hintData = nullptr;
     }
     //else: Setting empty hint when we don't have any doesn't do anything.
 

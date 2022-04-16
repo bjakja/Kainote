@@ -85,7 +85,7 @@ public:
     virtual void SetImageList(wxImageList *imageList);
 
     virtual bool DeleteAllPages();
-    virtual int HitTest(const wxPoint& pt, long *flags = NULL) const;
+    virtual int HitTest(const wxPoint& pt, long *flags = nullptr) const;
 
 
     // methods which are not part of base wxBookctrl API

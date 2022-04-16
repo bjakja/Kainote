@@ -73,7 +73,7 @@ bool wxFontPickerCtrl::Create( wxWindow *parent, wxWindowID id,
 
     m_picker->Connect(wxEVT_COMMAND_FONTPICKER_CHANGED,
             wxFontPickerEventHandler(wxFontPickerCtrl::OnFontChange),
-            NULL, this);
+            nullptr, this);
 
     return true;
 }

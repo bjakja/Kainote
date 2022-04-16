@@ -70,7 +70,7 @@ bool wxColourPickerCtrl::Create( wxWindow *parent, wxWindowID id,
 
     m_picker->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
             wxColourPickerEventHandler(wxColourPickerCtrl::OnColourChange),
-            NULL, this);
+            nullptr, this);
 
     return true;
 }

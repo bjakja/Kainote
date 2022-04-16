@@ -345,12 +345,12 @@ struct wxPixelDataOut<wxImage>
                 }
                 else // alpha is not used at all
                 {
-                    m_pAlpha = NULL;
+                    m_pAlpha = nullptr;
                 }
             }
 
             // true if the iterator is valid
-            bool IsOk() const { return m_pRGB != NULL; }
+            bool IsOk() const { return m_pRGB != nullptr; }
 
 
             // navigation
@@ -431,7 +431,7 @@ struct wxPixelDataOut<wxImage>
             // pointer into RGB buffer
             unsigned char *m_pRGB;
 
-            // pointer into alpha buffer or NULL if alpha isn't used
+            // pointer into alpha buffer or nullptr if alpha isn't used
             unsigned char *m_pAlpha;
         };
 
@@ -543,11 +543,11 @@ struct wxPixelDataOut<wxBitmap>
             // default constructor
             Iterator()
             {
-                m_ptr = NULL;
+                m_ptr = nullptr;
             }
 
             // return true if this iterator is valid
-            bool IsOk() const { return m_ptr != NULL; }
+            bool IsOk() const { return m_ptr != nullptr; }
 
 
             // navigation

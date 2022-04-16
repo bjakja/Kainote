@@ -20,7 +20,6 @@
 #include <iostream>
 #include <cmath>
 #include <math.h>
-#include <functional>
 #include "Factory.h"
 #include "../Provider.h"
 #include "../GFFT/GFFT.h"

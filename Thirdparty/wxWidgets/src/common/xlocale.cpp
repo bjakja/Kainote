@@ -39,7 +39,7 @@
 // ----------------------------------------------------------------------------
 
 // This is the C locale object, it is created on demand
-static wxXLocale *gs_cLocale = NULL;
+static wxXLocale *gs_cLocale = nullptr;
 
 wxXLocale wxNullXLocale;
 
@@ -79,7 +79,7 @@ wxXLocale& wxXLocale::GetCLocale()
     {
         // NOTE: bcc551 has trouble doing static_cast with incomplete
         //       type definition. reinterpret_cast used as workaround
-        gs_cLocale = new wxXLocale( reinterpret_cast<wxXLocaleCTag *>(NULL) );
+        gs_cLocale = new wxXLocale( reinterpret_cast<wxXLocaleCTag *>(nullptr) );
     }
 
     return *gs_cLocale;
@@ -92,7 +92,7 @@ wxXLocale::wxXLocale(wxLanguage lang)
     const wxLanguageInfo * const info = wxLocale::GetLanguageInfo(lang);
     if ( !info )
     {
-        m_locale = NULL;
+        m_locale = nullptr;
     }
     else
     {
@@ -131,7 +131,7 @@ void wxXLocale::Init(const char *loc)
     if (!loc || *loc == '\0')
         return;
 
-    m_locale = newlocale(LC_ALL_MASK, loc, NULL);
+    m_locale = newlocale(LC_ALL_MASK, loc, nullptr);
     if (!m_locale)
     {
         // NOTE: here we do something similar to what wxSetLocaleTryUTF8() does
@@ -139,21 +139,21 @@ void wxXLocale::Init(const char *loc)
         wxString buf(loc);
         wxString buf2;
         buf2 = buf + wxS(".UTF-8");
-        m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
+        m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
         if ( !m_locale )
         {
             buf2 = buf + wxS(".utf-8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
         }
         if ( !m_locale )
         {
             buf2 = buf + wxS(".UTF8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
         }
         if ( !m_locale )
         {
             buf2 = buf + wxS(".utf8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
         }
     }
 
@@ -288,7 +288,7 @@ class CNumericLocaleSetter
 {
 public:
     CNumericLocaleSetter()
-        : m_oldLocale(wxStrdupA(setlocale(LC_NUMERIC, NULL)))
+        : m_oldLocale(wxStrdupA(setlocale(LC_NUMERIC, nullptr)))
     {
         if ( !wxSetlocale(LC_NUMERIC, "C") )
         {

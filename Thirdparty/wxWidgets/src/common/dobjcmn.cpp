@@ -106,7 +106,7 @@ wxDataObjectComposite::GetObject(const wxDataFormat& format, wxDataObjectBase::D
           return dataObj;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 void wxDataObjectComposite::Add(wxDataObjectSimple *dataObject, bool preferred)
@@ -153,7 +153,7 @@ const void* wxDataObjectComposite::GetSizeFromBuffer( const void* buffer,
 {
     wxDataObjectSimple *dataObj = GetObject(format);
 
-    wxCHECK_MSG( dataObj, NULL,
+    wxCHECK_MSG( dataObj, nullptr,
                  wxT("unsupported format in wxDataObjectComposite"));
 
     return dataObj->GetSizeFromBuffer( buffer, size, format );
@@ -165,7 +165,7 @@ void* wxDataObjectComposite::SetSizeInBuffer( void* buffer, size_t size,
 {
     wxDataObjectSimple *dataObj = GetObject( format );
 
-    wxCHECK_MSG( dataObj, NULL,
+    wxCHECK_MSG( dataObj, nullptr,
                  wxT("unsupported format in wxDataObjectComposite"));
 
     return dataObj->SetSizeInBuffer( buffer, size, format );
@@ -285,7 +285,7 @@ bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
 bool wxTextDataObject::SetData(const wxDataFormat& format,
                                size_t WXUNUSED(len), const void *buf)
 {
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     wxWCharBuffer buffer = GetConv(format).cMB2WX( (const char*)buf );
@@ -336,7 +336,7 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
 {
     const char * const buf = static_cast<const char *>(buf_);
 
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     if ( format == wxDF_UNICODETEXT || wxLocaleIsUtf8 )
@@ -350,7 +350,7 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
     }
     else // wxDF_TEXT, convert from current (non-UTF8) locale
     {
-        m_text = wxConvLocal.cMB2WC(buf, len, NULL);
+        m_text = wxConvLocal.cMB2WC(buf, len, nullptr);
     }
 
     return true;
@@ -375,12 +375,12 @@ inline wxMBConv& GetConv(const wxDataFormat& format)
 
 size_t wxTextDataObject::GetDataSize(const wxDataFormat& format) const
 {
-    return GetConv(format).WC2MB(NULL, GetText().wc_str(), 0);
+    return GetConv(format).WC2MB(nullptr, GetText().wc_str(), 0);
 }
 
 bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
 {
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     wxCharBuffer buffer(GetConv(format).cWX2MB(GetText().c_str()));
@@ -394,7 +394,7 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
                                size_t WXUNUSED(len),
                                const void *buf)
 {
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     SetText(GetConv(format).cMB2WX(static_cast<const char*>(buf)));
@@ -504,7 +504,7 @@ bool wxHTMLDataObject::GetDataHere(void *buf) const
 
 bool wxHTMLDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 {
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     // Windows and Mac always use UTF-8, and docs suggest GTK does as well.
@@ -539,7 +539,7 @@ bool wxHTMLDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 wxCustomDataObject::wxCustomDataObject(const wxDataFormat& format)
     : wxDataObjectSimple(format)
 {
-    m_data = NULL;
+    m_data = nullptr;
     m_size = 0;
 }
 
@@ -565,7 +565,7 @@ void wxCustomDataObject::Free()
 {
     delete [] (char*)m_data;
     m_size = 0;
-    m_data = NULL;
+    m_data = nullptr;
 }
 
 size_t wxCustomDataObject::GetDataSize() const
@@ -575,11 +575,11 @@ size_t wxCustomDataObject::GetDataSize() const
 
 bool wxCustomDataObject::GetDataHere(void *buf) const
 {
-    if ( buf == NULL )
+    if ( buf == nullptr )
         return false;
 
     void *data = GetData();
-    if ( data == NULL )
+    if ( data == nullptr )
         return false;
 
     memcpy( buf, data, GetSize() );
@@ -592,7 +592,7 @@ bool wxCustomDataObject::SetData(size_t size, const void *buf)
     Free();
 
     m_data = Alloc(size);
-    if ( m_data == NULL )
+    if ( m_data == nullptr )
         return false;
 
     m_size = size;

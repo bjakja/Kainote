@@ -49,7 +49,7 @@ const wxVideoMode wxDefaultVideoMode;
 // the factory object used by wxDisplay
 //
 // created on demand and destroyed by wxDisplayModule
-static wxDisplayFactory *gs_factory = NULL;
+static wxDisplayFactory *gs_factory = nullptr;
 
 // ----------------------------------------------------------------------------
 // wxDisplayImplSingle: trivial implementation working for main display only
@@ -246,7 +246,7 @@ int wxDisplayFactory::GetFromWindow(const wxWindow *window)
 wxDisplayImpl *wxDisplayFactorySingle::CreateDisplay(unsigned n)
 {
     // we recognize the main display only
-    return n != 0 ? NULL : new wxDisplayImplSingle;
+    return n != 0 ? nullptr : new wxDisplayImplSingle;
 }
 
 int wxDisplayFactorySingle::GetFromPoint(const wxPoint& pt)

@@ -36,7 +36,7 @@
 // construction/destruction
 // ----------------------------------------------------------------------------
 
-// TODO:  Do we want to include the null char in the stream?  If so then
+// TODO:  Do we want to include the nullptr char in the stream?  If so then
 // just add +1 to m_len in the ctor
 wxStringInputStream::wxStringInputStream(const wxString& s)
 #if wxUSE_UNICODE
@@ -47,7 +47,7 @@ wxStringInputStream::wxStringInputStream(const wxString& s)
 #endif
 {
 #if wxUSE_UNICODE
-    wxASSERT_MSG(m_buf.data() != NULL, wxT("Could not convert string to UTF8!"));
+    wxASSERT_MSG(m_buf.data() != nullptr, wxT("Could not convert string to UTF8!"));
 #endif
     m_pos = 0;
 }

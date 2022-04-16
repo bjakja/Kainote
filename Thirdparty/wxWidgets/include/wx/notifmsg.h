@@ -30,7 +30,7 @@ public:
     // default ctor, use setters below to initialize it later
     wxNotificationMessageBase()
     {
-        m_parent = NULL;
+        m_parent = nullptr;
         m_flags = wxICON_INFORMATION;
     }
 
@@ -38,7 +38,7 @@ public:
     // latter may be empty in which case only the title will be shown)
     wxNotificationMessageBase(const wxString& title,
                               const wxString& message = wxEmptyString,
-                              wxWindow *parent = NULL,
+                              wxWindow *parent = nullptr,
                               int flags = wxICON_INFORMATION)
         : m_title(title),
           m_message(message),
@@ -145,7 +145,7 @@ private:
         wxNotificationMessage() { }
         wxNotificationMessage(const wxString& title,
                               const wxString& message = wxEmptyString,
-                              wxWindow *parent = NULL,
+                              wxWindow *parent = nullptr,
                               int flags = wxICON_INFORMATION)
             : wxGenericNotificationMessage(title, message, parent, flags)
         {

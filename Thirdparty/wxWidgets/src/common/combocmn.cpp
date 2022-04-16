@@ -974,18 +974,18 @@ IMPLEMENT_ABSTRACT_CLASS(wxComboCtrlBase, wxControl)
 
 void wxComboCtrlBase::Init()
 {
-    m_winPopup = NULL;
-    m_popup = NULL;
+    m_winPopup = nullptr;
+    m_popup = nullptr;
     m_popupWinState = Hidden;
-    m_btn = NULL;
-    m_text = NULL;
-    m_popupInterface = NULL;
+    m_btn = nullptr;
+    m_text = nullptr;
+    m_popupInterface = nullptr;
 
-    m_popupEvtHandler = NULL;
-    m_textEvtHandler = NULL;
+    m_popupEvtHandler = nullptr;
+    m_textEvtHandler = nullptr;
 
 #if INSTALL_TOPLEV_HANDLER
-    m_toplevEvtHandler = NULL;
+    m_toplevEvtHandler = nullptr;
 #endif
 
     m_mainCtrlWnd = this;
@@ -1097,10 +1097,10 @@ wxComboCtrlBase::CreateTextCtrl(int style)
         wxWindowID id = m_text->GetId();
         m_text->Connect(id, wxEVT_COMMAND_TEXT_UPDATED,
                         wxCommandEventHandler(wxComboCtrlBase::OnTextCtrlEvent),
-                        NULL, this);
+                        nullptr, this);
         m_text->Connect(id, wxEVT_COMMAND_TEXT_ENTER,
                         wxCommandEventHandler(wxComboCtrlBase::OnTextCtrlEvent),
-                        NULL, this);
+                        nullptr, this);
 
         m_text->SetHint(m_hintText);
     }
@@ -1144,7 +1144,7 @@ wxComboCtrlBase::~wxComboCtrlBase()
 
 #if INSTALL_TOPLEV_HANDLER
     delete ((wxComboFrameEventHandler*)m_toplevEvtHandler);
-    m_toplevEvtHandler = NULL;
+    m_toplevEvtHandler = nullptr;
 #endif
 
     DestroyPopup();
@@ -1498,8 +1498,8 @@ void wxComboCtrlBase::DoSetToolTip(wxToolTip *tooltip)
     }
     else
     {
-        if ( m_text ) m_text->SetToolTip( NULL );
-        if ( m_btn ) m_btn->SetToolTip( NULL );
+        if ( m_text ) m_text->SetToolTip( nullptr );
+        if ( m_btn ) m_btn->SetToolTip( nullptr );
     }
 }
 #endif // wxUSE_TOOLTIPS
@@ -2141,7 +2141,7 @@ void wxComboCtrlBase::DestroyPopup()
     {
         // NB: DestroyPopup() performs 'delete this'.
         m_popupInterface->DestroyPopup();
-        m_popupInterface = NULL;
+        m_popupInterface = nullptr;
     }
 
     if ( m_winPopup )
@@ -2149,10 +2149,10 @@ void wxComboCtrlBase::DestroyPopup()
         m_winPopup->RemoveEventHandler(m_popupWinEvtHandler);
         wxDELETE(m_popupWinEvtHandler);
         m_winPopup->Destroy();
-        m_winPopup = NULL;
+        m_winPopup = nullptr;
     }
 
-    m_popup = NULL;
+    m_popup = nullptr;
 }
 
 void wxComboCtrlBase::DoSetPopupControl(wxComboPopup* iface)
@@ -2172,7 +2172,7 @@ void wxComboCtrlBase::DoSetPopupControl(wxComboPopup* iface)
     }
     else
     {
-        m_popup = NULL;
+        m_popup = nullptr;
     }
 
     // This must be done after creation
@@ -2187,7 +2187,7 @@ void wxComboCtrlBase::DoSetPopupControl(wxComboPopup* iface)
 void wxComboCtrlBase::EnsurePopupControl()
 {
     if ( !m_popupInterface )
-        SetPopupControl(NULL);
+        SetPopupControl(nullptr);
 }
 
 void wxComboCtrlBase::OnButtonClick()

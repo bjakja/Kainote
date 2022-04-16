@@ -147,14 +147,14 @@ public:
 
     wxFormatConverterBase()
     {
-        m_fmtOrig = NULL;
-        m_fmtLast = NULL;
+        m_fmtOrig = nullptr;
+        m_fmtLast = nullptr;
         m_nCopied = 0;
     }
 
     wxScopedCharTypeBuffer<CharType> Convert(const CharType *format)
     {
-        // this is reset to NULL if we modify the format string
+        // this is reset to nullptr if we modify the format string
         m_fmtOrig = format;
 
         while ( *format )
@@ -271,7 +271,7 @@ public:
             }
         }
 
-        // notice that we only translated the string if m_fmtOrig == NULL (as
+        // notice that we only translated the string if m_fmtOrig == nullptr (as
         // set by CopyAllBefore()), otherwise we should simply use the original
         // format
         if ( m_fmtOrig )
@@ -344,7 +344,7 @@ private:
 
     void CopyAllBefore()
     {
-        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
+        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == nullptr, "logic error" );
 
         // the modified format string is guaranteed to be no longer than
         // 3/2 of the original (worst case: the entire format string consists
@@ -361,7 +361,7 @@ private:
 
         // we won't need it any longer and resetting it also indicates that we
         // modified the format
-        m_fmtOrig = NULL;
+        m_fmtOrig = nullptr;
     }
 
     static bool IsFlagChar(CharType ch)
@@ -658,7 +658,7 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
     wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
                  "more arguments than format string specifiers?" );
 
-    wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
+    wxCHECK_MSG( parser.pspec[n-1] != nullptr, wxFormatString::Arg_Unknown,
                  "requested argument not found - invalid format string?" );
 
     switch ( parser.pspec[n-1]->m_type )

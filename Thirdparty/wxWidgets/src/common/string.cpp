@@ -72,7 +72,7 @@ namespace wxPrivate
 // to make it safe to access it even before all global statics are initialized
 UntypedBufferData *GetUntypedNullData()
 {
-    static UntypedBufferData s_untypedNullData(NULL, 0);
+    static UntypedBufferData s_untypedNullData(nullptr, 0);
 
     return &s_untypedNullData;
 }
@@ -490,9 +490,9 @@ const wchar_t *wxString::AsWChar(const wxMBConv& conv) const
     const size_t lenMB = m_impl.length();
 
     // find out the size of the buffer needed
-    const size_t lenWC = conv.ToWChar(NULL, 0, strMB, lenMB);
+    const size_t lenWC = conv.ToWChar(nullptr, 0, strMB, lenMB);
     if ( lenWC == wxCONV_FAILED )
-        return NULL;
+        return nullptr;
 
     // keep the same buffer if the string size didn't change: this is not only
     // an optimization but also ensure that code which modifies string
@@ -507,14 +507,14 @@ const wchar_t *wxString::AsWChar(const wxMBConv& conv) const
     if ( !m_convertedToWChar.m_str || lenWC != m_convertedToWChar.m_len )
     {
         if ( !const_cast<wxString *>(this)->m_convertedToWChar.Extend(lenWC) )
-            return NULL;
+            return nullptr;
     }
 
     // finally do convert
     m_convertedToWChar.m_str[lenWC] = L'\0';
     if ( conv.ToWChar(m_convertedToWChar.m_str, lenWC,
                       strMB, lenMB) == wxCONV_FAILED )
-        return NULL;
+        return nullptr;
 
     return m_convertedToWChar.m_str;
 }
@@ -541,20 +541,20 @@ const char *wxString::AsChar(const wxMBConv& conv) const
     const size_t lenWC = m_impl.length();
 #endif // wxUSE_UNICODE_UTF8/wxUSE_UNICODE_WCHAR
 
-    const size_t lenMB = conv.FromWChar(NULL, 0, strWC, lenWC);
+    const size_t lenMB = conv.FromWChar(nullptr, 0, strWC, lenWC);
     if ( lenMB == wxCONV_FAILED )
-        return NULL;
+        return nullptr;
 
     if ( !m_convertedToChar.m_str || lenMB != m_convertedToChar.m_len )
     {
         if ( !const_cast<wxString *>(this)->m_convertedToChar.Extend(lenMB) )
-            return NULL;
+            return nullptr;
     }
 
     m_convertedToChar.m_str[lenMB] = '\0';
     if ( conv.FromWChar(m_convertedToChar.m_str, lenMB,
                         strWC, lenWC) == wxCONV_FAILED )
-        return NULL;
+        return nullptr;
 
     return m_convertedToChar.m_str;
 }
@@ -1055,22 +1055,22 @@ size_t wxString::find_first_of(const wxOtherCharType* sz, size_t nStart) const
 
 size_t wxString::find_first_of(const wxOtherCharType* sz, size_t nStart,
                                size_t n) const
-    { return find_first_of(STRCONV(sz, n, NULL), nStart, n); }
+    { return find_first_of(STRCONV(sz, n, nullptr), nStart, n); }
 size_t wxString::find_last_of(const wxOtherCharType* sz, size_t nStart) const
     { return find_last_of(STRCONV(sz), nStart); }
 size_t wxString::find_last_of(const wxOtherCharType* sz, size_t nStart,
                               size_t n) const
-    { return find_last_of(STRCONV(sz, n, NULL), nStart, n); }
+    { return find_last_of(STRCONV(sz, n, nullptr), nStart, n); }
 size_t wxString::find_first_not_of(const wxOtherCharType* sz, size_t nStart) const
     { return find_first_not_of(STRCONV(sz), nStart); }
 size_t wxString::find_first_not_of(const wxOtherCharType* sz, size_t nStart,
                                    size_t n) const
-    { return find_first_not_of(STRCONV(sz, n, NULL), nStart, n); }
+    { return find_first_not_of(STRCONV(sz, n, nullptr), nStart, n); }
 size_t wxString::find_last_not_of(const wxOtherCharType* sz, size_t nStart) const
     { return find_last_not_of(STRCONV(sz), nStart); }
 size_t wxString::find_last_not_of(const wxOtherCharType* sz, size_t nStart,
                                   size_t n) const
-    { return find_last_not_of(STRCONV(sz, n, NULL), nStart, n); }
+    { return find_last_not_of(STRCONV(sz, n, nullptr), nStart, n); }
 
 #undef wxOtherCharType
 #undef STRCONV
@@ -1266,7 +1266,7 @@ wxString wxString::Mid(size_t nFirst, size_t nCount) const
 }
 
 // check that the string starts with prefix and return the rest of the string
-// in the provided pointer if it is not NULL, otherwise return false
+// in the provided pointer if it is not nullptr, otherwise return false
 bool wxString::StartsWith(const wxString& prefix, wxString *rest) const
 {
     if ( compare(0, prefix.length(), prefix) != 0 )
@@ -1283,7 +1283,7 @@ bool wxString::StartsWith(const wxString& prefix, wxString *rest) const
 
 
 // check that the string ends with suffix and return the rest of it in the
-// provided pointer if it is not NULL, otherwise return false
+// provided pointer if it is not nullptr, otherwise return false
 bool wxString::EndsWith(const wxString& suffix, wxString *rest) const
 {
     int start = length() - suffix.length();
@@ -1681,7 +1681,7 @@ int wxString::Find(wxUniChar ch, bool bFromEnd) const
 #endif
 
 #define WX_STRING_TO_X_TYPE_START                                           \
-    wxCHECK_MSG( pVal, false, wxT("NULL output pointer") );                  \
+    wxCHECK_MSG( pVal, false, wxT("nullptr output pointer") );                  \
     DO_IF_NOT_WINCE( errno = 0; )                                           \
     const wxStringCharType *start = wx_str();                               \
     wxStringCharType *end;
@@ -2017,7 +2017,7 @@ int wxString::DoPrintfUtf8(const char *format, ...)
     There is yet one more non-standard implementation and that is our own.
     Fortunately, that can be detected at compile-time.
 
-    On top of all that, ISO C99 explicitly defines snprintf to write a null
+    On top of all that, ISO C99 explicitly defines snprintf to write a nullptr
     character to the last position of the specified buffer.  That would be at
     at the given buffer size minus 1.  It is supposed to do this even if it
     turns out that the buffer is sized too small.
@@ -2118,7 +2118,7 @@ static int DoStringPrintfV(wxString& str,
             // some don't in len == size case, to be safe always add 1
             // FIXME: I don't quite understand this comment.  The vsnprintf
             // function is specifically defined to return the number of
-            // characters printed not including the null terminator.
+            // characters printed not including the nullptr terminator.
             // So OF COURSE you need to add 1 to get the right buffer size.
             // The following line is definitely correct, no question.
             size = len + 1;
@@ -2232,8 +2232,8 @@ bool wxString::Matches(const wxString& mask) const
 #endif
 
   // the last location where '*' matched
-  const wxChar *pszLastStarInText = NULL;
-  const wxChar *pszLastStarInMask = NULL;
+  const wxChar *pszLastStarInText = nullptr;
+  const wxChar *pszLastStarInMask = nullptr;
 
 match:
   for ( ; *pszMask != wxT('\0'); pszMask++, pszTxt++ ) {
@@ -2265,7 +2265,7 @@ match:
           size_t uiLenMask;
           const wxChar *pEndMask = wxStrpbrk(pszMask, wxT("*?"));
 
-          if ( pEndMask != NULL ) {
+          if ( pEndMask != nullptr ) {
             // we have to match the string between two metachars
             uiLenMask = pEndMask - pszMask;
           }
@@ -2276,7 +2276,7 @@ match:
 
           wxString strToMatch(pszMask, uiLenMask);
           const wxChar* pMatch = wxStrstr(pszTxt, strToMatch);
-          if ( pMatch == NULL )
+          if ( pMatch == nullptr )
             return false;
 
           // -1 to compensate "++" in the loop
@@ -2301,7 +2301,7 @@ match:
     pszTxt = pszLastStarInText + 1;
     pszMask = pszLastStarInMask;
 
-    pszLastStarInText = NULL;
+    pszLastStarInText = nullptr;
 
     // don't bother resetting pszLastStarInMask, it's unnecessary
 

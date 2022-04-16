@@ -93,15 +93,15 @@ bool wxStringOperationsUtf8::IsValidUtf8String(const char *str, size_t len)
         return true; // empty string is UTF8 string
 
     const unsigned char *c = (const unsigned char*)str;
-    const unsigned char * const end = (len == wxStringImpl::npos) ? NULL : c + len;
+    const unsigned char * const end = (len == wxStringImpl::npos) ? nullptr : c + len;
 
     for ( ; c != end && *c; ++c )
     {
         unsigned char b = *c;
 
-        if ( end != NULL )
+        if ( end != nullptr )
         {
-            // if the string is not NULL-terminated, verify we have enough
+            // if the string is not nullptr-terminated, verify we have enough
             // bytes in it left for current character's encoding:
             if ( c + ms_utf8IterTable[*c] > end )
                 return false;

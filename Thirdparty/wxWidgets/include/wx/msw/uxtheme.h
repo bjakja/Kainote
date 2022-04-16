@@ -64,7 +64,7 @@ public:
             // But the face name must be converted from Unicode.
             WideCharToMultiByte(CP_ACP, 0, m_lfW.lfFaceName, -1,
                                 m_lfA.lfFaceName, sizeof(m_lfA.lfFaceName),
-                                NULL, NULL);
+                                nullptr, nullptr);
         }
 
         return m_lfA;
@@ -150,10 +150,10 @@ typedef HRESULT (__stdcall *PFNWXUENABLETHEMING)(BOOL);
 class WXDLLIMPEXP_CORE wxUxThemeEngine
 {
 public:
-    // get the theme engine or NULL if themes are not available
+    // get the theme engine or nullptr if themes are not available
     static wxUxThemeEngine *Get();
 
-    // get the theme enging or NULL if themes are not available or not used for
+    // get the theme enging or nullptr if themes are not available or not used for
     // this application
     static wxUxThemeEngine *GetIfActive();
 
@@ -226,7 +226,7 @@ private:
     wxDynamicLibrary m_dllUxTheme;
 
 
-    // the one and only theme engine, initially NULL
+    // the one and only theme engine, initially nullptr
     static wxUxThemeEngine *ms_themeEngine;
 
     // this is a bool which initially has the value -1 meaning "unknown"
@@ -246,19 +246,19 @@ private:
     wxUxThemeEngine *engine = Get();
     return engine && engine->IsAppThemed() && engine->IsThemeActive()
                 ? engine
-                : NULL;
+                : nullptr;
 }
 
 #else // !wxUSE_UXTHEME
 
 /* static */ inline wxUxThemeEngine *wxUxThemeEngine::Get()
 {
-    return NULL;
+    return nullptr;
 }
 
 /* static */ inline wxUxThemeEngine *wxUxThemeEngine::GetIfActive()
 {
-    return NULL;
+    return nullptr;
 }
 
 #endif // wxUSE_UXTHEME/!wxUSE_UXTHEME
@@ -275,7 +275,7 @@ public:
         wxUxThemeEngine *engine = wxUxThemeEngine::Get();
 
         m_hTheme = engine ? (HTHEME)engine->OpenThemeData(GetHwndOf(win), classes)
-                          : NULL;
+                          : nullptr;
     }
 
     operator HTHEME() const { return m_hTheme; }

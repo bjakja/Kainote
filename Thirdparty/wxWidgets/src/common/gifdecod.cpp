@@ -84,8 +84,8 @@ GIFImage::GIFImage()
     transparent = 0;
     disposal = wxANIM_DONOTREMOVE;
     delay = -1;
-    p = (unsigned char *) NULL;
-    pal = (unsigned char *) NULL;
+    p = (unsigned char *) nullptr;
+    pal = (unsigned char *) nullptr;
     ncolours = 0;
 }
 
@@ -319,20 +319,20 @@ wxGIFDecoder::dgif(wxInputStream& stream, GIFImage *img, int interl, int bits)
 {
     static const int allocSize = 4096 + 1;
     int *ab_prefix = new int[allocSize]; // alphabet (prefixes)
-    if (ab_prefix == NULL)
+    if (ab_prefix == nullptr)
     {
         return wxGIF_MEMERR;
     }
 
     int *ab_tail = new int[allocSize];   // alphabet (tails)
-    if (ab_tail == NULL)
+    if (ab_tail == nullptr)
     {
         delete[] ab_prefix;
         return wxGIF_MEMERR;
     }
 
     int *stack = new int[allocSize];     // decompression stack
-    if (stack == NULL)
+    if (stack == nullptr)
     {
         delete[] ab_prefix;
         delete[] ab_tail;

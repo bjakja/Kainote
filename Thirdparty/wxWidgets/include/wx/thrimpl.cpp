@@ -15,6 +15,10 @@
 // wxMutex
 // ----------------------------------------------------------------------------
 
+#include "thread.h"
+
+
+
 wxMutex::wxMutex(wxMutexType mutexType)
 {
     m_internal = new wxMutexInternal(mutexType);
@@ -22,7 +26,7 @@ wxMutex::wxMutex(wxMutexType mutexType)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = NULL;
+        m_internal = nullptr;
     }
 }
 
@@ -33,7 +37,7 @@ wxMutex::~wxMutex()
 
 bool wxMutex::IsOk() const
 {
-    return m_internal != NULL;
+    return m_internal != nullptr;
 }
 
 wxMutexError wxMutex::Lock()
@@ -93,7 +97,7 @@ public:
 
 private:
     // the number of threads currently waiting for this condition
-    LONG m_numWaiters;
+    long m_numWaiters;
 
     // the critical section protecting m_numWaiters
     wxCriticalSection m_csWaiters;
@@ -236,7 +240,7 @@ wxCondition::wxCondition(wxMutex& mutex)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = NULL;
+        m_internal = nullptr;
     }
 }
 
@@ -247,7 +251,7 @@ wxCondition::~wxCondition()
 
 bool wxCondition::IsOk() const
 {
-    return m_internal != NULL;
+    return m_internal != nullptr;
 }
 
 wxCondError wxCondition::Wait()
@@ -292,7 +296,7 @@ wxSemaphore::wxSemaphore(int initialcount, int maxcount)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = NULL;
+        m_internal = nullptr;
     }
 }
 
@@ -303,7 +307,7 @@ wxSemaphore::~wxSemaphore()
 
 bool wxSemaphore::IsOk() const
 {
-    return m_internal != NULL;
+    return m_internal != nullptr;
 }
 
 wxSemaError wxSemaphore::Wait()

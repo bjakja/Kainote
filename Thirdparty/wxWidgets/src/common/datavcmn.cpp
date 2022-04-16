@@ -631,7 +631,7 @@ wxDataViewRendererBase::wxDataViewRendererBase( const wxString &varianttype,
                                                 int WXUNUSED(align) )
 {
     m_variantType = varianttype;
-    m_owner = NULL;
+    m_owner = nullptr;
 }
 
 wxDataViewRendererBase::~wxDataViewRendererBase()
@@ -875,7 +875,7 @@ wxSize wxDataViewCustomRendererBase::GetTextExtent(const wxString& str) const
     {
         wxFont font(m_attr.GetEffectiveFont(view->GetFont()));
         wxSize size;
-        view->GetTextExtent(str, &size.x, &size.y, NULL, NULL, &font);
+        view->GetTextExtent(str, &size.x, &size.y, nullptr, nullptr, &font);
         return size;
     }
     else
@@ -991,7 +991,7 @@ void wxDataViewColumnBase::Init(wxDataViewRenderer *renderer,
 {
     m_renderer = renderer;
     m_model_column = model_column;
-    m_owner = NULL;
+    m_owner = nullptr;
     m_renderer->SetOwner( (wxDataViewColumn*) this );
 }
 
@@ -1008,7 +1008,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxDataViewCtrlBase, wxControl)
 
 wxDataViewCtrlBase::wxDataViewCtrlBase()
 {
-    m_model = NULL;
+    m_model = nullptr;
     m_expander_column = 0;
     m_indent = 8;
 }
@@ -1018,7 +1018,7 @@ wxDataViewCtrlBase::~wxDataViewCtrlBase()
     if (m_model)
     {
         m_model->DecRef();
-        m_model = NULL;
+        m_model = nullptr;
     }
 }
 
@@ -1777,7 +1777,7 @@ void wxDataViewListStore::SetItemData( const wxDataViewItem& item, wxUIntPtr dat
 wxUIntPtr wxDataViewListStore::GetItemData( const wxDataViewItem& item ) const
 {
     wxDataViewListStoreLine* line = m_data[wxPtrToUInt( item.GetID() ) - 1];
-    if (!line) return static_cast<wxUIntPtr>(NULL);
+    if (!line) return static_cast<wxUIntPtr>(nullptr);
 
     return line->GetData();
 }
@@ -1971,7 +1971,7 @@ wxDataViewTreeStoreContainerNode::~wxDataViewTreeStoreContainerNode()
 
 wxDataViewTreeStore::wxDataViewTreeStore()
 {
-    m_root = new wxDataViewTreeStoreContainerNode( NULL, wxEmptyString );
+    m_root = new wxDataViewTreeStoreContainerNode( nullptr, wxEmptyString );
 }
 
 wxDataViewTreeStore::~wxDataViewTreeStore()
@@ -2170,7 +2170,7 @@ void wxDataViewTreeStore::SetItemData( const wxDataViewItem& item, wxClientData 
 wxClientData *wxDataViewTreeStore::GetItemData( const wxDataViewItem& item ) const
 {
     wxDataViewTreeStoreNode *node = FindNode( item );
-    if (!node) return NULL;
+    if (!node) return nullptr;
 
     return node->GetData();
 }
@@ -2320,7 +2320,7 @@ wxDataViewTreeStoreContainerNode *wxDataViewTreeStore::FindContainerNode( const 
     wxDataViewTreeStoreNode* node = (wxDataViewTreeStoreNode*) item.GetID();
 
     if (!node->IsContainer())
-        return NULL;
+        return nullptr;
 
     return (wxDataViewTreeStoreContainerNode*) node;
 }

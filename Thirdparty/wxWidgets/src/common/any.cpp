@@ -113,7 +113,7 @@ public:
         }
 
         // Nothing found
-        return NULL;
+        return nullptr;
     }
 
 private:
@@ -121,7 +121,7 @@ private:
     wxVector<wxAnyToVariantRegistration*>   m_anyToVariantRegs;
 };
 
-static wxAnyValueTypeGlobals* g_wxAnyValueTypeGlobals = NULL;
+static wxAnyValueTypeGlobals* g_wxAnyValueTypeGlobals = nullptr;
 
 
 WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImplVariantData)
@@ -177,7 +177,7 @@ bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
     wxVariantDataFactory f =
         g_wxAnyValueTypeGlobals->FindVariantDataFactory(any.GetType());
 
-    wxVariantData* data = NULL;
+    wxVariantData* data = nullptr;
 
     if ( f )
     {
@@ -519,8 +519,8 @@ public:
 #if wxUSE_EXTENDED_RTTI
     virtual const wxTypeInfo* GetTypeInfo() const
     {
-        wxFAIL_MSG("Null Type Info not available");
-        return NULL;
+        wxFAIL_MSG("nullptr Type Info not available");
+        return nullptr;
     }
 #endif
 

@@ -109,7 +109,7 @@ void wxMessageOutputBest::Output(const wxString& str)
 {
 #ifdef __WINDOWS__
     // decide whether to use console output or not
-    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
+    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
     const bool hasStderr = traits ? traits->CanUseStderr() : false;
 
     if ( !(m_flags & wxMSGOUT_PREFER_MSGBOX) )
@@ -124,7 +124,7 @@ void wxMessageOutputBest::Output(const wxString& str)
     else // Use some title to avoid default "Error"
         title = _("Message");
 
-    ::MessageBox(NULL, str.t_str(), title.t_str(), MB_ICONINFORMATION | MB_OK);
+    ::MessageBox(nullptr, str.t_str(), title.t_str(), MB_ICONINFORMATION | MB_OK);
 #else // !__WINDOWS__
     // TODO: use the native message box for the other ports too
     wxMessageOutputStderr::Output(str);

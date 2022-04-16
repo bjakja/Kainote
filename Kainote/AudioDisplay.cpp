@@ -323,7 +323,7 @@ bool AudioDisplay::InitDX(const wxSize &size)
 	wxSize sizeVerdana11 = verdana11.GetPixelSize();
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma13.y, sizeTahoma13.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma13), _("Nie można stworzyć czcionki D3DX"));
 	HR(D3DXCreateFontW(d3dDevice, sizeTahoma8.y, sizeTahoma8.x, FW_NORMAL, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Tahoma"), &d3dFontTahoma8), _("Nie można stworzyć czcionki D3DX"));
-	HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Nie można stworzyć czcionki D3DX"));
+	//HR(D3DXCreateFontW(d3dDevice, sizeVerdana11.y, sizeVerdana11.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_TT_ONLY_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, TEXT("Verdana"), &d3dFontVerdana11), _("Nie można stworzyć czcionki D3DX"));
 	//HR(d3dLine->SetAntialias(TRUE), _("Linia nie ustawi AA"));
 	HR(d3dDevice->CreateOffscreenPlainSurface(size.x, size.y, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &spectrumSurface, 0), _("Nie można stworzyć plain surface"));
 	//HR(d3dDevice->CreateTexture(size.x, size.y, 1, D3DUSAGE_RENDERTARGET,
@@ -1062,7 +1062,7 @@ void AudioDisplay::DrawProgress()
 	textParcent.top = halfY - 20;
 	textParcent.bottom = halfY + 20;
 	wxString txt = std::to_string((int)(provider->GetAudioProgress() * 100.f)) + L"%";
-	
+
 	d3dLine->SetWidth(1);
 	d3dLine->Begin();
 	d3dLine->Draw(&vectors[4], 5, 0xFF00FFFF);
@@ -1072,8 +1072,9 @@ void AudioDisplay::DrawProgress()
 	d3dLine->Begin();
 	d3dLine->Draw(&vectors[14], 2, 0xFFFFFFFF);
 	d3dLine->End();
-
-	DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	if (d3dFontTahoma13) {
+		DRAWOUTTEXT(d3dFontTahoma13, txt, textParcent, DT_CENTER | DT_VCENTER, 0xFFFFFFFF)
+	}
 }
 
 //////////////////////////

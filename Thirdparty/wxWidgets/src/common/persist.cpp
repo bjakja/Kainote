@@ -33,7 +33,7 @@
 namespace
 {
 
-wxPersistenceManager* gs_manager = NULL;
+wxPersistenceManager* gs_manager = nullptr;
 
 } // anonymous namespace
 
@@ -80,7 +80,7 @@ wxPersistentObject *wxPersistenceManager::Find(void *obj) const
 {
     const wxPersistentObjectsMap::const_iterator
         it = m_persistentObjects.find(obj);
-    return it == m_persistentObjects.end() ? NULL : it->second;
+    return it == m_persistentObjects.end() ? nullptr : it->second;
 }
 
 wxPersistentObject *

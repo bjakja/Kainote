@@ -45,7 +45,7 @@
 // in the version after it completely.
 //
 // Recommended setting: 0 (please update your code)
-#define WXWIN_COMPATIBILITY_2_8 1
+#define WXWIN_COMPATIBILITY_2_8 0
 
 // MSW-only: Set to 0 for accurate dialog units, else 1 for old behaviour when
 // default system font is used for wxWindow::GetCharWidth/Height() instead of
@@ -1085,7 +1085,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (can't be disabled under MSW)
-#define wxUSE_MENUS         1
+#define wxUSE_MENUS         0
 
 // Use wxNotificationMessage.
 //
@@ -1369,7 +1369,7 @@
 
 #define wxUSE_IPC         1
                                 // 0 for no interprocess comms
-#define wxUSE_HELP        1
+#define wxUSE_HELP        0
                                 // 0 for no help facility
 
 // Should we use MS HTML help for wxHelpController? If disabled, neither
@@ -1379,7 +1379,7 @@
 //
 // Recommended setting: 1, only set to 0 if you have trouble compiling
 // wxCHMHelpController (could be a problem with really ancient compilers)
-#define wxUSE_MS_HTML_HELP 1
+#define wxUSE_MS_HTML_HELP 0
 
 
 // Use wxHTML-based help controller?

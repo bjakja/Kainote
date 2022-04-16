@@ -410,7 +410,7 @@ public:
 
 
     CBaseVideoRenderer(REFCLSID RenderClass, // CLSID for this renderer
-                       __in_opt const char * pName,         // Debug ONLY description
+                       __in_opt LPCTSTR pName,         // Debug ONLY description
                        __inout_opt LPUNKNOWN pUnk,       // Aggregated owner object
                        __inout HRESULT *phr);        // General OLE return code
 

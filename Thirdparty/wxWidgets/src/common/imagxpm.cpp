@@ -125,7 +125,7 @@ bool wxXPMHandler::SaveFile(wxImage * image,
     if ( image->HasOption(wxIMAGE_OPTION_FILENAME) )
     {
         wxFileName::SplitPath(image->GetOption(wxIMAGE_OPTION_FILENAME),
-                              NULL, &sName, NULL);
+                              nullptr, &sName, nullptr);
         sName << wxT("_xpm");
     }
 

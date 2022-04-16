@@ -65,7 +65,7 @@ enum
 class wxTreeListItem : public wxItemId<wxTreeListModelNode*>
 {
 public:
-    wxTreeListItem(wxTreeListModelNode* item = NULL)
+    wxTreeListItem(wxTreeListModelNode* item = nullptr)
         : wxItemId<wxTreeListModelNode*>(item)
     {
     }
@@ -87,7 +87,7 @@ class wxTreeListItemComparator
 public:
     wxTreeListItemComparator() { }
 
-    // The comparison function should return negative, null or positive value
+    // The comparison function should return negative, nullptr or positive value
     // depending on whether the first item is less than, equal to or greater
     // than the second one. The items should be compared using their values for
     // the given column.
@@ -202,7 +202,7 @@ public:
                               const wxString& text,
                               int imageClosed = NO_IMAGE,
                               int imageOpened = NO_IMAGE,
-                              wxClientData* data = NULL)
+                              wxClientData* data = nullptr)
     {
         return DoInsertItem(parent, wxTLI_LAST, text,
                             imageClosed, imageOpened, data);
@@ -213,7 +213,7 @@ public:
                               const wxString& text,
                               int imageClosed = NO_IMAGE,
                               int imageOpened = NO_IMAGE,
-                              wxClientData* data = NULL)
+                              wxClientData* data = nullptr)
     {
         return DoInsertItem(parent, previous, text,
                             imageClosed, imageOpened, data);
@@ -223,7 +223,7 @@ public:
                                const wxString& text,
                                int imageClosed = NO_IMAGE,
                                int imageOpened = NO_IMAGE,
-                               wxClientData* data = NULL)
+                               wxClientData* data = nullptr)
     {
         return DoInsertItem(parent, wxTLI_FIRST, text,
                             imageClosed, imageOpened, data);
@@ -366,7 +366,7 @@ public:
     // parameters with the column which is currently used for sorting and
     // whether we sort using ascending or descending order. Otherwise, i.e. if
     // the control contents is unsorted, simply return false.
-    bool GetSortColumn(unsigned* col, bool* ascendingOrder = NULL);
+    bool GetSortColumn(unsigned* col, bool* ascendingOrder = nullptr);
 
     // Set the object to use for comparing the items. It will be called when
     // the control is being sorted because the user clicked on a sortable
@@ -374,7 +374,7 @@ public:
     //
     // The provided pointer is stored by the control so the object it points to
     // must have a life-time equal or greater to that of the control itself. In
-    // addition, the pointer can be NULL to stop using custom comparator and
+    // addition, the pointer can be nullptr to stop using custom comparator and
     // revert to the default alphabetical comparison.
     void SetItemComparator(wxTreeListItemComparator* comparator);
 

@@ -247,7 +247,7 @@ int ReadTGA(wxImage* image, wxInputStream& stream)
 
     unsigned char *dst = image->GetData();
 
-    unsigned char* alpha = NULL;
+    unsigned char* alpha = nullptr;
     if (bpp == 16 || bpp == 32)
     {
         image->SetAlpha();
@@ -259,7 +259,7 @@ int ReadTGA(wxImage* image, wxInputStream& stream)
     if (stream.SeekI(offset, wxFromStart) == wxInvalidOffset)
         return wxTGA_INVFORMAT;
 
-    unsigned char *palette = NULL;
+    unsigned char *palette = nullptr;
     // Load a palette if we have one.
     if (colorType == wxTGA_MAPPED)
     {

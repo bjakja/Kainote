@@ -160,7 +160,7 @@ wxString wxNow()
     return wxEmptyString;
 #endif
 #else
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
     char *date = ctime(&now);
     date[24] = '\0';
     return wxString::FromAscii(date);
@@ -217,7 +217,7 @@ bool wxIsPlatformLittleEndian()
  * Class to make it easier to specify platform-dependent values
  */
 
-wxArrayInt*  wxPlatform::sm_customPlatforms = NULL;
+wxArrayInt*  wxPlatform::sm_customPlatforms = nullptr;
 
 void wxPlatform::Copy(const wxPlatform& platform)
 {
@@ -511,7 +511,7 @@ wxString wxGetCurrentDir()
     bool ok;
     do
     {
-        ok = getcwd(dir.GetWriteBuf(len + 1), len) != NULL;
+        ok = getcwd(dir.GetWriteBuf(len + 1), len) != nullptr;
         dir.UngetWriteBuf();
 
         if ( !ok )
@@ -548,7 +548,7 @@ wxString wxGetCurrentDir()
 
 bool wxGetEnvMap(wxEnvVariableHashMap *map)
 {
-    wxCHECK_MSG( map, false, wxS("output pointer can't be NULL") );
+    wxCHECK_MSG( map, false, wxS("output pointer can't be nullptr") );
 
 #if defined(__VISUALC__)
     // This variable only exists to force the CRT to fill the wide char array,
@@ -560,7 +560,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
 #elif defined(__VMS)
    // Now this routine wil give false for OpenVMS
    // TODO : should we do something with logicals?
-    char **env=NULL;
+    char **env=nullptr;
 #elif defined(__WXOSX__)
 #if wxOSX_USE_COCOA_OR_CARBON
     // Under Mac shared libraries don't have access to the global environ
@@ -571,7 +571,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
         return false;
     char **env = *penv;
 #else
-    char **env=NULL;
+    char **env=nullptr;
     // todo translate NSProcessInfo environment into map
 #endif
 #else // non-MSVC non-Mac
@@ -626,7 +626,7 @@ bool wxGetEnvMap(wxEnvVariableHashMap *map)
 #if wxUSE_STREAMS
 static bool ReadAll(wxInputStream *is, wxArrayString& output)
 {
-    wxCHECK_MSG( is, false, wxT("NULL stream in wxExecute()?") );
+    wxCHECK_MSG( is, false, wxT("nullptr stream in wxExecute()?") );
 
     // the stream could be already at EOF or in wxSTREAM_BROKEN_PIPE state
     is->Reset();
@@ -698,7 +698,7 @@ static long wxDoExecuteWithCapture(const wxString& command,
 long wxExecute(const wxString& command, wxArrayString& output, int flags,
                const wxExecuteEnv *env)
 {
-    return wxDoExecuteWithCapture(command, output, NULL, flags, env);
+    return wxDoExecuteWithCapture(command, output, nullptr, flags, env);
 }
 
 long wxExecute(const wxString& command,
@@ -837,7 +837,7 @@ void wxQsort(void* pbase, size_t total_elems,
       stack_node stack[STACK_SIZE];
       stack_node *top = stack;
 
-      PUSH (NULL, NULL);
+      PUSH (nullptr, nullptr);
 
       while (STACK_NOT_EMPTY)
         {
@@ -1224,8 +1224,8 @@ wxString wxStripMenuCodes(const wxString& in, int flags)
 // ----------------------------------------------------------------------------
 
 /*
- * If parent is non-NULL, look through children for a label or title
- * matching the specified string. If NULL, look through all top-level windows.
+ * If parent is non-nullptr, look through children for a label or title
+ * matching the specified string. If nullptr, look through all top-level windows.
  *
  */
 
@@ -1237,8 +1237,8 @@ wxFindWindowByLabel (const wxString& title, wxWindow * parent)
 
 
 /*
- * If parent is non-NULL, look through children for a name
- * matching the specified string. If NULL, look through all top-level windows.
+ * If parent is non-nullptr, look through children for a name
+ * matching the specified string. If nullptr, look through all top-level windows.
  *
  */
 
@@ -1275,7 +1275,7 @@ wxFindMenuItemId(wxFrame *frame,
 wxWindow* wxFindWindowAtPoint(wxWindow* win, const wxPoint& pt)
 {
     if (!win->IsShown())
-        return NULL;
+        return nullptr;
 
     // Hack for wxNotebook case: at least in wxGTK, all pages
     // claim to be shown, so we must only deal with the selected one.
@@ -1315,7 +1315,7 @@ wxWindow* wxFindWindowAtPoint(wxWindow* win, const wxPoint& pt)
     if (rect.Contains(pt))
         return win;
 
-    return NULL;
+    return nullptr;
 }
 
 wxWindow* wxGenericFindWindowAtPoint(const wxPoint& pt)
@@ -1332,7 +1332,7 @@ wxWindow* wxGenericFindWindowAtPoint(const wxPoint& pt)
             return found;
         node = node->GetPrevious();
     }
-    return NULL;
+    return nullptr;
 }
 
 // ----------------------------------------------------------------------------
@@ -1600,7 +1600,7 @@ void wxWindowDisabler::DoDisable(wxWindow *winToSkip)
 {
     // remember the top level windows which were already disabled, so that we
     // don't reenable them later
-    m_winDisabled = NULL;
+    m_winDisabled = nullptr;
 
     wxWindowList::compatibility_iterator node;
     for ( node = wxTopLevelWindows.GetFirst(); node; node = node->GetNext() )

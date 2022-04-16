@@ -15,7 +15,8 @@
 
 // Last update: November 22, 2001
 
-#pragma once
+#ifndef NULLTYPE_INC_
+#define NULLTYPE_INC_
 
 namespace Loki
 {
@@ -35,4 +36,4 @@ namespace Loki
 // November 22, 2001: minor change to support porting to boost
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#endif // NULLTYPE_INC_

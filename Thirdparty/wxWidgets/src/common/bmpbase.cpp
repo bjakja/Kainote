@@ -88,7 +88,7 @@ wxBitmapHandler *wxBitmapBase::FindHandler(const wxString& name)
             return handler;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxBitmapHandler *wxBitmapBase::FindHandler(const wxString& extension, wxBitmapType bitmapType)
@@ -102,7 +102,7 @@ wxBitmapHandler *wxBitmapBase::FindHandler(const wxString& extension, wxBitmapTy
             return handler;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 wxBitmapHandler *wxBitmapBase::FindHandler(wxBitmapType bitmapType)
@@ -115,7 +115,7 @@ wxBitmapHandler *wxBitmapBase::FindHandler(wxBitmapType bitmapType)
             return handler;
         node = node->GetNext();
     }
-    return NULL;
+    return nullptr;
 }
 
 void wxBitmapBase::CleanUpHandlers()
@@ -152,7 +152,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxBitmapBaseModule, wxModule)
 
 wxBitmap::wxBitmap(const char* const* bits)
 {
-    wxCHECK2_MSG(bits != NULL, return, wxT("invalid bitmap data"));
+    wxCHECK2_MSG(bits != nullptr, return, wxT("invalid bitmap data"));
 
 #if wxUSE_IMAGE && wxUSE_XPM
     wxImage image(bits);

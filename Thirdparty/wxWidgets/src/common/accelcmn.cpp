@@ -25,13 +25,13 @@
 
 #if wxUSE_ACCEL
 
-#ifndef WX_PRECOMP
+//#ifndef WX_PRECOMP
     #include "wx/accel.h"
     #include "wx/string.h"
     #include "wx/intl.h"
     #include "wx/log.h"
     #include "wx/crt.h"
-#endif //WX_PRECOMP
+//#endif //WX_PRECOMP
 
 wxAcceleratorTable wxNullAcceleratorTable;
 
@@ -285,14 +285,14 @@ wxAcceleratorEntry *wxAcceleratorEntry::Create(const wxString& str)
     {
         // It's ok to pass strings not containing any accelerators at all to
         // this function, wxMenuItem code does it and we should just return
-        // NULL in this case.
-        return NULL;
+        // nullptr in this case.
+        return nullptr;
     }
 
     int flags,
         keyCode;
     if ( !ParseAccel(accelStr, &flags, &keyCode) )
-        return NULL;
+        return nullptr;
 
     return new wxAcceleratorEntry(flags, keyCode);
 }

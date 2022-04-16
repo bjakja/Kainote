@@ -330,7 +330,7 @@ typedef my_cquantizer * my_cquantize_ptr;
  * initialized to zeroes by start_pass.
  * An output_buf parameter is required by the method signature, but no data
  * is actually output (in fact the buffer controller is probably passing a
- * NULL pointer).
+ * nullptr pointer).
  */
 
 void
@@ -389,12 +389,12 @@ typedef box * boxptr;
 boxptr
 find_biggest_color_pop (boxptr boxlist, int numboxes)
 /* Find the splittable box with the largest color population */
-/* Returns NULL if no splittable boxes remain */
+/* Returns nullptr if no splittable boxes remain */
 {
   register boxptr boxp;
   register int i;
   register long maxc = 0;
-  boxptr which = NULL;
+  boxptr which = nullptr;
 
   for (i = 0, boxp = boxlist; i < numboxes; i++, boxp++) {
     if (boxp->colorcount > maxc && boxp->volume > 0) {
@@ -409,12 +409,12 @@ find_biggest_color_pop (boxptr boxlist, int numboxes)
 boxptr
 find_biggest_volume (boxptr boxlist, int numboxes)
 /* Find the splittable box with the largest (scaled) volume */
-/* Returns NULL if no splittable boxes remain */
+/* Returns nullptr if no splittable boxes remain */
 {
   register boxptr boxp;
   register int i;
   register INT32 maxv = 0;
-  boxptr which = NULL;
+  boxptr which = nullptr;
 
   for (i = 0, boxp = boxlist; i < numboxes; i++, boxp++) {
     if (boxp->volume > maxv) {
@@ -555,7 +555,7 @@ median_cut (j_decompress_ptr cinfo, boxptr boxlist, int numboxes,
     } else {
       b1 = find_biggest_volume(boxlist, numboxes);
     }
-    if (b1 == NULL)     /* no splittable boxes left! */
+    if (b1 == nullptr)     /* no splittable boxes left! */
       break;
     b2 = &boxlist[numboxes];    /* where new box will go */
     /* Copy the color bounds to the new box. */
@@ -1315,12 +1315,12 @@ start_pass_2_quant (j_decompress_ptr cinfo, bool is_pre_scan)
       size_t arraysize = (size_t) ((cinfo->output_width + 2) *
                    (3 * sizeof(FSERROR)));
       /* Allocate Floyd-Steinberg workspace if we didn't already. */
-      if (cquantize->fserrors == NULL)
+      if (cquantize->fserrors == nullptr)
     cquantize->fserrors = (INT16*) malloc(arraysize);
       /* Initialize the propagated errors to zero. */
       memset((void  *) cquantize->fserrors, 0, arraysize);
       /* Make the error-limit table if we didn't already. */
-      if (cquantize->error_limiter == NULL)
+      if (cquantize->error_limiter == nullptr)
     init_error_limit(cinfo);
       cquantize->on_odd_row = false;
     }
@@ -1365,8 +1365,8 @@ jinit_2pass_quantizer (j_decompress_ptr cinfo)
   cinfo->cquantize = (jpeg_color_quantizer *) cquantize;
   cquantize->pub.start_pass = start_pass_2_quant;
   cquantize->pub.new_color_map = new_color_map_2_quant;
-  cquantize->fserrors = NULL;   /* flag optional arrays not allocated */
-  cquantize->error_limiter = NULL;
+  cquantize->fserrors = nullptr;   /* flag optional arrays not allocated */
+  cquantize->error_limiter = nullptr;
 
 
   /* Allocate the histogram/inverse colormap storage */
@@ -1587,10 +1587,10 @@ bool wxQuantize::Quantize(const wxImage& src, wxImage& dest,
         // Fill the first 20 entries with Windows system colours
         if (flags & wxQUANTIZE_INCLUDE_WINDOWS_COLOURS)
         {
-            HDC hDC = ::GetDC(NULL);
+            HDC hDC = ::GetDC(nullptr);
             PALETTEENTRY* entries = new PALETTEENTRY[windowsSystemColourCount];
             ::GetSystemPaletteEntries(hDC, 0, windowsSystemColourCount, entries);
-            ::ReleaseDC(NULL, hDC);
+            ::ReleaseDC(nullptr, hDC);
 
             for (i = 0; i < windowsSystemColourCount; i++)
             {
@@ -1637,7 +1637,7 @@ bool wxQuantize::Quantize(const wxImage& src,
                           unsigned char** eightBitData,
                           int flags)
 {
-    wxPalette* palette = NULL;
+    wxPalette* palette = nullptr;
     if ( !Quantize(src, dest, & palette, desiredNoColours, eightBitData, flags) )
         return false;
 

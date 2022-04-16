@@ -247,13 +247,13 @@ public:
                           return false; )
 
     // Deprecated, use (and override) ActivateCell() instead
-    wxDEPRECATED_BUT_USED_INTERNALLY_INLINE(
+    //wxDEPRECATED_BUT_USED_INTERNALLY_INLINE(
         virtual bool LeftClick(wxPoint WXUNUSED(cursor),
                                wxRect WXUNUSED(cell),
                                wxDataViewModel *WXUNUSED(model),
                                const wxDataViewItem & WXUNUSED(item),
                                unsigned int WXUNUSED(col)),
-                          return false; )
+                          return false; //)
 
     virtual bool StartDrag(const wxPoint& WXUNUSED(cursor),
                            const wxRect& WXUNUSED(cell),

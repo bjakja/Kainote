@@ -63,7 +63,7 @@ void wxStreamBuffer::InitBuffer()
 {
     m_buffer_start =
     m_buffer_end =
-    m_buffer_pos = NULL;
+    m_buffer_pos = nullptr;
 
     // if we are going to allocate the buffer, we should free it later as well
     m_destroybuf = true;
@@ -90,7 +90,7 @@ wxStreamBuffer::wxStreamBuffer(BufMode mode)
 {
     Init();
 
-    m_stream = NULL;
+    m_stream = nullptr;
     m_mode = mode;
 
     m_flushable = false;
@@ -118,7 +118,7 @@ void wxStreamBuffer::FreeBuffer()
     if ( m_destroybuf )
     {
         free(m_buffer_start);
-        m_buffer_start = NULL;
+        m_buffer_start = nullptr;
     }
 }
 
@@ -129,12 +129,12 @@ wxStreamBuffer::~wxStreamBuffer()
 
 wxInputStream *wxStreamBuffer::GetInputStream() const
 {
-    return m_mode == write ? NULL : (wxInputStream *)m_stream;
+    return m_mode == write ? nullptr : (wxInputStream *)m_stream;
 }
 
 wxOutputStream *wxStreamBuffer::GetOutputStream() const
 {
-    return m_mode == read ? NULL : (wxOutputStream *)m_stream;
+    return m_mode == read ? nullptr : (wxOutputStream *)m_stream;
 }
 
 void wxStreamBuffer::SetBufferIO(void *buffer_start,
@@ -391,7 +391,7 @@ char wxStreamBuffer::GetChar()
 
 size_t wxStreamBuffer::Read(void *buffer, size_t size)
 {
-    wxASSERT_MSG( buffer, wxT("Warning: Null pointer is about to be used") );
+    wxASSERT_MSG( buffer, wxT("Warning: nullptr pointer is about to be used") );
 
     /* Clear buffer first */
     memset(buffer, 0x00, size);
@@ -472,7 +472,7 @@ size_t wxStreamBuffer::Read(wxStreamBuffer *dbuf)
 
 size_t wxStreamBuffer::Write(const void *buffer, size_t size)
 {
-    wxASSERT_MSG( buffer, wxT("Warning: Null pointer is about to be send") );
+    wxASSERT_MSG( buffer, wxT("Warning: nullptr pointer is about to be send") );
 
     if (m_stream)
     {
@@ -719,7 +719,7 @@ IMPLEMENT_ABSTRACT_CLASS(wxInputStream, wxStreamBase)
 
 wxInputStream::wxInputStream()
 {
-    m_wback = NULL;
+    m_wback = nullptr;
     m_wbacksize =
     m_wbackcur = 0;
 }
@@ -753,7 +753,7 @@ char *wxInputStream::AllocSpaceWBack(size_t needed_size)
     char *temp_b = (char *)malloc(needed_size + toget);
 
     if (!temp_b)
-        return NULL;
+        return nullptr;
 
     // copy previous data (and free old buffer) if needed
     if (m_wback)
@@ -772,7 +772,7 @@ char *wxInputStream::AllocSpaceWBack(size_t needed_size)
 
 size_t wxInputStream::GetWBack(void *buf, size_t size)
 {
-    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be used") );
+    wxASSERT_MSG( buf, wxT("Warning: nullptr pointer is about to be used") );
 
     /* Clear buffer first */
     memset(buf, 0x00, size);
@@ -797,7 +797,7 @@ size_t wxInputStream::GetWBack(void *buf, size_t size)
     {
         // TODO: should we really free it here all the time? maybe keep it?
         free(m_wback);
-        m_wback = NULL;
+        m_wback = nullptr;
         m_wbacksize = 0;
         m_wbackcur = 0;
     }
@@ -808,7 +808,7 @@ size_t wxInputStream::GetWBack(void *buf, size_t size)
 
 size_t wxInputStream::Ungetch(const void *buf, size_t bufsize)
 {
-    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be used in Ungetch()") );
+    wxASSERT_MSG( buf, wxT("Warning: nullptr pointer is about to be used in Ungetch()") );
 
     if ( m_lasterror != wxSTREAM_NO_ERROR && m_lasterror != wxSTREAM_EOF )
     {
@@ -842,7 +842,7 @@ int wxInputStream::GetC()
 
 wxInputStream& wxInputStream::Read(void *buf, size_t size)
 {
-    wxASSERT_MSG( buf, wxT("Warning: Null pointer is about to be read") );
+    wxASSERT_MSG( buf, wxT("Warning: nullptr pointer is about to be read") );
 
     char *p = (char *)buf;
     m_lastcount = 0;
@@ -974,7 +974,7 @@ wxFileOffset wxInputStream::SeekI(wxFileOffset pos, wxSeekMode mode)
         wxLogDebug( wxT("Seeking in stream which has data written back to it.") );
 
         free(m_wback);
-        m_wback = NULL;
+        m_wback = nullptr;
         m_wbacksize = 0;
         m_wbackcur = 0;
     }
@@ -1116,7 +1116,7 @@ wxFileOffset wxCountingOutputStream::OnSysTell() const
 IMPLEMENT_ABSTRACT_CLASS(wxFilterInputStream, wxInputStream)
 
 wxFilterInputStream::wxFilterInputStream()
- :  m_parent_i_stream(NULL),
+ :  m_parent_i_stream(nullptr),
     m_owns(false)
 {
 }
@@ -1146,7 +1146,7 @@ wxFilterInputStream::~wxFilterInputStream()
 IMPLEMENT_ABSTRACT_CLASS(wxFilterOutputStream, wxOutputStream)
 
 wxFilterOutputStream::wxFilterOutputStream()
- :  m_parent_o_stream(NULL),
+ :  m_parent_o_stream(nullptr),
     m_owns(false)
 {
 }
@@ -1219,7 +1219,7 @@ bool wxFilterClassFactoryBase::CanHandle(const wxString& protocol,
 
 IMPLEMENT_ABSTRACT_CLASS(wxFilterClassFactory, wxFilterClassFactoryBase)
 
-wxFilterClassFactory *wxFilterClassFactory::sm_first = NULL;
+wxFilterClassFactory *wxFilterClassFactory::sm_first = nullptr;
 
 void wxFilterClassFactory::Remove()
 {
@@ -1245,7 +1245,7 @@ namespace
 
 // helper function used for initializing the buffer used by
 // wxBufferedInput/OutputStream: it simply returns the provided buffer if it's
-// not NULL or creates a buffer of the given size otherwise
+// not nullptr or creates a buffer of the given size otherwise
 template <typename T>
 wxStreamBuffer *
 CreateBufferIfNeeded(T& stream, wxStreamBuffer *buffer, size_t bufsize = 1024)
@@ -1266,7 +1266,7 @@ wxBufferedInputStream::wxBufferedInputStream(wxInputStream& stream,
                                              size_t bufsize)
                      : wxFilterInputStream(stream)
 {
-    m_i_streambuf = CreateBufferIfNeeded(*this, NULL, bufsize);
+    m_i_streambuf = CreateBufferIfNeeded(*this, nullptr, bufsize);
 }
 
 wxBufferedInputStream::~wxBufferedInputStream()
@@ -1323,7 +1323,7 @@ wxFileOffset wxBufferedInputStream::SeekI(wxFileOffset pos, wxSeekMode mode)
         wxLogDebug( wxT("Seeking in stream which has data written back to it.") );
 
         free(m_wback);
-        m_wback = NULL;
+        m_wback = nullptr;
         m_wbacksize = 0;
         m_wbackcur = 0;
     }
@@ -1379,7 +1379,7 @@ wxBufferedOutputStream::wxBufferedOutputStream(wxOutputStream& stream,
                                                size_t bufsize)
                       : wxFilterOutputStream(stream)
 {
-    m_o_streambuf = CreateBufferIfNeeded(*this, NULL, bufsize);
+    m_o_streambuf = CreateBufferIfNeeded(*this, nullptr, bufsize);
 }
 
 wxBufferedOutputStream::~wxBufferedOutputStream()

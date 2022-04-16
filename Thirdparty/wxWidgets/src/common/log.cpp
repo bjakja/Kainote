@@ -195,7 +195,7 @@ private:
 void wxSafeShowMessage(const wxString& title, const wxString& text)
 {
 #ifdef __WINDOWS__
-    ::MessageBox(NULL, text.t_str(), title.t_str(), MB_OK | MB_ICONSTOP);
+    ::MessageBox(nullptr, text.t_str(), title.t_str(), MB_OK | MB_ICONSTOP);
 #else
     wxFprintf(stderr, wxS("%s: %s\n"), title.c_str(), text.c_str());
     fflush(stderr);
@@ -523,7 +523,7 @@ wxLog *wxLog::GetActiveTarget()
 /* static */
 wxLog *wxLog::GetMainThreadActiveTarget()
 {
-    if ( ms_bAutoCreate && ms_pLogger == NULL ) {
+    if ( ms_bAutoCreate && ms_pLogger == nullptr ) {
         // prevent infinite recursion if someone calls wxLogXXX() from
         // wxApp::CreateLogTarget()
         static bool s_bInGetActiveTarget = false;
@@ -531,7 +531,7 @@ wxLog *wxLog::GetMainThreadActiveTarget()
             s_bInGetActiveTarget = true;
 
             // ask the application to create a log target for us
-            if ( wxTheApp != NULL )
+            if ( wxTheApp != nullptr )
                 ms_pLogger = wxTheApp->GetTraits()->CreateLogTarget();
             else
                 ms_pLogger = new wxLogOutputBest;
@@ -547,7 +547,7 @@ wxLog *wxLog::GetMainThreadActiveTarget()
 
 wxLog *wxLog::SetActiveTarget(wxLog *pLogger)
 {
-    if ( ms_pLogger != NULL ) {
+    if ( ms_pLogger != nullptr ) {
         // flush the old messages before changing because otherwise they might
         // get lost later if this target is not restored
         ms_pLogger->Flush();
@@ -848,7 +848,7 @@ void wxLogBuffer::DoLogTextAtLevel(wxLogLevel level, const wxString& msg)
 
 wxLogStderr::wxLogStderr(FILE *fp)
 {
-    if ( fp == NULL )
+    if ( fp == nullptr )
         m_fp = stderr;
     else
         m_fp = fp;
@@ -865,7 +865,7 @@ void wxLogStderr::DoLogText(const wxString& msg)
     // simply lost
     if ( m_fp == stderr )
     {
-        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
+        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
         if ( traits && !traits->HasStderr() )
         {
             wxMessageOutputDebug().Output(msg + wxS('\n'));
@@ -881,7 +881,7 @@ void wxLogStderr::DoLogText(const wxString& msg)
 #include "wx/ioswrap.h"
 wxLogStream::wxLogStream(wxSTD ostream *ostr)
 {
-    if ( ostr == NULL )
+    if ( ostr == nullptr )
         m_ostr = &wxSTD cerr;
     else
         m_ostr = ostr;
@@ -989,7 +989,7 @@ wxLogInterposerTemp::wxLogInterposerTemp()
 
 bool            wxLog::ms_bRepetCounting = false;
 
-wxLog          *wxLog::ms_pLogger      = NULL;
+wxLog          *wxLog::ms_pLogger      = nullptr;
 bool            wxLog::ms_doLog        = true;
 bool            wxLog::ms_bAutoCreate  = true;
 bool            wxLog::ms_bVerbose     = false;
@@ -1069,12 +1069,12 @@ const wxChar *wxSysErrorMsg(unsigned long nErrCode)
     if ( ::FormatMessage
          (
             FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-            NULL,
+            nullptr,
             nErrCode,
             MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
             (LPTSTR)&lpMsgBuf,
             0,
-            NULL
+            nullptr
          ) == 0 )
     {
         // if this happens, something is seriously wrong, so don't use _() here

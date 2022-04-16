@@ -60,7 +60,7 @@ WX_CHECK_BUILD_OPTIONS("wxCore")
 
 wxAppBase::wxAppBase()
 {
-    m_topWindow = NULL;
+    m_topWindow = nullptr;
 
     m_useBestVisual = false;
     m_forceTrueColour = false;
@@ -140,7 +140,7 @@ void wxAppBase::CleanUp()
 wxWindow* wxAppBase::GetTopWindow() const
 {
     wxWindow* window = m_topWindow;
-    if (window == NULL && wxTopLevelWindows.GetCount() > 0)
+    if (window == nullptr && wxTopLevelWindows.GetCount() > 0)
         window = wxTopLevelWindows.GetFirst()->GetData();
     return window;
 }
@@ -188,7 +188,7 @@ void wxAppBase::OnInitCmdLine(wxCmdLineParser& parser)
 #ifdef __WXUNIVERSAL__
         {
             wxCMD_LINE_OPTION,
-            NULL,
+            nullptr,
             OPTION_THEME,
             gettext_noop("specify the theme to use"),
             wxCMD_LINE_VAL_STRING,
@@ -202,7 +202,7 @@ void wxAppBase::OnInitCmdLine(wxCmdLineParser& parser)
         //     and not dfb/app.cpp
         {
             wxCMD_LINE_OPTION,
-            NULL,
+            nullptr,
             OPTION_MODE,
             gettext_noop("specify display mode to use (e.g. 640x480-16)"),
             wxCMD_LINE_VAL_STRING,
@@ -287,7 +287,7 @@ int wxAppBase::OnRun()
 int wxAppBase::OnExit()
 {
 #ifdef __WXUNIVERSAL__
-    delete wxTheme::Set(NULL);
+    delete wxTheme::Set(nullptr);
 #endif // __WXUNIVERSAL__
 
     return wxAppConsole::OnExit();
@@ -418,7 +418,7 @@ wxFontMapper *wxGUIAppTraitsBase::CreateFontMapper()
 wxRendererNative *wxGUIAppTraitsBase::CreateRenderer()
 {
     // use the default native renderer by default
-    return NULL;
+    return nullptr;
 }
 
 bool wxGUIAppTraitsBase::ShowAssertDialog(const wxString& msg)

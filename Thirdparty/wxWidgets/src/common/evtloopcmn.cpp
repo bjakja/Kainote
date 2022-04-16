@@ -26,7 +26,7 @@
 // wxEventLoopBase
 // ----------------------------------------------------------------------------
 
-wxEventLoopBase *wxEventLoopBase::ms_activeLoop = NULL;
+wxEventLoopBase *wxEventLoopBase::ms_activeLoop = nullptr;
 
 wxEventLoopBase::wxEventLoopBase()
 {

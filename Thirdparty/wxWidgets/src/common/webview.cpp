@@ -72,7 +72,7 @@ wxWebView* wxWebView::New(wxWebViewBackend backend)
 
         // fall-through intended
         default:
-            return NULL;
+            return nullptr;
     }
 }
 
@@ -112,7 +112,7 @@ wxWebView* wxWebView::New(wxWindow* parent,
 
         // fall-through intended
         default:
-            return NULL;
+            return nullptr;
     }
 }
 

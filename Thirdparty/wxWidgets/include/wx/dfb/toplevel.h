@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_DFB_TOPLEVEL_H_
-#define _WX_DFB_TOPLEVEL_H_
+#pragma once
 
 //-----------------------------------------------------------------------------
 // wxTopLevelWindowDFB
@@ -76,4 +75,3 @@ protected:
     wxRect        m_savedFrame;
 };
 
-#endif // _WX_DFB_TOPLEVEL_H_

@@ -96,7 +96,7 @@
 // wxDCFactory
 //----------------------------------------------------------------------------
 
-wxDCFactory *wxDCFactory::m_factory = NULL;
+wxDCFactory *wxDCFactory::m_factory = nullptr;
 
 void wxDCFactory::Set(wxDCFactory *factory)
 {
@@ -117,7 +117,7 @@ class wxDCFactoryCleanupModule : public wxModule
 {
 public:
     virtual bool OnInit() { return true; }
-    virtual void OnExit() { wxDCFactory::Set(NULL); }
+    virtual void OnExit() { wxDCFactory::Set(nullptr); }
 
 private:
     DECLARE_DYNAMIC_CLASS(wxDCFactoryCleanupModule)
@@ -323,7 +323,7 @@ int wxPrinterDC::GetResolution() const
 IMPLEMENT_ABSTRACT_CLASS(wxDCImpl, wxObject)
 
 wxDCImpl::wxDCImpl( wxDC *owner )
-        : m_window(NULL)
+        : m_window(nullptr)
         , m_colour(wxColourDisplay())
         , m_ok(true)
         , m_clipping(false)
@@ -499,7 +499,7 @@ void wxDCImpl::SetAxisOrientation( bool xLeftRight, bool yBottomUp )
 class FontWidthCache
 {
 public:
-    FontWidthCache() : m_scaleX(1), m_widths(NULL) { }
+    FontWidthCache() : m_scaleX(1), m_widths(nullptr) { }
     ~FontWidthCache() { delete []m_widths; }
 
     void Reset()
@@ -589,8 +589,8 @@ void wxDCImpl::GetMultiLineTextExtent(const wxString& text,
                 if ( !heightLineDefault )
                 {
                     // but we don't know it yet - choose something reasonable
-                    DoGetTextExtent(wxT("W"), NULL, &heightLineDefault,
-                                  NULL, NULL, font);
+                    DoGetTextExtent(wxT("W"), nullptr, &heightLineDefault,
+                                  nullptr, nullptr, font);
                 }
 
                 heightTextTotal += heightLineDefault;
@@ -598,7 +598,7 @@ void wxDCImpl::GetMultiLineTextExtent(const wxString& text,
             else
             {
                 DoGetTextExtent(curLine, &widthLine, &heightLine,
-                              NULL, NULL, font);
+                              nullptr, nullptr, font);
                 if ( widthLine > widthTextMax )
                     widthTextMax = widthLine;
                 heightTextTotal += heightLine;
@@ -925,7 +925,7 @@ void wxDCImpl::DoDrawSpline( const wxPointList *points )
 
     while ((node = node->GetNext())
 #if !wxUSE_STD_CONTAINERS
-           != NULL
+           != nullptr
 #endif // !wxUSE_STD_CONTAINERS
           )
     {
@@ -1122,7 +1122,7 @@ void wxDCImpl::DoGradientFillConcentric(const wxRect& rect,
 
 void wxDCImpl::InheritAttributes(wxWindow *win)
 {
-    wxCHECK_RET( win, "window can't be NULL" );
+    wxCHECK_RET( win, "window can't be nullptr" );
 
     SetFont(win->GetFont());
     SetTextForeground(win->GetForegroundColour());
@@ -1258,7 +1258,7 @@ void wxDC::DrawLabel(const wxString& text,
                 if ( alignment & (wxALIGN_RIGHT | wxALIGN_CENTRE_HORIZONTAL) )
                 {
                     wxCoord widthLine;
-                    GetTextExtent(curLine, &widthLine, NULL);
+                    GetTextExtent(curLine, &widthLine, nullptr);
 
                     if ( alignment & wxALIGN_RIGHT )
                     {
@@ -1295,9 +1295,9 @@ void wxDC::DrawLabel(const wxString& text,
             if ( pc - text.begin() == indexAccel )
             {
                 // remember to draw underscore here
-                GetTextExtent(curLine, &startUnderscore, NULL);
+                GetTextExtent(curLine, &startUnderscore, nullptr);
                 curLine += *pc;
-                GetTextExtent(curLine, &endUnderscore, NULL);
+                GetTextExtent(curLine, &endUnderscore, nullptr);
 
                 yUnderscore = y + heightLine;
             }

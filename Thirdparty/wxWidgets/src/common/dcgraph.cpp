@@ -140,7 +140,7 @@ wxGCDC::~wxGCDC()
 
 wxGraphicsContext* wxGCDC::GetGraphicsContext() const
 {
-    if (!m_pimpl) return NULL;
+    if (!m_pimpl) return nullptr;
     wxGCDCImpl *gc_impl = (wxGCDCImpl*) m_pimpl;
     return gc_impl->GetGraphicsContext();
 }
@@ -256,7 +256,7 @@ void wxGCDCImpl::DoDrawBitmap( const wxBitmap &bmp, wxCoord x, wxCoord y,
         // it the copy is cheap as bitmaps are reference-counted
         wxBitmap bmpCopy(bmp);
         if ( !useMask && bmp.GetMask() )
-            bmpCopy.SetMask(NULL);
+            bmpCopy.SetMask(nullptr);
 
         m_graphicContext->DrawBitmap( bmpCopy, x, y, w, h );
     }
@@ -677,7 +677,7 @@ void wxGCDCImpl::DoDrawSpline(const wxPointList *points)
     path.AddLineToPoint( cx1 , cy1 );
 #if !wxUSE_STD_CONTAINERS
 
-    while ((node = node->GetNext()) != NULL)
+    while ((node = node->GetNext()) != nullptr)
 #else
 
     while ((node = node->GetNext()))
@@ -894,7 +894,7 @@ bool wxGCDCImpl::DoStretchBlit(
         if ( blit.IsOk() )
         {
             if ( !useMask && blit.GetMask() )
-                blit.SetMask(NULL);
+                blit.SetMask(nullptr);
 
             double x = xdest;
             double y = ydest;
@@ -1028,7 +1028,7 @@ bool wxGCDCImpl::DoGetPartialTextExtents(const wxString& text, wxArrayInt& width
 wxCoord wxGCDCImpl::GetCharWidth(void) const
 {
     wxCoord width;
-    DoGetTextExtent( wxT("g") , &width , NULL , NULL , NULL , NULL );
+    DoGetTextExtent( wxT("g") , &width , nullptr , nullptr , nullptr , nullptr );
 
     return width;
 }
@@ -1036,7 +1036,7 @@ wxCoord wxGCDCImpl::GetCharWidth(void) const
 wxCoord wxGCDCImpl::GetCharHeight(void) const
 {
     wxCoord height;
-    DoGetTextExtent( wxT("g") , NULL , &height , NULL , NULL , NULL );
+    DoGetTextExtent( wxT("g") , nullptr , &height , nullptr , nullptr , nullptr );
 
     return height;
 }

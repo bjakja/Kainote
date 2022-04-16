@@ -42,9 +42,9 @@ public:
     LocaleId()
     {
 #if wxUSE_INTL
-        m_wxloc = NULL;
+        m_wxloc = nullptr;
 #endif // wxUSE_INTL
-        m_cloc = NULL;
+        m_cloc = nullptr;
     }
 
     ~LocaleId()
@@ -60,7 +60,7 @@ public:
     bool NotInitializedOrHasChanged()
     {
         wxLocale * const wxloc = wxGetLocale();
-        const char * const cloc = setlocale(LC_ALL, NULL);
+        const char * const cloc = setlocale(LC_ALL, nullptr);
         if ( m_wxloc || m_cloc )
         {
             if ( m_wxloc == wxloc && strcmp(m_cloc, cloc) == 0 )

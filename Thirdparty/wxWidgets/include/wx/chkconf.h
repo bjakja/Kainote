@@ -1807,7 +1807,7 @@
 #if wxUSE_WXHTML_HELP
 #   if !wxUSE_HELP || !wxUSE_HTML || !wxUSE_COMBOBOX || !wxUSE_NOTEBOOK || !wxUSE_SPINCTRL
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "Built in help controller can't be compiled"
+#           //error "Built in help controller can't be compiled"
 #       else
 #           undef wxUSE_HELP
 #           define wxUSE_HELP 1
@@ -1924,7 +1924,7 @@
 #if wxUSE_DOC_VIEW_ARCHITECTURE
 #   if !wxUSE_MENUS
 #        ifdef wxABORT_ON_CONFIG_ERROR
-#            error "DocView requires wxUSE_MENUS"
+#            //error "DocView requires wxUSE_MENUS"
 #        else
 #            undef wxUSE_MENUS
 #            define wxUSE_MENUS 1
@@ -2153,7 +2153,7 @@
 
 #if wxUSE_TASKBARICON && !wxUSE_MENUS
 #   ifdef wxABORT_ON_CONFIG_ERROR
-#       error "wxUSE_TASKBARICON requires wxUSE_MENUS"
+#       //error "wxUSE_TASKBARICON requires wxUSE_MENUS"
 #   else
 #       undef wxUSE_TASKBARICON
 #       define wxUSE_TASKBARICON 0
@@ -2163,7 +2163,7 @@
 #if !wxUSE_VARIANT
 #   if wxUSE_DATAVIEWCTRL
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxDataViewCtrl requires wxVariant"
+#           //error "wxDataViewCtrl requires wxVariant"
 #       else
 #           undef wxUSE_DATAVIEWCTRL
 #           define wxUSE_DATAVIEWCTRL 0
@@ -2173,7 +2173,7 @@
 
 #if wxUSE_TREELISTCTRL && !wxUSE_DATAVIEWCTRL
 #   ifdef wxABORT_ON_CONFIG_ERROR
-#       error "wxUSE_TREELISTCTRL requires wxDataViewCtrl"
+#       //error "wxUSE_TREELISTCTRL requires wxDataViewCtrl"
 #   else
 #       undef wxUSE_TREELISTCTRL
 #       define wxUSE_TREELISTCTRL 0
@@ -2182,7 +2182,7 @@
 
 #if wxUSE_WEBVIEW && !(wxUSE_WEBVIEW_WEBKIT || wxUSE_WEBVIEW_IE)
 #   ifdef wxABORT_ON_CONFIG_ERROR
-#       error "wxUSE_WEBVIEW requires at least one backend"
+#       //error "wxUSE_WEBVIEW requires at least one backend"
 #   else
 #       undef wxUSE_WEBVIEW
 #       define wxUSE_WEBVIEW 0

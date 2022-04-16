@@ -122,7 +122,7 @@ BEGIN_EVENT_TABLE(wxDialogBase, wxTopLevelWindow)
     EVT_CHAR_HOOK(wxDialogBase::OnCharHook)
 END_EVENT_TABLE()
 
-wxDialogLayoutAdapter* wxDialogBase::sm_layoutAdapter = NULL;
+wxDialogLayoutAdapter* wxDialogBase::sm_layoutAdapter = nullptr;
 bool wxDialogBase::sm_layoutAdaptation = false;
 
 void wxDialogBase::Init()
@@ -143,27 +143,27 @@ void wxDialogBase::Init()
 wxWindow *wxDialogBase::CheckIfCanBeUsedAsParent(wxWindow *parent) const
 {
     if ( !parent )
-        return NULL;
+        return nullptr;
 
     extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
     if ( wxPendingDelete.Member(parent) || parent->IsBeingDeleted() )
     {
         // this window is being deleted and we shouldn't create any children
         // under it
-        return NULL;
+        return nullptr;
     }
 
     if ( parent->HasExtraStyle(wxWS_EX_TRANSIENT) )
     {
         // this window is not being deleted yet but it's going to disappear
         // soon so still don't parent this window under it
-        return NULL;
+        return nullptr;
     }
 
     if ( !parent->IsShownOnScreen() )
     {
         // using hidden parent won't work correctly neither
-        return NULL;
+        return nullptr;
     }
 
     // FIXME-VC6: this compiler requires an explicit const cast or it fails
@@ -172,7 +172,7 @@ wxWindow *wxDialogBase::CheckIfCanBeUsedAsParent(wxWindow *parent) const
     {
         // not sure if this can really happen but it doesn't hurt to guard
         // against this clearly invalid situation
-        return NULL;
+        return nullptr;
     }
 
     return parent;
@@ -185,7 +185,7 @@ wxDialogBase::GetParentForModalDialog(wxWindow *parent, long style) const
     // in an unfocused dialog, so try to find a valid parent for it unless we
     // were explicitly asked not to
     if ( style & wxDIALOG_NO_PARENT )
-        return NULL;
+        return nullptr;
 
     // first try the given parent
     if ( parent )
@@ -245,7 +245,7 @@ wxSizer *wxDialogBase::CreateButtonSizer(long flags)
     if ( flags & wxNO )
         dialog->SetRightMenu(wxID_NO);
 
-    return NULL;
+    return nullptr;
 #else // !__SMARTPHONE__
 
 #if wxUSE_BUTTON
@@ -262,13 +262,13 @@ wxSizer *wxDialogBase::CreateButtonSizer(long flags)
         return CreateStdDialogButtonSizer(flags);
     }
 #ifdef __POCKETPC__
-    return NULL;
+    return nullptr;
 #endif // __POCKETPC__
 
 #else // !wxUSE_BUTTON
     wxUnusedVar(flags);
 
-    return NULL;
+    return nullptr;
 #endif // wxUSE_BUTTON/!wxUSE_BUTTON
 
 #endif // __SMARTPHONE__/!__SMARTPHONE__
@@ -293,7 +293,7 @@ wxSizer *wxDialogBase::CreateSeparatedButtonSizer(long flags)
 {
     wxSizer *sizer = CreateButtonSizer(flags);
     if ( !sizer )
-        return NULL;
+        return nullptr;
 
     return CreateSeparatedSizer(sizer);
 }
@@ -304,9 +304,9 @@ wxStdDialogButtonSizer *wxDialogBase::CreateStdDialogButtonSizer( long flags )
 {
     wxStdDialogButtonSizer *sizer = new wxStdDialogButtonSizer();
 
-    wxButton *ok = NULL;
-    wxButton *yes = NULL;
-    wxButton *no = NULL;
+    wxButton *ok = nullptr;
+    wxButton *yes = nullptr;
+    wxButton *no = nullptr;
 
     if (flags & wxOK)
     {
@@ -609,7 +609,7 @@ bool wxDialogBase::CanDoLayoutAdaptation()
     // Check if local setting overrides the global setting
     bool layoutEnabled = (GetLayoutAdaptationMode() == wxDIALOG_ADAPTATION_MODE_ENABLED) || (IsLayoutAdaptationEnabled() && (GetLayoutAdaptationMode() != wxDIALOG_ADAPTATION_MODE_DISABLED));
 
-    return (layoutEnabled && !m_layoutAdaptationDone && GetLayoutAdaptationLevel() != 0 && GetLayoutAdapter() != NULL && GetLayoutAdapter()->CanDoLayoutAdaptation((wxDialog*) this));
+    return (layoutEnabled && !m_layoutAdaptationDone && GetLayoutAdaptationLevel() != 0 && GetLayoutAdapter() != nullptr && GetLayoutAdapter()->CanDoLayoutAdaptation((wxDialog*) this));
 }
 
 /// Set scrolling adapter class, returning old adapter
@@ -794,7 +794,7 @@ wxSizer* wxStandardDialogLayoutAdapter::FindButtonSizer(bool stdButtonSizer, wxD
                 return s;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /// Check if this sizer contains standard buttons, and so can be repositioned in the dialog
@@ -999,7 +999,7 @@ class wxDialogLayoutAdapterModule: public wxModule
     DECLARE_DYNAMIC_CLASS(wxDialogLayoutAdapterModule)
 public:
     wxDialogLayoutAdapterModule() {}
-    virtual void OnExit() { delete wxDialogBase::SetLayoutAdapter(NULL); }
+    virtual void OnExit() { delete wxDialogBase::SetLayoutAdapter(nullptr); }
     virtual bool OnInit() { wxDialogBase::SetLayoutAdapter(new wxStandardDialogLayoutAdapter); return true; }
 };
 

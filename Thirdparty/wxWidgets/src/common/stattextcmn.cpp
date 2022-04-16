@@ -136,7 +136,7 @@ void wxTextWrapper::Wrap(wxWindow *win, const wxString& text, int widthMax)
             if ( widthMax >= 0 && lastSpace != text.end() )
             {
                 int width;
-                win->GetTextExtent(line, &width, NULL);
+                win->GetTextExtent(line, &width, nullptr);
 
                 if ( width > widthMax )
                 {

@@ -560,7 +560,7 @@ bool wxCmdLineParser::Found(const wxString& name, wxString *value) const
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    wxCHECK_MSG( value, false, wxT("nullptr pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetStrVal();
 
@@ -579,7 +579,7 @@ bool wxCmdLineParser::Found(const wxString& name, long *value) const
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    wxCHECK_MSG( value, false, wxT("nullptr pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetLongVal();
 
@@ -598,7 +598,7 @@ bool wxCmdLineParser::Found(const wxString& name, double *value) const
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    wxCHECK_MSG( value, false, wxT("nullptr pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetDoubleVal();
 
@@ -618,7 +618,7 @@ bool wxCmdLineParser::Found(const wxString& name, wxDateTime *value) const
     if ( !opt.HasValue() )
         return false;
 
-    wxCHECK_MSG( value, false, wxT("NULL pointer in wxCmdLineOption::Found") );
+    wxCHECK_MSG( value, false, wxT("nullptr pointer in wxCmdLineOption::Found") );
 
     *value = opt.GetDateVal();
 
@@ -1250,7 +1250,7 @@ wxString wxCmdLineParser::GetUsageString() const
     count = namesOptions.size();
 
     // get option names & descriptions for standard options, if any:
-    wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
+    wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
     wxString stdDesc;
     if ( traits )
         stdDesc = traits->GetStandardCmdLineOptions(namesOptions, descOptions);

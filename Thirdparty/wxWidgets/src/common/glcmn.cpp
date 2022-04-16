@@ -44,7 +44,7 @@ IMPLEMENT_CLASS(wxGLApp, wxApp)
 wxGLCanvasBase::wxGLCanvasBase()
 {
 #if WXWIN_COMPATIBILITY_2_8
-    m_glContext = NULL;
+    m_glContext = nullptr;
 #endif
 
     // we always paint background entirely ourselves so prevent wx from erasing

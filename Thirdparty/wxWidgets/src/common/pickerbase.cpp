@@ -94,14 +94,14 @@ bool wxPickerBase::CreateBase(wxWindow *parent,
 
         m_text->Connect(m_text->GetId(), wxEVT_COMMAND_TEXT_UPDATED,
                 wxCommandEventHandler(wxPickerBase::OnTextCtrlUpdate),
-                NULL, this);
+                nullptr, this);
         m_text->Connect(m_text->GetId(), wxEVT_KILL_FOCUS,
                 wxFocusEventHandler(wxPickerBase::OnTextCtrlKillFocus),
-                NULL, this);
+                nullptr, this);
 
         m_text->Connect(m_text->GetId(), wxEVT_DESTROY,
                 wxWindowDestroyEventHandler(wxPickerBase::OnTextCtrlDelete),
-                NULL, this);
+                nullptr, this);
 
         // the text control's proportion values defaults to 2
         m_sizer->Add(m_text, 2, GetDefaultTextCtrlFlag(), 5);
@@ -147,7 +147,7 @@ void wxPickerBase::DoSetToolTip(wxToolTip *tip)
 
     // do a copy as wxWindow will own the pointer we pass
     if ( m_text )
-        m_text->SetToolTip(tip ? new wxToolTip(tip->GetTip()) : NULL);
+        m_text->SetToolTip(tip ? new wxToolTip(tip->GetTip()) : nullptr);
 }
 
 #endif // wxUSE_TOOLTIPS
@@ -168,7 +168,7 @@ void wxPickerBase::OnTextCtrlKillFocus(wxFocusEvent& event)
 void wxPickerBase::OnTextCtrlDelete(wxWindowDestroyEvent &)
 {
     // the textctrl has been deleted; our pointer is invalid!
-    m_text = NULL;
+    m_text = nullptr;
 }
 
 void wxPickerBase::OnTextCtrlUpdate(wxCommandEvent &)

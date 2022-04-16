@@ -47,7 +47,7 @@ class WXDLLIMPEXP_FWD_ADV wxWizard;
 
 // ----------------------------------------------------------------------------
 // wxWizardPage is one of the wizards screen: it must know what are the
-// following and preceding pages (which may be NULL for the first/last page).
+// following and preceding pages (which may be nullptr for the first/last page).
 //
 // Other than GetNext/Prev() functions, wxWizardPage is just a panel and may be
 // used as such (i.e. controls may be placed directly on it &c).
@@ -126,16 +126,16 @@ public:
 
     // ctor takes the previous and next pages
     wxWizardPageSimple(wxWizard *parent,
-                       wxWizardPage *prev = NULL,
-                       wxWizardPage *next = NULL,
+                       wxWizardPage *prev = nullptr,
+                       wxWizardPage *next = nullptr,
                        const wxBitmap& bitmap = wxNullBitmap)
     {
         Create(parent, prev, next, bitmap);
     }
 
-    bool Create(wxWizard *parent = NULL, // let it be default ctor too
-                wxWizardPage *prev = NULL,
-                wxWizardPage *next = NULL,
+    bool Create(wxWizard *parent = nullptr, // let it be default ctor too
+                wxWizardPage *prev = nullptr,
+                wxWizardPage *next = nullptr,
                 const wxBitmap& bitmap = wxNullBitmap)
     {
         m_prev = prev;
@@ -151,7 +151,7 @@ public:
     static void Chain(wxWizardPageSimple *first, wxWizardPageSimple *second)
     {
         wxCHECK_RET( first && second,
-                     wxT("NULL passed to wxWizardPageSimple::Chain") );
+                     wxT("nullptr passed to wxWizardPageSimple::Chain") );
 
         first->SetNext(second);
         second->SetPrev(first);
@@ -165,7 +165,7 @@ private:
     // common part of ctors:
     void Init()
     {
-        m_prev = m_next = NULL;
+        m_prev = m_next = nullptr;
     }
 
     // pointers are private, the derived classes shouldn't mess with them -
@@ -200,7 +200,7 @@ public:
     // successfully finished, false if user cancelled it
     virtual bool RunWizard(wxWizardPage *firstPage) = 0;
 
-    // get the current page (NULL if RunWizard() isn't running)
+    // get the current page (nullptr if RunWizard() isn't running)
     virtual wxWizardPage *GetCurrentPage() const = 0;
 
     // set the min size which should be available for the pages: a
@@ -231,10 +231,10 @@ public:
     // custom logic for determining the pages order
 
     virtual bool HasNextPage(wxWizardPage *page)
-        { return page->GetNext() != NULL; }
+        { return page->GetNext() != nullptr; }
 
     virtual bool HasPrevPage(wxWizardPage *page)
-        { return page->GetPrev() != NULL; }
+        { return page->GetPrev() != nullptr; }
 
     /// Override these functions to stop InitDialog from calling TransferDataToWindow
     /// for _all_ pages when the wizard starts. Instead 'ShowPage' will call
@@ -262,7 +262,7 @@ public:
     wxWizardEvent(wxEventType type = wxEVT_NULL,
                   int id = wxID_ANY,
                   bool direction = true,
-                  wxWizardPage* page = NULL);
+                  wxWizardPage* page = nullptr);
 
     // for EVT_WIZARD_PAGE_CHANGING, return true if we're going forward or
     // false otherwise and for EVT_WIZARD_PAGE_CHANGED return true if we came

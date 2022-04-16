@@ -124,7 +124,7 @@ public:
                 ::SendMessage(m_hwnds[n], WM_SETFONT, (WPARAM)hfont, 0);
 
                 // otherwise the window might not be redrawn correctly
-                ::InvalidateRect(m_hwnds[n], NULL, FALSE /* don't erase bg */);
+                ::InvalidateRect(m_hwnds[n], nullptr, FALSE /* don't erase bg */);
             }
         }
     }
@@ -152,7 +152,7 @@ private:
     void Init()
     {
         m_count = 0;
-        m_hwnds = NULL;
+        m_hwnds = nullptr;
     }
 
     // number of elements in m_hwnds array

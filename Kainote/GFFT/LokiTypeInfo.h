@@ -15,7 +15,8 @@
 
 // Last update: June 20, 2001
 
-#pragma once
+#ifndef LOKITYPEINFO_INC_
+#define LOKITYPEINFO_INC_
 
 #include <typeinfo>
 #include <cassert>
@@ -104,4 +105,4 @@ namespace Loki
 // June 20, 2001: ported by Nick Thurn to gcc 2.95.3. Kudos, Nick!!!
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#endif // LOKITYPEINFO_INC_

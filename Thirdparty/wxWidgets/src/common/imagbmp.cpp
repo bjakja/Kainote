@@ -266,9 +266,9 @@ bool wxBMPHandler::SaveDib(wxImage *image,
         }
     }
 
-    wxPalette *palette = NULL; // entries for quantized images
-    wxUint8 *rgbquad = NULL;   // for the RGBQUAD bytes for the colormap
-    wxImage *q_image = NULL;   // destination for quantized image
+    wxPalette *palette = nullptr; // entries for quantized images
+    wxUint8 *rgbquad = nullptr;   // for the RGBQUAD bytes for the colormap
+    wxImage *q_image = nullptr;   // destination for quantized image
 
     // if <24bpp use quantization to reduce colors for *some* of the formats
     if ( (format == wxBMP_1BPP) || (format == wxBMP_4BPP) ||
@@ -528,7 +528,7 @@ bool wxBMPHandler::DoLoadDib(wxImage * image, int width, int height,
     }
     else // no palette
     {
-        cmap = NULL;
+        cmap = nullptr;
     }
 
     wxON_BLOCK_EXIT1(&BMPPalette::Free, cmap);
@@ -573,7 +573,7 @@ bool wxBMPHandler::DoLoadDib(wxImage * image, int width, int height,
     }
     else // no alpha
     {
-        alpha = NULL;
+        alpha = nullptr;
     }
 
     // Reading the palette, if it exists:

@@ -56,7 +56,7 @@
 
 // Copy chars from source to dest converting '%%' to '%'. Takes at most maxIn
 // chars from source and write at most outMax chars to dest, returns the
-// number of chars actually written. Does not treat null specially.
+// number of chars actually written. Does not treat nullptr specially.
 template<typename CharType>
 static int wxCopyStrWithPercents(
         size_t maxOut,

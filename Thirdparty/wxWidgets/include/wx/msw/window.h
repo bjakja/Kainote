@@ -14,6 +14,7 @@
 #define _WX_WINDOW_H_
 
 #include "wx/settings.h"        // solely for wxSystemColour
+#include "wx/toplevel.h"
 
 // if this is set to 1, we use deferred window sizing to reduce flicker when
 // resizing complicated window hierarchies, but this can in theory result in

@@ -238,7 +238,7 @@ int wxFileSystemWatcherBase::GetWatchedPathsCount() const
 
 int wxFileSystemWatcherBase::GetWatchedPaths(wxArrayString* paths) const
 {
-    wxCHECK_MSG( paths != NULL, -1, "Null array passed to retrieve paths");
+    wxCHECK_MSG( paths != nullptr, -1, "nullptr array passed to retrieve paths");
 
     wxFSWatchInfoMap::const_iterator it = m_watches.begin();
     for ( ; it != m_watches.end(); ++it)

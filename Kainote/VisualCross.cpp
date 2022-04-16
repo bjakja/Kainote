@@ -116,13 +116,17 @@ void Cross::Draw(int time)
 {
 	if (cross && isOnVideo){
 		HRESULT hr;
-		DRAWOUTTEXT(font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF);
-		hr = line->SetWidth(3);
-		hr = line->Begin();
-		hr = line->Draw(&vectors[0], 2, 0xFF000000);
-		hr = line->Draw(&vectors[2], 2, 0xFF000000);
-		hr = line->End();
-		hr = line->SetWidth(1);
+		if (font) {
+			DRAWOUTTEXT(font, coords, crossRect, (crossRect.left < vectors[0].x) ? 10 : 8, 0xFFFFFFFF);
+		}
+		if (line) {
+			hr = line->SetWidth(3);
+			hr = line->Begin();
+			hr = line->Draw(&vectors[0], 2, 0xFF000000);
+			hr = line->Draw(&vectors[2], 2, 0xFF000000);
+			hr = line->End();
+			hr = line->SetWidth(1);
+		}
 		D3DXVECTOR2 v1[4];
 		v1[0] = vectors[0];
 		v1[0].x += 0.5f;
@@ -132,10 +136,12 @@ void Cross::Draw(int time)
 		v1[2].y += 0.5f;
 		v1[3] = vectors[3];
 		v1[3].y += 0.5f;
-		hr = line->Begin();
-		hr = line->Draw(&v1[0], 2, 0xFFFFFFFF);
-		hr = line->Draw(&v1[2], 2, 0xFFFFFFFF);
-		hr = line->End();
+		if (line) {
+			hr = line->Begin();
+			hr = line->Draw(&v1[0], 2, 0xFFFFFFFF);
+			hr = line->Draw(&v1[2], 2, 0xFFFFFFFF);
+			hr = line->End();
+		}
 	}
 }
 
@@ -160,7 +166,7 @@ void Cross::DrawLines(wxPoint point)
 		int w, h, fw, fh;
 		tab->Video->GetWindowSize(&w, &h);
 		RECT rcRect = { 0, 0, 0, 0 };
-		if (calcfont->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+		if (calcfont && calcfont->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
 			fw = rcRect.right - rcRect.left;
 			fh = rcRect.bottom - rcRect.top;
 		}

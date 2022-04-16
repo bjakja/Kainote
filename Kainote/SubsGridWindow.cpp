@@ -476,15 +476,18 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					tdc.SetBrush(comm);
 					tdc.SetPen(*wxTRANSPARENT_PEN);
 					tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
+					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
 					if (nextDial && nextDial->treeState == TREE_CLOSED)
-						tdc.DrawBitmap(wxBITMAP_PNG(L"arrow_list"), posX + 6, posY + 5);
+						if(arrow.IsOk())
+							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
 					else{
 						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
 						wxImage img = bmp.ConvertToImage();
 						img = img.Rotate180();
-						tdc.DrawBitmap(img, posX + 6, posY + 5);
+						if (img.IsOk())
+							tdc.DrawBitmap(img, posX + 6, posY + 5);
 					}
 					tdc.DrawText(Dial->Text, posX + 23, posY + 1);
 					break;
@@ -882,13 +885,15 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
 					if (nextDial && nextDial->treeState == TREE_CLOSED) {
 						wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
-						gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
+						if (bmpal.IsOk())
+							gc->DrawBitmap(bmpal, posX + 6, posY + 5, bmpal.GetWidth(), bmpal.GetHeight());
 					}
 					else {
 						wxBitmap bmp(wxBITMAP_PNG(L"arrow_list"));
 						wxImage img = bmp.ConvertToImage();
 						img = img.Rotate180();
-						gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
+						if(img.IsOk())
+							gc->DrawBitmap(img, posX + 6, posY + 5, img.GetWidth(), img.GetHeight());
 						gc->SetBrush(*wxTRANSPARENT_BRUSH);
 						gc->SetPen(textcol);
 						gc->StrokeLine(posX, posY + GridHeight, w - 1, posY + GridHeight);

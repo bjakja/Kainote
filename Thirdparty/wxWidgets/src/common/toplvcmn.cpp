@@ -61,7 +61,7 @@ wxTopLevelWindowBase::~wxTopLevelWindowBase()
 {
     // don't let wxTheApp keep any stale pointers to us
     if ( wxTheApp && wxTheApp->GetTopWindow() == this )
-        wxTheApp->SetTopWindow(NULL);
+        wxTheApp->SetTopWindow(nullptr);
 
     wxTopLevelWindows.DeleteObject(this);
 
@@ -369,7 +369,7 @@ void wxTopLevelWindowBase::DoLayout()
     else
     {
         // do we have _exactly_ one child?
-        wxWindow *child = NULL;
+        wxWindow *child = nullptr;
         for ( wxWindowList::compatibility_iterator node = GetChildren().GetFirst();
               node;
               node = node->GetNext() )

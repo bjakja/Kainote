@@ -54,7 +54,7 @@ END_EVENT_TABLE()
 void wxBookCtrlBase::Init()
 {
     m_selection = wxNOT_FOUND;
-    m_bookctrl = NULL;
+    m_bookctrl = nullptr;
     m_fitToCurrentPage = false;
 
 #if defined(__WXWINCE__)
@@ -64,7 +64,7 @@ void wxBookCtrlBase::Init()
 #endif
 
     m_controlMargin = 0;
-    m_controlSizer = NULL;
+    m_controlSizer = nullptr;
 }
 
 bool
@@ -263,7 +263,7 @@ void wxBookCtrlBase::DoSize()
         if ( !page )
         {
             wxASSERT_MSG( AllowNullPage(),
-                wxT("Null page in a control that does not allow null pages?") );
+                wxT("nullptr page in a control that does not allow nullptr pages?") );
             continue;
         }
 
@@ -329,7 +329,7 @@ void wxBookCtrlBase::OnHelp(wxHelpEvent& event)
     {
         // this event is for the book control itself, redirect it to the
         // corresponding page
-        wxWindow *page = NULL;
+        wxWindow *page = nullptr;
 
         if ( event.GetOrigin() == wxHelpEvent::Origin_HelpButton )
         {
@@ -379,7 +379,7 @@ wxBookCtrlBase::InsertPage(size_t nPage,
                            int WXUNUSED(imageId))
 {
     wxCHECK_MSG( page || AllowNullPage(), false,
-                 wxT("NULL page in wxBookCtrlBase::InsertPage()") );
+                 wxT("nullptr page in wxBookCtrlBase::InsertPage()") );
     wxCHECK_MSG( nPage <= m_pages.size(), false,
                  wxT("invalid page index in wxBookCtrlBase::InsertPage()") );
 
@@ -398,7 +398,7 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
     if ( !(page || AllowNullPage()) )
         return false;
 
-    // delete NULL is harmless
+    // delete nullptr is harmless
     delete page;
 
     return true;
@@ -406,7 +406,7 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
 
 wxWindow *wxBookCtrlBase::DoRemovePage(size_t nPage)
 {
-    wxCHECK_MSG( nPage < m_pages.size(), NULL,
+    wxCHECK_MSG( nPage < m_pages.size(), nullptr,
                  wxT("invalid page index in wxBookCtrlBase::DoRemovePage()") );
 
     wxWindow *pageRemoved = m_pages[nPage];

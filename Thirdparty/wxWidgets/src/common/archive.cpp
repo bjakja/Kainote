@@ -70,7 +70,7 @@ void wxArchiveEntry::SetNotifier(wxArchiveNotifier& notifier)
 
 wxArchiveEntry& wxArchiveEntry::operator=(const wxArchiveEntry& WXUNUSED(e))
 {
-    m_notifier = NULL;
+    m_notifier = nullptr;
     return *this;
 }
 
@@ -78,7 +78,7 @@ wxArchiveEntry& wxArchiveEntry::operator=(const wxArchiveEntry& WXUNUSED(e))
 /////////////////////////////////////////////////////////////////////////////
 // wxArchiveClassFactory
 
-wxArchiveClassFactory *wxArchiveClassFactory::sm_first = NULL;
+wxArchiveClassFactory *wxArchiveClassFactory::sm_first = nullptr;
 
 void wxArchiveClassFactory::Remove()
 {

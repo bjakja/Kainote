@@ -65,7 +65,7 @@ public:
     // Page insertion operations
     // -------------------------
 
-    // Notice that page pointer may be NULL in which case the next non NULL
+    // Notice that page pointer may be nullptr in which case the next non nullptr
     // page (usually the first child page of a node) is shown when this page is
     // selected
 
@@ -133,7 +133,7 @@ public:
     virtual bool SetPageImage(size_t n, int imageId);
     virtual int SetSelection(size_t n) { return DoSetSelection(n, SetSelection_SendEvent); }
     virtual int ChangeSelection(size_t n) { return DoSetSelection(n); }
-    virtual int HitTest(const wxPoint& pt, long *flags = NULL) const;
+    virtual int HitTest(const wxPoint& pt, long *flags = nullptr) const;
     virtual void SetImageList(wxImageList *imageList);
     virtual void AssignImageList(wxImageList *imageList);
     virtual bool DeleteAllPages();
@@ -142,7 +142,7 @@ protected:
     // Implementation of a page removal. See DeletPage for comments.
     wxTreebookPage *DoRemovePage(size_t pos);
 
-    // This subclass of wxBookCtrlBase accepts NULL page pointers (empty pages)
+    // This subclass of wxBookCtrlBase accepts nullptr page pointers (empty pages)
     virtual bool AllowNullPage() const { return true; }
 
     // event handlers
@@ -153,7 +153,7 @@ protected:
     wxArrayTreeItemIds m_treeIds;
 
     // in the situation when m_selection page is not wxNOT_FOUND but page is
-    // NULL this is the first (sub)child that has a non-NULL page
+    // nullptr this is the first (sub)child that has a non-nullptr page
     int m_actualSelection;
 
 private:
@@ -185,7 +185,7 @@ private:
     int DoSetSelection(size_t pos, int flags = 0);
 
     // Returns currently shown page. In a case when selected the node
-    // has empty (NULL) page finds first (sub)child with not-empty page.
+    // has empty (nullptr) page finds first (sub)child with not-empty page.
     wxTreebookPage *DoGetCurrentPage() const;
 
     // Does the selection update. Called from page insertion functions

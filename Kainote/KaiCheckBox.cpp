@@ -113,7 +113,9 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 	tdc.SetBrush(wxBrush(background));
 	tdc.SetPen(wxPen(background));
 	tdc.DrawRectangle(0, 0, w, h);
-	tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
+	if(checkboxBmp.IsOk()){
+		tdc.DrawBitmap(checkboxBmp, 1, (h - 13) / 2);
+	}
 	if (HasFocus()) {
 		wxPoint frame[5] = { wxPoint(0, 0), wxPoint(w - 1, 0), wxPoint(w - 1, h - 1), wxPoint(0, h - 1), wxPoint(0, 0) };
 		DrawDashedLine(&tdc, frame, 5, 1, Options.GetColour(WINDOW_TEXT_INACTIVE));

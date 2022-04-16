@@ -19,13 +19,13 @@ class WXDLLIMPEXP_CORE wxProgressDialog : public wxGenericProgressDialog
 public:
     wxProgressDialog(const wxString& title, const wxString& message,
                      int maximum = 100,
-                     wxWindow *parent = NULL,
+                     wxWindow *parent = nullptr,
                      int style = wxPD_APP_MODAL | wxPD_AUTO_HIDE);
 
     virtual ~wxProgressDialog();
 
-    virtual bool Update(int value, const wxString& newmsg = wxEmptyString, bool *skip = NULL);
-    virtual bool Pulse(const wxString& newmsg = wxEmptyString, bool *skip = NULL);
+    virtual bool Update(int value, const wxString& newmsg = wxEmptyString, bool *skip = nullptr);
+    virtual bool Pulse(const wxString& newmsg = wxEmptyString, bool *skip = nullptr);
 
     void Resume();
 

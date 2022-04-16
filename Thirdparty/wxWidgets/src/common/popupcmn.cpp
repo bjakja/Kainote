@@ -211,10 +211,10 @@ void wxPopupWindowBase::Position(const wxPoint& ptOrigin,
 void wxPopupTransientWindow::Init()
 {
     m_child =
-    m_focus = NULL;
+    m_focus = nullptr;
 
-    m_handlerFocus = NULL;
-    m_handlerPopup = NULL;
+    m_handlerFocus = nullptr;
+    m_handlerPopup = nullptr;
 }
 
 wxPopupTransientWindow::wxPopupTransientWindow(wxWindow *parent, int style)
@@ -244,13 +244,13 @@ void wxPopupTransientWindow::PopHandlers()
         {
             // something is very wrong and someone else probably deleted our
             // handler - so don't risk deleting it second time
-            m_handlerPopup = NULL;
+            m_handlerPopup = nullptr;
         }
         if (m_child->HasCapture())
         {
             m_child->ReleaseMouse();
         }
-        m_child = NULL;
+        m_child = nullptr;
     }
 
     if ( m_focus )
@@ -258,10 +258,10 @@ void wxPopupTransientWindow::PopHandlers()
         if ( !m_focus->RemoveEventHandler(m_handlerFocus) )
         {
             // see above
-            m_handlerFocus = NULL;
+            m_handlerFocus = nullptr;
         }
     }
-    m_focus = NULL;
+    m_focus = nullptr;
 }
 
 void wxPopupTransientWindow::Popup(wxWindow *winFocus)
@@ -356,8 +356,8 @@ bool wxPopupTransientWindow::Show( bool show )
                              GDK_BUTTON_RELEASE_MASK |
                              GDK_POINTER_MOTION_HINT_MASK |
                              GDK_POINTER_MOTION_MASK),
-                          NULL,
-                          NULL,
+                          nullptr,
+                          nullptr,
                           (guint32)GDK_CURRENT_TIME );
     }
 #endif
@@ -527,7 +527,7 @@ void wxPopupWindowHandler::OnLeftDown(wxMouseEvent& event)
     // in non-Univ ports the system manages scrollbars for us
 #if defined(__WXUNIVERSAL__) && wxUSE_SCROLLBAR
     // scrollbar on which the click occurred
-    wxWindow *sbar = NULL;
+    wxWindow *sbar = nullptr;
 #endif // __WXUNIVERSAL__ && wxUSE_SCROLLBAR
 
     wxWindow *win = (wxWindow *)event.GetEventObject();

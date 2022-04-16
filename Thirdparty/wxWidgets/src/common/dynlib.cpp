@@ -80,7 +80,7 @@ bool wxDynamicLibrary::Load(const wxString& libnameOrig, int flags)
     {
         // and also check that the libname doesn't already have it
         wxString ext;
-        wxFileName::SplitPath(libname, NULL, NULL, &ext);
+        wxFileName::SplitPath(libname, nullptr, nullptr, &ext);
         if ( ext.empty() )
         {
             libname += GetDllExt();
@@ -128,7 +128,7 @@ void wxDynamicLibrary::Unload(wxDllType handle)
 
 void *wxDynamicLibrary::DoGetSymbol(const wxString &name, bool *success) const
 {
-    wxCHECK_MSG( IsLoaded(), NULL,
+    wxCHECK_MSG( IsLoaded(), nullptr,
                  wxT("Can't load symbol from unloaded library") );
 
     void    *symbol = 0;
@@ -141,7 +141,7 @@ void *wxDynamicLibrary::DoGetSymbol(const wxString &name, bool *success) const
 #endif
 
     if ( success )
-        *success = symbol != NULL;
+        *success = symbol != nullptr;
 
     return symbol;
 }

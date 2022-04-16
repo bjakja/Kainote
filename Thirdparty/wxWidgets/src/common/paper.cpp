@@ -79,7 +79,7 @@ WX_DECLARE_LIST(wxPrintPaperType, wxPrintPaperTypeList);
 #include "wx/listimpl.cpp"
 WX_DEFINE_LIST(wxPrintPaperTypeList)
 
-wxPrintPaperDatabase* wxThePrintPaperDatabase = NULL;
+wxPrintPaperDatabase* wxThePrintPaperDatabase = nullptr;
 
 wxPrintPaperDatabase::wxPrintPaperDatabase()
 {
@@ -247,7 +247,7 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxString& name)
     if (it != m_map->end())
         return it->second;
     else
-        return NULL;
+        return nullptr;
 }
 
 wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(wxPaperSize id)
@@ -261,7 +261,7 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(wxPaperSize id)
             return paperType;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 wxPrintPaperType *wxPrintPaperDatabase::FindPaperTypeByPlatformId(int id)
@@ -275,7 +275,7 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperTypeByPlatformId(int id)
             return paperType;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxSize& sz)
@@ -292,7 +292,7 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxSize& sz)
             return paperType;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Convert name to size id

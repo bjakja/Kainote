@@ -13,14 +13,13 @@
 //     without express or implied warranty.
 ////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef ASSOCVECTOR_INC_
+#define ASSOCVECTOR_INC_
 
 #include <algorithm>
 #include <functional>
 #include <vector>
 #include <utility>
-
-
 
 namespace Loki
 {
@@ -34,11 +33,9 @@ namespace Loki
         template <class Value, class C>
         class AssocVectorCompare : public C
         {
-            //typename C::first_argument_type;
-            //typedef const C::first_argument_type first_argument_type;
-            //typedef std::pair<typename C::first_argument_type, Value>
-                //Data;
-            
+            typedef std::pair<typename C::first_argument_type, Value>
+                Data;
+            typedef typename C::first_argument_type first_argument_type;
 
         public:
             AssocVectorCompare()
@@ -47,20 +44,20 @@ namespace Loki
             AssocVectorCompare(const C& src) : C(src)
             {}
             
-            /*bool operator()(const first_argument_type& lhs, 
+           bool operator()(const first_argument_type& lhs, 
                 const first_argument_type& rhs) const
             { return C::operator()(lhs, rhs); }
             
-            bool operator()(const Data& lhs, const Data& rhs)
+            bool operator()(const Data& lhs, const Data& rhs) const
             { return operator()(lhs.first, rhs.first); }
             
             bool operator()(const Data& lhs, 
-                const first_argument_type& rhs)
+                const first_argument_type& rhs) const
             { return operator()(lhs.first, rhs); }
             
             bool operator()(const first_argument_type& lhs,
                 const Data& rhs) const
-            { return operator()(lhs, rhs.first); }*/
+            { return operator()(lhs, rhs.first); }
         };
     }
 
@@ -96,22 +93,27 @@ namespace Loki
 
         typedef C key_compare;
         typedef A allocator_type;
-        //typedef typename A::reference reference;
-        //typedef typename A::const_reference const_reference;
+        typedef typename A::reference reference;
+        typedef typename A::const_reference const_reference;
         typedef typename Base::iterator iterator;
         typedef typename Base::const_iterator const_iterator;
         typedef typename Base::size_type size_type;
         typedef typename Base::difference_type difference_type;
-        //typedef typename A::pointer pointer;
-        //typedef typename A::const_pointer const_pointer;
+        typedef typename A::pointer pointer;
+        typedef typename A::const_pointer const_pointer;
         typedef typename Base::reverse_iterator reverse_iterator;
         typedef typename Base::const_reverse_iterator const_reverse_iterator;
 
         class value_compare
-            : private key_compare
+            : public std::binary_function<value_type, value_type, bool>
+            , private key_compare
         {
             friend class AssocVector;
         
+        protected:
+            value_compare(key_compare pred) : key_compare(pred)
+            {}
+
         public:
             bool operator()(const value_type& lhs, const value_type& rhs) const
             { return key_compare::operator()(lhs.first, rhs.first); }
@@ -331,4 +333,4 @@ namespace Loki
 // February 2, 2003: fixed dependent names - credit due to Rani Sharoni
 ////////////////////////////////////////////////////////////////////////////////
 
-
+#endif // ASSOCVECTOR_INC_

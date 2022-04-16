@@ -294,7 +294,7 @@ bool wxFile::Close()
 // read
 ssize_t wxFile::Read(void *pBuf, size_t nCount)
 {
-    wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
+    wxCHECK( (pBuf != nullptr) && IsOpened(), 0 );
 
     ssize_t iRc = wxRead(m_fd, pBuf, nCount);
 
@@ -310,7 +310,7 @@ ssize_t wxFile::Read(void *pBuf, size_t nCount)
 // write
 size_t wxFile::Write(const void *pBuf, size_t nCount)
 {
-    wxCHECK( (pBuf != NULL) && IsOpened(), 0 );
+    wxCHECK( (pBuf != nullptr) && IsOpened(), 0 );
 
     ssize_t iRc = wxWrite(m_fd, pBuf, nCount);
 
