@@ -11,8 +11,8 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_PRIVATE_H_
-#define _WX_PRIVATE_H_
+#pragma once
+
 
 #include "wx/msw/wrapwin.h"
 
@@ -23,9 +23,9 @@
 
 #include "wx/log.h"
 
-#if wxUSE_GUI
+
     #include "wx/window.h"
-#endif // wxUSE_GUI
+
 
 class WXDLLIMPEXP_FWD_CORE wxFont;
 class WXDLLIMPEXP_FWD_CORE wxWindow;
@@ -1071,4 +1071,4 @@ inline void *wxSetWindowUserData(HWND hwnd, void *data)
 
 #endif // wxUSE_GUI
 
-#endif // _WX_PRIVATE_H_
+

@@ -16,7 +16,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -26,11 +26,11 @@
 
 #if wxUSE_BITMAPCOMBOBOX
 
-#ifndef WX_PRECOMP
+
     #include "wx/log.h"
     #include "wx/dc.h"
     #include "wx/ctrlsub.h"
-#endif
+
 
 #include "wx/settings.h"
 

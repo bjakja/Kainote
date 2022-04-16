@@ -9,25 +9,26 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_EVENT_H_
-#define _WX_EVENT_H_
+#pragma once
 
 #include "wx/defs.h"
 #include "wx/cpp.h"
 #include "wx/object.h"
 #include "wx/clntdata.h"
 
-#if wxUSE_GUI
+
     #include "wx/gdicmn.h"
     #include "wx/cursor.h"
     #include "wx/mousestate.h"
-#endif
+
 
 #include "wx/dynarray.h"
 #include "wx/thread.h"
 #include "wx/tracker.h"
 #include "wx/typeinfo.h"
 #include "wx/any.h"
+#include "wx/event.h"
+#include "wx/windowid.h"
 
 #ifdef wxHAS_EVENT_BIND
     #include "wx/meta/convertible.h"
@@ -40,12 +41,12 @@
 class WXDLLIMPEXP_FWD_BASE wxList;
 class WXDLLIMPEXP_FWD_BASE wxEvent;
 class WXDLLIMPEXP_FWD_BASE wxEventFilter;
-#if wxUSE_GUI
+
     class WXDLLIMPEXP_FWD_CORE wxDC;
     class WXDLLIMPEXP_FWD_CORE wxMenu;
     class WXDLLIMPEXP_FWD_CORE wxWindow;
     class WXDLLIMPEXP_FWD_CORE wxWindowBase;
-#endif // wxUSE_GUI
+
 
 // We operate with pointer to members of wxEvtHandler (such functions are used
 // as event handlers in the event tables or as arguments to Connect()) but by
@@ -1262,7 +1263,7 @@ private:
 };
 
 
-#if wxUSE_GUI
+
 
 
 // Item or menu event class
@@ -2848,7 +2849,7 @@ private:
  wxEVT_COMPARE_ITEM
 */
 
-#endif // wxUSE_GUI
+
 
 
 // ============================================================================
@@ -4141,4 +4142,3 @@ WXDLLIMPEXP_CORE wxWindow* wxFindFocusDescendant(wxWindow* ancestor);
 #define DEFINE_EVENT_TYPE(name) const wxEventType name = wxNewEventType();
 #define DEFINE_LOCAL_EVENT_TYPE(name) DEFINE_EVENT_TYPE(name)
 
-#endif // _WX_EVENT_H_

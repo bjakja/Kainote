@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_DIALOG_H_BASE_
-#define _WX_DIALOG_H_BASE_
+#pragma once
 
 #include "wx/defs.h"
 #include "wx/toplevel.h"
@@ -395,5 +394,3 @@ typedef void (wxEvtHandler::*wxWindowModalDialogEventFunction)(wxWindowModalDial
 #define EVT_WINDOW_MODAL_DIALOG_CLOSED(winid, func) \
     wx__DECLARE_EVT1(wxEVT_WINDOW_MODAL_DIALOG_CLOSED, winid, wxWindowModalDialogEventHandler(func))
 
-#endif
-    // _WX_DIALOG_H_BASE_

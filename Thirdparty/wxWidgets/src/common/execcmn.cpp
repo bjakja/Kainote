@@ -11,12 +11,11 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_WXEXEC_CPP_
-#define _WX_WXEXEC_CPP_
+#pragma once
 
 // this file should never be compiled directly, just included by other code
 #ifndef _WX_USED_BY_WXEXECUTE_
-    #error "You should never directly build this file!"
+    //#error "You should never directly build this file!"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -41,6 +40,7 @@
    needed! However it's not easy to devise a way to do this keeping backwards
    compatibility with the existing wxExecute(wxEXEC_SYNC)...
 */
+#include <malloc.h>
 
 class wxStreamTempInputBuffer
 {
@@ -122,5 +122,4 @@ wxStreamTempInputBuffer::~wxStreamTempInputBuffer()
     }
 }
 
-#endif // _WX_WXEXEC_CPP_
 

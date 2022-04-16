@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_WINDOW_H_BASE_
-#define _WX_WINDOW_H_BASE_
+#pragma once
 
 // ----------------------------------------------------------------------------
 // headers which we must include here
@@ -2035,4 +2034,3 @@ public:
 #endif // wxUSE_ACCESSIBILITY
 
 
-#endif // _WX_WINDOW_H_BASE_

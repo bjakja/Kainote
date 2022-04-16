@@ -11,8 +11,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_TOPLEVEL_BASE_H_
-#define _WX_TOPLEVEL_BASE_H_
+#pragma once
 
 // ----------------------------------------------------------------------------
 // headers
@@ -410,4 +409,4 @@ protected:
     };
 #endif // __WXUNIVERSAL__/!__WXUNIVERSAL__
 
-#endif // _WX_TOPLEVEL_BASE_H_
+

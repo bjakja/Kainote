@@ -749,6 +749,12 @@
     <ClCompile Include="..\..\wxWidgets\include\wx\thrimpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\wxWidgets\src\msw\thread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\wxWidgets\src\msw\taskbar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\wxWidgets\src\common\descrip.mms">

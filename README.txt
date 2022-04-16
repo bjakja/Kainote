@@ -1,4 +1,6 @@
-﻿Kainote: 
+﻿Kainote:
+Warning! Ne version will be much faster ant have a less weight
+ 
 Subtitles editor that can play video using FFMS2 (for typesetting, 
 timing and more advanced edition) or DirectShow (for playback 
 or minor subtitles edition).

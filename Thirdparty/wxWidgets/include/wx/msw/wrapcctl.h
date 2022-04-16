@@ -9,9 +9,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MSW_WRAPCCTL_H_
-#define _WX_MSW_WRAPCCTL_H_
-
+#pragma once
 #include "wx/msw/wrapwin.h"
 
 #include <commctrl.h>
@@ -29,7 +27,7 @@ inline void wxSetCCUnicodeFormat(HWND WXUNUSED_IN_WINCE(hwnd))
 #endif // __WXWINCE__/!__WXWINCE__
 }
 
-#if wxUSE_GUI
+
 // Return the default font for the common controls
 //
 // this is implemented in msw/settings.cpp
@@ -46,6 +44,5 @@ struct wxHDITEM : public HDITEM
     }
 };
 
-#endif // wxUSE_GUI
 
-#endif // _WX_MSW_WRAPCCTL_H_
+

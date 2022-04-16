@@ -17,13 +17,13 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
-#include "wx/filehistory.h"
+//#include "wx/filehistory.h"
 
 #if wxUSE_FILE_HISTORY
 

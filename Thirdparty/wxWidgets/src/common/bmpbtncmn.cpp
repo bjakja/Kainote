@@ -10,21 +10,22 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
-#if wxUSE_BMPBUTTON
+
 
 #include "wx/bmpbuttn.h"
 
-#ifndef WX_PRECOMP
+
     #include "wx/log.h"
     #include "wx/dcmemory.h"
     #include "wx/image.h"
-#endif
+
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -90,4 +91,4 @@ bitmap "focus" ,
 bitmap "disabled" ,
 */
 
-#endif // wxUSE_BMPBUTTON
+

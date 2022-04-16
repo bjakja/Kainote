@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -28,15 +28,15 @@
 
 #include "wx/toolbar.h"
 
-#ifndef WX_PRECOMP
+
     #include "wx/control.h"
     #include "wx/frame.h"
     #include "wx/settings.h"
     #if WXWIN_COMPATIBILITY_2_8
         #include "wx/image.h"
     #endif // WXWIN_COMPATIBILITY_2_8
-    #include "wx/menu.h"
-#endif
+    
+
 
 extern WXDLLEXPORT_DATA(const char) wxToolBarNameStr[] = "toolbar";
 

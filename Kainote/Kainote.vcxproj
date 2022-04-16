@@ -664,6 +664,15 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <None Include="kai.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Thirdparty\Build\base\base.vcxproj">
+      <Project>{c238111d-59ff-40cd-8bd5-cf1b9a1ee591}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\FFMS2\ffms2.vcxproj">
+      <Project>{2cf8c7d2-55e5-4861-a58a-a79b84d0d9ea}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Thirdparty\Build\Libass\Libass.vcxproj">
+      <Project>{dd6c83b0-c8e0-4c46-bfce-c758b31904b1}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Thirdparty\Build\Zlib\Zlib.vcxproj">
       <Project>{56e35122-0b51-43d4-a721-472f2f956e0f}</Project>
     </ProjectReference>

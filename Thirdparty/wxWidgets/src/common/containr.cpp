@@ -18,23 +18,23 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
-#ifndef WX_PRECOMP
-    #include "wx/containr.h"
-#endif
 
-#ifndef WX_PRECOMP
+    #include "wx/containr.h"
+
+
+
     #include "wx/log.h"
     #include "wx/event.h"
     #include "wx/window.h"
     #include "wx/scrolbar.h"
     #include "wx/radiobut.h"
-#endif //WX_PRECOMP
+
 
 // trace mask for focus messages
 #define TRACE_FOCUS wxT("focus")

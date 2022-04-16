@@ -18,21 +18,21 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
-#if wxUSE_POPUPWIN
+//#if wxUSE_POPUPWIN
 
 #include "wx/popupwin.h"
 
-#ifndef WX_PRECOMP
+
     #include "wx/combobox.h"        // wxComboCtrl
     #include "wx/app.h"             // wxPostEvent
     #include "wx/log.h"
-#endif //WX_PRECOMP
+
 
 #include "wx/display.h"
 #include "wx/recguard.h"
@@ -650,4 +650,4 @@ void wxPopupFocusHandler::OnChar(wxKeyEvent& event)
     }
 }
 
-#endif // wxUSE_POPUPWIN
+//#endif // wxUSE_POPUPWIN

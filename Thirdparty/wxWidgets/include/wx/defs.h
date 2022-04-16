@@ -11,8 +11,7 @@
 
 /* THIS IS A C FILE, DON'T USE C++ FEATURES (IN PARTICULAR COMMENTS) IN IT */
 
-#ifndef _WX_DEFS_H_
-#define _WX_DEFS_H_
+#pragma once
 
 /*
     NOTE: this symbol will be replaced with "WXWIN_COMPATIBILITY_3_0" as soon
@@ -1118,7 +1117,7 @@ typedef wxUint32 wxDword;
     of warnings as Win32 API often passes pointers in them)
  */
 #if wxCHECK_VISUALC_VERSION(7)
-    #define wxW64 __w64
+    #define wxW64
 #else
     #define wxW64
 #endif
@@ -3345,5 +3344,3 @@ typedef const void* WXWidget;
 
 #endif /* !wxUSE_NO_MANIFEST && _MSC_FULL_VER >= 140040130 */
 
-#endif
-    /*  _WX_DEFS_H_ */

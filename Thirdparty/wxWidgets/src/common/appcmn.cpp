@@ -18,13 +18,13 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+
 
 #if defined(__BORLANDC__)
     #pragma hdrstop
 #endif
 
-#ifndef WX_PRECOMP
+
     #include "wx/app.h"
     #include "wx/window.h"
     #include "wx/bitmap.h"
@@ -33,7 +33,7 @@
     #include "wx/confbase.h"
     #include "wx/utils.h"
     #include "wx/wxcrtvararg.h"
-#endif
+
 
 #include "wx/apptrait.h"
 #include "wx/cmdline.h"

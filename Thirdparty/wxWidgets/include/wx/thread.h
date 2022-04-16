@@ -122,8 +122,8 @@ enum wxMutexType
 // forward declarations
 class /*WXDLLIMPEXP_FWD_BASE*/ wxThreadHelper;
 class /*WXDLLIMPEXP_FWD_BASE*/ wxConditionInternal;
-class wxMutexInternal;
-class wxSemaphoreInternal;
+class WXDLLIMPEXP_FWD_BASE wxMutexInternal;
+class WXDLLIMPEXP_FWD_BASE wxSemaphoreInternal;
 class /*WXDLLIMPEXP_FWD_BASE*/ wxThreadInternal;
 
 // ----------------------------------------------------------------------------

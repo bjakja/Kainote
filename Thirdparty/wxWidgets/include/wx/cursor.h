@@ -9,8 +9,7 @@
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_CURSOR_H_BASE_
-#define _WX_CURSOR_H_BASE_
+#pragma once
 
 #include "wx/defs.h"
 
@@ -104,5 +103,5 @@ public:
         }
     }
 };
-#endif
+
     // _WX_CURSOR_H_BASE_

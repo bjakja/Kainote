@@ -10,7 +10,7 @@
 
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -20,8 +20,8 @@
 // the wx dll in order to load them dynamically.
 #define cairo_public 
 
-#include "wx/cairo.h"
-#include "wx/dynlib.h"
+//#include "wx/cairo.h"
+//#include "wx/dynlib.h"
 
 #if wxUSE_CAIRO
 

@@ -9,8 +9,8 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_NONOWNEDWND_H_
-#define _WX_NONOWNEDWND_H_
+#pragma once
+
 
 #include "wx/window.h"
 
@@ -111,4 +111,4 @@ protected:
     };
 #endif
 
-#endif // _WX_NONOWNEDWND_H_
+

@@ -604,7 +604,7 @@ WXDLLIMPEXP_BASE void wxQsort(void* pbase, size_t total_elems,
                               const void* user_data);
 
 
-#if wxUSE_GUI // GUI only things from now on
+
 
 // ----------------------------------------------------------------------------
 // Launch default browser
@@ -787,7 +787,7 @@ inline struct _XDisplay *wxGetX11Display()
 
 #endif // X11 || wxGTK
 
-#endif // wxUSE_GUI
+
 
 // ----------------------------------------------------------------------------
 // wxYield(): these functions are obsolete, please use wxApp methods instead!
