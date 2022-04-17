@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/app.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,7 @@ public:
     wxApp();
     virtual ~wxApp();
 
-    /* override for altering the way wxGTK intializes the GUI
+    /* override for altering the way wxGTK initializes the GUI
      * (palette/visual/colorcube). under wxMSW, OnInitGui() does nothing by
      * default. when overriding this method, the code in it is likely to be
      * platform dependent, otherwise use OnInit(). */
@@ -72,7 +71,7 @@ private:
     // true if we're inside an assert modal dialog
     bool m_isInAssert;
 
-    DECLARE_DYNAMIC_CLASS(wxApp)
+    wxDECLARE_DYNAMIC_CLASS(wxApp);
 };
 
 #endif // __GTKAPPH__

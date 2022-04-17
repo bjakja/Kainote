@@ -4,7 +4,6 @@
 // Author:      Hans Van Leemputten
 // Modified by: Benjamin I. Williams / Kirix Corporation
 // Created:     29/07/2002
-// RCS-ID:      $Id$
 // Copyright:   (c) Hans Van Leemputten
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_AUI
 #if wxUSE_MDI
@@ -52,14 +48,15 @@ enum MDI_MENU_ID
 // wxAuiMDIParentFrame
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxAuiMDIParentFrame, wxFrame)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAuiMDIParentFrame, wxFrame);
 
-BEGIN_EVENT_TABLE(wxAuiMDIParentFrame, wxFrame)
+wxBEGIN_EVENT_TABLE(wxAuiMDIParentFrame, wxFrame)
+    EVT_CLOSE(wxAuiMDIParentFrame::OnClose)
 #if wxUSE_MENUS
     EVT_MENU (wxID_ANY, wxAuiMDIParentFrame::DoHandleMenu)
     EVT_UPDATE_UI (wxID_ANY, wxAuiMDIParentFrame::DoHandleUpdateUI)
 #endif
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 wxAuiMDIParentFrame::wxAuiMDIParentFrame()
 {
@@ -80,6 +77,8 @@ wxAuiMDIParentFrame::wxAuiMDIParentFrame(wxWindow *parent,
 
 wxAuiMDIParentFrame::~wxAuiMDIParentFrame()
 {
+    // Avoid having GetActiveChild() called after m_pClientWindow is destroyed
+    SendDestroyEvent();
     // Make sure the client window is destructed before the menu bars are!
     wxDELETE(m_pClientWindow);
 
@@ -212,7 +211,8 @@ bool wxAuiMDIParentFrame::ProcessEvent(wxEvent& event)
 
     // let the active child (if any) process the event first.
     bool res = false;
-    if (m_pActiveChild &&
+    wxAuiMDIChildFrame* pActiveChild = GetActiveChild();
+    if (pActiveChild &&
         event.IsCommandEvent() &&
         event.GetEventObject() != m_pClientWindow &&
            !(event.GetEventType() == wxEVT_ACTIVATE ||
@@ -223,7 +223,7 @@ bool wxAuiMDIParentFrame::ProcessEvent(wxEvent& event)
              event.GetEventType() == wxEVT_COMMAND_KILL_FOCUS )
        )
     {
-        res = m_pActiveChild->GetEventHandler()->ProcessEvent(event);
+        res = pActiveChild->GetEventHandler()->ProcessEvent(event);
     }
 
     if (!res)
@@ -239,14 +239,44 @@ bool wxAuiMDIParentFrame::ProcessEvent(wxEvent& event)
     return res;
 }
 
+void wxAuiMDIParentFrame::OnClose(wxCloseEvent& event)
+{
+    if (!CloseAll())
+        event.Veto();
+    else
+        event.Skip();
+}
+
+bool wxAuiMDIParentFrame::CloseAll()
+{
+    wxAuiMDIChildFrame* pActiveChild;
+    while ((pActiveChild = GetActiveChild()) != NULL)
+    {
+        if (!pActiveChild->Close())
+        {
+            // it refused to close, don't close the remaining ones neither
+            return false;
+        }
+    }
+
+    return true;
+}
+
 wxAuiMDIChildFrame *wxAuiMDIParentFrame::GetActiveChild() const
 {
-    return m_pActiveChild;
+    // We can be called before the client window is created, so check for its
+    // existence.
+    wxAuiMDIClientWindow* const client = GetClientWindow();
+    return client ? client->GetActiveChild() : NULL;
 }
 
 void wxAuiMDIParentFrame::SetActiveChild(wxAuiMDIChildFrame* pChildFrame)
 {
-    m_pActiveChild = pChildFrame;
+    wxAuiMDIClientWindow* const client = GetClientWindow();
+    if (client && client->GetActiveChild() != pChildFrame)
+    {
+        client->SetActiveChild(pChildFrame);
+    }
 }
 
 wxAuiMDIClientWindow *wxAuiMDIParentFrame::GetClientWindow() const
@@ -287,7 +317,6 @@ void wxAuiMDIParentFrame::Init()
 {
     m_pLastEvt = NULL;
     m_pClientWindow = NULL;
-    m_pActiveChild = NULL;
 #if wxUSE_MENUS
     m_pWindowMenu = NULL;
     m_pMyMenuBar = NULL;
@@ -327,18 +356,17 @@ void wxAuiMDIParentFrame::DoHandleMenu(wxCommandEvent& event)
     switch (event.GetId())
     {
         case wxWINDOWCLOSE:
-            if (m_pActiveChild)
-                m_pActiveChild->Close();
+        {
+            wxAuiMDIChildFrame* pActiveChild = GetActiveChild();
+            if (pActiveChild)
+                pActiveChild->Close();
             break;
+        }
         case wxWINDOWCLOSEALL:
-            while (m_pActiveChild)
-            {
-                if (!m_pActiveChild->Close())
-                {
-                    return; // failure
-                }
-            }
+        {
+            CloseAll();
             break;
+        }
         case wxWINDOWNEXT:
             ActivateNext();
             break;
@@ -409,13 +437,11 @@ void wxAuiMDIParentFrame::Tile(wxOrientation orient)
 // wxAuiMDIChildFrame
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxAuiMDIChildFrame, wxPanel)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAuiMDIChildFrame, wxFrame);
 
-BEGIN_EVENT_TABLE(wxAuiMDIChildFrame, wxPanel)
+wxBEGIN_EVENT_TABLE(wxAuiMDIChildFrame, wxFrame)
     EVT_MENU_HIGHLIGHT_ALL(wxAuiMDIChildFrame::OnMenuHighlight)
-    EVT_ACTIVATE(wxAuiMDIChildFrame::OnActivate)
-    EVT_CLOSE(wxAuiMDIChildFrame::OnCloseWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 wxAuiMDIChildFrame::wxAuiMDIChildFrame()
 {
@@ -484,25 +510,31 @@ bool wxAuiMDIChildFrame::Create(wxAuiMDIParentFrame* parent,
     if (style & wxMINIMIZE)
         m_activateOnCreate = false;
 
-    wxSize cli_size = pClientWindow->GetClientSize();
-
-    // create the window off-screen to prevent flicker
-    wxPanel::Create(pClientWindow,
+    // create the window hidden to prevent flicker
+    wxWindow::Show(false);
+    wxWindow::Create(pClientWindow,
                     id,
-                    wxPoint(cli_size.x+1, cli_size.y+1),
+                    wxDefaultPosition,
                     size,
                     wxNO_BORDER, name);
 
-    DoShow(false);
-
     SetMDIParentFrame(parent);
-
-    // this is the currently active child
-    parent->SetActiveChild(this);
 
     m_title = title;
 
     pClientWindow->AddPage(this, title, m_activateOnCreate);
+
+    // Check that the parent notion of the active child coincides with our one.
+    // This is less obvious that it seems because we must honour
+    // m_activateOnCreate flag but only if it's not the first child because
+    // this one becomes active unconditionally.
+    wxASSERT_MSG
+    (
+        (m_activateOnCreate || pClientWindow->GetPageCount() == 1)
+            == (parent->GetActiveChild() == this),
+        wxS("Logic error: child [not] activated when it should [not] have been.")
+    );
+
     pClientWindow->Refresh();
 
     return true;
@@ -523,7 +555,6 @@ bool wxAuiMDIChildFrame::Destroy()
         event.SetEventObject(this);
         GetEventHandler()->ProcessEvent(event);
 
-        pParentFrame->SetActiveChild(NULL);
         pParentFrame->SetChildMenuBar(NULL);
     }
 
@@ -587,32 +618,17 @@ void wxAuiMDIChildFrame::SetTitle(const wxString& title)
     }
 }
 
-wxString wxAuiMDIChildFrame::GetTitle() const
-{
-    return m_title;
-}
-
 void wxAuiMDIChildFrame::SetIcons(const wxIconBundle& icons)
 {
-    // get icon with the system icon size
-    SetIcon(icons.GetIcon(-1));
-    m_iconBundle = icons;
-}
+    wxTDIChildFrame::SetIcons(icons);
 
-const wxIconBundle& wxAuiMDIChildFrame::GetIcons() const
-{
-    return m_iconBundle;
-}
-
-void wxAuiMDIChildFrame::SetIcon(const wxIcon& icon)
-{
     wxAuiMDIParentFrame* pParentFrame = GetMDIParentFrame();
     wxASSERT_MSG(pParentFrame, wxT("Missing MDI Parent Frame"));
 
-    m_icon = icon;
-
+    const wxSize sizeIcon(wxSystemSettings::GetMetric(wxSYS_SMALLICON_X, this),
+                          wxSystemSettings::GetMetric(wxSYS_SMALLICON_Y, this));
     wxBitmap bmp;
-    bmp.CopyFromIcon(m_icon);
+    bmp.CopyFromIcon(icons.GetIcon(sizeIcon));
 
     wxAuiMDIClientWindow* pClientWindow = pParentFrame->GetClientWindow();
     if (pClientWindow != NULL)
@@ -625,12 +641,6 @@ void wxAuiMDIChildFrame::SetIcon(const wxIcon& icon)
         }
     }
 }
-
-const wxIcon& wxAuiMDIChildFrame::GetIcon() const
-{
-    return m_icon;
-}
-
 
 void wxAuiMDIChildFrame::Activate()
 {
@@ -667,16 +677,6 @@ void wxAuiMDIChildFrame::OnMenuHighlight(wxMenuEvent& event)
 #endif // wxUSE_STATUSBAR
 }
 
-void wxAuiMDIChildFrame::OnActivate(wxActivateEvent& WXUNUSED(event))
-{
-    // do nothing
-}
-
-void wxAuiMDIChildFrame::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
-{
-    Destroy();
-}
-
 void wxAuiMDIChildFrame::SetMDIParentFrame(wxAuiMDIParentFrame* parentFrame)
 {
     m_pMDIParentFrame = parentFrame;
@@ -700,52 +700,31 @@ bool wxAuiMDIChildFrame::Show(bool show)
 {
     m_activateOnCreate = show;
 
-    // do nothing
+    if ( show )
+    {
+        // This is not a real TLW, so it won't get a size event when it's
+        // really "mapped", i.e. appears on the screen for the first time.
+        // Instead, its size had been already set when it was created and we
+        // didn't have any opportunity to lay it out since then, i.e. since
+        // before its children were created. Do it now to allow the same code
+        // that would work with a "real" wxMDIChildFrame to also work with this
+        // class.
+        DoLayout();
+    }
+
     return true;
 }
-
-void wxAuiMDIChildFrame::DoShow(bool show)
-{
-    wxWindow::Show(show);
-}
-
-void wxAuiMDIChildFrame::DoSetSize(int x, int y, int width, int height, int sizeFlags)
-{
-    m_mdiNewRect = wxRect(x, y, width, height);
-#ifdef __WXGTK__
-    wxPanel::DoSetSize(x,y,width, height, sizeFlags);
-#else
-    wxUnusedVar(sizeFlags);
-#endif
-}
-
-void wxAuiMDIChildFrame::DoMoveWindow(int x, int y, int width, int height)
-{
-    m_mdiNewRect = wxRect(x, y, width, height);
-}
-
-void wxAuiMDIChildFrame::ApplyMDIChildFrameRect()
-{
-    if (m_mdiCurRect != m_mdiNewRect)
-    {
-        wxPanel::DoMoveWindow(m_mdiNewRect.x, m_mdiNewRect.y,
-                              m_mdiNewRect.width, m_mdiNewRect.height);
-        m_mdiCurRect = m_mdiNewRect;
-    }
-}
-
 
 //-----------------------------------------------------------------------------
 // wxAuiMDIClientWindow
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxAuiMDIClientWindow, wxAuiNotebook)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAuiMDIClientWindow, wxAuiNotebook);
 
-BEGIN_EVENT_TABLE(wxAuiMDIClientWindow, wxAuiNotebook)
+wxBEGIN_EVENT_TABLE(wxAuiMDIClientWindow, wxAuiNotebook)
     EVT_AUINOTEBOOK_PAGE_CHANGED(wxID_ANY, wxAuiMDIClientWindow::OnPageChanged)
     EVT_AUINOTEBOOK_PAGE_CLOSE(wxID_ANY, wxAuiMDIClientWindow::OnPageClose)
-    EVT_SIZE(wxAuiMDIClientWindow::OnSize)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 wxAuiMDIClientWindow::wxAuiMDIClientWindow()
 {
@@ -760,15 +739,10 @@ bool wxAuiMDIClientWindow::CreateClient(wxAuiMDIParentFrame* parent, long style)
 {
     SetWindowStyleFlag(style);
 
-    wxSize caption_icon_size =
-            wxSize(wxSystemSettings::GetMetric(wxSYS_SMALLICON_X),
-                   wxSystemSettings::GetMetric(wxSYS_SMALLICON_Y));
-    SetUniformBitmapSize(caption_icon_size);
-
     if (!wxAuiNotebook::Create(parent,
                                wxID_ANY,
                                wxPoint(0,0),
-                               wxSize(100, 100),
+                               parent->FromDIP(wxSize(100, 100)),
                                wxAUI_NB_DEFAULT_STYLE | wxNO_BORDER))
     {
         return false;
@@ -782,9 +756,13 @@ bool wxAuiMDIClientWindow::CreateClient(wxAuiMDIParentFrame* parent, long style)
     return true;
 }
 
-int wxAuiMDIClientWindow::SetSelection(size_t nPage)
+wxAuiMDIChildFrame* wxAuiMDIClientWindow::GetActiveChild()
 {
-    return wxAuiNotebook::SetSelection(nPage);
+    const int sel = GetSelection();
+    if ( sel == wxNOT_FOUND || sel >= (int)GetPageCount() )
+        return NULL;
+
+    return wxStaticCast(GetPage(sel), wxAuiMDIChildFrame);
 }
 
 void wxAuiMDIClientWindow::PageChanged(int old_selection, int new_selection)
@@ -850,14 +828,6 @@ void wxAuiMDIClientWindow::OnPageClose(wxAuiNotebookEvent& evt)
 void wxAuiMDIClientWindow::OnPageChanged(wxAuiNotebookEvent& evt)
 {
     PageChanged(evt.GetOldSelection(), evt.GetSelection());
-}
-
-void wxAuiMDIClientWindow::OnSize(wxSizeEvent& evt)
-{
-    wxAuiNotebook::OnSize(evt);
-
-    for (size_t pos = 0; pos < GetPageCount(); pos++)
-        ((wxAuiMDIChildFrame *)GetPage(pos))->ApplyMDIChildFrameRect();
 }
 
 #endif //wxUSE_AUI

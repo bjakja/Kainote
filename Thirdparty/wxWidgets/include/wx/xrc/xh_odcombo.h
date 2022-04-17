@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxOwnerDrawnComboBox
 // Author:      Alex Bligh - based on wx/xrc/xh_combo.h
 // Created:     2006/06/19
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Alex Bligh
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,12 @@
 
 class WXDLLIMPEXP_XRC wxOwnerDrawnComboBoxXmlHandler : public wxXmlResourceHandler
 {
-    DECLARE_DYNAMIC_CLASS(wxOwnerDrawnComboBoxXmlHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxOwnerDrawnComboBoxXmlHandler);
 
 public:
     wxOwnerDrawnComboBoxXmlHandler();
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
 private:
     bool m_insideBox;

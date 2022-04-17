@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxTimePickerCtrl
 // Author:      Vadim Zeitlin
 // Created:     2011-09-22
-// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,8 +18,8 @@ class WXDLLIMPEXP_XRC wxTimeCtrlXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxTimeCtrlXmlHandler();
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
 private:
     wxDECLARE_DYNAMIC_CLASS(wxTimeCtrlXmlHandler);

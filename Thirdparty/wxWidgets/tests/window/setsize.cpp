@@ -3,7 +3,6 @@
 // Purpose:     Tests for SetSize() and related wxWindow methods
 // Author:      Vadim Zeitlin
 // Created:     2008-05-25
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,81 +12,97 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
+    #include "wx/frame.h"
     #include "wx/window.h"
 #endif // WX_PRECOMP
 
+#include "wx/scopedptr.h"
+
 #include "asserthelper.h"
+#include "waitforpaint.h"
 
 // ----------------------------------------------------------------------------
-// test class
+// tests helpers
 // ----------------------------------------------------------------------------
 
-class SetSizeTestCase : public CppUnit::TestCase
+namespace
+{
+
+// Helper class overriding DoGetBestSize() for testing purposes.
+class MyWindow : public wxWindow
 {
 public:
-    SetSizeTestCase() { }
+    MyWindow(wxWindow* parent)
+        : wxWindow(parent, wxID_ANY)
+    {
+    }
 
-    virtual void setUp();
-    virtual void tearDown();
-
-private:
-    CPPUNIT_TEST_SUITE( SetSizeTestCase );
-        CPPUNIT_TEST( SetSize );
-        CPPUNIT_TEST( SetSizeLessThanMinSize );
-    CPPUNIT_TEST_SUITE_END();
-
-    void SetSize();
-    void SetSizeLessThanMinSize();
-
-    wxWindow *m_win;
-
-    DECLARE_NO_COPY_CLASS(SetSizeTestCase)
+protected:
+    virtual wxSize DoGetBestSize() const wxOVERRIDE { return wxSize(50, 250); }
 };
 
-// register in the unnamed registry so that these tests are run by default
-CPPUNIT_TEST_SUITE_REGISTRATION( SetSizeTestCase );
-
-// also include in its own registry so that these tests can be run alone
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( SetSizeTestCase, "SetSizeTestCase" );
-
-// ----------------------------------------------------------------------------
-// test initialization
-// ----------------------------------------------------------------------------
-
-void SetSizeTestCase::setUp()
-{
-    m_win = new wxWindow(wxTheApp->GetTopWindow(), wxID_ANY);
-}
-
-void SetSizeTestCase::tearDown()
-{
-    delete m_win;
-    m_win = NULL;
-}
+} // anonymous namespace
 
 // ----------------------------------------------------------------------------
 // tests themselves
 // ----------------------------------------------------------------------------
 
-void SetSizeTestCase::SetSize()
+TEST_CASE("wxWindow::SetSize", "[window][size]")
 {
-    const wxSize size(127, 35);
-    m_win->SetSize(size);
-    CPPUNIT_ASSERT_EQUAL( size, m_win->GetSize() );
+    wxScopedPtr<wxWindow> w(new MyWindow(wxTheApp->GetTopWindow()));
+
+    SECTION("Simple")
+    {
+        const wxSize size(127, 35);
+        w->SetSize(size);
+        CHECK( size == w->GetSize() );
+    }
+
+    SECTION("With min size")
+    {
+        w->SetMinSize(wxSize(100, 100));
+
+        const wxSize size(200, 50);
+        w->SetSize(size);
+        CHECK( size == w->GetSize() );
+    }
 }
 
-void SetSizeTestCase::SetSizeLessThanMinSize()
+TEST_CASE("wxWindow::GetBestSize", "[window][size][best-size]")
 {
-    m_win->SetMinSize(wxSize(100, 100));
+    wxScopedPtr<wxWindow> w(new MyWindow(wxTheApp->GetTopWindow()));
 
-    const wxSize size(200, 50);
-    m_win->SetSize(size);
-    CPPUNIT_ASSERT_EQUAL( size, m_win->GetSize() );
+    CHECK( wxSize(50, 250) == w->GetBestSize() );
+
+    w->SetMinSize(wxSize(100, 100));
+    CHECK( wxSize(100, 250) == w->GetBestSize() );
+
+    w->SetMaxSize(wxSize(200, 200));
+    CHECK( wxSize(100, 200) == w->GetBestSize() );
 }
 
+TEST_CASE("wxWindow::MovePreservesSize", "[window][size][move]")
+{
+    wxScopedPtr<wxWindow>
+        w(new wxFrame(wxTheApp->GetTopWindow(), wxID_ANY, "Test child frame"));
+
+    // Unfortunately showing the window is asynchronous, at least when using
+    // X11, so we have to wait for some time before retrieving its true
+    // geometry. And it's not clear how long should we wait, so we do it until
+    // we get the first paint event -- by then the window really should have
+    // its final size.
+    WaitForPaint waitForPaint(w.get());
+
+    w->Show();
+
+    waitForPaint.YieldUntilPainted();
+
+    const wxRect rectOrig = w->GetRect();
+
+    // Check that moving the window doesn't change its size.
+    w->Move(rectOrig.GetPosition() + wxPoint(100, 100));
+    CHECK( w->GetSize() == rectOrig.GetSize() );
+}

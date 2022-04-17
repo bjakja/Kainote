@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -33,6 +32,7 @@
 
 @interface wxNSStaticTextView : NSTextField
 {
+    NSColor *m_textColor;
 }
 @end
 
@@ -48,21 +48,35 @@
     }
 }
 
+- (void)dealloc
+{
+    [m_textColor release];
+    [super dealloc];
+}
+
 - (void) setEnabled:(BOOL) flag 
-{ 
+{
+    bool wasEnabled = [self isEnabled];
+
     [super setEnabled: flag]; 
     
-    if (![self drawsBackground]) { 
-        // Static text is drawn incorrectly when disabled. 
-        // For an explanation, see 
-        // http://www.cocoabuilder.com/archive/message/cocoa/2006/7/21/168028 
+    if (![self drawsBackground]) {
+        // Static text is drawn incorrectly when disabled.
+        // For an explanation, see
+        // http://www.cocoabuilder.com/archive/message/cocoa/2006/7/21/168028
         if (flag)
         { 
-            [self setTextColor: [NSColor controlTextColor]]; 
+            if (m_textColor)
+                [self setTextColor: m_textColor];
         }
         else 
-        { 
-            [self setTextColor: [NSColor secondarySelectedControlColor]]; 
+        {
+            if (wasEnabled)
+            {
+                [m_textColor release];
+                m_textColor = [[self textColor] retain];
+            }
+            [self setTextColor: [NSColor disabledControlTextColor]]; 
         } 
     } 
 } 
@@ -77,8 +91,10 @@ public:
         m_lineBreak = lineBreak;
     }
 
-    virtual void SetLabel(const wxString& title, wxFontEncoding encoding)
+    virtual void SetLabel(const wxString& title, wxFontEncoding encoding) wxOVERRIDE
     {
+        wxMacAutoreleasePool autoreleasepool;
+
         wxCFStringRef text( title , encoding );
 
         NSMutableAttributedString *
@@ -88,9 +104,9 @@ public:
     }
 
 #if wxUSE_MARKUP
-    virtual void SetLabelMarkup( const wxString& markup)
+    virtual void SetLabelMarkup( const wxString& markup) wxOVERRIDE
     {
-        wxMarkupToAttrString toAttr(GetWXPeer(), markup);
+        wxMarkupToAttrString toAttr(GetWXPeer()->GetFont(), markup);
 
         DoSetAttrString(toAttr.GetNSAttributedString());
     }
@@ -141,8 +157,8 @@ wxWidgetImplType* wxWidgetImpl::CreateStaticText( wxWindowMac* wxpeer,
     [v setBezeled:NO];
     [v setBordered:NO];
 
-    NSLineBreakMode linebreak = NSLineBreakByWordWrapping;
-    if ( ((wxStaticText*)wxpeer)->IsEllipsized() )
+    NSLineBreakMode linebreak = NSLineBreakByClipping;
+    if ( style & wxST_ELLIPSIZE_MASK )
     {
         if ( style & wxST_ELLIPSIZE_MIDDLE )
             linebreak = NSLineBreakByTruncatingMiddle;

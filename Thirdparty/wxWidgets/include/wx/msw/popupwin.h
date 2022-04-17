@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.01.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,27 +18,38 @@
 class WXDLLIMPEXP_CORE wxPopupWindow : public wxPopupWindowBase
 {
 public:
-    wxPopupWindow() { }
+    wxPopupWindow() { m_owner = NULL; }
 
     wxPopupWindow(wxWindow *parent, int flags = wxBORDER_NONE)
         { (void)Create(parent, flags); }
 
     bool Create(wxWindow *parent, int flags = wxBORDER_NONE);
 
-    virtual bool Show(bool show = true);
+    virtual ~wxPopupWindow();
+
+    virtual void SetFocus() wxOVERRIDE;
+    virtual bool Show(bool show = true) wxOVERRIDE;
 
     // return the style to be used for the popup windows
-    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const;
+    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle) const wxOVERRIDE;
 
     // get the HWND to be used as parent of this window with CreateWindow()
-    virtual WXHWND MSWGetParent() const;
+    virtual WXHWND MSWGetParent() const wxOVERRIDE;
 
-protected:
-    // popups handle the position like wxTopLevelWindow, not wxWindow
-    virtual void DoGetPosition(int *x, int *y) const;
 
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow)
+    // Implementation only from now on.
+
+    // Return the top level window parent of this popup or null.
+    wxWindow* MSWGetOwner() const { return m_owner; }
+
+    // This is a way to notify non-wxPU_CONTAINS_CONTROLS windows about the
+    // events that should result in their dismissal.
+    virtual void MSWDismissUnfocusedPopup() { }
+
+private:
+    wxWindow* m_owner;
+
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
 };
 
 #endif // _WX_MSW_POPUPWIN_H_
-

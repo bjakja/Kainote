@@ -4,7 +4,6 @@
 // Author:      Neil Perkins
 // Modified by:
 // Created:     2010-05-15
-// RCS-ID:      $Id$
 // Copyright:   (C) 2010 Neil Perkins
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -106,6 +105,9 @@ public:
     bool SetDefaultIcon(const wxString& strIcon = wxEmptyString, int index = 0);
     bool Unassociate(wxFileType *ft);
 
+    wxString
+    GetExpandedCommand(const wxString& verb,
+                       const wxFileType::MessageParameters& params) const;
 private:
 
     // All that is needed to query type info - UTI and pointer to the manager

@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin, Ryan Norton
 // Modified by:
 // Created:     29/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 //              (c) 2004 Ryan Norton <wxprojects@comcast.net>
 // Licence:     wxWindows licence
@@ -21,12 +20,9 @@
 // headers, declarations, constants
 // ===========================================================================
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/stringimpl.h"
@@ -35,30 +31,10 @@
 
 #include <ctype.h>
 
-#ifndef __WXWINCE__
-    #include <errno.h>
-#endif
+#include <errno.h>
 
 #include <string.h>
 #include <stdlib.h>
-
-// allocating extra space for each string consumes more memory but speeds up
-// the concatenation operations (nLen is the current string's length)
-// NB: EXTRA_ALLOC must be >= 0!
-#define EXTRA_ALLOC       (19 - nLen % 16)
-
-
-// string handling functions used by wxString:
-#if wxUSE_UNICODE_UTF8
-    #define wxStringMemcpy   memcpy
-    #define wxStringMemcmp   memcmp
-    #define wxStringMemchr   memchr
-#else
-    #define wxStringMemcpy   wxTmemcpy
-    #define wxStringMemcmp   wxTmemcmp
-    #define wxStringMemchr   wxTmemchr
-#endif
-
 
 // ---------------------------------------------------------------------------
 // static class variables definition
@@ -82,6 +58,22 @@ const wxStringCharType WXDLLIMPEXP_BASE *wxEmptyStringImpl = "";
 const wxChar WXDLLIMPEXP_BASE *wxEmptyString = wxT("");
 
 #else
+
+// allocating extra space for each string consumes more memory but speeds up
+// the concatenation operations (nLen is the current string's length)
+// NB: EXTRA_ALLOC must be >= 0!
+#define EXTRA_ALLOC       (19 - nLen % 16)
+
+// string handling functions used by wxString:
+#if wxUSE_UNICODE_UTF8
+    #define wxStringMemcpy   memcpy
+    #define wxStringMemcmp   memcmp
+    #define wxStringMemchr   memchr
+#else
+    #define wxStringMemcpy   wxTmemcpy
+    #define wxStringMemcmp   wxTmemcmp
+    #define wxStringMemchr   wxTmemchr
+#endif
 
 // for an empty string, GetStringData() will return this address: this
 // structure has the same layout as wxStringData and it's data() method will
@@ -225,7 +217,7 @@ bool wxStringImpl::AllocBuffer(size_t nLen)
   wxStringData* pData = (wxStringData*)
     malloc(sizeof(wxStringData) + (nLen + EXTRA_ALLOC + 1)*sizeof(wxStringCharType));
 
-  if ( pData == nullptr ) {
+  if ( pData == NULL ) {
     // allocation failures are handled by the caller
     return false;
   }
@@ -285,7 +277,7 @@ bool wxStringImpl::AllocBeforeWrite(size_t nLen)
           realloc(pData,
                   sizeof(wxStringData) + (nLen + 1)*sizeof(wxStringCharType));
 
-      if ( pData == nullptr ) {
+      if ( pData == NULL ) {
         // allocation failures are handled by the caller
         // keep previous data since reallocation failed
         return false;
@@ -349,7 +341,7 @@ bool wxStringImpl::Alloc(size_t nLen)
       pData = (wxStringData *)
              malloc(sizeof(wxStringData) + (nLen + 1)*sizeof(wxStringCharType));
 
-      if ( pData == nullptr ) {
+      if ( pData == NULL ) {
         // allocation failure handled by caller
         return false;
       }
@@ -377,7 +369,7 @@ bool wxStringImpl::Alloc(size_t nLen)
       pData = (wxStringData *)
         realloc(pData, sizeof(wxStringData) + (nLen + 1)*sizeof(wxStringCharType));
 
-      if ( pData == nullptr ) {
+      if ( pData == NULL ) {
         // allocation failure handled by caller
         // keep previous data since reallocation failed
         return false;
@@ -517,7 +509,7 @@ size_t wxStringImpl::find(wxStringCharType ch, size_t nStart) const
     const wxStringCharType *p = (const wxStringCharType*)
         wxStringMemchr(c_str() + nStart, ch, length() - nStart);
 
-    return p == nullptr ? npos : p - c_str();
+    return p == NULL ? npos : p - c_str();
 }
 
 size_t wxStringImpl::rfind(const wxStringImpl& str, size_t nStart) const
@@ -769,7 +761,7 @@ wxStringCharType *wxStringImpl::DoGetWriteBuf(size_t nLen)
 {
   if ( !AllocBeforeWrite(nLen) ) {
     // allocation failure handled by caller
-    return nullptr;
+    return NULL;
   }
 
   wxASSERT( GetStringData()->nRefs == 1 );

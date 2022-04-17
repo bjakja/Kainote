@@ -4,7 +4,6 @@
 // Author:      Julian Smart (extracted from docview.h by VZ)
 // Modified by:
 // Created:     05.11.00
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/intl.h"
@@ -37,17 +33,17 @@
 // implementation
 // ============================================================================
 
-IMPLEMENT_CLASS(wxCommand, wxObject)
-IMPLEMENT_DYNAMIC_CLASS(wxCommandProcessor, wxObject)
+wxIMPLEMENT_CLASS(wxCommand, wxObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxCommandProcessor, wxObject);
 
 // ----------------------------------------------------------------------------
 // wxCommand
 // ----------------------------------------------------------------------------
 
 wxCommand::wxCommand(bool canUndoIt, const wxString& name)
+    : m_commandName(name)
 {
     m_canUndo = canUndoIt;
-    m_commandName = name;
 }
 
 // ----------------------------------------------------------------------------
@@ -55,19 +51,15 @@ wxCommand::wxCommand(bool canUndoIt, const wxString& name)
 // ----------------------------------------------------------------------------
 
 wxCommandProcessor::wxCommandProcessor(int maxCommands)
+#if wxUSE_ACCEL
+    : m_undoAccelerator('\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Z').ToString())
+    , m_redoAccelerator('\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Y').ToString())
+#endif // wxUSE_ACCEL
 {
     m_maxNoCommands = maxCommands;
 #if wxUSE_MENUS
-    m_commandEditMenu = nullptr;
+    m_commandEditMenu = NULL;
 #endif // wxUSE_MENUS
-
-#if wxUSE_ACCEL
-    m_undoAccelerator = '\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Z').ToString();
-    m_redoAccelerator = '\t' + wxAcceleratorEntry(wxACCEL_CTRL, 'Y').ToString();
-#endif // wxUSE_ACCEL
-
-    m_lastSavedCommand =
-    m_currentCommand = wxList::compatibility_iterator();
 }
 
 wxCommandProcessor::~wxCommandProcessor()
@@ -170,10 +162,10 @@ bool wxCommandProcessor::Undo()
 
 bool wxCommandProcessor::Redo()
 {
-    wxCommand *redoCommand = nullptr;
+    wxCommand *redoCommand = NULL;
     wxList::compatibility_iterator redoNode
 #if !wxUSE_STD_CONTAINERS
-        = nullptr          // just to avoid warnings
+        = NULL          // just to avoid warnings
 #endif // !wxUSE_STD_CONTAINERS
         ;
 
@@ -302,7 +294,7 @@ wxString wxCommandProcessor::GetRedoMenuLabel() const
         }
         else
         {
-            // currentCommand is nullptr but there are commands: this means that
+            // currentCommand is NULL but there are commands: this means that
             // we've undone to the start of the list, but can redo the first.
             wxCommand *redoCommand = (wxCommand *)m_commands.GetFirst()->GetData();
             wxString redoCommandName(redoCommand->GetName());
@@ -330,16 +322,14 @@ void wxCommandProcessor::ClearCommands()
 
 bool wxCommandProcessor::IsDirty() const
 {
-    if ( m_commands.empty() )
-    {
-        // If we have never been modified, we can't be dirty.
-        return false;
-    }
-
     if ( !m_lastSavedCommand )
     {
-        // If we have been modified but have never been saved, we're dirty.
-        return true;
+        // We have never been saved, so we are dirty if and only if we have any
+        // commands at all.
+        //
+        // NB: The ugly "!!" test is needed to avoid warnings both from MSVC in
+        //     non-STL build and g++ in STL build.
+        return !!m_currentCommand;
     }
 
     if ( !m_currentCommand )

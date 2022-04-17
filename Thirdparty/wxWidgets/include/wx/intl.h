@@ -5,7 +5,6 @@
 // Modified by: Michael N. Filippov <michael@idisys.iae.nsk.su>
 //              (2003/09/30 - plural forms support)
 // Created:     29/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,18 +13,9 @@
 #define _WX_INTL_H_
 
 #include "wx/defs.h"
+#include "wx/localedefs.h"
 #include "wx/string.h"
 #include "wx/translation.h"
-
-// Make wxLayoutDirection enum available without need for wxUSE_INTL so wxWindow, wxApp
-// and other classes are not distrubed by wxUSE_INTL
-
-enum wxLayoutDirection
-{
-    wxLayout_Default,
-    wxLayout_LeftToRight,
-    wxLayout_RightToLeft
-};
 
 #if wxUSE_INTL
 
@@ -45,90 +35,10 @@ enum wxLayoutDirection
 // ----------------------------------------------------------------------------
 
 class WXDLLIMPEXP_FWD_BASE wxLocale;
-class WXDLLIMPEXP_FWD_BASE wxLanguageInfoArray;
 
 // ============================================================================
 // locale support
 // ============================================================================
-
-// ----------------------------------------------------------------------------
-// wxLanguageInfo: encapsulates wxLanguage to OS native lang.desc.
-//                 translation information
-// ----------------------------------------------------------------------------
-
-struct WXDLLIMPEXP_BASE wxLanguageInfo
-{
-    int Language;                   // wxLanguage id
-    wxString CanonicalName;         // Canonical name, e.g. fr_FR
-#ifdef __WINDOWS__
-    wxUint32 WinLang,               // Win32 language identifiers
-             WinSublang;
-#endif // __WINDOWS__
-    wxString Description;           // human-readable name of the language
-    wxLayoutDirection LayoutDirection;
-
-#ifdef __WINDOWS__
-    // return the LCID corresponding to this language
-    wxUint32 GetLCID() const;
-#endif // __WINDOWS__
-
-    // return the locale name corresponding to this language usable with
-    // setlocale() on the current system
-    wxString GetLocaleName() const;
-};
-
-// for Unix systems GetLocaleName() is trivial so implement it inline here, for
-// MSW it's implemented in intl.cpp
-#ifndef __WINDOWS__
-inline wxString wxLanguageInfo::GetLocaleName() const { return CanonicalName; }
-#endif // !__WINDOWS__
-
-
-// ----------------------------------------------------------------------------
-// wxLocaleCategory: the category of locale settings
-// ----------------------------------------------------------------------------
-
-enum wxLocaleCategory
-{
-    // (any) numbers
-    wxLOCALE_CAT_NUMBER,
-
-    // date/time
-    wxLOCALE_CAT_DATE,
-
-    // monetary value
-    wxLOCALE_CAT_MONEY,
-
-    // default category for wxLocaleInfo values which only apply to a single
-    // category (e.g. wxLOCALE_SHORT_DATE_FMT)
-    wxLOCALE_CAT_DEFAULT,
-
-    wxLOCALE_CAT_MAX
-};
-
-// ----------------------------------------------------------------------------
-// wxLocaleInfo: the items understood by wxLocale::GetInfo()
-// ----------------------------------------------------------------------------
-
-enum wxLocaleInfo
-{
-    // the thousands separator (for wxLOCALE_CAT_NUMBER or MONEY)
-    wxLOCALE_THOUSANDS_SEP,
-
-    // the character used as decimal point (for wxLOCALE_CAT_NUMBER or MONEY)
-    wxLOCALE_DECIMAL_POINT,
-
-    // the stftime()-formats used for short/long date and time representations
-    // (under some platforms short and long date formats are the same)
-    //
-    // NB: these elements should appear in this order, code in GetInfo() relies
-    //     on it
-    wxLOCALE_SHORT_DATE_FMT,
-    wxLOCALE_LONG_DATE_FMT,
-    wxLOCALE_DATE_TIME_FMT,
-    wxLOCALE_TIME_FMT
-
-};
 
 // ----------------------------------------------------------------------------
 // wxLocale: encapsulates all language dependent settings, including current
@@ -144,6 +54,8 @@ enum wxLocaleInitFlags
                                              // it from the existing code
 #endif
 };
+
+// NOTE: This class is deprecated, use wxUILocale and wxTranslations instead.
 
 class WXDLLIMPEXP_BASE wxLocale
 {
@@ -214,6 +126,17 @@ public:
     // is used, the US default value is returned if everything else fails
     static wxString GetInfo(wxLocaleInfo index,
                             wxLocaleCategory cat = wxLOCALE_CAT_DEFAULT);
+
+    // Same as GetInfo() but uses current locale at the OS level to retrieve
+    // the information. Normally it should be the same as the one used by
+    // GetInfo() but there are two exceptions: the most important one is that
+    // if no locale had been set, GetInfo() would fall back to "C" locale,
+    // while this one uses the default OS locale. Another, more rare, one is
+    // that some locales might not supported by the OS.
+    //
+    // Currently this is the same as GetInfo() under non-MSW platforms.
+    static wxString GetOSInfo(wxLocaleInfo index,
+                              wxLocaleCategory cat = wxLOCALE_CAT_DEFAULT);
 
     // return true if the locale was set successfully
     bool IsOk() const { return m_pszOldLocale != NULL; }
@@ -308,12 +231,6 @@ public:
         return wxGetTranslation(origString, origString2, n, domain);
     }
 
-    // this is hack to work around a problem with wxGetTranslation() which
-    // returns const wxString& and not wxString, so when it returns untranslated
-    // string, it needs to have a copy of it somewhere
-    static const wxString& GetUntranslatedString(const wxString& str)
-        { return wxTranslations::GetUntranslatedString(str); }
-
     // Returns the current short name for the locale
     const wxString& GetName() const { return m_strShort; }
 
@@ -321,36 +238,48 @@ public:
     wxString GetHeaderValue(const wxString& header,
                             const wxString& domain = wxEmptyString) const;
 
-    // These two methods are for internal use only. First one creates
-    // ms_languagesDB if it doesn't already exist, second one destroys
+    // These two methods are for internal use only. First one creates the
+    // global language database if it doesn't already exist, second one destroys
     // it.
     static void CreateLanguagesDB();
     static void DestroyLanguagesDB();
 
 private:
-    bool DoInit(const wxString& name,
+    // This method updates the member fields when this locale is actually set
+    // as active.
+    void DoInit(const wxString& name,
                 const wxString& shortName,
-                const wxString& locale);
+                int language);
 
-    // copy default table of languages from global static array to
-    // m_langugagesInfo, called by InitLanguagesDB
-    static void InitLanguagesDB();
-
-    // initialize the member fields to default values
+    // This method is trivial and just initializes the member fields to default
+    // values.
     void DoCommonInit();
+
+    // After trying to set locale, call this method to give the appropriate
+    // error if it couldn't be set (success == false) and to load the
+    // translations for the given language, if necessary.
+    //
+    // The return value is the same as "success" parameter.
+    bool DoCommonPostInit(bool success,
+                          const wxString& name,
+                          const wxString& shortName,
+                          bool bLoadDefault);
+
 
     wxString       m_strLocale,       // this locale name
                    m_strShort;        // short name for the locale
     int            m_language;        // this locale wxLanguage value
 
+    wxString       m_oldUILocale;     // previous wxUILocale name
     const char  *m_pszOldLocale;      // previous locale from setlocale()
     wxLocale      *m_pOldLocale;      // previous wxLocale
+#ifdef __WIN32__
+    wxUint32       m_oldLCID;
+#endif
 
     bool           m_initialized;
 
     wxTranslations m_translations;
-
-    static wxLanguageInfoArray *ms_languagesDB;
 
     wxDECLARE_NO_COPY_CLASS(wxLocale);
 };

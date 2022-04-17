@@ -3,13 +3,15 @@
 // Purpose:     Declaration of wxTextCompleter class.
 // Author:      Vadim Zeitlin
 // Created:     2011-04-13
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #ifndef _WX_TEXTCOMPLETER_H_
 #define _WX_TEXTCOMPLETER_H_
+
+#include "wx/defs.h"
+#include "wx/arrstr.h"
 
 // ----------------------------------------------------------------------------
 // wxTextCompleter: used by wxTextEnter::AutoComplete()
@@ -45,8 +47,8 @@ public:
     // Must be implemented to return all the completions for the given prefix.
     virtual void GetCompletions(const wxString& prefix, wxArrayString& res) = 0;
 
-    virtual bool Start(const wxString& prefix);
-    virtual wxString GetNext();
+    virtual bool Start(const wxString& prefix) wxOVERRIDE;
+    virtual wxString GetNext() wxOVERRIDE;
 
 private:
     wxArrayString m_completions;
@@ -73,7 +75,7 @@ public:
     }
 
     virtual void GetCompletions(const wxString& WXUNUSED(prefix),
-                                wxArrayString& res)
+                                wxArrayString& res) wxOVERRIDE
     {
         res = m_strings;
     }

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 // Group box
 class WXDLLIMPEXP_CORE wxStaticBox: public wxStaticBoxBase
 {
-    DECLARE_DYNAMIC_CLASS(wxStaticBox)
+    wxDECLARE_DYNAMIC_CLASS(wxStaticBox);
 
 public:
     wxStaticBox();
@@ -24,7 +23,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
-        const wxString& name = wxStaticBoxNameStr)
+        const wxString& name = wxASCII_STR(wxStaticBoxNameStr))
     {
         Create(parent, id, label, pos, size, style, name);
     }
@@ -36,7 +35,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = 0,
-        const wxString& name = wxStaticBoxNameStr);
+        const wxString& name = wxASCII_STR(wxStaticBoxNameStr));
 
     virtual bool ProcessCommand(wxCommandEvent& WXUNUSED(event))
     {
@@ -52,7 +51,7 @@ private:
     WXWidget  m_labelWidget;
 
 private:
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 #endif

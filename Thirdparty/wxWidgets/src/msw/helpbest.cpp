@@ -4,17 +4,12 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     02/04/2001
-// RCS-ID:      $Id$
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
-#include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/log.h"
@@ -29,7 +24,7 @@
 #include "wx/html/helpctrl.h"
 #include "wx/msw/helpbest.h"
 
-IMPLEMENT_DYNAMIC_CLASS( wxBestHelpController, wxHelpControllerBase )
+wxIMPLEMENT_DYNAMIC_CLASS(wxBestHelpController, wxHelpControllerBase);
 
 bool wxBestHelpController::Initialize( const wxString& filename )
 {

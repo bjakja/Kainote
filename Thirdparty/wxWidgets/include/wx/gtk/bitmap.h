@@ -2,7 +2,6 @@
 // Name:        wx/gtk/bitmap.h
 // Purpose:
 // Author:      Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,6 +15,7 @@ typedef struct _cairo_surface cairo_surface_t;
 #endif
 typedef struct _GdkPixbuf GdkPixbuf;
 class WXDLLIMPEXP_FWD_CORE wxPixelDataBase;
+class WXDLLIMPEXP_FWD_CORE wxCursor;
 
 //-----------------------------------------------------------------------------
 // wxMask
@@ -32,20 +32,21 @@ public:
 #endif // wxUSE_PALETTE
     wxMask( const wxBitmap& bitmap );
     virtual ~wxMask();
+    wxBitmap GetBitmap() const;
 
     // implementation
 #ifdef __WXGTK3__
     wxMask(cairo_surface_t*);
-    cairo_surface_t* GetBitmap() const;
+    operator cairo_surface_t*() const;
 #else
     wxMask(GdkPixmap*);
-    GdkPixmap* GetBitmap() const;
+    operator GdkPixmap*() const;
 #endif
 
 protected:
-    virtual void FreeData();
-    virtual bool InitFromColour(const wxBitmap& bitmap, const wxColour& colour);
-    virtual bool InitFromMonoBitmap(const wxBitmap& bitmap);
+    virtual void FreeData() wxOVERRIDE;
+    virtual bool InitFromColour(const wxBitmap& bitmap, const wxColour& colour) wxOVERRIDE;
+    virtual bool InitFromMonoBitmap(const wxBitmap& bitmap) wxOVERRIDE;
 
 private:
 #ifdef __WXGTK3__
@@ -54,7 +55,7 @@ private:
     GdkPixmap* m_bitmap;
 #endif
 
-    DECLARE_DYNAMIC_CLASS(wxMask)
+    wxDECLARE_DYNAMIC_CLASS(wxMask);
 };
 
 //-----------------------------------------------------------------------------
@@ -71,46 +72,46 @@ public:
         { Create(sz, depth); }
     wxBitmap( const char bits[], int width, int height, int depth = 1 );
     wxBitmap( const char* const* bits );
-#ifdef wxNEEDS_CHARPP
-    // needed for old GCC
-    wxBitmap(char** data)
-        { *this = wxBitmap(const_cast<const char* const*>(data)); }
-#endif
     wxBitmap( const wxString &filename, wxBitmapType type = wxBITMAP_DEFAULT_TYPE );
 #if wxUSE_IMAGE
-    wxBitmap(const wxImage& image, int depth = wxBITMAP_SCREEN_DEPTH);
+    wxBitmap(const wxImage& image, int depth = wxBITMAP_SCREEN_DEPTH, double scale = 1.0);
 #endif // wxUSE_IMAGE
-    wxBitmap(GdkPixbuf* pixbuf);
+    wxBitmap(GdkPixbuf* pixbuf, int depth = 0);
+    explicit wxBitmap(const wxCursor& cursor);
     virtual ~wxBitmap();
 
-    bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH);
-    bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH)
+    bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH) wxOVERRIDE;
+    bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH) wxOVERRIDE
         { return Create(sz.GetWidth(), sz.GetHeight(), depth); }
+#ifdef __WXGTK3__
+    bool Create(int width, int height, const wxDC& dc);
+    virtual void SetScaleFactor(double scale) wxOVERRIDE;
+    virtual double GetScaleFactor() const wxOVERRIDE;
+#else
+    bool Create(int width, int height, const wxDC& WXUNUSED(dc))
+        { return Create(width,height); }
+#endif
 
-    virtual int GetHeight() const;
-    virtual int GetWidth() const;
-    virtual int GetDepth() const;
+    virtual int GetHeight() const wxOVERRIDE;
+    virtual int GetWidth() const wxOVERRIDE;
+    virtual int GetDepth() const wxOVERRIDE;
 
 #if wxUSE_IMAGE
-    wxImage ConvertToImage() const;
+    wxImage ConvertToImage() const wxOVERRIDE;
 #endif // wxUSE_IMAGE
 
-    // copies the contents and mask of the given (colour) icon to the bitmap
-    virtual bool CopyFromIcon(const wxIcon& icon);
+    wxMask *GetMask() const wxOVERRIDE;
+    void SetMask( wxMask *mask ) wxOVERRIDE;
 
-    wxMask *GetMask() const;
-    void SetMask( wxMask *mask );
-    wxBitmap GetMaskBitmap() const;
-
-    wxBitmap GetSubBitmap( const wxRect& rect ) const;
+    wxBitmap GetSubBitmap( const wxRect& rect ) const wxOVERRIDE;
 
     bool SaveFile(const wxString &name, wxBitmapType type,
-                          const wxPalette *palette = NULL) const;
-    bool LoadFile(const wxString &name, wxBitmapType type = wxBITMAP_DEFAULT_TYPE);
+                          const wxPalette *palette = NULL) const wxOVERRIDE;
+    bool LoadFile(const wxString &name, wxBitmapType type = wxBITMAP_DEFAULT_TYPE) wxOVERRIDE;
 
 #if wxUSE_PALETTE
-    wxPalette *GetPalette() const;
-    void SetPalette(const wxPalette& palette);
+    wxPalette *GetPalette() const wxOVERRIDE;
+    void SetPalette(const wxPalette& palette) wxOVERRIDE;
     wxPalette *GetColourMap() const { return GetPalette(); }
 #endif // wxUSE_PALETTE
 
@@ -119,20 +120,24 @@ public:
     // implementation
     // --------------
 
-    void SetHeight( int height );
-    void SetWidth( int width );
-    void SetDepth( int depth );
+#if WXWIN_COMPATIBILITY_3_0
+    wxDEPRECATED(void SetHeight( int height ) wxOVERRIDE);
+    wxDEPRECATED(void SetWidth( int width ) wxOVERRIDE);
+    wxDEPRECATED(void SetDepth( int depth ) wxOVERRIDE);
+#endif
 
 #ifdef __WXGTK3__
-    GdkPixbuf* GetPixbufNoMask() const;
     cairo_t* CairoCreate() const;
     void Draw(cairo_t* cr, int x, int y, bool useMask = true, const wxColour* fg = NULL, const wxColour* bg = NULL) const;
     void SetSourceSurface(cairo_t* cr, int x, int y, const wxColour* fg = NULL, const wxColour* bg = NULL) const;
+    wxBitmap CreateDisabled() const;
 #else
     GdkPixmap *GetPixmap() const;
     bool HasPixmap() const;
     bool HasPixbuf() const;
+    wxBitmap(GdkPixmap* pixmap);
 #endif
+    GdkPixbuf* GetPixbufNoMask() const;
     GdkPixbuf *GetPixbuf() const;
 
     // raw bitmap access support functions
@@ -148,8 +153,12 @@ protected:
 #endif // wxUSE_IMAGE
 #endif
 
-    virtual wxGDIRefData* CreateGDIRefData() const;
-    virtual wxGDIRefData* CloneGDIRefData(const wxGDIRefData* data) const;
+    virtual wxGDIRefData* CreateGDIRefData() const wxOVERRIDE;
+    virtual wxGDIRefData* CloneGDIRefData(const wxGDIRefData* data) const wxOVERRIDE;
+
+#ifdef __WXGTK3__
+    virtual bool DoCreate(const wxSize& sz, double scale, int depth) wxOVERRIDE;
+#endif
 
 private:
 #ifndef __WXGTK3__
@@ -172,7 +181,7 @@ public:
     void PurgeOtherRepresentations(Representation keep);
 #endif
 
-    DECLARE_DYNAMIC_CLASS(wxBitmap)
+    wxDECLARE_DYNAMIC_CLASS(wxBitmap);
 };
 
 #endif // _WX_GTK_BITMAP_H_

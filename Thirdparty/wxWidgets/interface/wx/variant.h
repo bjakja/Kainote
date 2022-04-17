@@ -2,7 +2,6 @@
 // Name:        variant.h
 // Purpose:     interface of wxVariant
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +24,10 @@
     variant. Actual values for user-defined types will need to be accessed via
     the wxVariantData object, unlike the case for basic data types where
     convenience functions such as GetLong() can be used.
+
+    Under Microsoft Windows, three additional wxVariantData-derived classes --
+    wxVariantDataCurrency, wxVariantDataErrorCode and wxVariantDataSafeArray --
+    are available for interoperation with OLE VARIANT when using wxAutomationObject.
 
     Pointers to any wxObject derived class can also easily be stored in a
     wxVariant. wxVariant will then use wxWidgets' built-in RTTI system to set
@@ -233,7 +236,7 @@ public:
     wxVariant(void* value, const wxString& name = wxEmptyString);
 
     /**
-        Constructs a variant from a pointer to an wxObject
+        Constructs a variant from a pointer to a wxObject
         derived class.
     */
     wxVariant(wxObject* value, const wxString& name = wxEmptyString);

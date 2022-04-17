@@ -3,15 +3,10 @@
 // Purpose:     wxArchive file system
 // Author:      Vaclav Slavik, Mike Wetherell
 // Copyright:   (c) 1999 Vaclav Slavik, (c) 2006 Mike Wetherell
-// CVS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include <wx\wxprec.h>
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
+#include "wx/wxprec.h"
 
 #if wxUSE_FS_ARCHIVE
 
@@ -22,12 +17,7 @@
     #include "wx/log.h"
 #endif
 
-#if WXWIN_COMPATIBILITY_2_6 && wxUSE_ZIPSTREAM
-    #include "wx/zipstrm.h"
-#else
-    #include "wx/archive.h"
-#endif
-
+#include "wx/archive.h"
 #include "wx/private/fileback.h"
 
 //---------------------------------------------------------------------------
@@ -87,7 +77,7 @@ wxArchiveFSCacheDataImpl::wxArchiveFSCacheDataImpl(
         const wxArchiveClassFactory& factory,
         const wxBackingFile& backer)
  :  m_refcount(1),
-    m_begin(nullptr),
+    m_begin(NULL),
     m_endptr(&m_begin),
     m_backer(backer),
     m_stream(new wxBackedInputStream(backer)),
@@ -99,7 +89,7 @@ wxArchiveFSCacheDataImpl::wxArchiveFSCacheDataImpl(
         const wxArchiveClassFactory& factory,
         wxInputStream *stream)
  :  m_refcount(1),
-    m_begin(nullptr),
+    m_begin(NULL),
     m_endptr(&m_begin),
     m_stream(stream),
     m_archive(factory.NewStream(*m_stream))
@@ -128,7 +118,7 @@ wxArchiveFSEntry *wxArchiveFSCacheDataImpl::AddToCache(wxArchiveEntry *entry)
     wxArchiveFSEntry *fse = new wxArchiveFSEntry;
     *m_endptr = fse;
     (*m_endptr)->entry = entry;
-    (*m_endptr)->next = nullptr;
+    (*m_endptr)->next = NULL;
     m_endptr = &(*m_endptr)->next;
     return fse;
 }
@@ -147,11 +137,11 @@ wxArchiveEntry *wxArchiveFSCacheDataImpl::Get(const wxString& name)
         return it->second;
 
     if (!m_archive)
-        return nullptr;
+        return NULL;
 
     wxArchiveEntry *entry;
 
-    while ((entry = m_archive->GetNextEntry()) != nullptr)
+    while ((entry = m_archive->GetNextEntry()) != NULL)
     {
         AddToCache(entry);
 
@@ -161,7 +151,7 @@ wxArchiveEntry *wxArchiveFSCacheDataImpl::Get(const wxString& name)
 
     CloseStreams();
 
-    return nullptr;
+    return NULL;
 }
 
 wxInputStream* wxArchiveFSCacheDataImpl::NewStream() const
@@ -169,7 +159,7 @@ wxInputStream* wxArchiveFSCacheDataImpl::NewStream() const
     if (m_backer)
         return new wxBackedInputStream(m_backer);
     else
-        return nullptr;
+        return NULL;
 }
 
 wxArchiveFSEntry *wxArchiveFSCacheDataImpl::GetNext(wxArchiveFSEntry *fse)
@@ -192,7 +182,7 @@ wxArchiveFSEntry *wxArchiveFSCacheDataImpl::GetNext(wxArchiveFSEntry *fse)
 //---------------------------------------------------------------------------
 // wxArchiveFSCacheData
 //
-// This is the inteface for wxArchiveFSCacheDataImpl above. Holds the catalog
+// This is the interface for wxArchiveFSCacheDataImpl above. Holds the catalog
 // of an archive file, and if it is being read from a non-seekable stream, a
 // copy of its backing file.
 //---------------------------------------------------------------------------
@@ -200,7 +190,7 @@ wxArchiveFSEntry *wxArchiveFSCacheDataImpl::GetNext(wxArchiveFSEntry *fse)
 class wxArchiveFSCacheData
 {
 public:
-    wxArchiveFSCacheData() : m_impl(nullptr) { }
+    wxArchiveFSCacheData() : m_impl(NULL) { }
     wxArchiveFSCacheData(const wxArchiveClassFactory& factory,
                          const wxBackingFile& backer);
     wxArchiveFSCacheData(const wxArchiveClassFactory& factory,
@@ -235,7 +225,7 @@ wxArchiveFSCacheData::wxArchiveFSCacheData(
 }
 
 wxArchiveFSCacheData::wxArchiveFSCacheData(const wxArchiveFSCacheData& data)
-  : m_impl(data.m_impl ? data.m_impl->AddRef() : nullptr)
+  : m_impl(data.m_impl ? data.m_impl->AddRef() : NULL)
 {
 }
 
@@ -304,24 +294,23 @@ wxArchiveFSCacheData *wxArchiveFSCache::Get(const wxString& name)
     if ((it = m_hash.find(name)) != m_hash.end())
         return &it->second;
 
-    return nullptr;
+    return NULL;
 }
 
 //----------------------------------------------------------------------------
 // wxArchiveFSHandler
 //----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxArchiveFSHandler, wxFileSystemHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxArchiveFSHandler, wxFileSystemHandler);
 
 wxArchiveFSHandler::wxArchiveFSHandler()
  :  wxFileSystemHandler()
 {
-    m_Archive = nullptr;
-    m_FindEntry = nullptr;
-    m_ZipFile = m_Pattern = m_BaseDir = wxEmptyString;
+    m_Archive = NULL;
+    m_FindEntry = NULL;
     m_AllowDirs = m_AllowFiles = true;
-    m_DirsFound = nullptr;
-    m_cache = nullptr;
+    m_DirsFound = NULL;
+    m_cache = NULL;
 }
 
 wxArchiveFSHandler::~wxArchiveFSHandler()
@@ -338,7 +327,7 @@ void wxArchiveFSHandler::Cleanup()
 bool wxArchiveFSHandler::CanOpen(const wxString& location)
 {
     wxString p = GetProtocol(location);
-    return wxArchiveClassFactory::Find(p) != nullptr;
+    return wxArchiveClassFactory::Find(p) != NULL;
 }
 
 wxFSFile* wxArchiveFSHandler::OpenFile(
@@ -366,48 +355,43 @@ wxFSFile* wxArchiveFSHandler::OpenFile(
     const wxArchiveClassFactory *factory;
     factory = wxArchiveClassFactory::Find(protocol);
     if (!factory)
-        return nullptr;
+        return NULL;
 
     wxArchiveFSCacheData *cached = m_cache->Get(key);
     if (!cached)
     {
         wxFSFile *leftFile = m_fs.OpenFile(left);
         if (!leftFile)
-            return nullptr;
+            return NULL;
         cached = m_cache->Add(key, *factory, leftFile->DetachStream());
         delete leftFile;
     }
 
     wxArchiveEntry *entry = cached->Get(right);
     if (!entry)
-        return nullptr;
+        return NULL;
 
     wxInputStream *leftStream = cached->NewStream();
     if (!leftStream)
     {
         wxFSFile *leftFile = m_fs.OpenFile(left);
         if (!leftFile)
-            return nullptr;
+            return NULL;
         leftStream = leftFile->DetachStream();
         delete leftFile;
     }
 
     wxArchiveInputStream *s = factory->NewStream(leftStream);
     if ( !s )
-        return nullptr;
+        return NULL;
 
     s->OpenEntry(*entry);
 
     if (!s->IsOk())
     {
         delete s;
-        return nullptr;
+        return NULL;
     }
-
-#if WXWIN_COMPATIBILITY_2_6 && wxUSE_ZIPSTREAM
-    if (wxDynamicCast(factory, wxZipClassFactory))
-        ((wxZipInputStream*)s)->m_allowSeeking = true;
-#endif // WXWIN_COMPATIBILITY_2_6
 
     return new wxFSFile(s,
                         key + right,
@@ -446,7 +430,7 @@ wxString wxArchiveFSHandler::FindFirst(const wxString& spec, int flags)
         delete leftFile;
     }
 
-    m_FindEntry = nullptr;
+    m_FindEntry = NULL;
 
     switch (flags)
     {
@@ -488,16 +472,16 @@ wxString wxArchiveFSHandler::FindNext()
 wxString wxArchiveFSHandler::DoFind()
 {
     wxString namestr, dir, filename;
-    wxString match = wxEmptyString;
+    wxString match;
 
-    while (match == wxEmptyString)
+    while (match.empty())
     {
         m_FindEntry = m_Archive->GetNext(m_FindEntry);
 
         if (!m_FindEntry)
         {
-            m_Archive = nullptr;
-            m_FindEntry = nullptr;
+            m_Archive = NULL;
+            m_FindEntry = NULL;
             break;
         }
         namestr = m_FindEntry->entry->GetName(wxPATH_UNIX);
@@ -517,7 +501,7 @@ wxString wxArchiveFSHandler::DoFind()
                         match = m_ZipFile + dir + wxT("/") + filename;
                 }
                 else
-                    break; // already tranversed
+                    break; // already transversed
             }
         }
 

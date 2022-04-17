@@ -2,7 +2,6 @@
 // Name:        src/gtk/app.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,18 +27,11 @@
 
 #include "wx/apptrait.h"
 #include "wx/fontmap.h"
+#include "wx/msgout.h"
 
-#if wxUSE_LIBHILDON
-    #include <hildon-widgets/hildon-program.h>
-#endif // wxUSE_LIBHILDON
-
-#if wxUSE_LIBHILDON2
-    #include <hildon/hildon.h>
-#endif // wxUSE_LIBHILDON2
-
-#include <gtk/gtk.h>
 #include "wx/gtk/private.h"
 
+#include "wx/gtk/mimetype.h"
 //-----------------------------------------------------------------------------
 // link GnomeVFS
 //-----------------------------------------------------------------------------
@@ -109,6 +101,21 @@ static gboolean wxapp_idle_callback(gpointer)
 }
 }
 
+// 0: no change, 1: focus in, 2: focus out
+static wxUIntPtr gs_focusChange;
+
+extern "C" {
+static gboolean
+wx_focus_event_hook(GSignalInvocationHint*, unsigned, const GValue* param_values, void* data)
+{
+    // If focus change on TLW
+    if (GTK_IS_WINDOW(g_value_peek_pointer(param_values)))
+        gs_focusChange = wxUIntPtr(data);
+
+    return true;
+}
+}
+
 bool wxApp::DoIdle()
 {
     guint id_save;
@@ -132,6 +139,12 @@ bool wxApp::DoIdle()
     }
 
     gdk_threads_enter();
+
+    if (gs_focusChange) {
+        SetActive(gs_focusChange == 1, NULL);
+        gs_focusChange = 0;
+    }
+
     bool needMore;
     do {
         ProcessPendingEvents();
@@ -143,52 +156,76 @@ bool wxApp::DoIdle()
 #if wxUSE_THREADS
     wxMutexLocker lock(m_idleMutex);
 #endif
-    // if a new idle source was added during ProcessIdle
-    if (m_idleSourceId != 0)
-    {
-        // remove it
-        g_source_remove(m_idleSourceId);
-        m_idleSourceId = 0;
-    }
 
-    // Pending events can be added asynchronously,
-    // need to keep idle source if any have appeared
-    if (HasPendingEvents())
-        needMore = true;
-
-    // if more idle processing requested
-    if (needMore)
+    bool keepSource = false;
+    // if a new idle source has not been added, either as a result of idle
+    // processing above or by another thread calling WakeUpIdle()
+    if (m_idleSourceId == 0)
     {
-        // keep this source installed
-        m_idleSourceId = id_save;
-        return true;
+        // if more idle processing was requested or pending events have appeared
+        if (needMore || HasPendingEvents())
+        {
+            // keep this source installed
+            m_idleSourceId = id_save;
+            keepSource = true;
+        }
+        else // add hooks and remove this source
+            wx_add_idle_hooks();
     }
-    // add hooks and remove this source
-    wx_add_idle_hooks();
-    return false;
+    // else remove this source, leave new one installed
+    // we must keep an idle source, otherwise a wakeup could be lost
+
+    return keepSource;
 }
 
-//-----------------------------------------------------------------------------
-// Access to the root window global
-//-----------------------------------------------------------------------------
-
-GtkWidget* wxGetRootWindow()
+// Custom Glib log writer: setting it is only possible with glib 2.50 or later.
+#if GLIB_CHECK_VERSION(2, 50, 0)
+extern "C" {
+static GLogWriterOutput
+wx_log_writer(GLogLevelFlags   log_level,
+              const GLogField *fields,
+              gsize            n_fields,
+              gpointer         user_data)
 {
-    static GtkWidget *s_RootWindow = NULL;
+    const wxUIntPtr log_mask = reinterpret_cast<wxUIntPtr>(user_data);
 
-    if (s_RootWindow == NULL)
+    GLogWriterOutput result;
+    if (log_level & log_mask)
     {
-        s_RootWindow = gtk_window_new( GTK_WINDOW_TOPLEVEL );
-        gtk_widget_realize( s_RootWindow );
+        result = G_LOG_WRITER_HANDLED;
     }
-    return s_RootWindow;
+    else
+    {
+        result = g_log_writer_default(log_level, fields, n_fields, NULL);
+    }
+    return result;
 }
+}
+
+/* static */
+void wxApp::GTKSuppressDiagnostics(int flags)
+{
+    if (glib_check_version(2, 50, 0) == 0)
+    {
+        g_log_set_writer_func(
+            wx_log_writer,
+            (wxUIntToPtr)(flags == -1 ? G_LOG_LEVEL_MASK : flags),
+            NULL);
+    }
+}
+#else // glib < 2.50
+/* static */
+void wxApp::GTKSuppressDiagnostics(int WXUNUSED(flags))
+{
+    // We can't do anything here.
+}
+#endif // glib >=/< 2.50
 
 //-----------------------------------------------------------------------------
 // wxApp
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxApp,wxEvtHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxApp,wxEvtHandler);
 
 wxApp::wxApp()
 {
@@ -202,6 +239,10 @@ wxApp::~wxApp()
 
 bool wxApp::SetNativeTheme(const wxString& theme)
 {
+#ifdef __WXGTK3__
+    wxUnusedVar(theme);
+    return false;
+#else
     wxString path;
     path = gtk_rc_get_theme_dir();
     path += "/";
@@ -222,6 +263,7 @@ bool wxApp::SetNativeTheme(const wxString& theme)
     gtk_rc_reparse_all_for_settings(gtk_settings_get_default(), TRUE);
 
     return true;
+#endif
 }
 
 bool wxApp::OnInitGui()
@@ -269,14 +311,6 @@ bool wxApp::OnInitGui()
     }
 #endif
 
-#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
-    if ( !GetHildonProgram() )
-    {
-        wxLogError(_("Unable to initialize Hildon program"));
-        return false;
-    }
-#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2
-
     return true;
 }
 
@@ -286,13 +320,20 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
     if ( !wxAppBase::Initialize(argc_, argv_) )
         return false;
 
+    // Thread support is always on since glib 2.31.
+#if !GLIB_CHECK_VERSION(2, 31, 0)
 #if wxUSE_THREADS
     if (!g_thread_supported())
     {
+        // g_thread_init() does nothing and is deprecated in recent glib but
+        // might still be needed in the older versions, which are the only ones
+        // for which this code is going to be executed (as g_thread_supported()
+        // is always TRUE in these recent glib versions anyhow).
         g_thread_init(NULL);
         gdk_threads_init();
     }
 #endif // wxUSE_THREADS
+#endif // glib < 2.31
 
     // gtk+ 2.0 supports Unicode through UTF-8 strings
     wxConvCurrent = &wxConvUTF8;
@@ -307,9 +348,9 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
     if (encName.CmpNoCase(wxT("@locale")) == 0)
         encName.clear();
     encName.MakeUpper();
-#if wxUSE_INTL
     if (encName.empty())
     {
+#if wxUSE_INTL
         // (2) if a non default locale is set, assume that the user wants his
         //     filenames in this locale too
         encName = wxLocale::GetSystemEncodingName().Upper();
@@ -328,31 +369,36 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
                 encName.clear();
             }
         }
+#endif // wxUSE_INTL
 
         // (3) finally use UTF-8 by default
         if ( encName.empty() )
             encName = wxT("UTF-8");
         wxSetEnv(wxT("G_FILENAME_ENCODING"), encName);
     }
-#else
-    if (encName.empty())
-        encName = wxT("UTF-8");
 
-    // if wxUSE_INTL==0 it probably indicates that only "C" locale is supported
-    // by the program anyhow so prevent GTK+ from calling setlocale(LC_ALL, "")
-    // from gtk_init_check() as it does by default
-    gtk_disable_setlocale();
-
-#endif // wxUSE_INTL
     static wxConvBrokenFileNames fileconv(encName);
     wxConvFileName = &fileconv;
 #endif // __UNIX__
 
 
+    // Using XIM results in many problems, so try to warn people about it.
+    wxString inputMethod;
+    if ( wxGetEnv("GTK_IM_MODULE", &inputMethod) && inputMethod == "xim" )
+    {
+        wxMessageOutputStderr().Output
+        (
+            _("WARNING: using XIM input method is unsupported and may result "
+              "in problems with input handling and flickering. Consider "
+              "unsetting GTK_IM_MODULE or setting to \"ibus\".")
+        );
+    }
+
     bool init_result;
-    int i;
 
 #if wxUSE_UNICODE
+    int i;
+
     // gtk_init() wants UTF-8, not wchar_t, so convert
     char **argvGTK = new char *[argc_ + 1];
     for ( i = 0; i < argc_; i++ )
@@ -364,13 +410,27 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
 
     int argcGTK = argc_;
 
+    // Prevent gtk_init_check() from changing the locale automatically for
+    // consistency with the other ports that don't do it. If necessary,
+    // wxApp::SetCLocale() may be explicitly called.
+    //
+    // Note that this function generates a warning if it's called more than
+    // once, so avoid them.
+    static bool s_gtkLocalDisabled = false;
+    if ( !s_gtkLocalDisabled )
+    {
+        s_gtkLocalDisabled = true;
+        gtk_disable_setlocale();
+    }
+
 #ifdef __WXGPE__
     init_result = true;  // is there a _check() version of this?
     gpe_application_init( &argcGTK, &argvGTK );
+#elif defined(__WXGTK4__)
+    init_result = gtk_init_check() != 0;
 #else
     init_result = gtk_init_check( &argcGTK, &argvGTK ) != 0;
 #endif
-    wxUpdateLocaleIsUtf8();
 
     if ( argcGTK != argc_ )
     {
@@ -403,45 +463,21 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
 
     // update internal arg[cv] as GTK+ may have removed processed options:
     this->argc = argc_;
+#if wxUSE_UNICODE
+    this->argv.Init(argc_, argv_);
+#else
     this->argv = argv_;
-
-    if ( m_traits )
-    {
-        // if there are still GTK+ standard options unparsed in the command
-        // line, it means that they were not syntactically correct and GTK+
-        // already printed a warning on the command line and we should now
-        // exit:
-        wxArrayString opt, desc;
-        m_traits->GetStandardCmdLineOptions(opt, desc);
-
-        for ( i = 0; i < argc_; i++ )
-        {
-            // leave just the names of the options with values
-            const wxString str = wxString(argv_[i]).BeforeFirst('=');
-
-            for ( size_t j = 0; j < opt.size(); j++ )
-            {
-                // remove the leading spaces from the option string as it does
-                // have them
-                if ( opt[j].Trim(false).BeforeFirst('=') == str )
-                {
-                    // a GTK+ option can be left on the command line only if
-                    // there was an error in (or before, in another standard
-                    // options) it, so abort, just as we do if incorrect
-                    // program option is given
-                    wxLogError(_("Invalid GTK+ command line option, use \"%s --help\""),
-                               argv_[0]);
-                    return false;
-                }
-            }
-        }
-    }
+#endif
 
     if ( !init_result )
     {
         wxLogError(_("Unable to initialize GTK+, is DISPLAY set properly?"));
         return false;
     }
+
+#if wxUSE_MIMETYPE
+    wxMimeTypesManagerFactory::Set(new wxGTKMimeTypesManagerFactory());
+#endif
 
     // we cannot enter threads before gtk_init is done
     gdk_threads_enter();
@@ -450,8 +486,18 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
     wxFont::SetDefaultEncoding(wxLocale::GetSystemEncoding());
 #endif
 
-    // make sure GtkWidget type is loaded, idle hooks need it
-    g_type_class_ref(GTK_TYPE_WIDGET);
+    // make sure GtkWidget type is loaded, signal emission hooks need it
+    const GType widgetType = GTK_TYPE_WIDGET;
+    g_type_class_ref(widgetType);
+
+    // focus in/out hooks used for generating wxEVT_ACTIVATE_APP
+    g_signal_add_emission_hook(
+        g_signal_lookup("focus_in_event", widgetType),
+        0, wx_focus_event_hook, GINT_TO_POINTER(1), NULL);
+    g_signal_add_emission_hook(
+        g_signal_lookup("focus_out_event", widgetType),
+        0, wx_focus_event_hook, GINT_TO_POINTER(2), NULL);
+
     WakeUpIdle();
 
     return true;
@@ -463,7 +509,9 @@ void wxApp::CleanUp()
         g_source_remove(m_idleSourceId);
 
     // release reference acquired by Initialize()
-    g_type_class_unref(g_type_class_peek(GTK_TYPE_WIDGET));
+    gpointer gt = g_type_class_peek(GTK_TYPE_WIDGET);
+    if (gt != NULL)
+        g_type_class_unref(gt);
 
     gdk_threads_leave();
 
@@ -531,11 +579,21 @@ void wxGUIAppTraits::MutexGuiLeave()
 }
 #endif // wxUSE_THREADS
 
-#if wxUSE_LIBHILDON || wxUSE_LIBHILDON2
-// Maemo-specific method: get the main program object
-HildonProgram *wxApp::GetHildonProgram()
+/* static */
+bool wxApp::GTKIsUsingGlobalMenu()
 {
-    return hildon_program_get_instance();
-}
+    static int s_isUsingGlobalMenu = -1;
+    if ( s_isUsingGlobalMenu == -1 )
+    {
+        // Currently we just check for this environment variable because this
+        // is how support for the global menu is implemented under Ubuntu.
+        //
+        // If we ever get false positives, we could also check for
+        // XDG_CURRENT_DESKTOP env var being set to "Unity".
+        wxString proxy;
+        s_isUsingGlobalMenu = wxGetEnv("UBUNTU_MENUPROXY", &proxy) &&
+                                !proxy.empty() && proxy != "0";
+    }
 
-#endif // wxUSE_LIBHILDON || wxUSE_LIBHILDON2
+    return s_isUsingGlobalMenu == 1;
+}

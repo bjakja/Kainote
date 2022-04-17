@@ -4,7 +4,6 @@
 // Author:      George Policello
 // Modified by:
 // Created:     28 Jan 02
-// RCS-ID:      $Id$
 // Copyright:   (c) 2002 George Policello
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FSVOLUME
 
@@ -45,7 +41,7 @@
 // even if this is not necessary with most of them
 #include "wx/msw/wrapwin.h"
 #include <shellapi.h>
-#include <shlobj.h>
+#include "wx/msw/wrapshl.h"
 #include "wx/msw/missing.h"
 
 #if wxUSE_BASE
@@ -69,7 +65,18 @@ static WNetCloseEnumPtr s_pWNetCloseEnum;
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Globals/Statics
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-static long s_cancelSearch = FALSE;
+
+#if defined(__CYGWIN__) && defined(__LP64__)
+    // We can't use long in 64 bit Cygwin build because Cygwin uses LP64 model
+    // (unlike all the other MSW compilers) and long is 64 bits, while
+    // InterlockedExchange(), with which this variable is used, requires a 32
+    // bit-sized value, so use Cygwin-specific type with the right size.
+    typedef __LONG32 wxInterlockedArg_t;
+#else
+    typedef long wxInterlockedArg_t;
+#endif
+
+static wxInterlockedArg_t s_cancelSearch = FALSE;
 
 struct FileInfo
 {
@@ -505,13 +512,14 @@ bool wxFSVolumeBase::Create(const wxString& name)
     long rc = SHGetFileInfo(m_volName.t_str(), 0, &fi, sizeof(fi), SHGFI_DISPLAYNAME);
     if (!rc)
     {
-        wxLogError(_("Cannot read typename from '%s'!"), m_volName.c_str());
-        return m_isOk;
+        wxLogError(_("Cannot read typename from '%s'!"), m_volName);
+        return false;
     }
     m_dispName = fi.szDisplayName;
 
     // all tests passed.
-    return m_isOk = true;
+    m_isOk = true;
+    return true;
 } // Create
 
 //=============================================================================
@@ -614,10 +622,13 @@ wxIcon wxFSVolume::GetIcon(wxFSIconType type) const
 
         SHFILEINFO fi;
         long rc = SHGetFileInfo(m_volName.t_str(), 0, &fi, sizeof(fi), flags);
-        m_icons[type].SetHICON((WXHICON)fi.hIcon);
         if (!rc || !fi.hIcon)
         {
-            wxLogError(_("Cannot load icon from '%s'."), m_volName.c_str());
+            wxLogError(_("Cannot load icon from '%s'."), m_volName);
+        }
+        else
+        {
+            m_icons[type].CreateFromHICON((WXHICON)fi.hIcon);
         }
     }
 

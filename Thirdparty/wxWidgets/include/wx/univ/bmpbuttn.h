@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     25.08.00
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,53 +18,58 @@ public:
 
     wxBitmapButton(wxWindow *parent,
                    wxWindowID id,
-                   const wxBitmap& bitmap,
+                   const wxBitmapBundle& bitmap,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxButtonNameStr)
+                   const wxString& name = wxASCII_STR(wxButtonNameStr))
     {
         Create(parent, id, bitmap, pos, size, style, validator, name);
     }
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxBitmap& bitmap,
+                const wxBitmapBundle& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxButtonNameStr);
+                const wxString& name = wxASCII_STR(wxButtonNameStr));
 
-    virtual void SetMargins(int x, int y)
+    bool CreateCloseButton(wxWindow* parent,
+                           wxWindowID winid,
+                           const wxString& name = wxString());
+
+
+    virtual void SetMargins(int x, int y) wxOVERRIDE
     {
         SetBitmapMargins(x, y);
 
         wxBitmapButtonBase::SetMargins(x, y);
     }
 
-    virtual bool Enable(bool enable = true);
+    virtual bool Enable(bool enable = true) wxOVERRIDE;
 
-    virtual bool SetCurrent(bool doit = true);
+    virtual bool SetCurrent(bool doit = true) wxOVERRIDE;
 
-    virtual void Press();
-    virtual void Release();
+    virtual void Press() wxOVERRIDE;
+    virtual void Release() wxOVERRIDE;
 
 protected:
     void OnSetFocus(wxFocusEvent& event);
     void OnKillFocus(wxFocusEvent& event);
 
     // called when one of the bitmap is changed by user
-    virtual void OnSetBitmap();
+    virtual void OnSetBitmap() wxOVERRIDE;
 
     // set bitmap to the given one if it's ok or to the normal bitmap and
     // return true if the bitmap really changed
     bool ChangeBitmap(const wxBitmap& bmp);
 
 private:
-    DECLARE_EVENT_TABLE()
-    DECLARE_DYNAMIC_CLASS(wxBitmapButton)
+    wxDECLARE_EVENT_TABLE();
+    wxDECLARE_DYNAMIC_CLASS(wxBitmapButton);
 };
 
 #endif // _WX_UNIV_BMPBUTTN_H_

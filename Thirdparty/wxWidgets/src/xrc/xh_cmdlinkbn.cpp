@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for command link buttons
 // Author:      Kinaou Herve
 // Created:     2010/10/20
-// RCS-ID:      $Id:$
 // Copyright:
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_COMMANDLINKBUTTON
 
@@ -21,7 +17,7 @@
 
 #include "wx/commandlinkbutton.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxCommandLinkButtonXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxCommandLinkButtonXmlHandler, wxXmlResourceHandler);
 
 wxCommandLinkButtonXmlHandler::wxCommandLinkButtonXmlHandler()
     : wxXmlResourceHandler()
@@ -46,6 +42,15 @@ wxObject *wxCommandLinkButtonXmlHandler::DoCreateResource()
                     GetStyle(),
                     wxDefaultValidator,
                     GetName());
+
+    if (GetBool(wxT("default"), 0))
+        button->SetDefault();
+
+    if ( GetParamNode("bitmap") )
+    {
+        button->SetBitmap(GetBitmapBundle("bitmap", wxART_BUTTON),
+                          GetDirection("bitmapposition"));
+    }
 
     SetupWindow(button);
 

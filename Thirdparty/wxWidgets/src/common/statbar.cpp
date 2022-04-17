@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by: Francesco Montorsi
 // Created:     14.10.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STATUSBAR
 
@@ -107,7 +103,7 @@ bool wxStatusBarPane::PopText()
 // wxStatusBarBase implementation
 // ============================================================================
 
-IMPLEMENT_DYNAMIC_CLASS(wxStatusBar, wxWindow)
+wxIMPLEMENT_DYNAMIC_CLASS(wxStatusBar, wxWindow);
 
 #include "wx/arrimpl.cpp" // This is a magic incantation which must be done!
 WX_DEFINE_EXPORTED_OBJARRAY(wxStatusBarPaneArray)
@@ -128,7 +124,7 @@ wxStatusBarBase::~wxStatusBarBase()
     // dangling pointers
     wxFrame *frame = wxDynamicCast(GetParent(), wxFrame);
     if ( frame && frame->GetStatusBar() == this )
-        frame->SetStatusBar(nullptr);
+        frame->SetStatusBar(NULL);
 }
 
 // ----------------------------------------------------------------------------
@@ -163,7 +159,7 @@ void wxStatusBarBase::SetStatusWidths(int WXUNUSED_UNLESS_DEBUG(n),
 {
     wxASSERT_MSG( (size_t)n == m_panes.GetCount(), wxT("field number mismatch") );
 
-    if (widths == nullptr)
+    if (widths == NULL)
     {
         // special value meaning: override explicit pane widths and make them all
         // of the same size
@@ -184,7 +180,7 @@ void wxStatusBarBase::SetStatusWidths(int WXUNUSED_UNLESS_DEBUG(n),
 void wxStatusBarBase::SetStatusStyles(int WXUNUSED_UNLESS_DEBUG(n),
                                     const int styles[])
 {
-    wxCHECK_RET( styles, wxT("nullptr pointer in SetStatusStyles") );
+    wxCHECK_RET( styles, wxT("NULL pointer in SetStatusStyles") );
 
     wxASSERT_MSG( (size_t)n == m_panes.GetCount(), wxT("field number mismatch") );
 

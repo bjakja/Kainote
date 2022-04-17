@@ -3,7 +3,6 @@
 // Purpose:   Region handling for wxWidgets/DFB
 // Author:    Vaclav Slavik
 // Created:   2006-08-08
-// RCS-ID:    $Id$
 // Copyright: (c) 2006 REA Elektronik GmbH
 // Licence:   wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,14 +10,11 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/region.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxRegion, wxGDIObject)
-IMPLEMENT_DYNAMIC_CLASS(wxRegionIterator, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxRegion, wxGDIObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxRegionIterator, wxObject);
 
 //-----------------------------------------------------------------------------
 // wxRegionRefData
@@ -33,7 +29,7 @@ public:
 
     ~wxRegionRefData() {}
 
-    // default assignment and comparision operators are OK
+    // default assignment and comparison operators are OK
 
     wxRect m_rect;
 };
@@ -73,6 +69,12 @@ wxRegion::wxRegion(const wxPoint& topLeft, const wxPoint& bottomRight)
 wxRegion::wxRegion(const wxRect& r)
 {
     m_refData = new wxRegionRefData(r);
+}
+
+wxRegion::wxRegion(size_t n, const wxPoint *points, wxPolygonFillMode fillStyle)
+{
+#warning "implement this"
+    m_refData = NULL;
 }
 
 wxRegion::~wxRegion()
@@ -178,7 +180,7 @@ bool wxRegion::DoSubtract(const wxRegion& region)
     }
     else if ( !M_REGION->m_rect.Intersects(rect) )
     {
-        // the rectangles are disjoint, so substracting has no effect
+        // the rectangles are disjoint, so subtracting has no effect
         return true;
     }
     else

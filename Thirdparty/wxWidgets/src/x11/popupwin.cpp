@@ -2,7 +2,6 @@
 // Name:        srx/x11/popupwin.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,8 +27,8 @@
 // wxPopupWindow
 //-----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxPopupWindow,wxPopupWindowBase)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(wxPopupWindow,wxPopupWindowBase)
+wxEND_EVENT_TABLE()
 
 wxPopupWindow::~wxPopupWindow()
 {

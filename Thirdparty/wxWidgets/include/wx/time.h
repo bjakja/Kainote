@@ -3,7 +3,6 @@
 // Purpose:     Miscellaneous time-related functions.
 // Author:      Vadim Zeitlin
 // Created:     2011-11-26
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,7 +57,7 @@ wxLongLong WXDLLIMPEXP_BASE wxGetUTCTimeUSec();
 #define wxLocaltime_r localtime_r
 #else
 WXDLLIMPEXP_BASE struct tm *wxLocaltime_r(const time_t*, struct tm*);
-#if wxUSE_THREADS && !defined(__WINDOWS__) && !defined(__WATCOMC__)
+#if wxUSE_THREADS && !defined(__WINDOWS__)
      // On Windows, localtime _is_ threadsafe!
 #warning using pseudo thread-safe wrapper for localtime to emulate localtime_r
 #endif
@@ -68,7 +67,7 @@ WXDLLIMPEXP_BASE struct tm *wxLocaltime_r(const time_t*, struct tm*);
 #define wxGmtime_r gmtime_r
 #else
 WXDLLIMPEXP_BASE struct tm *wxGmtime_r(const time_t*, struct tm*);
-#if wxUSE_THREADS && !defined(__WINDOWS__) && !defined(__WATCOMC__)
+#if wxUSE_THREADS && !defined(__WINDOWS__)
      // On Windows, gmtime _is_ threadsafe!
 #warning using pseudo thread-safe wrapper for gmtime to emulate gmtime_r
 #endif

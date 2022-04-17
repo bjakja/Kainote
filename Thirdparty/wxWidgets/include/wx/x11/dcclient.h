@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -77,9 +76,9 @@ protected:
         wxCoord width, wxCoord height);
     virtual void DoSetDeviceClippingRegion(const wxRegion& region);
 
-    virtual void DoDrawLines(int n, wxPoint points[],
+    virtual void DoDrawLines(int n, const wxPoint points[],
         wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, wxPoint points[],
+    virtual void DoDrawPolygon(int n, const wxPoint points[],
         wxCoord xoffset, wxCoord yoffset,
         wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
 
@@ -108,6 +107,9 @@ public:
     WXWindow GetX11Window() const { return m_x11window; }
 
     virtual void ComputeScaleAndOrigin();
+#if wxUSE_CAIRO
+    virtual void* GetCairoContext() const wxOVERRIDE;
+#endif
 
 protected:
     // implementation
@@ -141,7 +143,7 @@ protected:
     void Destroy();
 
 private:
-    DECLARE_CLASS(wxWindowDCImpl)
+    wxDECLARE_CLASS(wxWindowDCImpl);
 };
 
 //-----------------------------------------------------------------------------
@@ -158,7 +160,7 @@ protected:
     virtual void DoGetSize(int *width, int *height) const;
 
 private:
-    DECLARE_CLASS(wxClientDCImpl)
+    wxDECLARE_CLASS(wxClientDCImpl);
 };
 
 //-----------------------------------------------------------------------------
@@ -172,7 +174,7 @@ public:
     wxPaintDCImpl( wxDC *owner, wxWindow *win );
 
 private:
-    DECLARE_CLASS(wxPaintDCImpl)
+    wxDECLARE_CLASS(wxPaintDCImpl);
 };
 
 #endif

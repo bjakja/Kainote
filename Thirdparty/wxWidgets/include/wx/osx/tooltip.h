@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     31.01.99
-// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Robert Roebling, Vadim Zeitlin, Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,7 +51,7 @@ public:
 private:
     wxString  m_text;           // tooltip text
     wxWindow *m_window;         // window we're associated with
-    DECLARE_ABSTRACT_CLASS(wxToolTip)
+    wxDECLARE_ABSTRACT_CLASS(wxToolTip);
 };
 
 #endif // _WX_MAC_TOOLTIP_H_

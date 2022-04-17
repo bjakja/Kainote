@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     26.07.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,16 +16,15 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CHOICE
 
 #include "wx/choice.h"
+
+#include "wx/private/textmeasure.h"
 
 #ifndef WX_PRECOMP
 #endif
@@ -65,10 +63,10 @@ wxFLAGS_MEMBER(wxHSCROLL)
 
 wxEND_FLAGS( wxChoiceStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxChoice, wxControl, "wx/choice.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxChoice, wxControl, "wx/choice.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxChoice)
-wxEVENT_PROPERTY( Select, wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEvent )
+wxEVENT_PROPERTY( Select, wxEVT_CHOICE, wxCommandEvent )
 
 wxPROPERTY( Font, wxFont, SetFont, GetFont , wxEMPTY_PARAMETER_VALUE, \
            0 /*flags*/, wxT("Helpstring"), wxT("group"))
@@ -101,6 +99,21 @@ wxCONSTRUCTOR_4( wxChoice, wxWindow*, Parent, wxWindowID, Id, \
 wxChoiceBase::~wxChoiceBase()
 {
     // this destructor is required for Darwin
+}
+
+wxSize wxChoiceBase::DoGetBestSize() const
+{
+    // a reasonable width for an empty choice list
+    wxSize best(FromDIP(80), -1);
+
+    const unsigned int nItems = GetCount();
+    if ( nItems > 0 )
+    {
+        wxTextMeasure txm(this);
+        best.x = txm.GetLargestStringExtent(GetStrings()).x;
+    }
+
+    return best;
 }
 
 // ----------------------------------------------------------------------------

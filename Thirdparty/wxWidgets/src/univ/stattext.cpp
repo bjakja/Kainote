@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     14.08.00
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STATTEXT
 
@@ -71,19 +67,22 @@ void wxStaticText::DoDraw(wxControlRenderer *renderer)
 
 void wxStaticText::SetLabel(const wxString& str)
 {
+    if ( str == m_labelOrig )
+        return;
+
     // save original label
     m_labelOrig = str;
 
     // draw as real label the abbreviated version of it
-    DoSetLabel(GetEllipsizedLabel());
+    WXSetVisibleLabel(GetEllipsizedLabel());
 }
 
-void wxStaticText::DoSetLabel(const wxString& str)
+void wxStaticText::WXSetVisibleLabel(const wxString& str)
 {
     UnivDoSetLabel(str);
 }
 
-wxString wxStaticText::DoGetLabel() const
+wxString wxStaticText::WXGetVisibleLabel() const
 {
     return wxControl::GetLabel();
 }

@@ -4,8 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     19.08.03
-// RCS-ID:      $Id$
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_BOOKCTRL
 
@@ -38,14 +34,14 @@
 // event table
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS(wxBookCtrlBase, wxControl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxBookCtrlBase, wxControl);
 
-BEGIN_EVENT_TABLE(wxBookCtrlBase, wxControl)
+wxBEGIN_EVENT_TABLE(wxBookCtrlBase, wxControl)
     EVT_SIZE(wxBookCtrlBase::OnSize)
 #if wxUSE_HELP
     EVT_HELP(wxID_ANY, wxBookCtrlBase::OnHelp)
 #endif // wxUSE_HELP
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------
 // constructors and destructors
@@ -54,17 +50,15 @@ END_EVENT_TABLE()
 void wxBookCtrlBase::Init()
 {
     m_selection = wxNOT_FOUND;
-    m_bookctrl = nullptr;
+    m_bookctrl = NULL;
     m_fitToCurrentPage = false;
 
-#if defined(__WXWINCE__)
-    m_internalBorder = 1;
-#else
     m_internalBorder = 5;
-#endif
 
     m_controlMargin = 0;
-    m_controlSizer = nullptr;
+    m_controlSizer = NULL;
+
+    Bind(wxEVT_DPI_CHANGED, &wxBookCtrlBase::WXHandleDPIChanged, this);
 }
 
 bool
@@ -109,21 +103,17 @@ wxSize wxBookCtrlBase::CalcSizeFromPage(const wxSize& sizePage) const
     if ( !m_bookctrl || !m_bookctrl->IsShown() )
         return sizePage;
 
+    // Notice that the controller size is its current size while we really want
+    // to have its best size. So we only take into account its size in the
+    // direction in which we should add it but not in the other one, where the
+    // controller size is determined by the size of wxBookCtrl itself.
     const wxSize sizeController = GetControllerSize();
 
     wxSize size = sizePage;
     if ( IsVertical() )
-    {
-        if ( sizeController.x > sizePage.x )
-            size.x = sizeController.x;
         size.y += sizeController.y + GetInternalBorder();
-    }
     else // left/right aligned
-    {
         size.x += sizeController.x + GetInternalBorder();
-        if ( sizeController.y > sizePage.y )
-            size.y = sizeController.y;
-    }
 
     return size;
 }
@@ -137,31 +127,25 @@ wxSize wxBookCtrlBase::DoGetBestSize() const
 {
     wxSize bestSize;
 
-    // iterate over all pages, get the largest width and height
-    const size_t nCount = m_pages.size();
-    for ( size_t nPage = 0; nPage < nCount; nPage++ )
+    if (m_fitToCurrentPage && GetCurrentPage())
     {
-        const wxWindow * const pPage = m_pages[nPage];
-        if( pPage )
+        bestSize = GetCurrentPage()->GetBestSize();
+    }
+    else
+    {
+        // iterate over all pages, get the largest width and height
+        const size_t nCount = m_pages.size();
+        for ( size_t nPage = 0; nPage < nCount; nPage++ )
         {
-            wxSize childBestSize(pPage->GetBestSize());
-
-            if ( childBestSize.x > bestSize.x )
-                bestSize.x = childBestSize.x;
-
-            if ( childBestSize.y > bestSize.y )
-                bestSize.y = childBestSize.y;
+            const wxWindow * const pPage = m_pages[nPage];
+            if ( pPage )
+                bestSize.IncTo(pPage->GetBestSize());
         }
     }
 
-    if (m_fitToCurrentPage && GetCurrentPage())
-        bestSize = GetCurrentPage()->GetBestSize();
-
     // convert display area to window area, adding the size necessary for the
     // tabs
-    wxSize best = CalcSizeFromPage(bestSize);
-    CacheBestSize(best);
-    return best;
+    return CalcSizeFromPage(bestSize);
 }
 
 wxRect wxBookCtrlBase::GetPageRect() const
@@ -175,11 +159,11 @@ wxRect wxBookCtrlBase::GetPageRect() const
     {
         default:
             wxFAIL_MSG( wxT("unexpected alignment") );
-            // fall through
+            wxFALLTHROUGH;
 
         case wxBK_TOP:
             rectPage.y = size.y + GetInternalBorder();
-            // fall through
+            wxFALLTHROUGH;
 
         case wxBK_BOTTOM:
             rectPage.height -= size.y + GetInternalBorder();
@@ -189,7 +173,7 @@ wxRect wxBookCtrlBase::GetPageRect() const
 
         case wxBK_LEFT:
             rectPage.x = size.x + GetInternalBorder();
-            // fall through
+            wxFALLTHROUGH;
 
         case wxBK_RIGHT:
             rectPage.width -= size.x + GetInternalBorder();
@@ -234,7 +218,7 @@ void wxBookCtrlBase::DoSize()
         {
             default:
                 wxFAIL_MSG( wxT("unexpected alignment") );
-                // fall through
+                wxFALLTHROUGH;
 
             case wxBK_TOP:
             case wxBK_LEFT:
@@ -256,14 +240,14 @@ void wxBookCtrlBase::DoSize()
 
     // resize all pages to fit the new control size
     const wxRect pageRect = GetPageRect();
-    const unsigned pagesCount = m_pages.GetCount();
-    for ( unsigned int i = 0; i < pagesCount; ++i )
+    const size_t pagesCount = m_pages.size();
+    for ( size_t i = 0; i < pagesCount; ++i )
     {
         wxWindow * const page = m_pages[i];
         if ( !page )
         {
             wxASSERT_MSG( AllowNullPage(),
-                wxT("nullptr page in a control that does not allow nullptr pages?") );
+                wxT("Null page in a control that does not allow null pages?") );
             continue;
         }
 
@@ -325,11 +309,11 @@ void wxBookCtrlBase::OnHelp(wxHelpEvent& event)
         source = source->GetParent();
     }
 
-    if ( source && m_pages.Index(source) == wxNOT_FOUND )
+    if ( source && FindPage(source) == wxNOT_FOUND )
     {
         // this event is for the book control itself, redirect it to the
         // corresponding page
-        wxWindow *page = nullptr;
+        wxWindow *page = NULL;
 
         if ( event.GetOrigin() == wxHelpEvent::Origin_HelpButton )
         {
@@ -379,11 +363,11 @@ wxBookCtrlBase::InsertPage(size_t nPage,
                            int WXUNUSED(imageId))
 {
     wxCHECK_MSG( page || AllowNullPage(), false,
-                 wxT("nullptr page in wxBookCtrlBase::InsertPage()") );
+                 wxT("NULL page in wxBookCtrlBase::InsertPage()") );
     wxCHECK_MSG( nPage <= m_pages.size(), false,
                  wxT("invalid page index in wxBookCtrlBase::InsertPage()") );
 
-    m_pages.Insert(page, nPage);
+    m_pages.insert(m_pages.begin() + nPage, page);
     if ( page )
         page->SetSize(GetPageRect());
 
@@ -398,7 +382,7 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
     if ( !(page || AllowNullPage()) )
         return false;
 
-    // delete nullptr is harmless
+    // delete NULL is harmless
     delete page;
 
     return true;
@@ -406,11 +390,11 @@ bool wxBookCtrlBase::DeletePage(size_t nPage)
 
 wxWindow *wxBookCtrlBase::DoRemovePage(size_t nPage)
 {
-    wxCHECK_MSG( nPage < m_pages.size(), nullptr,
+    wxCHECK_MSG( nPage < m_pages.size(), NULL,
                  wxT("invalid page index in wxBookCtrlBase::DoRemovePage()") );
 
     wxWindow *pageRemoved = m_pages[nPage];
-    m_pages.RemoveAt(nPage);
+    m_pages.erase(m_pages.begin() + nPage);
     DoInvalidateBestSize();
 
     return pageRemoved;
@@ -439,6 +423,18 @@ int wxBookCtrlBase::GetNextPage(bool forward) const
     return nPage;
 }
 
+int wxBookCtrlBase::FindPage(const wxWindow* page) const
+{
+    const size_t nCount = m_pages.size();
+    for ( size_t nPage = 0; nPage < nCount; nPage++ )
+    {
+        if ( m_pages[nPage] == page )
+            return (int)nPage;
+    }
+
+    return wxNOT_FOUND;
+}
+
 bool wxBookCtrlBase::DoSetSelectionAfterInsertion(size_t n, bool bSelect)
 {
     if ( bSelect )
@@ -452,6 +448,26 @@ bool wxBookCtrlBase::DoSetSelectionAfterInsertion(size_t n, bool bSelect)
     return true;
 }
 
+void wxBookCtrlBase::DoSetSelectionAfterRemoval(size_t n)
+{
+    if ( m_selection >= (int)n )
+    {
+        // ensure that the selection is valid
+        int sel;
+        if ( GetPageCount() == 0 )
+            sel = wxNOT_FOUND;
+        else
+            sel = m_selection ? m_selection - 1 : 0;
+
+        // if deleting current page we shouldn't try to hide it
+        m_selection = m_selection == (int)n ? wxNOT_FOUND
+                                            : m_selection - 1;
+
+        if ( sel != wxNOT_FOUND && sel != m_selection )
+            SetSelection(sel);
+    }
+}
+
 int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
 {
     wxCHECK_MSG( n < GetPageCount(), wxNOT_FOUND,
@@ -462,7 +478,7 @@ int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
     if ( n != (size_t)oldSel )
     {
         wxBookCtrlEvent *event = CreatePageChangingEvent();
-        bool allowed = false;
+        bool allowed = true;
 
         if ( flags & SetSelection_SendEvent )
         {
@@ -473,16 +489,24 @@ int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
             allowed = !GetEventHandler()->ProcessEvent(*event) || event->IsAllowed();
         }
 
-        if ( !(flags & SetSelection_SendEvent) || allowed)
+        if ( allowed )
         {
             if ( oldSel != wxNOT_FOUND )
-                m_pages[oldSel]->Hide();
+            {
+                if ( wxWindow* const oldPage = TryGetNonNullPage(oldSel) )
+                {
+                    DoShowPage(oldPage, false);
+                }
+            }
 
-            wxWindow *page = m_pages[n];
-            page->SetSize(GetPageRect());
-            page->Show();
+            if ( wxWindow* const page = TryGetNonNullPage(n) )
+            {
+                page->SetSize(GetPageRect());
+                DoShowPage(page, true);
+            }
 
             // change selection now to ignore the selection change event
+            m_selection = n;
             UpdateSelectedPage(n);
 
             if ( flags & SetSelection_SendEvent )
@@ -492,6 +516,15 @@ int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
                 (void)GetEventHandler()->ProcessEvent(*event);
             }
         }
+        else
+        {
+            // Selection in the control might have already had changed.
+            if ( oldSel != wxNOT_FOUND )
+            {
+                m_selection = oldSel;
+                UpdateSelectedPage(oldSel);
+            }
+        }
 
         delete event;
     }
@@ -499,6 +532,6 @@ int wxBookCtrlBase::DoSetSelection(size_t n, int flags)
     return oldSel;
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxBookCtrlEvent, wxNotifyEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxBookCtrlEvent, wxNotifyEvent);
 
 #endif // wxUSE_BOOKCTRL

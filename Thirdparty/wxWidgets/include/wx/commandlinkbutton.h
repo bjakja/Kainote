@@ -3,7 +3,6 @@
 // Purpose:     wxCommandLinkButtonBase and wxGenericCommandLinkButton classes
 // Author:      Rickard Westerlund
 // Created:     2010-06-11
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -41,7 +40,7 @@ public:
                             long style = 0,
                             const wxValidator& validator =
                                 wxDefaultValidator,
-                            const wxString& name = wxButtonNameStr)
+                            const wxString& name = wxASCII_STR(wxButtonNameStr))
         : wxButton(parent,
                    id,
                    mainLabel + '\n' + note,
@@ -104,7 +103,7 @@ public:
                                const wxSize& size = wxDefaultSize,
                                long style = 0,
                                const wxValidator& validator = wxDefaultValidator,
-                               const wxString& name = wxButtonNameStr)
+                               const wxString& name = wxASCII_STR(wxButtonNameStr))
         : wxCommandLinkButtonBase()
     {
         Create(parent, id, mainLabel, note, pos, size, style, validator, name);
@@ -118,10 +117,10 @@ public:
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxButtonNameStr);
+                const wxString& name = wxASCII_STR(wxButtonNameStr));
 
     virtual void SetMainLabelAndNote(const wxString& mainLabel,
-                                     const wxString& note)
+                                     const wxString& note) wxOVERRIDE
     {
         wxButton::SetLabel(mainLabel + '\n' + note);
     }
@@ -148,7 +147,7 @@ private:
                             const wxSize& size = wxDefaultSize,
                             long style = 0,
                             const wxValidator& validator = wxDefaultValidator,
-                            const wxString& name = wxButtonNameStr)
+                            const wxString& name = wxASCII_STR(wxButtonNameStr))
             : wxGenericCommandLinkButton(parent,
                                          id,
                                          mainLabel,

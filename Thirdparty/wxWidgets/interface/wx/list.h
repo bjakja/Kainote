@@ -2,7 +2,6 @@
 // Name:        list.h
 // Purpose:     interface of wxList<T>
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -100,18 +99,18 @@ public:
     /**
         Default constructor.
     */
-    wxList<T>();
+    wxList();
 
     /**
         Constructor which initialized the list with an array of @a count elements.
     */
-    wxList<T>(size_t count, T* elements[]);
+    wxList(size_t count, T* elements[]);
 
     /**
         Destroys the list, but does not delete the objects stored in the list
         unless you called DeleteContents(@true ).
     */
-    ~wxList<T>();
+    ~wxList();
 
     /**
         Appends the pointer to @a object to the list.
@@ -279,7 +278,7 @@ public:
     const_iterator end() const;
 
     /**
-        Returns a iterator pointing at the end of the list.
+        Returns an iterator pointing at the end of the list.
     */
     iterator end() const;
 
@@ -391,6 +390,13 @@ public:
         Returns the size of the list.
     */
     size_type size() const;
+
+    /**
+        Returns a wxVector holding the list elements.
+
+        @since 2.9.5
+    */
+    wxVector<T> AsVector() const;
 };
 
 

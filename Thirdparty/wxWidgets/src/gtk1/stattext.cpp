@@ -2,7 +2,6 @@
 // Name:        src/gtk1/stattext.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -152,6 +151,25 @@ bool wxStaticText::SetForegroundColour(const wxColour& colour)
     // Then, to force the color change, we set the label with the current label
     SetLabel(GetLabel());
     return true;
+}
+
+// These functions are not used as GTK supports ellipsization natively and we
+// never call the base class UpdateText() which uses them.
+//
+// Note that, unfortunately, we still need to define them because they still
+// exist, as pure virtuals, in the base class even in wxGTK to allow
+// wxGenericStaticText to override them.
+
+wxString wxStaticText::WXGetVisibleLabel() const
+{
+    wxFAIL_MSG(wxS("Unreachable"));
+
+    return wxString();
+}
+
+void wxStaticText::WXSetVisibleLabel(const wxString& WXUNUSED(str))
+{
+    wxFAIL_MSG(wxS("Unreachable"));
 }
 
 // static

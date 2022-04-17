@@ -4,17 +4,13 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/04/2003
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TASKBARICON
 
@@ -26,7 +22,9 @@
     #include "wx/menu.h"
 #endif
 
-extern WXDLLIMPEXP_DATA_CORE(wxList) wxPendingDelete;
+#include "wx/scopedptr.h"
+
+extern WXDLLIMPEXP_DATA_BASE(wxList) wxPendingDelete;
 
 // DLL options compatibility check:
 WX_CHECK_BUILD_OPTIONS("wxAdvanced")
@@ -42,18 +40,24 @@ wxDEFINE_EVENT( wxEVT_TASKBAR_BALLOON_TIMEOUT, wxTaskBarIconEvent );
 wxDEFINE_EVENT( wxEVT_TASKBAR_BALLOON_CLICK, wxTaskBarIconEvent );
 
 
-BEGIN_EVENT_TABLE(wxTaskBarIconBase, wxEvtHandler)
+wxBEGIN_EVENT_TABLE(wxTaskBarIconBase, wxEvtHandler)
     EVT_TASKBAR_CLICK(wxTaskBarIconBase::OnRightButtonDown)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 void wxTaskBarIconBase::OnRightButtonDown(wxTaskBarIconEvent& WXUNUSED(event))
 {
-    wxMenu *menu = CreatePopupMenu();
-    if (menu)
+    wxScopedPtr<wxMenu> menuDeleter;
+    wxMenu *menu = GetPopupMenu();
+    if ( !menu )
     {
-        PopupMenu(menu);
-        delete menu;
+        menu = CreatePopupMenu();
+        if ( !menu )
+            return;
+
+        menuDeleter.reset(menu);
     }
+
+    PopupMenu(menu);
 }
 
 void wxTaskBarIconBase::Destroy()

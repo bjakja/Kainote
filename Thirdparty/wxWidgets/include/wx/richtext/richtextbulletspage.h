@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/richtext/richtextbulletspage.h
-// Purpose:
+// Purpose:     Declares the rich text formatting dialog bullets page.
 // Author:      Julian Smart
 // Modified by:
 // Created:     10/4/2006 10:32:31 AM
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,7 @@ class wxRichTextCtrl;
  */
 
 ////@begin control identifiers
-#define SYMBOL_WXRICHTEXTBULLETSPAGE_STYLE wxRESIZE_BORDER|wxTAB_TRAVERSAL
+#define SYMBOL_WXRICHTEXTBULLETSPAGE_STYLE wxTAB_TRAVERSAL
 #define SYMBOL_WXRICHTEXTBULLETSPAGE_TITLE wxEmptyString
 #define SYMBOL_WXRICHTEXTBULLETSPAGE_IDNAME ID_RICHTEXTBULLETSPAGE
 #define SYMBOL_WXRICHTEXTBULLETSPAGE_SIZE wxSize(400, 300)
@@ -46,8 +45,8 @@ class wxRichTextCtrl;
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextBulletsPage: public wxRichTextDialogPage
 {
-    DECLARE_DYNAMIC_CLASS( wxRichTextBulletsPage )
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wxRichTextBulletsPage);
+    wxDECLARE_EVENT_TABLE();
     DECLARE_HELP_PROVISION()
 
 public:
@@ -68,8 +67,8 @@ public:
     void UpdatePreview();
 
     /// Transfer data from/to window
-    virtual bool TransferDataFromWindow();
-    virtual bool TransferDataToWindow();
+    virtual bool TransferDataFromWindow() wxOVERRIDE;
+    virtual bool TransferDataToWindow() wxOVERRIDE;
 
     /// Gets the attributes associated with the main formatting dialog
     wxRichTextAttr* GetAttributes();

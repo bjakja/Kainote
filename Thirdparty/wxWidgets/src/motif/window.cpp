@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -132,9 +131,9 @@ static int str16len(const char *s)
 // event tables
 // ----------------------------------------------------------------------------
 
-    BEGIN_EVENT_TABLE(wxWindow, wxWindowBase)
-        EVT_SYS_COLOUR_CHANGED(wxWindow::OnSysColourChanged)
-    END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(wxWindow, wxWindowBase)
+    EVT_SYS_COLOUR_CHANGED(wxWindow::OnSysColourChanged)
+wxEND_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -887,7 +886,7 @@ void wxWindow::ScrollWindow(int dx, int dy, const wxRect *rect)
     XCopyArea(display, window, window, gc, x1, y1, w1, h1, x2, y2);
 
     dcimpl->SetAutoSetting(true);
-    wxBrush brush(GetBackgroundColour(), wxSOLID);
+    wxBrush brush(GetBackgroundColour(), wxBRUSHSTYLE_SOLID);
     dc.SetBrush(brush); // FIXME: needed?
 
     wxWindowList::compatibility_iterator cnode = m_children.GetFirst();
@@ -1231,7 +1230,8 @@ void wxWindow::DoGetClientSize(int *x, int *y) const
     Widget widget = (Widget) GetClientWidget();
     Dimension xx, yy;
     XtVaGetValues(widget, XmNwidth, &xx, XmNheight, &yy, NULL);
-    if(x) *x = xx; if(y) *y = yy;
+    if(x) *x = xx;
+    if(y) *y = yy;
 }
 
 void wxWindow::DoSetSize(int x, int y, int width, int height, int sizeFlags)
@@ -1253,8 +1253,8 @@ void wxWindow::DoSetSizeIntr(int x, int y, int width, int height,
 
     if (x == -1)
         x = oldX;
-    if (x == -1)
-        x = oldY;
+    if (y == -1)
+        y = oldY;
 
     if ( !(sizeFlags & wxSIZE_ALLOW_MINUS_ONE) )
     {
@@ -1538,7 +1538,7 @@ void wxWindow::Refresh(bool eraseBack, const wxRect *rect)
     if (eraseBack)
     {
         wxClientDC dc(this);
-        wxBrush backgroundBrush(GetBackgroundColour(), wxSOLID);
+        wxBrush backgroundBrush(GetBackgroundColour(), wxBRUSHSTYLE_SOLID);
         dc.SetBackground(backgroundBrush);
 
         wxClientDCImpl * const
@@ -1621,8 +1621,7 @@ void wxWindow::DoPaint()
         eraseEvent.SetEventObject(this);
         HandleWindowEvent(eraseEvent);
 
-        wxPaintEvent event(GetId());
-        event.SetEventObject(this);
+        wxPaintEvent event(this);
         HandleWindowEvent(event);
 
         m_needsRefresh = false;
@@ -1692,7 +1691,7 @@ bool wxWindow::ProcessAccelerator(wxKeyEvent& event)
                     wxMenuItem* item = frame->GetMenuBar()->FindItem(entry->GetCommand());
                     if (item)
                     {
-                        wxCommandEvent commandEvent(wxEVT_COMMAND_MENU_SELECTED, entry->GetCommand());
+                        wxCommandEvent commandEvent(wxEVT_MENU, entry->GetCommand());
                         commandEvent.SetEventObject(frame);
 
                         // If ProcessEvent returns true (it was handled), then
@@ -1714,7 +1713,7 @@ bool wxWindow::ProcessAccelerator(wxKeyEvent& event)
             // For now, only buttons.
             if ( wxDynamicCast(child, wxButton) )
             {
-                wxCommandEvent commandEvent (wxEVT_COMMAND_BUTTON_CLICKED, child->GetId());
+                wxCommandEvent commandEvent (wxEVT_BUTTON, child->GetId());
                 commandEvent.SetEventObject(child);
                 return child->HandleWindowEvent(commandEvent);
             }
@@ -2609,7 +2608,7 @@ void wxGetTextExtent(const wxWindow* window, const wxString& str,
     if (table == NULL)
         table = XmeGetDefaultRenderTable(w, XmTEXT_RENDER_TABLE);
 
-    rendition = XmRenderTableGetRendition( table, "" );
+    rendition = XmRenderTableGetRendition( table, (char*)"" );
     XtSetArg( args[count], XmNfont, 0 ); ++count;
     XtSetArg( args[count], XmNfontType, 0 ); ++count;
     XmRenditionRetrieve( rendition, args, count );

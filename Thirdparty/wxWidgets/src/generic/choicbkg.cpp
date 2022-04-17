@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by: Wlodzimierz ABX Skiba from generic/listbkg.cpp
 // Created:     15.09.04
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin, Wlodzimierz Skiba
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CHOICEBOOK
 
@@ -37,24 +33,17 @@
 #include "wx/imaglist.h"
 
 // ----------------------------------------------------------------------------
-// various wxWidgets macros
-// ----------------------------------------------------------------------------
-
-// check that the page index is valid
-#define IS_VALID_PAGE(nPage) ((nPage) < GetPageCount())
-
-// ----------------------------------------------------------------------------
 // event table
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxChoicebook, wxBookCtrlBase)
+wxIMPLEMENT_DYNAMIC_CLASS(wxChoicebook, wxBookCtrlBase);
 
-wxDEFINE_EVENT( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_CHOICEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDEFINE_EVENT( wxEVT_CHOICEBOOK_PAGE_CHANGED,  wxBookCtrlEvent );
 
-BEGIN_EVENT_TABLE(wxChoicebook, wxBookCtrlBase)
+wxBEGIN_EVENT_TABLE(wxChoicebook, wxBookCtrlBase)
     EVT_CHOICE(wxID_ANY, wxChoicebook::OnChoiceSelected)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 // ============================================================================
 // wxChoicebook implementation
@@ -100,8 +89,13 @@ wxChoicebook::Create(wxWindow *parent,
         mainSizer->Add(0, 0, 1, wxEXPAND, 0);
 
     m_controlSizer = new wxBoxSizer(IsVertical() ? wxHORIZONTAL : wxVERTICAL);
-    m_controlSizer->Add(m_bookctrl, 1, (IsVertical() ? wxALIGN_CENTRE_VERTICAL : wxALIGN_CENTRE) |wxGROW, 0);
-    mainSizer->Add(m_controlSizer, 0, (IsVertical() ? (int) wxGROW : (int) wxALIGN_CENTRE_VERTICAL)|wxALL, m_controlMargin);
+    m_controlSizer->Add(m_bookctrl, wxSizerFlags(1).Expand());
+    wxSizerFlags flags;
+    if ( IsVertical() )
+        flags.Expand();
+    else
+        flags.CentreVertical();
+    mainSizer->Add(m_controlSizer, flags.Border(wxALL, m_controlMargin));
     SetSizer(mainSizer);
     return true;
 }
@@ -162,12 +156,12 @@ void wxChoicebook::SetImageList(wxImageList *imageList)
 
 wxBookCtrlEvent* wxChoicebook::CreatePageChangingEvent() const
 {
-    return new wxBookCtrlEvent(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING, m_windowId);
+    return new wxBookCtrlEvent(wxEVT_CHOICEBOOK_PAGE_CHANGING, m_windowId);
 }
 
 void wxChoicebook::MakeChangedEvent(wxBookCtrlEvent &event)
 {
-    event.SetEventType(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED);
+    event.SetEventType(wxEVT_CHOICEBOOK_PAGE_CHANGED);
 }
 
 // ----------------------------------------------------------------------------
@@ -209,22 +203,7 @@ wxWindow *wxChoicebook::DoRemovePage(size_t page)
     {
         GetChoiceCtrl()->Delete(page);
 
-        if ( m_selection >= (int)page )
-        {
-            // ensure that the selection is valid
-            int sel;
-            if ( GetPageCount() == 0 )
-                sel = wxNOT_FOUND;
-            else
-                sel = m_selection ? m_selection - 1 : 0;
-
-            // if deleting current page we shouldn't try to hide it
-            m_selection = m_selection == (int)page ? wxNOT_FOUND
-                                                   : m_selection - 1;
-
-            if ( sel != wxNOT_FOUND && sel != m_selection )
-                SetSelection(sel);
-        }
+        DoSetSelectionAfterRemoval(page);
     }
 
     return win;

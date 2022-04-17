@@ -3,7 +3,6 @@
 // Purpose:     wxGTK-specific wxNonOwnedWindow declaration.
 // Author:      Vadim Zeitlin
 // Created:     2011-10-12
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -24,13 +23,13 @@ public:
     virtual ~wxNonOwnedWindow();
 
     // Overridden to actually set the shape when the window becomes realized.
-    virtual void GTKHandleRealized();
+    virtual void GTKHandleRealized() wxOVERRIDE;
 
 protected:
-    virtual bool DoClearShape();
-    virtual bool DoSetRegionShape(const wxRegion& region);
+    virtual bool DoClearShape() wxOVERRIDE;
+    virtual bool DoSetRegionShape(const wxRegion& region) wxOVERRIDE;
 #if wxUSE_GRAPHICS_CONTEXT
-    virtual bool DoSetPathShape(const wxGraphicsPath& path);
+    virtual bool DoSetPathShape(const wxGraphicsPath& path) wxOVERRIDE;
 #endif // wxUSE_GRAPHICS_CONTEXT
 
 

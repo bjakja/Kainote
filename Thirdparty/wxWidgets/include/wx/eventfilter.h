@@ -3,7 +3,6 @@
 // Purpose:     wxEventFilter class declaration.
 // Author:      Vadim Zeitlin
 // Created:     2011-11-21
-// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -60,7 +59,7 @@ public:
 
 private:
     // Objects of this class are made to be stored in a linked list in
-    // wxEvtHandler so put the next node ponter directly in the class itself.
+    // wxEvtHandler so put the next node pointer directly in the class itself.
     wxEventFilter* m_next;
 
     // And provide access to it for wxEvtHandler [only].

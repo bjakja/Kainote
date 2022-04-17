@@ -8,7 +8,6 @@
 //              Vadim Zeitlin (added support for Unix sockets) Apr 2002
 //                            (use buffering, many fixes/cleanup) Oct 2008
 // Created:     1993
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart 1993
 //              (c) Guilhem Lavaux 1997, 1998
 //              (c) 2000 Guillermo Rodriguez <guille@iies.es>
@@ -23,12 +22,9 @@
 // headers
 // --------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SOCKETS && wxUSE_IPC && wxUSE_STREAMS
 
@@ -127,7 +123,7 @@ public:
 private:
     void HandleDisconnect(wxTCPConnection *connection);
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxTCPEventHandler);
 };
 
@@ -156,19 +152,19 @@ public:
     }
 
     // as ms_handler is initialized on demand, don't do anything in OnInit()
-    virtual bool OnInit() { return true; }
-    virtual void OnExit() { wxDELETE(ms_handler); }
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE { wxDELETE(ms_handler); }
 
 private:
     static wxTCPEventHandler *ms_handler;
 
-    DECLARE_DYNAMIC_CLASS(wxTCPEventHandlerModule)
+    wxDECLARE_DYNAMIC_CLASS(wxTCPEventHandlerModule);
     wxDECLARE_NO_COPY_CLASS(wxTCPEventHandlerModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxTCPEventHandlerModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxTCPEventHandlerModule, wxModule);
 
-wxTCPEventHandler *wxTCPEventHandlerModule::ms_handler = nullptr;
+wxTCPEventHandler *wxTCPEventHandlerModule::ms_handler = NULL;
 
 // --------------------------------------------------------------------------
 // wxIPCSocketStreams
@@ -237,13 +233,13 @@ public:
     {
         Flush();
 
-        wxCHECK_MSG( conn, nullptr, "nullptr connection parameter" );
-        wxCHECK_MSG( size, nullptr, "nullptr size parameter" );
+        wxCHECK_MSG( conn, NULL, "NULL connection parameter" );
+        wxCHECK_MSG( size, NULL, "NULL size parameter" );
 
         *size = Read32();
 
         void * const data = conn->GetBufferAtLeast(*size);
-        wxCHECK_MSG( data, nullptr, "IPC buffer allocation failed" );
+        wxCHECK_MSG( data, NULL, "IPC buffer allocation failed" );
 
         m_socketStream.Read(data, *size);
 
@@ -254,7 +250,7 @@ public:
     void *
     ReadFormatData(wxConnectionBase *conn, wxIPCFormat *format, size_t *size)
     {
-        wxCHECK_MSG( format, nullptr, "nullptr format parameter" );
+        wxCHECK_MSG( format, NULL, "NULL format parameter" );
 
         *format = static_cast<wxIPCFormat>(Read8());
 
@@ -303,7 +299,7 @@ public:
     IPCOutput(wxIPCSocketStreams *streams)
         : m_streams(*streams)
     {
-        wxASSERT_MSG( streams, "nullptr streams pointer" );
+        wxASSERT_MSG( streams, "NULL streams pointer" );
     }
 
     // dtor calls Flush() really sending the IPC data to the network
@@ -350,9 +346,9 @@ private:
 // implementation
 // ==========================================================================
 
-IMPLEMENT_DYNAMIC_CLASS(wxTCPServer, wxServerBase)
-IMPLEMENT_DYNAMIC_CLASS(wxTCPClient, wxClientBase)
-IMPLEMENT_CLASS(wxTCPConnection, wxConnectionBase)
+wxIMPLEMENT_DYNAMIC_CLASS(wxTCPServer, wxServerBase);
+wxIMPLEMENT_DYNAMIC_CLASS(wxTCPClient, wxClientBase);
+wxIMPLEMENT_CLASS(wxTCPConnection, wxConnectionBase);
 
 // --------------------------------------------------------------------------
 // wxTCPClient
@@ -376,7 +372,7 @@ wxConnectionBase *wxTCPClient::MakeConnection(const wxString& host,
 {
     wxSockAddress *addr = GetAddressFromName(serverName, host);
     if ( !addr )
-        return nullptr;
+        return NULL;
 
     wxSocketClient * const client = new wxSocketClient(wxSOCKET_WAITALL);
     wxIPCSocketStreams * const streams = new wxIPCSocketStreams(*client);
@@ -424,7 +420,7 @@ wxConnectionBase *wxTCPClient::MakeConnection(const wxString& host,
     delete streams;
     client->Destroy();
 
-    return nullptr;
+    return NULL;
 }
 
 wxConnectionBase *wxTCPClient::OnMakeConnection()
@@ -439,7 +435,7 @@ wxConnectionBase *wxTCPClient::OnMakeConnection()
 wxTCPServer::wxTCPServer()
            : wxServerBase()
 {
-    m_server = nullptr;
+    m_server = NULL;
 }
 
 bool wxTCPServer::Create(const wxString& serverName)
@@ -447,9 +443,9 @@ bool wxTCPServer::Create(const wxString& serverName)
     // Destroy previous server, if any
     if (m_server)
     {
-        m_server->SetClientData(nullptr);
+        m_server->SetClientData(NULL);
         m_server->Destroy();
-        m_server = nullptr;
+        m_server = NULL;
     }
 
     wxSockAddress *addr = GetAddressFromName(serverName);
@@ -501,7 +497,7 @@ bool wxTCPServer::Create(const wxString& serverName)
     if (!m_server->IsOk())
     {
         m_server->Destroy();
-        m_server = nullptr;
+        m_server = NULL;
 
         return false;
     }
@@ -519,7 +515,7 @@ wxTCPServer::~wxTCPServer()
 {
     if ( m_server )
     {
-        m_server->SetClientData(nullptr);
+        m_server->SetClientData(NULL);
         m_server->Destroy();
     }
 
@@ -528,7 +524,7 @@ wxTCPServer::~wxTCPServer()
     {
         if ( remove(m_filename.fn_str()) != 0 )
         {
-            wxLogDebug(wxT("Stale AF_UNIX file '%s' left."), m_filename.c_str());
+            wxLogDebug(wxT("Stale AF_UNIX file '%s' left."), m_filename);
         }
     }
 #endif // __UNIX_LIKE__
@@ -546,8 +542,8 @@ wxTCPServer::OnAcceptConnection(const wxString& WXUNUSED(topic))
 
 void wxTCPConnection::Init()
 {
-    m_sock = nullptr;
-    m_streams = nullptr;
+    m_sock = NULL;
+    m_streams = NULL;
 }
 
 wxTCPConnection::~wxTCPConnection()
@@ -556,7 +552,7 @@ wxTCPConnection::~wxTCPConnection()
 
     if ( m_sock )
     {
-        m_sock->SetClientData(nullptr);
+        m_sock->SetClientData(NULL);
         m_sock->Destroy();
     }
 
@@ -610,16 +606,16 @@ const void *wxTCPConnection::Request(const wxString& item,
                                      wxIPCFormat format)
 {
     if ( !m_sock->IsConnected() )
-        return nullptr;
+        return NULL;
 
     IPCOutput(m_streams).Write(IPC_REQUEST, item, format);
 
     const int ret = m_streams->Read8();
     if ( ret != IPC_REQUEST_REPLY )
-        return nullptr;
+        return NULL;
 
-    // ReadData() needs a non-nullptr size pointer but the client code can call us
-    // with nullptr pointer (this makes sense if it knows that it always works
+    // ReadData() needs a non-NULL size pointer but the client code can call us
+    // with NULL pointer (this makes sense if it knows that it always works
     // with NUL-terminated strings)
     size_t sizeFallback;
     return m_streams->ReadData(this, size ? size : &sizeFallback);
@@ -684,10 +680,10 @@ bool wxTCPConnection::DoAdvise(const wxString& item,
 // wxTCPEventHandler (private class)
 // --------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxTCPEventHandler, wxEvtHandler)
+wxBEGIN_EVENT_TABLE(wxTCPEventHandler, wxEvtHandler)
     EVT_SOCKET(_CLIENT_ONREQUEST_ID, wxTCPEventHandler::Client_OnRequest)
     EVT_SOCKET(_SERVER_ONREQUEST_ID, wxTCPEventHandler::Server_OnRequest)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 void wxTCPEventHandler::HandleDisconnect(wxTCPConnection *connection)
 {
@@ -698,7 +694,7 @@ void wxTCPEventHandler::HandleDisconnect(wxTCPConnection *connection)
     // don't leave references to this soon-to-be-dangling connection in the
     // socket as it won't be destroyed immediately as its destruction will be
     // delayed in case there are more events pending for it
-    connection->m_sock->SetClientData(nullptr);
+    connection->m_sock->SetClientData(NULL);
 
     connection->SetConnected(false);
     connection->OnDisconnect();

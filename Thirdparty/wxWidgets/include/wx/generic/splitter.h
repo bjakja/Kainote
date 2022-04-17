@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -106,7 +105,7 @@ public:
     // and changing the split mode.
     // Does nothing and returns false if the window is already split.
     // A sashPosition of 0 means choose a default sash position,
-    // negative sashPosition specifies the size of right/lower pane as it's
+    // negative sashPosition specifies the size of right/lower pane as its
     // absolute value rather than the size of left/upper pane.
     virtual bool SplitVertically(wxWindow *window1,
                                  wxWindow *window2,
@@ -202,8 +201,10 @@ public:
     // Adjusts the panes
     void OnSize(wxSizeEvent& event);
 
+    void OnDPIChanged(wxDPIChangedEvent& event);
+
     // In live mode, resize child windows in idle time
-    void OnInternalIdle();
+    void OnInternalIdle() wxOVERRIDE;
 
     // Draws the sash
     virtual void DrawSash(wxDC& dc);
@@ -212,13 +213,13 @@ public:
     virtual void DrawSashTracker(int x, int y);
 
     // Tests for x, y over sash
-    virtual bool SashHitTest(int x, int y, int tolerance = 5);
+    virtual bool SashHitTest(int x, int y);
 
     // Resizes subwindows
     virtual void SizeWindows();
 
 #ifdef __WXMAC__
-    virtual bool MacClipGrandChildren() const { return true ; }
+    virtual bool MacClipGrandChildren() const wxOVERRIDE { return true ; }
 #endif
 
     // Sets the sash size: this doesn't do anything and shouldn't be used at
@@ -230,10 +231,6 @@ protected:
 #if defined(__WXMSW__) || defined(__WXMAC__)
     void OnSetCursor(wxSetCursorEvent& event);
 #endif // wxMSW
-
-    // send the given event, return false if the event was processed and vetoed
-    // by the user code
-    bool DoSendEvent(wxSplitterEvent& event);
 
     // common part of all ctors
     void Init();
@@ -275,7 +272,7 @@ protected:
 
     // return the best size of the splitter equal to best sizes of its
     // subwindows
-    virtual wxSize DoGetBestSize() const;
+    virtual wxSize DoGetBestSize() const wxOVERRIDE;
 
 
     wxSplitMode m_splitMode;
@@ -302,8 +299,8 @@ protected:
     bool        m_isHot:1;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxSplitterWindow)
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wxSplitterWindow);
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxSplitterWindow);
 };
 
@@ -324,9 +321,13 @@ public:
     {
         SetEventObject(splitter);
         if (splitter) m_id = splitter->GetId();
+
+        m_data.resize.oldSize = 0;
+        m_data.resize.newSize = 0;
     }
     wxSplitterEvent(const wxSplitterEvent& event)
-        : wxNotifyEvent(event), m_data(event.m_data) { }
+        : wxNotifyEvent(event), m_data(event.m_data)
+    { }
 
     // SASH_POS_CHANGED methods
 
@@ -334,24 +335,48 @@ public:
     // all
     void SetSashPosition(int pos)
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+        wxASSERT( GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGED
+            || GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGING
+            || GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        m_data.pos = pos;
+        m_data.resize.pos = pos;
     }
 
     int GetSashPosition() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED
-                || GetEventType() == wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING);
+        wxASSERT( GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGED
+            || GetEventType() == wxEVT_SPLITTER_SASH_POS_CHANGING
+            || GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
 
-        return m_data.pos;
+        return m_data.resize.pos;
+    }
+
+    void SetSize(int oldSize, int newSize)
+    {
+        wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
+
+        m_data.resize.oldSize = oldSize;
+        m_data.resize.newSize = newSize;
+    }
+
+    int GetOldSize() const
+    {
+        wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
+
+        return m_data.resize.oldSize;
+    }
+
+    int GetNewSize() const
+    {
+        wxASSERT(GetEventType() == wxEVT_SPLITTER_SASH_POS_RESIZE);
+
+        return m_data.resize.newSize;
     }
 
     // UNSPLIT event methods
     wxWindow *GetWindowBeingRemoved() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_UNSPLIT );
+        wxASSERT( GetEventType() == wxEVT_SPLITTER_UNSPLIT );
 
         return m_data.win;
     }
@@ -359,19 +384,19 @@ public:
     // DCLICK event methods
     int GetX() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+        wxASSERT( GetEventType() == wxEVT_SPLITTER_DOUBLECLICKED );
 
         return m_data.pt.x;
     }
 
     int GetY() const
     {
-        wxASSERT( GetEventType() == wxEVT_COMMAND_SPLITTER_DOUBLECLICKED );
+        wxASSERT( GetEventType() == wxEVT_SPLITTER_DOUBLECLICKED );
 
         return m_data.pt.y;
     }
 
-    virtual wxEvent *Clone() const { return new wxSplitterEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxSplitterEvent(*this); }
 
 private:
     friend class WXDLLIMPEXP_FWD_CORE wxSplitterWindow;
@@ -379,7 +404,12 @@ private:
     // data for the different types of event
     union
     {
-        int pos;            // position for SASH_POS_CHANGED event
+        struct
+        {
+            int pos;            // position for SASH_POS_* events
+            int oldSize;        // window size for SASH_POS_RESIZE event
+            int newSize;        // window size for SASH_POS_RESIZE event
+        } resize;
         wxWindow *win;      // window being removed for UNSPLIT event
         struct
         {
@@ -387,7 +417,7 @@ private:
         } pt;               // position of double click for DCLICK event
     } m_data;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSplitterEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSplitterEvent);
 };
 
 typedef void (wxEvtHandler::*wxSplitterEventFunction)(wxSplitterEvent&);
@@ -396,7 +426,7 @@ typedef void (wxEvtHandler::*wxSplitterEventFunction)(wxSplitterEvent&);
     wxEVENT_HANDLER_CAST(wxSplitterEventFunction, func)
 
 #define wx__DECLARE_SPLITTEREVT(evt, id, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_SPLITTER_ ## evt, id, wxSplitterEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_SPLITTER_ ## evt, id, wxSplitterEventHandler(fn))
 
 #define EVT_SPLITTER_SASH_POS_CHANGED(id, fn) \
     wx__DECLARE_SPLITTEREVT(SASH_POS_CHANGED, id, fn)
@@ -404,10 +434,20 @@ typedef void (wxEvtHandler::*wxSplitterEventFunction)(wxSplitterEvent&);
 #define EVT_SPLITTER_SASH_POS_CHANGING(id, fn) \
     wx__DECLARE_SPLITTEREVT(SASH_POS_CHANGING, id, fn)
 
+#define EVT_SPLITTER_SASH_POS_RESIZE(id, fn) \
+    wx__DECLARE_SPLITTEREVT(SASH_POS_RESIZE, id, fn)
+
 #define EVT_SPLITTER_DCLICK(id, fn) \
     wx__DECLARE_SPLITTEREVT(DOUBLECLICKED, id, fn)
 
 #define EVT_SPLITTER_UNSPLIT(id, fn) \
     wx__DECLARE_SPLITTEREVT(UNSPLIT, id, fn)
+
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED    wxEVT_SPLITTER_SASH_POS_CHANGED
+#define wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING   wxEVT_SPLITTER_SASH_POS_CHANGING
+#define wxEVT_COMMAND_SPLITTER_DOUBLECLICKED       wxEVT_SPLITTER_DOUBLECLICKED
+#define wxEVT_COMMAND_SPLITTER_UNSPLIT             wxEVT_SPLITTER_UNSPLIT
 
 #endif // _WX_GENERIC_SPLITTER_H_

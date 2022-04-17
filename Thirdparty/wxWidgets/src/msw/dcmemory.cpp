@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/dcmemory.h"
 #include "wx/msw/dcmemory.h"
@@ -32,13 +28,15 @@
     #include "wx/log.h"
 #endif
 
+#include "wx/display.h"
+
 #include "wx/msw/private.h"
 
 // ----------------------------------------------------------------------------
 // wxMemoryDCImpl
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl, wxMSWDCImpl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl, wxMSWDCImpl);
 
 wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner )
         : wxMSWDCImpl( owner )
@@ -71,6 +69,7 @@ void wxMemoryDCImpl::Init()
     {
         SetBrush(*wxWHITE_BRUSH);
         SetPen(*wxBLACK_PEN);
+        SetFont(*wxNORMAL_FONT);
 
         // the background mode is only used for text background and is set in
         // DrawText() to OPAQUE as required, otherwise always TRANSPARENT
@@ -134,6 +133,24 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
     {
         m_oldBitmap = hBmp;
     }
+
+    // Remember content scale factor used by the bitmap: we don't use it
+    // ourselves, but this can be needed later for creating fonts of the
+    // correct size.
+    m_contentScaleFactor = bitmap.GetScaleFactor();
+
+    // The font may need to be adjusted for the new scale factor.
+    SetFont(GetFont());
+}
+
+void wxMemoryDCImpl::SetFont(const wxFont& font)
+{
+    // We need to adjust the font size by the ratio between the scale factor we
+    // use and the default/global scale factor used when creating fonts.
+    wxFont scaledFont = font;
+    if ( scaledFont.IsOk() )
+        scaledFont.WXAdjustToPPI(wxDisplay::GetStdPPI()*m_contentScaleFactor);
+    wxMSWDCImpl::SetFont(scaledFont);
 }
 
 void wxMemoryDCImpl::DoGetSize(int *width, int *height) const
@@ -163,7 +180,7 @@ static void wxDrawRectangle(wxDC& dc, wxCoord x, wxCoord y, wxCoord width, wxCoo
 {
     wxBrush brush(dc.GetBrush());
     wxPen pen(dc.GetPen());
-    if (brush.IsOk() && brush.GetStyle() != wxTRANSPARENT)
+    if (brush.IsOk() && brush.GetStyle() != wxBRUSHSTYLE_TRANSPARENT)
     {
         HBRUSH hBrush = (HBRUSH) brush.GetResourceHandle() ;
         if (hBrush)
@@ -176,7 +193,7 @@ static void wxDrawRectangle(wxDC& dc, wxCoord x, wxCoord y, wxCoord width, wxCoo
         }
     }
     width --; height --;
-    if (pen.IsOk() && pen.GetStyle() != wxTRANSPARENT)
+    if (pen.IsOk() && pen.GetStyle() != wxPENSTYLE_TRANSPARENT)
     {
         dc.DrawLine(x, y, x + width, y);
         dc.DrawLine(x, y, x, y + height);
@@ -193,8 +210,8 @@ void wxMemoryDCImpl::DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoor
     // (visible with e.g. 70x70 rectangle on a memory DC; see Drawing sample)
 #if wxUSE_MEMORY_DC_DRAW_RECTANGLE
     if (m_brush.IsOk() && m_pen.IsOk() &&
-        (m_brush.GetStyle() == wxSOLID || m_brush.GetStyle() == wxTRANSPARENT) &&
-        (m_pen.GetStyle() == wxSOLID || m_pen.GetStyle() == wxTRANSPARENT) &&
+        (m_brush.GetStyle() == wxBRUSHSTYLE_SOLID || m_brush.GetStyle() == wxBRUSHSTYLE_TRANSPARENT) &&
+        (m_pen.GetStyle() == wxPENSTYLE_SOLID || m_pen.GetStyle() == wxPENSTYLE_TRANSPARENT) &&
         (GetLogicalFunction() == wxCOPY))
     {
         wxDrawRectangle(* this, x, y, width, height);

@@ -4,7 +4,6 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     2006-12-20
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin, Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/fontutil.h"
 #include "wx/encinfo.h"

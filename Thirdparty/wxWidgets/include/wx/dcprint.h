@@ -5,7 +5,6 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,13 +28,13 @@ public:
     wxPrinterDC(const wxPrintData& data);
 
     wxRect GetPaperRect() const;
-    int GetResolution() const;
+    int GetResolution() const wxOVERRIDE;
 
 protected:
     wxPrinterDC(wxDCImpl *impl) : wxDC(impl) { }
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxPrinterDC)
+    wxDECLARE_DYNAMIC_CLASS(wxPrinterDC);
 };
 
 #endif // wxUSE_PRINTING_ARCHITECTURE

@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/control.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -43,7 +42,7 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize, long style = 0,
              const wxValidator& validator = wxDefaultValidator,
-             const wxString& name = wxControlNameStr)
+             const wxString& name = wxASCII_STR(wxControlNameStr))
     {
         Create(parent, id, pos, size, style, validator, name);
     }
@@ -52,7 +51,7 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize, long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxControlNameStr);
+            const wxString& name = wxASCII_STR(wxControlNameStr));
 
     virtual void SetLabel( const wxString &label );
     virtual wxString GetLabel() const;
@@ -99,7 +98,7 @@ protected:
     wxString m_label;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxControl)
+    wxDECLARE_DYNAMIC_CLASS(wxControl);
 };
 
 #endif // __GTKCONTROLH__

@@ -4,7 +4,6 @@
 // Author:      Francesco Montorsi
 // Modified by:
 // Created:     8/10/2006
-// RCS-ID:      $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -42,8 +41,25 @@ public:
 
     virtual wxWindow *GetPane() const = 0;
 
-    virtual wxString GetLabel() const = 0;
-    virtual void SetLabel(const wxString& label) = 0;
+    virtual wxString GetLabel() const wxOVERRIDE = 0;
+    virtual void SetLabel(const wxString& label) wxOVERRIDE = 0;
+
+    virtual bool
+    InformFirstDirection(int direction,
+                         int size,
+                         int availableOtherDir) wxOVERRIDE
+    {
+        wxWindow* const p = GetPane();
+        if ( !p )
+            return false;
+
+        if ( !p->InformFirstDirection(direction, size, availableOtherDir) )
+            return false;
+
+        InvalidateBestSize();
+
+        return true;
+    }
 };
 
 
@@ -53,14 +69,14 @@ public:
 
 class WXDLLIMPEXP_FWD_CORE wxCollapsiblePaneEvent;
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_COLLPANE_CHANGED, wxCollapsiblePaneEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COLLAPSIBLEPANE_CHANGED, wxCollapsiblePaneEvent );
 
 class WXDLLIMPEXP_CORE wxCollapsiblePaneEvent : public wxCommandEvent
 {
 public:
     wxCollapsiblePaneEvent() {}
     wxCollapsiblePaneEvent(wxObject *generator, int id, bool collapsed)
-        : wxCommandEvent(wxEVT_COMMAND_COLLPANE_CHANGED, id),
+        : wxCommandEvent(wxEVT_COLLAPSIBLEPANE_CHANGED, id),
         m_bCollapsed(collapsed)
     {
         SetEventObject(generator);
@@ -71,12 +87,12 @@ public:
 
 
     // default copy ctor, assignment operator and dtor are ok
-    virtual wxEvent *Clone() const { return new wxCollapsiblePaneEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxCollapsiblePaneEvent(*this); }
 
 private:
     bool m_bCollapsed;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxCollapsiblePaneEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxCollapsiblePaneEvent);
 };
 
 // ----------------------------------------------------------------------------
@@ -89,7 +105,7 @@ typedef void (wxEvtHandler::*wxCollapsiblePaneEventFunction)(wxCollapsiblePaneEv
     wxEVENT_HANDLER_CAST(wxCollapsiblePaneEventFunction, func)
 
 #define EVT_COLLAPSIBLEPANE_CHANGED(id, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_COLLPANE_CHANGED, id, wxCollapsiblePaneEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COLLAPSIBLEPANE_CHANGED, id, wxCollapsiblePaneEventHandler(fn))
 
 
 #if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
@@ -100,6 +116,9 @@ typedef void (wxEvtHandler::*wxCollapsiblePaneEventFunction)(wxCollapsiblePaneEv
     // use #define and not a typedef to allow forward declaring the class
     #define wxCollapsiblePane wxGenericCollapsiblePane
 #endif
+
+// old wxEVT_COMMAND_* constant
+#define wxEVT_COMMAND_COLLPANE_CHANGED   wxEVT_COLLAPSIBLEPANE_CHANGED
 
 #endif // wxUSE_COLLPANE
 

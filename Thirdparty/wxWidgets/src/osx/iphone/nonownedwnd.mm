@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     2008-06-20
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -70,7 +69,7 @@ wxPoint wxFromNSPoint( UIView* parent, const CGPoint& p )
 // c++ impl
 //
 
-IMPLEMENT_DYNAMIC_CLASS( wxNonOwnedWindowIPhoneImpl , wxNonOwnedWindowImpl )
+wxIMPLEMENT_DYNAMIC_CLASS(wxNonOwnedWindowIPhoneImpl , wxNonOwnedWindowImpl);
 
 wxNonOwnedWindowIPhoneImpl::wxNonOwnedWindowIPhoneImpl( wxNonOwnedWindow* nonownedwnd) :
     wxNonOwnedWindowImpl(nonownedwnd)
@@ -285,6 +284,11 @@ bool wxNonOwnedWindowIPhoneImpl::IsFullScreen() const
     return m_macFullScreenData != NULL ;
 }
 
+bool wxNonOwnedWindowIPhoneImpl::EnableFullScreenView(bool WXUNUSED(enable), long WXUNUSED(style))
+{
+    return true;
+}
+
 bool wxNonOwnedWindowIPhoneImpl::ShowFullScreen(bool show, long style)
 {
     return true;
@@ -350,9 +354,17 @@ wxWidgetImpl* wxWidgetImpl::CreateContentView( wxNonOwnedWindow* now )
     [contentview setController:controller];
     [contentview setHidden:YES];
     
-    wxWidgetIPhoneImpl* impl = new wxWidgetIPhoneImpl( now, contentview, true );
+    wxWidgetIPhoneImpl* impl = new wxWidgetIPhoneImpl( now, contentview, Widget_IsRoot );
     impl->InstallEventHandler();
-    [toplevelwindow addSubview:contentview];
+    
+    if ([toplevelwindow respondsToSelector:@selector(setRootViewController:)])
+    {
+        toplevelwindow.rootViewController = controller;
+    }
+    else
+    {
+        [toplevelwindow addSubview:contentview];
+    }
     return impl;
 }
 
@@ -395,6 +407,21 @@ wxWidgetImpl* wxWidgetImpl::CreateContentView( wxNonOwnedWindow* now )
     
     return YES;
 }
+
+// iOS 6 support, right now unconditionally supporting all orientations, TODO use a orientation mask
+
+-(BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+ - (NSUInteger)supportedInterfaceOrientations
+{
+     return UIInterfaceOrientationMaskAll;
+}
+ 
+ 
+
 
 - (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {

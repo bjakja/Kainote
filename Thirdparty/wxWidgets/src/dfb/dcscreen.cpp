@@ -3,7 +3,6 @@
 // Purpose:     wxScreenDC implementation
 // Author:      Vaclav Slavik
 // Created:     2006-08-16
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -59,7 +58,7 @@
 //        The surface, as obtained from GetPrimarySurface(), is double-buffered
 //        for the sole purpose of silencing the warning from 3) above.
 
-IMPLEMENT_ABSTRACT_CLASS(wxScreenDCImpl, wxDFBDCImpl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxScreenDCImpl, wxDFBDCImpl);
 
 wxScreenDCImpl::wxScreenDCImpl(wxScreenDC *owner)
               : wxDFBDCImpl(owner)

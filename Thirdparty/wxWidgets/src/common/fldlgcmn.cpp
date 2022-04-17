@@ -4,17 +4,13 @@
 // Author:      John Labenski
 // Modified by:
 // Created:     14.06.03 (extracted from src/*/filedlg.cpp)
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FILEDLG
 
@@ -31,7 +27,7 @@
 extern WXDLLEXPORT_DATA(const char) wxFileDialogNameStr[] = "filedlg";
 extern WXDLLEXPORT_DATA(const char) wxFileSelectorPromptStr[] = "Select a file";
 extern WXDLLEXPORT_DATA(const char) wxFileSelectorDefaultWildcardStr[] =
-#if defined(__WXMSW__) || defined(__OS2__)
+#if defined(__WXMSW__)
     "*.*"
 #else // Unix/Mac
     "*"
@@ -42,14 +38,15 @@ extern WXDLLEXPORT_DATA(const char) wxFileSelectorDefaultWildcardStr[] =
 // wxFileDialogBase
 //----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxFileDialogBase, wxDialog)
+wxIMPLEMENT_DYNAMIC_CLASS(wxFileDialogBase, wxDialog);
 
 void wxFileDialogBase::Init()
 {
     m_filterIndex = 0;
+    m_currentlySelectedFilterIndex = wxNOT_FOUND;
     m_windowStyle = 0;
-    m_extraControl = nullptr;
-    m_extraControlCreator = nullptr;
+    m_extraControl = NULL;
+    m_extraControlCreator = NULL;
 }
 
 bool wxFileDialogBase::Create(wxWindow *parent,
@@ -68,8 +65,25 @@ bool wxFileDialogBase::Create(wxWindow *parent,
     m_wildCard = wildCard;
 
     m_parent = parent;
+
+#ifdef __WXOSX__
+    /*
+    [DS]
+    Remove the (for OS X unnecessary) wxFD_FILE_MUST_EXIST flag. Using it
+    causes problems when having an extra panel (either a custom one or
+    by showing the filetype filters through calling
+    wxSystemOptions::SetOption(wxOSX_FILEDIALOG_ALWAYS_SHOW_TYPES, 1) ).
+    Presumably the style flag conflicts with other style flags and an
+    assert in wxRegion::DoOffset is triggered later on.
+    Another solution was to override GetWindowStyleFlag() to not include
+    wxFD_FILE_MUST_EXIST in its return value, but as other wxFileDialog
+    style flags (that are actually used) don't seem to cause problems
+    this seemed an easier solution.
+    */
+    style &= ~wxFD_FILE_MUST_EXIST;
+#endif
+
     m_windowStyle = style;
-    m_filterIndex = 0;
 
     if (!HasFdFlag(wxFD_OPEN) && !HasFdFlag(wxFD_SAVE))
         m_windowStyle |= wxFD_OPEN;     // wxFD_OPEN is the default
@@ -114,19 +128,6 @@ bool wxFileDialogBase::Create(wxWindow *parent,
 
     return true;
 }
-
-#if WXWIN_COMPATIBILITY_2_6
-long wxFileDialogBase::GetStyle() const
-{
-    return GetWindowStyle();
-}
-
-void wxFileDialogBase::SetStyle(long style)
-{
-    SetWindowStyle(style);
-}
-#endif // WXWIN_COMPATIBILITY_2_6
-
 
 wxString wxFileDialogBase::AppendExtension(const wxString &filePath,
                                            const wxString &extensionList)
@@ -187,8 +188,14 @@ wxSize wxFileDialogBase::GetExtraControlSize()
     // create the extra control in an empty dialog just to find its size: this
     // is not terribly efficient but we do need to know the size before
     // creating the native dialog and this seems to be the only way
-    wxDialog dlg(nullptr, wxID_ANY, "");
+    wxDialog dlg(NULL, wxID_ANY, wxString());
     return (*m_extraControlCreator)(&dlg)->GetSize();
+}
+
+void wxFileDialogBase::UpdateExtraControlUI()
+{
+    if ( m_extraControl )
+        m_extraControl->UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 
 void wxFileDialogBase::SetPath(const wxString& path)
@@ -196,7 +203,12 @@ void wxFileDialogBase::SetPath(const wxString& path)
     wxString ext;
     wxFileName::SplitPath(path, &m_dir, &m_fileName, &ext);
     if ( !ext.empty() )
+    {
+        SetFilterIndexFromExt(ext);
+
         m_fileName << wxT('.') << ext;
+    }
+
     m_path = path;
 }
 
@@ -210,6 +222,30 @@ void wxFileDialogBase::SetFilename(const wxString& name)
 {
     m_fileName = name;
     m_path = wxFileName(m_dir, m_fileName).GetFullPath();
+}
+
+void wxFileDialogBase::SetFilterIndexFromExt(const wxString& ext)
+{
+    // if filter is of form "All files (*)|*|..." set correct filter index
+    if ( !ext.empty() && m_wildCard.find(wxT('|')) != wxString::npos )
+    {
+        int filterIndex = -1;
+
+        wxArrayString descriptions, filters;
+        // don't care about errors, handled already by wxFileDialog
+        (void)wxParseCommonDialogsFilter(m_wildCard, descriptions, filters);
+        for (size_t n=0; n<filters.GetCount(); n++)
+        {
+            if (filters[n].Contains(ext))
+            {
+                filterIndex = n;
+                break;
+            }
+        }
+
+        if (filterIndex >= 0)
+            SetFilterIndex(filterIndex);
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -246,26 +282,7 @@ wxString wxFileSelector(const wxString& title,
                             defaultFileName, filter2,
                             flags, wxPoint(x, y));
 
-    // if filter is of form "All files (*)|*|..." set correct filter index
-    if ( !defaultExtension.empty() && filter2.find(wxT('|')) != wxString::npos )
-    {
-        int filterIndex = 0;
-
-        wxArrayString descriptions, filters;
-        // don't care about errors, handled already by wxFileDialog
-        (void)wxParseCommonDialogsFilter(filter2, descriptions, filters);
-        for (size_t n=0; n<filters.GetCount(); n++)
-        {
-            if (filters[n].Contains(defaultExtension))
-            {
-                filterIndex = n;
-                break;
-            }
-        }
-
-        if (filterIndex > 0)
-            fileDialog.SetFilterIndex(filterIndex);
-    }
+    fileDialog.SetFilterIndexFromExt(defaultExtension);
 
     wxString filename;
     if ( fileDialog.ShowModal() == wxID_OK )
@@ -377,18 +394,5 @@ WXDLLEXPORT wxString wxSaveFileSelector(const wxString& what,
 //----------------------------------------------------------------------------
 // wxDirDialogBase
 //----------------------------------------------------------------------------
-
-#if WXWIN_COMPATIBILITY_2_6
-long wxDirDialogBase::GetStyle() const
-{
-    return GetWindowStyle();
-}
-
-void wxDirDialogBase::SetStyle(long style)
-{
-    SetWindowStyle(style);
-}
-#endif // WXWIN_COMPATIBILITY_2_6
-
 
 #endif // wxUSE_FILEDLG

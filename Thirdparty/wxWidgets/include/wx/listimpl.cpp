@@ -4,11 +4,9 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     16/11/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-#include <wx\wxprec.h>
 
 #if wxUSE_STD_CONTAINERS
 
@@ -18,7 +16,7 @@
     {                                                                         \
         delete X;                                                             \
     }                                                                         \
-    name::BaseListType name::EmptyList;
+    _WX_LIST_HELPER_##name::BaseListType _WX_LIST_HELPER_##name::EmptyList;
 
 #else // !wxUSE_STD_CONTAINERS
     #undef WX_DEFINE_LIST_2

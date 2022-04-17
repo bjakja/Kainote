@@ -3,7 +3,6 @@
 // Purpose:     Rich text printing classes
 // Author:      Julian Smart
 // Created:     2006-10-24
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RICHTEXT && wxUSE_PRINTING_ARCHITECTURE && wxUSE_STREAMS
 
@@ -84,13 +80,13 @@ void wxRichTextPrintout::OnPreparePrinting()
             wxASSERT (child != NULL);
             if (child)
             {
-                wxRichTextLineList::compatibility_iterator node2 = child->GetLines().GetFirst();
-                while (node2)
+                wxRichTextLineVector::const_iterator it = child->GetLines().begin();
+                while (it != child->GetLines().end())
                 {
-                    wxRichTextLine* line = node2->GetData();
+                    wxRichTextLine* line = *it;
 
                     int lineY = child->GetPosition().y + line->GetPosition().y - yOffset;
-                    bool hasHardPageBreak = ((node2 == child->GetLines().GetFirst()) && child->GetAttributes().HasPageBreak());
+                    bool hasHardPageBreak = ((it == child->GetLines().begin()) && child->GetAttributes().HasPageBreak());
 
                     // Break the page if either we're going off the bottom, or this paragraph specifies
                     // an explicit page break
@@ -138,7 +134,7 @@ void wxRichTextPrintout::OnPreparePrinting()
 
                     lastLine = line;
 
-                    node2 = node2->GetNext();
+                    ++it;
                 }
             }
 
@@ -332,7 +328,7 @@ void wxRichTextPrintout::CalculateScaling(wxDC* dc, wxRect& textRect, wxRect& he
 
     // This scales the DC so that the printout roughly represents the
     // the screen scaling.
-    float scale = (float)((float)ppiPrinterX/(float)ppiScreenX);
+    const double scale = double(ppiPrinterX) / ppiScreenX;
 
     // Now we have to check in case our real page size is reduced
     // (e.g. because we're drawing to a print preview memory DC)
@@ -343,13 +339,13 @@ void wxRichTextPrintout::CalculateScaling(wxDC* dc, wxRect& textRect, wxRect& he
 
     // If printer pageWidth == current DC width, then this doesn't
     // change. But w might be the preview bitmap width, so scale down.
-    float previewScale = (float)(w/(float)pageWidth);
-    float overallScale = scale * previewScale;
+    const double previewScale = double(w) / pageWidth;
+    const double overallScale = scale * previewScale;
 
     // The dimensions used for indentation etc. have to be unscaled
     // during printing to be correct when scaling is applied.
     // Also, correct the conversions in wxRTC using DC instead of print DC.
-    m_richTextBuffer->SetScale(scale * float(dc->GetPPI().x)/float(ppiPrinterX));
+    m_richTextBuffer->SetScale(scale * dc->GetPPI().x / ppiPrinterX);
 
     // Calculate margins
     int marginLeft = wxRichTextObject::ConvertTenthsMMToPixels(ppiPrinterX, m_marginLeft);
@@ -428,10 +424,15 @@ bool wxRichTextPrintout::SubstituteKeywords(wxString& str, const wxString& title
     num.Printf(wxT("%lu"), (unsigned long) pageCount);
     str.Replace(wxT("@PAGESCNT@"), num);
 
+#if wxUSE_DATETIME
     wxDateTime now = wxDateTime::Now();
 
     str.Replace(wxT("@DATE@"), now.FormatDate());
     str.Replace(wxT("@TIME@"), now.FormatTime());
+#else
+    str.Replace(wxT("@DATE@"), wxEmptyString);
+    str.Replace(wxT("@TIME@"), wxEmptyString);
+#endif
 
     str.Replace(wxT("@TITLE@"), title);
 
@@ -443,15 +444,14 @@ bool wxRichTextPrintout::SubstituteKeywords(wxString& str, const wxString& title
  */
 
 wxRichTextPrinting::wxRichTextPrinting(const wxString& name, wxWindow *parentWindow)
+    : m_title(name)
+    , m_previewRect(100, 100, 800, 800)
 {
     m_richTextBufferPrinting = NULL;
     m_richTextBufferPreview = NULL;
 
     m_parentWindow = parentWindow;
-    m_title = name;
     m_printData = NULL;
-
-    m_previewRect = wxRect(wxPoint(100, 100), wxSize(800, 800));
 
     m_pageSetupData = new wxPageSetupDialogData;
     m_pageSetupData->EnableMargins(true);
@@ -506,6 +506,7 @@ void wxRichTextPrinting::SetRichTextBufferPreview(wxRichTextBuffer* buf)
     m_richTextBufferPreview = buf;
 }
 
+#if wxUSE_FFILE && wxUSE_STREAMS
 bool wxRichTextPrinting::PreviewFile(const wxString& richTextFile)
 {
     SetRichTextBufferPreview(new wxRichTextBuffer);
@@ -525,6 +526,7 @@ bool wxRichTextPrinting::PreviewFile(const wxString& richTextFile)
     p2->SetRichTextBuffer(m_richTextBufferPrinting);
     return DoPreview(p1, p2);
 }
+#endif // wxUSE_FFILE && wxUSE_STREAMS
 
 bool wxRichTextPrinting::PreviewBuffer(const wxRichTextBuffer& buffer)
 {
@@ -540,6 +542,7 @@ bool wxRichTextPrinting::PreviewBuffer(const wxRichTextBuffer& buffer)
     return DoPreview(p1, p2);
 }
 
+#if wxUSE_FFILE && wxUSE_STREAMS
 bool wxRichTextPrinting::PrintFile(const wxString& richTextFile, bool showPrintDialog)
 {
     SetRichTextBufferPrinting(new wxRichTextBuffer);
@@ -557,6 +560,7 @@ bool wxRichTextPrinting::PrintFile(const wxString& richTextFile, bool showPrintD
     delete p;
     return ret;
 }
+#endif // wxUSE_FFILE && wxUSE_STREAMS
 
 bool wxRichTextPrinting::PrintBuffer(const wxRichTextBuffer& buffer, bool showPrintDialog)
 {
@@ -661,7 +665,7 @@ wxString wxRichTextPrinting::GetFooterText(wxRichTextOddEvenPage page, wxRichTex
  * Header/footer data
  */
 
-IMPLEMENT_CLASS(wxRichTextHeaderFooterData, wxObject)
+wxIMPLEMENT_CLASS(wxRichTextHeaderFooterData, wxObject);
 
 /// Copy
 void wxRichTextHeaderFooterData::Copy(const wxRichTextHeaderFooterData& data)
@@ -736,7 +740,7 @@ void wxRichTextHeaderFooterData::Clear()
 {
     int i;
     for (i = 0; i < 12; i++)
-        m_text[i] = wxEmptyString;
+        m_text[i].clear();
 }
 
 #endif // wxUSE_RICHTEXT & wxUSE_PRINTING_ARCHITECTURE

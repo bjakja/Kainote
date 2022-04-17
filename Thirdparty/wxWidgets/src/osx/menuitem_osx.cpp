@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,8 +21,9 @@
 #endif // WX_PRECOMP
 
 #include "wx/osx/private.h"
+#include "wx/osx/private/available.h"
 
-IMPLEMENT_ABSTRACT_CLASS( wxMenuItemImpl , wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS(wxMenuItemImpl, wxObject);
 
 wxMenuItemImpl::~wxMenuItemImpl()
 {
@@ -42,23 +42,24 @@ wxMenuItem::wxMenuItem(wxMenu *pParentMenu,
     // In other languages there is no difference in naming the Exit/Quit menu item between MacOS and Windows guidelines
     // therefore these item must not be translated
     if (pParentMenu != NULL && !pParentMenu->GetNoEventsMode())
-        if ( wxStripMenuCodes(m_text).Upper() == wxT("EXIT") )
+        if ( wxStripMenuCodes(m_text, wxStrip_Menu).Upper() == wxT("EXIT") )
             m_text = wxT("Quit\tCtrl+Q") ;
 
-    m_radioGroup.start = -1;
-    m_isRadioGroupStart = false;
-
-    wxString text = wxStripMenuCodes(m_text, (pParentMenu != NULL && pParentMenu->GetNoEventsMode()) ? wxStrip_Accel : wxStrip_All);
+    wxString text = wxStripMenuCodes(m_text, (pParentMenu != NULL && pParentMenu->GetNoEventsMode()) ? wxStrip_Accel : wxStrip_Menu);
     if (text.IsEmpty() && !IsSeparator())
     {
         wxASSERT_MSG(wxIsStockID(GetId()), wxT("A non-stock menu item with an empty label?"));
         text = wxGetStockLabel(GetId(), wxSTOCK_WITH_ACCELERATOR|wxSTOCK_WITH_MNEMONIC);
     }
 
-    wxAcceleratorEntry *entry = wxAcceleratorEntry::Create( m_text ) ;
     // use accessors for ID and Kind because they might have been changed in the base constructor
+#if wxUSE_ACCEL
+    wxAcceleratorEntry *entry = wxAcceleratorEntry::Create( m_text ) ;
     m_peer = wxMenuItemImpl::Create( this, pParentMenu, GetId(), text, entry, strHelp, GetKind(), pSubMenu );
     delete entry;
+#else
+    m_peer = wxMenuItemImpl::Create( this, pParentMenu, GetId(), text, NULL, strHelp, GetKind(), pSubMenu );
+#endif // wxUSE_ACCEL/!wxUSE_ACCEL
 }
 
 wxMenuItem::~wxMenuItem()
@@ -69,10 +70,14 @@ wxMenuItem::~wxMenuItem()
 // change item state
 // -----------------
 
-void wxMenuItem::SetBitmap(const wxBitmap& bitmap)
+void wxMenuItem::SetBitmap(const wxBitmapBundle& bitmap)
 {
       m_bitmap = bitmap;
-      UpdateItemBitmap();
+}
+
+wxBitmap wxMenuItem::GetBitmap() const
+{
+    return GetBitmapFromBundle(m_bitmap);
 }
 
 void wxMenuItem::Enable(bool bDoEnable)
@@ -81,9 +86,6 @@ void wxMenuItem::Enable(bool bDoEnable)
       // avoid changing menuitem state when menu is disabled
       // eg. BeginAppModalStateForWindow() will disable menus and ignore this change
       // which in turn causes m_isEnabled to become out of sync with real menuitem state
-#if wxOSX_USE_CARBON
-         && !(m_parentMenu && !IsMenuItemEnabled(MAC_WXHMENU(m_parentMenu->GetHMenu()), 0))
-#endif
          )
       // always update builtin menuitems
          || (   GetId() == wxApp::s_macPreferencesMenuItemId
@@ -126,18 +128,9 @@ void wxMenuItem::Check(bool bDoCheck)
 
                 // get the radio group range
                 int start, end;
-
-                if ( m_isRadioGroupStart )
+                if ( !m_parentMenu->OSXGetRadioGroupRange(pos, &start, &end) )
                 {
-                    // we already have all information we need
-                    start = pos;
-                    end = m_radioGroup.end;
-                }
-                else // next radio group item
-                {
-                    // get the radio group end from the start item
-                    start = m_radioGroup.start;
-                    end = items.Item(start)->GetData()->m_radioGroup.end;
+                    wxFAIL_MSG( wxS("Menu radio item not part of radio group?") );
                 }
 
                 // also uncheck all the other items in this radio group
@@ -178,7 +171,7 @@ void wxMenuItem::UpdateItemBitmap()
 
     if ( m_bitmap.IsOk() )
     {
-        GetPeer()->SetBitmap( m_bitmap );
+        GetPeer()->SetBitmap(GetBitmap());
     }
 }
 
@@ -203,41 +196,60 @@ void wxMenuItem::UpdateItemText()
     if ( !m_parentMenu )
         return ;
 
-    wxString text = wxStripMenuCodes(m_text, m_parentMenu != NULL && m_parentMenu->GetNoEventsMode() ? wxStrip_Accel : wxStrip_All);
+    wxString text = wxStripMenuCodes(m_text, m_parentMenu != NULL && m_parentMenu->GetNoEventsMode() ? wxStrip_Accel : wxStrip_Menu);
     if (text.IsEmpty() && !IsSeparator())
     {
         wxASSERT_MSG(wxIsStockID(GetId()), wxT("A non-stock menu item with an empty label?"));
         text = wxGetStockLabel(GetId(), wxSTOCK_WITH_ACCELERATOR|wxSTOCK_WITH_MNEMONIC);
     }
 
+#if wxUSE_ACCEL
     wxAcceleratorEntry *entry = wxAcceleratorEntry::Create( m_text ) ;
     GetPeer()->SetLabel( text, entry );
     delete entry ;
+#else
+    GetPeer()->SetLabel( text, NULL );
+#endif // wxUSE_ACCEL/!wxUSE_ACCEL
 }
 
-// radio group stuff
-// -----------------
+#if wxUSE_ACCEL
 
-void wxMenuItem::SetAsRadioGroupStart()
+void wxMenuItem::AddExtraAccel(const wxAcceleratorEntry& accel)
 {
-    m_isRadioGroupStart = true;
+    if (WX_IS_MACOS_AVAILABLE(10, 13))
+    {
+        wxMenuItemBase::AddExtraAccel(accel);
+
+        // create the same wxMenuItem but hidden and with different accelerator.
+        wxMenuItem* hiddenMenuItem = new wxMenuItem(m_parentMenu, GetId(), m_text, m_help, GetKind(), m_subMenu);
+        hiddenMenuItem->SetAccel(&(m_extraAccels.back()));
+        hiddenMenuItem->GetPeer()->Hide(true);
+        hiddenMenuItem->GetPeer()->SetAllowsKeyEquivalentWhenHidden(true);
+        m_parentMenu->GetPeer()->InsertOrAppend( hiddenMenuItem, -1 );
+        hiddenMenuItem->SetMenu(m_parentMenu);
+        m_hiddenMenuItems.push_back(hiddenMenuItem);
+    }
+    else
+    {
+        wxLogDebug("Extra accelerators not being supported under macOS < 10.13");
+    }
 }
 
-void wxMenuItem::SetRadioGroupStart(int start)
+void wxMenuItem::ClearExtraAccels()
 {
-    wxASSERT_MSG( !m_isRadioGroupStart,
-                  wxT("should only be called for the next radio items") );
-
-    m_radioGroup.start = start;
+    wxMenuItemBase::ClearExtraAccels();
+    RemoveHiddenItems();
 }
 
-void wxMenuItem::SetRadioGroupEnd(int end)
+void wxMenuItem::RemoveHiddenItems()
 {
-    wxASSERT_MSG( m_isRadioGroupStart,
-                  wxT("should only be called for the first radio item") );
-
-    m_radioGroup.end = end;
+    for (size_t i = 0; i < m_hiddenMenuItems.size(); ++i)
+    {
+        m_parentMenu->GetPeer()->Remove( m_hiddenMenuItems[i] );
+    }
 }
+
+#endif // wxUSE_ACCEL
 
 // ----------------------------------------------------------------------------
 // wxMenuItemBase

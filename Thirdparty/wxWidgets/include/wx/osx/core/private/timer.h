@@ -3,7 +3,6 @@
 // Purpose:     wxTimer class based on core foundation
 // Author:      Stefan Csomor
 // Created:     2008-07-16
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,10 +20,10 @@ public:
     wxOSXTimerImpl(wxTimer *timer);
     virtual ~wxOSXTimerImpl();
 
-    virtual bool Start(int milliseconds = -1, bool one_shot = false);
-    virtual void Stop();
+    virtual bool Start(int milliseconds = -1, bool one_shot = false) wxOVERRIDE;
+    virtual void Stop() wxOVERRIDE;
 
-    virtual bool IsRunning() const;
+    virtual bool IsRunning() const wxOVERRIDE;
 
 private:
     wxOSXTimerInfo *m_info;

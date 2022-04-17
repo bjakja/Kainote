@@ -2,7 +2,6 @@
 // Name:        msgdlg.h
 // Purpose:     interface of wxMessageDialog
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -32,12 +31,13 @@ const char wxMessageBoxCaptionStr[] = "Message";
         Puts a Help button to the message box. This button can have special
         appearance or be specially positioned if its label is not changed from
         the default one. Notice that using this button is not supported when
-        showing a message box from non-main thread in wxOSX/Cocoa and it is not
-        supported in wxOSX/Carbon at all. @since 2.9.3.
+        showing a message box from non-main thread in wxOSX/Cocoa.
+        Available since wxWidgets 2.9.3.
     @style{wxNO_DEFAULT}
         Makes the "No" button default, can only be used with @c wxYES_NO.
     @style{wxCANCEL_DEFAULT}
-        Makes the "Cancel" button default, can only be used with @c wxCANCEL
+        Makes the "Cancel" button default, can only be used with @c wxCANCEL.
+        This style is currently not supported (and ignored) in wxOSX.
     @style{wxYES_DEFAULT}
         Makes the "Yes" button default, this is the default behaviour and
         this flag exists solely for symmetry with @c wxNO_DEFAULT.
@@ -50,24 +50,38 @@ const char wxMessageBoxCaptionStr[] = "Message";
         used to prevent the dialog from using the default icon based on @c
         wxYES_NO presence as explained in @c wxICON_QUESTION and @c
         wxICON_INFORMATION documentation below.
-    @style{wxICON_EXCLAMATION}
-        Displays an exclamation, or warning, icon in the dialog.
     @style{wxICON_ERROR}
         Displays an error icon in the dialog.
-    @style{wxICON_HAND}
-        Displays an error symbol, this is a MSW-inspired synonym for @c wxICON_ERROR.
+    @style{wxICON_WARNING}
+        Displays a warning icon in the dialog. This style should be used for
+        informative warnings or, in combination with @c wxYES_NO or @c wxCANCEL,
+        for questions that have potentially serious consequences (caution
+        icon is used on macOS in this case).
     @style{wxICON_QUESTION}
         Displays a question mark symbol. This icon is automatically used
         with @c wxYES_NO so it's usually unnecessary to specify it explicitly.
         This style is not supported for message dialogs under wxMSW when a task
         dialog is used to implement them (i.e. when running under Windows Vista
-        or later) because <a href="http://msdn.microsoft.com/en-us/library/aa511273.aspx">Microsoft
+        or later) because <a href="https://docs.microsoft.com/en-us/windows/desktop/uxguide/mess-confirm">Microsoft
         guidelines</a> indicate that no icon should be used for routine
         confirmations. If it is specified, no icon will be displayed.
     @style{wxICON_INFORMATION}
         Displays an information symbol. This icon is used by default if
         @c wxYES_NO is not given so it is usually unnecessary to specify it
         explicitly.
+    @style{wxICON_EXCLAMATION}
+        Alias for @c wxICON_WARNING.
+    @style{wxICON_HAND}
+        Alias for @c wxICON_ERROR.
+    @style{wxICON_AUTH_NEEDED}
+        Displays an authentication needed symbol. This style is only supported
+        for message dialogs under wxMSW when a task dialog is used to implement
+        them (i.e. when running under Windows Vista or later). In other cases
+        the default icon selection logic will be used. Note this can be
+        combined with other styles to provide a fallback. For instance, using
+        wxICON_AUTH_NEEDED | wxICON_QUESTION will show a shield symbol on
+        Windows Vista or above and a question symbol on other platforms.
+        Available since wxWidgets 2.9.5
     @style{wxSTAY_ON_TOP}
         Makes the message box stay on top of all other windows and not only
         just its parent (currently implemented only under MSW and GTK).

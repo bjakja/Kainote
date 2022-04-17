@@ -1,7 +1,6 @@
 #
 # Helper functions for wxWidgets bakefiles
 #
-# $Id$
 #
 
 
@@ -52,6 +51,8 @@ EXTRALIBS = {
     'html' : '$(EXTRALIBS_HTML)',
     'adv' : '$(PLUGIN_ADV_EXTRALIBS)',
     'media' : '$(EXTRALIBS_MEDIA)',
+    'stc' : '$(EXTRALIBS_STC)',
+    'webview' : '$(EXTRALIBS_WEBVIEW)',
 }
 
 def mkLibName(wxid):

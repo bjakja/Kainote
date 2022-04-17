@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Created:     01/02/97
 // Modified:
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart et al
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // -----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TREECTRL
 
@@ -35,27 +31,27 @@ extern WXDLLEXPORT_DATA(const char) wxTreeCtrlNameStr[] = "treeCtrl";
 // events
 // ----------------------------------------------------------------------------
 
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_BEGIN_DRAG, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_BEGIN_RDRAG, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_END_LABEL_EDIT, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_DELETE_ITEM, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_GET_INFO, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_SET_INFO, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_EXPANDED, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_EXPANDING, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_COLLAPSED, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_COLLAPSING, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_SEL_CHANGING, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_KEY_DOWN, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_END_DRAG, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP, wxTreeEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_BEGIN_DRAG, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_BEGIN_RDRAG, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_BEGIN_LABEL_EDIT, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_END_LABEL_EDIT, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_DELETE_ITEM, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_GET_INFO, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_SET_INFO, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_EXPANDED, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_EXPANDING, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_COLLAPSED, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_COLLAPSING, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_SEL_CHANGED, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_SEL_CHANGING, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_KEY_DOWN, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_ACTIVATED, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_RIGHT_CLICK, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_MIDDLE_CLICK, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_END_DRAG, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_STATE_IMAGE_CLICK, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_GETTOOLTIP, wxTreeEvent );
+wxDEFINE_EVENT( wxEVT_TREE_ITEM_MENU, wxTreeEvent );
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -108,12 +104,12 @@ wxFLAGS_MEMBER(wxTR_EXTENDED)
 wxFLAGS_MEMBER(wxTR_DEFAULT_STYLE)
 wxEND_FLAGS( wxTreeCtrlStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxTreeCtrl, wxControl, "wx/treectrl.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxTreeCtrl, wxControl, "wx/treectrl.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxTreeCtrl)
-wxEVENT_PROPERTY( TextUpdated, wxEVT_COMMAND_TEXT_UPDATED, wxCommandEvent )
-wxEVENT_RANGE_PROPERTY( TreeEvent, wxEVT_COMMAND_TREE_BEGIN_DRAG, \
-                       wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK, wxTreeEvent )
+wxEVENT_PROPERTY( TextUpdated, wxEVT_TEXT, wxCommandEvent )
+wxEVENT_RANGE_PROPERTY( TreeEvent, wxEVT_TREE_BEGIN_DRAG, \
+                       wxEVT_TREE_STATE_IMAGE_CLICK, wxTreeEvent )
 
 wxPROPERTY_FLAGS( WindowStyle, wxTreeCtrlStyle, long, SetWindowStyleFlag, \
                  GetWindowStyleFlag, wxEMPTY_PARAMETER_VALUE, 0 /*flags*/, \
@@ -129,7 +125,7 @@ wxCONSTRUCTOR_5( wxTreeCtrl, wxWindow*, Parent, wxWindowID, Id, \
 // Tree event
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxTreeEvent, wxNotifyEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxTreeEvent, wxNotifyEvent);
 
 wxTreeEvent::wxTreeEvent(wxEventType commandType,
                          wxTreeCtrlBase *tree,
@@ -154,12 +150,12 @@ wxTreeEvent::wxTreeEvent(wxEventType commandType, int id)
 
 wxTreeEvent::wxTreeEvent(const wxTreeEvent & event)
            : wxNotifyEvent(event)
+    , m_evtKey(event.m_evtKey)
+    , m_item(event.m_item)
+    , m_itemOld(event.m_itemOld)
+    , m_pointDrag(event.m_pointDrag)
+    , m_label(event.m_label)
 {
-    m_evtKey = event.m_evtKey;
-    m_item = event.m_item;
-    m_itemOld = event.m_itemOld;
-    m_pointDrag = event.m_pointDrag;
-    m_label = event.m_label;
     m_editCancelled = event.m_editCancelled;
 }
 
@@ -169,26 +165,18 @@ wxTreeEvent::wxTreeEvent(const wxTreeEvent & event)
 
 wxTreeCtrlBase::wxTreeCtrlBase()
 {
-    m_imageListNormal =
-    m_imageListState = nullptr;
-    m_ownsImageListNormal =
-    m_ownsImageListState = false;
-
     // arbitrary default
     m_spacing = 18;
 
     // quick DoGetBestSize calculation
     m_quickBestSize = true;
 
-    Connect(wxEVT_CHAR_HOOK, wxKeyEventHandler(wxTreeCtrlBase::OnCharHook));
+    Bind(wxEVT_CHAR_HOOK, &wxTreeCtrlBase::OnCharHook, this);
+    Bind(wxEVT_DPI_CHANGED, &wxTreeCtrlBase::WXHandleDPIChanged, this);
 }
 
 wxTreeCtrlBase::~wxTreeCtrlBase()
 {
-    if (m_ownsImageListNormal)
-        delete m_imageListNormal;
-    if (m_ownsImageListState)
-        delete m_imageListState;
 }
 
 void wxTreeCtrlBase::SetItemState(const wxTreeItemId& item, int state)
@@ -199,7 +187,7 @@ void wxTreeCtrlBase::SetItemState(const wxTreeItemId& item, int state)
         if ( current == wxTREE_ITEMSTATE_NONE )
             return;
         state = current + 1;
-        if ( m_imageListState && state >= m_imageListState->GetImageCount() )
+        if ( m_imagesState.HasImages() && state >= m_imagesState.GetImageCount() )
             state = 0;
     }
     else if ( state == wxTREE_ITEMSTATE_PREV )
@@ -209,7 +197,7 @@ void wxTreeCtrlBase::SetItemState(const wxTreeItemId& item, int state)
             return;
         state = current - 1;
         if ( state == -1 )
-            state = m_imageListState ? m_imageListState->GetImageCount() - 1 : 0;
+            state = m_imagesState.GetImageCount();
     }
     // else: wxTREE_ITEMSTATE_NONE depending on platform
 
@@ -280,13 +268,8 @@ wxSize wxTreeCtrlBase::DoGetBestSize() const
     // need some minimal size even for empty tree
     if ( !size.x || !size.y )
         size = wxControl::DoGetBestSize();
-    else
-    {
-        // Add border size
+    else // add border size
         size += GetWindowBorderSize();
-
-        CacheBestSize(size);
-    }
 
     return size;
 }
@@ -360,9 +343,10 @@ void wxTreeCtrlBase::OnCharHook(wxKeyEvent& event)
         {
             case WXK_ESCAPE:
                 discardChanges = true;
-                // fall through
+                wxFALLTHROUGH;
 
             case WXK_RETURN:
+            case WXK_NUMPAD_ENTER:
                 EndEditLabel(GetFocusedItem(), discardChanges);
 
                 // Do not call Skip() below.

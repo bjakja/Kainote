@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -71,7 +67,7 @@ wxBEGIN_FLAGS( wxSpinButtonStyle )
     wxFLAGS_MEMBER(wxSP_WRAP)
 wxEND_FLAGS( wxSpinButtonStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSpinButton, wxControl, "wx/spinbutt.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxSpinButton, wxControl, "wx/spinbutt.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxSpinButton)
     wxEVENT_RANGE_PROPERTY( Spin, wxEVT_SCROLL_TOP, wxEVT_SCROLL_CHANGED, wxSpinEvent )
@@ -93,7 +89,7 @@ wxEMPTY_HANDLERS_TABLE(wxSpinButton)
 wxCONSTRUCTOR_5( wxSpinButton, wxWindow*, Parent, wxWindowID, Id, \
                  wxPoint, Position, wxSize, Size, long, WindowStyle )
 
-IMPLEMENT_DYNAMIC_CLASS(wxSpinEvent, wxNotifyEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxSpinEvent, wxNotifyEvent);
 
 
 #endif // wxUSE_SPINBTN

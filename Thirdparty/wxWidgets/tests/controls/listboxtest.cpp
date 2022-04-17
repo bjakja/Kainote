@@ -3,7 +3,6 @@
 // Purpose:     wxListBox unit test
 // Author:      Steven Lamerton
 // Created:     2010-06-29
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_LISTBOX
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -29,12 +25,12 @@ class ListBoxTestCase : public ItemContainerTestCase, public CppUnit::TestCase
 public:
     ListBoxTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxItemContainer *GetContainer() const { return m_list; }
-    virtual wxWindow *GetContainerWindow() const { return m_list; }
+    virtual wxItemContainer *GetContainer() const wxOVERRIDE { return m_list; }
+    virtual wxWindow *GetContainerWindow() const wxOVERRIDE { return m_list; }
 
     CPPUNIT_TEST_SUITE( ListBoxTestCase );
         wxITEM_CONTAINER_TESTS();
@@ -66,14 +62,11 @@ private:
 
     wxListBox* m_list;
 
-    DECLARE_NO_COPY_CLASS(ListBoxTestCase)
+    wxDECLARE_NO_COPY_CLASS(ListBoxTestCase);
 };
 
-// register in the unnamed registry so that these tests are run by default
-CPPUNIT_TEST_SUITE_REGISTRATION( ListBoxTestCase );
-
-// also include in its own registry so that these tests can be run alone
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( ListBoxTestCase, "ListBoxTestCase" );
+wxREGISTER_UNIT_TEST_WITH_TAGS(ListBoxTestCase,
+                               "[ListBoxTestCase][item-container]");
 
 //initialise the static variable
 bool ListBoxTestCase::ms_ownerdrawn = false;
@@ -123,9 +116,10 @@ void ListBoxTestCase::Sort()
     CPPUNIT_ASSERT_EQUAL("aab", m_list->GetString(4));
     CPPUNIT_ASSERT_EQUAL("aba", m_list->GetString(5));
 
-    m_list->Append("a");
+    m_list->Append("a", wxUIntToPtr(1));
 
     CPPUNIT_ASSERT_EQUAL("a", m_list->GetString(0));
+    CPPUNIT_ASSERT_EQUAL(wxUIntToPtr(1), m_list->GetClientData(0));
 #endif
 }
 
@@ -184,8 +178,8 @@ void ListBoxTestCase::ClickEvents()
     wxTestableFrame* frame = wxStaticCast(wxTheApp->GetTopWindow(),
                                               wxTestableFrame);
 
-    EventCounter selected(frame, wxEVT_COMMAND_LISTBOX_SELECTED);
-    EventCounter dclicked(frame, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED);
+    EventCounter selected(frame, wxEVT_LISTBOX);
+    EventCounter dclicked(frame, wxEVT_LISTBOX_DCLICK);
 
     wxUIActionSimulator sim;
 
@@ -220,8 +214,8 @@ void ListBoxTestCase::ClickNotOnItem()
     wxTestableFrame* frame = wxStaticCast(wxTheApp->GetTopWindow(),
                                               wxTestableFrame);
 
-    EventCounter selected(frame, wxEVT_COMMAND_LISTBOX_SELECTED);
-    EventCounter dclicked(frame, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED);
+    EventCounter selected(frame, wxEVT_LISTBOX);
+    EventCounter dclicked(frame, wxEVT_LISTBOX_DCLICK);
 
     wxUIActionSimulator sim;
 
@@ -271,7 +265,17 @@ void ListBoxTestCase::HitTest()
     wxYield();
 #endif
 
-    CPPUNIT_ASSERT_EQUAL( 0, m_list->HitTest(5, 5) );
+    wxPoint p(5, 5);
+#ifdef __WXOSX__
+    // On macOS >= 11 wxListBox has a new layout because underlying
+    // NSTableView has a new style with padding so we need to move
+    // the point to be tested to another position.
+    if ( wxCheckOsVersion(11, 0) )
+    {
+        p = wxPoint(10, 10);
+    }
+#endif
+    CPPUNIT_ASSERT_EQUAL( 0, m_list->HitTest(p) );
 
     CPPUNIT_ASSERT_EQUAL( wxNOT_FOUND, m_list->HitTest(290, 190) );
 }

@@ -3,7 +3,6 @@
 // Purpose:     wxIPC client side benchmarks
 // Author:      Vadim Zeitlin
 // Created:     2008-10-13
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -62,7 +61,7 @@ private:
     wxString m_item;
     bool m_gotAdvised;
 
-    DECLARE_NO_COPY_CLASS(PokeAdviseConn)
+    wxDECLARE_NO_COPY_CLASS(PokeAdviseConn);
 };
 
 class PokeAdviseClient : public wxClient
@@ -125,7 +124,7 @@ private:
     PokeAdviseConn *m_conn;
     bool m_initDone;
 
-    DECLARE_NO_COPY_CLASS(PokeAdvisePersistentConnection)
+    wxDECLARE_NO_COPY_CLASS(PokeAdvisePersistentConnection);
 };
 
 PokeAdvisePersistentConnection *theConnection = NULL;

@@ -4,7 +4,6 @@
 // Author:      Peter Cawley
 // Modified by:
 // Created:     2009-07-06
-// RCS-ID:      $Id$
 // Copyright:   (C) Peter Cawley
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,6 +131,7 @@ public:
 
     virtual wxRibbonToolBarToolBase* FindById(int tool_id)const;
     virtual wxRibbonToolBarToolBase* GetToolByPos(size_t pos)const;
+    virtual wxRibbonToolBarToolBase* GetToolByPos(wxCoord x, wxCoord y)const;
     virtual size_t GetToolCount() const;
     virtual int GetToolId(const wxRibbonToolBarToolBase* tool)const;
 
@@ -140,9 +140,10 @@ public:
     virtual wxString GetToolHelpString(int tool_id)const;
     virtual wxRibbonButtonKind GetToolKind(int tool_id)const;
     virtual int GetToolPos(int tool_id)const;
+    virtual wxRect GetToolRect(int tool_id)const;
     virtual bool GetToolState(int tool_id)const;
 
-    virtual bool Realize();
+    virtual bool Realize() wxOVERRIDE;
     virtual void SetRows(int nMin, int nMax = -1);
 
     virtual void SetToolClientData(int tool_id, wxObject* clientData);
@@ -150,18 +151,18 @@ public:
     virtual void SetToolHelpString(int tool_id, const wxString& helpString);
     virtual void SetToolNormalBitmap(int tool_id, const wxBitmap &bitmap);
 
-    virtual bool IsSizingContinuous() const;
+    virtual bool IsSizingContinuous() const wxOVERRIDE;
 
     virtual void EnableTool(int tool_id, bool enable = true);
     virtual void ToggleTool(int tool_id, bool checked);
 
     // Finds the best width and height given the parent's width and height
-    virtual wxSize GetBestSizeForParentSize(const wxSize& parentSize) const;
+    virtual wxSize GetBestSizeForParentSize(const wxSize& parentSize) const wxOVERRIDE;
 
 protected:
     friend class wxRibbonToolBarEvent;
-    virtual wxSize DoGetBestSize() const;
-    wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+    virtual wxSize DoGetBestSize() const wxOVERRIDE;
+    wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
 
     void OnEraseBackground(wxEraseEvent& evt);
     void OnMouseDown(wxMouseEvent& evt);
@@ -173,14 +174,14 @@ protected:
     void OnSize(wxSizeEvent& evt);
 
     virtual wxSize DoGetNextSmallerSize(wxOrientation direction,
-                                      wxSize relative_to) const;
+                                      wxSize relative_to) const wxOVERRIDE;
     virtual wxSize DoGetNextLargerSize(wxOrientation direction,
-                                     wxSize relative_to) const;
+                                     wxSize relative_to) const wxOVERRIDE;
 
     void CommonInit(long style);
     void AppendGroup();
     wxRibbonToolBarToolGroup* InsertGroup(size_t pos);
-    virtual void UpdateWindowUI(long flags);
+    virtual void UpdateWindowUI(long flags) wxOVERRIDE;
 
     static wxBitmap MakeDisabledBitmap(const wxBitmap& original);
 
@@ -192,8 +193,8 @@ protected:
     int m_nrows_max;
 
 #ifndef SWIG
-    DECLARE_CLASS(wxRibbonToolBar)
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_CLASS(wxRibbonToolBar);
+    wxDECLARE_EVENT_TABLE();
 #endif
 };
 
@@ -208,13 +209,7 @@ public:
         , m_bar(bar)
     {
     }
-#ifndef SWIG
-    wxRibbonToolBarEvent(const wxRibbonToolBarEvent& e) : wxCommandEvent(e)
-    {
-        m_bar = e.m_bar;
-    }
-#endif
-    wxEvent *Clone() const { return new wxRibbonToolBarEvent(*this); }
+    wxEvent *Clone() const wxOVERRIDE { return new wxRibbonToolBarEvent(*this); }
 
     wxRibbonToolBar* GetBar() {return m_bar;}
     void SetBar(wxRibbonToolBar* bar) {m_bar = bar;}
@@ -225,14 +220,14 @@ protected:
 
 #ifndef SWIG
 private:
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRibbonToolBarEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRibbonToolBarEvent);
 #endif
 };
 
 #ifndef SWIG
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_COMMAND_RIBBONTOOL_CLICKED, wxRibbonToolBarEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED, wxRibbonToolBarEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_RIBBONTOOLBAR_CLICKED, wxRibbonToolBarEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_RIBBON, wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, wxRibbonToolBarEvent);
 
 typedef void (wxEvtHandler::*wxRibbonToolBarEventFunction)(wxRibbonToolBarEvent&);
 
@@ -240,20 +235,24 @@ typedef void (wxEvtHandler::*wxRibbonToolBarEventFunction)(wxRibbonToolBarEvent&
     wxEVENT_HANDLER_CAST(wxRibbonToolBarEventFunction, func)
 
 #define EVT_RIBBONTOOLBAR_CLICKED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_RIBBONTOOL_CLICKED, winid, wxRibbonToolBarEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_RIBBONTOOLBAR_CLICKED, winid, wxRibbonToolBarEventHandler(fn))
 #define EVT_RIBBONTOOLBAR_DROPDOWN_CLICKED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED, winid, wxRibbonToolBarEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, winid, wxRibbonToolBarEventHandler(fn))
 #else
 
 // wxpython/swig event work
-%constant wxEventType wxEVT_COMMAND_RIBBONTOOL_CLICKED;
-%constant wxEventType wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED;
+%constant wxEventType wxEVT_RIBBONTOOLBAR_CLICKED;
+%constant wxEventType wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED;
 
 %pythoncode {
-    EVT_RIBBONTOOLBAR_CLICKED = wx.PyEventBinder( wxEVT_COMMAND_RIBBONTOOL_CLICKED, 1 )
-    EVT_RIBBONTOOLBAR_DROPDOWN_CLICKED = wx.PyEventBinder( wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED, 1 )
+    EVT_RIBBONTOOLBAR_CLICKED = wx.PyEventBinder( wxEVT_RIBBONTOOLBAR_CLICKED, 1 )
+    EVT_RIBBONTOOLBAR_DROPDOWN_CLICKED = wx.PyEventBinder( wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED, 1 )
 }
 #endif
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_RIBBONTOOL_CLICKED            wxEVT_RIBBONTOOLBAR_CLICKED
+#define wxEVT_COMMAND_RIBBONTOOL_DROPDOWN_CLICKED   wxEVT_RIBBONTOOLBAR_DROPDOWN_CLICKED
 
 #endif // wxUSE_RIBBON
 

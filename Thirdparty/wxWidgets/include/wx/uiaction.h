@@ -2,12 +2,10 @@
 // Name:        wx/uiaction.h
 // Purpose:     wxUIActionSimulator interface
 // Author:      Kevin Ollivier, Steven Lamerton, Vadim Zeitlin
-// Modified by:
 // Created:     2010-03-06
-// RCS-ID:      $Id$
-// Copyright:   (c) Kevin Ollivier
+// Copyright:   (c) 2010 Kevin Ollivier
 //              (c) 2010 Steven Lamerton
-//              (c) 2010 Vadim Zeitlin
+//              (c) 2010-2016 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -23,11 +21,8 @@
 class WXDLLIMPEXP_CORE wxUIActionSimulator
 {
 public:
-    wxUIActionSimulator() { }
-
-
-    // Default dtor, copy ctor and assignment operator are ok (even though the
-    // last two don't make much sense for this class).
+    wxUIActionSimulator();
+    ~wxUIActionSimulator();
 
 
     // Mouse simulation
@@ -45,7 +40,9 @@ public:
     bool MouseDblClick(int button = wxMOUSE_BTN_LEFT);
     bool MouseDragDrop(long x1, long y1, long x2, long y2,
                        int button = wxMOUSE_BTN_LEFT);
-
+    bool MouseDragDrop(const wxPoint& p1, const wxPoint& p2,
+                       int button = wxMOUSE_BTN_LEFT)
+    { return MouseDragDrop(p1.x, p1.y, p2.x, p2.y, button); }
 
     // Keyboard simulation
     // -------------------
@@ -64,6 +61,9 @@ public:
 
     bool Text(const char *text);
 
+    // Select the item with the given text in the currently focused control.
+    bool Select(const wxString& text);
+
 private:
     // This is the common part of Key{Down,Up}() methods: while we keep them
     // separate at public API level for consistency with Mouse{Down,Up}(), at
@@ -78,10 +78,12 @@ private:
     void SimulateModifiers(int modifier, bool isDown);
 
 
-    // The low-level port-specific function which really generates the key
-    // presses. It should generate exactly one key event with the given
-    // parameters.
-    bool DoKey(int keycode, int modifiers, bool isDown);
+
+    // This pointer is allocated in the ctor and points to the
+    // platform-specific implementation.
+    class wxUIActionSimulatorImpl* const m_impl;
+
+    wxDECLARE_NO_COPY_CLASS(wxUIActionSimulator);
 };
 
 #endif // wxUSE_UIACTIONSIMULATOR

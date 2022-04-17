@@ -3,12 +3,12 @@
 // Purpose:     Top level window, abstraction of wxFrame and wxDialog
 // Author:      Vaclav Slavik
 // Created:     2006-08-10
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _WX_DFB_TOPLEVEL_H_
+#define _WX_DFB_TOPLEVEL_H_
 
 //-----------------------------------------------------------------------------
 // wxTopLevelWindowDFB
@@ -25,7 +25,7 @@ public:
                         const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize,
                         long style = wxDEFAULT_FRAME_STYLE,
-                        const wxString& name = wxFrameNameStr)
+                        const wxString& name = wxASCII_STR(wxFrameNameStr))
     {
         Init();
 
@@ -38,7 +38,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDEFAULT_FRAME_STYLE,
-                const wxString& name = wxFrameNameStr);
+                const wxString& name = wxASCII_STR(wxFrameNameStr));
 
     // implement base class pure virtuals
     virtual void Maximize(bool maximize = true);
@@ -75,3 +75,4 @@ protected:
     wxRect        m_savedFrame;
 };
 
+#endif // _WX_DFB_TOPLEVEL_H_

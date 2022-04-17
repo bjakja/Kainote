@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,6 +14,6 @@
 
 #include "wx/minifram.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxMiniFrame, wxFrame)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMiniFrame, wxFrame);
 
 #endif // wxUSE_MINIFRAME

@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,6 +14,8 @@
 class WXDLLIMPEXP_FWD_CORE wxFrame;
 
 #include "wx/arrstr.h"
+
+class wxMenuRadioItemsData;
 
 // ----------------------------------------------------------------------------
 // Menu
@@ -33,11 +34,9 @@ public:
 
     virtual ~wxMenu();
 
-    virtual void Attach(wxMenuBarBase *menubar) ;
+    virtual void SetTitle(const wxString& title) wxOVERRIDE;
 
-    virtual void Break();
-
-    virtual void SetTitle(const wxString& title);
+    virtual void SetInvokingWindow(wxWindow* win) wxOVERRIDE;
 
     bool ProcessCommand(wxCommandEvent& event);
 
@@ -47,8 +46,8 @@ public:
     // implementation only from now on
     // -------------------------------
 
-    bool HandleCommandUpdateStatus( wxMenuItem* menuItem, wxWindow* senderWindow = NULL);
-    bool HandleCommandProcess( wxMenuItem* menuItem, wxWindow* senderWindow = NULL);
+    bool HandleCommandUpdateStatus( wxMenuItem* menuItem );
+    bool HandleCommandProcess( wxMenuItem* menuItem );
     void HandleMenuItemHighlighted( wxMenuItem* menuItem );
     void HandleMenuOpened();
     void HandleMenuClosed();
@@ -63,31 +62,39 @@ public:
     // we don't want native menu events being triggered
     void SetNoEventsMode( bool noEvents );
     bool GetNoEventsMode() const { return m_noEventsMode; }
+
+    // Returns the start and end position of the radio group to which the item
+    // at given position belongs. Return false if there is no radio group
+    // containing this position.
+    bool OSXGetRadioGroupRange(int pos, int *start, int *end) const;
+
+#if wxUSE_MENUBAR
+    virtual void Attach(wxMenuBarBase *menubar) wxOVERRIDE;
+#endif
+
+    void SetupBitmaps();
+
 protected:
     // hide special menu items like exit, preferences etc
     // that are expected in the app menu
     void DoRearrange() ;
 
-    bool DoHandleMenuEvent( wxEvent& evt );
-    virtual wxMenuItem* DoAppend(wxMenuItem *item);
-    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item);
-    virtual wxMenuItem* DoRemove(wxMenuItem *item);
+    virtual wxMenuItem* DoAppend(wxMenuItem *item) wxOVERRIDE;
+    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item) wxOVERRIDE;
+    virtual wxMenuItem* DoRemove(wxMenuItem *item) wxOVERRIDE;
 
 private:
     // common part of all ctors
     void Init();
 
-    // common part of Append/Insert (behaves as Append is pos == (size_t)-1)
+    // common part of Do{Append,Insert}(): behaves as Append if pos == -1
     bool DoInsertOrAppend(wxMenuItem *item, size_t pos = (size_t)-1);
-
-    // terminate the current radio group, if any
-    void EndRadioGroup();
 
     // Common part of HandleMenu{Opened,Closed}().
     void DoHandleMenuOpenedOrClosed(wxEventType evtType);
 
 
-    // if TRUE, insert a breal before appending the next item
+    // if TRUE, insert a break before appending the next item
     bool m_doBreak;
 
     // in this menu rearranging of menu items (esp hiding) is allowed
@@ -96,15 +103,14 @@ private:
     // don't trigger native events
     bool m_noEventsMode;
 
-    // the position of the first item in the current radio group or -1
-    int m_startRadioGroup;
+    wxMenuRadioItemsData* m_radioData;
 
     wxMenuImpl* m_peer;
 
-    DECLARE_DYNAMIC_CLASS(wxMenu)
+    wxDECLARE_DYNAMIC_CLASS(wxMenu);
 };
 
-#if wxOSX_USE_COCOA_OR_CARBON
+#if wxUSE_MENUBAR
 
 // the iphone only has popup-menus
 
@@ -125,16 +131,16 @@ public:
     virtual ~wxMenuBar();
 
     // menubar construction
-    virtual bool Append( wxMenu *menu, const wxString &title );
-    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title);
-    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title);
-    virtual wxMenu *Remove(size_t pos);
+    virtual bool Append( wxMenu *menu, const wxString &title ) wxOVERRIDE;
+    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
+    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
+    virtual wxMenu *Remove(size_t pos) wxOVERRIDE;
 
-    virtual void EnableTop( size_t pos, bool flag );
-    virtual bool IsEnabledTop(size_t pos) const;
-    virtual void SetMenuLabel( size_t pos, const wxString& label );
-    virtual wxString GetMenuLabel( size_t pos ) const;
-    virtual bool Enable( bool enable = true );
+    virtual void EnableTop( size_t pos, bool flag ) wxOVERRIDE;
+    virtual bool IsEnabledTop(size_t pos) const wxOVERRIDE;
+    virtual void SetMenuLabel( size_t pos, const wxString& label ) wxOVERRIDE;
+    virtual wxString GetMenuLabel( size_t pos ) const wxOVERRIDE;
+    virtual bool Enable( bool enable = true ) wxOVERRIDE;
     // for virtual function hiding
     virtual void Enable( int itemid, bool enable )
     {
@@ -142,29 +148,39 @@ public:
     }
 
     // implementation from now on
-    void Detach();
 
         // returns TRUE if we're attached to a frame
     bool IsAttached() const { return m_menuBarFrame != NULL; }
         // get the frame we live in
     wxFrame *GetFrame() const { return m_menuBarFrame; }
-        // attach to a frame
-    void Attach(wxFrame *frame);
 
     // if the menubar is modified, the display is not updated automatically,
     // call this function to update it (m_menuBarFrame should be !NULL)
-    void Refresh(bool eraseBackground = true, const wxRect *rect = NULL);
+    void Refresh(bool eraseBackground = true, const wxRect *rect = NULL) wxOVERRIDE;
+
+#if wxABI_VERSION >= 30001
+    wxMenu *OSXGetAppleMenu() const { return m_appleMenu; }
+#endif
 
     static void SetAutoWindowMenu( bool enable ) { s_macAutoWindowMenu = enable ; }
     static bool GetAutoWindowMenu() { return s_macAutoWindowMenu ; }
 
+    void MacUninstallMenuBar() ;
     void MacInstallMenuBar() ;
     static wxMenuBar* MacGetInstalledMenuBar() { return s_macInstalledMenuBar ; }
     static void MacSetCommonMenuBar(wxMenuBar* menubar) { s_macCommonMenuBar=menubar; }
     static wxMenuBar* MacGetCommonMenuBar() { return s_macCommonMenuBar; }
 
+    virtual void Attach(wxFrame *frame) wxOVERRIDE;
+    void SetupBitmaps();
+
 
     static WXHMENU MacGetWindowMenuHMenu() { return s_macWindowMenuHandle ; }
+
+    virtual void DoGetPosition(int *x, int *y) const wxOVERRIDE;
+    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetClientSize(int *width, int *height) const wxOVERRIDE;
+
 protected:
     // common part of all ctors
     void Init();
@@ -179,7 +195,7 @@ private:
     wxMenu* m_rootMenu;
     wxMenu* m_appleMenu;
 
-    DECLARE_DYNAMIC_CLASS(wxMenuBar)
+    wxDECLARE_DYNAMIC_CLASS(wxMenuBar);
 };
 
 #endif

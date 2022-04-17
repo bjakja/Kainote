@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     21.01.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif
@@ -112,7 +108,7 @@ void wxSpinButton::SetRange(int minVal, int maxVal)
 
     // because the arrows disabled state might have changed - we don't check if
     // it really changed or not because SetRange() is called rarely enough and
-    // son an extre refresh here doesn't really hurt
+    // an extra refresh here doesn't really hurt
     Refresh();
 }
 
@@ -169,7 +165,7 @@ bool wxSpinButton::ChangeValue(int inc)
 
     if ( GetEventHandler()->ProcessEvent(event) && !event.IsAllowed() )
     {
-        // programm has vetoed the event
+        // program has vetoed the event
         return false;
     }
 

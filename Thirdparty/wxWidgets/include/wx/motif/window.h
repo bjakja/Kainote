@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ public:
              const wxPoint& pos = wxDefaultPosition,
              const wxSize& size = wxDefaultSize,
              long style = 0,
-             const wxString& name = wxPanelNameStr)
+             const wxString& name = wxASCII_STR(wxPanelNameStr))
     {
         Init();
         Create(parent, id, pos, size, style, name);
@@ -44,7 +43,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxPanelNameStr);
+                const wxString& name = wxASCII_STR(wxPanelNameStr));
 
     // implement base class pure virtuals
     virtual void SetLabel(const wxString& label);
@@ -132,7 +131,7 @@ public:
     // (for wxWindowDC and Motif callbacks only)
     // -----------------------------------------
 
-    // Adds a recangle to the updates list
+    // Adds a rectangle to the updates list
     void AddUpdateRect(int x, int y, int w, int h);
 
     void ClearUpdateRegion() { m_updateRegion.Clear(); }
@@ -298,9 +297,9 @@ private:
     // common part of all ctors
     void Init();
 
-    DECLARE_DYNAMIC_CLASS(wxWindow)
+    wxDECLARE_DYNAMIC_CLASS(wxWindow);
     wxDECLARE_NO_COPY_CLASS(wxWindow);
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 // ----------------------------------------------------------------------------
@@ -311,7 +310,7 @@ private:
 // undesired effects.
 //
 // Usage: create an instance of this class on the stack to disable the size
-// optimisation, it will be reenabled as soon as the object goes out
+// optimisation, it will be re-enabled as soon as the object goes out
 // from scope.
 // ----------------------------------------------------------------------------
 

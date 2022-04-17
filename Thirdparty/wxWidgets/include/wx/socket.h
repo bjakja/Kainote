@@ -4,7 +4,6 @@
 // Authors:     Guilhem Lavaux, Guillermo Rodriguez Garcia
 // Modified by:
 // Created:     April 1997
-// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -29,6 +28,16 @@ class wxSocketImpl;
 // ------------------------------------------------------------------------
 // Types and constants
 // ------------------------------------------------------------------------
+
+// Define the type of native sockets.
+#if defined(__WINDOWS__)
+    // Although socket descriptors are still 32 bit values, even under Win64,
+    // the socket type is 64 bit there.
+    typedef wxUIntPtr wxSOCKET_T;
+#else
+    typedef int wxSOCKET_T;
+#endif
+
 
 // Types of different socket notifications or events.
 //
@@ -71,13 +80,17 @@ enum wxSocketError
 // socket options/flags bit masks
 enum
 {
-    wxSOCKET_NONE = 0,
-    wxSOCKET_NOWAIT = 1,
-    wxSOCKET_WAITALL = 2,
-    wxSOCKET_BLOCK = 4,
-    wxSOCKET_REUSEADDR = 8,
-    wxSOCKET_BROADCAST = 16,
-    wxSOCKET_NOBIND = 32
+    wxSOCKET_NONE           = 0x0000,
+    wxSOCKET_NOWAIT_READ    = 0x0001,
+    wxSOCKET_NOWAIT_WRITE   = 0x0002,
+    wxSOCKET_NOWAIT         = wxSOCKET_NOWAIT_READ | wxSOCKET_NOWAIT_WRITE,
+    wxSOCKET_WAITALL_READ   = 0x0004,
+    wxSOCKET_WAITALL_WRITE  = 0x0008,
+    wxSOCKET_WAITALL        = wxSOCKET_WAITALL_READ | wxSOCKET_WAITALL_WRITE,
+    wxSOCKET_BLOCK          = 0x0010,
+    wxSOCKET_REUSEADDR      = 0x0020,
+    wxSOCKET_BROADCAST      = 0x0040,
+    wxSOCKET_NOBIND         = 0x0080
 };
 
 typedef int wxSocketFlags;
@@ -123,6 +136,8 @@ public:
     bool IsData() { return WaitForRead(0, 0); }
     bool IsDisconnected() const { return !IsConnected(); }
     wxUint32 LastCount() const { return m_lcount; }
+    wxUint32 LastReadCount() const { return m_lcount_read; }
+    wxUint32 LastWriteCount() const { return m_lcount_write; }
     wxSocketError LastError() const;
     void SaveState();
     void RestoreState();
@@ -171,6 +186,8 @@ public:
     bool GetOption(int level, int optname, void *optval, int *optlen);
     bool SetOption(int level, int optname, const void *optval, int optlen);
     wxUint32 GetLastIOSize() const { return m_lcount; }
+    wxUint32 GetLastIOReadSize() const { return m_lcount_read; }
+    wxUint32 GetLastIOWriteSize() const { return m_lcount_write; }
 
     // event handling
     void *GetClientData() const { return m_clientData; }
@@ -178,6 +195,9 @@ public:
     void SetEventHandler(wxEvtHandler& handler, int id = wxID_ANY);
     void SetNotify(wxSocketEventFlags flags);
     void Notify(bool notify);
+
+    // Get the underlying socket descriptor.
+    wxSOCKET_T GetSocket() const;
 
     // initialize/shutdown the sockets (done automatically so there is no need
     // to call these functions usually)
@@ -204,6 +224,16 @@ public:
     // do not use, not documented nor supported
     bool IsNoWait() const { return ((m_flags & wxSOCKET_NOWAIT) != 0); }
     wxSocketType GetType() const { return m_type; }
+
+    // Helper returning wxSOCKET_NONE if non-blocking sockets can be used, i.e.
+    // the socket is being created in the main thread and the event loop is
+    // running, or wxSOCKET_BLOCK otherwise.
+    //
+    // This is an internal function used only by wxWidgets itself, user code
+    // should decide if it wants blocking sockets or not and use the
+    // appropriate style instead of using it (but wxWidgets has to do it like
+    // this for compatibility with the original network classes behaviour).
+    static int GetBlockingFlagIfNeeded();
 
 private:
     friend class wxSocketClient;
@@ -254,6 +284,8 @@ private:
     bool          m_writing;          // busy writing?
     bool          m_closed;           // was the other end closed?
     wxUint32      m_lcount;           // last IO transaction size
+    wxUint32      m_lcount_read;      // last IO transaction size of Read() direction.
+    wxUint32      m_lcount_write;     // last IO transaction size of Write() direction.
     unsigned long m_timeout;          // IO timeout value in seconds
                                       // (TODO: remove, wxSocketImpl has it too)
     wxList        m_states;           // stack of states (TODO: remove!)
@@ -278,8 +310,8 @@ private:
     friend class wxSocketReadGuard;
     friend class wxSocketWriteGuard;
 
+    wxDECLARE_CLASS(wxSocketBase);
     wxDECLARE_NO_COPY_CLASS(wxSocketBase);
-    DECLARE_CLASS(wxSocketBase)
 };
 
 
@@ -298,8 +330,8 @@ public:
 
     bool WaitForAccept(long seconds = -1, long milliseconds = 0);
 
+    wxDECLARE_CLASS(wxSocketServer);
     wxDECLARE_NO_COPY_CLASS(wxSocketServer);
-    DECLARE_CLASS(wxSocketServer)
 };
 
 
@@ -337,8 +369,8 @@ private:
     int m_initialRecvBufferSize;
     int m_initialSendBufferSize;
 
+    wxDECLARE_CLASS(wxSocketClient);
     wxDECLARE_NO_COPY_CLASS(wxSocketClient);
-    DECLARE_CLASS(wxSocketClient)
 };
 
 
@@ -366,8 +398,8 @@ public:
      */
 
 private:
+    wxDECLARE_CLASS(wxDatagramSocket);
     wxDECLARE_NO_COPY_CLASS(wxDatagramSocket);
-    DECLARE_CLASS(wxDatagramSocket)
 };
 
 
@@ -388,14 +420,14 @@ public:
         { return (wxSocketBase *) GetEventObject(); }
     void *GetClientData() const { return m_clientData; }
 
-    virtual wxEvent *Clone() const { return new wxSocketEvent(*this); }
-    virtual wxEventCategory GetEventCategory() const { return wxEVT_CATEGORY_SOCKET; }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxSocketEvent(*this); }
+    virtual wxEventCategory GetEventCategory() const wxOVERRIDE { return wxEVT_CATEGORY_SOCKET; }
 
 public:
     wxSocketNotify  m_event;
     void           *m_clientData;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxSocketEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxSocketEvent);
 };
 
 

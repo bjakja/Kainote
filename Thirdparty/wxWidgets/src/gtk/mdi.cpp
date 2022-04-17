@@ -2,7 +2,6 @@
 // Name:        src/gtk/mdi.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -77,7 +76,7 @@ switch_page(GtkNotebook* widget, GtkNotebookPage*, guint page_num, wxMDIParentFr
 // wxMDIParentFrame
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame,wxFrame)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame, wxFrame);
 
 void wxMDIParentFrame::Init()
 {
@@ -191,7 +190,7 @@ void wxMDIParentFrame::DoGetClientSize(int* width, int* height) const
 {
     wxFrame::DoGetClientSize(width, height);
 
-    if (height)
+    if (!m_useCachedClientSize && height)
     {
         wxMDIChildFrame* active_child_frame = GetActiveChild();
         if (active_child_frame)
@@ -200,7 +199,7 @@ void wxMDIParentFrame::DoGetClientSize(int* width, int* height) const
             if (menubar && menubar->IsShown())
             {
                 GtkRequisition req;
-                gtk_widget_size_request(menubar->m_widget, &req);
+                gtk_widget_get_preferred_height(menubar->m_widget, NULL, &req.height);
                 *height -= req.height;
                 if (*height < 0) *height = 0;
             }
@@ -257,12 +256,12 @@ void wxMDIParentFrame::ActivatePrevious()
 // wxMDIChildFrame
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame,wxFrame)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame, wxFrame);
 
-BEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
+wxBEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
     EVT_ACTIVATE(wxMDIChildFrame::OnActivate)
     EVT_MENU_HIGHLIGHT_ALL(wxMDIChildFrame::OnMenuHighlight)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 void wxMDIChildFrame::Init()
 {
@@ -372,11 +371,22 @@ void wxMDIChildFrame::SetTitle( const wxString &title )
     gtk_notebook_set_tab_label_text(notebook, m_widget, wxGTK_CONV( title ) );
 }
 
+void wxMDIChildFrame::DoGetPosition(int *x, int *y) const
+{
+    // Pages of notebook always have position (0, 0) in its client area, so
+    // override this method to return this instead of the actual offset from
+    // the parent top left corner that the base class version returns.
+    if ( x )
+        *x = 0;
+    if ( y )
+        *y = 0;
+}
+
 //-----------------------------------------------------------------------------
 // wxMDIClientWindow
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow, wxWindow)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow, wxWindow);
 
 wxMDIClientWindow::~wxMDIClientWindow()
 {
@@ -423,7 +433,13 @@ void wxMDIClientWindow::AddChildGTK(wxWindowGTK* child)
         s = _("MDI child");
 
     GtkWidget *label_widget = gtk_label_new( s.mbc_str() );
+#ifdef __WXGTK4__
+    g_object_set(label_widget, "xalign", 0.0f, NULL);
+#else
+    wxGCC_WARNING_SUPPRESS(deprecated-declarations)
     gtk_misc_set_alignment( GTK_MISC(label_widget), 0.0, 0.5 );
+    wxGCC_WARNING_RESTORE()
+#endif
 
     GtkNotebook* notebook = GTK_NOTEBOOK(m_widget);
 

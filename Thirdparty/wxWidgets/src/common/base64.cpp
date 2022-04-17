@@ -3,15 +3,11 @@
 // Purpose:     implementation of BASE64 encoding/decoding functions
 // Author:      Charles Reimers, Vadim Zeitlin
 // Created:     2007-06-18
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <wx\wxprec.h>
+#include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_BASE64
 
@@ -20,7 +16,7 @@
 size_t
 wxBase64Encode(char *dst, size_t dstLen, const void *src_, size_t srcLen)
 {
-    wxCHECK_MSG( src_, wxCONV_FAILED, wxT("nullptr input buffer") );
+    wxCHECK_MSG( src_, wxCONV_FAILED, wxT("NULL input buffer") );
 
     const unsigned char *src = static_cast<const unsigned char *>(src_);
 
@@ -73,7 +69,7 @@ wxBase64Decode(void *dst_, size_t dstLen,
                wxBase64DecodeMode mode,
                size_t *posErr)
 {
-    wxCHECK_MSG( src, wxCONV_FAILED, wxT("nullptr input buffer") );
+    wxCHECK_MSG( src, wxCONV_FAILED, wxT("NULL input buffer") );
 
     unsigned char *dst = static_cast<unsigned char *>(dst_);
 
@@ -128,7 +124,7 @@ wxBase64Decode(void *dst_, size_t dstLen,
             case WSP:
                 if ( mode == wxBase64DecodeMode_SkipWS )
                     continue;
-                // fall through
+                wxFALLTHROUGH;
 
             case INV:
                 if ( mode == wxBase64DecodeMode_Relaxed )
@@ -223,7 +219,7 @@ wxMemoryBuffer wxBase64Decode(const char *src,
                               size_t *posErr)
 {
     wxMemoryBuffer buf;
-    wxCHECK_MSG( src, buf, wxT("nullptr input buffer") );
+    wxCHECK_MSG( src, buf, wxT("NULL input buffer") );
 
     if ( srcLen == wxNO_LEN )
         srcLen = strlen(src);

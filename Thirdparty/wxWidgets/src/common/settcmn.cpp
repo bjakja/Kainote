@@ -2,7 +2,6 @@
 // Name:        src/common/settcmn.cpp
 // Purpose:     common (to all ports) wxWindow functions
 // Author:      Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,12 +14,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/settings.h"
 
@@ -66,4 +62,42 @@ wxSystemScreenType wxSystemSettings::GetScreenType()
 void wxSystemSettings::SetScreenType( wxSystemScreenType screen )
 {
     ms_screen = screen;
+}
+
+// ----------------------------------------------------------------------------
+// Trivial wxSystemAppearance implementation
+// ----------------------------------------------------------------------------
+
+#if !defined(__WXOSX__)
+
+wxString wxSystemAppearance::GetName() const
+{
+    return wxString();
+}
+
+#endif // !__WXOSX__
+
+// These ports implement this function using platform-specific API.
+#if !defined(__WXOSX__) && !defined(__WXMSW__)
+
+bool wxSystemAppearance::IsDark() const
+{
+    return IsUsingDarkBackground();
+}
+
+#endif // !__WXOSX__ && !__WXMSW__
+
+bool wxSystemAppearance::IsUsingDarkBackground() const
+{
+    const wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+    const wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+
+    // The threshold here is rather arbitrary, but it seems that using just
+    // inequality would be wrong as it could result in false positivies.
+    return fg.GetLuminance() - bg.GetLuminance() > 0.2;
+}
+
+wxSystemAppearance wxSystemSettingsNative::GetAppearance()
+{
+    return wxSystemAppearance();
 }

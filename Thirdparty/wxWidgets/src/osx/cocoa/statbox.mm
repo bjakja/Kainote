@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:       wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -40,7 +39,7 @@ namespace
         {
         }
 
-        virtual void SetLabel( const wxString& title, wxFontEncoding encoding )
+        virtual void SetLabel( const wxString& title, wxFontEncoding encoding ) wxOVERRIDE
         {
             if (title.empty())
                 [GetNSBox() setTitlePosition:NSNoTitle];
@@ -72,8 +71,13 @@ wxWidgetImplType* wxWidgetImpl::CreateGroupBox( wxWindowMac* wxpeer,
 {
     NSRect r = wxOSXGetFrameForControl( wxpeer, pos , size ) ;
     wxNSBox* v = [[wxNSBox alloc] initWithFrame:r];
+    NSSize margin = { 0.0, 0.0 };
+    [v setContentViewMargins: margin];
+    [v sizeToFit];
     wxStaticBoxCocoaImpl* c = new wxStaticBoxCocoaImpl( wxpeer, v );
+#if !wxOSX_USE_NATIVE_FLIPPED
     c->SetFlipped(false);
+#endif
     return c;
 }
 

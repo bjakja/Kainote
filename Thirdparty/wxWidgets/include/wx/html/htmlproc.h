@@ -2,7 +2,6 @@
 // Name:        wx/html/htmlprep.h
 // Purpose:     HTML processor
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ enum
 
 class WXDLLIMPEXP_HTML wxHtmlProcessor : public wxObject
 {
-    DECLARE_ABSTRACT_CLASS(wxHtmlProcessor)
+    wxDECLARE_ABSTRACT_CLASS(wxHtmlProcessor);
 
 public:
     wxHtmlProcessor() : wxObject(), m_enabled(true) {}

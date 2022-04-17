@@ -2,7 +2,6 @@
 // Name:        bmpbuttn.h
 // Purpose:     interface of wxBitmapButton
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -13,7 +12,7 @@
 
     Notice that since wxWidgets 2.9.1 bitmap display is supported by the base
     wxButton class itself and the only tiny advantage of using this class is
-    that it allows to specify the bitmap in its constructor, unlike wxButton.
+    that it allows specifying the bitmap in its constructor, unlike wxButton.
     Please see the base class documentation for more information about images
     support in wxButton.
 
@@ -33,12 +32,12 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_BUTTON(id, func)}
-           Process a @c wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked.
+           Process a @c wxEVT_BUTTON event, when the button is clicked.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{bitmapbutton.png}
+    @appearance{bitmapbutton}
 
     @see wxButton
 */
@@ -63,8 +62,8 @@ public:
             Button position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Button size. 
-            If ::wxDefaultSize is specified then the button is sized appropriately 
+            Button size.
+            If ::wxDefaultSize is specified then the button is sized appropriately
             for the bitmap.
         @param style
             Window style. See wxBitmapButton.
@@ -84,7 +83,7 @@ public:
                    const wxBitmap& bitmap,
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
-                   long style = wxBU_AUTODRAW,
+                   long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
                    const wxString& name = wxButtonNameStr);
 
@@ -96,8 +95,45 @@ public:
                 const wxBitmap& bitmap,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
-                long style = wxBU_AUTODRAW,
+                long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxButtonNameStr);
+
+    /**
+        Creation function for two-step creation of "Close" button.
+
+        It is usually not necessary to use this function directly as
+        NewCloseButton() is more convenient, but, if required, it can be called
+        on a default-constructed wxBitmapButton object to achieve the same
+        effect.
+
+        @param parent The button parent window, must be non-@NULL.
+        @param winid The identifier for the new button.
+        @param name The name for the new button.
+
+        @since 3.1.5
+     */
+    bool CreateCloseButton(wxWindow* parent,
+                           wxWindowID winid,
+                           const wxString& name = wxString());
+
+    /**
+        Helper function creating a standard-looking "Close" button.
+
+        To get the best results, platform-specific code may need to be used to
+        create a small, title bar-like "Close" button. This function is
+        provided to avoid the need to test for the current platform and creates
+        the button with as native look as possible.
+
+        @param parent The button parent window, must be non-@NULL.
+        @param winid The identifier for the new button.
+        @param name The name for the new button (available since wxWidgets 3.1.5)
+        @return The new button.
+
+        @since 2.9.5
+     */
+    static wxBitmapButton* NewCloseButton(wxWindow* parent,
+                                          wxWindowID winid,
+                                          const wxString& name = wxString());
 };
 

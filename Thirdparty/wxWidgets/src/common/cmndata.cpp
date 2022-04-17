@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
@@ -45,9 +41,9 @@
 #include "wx/paper.h"
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxPrintData, wxObject)
-IMPLEMENT_DYNAMIC_CLASS(wxPrintDialogData, wxObject)
-IMPLEMENT_DYNAMIC_CLASS(wxPageSetupDialogData, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxPrintData, wxObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxPrintDialogData, wxObject);
+wxIMPLEMENT_DYNAMIC_CLASS(wxPageSetupDialogData, wxObject);
 
 // ============================================================================
 // implementation
@@ -58,6 +54,7 @@ IMPLEMENT_DYNAMIC_CLASS(wxPageSetupDialogData, wxObject)
 // ----------------------------------------------------------------------------
 
 wxPrintData::wxPrintData()
+    : m_paperSize(wxDefaultSize)
 {
     m_bin = wxPRINTBIN_DEFAULT;
     m_media = wxPRINTMEDIA_DEFAULT;
@@ -68,7 +65,6 @@ wxPrintData::wxPrintData()
     m_printCollate = false;
 
     // New, 24/3/99
-    m_printerName = wxEmptyString;
     m_colour = true;
     m_duplexMode = wxDUPLEX_SIMPLEX;
     m_printQuality = wxPRINT_QUALITY_HIGH;
@@ -76,9 +72,8 @@ wxPrintData::wxPrintData()
     // we intentionally don't initialize paper id and size at all, like this
     // the default system settings will be used for them
     m_paperId = wxPAPER_NONE;
-    m_paperSize = wxDefaultSize;
 
-    m_privData = nullptr;
+    m_privData = NULL;
     m_privDataLen = 0;
 
     m_nativeData = wxPrintFactory::GetFactory()->CreatePrintNativeData();
@@ -87,8 +82,8 @@ wxPrintData::wxPrintData()
 wxPrintData::wxPrintData(const wxPrintData& printData)
     : wxObject()
 {
-    m_nativeData = nullptr;
-    m_privData = nullptr;
+    m_nativeData = NULL;
+    m_privData = NULL;
     (*this) = printData;
 }
 
@@ -109,8 +104,7 @@ wxPrintData::~wxPrintData()
     if (m_nativeData->m_ref == 0)
         delete m_nativeData;
 
-    if (m_privData)
-        delete [] m_privData;
+    delete[] m_privData;
 }
 
 void wxPrintData::ConvertToNative()
@@ -204,6 +198,7 @@ wxPrintDialogData::wxPrintDialogData(const wxPrintDialogData& dialogData)
 }
 
 wxPrintDialogData::wxPrintDialogData(const wxPrintData& printData)
+    : m_printData(printData)
 {
     m_printFromPage = 1;
     m_printToPage = 0;
@@ -223,7 +218,6 @@ wxPrintDialogData::wxPrintDialogData(const wxPrintData& printData)
     m_printEnablePageNumbers = true;
     m_printEnablePrintToFile = true;
     m_printEnableHelp = false;
-    m_printData = printData;
 }
 
 wxPrintDialogData::~wxPrintDialogData()
@@ -259,8 +253,6 @@ void wxPrintDialogData::operator=(const wxPrintData& data)
 
 wxPageSetupDialogData::wxPageSetupDialogData()
 {
-    m_paperSize = wxSize(0,0);
-
     CalculatePaperSizeFromId();
 
     m_minMarginTopLeft =
@@ -285,13 +277,8 @@ wxPageSetupDialogData::wxPageSetupDialogData(const wxPageSetupDialogData& dialog
 }
 
 wxPageSetupDialogData::wxPageSetupDialogData(const wxPrintData& printData)
+    : m_printData(printData)
 {
-    m_paperSize = wxSize(0,0);
-    m_minMarginTopLeft =
-    m_minMarginBottomRight =
-    m_marginTopLeft =
-    m_marginBottomRight = wxPoint(0,0);
-
     // Flags
     m_defaultMinMargins = false;
     m_enableMargins = true;
@@ -300,8 +287,6 @@ wxPageSetupDialogData::wxPageSetupDialogData(const wxPrintData& printData)
     m_enablePrinter = true;
     m_enableHelp = false;
     m_getDefaultInfo = false;
-
-    m_printData = printData;
 
     // The wxPrintData paper size overrides these values, unless the size cannot
     // be found.
@@ -367,8 +352,8 @@ void wxPageSetupDialogData::SetPrintData(const wxPrintData& printData)
 // paper id
 void wxPageSetupDialogData::CalculateIdFromPaperSize()
 {
-    wxASSERT_MSG( (wxThePrintPaperDatabase != nullptr),
-                  wxT("wxThePrintPaperDatabase should not be nullptr. Do not create global print dialog data objects.") );
+    wxASSERT_MSG( (wxThePrintPaperDatabase != NULL),
+                  wxT("wxThePrintPaperDatabase should not be NULL. Do not create global print dialog data objects.") );
 
     wxSize sz = GetPaperSize();
 
@@ -382,8 +367,8 @@ void wxPageSetupDialogData::CalculateIdFromPaperSize()
 // Use paper id in wxPrintData to set this object's paper size
 void wxPageSetupDialogData::CalculatePaperSizeFromId()
 {
-    wxASSERT_MSG( (wxThePrintPaperDatabase != nullptr),
-                  wxT("wxThePrintPaperDatabase should not be nullptr. Do not create global print dialog data objects.") );
+    wxASSERT_MSG( (wxThePrintPaperDatabase != NULL),
+                  wxT("wxThePrintPaperDatabase should not be NULL. Do not create global print dialog data objects.") );
 
     wxSize sz = wxThePrintPaperDatabase->GetSize(m_printData.GetPaperId());
 

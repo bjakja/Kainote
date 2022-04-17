@@ -2,7 +2,6 @@
 // Name:        include/wx/msw/webviewhistoryitem.h
 // Purpose:     wxWebViewHistoryItem header for MSW
 // Author:      Steven Lamerton
-// Id:          $Id$
 // Copyright:   (c) 2011 Steven Lamerton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,7 +11,7 @@
 
 #include "wx/setup.h"
 
-#if wxUSE_WEBVIEW && wxUSE_WEBVIEW_IE && defined(__WXMSW__)
+#if wxUSE_WEBVIEW && (wxUSE_WEBVIEW_IE || wxUSE_WEBVIEW_EDGE) && defined(__WXMSW__)
 
 class WXDLLIMPEXP_WEBVIEW wxWebViewHistoryItem
 {

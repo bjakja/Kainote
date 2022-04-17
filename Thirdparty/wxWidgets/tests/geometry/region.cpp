@@ -3,7 +3,6 @@
 // Purpose:     wxRegion unit test
 // Author:      Vadim Zeitlin
 // Created:     2011-10-12
-// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,9 +12,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/region.h"
@@ -67,9 +63,11 @@ public:
 private:
     CPPUNIT_TEST_SUITE( RegionTestCase );
         CPPUNIT_TEST( Validity );
+        CPPUNIT_TEST( Intersect );
     CPPUNIT_TEST_SUITE_END();
 
     void Validity();
+    void Intersect();
 
     wxDECLARE_NO_COPY_CLASS(RegionTestCase);
 };
@@ -111,4 +109,28 @@ void RegionTestCase::Validity()
         wxRegion(0, 0, 10, 10),
         r
     );
+}
+
+void RegionTestCase::Intersect()
+{
+    const wxPoint points1[] = {
+        wxPoint(310, 392),
+        wxPoint(270, 392),
+        wxPoint(270, 421),
+        wxPoint(310, 421)
+    };
+
+    wxRegion region1(WXSIZEOF(points1), points1);
+
+    const wxPoint points2[] = {
+        wxPoint(54, 104),
+        wxPoint(85,  82),
+        wxPoint(68,  58),
+        wxPoint(37,  80)
+    };
+
+    wxRegion region2(4,points2);
+
+    CPPUNIT_ASSERT( region1.Intersect(region2) );
+    CPPUNIT_ASSERT( region1.IsEmpty() );
 }

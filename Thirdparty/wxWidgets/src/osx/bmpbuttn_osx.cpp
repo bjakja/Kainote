@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,7 +25,7 @@
 
 bool wxBitmapButton::Create( wxWindow *parent,
                              wxWindowID id,
-                             const wxBitmap& bitmap,
+                             const wxBitmapBundle& bitmap,
                              const wxPoint& pos,
                              const wxSize& size,
                              long style,
@@ -39,16 +38,8 @@ bool wxBitmapButton::Create( wxWindow *parent,
                                      validator, name) )
         return false;
 
-    if ( style & wxBU_AUTODRAW )
-    {
-        m_marginX =
-        m_marginY = wxDEFAULT_BUTTON_MARGIN;
-    }
-    else
-    {
-        m_marginX =
-        m_marginY = 0;
-    }
+    m_marginX =
+    m_marginY = wxDEFAULT_BUTTON_MARGIN;
 
     m_bitmaps[State_Normal] = bitmap;
 
@@ -67,7 +58,26 @@ wxSize wxBitmapButton::DoGetBestSize() const
 
     if ( GetBitmapLabel().IsOk() )
     {
-        best += GetBitmapLabel().GetSize();
+        const wxSize bitmapSize = GetBitmapLabel().GetLogicalSize();
+        best += bitmapSize;
+
+        // The NSRoundedBezelStyle and NSTexturedRoundedBezelStyle used when
+        // the image is less than 20px tall have a small horizontal border,
+        // account for it here to prevent part of the image from being cut off.
+        //
+        // Note that the magic 20px comes from SetBezelStyleFromBorderFlags()
+        // defined in src/osx/cocoa/button.mm and so do the style checks.
+        switch ( GetWindowStyle() & wxBORDER_MASK )
+        {
+            case wxBORDER_NONE:
+            case wxBORDER_SIMPLE:
+                break;
+
+            default:
+                if ( bitmapSize.y < 20 )
+                    best += wxSize(4,0);
+                break;
+        }
     }
 
     return best;

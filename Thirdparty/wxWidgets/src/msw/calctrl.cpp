@@ -3,7 +3,6 @@
 // Purpose:     wxCalendarCtrl implementation
 // Author:      Vadim Zeitlin
 // Created:     2008-04-04
-// RCS-ID:      $Id$
 // Copyright:   (C) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,9 +17,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CALENDARCTRL
 
@@ -109,7 +105,7 @@ wxCalendarCtrl::Create(wxWindow *parent,
     }
 
     const wxChar * const clsname = s_clsMonthCal.IsRegistered()
-        ? s_clsMonthCal.GetName().t_str()
+        ? static_cast<const wxChar*>(s_clsMonthCal.GetName().t_str())
         : MONTHCAL_CLASS;
 
     if ( !MSWCreateControl(clsname, wxEmptyString, pos, size) )
@@ -123,10 +119,8 @@ wxCalendarCtrl::Create(wxWindow *parent,
     SetHolidayAttrs();
     UpdateMarks();
 
-    Connect(wxEVT_LEFT_DOWN,
-            wxMouseEventHandler(wxCalendarCtrl::MSWOnClick));
-    Connect(wxEVT_LEFT_DCLICK,
-            wxMouseEventHandler(wxCalendarCtrl::MSWOnDoubleClick));
+    Bind(wxEVT_LEFT_DOWN, &wxCalendarCtrl::MSWOnClick, this);
+    Bind(wxEVT_LEFT_DCLICK, &wxCalendarCtrl::MSWOnDoubleClick, this);
 
     return true;
 }
@@ -153,11 +147,11 @@ WXDWORD wxCalendarCtrl::MSWGetStyle(long style, WXDWORD *exstyle) const
 
 void wxCalendarCtrl::SetWindowStyleFlag(long style)
 {
-    const bool hadMondayFirst = HasFlag(wxCAL_MONDAY_FIRST);
+    const bool hadMondayFirst = WeekStartsOnMonday();
 
     wxCalendarCtrlBase::SetWindowStyleFlag(style);
 
-    if ( HasFlag(wxCAL_MONDAY_FIRST) != hadMondayFirst )
+    if ( WeekStartsOnMonday() != hadMondayFirst )
         UpdateFirstDayOfWeek();
 }
 
@@ -174,9 +168,7 @@ wxSize wxCalendarCtrl::DoGetBestSize() const
         return wxCalendarCtrlBase::DoGetBestSize();
     }
 
-    const wxSize best = wxRectFromRECT(rc).GetSize() + GetWindowBorderSize();
-    CacheBestSize(best);
-    return best;
+    return wxRectFromRECT(rc).GetSize() + GetWindowBorderSize();
 }
 
 wxCalendarHitTestResult
@@ -201,7 +193,7 @@ wxCalendarCtrl::HitTest(const wxPoint& pos,
         default:
         case MCHT_CALENDARWEEKNUM:
             wxFAIL_MSG( "unexpected" );
-            // fall through
+            wxFALLTHROUGH;
 
         case MCHT_NOWHERE:
         case MCHT_CALENDARBK:
@@ -430,7 +422,7 @@ void wxCalendarCtrl::UpdateMarks()
 void wxCalendarCtrl::UpdateFirstDayOfWeek()
 {
     MonthCal_SetFirstDayOfWeek(GetHwnd(),
-                               HasFlag(wxCAL_MONDAY_FIRST) ? MonthCal_Monday
+                               WeekStartsOnMonday() ? MonthCal_Monday
                                                            : MonthCal_Sunday);
 }
 
@@ -474,7 +466,9 @@ bool wxCalendarCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
                 wxDateTime startDate;
                 startDate.SetFromMSWSysDate(ds->stStart);
 
-                wxDateTime currentDate = m_date;
+                // Ensure we have a valid date to work with.
+                wxDateTime currentDate = m_date.IsValid() ? m_date : startDate;
+
                 // Set to the start of month for comparison with startDate to
                 // work correctly.
                 currentDate.SetDay(1);

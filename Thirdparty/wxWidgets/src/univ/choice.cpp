@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     15.12.00
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CHOICE
 
@@ -31,9 +27,9 @@
     #include "wx/arrstr.h"
 #endif
 
-BEGIN_EVENT_TABLE(wxChoice, wxComboBox)
+wxBEGIN_EVENT_TABLE(wxChoice, wxComboBox)
     EVT_COMBOBOX(wxID_ANY, wxChoice::OnComboBox)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 wxChoice::wxChoice(wxWindow *parent, wxWindowID id,
                    const wxPoint& pos,
@@ -64,7 +60,7 @@ bool wxChoice::Create(wxWindow *parent, wxWindowID id,
                       const wxPoint& pos,
                       const wxSize& size,
                       int n, const wxString choices[],
-                      long WXUNUSED(style),
+                      long style,
                       const wxValidator& validator,
                       const wxString& name)
 {
@@ -73,7 +69,7 @@ bool wxChoice::Create(wxWindow *parent, wxWindowID id,
         value = choices[0];
     return wxComboBox::Create(parent, id, value,
                                  pos, size, n, choices,
-                                 wxCB_READONLY, validator, name);
+                                 wxCB_READONLY | style, validator, name);
 }
 
 
@@ -81,7 +77,7 @@ void wxChoice::OnComboBox(wxCommandEvent& event)
 {
     if ( event.GetId() == GetId() )
     {
-        event.SetEventType(wxEVT_COMMAND_CHOICE_SELECTED);
+        event.SetEventType(wxEVT_CHOICE);
         event.Skip();
         GetEventHandler()->ProcessEvent(event);
     }

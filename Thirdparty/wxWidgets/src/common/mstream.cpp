@@ -4,7 +4,6 @@
 // Author:      Guilhem Lavaux
 // Modified by: VZ (23.11.00): general code review
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STREAMS
 
@@ -42,7 +38,7 @@
 // wxMemoryInputStream
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS(wxMemoryInputStream, wxInputStream)
+wxIMPLEMENT_ABSTRACT_CLASS(wxMemoryInputStream, wxInputStream);
 
 wxMemoryInputStream::wxMemoryInputStream(const void *data, size_t len)
 {
@@ -59,7 +55,7 @@ wxMemoryInputStream::wxMemoryInputStream(const wxMemoryOutputStream& stream)
     const wxFileOffset lenFile = stream.GetLength();
     if ( lenFile == wxInvalidOffset )
     {
-        m_i_streambuf = nullptr;
+        m_i_streambuf = NULL;
         m_lasterror = wxSTREAM_EOF;
         return;
     }
@@ -83,7 +79,7 @@ wxMemoryInputStream::InitFromStream(wxInputStream& stream, wxFileOffset lenFile)
 
     if ( lenFile == wxInvalidOffset )
     {
-        m_i_streambuf = nullptr;
+        m_i_streambuf = NULL;
         m_lasterror = wxSTREAM_EOF;
         return;
     }
@@ -153,7 +149,7 @@ wxFileOffset wxMemoryInputStream::OnSysTell() const
 // wxMemoryOutputStream
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxMemoryOutputStream, wxOutputStream)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMemoryOutputStream, wxOutputStream);
 
 wxMemoryOutputStream::wxMemoryOutputStream(void *data, size_t len)
 {

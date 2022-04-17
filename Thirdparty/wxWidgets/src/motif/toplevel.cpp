@@ -4,7 +4,6 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     12/10/2002
-// RCS-ID:      $Id$
 // Copyright:   (c) Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -119,7 +118,7 @@ bool wxTopLevelWindowMotif::Create( wxWindow *parent, wxWindowID id,
     // Intercept CLOSE messages from the window manager
     Widget shell = (Widget)GetShellWidget();
     Atom WM_DELETE_WINDOW = XmInternAtom( XtDisplay( shell ),
-                                          "WM_DELETE_WINDOW", False );
+                                          (char*)"WM_DELETE_WINDOW", False );
 
     // Remove and add WM_DELETE_WINDOW so ours is only handler
     // This only appears to be necessary for wxDialog, but does not hurt

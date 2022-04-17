@@ -2,7 +2,6 @@
 // Name:        tests/scopeguard/scopeguardtest.cpp
 // Purpose:     Test wxScopeGuard and related macros
 // Author:      Vadim Zeitlin
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Vadim Zeitlin
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,9 +16,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/string.h"
 #include "wx/scopeguard.h"

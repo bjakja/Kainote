@@ -3,7 +3,6 @@
 // Purpose:
 // Author:      Robert Roebling
 // Created:
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:           wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,13 +23,13 @@ public:
             const wxPoint &pos = wxDefaultPosition,
             const wxSize &size = wxDefaultSize,
             long style = wxDEFAULT_DIALOG_STYLE,
-            const wxString &name = wxDialogNameStr );
+            const wxString &name = wxASCII_STR(wxDialogNameStr) );
     bool Create( wxWindow *parent, wxWindowID id,
             const wxString &title,
             const wxPoint &pos = wxDefaultPosition,
             const wxSize &size = wxDefaultSize,
             long style = wxDEFAULT_DIALOG_STYLE,
-            const wxString &name = wxDialogNameStr );
+            const wxString &name = wxASCII_STR(wxDialogNameStr) );
     virtual ~wxDialog() {}
 
     void OnApply( wxCommandEvent &event );
@@ -58,8 +57,8 @@ protected:
     void Init();
 
 private:
-    DECLARE_EVENT_TABLE()
-    DECLARE_DYNAMIC_CLASS(wxDialog)
+    wxDECLARE_EVENT_TABLE();
+    wxDECLARE_DYNAMIC_CLASS(wxDialog);
 };
 
 #endif // __GTKDIALOGH__

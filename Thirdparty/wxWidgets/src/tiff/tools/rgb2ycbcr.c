@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * Copyright (c) 1991-1997 Sam Leffler
  * Copyright (c) 1991-1997 Silicon Graphics, Inc.
@@ -34,7 +32,19 @@
 # include <unistd.h>
 #endif
 
+#ifdef NEED_LIBPORT
+# include "libport.h"
+#endif
+
+#include "tiffiop.h"
 #include "tiffio.h"
+
+#ifndef EXIT_SUCCESS
+#define EXIT_SUCCESS 0
+#endif
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 1
+#endif
 
 #define	streq(a,b)	(strcmp(a,b) == 0)
 #define	CopyField(tag, v) \
@@ -67,8 +77,10 @@ main(int argc, char* argv[])
 {
 	TIFF *in, *out;
 	int c;
+#if !HAVE_DECL_OPTARG
 	extern int optind;
 	extern char *optarg;
+#endif
 
 	while ((c = getopt(argc, argv, "c:h:r:v:z")) != -1)
 		switch (c) {
@@ -84,13 +96,17 @@ main(int argc, char* argv[])
 			else if (streq(optarg, "zip"))
 			    compression = COMPRESSION_ADOBE_DEFLATE;
 			else
-			    usage(-1);
+			    usage(EXIT_FAILURE);
 			break;
 		case 'h':
 			horizSubSampling = atoi(optarg);
+            if( horizSubSampling != 1 && horizSubSampling != 2 && horizSubSampling != 4 )
+                usage(EXIT_FAILURE);
 			break;
 		case 'v':
 			vertSubSampling = atoi(optarg);
+            if( vertSubSampling != 1 && vertSubSampling != 2 && vertSubSampling != 4 )
+                usage(EXIT_FAILURE);
 			break;
 		case 'r':
 			rowsperstrip = atoi(optarg);
@@ -104,14 +120,14 @@ main(int argc, char* argv[])
 			refBlackWhite[5] = 240.;
 			break;
 		case '?':
-			usage(0);
+			usage(EXIT_FAILURE);
 			/*NOTREACHED*/
 		}
 	if (argc - optind < 2)
-		usage(-1);
+		usage(EXIT_FAILURE);
 	out = TIFFOpen(argv[argc-1], "w");
 	if (out == NULL)
-		return (-2);
+		return (EXIT_FAILURE);
 	setupLumaTables();
 	for (; optind < argc-1; optind++) {
 		in = TIFFOpen(argv[optind], "r");
@@ -120,6 +136,7 @@ main(int argc, char* argv[])
 				if (!tiffcvt(in, out) ||
 				    !TIFFWriteDirectory(out)) {
 					(void) TIFFClose(out);
+					(void) TIFFClose(in);
 					return (1);
 				}
 			} while (TIFFReadDirectory(in));
@@ -127,7 +144,7 @@ main(int argc, char* argv[])
 		}
 	}
 	(void) TIFFClose(out);
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 float	*lumaRed;
@@ -254,6 +271,7 @@ cvtRaster(TIFF* tif, uint32* raster, uint32 width, uint32 height)
 	cc = rnrows*rwidth +
 	    2*((rnrows*rwidth) / (horizSubSampling*vertSubSampling));
 	buf = (unsigned char*)_TIFFmalloc(cc);
+	// FIXME unchecked malloc
 	for (y = height; (int32) y > 0; y -= nrows) {
 		uint32 nr = (y > nrows ? nrows : y);
 		cvtStrip(buf, raster + (y-1)*width, nr, width);
@@ -278,14 +296,32 @@ tiffcvt(TIFF* in, TIFF* out)
 	float floatv;
 	char *stringv;
 	uint32 longv;
+	int result;
+	size_t pixel_count;
 
 	TIFFGetField(in, TIFFTAG_IMAGEWIDTH, &width);
 	TIFFGetField(in, TIFFTAG_IMAGELENGTH, &height);
-	raster = (uint32*)_TIFFmalloc(width * height * sizeof (uint32));
-	if (raster == 0) {
-		TIFFError(TIFFFileName(in), "No space for raster buffer");
-		return (0);
-	}
+	pixel_count = width * height;
+
+ 	/* XXX: Check the integer overflow. */
+ 	if (!width || !height || pixel_count / width != height) {
+ 		TIFFError(TIFFFileName(in),
+ 			  "Malformed input file; "
+ 			  "can't allocate buffer for raster of %lux%lu size",
+ 			  (unsigned long)width, (unsigned long)height);
+ 		return 0;
+ 	}
+ 
+ 	raster = (uint32*)_TIFFCheckMalloc(in, pixel_count, sizeof(uint32),
+ 					   "raster buffer");
+  	if (raster == 0) {
+ 		TIFFError(TIFFFileName(in),
+ 			  "Failed to allocate buffer (%lu elements of %lu each)",
+ 			  (unsigned long)pixel_count,
+ 			  (unsigned long)sizeof(uint32));
+  		return (0);
+  	}
+
 	if (!TIFFReadRGBAImage(in, width, height, raster, 0)) {
 		_TIFFfree(raster);
 		return (0);
@@ -308,7 +344,8 @@ tiffcvt(TIFF* in, TIFF* out)
 	TIFFSetField(out, TIFFTAG_PLANARCONFIG, PLANARCONFIG_CONTIG);
 	{ char buf[2048];
 	  char *cp = strrchr(TIFFFileName(in), '/');
-	  sprintf(buf, "YCbCr conversion of %s", cp ? cp+1 : TIFFFileName(in));
+	  snprintf(buf, sizeof(buf), "YCbCr conversion of %s",
+		   cp ? cp+1 : TIFFFileName(in));
 	  TIFFSetField(out, TIFFTAG_IMAGEDESCRIPTION, buf);
 	}
 	TIFFSetField(out, TIFFTAG_SOFTWARE, TIFFGetVersion());
@@ -322,10 +359,12 @@ tiffcvt(TIFF* in, TIFF* out)
 	rowsperstrip = TIFFDefaultStripSize(out, rowsperstrip);
 	TIFFSetField(out, TIFFTAG_ROWSPERSTRIP, rowsperstrip);
 
-	return (cvtRaster(out, raster, width, height));
+	result = cvtRaster(out, raster, width, height);
+        _TIFFfree(raster);
+        return result;
 }
 
-char* stuff[] = {
+const char* stuff[] = {
     "usage: rgb2ycbcr [-c comp] [-r rows] [-h N] [-v N] input... output\n",
     "where comp is one of the following compression algorithms:\n",
     " jpeg\t\tJPEG encoding\n",
@@ -343,15 +382,20 @@ char* stuff[] = {
 static void
 usage(int code)
 {
-	char buf[BUFSIZ];
 	int i;
+	FILE * out = (code == EXIT_SUCCESS) ? stdout : stderr;
 
-	setbuf(stderr, buf);
-       
- fprintf(stderr, "%s\n\n", TIFFGetVersion());
+	fprintf(out, "%s\n\n", TIFFGetVersion());
 	for (i = 0; stuff[i] != NULL; i++)
-		fprintf(stderr, "%s\n", stuff[i]);
+		fprintf(out, "%s\n", stuff[i]);
 	exit(code);
 }
 
 /* vim: set ts=8 sts=8 sw=8 noet: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

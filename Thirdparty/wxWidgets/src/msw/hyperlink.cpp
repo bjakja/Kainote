@@ -3,7 +3,6 @@
 // Purpose:     Hyperlink control
 // Author:      Rickard Westerlund
 // Created:     2010-08-03
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,12 +11,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_HYPERLINKCTRL && wxUSE_UNICODE
 
@@ -175,7 +171,12 @@ bool wxHyperlinkCtrl::MSWOnNotify(int idCtrl, WXLPARAM lParam, WXLPARAM *result)
             case NM_RETURN:
                 SetVisited();
                 SendEvent();
-                return 0;
+
+                // SendEvent() launches the browser by default, so we consider
+                // that the event was processed in any case, either by user
+                // code or by wx itself, hence we always return true to
+                // indicate that the default processing shouldn't take place.
+                return true;
         }
     }
 

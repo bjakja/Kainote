@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.10.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_LISTBOX
 
@@ -32,6 +28,7 @@
     #include "wx/dynarray.h"
     #include "wx/arrstr.h"
     #include "wx/log.h"
+    #include "wx/dcclient.h"
 #endif
 
 extern WXDLLEXPORT_DATA(const char) wxListBoxNameStr[] = "listBox";
@@ -87,11 +84,11 @@ wxFLAGS_MEMBER(wxLB_NEEDED_SB)
 wxFLAGS_MEMBER(wxLB_SORT)
 wxEND_FLAGS( wxListBoxStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxListBox, wxControl, "wx/listbox.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxListBox, wxControl, "wx/listbox.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxListBox)
-wxEVENT_PROPERTY( Select, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEvent )
-wxEVENT_PROPERTY( DoubleClick, wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEvent )
+wxEVENT_PROPERTY( Select, wxEVT_LISTBOX, wxCommandEvent )
+wxEVENT_PROPERTY( DoubleClick, wxEVT_LISTBOX_DCLICK, wxCommandEvent )
 
 wxPROPERTY( Font, wxFont, SetFont, GetFont , wxEMPTY_PARAMETER_VALUE, 0 /*flags*/, \
            wxT("Helpstring"), wxT("group"))
@@ -303,7 +300,7 @@ bool wxListBoxBase::CalcAndSendEvent()
 
     m_oldSelections = selections;
 
-    return SendEvent(wxEVT_COMMAND_LISTBOX_SELECTED, item, selected);
+    return SendEvent(wxEVT_LISTBOX, item, selected);
 }
 
 // ----------------------------------------------------------------------------
@@ -340,5 +337,4 @@ void wxListBoxBase::EnsureVisible(int WXUNUSED(n))
     // the base class version does nothing (the only alternative would be to
     // call SetFirstItem() but this is probably even more stupid)
 }
-
 #endif // wxUSE_LISTBOX

@@ -3,7 +3,6 @@
 // Purpose:     Declaration of wxTimePickerCtrl class.
 // Author:      Vadim Zeitlin
 // Created:     2011-09-22
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,10 @@ enum
 // wxTimePickerCtrl: Allow the user to enter the time.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxTimePickerCtrlBase : public wxDateTimePickerCtrl
+// The template argument must be a class deriving from wxDateTimePickerCtrlBase
+// (i.e. in practice either this class itself or wxDateTimePickerCtrl).
+template <typename Base>
+class wxTimePickerCtrlCommonBase : public Base
 {
 public:
     /*
@@ -68,18 +70,18 @@ public:
             return false;
         }
 
-        SetValue(dt);
+        this->SetValue(dt);
 
         return true;
     }
 
-    // Get the current time components. All pointers must be non-nullptr.
+    // Get the current time components. All pointers must be non-NULL.
     bool GetTime(int* hour, int* min, int* sec) const
     {
         wxCHECK_MSG( hour && min && sec, false,
-                     wxS("Time component pointers must be non-nullptr") );
+                     wxS("Time component pointers must be non-NULL") );
 
-        const wxDateTime::Tm tm = GetValue().GetTm();
+        const wxDateTime::Tm tm = this->GetValue().GetTm();
         *hour = tm.hour;
         *min = tm.min;
         *sec = tm.sec;
@@ -87,6 +89,10 @@ public:
         return true;
     }
 };
+
+// This class is defined mostly for compatibility and is used as the base class
+// by native wxTimePickerCtrl implementations.
+typedef wxTimePickerCtrlCommonBase<wxDateTimePickerCtrl> wxTimePickerCtrlBase;
 
 #if defined(__WXMSW__) && !defined(__WXUNIVERSAL__)
     #include "wx/msw/timectrl.h"

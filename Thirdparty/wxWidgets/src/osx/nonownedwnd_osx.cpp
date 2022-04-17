@@ -3,7 +3,6 @@
 // Purpose:     implementation of wxNonOwnedWindow
 // Author:      Stefan Csomor
 // Created:     2008-03-24
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor 2008
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -36,8 +35,6 @@
 
 // trace mask for activation tracing messages
 #define TRACE_ACTIVATE "activation"
-
-wxWindow* g_MacLastWindow = NULL ;
 
 clock_t wxNonOwnedWindow::s_lastFlush = 0;
 
@@ -92,7 +89,7 @@ void wxNonOwnedWindowImpl::Associate( WXWindow window, wxNonOwnedWindowImpl *imp
 // wxNonOwnedWindow creation
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS( wxNonOwnedWindowImpl , wxObject )
+wxIMPLEMENT_ABSTRACT_CLASS(wxNonOwnedWindowImpl, wxObject);
 
 wxNonOwnedWindow *wxNonOwnedWindow::s_macDeactivateWindow = NULL;
 
@@ -100,6 +97,7 @@ void wxNonOwnedWindow::Init()
 {
     m_nowpeer = NULL;
     m_isNativeWindowWrapper = false;
+    m_ignoreResizing = false;
 }
 
 bool wxNonOwnedWindow::Create(wxWindow *parent,
@@ -153,8 +151,6 @@ bool wxNonOwnedWindow::Create(wxWindow *parent,
 
     wxWindowCreateEvent event(this);
     HandleWindowEvent(event);
-
-    SetBackgroundColour(wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE ));
 
     if ( parent )
         parent->AddChild(this);
@@ -233,14 +229,6 @@ bool wxNonOwnedWindow::OSXShowWithEffect(bool show,
                                          wxShowEffect effect,
                                          unsigned timeout)
 {
-    // Cocoa code needs to manage window visibility on its own and so calls
-    // wxWindow::Show() as needed but if we already changed the internal
-    // visibility flag here, Show() would do nothing, so avoid doing it
-#if wxOSX_USE_CARBON
-    if ( !wxWindow::Show(show) )
-        return false;
-#endif // Carbon
-
     if ( effect == wxSHOW_EFFECT_NONE ||
             !m_nowpeer || !m_nowpeer->ShowWithEffect(show, effect, timeout) )
         return Show(show);
@@ -249,10 +237,7 @@ bool wxNonOwnedWindow::OSXShowWithEffect(bool show,
     {
         // as apps expect a size event to occur when the window is shown,
         // generate one when it is shown with effect too
-        MacOnInternalSize();
-        wxSizeEvent event(GetSize(), m_windowId);
-        event.SetEventObject(this);
-        HandleWindowEvent(event);
+        SendSizeEvent();
     }
 
     return true;
@@ -269,8 +254,11 @@ bool wxNonOwnedWindow::SetBackgroundColour(const wxColour& c )
 {
     if ( !wxWindow::SetBackgroundColour(c) && m_hasBgCol )
         return false ;
-
-    if ( GetBackgroundStyle() != wxBG_STYLE_CUSTOM )
+    
+    // only set the native background color if the toplevel window's
+    // background is not supposed to be transparent, otherwise the
+    // transparency is lost
+    if ( GetBackgroundStyle() != wxBG_STYLE_PAINT && GetBackgroundStyle() != wxBG_STYLE_TRANSPARENT)
     {
         if ( m_nowpeer )
             return m_nowpeer->SetBackgroundColour(c);
@@ -310,13 +298,9 @@ void wxNonOwnedWindow::HandleActivated( double timestampsec, bool didActivate )
     HandleWindowEvent(wxevent);
 }
 
-void wxNonOwnedWindow::HandleResized( double timestampsec )
+void wxNonOwnedWindow::HandleResized( double WXUNUSED(timestampsec) )
 {
-    MacOnInternalSize();
-    wxSizeEvent wxevent( GetSize() , GetId());
-    wxevent.SetTimestamp( (int) (timestampsec * 1000) );
-    wxevent.SetEventObject( this );
-    HandleWindowEvent(wxevent);
+    SendSizeEvent();
     // we have to inform some controls that have to reset things
     // relative to the toplevel window (e.g. OpenGL buffers)
     wxWindowMac::MacSuperChangedPosition() ; // like this only children will be notified
@@ -324,6 +308,9 @@ void wxNonOwnedWindow::HandleResized( double timestampsec )
 
 void wxNonOwnedWindow::HandleResizing( double WXUNUSED(timestampsec), wxRect* rect )
 {
+    if ( m_ignoreResizing )
+        return;
+
     wxRect r = *rect ;
 
     // this is a EVT_SIZING not a EVT_SIZE type !
@@ -387,10 +374,7 @@ bool wxNonOwnedWindow::Show(bool show)
     if ( show )
     {
         // because apps expect a size event to occur at this moment
-        MacOnInternalSize();
-        wxSizeEvent event(GetSize() , m_windowId);
-        event.SetEventObject(this);
-        HandleWindowEvent(event);
+        SendSizeEvent();
     }
 
     return true ;
@@ -495,6 +479,9 @@ void wxNonOwnedWindow::WindowWasPainted()
 
 void wxNonOwnedWindow::Update()
 {
+    if ( m_nowpeer == NULL )
+        return;
+
     if ( clock() - s_lastFlush > CLOCKS_PER_SEC / 30 )
     {
         s_lastFlush = clock();
@@ -507,6 +494,13 @@ WXWindow wxNonOwnedWindow::GetWXWindow() const
     return m_nowpeer ? m_nowpeer->GetWXWindow() : NULL;
 }
 
+#if wxOSX_USE_COCOA_OR_IPHONE
+void *wxNonOwnedWindow::OSXGetViewOrWindow() const
+{
+    return GetWXWindow();
+}
+#endif
+
 // ---------------------------------------------------------------------------
 // Shape implementation
 // ---------------------------------------------------------------------------
@@ -514,6 +508,7 @@ WXWindow wxNonOwnedWindow::GetWXWindow() const
 bool wxNonOwnedWindow::DoClearShape()
 {
     m_shape.Clear();
+    m_shapePath = wxGraphicsPath();
 
     wxSize sz = GetClientSize();
     wxRegion region(0, 0, sz.x, sz.y);
@@ -523,7 +518,13 @@ bool wxNonOwnedWindow::DoClearShape()
 
 bool wxNonOwnedWindow::DoSetRegionShape(const wxRegion& region)
 {
+    m_shapePath = wxGraphicsPath();
     m_shape = region;
+
+    // set the native content view to transparency, this is an implementation detail
+    // no reflected in the wx BackgroundStyle
+    GetPeer()->SetBackgroundStyle(wxBG_STYLE_TRANSPARENT);
+    GetPeer()->SetNeedsDisplay();
 
     return m_nowpeer->SetShape(region);
 }
@@ -534,8 +535,6 @@ bool wxNonOwnedWindow::DoSetRegionShape(const wxRegion& region)
 
 bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
 {
-    m_shapePath = path;
-
     // Convert the path to wxRegion by rendering the path on a window-sized
     // bitmap, creating a mask from it and finally creating the region from
     // this mask.
@@ -543,17 +542,32 @@ bool wxNonOwnedWindow::DoSetPathShape(const wxGraphicsPath& path)
 
     {
         wxMemoryDC dc(bmp);
-        dc.SetBackground(*wxBLACK);
+        dc.SetBackground(*wxBLACK_BRUSH);
         dc.Clear();
 
         wxScopedPtr<wxGraphicsContext> context(wxGraphicsContext::Create(dc));
-        context->SetBrush(*wxWHITE);
-        context->FillPath(m_shapePath);
+        context->SetBrush(*wxWHITE_BRUSH);
+        context->SetAntialiasMode(wxANTIALIAS_NONE);
+        context->FillPath(path);
     }
 
     bmp.SetMask(new wxMask(bmp, *wxBLACK));
 
-    return DoSetRegionShape(wxRegion(bmp));
+    // the shape path has to be set AFTER the region is set, because that method
+    // clears any former path
+    bool success = DoSetRegionShape(wxRegion(bmp));
+    if ( success )
+        m_shapePath = path;
+
+    return success;
+}
+
+void
+wxNonOwnedWindow::OSXHandleMiniaturize(double WXUNUSED(timestampsec),
+                                       bool miniaturized)
+{
+    if ( wxTopLevelWindowMac* top = (wxTopLevelWindowMac*) MacGetTopLevelWindow() )
+        top->OSXSetIconizeState(miniaturized);
 }
 
 #endif // wxUSE_GRAPHICS_CONTEXT

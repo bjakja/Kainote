@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     05.05.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -29,30 +28,32 @@ public:
     virtual ~wxMenuItem();
 
     // override base class virtuals to update the item appearance on screen
-    virtual void SetItemLabel(const wxString& text);
-    virtual void SetCheckable(bool checkable);
+    virtual void SetItemLabel(const wxString& text) wxOVERRIDE;
+    virtual void SetCheckable(bool checkable) wxOVERRIDE;
 
-    virtual void Enable(bool enable = true);
-    virtual void Check(bool check = true);
+    virtual void Enable(bool enable = true) wxOVERRIDE;
+    virtual void Check(bool check = true) wxOVERRIDE;
 
     // we add some extra functions which are also available under MSW from
     // wxOwnerDrawn class - they will be moved to wxMenuItemBase later
     // hopefully
-    void SetBitmaps(const wxBitmap& bmpChecked,
-                    const wxBitmap& bmpUnchecked = wxNullBitmap);
-    void SetBitmap(const wxBitmap& bmp) { SetBitmaps(bmp); }
-    const wxBitmap& GetBitmap(bool checked = true) const
-      { return checked ? m_bmpChecked : m_bmpUnchecked; }
+    void SetBitmaps(const wxBitmapBundle& bmpChecked,
+                    const wxBitmapBundle& bmpUnchecked = wxBitmapBundle());
+    void SetBitmap(const wxBitmapBundle& bmp) { SetBitmaps(bmp); }
+    wxBitmap GetBitmap(bool checked = true) const
+      { return GetBitmapFromBundle(checked ? m_bmpChecked : m_bmpUnchecked); }
 
-    void SetDisabledBitmap( const wxBitmap& bmpDisabled )
+    void SetDisabledBitmap( const wxBitmapBundle& bmpDisabled )
       { m_bmpDisabled = bmpDisabled; }
-    const wxBitmap& GetDisabledBitmap() const
-      { return m_bmpDisabled; }
+    wxBitmap GetDisabledBitmap() const
+      { return GetBitmapFromBundle(m_bmpDisabled); }
 
     // mark item as belonging to the given radio group
     void SetAsRadioGroupStart();
     void SetRadioGroupStart(int start);
     void SetRadioGroupEnd(int end);
+    int GetRadioGroupStart();
+    int GetRadioGroupEnd();
 
     // wxUniv-specific methods for implementation only starting from here
 
@@ -92,9 +93,9 @@ protected:
     void UpdateAccelInfo();
 
     // the bitmaps (may be invalid, then they're not used)
-    wxBitmap m_bmpChecked,
-             m_bmpUnchecked,
-             m_bmpDisabled;
+    wxBitmapBundle m_bmpChecked,
+                   m_bmpUnchecked,
+                   m_bmpDisabled;
 
     // the positions of the first and last items of the radio group this item
     // belongs to or -1: start is the radio group start and is valid for all
@@ -120,7 +121,7 @@ protected:
             m_height;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxMenuItem)
+    wxDECLARE_DYNAMIC_CLASS(wxMenuItem);
 };
 
 #endif // _WX_UNIV_MENUITEM_H_

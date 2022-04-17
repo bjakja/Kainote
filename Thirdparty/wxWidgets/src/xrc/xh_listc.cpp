@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for wxListCtrl
 // Author:      Brian Gavin, Kinaou Hervé, Vadim Zeitlin
 // Created:     2000/09/09
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Brian Gavin
 //              (c) 2009 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -12,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_LISTCTRL
 
@@ -37,7 +33,7 @@ const char *LISTCOL_CLASS_NAME = "listcol";
 } // anonymous namespace
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxListCtrlXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxListCtrlXmlHandler, wxXmlResourceHandler);
 
 wxListCtrlXmlHandler::wxListCtrlXmlHandler()
     : wxXmlResourceHandler()
@@ -150,7 +146,7 @@ void wxListCtrlXmlHandler::HandleListItem()
     if (HasParam(wxT("data")))
         item.SetData(GetLong(wxT("data")));
     if (HasParam(wxT("font")))
-        item.SetFont(GetFont());
+        item.SetFont(GetFont(wxT("font"), list));
     if (HasParam(wxT("state")))
         item.SetState(GetStyle(wxT("state")));
     if (HasParam(wxT("textcolour")))

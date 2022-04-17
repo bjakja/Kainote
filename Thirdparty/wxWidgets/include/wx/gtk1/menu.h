@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/menu.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -50,7 +49,7 @@ public:
 private:
     void Init(size_t n, wxMenu *menus[], const wxString titles[], long style);
 
-    DECLARE_DYNAMIC_CLASS(wxMenuBar)
+    wxDECLARE_DYNAMIC_CLASS(wxMenuBar);
 };
 
 //-----------------------------------------------------------------------------
@@ -95,7 +94,7 @@ private:
 
     GtkWidget *m_prevRadio;
 
-    DECLARE_DYNAMIC_CLASS(wxMenu)
+    wxDECLARE_DYNAMIC_CLASS(wxMenu);
 };
 
 #endif

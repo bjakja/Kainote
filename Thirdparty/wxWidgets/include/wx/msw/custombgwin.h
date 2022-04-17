@@ -3,7 +3,6 @@
 // Purpose:     wxMSW implementation of wxCustomBackgroundWindow
 // Author:      Vadim Zeitlin
 // Created:     2011-10-10
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,15 +24,15 @@ class wxCustomBackgroundWindow : public W,
 public:
     typedef W BaseWindowClass;
 
-    wxCustomBackgroundWindow() { m_backgroundBrush = nullptr; }
+    wxCustomBackgroundWindow() { m_backgroundBrush = NULL; }
 
     virtual ~wxCustomBackgroundWindow() { delete m_backgroundBrush; }
 
 protected:
-    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp)
+    virtual void DoSetBackgroundBitmap(const wxBitmap& bmp) wxOVERRIDE
     {
         delete m_backgroundBrush;
-        m_backgroundBrush = bmp.IsOk() ? new wxBrush(bmp) : nullptr;
+        m_backgroundBrush = bmp.IsOk() ? new wxBrush(bmp) : NULL;
 
         // Our transparent children should use our background if we have it,
         // otherwise try to restore m_inheritBgCol to some reasonable value: true
@@ -42,7 +41,7 @@ protected:
                                             || BaseWindowClass::UseBgCol();
     }
 
-    virtual WXHBRUSH MSWGetCustomBgBrush()
+    virtual WXHBRUSH MSWGetCustomBgBrush() wxOVERRIDE
     {
         if ( m_backgroundBrush )
             return (WXHBRUSH)m_backgroundBrush->GetResourceHandle();

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ---------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STATBMP
 
@@ -36,14 +32,21 @@
 #endif
 
 #include "wx/msw/private.h"
+#include "wx/msw/dib.h"
+#include "wx/msw/private/winstyle.h"
 
 #include "wx/sysopt.h"
 
 #include <stdio.h>
 
 // ---------------------------------------------------------------------------
-// macors
+// macros
 // ---------------------------------------------------------------------------
+
+wxBEGIN_EVENT_TABLE(wxStaticBitmap, wxStaticBitmapBase)
+    EVT_SIZE(wxStaticBitmap::WXHandleSize)
+    EVT_DPI_CHANGED(wxStaticBitmap::WXHandleDPIChanged)
+wxEND_EVENT_TABLE()
 
 // ===========================================================================
 // implementation
@@ -53,41 +56,8 @@
 // wxStaticBitmap
 // ---------------------------------------------------------------------------
 
-// we may have either bitmap or icon: if a bitmap with mask is passed, we
-// will transform it to an icon ourselves because otherwise the mask will
-// be ignored by Windows
-// note that this function will create a new object every time
-// it is called even if the image needs no conversion
-
-static wxGDIImage* ConvertImage( const wxGDIImage& bitmap )
-{
-    bool isIcon = bitmap.IsKindOf( wxCLASSINFO(wxIcon) );
-
-    if( !isIcon )
-    {
-        wxASSERT_MSG( wxDynamicCast(&bitmap, wxBitmap),
-                      wxT("not an icon and not a bitmap?") );
-
-        const wxBitmap& bmp = (const wxBitmap&)bitmap;
-        wxMask *mask = bmp.GetMask();
-        if ( mask && mask->GetMaskBitmap() )
-        {
-            wxIcon* icon = new wxIcon;
-            icon->CopyFromBitmap(bmp);
-
-            return icon;
-        }
-
-        return new wxBitmap( bmp );
-    }
-
-    // copying a bitmap is a cheap operation
-    return new wxIcon( (const wxIcon&)bitmap );
-}
-
-bool wxStaticBitmap::Create(wxWindow *parent,
+bool wxStaticBitmap::DoCreate(wxWindow *parent,
                             wxWindowID id,
-                            const wxGDIImage& bitmap,
                             const wxPoint& pos,
                             const wxSize& size,
                             long style,
@@ -96,14 +66,6 @@ bool wxStaticBitmap::Create(wxWindow *parent,
     if ( !CreateControl(parent, id, pos, size, style, wxDefaultValidator, name) )
         return false;
 
-    // we may have either bitmap or icon: if a bitmap with mask is passed, we
-    // will transform it to an icon ourselves because otherwise the mask will
-    // be ignored by Windows
-    m_isIcon = bitmap.IsKindOf(wxCLASSINFO(wxIcon));
-
-    wxGDIImage *image = ConvertImage( bitmap );
-    m_isIcon = image->IsKindOf( wxCLASSINFO(wxIcon) );
-
     // create the native control
     if ( !MSWCreateControl(wxT("STATIC"), wxEmptyString, pos, size) )
     {
@@ -111,26 +73,19 @@ bool wxStaticBitmap::Create(wxWindow *parent,
         return false;
     }
 
-    // no need to delete the new image
-    SetImageNoCopy(image);
+    DoUpdateImage(wxSize(), m_icon.IsOk());
 
     // GetBestSize will work properly now, so set the best size if needed
     SetInitialSize(size);
 
-    // painting manually is reported not to work under Windows CE (see #10093),
-    // so don't do it there even if this probably means that alpha is not
-    // supported there -- but at least bitmaps without alpha appear correctly
-#ifndef __WXWINCE__
-    // Windows versions before XP (and even XP if the application has no
-    // manifest and so the old comctl32.dll is used) don't draw correctly the
-    // images with alpha channel so we need to draw them ourselves and it's
-    // easier to just always do it rather than check if we have an image with
-    // alpha or not
+    // if the application has no manifest and so the old comctl32.dll is
+    // used, the images with alpha channel are not correctly drawn so we need
+    // to draw them ourselves and it's easier to just always do it rather than
+    // check if we have an image with alpha or not
     if ( wxTheApp->GetComCtl32Version() < 600 )
     {
-        Connect(wxEVT_PAINT, wxPaintEventHandler(wxStaticBitmap::DoPaintManually));
+        Bind(wxEVT_PAINT, &wxStaticBitmap::DoPaintManually, this);
     }
-#endif // !__WXWINCE__
 
     return true;
 }
@@ -140,7 +95,7 @@ WXDWORD wxStaticBitmap::MSWGetStyle(long style, WXDWORD *exstyle) const
     WXDWORD msStyle = wxControl::MSWGetStyle(style, exstyle);
 
     // what kind of control are we?
-    msStyle |= m_isIcon ? SS_ICON : SS_BITMAP;
+    msStyle |= m_icon.IsOk() ? SS_ICON : SS_BITMAP;
 
     // we use SS_CENTERIMAGE to prevent the control from resizing the bitmap to
     // fit to its size -- this is unexpected and doesn't happen in other ports
@@ -151,52 +106,75 @@ WXDWORD wxStaticBitmap::MSWGetStyle(long style, WXDWORD *exstyle) const
     return msStyle;
 }
 
-bool wxStaticBitmap::ImageIsOk() const
+wxSize wxStaticBitmap::GetImageSize() const
 {
-    return m_image && m_image->IsOk();
+    return m_icon.IsOk() ? m_icon.GetSize()
+                         : m_bitmapBundle.GetPreferredBitmapSizeFor(this);
+}
+
+void wxStaticBitmap::SetIcon(const wxIcon& icon)
+{
+    const wxSize sizeOld = GetImageSize();
+    const bool wasIcon = m_icon.IsOk();
+
+    m_icon = icon;
+    m_bitmapBundle = wxBitmapBundle();
+
+    DoUpdateImage(sizeOld, wasIcon);
+}
+
+void wxStaticBitmap::SetBitmap(const wxBitmapBundle& bitmap)
+{
+    const wxSize sizeOld = GetImageSize();
+    const bool wasIcon = m_icon.IsOk();
+
+    m_icon = wxIcon();
+    m_bitmapBundle = bitmap;
+
+    DoUpdateImage(sizeOld, wasIcon);
 }
 
 wxIcon wxStaticBitmap::GetIcon() const
 {
-    wxCHECK_MSG( m_image, wxIcon(), wxT("no image in wxStaticBitmap") );
+    wxIcon icon = m_icon;
+    if ( !icon.IsOk() && m_bitmapBundle.IsOk() )
+        icon.CopyFromBitmap(m_bitmapBundle.GetBitmapFor(this));
 
-    // we can't ask for an icon if all we have is a bitmap
-    wxCHECK_MSG( m_isIcon, wxIcon(), wxT("no icon in this wxStaticBitmap") );
-
-    return *(wxIcon *)m_image;
+    return icon;
 }
 
 wxBitmap wxStaticBitmap::GetBitmap() const
 {
-    if ( m_isIcon )
-    {
-        // don't fail because we might have replaced the bitmap with icon
-        // ourselves internally in ConvertImage() to keep the transparency but
-        // the user code doesn't know about it so it still can use GetBitmap()
-        // to retrieve the bitmap
-        return wxBitmap(GetIcon());
-    }
-    else // we have a bitmap
-    {
-        wxCHECK_MSG( m_image, wxBitmap(), wxT("no image in wxStaticBitmap") );
+    wxBitmap bitmap = m_bitmapBundle.GetBitmapFor(this);
+    if ( !bitmap.IsOk() && m_icon.IsOk() )
+        bitmap.CopyFromIcon(m_icon);
 
-        return *(wxBitmap *)m_image;
-    }
+    return bitmap;
+}
+
+void wxStaticBitmap::Init()
+{
+    m_currentHandle = 0;
+    m_ownsCurrentHandle = false;
 }
 
 void wxStaticBitmap::Free()
 {
-    wxDELETE(m_image);
+    m_bitmap.UnRef();
+
+    MSWReplaceImageHandle(0);
+
+    if ( m_ownsCurrentHandle )
+    {
+        ::DeleteObject(m_currentHandle);
+        m_ownsCurrentHandle = false;
+    }
 }
 
 wxSize wxStaticBitmap::DoGetBestClientSize() const
 {
-    wxSize size;
-    if ( ImageIsOk() )
-    {
-        size = m_image->GetSize();
-    }
-    else // No image yet
+    wxSize size = GetImageSize();
+    if ( size == wxDefaultSize )
     {
         // this is completely arbitrary
         size.x =
@@ -206,7 +184,24 @@ wxSize wxStaticBitmap::DoGetBestClientSize() const
     return size;
 }
 
-#ifndef __WXWINCE__
+void wxStaticBitmap::WXHandleSize(wxSizeEvent& event)
+{
+    // Invalidate everything when our size changes as the image position (it's
+    // drawn centred in the window client area) changes.
+    Refresh();
+
+    event.Skip();
+}
+
+void wxStaticBitmap::WXHandleDPIChanged(wxDPIChangedEvent& event)
+{
+    // Icons only exist in a single resolution, so don't bother updating in
+    // this case.
+    if ( !m_icon.IsOk() && m_bitmapBundle.IsOk() )
+        DoUpdateImage(wxSize(), false /* not using an icon */);
+
+    event.Skip();
+}
 
 void wxStaticBitmap::DoPaintManually(wxPaintEvent& WXUNUSED(event))
 {
@@ -230,63 +225,88 @@ void wxStaticBitmap::DoPaintManually(wxPaintEvent& WXUNUSED(event))
                   true /* use mask */);
 }
 
-#endif // !__WXWINCE__
-
-void wxStaticBitmap::SetImage( const wxGDIImage* image )
+void wxStaticBitmap::MSWReplaceImageHandle(WXHANDLE handle)
 {
-    wxGDIImage* convertedImage = ConvertImage( *image );
-    SetImageNoCopy( convertedImage );
-}
-
-void wxStaticBitmap::SetImageNoCopy( wxGDIImage* image)
-{
-    Free();
-    InvalidateBestSize();
-
-    m_isIcon = image->IsKindOf( wxCLASSINFO(wxIcon) );
-    // the image has already been copied
-    m_image = image;
-
-    int x, y;
-    int w, h;
-    GetPosition(&x, &y);
-    GetSize(&w, &h);
-
-#ifdef __WIN32__
-    HANDLE handle = (HANDLE)m_image->GetHandle();
-    LONG style = ::GetWindowLong( (HWND)GetHWND(), GWL_STYLE ) ;
-    ::SetWindowLong( (HWND)GetHWND(), GWL_STYLE, ( style & ~( SS_BITMAP|SS_ICON ) ) |
-                     ( m_isIcon ? SS_ICON : SS_BITMAP ) );
     HGDIOBJ oldHandle = (HGDIOBJ)::SendMessage(GetHwnd(), STM_SETIMAGE,
-                  m_isIcon ? IMAGE_ICON : IMAGE_BITMAP, (LPARAM)handle);
+                  m_icon.IsOk() ? IMAGE_ICON : IMAGE_BITMAP, (LPARAM)handle);
     // detect if this is still the handle we passed before or
     // if the static-control made a copy of the bitmap!
-    if (m_currentHandle != 0 && oldHandle != (HGDIOBJ) m_currentHandle)
+    if (oldHandle != 0 && oldHandle != (HGDIOBJ) m_currentHandle)
     {
         // the static control made a copy and we are responsible for deleting it
-        DeleteObject((HGDIOBJ) oldHandle);
+        ::DeleteObject((HGDIOBJ) oldHandle);
     }
-    m_currentHandle = (WXHANDLE)handle;
-#endif // Win32
+}
 
-    if ( ImageIsOk() )
+void wxStaticBitmap::DoUpdateImage(const wxSize& sizeOld, bool wasIcon)
+{
+    const wxSize sizeNew = GetImageSize();
+
+    Free();
+
+    // For the icons we just use its HICON directly, but for bitmaps we create
+    // our own temporary bitmap and need to delete its handle manually later.
+    if ( !m_icon.IsOk() )
     {
-        int width = image->GetWidth(),
-            height = image->GetHeight();
-        if ( width && height )
-        {
-            w = width;
-            h = height;
+        wxBitmap bitmap = m_bitmapBundle.GetBitmapFor(this);
 
-            ::MoveWindow(GetHwnd(), x, y, width, height, FALSE);
+#if wxUSE_WXDIB
+        // wxBitmap normally stores alpha in pre-multiplied format but
+        // apparently STM_SETIMAGE message handler does pre-multiplication
+        // internally so we need to undo the pre-multiplication here for a
+        // while (this is similar to what we do in ImageList::Add()).
+        if ( bitmap.HasAlpha() )
+        {
+            // For bitmap with alpha channel create temporary DIB with
+            // not-premultiplied alpha values.
+            m_currentHandle = wxDIB(bitmap.ConvertToImage(),
+                                    wxDIB::PixelFormat_NotPreMultiplied)
+                .Detach();
+            m_ownsCurrentHandle = true;
+        }
+        else if ( bitmap.GetMask() )
+        {
+            // The native control doesn't know anything about the bitmap mask,
+            // so we need to use an icon in this case.
+            //
+            // Alternatively, we could convert mask to alpha and it's not
+            // really clear what is better, but we used to use icons for
+            // bitmaps with masks before, so let's keep doing it until we find
+            // a good reason not to.
+            m_icon.CopyFromBitmap(bitmap);
+        }
+        else
+#endif // wxUSE_WXDIB
+        {
+            // Just use the HBITMAP as is, but also make a copy of the bitmap
+            // to ensure that HBITMAP remains valid for as long as we need it
+            m_bitmap = bitmap;
+            m_currentHandle = bitmap.GetHandle();
         }
     }
 
-    RECT rect;
-    rect.left   = x;
-    rect.top    = y;
-    rect.right  = x + w;
-    rect.bottom = y + h;
+    const bool isIcon = m_icon.IsOk();
+    if ( isIcon )
+    {
+        m_currentHandle = m_icon.GetHandle();
+    }
+
+    if ( isIcon != wasIcon )
+    {
+        wxMSWWinStyleUpdater(GetHwnd())
+            .TurnOff(SS_BITMAP | SS_ICON)
+            .TurnOn(isIcon ? SS_ICON : SS_BITMAP);
+    }
+
+    MSWReplaceImageHandle(m_currentHandle);
+
+    if ( sizeNew != sizeOld )
+    {
+        InvalidateBestSize();
+        SetSize(GetBestSize());
+    }
+
+    RECT rect = wxGetWindowRect(GetHwnd());
     ::InvalidateRect(GetHwndOf(GetParent()), &rect, TRUE);
 }
 

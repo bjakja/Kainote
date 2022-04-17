@@ -3,8 +3,7 @@
 // Purpose:     wxTimePickerCtrl for Windows.
 // Author:      Vadim Zeitlin
 // Created:     2011-09-22
-// RCS-ID:      $Id$
-// Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -48,12 +47,14 @@ public:
     }
 
     // Override MSW-specific functions used during control creation.
-    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const;
+    virtual WXDWORD MSWGetStyle(long style, WXDWORD *exstyle) const wxOVERRIDE;
 
 protected:
-    virtual wxLocaleInfo MSWGetFormat() const;
-    virtual bool MSWAllowsNone() const { return false; }
-    virtual bool MSWOnDateTimeChange(const tagNMDATETIMECHANGE& dtch);
+#if wxUSE_INTL
+    virtual wxLocaleInfo MSWGetFormat() const wxOVERRIDE;
+#endif // wxUSE_INTL
+    virtual bool MSWAllowsNone() const wxOVERRIDE { return false; }
+    virtual bool MSWOnDateTimeChange(const tagNMDATETIMECHANGE& dtch) wxOVERRIDE;
 
     wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTimePickerCtrl);
 };

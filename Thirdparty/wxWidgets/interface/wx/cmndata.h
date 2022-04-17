@@ -2,7 +2,6 @@
 // Name:        cmndata.h
 // Purpose:     interface of print wx*Data classes
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -255,36 +254,6 @@ enum wxPrintBin
     wxPageSetupDialogData, as part of the mechanism for transferring data
     between the print dialogs and the application.
 
-    @remarks
-
-    The following functions are specific to PostScript printing and have not
-    yet been documented:
-
-    @code
-    const wxString& GetPrinterCommand() const ;
-    const wxString& GetPrinterOptions() const ;
-    const wxString& GetPreviewCommand() const ;
-    const wxString& GetFilename() const ;
-    const wxString& GetFontMetricPath() const ;
-    double GetPrinterScaleX() const ;
-    double GetPrinterScaleY() const ;
-    long GetPrinterTranslateX() const ;
-    long GetPrinterTranslateY() const ;
-    // wxPRINT_MODE_PREVIEW, wxPRINT_MODE_FILE, wxPRINT_MODE_PRINTER
-
-    void SetPrinterCommand(const wxString& command) ;
-    void SetPrinterOptions(const wxString& options) ;
-    void SetPreviewCommand(const wxString& command) ;
-    void SetFilename(const wxString& filename) ;
-    void SetFontMetricPath(const wxString& path) ;
-    void SetPrinterScaleX(double x) ;
-    void SetPrinterScaleY(double y) ;
-    void SetPrinterScaling(double x, double y) ;
-    void SetPrinterTranslateX(long x) ;
-    void SetPrinterTranslateY(long y) ;
-    void SetPrinterTranslation(long x, long y) ;
-    @endcode
-
     @library{wxcore}
     @category{printing,data}
 
@@ -415,8 +384,18 @@ public:
         Sets the paper id. This indicates the type of paper to be used. For a
         mapping between paper id, paper size and string name, see
         wxPrintPaperDatabase in @c "paper.h" (not yet documented).
+
+        @see SetPaperSize()
     */
     void SetPaperId(wxPaperSize paperId);
+
+    /**
+        Sets custom paper size.
+
+        This method can be used to set up custom paper size. When using a
+        standard size, prefer to use SetPaperId() instead.
+     */
+    void SetPaperSize(const wxSize& size);
 
     /**
         Sets the printer name. This can be the empty string to indicate that

@@ -2,7 +2,6 @@
 // Name:        fontenum.h
 // Purpose:     interface of wxFontEnumerator
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -73,6 +72,17 @@ public:
         of an installed font and it can safely be used with wxFont::SetFaceName.
     */
     static bool IsValidFacename(const wxString& facename);
+
+    /**
+        Invalidate cache used by some of the methods of this class internally.
+
+        This method should be called if the list of the fonts available on the
+        system changes, for whatever reason. In particular, it is called
+        automatically by wxFont::AddPrivateFont().
+
+        @since 3.1.1
+     */
+    static void InvalidateCache();
 
     /**
         Called by EnumerateFacenames() for each match.

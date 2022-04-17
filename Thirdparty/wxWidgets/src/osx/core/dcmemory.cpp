@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,7 +20,7 @@
 // wxMemoryDCImpl
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl,wxPaintDCImpl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxMemoryDCImpl, wxPaintDCImpl);
 
 
 wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner )
@@ -57,7 +56,7 @@ wxMemoryDCImpl::~wxMemoryDCImpl()
 {
     if ( m_selected.IsOk() )
     {
-        m_selected.EndRawAccess() ;
+        m_selected.SetSelectedInto(NULL);
         wxDELETE(m_graphicContext);
     }
 }
@@ -66,18 +65,21 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
 {
     if ( m_selected.IsOk() )
     {
-        m_selected.EndRawAccess() ;
+        m_selected.SetSelectedInto(NULL);
         wxDELETE(m_graphicContext);
     }
 
     m_selected = bitmap;
     if (m_selected.IsOk())
     {
-        if ( m_selected.GetDepth() != 1 )
-            m_selected.UseAlpha() ;
-        m_selected.BeginRawAccess() ;
-        m_width = bitmap.GetWidth();
-        m_height = bitmap.GetHeight();
+        wxASSERT_MSG( !bitmap.GetSelectedInto() ||
+                     (bitmap.GetSelectedInto() == GetOwner()),
+                     "Bitmap is selected in another wxMemoryDC, delete the first wxMemoryDC or use SelectObject(NULL)" );
+
+        m_selected.SetSelectedInto(GetOwner());
+        m_width = bitmap.GetLogicalWidth();
+        m_height = bitmap.GetLogicalHeight();
+        m_contentScaleFactor = bitmap.GetScaleFactor();
         CGColorSpaceRef genericColorSpace  = wxMacGetGenericRGBColorSpace();
         CGContextRef bmCtx = (CGContextRef) m_selected.GetHBITMAP();
 
@@ -86,6 +88,10 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
             CGContextSetFillColorSpace( bmCtx, genericColorSpace );
             CGContextSetStrokeColorSpace( bmCtx, genericColorSpace );
             SetGraphicsContext( wxGraphicsContext::CreateFromNative( bmCtx ) );
+            if (m_graphicContext)
+            {
+                m_graphicContext->SetContentScaleFactor(m_contentScaleFactor);
+            }
         }
         m_ok = (m_graphicContext != NULL) ;
     }
@@ -100,9 +106,9 @@ void wxMemoryDCImpl::DoGetSize( int *width, int *height ) const
     if (m_selected.IsOk())
     {
         if (width)
-            (*width) = m_selected.GetWidth();
+            (*width) = m_selected.GetLogicalWidth();
         if (height)
-            (*height) = m_selected.GetHeight();
+            (*height) = m_selected.GetLogicalHeight();
     }
     else
     {

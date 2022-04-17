@@ -3,7 +3,6 @@
 // Purpose:     wxRadioBox unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-14
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_RADIOBOX
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -27,8 +23,8 @@ class RadioBoxTestCase : public CppUnit::TestCase
 public:
     RadioBoxTestCase() { }
 
-    void setUp();
-    void tearDown();
+    void setUp() wxOVERRIDE;
+    void tearDown() wxOVERRIDE;
 
 private:
     CPPUNIT_TEST_SUITE( RadioBoxTestCase );
@@ -55,7 +51,7 @@ private:
 
     wxRadioBox* m_radio;
 
-    DECLARE_NO_COPY_CLASS(RadioBoxTestCase)
+    wxDECLARE_NO_COPY_CLASS(RadioBoxTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default

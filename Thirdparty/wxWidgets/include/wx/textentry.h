@@ -3,8 +3,7 @@
 // Purpose:     declares wxTextEntry interface defining a simple text entry
 // Author:      Vadim Zeitlin
 // Created:     2007-09-24
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -58,7 +57,7 @@ public:
 
     virtual void Replace(long from, long to, const wxString& value);
     virtual void Remove(long from, long to) = 0;
-    virtual void Clear() { SetValue(wxString()); }
+    virtual void Clear() { Remove(0, -1); }
     void RemoveSelection();
 
 
@@ -98,6 +97,8 @@ public:
 
     virtual void SetSelection(long from, long to) = 0;
     virtual void SelectAll() { SetSelection(-1, -1); }
+    virtual void SelectNone()
+        { const long pos = GetInsertionPoint(); SetSelection(pos, pos); }
     virtual void GetSelection(long *from, long *to) const = 0;
     bool HasSelection() const;
     virtual wxString GetStringSelection() const;
@@ -137,9 +138,15 @@ public:
     virtual void SetEditable(bool editable) = 0;
 
 
+    // input restrictions
+    // ------------------
+
     // set the max number of characters which may be entered in a single line
     // text control
     virtual void SetMaxLength(unsigned long WXUNUSED(len)) { }
+
+    // convert any lower-case characters to upper-case on the fly in this entry
+    virtual void ForceUpper();
 
 
     // hints
@@ -171,20 +178,20 @@ public:
     // implementation only
     // -------------------
 
-    // generate the wxEVT_COMMAND_TEXT_UPDATED event for GetEditableWindow(),
+    // generate the wxEVT_TEXT event for GetEditableWindow(),
     // like SetValue() does and return true if the event was processed
     //
     // NB: this is public for wxRichTextCtrl use only right now, do not call it
     static bool SendTextUpdatedEvent(wxWindow *win);
 
-    // generate the wxEVT_COMMAND_TEXT_UPDATED event for this window
+    // generate the wxEVT_TEXT event for this window
     bool SendTextUpdatedEvent()
     {
         return SendTextUpdatedEvent(GetEditableWindow());
     }
 
 
-    // generate the wxEVT_COMMAND_TEXT_UPDATED event for this window if the
+    // generate the wxEVT_TEXT event for this window if the
     // events are not currently disabled
     void SendTextUpdatedEventIfAllowed()
     {
@@ -206,6 +213,10 @@ public:
         else
             SuppressTextChangedEvents();
     }
+
+    // change the entry value to be in upper case only, if needed (i.e. if it's
+    // not already the case)
+    void ConvertToUpperCase();
 
 protected:
     // flags for DoSetValue(): common part of SetValue() and ChangeValue() and
@@ -318,8 +329,8 @@ private:
     #include "wx/msw/textentry.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/textentry.h"
-#elif defined(__WXPM__)
-    #include "wx/os2/textentry.h"
+#elif defined(__WXQT__)
+    #include "wx/qt/textentry.h"
 #else
     // no platform-specific implementation of wxTextEntry yet
     class WXDLLIMPEXP_CORE wxTextEntry : public wxTextEntryBase

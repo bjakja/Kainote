@@ -4,17 +4,13 @@
 // Author:      Vadim Zeitlin, Robert Roebling
 // Modified by:
 // Created:     19.10.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets Team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_DATAOBJ
 
@@ -23,6 +19,9 @@
 #ifndef WX_PRECOMP
     #include "wx/app.h"
 #endif
+
+#include "wx/mstream.h"
+#include "wx/textbuf.h"
 
 // ----------------------------------------------------------------------------
 // lists
@@ -106,7 +105,7 @@ wxDataObjectComposite::GetObject(const wxDataFormat& format, wxDataObjectBase::D
           return dataObj;
         node = node->GetNext();
     }
-    return nullptr;
+    return NULL;
 }
 
 void wxDataObjectComposite::Add(wxDataObjectSimple *dataObject, bool preferred)
@@ -153,7 +152,7 @@ const void* wxDataObjectComposite::GetSizeFromBuffer( const void* buffer,
 {
     wxDataObjectSimple *dataObj = GetObject(format);
 
-    wxCHECK_MSG( dataObj, nullptr,
+    wxCHECK_MSG( dataObj, NULL,
                  wxT("unsupported format in wxDataObjectComposite"));
 
     return dataObj->GetSizeFromBuffer( buffer, size, format );
@@ -165,7 +164,7 @@ void* wxDataObjectComposite::SetSizeInBuffer( void* buffer, size_t size,
 {
     wxDataObjectSimple *dataObj = GetObject( format );
 
-    wxCHECK_MSG( dataObj, nullptr,
+    wxCHECK_MSG( dataObj, NULL,
                  wxT("unsupported format in wxDataObjectComposite"));
 
     return dataObj->SetSizeInBuffer( buffer, size, format );
@@ -283,12 +282,12 @@ bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
 }
 
 bool wxTextDataObject::SetData(const wxDataFormat& format,
-                               size_t WXUNUSED(len), const void *buf)
+                               size_t len, const void *buf)
 {
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
-    wxWCharBuffer buffer = GetConv(format).cMB2WX( (const char*)buf );
+    wxWCharBuffer buffer = GetConv(format).cMB2WC((const char*)buf, len, NULL);
 
     SetText( buffer );
 
@@ -299,13 +298,14 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
 
 size_t wxTextDataObject::GetDataSize(const wxDataFormat& format) const
 {
+    const wxString& text = GetText();
     if ( format == wxDF_UNICODETEXT || wxLocaleIsUtf8 )
     {
-        return m_text.utf8_length();
+        return text.utf8_length();
     }
     else // wxDF_TEXT
     {
-        const wxCharBuffer buf(wxConvLocal.cWC2MB(m_text.wc_str()));
+        const wxCharBuffer buf(wxConvLocal.cWC2MB(text.wc_str()));
         return buf ? strlen(buf) : 0;
     }
 }
@@ -315,13 +315,14 @@ bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
     if ( !buf )
         return false;
 
+    const wxString& text = GetText();
     if ( format == wxDF_UNICODETEXT || wxLocaleIsUtf8 )
     {
-        memcpy(buf, m_text.utf8_str(), m_text.utf8_length());
+        memcpy(buf, text.utf8_str(), text.utf8_length());
     }
     else // wxDF_TEXT
     {
-        const wxCharBuffer bufLocal(wxConvLocal.cWC2MB(m_text.wc_str()));
+        const wxCharBuffer bufLocal(wxConvLocal.cWC2MB(text.wc_str()));
         if ( !bufLocal )
             return false;
 
@@ -336,7 +337,7 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
 {
     const char * const buf = static_cast<const char *>(buf_);
 
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
     if ( format == wxDF_UNICODETEXT || wxLocaleIsUtf8 )
@@ -346,11 +347,11 @@ bool wxTextDataObject::SetData(const wxDataFormat& format,
         // is not in UTF-8 so do an extra check for tranquility, it shouldn't
         // matter much if we lose a bit of performance when pasting from
         // clipboard
-        m_text = wxString::FromUTF8(buf, len);
+        SetText(wxString::FromUTF8(buf, len));
     }
     else // wxDF_TEXT, convert from current (non-UTF8) locale
     {
-        m_text = wxConvLocal.cMB2WC(buf, len, nullptr);
+        SetText(wxConvLocal.cMB2WC(buf, len, NULL));
     }
 
     return true;
@@ -375,12 +376,12 @@ inline wxMBConv& GetConv(const wxDataFormat& format)
 
 size_t wxTextDataObject::GetDataSize(const wxDataFormat& format) const
 {
-    return GetConv(format).WC2MB(nullptr, GetText().wc_str(), 0);
+    return GetConv(format).WC2MB(NULL, GetText().wc_str(), 0);
 }
 
 bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
 {
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
     wxCharBuffer buffer(GetConv(format).cWX2MB(GetText().c_str()));
@@ -391,45 +392,63 @@ bool wxTextDataObject::GetDataHere(const wxDataFormat& format, void *buf) const
 }
 
 bool wxTextDataObject::SetData(const wxDataFormat& format,
-                               size_t WXUNUSED(len),
+                               size_t len,
                                const void *buf)
 {
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
-    SetText(GetConv(format).cMB2WX(static_cast<const char*>(buf)));
+    SetText(GetConv(format).cMB2WC(static_cast<const char*>(buf), len, NULL));
 
     return true;
 }
 
 #else // !wxNEEDS_UTF{8,16}_FOR_TEXT_DATAOBJ
 
+// NB: This branch, using native wxChar for the clipboard, is only used under
+//     Windows currently. It's just a coincidence, but Windows is also the only
+//     platform where we need to convert the text to the native EOL format, so
+//     wxTextBuffer::Translate() is only used here and not in the code above.
+
 size_t wxTextDataObject::GetDataSize() const
 {
-    return GetTextLength() * sizeof(wxChar);
+    return (wxTextBuffer::Translate(GetText()).length() + 1)*sizeof(wxChar);
 }
 
 bool wxTextDataObject::GetDataHere(void *buf) const
 {
+    const wxString textNative = wxTextBuffer::Translate(GetText());
+
     // NOTE: use wxTmemcpy() instead of wxStrncpy() to allow
     //       retrieval of strings with embedded NULLs
-    wxTmemcpy( (wxChar*)buf, GetText().c_str(), GetTextLength() );
+    wxTmemcpy(static_cast<wxChar*>(buf),
+              textNative.t_str(),
+              textNative.length() + 1);
 
     return true;
 }
 
 bool wxTextDataObject::SetData(size_t len, const void *buf)
 {
-    SetText( wxString((const wxChar*)buf, len/sizeof(wxChar)) );
+    const wxString
+        text = wxString(static_cast<const wxChar*>(buf), len/sizeof(wxChar));
+    SetText(wxTextBuffer::Translate(text, wxTextFileType_Unix));
 
     return true;
 }
 
 #endif // different wxTextDataObject implementations
 
+// ----------------------------------------------------------------------------
+// wxHTMLDataObject
+// ----------------------------------------------------------------------------
+
 size_t wxHTMLDataObject::GetDataSize() const
 {
-    const wxScopedCharBuffer buffer(GetHTML().utf8_str());
+    // Ensure that the temporary string returned by GetHTML() is kept alive for
+    // as long as we need it here.
+    const wxString& htmlStr = GetHTML();
+    const wxScopedCharBuffer buffer(htmlStr.utf8_str());
 
     size_t size = buffer.length();
 
@@ -448,7 +467,8 @@ bool wxHTMLDataObject::GetDataHere(void *buf) const
         return false;
 
     // Windows and Mac always use UTF-8, and docs suggest GTK does as well.
-    const wxScopedCharBuffer html(GetHTML().utf8_str());
+    const wxString& htmlStr = GetHTML();
+    const wxScopedCharBuffer html(htmlStr.utf8_str());
     if ( !html )
         return false;
 
@@ -504,7 +524,7 @@ bool wxHTMLDataObject::GetDataHere(void *buf) const
 
 bool wxHTMLDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 {
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
     // Windows and Mac always use UTF-8, and docs suggest GTK does as well.
@@ -539,7 +559,7 @@ bool wxHTMLDataObject::SetData(size_t WXUNUSED(len), const void *buf)
 wxCustomDataObject::wxCustomDataObject(const wxDataFormat& format)
     : wxDataObjectSimple(format)
 {
-    m_data = nullptr;
+    m_data = NULL;
     m_size = 0;
 }
 
@@ -565,7 +585,7 @@ void wxCustomDataObject::Free()
 {
     delete [] (char*)m_data;
     m_size = 0;
-    m_data = nullptr;
+    m_data = NULL;
 }
 
 size_t wxCustomDataObject::GetDataSize() const
@@ -575,11 +595,11 @@ size_t wxCustomDataObject::GetDataSize() const
 
 bool wxCustomDataObject::GetDataHere(void *buf) const
 {
-    if ( buf == nullptr )
+    if ( buf == NULL )
         return false;
 
     void *data = GetData();
-    if ( data == nullptr )
+    if ( data == NULL )
         return false;
 
     memcpy( buf, data, GetSize() );
@@ -592,13 +612,66 @@ bool wxCustomDataObject::SetData(size_t size, const void *buf)
     Free();
 
     m_data = Alloc(size);
-    if ( m_data == nullptr )
+    if ( m_data == NULL )
         return false;
 
     m_size = size;
     memcpy( m_data, buf, m_size );
 
     return true;
+}
+
+// ----------------------------------------------------------------------------
+// wxImageDataObject
+// ----------------------------------------------------------------------------
+
+#if defined(__WXMSW__)
+#define wxIMAGE_FORMAT_DATA wxDF_PNG
+#define wxIMAGE_FORMAT_BITMAP_TYPE wxBITMAP_TYPE_PNG
+#define wxIMAGE_FORMAT_NAME "PNG"
+#elif defined(__WXGTK__)
+#define wxIMAGE_FORMAT_DATA wxDF_BITMAP
+#define wxIMAGE_FORMAT_BITMAP_TYPE wxBITMAP_TYPE_PNG
+#define wxIMAGE_FORMAT_NAME "PNG"
+#elif defined(__WXOSX__)
+#define wxIMAGE_FORMAT_DATA wxDF_BITMAP
+#define wxIMAGE_FORMAT_BITMAP_TYPE wxBITMAP_TYPE_TIFF
+#define wxIMAGE_FORMAT_NAME "TIFF"
+#else
+#define wxIMAGE_FORMAT_DATA wxDF_BITMAP
+#define wxIMAGE_FORMAT_BITMAP_TYPE wxBITMAP_TYPE_PNG
+#define wxIMAGE_FORMAT_NAME "PNG"
+#endif
+
+wxImageDataObject::wxImageDataObject(const wxImage& image)
+    : wxCustomDataObject(wxIMAGE_FORMAT_DATA)
+{
+    if ( image.IsOk() )
+    {
+        SetImage(image);
+    }
+}
+
+void wxImageDataObject::SetImage(const wxImage& image)
+{
+    wxCHECK_RET(wxImage::FindHandler(wxIMAGE_FORMAT_BITMAP_TYPE) != NULL,
+        wxIMAGE_FORMAT_NAME " image handler must be installed to use clipboard with image");
+
+    wxMemoryOutputStream mem;
+    image.SaveFile(mem, wxIMAGE_FORMAT_BITMAP_TYPE);
+
+    SetData(mem.GetLength(), mem.GetOutputStreamBuffer()->GetBufferStart());
+}
+
+wxImage wxImageDataObject::GetImage() const
+{
+    wxCHECK_MSG(wxImage::FindHandler(wxIMAGE_FORMAT_BITMAP_TYPE) != NULL, wxNullImage,
+        wxIMAGE_FORMAT_NAME " image handler must be installed to use clipboard with image");
+
+    wxMemoryInputStream mem(GetData(), GetSize());
+    wxImage image;
+    image.LoadFile(mem, wxIMAGE_FORMAT_BITMAP_TYPE);
+    return image;
 }
 
 // ============================================================================

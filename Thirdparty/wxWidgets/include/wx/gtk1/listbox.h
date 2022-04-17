@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/listbox.h
 // Purpose:     wxListBox class declaration
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ public:
             int n = 0, const wxString choices[] = (const wxString *) NULL,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxListBoxNameStr )
+            const wxString& name = wxASCII_STR(wxListBoxNameStr) )
     {
 #if wxUSE_CHECKLISTBOX
         m_hasCheckBoxes = false;
@@ -44,7 +43,7 @@ public:
             const wxArrayString& choices,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxListBoxNameStr )
+            const wxString& name = wxASCII_STR(wxListBoxNameStr) )
     {
 #if wxUSE_CHECKLISTBOX
         m_hasCheckBoxes = false;
@@ -59,14 +58,14 @@ public:
                 int n = 0, const wxString choices[] = (const wxString *) NULL,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxListBoxNameStr);
+                const wxString& name = wxASCII_STR(wxListBoxNameStr));
     bool Create(wxWindow *parent, wxWindowID id,
                 const wxPoint& pos,
                 const wxSize& size,
                 const wxArrayString& choices,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxListBoxNameStr);
+                const wxString& name = wxASCII_STR(wxListBoxNameStr));
 
     // implement base class pure virtuals
     virtual void DoClear();
@@ -134,7 +133,7 @@ private:
     // allocate it if it's needed (hence using pointer)
     wxSortedArrayString *m_strings;
 
-    DECLARE_DYNAMIC_CLASS(wxListBox)
+    wxDECLARE_DYNAMIC_CLASS(wxListBox);
 };
 
 #endif // __GTKLISTBOXH__

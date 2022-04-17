@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     12.03.02
-// RCS-ID:      $Id$
 // Copyright:   (c) 2002 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,10 +11,14 @@
 #ifndef _WX_GTK_PRIVATE_H_
 #define _WX_GTK_PRIVATE_H_
 
-#include <gtk/gtk.h>
+#include "wx/gtk/private/wrapgtk.h"
 
 #include "wx/gtk/private/string.h"
-#include "wx/gtk/private/gtk2-compat.h"
+
+#ifndef G_VALUE_INIT
+    // introduced in GLib 2.30
+    #define G_VALUE_INIT { 0, { { 0 } } }
+#endif
 
 // pango_version_check symbol is quite recent ATM (4/2007)... so we
 // use our own wrapper which implements a smart trick.

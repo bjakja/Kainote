@@ -3,7 +3,6 @@
 // Purpose:     wxTimer for wxBase (unix)
 // Author:      Lukasz Michalski
 // Created:     15/01/2005
-// RCS-ID:      $Id$
 // Copyright:   (c) Lukasz Michalski
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,9 +30,9 @@ public:
     wxUnixTimerImpl(wxTimer *timer);
     virtual ~wxUnixTimerImpl();
 
-    virtual bool IsRunning() const;
-    virtual bool Start(int milliseconds = -1, bool oneShot = false);
-    virtual void Stop();
+    virtual bool IsRunning() const wxOVERRIDE;
+    virtual bool Start(int milliseconds = -1, bool oneShot = false) wxOVERRIDE;
+    virtual void Stop() wxOVERRIDE;
 
     // for wxTimerScheduler only: resets the internal flag indicating that the
     // timer is running

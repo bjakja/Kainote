@@ -2,63 +2,8 @@
 // Name:        control.h
 // Purpose:     interface of wxControl
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
-
-/**
-    Flags used by wxControl::Ellipsize function.
-*/
-enum wxEllipsizeFlags
-{
-    /// No special flags.
-    wxELLIPSIZE_FLAGS_NONE = 0,
-
-    /**
-        Take mnemonics into account when calculating the text width.
-
-        With this flag when calculating the size of the passed string,
-        mnemonics characters (see wxControl::SetLabel) will be automatically
-        reduced to a single character. This leads to correct calculations only
-        if the string passed to Ellipsize() will be used with
-        wxControl::SetLabel. If you don't want ampersand to be interpreted as
-        mnemonics (e.g. because you use wxControl::SetLabelText) then don't use
-        this flag.
-     */
-    wxELLIPSIZE_FLAGS_PROCESS_MNEMONICS = 1,
-
-    /**
-        Expand tabs in spaces when calculating the text width.
-
-        This flag tells wxControl::Ellipsize() to calculate the width of tab
-        characters @c '\\t' as 6 spaces.
-     */
-    wxELLIPSIZE_FLAGS_EXPAND_TABS = 2,
-
-    /// The default flags for wxControl::Ellipsize.
-    wxELLIPSIZE_FLAGS_DEFAULT = wxELLIPSIZE_FLAGS_PROCESS_MNEMONICS|
-                                wxELLIPSIZE_FLAGS_EXPAND_TABS
-};
-
-
-/**
-    The different ellipsization modes supported by the
-    wxControl::Ellipsize function.
-*/
-enum wxEllipsizeMode
-{
-    /// Don't ellipsize the text at all. @since 2.9.1
-    wxELLIPSIZE_NONE,
-
-    /// Put the ellipsis at the start of the string, if the string needs ellipsization.
-    wxELLIPSIZE_START,
-
-    /// Put the ellipsis in the middle of the string, if the string needs ellipsization.
-    wxELLIPSIZE_MIDDLE,
-
-    /// Put the ellipsis at the end of the string, if the string needs ellipsization.
-    wxELLIPSIZE_END
-};
 
 /**
     @class wxControl
@@ -104,6 +49,8 @@ public:
             obviously not correctly sized.
         @param style
             Control style. For generic window styles, please see wxWindow.
+        @param validator
+            Control validator.
         @param name
             Control name.
     */
@@ -117,7 +64,7 @@ public:
        Default constructor to allow 2-phase creation.
     */
     wxControl();
-    
+
     bool Create(wxWindow *parent, wxWindowID id,
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize, long style = 0,
@@ -151,6 +98,68 @@ public:
         was passed to SetLabelText().
     */
     wxString GetLabelText() const;
+
+    /**
+        Determine the size needed by the control to leave the given area for
+        its text.
+
+        This function is mostly useful with control displaying short amounts of
+        text that can be edited by the user, e.g. wxTextCtrl, wxComboBox,
+        wxSearchCtrl etc. Typically it is used to size these controls for the
+        maximal amount of input they are supposed to contain, for example:
+        @code
+            // Create a control for post code entry.
+            wxTextCtrl* postcode = new wxTextCtrl(this, ...);
+
+            // And set its initial and minimal size to be big enough for
+            // entering 5 digits.
+            postcode->SetInitialSize(
+                postcode->GetSizeFromTextSize(
+                    postcode->GetTextExtent("99999")));
+        @endcode
+
+        Currently this method is only implemented for wxTextCtrl, wxComboBox
+        and wxChoice in wxMSW and wxGTK.
+
+        @param xlen The horizontal extent of the area to leave for text, in
+            pixels.
+        @param ylen The vertical extent of the area to leave for text, in
+            pixels. By default -1 meaning that the vertical component of the
+            returned size should be the default height of this control.
+        @return The size that the control should have to leave the area of the
+            specified size for its text. May return wxDefaultSize if this
+            method is not implemented for this particular control under the
+            current platform.
+
+        @since 2.9.5
+     */
+    wxSize GetSizeFromTextSize(int xlen, int ylen = -1) const;
+
+    /**
+        @overload
+    */
+    wxSize GetSizeFromTextSize(const wxSize& tsize) const;
+
+    /**
+        Determine the minimum size needed by the control to display the given text.
+
+        The helper function that uses combination of GetSizeFromTextSize() and
+        GetTextExtent() which used together pretty often:
+        @code
+            wxSize GetSizeFromText(const wxString& text) const
+            {
+                return GetSizeFromTextSize(GetTextExtent(text).GetWidth());
+            }
+        @endcode
+
+        @param text The given text.
+        @return The size that the control should have to leave the area of the
+            specified text. May return wxDefaultSize if this method is not
+            implemented for this particular control under the current platform.
+
+        @since 3.1.3
+     */
+    wxSize GetSizeFromText(const wxString& text) const;
 
     /**
         Sets the control's label.
@@ -344,7 +353,7 @@ public:
 
 
 public:     // static functions
-    
+
     /**
         Returns the given @a label string without mnemonics ("&" characters).
     */
@@ -352,7 +361,7 @@ public:     // static functions
 
     /**
         Returns the given @a str string without mnemonics ("&" characters).
-        
+
         @note This function is identical to GetLabelText() and is provided
               mostly for symmetry with EscapeMnemonics().
     */
@@ -395,7 +404,8 @@ public:     // static functions
             wxDC::GetPartialTextExtents() function.
         @param mode
             The ellipsization mode. This is the setting which determines
-            which part of the string should be replaced by the ellipsis.
+            which part of the string should be replaced by the ellipsis
+            (unless it is ::wxELLIPSIZE_NONE in which case nothing is done).
             See ::wxEllipsizeMode enumeration values for more info.
         @param maxWidth
             The maximum width of the returned string in pixels.

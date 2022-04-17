@@ -5,7 +5,6 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     10.02.03
-// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Mattia Barbon
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +23,7 @@ public:
                     const wxSize& size = wxDefaultSize,
                     long style = 0,
                     const wxValidator& val = wxDefaultValidator,
-                    const wxString& name = wxCheckBoxNameStr )
+                    const wxString& name = wxASCII_STR(wxCheckBoxNameStr) )
     {
         Init();
 
@@ -36,18 +35,18 @@ public:
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
                  const wxValidator& val = wxDefaultValidator,
-                 const wxString &name = wxCheckBoxNameStr );
+                 const wxString &name = wxASCII_STR(wxCheckBoxNameStr) );
 
 protected:
     virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxToggleButton)
+    wxDECLARE_DYNAMIC_CLASS(wxToggleButton);
 
     // common part of all constructors
     void Init()
     {
-        m_evtType = wxEVT_COMMAND_TOGGLEBUTTON_CLICKED;
+        m_evtType = wxEVT_TOGGLEBUTTON;
     }
 };
 

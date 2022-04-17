@@ -5,17 +5,13 @@
 // Author:      Julian Smart
 // Modified by: Vaclav Slavik
 // Created:     24/3/98
-// RCS-ID:      $Id$
 // Copyright:   (c)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TASKBARICON
 
@@ -31,36 +27,20 @@
 
 #include <string.h>
 #include "wx/taskbar.h"
+#include "wx/platinfo.h"
 #include "wx/msw/private.h"
-#include "wx/dynlib.h"
 
 #ifndef NIN_BALLOONTIMEOUT
     #define NIN_BALLOONTIMEOUT      0x0404
     #define NIN_BALLOONUSERCLICK    0x0405
 #endif
 
-#ifndef NIM_SETVERSION
-    #define NIM_SETVERSION  0x00000004
+#ifndef NIIF_USER
+    #define NIIF_USER       0x0004
 #endif
 
-#ifndef NIF_INFO
-    #define NIF_INFO        0x00000010
-#endif
-
-#ifndef NOTIFYICONDATA_V1_SIZE
-    #ifdef UNICODE
-        #define NOTIFYICONDATA_V1_SIZE 0x0098
-    #else
-        #define NOTIFYICONDATA_V1_SIZE 0x0058
-    #endif
-#endif
-
-#ifndef NOTIFYICONDATA_V2_SIZE
-    #ifdef UNICODE
-        #define NOTIFYICONDATA_V2_SIZE 0x03A8
-    #else
-        #define NOTIFYICONDATA_V2_SIZE 0x01E8
-    #endif
+#ifndef NIIF_LARGE_ICON
+    #define NIIF_LARGE_ICON 0x0020
 #endif
 
 // initialized on demand
@@ -68,43 +48,11 @@ static UINT gs_msgTaskbar = 0;
 static UINT gs_msgRestartTaskbar = 0;
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxTaskBarIcon, wxEvtHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxTaskBarIcon, wxEvtHandler);
 
 // ============================================================================
 // implementation
 // ============================================================================
-
-// wrapper around Shell_NotifyIcon(): this function is not present in Win95
-// shell32.dll so load it dynamically to allow programs using wxTaskBarIcon to
-// start under this OS
-static BOOL wxShellNotifyIcon(DWORD dwMessage, NOTIFYICONDATA *pData)
-{
-#if wxUSE_DYNLIB_CLASS
-    typedef BOOL (WINAPI *Shell_NotifyIcon_t)(DWORD, NOTIFYICONDATA *);
-
-    static Shell_NotifyIcon_t s_pfnShell_NotifyIcon = NULL;
-    static bool s_initialized = false;
-    if ( !s_initialized )
-    {
-        s_initialized = true;
-
-        wxLogNull noLog;
-        wxDynamicLibrary dllShell("shell32.dll");
-        if ( dllShell.IsLoaded() )
-        {
-            wxDL_INIT_FUNC_AW(s_pfn, Shell_NotifyIcon, dllShell);
-        }
-
-        // NB: it's ok to destroy dllShell here, we link to shell32.dll
-        //     implicitly so it won't be unloaded
-    }
-
-    return s_pfnShell_NotifyIcon ? (*s_pfnShell_NotifyIcon)(dwMessage, pData)
-                                 : FALSE;
-#else // !wxUSE_DYNLIB_CLASS
-    return Shell_NotifyIcon(dwMessage, pData);
-#endif // wxUSE_DYNLIB_CLASS/!wxUSE_DYNLIB_CLASS
-}
 
 // ----------------------------------------------------------------------------
 // wxTaskBarIconWindow: helper window
@@ -124,7 +72,7 @@ public:
     }
 
     WXLRESULT MSWWindowProc(WXUINT msg,
-                            WXWPARAM wParam, WXLPARAM lParam)
+                            WXWPARAM wParam, WXLPARAM lParam) wxOVERRIDE
     {
         if (msg == gs_msgRestartTaskbar || msg == gs_msgTaskbar)
         {
@@ -149,19 +97,14 @@ struct NotifyIconData : public NOTIFYICONDATA
 {
     NotifyIconData(WXHWND hwnd)
     {
-        memset(this, 0, sizeof(NOTIFYICONDATA));
+        wxZeroMemory(*this);
 
-        // Do _not_ use sizeof(NOTIFYICONDATA) here, it may be too big if we're
-        // compiled with newer headers but running on an older system and while
-        // we could do complicated tests for the exact system version it's
-        // easier to just use an old size which should be supported everywhere
-        // from Windows 2000 up and which is all we need as we don't use any
-        // newer features so far. But if we're running under a really ancient
-        // system (Win9x), fall back to even smaller size -- then the balloon
-        // related features won't be available but the rest will still work.
-        cbSize = wxTheApp->GetShell32Version() >= 500
-                    ? NOTIFYICONDATA_V2_SIZE
-                    : NOTIFYICONDATA_V1_SIZE;
+        // Since Vista there is a new member hBalloonIcon which will be used
+        // if a user specified icon is specified in ShowBalloon(). For XP 
+        // use the old size
+        cbSize = wxPlatformInfo::Get().CheckOSVersion(6, 0)
+                    ? sizeof(NOTIFYICONDATA)
+                    : NOTIFYICONDATA_V2_SIZE;
 
         hWnd = (HWND) hwnd;
         uCallbackMessage = gs_msgTaskbar;
@@ -200,7 +143,25 @@ wxTaskBarIcon::~wxTaskBarIcon()
 }
 
 // Operations
-bool wxTaskBarIcon::SetIcon(const wxIcon& icon, const wxString& tooltip)
+bool wxTaskBarIcon::SetIcon(const wxBitmapBundle& icon, const wxString& tooltip)
+{
+    if ( !DoSetIcon(icon, tooltip,
+                    m_iconAdded ? Operation_Modify : Operation_Add) )
+    {
+        return false;
+    }
+
+    // We surely have it now, after setting it successfully (we could also have
+    // had it before, but it's harmless to set this flag again in this case).
+    m_iconAdded = true;
+
+    return true;
+}
+
+bool
+wxTaskBarIcon::DoSetIcon(const wxBitmapBundle& icon,
+                         const wxString& tooltip,
+                         Operation operation)
 {
     // NB: we have to create the window lazily because of backward compatibility,
     //     old applications may create a wxTaskBarIcon instance before wxApp
@@ -218,7 +179,8 @@ bool wxTaskBarIcon::SetIcon(const wxIcon& icon, const wxString& tooltip)
     if (icon.IsOk())
     {
         notifyData.uFlags |= NIF_ICON;
-        notifyData.hIcon = GetHiconOf(icon);
+        m_realIcon = icon.GetIconFor(m_win);
+        notifyData.hIcon = GetHiconOf(m_realIcon);
     }
 
     // set NIF_TIP even for an empty tooltip: otherwise it would be impossible
@@ -229,18 +191,35 @@ bool wxTaskBarIcon::SetIcon(const wxIcon& icon, const wxString& tooltip)
         wxStrlcpy(notifyData.szTip, tooltip.t_str(), WXSIZEOF(notifyData.szTip));
     }
 
-    bool ok = wxShellNotifyIcon(m_iconAdded ? NIM_MODIFY
-                                            : NIM_ADD, &notifyData) != 0;
-
-    if ( !ok )
+    switch ( operation )
     {
-        wxLogLastError(wxT("wxShellNotifyIcon(NIM_MODIFY/ADD)"));
+        case Operation_Add:
+            if ( !Shell_NotifyIcon(NIM_ADD, &notifyData) )
+            {
+                wxLogLastError("Shell_NotifyIcon(NIM_ADD)");
+                return false;
+            }
+            break;
+
+        case Operation_Modify:
+            if ( !Shell_NotifyIcon(NIM_MODIFY, &notifyData) )
+            {
+                wxLogLastError("Shell_NotifyIcon(NIM_MODIFY)");
+                return false;
+            }
+            break;
+
+        case Operation_TryBoth:
+            if ( !Shell_NotifyIcon(NIM_ADD, &notifyData) &&
+                    !Shell_NotifyIcon(NIM_MODIFY, &notifyData) )
+            {
+                wxLogLastError("Shell_NotifyIcon(NIM_ADD/NIM_MODIFY)");
+                return false;
+            }
+            break;
     }
 
-    if ( !m_iconAdded && ok )
-        m_iconAdded = true;
-
-    return ok;
+    return true;
 }
 
 #if wxUSE_TASKBARICON_BALLOONS
@@ -249,7 +228,8 @@ bool
 wxTaskBarIcon::ShowBalloon(const wxString& title,
                            const wxString& text,
                            unsigned msec,
-                           int flags)
+                           int flags,
+                           const wxBitmapBundle& icon)
 {
     wxCHECK_MSG( m_iconAdded, false,
                     wxT("can't be used before the icon is created") );
@@ -262,9 +242,9 @@ wxTaskBarIcon::ShowBalloon(const wxString& title,
     notifyData.uFlags = 0;
     notifyData.uVersion = 3 /* NOTIFYICON_VERSION for Windows 2000/XP */;
 
-    if ( !wxShellNotifyIcon(NIM_SETVERSION, &notifyData) )
+    if ( !Shell_NotifyIcon(NIM_SETVERSION, &notifyData) )
     {
-        wxLogLastError(wxT("wxShellNotifyIcon(NIM_SETVERSION)"));
+        wxLogLastError(wxT("Shell_NotifyIcon(NIM_SETVERSION)"));
     }
 
     // do show the balloon now
@@ -275,17 +255,26 @@ wxTaskBarIcon::ShowBalloon(const wxString& title,
     wxStrlcpy(notifyData.szInfoTitle, title.t_str(),
                 WXSIZEOF(notifyData.szInfoTitle));
 
-    if ( flags & wxICON_INFORMATION )
+    wxUnusedVar(icon); // It's only unused if not supported actually.
+
+    // User specified icon is only supported since Vista
+    if ( icon.IsOk() && wxPlatformInfo::Get().CheckOSVersion(6, 0) )
+    {
+        m_balloonIcon = icon.GetIconFor(m_win);
+        notifyData.hBalloonIcon = GetHiconOf(m_balloonIcon);
+        notifyData.dwInfoFlags |= NIIF_USER | NIIF_LARGE_ICON;
+    }
+    else if ( flags & wxICON_INFORMATION )
         notifyData.dwInfoFlags |= NIIF_INFO;
     else if ( flags & wxICON_WARNING )
         notifyData.dwInfoFlags |= NIIF_WARNING;
     else if ( flags & wxICON_ERROR )
         notifyData.dwInfoFlags |= NIIF_ERROR;
 
-    bool ok = wxShellNotifyIcon(NIM_MODIFY, &notifyData) != 0;
+    bool ok = Shell_NotifyIcon(NIM_MODIFY, &notifyData) != 0;
     if ( !ok )
     {
-        wxLogLastError(wxT("wxShellNotifyIcon(NIM_MODIFY)"));
+        wxLogLastError(wxT("Shell_NotifyIcon(NIM_MODIFY)"));
     }
 
     return ok;
@@ -302,10 +291,10 @@ bool wxTaskBarIcon::RemoveIcon()
 
     NotifyIconData notifyData(GetHwndOf(m_win));
 
-    bool ok = wxShellNotifyIcon(NIM_DELETE, &notifyData) != 0;
+    bool ok = Shell_NotifyIcon(NIM_DELETE, &notifyData) != 0;
     if ( !ok )
     {
-        wxLogLastError(wxT("wxShellNotifyIcon(NIM_DELETE)"));
+        wxLogLastError(wxT("Shell_NotifyIcon(NIM_DELETE)"));
     }
 
     return ok;
@@ -375,8 +364,11 @@ long wxTaskBarIcon::WindowProc(unsigned int msg,
 {
     if ( msg == gs_msgRestartTaskbar )   // does the icon need to be redrawn?
     {
-        m_iconAdded = false;
-        SetIcon(m_icon, m_strTooltip);
+        // We can get this message after the taskbar has been really recreated,
+        // in which case we need to add our icon anew, or if it just needs to
+        // be refreshed, in which case the existing icon just needs to be
+        // updated, so try doing both in DoSetIcon().
+        DoSetIcon(m_icon, m_strTooltip, Operation_TryBoth);
         return 0;
     }
 

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,7 +22,7 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
-                 const wxString& name = wxStaticTextNameStr)
+                 const wxString& name = wxASCII_STR(wxStaticTextNameStr))
     {
         Create(parent, id, label, pos, size, style, name);
     }
@@ -34,24 +33,24 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxStaticTextNameStr);
+                const wxString& name = wxASCII_STR(wxStaticTextNameStr));
 
     // override some methods to resize the window properly
-    virtual void SetLabel(const wxString& label);
-    virtual bool SetFont( const wxFont &font );
+    virtual void SetLabel(const wxString& label) wxOVERRIDE;
+    virtual bool SetFont( const wxFont &font ) wxOVERRIDE;
 
-    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const;
+    virtual WXDWORD MSWGetStyle(long flags, WXDWORD *exstyle = NULL) const wxOVERRIDE;
 
 protected:
     // implement/override some base class virtuals
     virtual void DoSetSize(int x, int y, int w, int h,
-                           int sizeFlags = wxSIZE_AUTO);
-    virtual wxSize DoGetBestClientSize() const;
+                           int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
+    virtual wxSize DoGetBestClientSize() const wxOVERRIDE;
 
-    virtual wxString DoGetLabel() const;
-    virtual void DoSetLabel(const wxString& str);
+    virtual wxString WXGetVisibleLabel() const wxOVERRIDE;
+    virtual void WXSetVisibleLabel(const wxString& str) wxOVERRIDE;
 
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticText)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxStaticText);
 };
 
 #endif

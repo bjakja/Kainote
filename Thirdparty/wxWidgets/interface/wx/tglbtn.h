@@ -2,10 +2,11 @@
 // Name:        tglbtn.h
 // Purpose:     interface of wxBitmapToggleButton, wxToggleButton
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+
+wxEventType wxEVT_TOGGLEBUTTON;
 
 /**
     @class wxToggleButton
@@ -15,16 +16,16 @@
 
     Since wxWidgets version 2.9.0 this control emits an update UI event.
 
-    You can see wxToggleButton in action in @ref page_samples_controls.
+    You can see wxToggleButton in action in @ref page_samples_widgets.
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_TOGGLEBUTTON(id, func)}
-        Handles a wxEVT_COMMAND_TOGGLEBUTTON_CLICKED event.
+        Handles a wxEVT_TOGGLEBUTTON event.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{togglebutton.png}
+    @appearance{togglebutton}
 
     @see wxCheckBox, wxButton, wxBitmapToggleButton
 */
@@ -119,12 +120,11 @@ public:
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_TOGGLEBUTTON(id, func)}
-        Handles a wxEVT_COMMAND_TOGGLEBUTTON_CLICKED event.
+        Handles a wxEVT_TOGGLEBUTTON event.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{bitmaptogglebutton.png}
 */
 class wxBitmapToggleButton : public wxToggleButton
 {
@@ -139,7 +139,7 @@ public:
         Internally calls Create().
     */
     wxBitmapToggleButton(wxWindow* parent, wxWindowID id,
-                         const wxBitmap& label,
+                         const wxBitmapBundle& label,
                          const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = 0,
@@ -150,7 +150,7 @@ public:
         Create method for two-step construction.
     */
     bool Create(wxWindow* parent, wxWindowID id,
-                const wxBitmap& label,
+                const wxBitmapBundle& label,
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,

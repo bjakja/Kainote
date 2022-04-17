@@ -2,29 +2,128 @@
 // Name:        html/htmlwin.h
 // Purpose:     interface of wxHtmlWindow
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+
+// wxHtmlWindow flags:
+#define wxHW_SCROLLBAR_NEVER    0x0002
+#define wxHW_SCROLLBAR_AUTO     0x0004
+#define wxHW_NO_SELECTION       0x0008
+
+#define wxHW_DEFAULT_STYLE      wxHW_SCROLLBAR_AUTO
+
+
+/// Enum for wxHtmlWindow::OnOpeningURL and wxHtmlWindowInterface::OnOpeningURL
+enum wxHtmlOpeningStatus
+{
+    /// Open the requested URL
+    wxHTML_OPEN,
+    /// Do not open the URL
+    wxHTML_BLOCK,
+    /// Redirect to another URL (returned from OnOpeningURL)
+    wxHTML_REDIRECT
+};
+
+
+/**
+   @class wxHtmlWindowInterface
+
+   Abstract interface to a HTML rendering window (such as wxHtmlWindow or
+   wxHtmlListBox) that is passed to wxHtmlWinParser. It encapsulates all
+   communication from the parser to the window.
+ */
+class wxHtmlWindowInterface
+{
+public:
+    /// Ctor
+    wxHtmlWindowInterface();
+    virtual ~wxHtmlWindowInterface();
+
+    /**
+        Called by the parser to set window's title to given text.
+     */
+    virtual void SetHTMLWindowTitle(const wxString& title) = 0;
+
+    /**
+        Called when a link is clicked.
+
+        @param link information about the clicked link
+     */
+    virtual void OnHTMLLinkClicked(const wxHtmlLinkInfo& link) = 0;
+
+    /**
+        Called when the parser needs to open another URL (e.g. an image).
+
+        @param type     Type of the URL request (e.g. image)
+        @param url      URL the parser wants to open
+        @param redirect If the return value is wxHTML_REDIRECT, then the
+                        URL to redirect to will be stored in this variable
+                        (the pointer must never be NULL)
+
+        @return indicator of how to treat the request
+     */
+    virtual wxHtmlOpeningStatus OnHTMLOpeningURL(wxHtmlURLType type,
+                                                 const wxString& url,
+                                                 wxString *redirect) const = 0;
+
+    /**
+        Converts coordinates @a pos relative to given @a cell to
+        physical coordinates in the window.
+     */
+    virtual wxPoint HTMLCoordsToWindow(wxHtmlCell *cell,
+                                       const wxPoint& pos) const = 0;
+
+    /// Returns the window used for rendering (may be NULL).
+    virtual wxWindow* GetHTMLWindow() = 0;
+
+    /// Returns background colour to use by default.
+    virtual wxColour GetHTMLBackgroundColour() const = 0;
+
+    /// Sets window's background to colour @a clr.
+    virtual void SetHTMLBackgroundColour(const wxColour& clr) = 0;
+
+    /// Sets window's background to given bitmap.
+    virtual void SetHTMLBackgroundImage(const wxBitmapBundle& bmpBg) = 0;
+
+    /// Sets status bar text.
+    virtual void SetHTMLStatusText(const wxString& text) = 0;
+
+    /// Type of mouse cursor
+    enum HTMLCursor
+    {
+        /// Standard mouse cursor (typically an arrow)
+        HTMLCursor_Default,
+        /// Cursor shown over links
+        HTMLCursor_Link,
+        /// Cursor shown over selectable text
+        HTMLCursor_Text
+    };
+
+    /**
+        Returns mouse cursor of given @a type.
+     */
+    virtual wxCursor GetHTMLCursor(wxHtmlWindowInterface::HTMLCursor type) const = 0;
+};
+
+
 
 /**
     @class wxHtmlWindow
 
-    wxHtmlWindow is probably the only class you will directly use unless you want
-    to do something special (like adding new tag handlers or MIME filters).
+    wxHtmlWindow is probably the only class you will directly use unless you
+    want to do something special (like adding new tag handlers or MIME filters).
 
-    The purpose of this class is to display rich content pages (either local file or
-    downloaded via HTTP protocol) in a window based on a subset of the HTML standard.
-    The width of the window is constant - given in the constructor - and virtual height
-    is changed dynamically depending on page size.
-    Once the window is created you can set its content by calling SetPage() with raw HTML,
-    LoadPage() with a wxFileSystem location or LoadFile() with a filename.
+    The purpose of this class is to display rich content pages (either local
+    file or downloaded via HTTP protocol) in a window based on a subset of the
+    HTML standard. The width of the window is constant, given in the constructor
+    and virtual height is changed dynamically depending on page size. Once the
+    window is created you can set its content by calling SetPage() with raw
+    HTML, LoadPage() with a wxFileSystem location or LoadFile() with a filename.
 
-    @note
-    If you want complete HTML/CSS support as well as a Javascript engine, see instead
-    wxWebView.
+    @note If you want complete HTML/CSS support as well as a Javascript engine,
+          consider using wxWebView instead.
 
-    @note
-    wxHtmlWindow uses the wxImage class for displaying images, as such you need to
+    wxHtmlWindow uses the wxImage class for displaying images, so you need to
     initialize the handlers for any image formats you use before loading a page.
     See ::wxInitAllImageHandlers and wxImage::AddHandler.
 
@@ -38,14 +137,13 @@
            Don't allow the user to select text.
     @endStyleTable
 
-
     @beginEventEmissionTable{wxHtmlCellEvent, wxHtmlLinkEvent}
     @event{EVT_HTML_CELL_CLICKED(id, func)}
         A wxHtmlCell was clicked.
     @event{EVT_HTML_CELL_HOVER(id, func)}
         The mouse passed over a wxHtmlCell.
     @event{EVT_HTML_LINK_CLICKED(id, func)}
-        A wxHtmlCell which contains an hyperlink was clicked.
+        A wxHtmlCell which contains a hyperlink was clicked.
     @endEventTable
 
     @library{wxhtml}
@@ -53,7 +151,7 @@
 
     @see wxHtmlLinkEvent, wxHtmlCellEvent
 */
-class wxHtmlWindow : public wxScrolledWindow
+class wxHtmlWindow : public wxScrolledWindow, public wxHtmlWindowInterface
 {
 public:
     /**
@@ -63,6 +161,7 @@ public:
 
     /**
         Constructor.
+
         The parameters are the same as wxScrolled::wxScrolled() constructor.
     */
     wxHtmlWindow(wxWindow *parent, wxWindowID id = wxID_ANY,
@@ -72,11 +171,16 @@ public:
                  const wxString& name = "htmlWindow");
 
     /**
-        Adds @ref overview_html_filters "input filter" to the static list of available
-        filters. These filters are present by default:
-        - @c text/html MIME type
-        - @c image/* MIME types
-        - Plain Text filter (this filter is used if no other filter matches)
+        Adds an @ref overview_html_filters "input filter" to the static list of
+        available filters. These filters are present by default:
+
+        @code
+            text/html
+            text/plain
+            image/*
+        @endcode
+
+        The plain text filter will be used if no other filter matches.
     */
     static void AddFilter(wxHtmlFilter* filter);
 
@@ -116,6 +220,11 @@ public:
         contain \<TITLE\> tag.
     */
     wxString GetOpenedPageTitle() const;
+
+    /**
+       Returns a pointer to the current parser.
+    */
+    wxHtmlWinParser *GetParser() const;
 
     /**
         Returns the related frame.
@@ -289,7 +398,7 @@ public:
                   const int* sizes = NULL);
 
     /**
-        Sets default font sizes and/or default font size. 
+        Sets default font sizes and/or default font size.
         See wxHtmlDCRenderer::SetStandardFonts for detailed description.
         @see SetFonts()
     */
@@ -365,12 +474,37 @@ public:
     virtual void WriteCustomization(wxConfigBase* cfg,
                                     wxString path = wxEmptyString);
 
+    /**
+        Retrieves the default cursor for a given HTMLCursor type.
+
+        @param type
+            HTMLCursor type to retrieve.
+
+        @since 3.1.0
+    */
+    static wxCursor GetDefaultHTMLCursor(HTMLCursor type);
+
+    /**
+        Sets the default cursor for a given HTMLCursor type.
+
+        These cursors are used for all wxHtmlWindow objects by default, but can
+        be overridden on a per-window basis.
+
+        @param type
+            HTMLCursor type to retrieve.
+        @param cursor
+            The default cursor for the specified cursor type.
+
+        @since 3.1.0
+    */
+    static void SetDefaultHTMLCursor(HTMLCursor type, const wxCursor& cursor);
+
 protected:
 
     /**
         This method is called when a mouse button is clicked inside wxHtmlWindow.
         The default behaviour is to emit a wxHtmlCellEvent and, if the event was
-        not processed or skipped, call OnLinkClicked() if the cell contains an
+        not processed or skipped, call OnLinkClicked() if the cell contains a
         hypertext link.
 
         Overloading this method is deprecated; intercept the event instead.
@@ -409,6 +543,11 @@ protected:
 
 
 
+wxEventType wxEVT_HTML_CELL_CLICKED;
+wxEventType wxEVT_HTML_CELL_HOVER;
+wxEventType wxEVT_HTML_LINK_CLICKED;
+
+
 /**
     @class wxHtmlLinkEvent
 
@@ -416,7 +555,7 @@ protected:
 
     @beginEventTable{wxHtmlLinkEvent}
     @event{EVT_HTML_LINK_CLICKED(id, func)}
-        User clicked on an hyperlink.
+        User clicked on a hyperlink.
     @endEventTable
 
     @library{wxhtml}
@@ -483,6 +622,11 @@ public:
     wxPoint GetPoint() const;
 
     /**
+        Returns the wxMouseEvent associated with the event.
+    */
+    wxMouseEvent GetMouseEvent() const;
+
+    /**
         Call this function with @a linkclicked set to @true if the cell which has
         been clicked contained a link or @false otherwise (which is the default).
 
@@ -491,4 +635,3 @@ public:
     */
     void SetLinkClicked(bool linkclicked);
 };
-

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     2005-09-30
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +17,7 @@
 
 #include "wx/scrolwin.h"
 #include "wx/caret.h"
-
+#include "wx/timer.h"
 #include "wx/textctrl.h"
 
 #if wxUSE_DRAG_AND_DROP
@@ -80,6 +79,8 @@ class WXDLLIMPEXP_FWD_RICHTEXT wxRichTextStyleDefinition;
 #define wxRICHTEXT_DEFAULT_DELAYED_LAYOUT_THRESHOLD 20000
 // Milliseconds before layout occurs after resize
 #define wxRICHTEXT_DEFAULT_LAYOUT_INTERVAL 50
+// Milliseconds before delayed image processing occurs
+#define wxRICHTEXT_DEFAULT_DELAYED_IMAGE_PROCESSING_INTERVAL 200
 
 /* Identifiers
  */
@@ -191,8 +192,8 @@ public:
 
     wxRichTextCtrl sends notification events: see wxRichTextEvent.
 
-    It also sends the standard wxTextCtrl events @c wxEVT_COMMAND_TEXT_ENTER and
-    @c wxEVT_COMMAND_TEXT_UPDATED, and wxTextUrlEvent when URL content is clicked.
+    It also sends the standard wxTextCtrl events @c wxEVT_TEXT_ENTER and
+    @c wxEVT_TEXT, and wxTextUrlEvent when URL content is clicked.
 
     For more information, see the @ref overview_richtextctrl.
 
@@ -216,8 +217,8 @@ class WXDLLIMPEXP_RICHTEXT wxRichTextCtrl : public wxControl,
                                             public wxTextCtrlIface,
                                             public wxScrollHelper
 {
-    DECLARE_DYNAMIC_CLASS( wxRichTextCtrl )
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wxRichTextCtrl);
+    wxDECLARE_EVENT_TABLE();
 
 public:
 // Constructors
@@ -250,7 +251,7 @@ public:
         @see Create(), wxValidator
     */
     wxRichTextCtrl( wxWindow* parent, wxWindowID id = -1, const wxString& value = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxRE_MULTILINE, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxTextCtrlNameStr);
+        long style = wxRE_MULTILINE, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxASCII_STR(wxTextCtrlNameStr));
 
     /**
         Destructor.
@@ -263,7 +264,7 @@ public:
         Creates the underlying window.
     */
     bool Create( wxWindow* parent, wxWindowID id = -1, const wxString& value = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
-        long style = wxRE_MULTILINE, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxTextCtrlNameStr );
+        long style = wxRE_MULTILINE, const wxValidator& validator = wxDefaultValidator, const wxString& name = wxASCII_STR(wxTextCtrlNameStr) );
 
     /**
         Initialises the members of the control.
@@ -277,32 +278,32 @@ public:
         The end point of range is specified as the last character position of
         the span of text, plus one.
     */
-    virtual wxString GetRange(long from, long to) const;
+    virtual wxString GetRange(long from, long to) const wxOVERRIDE;
 
     /**
         Returns the length of the specified line in characters.
     */
-    virtual int GetLineLength(long lineNo) const ;
+    virtual int GetLineLength(long lineNo) const wxOVERRIDE ;
 
     /**
         Returns the text for the given line.
     */
-    virtual wxString GetLineText(long lineNo) const ;
+    virtual wxString GetLineText(long lineNo) const wxOVERRIDE ;
 
     /**
         Returns the number of lines in the buffer.
     */
-    virtual int GetNumberOfLines() const ;
+    virtual int GetNumberOfLines() const wxOVERRIDE ;
 
     /**
         Returns @true if the buffer has been modified.
     */
-    virtual bool IsModified() const ;
+    virtual bool IsModified() const wxOVERRIDE ;
 
     /**
         Returns @true if the control is editable.
     */
-    virtual bool IsEditable() const ;
+    virtual bool IsEditable() const wxOVERRIDE ;
 
     /**
         Returns @true if the control is single-line.
@@ -322,7 +323,7 @@ public:
         of text, plus one.
         If the return values @a from and @a to are the same, there is no selection.
     */
-    virtual void GetSelection(long* from, long* to) const;
+    virtual void GetSelection(long* from, long* to) const wxOVERRIDE;
     const wxRichTextSelection& GetSelection() const { return m_selection; }
     wxRichTextSelection& GetSelection() { return m_selection; }
     //@}
@@ -330,7 +331,7 @@ public:
     /**
         Returns the text within the current selection range, if any.
     */
-    virtual wxString GetStringSelection() const;
+    virtual wxString GetStringSelection() const wxOVERRIDE;
 
     /**
         Gets the current filename associated with the control.
@@ -547,18 +548,18 @@ public:
     /**
         Clears the buffer content, leaving a single empty paragraph. Cannot be undone.
     */
-    virtual void Clear();
+    virtual void Clear() wxOVERRIDE;
 
     /**
         Replaces the content in the specified range with the string specified by
         @a value.
     */
-    virtual void Replace(long from, long to, const wxString& value);
+    virtual void Replace(long from, long to, const wxString& value) wxOVERRIDE;
 
     /**
         Removes the content in the specified range.
     */
-    virtual void Remove(long from, long to);
+    virtual void Remove(long from, long to) wxOVERRIDE;
 
 #ifdef DOXYGEN
     /**
@@ -573,6 +574,7 @@ public:
                   int type = wxRICHTEXT_TYPE_ANY);
 #endif
 
+#if wxUSE_FFILE && wxUSE_STREAMS
     /**
         Helper function for LoadFile(). Loads content into the control's buffer using the given type.
 
@@ -581,7 +583,8 @@ public:
 
         This function looks for a suitable wxRichTextFileHandler object.
     */
-    virtual bool DoLoadFile(const wxString& file, int fileType);
+    virtual bool DoLoadFile(const wxString& file, int fileType) wxOVERRIDE;
+#endif // wxUSE_FFILE && wxUSE_STREAMS
 
 #ifdef DOXYGEN
     /**
@@ -596,6 +599,7 @@ public:
                   int type = wxRICHTEXT_TYPE_ANY);
 #endif
 
+#if wxUSE_FFILE && wxUSE_STREAMS
     /**
         Helper function for SaveFile(). Saves the buffer content using the given type.
 
@@ -605,7 +609,8 @@ public:
         This function looks for a suitable wxRichTextFileHandler object.
     */
     virtual bool DoSaveFile(const wxString& file = wxEmptyString,
-                            int fileType = wxRICHTEXT_TYPE_ANY);
+                            int fileType = wxRICHTEXT_TYPE_ANY) wxOVERRIDE;
+#endif // wxUSE_FFILE && wxUSE_STREAMS
 
     /**
         Sets flags that change the behaviour of loading or saving.
@@ -625,29 +630,29 @@ public:
     /**
         Marks the buffer as modified.
     */
-    virtual void MarkDirty();
+    virtual void MarkDirty() wxOVERRIDE;
 
     /**
         Sets the buffer's modified status to @false, and clears the buffer's command
         history.
     */
-    virtual void DiscardEdits();
+    virtual void DiscardEdits() wxOVERRIDE;
 
     /**
         Sets the maximum number of characters that may be entered in a single line
         text control. For compatibility only; currently does nothing.
     */
-    virtual void SetMaxLength(unsigned long WXUNUSED(len)) { }
+    virtual void SetMaxLength(unsigned long WXUNUSED(len)) wxOVERRIDE { }
 
     /**
         Writes text at the current position.
     */
-    virtual void WriteText(const wxString& text);
+    virtual void WriteText(const wxString& text) wxOVERRIDE;
 
     /**
         Sets the insertion point to the end of the buffer and writes the text.
     */
-    virtual void AppendText(const wxString& text);
+    virtual void AppendText(const wxString& text) wxOVERRIDE;
 
     //@{
     /**
@@ -663,7 +668,7 @@ public:
         returning a 2-element list (ok, attr).
         @endWxPerlOnly
     */
-    virtual bool GetStyle(long position, wxTextAttr& style);
+    virtual bool GetStyle(long position, wxTextAttr& style) wxOVERRIDE;
     virtual bool GetStyle(long position, wxRichTextAttr& style);
     virtual bool GetStyle(long position, wxRichTextAttr& style, wxRichTextParagraphLayoutBox* container);
     //@}
@@ -677,7 +682,7 @@ public:
         So, for example, to set the style for a character at position 5, use the range
         (5,6).
     */
-    virtual bool SetStyle(long start, long end, const wxTextAttr& style);
+    virtual bool SetStyle(long start, long end, const wxTextAttr& style) wxOVERRIDE;
     virtual bool SetStyle(long start, long end, const wxRichTextAttr& style);
     virtual bool SetStyle(const wxRichTextRange& range, const wxTextAttr& style);
     virtual bool SetStyle(const wxRichTextRange& range, const wxRichTextAttr& style);
@@ -759,7 +764,7 @@ public:
         Sets the current default style, which can be used to change how subsequently
         inserted text is displayed.
     */
-    virtual bool SetDefaultStyle(const wxTextAttr& style);
+    virtual bool SetDefaultStyle(const wxTextAttr& style) wxOVERRIDE;
     virtual bool SetDefaultStyle(const wxRichTextAttr& style);
     //@}
 
@@ -874,17 +879,17 @@ public:
     /**
         Translates from column and line number to position.
     */
-    virtual long XYToPosition(long x, long y) const;
+    virtual long XYToPosition(long x, long y) const wxOVERRIDE;
 
     /**
         Converts a text position to zero-based column and line numbers.
     */
-    virtual bool PositionToXY(long pos, long *x, long *y) const;
+    virtual bool PositionToXY(long pos, long *x, long *y) const wxOVERRIDE;
 
     /**
         Scrolls the buffer so that the given position is in view.
     */
-    virtual void ShowPosition(long pos);
+    virtual void ShowPosition(long pos) wxOVERRIDE;
 
     //@{
     /**
@@ -892,15 +897,15 @@ public:
         @a pt is in device coords (not adjusted for the client area origin nor for
         scrolling).
     */
-    virtual wxTextCtrlHitTestResult HitTest(const wxPoint& pt, long *pos) const;
+    virtual wxTextCtrlHitTestResult HitTest(const wxPoint& pt, long *pos) const wxOVERRIDE;
     virtual wxTextCtrlHitTestResult HitTest(const wxPoint& pt,
                                             wxTextCoord *col,
-                                            wxTextCoord *row) const;
+                                            wxTextCoord *row) const wxOVERRIDE;
 
     /**
         Finds the container at the given point, which is in screen coordinates.
     */
-    wxRichTextParagraphLayoutBox* FindContainerAtPoint(const wxPoint pt, long& position, int& hit, wxRichTextObject* hitObj, int flags = 0);
+    wxRichTextParagraphLayoutBox* FindContainerAtPoint(const wxPoint& pt, long& position, int& hit, wxRichTextObject* hitObj, int flags = 0);
     //@}
 
 #if wxUSE_DRAG_AND_DROP
@@ -915,18 +920,18 @@ public:
     /**
         Copies the selected content (if any) to the clipboard.
     */
-    virtual void Copy();
+    virtual void Copy() wxOVERRIDE;
 
     /**
         Copies the selected content (if any) to the clipboard and deletes the selection.
         This is undoable.
     */
-    virtual void Cut();
+    virtual void Cut() wxOVERRIDE;
 
     /**
         Pastes content from the clipboard to the buffer.
     */
-    virtual void Paste();
+    virtual void Paste() wxOVERRIDE;
 
     /**
         Deletes the content in the selection, if any. This is undoable.
@@ -936,17 +941,17 @@ public:
     /**
         Returns @true if selected content can be copied to the clipboard.
     */
-    virtual bool CanCopy() const;
+    virtual bool CanCopy() const wxOVERRIDE;
 
     /**
         Returns @true if selected content can be copied to the clipboard and deleted.
     */
-    virtual bool CanCut() const;
+    virtual bool CanCut() const wxOVERRIDE;
 
     /**
         Returns @true if the clipboard content can be pasted to the buffer.
     */
-    virtual bool CanPaste() const;
+    virtual bool CanPaste() const wxOVERRIDE;
 
     /**
         Returns @true if selected content can be deleted.
@@ -956,43 +961,43 @@ public:
     /**
         Undoes the command at the top of the command history, if there is one.
     */
-    virtual void Undo();
+    virtual void Undo() wxOVERRIDE;
 
     /**
         Redoes the current command.
     */
-    virtual void Redo();
+    virtual void Redo() wxOVERRIDE;
 
     /**
         Returns @true if there is a command in the command history that can be undone.
     */
-    virtual bool CanUndo() const;
+    virtual bool CanUndo() const wxOVERRIDE;
 
     /**
         Returns @true if there is a command in the command history that can be redone.
     */
-    virtual bool CanRedo() const;
+    virtual bool CanRedo() const wxOVERRIDE;
 
     /**
         Sets the insertion point and causes the current editing style to be taken from
         the new position (unlike wxRichTextCtrl::SetCaretPosition).
     */
-    virtual void SetInsertionPoint(long pos);
+    virtual void SetInsertionPoint(long pos) wxOVERRIDE;
 
     /**
         Sets the insertion point to the end of the text control.
     */
-    virtual void SetInsertionPointEnd();
+    virtual void SetInsertionPointEnd() wxOVERRIDE;
 
     /**
         Returns the current insertion point.
     */
-    virtual long GetInsertionPoint() const;
+    virtual long GetInsertionPoint() const wxOVERRIDE;
 
     /**
         Returns the last position in the buffer.
     */
-    virtual wxTextPos GetLastPosition() const;
+    virtual wxTextPos GetLastPosition() const wxOVERRIDE;
 
     //@{
     /**
@@ -1003,20 +1008,14 @@ public:
         So, for example, to set the selection for a character at position 5, use the
         range (5,6).
     */
-    virtual void SetSelection(long from, long to);
+    virtual void SetSelection(long from, long to) wxOVERRIDE;
     void SetSelection(const wxRichTextSelection& sel) { m_selection = sel; }
     //@}
-
-
-    /**
-        Selects all the text in the buffer.
-    */
-    virtual void SelectAll();
 
     /**
         Makes the control editable, or not.
     */
-    virtual void SetEditable(bool editable);
+    virtual void SetEditable(bool editable) wxOVERRIDE;
 
     /**
         Returns @true if there is a selection and the object containing the selection
@@ -1248,7 +1247,7 @@ public:
     bool EndParagraphSpacing() { return GetBuffer().EndParagraphSpacing(); }
 
     /**
-        Begins appling line spacing. @e spacing is a multiple, where 10 means
+        Begins applying line spacing. @e spacing is a multiple, where 10 means
         single-spacing, 15 means 1.5 spacing, and 20 means double spacing.
 
         The ::wxTextAttrLineSpacing constants are defined for convenience.
@@ -1361,7 +1360,7 @@ public:
     /**
         Cancels any selection.
     */
-    virtual void SelectNone();
+    virtual void SelectNone() wxOVERRIDE;
 
     /**
         Selects the word at the given character position.
@@ -1418,6 +1417,11 @@ public:
         This function should not normally be required by the application.
     */
     virtual bool LayoutContent(bool onlyVisibleRect = false);
+
+    /**
+        Implements layout. An application may override this to perform operations before or after layout.
+    */
+    virtual void DoLayoutBuffer(wxRichTextBuffer& buffer, wxDC& dc, wxRichTextDrawingContext& context, const wxRect& rect, const wxRect& parentRect, int flags);
 
     /**
         Move the caret to the given character position.
@@ -1493,7 +1497,7 @@ public:
     virtual bool WordLeft(int noPages = 1, int flags = 0);
 
     /**
-        Move a nuber of words to the right.
+        Move a number of words to the right.
     */
     virtual bool WordRight(int noPages = 1, int flags = 0);
 
@@ -1544,7 +1548,7 @@ public:
     */
     virtual bool HasCharacterAttributes(const wxRichTextRange& range, const wxRichTextAttr& style) const
     {
-        return GetBuffer().HasCharacterAttributes(range.ToInternal(), style);
+        return GetFocusObject()->HasCharacterAttributes(range.ToInternal(), style);
     }
 
     /**
@@ -1555,7 +1559,7 @@ public:
     */
     virtual bool HasParagraphAttributes(const wxRichTextRange& range, const wxRichTextAttr& style) const
     {
-        return GetBuffer().HasParagraphAttributes(range.ToInternal(), style);
+        return GetFocusObject()->HasParagraphAttributes(range.ToInternal(), style);
     }
 
     /**
@@ -1766,12 +1770,24 @@ public:
     */
     wxRect GetScaledRect(const wxRect& rect) const;
 
+    /**
+        Returns @true if this control can use virtual attributes and virtual text.
+        The default is @false.
+    */
+    bool GetVirtualAttributesEnabled() const { return m_useVirtualAttributes; }
+
+    /**
+        Pass @true to let the control use virtual attributes.
+        The default is @false.
+    */
+    void EnableVirtualAttributes(bool b) { m_useVirtualAttributes = b; }
+
 // Command handlers
 
     /**
         Sends the event to the control.
     */
-    void Command(wxCommandEvent& event);
+    void Command(wxCommandEvent& event) wxOVERRIDE;
 
     /**
         Loads the first dropped file.
@@ -1912,12 +1928,12 @@ public:
         Sets the font, and also the basic and default attributes
         (see wxRichTextCtrl::SetDefaultStyle).
     */
-    virtual bool SetFont(const wxFont& font);
+    virtual bool SetFont(const wxFont& font) wxOVERRIDE;
 
     /**
         A helper function setting up scrollbars, for example after a resize.
     */
-    virtual void SetupScrollbars(bool atTop = false);
+    virtual void SetupScrollbars(bool atTop = false, bool fromOnPaint = false);
 
     /**
         Helper function implementing keyboard navigation.
@@ -1947,7 +1963,7 @@ public:
     virtual void DoWriteText(const wxString& value, int flags = 0);
 
     // Should we inherit colours?
-    virtual bool ShouldInheritColours() const { return false; }
+    virtual bool ShouldInheritColours() const wxOVERRIDE { return false; }
 
     /**
         Internal function to position the visible caret according to the current caret
@@ -1962,6 +1978,16 @@ public:
     virtual bool ExtendSelection(long oldPosition, long newPosition, int flags);
 
     /**
+        Extends a table selection in the given direction.
+    */
+    virtual bool ExtendCellSelection(wxRichTextTable* table, int noRowSteps, int noColSteps);
+
+    /**
+        Starts selecting table cells.
+    */
+    virtual bool StartCellSelection(wxRichTextTable* table, wxRichTextParagraphLayoutBox* newCell);
+
+    /**
         Scrolls @a position into view. This function takes a caret position.
     */
     virtual bool ScrollIntoView(long position, int keyCode);
@@ -1970,6 +1996,12 @@ public:
         Refreshes the area affected by a selection change.
     */
     bool RefreshForSelectionChange(const wxRichTextSelection& oldSelection, const wxRichTextSelection& newSelection);
+
+    /**
+        Overrides standard refresh in order to provoke delayed image loading.
+    */
+    virtual void Refresh( bool eraseBackground = true,
+                       const wxRect *rect = (const wxRect *) NULL ) wxOVERRIDE;
 
     /**
         Sets the caret position.
@@ -2043,7 +2075,7 @@ public:
         list (ok, newPos).
         @endWxPerlOnly
     */
-    bool DeleteSelectedContent(long* newPos= NULL);
+    virtual bool DeleteSelectedContent(long* newPos= NULL);
 
     /**
         Transforms logical (unscrolled) position to physical window position.
@@ -2113,6 +2145,50 @@ public:
     */
     wxPoint GetFirstVisiblePoint() const;
 
+    /**
+        Enable or disable images
+    */
+
+    void EnableImages(bool b) { m_enableImages = b; }
+
+    /**
+        Returns @true if images are enabled.
+    */
+
+    bool GetImagesEnabled() const { return m_enableImages; }
+
+    /**
+        Enable or disable delayed image loading
+    */
+
+    void EnableDelayedImageLoading(bool b) { m_enableDelayedImageLoading = b; }
+
+    /**
+        Returns @true if delayed image loading is enabled.
+    */
+
+    bool GetDelayedImageLoading() const { return m_enableDelayedImageLoading; }
+
+    /**
+        Gets the flag indicating that delayed image processing is required.
+    */
+    bool GetDelayedImageProcessingRequired() const { return m_delayedImageProcessingRequired; }
+
+    /**
+        Sets the flag indicating that delayed image processing is required.
+    */
+    void SetDelayedImageProcessingRequired(bool b) { m_delayedImageProcessingRequired = b; }
+
+    /**
+        Returns the last time delayed image processing was performed.
+    */
+    wxLongLong GetDelayedImageProcessingTime() const { return m_delayedImageProcessingTime; }
+
+    /**
+        Sets the last time delayed image processing was performed.
+    */
+    void SetDelayedImageProcessingTime(wxLongLong t) { m_delayedImageProcessingTime = t; }
+
 #ifdef DOXYGEN
     /**
         Returns the content of the entire control as a string.
@@ -2142,7 +2218,22 @@ public:
 
 #endif
 
+    /// Set the line increment height in pixels
+    void SetLineHeight(int height) { m_lineHeight = height; }
+    int GetLineHeight() const { return m_lineHeight; }
+
 // Implementation
+
+    /**
+        Processes the back key.
+    */
+    virtual bool ProcessBackKey(wxKeyEvent& event, int flags);
+
+    /**
+        Given a character position at which there is a list style, find the range
+        encompassing the same list style by looking backwards and forwards.
+    */
+    virtual wxRichTextRange FindRangeForList(long pos, bool& isNumberedList);
 
     /**
         Sets up the caret for the given position and container, after a mouse click.
@@ -2175,15 +2266,31 @@ public:
     WX_FORWARD_TO_SCROLL_HELPER()
 
     // implement wxTextEntry methods
-    virtual wxString DoGetValue() const;
+    virtual wxString DoGetValue() const wxOVERRIDE;
+
+    /**
+        Do delayed image loading and garbage-collect other images
+    */
+    bool ProcessDelayedImageLoading(bool refresh);
+    bool ProcessDelayedImageLoading(const wxRect& screenRect, wxRichTextParagraphLayoutBox* box, int& loadCount);
+
+    /**
+        Request delayed image processing.
+    */
+    void RequestDelayedImageProcessing();
+
+    /**
+        Respond to timer events.
+    */
+    void OnTimer(wxTimerEvent& event);
 
 protected:
     // implement the wxTextEntry pure virtual method
-    virtual wxWindow *GetEditableWindow() { return this; }
+    virtual wxWindow *GetEditableWindow() wxOVERRIDE { return this; }
 
     // margins functions
-    virtual bool DoSetMargins(const wxPoint& pt);
-    virtual wxPoint DoGetMargins() const;
+    virtual bool DoSetMargins(const wxPoint& pt) wxOVERRIDE;
+    virtual wxPoint DoGetMargins() const wxOVERRIDE;
 
      // FIXME: this does not work, it allows this code to compile but will fail
      //        during run-time
@@ -2206,11 +2313,11 @@ protected:
     /**
         Currently this simply returns @c wxSize(10, 10).
     */
-    virtual wxSize DoGetBestSize() const ;
+    virtual wxSize DoGetBestSize() const wxOVERRIDE ;
 
-    virtual void DoSetValue(const wxString& value, int flags = 0);
+    virtual void DoSetValue(const wxString& value, int flags = 0) wxOVERRIDE;
 
-    virtual void DoThaw();
+    virtual void DoThaw() wxOVERRIDE;
 
 
 // Data members
@@ -2248,6 +2355,9 @@ protected:
 
     /// Are we editable?
     bool                    m_editable;
+
+    /// Can we use virtual attributes and virtual text?
+    bool                    m_useVirtualAttributes;
 
     /// Is the vertical scrollbar enabled?
     bool                    m_verticalScrollbarEnabled;
@@ -2293,6 +2403,23 @@ protected:
 
     /// An overall scale factor
     double                  m_scale;
+
+    /// Variables for scrollbar hysteresis detection
+    wxSize                  m_lastWindowSize;
+    int                     m_setupScrollbarsCount;
+    int                     m_setupScrollbarsCountInOnSize;
+
+    /// Whether images are enabled for this control
+    bool                    m_enableImages;
+
+    /// Line height in pixels
+    int                     m_lineHeight;
+
+    /// Whether delayed image loading is enabled for this control
+    bool                    m_enableDelayedImageLoading;
+    bool                    m_delayedImageProcessingRequired;
+    wxLongLong              m_delayedImageProcessingTime;
+    wxTimer                 m_delayedImageProcessingTimer;
 };
 
 #if wxUSE_DRAG_AND_DROP
@@ -2303,7 +2430,7 @@ public:
         : wxDropSource(data, tc), m_rtc(tc) {}
 
 protected:
-    bool GiveFeedback(wxDragResult effect);
+    bool GiveFeedback(wxDragResult effect) wxOVERRIDE;
 
     wxRichTextCtrl* m_rtc;
 };
@@ -2314,7 +2441,7 @@ public:
   wxRichTextDropTarget(wxRichTextCtrl* tc)
     : wxDropTarget(new wxRichTextBufferDataObject(new wxRichTextBuffer)), m_rtc(tc) {}
 
-    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def)
+    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE
     {
         if ( !GetData() )
             return wxDragNone;
@@ -2334,66 +2461,68 @@ protected:
 
     @beginEventTable{wxRichTextEvent}
     @event{EVT_RICHTEXT_LEFT_CLICK(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_LEFT_CLICK event, generated when the user
+        Process a @c wxEVT_RICHTEXT_LEFT_CLICK event, generated when the user
         releases the left mouse button over an object.
     @event{EVT_RICHTEXT_RIGHT_CLICK(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_RIGHT_CLICK event, generated when the user
+        Process a @c wxEVT_RICHTEXT_RIGHT_CLICK event, generated when the user
         releases the right mouse button over an object.
     @event{EVT_RICHTEXT_MIDDLE_CLICK(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_MIDDLE_CLICK event, generated when the user
+        Process a @c wxEVT_RICHTEXT_MIDDLE_CLICK event, generated when the user
         releases the middle mouse button over an object.
     @event{EVT_RICHTEXT_LEFT_DCLICK(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_LEFT_DCLICK event, generated when the user
+        Process a @c wxEVT_RICHTEXT_LEFT_DCLICK event, generated when the user
         double-clicks an object.
     @event{EVT_RICHTEXT_RETURN(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_RETURN event, generated when the user
+        Process a @c wxEVT_RICHTEXT_RETURN event, generated when the user
         presses the return key. Valid event functions: GetFlags, GetPosition.
     @event{EVT_RICHTEXT_CHARACTER(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_CHARACTER event, generated when the user
+        Process a @c wxEVT_RICHTEXT_CHARACTER event, generated when the user
         presses a character key. Valid event functions: GetFlags, GetPosition, GetCharacter.
+    @event{EVT_RICHTEXT_CONSUMING_CHARACTER(id, func)}
+        Process a @c wxEVT_RICHTEXT_CONSUMING_CHARACTER event, generated when the user
+        presses a character key but before it is processed and inserted into the control.
+        Call Veto to prevent normal processing. Valid event functions: GetFlags, GetPosition,
+        GetCharacter, Veto.
     @event{EVT_RICHTEXT_DELETE(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_DELETE event, generated when the user
+        Process a @c wxEVT_RICHTEXT_DELETE event, generated when the user
         presses the backspace or delete key. Valid event functions: GetFlags, GetPosition.
-    @event{EVT_RICHTEXT_RETURN(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_RETURN event, generated when the user
-        presses the return key. Valid event functions: GetFlags, GetPosition.
     @event{EVT_RICHTEXT_STYLE_CHANGED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED event, generated when
+        Process a @c wxEVT_RICHTEXT_STYLE_CHANGED event, generated when
         styling has been applied to the control. Valid event functions: GetPosition, GetRange.
     @event{EVT_RICHTEXT_STYLESHEET_CHANGED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING event, generated
+        Process a @c wxEVT_RICHTEXT_STYLESHEET_CHANGING event, generated
         when the control's stylesheet has changed, for example the user added,
         edited or deleted a style. Valid event functions: GetRange, GetPosition.
     @event{EVT_RICHTEXT_STYLESHEET_REPLACING(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING event, generated
+        Process a @c wxEVT_RICHTEXT_STYLESHEET_REPLACING event, generated
         when the control's stylesheet is about to be replaced, for example when
         a file is loaded into the control.
         Valid event functions: Veto, GetOldStyleSheet, GetNewStyleSheet.
     @event{EVT_RICHTEXT_STYLESHEET_REPLACED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED event, generated
+        Process a @c wxEVT_RICHTEXT_STYLESHEET_REPLACED event, generated
         when the control's stylesheet has been replaced, for example when a file
         is loaded into the control.
         Valid event functions: GetOldStyleSheet, GetNewStyleSheet.
     @event{EVT_RICHTEXT_PROPERTIES_CHANGED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_PROPERTIES_CHANGED event, generated when
+        Process a @c wxEVT_RICHTEXT_PROPERTIES_CHANGED event, generated when
         properties have been applied to the control. Valid event functions: GetPosition, GetRange.
     @event{EVT_RICHTEXT_CONTENT_INSERTED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED event, generated when
+        Process a @c wxEVT_RICHTEXT_CONTENT_INSERTED event, generated when
         content has been inserted into the control.
         Valid event functions: GetPosition, GetRange.
     @event{EVT_RICHTEXT_CONTENT_DELETED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED event, generated when
+        Process a @c wxEVT_RICHTEXT_CONTENT_DELETED event, generated when
         content has been deleted from the control.
         Valid event functions: GetPosition, GetRange.
     @event{EVT_RICHTEXT_BUFFER_RESET(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_BUFFER_RESET event, generated when the
+        Process a @c wxEVT_RICHTEXT_BUFFER_RESET event, generated when the
         buffer has been reset by deleting all content.
         You can use this to set a default style for the first new paragraph.
     @event{EVT_RICHTEXT_SELECTION_CHANGED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_SELECTION_CHANGED event, generated when the
+        Process a @c wxEVT_RICHTEXT_SELECTION_CHANGED event, generated when the
         selection range has changed.
     @event{EVT_RICHTEXT_FOCUS_OBJECT_CHANGED(id, func)}
-        Process a @c wxEVT_COMMAND_RICHTEXT_FOCUS_OBJECT_CHANGED event, generated when the
+        Process a @c wxEVT_RICHTEXT_FOCUS_OBJECT_CHANGED event, generated when the
         current focus object has changed.
     @endEventTable
 
@@ -2429,7 +2558,7 @@ public:
         { }
 
     /**
-        Returns the buffer position at which the event occured.
+        Returns the buffer position at which the event occurred.
     */
     long GetPosition() const { return m_position; }
 
@@ -2455,8 +2584,8 @@ public:
     /**
         Returns the old style sheet.
 
-        Can be used in a @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING or
-        @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGED event handler.
+        Can be used in a @c wxEVT_RICHTEXT_STYLESHEET_CHANGING or
+        @c wxEVT_RICHTEXT_STYLESHEET_CHANGED event handler.
     */
     wxRichTextStyleSheet* GetOldStyleSheet() const { return m_oldStyleSheet; }
 
@@ -2468,8 +2597,8 @@ public:
     /**
         Returns the new style sheet.
 
-        Can be used in a @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING or
-        @c wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGED event handler.
+        Can be used in a @c wxEVT_RICHTEXT_STYLESHEET_CHANGING or
+        @c wxEVT_RICHTEXT_STYLESHEET_CHANGED event handler.
     */
     wxRichTextStyleSheet* GetNewStyleSheet() const { return m_newStyleSheet; }
 
@@ -2489,7 +2618,7 @@ public:
     void SetRange(const wxRichTextRange& range) { m_range = range; }
 
     /**
-        Returns the character pressed, within a @c wxEVT_COMMAND_RICHTEXT_CHARACTER event.
+        Returns the character pressed, within a @c wxEVT_RICHTEXT_CHARACTER event.
     */
     wxChar GetCharacter() const { return m_char; }
 
@@ -2518,7 +2647,7 @@ public:
     */
     void SetOldContainer(wxRichTextParagraphLayoutBox* container) { m_oldContainer = container; }
 
-    virtual wxEvent *Clone() const { return new wxRichTextEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxRichTextEvent(*this); }
 
 protected:
     int                             m_flags;
@@ -2531,58 +2660,80 @@ protected:
     wxRichTextParagraphLayoutBox*   m_oldContainer;
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRichTextEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxRichTextEvent);
 };
 
 /*!
  * wxRichTextCtrl events
  */
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_LEFT_CLICK, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_RIGHT_CLICK, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_MIDDLE_CLICK, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_LEFT_DCLICK, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_RETURN, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_CHARACTER, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_DELETE, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_LEFT_CLICK, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_RIGHT_CLICK, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_MIDDLE_CLICK, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_LEFT_DCLICK, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_RETURN, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_CHARACTER, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_CONSUMING_CHARACTER, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_DELETE, wxRichTextEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_STYLESHEET_CHANGING, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_STYLESHEET_CHANGED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_STYLESHEET_REPLACING, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_STYLESHEET_REPLACED, wxRichTextEvent );
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_PROPERTIES_CHANGED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_SELECTION_CHANGED, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_BUFFER_RESET, wxRichTextEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_COMMAND_RICHTEXT_FOCUS_OBJECT_CHANGED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_CONTENT_INSERTED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_CONTENT_DELETED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_STYLE_CHANGED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_PROPERTIES_CHANGED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_SELECTION_CHANGED, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_BUFFER_RESET, wxRichTextEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_RICHTEXT, wxEVT_RICHTEXT_FOCUS_OBJECT_CHANGED, wxRichTextEvent );
 
 typedef void (wxEvtHandler::*wxRichTextEventFunction)(wxRichTextEvent&);
 
 #define wxRichTextEventHandler(func) \
     wxEVENT_HANDLER_CAST(wxRichTextEventFunction, func)
 
-#define EVT_RICHTEXT_LEFT_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_LEFT_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_RIGHT_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_RIGHT_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_MIDDLE_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_MIDDLE_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_LEFT_DCLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_LEFT_DCLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_RETURN(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_RETURN, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_CHARACTER(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_CHARACTER, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_DELETE(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_DELETE, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_LEFT_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_LEFT_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_RIGHT_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_RIGHT_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_MIDDLE_CLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_MIDDLE_CLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_LEFT_DCLICK(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_LEFT_DCLICK, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_RETURN(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_RETURN, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_CHARACTER(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_CHARACTER, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_CONSUMING_CHARACTER(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_CONSUMING_CHARACTER, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_DELETE(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_DELETE, id, -1, wxRichTextEventHandler( fn ), NULL ),
 
-#define EVT_RICHTEXT_STYLESHEET_CHANGING(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_STYLESHEET_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_STYLESHEET_REPLACING(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_STYLESHEET_REPLACED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_STYLESHEET_CHANGING(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_STYLESHEET_CHANGING, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_STYLESHEET_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_STYLESHEET_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_STYLESHEET_REPLACING(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_STYLESHEET_REPLACING, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_STYLESHEET_REPLACED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_STYLESHEET_REPLACED, id, -1, wxRichTextEventHandler( fn ), NULL ),
 
-#define EVT_RICHTEXT_CONTENT_INSERTED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_CONTENT_DELETED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_STYLE_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_PROPERTIES_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_PROPERTIES_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_SELECTION_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_SELECTION_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_BUFFER_RESET(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_BUFFER_RESET, id, -1, wxRichTextEventHandler( fn ), NULL ),
-#define EVT_RICHTEXT_FOCUS_OBJECT_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_COMMAND_RICHTEXT_FOCUS_OBJECT_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_CONTENT_INSERTED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_CONTENT_INSERTED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_CONTENT_DELETED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_CONTENT_DELETED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_STYLE_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_STYLE_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_PROPERTIES_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_PROPERTIES_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_SELECTION_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_SELECTION_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_BUFFER_RESET(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_BUFFER_RESET, id, -1, wxRichTextEventHandler( fn ), NULL ),
+#define EVT_RICHTEXT_FOCUS_OBJECT_CHANGED(id, fn) wxDECLARE_EVENT_TABLE_ENTRY( wxEVT_RICHTEXT_FOCUS_OBJECT_CHANGED, id, -1, wxRichTextEventHandler( fn ), NULL ),
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_RICHTEXT_LEFT_CLICK             wxEVT_RICHTEXT_LEFT_CLICK
+#define wxEVT_COMMAND_RICHTEXT_RIGHT_CLICK            wxEVT_RICHTEXT_RIGHT_CLICK
+#define wxEVT_COMMAND_RICHTEXT_MIDDLE_CLICK           wxEVT_RICHTEXT_MIDDLE_CLICK
+#define wxEVT_COMMAND_RICHTEXT_LEFT_DCLICK            wxEVT_RICHTEXT_LEFT_DCLICK
+#define wxEVT_COMMAND_RICHTEXT_RETURN                 wxEVT_RICHTEXT_RETURN
+#define wxEVT_COMMAND_RICHTEXT_CHARACTER              wxEVT_RICHTEXT_CHARACTER
+#define wxEVT_COMMAND_RICHTEXT_DELETE                 wxEVT_RICHTEXT_DELETE
+#define wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING    wxEVT_RICHTEXT_STYLESHEET_CHANGING
+#define wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGED     wxEVT_RICHTEXT_STYLESHEET_CHANGED
+#define wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING   wxEVT_RICHTEXT_STYLESHEET_REPLACING
+#define wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED    wxEVT_RICHTEXT_STYLESHEET_REPLACED
+#define wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED       wxEVT_RICHTEXT_CONTENT_INSERTED
+#define wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED        wxEVT_RICHTEXT_CONTENT_DELETED
+#define wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED          wxEVT_RICHTEXT_STYLE_CHANGED
+#define wxEVT_COMMAND_RICHTEXT_PROPERTIES_CHANGED     wxEVT_RICHTEXT_PROPERTIES_CHANGED
+#define wxEVT_COMMAND_RICHTEXT_SELECTION_CHANGED      wxEVT_RICHTEXT_SELECTION_CHANGED
+#define wxEVT_COMMAND_RICHTEXT_BUFFER_RESET           wxEVT_RICHTEXT_BUFFER_RESET
+#define wxEVT_COMMAND_RICHTEXT_FOCUS_OBJECT_CHANGED   wxEVT_RICHTEXT_FOCUS_OBJECT_CHANGED
 
 #endif
     // wxUSE_RICHTEXT

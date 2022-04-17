@@ -2,7 +2,6 @@
 // Name:        wx/imagtiff.h
 // Purpose:     wxImage TIFF handler
 // Author:      Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -42,16 +41,16 @@ public:
     static wxVersionInfo GetLibraryVersionInfo();
 
 #if wxUSE_STREAMS
-    virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 );
-    virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true );
+    virtual bool LoadFile( wxImage *image, wxInputStream& stream, bool verbose=true, int index=-1 ) wxOVERRIDE;
+    virtual bool SaveFile( wxImage *image, wxOutputStream& stream, bool verbose=true ) wxOVERRIDE;
 
 protected:
-    virtual int DoGetImageCount( wxInputStream& stream );
-    virtual bool DoCanRead( wxInputStream& stream );
+    virtual int DoGetImageCount( wxInputStream& stream ) wxOVERRIDE;
+    virtual bool DoCanRead( wxInputStream& stream ) wxOVERRIDE;
 #endif
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxTIFFHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxTIFFHandler);
 };
 
 #endif // wxUSE_LIBTIFF

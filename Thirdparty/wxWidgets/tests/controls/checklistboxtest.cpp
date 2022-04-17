@@ -3,7 +3,6 @@
 // Purpose:     wxCheckListBox unit test
 // Author:      Steven Lamerton
 // Created:     2010-06-30
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_CHECKLISTBOX
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -28,12 +24,12 @@ class CheckListBoxTestCase : public ItemContainerTestCase, public CppUnit::TestC
 public:
     CheckListBoxTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxItemContainer *GetContainer() const { return m_check; }
-    virtual wxWindow *GetContainerWindow() const { return m_check; }
+    virtual wxItemContainer *GetContainer() const wxOVERRIDE { return m_check; }
+    virtual wxWindow *GetContainerWindow() const wxOVERRIDE { return m_check; }
 
     CPPUNIT_TEST_SUITE( CheckListBoxTestCase );
         wxITEM_CONTAINER_TESTS();
@@ -44,14 +40,11 @@ private:
 
     wxCheckListBox* m_check;
 
-    DECLARE_NO_COPY_CLASS(CheckListBoxTestCase)
+    wxDECLARE_NO_COPY_CLASS(CheckListBoxTestCase);
 };
 
-// register in the unnamed registry so that these tests are run by default
-CPPUNIT_TEST_SUITE_REGISTRATION( CheckListBoxTestCase );
-
-// also include in its own registry so that these tests can be run alone
-CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( CheckListBoxTestCase, "CheckListBoxTestCase" );
+wxREGISTER_UNIT_TEST_WITH_TAGS(CheckListBoxTestCase,
+                               "[CheckListBoxTestCase][item-container]");
 
 void CheckListBoxTestCase::setUp()
 {
@@ -65,8 +58,9 @@ void CheckListBoxTestCase::tearDown()
 
 void CheckListBoxTestCase::Check()
 {
-    EventCounter toggled(m_check, wxEVT_COMMAND_CHECKLISTBOX_TOGGLED);
+    EventCounter toggled(m_check, wxEVT_CHECKLISTBOX);
 
+    wxArrayInt checkedItems;
     wxArrayString testitems;
     testitems.Add("item 0");
     testitems.Add("item 1");
@@ -83,6 +77,9 @@ void CheckListBoxTestCase::Check()
     CPPUNIT_ASSERT_EQUAL(0, toggled.GetCount());
     CPPUNIT_ASSERT_EQUAL(true, m_check->IsChecked(0));
     CPPUNIT_ASSERT_EQUAL(false, m_check->IsChecked(1));
+
+    CPPUNIT_ASSERT_EQUAL(1, m_check->GetCheckedItems(checkedItems));
+    CPPUNIT_ASSERT_EQUAL(0, checkedItems[0]);
 
     //Make sure a double check of an items doesn't deselect it
     m_check->Check(0);

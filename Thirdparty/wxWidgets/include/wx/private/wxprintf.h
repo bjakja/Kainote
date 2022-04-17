@@ -4,7 +4,6 @@
 // Author:      Ove Kaven
 // Modified by: Ron Lee, Francesco Montorsi
 // Created:     09/04/99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets copyright
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,11 +19,11 @@
 #include "wx/log.h"
 #include "wx/utils.h"
 
+#include <limits.h>
 #include <string.h>
 
 // prefer snprintf over sprintf
-#if defined(__VISUALC__) || \
-        (defined(__BORLANDC__) && __BORLANDC__ >= 0x540)
+#if defined(__VISUALC__)
     #define system_sprintf(buff, max, flags, data)      \
         ::_snprintf(buff, max, flags, data)
 #elif defined(HAVE_SNPRINTF)
@@ -182,7 +181,7 @@ public:
     bool LoadArg(wxPrintfArg *p, va_list &argptr);
 
 private:
-    // An helper function of LoadArg() which is used to handle the '*' flag
+    // A helper function of LoadArg() which is used to handle the '*' flag
     void ReplaceAsteriskWith(int w);
 };
 
@@ -190,7 +189,7 @@ template<typename CharType>
 void wxPrintfConvSpec<CharType>::Init()
 {
     m_nMinWidth = 0;
-    m_nMaxWidth = 0xFFFF;
+    m_nMaxWidth = INT_MAX;
     m_pos = 0;
     m_bAlignLeft = false;
     m_pArgPos = m_pArgEnd = NULL;
@@ -252,7 +251,7 @@ bool wxPrintfConvSpec<CharType>::Parse(const CharType *format)
             case wxT('.'):
                 // don't use CHECK_PREC here to avoid warning about the value
                 // assigned to prec_dot inside it being never used (because
-                // overwritten just below) from Borland in release build
+                // overwritten just below)
                 if (in_prec && !prec_dot)
                     m_szFlags[flagofs++] = '.';
                 in_prec = true;
@@ -303,6 +302,7 @@ bool wxPrintfConvSpec<CharType>::Parse(const CharType *format)
                     break;
                 }
                 // else: fall-through, 'I' is MSVC equivalent of C99 'z'
+                wxFALLTHROUGH;
 #endif      // __WINDOWS__
 
             case wxT('z'):
@@ -428,52 +428,56 @@ bool wxPrintfConvSpec<CharType>::Parse(const CharType *format)
                 break;
 
             case wxT('c'):
+#if wxUSE_UNICODE
                 if (ilen == -1)
                 {
-                    // in Unicode mode %hc == ANSI character
-                    // and in ANSI mode, %hc == %c == ANSI...
+                    // %hc == ANSI character
                     m_type = wxPAT_CHAR;
                 }
-                else if (ilen == 1)
+                else
                 {
-                    // in ANSI mode %lc == Unicode character
-                    // and in Unicode mode, %lc == %c == Unicode...
+                    // %lc == %c == Unicode character
+                    m_type = wxPAT_WCHAR;
+                }
+#else
+                if (ilen == 1)
+                {
+                    // %lc == Unicode character
                     m_type = wxPAT_WCHAR;
                 }
                 else
                 {
-#if wxUSE_UNICODE
-                    // in Unicode mode, %c == Unicode character
-                    m_type = wxPAT_WCHAR;
-#else
-                    // in ANSI mode, %c == ANSI character
+                    // %hc == %c == ANSI character
                     m_type = wxPAT_CHAR;
-#endif
                 }
+#endif
                 done = true;
                 break;
 
             case wxT('s'):
+#if wxUSE_UNICODE
                 if (ilen == -1)
                 {
-                    // Unicode mode wx extension: we'll let %hs mean non-Unicode
-                    // strings (when in ANSI mode, %s == %hs == ANSI string)
+                    // wx extension: we'll let %hs mean non-Unicode strings
                     m_type = wxPAT_PCHAR;
                 }
-                else if (ilen == 1)
+                else
                 {
-                    // in Unicode mode, %ls == %s == Unicode string
-                    // in ANSI mode, %ls == Unicode string
+                    // %ls == %s == Unicode string
+                    m_type = wxPAT_PWCHAR;
+                }
+#else
+                if (ilen == 1)
+                {
+                    // %ls == Unicode string
                     m_type = wxPAT_PWCHAR;
                 }
                 else
                 {
-#if wxUSE_UNICODE
-                    m_type = wxPAT_PWCHAR;
-#else
+                    // %s == %hs == ANSI string
                     m_type = wxPAT_PCHAR;
-#endif
                 }
+#endif
                 done = true;
                 break;
 
@@ -798,6 +802,7 @@ struct wxPrintfConvSpecParser
 
     wxPrintfConvSpecParser(const CharType *fmt)
     {
+        nspecs =
         nargs = 0;
         posarg_present =
         nonposarg_present = false;
@@ -818,7 +823,7 @@ struct wxPrintfConvSpecParser
                 continue;
             }
 
-            ConvSpec *spec = &specs[nargs];
+            ConvSpec *spec = &specs[nspecs];
             spec->Init();
 
             // attempt to parse this format specification
@@ -839,7 +844,7 @@ struct wxPrintfConvSpecParser
 
                 for ( unsigned n = 0; n < numAsterisks; n++ )
                 {
-                    if ( nargs++ == wxMAX_SVNPRINTF_ARGUMENTS )
+                    if ( ++nspecs == wxMAX_SVNPRINTF_ARGUMENTS )
                         break;
 
                     // TODO: we need to support specifiers of the form "%2$*1$s"
@@ -853,24 +858,29 @@ struct wxPrintfConvSpecParser
                         wxFAIL_MSG
                         (
                             wxString::Format
-                            (
+                            (wxASCII_STR(
                                 "Format string \"%s\" uses both positional "
                                 "parameters and '*' but this is not currently "
-                                "supported by this implementation, sorry.",
+                                "supported by this implementation, sorry."),
                                 fmt
                             )
                         );
                     }
 
-                    specs[nargs] = *spec;
+                    specs[nspecs] = *spec;
 
                     // make an entry for '*' and point to it from pspec
                     spec->Init();
                     spec->m_type = wxPAT_STAR;
-                    pspec[nargs - 1] = spec;
+                    pspec[nargs++] = spec;
 
-                    spec = &specs[nargs];
+                    spec = &specs[nspecs];
                 }
+
+                // If we hit the maximal number of arguments inside the inner
+                // loop, break out of the outer one as well.
+                if ( nspecs == wxMAX_SVNPRINTF_ARGUMENTS )
+                    break;
             }
 
 
@@ -880,34 +890,53 @@ struct wxPrintfConvSpecParser
                 // the positional arguments start from number 1 so we need
                 // to adjust the index
                 spec->m_pos--;
+
+                // We could be reusing an already existing argument, only
+                // increment their number if it's really a new one.
+                if ( spec->m_pos >= nargs )
+                {
+                    nargs = spec->m_pos + 1;
+                }
+                else if ( pspec[spec->m_pos] ) // Had we seen it before?
+                {
+                    // Check that the type specified this time is compatible
+                    // with the previously-specified type.
+                    wxASSERT_MSG
+                    (
+                        pspec[spec->m_pos]->m_type == spec->m_type,
+                        "Positional parameter specified multiple times "
+                        "with incompatible types."
+                    );
+                }
+
                 posarg_present = true;
             }
             else // not a positional argument...
             {
-                spec->m_pos = nargs;
+                spec->m_pos = nargs++;
                 nonposarg_present = true;
             }
 
             // this conversion specifier is tied to the pos-th argument...
             pspec[spec->m_pos] = spec;
 
-            if ( nargs++ == wxMAX_SVNPRINTF_ARGUMENTS )
+            if ( ++nspecs == wxMAX_SVNPRINTF_ARGUMENTS )
                 break;
         }
 
 
         // warn if we lost any arguments (the program probably will crash
         // anyhow because of stack corruption...)
-        if ( nargs == wxMAX_SVNPRINTF_ARGUMENTS )
+        if ( nspecs == wxMAX_SVNPRINTF_ARGUMENTS )
         {
             wxFAIL_MSG
             (
                 wxString::Format
-                (
+                (wxASCII_STR(
                     "wxVsnprintf() currently supports only %d arguments, "
                     "but format string \"%s\" defines more of them.\n"
                     "You need to change wxMAX_SVNPRINTF_ARGUMENTS and "
-                    "recompile if more are really needed.",
+                    "recompile if more are really needed."),
                     fmt, wxMAX_SVNPRINTF_ARGUMENTS
                 )
             );
@@ -915,6 +944,10 @@ struct wxPrintfConvSpecParser
     }
 
     // total number of valid elements in specs
+    unsigned nspecs;
+
+    // total number of arguments, also number of valid elements in pspec, and
+    // always less than or (usually) equal to nspecs
     unsigned nargs;
 
     // all format specifications in this format string in order of their

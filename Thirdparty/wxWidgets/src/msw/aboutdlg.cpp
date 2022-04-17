@@ -3,8 +3,7 @@
 // Purpose:     implementation of wxAboutBox() for wxMSW
 // Author:      Vadim Zeitlin
 // Created:     2006-10-07
-// RCS-ID:      $Id$
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ABOUTDLG
 

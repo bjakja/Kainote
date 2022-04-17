@@ -4,8 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2005-01-18
-// RCS-ID:      $Id$
-// Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STACKWALKER
 
@@ -182,17 +178,18 @@ void wxStackWalker::ProcessFrames(size_t skip)
     if (!ms_symbols || !m_depth)
         return;
 
-    // we have 3 more "intermediate" frames which the calling code doesn't know
-    // about, account for them
-    skip += 3;
+    // we are another level down from Walk(), so adjust the number of stack
+    // frames to skip accordingly
+    skip += 1;
 
     // call addr2line only once since this call may be very slow
     // (it has to load in memory the entire EXE of this app which may be quite
     //  big, especially if it contains debug info and is compiled statically!)
-    int towalk = InitFrames(frames, m_depth - skip, &ms_addresses[skip], &ms_symbols[skip]);
+    int numFrames = InitFrames(frames, m_depth - skip,
+                               &ms_addresses[skip], &ms_symbols[skip]);
 
     // now do user-defined operations on each frame
-    for ( int n = 0; n < towalk - (int)skip; n++ )
+    for ( int n = 0; n < numFrames; n++ )
         OnStackFrame(frames[n]);
 }
 
@@ -215,6 +212,8 @@ bool ReadLine(FILE* fp, unsigned long num, wxString* line)
 {
     if ( !fgets(g_buf, WXSIZEOF(g_buf), fp) )
     {
+        wxUnusedVar(num); // could be unused if debug tracing is disabled
+
         wxLogDebug(wxS("cannot read address information for stack frame #%lu"),
                    num);
         return false;
@@ -284,18 +283,18 @@ int wxStackWalker::InitFrames(wxStackFrame *arr, size_t n, void **addresses, cha
         //      func(args) (in module) (file:line)
         //
         // or just the same address back if it couldn't be resolved.
-        const size_t posIn = buffer.find("(in ");
+        const size_t posIn = buffer.find(" (in ");
         if ( posIn != wxString::npos )
         {
             name.assign(buffer, 0, posIn);
 
-            size_t posAt = buffer.find(") (", posIn + 3);
+            size_t posAt = buffer.find(") (", posIn + 5); // Skip " (in "
             if ( posAt != wxString::npos )
             {
                 posAt += 3; // Skip ") ("
 
-                // Discard the two last characters which are ")\n"
-                wxString location(buffer, posAt, buffer.length() - posAt - 2);
+                // Discard the last character which is ")"
+                wxString location(buffer, posAt, buffer.length() - posAt - 1);
 
                 wxString linenum;
                 filename = location.BeforeFirst(':', &linenum);

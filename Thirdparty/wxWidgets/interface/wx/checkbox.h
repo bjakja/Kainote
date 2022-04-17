@@ -2,7 +2,6 @@
 // Name:        checkbox.h
 // Purpose:     interface of wxCheckBox
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -51,8 +50,7 @@ enum wxCheckBoxState
     @style{wxCHK_2STATE}
            Create a 2-state checkbox. This is the default.
     @style{wxCHK_3STATE}
-           Create a 3-state checkbox. Not implemented in wxOS2 and
-           wxGTK built against GTK+ 1.2.
+           Create a 3-state checkbox.
     @style{wxCHK_ALLOW_3RD_STATE_FOR_USER}
            By default a user can't set a 3-state checkbox to the third state.
            It can only be done from code. Using this flags allows the user to
@@ -63,13 +61,13 @@ enum wxCheckBoxState
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_CHECKBOX(id, func)}
-           Process a @c wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox
+           Process a @c wxEVT_CHECKBOX event, when the checkbox
            is clicked.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{checkbox.png}
+    @appearance{checkbox}
 
     @see wxRadioButton, wxCommandEvent
 */
@@ -93,10 +91,10 @@ public:
         @param label
             Text to be displayed next to the checkbox.
         @param pos
-            Checkbox position. 
+            Checkbox position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Checkbox size. 
+            Checkbox size.
             If ::wxDefaultSize is specified then a default size is chosen.
         @param style
             Window style. See wxCheckBox.
@@ -170,7 +168,7 @@ public:
 
     /**
         Sets the checkbox to the given state. This does not cause a
-        @c wxEVT_COMMAND_CHECKBOX_CLICKED event to get emitted.
+        @c wxEVT_CHECKBOX event to get emitted.
 
         @param state
             If @true, the check is on, otherwise it is off.
@@ -179,7 +177,7 @@ public:
 
     /**
         Sets the checkbox to the given state. This does not cause a
-        @c wxEVT_COMMAND_CHECKBOX_CLICKED event to get emitted.
+        @c wxEVT_CHECKBOX event to get emitted.
 
         Asserts when the checkbox is a 2-state checkbox and setting the state
         to wxCHK_UNDETERMINED.

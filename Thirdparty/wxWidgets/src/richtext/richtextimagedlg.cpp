@@ -12,10 +12,6 @@
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
-
 #if wxUSE_RICHTEXT
 
 #ifndef WX_PRECOMP
@@ -39,19 +35,19 @@
  * wxRichTextObjectPropertiesDialog type definition
  */
 
-IMPLEMENT_DYNAMIC_CLASS( wxRichTextObjectPropertiesDialog, wxRichTextFormattingDialog )
+wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextObjectPropertiesDialog, wxRichTextFormattingDialog);
 
 
 /*!
  * wxRichTextObjectPropertiesDialog event table definition
  */
 
-BEGIN_EVENT_TABLE( wxRichTextObjectPropertiesDialog, wxRichTextFormattingDialog )
+wxBEGIN_EVENT_TABLE(wxRichTextObjectPropertiesDialog, wxRichTextFormattingDialog)
 
 ////@begin wxRichTextObjectPropertiesDialog event table entries
 ////@end wxRichTextObjectPropertiesDialog event table entries
 
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
 /*!
@@ -155,7 +151,7 @@ wxIcon wxRichTextObjectPropertiesDialog::GetIconResource( const wxString& name )
 
 #if 0
 /*!
- * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_BUTTON_PARA_UP
+ * wxEVT_BUTTON event handler for ID_BUTTON_PARA_UP
  */
 void wxRichTextObjectPropertiesDialog::OnRichtextParaUpClick( wxCommandEvent& WXUNUSED(event))
 {
@@ -188,7 +184,7 @@ void wxRichTextObjectPropertiesDialog::OnRichtextParaUpClick( wxCommandEvent& WX
 
 
 /*!
- * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_BUTTON_PARA_DOWN
+ * wxEVT_BUTTON event handler for ID_BUTTON_PARA_DOWN
  */
 
 void wxRichTextObjectPropertiesDialog::OnRichtextDownClick( wxCommandEvent& WXUNUSED(event))

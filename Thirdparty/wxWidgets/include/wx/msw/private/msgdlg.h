@@ -3,15 +3,15 @@
 // Purpose:     helper functions used with native message dialog
 // Author:      Rickard Westerlund
 // Created:     2010-07-12
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _WX_MSW_PRIVATE_MSGDLG_H_
+#define _WX_MSW_PRIVATE_MSGDLG_H_
 
-//#include <wx/msw/wrapcctl.h>
-//#include <wx/scopedarray.h>
+#include "wx/msw/wrapcctl.h"
+#include "wx/scopedarray.h"
 
 // Macro to help identify if task dialogs are available: we rely on
 // TD_WARNING_ICON being defined in the headers for this as this symbol is used
@@ -33,7 +33,7 @@ namespace wxMSWMessageDialog
 
         wxMSWTaskDialogConfig()
             : buttons(new TASKDIALOG_BUTTON[MAX_BUTTONS]),
-              parent(nullptr),
+              parent(NULL),
               iconId(0),
               style(0),
               useCustomLabels(false)
@@ -56,7 +56,7 @@ namespace wxMSWMessageDialog
         wxString btnCancelLabel;
         wxString btnHelpLabel;
 
-        // Will create a task dialog with it's paremeters for it's creation
+        // Will create a task dialog with it's parameters for it's creation
         // stored in the provided TASKDIALOGCONFIG parameter.
         // NOTE: The wxMSWTaskDialogConfig object needs to remain accessible
         // during the subsequent call to TaskDialogIndirect().
@@ -90,3 +90,4 @@ namespace wxMSWMessageDialog
     int MSWTranslateReturnCode(int msAns);
 }; // namespace wxMSWMessageDialog
 
+#endif // _WX_MSW_PRIVATE_MSGDLG_H_

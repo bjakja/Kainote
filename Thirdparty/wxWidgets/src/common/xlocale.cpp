@@ -3,7 +3,6 @@
 // Purpose:     xlocale wrappers/impl to provide some xlocale wrappers
 // Author:      Brian Vanderburg II, Vadim Zeitlin
 // Created:     2008-01-07
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Brian Vanderburg II
 //                  2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XLOCALE
 
@@ -39,7 +35,7 @@
 // ----------------------------------------------------------------------------
 
 // This is the C locale object, it is created on demand
-static wxXLocale *gs_cLocale = nullptr;
+static wxXLocale *gs_cLocale = NULL;
 
 wxXLocale wxNullXLocale;
 
@@ -55,13 +51,13 @@ wxXLocale wxNullXLocale;
 class wxXLocaleModule : public wxModule
 {
 public:
-    virtual bool OnInit() { return true; }
-    virtual void OnExit() { wxDELETE(gs_cLocale); }
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE { wxDELETE(gs_cLocale); }
 
-    DECLARE_DYNAMIC_CLASS(wxXLocaleModule)
+    wxDECLARE_DYNAMIC_CLASS(wxXLocaleModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxXLocaleModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxXLocaleModule, wxModule);
 
 
 // ============================================================================
@@ -77,9 +73,10 @@ wxXLocale& wxXLocale::GetCLocale()
 {
     if ( !gs_cLocale )
     {
-        // NOTE: bcc551 has trouble doing static_cast with incomplete
-        //       type definition. reinterpret_cast used as workaround
-        gs_cLocale = new wxXLocale( reinterpret_cast<wxXLocaleCTag *>(nullptr) );
+        // Notice that we need a separate variable because clang 3.1 refuses to
+        // cast nullptr (which is how NULL is defined in it) to anything.
+        static wxXLocaleCTag* const tag = NULL;
+        gs_cLocale = new wxXLocale(tag);
     }
 
     return *gs_cLocale;
@@ -87,18 +84,18 @@ wxXLocale& wxXLocale::GetCLocale()
 
 #ifdef wxHAS_XLOCALE_SUPPORT
 
+#if wxUSE_INTL
 wxXLocale::wxXLocale(wxLanguage lang)
 {
+    m_locale = NULL;
+
     const wxLanguageInfo * const info = wxLocale::GetLanguageInfo(lang);
-    if ( !info )
-    {
-        m_locale = nullptr;
-    }
-    else
+    if ( info )
     {
         Init(info->GetLocaleName().c_str());
     }
 }
+#endif // wxUSE_INTL
 
 #if wxCHECK_VISUALC_VERSION(8)
 
@@ -131,7 +128,7 @@ void wxXLocale::Init(const char *loc)
     if (!loc || *loc == '\0')
         return;
 
-    m_locale = newlocale(LC_ALL_MASK, loc, nullptr);
+    m_locale = newlocale(LC_ALL_MASK, loc, NULL);
     if (!m_locale)
     {
         // NOTE: here we do something similar to what wxSetLocaleTryUTF8() does
@@ -139,21 +136,21 @@ void wxXLocale::Init(const char *loc)
         wxString buf(loc);
         wxString buf2;
         buf2 = buf + wxS(".UTF-8");
-        m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
+        m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
         if ( !m_locale )
         {
             buf2 = buf + wxS(".utf-8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
         }
         if ( !m_locale )
         {
             buf2 = buf + wxS(".UTF8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
         }
         if ( !m_locale )
         {
             buf2 = buf + wxS(".utf8");
-            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), nullptr);
+            m_locale = newlocale(LC_ALL_MASK, buf2.c_str(), NULL);
         }
     }
 
@@ -288,7 +285,7 @@ class CNumericLocaleSetter
 {
 public:
     CNumericLocaleSetter()
-        : m_oldLocale(wxStrdupA(setlocale(LC_NUMERIC, nullptr)))
+        : m_oldLocale(wxStrdupA(setlocale(LC_NUMERIC, NULL)))
     {
         if ( !wxSetlocale(LC_NUMERIC, "C") )
         {

@@ -2,9 +2,83 @@
 // Name:        html/htmlcell.h
 // Purpose:     interface of wxHtml*Cell
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+
+
+/**
+   @class wxHtmlRenderingStyle
+
+   wxHtmlSelection is data holder with information about text selection.
+   Selection is defined by two positions (beginning and end of the selection)
+   and two leaf(!) cells at these positions.
+
+   @library{wxhtml}
+   @category{html}
+*/
+class wxHtmlSelection
+{
+public:
+    wxHtmlSelection();
+
+    // this version is used for the user selection defined with the mouse
+    void Set(const wxPoint& fromPos, const wxHtmlCell *fromCell,
+             const wxPoint& toPos, const wxHtmlCell *toCell);
+    void Set(const wxHtmlCell *fromCell, const wxHtmlCell *toCell);
+
+    const wxHtmlCell *GetFromCell() const;
+    const wxHtmlCell *GetToCell() const;
+
+    // these values are in absolute coordinates:
+    const wxPoint& GetFromPos() const;
+    const wxPoint& GetToPos() const;
+
+    // these are From/ToCell's private data
+    void ClearFromToCharacterPos();
+    bool AreFromToCharacterPosSet() const;
+
+    void SetFromCharacterPos (wxCoord pos);
+    void SetToCharacterPos (wxCoord pos);
+    wxCoord GetFromCharacterPos () const;
+    wxCoord GetToCharacterPos () const;
+
+    bool IsEmpty() const;
+};
+
+
+
+enum wxHtmlSelectionState
+{
+    wxHTML_SEL_OUT,     // currently rendered cell is outside the selection
+    wxHTML_SEL_IN,      // ... is inside selection
+    wxHTML_SEL_CHANGING // ... is the cell on which selection state changes
+};
+
+
+/**
+   @class wxHtmlRenderingState
+
+   Selection state is passed to wxHtmlCell::Draw so that it can render itself
+   differently e.g. when inside text selection or outside it.
+
+   @library{wxhtml}
+   @category{html}
+*/
+class wxHtmlRenderingState
+{
+public:
+    wxHtmlRenderingState();
+
+    void SetSelectionState(wxHtmlSelectionState s);
+    wxHtmlSelectionState GetSelectionState() const;
+
+    void SetFgColour(const wxColour& c);
+    const wxColour& GetFgColour() const;
+    void SetBgColour(const wxColour& c);
+    const wxColour& GetBgColour() const;
+    void SetBgMode(int m);
+    int GetBgMode() const;
+};
 
 
 
@@ -69,6 +143,25 @@ public:
 };
 
 
+
+// Flags for wxHtmlCell::FindCellByPos
+enum
+{
+    wxHTML_FIND_EXACT             = 1,
+    wxHTML_FIND_NEAREST_BEFORE    = 2,
+    wxHTML_FIND_NEAREST_AFTER     = 4
+};
+
+
+// Superscript/subscript/normal script mode of a cell
+enum wxHtmlScriptMode
+{
+    wxHTML_SCRIPT_NORMAL,
+    wxHTML_SCRIPT_SUB,
+    wxHTML_SCRIPT_SUP
+};
+
+
 /**
     @class wxHtmlCell
 
@@ -94,34 +187,31 @@ public:
     wxHtmlCell();
 
     /**
-        This method is used to adjust pagebreak position.
-        The first parameter is a variable that contains the y-coordinate of the page break
-        (= horizontal line that should not be crossed by words, images etc.).
-        If this cell cannot be divided into two pieces (each one on another page)
-        then it either moves the pagebreak a few pixels up, if possible, or, if
-        the cell cannot fit on the page at all, then the cell is forced to
-        split unconditionally.
+        This method is called when paginating HTML, e.g.\ when printing.
 
-        Returns @true if pagebreak was modified, @false otherwise.
+        User code should never call this function, but may need to override it
+        in custom HTML cell classes with any specific page breaking
+        requirements.
+
+        On input, @a pagebreak contains y-coordinate of page break (i.e. the
+        horizontal line that should not be crossed by words, images etc.)
+        relative to the parent cell on entry and may be modified to request a
+        page break at a position before it if this cell cannot be divided into
+        two pieces (each one on its own page).
+
+        Note that page break must still happen on the current page, i.e. the
+        returned value must be strictly greater than @code *pagebreak -
+        pageHeight @endcode and less or equal to @c *pagebreak for the value of
+        @a pagebreak on input.
 
         @param pagebreak
-            position in pixel of the pagebreak.
-
-        @param known_pagebreaks
-            the list of the previous pagebreaks
-
+            position in pixels of the pagebreak.
         @param pageHeight
-            the height in pixel of the page drawable area
+            the height in pixels of the page drawable area
 
-        Usage:
-        @code
-        while (container->AdjustPagebreak(&p, kp, ph)) {}
-        @endcode
-
+        @return @true if pagebreak was modified, @false otherwise.
     */
-    virtual bool AdjustPagebreak(int* pagebreak,
-                                 const wxArrayInt& known_pagebreaks,
-                                 int pageHeight) const;
+    virtual bool AdjustPagebreak(int* pagebreak, int pageHeight) const;
 
     /**
         Renders the cell.
@@ -183,6 +273,17 @@ public:
     virtual const wxHtmlCell* Find(int condition, const void* param) const;
 
     /**
+       Find a cell inside this cell positioned at the given coordinates
+       (relative to this's positions). Returns NULL if no such cell exists.
+       The flag can be used to specify whether to look for terminal or
+       nonterminal cells or both. In either case, returned cell is deepest
+       cell in cells tree that contains [x,y].
+    */
+    virtual wxHtmlCell *FindCellByPos(wxCoord x, wxCoord y,
+                                  unsigned flags = wxHTML_FIND_EXACT) const;
+
+
+    /**
         Returns descent value of the cell (m_Descent member).
         See explanation:
         @image html htmlcell_descent.png
@@ -225,8 +326,27 @@ public:
 
         @param window
             interface to the parent HTML window
+
+        @see GetMouseCursorAt()
     */
     virtual wxCursor GetMouseCursor(wxHtmlWindowInterface* window) const;
+
+    /**
+        Returns cursor to show when mouse pointer is over the specified point.
+
+        This function should be overridden instead of GetMouseCursorAt() if
+        the cursor should depend on the exact position of the mouse in the
+        window.
+
+        @param window
+            interface to the parent HTML window
+        @param rePos
+            Position to show cursor.
+
+        @since 3.0
+     */
+    virtual wxCursor GetMouseCursorAt(wxHtmlWindowInterface* window,
+                                      const wxPoint& rePos) const;
 
     /**
         Returns pointer to the next cell in list (see htmlcell.h if you're
@@ -323,6 +443,13 @@ public:
         Sets the cell's position within parent container.
     */
     virtual void SetPos(int x, int y);
+
+    /**
+       Converts the cell into text representation. If sel != NULL then
+       only part of the cell inside the selection is converted.
+    */
+    virtual wxString ConvertToText(wxHtmlSelection* sel) const;
+
 };
 
 
@@ -344,7 +471,21 @@ public:
     /**
         Constructor. @a parent is pointer to parent container or @NULL.
     */
-    wxHtmlContainerCell(wxHtmlContainerCell* parent);
+    explicit wxHtmlContainerCell(wxHtmlContainerCell* parent);
+
+    /**
+        Detach a child cell.
+
+        Detaching a cell removes it from this container and allows reattaching
+        it to another one by using InsertCell(). Alternatively, this method can
+        be used to selectively remove some elements of the HTML document tree
+        by deleting the cell after calling it.
+
+        @param cell Must be non-null and an immediate child of this cell.
+
+        @since 3.1.2
+     */
+    void Detach(wxHtmlCell* cell);
 
     /**
         Returns container's horizontal alignment.
@@ -379,6 +520,9 @@ public:
 
     /**
         Inserts a new cell into the container.
+
+        Note that the container takes ownership of the cell and will delete it
+        when it itself is destroyed.
     */
     void InsertCell(wxHtmlCell* cell);
 
@@ -618,4 +762,54 @@ public:
             that the window will always have same width as parent container).
     */
     wxHtmlWidgetCell(wxWindow* wnd, int w = 0);
+};
+
+
+
+/**
+    @class wxHtmlWordCell
+
+    This html cell represents a single word or text fragment in the document stream.
+
+    @library{wxhtml}
+    @category{html}
+*/
+class wxHtmlWordCell : public wxHtmlCell
+{
+public:
+    wxHtmlWordCell(const wxString& word, const wxDC& dc);
+};
+
+
+/**
+    @class wxHtmlWordWithTabsCell
+
+    wxHtmlWordCell is a specialization for storing text fragments with
+    embedded tab characters.
+
+    @library{wxhtml}
+    @category{html}
+*/
+class wxHtmlWordWithTabsCell : public wxHtmlWordCell
+{
+public:
+    wxHtmlWordWithTabsCell(const wxString& word,
+                           const wxString& wordOrig,
+                           size_t linepos,
+                           const wxDC& dc);
+};
+
+
+/**
+    @class wxHtmlFontCell
+
+    This cell represents a font change in the document stream.
+
+    @library{wxhtml}
+    @category{html}
+*/
+class wxHtmlFontCell : public wxHtmlCell
+{
+public:
+    wxHtmlFontCell(wxFont *font);
 };

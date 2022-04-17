@@ -2,7 +2,6 @@
 // Name:        print.h
 // Purpose:     interface of wxPreviewControlBar
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +45,7 @@ enum wxPrinterError
     You can derive a new class from this and override some or all member functions
     to change the behaviour and appearance; or you can leave it as it is.
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see wxPreviewFrame, wxPreviewCanvas, wxPrintPreview
@@ -120,7 +119,7 @@ public:
     A preview canvas is the default canvas used by the print preview
     system to display the preview.
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see wxPreviewFrame, wxPreviewControlBar, wxPrintPreview
@@ -183,7 +182,7 @@ enum wxPreviewFrameModalityKind
     Member functions may be overridden to replace functionality, or the
     class may be used without derivation.
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see wxPreviewCanvas, wxPreviewControlBar, wxPrintPreview
@@ -263,7 +262,7 @@ public:
 
         @since 2.9.2
     */
-    virtual void InitializeWithModality(wxPreviewFrameModalityKind kind);
+    void InitializeWithModality(wxPreviewFrameModalityKind kind);
 
     /**
         Enables any disabled frames in the application, and deletes the print preview
@@ -291,9 +290,9 @@ public:
     created. In particular, printing code relying on wxDC::GetTextExtent()
     heavily (for example, wxHtmlEasyPrinting and other wxHTML classes do) is
     affected. It is recommended to use native preview functionality on
-    platforms that offer it (OS X, GTK+).
+    platforms that offer it (macOS, GTK+).
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see @ref overview_printing, wxPrinterDC, wxPrintDialog, wxPrintout, wxPrinter,
@@ -444,7 +443,7 @@ public:
     but this and associated classes provide a more convenient and general method
     of printing.
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see @ref overview_printing, wxPrinterDC, wxPrintDialog, wxPrintout, wxPrintPreview
@@ -465,7 +464,7 @@ public:
     /**
         Creates the default printing abort window, with a cancel button.
     */
-    virtual wxWindow* CreateAbortWindow(wxWindow* parent, wxPrintout* printout);
+    virtual wxPrintAbortDialog* CreateAbortWindow(wxWindow* parent, wxPrintout* printout);
 
     /**
         Returns @true if the user has aborted the print job.
@@ -527,8 +526,8 @@ public:
     /**
         Invokes the print setup dialog.
 
-        @remarks
-        The setup dialog is obsolete from Windows 95, though retained
+        @deprecated
+        The setup dialog is obsolete, though retained
         for backward compatibility.
     */
     virtual bool Setup(wxWindow* parent);
@@ -562,7 +561,7 @@ public:
     to create the print preview image, and to create the printed paper image, and
     achieve a common appearance to the preview image and the printed page.
 
-    @library{wxbase}
+    @library{wxcore}
     @category{printing}
 
     @see @ref overview_printing, wxPrinterDC, wxPrintDialog, wxPageSetupDialog,
@@ -806,7 +805,7 @@ public:
         page rectangle, or page margins rectangle to perform your own scaling.
 
         @note
-        While the underlying drawing model of Mac OS X is floating-point,
+        While the underlying drawing model of macOS is floating-point,
         wxWidgets's drawing model scales from integer coordinates.
     */
     void MapScreenSizeToDevice();
@@ -905,3 +904,23 @@ public:
     void SetLogicalOrigin(wxCoord x, wxCoord y);
 };
 
+
+/**
+   @class wxPrintAbortDialog
+
+   The dialog created by default by the print framework that enables aborting
+   the printing process.
+ */
+class wxPrintAbortDialog: public wxDialog
+{
+public:
+    wxPrintAbortDialog(wxWindow *parent,
+                       const wxString& documentTitle,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = wxDEFAULT_DIALOG_STYLE,
+                       const wxString& name = "dialog");
+
+    void SetProgress(int currentPage, int totalPages,
+                     int currentCopy, int totalCopies);
+};

@@ -4,17 +4,12 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #include "wx/wx.h"
@@ -25,13 +20,13 @@
 
 const int ID_LISTBOX = 101;
 
-BEGIN_EVENT_TABLE(PlayerSelectionDialog, wxDialog)
+wxBEGIN_EVENT_TABLE(PlayerSelectionDialog, wxDialog)
     EVT_SIZE(PlayerSelectionDialog::OnSize)
     EVT_BUTTON(wxID_OK, PlayerSelectionDialog::ButtonCallback)
     EVT_BUTTON(wxID_CANCEL, PlayerSelectionDialog::ButtonCallback)
     EVT_LISTBOX(ID_LISTBOX, PlayerSelectionDialog::SelectCallback)
     EVT_CLOSE(PlayerSelectionDialog::OnCloseWindow)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 PlayerSelectionDialog::PlayerSelectionDialog(
                             wxWindow* parent,
@@ -102,7 +97,7 @@ void PlayerSelectionDialog::OnCloseWindow(wxCloseEvent& WXUNUSED(event))
 
 void PlayerSelectionDialog::SelectCallback(wxCommandEvent& event)
 {
-    if (event.GetEventType() == wxEVT_COMMAND_LISTBOX_SELECTED)
+    if (event.GetEventType() == wxEVT_LISTBOX)
     {
 //        if (event.IsSelection())
         m_textField->SetValue(event.GetString());

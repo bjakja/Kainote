@@ -3,8 +3,7 @@
 // Purpose:     wxNativeWindow implementation
 // Author:      Vadim Zeitlin
 // Created:     2008-03-05
-// RCS-ID:      $Id$
-// Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,17 +18,13 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
 
 #include "wx/nativewin.h"
 
-#include <gtk/gtk.h>
-#include "wx/gtk/private/gtk2-compat.h"
+#include "wx/gtk/private/wrapgtk.h"
 
 #ifdef GDK_WINDOWING_X11
     #include <gdk/gdkx.h>
@@ -39,10 +34,53 @@
 // implementation
 // ============================================================================
 
+// ----------------------------------------------------------------------------
+// wxNativeWindow
+// ----------------------------------------------------------------------------
+
+bool
+wxNativeWindow::Create(wxWindow* parent,
+                       wxWindowID winid,
+                       wxNativeWindowHandle widget)
+{
+    wxCHECK_MSG( widget, false, wxS("Invalid null GtkWidget") );
+
+    // Standard wxGTK controls use PreCreation() but we never have any size
+    // specified at this stage, so don't bother with it.
+    if ( !CreateBase(parent, winid) )
+        return false;
+
+    // Add a reference to the widget to match g_object_unref() in wxWindow dtor.
+    m_widget = widget;
+    g_object_ref(m_widget);
+
+    parent->DoAddChild(this);
+
+    PostCreation();
+
+    // Ensure that the best (and minimal) size is set to fully display the
+    // widget.
+    GtkRequisition req;
+    gtk_widget_get_preferred_size(widget, NULL, &req);
+    SetInitialSize(wxSize(req.width, req.height));
+
+    return true;
+}
+
+void wxNativeWindow::DoDisown()
+{
+    g_object_unref(m_widget);
+}
+
+// ----------------------------------------------------------------------------
+// wxNativeContainerWindow
+// ----------------------------------------------------------------------------
+
 // TODO: we probably need equivalent code for other GDK platforms
 #ifdef GDK_WINDOWING_X11
 
-extern "C" GdkFilterReturn
+extern "C" {
+static GdkFilterReturn
 wxNativeContainerWindowFilter(GdkXEvent *gdkxevent,
                               GdkEvent *event,
                               gpointer data)
@@ -60,6 +98,7 @@ wxNativeContainerWindowFilter(GdkXEvent *gdkxevent,
 
     return GDK_FILTER_CONTINUE;
 }
+}
 
 #endif // GDK_WINDOWING_X11
 
@@ -67,7 +106,7 @@ bool wxNativeContainerWindow::Create(wxNativeContainerWindowHandle win)
 {
     wxCHECK( win, false );
 
-    if ( !wxTopLevelWindow::Create(NULL, wxID_ANY, "") )
+    if ( !wxTopLevelWindow::Create(NULL, wxID_ANY, wxString()) )
         return false;
 
     // we need to realize the window first before reparenting it
@@ -96,7 +135,11 @@ bool wxNativeContainerWindow::Create(wxNativeContainerWindowId anid)
 {
     bool rc;
 #ifdef __WXGTK3__
+#ifdef GDK_WINDOWING_X11
     GdkWindow * const win = gdk_x11_window_foreign_new_for_display(gdk_display_get_default(), anid);
+#else
+    GdkWindow * const win = NULL;
+#endif
 #else
     GdkWindow * const win = gdk_window_foreign_new(anid);
 #endif
@@ -121,6 +164,7 @@ void wxNativeContainerWindow::OnNativeDestroyed()
     // because it's a private GDK function and calling normal
     // gdk_window_destroy() results in X errors while nulling just the window
     // pointer and destroying m_widget results in many GTK errors
+    GTKDisconnect(m_widget);
     m_widget = NULL;
 
     // notice that we intentionally don't use Close() nor Delete() here as our

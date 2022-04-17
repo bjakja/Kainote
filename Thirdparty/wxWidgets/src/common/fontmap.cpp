@@ -4,8 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.11.99
-// RCS-ID:      $Id$
-// Copyright:   (c) 1999-2003 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 1999-2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FONTMAP
 
@@ -156,7 +152,7 @@ private:
 
 wxFontMapper::wxFontMapper()
 {
-    m_windowParent = nullptr;
+    m_windowParent = NULL;
 }
 
 wxFontMapper::~wxFontMapper()
@@ -172,7 +168,7 @@ wxFontMapper *wxFontMapper::Get()
 
     // Now return it anyway because there's a chance the GUI code might just
     // only want to call wxFontMapperBase functions and it's better than
-    // crashing by returning nullptr
+    // crashing by returning NULL
     return (wxFontMapper *)fontmapper;
 }
 
@@ -497,7 +493,7 @@ bool wxFontMapper::GetAltForEncoding(wxFontEncoding encoding,
                                      bool interactive)
 {
     wxCHECK_MSG( encodingAlt, false,
-                    wxT("wxFontEncoding::GetAltForEncoding(): nullptr pointer") );
+                    wxT("wxFontEncoding::GetAltForEncoding(): NULL pointer") );
 
     wxNativeEncodingInfo info;
     if ( !GetAltForEncoding(encoding, &info, facename, interactive) )

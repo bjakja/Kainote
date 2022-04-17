@@ -4,17 +4,13 @@
 // Author:      Jaakko Salli
 // Modified by:
 // Created:     07/05/2009
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include <wx\wxprec.h>
+#include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/any.h"
 
@@ -29,6 +25,7 @@
 #include "wx/module.h"
 #include "wx/hashmap.h"
 #include "wx/hashset.h"
+#include "wx/scopedptr.h"
 
 using namespace wxPrivate;
 
@@ -102,7 +99,7 @@ public:
             return it->second;
 
         // Finally, attempt to find a compatible type
-        for ( it = anyToVariant.begin(); it != anyToVariant.end(); it++ )
+        for ( it = anyToVariant.begin(); it != anyToVariant.end(); ++it )
         {
             if ( type->IsSameType(it->first) )
             {
@@ -113,7 +110,7 @@ public:
         }
 
         // Nothing found
-        return nullptr;
+        return NULL;
     }
 
 private:
@@ -121,16 +118,27 @@ private:
     wxVector<wxAnyToVariantRegistration*>   m_anyToVariantRegs;
 };
 
-static wxAnyValueTypeGlobals* g_wxAnyValueTypeGlobals = nullptr;
+static wxScopedPtr<wxAnyValueTypeGlobals>& GetAnyValueTypeGlobals()
+{
+    static wxScopedPtr<wxAnyValueTypeGlobals> s_wxAnyValueTypeGlobals;
+    if ( !s_wxAnyValueTypeGlobals )
+    {
+        // Notice that it is _not_ sufficient to just initialize the static
+        // object like this because it can be used after it was reset by
+        // wxAnyValueTypeGlobalsManager if the library is shut down and then
+        // initialized again.
+        s_wxAnyValueTypeGlobals.reset(new wxAnyValueTypeGlobals());
+    }
+
+    return s_wxAnyValueTypeGlobals;
+}
 
 
 WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImplVariantData)
 
 void wxPreRegisterAnyToVariant(wxAnyToVariantRegistration* reg)
 {
-    if ( !g_wxAnyValueTypeGlobals )
-        g_wxAnyValueTypeGlobals = new wxAnyValueTypeGlobals();
-    g_wxAnyValueTypeGlobals->PreRegisterAnyToVariant(reg);
+    GetAnyValueTypeGlobals()->PreRegisterAnyToVariant(reg);
 }
 
 bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
@@ -147,7 +155,7 @@ bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
     // and others to "longlong".
     if ( wxANY_CHECK_TYPE(any, signed int) )
     {
-#ifdef wxLongLong_t
+#if defined(wxLongLong_t) && wxUSE_LONGLONG
         wxLongLong_t ll = 0;
         if ( any.GetAs(&ll) )
         {
@@ -175,9 +183,9 @@ bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
 
     // Find matching factory function
     wxVariantDataFactory f =
-        g_wxAnyValueTypeGlobals->FindVariantDataFactory(any.GetType());
+        GetAnyValueTypeGlobals()->FindVariantDataFactory(any.GetType());
 
-    wxVariantData* data = nullptr;
+    wxVariantData* data = NULL;
 
     if ( f )
     {
@@ -191,7 +199,7 @@ bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
             // Ok, one last chance: while unlikely, it is possible that the
             // wxAny actually contains wxVariant.
             if ( wxANY_CHECK_TYPE(any, wxVariant) )
-                *variant = wxANY_AS(any, wxVariant);
+                *variant = any.As<wxVariant>();
             return false;
         }
 
@@ -212,23 +220,23 @@ bool wxConvertAnyToVariant(const wxAny& any, wxVariant* variant)
 //
 class wxAnyValueTypeGlobalsManager : public wxModule
 {
-    DECLARE_DYNAMIC_CLASS(wxAnyValueTypeGlobalsManager)
+    wxDECLARE_DYNAMIC_CLASS(wxAnyValueTypeGlobalsManager);
 public:
     wxAnyValueTypeGlobalsManager() : wxModule() { }
     virtual ~wxAnyValueTypeGlobalsManager() { }
 
-    virtual bool OnInit()
+    virtual bool OnInit() wxOVERRIDE
     {
         return true;
     }
-    virtual void OnExit()
+    virtual void OnExit() wxOVERRIDE
     {
-        wxDELETE(g_wxAnyValueTypeGlobals);
+        GetAnyValueTypeGlobals().reset();
     }
 private:
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxAnyValueTypeGlobalsManager, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAnyValueTypeGlobalsManager, wxModule);
 
 #endif // wxUSE_VARIANT
 
@@ -265,7 +273,7 @@ bool wxAnyValueTypeImplInt::ConvertValue(const wxAnyValueBuffer& src,
     wxAnyBaseIntType value = GetValue(src);
     if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, wxString) )
     {
-#ifdef wxLongLong_t
+#if defined(wxLongLong_t) && wxUSE_LONGLONG
         wxLongLong ll(value);
         wxString s = ll.ToString();
 #else
@@ -303,7 +311,7 @@ bool wxAnyValueTypeImplUint::ConvertValue(const wxAnyValueBuffer& src,
     wxAnyBaseUintType value = GetValue(src);
     if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, wxString) )
     {
-#ifdef wxLongLong_t
+#if defined(wxLongLong_t) && wxUSE_LONGLONG
         wxULongLong ull(value);
         wxString s = ull.ToString();
 #else
@@ -320,13 +328,7 @@ bool wxAnyValueTypeImplUint::ConvertValue(const wxAnyValueBuffer& src,
     }
     else if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, double) )
     {
-#ifndef __VISUALC6__
         double value2 = static_cast<double>(value);
-#else
-        // VC6 doesn't implement conversion from unsigned __int64 to double
-        wxAnyBaseIntType value0 = static_cast<wxAnyBaseIntType>(value);
-        double value2 = static_cast<double>(value0);
-#endif
         wxAnyValueTypeImplDouble::SetValue(value2, dst);
     }
     else if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, bool) )
@@ -374,7 +376,7 @@ bool wxAnyConvertString(const wxString& value,
     else if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, double) )
     {
         double value2;
-        if ( !value.ToDouble(&value2) )
+        if ( !value.ToCDouble(&value2) )
             return false;
         wxAnyValueTypeImplDouble::SetValue(value2, dst);
     }
@@ -453,7 +455,7 @@ bool wxAnyValueTypeImplDouble::ConvertValue(const wxAnyValueBuffer& src,
     }
     else if ( wxANY_VALUE_TYPE_CHECK_TYPE(dstType, wxString) )
     {
-        wxString s = wxString::Format(wxS("%.14g"), value);
+        wxString s = wxString::FromCDouble(value, 14);
         wxAnyValueTypeImpl<wxString>::SetValue(s, dst);
     }
     else
@@ -484,7 +486,9 @@ WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImpl<wxDateTime>)
 
 class wxAnyNullValue
 {
-private:
+protected:
+    // this field is unused, but can't be private to avoid Clang's
+    // "Private field 'm_dummy' is not used" warning
     void*   m_dummy;
 };
 
@@ -494,13 +498,13 @@ class wxAnyValueTypeImpl<wxAnyNullValue> : public wxAnyValueType
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImpl<wxAnyNullValue>)
 public:
     // Dummy implementations
-    virtual void DeleteValue(wxAnyValueBuffer& buf) const
+    virtual void DeleteValue(wxAnyValueBuffer& buf) const wxOVERRIDE
     {
         wxUnusedVar(buf);
     }
 
     virtual void CopyBuffer(const wxAnyValueBuffer& src,
-                            wxAnyValueBuffer& dst) const
+                            wxAnyValueBuffer& dst) const wxOVERRIDE
     {
         wxUnusedVar(src);
         wxUnusedVar(dst);
@@ -508,7 +512,7 @@ public:
 
     virtual bool ConvertValue(const wxAnyValueBuffer& src,
                               wxAnyValueType* dstType,
-                              wxAnyValueBuffer& dst) const
+                              wxAnyValueBuffer& dst) const wxOVERRIDE
     {
         wxUnusedVar(src);
         wxUnusedVar(dstType);
@@ -519,8 +523,8 @@ public:
 #if wxUSE_EXTENDED_RTTI
     virtual const wxTypeInfo* GetTypeInfo() const
     {
-        wxFAIL_MSG("nullptr Type Info not available");
-        return nullptr;
+        wxFAIL_MSG("Null Type Info not available");
+        return NULL;
     }
 #endif
 

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ACCEL
 
@@ -35,7 +31,7 @@
 #include "wx/msw/private.h"
 #include "wx/msw/private/keyboard.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject);
 
 // ----------------------------------------------------------------------------
 // data defining wxAcceleratorTable

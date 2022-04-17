@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     31.05.03
-// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,6 +15,7 @@
 #include "wx/bitmap.h"
 
 class WXDLLIMPEXP_FWD_CORE wxSelectionStore;
+
 extern WXDLLIMPEXP_DATA_CORE(const char) wxVListBoxNameStr[];
 
 // ----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ public:
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                long style = 0,
-               const wxString& name = wxVListBoxNameStr)
+               const wxString& name = wxASCII_STR(wxVListBoxNameStr))
     {
         Init();
 
@@ -64,7 +64,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxVListBoxNameStr);
+                const wxString& name = wxASCII_STR(wxVListBoxNameStr));
 
     // dtor does some internal cleanup (deletes m_selStore if any)
     virtual ~wxVListBox();
@@ -194,7 +194,7 @@ public:
     void RefreshSelected();
 
 
-    virtual wxVisualAttributes GetDefaultAttributes() const
+    virtual wxVisualAttributes GetDefaultAttributes() const wxOVERRIDE
     {
         return GetClassDefaultAttributes(GetWindowVariant());
     }
@@ -203,7 +203,7 @@ public:
     GetClassDefaultAttributes(wxWindowVariant variant = wxWINDOW_VARIANT_NORMAL);
 
 protected:
-    virtual wxBorder GetDefaultBorder() const { return wxBORDER_THEME; }
+    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_THEME; }
 
     // the derived class must implement this function to actually draw the item
     // with the given index on the provided DC
@@ -233,7 +233,7 @@ protected:
     // allows us to add borders to the items easily
     //
     // this function is not supposed to be overridden by the derived classes
-    virtual wxCoord OnGetRowHeight(size_t line) const;
+    virtual wxCoord OnGetRowHeight(size_t line) const wxOVERRIDE;
 
 
     // event handlers
@@ -247,7 +247,7 @@ protected:
     // common part of all ctors
     void Init();
 
-    // send the wxEVT_COMMAND_LISTBOX_SELECTED event
+    // send the wxEVT_LISTBOX event
     void SendSelectedEvent();
     virtual void InitEvent(wxCommandEvent& event, int n);
 
@@ -303,9 +303,9 @@ private:
     // the selection bg colour
     wxColour m_colBgSel;
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxVListBox);
-    DECLARE_ABSTRACT_CLASS(wxVListBox)
+    wxDECLARE_ABSTRACT_CLASS(wxVListBox);
 };
 
 #endif // _WX_VLBOX_H_

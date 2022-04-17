@@ -4,7 +4,6 @@
 // Author:      Mattia Barbon
 // Modified by:
 // Created:     28.08.03
-// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Mattia Barbon
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,7 @@ public:
 private:
     void Init() { m_isShown = false; }
 
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxPopupWindow);
 };
 
 #endif // _WX_MOTIF_POPUPWIN_H_

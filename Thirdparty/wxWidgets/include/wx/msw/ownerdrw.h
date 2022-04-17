@@ -4,7 +4,6 @@
 // Author:      Marcin Malich
 // Modified by:
 // Created:     2009-09-22
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Marcin Malich <me@malcom.pl>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,7 +20,13 @@ public:
     virtual ~wxOwnerDrawn() {}
 
     virtual bool OnDrawItem(wxDC& dc, const wxRect& rc,
-                            wxODAction act, wxODStatus stat);
+                            wxODAction act, wxODStatus stat) wxOVERRIDE;
+
+protected:
+    // get the type of the text to draw in OnDrawItem(), by default is
+    // DST_PREFIXTEXT but can be overridden to return DST_TEXT when not using
+    // mnemonics
+    virtual int MSWGetTextType() const;
 };
 
 #endif // wxUSE_OWNER_DRAWN

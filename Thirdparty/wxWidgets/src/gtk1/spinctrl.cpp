@@ -3,7 +3,6 @@
 // Purpose:     wxSpinCtrl
 // Author:      Robert
 // Modified by:
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,10 +16,12 @@
 
 #ifndef WX_PRECOMP
     #include "wx/utils.h"
-    #include "wx/textctrl.h"    // for wxEVT_COMMAND_TEXT_UPDATED
+    #include "wx/textctrl.h"    // for wxEVT_TEXT
     #include "wx/math.h"
     #include "wx/crt.h"
 #endif
+
+#include "wx/private/spinctrl.h"
 
 #include "wx/gtk1/private.h"
 
@@ -44,6 +45,38 @@ extern bool   g_blockEventsOnDrag;
 //-----------------------------------------------------------------------------
 
 extern "C" {
+
+static gboolean
+wx_gtk_spin_input(GtkSpinButton* spin, gdouble* val, wxSpinCtrl* win)
+{
+    // We might use g_ascii_strtoll() here but it's 2.12+ only, so use our own
+    // wxString function even if this requires an extra conversion.
+    const wxString
+        text(wxString::FromUTF8(gtk_entry_get_text(GTK_ENTRY(spin))));
+
+    long lval;
+    if ( !text.ToLong(&lval, win->GetBase()) )
+        return FALSE;
+
+    *val = lval;
+
+    return TRUE;
+}
+
+static gint
+wx_gtk_spin_output(GtkSpinButton* spin, wxSpinCtrl* win)
+{
+    const gint val = gtk_spin_button_get_value_as_int(spin);
+
+    gtk_entry_set_text
+    (
+        GTK_ENTRY(spin),
+        wxSpinCtrlImpl::FormatAsHex(val, win->GetMax()).utf8_str()
+    );
+
+    return TRUE;
+}
+
 static void gtk_spinctrl_callback( GtkWidget *WXUNUSED(widget), wxSpinCtrl *win )
 {
     if (g_isIdle) wxapp_install_idle_handler();
@@ -51,7 +84,7 @@ static void gtk_spinctrl_callback( GtkWidget *WXUNUSED(widget), wxSpinCtrl *win 
     if (!win->m_hasVMT) return;
     if (g_blockEventsOnDrag) return;
 
-    wxCommandEvent event( wxEVT_COMMAND_SPINCTRL_UPDATED, win->GetId());
+    wxSpinEvent event( wxEVT_SPINCTRL, win->GetId());
     event.SetEventObject( win );
 
     // note that we don't use wxSpinCtrl::GetValue() here because it would
@@ -78,7 +111,7 @@ gtk_spinctrl_text_changed_callback( GtkWidget *WXUNUSED(widget), wxSpinCtrl *win
     if (g_isIdle)
         wxapp_install_idle_handler();
 
-    wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, win->GetId() );
+    wxCommandEvent event( wxEVT_TEXT, win->GetId() );
     event.SetEventObject( win );
 
     // see above
@@ -91,9 +124,9 @@ gtk_spinctrl_text_changed_callback( GtkWidget *WXUNUSED(widget), wxSpinCtrl *win
 // wxSpinCtrl
 //-----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxSpinCtrl, wxControl)
+wxBEGIN_EVENT_TABLE(wxSpinCtrl, wxControl)
     EVT_CHAR(wxSpinCtrl::OnChar)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 bool wxSpinCtrl::Create(wxWindow *parent, wxWindowID id,
                         const wxString& value,
@@ -132,6 +165,22 @@ bool wxSpinCtrl::Create(wxWindow *parent, wxWindowID id,
     return true;
 }
 
+void wxSpinCtrl::DoSetIncrement(double inc)
+{
+    wxCHECK_RET( m_widget, "invalid spin button" );
+
+    GtkAdjustment* adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(m_widget));
+    adj->step_increment = inc;
+}
+
+double wxSpinCtrl::DoGetIncrement() const
+{
+    wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
+
+    GtkAdjustment* adj = gtk_spin_button_get_adjustment(GTK_SPIN_BUTTON(m_widget));
+    return adj->step_increment;
+}
+
 void wxSpinCtrl::GtkDisableEvents()
 {
     gtk_signal_disconnect_by_func( GTK_OBJECT(m_adjust),
@@ -168,6 +217,13 @@ int wxSpinCtrl::GetMax() const
     wxCHECK_MSG( (m_widget != NULL), 0, wxT("invalid spin button") );
 
     return (int)ceil(m_adjust->upper);
+}
+
+wxString wxSpinCtrl::GetTextValue() const
+{
+    wxCHECK_MSG(m_widget, wxEmptyString, "invalid spin button");
+
+    return gtk_entry_get_text( GTK_ENTRY(m_widget) );
 }
 
 int wxSpinCtrl::GetValue() const
@@ -277,7 +333,7 @@ void wxSpinCtrl::OnChar( wxKeyEvent &event )
 
     if ((event.GetKeyCode() == WXK_RETURN) && (m_windowStyle & wxTE_PROCESS_ENTER))
     {
-        wxCommandEvent evt( wxEVT_COMMAND_TEXT_ENTER, m_windowId );
+        wxCommandEvent evt( wxEVT_TEXT_ENTER, m_windowId );
         evt.SetEventObject(this);
         GtkSpinButton *gsb = GTK_SPIN_BUTTON(m_widget);
         wxString val = wxGTK_CONV_BACK( gtk_entry_get_text( &gsb->entry ) );
@@ -299,10 +355,43 @@ bool wxSpinCtrl::IsOwnGtkWindow( GdkWindow *window )
 
 wxSize wxSpinCtrl::DoGetBestSize() const
 {
-    wxSize ret( wxControl::DoGetBestSize() );
-    wxSize best(95, ret.y);
-    CacheBestSize(best);
-    return best;
+    return wxSize(95, wxControl::DoGetBestSize().y);
+}
+
+bool wxSpinCtrl::SetBase(int base)
+{
+    // Currently we only support base 10 and 16. We could add support for base
+    // 8 quite easily but wxMSW doesn't support it natively so don't bother
+    // with doing something wxGTK-specific here.
+    if ( base != 10 && base != 16 )
+        return false;
+
+    if ( base == m_base )
+        return true;
+
+    m_base = base;
+
+    // We need to be able to enter letters for any base greater than 10.
+    gtk_spin_button_set_numeric( GTK_SPIN_BUTTON(m_widget), m_base <= 10 );
+
+    if ( m_base != 10 )
+    {
+        gtk_signal_connect( GTK_OBJECT(m_widget), "input",
+                              GTK_SIGNAL_FUNC(wx_gtk_spin_input), this);
+        gtk_signal_connect( GTK_OBJECT(m_widget), "output",
+                              GTK_SIGNAL_FUNC(wx_gtk_spin_output), this);
+    }
+    else
+    {
+        gtk_signal_disconnect_by_func(GTK_OBJECT(m_widget),
+                                             GTK_SIGNAL_FUNC(wx_gtk_spin_input),
+                                             this);
+        gtk_signal_disconnect_by_func(GTK_OBJECT(m_widget),
+                                             GTK_SIGNAL_FUNC(wx_gtk_spin_output),
+                                             this);
+    }
+
+    return true;
 }
 
 // static

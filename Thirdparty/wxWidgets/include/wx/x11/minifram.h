@@ -6,7 +6,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,7 +17,7 @@
 
 class WXDLLIMPEXP_CORE wxMiniFrame: public wxFrame {
 
-    DECLARE_DYNAMIC_CLASS(wxMiniFrame)
+    wxDECLARE_DYNAMIC_CLASS(wxMiniFrame);
 
 public:
     inline wxMiniFrame() {}
@@ -28,7 +27,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxDEFAULT_FRAME_STYLE|wxTINY_CAPTION,
-        const wxString& name = wxFrameNameStr)
+        const wxString& name = wxASCII_STR(wxFrameNameStr))
     {
         // Use wxFrame constructor in absence of more specific code.
         Create(parent, id, title, pos, size, style, name);

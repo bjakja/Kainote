@@ -3,7 +3,6 @@
 // Purpose:     interface of wxStdInputStream, wxStdInputStreamBuffer,
 //              wxStdOutputStream, wxStdOutputStreamBuffer
 // Author:      Jonathan Liu <net147@gmail.com>
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Jonathan Liu
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -54,7 +53,7 @@ public:
     /**
         Destructor.
     */
-    virtual ~wxStdInputStreamBuffer() { }
+    virtual ~wxStdInputStreamBuffer();
 };
 
 /**
@@ -103,7 +102,7 @@ public:
     /**
         Destructor.
     */
-    virtual ~wxStdInputStream() { }
+    virtual ~wxStdInputStream();
 };
 
 /**
@@ -148,7 +147,7 @@ public:
     /**
         Destructor.
     */
-    virtual ~wxStdOutputStreamBuffer() { }
+    virtual ~wxStdOutputStreamBuffer();
 };
 
 /**
@@ -186,5 +185,5 @@ public:
     /**
         Destructor.
     */
-    virtual ~wxStdOutputStream() { }
+    virtual ~wxStdOutputStream();
 };

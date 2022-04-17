@@ -2,7 +2,6 @@
 // Name:        process.h
 // Purpose:     interface of wxProcess
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +15,7 @@
     notified about the process termination and also retrieve its exit status which is
     unavailable from ::wxExecute() in the case of asynchronous execution.
 
-    @note 
+    @note
         If the @c wxEVT_END_PROCESS event sent after termination is processed by the
         parent, then it is responsible for deleting the wxProcess object which sent it.
         However, if it is not processed, the object will <b>delete itself</b> and so the
@@ -68,7 +67,7 @@ public:
 
     /**
         Creates an object without any associated parent (and hence no id neither)
-        but allows to specify the @a flags which can have the value of
+        but allows specifying the @a flags which can have the value of
         @c wxPROCESS_DEFAULT or @c wxPROCESS_REDIRECT.
 
         Specifying the former value has no particular effect while using the latter
@@ -80,6 +79,20 @@ public:
         Destroys the wxProcess object.
     */
     virtual ~wxProcess();
+
+    /**
+        Activates a GUI process by bringing up its main window to the front.
+
+        This is a convenient method which tries to bring this process to the
+        users attention.
+
+        Currently this is implemented in wxMSW only and simply returns @false
+        under the other platforms. Notice that this function can also return
+        @false under MSW if, for example, the process doesn't have any windows.
+
+        @since 3.1.0
+     */
+    bool Activate() const;
 
     /**
         Closes the output stream (the one connected to the stdin of the child
@@ -96,18 +109,18 @@ public:
 
     /**
         Detaches this event handler from the parent specified in the constructor
-        (see wxEvtHandler::Unlink() for a similar but not identic function).
-    
+        (see wxEvtHandler::Unlink() for a similar but not identical function).
+
         Normally, a wxProcess object is deleted by its parent when it receives the
-        notification about the process termination. 
-        
-        However, it might happen that the parent object is destroyed before the external 
-        process is terminated (e.g. a window from which this external process was launched 
-        is closed by the user) and in this case it @b should not delete the wxProcess 
-        object, but @b should call Detach() instead. 
-        
-        After the wxProcess object is detached from its parent, no notification events 
-        will be sent to the parent and the object will delete itself upon reception of 
+        notification about the process termination.
+
+        However, it might happen that the parent object is destroyed before the external
+        process is terminated (e.g. a window from which this external process was launched
+        is closed by the user) and in this case it @b should not delete the wxProcess
+        object, but @b should call Detach() instead.
+
+        After the wxProcess object is detached from its parent, no notification events
+        will be sent to the parent and the object will delete itself upon reception of
         the process termination notification.
     */
     void Detach();
@@ -161,7 +174,7 @@ public:
         Returns @true if there is data to be read on the child process standard
         output stream.
 
-        This allows to write simple (and extremely inefficient) polling-based code
+        This allows writing simple (and extremely inefficient) polling-based code
         waiting for a better mechanism in future wxWidgets versions.
         See the @ref page_samples_exec "exec sample" for an example of using this
         function.
@@ -198,7 +211,7 @@ public:
     /**
         It is called when the process with the pid @a pid finishes.
         It raises a wxWidgets event when it isn't overridden.
-        
+
         Note that this function won't be called if you Kill() the process.
 
         @param pid
@@ -243,6 +256,20 @@ public:
         The caught output stream is returned by GetInputStream() as a non-seekable stream.
     */
     void Redirect();
+
+    /**
+        Sets the priority of the process, between 0 (lowest) and 100 (highest).
+        It can only be set before the process is created.
+
+        The following symbolic constants can be used in addition to raw
+        values in 0..100 range:
+          - @b wxPRIORITY_MIN: 0
+          - @b wxPRIORITY_DEFAULT: 50
+          - @b wxPRIORITY_MAX: 100
+
+        @since 2.9.5
+    */
+    void SetPriority(unsigned priority);
 };
 
 
@@ -278,12 +305,12 @@ public:
     /**
         Returns the exist status.
     */
-    int GetExitCode();
+    int GetExitCode() const;
 
     /**
         Returns the process id.
     */
-    int GetPid();
+    int GetPid() const;
 };
 
 

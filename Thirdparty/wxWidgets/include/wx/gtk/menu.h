@@ -2,7 +2,6 @@
 // Name:        wx/gtk/menu.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,32 +23,25 @@ public:
     ~wxMenuBar();
 
     // implement base class (pure) virtuals
-    virtual bool Append( wxMenu *menu, const wxString &title );
-    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title);
-    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title);
-    virtual wxMenu *Remove(size_t pos);
+    virtual bool Append( wxMenu *menu, const wxString &title ) wxOVERRIDE;
+    virtual bool Insert(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
+    virtual wxMenu *Replace(size_t pos, wxMenu *menu, const wxString& title) wxOVERRIDE;
+    virtual wxMenu *Remove(size_t pos) wxOVERRIDE;
 
     virtual int FindMenuItem(const wxString& menuString,
-                             const wxString& itemString) const;
-    virtual wxMenuItem* FindItem( int id, wxMenu **menu = NULL ) const;
+                             const wxString& itemString) const wxOVERRIDE;
+    virtual wxMenuItem* FindItem( int id, wxMenu **menu = NULL ) const wxOVERRIDE;
 
-    virtual void EnableTop( size_t pos, bool flag );
-    virtual bool IsEnabledTop(size_t pos) const;
-    virtual void SetMenuLabel( size_t pos, const wxString& label );
-    virtual wxString GetMenuLabel( size_t pos ) const;
+    virtual void EnableTop( size_t pos, bool flag ) wxOVERRIDE;
+    virtual bool IsEnabledTop(size_t pos) const wxOVERRIDE;
+    virtual void SetMenuLabel( size_t pos, const wxString& label ) wxOVERRIDE;
+    virtual wxString GetMenuLabel( size_t pos ) const wxOVERRIDE;
 
-    void SetLayoutDirection(wxLayoutDirection dir);
-    wxLayoutDirection GetLayoutDirection() const;
+    void SetLayoutDirection(wxLayoutDirection dir) wxOVERRIDE;
+    wxLayoutDirection GetLayoutDirection() const wxOVERRIDE;
 
-    // wxMenuBar is not a top level window but it still doesn't need a parent
-    // window
-    virtual bool GTKNeedsParent() const { return false; }
-
-    virtual void Attach(wxFrame *frame);
-    virtual void Detach();
-
-    // implementation only from now on
-    GtkWidget       *m_menubar; // Public for hildon support
+    virtual void Attach(wxFrame *frame) wxOVERRIDE;
+    virtual void Detach() wxOVERRIDE;
 
 private:
     // common part of Append and Insert
@@ -57,7 +49,13 @@ private:
 
     void Init(size_t n, wxMenu *menus[], const wxString titles[], long style);
 
-    DECLARE_DYNAMIC_CLASS(wxMenuBar)
+    // wxMenuBar is not a top level window but it still doesn't need a parent
+    // window
+    virtual bool GTKNeedsParent() const wxOVERRIDE { return false; }
+
+    GtkWidget* m_menubar;
+
+    wxDECLARE_DYNAMIC_CLASS(wxMenuBar);
 };
 
 //-----------------------------------------------------------------------------
@@ -75,15 +73,18 @@ public:
 
     virtual ~wxMenu();
 
-    void Attach(wxMenuBarBase *menubar);
+    void Attach(wxMenuBarBase *menubar) wxOVERRIDE;
 
-    void SetLayoutDirection(const wxLayoutDirection dir);
+    void SetupBitmaps(wxWindow *win);
+
+    void SetLayoutDirection(wxLayoutDirection dir);
     wxLayoutDirection GetLayoutDirection() const;
 
     // Returns the title, with mnemonics translated to wx format
     wxString GetTitle() const;
 
-    // TODO: virtual void SetTitle(const wxString& title);
+    // Sets the title, with mnemonics translated to gtk format
+    virtual void SetTitle(const wxString& title) wxOVERRIDE;
 
     // implementation GTK only
     GtkWidget       *m_menu;  // GtkMenu
@@ -92,9 +93,9 @@ public:
     bool m_popupShown;
 
 protected:
-    virtual wxMenuItem* DoAppend(wxMenuItem *item);
-    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item);
-    virtual wxMenuItem* DoRemove(wxMenuItem *item);
+    virtual wxMenuItem* DoAppend(wxMenuItem *item) wxOVERRIDE;
+    virtual wxMenuItem* DoInsert(size_t pos, wxMenuItem *item) wxOVERRIDE;
+    virtual wxMenuItem* DoRemove(wxMenuItem *item) wxOVERRIDE;
 
 private:
     // common code for all constructors:
@@ -104,7 +105,7 @@ private:
     void GtkAppend(wxMenuItem* item, int pos = -1);
 
 
-    DECLARE_DYNAMIC_CLASS(wxMenu)
+    wxDECLARE_DYNAMIC_CLASS(wxMenu);
 };
 
 #endif

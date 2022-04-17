@@ -3,7 +3,6 @@
 // Purpose:     a generic wxStaticLine class
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
-// Version:     $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,7 @@ class wxStaticBox;
 
 class WXDLLIMPEXP_CORE wxStaticLine : public wxStaticLineBase
 {
-    DECLARE_DYNAMIC_CLASS(wxStaticLine)
+    wxDECLARE_DYNAMIC_CLASS(wxStaticLine);
 
 public:
     // constructors and pseudo-constructors
@@ -30,7 +29,7 @@ public:
                   const wxPoint &pos = wxDefaultPosition,
                   const wxSize &size = wxDefaultSize,
                   long style = wxLI_HORIZONTAL,
-                  const wxString &name = wxStaticLineNameStr )
+                  const wxString &name = wxASCII_STR(wxStaticLineNameStr) )
     {
         Create(parent, id, pos, size, style, name);
     }
@@ -42,7 +41,7 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = wxLI_HORIZONTAL,
-                 const wxString &name = wxStaticLineNameStr );
+                 const wxString &name = wxASCII_STR(wxStaticLineNameStr) );
 
     // it's necessary to override this wxWindow function because we
     // will want to return the main widget for m_statbox

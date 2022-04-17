@@ -3,8 +3,7 @@
 // Purpose:     Implementation of common wxFDIODispatcher methods
 // Author:      Vadim Zeitlin
 // Created:     2007-05-13
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/module.h"
@@ -34,7 +30,8 @@
     #include "wx/unix/private/epolldispatcher.h"
 #endif
 
-wxFDIODispatcher *gs_dispatcher = nullptr;
+static
+wxFDIODispatcher *gs_dispatcher = NULL;
 
 // ============================================================================
 // implementation
@@ -78,14 +75,14 @@ wxFDIOHandler *wxMappedFDIODispatcher::FindHandler(int fd) const
 {
     const wxFDIOHandlerMap::const_iterator it = m_handlers.find(fd);
 
-    return it == m_handlers.end() ? nullptr : it->second.handler;
+    return it == m_handlers.end() ? NULL : it->second.handler;
 }
 
 
 bool
 wxMappedFDIODispatcher::RegisterFD(int fd, wxFDIOHandler *handler, int flags)
 {
-    wxCHECK_MSG( handler, false, "handler can't be nullptr" );
+    wxCHECK_MSG( handler, false, "handler can't be NULL" );
 
     // notice that it's not an error to register a handler for the same fd
     // twice as it can be done with different flags -- but it is an error to
@@ -107,7 +104,7 @@ wxMappedFDIODispatcher::RegisterFD(int fd, wxFDIOHandler *handler, int flags)
 bool
 wxMappedFDIODispatcher::ModifyFD(int fd, wxFDIOHandler *handler, int flags)
 {
-    wxCHECK_MSG( handler, false, "handler can't be nullptr" );
+    wxCHECK_MSG( handler, false, "handler can't be NULL" );
 
     wxFDIOHandlerMap::iterator i = m_handlers.find(fd);
     wxCHECK_MSG( i != m_handlers.end(), false,
@@ -136,11 +133,11 @@ bool wxMappedFDIODispatcher::UnregisterFD(int fd)
 class wxFDIODispatcherModule : public wxModule
 {
 public:
-    virtual bool OnInit() { return true; }
-    virtual void OnExit() { wxDELETE(gs_dispatcher); }
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE { wxDELETE(gs_dispatcher); }
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxFDIODispatcherModule)
+    wxDECLARE_DYNAMIC_CLASS(wxFDIODispatcherModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxFDIODispatcherModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxFDIODispatcherModule, wxModule);

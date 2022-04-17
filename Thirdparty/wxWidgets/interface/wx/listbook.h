@@ -2,7 +2,6 @@
 // Name:        listbook.h
 // Purpose:     interface of wxListbook
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -14,8 +13,8 @@
 #define wxLB_RIGHT            wxBK_RIGHT
 #define wxLB_ALIGN_MASK       wxBK_ALIGN_MASK
 
-wxEventType wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED;
-wxEventType wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING;
+wxEventType wxEVT_LISTBOOK_PAGE_CHANGED;
+wxEventType wxEVT_LISTBOOK_PAGE_CHANGING;
 
 /**
     @class wxListbook
@@ -48,16 +47,16 @@ wxEventType wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING;
     @beginEventEmissionTable{wxBookCtrlEvent}
     @event{EVT_LISTBOOK_PAGE_CHANGED(id, func)}
         The page selection was changed.
-        Processes a @c wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED event.
+        Processes a @c wxEVT_LISTBOOK_PAGE_CHANGED event.
     @event{EVT_LISTBOOK_PAGE_CHANGING(id, func)}
         The page selection is about to be changed.
-        Processes a @c wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING event.
+        Processes a @c wxEVT_LISTBOOK_PAGE_CHANGING event.
         This event can be vetoed.
     @endEventTable
 
     @library{wxcore}
     @category{bookctrl}
-    @appearance{listbook.png}
+    @appearance{listbook}
 
     @see wxBookCtrl, wxNotebook, @ref page_samples_notebook
 */

@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/toolbar.h
 // Purpose:     GTK toolbar
 // Author:      Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -26,7 +25,7 @@ public:
                const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize,
                long style = 0,
-               const wxString& name = wxToolBarNameStr )
+               const wxString& name = wxASCII_STR(wxToolBarNameStr) )
     {
         Init();
 
@@ -38,7 +37,7 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
-                 const wxString& name = wxToolBarNameStr );
+                 const wxString& name = wxASCII_STR(wxToolBarNameStr) );
 
     virtual ~wxToolBar();
 
@@ -68,6 +67,9 @@ protected:
     // common part of all ctors
     void Init();
 
+    // choose the default border for this window
+    virtual wxBorder GetDefaultBorder() const { return wxBORDER_DEFAULT; }
+
     // set the GTK toolbar style and orientation
     void GtkSetStyle();
 
@@ -81,8 +83,8 @@ protected:
 
     virtual wxToolBarToolBase *CreateTool(int id,
                                           const wxString& label,
-                                          const wxBitmap& bitmap1,
-                                          const wxBitmap& bitmap2,
+                                          const wxBitmapBundle& bitmap1,
+                                          const wxBitmapBundle& bitmap2,
                                           wxItemKind kind,
                                           wxObject *clientData,
                                           const wxString& shortHelpString,
@@ -91,7 +93,7 @@ protected:
                                           const wxString& label);
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxToolBar)
+    wxDECLARE_DYNAMIC_CLASS(wxToolBar);
 };
 
 #endif // wxUSE_TOOLBAR

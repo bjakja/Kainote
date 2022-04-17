@@ -3,7 +3,6 @@
 // Purpose:     Implementation of wxRichToolTip.
 // Author:      Vadim Zeitlin
 // Created:     2011-10-07
-// RCS-ID:      $Id: wxhead.cpp,v 1.11 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RICHTOOLTIP
 
@@ -48,13 +44,10 @@
 #include "wx/textwrapper.h"
 
 #ifdef __WXMSW__
-    #include "wx/msw/uxtheme.h"
-
-    static const int TTP_BALLOONTITLE = 4;
-
-    static const int TMT_TEXTCOLOR = 3803;
-    static const int TMT_GRADIENTCOLOR1 = 3810;
-    static const int TMT_GRADIENTCOLOR2 = 3811;
+    #if wxUSE_UXTHEME
+        #include "wx/msw/uxtheme.h"
+        #define HAVE_MSW_THEME
+    #endif
 #endif
 
 // ----------------------------------------------------------------------------
@@ -84,7 +77,7 @@ public:
         }
         //else: Simply don't show any icon.
 
-        wxStaticText* const labelTitle = new wxStaticText(this, wxID_ANY, "");
+        wxStaticText* const labelTitle = new wxStaticText(this, wxID_ANY, wxString());
         labelTitle->SetLabelText(title);
 
         wxFont titleFont(titleFont_);
@@ -93,16 +86,15 @@ public:
             // Determine the appropriate title font for the current platform.
             titleFont = labelTitle->GetFont();
 
-#ifdef __WXMSW__
+#ifdef HAVE_MSW_THEME
             // When using themes MSW tooltips use larger bluish version of the
             // normal font.
-            wxUxThemeEngine* const theme = GetTooltipTheme();
-            if ( theme )
+            if ( UseTooltipTheme() )
             {
                 titleFont.MakeLarger();
 
                 COLORREF c;
-                if ( FAILED(theme->GetThemeColor
+                if ( FAILED(::GetThemeColor
                                    (
                                         wxUxThemeHandle(parent, L"TOOLTIP"),
                                         TTP_BALLOONTITLE,
@@ -118,7 +110,7 @@ public:
                 labelTitle->SetForegroundColour(wxRGBToColour(c));
             }
             else
-#endif // __WXMSW__
+#endif // HAVE_MSW_THEME
             {
                 // Everything else, including "classic" MSW look uses just the
                 // bold version of the base font.
@@ -140,8 +132,8 @@ public:
         wxTextSizerWrapper wrapper(this);
         wxSizer* sizerText = wrapper.CreateSizer(message, -1 /* No wrapping */);
 
-#ifdef __WXMSW__
-        if ( icon.IsOk() && GetTooltipTheme() )
+#ifdef HAVE_MSW_THEME
+        if ( icon.IsOk() && UseTooltipTheme() )
         {
             // Themed tooltips under MSW align the text with the title, not
             // with the icon, so use a helper horizontal sizer in this case.
@@ -152,7 +144,7 @@ public:
 
             sizerText = sizerTextIndent;
         }
-#endif // !__WXMSW__
+#endif // HAVE_MSW_THEME
         sizerTop->Add(sizerText,
                         wxSizerFlags().DoubleBorder(wxLEFT|wxRIGHT|wxBOTTOM)
                                       .Centre());
@@ -175,14 +167,13 @@ public:
         if ( !colStart.IsOk() )
         {
             // Determine the best colour(s) to use on our own.
-#ifdef __WXMSW__
-            wxUxThemeEngine* const theme = GetTooltipTheme();
-            if ( theme )
+#ifdef HAVE_MSW_THEME
+            if ( UseTooltipTheme() )
             {
                 wxUxThemeHandle hTheme(GetParent(), L"TOOLTIP");
 
                 COLORREF c1, c2;
-                if ( FAILED(theme->GetThemeColor
+                if ( FAILED(::GetThemeColor
                                    (
                                         hTheme,
                                         TTP_BALLOONTITLE,
@@ -190,7 +181,7 @@ public:
                                         TMT_GRADIENTCOLOR1,
                                         &c1
                                     )) ||
-                    FAILED(theme->GetThemeColor
+                    FAILED(::GetThemeColor
                                   (
                                         hTheme,
                                         TTP_BALLOONTITLE,
@@ -207,7 +198,7 @@ public:
                 colEnd = wxRGBToColour(c2);
             }
             else
-#endif // __WXMSW__
+#endif // HAVE_MSW_THEME
             {
                 colStart = wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK);
             }
@@ -232,56 +223,73 @@ public:
         }
     }
 
-    void DoShow()
+    void SetPosition(const wxRect* rect)
     {
-        wxPoint pos = GetTipPoint();
+        wxPoint pos;
+
+        if ( !rect || rect->IsEmpty() )
+            pos = GetTipPoint();
+        else
+            pos = GetParent()->ClientToScreen( wxPoint( rect->x + rect->width / 2, rect->y + rect->height / 2 ) );
 
         // We want our anchor point to coincide with this position so offset
         // the position of the top left corner passed to Move() accordingly.
         pos -= m_anchorPos;
 
         Move(pos, wxSIZE_NO_ADJUSTMENTS);
+    }
 
+    void DoShow()
+    {
         Popup();
     }
 
-    void SetTimeout(unsigned timeout)
+    void SetTimeoutAndShow(unsigned timeout, unsigned delay)
     {
-        if ( !timeout )
+        if ( !timeout && !delay )
+        {
+            DoShow();
             return;
+        }
 
-        Connect(wxEVT_TIMER, wxTimerEventHandler(wxRichToolTipPopup::OnTimer));
+        Bind(wxEVT_TIMER, &wxRichToolTipPopup::OnTimer, this);
 
-        m_timer.Start(timeout, true /* one shot */);
+        m_timeout = timeout; // set for use in OnTimer if we have a delay
+        m_delayShow = delay != 0;
+
+        if ( !m_delayShow )
+            DoShow();
+
+        m_timer.Start((delay ? delay : timeout), true /* one shot */);
     }
 
 protected:
-    virtual void OnDismiss()
+    virtual void OnDismiss() wxOVERRIDE
     {
         Destroy();
     }
 
 private:
-#ifdef __WXMSW__
+#ifdef HAVE_MSW_THEME
     // Returns non-NULL theme only if we're using Win7-style tooltips.
-    static wxUxThemeEngine* GetTooltipTheme()
+    static bool UseTooltipTheme()
     {
         // Even themed applications under XP still use "classic" tooltips.
         if ( wxGetWinVersion() <= wxWinVersion_XP )
-            return NULL;
-
-        return wxUxThemeEngine::GetIfActive();
+            return false;
+        else
+            return wxUxThemeIsActive();
     }
-#endif // __WXMSW__
+#endif // HAVE_MSW_THEME
 
     // For now we just hard code the tip height, would be nice to do something
     // smarter in the future.
     static int GetTipHeight()
     {
-#ifdef __WXMSW__
-        if ( GetTooltipTheme() )
+#ifdef HAVE_MSW_THEME
+        if ( UseTooltipTheme() )
             return 20;
-#endif // __WXMSW__
+#endif // HAVE_MSW_THEME
 
         return 15;
     }
@@ -310,11 +318,7 @@ private:
 
         // Use GetFromWindow() and not GetFromPoint() here to try to get the
         // correct display even if the tip point itself is not visible.
-        int dpy = wxDisplay::GetFromWindow(GetParent());
-        if ( dpy == wxNOT_FOUND )
-            dpy = 0; // What else can we do?
-
-        const wxRect rectDpy = wxDisplay(dpy).GetClientArea();
+        const wxRect rectDpy = wxDisplay(GetParent()).GetClientArea();
 
 #ifdef __WXMAC__
         return pos.y > rectDpy.height/2 ? wxTipKind_Bottom : wxTipKind_Top;
@@ -544,6 +548,8 @@ private:
 
         SetShape(path);
 #else // !wxUSE_GRAPHICS_CONTEXT
+        wxUnusedVar(tipKind);
+
         int x = contentSize.x/2,
             yApex = 0,
             dy = 0;
@@ -560,10 +566,22 @@ private:
     // Timer event handler hides the tooltip when the timeout expires.
     void OnTimer(wxTimerEvent& WXUNUSED(event))
     {
-        // Doing "Notify" here ensures that our OnDismiss() is called and so we
-        // also Destroy() ourselves. We could use Dismiss() and call Destroy()
-        // explicitly from here as well.
-        DismissAndNotify();
+        if ( !m_delayShow )
+        {
+            // Doing "Notify" here ensures that our OnDismiss() is called and so we
+            // also Destroy() ourselves. We could use Dismiss() and call Destroy()
+            // explicitly from here as well.
+            DismissAndNotify();
+
+            return;
+        }
+
+        m_delayShow = false;
+
+        if ( m_timeout )
+            m_timer.Start(m_timeout, true);
+
+        DoShow();
     }
 
 
@@ -573,6 +591,12 @@ private:
 
     // The timer counting down the time until we're hidden.
     wxTimer m_timer;
+
+    // We will need to accesss the timeout period when delaying showing tooltip.
+    int m_timeout;
+
+    // If true, delay showing the tooltip.
+    bool m_delayShow;
 
     wxDECLARE_NO_COPY_CLASS(wxRichToolTipPopup);
 };
@@ -621,9 +645,11 @@ void wxRichToolTipGenericImpl::SetStandardIcon(int icon)
     }
 }
 
-void wxRichToolTipGenericImpl::SetTimeout(unsigned milliseconds)
+void wxRichToolTipGenericImpl::SetTimeout(unsigned millisecondsTimeout,
+                                          unsigned millisecondsDelay)
 {
-    m_timeout = milliseconds;
+    m_delay = millisecondsDelay;
+    m_timeout = millisecondsTimeout;
 }
 
 void wxRichToolTipGenericImpl::SetTipKind(wxTipKind tipKind)
@@ -636,11 +662,8 @@ void wxRichToolTipGenericImpl::SetTitleFont(const wxFont& font)
     m_titleFont = font;
 }
 
-void wxRichToolTipGenericImpl::ShowFor(wxWindow* win)
+void wxRichToolTipGenericImpl::ShowFor(wxWindow* win, const wxRect* rect)
 {
-    // Set the focus to the window the tooltip refers to to make it look active.
-    win->SetFocus();
-
     wxRichToolTipPopup* const popup = new wxRichToolTipPopup
                                           (
                                             win,
@@ -653,9 +676,9 @@ void wxRichToolTipGenericImpl::ShowFor(wxWindow* win)
 
     popup->SetBackgroundColours(m_colStart, m_colEnd);
 
-    popup->DoShow();
-
-    popup->SetTimeout(m_timeout);
+    popup->SetPosition(rect);
+    // show or start the timer to delay showing the popup
+    popup->SetTimeoutAndShow( m_timeout, m_delay );
 }
 
 // Currently only wxMSW provides a native implementation.

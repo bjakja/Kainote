@@ -3,12 +3,12 @@
 // Purpose:     common functionality of wxItemContainer-derived controls
 // Author:      Vadim Zeitlin
 // Created:     2007-07-25
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _WX_MSW_CTRLSUB_H_
+#define _WX_MSW_CTRLSUB_H_
 
 // ----------------------------------------------------------------------------
 // wxControlWithItems
@@ -34,9 +34,9 @@ protected:
     virtual WXHWND MSWGetItemsHWND() const { return GetHWND(); }
 
 private:
-    DECLARE_ABSTRACT_CLASS(wxControlWithItems)
+    wxDECLARE_ABSTRACT_CLASS(wxControlWithItems);
     wxDECLARE_NO_COPY_CLASS(wxControlWithItems);
 };
 
-
+#endif // _WX_MSW_CTRLSUB_H_
 

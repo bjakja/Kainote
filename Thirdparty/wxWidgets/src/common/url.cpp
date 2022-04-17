@@ -4,17 +4,13 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     20/07/1997
-// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_URL
 
@@ -30,10 +26,10 @@
 #include <string.h>
 #include <ctype.h>
 
-IMPLEMENT_CLASS(wxURL, wxURI)
+wxIMPLEMENT_CLASS(wxURL, wxURI);
 
 // Protocols list
-wxProtoInfo *wxURL::ms_protocols = nullptr;
+wxProtoInfo *wxURL::ms_protocols = NULL;
 
 // Enforce linking of protocol classes:
 USE_PROTOCOL(wxFileProto)
@@ -41,7 +37,7 @@ USE_PROTOCOL(wxFileProto)
 #if wxUSE_PROTOCOL_HTTP
 USE_PROTOCOL(wxHTTP)
 
-    wxHTTP *wxURL::ms_proxyDefault = nullptr;
+    wxHTTP *wxURL::ms_proxyDefault = NULL;
     bool wxURL::ms_useDefaultProxy = false;
 #endif
 
@@ -79,7 +75,7 @@ wxURL::wxURL(const wxURL& url) : wxURI(url)
 
 void wxURL::Init(const wxString& url)
 {
-    m_protocol = nullptr;
+    m_protocol = NULL;
     m_error = wxURL_NOERR;
     m_url = url;
 #if wxUSE_URL_NATIVE
@@ -98,7 +94,7 @@ void wxURL::Init(const wxString& url)
         }
     }
 
-    m_useProxy = ms_proxyDefault != nullptr;
+    m_useProxy = ms_proxyDefault != NULL;
     m_proxy = ms_proxyDefault;
 #endif // wxUSE_PROTOCOL_HTTP
 
@@ -152,7 +148,7 @@ wxURL& wxURL::operator = (const wxURL& url)
 
 bool wxURL::ParseURL()
 {
-    // If the URL was already parsed (m_protocol != nullptr), pass this section.
+    // If the URL was already parsed (m_protocol != NULL), pass this section.
     if (!m_protocol)
     {
         // Clean up
@@ -217,7 +213,7 @@ void wxURL::CleanData()
         {
             // Need to safely delete the socket (pending events)
             m_protocol->Destroy();
-            m_protocol = nullptr;
+            m_protocol = NULL;
         }
     }
 }
@@ -271,7 +267,7 @@ wxInputStream *wxURL::GetInputStream()
     if (!m_protocol)
     {
         m_error = wxURL_NOPROTO;
-        return nullptr;
+        return NULL;
     }
 
     m_error = wxURL_NOERR;
@@ -304,7 +300,7 @@ wxInputStream *wxURL::GetInputStream()
 #if wxUSE_SOCKETS
     wxIPV4address addr;
 
-    // m_protoinfo is nullptr when we use a proxy
+    // m_protoinfo is NULL when we use a proxy
     if (
 #if wxUSE_PROTOCOL_HTTP
          !m_useProxy &&
@@ -314,15 +310,15 @@ wxInputStream *wxURL::GetInputStream()
         if (!addr.Hostname(m_server))
         {
             m_error = wxURL_NOHOST;
-            return nullptr;
+            return NULL;
         }
 
         addr.Service(m_port);
 
-        if (!m_protocol->Connect(addr, true)) // Watcom needs the 2nd arg for some reason
+        if (!m_protocol->Connect(addr))
         {
             m_error = wxURL_CONNERR;
-            return nullptr;
+            return NULL;
         }
     }
 #endif // wxUSE_SOCKETS
@@ -351,7 +347,7 @@ wxInputStream *wxURL::GetInputStream()
     if (!the_i_stream)
     {
         m_error = wxURL_PROTOERR;
-        return nullptr;
+        return NULL;
     }
 
     return the_i_stream;
@@ -389,7 +385,7 @@ void wxURL::SetDefaultProxy(const wxString& url_proxy)
             ms_proxyDefault->Close();
         else
             ms_proxyDefault = new wxHTTP();
-        ms_proxyDefault->Connect(addr, true); // Watcom needs the 2nd arg for some reason
+        ms_proxyDefault->Connect(addr);
     }
 }
 
@@ -428,7 +424,7 @@ void wxURL::SetProxy(const wxString& url_proxy)
         if (m_proxy && m_proxy != ms_proxyDefault)
             delete m_proxy;
         m_proxy = new wxHTTP();
-        m_proxy->Connect(addr, true); // Watcom needs the 2nd arg for some reason
+        m_proxy->Connect(addr);
 
         CleanData();
         // Reparse url.
@@ -451,14 +447,14 @@ class wxURLModule : public wxModule
 public:
     wxURLModule();
 
-    virtual bool OnInit();
-    virtual void OnExit();
+    virtual bool OnInit() wxOVERRIDE;
+    virtual void OnExit() wxOVERRIDE;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxURLModule)
+    wxDECLARE_DYNAMIC_CLASS(wxURLModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxURLModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxURLModule, wxModule);
 
 wxURLModule::wxURLModule()
 {

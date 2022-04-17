@@ -3,7 +3,6 @@
 // Purpose:     macros for implementing type-safe vararg passing of strings
 // Author:      Vaclav Slavik
 // Created:     2007-02-19
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 REA Elektronik GmbH
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/strvararg.h"
 #include "wx/string.h"
@@ -147,14 +143,14 @@ public:
 
     wxFormatConverterBase()
     {
-        m_fmtOrig = nullptr;
-        m_fmtLast = nullptr;
+        m_fmtOrig = NULL;
+        m_fmtLast = NULL;
         m_nCopied = 0;
     }
 
     wxScopedCharTypeBuffer<CharType> Convert(const CharType *format)
     {
-        // this is reset to nullptr if we modify the format string
+        // this is reset to NULL if we modify the format string
         m_fmtOrig = format;
 
         while ( *format )
@@ -199,6 +195,23 @@ public:
 
                 switch ( *format )
                 {
+                    // MSVC doesn't support C99 'z' size modifier, but it uses
+                    // 'I' with exactly the same meaning.
+                    //
+                    // MinGW does support 'z' but only in ANSI stdio mode, and
+                    // we can't be sure that this is what is actually going to
+                    // be used, application code could explicitly define
+                    // __USE_MINGW_ANSI_STDIO=0 (e.g. because it needs legacy
+                    // behaviour for its own printf() calls), so we map it to
+                    // 'I' for it too.
+#if defined(__VISUALC__) || defined(__MINGW32__)
+                    case 'z':
+                        ChangeFmtChar('I');
+                        format++;
+                        size = Size_Default;
+                        break;
+#endif // __VISUALC__ || __MINGW32__
+
                     case 'h':
                         size = Size_Short;
                         format++;
@@ -212,7 +225,7 @@ public:
                             format++;
                             break;
                         }
-                        //else: fall through
+                        wxFALLTHROUGH;
 
                     default:
                         size = Size_Default;
@@ -271,7 +284,7 @@ public:
             }
         }
 
-        // notice that we only translated the string if m_fmtOrig == nullptr (as
+        // notice that we only translated the string if m_fmtOrig == NULL (as
         // set by CopyAllBefore()), otherwise we should simply use the original
         // format
         if ( m_fmtOrig )
@@ -342,9 +355,21 @@ private:
         *(m_fmtLast++) = ch;
     }
 
+    // change a character
+    void ChangeFmtChar(CharType ch)
+    {
+        if ( m_fmtOrig )
+        {
+            // so far we haven't translated anything yet
+            CopyAllBefore();
+        }
+
+        *m_fmtLast++ = ch;
+    }
+
     void CopyAllBefore()
     {
-        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == nullptr, "logic error" );
+        wxASSERT_MSG( m_fmtOrig && m_fmt.data() == NULL, "logic error" );
 
         // the modified format string is guaranteed to be no longer than
         // 3/2 of the original (worst case: the entire format string consists
@@ -361,7 +386,7 @@ private:
 
         // we won't need it any longer and resetting it also indicates that we
         // modified the format
-        m_fmtOrig = nullptr;
+        m_fmtOrig = NULL;
     }
 
     static bool IsFlagChar(CharType ch)
@@ -388,7 +413,15 @@ private:
     size_t m_nCopied;
 };
 
-#if defined(__WINDOWS__) && !defined(__CYGWIN__)
+// Distinguish between the traditional Windows (and MSVC) behaviour and Cygwin
+// (which is always Unix-like) and MinGW. The last one is the most interesting
+// case as it can behave either as MSVC (__USE_MINGW_ANSI_STDIO=0) or as POSIX
+// (__USE_MINGW_ANSI_STDIO=1, which is explicitly set by including any standard
+// C++ header such as e.g. <string>). Luckily, "%ls" and "%lc" work in both
+// cases, at least for recent MinGW versions, so just use it always.
+#if defined(__WINDOWS__) && \
+    !defined(__CYGWIN__) && \
+    !defined(__MINGW32__)
 
 // on Windows, we should use %s and %c regardless of the build:
 class wxPrintfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
@@ -419,7 +452,7 @@ class wxPrintfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 {
     virtual void HandleString(CharType WXUNUSED(conv),
                               SizeModifier WXUNUSED(size),
-                              CharType& outConv, SizeModifier& outSize)
+                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         outConv = 's';
         outSize = Size_Long;
@@ -427,7 +460,7 @@ class wxPrintfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 
     virtual void HandleChar(CharType WXUNUSED(conv),
                             SizeModifier WXUNUSED(size),
-                            CharType& outConv, SizeModifier& outSize)
+                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         outConv = 'c';
         outSize = Size_Long;
@@ -442,7 +475,7 @@ class wxPrintfFormatConverterUtf8 : public wxFormatConverterBase<char>
 {
     virtual void HandleString(CharType WXUNUSED(conv),
                               SizeModifier WXUNUSED(size),
-                              CharType& outConv, SizeModifier& outSize)
+                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         outConv = 's';
         outSize = Size_Default;
@@ -450,7 +483,7 @@ class wxPrintfFormatConverterUtf8 : public wxFormatConverterBase<char>
 
     virtual void HandleChar(CharType WXUNUSED(conv),
                             SizeModifier WXUNUSED(size),
-                            CharType& outConv, SizeModifier& outSize)
+                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         // chars are represented using wchar_t in both builds, so this is
         // the same as above
@@ -500,14 +533,14 @@ class wxPrintfFormatConverterANSI : public wxFormatConverterBase<char>
 class wxScanfFormatConverterWchar : public wxFormatConverterBase<wchar_t>
 {
     virtual void HandleString(CharType conv, SizeModifier size,
-                              CharType& outConv, SizeModifier& outSize)
+                              CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         outConv = 's';
         outSize = GetOutSize(conv == 'S', size);
     }
 
     virtual void HandleChar(CharType conv, SizeModifier size,
-                            CharType& outConv, SizeModifier& outSize)
+                            CharType& outConv, SizeModifier& outSize) wxOVERRIDE
     {
         outConv = 'c';
         outSize = GetOutSize(conv == 'C', size);
@@ -655,10 +688,19 @@ wxFormatString::ArgumentType DoGetArgumentType(const CharType *format,
 
     wxPrintfConvSpecParser<CharType> parser(format);
 
-    wxCHECK_MSG( n <= parser.nargs, wxFormatString::Arg_Unknown,
-                 "more arguments than format string specifiers?" );
+    if ( n > parser.nargs )
+    {
+        // The n-th argument doesn't appear in the format string and is unused.
+        // This can happen e.g. if a translation of the format string is used
+        // and the translation language tends to avoid numbers in singular forms.
+        // The translator would then typically replace "%d" with "One" (e.g. in
+        // Hebrew). Passing too many vararg arguments does not harm, so its
+        // better to be more permissive here and allow legitimate uses in favour
+        // of catching harmless errors.
+        return wxFormatString::Arg_Unused;
+    }
 
-    wxCHECK_MSG( parser.pspec[n-1] != nullptr, wxFormatString::Arg_Unknown,
+    wxCHECK_MSG( parser.pspec[n-1] != NULL, wxFormatString::Arg_Unknown,
                  "requested argument not found - invalid format string?" );
 
     switch ( parser.pspec[n-1]->m_type )

@@ -3,28 +3,17 @@
 // Purpose:     wxGtkFileCtrl Implementation
 // Author:      Diaa M. Sami
 // Created:     2007-08-10
-// RCS-ID:      $Id$
 // Copyright:   (c) Diaa M. Sami
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
+#if wxUSE_FILECTRL && !defined(__WXUNIVERSAL__)
 
 #include "wx/filectrl.h"
 
-#if wxUSE_FILECTRL && !defined(__WXUNIVERSAL__)
-
-#ifndef WX_PRECOMP
-#    include "wx/sizer.h"
-#    include "wx/debug.h"
-#endif
-
 #include "wx/gtk/private.h"
-#include "wx/filedlg.h"
 #include "wx/filename.h"
 #include "wx/scopeguard.h"
 #include "wx/tokenzr.h"
@@ -88,7 +77,32 @@ bool wxGtkFileChooser::SetPath( const wxString& path )
     if ( path.empty() )
         return true;
 
-    return gtk_file_chooser_set_filename( m_widget, path.utf8_str() ) != 0;
+    switch ( gtk_file_chooser_get_action( m_widget ) )
+    {
+        case GTK_FILE_CHOOSER_ACTION_SAVE:
+            {
+                wxFileName fn(path);
+
+                const wxString fname = fn.GetFullName();
+                gtk_file_chooser_set_current_name( m_widget, fname.utf8_str() );
+
+                // set the initial file name and/or directory
+                const wxString dir = fn.GetPath();
+                return gtk_file_chooser_set_current_folder( m_widget,
+                                                            dir.utf8_str() ) != 0;
+            }
+
+        case GTK_FILE_CHOOSER_ACTION_OPEN:
+            return gtk_file_chooser_set_filename( m_widget, path.utf8_str() ) != 0;
+
+        case GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER:
+        case GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER:
+            break;
+    }
+
+    wxFAIL_MSG( "Unexpected file chooser type" );
+
+    return false;
 }
 
 bool wxGtkFileChooser::SetDirectory( const wxString& dir )
@@ -223,7 +237,7 @@ extern "C"
     static void
     gtkfilechooserwidget_file_activated_callback( GtkWidget *WXUNUSED( widget ), wxGtkFileCtrl *fileCtrl )
     {
-        GenerateFileActivatedEvent( fileCtrl, fileCtrl );
+        wxGenerateFileActivatedEvent( fileCtrl, fileCtrl );
     }
 }
 
@@ -244,7 +258,7 @@ extern "C"
         }
 
         if ( !fileCtrl->m_checkNextSelEvent )
-            GenerateSelectionChangedEvent( fileCtrl, fileCtrl );
+            wxGenerateSelectionChangedEvent( fileCtrl, fileCtrl );
     }
 }
 
@@ -259,7 +273,7 @@ extern "C"
         }
         else
         {
-            GenerateFolderChangedEvent( fileCtrl, fileCtrl );
+            wxGenerateFolderChangedEvent( fileCtrl, fileCtrl );
         }
 
         fileCtrl->m_checkNextSelEvent = true;
@@ -276,14 +290,20 @@ extern "C"
              fileCtrl->HasFilterChoice() &&
              !fileCtrl->GTKShouldIgnoreNextFilterEvent() )
         {
-            GenerateFilterChangedEvent( fileCtrl, fileCtrl );
+            wxGenerateFilterChangedEvent( fileCtrl, fileCtrl );
         }
     }
 }
 
 // wxGtkFileCtrl implementation
 
-IMPLEMENT_DYNAMIC_CLASS( wxGtkFileCtrl, wxControl )
+wxIMPLEMENT_DYNAMIC_CLASS(wxGtkFileCtrl, wxControl);
+
+wxGtkFileCtrl::~wxGtkFileCtrl()
+{
+    if (m_fcWidget)
+        GTKDisconnect(m_fcWidget);
+}
 
 void wxGtkFileCtrl::Init()
 {
@@ -315,11 +335,9 @@ bool wxGtkFileCtrl::Create( wxWindow *parent,
     if ( style & wxFC_SAVE )
         gtkAction = GTK_FILE_CHOOSER_ACTION_SAVE;
 
-    m_widget =  gtk_alignment_new ( 0, 0, 1, 1 );
-    g_object_ref(m_widget);
     m_fcWidget = GTK_FILE_CHOOSER( gtk_file_chooser_widget_new(gtkAction) );
-    gtk_widget_show ( GTK_WIDGET( m_fcWidget ) );
-    gtk_container_add ( GTK_CONTAINER ( m_widget ), GTK_WIDGET( m_fcWidget ) );
+    m_widget = GTK_WIDGET(m_fcWidget);
+    g_object_ref(m_widget);
 
     m_focusWidget = GTK_WIDGET( m_fcWidget );
 
@@ -450,8 +468,7 @@ void wxGtkFileCtrl::GetFilenames( wxArrayString& files ) const
 
 void wxGtkFileCtrl::ShowHidden(bool show)
 {
-    // gtk_file_chooser_set_show_hidden() is new in 2.6
-    g_object_set (G_OBJECT (m_fcWidget), "show-hidden", show, NULL);
+    gtk_file_chooser_set_show_hidden(m_fcWidget, show);
 }
 
 #endif // wxUSE_FILECTRL

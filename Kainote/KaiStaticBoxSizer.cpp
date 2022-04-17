@@ -15,7 +15,7 @@
 
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
-//#include "Utils.h"
+#include <wx/statbox.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 
@@ -95,7 +95,7 @@ wxSize KaiStaticBox::CalcBorders()
 
 bool KaiStaticBox::Enable(bool enable)
 {
-	bool succ = wxWindow::Enable(enable);
+	bool succ = wxWindowBase::Enable(enable);
 	Refresh(false);
 	return succ;
 }

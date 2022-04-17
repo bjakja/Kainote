@@ -6,7 +6,6 @@
 //              and William Gallafent.
 // Modified by:
 // Created:     08.02.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Johnny C. Norris II
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,9 +20,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TOGGLEBTN
 
@@ -45,7 +41,7 @@
 // macros
 // ----------------------------------------------------------------------------
 
-wxDEFINE_EVENT( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
+wxDEFINE_EVENT( wxEVT_TOGGLEBUTTON, wxCommandEvent );
 
 // ============================================================================
 // implementation
@@ -55,10 +51,10 @@ wxDEFINE_EVENT( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEvent );
 // wxBitmapToggleButton
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxBitmapToggleButton, wxToggleButton)
+wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapToggleButton, wxToggleButton);
 
 bool wxBitmapToggleButton::Create( wxWindow *parent, wxWindowID id,
-                const wxBitmap& label,const wxPoint& pos, const wxSize& size, long style,
+                const wxBitmapBundle& label,const wxPoint& pos, const wxSize& size, long style,
                 const wxValidator& validator, const wxString& name )
 {
     if (!wxToggleButton::Create( parent, id, wxEmptyString, pos, size, style, validator, name ))
@@ -84,7 +80,7 @@ bool wxBitmapToggleButton::Create( wxWindow *parent, wxWindowID id,
 // wxToggleButton
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl)
+wxIMPLEMENT_DYNAMIC_CLASS(wxToggleButton, wxControl);
 
 void wxToggleButton::Init()
 {
@@ -136,6 +132,11 @@ WXDWORD wxToggleButton::MSWGetStyle(long style, WXDWORD *exstyle) const
     return msStyle;
 }
 
+bool wxToggleButton::MSWIsPushed() const
+{
+    return GetValue();
+}
+
 void wxToggleButton::SetValue(bool val)
 {
     m_state = val;
@@ -145,7 +146,7 @@ void wxToggleButton::SetValue(bool val)
     }
     else
     {
-        ::SendMessage(GetHwnd(), BM_SETCHECK, val, 0);
+        ::SendMessage(GetHwnd(), BM_SETCHECK, val ? BST_CHECKED : BST_UNCHECKED, 0);
     }
 }
 
@@ -179,19 +180,11 @@ bool wxToggleButton::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
     // auto checkboxes so do it ourselves in any case
     m_state = !m_state;
 
-    wxCommandEvent event(wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, m_windowId);
+    wxCommandEvent event(wxEVT_TOGGLEBUTTON, m_windowId);
     event.SetInt(GetValue());
     event.SetEventObject(this);
     ProcessCommand(event);
     return true;
-}
-
-wxAnyButton::State wxToggleButton::GetNormalState() const
-{
-    if ( GetValue() )
-        return State_Pressed;
-    else
-        return State_Normal;
 }
 
 #endif // wxUSE_TOGGLEBTN

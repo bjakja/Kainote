@@ -2,11 +2,12 @@
 // Name:        dynarray.h
 // Purpose:     interface of wxArray<T>
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 /**
+    The legacy dynamic array class, existing for compatibility only and @e NOT
+    to be used in the new code.
 
     This section describes the so called @e "dynamic arrays". This is a C
     array-like type safe data structure i.e. the member access time is constant
@@ -254,36 +255,36 @@ public:
     wxSortedArray(int (*)(T first, T second)compareFunction);
 
     /**
-        Performs a shallow array copy (i.e. doesn't copy the objects pointed to
+        Performs a shallow array copy (i.e.\ doesn't copy the objects pointed to
         even if the source array contains the items of pointer type).
     */
     wxArray(const wxArray& array);
 
     /**
-        Performs a shallow array copy (i.e. doesn't copy the objects pointed to
+        Performs a shallow array copy (i.e.\ doesn't copy the objects pointed to
         even if the source array contains the items of pointer type).
     */
     wxSortedArray(const wxSortedArray& array);
 
     /**
-        Performs a deep copy (i.e. the array element are copied too).
+        Performs a deep copy (i.e.\ the array element are copied too).
     */
     wxObjArray(const wxObjArray& array);
 
     /**
-        Performs a shallow array copy (i.e. doesn't copy the objects pointed to
+        Performs a shallow array copy (i.e.\ doesn't copy the objects pointed to
         even if the source array contains the items of pointer type).
     */
     wxArray& operator=(const wxArray& array);
 
     /**
-        Performs a shallow array copy (i.e. doesn't copy the objects pointed to
+        Performs a shallow array copy (i.e.\ doesn't copy the objects pointed to
         even if the source array contains the items of pointer type).
     */
     wxSortedArray& operator=(const wxSortedArray& array);
 
     /**
-        Performs a deep copy (i.e. the array element are copied too).
+        Performs a deep copy (i.e.\ the array element are copied too).
     */
     wxObjArray& operator=(const wxObjArray& array);
 
@@ -376,7 +377,7 @@ public:
     T& Item(size_t index) const;
 
     /**
-        Returns the last element in the array, i.e. is the same as calling
+        Returns the last element in the array, i.e.\ is the same as calling
         "Item(GetCount() - 1)". An assert failure is raised in the debug mode
         if the array is empty.
 
@@ -669,9 +670,9 @@ public:
     This macro declares a new object array class named @a name and containing
     the elements of type @e T.
 
-    An exported array is used when compiling wxWidgets as a DLL under Windows
-    and the array needs to be visible outside the DLL. An user exported array
-    needed for exporting an array from a user DLL.
+    An exported array is used when compiling wxWidgets as a DLL under Windows,
+    and the array needs to be visible outside the DLL. A user-exported array
+    is needed for exporting an array from a user DLL.
 
     Example:
 
@@ -680,12 +681,12 @@ public:
     WX_DECLARE_OBJARRAY(MyClass, wxArrayOfMyClass); // note: not "MyClass *"!
     @endcode
 
-    You must use WX_DEFINE_OBJARRAY() macro to define the array class,
-    otherwise you would get link errors.
+    You must use the WX_DEFINE_OBJARRAY() macro to define the array class;
+    otherwise, you will get link errors.
 */
 #define WX_DECLARE_OBJARRAY(T, name)
 #define WX_DECLARE_EXPORTED_OBJARRAY(T, name)
-#define WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name)
+#define WX_DECLARE_USER_EXPORTED_OBJARRAY(T, name, expmode)
 //@}
 
 //@{
@@ -694,8 +695,8 @@ public:
     elements of type @a T.
 
     An exported array is used when compiling wxWidgets as a DLL under Windows
-    and the array needs to be visible outside the DLL. An user exported array
-    needed for exporting an array from a user DLL.
+    and the array needs to be visible outside the DLL. A user-exported array
+    is needed for exporting an array from a user DLL.
 
     Example:
 
@@ -727,8 +728,8 @@ public:
     destructor will not be called.
 
     An exported array is used when compiling wxWidgets as a DLL under Windows
-    and the array needs to be visible outside the DLL. An user exported array
-    needed for exporting an array from a user DLL.
+    and the array needs to be visible outside the DLL. A user-exported array
+    is needed for exporting an array from a user DLL.
 
     Example of usage:
 
@@ -759,8 +760,8 @@ public:
     the elements of type @e T.
 
     An exported array is used when compiling wxWidgets as a DLL under Windows
-    and the array needs to be visible outside the DLL. An user exported array
-    needed for exporting an array from a user DLL.
+    and the array needs to be visible outside the DLL. A user-exported array
+    is needed for exporting an array from a user DLL.
 
     Example:
 
@@ -793,7 +794,7 @@ public:
 */
 #define WX_DEFINE_SORTED_ARRAY(T, name)
 #define WX_DEFINE_SORTED_EXPORTED_ARRAY(T, name)
-#define WX_DEFINE_SORTED_USER_EXPORTED_ARRAY(T, name)
+#define WX_DEFINE_SORTED_USER_EXPORTED_ARRAY(T, name, expmode)
 //@}
 
 /**

@@ -2,7 +2,6 @@
 // Name:        src/gtk/bmpbuttn.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@
 
 bool wxBitmapButton::Create(wxWindow *parent,
                             wxWindowID id,
-                            const wxBitmap& bitmap,
+                            const wxBitmapBundle& bitmap,
                             const wxPoint& pos,
                             const wxSize& size,
                             long style,

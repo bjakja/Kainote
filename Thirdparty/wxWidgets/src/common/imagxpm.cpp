@@ -2,7 +2,6 @@
 // Name:        src/common/imagxpm.cpp
 // Purpose:     wxXPMHandler
 // Author:      Vaclav Slavik, Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -62,12 +61,9 @@ license is as follows:
 %
 */
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XPM
 
@@ -82,7 +78,7 @@ license is as follows:
 #include "wx/xpmdecod.h"
 #include "wx/filename.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxXPMHandler,wxImageHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxXPMHandler,wxImageHandler);
 
 //-----------------------------------------------------------------------------
 // wxXPMHandler
@@ -102,6 +98,45 @@ bool wxXPMHandler::LoadFile(wxImage *image,
     *image = img;
     return true;
 }
+
+namespace
+{
+
+// Make the given string a valid C identifier.
+//
+// All invalid characters are simply replaced by underscores and underscore is
+// also prepended in the beginning if the initial character is not alphabetic.
+void
+MakeValidCIdent(wxString* str)
+{
+    const wxChar chUnderscore = wxT('_');
+
+    for ( wxString::iterator it = str->begin(); it != str->end(); ++it )
+    {
+        const wxChar ch = *it;
+        if ( wxIsdigit(ch) )
+        {
+            if ( it == str->begin() )
+            {
+                // Identifiers can't start with a digit.
+                str->insert(0, chUnderscore); // prepend underscore
+                it = str->begin(); // restart as string changed
+                continue;
+            }
+        }
+        else if ( !wxIsalpha(ch) && ch != chUnderscore )
+        {
+            // Not a valid character in C identifiers.
+            *it = chUnderscore;
+        }
+    }
+
+    // Double underscores are not allowed in normal C identifiers and are
+    // useless anyhow.
+    str->Replace(wxT("__"), wxT("_"));
+}
+
+} // anonymous namespace
 
 bool wxXPMHandler::SaveFile(wxImage * image,
                             wxOutputStream& stream, bool WXUNUSED(verbose))
@@ -124,8 +159,8 @@ bool wxXPMHandler::SaveFile(wxImage * image,
     wxString sName;
     if ( image->HasOption(wxIMAGE_OPTION_FILENAME) )
     {
-        wxFileName::SplitPath(image->GetOption(wxIMAGE_OPTION_FILENAME),
-                              nullptr, &sName, nullptr);
+        sName = wxFileName(image->GetOption(wxIMAGE_OPTION_FILENAME)).GetName();
+        MakeValidCIdent(&sName);
         sName << wxT("_xpm");
     }
 

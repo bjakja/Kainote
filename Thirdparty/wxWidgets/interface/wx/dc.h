@@ -2,7 +2,6 @@
 // Name:        dc.h
 // Purpose:     interface of wxDC
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +14,15 @@
     and the corresponding @e dst destination pixel gets combined together to produce
     the final pixel. E.g. @c wxCLEAR and @c wxSET completely ignore the source
     and the destination pixel and always put zeroes or ones in the final surface.
+
+    Note that not all modes are supported under all platforms. Notably wxGTK3
+    and wxMac only support the following modes:
+    - wxCOPY
+    - wxOR
+    - wxNO_OP
+    - wxCLEAR
+    - wxXOR
+    and, in particular, do @em not support the commonly used @c wxINVERT.
 */
 enum wxRasterOperationMode
 {
@@ -73,7 +81,7 @@ enum wxMappingMode
     wxMM_TWIPS,
 
     /**
-        Each logical unit is a @e "printer point" i.e. 1/72 of an inch.
+        Each logical unit is a @e "printer point" i.e.\ 1/72 of an inch.
         Equivalent to about 353 micrometers.
     */
     wxMM_POINTS
@@ -111,9 +119,9 @@ struct wxFontMetrics
     abstract API for drawing on any of them.
 
     wxWidgets offers an alternative drawing API based on the modern drawing
-    backends GDI+, CoreGraphics and Cairo. See wxGraphicsContext, wxGraphicsRenderer
-    and related classes. There is also a wxGCDC linking the APIs by offering
-    the wxDC API on top of a wxGraphicsContext.
+    backends GDI+, CoreGraphics, Cairo and Direct2D. See wxGraphicsContext,
+    wxGraphicsRenderer and related classes. There is also a wxGCDC linking
+    the APIs by offering the wxDC API on top of a wxGraphicsContext.
 
     wxDC is an abstract base class and cannot be created directly.
     Use wxPaintDC, wxClientDC, wxWindowDC, wxScreenDC, wxMemoryDC or
@@ -147,7 +155,7 @@ struct wxFontMetrics
     stated. Logical units are arbitrary units mapped to device units using
     the current mapping mode (see wxDC::SetMapMode).
 
-    This mechanism allows to reuse the same code which prints on e.g. a window
+    This mechanism allows reusing the same code which prints on e.g. a window
     on the screen to print on e.g. a paper.
 
 
@@ -156,22 +164,25 @@ struct wxFontMetrics
     In general wxDC methods don't support alpha transparency and the alpha
     component of wxColour is simply ignored and you need to use wxGraphicsContext
     for full transparency support. There are, however, a few exceptions: first,
-    under Mac OS X colours with alpha channel are supported in all the normal
+    under macOS and GTK+ 3 colours with alpha channel are supported in all the normal
     wxDC-derived classes as they use wxGraphicsContext internally. Second,
     under all platforms wxSVGFileDC also fully supports alpha channel. In both
     of these cases the instances of wxPen or wxBrush that are built from
     wxColour use the colour's alpha values when stroking or filling.
 
 
-    @section Support for Transformation Matrix
+    @section dc_transform_support Support for Transformation Matrix
 
-    On some platforms (currently only under MSW and only on Windows NT, i.e.
-    not Windows 9x/ME, systems) wxDC has support for applying an arbitrary
-    affine transformation matrix to its coordinate system. Call
-    CanUseTransformMatrix() to check if this support is available and then call
-    SetTransformMatrix() if it is. If the transformation matrix is not
-    supported, SetTransformMatrix() always simply returns false and doesn't do
-    anything.
+    On some platforms (currently under MSW, GTK+ 3, macOS) wxDC has support for
+    applying an arbitrary affine transformation matrix to its coordinate system
+    (since 3.1.1 this feature is also supported by wxGCDC in all ports).
+    Call CanUseTransformMatrix() to check if this support is available and then
+    call SetTransformMatrix() if it is. If the transformation matrix is not
+    supported, SetTransformMatrix() always simply returns @c false and doesn't
+    do anything.
+
+    This feature is only available when @c wxUSE_DC_TRANSFORM_MATRIX build
+    option is enabled.
 
 
     @library{wxcore}
@@ -195,54 +206,150 @@ public:
     /**
         Convert @e device X coordinate to logical coordinate, using the current
         mapping mode, user scale factor, device origin and axis orientation.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord DeviceToLogicalX(wxCoord x) const;
 
     /**
         Convert @e device X coordinate to relative logical coordinate, using the
         current mapping mode and user scale factor but ignoring the
-        axis orientation. Use this for converting a width, for example.
+        axis orientation. Use this for converting a horizontal distance like
+        for example a width.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord DeviceToLogicalXRel(wxCoord x) const;
 
     /**
         Converts @e device Y coordinate to logical coordinate, using the current
         mapping mode, user scale factor, device origin and axis orientation.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord DeviceToLogicalY(wxCoord y) const;
 
     /**
         Convert @e device Y coordinate to relative logical coordinate, using the
         current mapping mode and user scale factor but ignoring the
-        axis orientation. Use this for converting a height, for example.
+        axis orientation. Use this for converting a vertical distance like
+        for example a height.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord DeviceToLogicalYRel(wxCoord y) const;
 
     /**
         Converts logical X coordinate to device coordinate, using the current
         mapping mode, user scale factor, device origin and axis orientation.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord LogicalToDeviceX(wxCoord x) const;
 
     /**
         Converts logical X coordinate to relative device coordinate, using the
         current mapping mode and user scale factor but ignoring the
-        axis orientation. Use this for converting a width, for example.
+        axis orientation. Use this for converting a horizontal distance like
+        for example a width.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord LogicalToDeviceXRel(wxCoord x) const;
 
     /**
         Converts logical Y coordinate to device coordinate, using the current
         mapping mode, user scale factor, device origin and axis orientation.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord LogicalToDeviceY(wxCoord y) const;
 
     /**
         Converts logical Y coordinate to relative device coordinate, using the
         current mapping mode and user scale factor but ignoring the
-        axis orientation. Use this for converting a height, for example.
+        axis orientation. Use this for converting a vertical distance like
+        for example a height.
+
+        @note Affine transformation applied to the coordinate system
+        with SetTransformMatrix() is not taken into account.
     */
     wxCoord LogicalToDeviceYRel(wxCoord y) const;
+
+    /**
+        Converts device (@a x, @a y) coordinates to logical coordinates
+        taking into account all applied transformations like the current
+        mapping mode, scale factors, device origin, axes orientation,
+        affine transformation.
+
+        @since 3.1.5
+    */
+    wxPoint DeviceToLogical(wxCoord x, wxCoord y) const;
+
+    /**
+        @overload
+
+        @since 3.1.5
+    */
+    wxPoint DeviceToLogical(const wxPoint& pt) const;
+
+    /**
+        Converts device @a x, @a y coordinates to relative logical coordinates
+        taking into account all applied transformations like the current
+        mapping mode, scale factors, affine transformation.
+        Use this for converting distances like e.g. width and height.
+
+        @since 3.1.5
+    */
+    wxSize DeviceToLogicalRel(int x, int y) const;
+
+    /**
+        @overload
+
+        @since 3.1.5
+    */
+    wxSize DeviceToLogicalRel(const wxSize& dim) const;
+
+    /**
+        Converts logical (@a x, @a y) coordinates to device coordinates
+        taking into account all applied transformations like the current
+        mapping mode, scale factors, device origin, axes orientation,
+        affine transformation.
+
+        @since 3.1.5
+    */
+    wxPoint LogicalToDevice(wxCoord x, wxCoord y) const;
+
+    /**
+        @overload
+
+        @since 3.1.5
+    */
+    wxPoint LogicalToDevice(const wxPoint& pt) const;
+
+    /**
+        Converts logical @a x, @a y coordinates to relative device coordinates
+        taking into account all applied transformations like the current
+        mapping mode, scale factors, affine transformation.
+        Use this for converting distances like e.g. width and height.
+
+        @since 3.1.5
+    */
+    wxSize LogicalToDeviceRel(int x, int y) const;
+
+    /**
+        @overload
+
+        @since 3.1.5
+    */
+    wxSize LogicalToDeviceRel(const wxSize& dim) const;
 
     //@}
 
@@ -255,17 +362,34 @@ public:
 
     /**
         Clears the device context using the current background brush.
+
+        Note that SetBackground() method must be used to set the brush used by
+        Clear(), the brush used for filling the shapes set by SetBrush() is
+        ignored by it.
+
+        If no background brush was set, solid white brush is used to clear the
+        device context.
     */
     void Clear();
 
     /**
-        Draws an arc of a circle, centred on (@a xc, @a yc), with starting
-        point (@a xStart, @a yStart) and ending at (@a xEnd, @a yEnd). 
-        The current pen is used for the outline and the current brush for 
-        filling the shape.
+        Draws an arc from the given start to the given end point.
 
-        The arc is drawn in a counter-clockwise direction from the start point
-        to the end point.
+        @note DrawEllipticArc() has more clear semantics and it is recommended
+        to use it instead of this function.
+
+        The arc drawn is an arc of the circle centered at (@a xc, @a yc). Its
+        start point is (@a xStart, @a yStart) whereas its end point is the
+        point of intersection of the line passing by (@a xc, @a yc) and (@a
+        xEnd, @a yEnd) with the circle passing by (@a xStart, @a yStart).
+
+        The arc is drawn in a counter-clockwise direction between the start and
+        the end points.
+
+        The current pen is used for the outline and the current brush for
+        filling the shape. Notice that unless the brush is transparent, the
+        lines connecting the centre of the circle to the end points of the arc
+        are drawn as well.
     */
     void DrawArc(wxCoord xStart, wxCoord yStart, wxCoord xEnd, wxCoord yEnd,
                  wxCoord xc, wxCoord yc);
@@ -277,7 +401,7 @@ public:
 
     /**
         Draw a bitmap on the device context at the specified point. If
-        @a transparent is @true and the bitmap has a transparency mask, the
+        @a useMask is @true and the bitmap has a transparency mask, the
         bitmap will be drawn transparently.
 
         When drawing a mono-bitmap, the current text foreground colour will be
@@ -347,11 +471,17 @@ public:
         @a width and @a height specify the width and height of the rectangle
         that contains the ellipse.
 
-        @a start and @a end specify the start and end of the arc relative to
+        @a start and @a end specify the end points of the arc relative to
         the three-o'clock position from the center of the rectangle. Angles are
-        specified in degrees (360 is a complete circle). Positive values mean
-        counter-clockwise motion. If @a start is equal to @e end, a complete
-        ellipse will be drawn.
+        specified in degrees with 0 degree angle corresponding to the positive
+        horizontal axis (3 o'clock) direction.
+
+        Independently of whether @a start is greater than or less than @a end,
+        the arc is drawn in the counter-clockwise direction. Also, if @a start
+        is equal to @e end, a complete ellipse is drawn.
+
+        Notice that unlike DrawArc(), this function does not draw the lines to
+        the arc ends, even when using non-transparent brush.
     */
     void DrawEllipticArc(wxCoord x, wxCoord y, wxCoord width, wxCoord height,
                           double start, double end);
@@ -413,7 +543,7 @@ public:
         Not supported by wxPerl.
         @endWxPerlOnly
     */
-    void DrawLines(int n, wxPoint points[], wxCoord xoffset = 0,
+    void DrawLines(int n, const wxPoint points[], wxCoord xoffset = 0,
                    wxCoord yoffset = 0);
     /**
         This method uses a list of wxPoints, adding the optional offset
@@ -455,7 +585,7 @@ public:
         Not supported by wxPerl.
         @endWxPerlOnly
     */
-    void DrawPolygon(int n, wxPoint points[], wxCoord xoffset = 0,
+    void DrawPolygon(int n, const wxPoint points[], wxCoord xoffset = 0,
                      wxCoord yoffset = 0,
                      wxPolygonFillMode fill_style = wxODDEVEN_RULE);
     /**
@@ -504,13 +634,19 @@ public:
         the DrawPolygon() member function, the polygons created by this
         method are not closed automatically.
     */
-    void DrawPolyPolygon(int n, int count[], wxPoint points[],
+    void DrawPolyPolygon(int n, const int count[], const wxPoint points[],
                          wxCoord xoffset = 0, wxCoord yoffset = 0,
                          wxPolygonFillMode fill_style = wxODDEVEN_RULE);
 
     /**
-        Draws a rectangle with the given top left corner, and with the given
-        size.  The current pen is used for the outline and the current brush
+        Draws a rectangle with the given corner coordinate and size.
+
+        Normally, @a x and @a y specify the top left corner coordinates and
+        both @a width and @a height are positive, however they are also allowed
+        to be negative, in which case the corresponding corner coordinate
+        refers to the right or bottom corner instead.
+
+        The current pen is used for the outline and the current brush
         for filling the shape.
     */
     void DrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height);
@@ -526,10 +662,13 @@ public:
     void DrawRectangle(const wxRect& rect);
 
     /**
-        Draws the text rotated by @a angle degrees 
+        Draws the text rotated by @a angle degrees
         (positive angles are counterclockwise; the full angle is 360 degrees).
 
-        @note Under Win9x only TrueType fonts can be drawn by this function. In
+        Notice that, as with DrawText(), the @a text can contain multiple lines
+        separated by the new line (@c '\\n') characters.
+
+        @note Under MSW only TrueType fonts can be drawn by this function. In
               particular, a font different from @c wxNORMAL_FONT should be used
               as the latter is not a TrueType font. @c wxSWISS_FONT is an
               example of a font which is.
@@ -575,11 +714,18 @@ public:
     /**
         Draws a spline between all given points using the current pen.
 
+        The number of points must be at least 2 for the spline to be drawn.
+
+        @note Drawn curve is not an interpolating curve - it does not go
+        through all points. It may be considered a smoothing curve.
+
         @beginWxPerlOnly
         Not supported by wxPerl.
         @endWxPerlOnly
+
+        @image html drawing-spline.png
     */
-    void DrawSpline(int n, wxPoint points[]);
+    void DrawSpline(int n, const wxPoint points[]);
 
     /**
         @overload
@@ -678,6 +824,9 @@ public:
         - wxFLOOD_BORDER: The area to be flooded is bounded by the given
           colour.
 
+        Currently this method is not implemented in wxOSX and does nothing
+        there.
+
         @return @false if the operation failed.
 
         @note The present implementation for non-Windows platforms may fail to
@@ -729,8 +878,35 @@ public:
 
     /**
         Gets the rectangle surrounding the current clipping region.
+        If no clipping region is set this function returns the extent
+        of the device context.
+
+        @remarks
+        Clipping region is given in logical coordinates.
+
+        @param x If non-@NULL, filled in with the logical horizontal coordinate
+            of the top left corner of the clipping region if the function
+            returns true or 0 otherwise.
+        @param y If non-@NULL, filled in with the logical vertical coordinate
+            of the top left corner of the clipping region if the function
+            returns true or 0 otherwise.
+        @param width If non-@NULL, filled in with the width of the clipping
+            region if the function returns true or the device context width
+            otherwise.
+        @param height If non-@NULL, filled in with the height of the clipping
+            region if the function returns true or the device context height
+            otherwise.
+        @return @true if there is a clipping region or @false if there is no
+            active clipping region (note that this return value is available
+            only since wxWidgets 3.1.2, this function didn't return anything in
+            the previous versions).
     */
-    void GetClippingBox(wxCoord *x, wxCoord *y, wxCoord *width, wxCoord *height) const;
+    bool GetClippingBox(wxCoord *x, wxCoord *y, wxCoord *width, wxCoord *height) const;
+
+    /**
+        @overload
+    */
+    bool GetClippingBox(wxRect& rect) const;
 
     /**
         Sets the clipping region for this device context to the intersection of
@@ -741,13 +917,17 @@ public:
         uses for the clipping region are for clipping text or for speeding up
         window redraws when only a known area of the screen is damaged.
 
-        Notice that you need to call DestroyClippingRegion() if you want to set
+        @remarks
+        - Clipping region should be given in logical coordinates.
+
+        - Calling this function can only make the clipping region smaller,
+        never larger.
+
+        - You need to call DestroyClippingRegion() first if you want to set
         the clipping region exactly to the region specified.
 
-        Also note that if the clipping region is empty, any previously set
-        clipping region is destroyed, i.e. it is equivalent to calling
-        DestroyClippingRegion(), and not to clipping out all drawing on the DC
-        as might be expected.
+        - If resulting clipping region is empty, then all drawing on the DC is
+        clipped out (all changes made by drawing operations are masked out).
 
         @see DestroyClippingRegion(), wxRegion
     */
@@ -792,7 +972,7 @@ public:
     /**
         Returns the various font characteristics.
 
-        This method allows to retrieve some of the font characteristics not
+        This method allows retrieving some of the font characteristics not
         returned by GetTextExtent(), notably internal leading and average
         character width.
 
@@ -815,6 +995,12 @@ public:
         used for the text extent calculation, otherwise the currently selected
         font is used.
 
+        If @a string is empty, its horizontal extent is 0 but, for convenience
+        when using this function for allocating enough space for a possibly
+        multi-line string, its vertical extent is the same as the height of an
+        empty line of text. Please note that this behaviour differs from that
+        of GetTextExtent().
+
         @note This function works with both single-line and multi-line strings.
 
         @beginWxPerlOnly
@@ -831,8 +1017,7 @@ public:
                                 const wxFont* font = NULL) const;
     /**
         Gets the dimensions of the string using the currently selected font.
-        @a string is the text string to measure, @e heightLine, if non @NULL,
-        is where to store the height of a single line.
+        @a string is the text string to measure.
 
         @return The text extent as a wxSize object.
 
@@ -878,6 +1063,8 @@ public:
         used for the text extent calculation. Otherwise the currently selected
         font is.
 
+        If @a string is empty, its extent is 0 in both directions, as expected.
+
         @note This function only works with single-line strings.
 
         @beginWxPerlOnly
@@ -913,17 +1100,17 @@ public:
     //@{
 
     /**
-        Returns the current background mode: @c wxSOLID or @c wxTRANSPARENT.
+        Returns the current background mode: @c wxBRUSHSTYLE_SOLID or @c wxBRUSHSTYLE_TRANSPARENT.
 
         @see SetBackgroundMode()
     */
     int GetBackgroundMode() const;
 
     /**
-        Gets the current font. 
-        
-        Notice that even although each device context object has some default font 
-        after creation, this method would return a ::wxNullFont initially and only 
+        Gets the current font.
+
+        Notice that even although each device context object has some default font
+        after creation, this method would return a ::wxNullFont initially and only
         after calling SetFont() a valid font is returned.
     */
     const wxFont& GetFont() const;
@@ -953,19 +1140,25 @@ public:
     const wxColour& GetTextForeground() const;
 
     /**
-        @a mode may be one of @c wxSOLID and @c wxTRANSPARENT. 
-        
-        This setting determines whether text will be drawn with a background 
+        Change the current background mode.
+
+        This setting determines whether text will be drawn with a background
         colour or not.
+
+        Default is @c wxBRUSHSTYLE_TRANSPARENT, i.e. text background is not
+        drawn.
+
+        @param mode one of @c wxBRUSHSTYLE_SOLID and @c wxBRUSHSTYLE_TRANSPARENT.
     */
     void SetBackgroundMode(int mode);
 
     /**
-        Sets the current font for the DC. 
+        Sets the current font for the DC.
 
-        If the argument is ::wxNullFont (or another invalid font; see wxFont::IsOk), 
-        the current font is selected out of the device context (leaving wxDC without 
-        any valid font), allowing the current font to be destroyed safely.
+        The @a font parameter should be valid, although in wxMSW port (only)
+        the argument ::wxNullFont is also accepted and resets the device
+        context font to the default value used by the system (which is not
+        generally useful).
 
         @see wxFont
     */
@@ -985,9 +1178,9 @@ public:
     void SetTextForeground(const wxColour& colour);
 
     /**
-        Sets the current layout direction for the device context. 
-        
-        @param dir 
+        Sets the current layout direction for the device context.
+
+        @param dir
            May be either @c wxLayout_Default, @c wxLayout_LeftToRight or
            @c wxLayout_RightToLeft.
 
@@ -1153,7 +1346,7 @@ public:
     /**
         Copy from a source DC to this DC possibly changing the scale.
 
-        Unlike Blit(), this method allows to specify different source and
+        Unlike Blit(), this method allows specifying different source and
         destination region sizes, meaning that it can stretch or shrink it
         while copying. The same can be achieved by changing the scale of the
         source or target DC but calling this method is simpler and can also be
@@ -1273,8 +1466,8 @@ public:
     /**
         Sets the current brush for the DC.
 
-        If the argument is ::wxNullBrush (or another invalid brush; see wxBrush::IsOk), 
-        the current brush is selected out of the device context (leaving wxDC without 
+        If the argument is ::wxNullBrush (or another invalid brush; see wxBrush::IsOk),
+        the current brush is selected out of the device context (leaving wxDC without
         any valid brush), allowing the current brush to be destroyed safely.
 
         @see wxBrush, wxMemoryDC (for the interpretation of colours when
@@ -1283,10 +1476,10 @@ public:
     void SetBrush(const wxBrush& brush);
 
     /**
-        Sets the current pen for the DC. 
+        Sets the current pen for the DC.
 
-        If the argument is ::wxNullPen (or another invalid pen; see wxPen::IsOk), 
-        the current pen is selected out of the device context (leaving wxDC without any 
+        If the argument is ::wxNullPen (or another invalid pen; see wxPen::IsOk),
+        the current pen is selected out of the device context (leaving wxDC without any
         valid pen), allowing the current pen to be destroyed safely.
 
         @see wxMemoryDC for the interpretation of colours when drawing into a
@@ -1340,8 +1533,10 @@ public:
     wxMappingMode GetMapMode() const;
 
     /**
-        Gets in @a colour the colour at the specified location. Not available
-        for wxPostScriptDC or wxMetafileDC.
+        Gets in @a colour the colour at the specified location.
+
+        This method isn't available for wxPostScriptDC or wxMetafileDC nor for
+        any DC in wxOSX port and simply returns @false there.
 
         @note Setting a pixel can be done using DrawPoint().
 
@@ -1413,7 +1608,7 @@ public:
     bool IsOk() const;
 
     /**
-        Sets the x and y axis orientation (i.e., the direction from lowest to
+        Sets the x and y axis orientation (i.e.\ the direction from lowest to
         highest values on the axis). The default orientation is x axis from
         left to right and y axis from top down.
 
@@ -1427,7 +1622,7 @@ public:
     void SetAxisOrientation(bool xLeftRight, bool yBottomUp);
 
     /**
-        Sets the device origin (i.e., the origin in pixels after scaling has
+        Sets the device origin (i.e.\ the origin in pixels after scaling has
         been applied). This function may be useful in Windows printing
         operations for placing a graphic on a page.
     */
@@ -1435,6 +1630,14 @@ public:
 
     /**
         Sets the current logical function for the device context.
+
+        @note This function is not fully supported in all ports, due to the
+        limitations of the underlying drawing model. Notably, @c wxINVERT which
+        was commonly used for drawing rubber bands or other moving outlines in
+        the past, is not, and will not, be supported by wxGTK3 and wxMac. The
+        suggested alternative is to draw temporarily objects normally and
+        refresh the (affected part of the) window to remove them later.
+
         It determines how a @e source pixel (from a pen or brush colour, or source
         device context if using Blit()) combines with a @e destination pixel in
         the current device context.
@@ -1444,8 +1647,7 @@ public:
 
         The default is @c wxCOPY, which simply draws with the current colour.
         The others combine the current colour and the background using a logical
-        operation. @c wxINVERT is commonly used for drawing rubber bands or moving
-        outlines, since drawing twice reverts to the original colour.
+        operation.
     */
     void SetLogicalFunction(wxRasterOperationMode function);
 
@@ -1495,10 +1697,8 @@ public:
         Check if the use of transformation matrix is supported by the current
         system.
 
-        Currently this function always returns @false for non-MSW platforms and
-        may return @false for old (Windows 9x/ME) Windows systems. Normally
-        support for the transformation matrix is always available in any
-        relatively recent Windows versions.
+        This function returns @true for MSW and GTK+ 3 platforms and since
+        3.1.1 also for wxGCDC in all ports.
 
         @since 2.9.2
     */
@@ -1535,12 +1735,90 @@ public:
     //@}
 
 
+    /**
+        @name query capabilities
+    */
+    //@{
+
+    /**
+       Does the DC support drawing bitmaps?
+    */
+    bool CanDrawBitmap() const;
+
+    /**
+       Does the DC support calculating the size required to draw text?
+    */
+    bool CanGetTextExtent() const;
+
+    //@}
+
+    /**
+       Returns a value that can be used as a handle to the native drawing
+       context, if this wxDC has something that could be thought of in that
+       way.  (Not all of them do.)
+
+       For example, on Windows the return value is an HDC, on macOS it is a
+       CGContextRef and on wxGTK it will be a GdkDrawable.  If the DC is a
+       wxGCDC then the return value will be the value returned from
+       wxGraphicsContext::GetNativeContext.  A value of NULL is returned if
+       the DC does not have anything that fits the handle concept.
+
+       @since 2.9.5
+     */
+    void* GetHandle() const;
+
+
+    /**
+       If supported by the platform and the type of DC, fetch the contents of the DC, or a subset of it, as a bitmap.
+    */
+    wxBitmap GetAsBitmap(const wxRect *subrect = NULL) const;
+
+
+    /**
+        Set the scale to use for translating wxDC coordinates to the physical
+        pixels.
+
+        The effect of calling this function is similar to that of calling
+        SetUserScale().
+     */
     void SetLogicalScale(double x, double y);
+
+    /**
+        Return the scale set by the last call to SetLogicalScale().
+     */
     void GetLogicalScale(double *x, double *y) const;
+
+    /**
+        Change the offset used for translating wxDC coordinates.
+
+        @see SetLogicalOrigin(), SetDeviceOrigin()
+     */
     void SetLogicalOrigin(wxCoord x, wxCoord y);
+
+    //@{
+    /**
+        Return the coordinates of the logical point (0, 0).
+
+        @see SetLogicalOrigin()
+     */
     void GetLogicalOrigin(wxCoord *x, wxCoord *y) const;
     wxPoint GetLogicalOrigin() const;
-    
+    //@}
+
+    /**
+       If supported by the platform and the @a wxDC implementation, this method
+       will return the @a wxGraphicsContext associated with the DC. Otherwise
+       @NULL is returned.
+    */
+    virtual wxGraphicsContext* GetGraphicsContext() const;
+
+    /**
+       Associate a wxGraphicsContext with the DC. Ignored if not supported by
+       the specific @a wxDC implementation. It is unlikely that this will need to
+       be used in application code.
+    */
+    virtual void SetGraphicsContext( wxGraphicsContext* ctx );
+
 };
 
 
@@ -1570,11 +1848,10 @@ public:
     }
     @endcode
 
-    @note Unlike other similar classes such as wxDCFontChanger, wxDCClipper
-        currently doesn't restore the previously active clipping region when it
-        is destroyed but simply resets clipping on the associated wxDC. This
-        may be changed in the future wxWidgets versions but has to be taken
-        into account explicitly in the current one.
+    @note Since 3.1.1 wxDCClipper restores the previously active clipping
+        region when it is destroyed. Previously it reset clipping on the
+        associated wxDC and this has to be taken into account explicitly in
+        previous wxWidgets versions.
 
     @library{wxcore}
     @category{gdi}
@@ -1679,7 +1956,7 @@ public:
     @category{gdi}
 
     @see wxDC::SetTextForeground(), wxDCFontChanger, wxDCPenChanger, wxDCBrushChanger,
-         wxDCClipper
+         wxDCClipper, wxDCTextBgColourChanger, wxDCBgModeChanger
 */
 class wxDCTextColourChanger
 {
@@ -1721,6 +1998,118 @@ public:
     ~wxDCTextColourChanger();
 };
 
+
+/**
+    @class wxDCTextBgColourChanger
+
+    wxDCTextBgColourChanger is a small helper class for setting a background
+    text colour on a wxDC and unsetting it automatically in the destructor,
+    restoring the previous one.
+
+    @library{wxcore}
+    @category{gdi}
+
+    @see wxDC::SetTextBackground(), wxDCFontChanger, wxDCPenChanger, wxDCBrushChanger,
+         wxDCClipper, wxDCTextColourChanger, wxDCBgModeChanger
+
+    @since 3.1.3
+*/
+class wxDCTextBgColourChanger
+{
+public:
+    /**
+        Trivial constructor not changing anything.
+
+        This constructor is useful if you don't know beforehand if the colour
+        needs to be changed or not. It simply creates the object which won't do
+        anything in its destructor unless Set() is called -- in which case it
+        would reset the previous colour.
+     */
+    wxDCTextBgColourChanger(wxDC& dc);
+
+    /**
+        Sets @a col on the given @a dc, storing the old one.
+
+        @param dc
+            The DC where the colour must be temporary set.
+        @param col
+            The text background colour to set.
+    */
+    wxDCTextBgColourChanger(wxDC& dc, const wxColour& col);
+
+    /**
+        Set the background colour to use.
+
+        This method is meant to be called once only and only on the objects
+        created with the constructor overload not taking wxColour argument and
+        has the same effect as the other constructor, i.e. sets the background colour to
+        the given @a col and ensures that the old value is restored when this
+        object is destroyed.
+     */
+    void Set(const wxColour& col);
+
+    /**
+        Restores the background colour originally selected in the DC passed to the ctor.
+    */
+    ~wxDCTextBgColourChanger();
+};
+
+
+/**
+    @class wxDCTextBgModeChanger
+
+    wxDCTextBgModeChanger is a small helper class for setting a background
+    text mode on a wxDC and unsetting it automatically in the destructor,
+    restoring the previous one.
+
+    @library{wxcore}
+    @category{gdi}
+
+    @see wxDC::SetBackgroundMode(), wxDCFontChanger, wxDCPenChanger, wxDCBrushChanger,
+         wxDCClipper, wxDCTextColourChanger, wxDCTextBgColourChanger
+
+    @since 3.1.3
+*/
+class wxDCBgModeChanger
+{
+public:
+    /**
+        Trivial constructor not changing anything.
+
+        This constructor is useful if you don't know beforehand if the background mode
+        needs to be changed or not. It simply creates the object which won't do
+        anything in its destructor unless Set() is called -- in which case it
+        would reset the previous mode.
+     */
+    wxDCBgModeChanger(wxDC& dc);
+
+    /**
+        Sets @a mode on the given @a dc, storing the old one.
+
+        @param dc
+            The DC where the mode must be temporary set.
+        @param mode
+            The background mode to set, one of @c wxBRUSHSTYLE_SOLID or @c
+            wxBRUSHSTYLE_TRANSPARENT.
+    */
+    wxDCBgModeChanger(wxDC& dc, int mode);
+
+    /**
+        Set the text background mode to use.
+
+        This method is meant to be called once only and only on the objects
+        created with the constructor overload not taking mode argument and
+        has the same effect as the other constructor, i.e. sets the background mode to
+        the given @a one, and ensures that the old value is restored when this
+        object is destroyed.
+     */
+    void Set(int mode);
+
+    /**
+        Restores the text background mode originally selected in the DC passed to the ctor.
+    */
+    ~wxDCBgModeChanger();
+};
 
 
 /**
@@ -1766,7 +2155,7 @@ public:
         Set the font to use.
 
         This method is meant to be called once only and only on the objects
-        created with the constructor overload not taking wxColour argument and
+        created with the constructor overload not taking wxFont argument and
         has the same effect as the other constructor, i.e. sets the font to
         the given @a font and ensures that the old value is restored when this
         object is destroyed.

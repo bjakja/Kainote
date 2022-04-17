@@ -1,93 +1,64 @@
-Announcing wxWidgets 2.7.0: a cross-platform GUI toolkit
-----------------------------------------------------------------
+April 04, 2022 -- The wxWidgets team is pleased to announce a new
+release of our open source framework for the development of native
+cross-platform applications in C++.
 
-August 5th, 2006 -- the wxWidgets team is pleased to announce
-a new release of the mature cross-platform C++ application framework.
+wxWidgets 3.1.6 is the latest release in the 3.1 development branch and
+hopefully the last one before the next stable 3.2.0 release. It is now
+available at
 
-The following platforms are supported:
+    https://www.wxwidgets.org/downloads/
 
-- Windows 95/98/ME, Windows NT, Windows 2000, Windows XP
-- Windows 64 on Itanium and x86-64 architectures
-- Windows CE, including Pocket PC 2003 and Smartphone 2003
-- Unix (Linux, *BSD, Solaris, AIX, HP-UX, IRIX, Tru64) and VMS with GTK+
-- Unix with X11 (beta)
-- Unix with Motif/Lesstif
-- Mac OS X using Carbon
-- Mac OS X using Cocoa (beta)
-- OS/2 (beta)
+Compared to the stable 3.0.x series, this version brings too many
+improvements and even more bug fixes to list all of them here, please
+see the change log
 
-To get wxWidgets, please go to the Download page at:
+https://raw.githubusercontent.com/wxWidgets/wxWidgets/v3.1.6/docs/changes.txt
 
-  http://www.wxwidgets.org/
+for the incomplete list of the most important ones and here is the
+maximally condensed summary of the changes compared to 3.0:
 
-This is the first version in the new 2.7 development series. Please
-notice that this series is called "development" and not "stable"
-solely because ABI or API compatibility is not assured between
-different 2.7.x series versions.  Rest assured however that these
-potentially incompatible changes are made in order to evolve the
-toolkit to the next ABI stable release series (2.8.x) and that
-normally efforts are made to preserve compilation compatibility, so
-often moving to a new development release just requires a full
-recompile of the application using wxWidgets.  There are currently no
-known issues with the stability of the programs using this version.
+- Build system improvements: support for new compilers (up to MSVS 2022,
+  g++ 11, clang 13) with an even simpler way of using wxWidgets from
+  MSVS, with wxwidgets.props file, and OS versions as well as an
+  entirely new CMake build system.
+- Support for native dark mode under macOS 10.14 Mojave and later and
+  support for macOS 11 and later on ARM hardware.
+- New features: HTTPS and HTTP/2 support with wxWebRequest and friends;
+  support for freezing rows/columns in wxGrid; mouse gesture events
+  (GSoC 2017 project); non-integer font sizes and arbitrary font weights
+  in wxFont; fractional pen widths in wxGraphicsContext; arbitrary label
+  windows in wxStaticBox; markup in wxDataViewCtrl items text; better
+  support for high DPI monitors and per-monitor DPI, notably the
+  addition of wxBitmapBundle, and dynamic DPI changes support under MSW;
+  support for ZIP 64 files; LZMA compression; much improved
+  accessibility support under MSW; new Edge-based wxWebView
+  implementation.
+- New classes: wxActivityIndicator, wxAddRemoveCtrl, wxAppProgressIndicator,
+  wxBitmapBundle, wxNativeWindow, wxPersistentComboBox,
+  wxPowerResourceBlocker, wxSecretStore, wxTempFFile and many new
+  features in the existing classes.
+- New XRC handlers for all the new and some of the existing classes.
+- Significant improvements to: wxBusyInfo, wxDataViewCtrl, wxDirDialog, wxGrid,
+  wxNotificationMessage, wxSpinCtrl, wxStaticBox, wxStyledTextCtrl,
+  wxUIActionSimulator.
+- Improvements to compile-time safety with the possibility to disable dangerous
+  implicit conversions between wxString and "char*" strings.
+- Latest versions of all bundled 3rd party libraries, including all the
+  security fixes and support for WebKit 2 and GStreamer 1.7 under Unix.
+- Revamped OpenGL support better suited to modern OpenGL (3.2+).
+- Further C++11 and later support improvements, wxWidgets can be built using
+  C++20 compilers.
+- A lot of bug fixes, especially in wxGTK3 and wxOSX/Cocoa ports.
+- New experimental wxQt port.
 
-There have been many changes since the 2.6 series, please see the
-change log file included in the distribution for more details. The
-most significant additions to the GUI part of the libraries were:
 
-    - AUI (advanced user interface) library providing dockable
-      windows and much more
-    - richtext library implementing wxRichTextCtrl
-    - New wxComboCtrl and wxOwnerDrawnComboBox controls
-    - New wxTreebook book-like control
-    - New wxColour/Dir/File/Font/PickerCtrls
-    - wxHyperlinkCtrl control
+This release is a "development" one as it makes (very few)
+incompatible API changes compared to 3.0 and does not guarantee the
+ABI stability, unlike the 3.0.x series. It is not inherently more
+buggy or less stable than the "stable" releases and you're encouraged
+to use it, including in production. If you're already using 3.0, upgrading
+shouldn't require any special effort, so please try it out.
 
+We hope that you will enjoy using the new release!
 
-*** About wxWidgets
-
-wxWidgets is a comprehensive open-source, multi-platform C++ GUI
-framework, that can be used to build commercial and free
-software. First released in 1992 under the name wxWindows, it's
-increasingly used by organisations and individuals all over the
-world due to its winning combination of sophistication, wide
-platform coverage, ease of use, unrestrictive licence and
-vibrant user community.
-
-For most ports, wxWidgets adopts the native look and feel of
-each platform since it uses the native widget sets. There is also
-a generic widget set, used for example by the wxX11 port - no
-other widget set is required, giving the potential for embedded
-use.
-
-An extraordinary range of classes is provided - but don't be put
-off by this because most people find wxWidgets easier to learn
-and use than MFC and other frameworks.
-
-As well as comprehensive support for the usual widgets, advanced
-features include: HTML viewing/printing, wxImage class providing
-handlers for reading and writing many image types, resizable panels
-and dialogs on all platforms, document/view, OpenGL support,
-HTML-based and context-sensitive help, wizards, drag and drop,
-a grid class, ODBC support, threads, sockets, container classes,
-a styled text control, and much more. A 2,000-page reference manual
-is provided in HTML, MS HTML Help, WinHelp, wxWidgets Help and PDF
-formats, and there are over eighty samples and demos.
-
-If you're an MFC user, you'll find many wxWidgets concepts
-reassuringly familiar, while often clearer and more consistent.
-If you're not, you should still find it intuitive from the start.
-
-wxWidgets bindings for many other languages are available,
-including Python, Perl, Basic, Lua, JavaScript and Eiffel.
-
-If you're considering wxWidgets, do check out some of these links:
-
-    http://www.wxwidgets.org/about/feedback.htm ; Comments from users
-    http://www.wxwidgets.org/about/screensh.htm ; Screenshots
-    http://www.wxwidgets.org/about/users.htm    ; Some of our users
-
-Have fun!
-
-The wxWidgets team
-
+Vadim Zeitlin, on behalf of wxWidgets development team.

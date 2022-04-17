@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/anybutton.h
 // Purpose:     wxAnyButtonBase class
-// Author:      Vadim Zetlin
+// Author:      Vadim Zeitlin
 // Created:     2000-08-15 (extracted from button.h)
-// RCS-ID:      $Id$
-// Copyright:   (c) Vadim Zetlin
+// Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,7 +25,7 @@
 #define wxBU_BOTTOM          0x0200
 #define wxBU_ALIGN_MASK      ( wxBU_LEFT | wxBU_TOP | wxBU_RIGHT | wxBU_BOTTOM )
 
-// These two flags are obsolete
+// These two flags are obsolete and have no effect any longer.
 #define wxBU_NOAUTODRAW      0x0000
 #define wxBU_AUTODRAW        0x0004
 
@@ -42,7 +41,7 @@
 #define wxBU_NOTEXT          0x0002
 
 
-#include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 #include "wx/control.h"
 
 // ----------------------------------------------------------------------------
@@ -56,7 +55,7 @@ public:
 
     // show the image in the button in addition to the label: this method is
     // supported on all (major) platforms
-    void SetBitmap(const wxBitmap& bitmap, wxDirection dir = wxLEFT)
+    void SetBitmap(const wxBitmapBundle& bitmap, wxDirection dir = wxLEFT)
     {
         SetBitmapLabel(bitmap);
         SetBitmapPosition(dir);
@@ -72,15 +71,15 @@ public:
     // SetBitmapXXX() methods (except for SetBitmapLabel() which is a synonym
     // for it anyhow) and that all bitmaps passed to these functions should be
     // of the same size.
-    void SetBitmapLabel(const wxBitmap& bitmap)
+    void SetBitmapLabel(const wxBitmapBundle& bitmap)
         { DoSetBitmap(bitmap, State_Normal); }
-    void SetBitmapPressed(const wxBitmap& bitmap)
+    void SetBitmapPressed(const wxBitmapBundle& bitmap)
         { DoSetBitmap(bitmap, State_Pressed); }
-    void SetBitmapDisabled(const wxBitmap& bitmap)
+    void SetBitmapDisabled(const wxBitmapBundle& bitmap)
         { DoSetBitmap(bitmap, State_Disabled); }
-    void SetBitmapCurrent(const wxBitmap& bitmap)
+    void SetBitmapCurrent(const wxBitmapBundle& bitmap)
         { DoSetBitmap(bitmap, State_Current); }
-    void SetBitmapFocus(const wxBitmap& bitmap)
+    void SetBitmapFocus(const wxBitmapBundle& bitmap)
         { DoSetBitmap(bitmap, State_Focused); }
 
     wxBitmap GetBitmapLabel() const { return DoGetBitmap(State_Normal); }
@@ -103,7 +102,7 @@ public:
     // Buttons on MSW can look bad if they are not native colours, because
     // then they become owner-drawn and not theme-drawn.  Disable it here
     // in wxAnyButtonBase to make it consistent.
-    virtual bool ShouldInheritColours() const { return false; }
+    virtual bool ShouldInheritColours() const wxOVERRIDE { return false; }
 
     // wxUniv-compatible and deprecated equivalents to SetBitmapXXX()
 #if WXWIN_COMPATIBILITY_2_8
@@ -114,6 +113,7 @@ public:
     // backwards compatible names for pressed/current bitmaps: they're not
     // deprecated as there is nothing really wrong with using them and no real
     // advantage to using the new names but the new names are still preferred
+    // (and need to be used when using wxBitmapBundle and not just wxBitmap)
     wxBitmap GetBitmapSelected() const { return GetBitmapPressed(); }
     wxBitmap GetBitmapHover() const { return GetBitmapCurrent(); }
 
@@ -136,6 +136,13 @@ public:
         State_Max
     };
 
+    // return the current setting for the "normal" state of the button, it can
+    // be different from State_Normal for a wxToggleButton
+    virtual State GetNormalState() const
+    {
+        return State_Normal;
+    }
+
     // return true if this button shouldn't show the text label, either because
     // it doesn't have it or because it was explicitly disabled with wxBU_NOTEXT
     bool DontShowLabel() const
@@ -151,11 +158,11 @@ public:
 
 protected:
     // choose the default border for this window
-    virtual wxBorder GetDefaultBorder() const { return wxBORDER_NONE; }
+    virtual wxBorder GetDefaultBorder() const wxOVERRIDE { return wxBORDER_NONE; }
 
     virtual wxBitmap DoGetBitmap(State WXUNUSED(which)) const
         { return wxBitmap(); }
-    virtual void DoSetBitmap(const wxBitmap& WXUNUSED(bitmap),
+    virtual void DoSetBitmap(const wxBitmapBundle& WXUNUSED(bitmap),
                              State WXUNUSED(which))
         { }
 
@@ -187,10 +194,8 @@ protected:
 //    #include "wx/gtk1/anybutton.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/anybutton.h"
-//#elif defined(__WXCOCOA__)
-//    #include "wx/cocoa/anybutton.h"
-//#elif defined(__WXPM__)
-//    #include "wx/os2/anybutton.h"
+#elif defined(__WXQT__)
+    #include "wx/qt/anybutton.h"
 #else
     typedef wxAnyButtonBase wxAnyButton;
 #endif

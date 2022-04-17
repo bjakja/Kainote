@@ -2,24 +2,20 @@
 // Name:        src/common/archive.cpp
 // Purpose:     Streams for archive formats
 // Author:      Mike Wetherell
-// RCS-ID:      $Id$
 // Copyright:   (c) Mike Wetherell
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STREAMS && wxUSE_ARCHIVE_STREAMS
 
 #include "wx/archive.h"
 
-IMPLEMENT_ABSTRACT_CLASS(wxArchiveEntry, wxObject)
-IMPLEMENT_ABSTRACT_CLASS(wxArchiveClassFactory, wxFilterClassFactoryBase)
+wxIMPLEMENT_ABSTRACT_CLASS(wxArchiveEntry, wxObject);
+wxIMPLEMENT_ABSTRACT_CLASS(wxArchiveClassFactory, wxFilterClassFactoryBase);
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -70,7 +66,7 @@ void wxArchiveEntry::SetNotifier(wxArchiveNotifier& notifier)
 
 wxArchiveEntry& wxArchiveEntry::operator=(const wxArchiveEntry& WXUNUSED(e))
 {
-    m_notifier = nullptr;
+    m_notifier = NULL;
     return *this;
 }
 
@@ -78,7 +74,7 @@ wxArchiveEntry& wxArchiveEntry::operator=(const wxArchiveEntry& WXUNUSED(e))
 /////////////////////////////////////////////////////////////////////////////
 // wxArchiveClassFactory
 
-wxArchiveClassFactory *wxArchiveClassFactory::sm_first = nullptr;
+wxArchiveClassFactory *wxArchiveClassFactory::sm_first = NULL;
 
 void wxArchiveClassFactory::Remove()
 {

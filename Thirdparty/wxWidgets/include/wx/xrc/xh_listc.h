@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxListCtrl
 // Author:      Brian Gavin
 // Created:     2000/09/09
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Brian Gavin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,8 +21,8 @@ class WXDLLIMPEXP_XRC wxListCtrlXmlHandler : public wxXmlResourceHandler
 {
 public:
     wxListCtrlXmlHandler();
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
 private:
     // handlers for wxListCtrl itself and its listcol and listitem children
@@ -38,7 +37,7 @@ private:
     // which is wxIMAGE_LIST_NORMAL or small if it is wxIMAGE_LIST_SMALL)
     long GetImageIndex(wxListCtrl *listctrl, int which);
 
-    DECLARE_DYNAMIC_CLASS(wxListCtrlXmlHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxListCtrlXmlHandler);
 };
 
 #endif // wxUSE_XRC && wxUSE_LISTCTRL

@@ -2,7 +2,6 @@
 // Name:        wx/editlbox.h
 // Purpose:     ListBox with editable items
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,12 +26,12 @@ class WXDLLIMPEXP_FWD_CORE wxListEvent;
 #define wxEL_NO_REORDER         0x0800
 #define wxEL_DEFAULT_STYLE      (wxEL_ALLOW_NEW | wxEL_ALLOW_EDIT | wxEL_ALLOW_DELETE)
 
-extern WXDLLIMPEXP_DATA_ADV(const char) wxEditableListBoxNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxEditableListBoxNameStr[];
 
 // This class provides a composite control that lets the
 // user easily enter list of strings
 
-class WXDLLIMPEXP_ADV wxEditableListBox : public wxPanel
+class WXDLLIMPEXP_CORE wxEditableListBox : public wxPanel
 {
 public:
     wxEditableListBox() { Init(); }
@@ -42,7 +41,7 @@ public:
                       const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize,
                       long style = wxEL_DEFAULT_STYLE,
-                      const wxString& name = wxEditableListBoxNameStr)
+                      const wxString& name = wxASCII_STR(wxEditableListBoxNameStr))
     {
         Init();
         Create(parent, id, label, pos, size, style, name);
@@ -53,7 +52,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxEL_DEFAULT_STYLE,
-                const wxString& name = wxEditableListBoxNameStr);
+                const wxString& name = wxASCII_STR(wxEditableListBoxNameStr));
 
     void SetStrings(const wxArrayString& strings);
     void GetStrings(wxArrayString& strings) const;
@@ -75,8 +74,8 @@ protected:
     {
         m_style = 0;
         m_selection = 0;
-        m_bEdit = m_bNew = m_bDel = m_bUp = m_bDown = nullptr;
-        m_listCtrl = nullptr;
+        m_bEdit = m_bNew = m_bDel = m_bUp = m_bDown = NULL;
+        m_listCtrl = NULL;
     }
 
     void OnItemSelected(wxListEvent& event);
@@ -87,8 +86,12 @@ protected:
     void OnUpItem(wxCommandEvent& event);
     void OnDownItem(wxCommandEvent& event);
 
-    DECLARE_CLASS(wxEditableListBox)
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_CLASS(wxEditableListBox);
+    wxDECLARE_EVENT_TABLE();
+
+private:
+    void SwapItems(long i1, long i2);
+
 };
 
 #endif  // wxUSE_EDITABLELISTBOX

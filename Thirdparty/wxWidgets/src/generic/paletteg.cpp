@@ -3,7 +3,6 @@
 // Purpose:
 // Author:      Robert Roebling
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling and Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if defined(__BORLANDC__)
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PALETTE
 
@@ -62,7 +58,7 @@ wxPaletteRefData::~wxPaletteRefData()
 
 #define M_PALETTEDATA ((wxPaletteRefData *)m_refData)
 
-IMPLEMENT_DYNAMIC_CLASS(wxPalette,wxGDIObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxPalette,wxGDIObject);
 
 wxPalette::wxPalette()
 {
@@ -135,8 +131,11 @@ bool wxPalette::GetRGB(int pixel,
                        unsigned char *green,
                        unsigned char *blue) const
 {
-    if (!m_refData) return false;
-    if (pixel >= M_PALETTEDATA->m_count) return false;
+    if ( !m_refData )
+        return false;
+
+    if ( pixel < 0 || pixel >= M_PALETTEDATA->m_count )
+        return false;
 
     wxPaletteEntry& p = M_PALETTEDATA->m_entries[pixel];
     if (red) *red = p.red;

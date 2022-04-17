@@ -2,16 +2,11 @@
 // Name:        tests/misc/typeinfotest.cpp
 // Purpose:     Test typeinfo.h
 // Author:      Jaakko Salli
-// RCS-ID:      $Id$
 // Copyright:   (c) the wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
-
-#ifdef __BORLANDC__
-#   pragma hdrstop
-#endif
 
 #include "wx/typeinfo.h"
 
@@ -31,7 +26,7 @@ private:
 
     void Test();
 
-    DECLARE_NO_COPY_CLASS(TypeInfoTestCase)
+    wxDECLARE_NO_COPY_CLASS(TypeInfoTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default

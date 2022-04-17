@@ -3,17 +3,12 @@
 // Author:      Anthony Bretaudeau
 // Purpose:     GTK printing support
 // Created:     2007-08-25
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 wxWidgets development team
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #if wxUSE_GTKPRINT
 
@@ -33,8 +28,9 @@
 #include "wx/fontutil.h"
 #include "wx/dynlib.h"
 #include "wx/paper.h"
+#include "wx/modalhook.h"
 
-#include <gtk/gtk.h>
+#include "wx/gtk/private/wrapgtk.h"
 
 #if GTK_CHECK_VERSION(2,14,0)
 #include <gtk/gtkunixprint.h>
@@ -42,29 +38,187 @@
 #include <gtk/gtkpagesetupunixdialog.h>
 #endif
 
-
-#if wxUSE_GRAPHICS_CONTEXT
-#include "wx/graphics.h"
-#endif
-
 #include "wx/link.h"
 wxFORCE_LINK_THIS_MODULE(gtk_print)
 
-#if wxUSE_LIBGNOMEPRINT
-#include "wx/gtk/gnome/gprint.h"
-#endif
-
 #include "wx/gtk/private/object.h"
 
-// Useful to convert angles from/to Rad to/from Deg.
-static const double RAD2DEG  = 180.0 / M_PI;
+// Useful to convert angles from degrees to radians.
 static const double DEG2RAD  = M_PI / 180.0;
+
+// Map wxPaperSize to GtkPaperSize names
+// Ordering must be the same as wxPaperSize enum
+static const char* const gs_paperList[] = {
+    NULL, // wxPAPER_NONE
+    "na_letter", // wxPAPER_LETTER
+    "na_legal", // wxPAPER_LEGAL
+    "iso_a4", // wxPAPER_A4
+    "na_c", // wxPAPER_CSHEET
+    "na_d", // wxPAPER_DSHEET
+    "na_e", // wxPAPER_ESHEET
+    "na_letter", // wxPAPER_LETTERSMALL
+    "na_ledger", // wxPAPER_TABLOID
+    "na_ledger", // wxPAPER_LEDGER
+    "na_invoice", // wxPAPER_STATEMENT
+    "na_executive", // wxPAPER_EXECUTIVE
+    "iso_a3", // wxPAPER_A3
+    "iso_a4", // wxPAPER_A4SMALL
+    "iso_a5", // wxPAPER_A5
+    "jis_b4", // wxPAPER_B4 "B4 (JIS) 257 x 364 mm"
+    "jis_b5", // wxPAPER_B5 "B5 (JIS) 182 x 257 mm"
+    "om_folio", // wxPAPER_FOLIO
+    "na_quarto", // wxPAPER_QUARTO
+    "na_10x14", // wxPAPER_10X14
+    "na_ledger", // wxPAPER_11X17
+    "na_letter", // wxPAPER_NOTE
+    "na_number-9", // wxPAPER_ENV_9
+    "na_number-10", // wxPAPER_ENV_10
+    "na_number-11", // wxPAPER_ENV_11
+    "na_number-12", // wxPAPER_ENV_12
+    "na_number-14", // wxPAPER_ENV_14
+    "iso_dl", // wxPAPER_ENV_DL
+    "iso_c5", // wxPAPER_ENV_C5
+    "iso_c3", // wxPAPER_ENV_C3
+    "iso_c4", // wxPAPER_ENV_C4
+    "iso_c6", // wxPAPER_ENV_C6
+    "iso_c6c5", // wxPAPER_ENV_C65
+    "iso_b4", // wxPAPER_ENV_B4
+    "iso_b5", // wxPAPER_ENV_B5
+    "iso_b6", // wxPAPER_ENV_B6
+    "om_italian", // wxPAPER_ENV_ITALY
+    "na_monarch", // wxPAPER_ENV_MONARCH
+    "na_personal", // wxPAPER_ENV_PERSONAL
+    "na_fanfold-us", // wxPAPER_FANFOLD_US
+    "na_fanfold-eur", // wxPAPER_FANFOLD_STD_GERMAN
+    "na_foolscap", // wxPAPER_FANFOLD_LGL_GERMAN
+    "iso_b4", // wxPAPER_ISO_B4
+    "jpn_hagaki", // wxPAPER_JAPANESE_POSTCARD
+    "na_9x11", // wxPAPER_9X11
+    "na_10x11", // wxPAPER_10X11
+    "na_11x15", // wxPAPER_15X11
+    "om_invite", // wxPAPER_ENV_INVITE
+    "na_letter-extra", // wxPAPER_LETTER_EXTRA
+    "na_legal-extra", // wxPAPER_LEGAL_EXTRA
+    "na_arch-b", // wxPAPER_TABLOID_EXTRA
+    "iso_a4-extra", // wxPAPER_A4_EXTRA
+    "na_letter", // wxPAPER_LETTER_TRANSVERSE
+    "iso_a4", // wxPAPER_A4_TRANSVERSE
+    "na_letter-extra", // wxPAPER_LETTER_EXTRA_TRANSVERSE
+    "na_super-a", // wxPAPER_A_PLUS
+    "na_super-b", // wxPAPER_B_PLUS
+    "na_letter-plus", // wxPAPER_LETTER_PLUS
+    "om_folio", // wxPAPER_A4_PLUS "A4 Plus 210 x 330 mm" (no A4 Plus in PWG standard)
+    "iso_a5", // wxPAPER_A5_TRANSVERSE
+    "jis_b5", // wxPAPER_B5_TRANSVERSE "B5 (JIS) Transverse 182 x 257 mm"
+    "iso_a3-extra", // wxPAPER_A3_EXTRA
+    "iso_a5-extra", // wxPAPER_A5_EXTRA
+    "iso_b5-extra", // wxPAPER_B5_EXTRA
+    "iso_a2", // wxPAPER_A2
+    "iso_a3", // wxPAPER_A3_TRANSVERSE
+    "iso_a3-extra", // wxPAPER_A3_EXTRA_TRANSVERSE
+    "jpn_oufuku", // wxPAPER_DBL_JAPANESE_POSTCARD
+    "iso_a6", // wxPAPER_A6
+    "jpn_kaku2", // wxPAPER_JENV_KAKU2
+    "jpn_kaku3_216x277mm", // wxPAPER_JENV_KAKU3
+    "jpn_chou3", // wxPAPER_JENV_CHOU3
+    "jpn_chou4", // wxPAPER_JENV_CHOU4
+    "na_letter", // wxPAPER_LETTER_ROTATED
+    "iso_a3", // wxPAPER_A3_ROTATED
+    "iso_a4", // wxPAPER_A4_ROTATED
+    "iso_a5", // wxPAPER_A5_ROTATED
+    "jis_b4", // wxPAPER_B4_JIS_ROTATED
+    "jis_b5", // wxPAPER_B5_JIS_ROTATED
+    "jpn_hagaki", // wxPAPER_JAPANESE_POSTCARD_ROTATED
+    "jpn_oufuku", // wxPAPER_DBL_JAPANESE_POSTCARD_ROTATED
+    "iso_a6", // wxPAPER_A6_ROTATED
+    "jpn_kaku2", // wxPAPER_JENV_KAKU2_ROTATED
+    "jpn_kaku3_216x277mm", // wxPAPER_JENV_KAKU3_ROTATED
+    "jpn_chou3", // wxPAPER_JENV_CHOU3_ROTATED
+    "jpn_chou4", // wxPAPER_JENV_CHOU4_ROTATED
+    "jis_b6", // wxPAPER_B6_JIS
+    "jis_b6", // wxPAPER_B6_JIS_ROTATED
+    "na_11x12", // wxPAPER_12X11
+    "jpn_you4", // wxPAPER_JENV_YOU4
+    "jpn_you4", // wxPAPER_JENV_YOU4_ROTATED
+    "prc_16k", // wxPAPER_P16K
+    "prc_32k", // wxPAPER_P32K
+    "prc_32k", // wxPAPER_P32KBIG
+    "prc_1", // wxPAPER_PENV_1
+    "prc_2", // wxPAPER_PENV_2
+    "prc_3", // wxPAPER_PENV_3
+    "prc_4", // wxPAPER_PENV_4
+    "prc_5", // wxPAPER_PENV_5
+    "prc_6", // wxPAPER_PENV_6
+    "prc_7", // wxPAPER_PENV_7
+    "prc_8", // wxPAPER_PENV_8
+    "prc_9", // wxPAPER_PENV_9
+    "prc_10", // wxPAPER_PENV_10
+    "prc_16k", // wxPAPER_P16K_ROTATED
+    "prc_32k", // wxPAPER_P32K_ROTATED
+    "prc_32k", // wxPAPER_P32KBIG_ROTATED
+    "prc_1", // wxPAPER_PENV_1_ROTATED
+    "prc_2", // wxPAPER_PENV_2_ROTATED
+    "prc_3", // wxPAPER_PENV_3_ROTATED
+    "prc_4", // wxPAPER_PENV_4_ROTATED
+    "prc_5", // wxPAPER_PENV_5_ROTATED
+    "prc_6", // wxPAPER_PENV_6_ROTATED
+    "prc_7", // wxPAPER_PENV_7_ROTATED
+    "prc_8", // wxPAPER_PENV_8_ROTATED
+    "prc_9", // wxPAPER_PENV_9_ROTATED
+    "prc_10", // wxPAPER_PENV_10_ROTATED
+    "iso_a0", // wxPAPER_A0
+    "iso_a1"  // wxPAPER_A1
+};
+
+static GtkPaperSize* wxGetGtkPaperSize(wxPaperSize paperId, const wxSize& size)
+{
+    // if wxPaperSize is valid, get corresponding GtkPaperSize
+    if (paperId > 0 && size_t(paperId) < WXSIZEOF(gs_paperList))
+        return gtk_paper_size_new(gs_paperList[paperId]);
+
+    // if size is not valid, use a default GtkPaperSize
+    if (size.x < 1 || size.y < 1)
+        return gtk_paper_size_new(gtk_paper_size_get_default());
+
+#if GTK_CHECK_VERSION(2,12,0)
+    if (wx_is_at_least_gtk2(12))
+    {
+        // look for a size match in GTK's GtkPaperSize list
+        const double w = size.x;
+        const double h = size.y;
+        GtkPaperSize* paperSize = NULL;
+        GList* list = gtk_paper_size_get_paper_sizes(true);
+        for (GList* p = list; p; p = p->next)
+        {
+            GtkPaperSize* paperSize2 = static_cast<GtkPaperSize*>(p->data);
+            if (paperSize == NULL &&
+                fabs(w - gtk_paper_size_get_width(paperSize2, GTK_UNIT_MM)) < 1 &&
+                fabs(h - gtk_paper_size_get_height(paperSize2, GTK_UNIT_MM)) < 1)
+            {
+                paperSize = paperSize2;
+            }
+            else
+                gtk_paper_size_free(paperSize2);
+        }
+        g_list_free(list);
+
+        if (paperSize)
+            return paperSize;
+    }
+#endif // GTK >= 2.12
+
+    // last resort, use a custom GtkPaperSize
+    const wxString title = _("Custom size");
+    char name[40];
+    g_snprintf(name, sizeof(name), "custom_%dx%d", size.x, size.y);
+    return gtk_paper_size_new_custom(
+        name, title.utf8_str(), size.x, size.y, GTK_UNIT_MM);
+}
 
 //----------------------------------------------------------------------------
 // wxGtkPrintModule
 // Initialized when starting the app : if it successfully load the gtk-print framework,
-// it uses it. If not, it falls back to gnome print (see /gtk/gnome/gprint.cpp) then
-// to postscript if gnomeprint is not available.
+// it uses it. If not, it falls back to Postscript.
 //----------------------------------------------------------------------------
 
 class wxGtkPrintModule: public wxModule
@@ -72,30 +226,24 @@ class wxGtkPrintModule: public wxModule
 public:
     wxGtkPrintModule()
     {
-#if wxUSE_LIBGNOMEPRINT
-        // This module must be initialized AFTER gnomeprint's one
-        AddDependency(wxCLASSINFO(wxGnomePrintModule));
-#endif
     }
-    bool OnInit();
-    void OnExit() {}
+    bool OnInit() wxOVERRIDE;
+    void OnExit() wxOVERRIDE {}
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxGtkPrintModule)
+    wxDECLARE_DYNAMIC_CLASS(wxGtkPrintModule);
 };
 
 bool wxGtkPrintModule::OnInit()
 {
-#ifndef __WXGTK3__
-    if (gtk_check_version(2,10,0) == NULL)
-#endif
+    if (wx_is_at_least_gtk2(10))
     {
         wxPrintFactory::SetPrintFactory( new wxGtkPrintFactory );
     }
     return true;
 }
 
-IMPLEMENT_DYNAMIC_CLASS(wxGtkPrintModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxGtkPrintModule, wxModule);
 
 //----------------------------------------------------------------------------
 // wxGtkPrintFactory
@@ -229,19 +377,32 @@ extern "C"
 // wxGtkPrintNativeData
 //----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxGtkPrintNativeData, wxPrintNativeDataBase)
+wxIMPLEMENT_CLASS(wxGtkPrintNativeData, wxPrintNativeDataBase);
 
 wxGtkPrintNativeData::wxGtkPrintNativeData()
 {
     m_config = gtk_print_settings_new();
-    m_job = gtk_print_operation_new();
+    m_job = NULL;
     m_context = NULL;
 }
 
 wxGtkPrintNativeData::~wxGtkPrintNativeData()
 {
-    g_object_unref(m_job);
     g_object_unref(m_config);
+}
+
+void wxGtkPrintNativeData::SetPrintJob(GtkPrintOperation* job)
+{
+    m_job = job;
+#if GTK_CHECK_VERSION(2,18,0)
+    if (job)
+    {
+        if (wx_is_at_least_gtk2(18))
+        {
+            gtk_print_operation_set_embed_page_setup(job, true);
+        }
+    }
+#endif
 }
 
 // Convert datas stored in m_config to a wxPrintData.
@@ -272,7 +433,7 @@ bool wxGtkPrintNativeData::TransferTo( wxPrintData &data )
 
     data.SetNoCopies(gtk_print_settings_get_n_copies(m_config));
 
-    data.SetColour(gtk_print_settings_get_use_color(m_config));
+    data.SetColour(gtk_print_settings_get_use_color(m_config) != 0);
 
     switch (gtk_print_settings_get_duplex(m_config))
     {
@@ -309,98 +470,38 @@ bool wxGtkPrintNativeData::TransferTo( wxPrintData &data )
         data.SetOrientationReversed(true);
     }
 
-    data.SetCollate(gtk_print_settings_get_collate (m_config));
+    data.SetCollate(gtk_print_settings_get_collate(m_config) != 0);
 
-    // Paper formats : these are the most common paper formats.
+    wxPaperSize paperId = wxPAPER_NONE;
     GtkPaperSize *paper_size = gtk_print_settings_get_paper_size (m_config);
-    if (!paper_size)
-        data.SetPaperId(wxPAPER_NONE);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_A3)))
-        data.SetPaperId(wxPAPER_A3);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_A4)))
-        data.SetPaperId(wxPAPER_A4);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_A5)))
-        data.SetPaperId(wxPAPER_A5);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_B5)))
-        data.SetPaperId(wxPAPER_B5);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_LETTER)))
-        data.SetPaperId(wxPAPER_LETTER);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_LEGAL)))
-        data.SetPaperId(wxPAPER_LEGAL);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new (GTK_PAPER_NAME_EXECUTIVE)))
-        data.SetPaperId(wxPAPER_EXECUTIVE);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"na_number-10")))
-        data.SetPaperId(wxPAPER_ENV_10);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-c5")))
-        data.SetPaperId(wxPAPER_ENV_C5);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-c6")))
-        data.SetPaperId(wxPAPER_ENV_C6);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"jis-b5")))
-        data.SetPaperId(wxPAPER_B5_TRANSVERSE);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-b5")))
-        data.SetPaperId(wxPAPER_ENV_B5);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"na_monarch")))
-        data.SetPaperId(wxPAPER_ENV_MONARCH);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"engineering-c")))
-        data.SetPaperId( wxPAPER_CSHEET);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"engineering-d")))
-        data.SetPaperId( wxPAPER_DSHEET);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"engineering-e")))
-        data.SetPaperId( wxPAPER_ESHEET);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"letter")))
-        data.SetPaperId( wxPAPER_LETTERSMALL);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"engineering-b")))
-        data.SetPaperId( wxPAPER_TABLOID);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"ledger")))
-        data.SetPaperId( wxPAPER_LEDGER);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"statement")))
-        data.SetPaperId( wxPAPER_STATEMENT);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( GTK_PAPER_NAME_A4 )))
-        data.SetPaperId( wxPAPER_A4SMALL);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-b4")))
-        data.SetPaperId( wxPAPER_B4);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"folio")))
-        data.SetPaperId( wxPAPER_FOLIO);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"quarto")))
-        data.SetPaperId( wxPAPER_QUARTO);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"10x14")))
-        data.SetPaperId( wxPAPER_10X14);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"ledger")))
-        data.SetPaperId( wxPAPER_11X17);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"letter")))
-        data.SetPaperId( wxPAPER_NOTE);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"na-number-9-envelope")))
-        data.SetPaperId( wxPAPER_ENV_9);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"number-11")))
-        data.SetPaperId( wxPAPER_ENV_11);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"number-12")))
-        data.SetPaperId( wxPAPER_ENV_12);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"number-14")))
-        data.SetPaperId( wxPAPER_ENV_14);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-designated")))
-        data.SetPaperId( wxPAPER_ENV_DL);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-c3")))
-        data.SetPaperId( wxPAPER_ENV_C3);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-c4")))
-        data.SetPaperId( wxPAPER_ENV_C4);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"c6/c5")))
-        data.SetPaperId( wxPAPER_ENV_C65);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-b4")))
-        data.SetPaperId( wxPAPER_ENV_B4);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"iso-b6")))
-            data.SetPaperId( wxPAPER_ENV_B6);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"Italian")))
-        data.SetPaperId( wxPAPER_ENV_ITALY);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"personal")))
-        data.SetPaperId( wxPAPER_ENV_PERSONAL);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"fanfold-us")))
-        data.SetPaperId( wxPAPER_FANFOLD_US);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"fanfold-European")))
-        data.SetPaperId( wxPAPER_FANFOLD_STD_GERMAN);
-    else if (gtk_paper_size_is_equal(paper_size,gtk_paper_size_new ( (const gchar*)"foolscap")))
-        data.SetPaperId( wxPAPER_FANFOLD_LGL_GERMAN);
-    else
-        data.SetPaperId(wxPAPER_NONE);
+    if (paper_size)
+    {
+        const char* name = gtk_paper_size_get_name(paper_size);
+        for (size_t i = 1; i < WXSIZEOF(gs_paperList); i++)
+        {
+            if (strcmp(name, gs_paperList[i]) == 0)
+            {
+                paperId = static_cast<wxPaperSize>(i);
+                break;
+            }
+        }
+        if (paperId == wxPAPER_NONE)
+        {
+            // look for a size match in wxThePrintPaperDatabase
+            const wxSize size(
+                int(10 * gtk_paper_size_get_width(paper_size, GTK_UNIT_MM)),
+                int(10 * gtk_paper_size_get_height(paper_size, GTK_UNIT_MM)));
+
+            paperId = wxThePrintPaperDatabase->GetSize(size);
+
+            // if no match, set custom size
+            if (paperId == wxPAPER_NONE)
+                data.SetPaperSize(size);
+        }
+
+        gtk_paper_size_free(paper_size);
+    }
+    data.SetPaperId(paperId);
 
     data.SetPrinterName(gtk_print_settings_get_printer(m_config));
 
@@ -461,96 +562,9 @@ bool wxGtkPrintNativeData::TransferFrom( const wxPrintData &data )
 
     gtk_print_settings_set_collate (m_config, data.GetCollate());
 
-    // Paper formats: these are the most common paper formats.
-    switch (data.GetPaperId())
-    {
-        case wxPAPER_A3:        gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_A3));
-                                break;
-        case wxPAPER_A4:        gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_A4));
-                                break;
-        case wxPAPER_A5:        gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_A5));
-                                break;
-        case wxPAPER_B5_TRANSVERSE:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "jis-b5"));
-                                break;
-        case wxPAPER_B5:        gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_B5));
-                                break;
-        case wxPAPER_LETTER:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_LETTER));
-                                break;
-        case wxPAPER_LEGAL:     gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_LEGAL));
-                                break;
-        case wxPAPER_EXECUTIVE: gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_EXECUTIVE));
-                                break;
-        case wxPAPER_ENV_10:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "na_number-10"));
-                                break;
-        case wxPAPER_ENV_C5:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-c5"));
-                                break;
-        case wxPAPER_ENV_C6:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-c6"));
-                                break;
-        case wxPAPER_ENV_B5:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-c5b5"));
-                                break;
-        case wxPAPER_ENV_MONARCH:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "na_monarch"));
-                                break;
-        case wxPAPER_CSHEET:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "engineering-c"));
-                                break;
-        case wxPAPER_DSHEET:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "engineering-d"));
-                                break;
-        case wxPAPER_ESHEET:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "engineering-e"));
-                                break;
-        case wxPAPER_LETTERSMALL:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "letter"));
-                                break;
-        case wxPAPER_TABLOID:   gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "engineering-b"));
-                                break;
-        case wxPAPER_LEDGER:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "ledger"));
-                                break;
-        case wxPAPER_STATEMENT:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "statement"));
-                                break;
-        case wxPAPER_A4SMALL:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new (GTK_PAPER_NAME_A4));
-                                break;
-        case wxPAPER_B4:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-b4"));
-                                break;
-        case wxPAPER_FOLIO:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "folio"));
-                                break;
-        case wxPAPER_QUARTO:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "quarto"));
-                                break;
-        case wxPAPER_10X14:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "10x14"));
-                                break;
-        case wxPAPER_11X17:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "ledger"));
-                                break;
-        case wxPAPER_NOTE:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "letter"));
-                                break;
-        case wxPAPER_ENV_9:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "na-number-9-envelope"));
-                                break;
-        case wxPAPER_ENV_11:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "number-11"));
-                                break;
-        case wxPAPER_ENV_12:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "number-12"));
-                                break;
-        case wxPAPER_ENV_14:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "number-14"));
-                                break;
-        case wxPAPER_ENV_DL:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-designated"));
-                                break;
-        case wxPAPER_ENV_C3:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-c3"));
-                                break;
-        case wxPAPER_ENV_C4:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-c4"));
-                                break;
-        case wxPAPER_ENV_C65:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "c6/c5"));
-                                break;
-        case wxPAPER_ENV_B4:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-b4"));
-                                break;
-        case wxPAPER_ENV_B6:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "iso-b6"));
-                                break;
-        case wxPAPER_ENV_ITALY:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "Italian"));
-                                break;
-        case wxPAPER_ENV_PERSONAL:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "personal"));
-                                break;
-        case wxPAPER_FANFOLD_US:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "fanfold-us"));
-                                break;
-        case wxPAPER_FANFOLD_STD_GERMAN:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "fanfold-European"));
-                                break;
-        case wxPAPER_FANFOLD_LGL_GERMAN:    gtk_print_settings_set_paper_size(m_config, gtk_paper_size_new ((const gchar*) "foolscap"));
-                                break;
-        case wxPAPER_NONE:
-        default:                break;
-    }
+    GtkPaperSize* paperSize = wxGetGtkPaperSize(data.GetPaperId(), data.GetPaperSize());
+    gtk_print_settings_set_paper_size(m_config, paperSize);
+    gtk_paper_size_free(paperSize);
 
     gtk_print_settings_set_printer(m_config, data.GetPrinterName().utf8_str());
 
@@ -560,34 +574,48 @@ bool wxGtkPrintNativeData::TransferFrom( const wxPrintData &data )
 void wxGtkPrintNativeData::SetPrintConfig( GtkPrintSettings * config )
 {
     if (config)
+    {
+        if ( m_config )
+        {
+            g_object_unref(m_config);
+        }
         m_config = gtk_print_settings_copy(config);
+    }
 }
 
+namespace
+{
+
 // Extract page setup from settings.
-GtkPageSetup* wxGtkPrintNativeData::GetPageSetupFromSettings(GtkPrintSettings* settings)
+GtkPageSetup* GetPageSetupFromSettings(GtkPrintSettings* settings)
 {
     GtkPageSetup* page_setup = gtk_page_setup_new();
     gtk_page_setup_set_orientation (page_setup, gtk_print_settings_get_orientation (settings));
 
     GtkPaperSize *paper_size = gtk_print_settings_get_paper_size (settings);
     if (paper_size != NULL)
+    {
         gtk_page_setup_set_paper_size_and_default_margins (page_setup, paper_size);
+        gtk_paper_size_free(paper_size);
+    }
 
     return page_setup;
 }
 
 // Insert page setup into a given GtkPrintSettings.
-void wxGtkPrintNativeData::SetPageSetupToSettings(GtkPrintSettings* settings, GtkPageSetup* page_setup)
+void SetPageSetupToSettings(GtkPrintSettings* settings, GtkPageSetup* page_setup)
 {
     gtk_print_settings_set_orientation ( settings, gtk_page_setup_get_orientation (page_setup));
     gtk_print_settings_set_paper_size ( settings, gtk_page_setup_get_paper_size (page_setup));
 }
 
+} // anonymous namespace
+
 //----------------------------------------------------------------------------
 // wxGtkPrintDialog
 //----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxGtkPrintDialog, wxPrintDialogBase)
+wxIMPLEMENT_CLASS(wxGtkPrintDialog, wxPrintDialogBase);
 
 wxGtkPrintDialog::wxGtkPrintDialog( wxWindow *parent, wxPrintDialogData *data )
                     : wxPrintDialogBase(parent, wxID_ANY, _("Print"),
@@ -600,6 +628,11 @@ wxGtkPrintDialog::wxGtkPrintDialog( wxWindow *parent, wxPrintDialogData *data )
 
     m_parent = parent;
     SetShowDialog(true);
+
+    const wxPrintData& printData = m_printDialogData.GetPrintData();
+    wxGtkPrintNativeData* native =
+        static_cast<wxGtkPrintNativeData*>(printData.GetNativeData());
+    native->SetPrintJob(gtk_print_operation_new());
 }
 
 wxGtkPrintDialog::wxGtkPrintDialog( wxWindow *parent, wxPrintData *data )
@@ -613,16 +646,29 @@ wxGtkPrintDialog::wxGtkPrintDialog( wxWindow *parent, wxPrintData *data )
 
     m_parent = parent;
     SetShowDialog(true);
+
+    const wxPrintData& printData = m_printDialogData.GetPrintData();
+    wxGtkPrintNativeData* native =
+        static_cast<wxGtkPrintNativeData*>(printData.GetNativeData());
+    native->SetPrintJob(gtk_print_operation_new());
 }
 
 
 wxGtkPrintDialog::~wxGtkPrintDialog()
 {
+    const wxPrintData& printData = m_printDialogData.GetPrintData();
+    wxGtkPrintNativeData* native =
+        static_cast<wxGtkPrintNativeData*>(printData.GetNativeData());
+    GtkPrintOperation* printOp = native->GetPrintJob();
+    g_object_unref(printOp);
+    native->SetPrintJob(NULL);
 }
 
 // This is called even if we actually don't want the dialog to appear.
 int wxGtkPrintDialog::ShowModal()
 {
+    WX_HOOK_MODAL_DIALOG();
+
     // We need to restore the settings given in the constructor.
     wxPrintData data = m_printDialogData.GetPrintData();
     wxGtkPrintNativeData *native =
@@ -640,11 +686,10 @@ int wxGtkPrintDialog::ShowModal()
         gtk_print_settings_set_print_pages(settings, GTK_PRINT_PAGES_ALL);
     else {
         gtk_print_settings_set_print_pages(settings, GTK_PRINT_PAGES_RANGES);
-        GtkPageRange *range;
-        range = g_new (GtkPageRange, 1);
-        range[0].start = fromPage-1;
-        range[0].end = (toPage >= fromPage) ? toPage-1 : fromPage-1;
-        gtk_print_settings_set_page_ranges (settings, range, 1);
+        GtkPageRange range;
+        range.start = fromPage - 1;
+        range.end = (toPage >= fromPage) ? toPage - 1 : fromPage - 1;
+        gtk_print_settings_set_page_ranges(settings, &range, 1);
     }
 
     GtkPrintOperation * const printOp = native->GetPrintJob();
@@ -652,7 +697,9 @@ int wxGtkPrintDialog::ShowModal()
     // If the settings are OK, we restore it.
     if (settings != NULL)
         gtk_print_operation_set_print_settings (printOp, settings);
-    gtk_print_operation_set_default_page_setup (printOp, native->GetPageSetupFromSettings(settings));
+    GtkPageSetup* pgSetup = GetPageSetupFromSettings(settings);
+    gtk_print_operation_set_default_page_setup (printOp, pgSetup);
+    g_object_unref(pgSetup);
 
     // Show the dialog if needed.
     GError* gError = NULL;
@@ -682,6 +729,19 @@ int wxGtkPrintDialog::ShowModal()
 
     // Now get the settings and save it.
     GtkPrintSettings* newSettings = gtk_print_operation_get_print_settings(printOp);
+
+    // When embedding the page setup tab into the dialog, as we do, changes to
+    // the settings such as the paper size and orientation there are not
+    // reflected in the print settings, but must be retrieved from the page
+    // setup struct itself separately.
+    GtkPageSetup* defPageSetup = NULL;
+    g_object_get(printOp, "default-page-setup", &defPageSetup, NULL);
+    if ( defPageSetup )
+    {
+        SetPageSetupToSettings(newSettings, defPageSetup);
+        g_object_unref(defPageSetup);
+    }
+
     native->SetPrintConfig(newSettings);
     data.ConvertFromNative();
 
@@ -708,6 +768,7 @@ int wxGtkPrintDialog::ShowModal()
             {
                 m_printDialogData.SetFromPage( range[0].start );
                 m_printDialogData.SetToPage( range[0].end );
+                g_free(range);
             }
             else {
                 m_printDialogData.SetAllPages( true );
@@ -726,11 +787,16 @@ int wxGtkPrintDialog::ShowModal()
     return wxID_OK;
 }
 
+wxDC* wxGtkPrintDialog::GetPrintDC()
+{
+    return new wxPrinterDC(m_printDialogData.GetPrintData());
+}
+
 //----------------------------------------------------------------------------
 // wxGtkPageSetupDialog
 //----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxGtkPageSetupDialog, wxPageSetupDialogBase)
+wxIMPLEMENT_CLASS(wxGtkPageSetupDialog, wxPageSetupDialogBase);
 
 wxGtkPageSetupDialog::wxGtkPageSetupDialog( wxWindow *parent,
                             wxPageSetupDialogData* data )
@@ -747,24 +813,26 @@ wxGtkPageSetupDialog::~wxGtkPageSetupDialog()
 
 int wxGtkPageSetupDialog::ShowModal()
 {
+    WX_HOOK_MODAL_DIALOG();
+
     // Get the config.
     m_pageDialogData.GetPrintData().ConvertToNative();
     wxGtkPrintNativeData *native = (wxGtkPrintNativeData*) m_pageDialogData.GetPrintData().GetNativeData();
     GtkPrintSettings* nativeData = native->GetPrintConfig();
 
     // We only need the pagesetup data which are part of the settings.
-    GtkPageSetup* oldPageSetup = native->GetPageSetupFromSettings(nativeData);
+    GtkPageSetup* oldPageSetup = GetPageSetupFromSettings(nativeData);
 
     // If the user used a custom paper format the last time he printed, we have to restore it too.
-    if (m_pageDialogData.GetPrintData().GetPaperId() == wxPAPER_NONE)
+    wxPaperSize paperId = m_pageDialogData.GetPrintData().GetPaperId();
+    if (paperId == wxPAPER_NONE)
     {
         wxSize customPaperSize = m_pageDialogData.GetPaperSize();
         if (customPaperSize.GetWidth() > 0 && customPaperSize.GetHeight() > 0)
         {
-            wxString title = _("Custom size");
-            GtkPaperSize* customSize = gtk_paper_size_new_custom ("custom", title.mb_str(), (gdouble) customPaperSize.GetWidth(), (gdouble) customPaperSize.GetHeight(), GTK_UNIT_MM);
+            GtkPaperSize* customSize = wxGetGtkPaperSize(paperId, customPaperSize);
             gtk_page_setup_set_paper_size_and_default_margins (oldPageSetup, customSize);
-            g_object_unref(customSize);
+            gtk_paper_size_free(customSize);
         }
     }
 
@@ -788,6 +856,8 @@ int wxGtkPageSetupDialog::ShowModal()
     gtk_page_setup_unix_dialog_set_page_setup(
         GTK_PAGE_SETUP_UNIX_DIALOG(dlg), oldPageSetup);
 
+    g_object_unref(oldPageSetup);
+
     int result = gtk_dialog_run(GTK_DIALOG(dlg));
     gtk_widget_hide(dlg);
 
@@ -806,7 +876,7 @@ int wxGtkPageSetupDialog::ShowModal()
                 wxGtkObject<GtkPageSetup>
                     newPageSetup(gtk_page_setup_unix_dialog_get_page_setup(
                                         GTK_PAGE_SETUP_UNIX_DIALOG(dlg)));
-                native->SetPageSetupToSettings(nativeData, newPageSetup);
+                SetPageSetupToSettings(nativeData, newPageSetup);
 
                 m_pageDialogData.GetPrintData().ConvertFromNative();
 
@@ -850,12 +920,13 @@ int wxGtkPageSetupDialog::ShowModal()
 // wxGtkPrinter
 //----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxGtkPrinter, wxPrinterBase)
+wxIMPLEMENT_CLASS(wxGtkPrinter, wxPrinterBase);
 
 wxGtkPrinter::wxGtkPrinter( wxPrintDialogData *data ) :
     wxPrinterBase( data )
 {
     m_gpc = NULL;
+    m_dc = NULL;
 
     if (data)
         m_printDialogData = *data;
@@ -904,12 +975,15 @@ bool wxGtkPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt )
     wxPrintData printdata = GetPrintDialogData().GetPrintData();
     wxGtkPrintNativeData *native = (wxGtkPrintNativeData*) printdata.GetNativeData();
 
-    GtkPrintOperation * const printOp = native->GetPrintJob();
+    // wxGtkPrintDialog needs to be created first as it creates the PrintOp
+    wxGtkPrintDialog dialog(parent, &m_printDialogData);
+    GtkPrintOperation* printOp = native->GetPrintJob();
 
     wxPrinterToGtkData dataToSend;
     dataToSend.printer = this;
     dataToSend.printout = printout;
 
+    wxDELETE(m_dc);
     // These Gtk signals are caught here.
     g_signal_connect (printOp, "begin-print", G_CALLBACK (gtk_begin_print_callback), &dataToSend);
     g_signal_connect (printOp, "draw-page", G_CALLBACK (gtk_draw_page_print_callback), &dataToSend);
@@ -917,23 +991,29 @@ bool wxGtkPrinter::Print(wxWindow *parent, wxPrintout *printout, bool prompt )
 
     // This is used to setup the DC and
     // show the dialog if desired
-    wxGtkPrintDialog dialog( parent, &m_printDialogData );
-    dialog.SetPrintDC(m_dc);
     dialog.SetShowDialog(prompt);
 
     // doesn't necessarily show
     int ret = dialog.ShowModal();
+
+    printout->SetDC(NULL);
+    wxDELETE(m_dc);
+
     if (ret == wxID_CANCEL)
     {
         sm_lastError = wxPRINTER_CANCELLED;
+        return false;
     }
     if (ret == wxID_NO)
     {
         sm_lastError = wxPRINTER_ERROR;
-        wxFAIL_MSG(_("The print dialog returned an error."));
+        return false;
     }
 
-    return (sm_lastError == wxPRINTER_NO_ERROR);
+    m_printDialogData = dialog.GetPrintDialogData();
+
+    sm_lastError = wxPRINTER_NO_ERROR;
+    return true;
 }
 
 void wxGtkPrinter::BeginPrint(wxPrintout *printout, GtkPrintOperation *operation, GtkPrintContext *context)
@@ -958,24 +1038,13 @@ void wxGtkPrinter::BeginPrint(wxPrintout *printout, GtkPrintOperation *operation
         if (sm_lastError != wxPRINTER_CANCELLED)
         {
             sm_lastError = wxPRINTER_ERROR;
-            wxFAIL_MSG(_("The wxGtkPrinterDC cannot be used."));
+            wxFAIL_MSG("The wxGtkPrinterDC cannot be used.");
         }
         return;
     }
 
-    printout->SetPPIScreen(wxGetDisplayPPI());
-    printout->SetPPIPrinter( printDC->GetResolution(),
-                             printDC->GetResolution() );
+    printout->SetUp(*m_dc);
 
-    printout->SetDC(m_dc);
-
-    int w, h;
-    m_dc->GetSize(&w, &h);
-    printout->SetPageSizePixels((int)w, (int)h);
-    printout->SetPaperRectPixels(wxRect(0, 0, w, h));
-    int mw, mh;
-    m_dc->GetSizeMM(&mw, &mh);
-    printout->SetPageSizeMM((int)mw, (int)mh);
     printout->OnPreparePrinting();
 
     // Get some parameters from the printout, if defined.
@@ -986,7 +1055,7 @@ void wxGtkPrinter::BeginPrint(wxPrintout *printout, GtkPrintOperation *operation
     if (maxPage == 0)
     {
         sm_lastError = wxPRINTER_ERROR;
-        wxFAIL_MSG(_("wxPrintout::GetPageInfo gives a null maxPage."));
+        wxFAIL_MSG("wxPrintout::GetPageInfo gives a null maxPage.");
         return;
     }
 
@@ -1018,7 +1087,11 @@ void wxGtkPrinter::BeginPrint(wxPrintout *printout, GtkPrintOperation *operation
                     if (range[i].start > maxPage-1) range[i].start = maxPage-1;
                     numPages += range[i].end - range[i].start + 1;
                 }
-                gtk_print_settings_set_page_ranges (settings, range, 1);
+                if (range)
+                {
+                    gtk_print_settings_set_page_ranges(settings, range, 1);
+                    g_free(range);
+                }
                 break;}
             case GTK_PRINT_PAGES_ALL:
             default:
@@ -1047,8 +1120,8 @@ void wxGtkPrinter::DrawPage(wxPrintout *printout,
     switch (gtk_print_settings_get_print_pages(settings))
     {
         case GTK_PRINT_PAGES_CURRENT:
-            g_object_get_property((GObject*) operation, (const gchar *) "current-page", (GValue*) &startPage);
-            g_object_get_property((GObject*) operation, (const gchar *) "current-page", (GValue*) &endPage);
+            g_object_get(G_OBJECT(operation), "current-page", &startPage, NULL);
+            endPage = startPage;
             break;
         case GTK_PRINT_PAGES_RANGES:
             {gint num_ranges = 0;
@@ -1059,6 +1132,7 @@ void wxGtkPrinter::DrawPage(wxPrintout *printout,
             {
                 startPage = range[0].start + 1;
                 endPage = range[0].end + 1;
+                g_free(range);
             }
             else {
                 startPage = minPage;
@@ -1100,7 +1174,6 @@ wxDC* wxGtkPrinter::PrintDialog( wxWindow *parent )
 {
     wxGtkPrintDialog dialog( parent, &m_printDialogData );
 
-    dialog.SetPrintDC(m_dc);
     dialog.SetShowDialog(true);
 
     int ret = dialog.ShowModal();
@@ -1113,13 +1186,16 @@ wxDC* wxGtkPrinter::PrintDialog( wxWindow *parent )
     if (ret == wxID_NO)
     {
         sm_lastError = wxPRINTER_ERROR;
-        wxFAIL_MSG(_("The print dialog returned an error."));
         return NULL;
     }
 
-    m_printDialogData = dialog.GetPrintDialogData();
+    wxDC* dc = dialog.GetPrintDC();
+    if ( dc )
+    {
+        m_printDialogData = dialog.GetPrintDialogData();
+    }
 
-    return new wxPrinterDC( m_printDialogData.GetPrintData() );
+    return dc;
 }
 
 bool wxGtkPrinter::Setup( wxWindow * WXUNUSED(parent) )
@@ -1150,13 +1226,12 @@ bool wxGtkPrinter::Setup( wxWindow * WXUNUSED(parent) )
 
 #endif
 
-IMPLEMENT_ABSTRACT_CLASS(wxGtkPrinterDCImpl, wxDCImpl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxGtkPrinterDCImpl, wxDCImpl);
 
 wxGtkPrinterDCImpl::wxGtkPrinterDCImpl(wxPrinterDC *owner, const wxPrintData& data)
                   : wxDCImpl( owner )
+    , m_printData(data)
 {
-    m_printData = data;
-
     wxGtkPrintNativeData *native =
         (wxGtkPrintNativeData*) m_printData.GetNativeData();
 
@@ -1176,8 +1251,6 @@ wxGtkPrinterDCImpl::wxGtkPrinterDCImpl(wxPrinterDC *owner, const wxPrintData& da
 #if wxCAIRO_SCALE
     m_PS2DEV = 1.0;
     m_DEV2PS = 1.0;
-
-    cairo_scale( m_cairo, 72.0 / (double)m_resolution, 72.0 / (double)m_resolution );
 #else
     m_PS2DEV = (double)m_resolution / 72.0;
     m_DEV2PS = 72.0 / (double)m_resolution;
@@ -1186,22 +1259,17 @@ wxGtkPrinterDCImpl::wxGtkPrinterDCImpl(wxPrinterDC *owner, const wxPrintData& da
     m_currentRed = 0;
     m_currentBlue = 0;
     m_currentGreen = 0;
+    m_currentAlpha = 0;
 
     m_signX = 1;  // default x-axis left to right.
     m_signY = 1;  // default y-axis bottom up -> top down.
-
-    // By default the origin of the Cairo context is in the upper left
-    // corner of the printable area. We need to translate it so that it
-    // is in the upper left corner of the paper (without margins)
-    GtkPageSetup *setup = gtk_print_context_get_page_setup( m_gpc );
-    gdouble ml, mt;
-    ml = gtk_page_setup_get_left_margin (setup, GTK_UNIT_POINTS);
-    mt = gtk_page_setup_get_top_margin (setup, GTK_UNIT_POINTS);
-    cairo_translate(m_cairo, -ml, -mt);
 }
 
 wxGtkPrinterDCImpl::~wxGtkPrinterDCImpl()
 {
+    if ( m_fontdesc )
+         pango_font_description_free(m_fontdesc);
+
     g_object_unref(m_context);
     g_object_unref(m_layout);
 }
@@ -1213,7 +1281,12 @@ bool wxGtkPrinterDCImpl::IsOk() const
 
 void* wxGtkPrinterDCImpl::GetCairoContext() const
 {
-    return (void*) cairo_reference( m_cairo );
+    return m_cairo;
+}
+
+void* wxGtkPrinterDCImpl::GetHandle() const
+{
+    return GetCairoContext();
 }
 
 bool wxGtkPrinterDCImpl::DoFloodFill(wxCoord WXUNUSED(x1),
@@ -1223,7 +1296,7 @@ bool wxGtkPrinterDCImpl::DoFloodFill(wxCoord WXUNUSED(x1),
 {
     // We can't access the given coord as a Cairo context is scalable, ie a
     // coord doesn't mean anything in this context.
-    wxFAIL_MSG(_("not implemented"));
+    wxFAIL_MSG("not implemented");
     return false;
 }
 
@@ -1236,8 +1309,7 @@ void wxGtkPrinterDCImpl::DoGradientFillConcentric(const wxRect& rect, const wxCo
     wxCoord w =  rect.width;
     wxCoord h = rect.height;
 
-    const double r2 = (w/2)*(w/2)+(h/2)*(h/2);
-    double radius = sqrt(r2);
+    const double radius = wxMin(w, h) / 2.0;
 
     unsigned char redI = initialColour.Red();
     unsigned char blueI = initialColour.Blue();
@@ -1328,7 +1400,7 @@ bool wxGtkPrinterDCImpl::DoGetPixel(wxCoord WXUNUSED(x1),
                               wxCoord WXUNUSED(y1),
                               wxColour * WXUNUSED(col)) const
 {
-    wxFAIL_MSG(_("not implemented"));
+    wxFAIL_MSG("not implemented");
     return false;
 }
 
@@ -1365,50 +1437,52 @@ void wxGtkPrinterDCImpl::DoCrossHair(wxCoord x, wxCoord y)
 
 void wxGtkPrinterDCImpl::DoDrawArc(wxCoord x1,wxCoord y1,wxCoord x2,wxCoord y2,wxCoord xc,wxCoord yc)
 {
-    double dx = x1 - xc;
-    double dy = y1 - yc;
-    double radius = sqrt((double)(dx*dx+dy*dy));
+    const double dx1 = x1 - xc;
+    const double dy1 = y1 - yc;
+    const double radius = sqrt(dx1*dx1 + dy1*dy1);
+
+    if ( radius == 0.0 )
+        return;
 
     double alpha1, alpha2;
-    if (x1 == x2 && y1 == y2)
+    if ( x1 == x2 && y1 == y2 )
     {
         alpha1 = 0.0;
-        alpha2 = 360.0;
-    }
-    else
-    if (radius == 0.0)
-    {
-        alpha1 = alpha2 = 0.0;
+        alpha2 = 2*M_PI;
+
     }
     else
     {
-        alpha1 = (x1 - xc == 0) ?
-            (y1 - yc < 0) ? 90.0 : -90.0 :
-            atan2(double(y1-yc), double(x1-xc)) * RAD2DEG;
-        alpha2 = (x2 - xc == 0) ?
-            (y2 - yc < 0) ? 90.0 : -90.0 :
-            atan2(double(y2-yc), double(x2-xc)) * RAD2DEG;
-
-        while (alpha1 <= 0)   alpha1 += 360;
-        while (alpha2 <= 0)   alpha2 += 360; // adjust angles to be between.
-        while (alpha1 > 360)  alpha1 -= 360; // 0 and 360 degree.
-        while (alpha2 > 360)  alpha2 -= 360;
+        alpha1 = atan2(dy1, dx1);
+        alpha2 = atan2(double(y2-yc), double(x2-xc));
     }
-
-    alpha1 *= DEG2RAD;
-    alpha2 *= DEG2RAD;
 
     cairo_new_path(m_cairo);
 
-    cairo_arc_negative ( m_cairo, XLOG2DEV(xc), YLOG2DEV(yc), XLOG2DEVREL((int)radius), alpha1, alpha2);
-    cairo_line_to(m_cairo, XLOG2DEV(xc), YLOG2DEV(yc));
-    cairo_close_path (m_cairo);
+    // We use the "negative" variant because the arc should go counterclockwise
+    // while in the default coordinate system, with Y axis going down, Cairo
+    // counts angles in the direction from positive X axis direction to
+    // positive Y axis direction, i.e. clockwise.
+    cairo_arc_negative(m_cairo, XLOG2DEV(xc), YLOG2DEV(yc),
+                       XLOG2DEVREL(wxRound(radius)), alpha1, alpha2);
 
-    SetBrush( m_brush );
-    cairo_fill_preserve( m_cairo );
+    if ( m_brush.IsNonTransparent() )
+    {
+        cairo_line_to(m_cairo, XLOG2DEV(xc), YLOG2DEV(yc));
+        cairo_close_path (m_cairo);
 
-    SetPen (m_pen);
-    cairo_stroke( m_cairo );
+        SetBrush( m_brush );
+        if ( m_pen.IsTransparent() )
+            cairo_fill(m_cairo);
+        else
+           cairo_fill_preserve(m_cairo);
+    }
+
+    SetPen(m_pen);
+    if ( m_pen.IsNonTransparent() )
+    {
+        cairo_stroke(m_cairo);
+    }
 
     CalcBoundingBox (x1, y1);
     CalcBoundingBox (xc, yc);
@@ -1455,7 +1529,7 @@ void wxGtkPrinterDCImpl::DoDrawPoint(wxCoord x, wxCoord y)
     CalcBoundingBox( x, y );
 }
 
-void wxGtkPrinterDCImpl::DoDrawLines(int n, wxPoint points[], wxCoord xoffset, wxCoord yoffset)
+void wxGtkPrinterDCImpl::DoDrawLines(int n, const wxPoint points[], wxCoord xoffset, wxCoord yoffset)
 {
     if ( m_pen.IsTransparent() )
         return;
@@ -1477,7 +1551,7 @@ void wxGtkPrinterDCImpl::DoDrawLines(int n, wxPoint points[], wxCoord xoffset, w
     cairo_stroke ( m_cairo);
 }
 
-void wxGtkPrinterDCImpl::DoDrawPolygon(int n, wxPoint points[],
+void wxGtkPrinterDCImpl::DoDrawPolygon(int n, const wxPoint points[],
                                        wxCoord xoffset, wxCoord yoffset,
                                        wxPolygonFillMode fillStyle)
 {
@@ -1496,24 +1570,30 @@ void wxGtkPrinterDCImpl::DoDrawPolygon(int n, wxPoint points[],
     int i;
     for (i = 1; i < n; i++)
     {
-        int x = points[i].x + xoffset;
-        int y = points[i].y + yoffset;
-        cairo_line_to( m_cairo, XLOG2DEV(x), YLOG2DEV(y) );
+        int xx = points[i].x + xoffset;
+        int yy = points[i].y + yoffset;
+        cairo_line_to( m_cairo, XLOG2DEV(xx), YLOG2DEV(yy) );
     }
     cairo_close_path(m_cairo);
 
     SetBrush( m_brush );
-    cairo_fill_preserve( m_cairo );
+    if ( m_pen.IsTransparent() )
+        cairo_fill(m_cairo);
+    else
+        cairo_fill_preserve(m_cairo);
 
-    SetPen (m_pen);
-    cairo_stroke( m_cairo );
+    SetPen(m_pen);
+    if ( m_pen.IsNonTransparent() )
+    {
+        cairo_stroke(m_cairo);
+    }
 
     CalcBoundingBox( x, y );
 
     cairo_restore(m_cairo);
 }
 
-void wxGtkPrinterDCImpl::DoDrawPolyPolygon(int n, int count[], wxPoint points[],
+void wxGtkPrinterDCImpl::DoDrawPolyPolygon(int n, const int count[], const wxPoint points[],
                                            wxCoord xoffset, wxCoord yoffset,
                                            wxPolygonFillMode fillStyle)
 {
@@ -1522,17 +1602,27 @@ void wxGtkPrinterDCImpl::DoDrawPolyPolygon(int n, int count[], wxPoint points[],
 
 void wxGtkPrinterDCImpl::DoDrawRectangle(wxCoord x, wxCoord y, wxCoord width, wxCoord height)
 {
-    width--;
-    height--;
+    if ( m_pen.IsNonTransparent() )
+    {
+        // outline is one pixel larger than what raster-based wxDC implementations draw
+        width -= 1;
+        height -= 1;
+    }
 
     cairo_new_path(m_cairo);
     cairo_rectangle ( m_cairo, XLOG2DEV(x), YLOG2DEV(y), XLOG2DEVREL(width), YLOG2DEVREL(height));
 
     SetBrush( m_brush );
-    cairo_fill_preserve( m_cairo );
+    if ( m_pen.IsTransparent() )
+        cairo_fill(m_cairo);
+    else
+        cairo_fill_preserve(m_cairo);
 
-    SetPen (m_pen);
-    cairo_stroke( m_cairo );
+    SetPen(m_pen);
+    if ( m_pen.IsNonTransparent() )
+    {
+        cairo_stroke(m_cairo);
+    }
 
     CalcBoundingBox( x, y );
     CalcBoundingBox( x + width, y + height );
@@ -1577,10 +1667,16 @@ void wxGtkPrinterDCImpl::DoDrawRoundedRectangle(wxCoord x, wxCoord y, wxCoord wi
     cairo_close_path(m_cairo);
 
     SetBrush(m_brush);
-    cairo_fill_preserve(m_cairo);
+    if ( m_pen.IsTransparent() )
+        cairo_fill(m_cairo);
+    else
+        cairo_fill_preserve(m_cairo);
 
     SetPen(m_pen);
-    cairo_stroke(m_cairo);
+    if ( m_pen.IsNonTransparent() )
+    {
+        cairo_stroke(m_cairo);
+    }
 
     CalcBoundingBox(x,y);
     CalcBoundingBox(x+width,y+height);
@@ -1600,10 +1696,16 @@ void wxGtkPrinterDCImpl::DoDrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCo
     cairo_arc ( m_cairo, 0, 0, XLOG2DEVREL(width/2), 0, 2 * M_PI);
 
     SetBrush( m_brush );
-    cairo_fill_preserve( m_cairo );
+    if ( m_pen.IsTransparent() )
+        cairo_fill(m_cairo);
+    else
+        cairo_fill_preserve(m_cairo);
 
-    SetPen (m_pen);
-    cairo_stroke( m_cairo );
+    SetPen(m_pen);
+    if ( m_pen.IsNonTransparent() )
+    {
+        cairo_stroke(m_cairo);
+    }
 
     CalcBoundingBox( x, y );
     CalcBoundingBox( x + width, y + height );
@@ -1614,9 +1716,12 @@ void wxGtkPrinterDCImpl::DoDrawEllipse(wxCoord x, wxCoord y, wxCoord width, wxCo
 #if wxUSE_SPLINES
 void wxGtkPrinterDCImpl::DoDrawSpline(const wxPointList *points)
 {
+    wxCHECK_RET(points, "NULL pointer to spline points?");
+    wxCHECK_RET(points->GetCount() >= 2, "incomplete list of spline points?");
+
     SetPen (m_pen);
 
-    double c, d, x1, y1, x2, y2, x3, y3;
+    double c, d, x1, y1, x3, y3;
     wxPoint *p, *q;
 
     wxPointList::compatibility_iterator node = points->GetFirst();
@@ -1643,6 +1748,7 @@ void wxGtkPrinterDCImpl::DoDrawSpline(const wxPointList *points)
     node = node->GetNext();
     while (node)
     {
+        double x2, y2;
         q = node->GetData();
 
         x1 = x3;
@@ -1871,11 +1977,11 @@ void wxGtkPrinterDCImpl::SetPen( const wxPen& pen )
     double width;
 
     if (m_pen.GetWidth() <= 0)
-        width = 0.1;
+        width = 0.1; // Thin, scale-independent line.
     else
-        width = (double) m_pen.GetWidth();
+        width = (double) m_pen.GetWidth() * m_scaleX;
 
-    cairo_set_line_width( m_cairo, width * m_DEV2PS * m_scaleX );
+    cairo_set_line_width( m_cairo, width * m_DEV2PS );
     static const double dotted[] = {2.0, 5.0};
     static const double short_dashed[] = {4.0, 4.0};
     static const double long_dashed[] = {4.0, 8.0};
@@ -2019,7 +2125,7 @@ void wxGtkPrinterDCImpl::SetBrush( const wxBrush& brush )
                 cairo_line_to(cr, 5, 10);
                 break;
             default:
-                wxFAIL_MSG(_("Couldn't get hatch style from wxBrush."));
+                wxFAIL_MSG("Couldn't get hatch style from wxBrush.");
         }
 
         cairo_set_source_rgba(cr, redPS, greenPS, bluePS, alphaPS);
@@ -2075,11 +2181,15 @@ void wxGtkPrinterDCImpl::DoSetClippingRegion(wxCoord x, wxCoord y, wxCoord width
 {
     cairo_rectangle ( m_cairo, XLOG2DEV(x), YLOG2DEV(y), XLOG2DEVREL(width), YLOG2DEVREL(height));
     cairo_clip(m_cairo);
+
+    wxDCImpl::DoSetClippingRegion(x, y, width, height);
 }
 
 void wxGtkPrinterDCImpl::DestroyClippingRegion()
 {
     cairo_reset_clip(m_cairo);
+
+    wxDCImpl::DestroyClippingRegion();
 }
 
 bool wxGtkPrinterDCImpl::StartDoc(const wxString& WXUNUSED(message))
@@ -2094,7 +2204,24 @@ void wxGtkPrinterDCImpl::EndDoc()
 
 void wxGtkPrinterDCImpl::StartPage()
 {
-    return;
+    // Notice that we may change the Cairo transformation matrix only here and
+    // not before (e.g. in wxGtkPrinterDCImpl ctor as we used to do) in order
+    // to not affect _gtk_print_context_rotate_according_to_orientation() which
+    // is used in GTK+ itself and wouldn't work correctly if we applied these
+    // transformations before it is called.
+
+    // By default the origin of the Cairo context is in the upper left
+    // corner of the printable area. We need to translate it so that it
+    // is in the upper left corner of the paper (without margins)
+    GtkPageSetup *setup = gtk_print_context_get_page_setup( m_gpc );
+    gdouble ml, mt;
+    ml = gtk_page_setup_get_left_margin (setup, GTK_UNIT_POINTS);
+    mt = gtk_page_setup_get_top_margin (setup, GTK_UNIT_POINTS);
+    cairo_translate(m_cairo, -ml, -mt);
+
+#if wxCAIRO_SCALE
+    cairo_scale( m_cairo, 72.0 / (double)m_resolution, 72.0 / (double)m_resolution );
+#endif
 }
 
 void wxGtkPrinterDCImpl::EndPage()
@@ -2186,6 +2313,38 @@ void wxGtkPrinterDCImpl::DoGetTextExtent(const wxString& string, wxCoord *width,
     cairo_restore( m_cairo );
 }
 
+bool wxGtkPrinterDCImpl::DoGetPartialTextExtents(const wxString& text, wxArrayInt& widths) const
+{
+    widths.Empty();
+
+    const wxCharBuffer data = text.utf8_str();
+    int w = 0;
+    if ( data.length() > 0 )
+    {
+        cairo_save(m_cairo);
+        cairo_scale(m_cairo, m_scaleX, m_scaleY);
+
+        pango_layout_set_text(m_layout, data, data.length());
+        PangoLayoutIter* iter = pango_layout_get_iter(m_layout);
+        do
+        {
+            PangoRectangle rect;
+            pango_layout_iter_get_cluster_extents(iter, NULL, &rect);
+            w += rect.width;
+            widths.Add(PANGO_PIXELS(w));
+        } while (pango_layout_iter_next_cluster(iter));
+        pango_layout_iter_free(iter);
+
+       cairo_restore(m_cairo);
+    }
+    size_t i = widths.GetCount();
+    const size_t len = text.length();
+    while (i++ < len)
+        widths.Add(PANGO_PIXELS(w));
+
+    return true;
+}
+
 void wxGtkPrinterDCImpl::DoGetSize(int* width, int* height) const
 {
     GtkPageSetup *setup = gtk_print_context_get_page_setup( m_gpc );
@@ -2236,7 +2395,7 @@ int wxGtkPrinterDCImpl::GetResolution() const
 // Print preview
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxGtkPrintPreview, wxPrintPreviewBase)
+wxIMPLEMENT_CLASS(wxGtkPrintPreview, wxPrintPreviewBase);
 
 void wxGtkPrintPreview::Init(wxPrintout * WXUNUSED(printout),
                              wxPrintout * WXUNUSED(printoutForPrinting),

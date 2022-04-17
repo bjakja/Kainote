@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,8 +11,6 @@
 #ifndef _WX_CURSOR_H_
 #define _WX_CURSOR_H_
 
-#include "wx/gdiobj.h"
-#include "wx/gdicmn.h"
 #include "wx/colour.h"
 
 class WXDLLIMPEXP_FWD_CORE wxImage;
@@ -22,7 +19,7 @@ class WXDLLIMPEXP_FWD_CORE wxImage;
 // wxCursor
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
+class WXDLLIMPEXP_CORE wxCursor : public wxCursorBase
 {
 public:
     wxCursor();
@@ -32,6 +29,7 @@ public:
 #endif
 #if wxUSE_IMAGE
     wxCursor( const wxImage & image );
+    wxCursor(const char* const* xpmData);
 #endif
 
     wxCursor(const wxString& name,
@@ -50,7 +48,7 @@ protected:
     virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxCursor)
+    wxDECLARE_DYNAMIC_CLASS(wxCursor);
 };
 
 #endif // _WX_CURSOR_H_

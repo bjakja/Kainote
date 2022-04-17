@@ -2,7 +2,6 @@
 // Name:        wx/xpmdecod.h
 // Purpose:     wxXPMDecoder, XPM reader for wxImage and wxBitmap
 // Author:      Vaclav Slavik
-// CVS-ID:      $Id$
 // Copyright:   (c) 2001 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -40,11 +39,6 @@ public:
     // Read directly from XPM data (as passed to wxBitmap ctor):
     wxImage ReadData(const char* const* xpm_data);
 
-#ifdef __BORLANDC__
-    // needed for Borland 5.5
-    wxImage ReadData(char** xpm_data)
-        { return ReadData(const_cast<const char* const*>(xpm_data)); }
-#endif
 };
 
 #endif // wxUSE_IMAGE && wxUSE_XPM

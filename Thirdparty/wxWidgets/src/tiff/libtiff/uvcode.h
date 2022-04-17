@@ -3,7 +3,7 @@
 #define UV_NDIVS	16289
 #define UV_VSTART	(float)0.016940
 #define UV_NVS		163
-static struct {
+static const struct {
 	float	ustart;
 	short	nus, ncum;
 }	uv_row[UV_NVS] = {
@@ -171,3 +171,10 @@ static struct {
 	{ (float)0.016994,	31,	16237 },
 	{ (float)0.023659,	21,	16268 },
 };
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 8
+ * fill-column: 78
+ * End:
+ */

@@ -2,7 +2,6 @@
 // Name:        src/gtk1/control.cpp
 // Purpose:     wxControl implementation for wxGTK
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart and Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,7 +29,7 @@
 // wxControl creation
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxControl, wxWindow)
+wxIMPLEMENT_DYNAMIC_CLASS(wxControl, wxWindow);
 
 wxControl::wxControl()
 {
@@ -65,9 +64,7 @@ wxSize wxControl::DoGetBestSize() const
     (* GTK_WIDGET_CLASS( GTK_OBJECT_GET_CLASS(m_widget) )->size_request )
         (m_widget, &req );
 
-    wxSize best(req.width, req.height);
-    CacheBestSize(best);
-    return best;
+    return wxSize(req.width, req.height);
 }
 
 
@@ -139,7 +136,7 @@ wxString wxControl::GTKRemoveMnemonics(const wxString& label)
             if ( i == len - 1 )
             {
                 // "&" at the end of string is an error
-                wxLogDebug(wxT("Invalid label \"%s\"."), label.c_str());
+                wxLogDebug(wxT("Invalid label \"%s\"."), label);
                 break;
             }
 
@@ -208,7 +205,7 @@ wxControl::GetDefaultAttributesFromGTKWidget(GtkWidget* widget,
 
     // get the style's font
     // TODO: isn't there a way to get a standard gtk 1.2 font?
-    attr.font = wxFont( 12, wxSWISS, wxNORMAL, wxNORMAL );
+    attr.font = wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
 
     return attr;
 }

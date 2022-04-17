@@ -2,7 +2,6 @@
 // Name:        src/gtk1/minifram.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -320,7 +319,7 @@ static const char *cross_xpm[] = {
 " ### ",
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxMiniFrame,wxFrame)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMiniFrame, wxFrame);
 
 bool wxMiniFrame::Create( wxWindow *parent, wxWindowID id, const wxString &title,
       const wxPoint &pos, const wxSize &size,

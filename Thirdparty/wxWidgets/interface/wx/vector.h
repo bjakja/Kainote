@@ -2,7 +2,6 @@
 // Name:        vector.h
 // Purpose:     interface of wxVector<T>
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -52,6 +51,19 @@ public:
     wxVector(size_type size, const value_type& value);
 
     /**
+        Constructor initializing the vector with the elements in the given
+        range.
+
+        The @a InputIterator template parameter must be an input iterator type.
+        This constructor adds all elements from @a first until, not
+        including, @a last to the vector.
+
+        @since 2.9.5
+     */
+    template <class InputIterator>
+    wxVector(InputIterator first, InputIterator last);
+
+    /**
         Copy constructor.
     */
     wxVector(const wxVector<T>& c);
@@ -60,6 +72,27 @@ public:
         Destructor.
     */
     ~wxVector();
+
+    /**
+        Resizes the vector to @a n and assigns @a v to all elements.
+
+        @see resize()
+
+        @since 2.9.5
+     */
+    void assign(size_type n, const value_type& v);
+
+    /**
+        Assigns the elements in the given range to the vector.
+
+        The @a InputIterator template parameter must be an input iterator type.
+        This method clears the vector and then adds all elements from @a first
+        until, not not including, @a last to it.
+
+        @since 2.9.5
+     */
+    template <class InputIterator>
+    void assign(InputIterator first, InputIterator last);
 
     /**
         Returns item at position @a idx.
@@ -103,7 +136,7 @@ public:
 
 
     /**
-        Returns vector's current capacity, i.e. how much memory is allocated.
+        Returns vector's current capacity, i.e.\ how much memory is allocated.
 
         @see reserve()
     */
@@ -162,9 +195,32 @@ public:
     iterator insert(iterator it, const value_type& v = value_type());
 
     /**
+        Insert the given number of copies of @a v at the given position.
+
+        @return Iterator for the first inserted item.
+
+        @since 3.1.1
+     */
+    iterator insert(iterator it, size_type count, const value_type& v);
+
+    /**
         Assignment operator.
     */
     wxVector& operator=(const wxVector& vb);
+
+    /**
+        Equality operator.
+
+        @since 3.1.1
+    */
+    wxVector& operator==(const wxVector& vb) const;
+
+    /**
+        Inequality operator.
+
+        @since 3.1.1
+    */
+    wxVector& operator!=(const wxVector& vb) const;
 
     /**
         Returns item at position @a idx.
@@ -207,6 +263,18 @@ public:
     //@}
 
     /**
+        Free unused memory allocated by the vector.
+
+        Reduces the memory used by the vector to the bare minimum required to
+        hold its current number of elements, possibly 0.
+
+        After calling this method, capacity() returns the same as size().
+
+        @since 3.1.1
+     */
+    void shrink_to_fit();
+
+    /**
         Returns the size of the vector.
     */
     size_type size() const;
@@ -239,3 +307,13 @@ public:
 */
 template<typename T>
 void wxVectorSort(wxVector<T>& v);
+
+/**
+    Returns true if the vector contains the given value.
+
+    This is just a trivial wrapper around std::find().
+
+    @since 3.1.5
+ */
+template<typename T>
+bool wxVectorContains(const wxVector<T>& v, const T& value);

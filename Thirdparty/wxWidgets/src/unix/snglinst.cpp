@@ -5,7 +5,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     09.06.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -21,9 +20,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SNGLINST_CHECKER
 
@@ -167,7 +163,7 @@ LockResult wxSingleInstanceCheckerImpl::CreateLockFile()
             if ( write(m_fdLock, buf, len) != len )
             {
                 wxLogSysError(_("Failed to write to lock file '%s'"),
-                              m_nameLock.c_str());
+                              m_nameLock);
 
                 Unlock();
 
@@ -180,7 +176,7 @@ LockResult wxSingleInstanceCheckerImpl::CreateLockFile()
             if ( chmod(m_nameLock.fn_str(), S_IRUSR | S_IWUSR) != 0 )
             {
                 wxLogSysError(_("Failed to set permissions on lock file '%s'"),
-                              m_nameLock.c_str());
+                              m_nameLock);
 
                 Unlock();
 
@@ -197,7 +193,7 @@ LockResult wxSingleInstanceCheckerImpl::CreateLockFile()
             if ( errno != EACCES && errno != EAGAIN )
             {
                 wxLogSysError(_("Failed to lock the lock file '%s'"),
-                              m_nameLock.c_str());
+                              m_nameLock);
 
                 unlink(m_nameLock.fn_str());
 
@@ -239,17 +235,17 @@ bool wxSingleInstanceCheckerImpl::Create(const wxString& name)
     wxStructStat stats;
     if ( wxStat(name, &stats) != 0 )
     {
-        wxLogSysError(_("Failed to inspect the lock file '%s'"), name.c_str());
+        wxLogSysError(_("Failed to inspect the lock file '%s'"), name);
         return false;
     }
     if ( stats.st_uid != getuid() )
     {
-        wxLogError(_("Lock file '%s' has incorrect owner."), name.c_str());
+        wxLogError(_("Lock file '%s' has incorrect owner."), name);
         return false;
     }
     if ( stats.st_mode != (S_IFREG | S_IRUSR | S_IWUSR) )
     {
-        wxLogError(_("Lock file '%s' has incorrect permissions."), name.c_str());
+        wxLogError(_("Lock file '%s' has incorrect permissions."), name);
         return false;
     }
 
@@ -287,14 +283,20 @@ bool wxSingleInstanceCheckerImpl::Create(const wxString& name)
                 if ( unlink(name.fn_str()) != 0 )
                 {
                     wxLogError(_("Failed to remove stale lock file '%s'."),
-                               name.c_str());
+                               name);
 
                     // return true in this case for now...
                 }
                 else
                 {
-                    wxLogMessage(_("Deleted stale lock file '%s'."),
-                                 name.c_str());
+                    // This may be important to know if something goes
+                    // mysteriously wrong, but as the user can't really do
+                    // anything about here (the most typical reason for this
+                    // message is that the previous instance of the program
+                    // crashed), don't show it by default, i.e. unless the
+                    // program is running with --verbose command line option.
+                    wxLogVerbose(_("Deleted stale lock file '%s'."),
+                                 name);
 
                     // retry now
                     (void)CreateLockFile();
@@ -304,7 +306,7 @@ bool wxSingleInstanceCheckerImpl::Create(const wxString& name)
         }
         else
         {
-            wxLogWarning(_("Invalid lock file '%s'."), name.c_str());
+            wxLogWarning(_("Invalid lock file '%s'."), name);
         }
     }
 
@@ -321,19 +323,19 @@ void wxSingleInstanceCheckerImpl::Unlock()
         if ( unlink(m_nameLock.fn_str()) != 0 )
         {
             wxLogSysError(_("Failed to remove lock file '%s'"),
-                          m_nameLock.c_str());
+                          m_nameLock);
         }
 
         if ( wxLockFile(m_fdLock, UNLOCK) != 0 )
         {
             wxLogSysError(_("Failed to unlock lock file '%s'"),
-                          m_nameLock.c_str());
+                          m_nameLock);
         }
 
         if ( close(m_fdLock) != 0 )
         {
             wxLogSysError(_("Failed to close lock file '%s'"),
-                          m_nameLock.c_str());
+                          m_nameLock);
         }
     }
 

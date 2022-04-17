@@ -5,7 +5,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     08/04/99
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -81,7 +80,7 @@
     {
         m_dragImage->EndDrag(this);
         delete m_dragImage;
-        m_dragImage = nullptr;
+        m_dragImage = NULL;
     }
     ReleaseMouse();
  }
@@ -175,7 +174,7 @@ public:
 
     // Begin drag. hotspot is the location of the drag position relative to the upper-left
     // corner of the image.
-    bool BeginDrag(const wxPoint& hotspot, wxWindow* window, bool fullScreen = false, wxRect* rect = nullptr);
+    bool BeginDrag(const wxPoint& hotspot, wxWindow* window, bool fullScreen = false, wxRect* rect = NULL);
 
     // Begin drag. hotspot is the location of the drag position relative to the upper-left
     // corner of the image. This is full screen only. fullScreenRect gives the
@@ -186,7 +185,7 @@ public:
     bool EndDrag();
 
     // Move the image: call from OnMouseMove. Pt is in window client coordinates if window
-    // is non-nullptr, or in screen coordinates if nullptr.
+    // is non-NULL, or in screen coordinates if NULL.
     bool Move(const wxPoint& pt);
 
     // Show the image
@@ -236,7 +235,7 @@ protected:
     bool            m_fullScreen;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxDragImage)
+    wxDECLARE_DYNAMIC_CLASS(wxDragImage);
     wxDECLARE_NO_COPY_CLASS(wxDragImage);
 };
 

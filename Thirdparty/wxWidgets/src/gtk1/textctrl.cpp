@@ -2,7 +2,6 @@
 // Name:        src/gtk1/textctrl.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -114,11 +113,11 @@ gtk_insert_text_callback(GtkEditable *editable,
         gtk_signal_emit_stop_by_name(GTK_OBJECT(editable), "insert_text");
 
         // remember that the next changed signal is to be ignored to avoid
-        // generating a dummy wxEVT_COMMAND_TEXT_UPDATED event
+        // generating a dummy wxEVT_TEXT event
         win->IgnoreNextTextUpdate();
 
         // and generate the correct one ourselves
-        wxCommandEvent event(wxEVT_COMMAND_TEXT_MAXLEN, win->GetId());
+        wxCommandEvent event(wxEVT_TEXT_MAXLEN, win->GetId());
         event.SetEventObject(win);
         event.SetString(win->GetValue());
         win->HandleWindowEvent( event );
@@ -145,7 +144,7 @@ gtk_text_changed_callback( GtkWidget *WXUNUSED(widget), wxTextCtrl *win )
     win->SetModified();
     win->UpdateFontIfNeeded();
 
-    wxCommandEvent event( wxEVT_COMMAND_TEXT_UPDATED, win->GetId() );
+    wxCommandEvent event( wxEVT_TEXT, win->GetId() );
     event.SetEventObject( win );
     win->HandleWindowEvent( event );
 }
@@ -201,7 +200,7 @@ static void wxgtk_text_draw( GtkWidget *widget, GdkRectangle *rect)
 //  wxTextCtrl
 //-----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
+wxBEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
     EVT_CHAR(wxTextCtrl::OnChar)
 
     EVT_MENU(wxID_CUT, wxTextCtrl::OnCut)
@@ -215,7 +214,7 @@ BEGIN_EVENT_TABLE(wxTextCtrl, wxTextCtrlBase)
     EVT_UPDATE_UI(wxID_PASTE, wxTextCtrl::OnUpdatePaste)
     EVT_UPDATE_UI(wxID_UNDO, wxTextCtrl::OnUpdateUndo)
     EVT_UPDATE_UI(wxID_REDO, wxTextCtrl::OnUpdateRedo)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 void wxTextCtrl::Init()
 {
@@ -714,29 +713,6 @@ void wxTextCtrl::DoEnable( bool enable )
     }
 }
 
-// wxGTK-specific: called recursively by Enable,
-// to give widgets an oppprtunity to correct their colours after they
-// have been changed by Enable
-void wxTextCtrl::OnEnabled( bool WXUNUSED(enable) )
-{
-    if ( IsSingleLine() )
-        return;
-
-    // If we have a custom background colour, we use this colour in both
-    // disabled and enabled mode, or we end up with a different colour under the
-    // text.
-    wxColour oldColour = GetBackgroundColour();
-    if (oldColour.IsOk())
-    {
-        // Need to set twice or it'll optimize the useful stuff out
-        if (oldColour == * wxWHITE)
-            SetBackgroundColour(*wxBLACK);
-        else
-            SetBackgroundColour(*wxWHITE);
-        SetBackgroundColour(oldColour);
-    }
-}
-
 void wxTextCtrl::MarkDirty()
 {
     m_modified = true;
@@ -995,7 +971,7 @@ void wxTextCtrl::OnChar( wxKeyEvent &key_event )
 
     if ((key_event.GetKeyCode() == WXK_RETURN) && (m_windowStyle & wxTE_PROCESS_ENTER))
     {
-        wxCommandEvent event(wxEVT_COMMAND_TEXT_ENTER, m_windowId);
+        wxCommandEvent event(wxEVT_TEXT_ENTER, m_windowId);
         event.SetEventObject(this);
         event.SetString(GetValue());
         if (HandleWindowEvent(event)) return;
@@ -1042,7 +1018,7 @@ bool wxTextCtrl::IsOwnGtkWindow( GdkWindow *window )
     }
 }
 
-// the font will change for subsequent text insertiongs
+// the font will change for subsequent text insertions
 bool wxTextCtrl::SetFont( const wxFont &font )
 {
     wxCHECK_MSG( m_text != NULL, false, wxT("invalid text ctrl") );
@@ -1279,10 +1255,7 @@ void wxTextCtrl::OnInternalIdle()
 wxSize wxTextCtrl::DoGetBestSize() const
 {
     // FIXME should be different for multi-line controls...
-    wxSize ret( wxControl::DoGetBestSize() );
-    wxSize best(80, ret.y);
-    CacheBestSize(best);
-    return best;
+    return wxSize(80, wxControl::DoGetBestSize().y);
 }
 
 // ----------------------------------------------------------------------------

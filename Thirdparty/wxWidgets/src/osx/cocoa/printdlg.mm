@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,6 +13,7 @@
 #if wxUSE_PRINTING_ARCHITECTURE
 
 #include "wx/printdlg.h"
+#include "wx/modalhook.h"
 
 #ifndef WX_PRECOMP
     #include "wx/object.h"
@@ -28,7 +28,7 @@
 #include "wx/osx/private/print.h"
 #include "wx/osx/private.h"
 
-IMPLEMENT_CLASS(wxOSXCocoaPrintData, wxOSXPrintData)
+wxIMPLEMENT_CLASS(wxOSXCocoaPrintData, wxOSXPrintData);
 
 wxOSXCocoaPrintData::wxOSXCocoaPrintData()
 {
@@ -59,24 +59,37 @@ void wxOSXCocoaPrintData::UpdateToPMState()
 
 int wxMacPrintDialog::ShowModal()
 {
+    WX_HOOK_MODAL_DIALOG();
+
     m_printDialogData.GetPrintData().ConvertToNative();
 
     int result = wxID_CANCEL;
 
     NSPrintPanel* panel = [NSPrintPanel printPanel];
     NSPrintInfo* printInfo = ((wxOSXCocoaPrintData*)m_printDialogData.GetPrintData().GetNativeData())->GetNSPrintInfo();
-    if ( (NSInteger)[panel runModalWithPrintInfo:printInfo] == NSOKButton )
+
+    NSMutableDictionary* dict = [printInfo printSettings];
+    [dict setValue:[NSNumber numberWithInt:m_printDialogData.GetMinPage()] forKey:@"com_apple_print_PrintSettings_PMFirstPage"];
+    [dict setValue:[NSNumber numberWithInt:m_printDialogData.GetMaxPage()] forKey:@"com_apple_print_PrintSettings_PMLastPage"];
+
+    OSXBeginModalDialog();
+
+    if ( (NSInteger)[panel runModalWithPrintInfo:printInfo] == NSModalResponseOK )
     {
         result = wxID_OK;
         m_printDialogData.GetPrintData().ConvertFromNative();
         ((wxOSXPrintData*)m_printDialogData.GetPrintData().GetNativeData())->TransferTo( &m_printDialogData );
     }
+    
+    OSXEndModalDialog();
 
     return result;
 }
 
 int wxMacPageSetupDialog::ShowModal()
 {
+    WX_HOOK_MODAL_DIALOG();
+
     m_pageSetupData.GetPrintData().ConvertToNative();
     ((wxOSXCocoaPrintData*)m_pageSetupData.GetPrintData().GetNativeData())->TransferFrom( &m_pageSetupData );
 
@@ -84,13 +97,18 @@ int wxMacPageSetupDialog::ShowModal()
 
     NSPageLayout *pageLayout = [NSPageLayout pageLayout];
     NSPrintInfo* printInfo = ((wxOSXCocoaPrintData*)m_pageSetupData.GetPrintData().GetNativeData())->GetNSPrintInfo();
-    if ( [pageLayout runModalWithPrintInfo:printInfo] == NSOKButton )
+    
+    OSXBeginModalDialog();
+
+    if ( [pageLayout runModalWithPrintInfo:printInfo] == NSModalResponseOK )
     {
         result = wxID_OK;
         m_pageSetupData.GetPrintData().ConvertFromNative();
         m_pageSetupData.SetPaperSize( m_pageSetupData.GetPrintData().GetPaperSize() );
     }
 
+    OSXEndModalDialog();
+    
     return result;
 }
 

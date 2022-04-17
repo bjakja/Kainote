@@ -3,7 +3,6 @@
 // Purpose:     Test wxStopWatch class
 // Author:      Francesco Montorsi (extracted from console sample)
 // Created:     2010-05-16
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -14,9 +13,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
@@ -54,7 +50,7 @@ private:
     void BackwardsClockBug();
     void RestartBug();
 
-    DECLARE_NO_COPY_CLASS(StopWatchTestCase)
+    wxDECLARE_NO_COPY_CLASS(StopWatchTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -65,6 +61,14 @@ CPPUNIT_TEST_SUITE_NAMED_REGISTRATION( StopWatchTestCase, "StopWatchTestCase" );
 
 void StopWatchTestCase::Misc()
 {
+    // Buildbot machines are quite slow and sleep doesn't work reliably there,
+    // i.e. it can sleep for much longer than requested. This is not really an
+    // error, so just don't run this test there -- and if you get failures in
+    // this test when running it interactively, this might also be normal if
+    // the machine is under heavy load.
+    if ( IsAutomaticTest() )
+        return;
+
     wxStopWatch sw;
     long t;
     wxLongLong usec;
@@ -96,7 +100,7 @@ void StopWatchTestCase::Misc()
     WX_ASSERT_MESSAGE
     (
         ("Actual time value is %ld", t),
-        t > sleepTime - tolerance && t < sleepTime + tolerance
+        t > sleepTime - tolerance && t < 2*sleepTime
     );
 
     sw.Pause();
@@ -112,7 +116,7 @@ void StopWatchTestCase::Misc()
     WX_ASSERT_MESSAGE
     (
         ("Actual time value is %ld", t),
-        t > 2*sleepTime - tolerance && t < 2*sleepTime + tolerance
+        t > 2*sleepTime - tolerance && t < 3*sleepTime
     );
 }
 
@@ -127,7 +131,8 @@ void StopWatchTestCase::BackwardsClockBug()
 
         for ( size_t m = 0; m < 10000; m++ )
         {
-            CPPUNIT_ASSERT ( sw.Time() >= 0 && sw2.Time() >= 0 );
+            CPPUNIT_ASSERT( sw.Time() >= 0 );
+            CPPUNIT_ASSERT( sw2.Time() >= 0 );
         }
     }
 }
@@ -146,7 +151,19 @@ void StopWatchTestCase::RestartBug()
     WX_ASSERT_MESSAGE
     (
         ("Actual time value is %ld", t),
-        t > offset + sleepTime - tolerance &&
-            t < offset + sleepTime + tolerance
+        t >= offset + sleepTime - tolerance
     );
+
+    // As above, this is not actually due to the fact of the test being
+    // automatic but just because buildbot machines are usually pretty slow, so
+    // this test often fails there simply because of the high load on them.
+    if ( !IsAutomaticTest() )
+    {
+
+        WX_ASSERT_MESSAGE
+        (
+            ("Actual time value is %ld", t),
+            t < offset + sleepTime + tolerance
+        );
+    }
 }

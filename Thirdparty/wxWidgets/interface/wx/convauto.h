@@ -2,7 +2,6 @@
 // Name:        convauto.h
 // Purpose:     interface of wxConvAuto
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +145,22 @@ public:
         @since 2.9.3
     */
     wxBOM GetBOM() const;
+
+    /**
+        Return the detected encoding
+
+        Returns @c wxFONTENCODING_MAX if called before the first use.
+
+        @since 3.1.5
+    */
+    wxBOM GetEncoding() const;
+
+    /**
+        Check if the fall-back encoding is used.
+
+        @since 3.1.5
+    */
+    bool IsUsingFallbackEncoding() const;
 
     /**
         Return a pointer to the characters that makes up this BOM.

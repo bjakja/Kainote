@@ -5,7 +5,6 @@
 #-- Author:      Gilles Depeyrot
 #-- Modified by:
 #-- Created:     12.09.2003
-#-- RCS-ID:      $Id: pbsetup-sh 55402 2008-09-01 07:15:52Z SC $
 #-- Copyright:   (c) 2003 Gilles Depeyrot
 #-- Licence:     wxWindows licence
 #-----------------------------------------------------------------------------
@@ -27,26 +26,6 @@ if [ ! -d "${2}/include/wx" ]; then
         echo "${0}:${LINENO}: error: unable to create directory \"${2}/include/wx\""
         exit 1
     fi
-fi
-#
-# Copy stock setup0.h to setup.h if it doesn't exist
-#   preserve user modifications made to setup.h
-#
-if [ ! -f "${1}/../include/wx/osx/setup.h" ]; then
-    echo "${0}:${LINENO}: warning: copying \"include/wx/osx/setup0.h\" to \"include/wx/osx/setup.h\""
-    echo "${0}:${LINENO}: warning: edit \"include/wx/osx/setup.h\" to choose the features you would like to compile wxWindows with[out]"
-    cp "${1}/../include/wx/osx/setup0.h" "${1}/../include/wx/osx/setup.h"
-    if [ ! -f "${1}/../include/wx/osx/setup.h" ]; then
-        echo "${0}:${LINENO}: error: unable to create setup file \"${1}/../include/wx/osx/setup.h\""
-        exit 1
-    fi
-fi
-#
-# Check that stock setup0.h is not newer than user setup.h
-#
-if [ "${1}/../include/wx/osx/setup0.h" -nt "${1}/../include/wx/osx/setup.h" ] ; then
-    echo "${0}:${LINENO}: warning: \"include/wx/osx/setup0.h\" is more recent than \"include/wx/osx/setup.h\""
-    echo "${0}:${LINENO}: warning: edit or replace \"include/wx/osx/setup.h\" to integrate changes"
 fi
 #
 # Copy user setup.h to build setup.h if the latter doesn't exist or is older

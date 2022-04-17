@@ -3,7 +3,6 @@
 // Purpose:     wxStaticLine class
 // Author:      Stefan Csomor
 // Created:     28.06.99
-// Version:     $Id$
 // Copyright:   (c) 2008 Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_STATLINE
 

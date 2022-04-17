@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,16 +27,16 @@ public:
     // Create from data
     bool Create(size_t size, const void* data);
 
-    bool IsOk() const { return m_data != nullptr; }
+    bool IsOk() const { return m_data != NULL; }
 
     static void Stop();
 
 protected:
-    void Init() { m_data = nullptr; }
+    void Init() { m_data = NULL; }
     bool CheckCreatedOk();
     void Free();
 
-    virtual bool DoPlay(unsigned flags) const;
+    virtual bool DoPlay(unsigned flags) const wxOVERRIDE;
 
 private:
     // data of this object

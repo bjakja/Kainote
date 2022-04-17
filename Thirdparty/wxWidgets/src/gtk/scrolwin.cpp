@@ -5,7 +5,6 @@
 // Modified by: Ron Lee
 //              Vadim Zeitlin: removed 90% of duplicated common code
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -13,14 +12,10 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/scrolwin.h"
 
-#include <gtk/gtk.h>
-#include "wx/gtk/private/gtk2-compat.h"
+#include "wx/gtk/private/wrapgtk.h"
 
 // ----------------------------------------------------------------------------
 // wxScrollHelper implementation
@@ -56,6 +51,8 @@ void wxScrollHelper::DoAdjustScrollbar(GtkRange* range,
     {
         upper = (virtSize + pixelsPerLine - 1) / pixelsPerLine;
         page_size = winSize / pixelsPerLine;
+        if (page_size == 0)
+            page_size = 1;
         *lines = upper;
         *linesPerPage = page_size;
     }
@@ -69,9 +66,23 @@ void wxScrollHelper::DoAdjustScrollbar(GtkRange* range,
         *linesPerPage = 0;
     }
 
-    gtk_range_set_increments(range, 1, page_size);
-    gtk_adjustment_set_page_size(gtk_range_get_adjustment(range), page_size);
-    gtk_range_set_range(range, 0, upper);
+    GtkAdjustment* adj = gtk_range_get_adjustment(range);
+    const double adj_upper = gtk_adjustment_get_upper(adj);
+    const double adj_page_size = gtk_adjustment_get_page_size(adj);
+    if (adj_upper != upper || adj_page_size != page_size)
+    {
+        const bool wasVisible = adj_upper > adj_page_size;
+
+        g_object_freeze_notify(G_OBJECT(adj));
+        gtk_range_set_increments(range, 1, page_size);
+        gtk_adjustment_set_page_size(adj, page_size);
+        gtk_range_set_range(range, 0, upper);
+        g_object_thaw_notify(G_OBJECT(adj));
+
+        const bool isVisible = gtk_adjustment_get_upper(adj) > gtk_adjustment_get_page_size(adj);
+        if (isVisible != wasVisible)
+            m_win->m_useCachedClientSize = false;
+    }
 
     // ensure that the scroll position is always in valid range
     if (*pos > *lines)
@@ -82,6 +93,10 @@ void wxScrollHelper::AdjustScrollbars()
 {
     int vw, vh;
     m_targetWindow->GetVirtualSize(&vw, &vh);
+#ifdef __WXGTK3__
+    // GtkScrolledWindow uses child's preferred size as virtual size
+    gtk_widget_set_size_request(m_win->m_wxwindow, vw, vh);
+#endif
 
     int w, h;
     const wxSize availSize = GetSizeAvailableForScrollTarget(
@@ -170,7 +185,7 @@ GtkPolicyType GtkPolicyFromWX(wxScrollbarVisibility visibility)
 
         default:
             wxFAIL_MSG( wxS("unknown scrollbar visibility") );
-            // fall through
+            wxFALLTHROUGH;
 
         case wxSHOW_SB_ALWAYS:
             policy = GTK_POLICY_ALWAYS;
@@ -181,6 +196,23 @@ GtkPolicyType GtkPolicyFromWX(wxScrollbarVisibility visibility)
 }
 
 } // anonymous namespace
+
+bool wxScrollHelper::IsScrollbarShown(int orient) const
+{
+    GtkScrolledWindow * const scrolled = GTK_SCROLLED_WINDOW(m_win->m_widget);
+    if ( !scrolled )
+    {
+        // By default, all windows are scrollable.
+        return true;
+    }
+
+    GtkPolicyType hpolicy, vpolicy;
+    gtk_scrolled_window_get_policy(scrolled, &hpolicy, &vpolicy);
+
+    GtkPolicyType policy = orient == wxHORIZONTAL ? hpolicy : vpolicy;
+
+    return policy != GTK_POLICY_NEVER;
+}
 
 void wxScrollHelper::DoShowScrollbars(wxScrollbarVisibility horz,
                                       wxScrollbarVisibility vert)

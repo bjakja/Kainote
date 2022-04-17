@@ -2,7 +2,6 @@
 // Name:        icon.h
 // Purpose:     interface of wxIcon
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -48,7 +47,7 @@
     ::wxNullIcon
 
     @see @ref overview_bitmap, @ref overview_bitmap_supportedformats,
-         wxDC::DrawIcon, wxCursor
+         wxIconBundle, wxDC::DrawIcon, wxCursor
 */
 class wxIcon : public wxGDIObject
 {
@@ -180,6 +179,22 @@ public:
     virtual ~wxIcon();
 
     /**
+        Attach a Windows icon handle.
+
+        This wxMSW-specific method allows assigning a native Windows @c HICON
+        (which must be cast to @c WXHICON opaque handle type) to wxIcon.
+        Notice that this means that the @c HICON will be destroyed by wxIcon
+        when it is destroyed.
+
+        @return @true if successful.
+
+        @onlyfor{wxmsw}
+
+        @since 2.9.5
+    */
+    bool CreateFromHICON(WXHICON icon);
+
+    /**
         Returns disabled (dimmed) version of the icon.
 
         This method is available in wxIcon only under wxMSW, other ports only
@@ -207,16 +222,59 @@ public:
     int GetDepth() const;
 
     /**
-        Gets the height of the icon in pixels.
+        Gets the height of the icon in physical pixels.
 
-        @see GetWidth()
+        @see GetWidth(), GetLogicalHeight()
     */
     int GetHeight() const;
 
     /**
-        Gets the width of the icon in pixels.
+        Gets the height of the icon in logical pixels.
 
-        @see GetHeight()
+        See wxBitmap::GetLogicalHeight().
+
+        @since 3.1.6
+     */
+    double GetLogicalHeight() const;
+
+    /**
+        Gets the size of the icon in logical pixels.
+
+        See wxBitmap::GetLogicalSize().
+
+        @since 3.1.6
+     */
+    double GetLogicalSize() const;
+
+    /**
+        Gets the width of the icon in logical pixels.
+
+        See wxBitmap::GetLogicalWidth().
+
+        @since 3.1.6
+     */
+    double GetLogicalWidth() const;
+
+    /**
+        Gets the scale factor of this icon.
+
+        See wxBitmap::GetScaleFactor().
+
+        @since 3.1.6
+     */
+    double GetScaleFactor() const;
+
+    /**
+        Gets the size of the icon in physical pixels.
+
+        @see GetLogicalSize()
+     */
+    wxSize GetSize() const;
+
+    /**
+        Gets the width of the icon in physical pixels.
+
+        @see GetHeight(), GetLogicalWidth()
     */
     int GetWidth() const;
 
@@ -252,6 +310,9 @@ public:
                   int desiredWidth = -1, int desiredHeight = -1);
 
     /**
+        @deprecated This function is deprecated since version 3.1.2, dimensions
+            and depth can only be set at construction time.
+
         Sets the depth member (does not affect the icon data).
 
         @param depth
@@ -260,6 +321,9 @@ public:
     void SetDepth(int depth);
 
     /**
+        @deprecated This function is deprecated since version 3.1.2, dimensions
+            and depth can only be set at construction time.
+
         Sets the height member (does not affect the icon data).
 
         @param height
@@ -268,6 +332,9 @@ public:
     void SetHeight(int height);
 
     /**
+        @deprecated This function is deprecated since version 3.1.2, dimensions
+            and depth can only be set at construction time.
+
         Sets the width member (does not affect the icon data).
 
         @param width

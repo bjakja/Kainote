@@ -2,7 +2,6 @@
 // Name:        msw/ole/activex.h
 // Purpose:     interface of wxActiveXEvent
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -263,7 +262,7 @@ public:
         wxActiveXContainer* m_pAX;
         wxAutomationObject m_PDF;
 
-        wxDECLARE_DYNAMIC_CLASS(wxPDFMediaBackend)
+        wxDECLARE_DYNAMIC_CLASS(wxPDFMediaBackend);
     };
 
     wxIMPLEMENT_DYNAMIC_CLASS(wxPDFMediaBackend, wxMediaBackend);
@@ -278,10 +277,10 @@ public:
 
     @onlyfor{wxmsw}
 
-    @library{wxbase}
+    @library{wxcore}
     @category{ctrl,ipc}
 
-    @see wxActiveXEvent, @ref page_samples_flash
+    @see wxActiveXEvent
 */
 class wxActiveXContainer : public wxControl
 {

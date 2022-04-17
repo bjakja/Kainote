@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by: Robert Vazan (sizers)
 // Created:     28.09.99
-// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,11 +17,11 @@
 
 class WXDLLIMPEXP_FWD_CORE wxButton;
 class WXDLLIMPEXP_FWD_CORE wxStaticBitmap;
-class WXDLLIMPEXP_FWD_ADV wxWizardEvent;
+class WXDLLIMPEXP_FWD_CORE wxWizardEvent;
 class WXDLLIMPEXP_FWD_CORE wxBoxSizer;
-class WXDLLIMPEXP_FWD_ADV wxWizardSizer;
+class WXDLLIMPEXP_FWD_CORE wxWizardSizer;
 
-class WXDLLIMPEXP_ADV wxWizard : public wxWizardBase
+class WXDLLIMPEXP_CORE wxWizard : public wxWizardBase
 {
 public:
     // ctor
@@ -30,7 +29,7 @@ public:
     wxWizard(wxWindow *parent,
              int id = wxID_ANY,
              const wxString& title = wxEmptyString,
-             const wxBitmap& bitmap = wxNullBitmap,
+             const wxBitmapBundle& bitmap = wxBitmapBundle(),
              const wxPoint& pos = wxDefaultPosition,
              long style = wxDEFAULT_DIALOG_STYLE)
     {
@@ -40,24 +39,24 @@ public:
     bool Create(wxWindow *parent,
              int id = wxID_ANY,
              const wxString& title = wxEmptyString,
-             const wxBitmap& bitmap = wxNullBitmap,
+             const wxBitmapBundle& bitmap = wxBitmapBundle(),
              const wxPoint& pos = wxDefaultPosition,
              long style = wxDEFAULT_DIALOG_STYLE);
     void Init();
     virtual ~wxWizard();
 
     // implement base class pure virtuals
-    virtual bool RunWizard(wxWizardPage *firstPage);
-    virtual wxWizardPage *GetCurrentPage() const;
-    virtual void SetPageSize(const wxSize& size);
-    virtual wxSize GetPageSize() const;
-    virtual void FitToPage(const wxWizardPage *firstPage);
-    virtual wxSizer *GetPageAreaSizer() const;
-    virtual void SetBorder(int border);
+    virtual bool RunWizard(wxWizardPage *firstPage) wxOVERRIDE;
+    virtual wxWizardPage *GetCurrentPage() const wxOVERRIDE;
+    virtual void SetPageSize(const wxSize& size) wxOVERRIDE;
+    virtual wxSize GetPageSize() const wxOVERRIDE;
+    virtual void FitToPage(const wxWizardPage *firstPage) wxOVERRIDE;
+    virtual wxSizer *GetPageAreaSizer() const wxOVERRIDE;
+    virtual void SetBorder(int border) wxOVERRIDE;
 
     /// set/get bitmap
-    const wxBitmap& GetBitmap() const { return m_bitmap; }
-    void SetBitmap(const wxBitmap& bitmap);
+    wxBitmap GetBitmap() const { return m_bitmap.GetBitmapFor(this); }
+    void SetBitmap(const wxBitmapBundle& bitmap);
 
     // implementation only from now on
     // -------------------------------
@@ -75,7 +74,7 @@ public:
     virtual void DoCreateControls();
 
     // Do the adaptation
-    virtual bool DoLayoutAdaptation();
+    virtual bool DoLayoutAdaptation() wxOVERRIDE;
 
     // Set/get bitmap background colour
     void SetBitmapBackgroundColour(const wxColour& colour) { m_bitmapBackgroundColour = colour; }
@@ -117,6 +116,9 @@ protected:
     void AddBackNextPair(wxBoxSizer *buttonRow);
     void AddButtonRow(wxBoxSizer *mainColumn);
 
+    // This function can be used as event handle for wxEVT_DPI_CHANGED event.
+    void WXHandleDPIChanged(wxDPIChangedEvent& event);
+
     // the page size requested by user
     wxSize m_sizePage;
 
@@ -124,13 +126,18 @@ protected:
     wxPoint m_posWizard;
 
     // wizard state
-    wxWizardPage *m_page;       // the current page or NULL
-    wxBitmap      m_bitmap;     // the default bitmap to show
+    wxWizardPage  *m_page;       // the current page or NULL
+    wxWizardPage  *m_firstpage;  // the page RunWizard started on or NULL
+    wxBitmapBundle m_bitmap;     // the default bitmap to show
 
     // wizard controls
     wxButton    *m_btnPrev,     // the "<Back" button
                 *m_btnNext;     // the "Next>" or "Finish" button
     wxStaticBitmap *m_statbmp;  // the control for the bitmap
+
+    // cached labels so their translations stay consistent
+    wxString    m_nextLabel,
+                m_finishLabel;
 
     // Border around page area sizer requested using SetBorder()
     int m_border;
@@ -161,8 +168,8 @@ protected:
 
     friend class wxWizardSizer;
 
-    DECLARE_DYNAMIC_CLASS(wxWizard)
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wxWizard);
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxWizard);
 };
 

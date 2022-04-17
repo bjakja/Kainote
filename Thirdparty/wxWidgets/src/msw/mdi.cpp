@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: Vadim Zeitlin on 2008-11-04 to use the base classes
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Julian Smart
 //              (c) 2008-2009 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -18,12 +17,9 @@
 // headers
 // ---------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_MDI && !defined(__WXUNIVERSAL__)
 
@@ -39,11 +35,13 @@
     #include "wx/settings.h"
     #include "wx/intl.h"
     #include "wx/log.h"
+    #include "wx/sizer.h"
     #include "wx/toolbar.h"
 #endif
 
 #include "wx/stockitem.h"
 #include "wx/msw/private.h"
+#include "wx/msw/private/winstyle.h"
 
 #include <string.h>
 
@@ -62,12 +60,17 @@ namespace
 // constants
 // ---------------------------------------------------------------------------
 
-// This range gives a maximum of 500 MDI children. Should be enough :-)
+// First ID for the MDI child menu item in the "Window" menu.
 const int wxFIRST_MDI_CHILD = 4100;
-const int wxLAST_MDI_CHILD = 4600;
 
-// The MDI "Window" menu label
-const char *WINDOW_MENU_LABEL = gettext_noop("&Window");
+// There can be no more than 9 children in the "Window" menu as beginning with
+// the tenth one they're not shown and "More windows..." menu item is used
+// instead.
+const int wxLAST_MDI_CHILD = wxFIRST_MDI_CHILD + 8;
+
+// The ID of the "More windows..." menu item is the next one after the last
+// child.
+const int wxID_MDI_MORE_WINDOWS = wxLAST_MDI_CHILD + 1;
 
 // ---------------------------------------------------------------------------
 // private functions
@@ -79,10 +82,10 @@ void MDISetMenu(wxWindow *win, HMENU hmenuFrame, HMENU hmenuWindow);
 
 // insert the window menu (subMenu) into menu just before "Help" submenu or at
 // the very end if not found
-void MDIInsertWindowMenu(wxWindow *win, WXHMENU hMenu, HMENU subMenu);
+void MDIInsertWindowMenu(wxWindow *win, WXHMENU hMenu, HMENU subMenu, const wxString& windowMenuLabelTranslated);
 
 // Remove the window menu
-void MDIRemoveWindowMenu(wxWindow *win, WXHMENU hMenu);
+void MDIRemoveWindowMenu(wxWindow *win, WXHMENU hMenu, const wxString& windowMenuLabelTranslated);
 
 // unpack the parameters of WM_MDIACTIVATE message
 void UnpackMDIActivate(WXWPARAM wParam, WXLPARAM lParam,
@@ -108,11 +111,12 @@ inline HMENU GetMDIWindowMenu(wxMDIParentFrame *frame)
 // wxWin macros
 // ---------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame, wxFrame)
-IMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame, wxFrame)
-IMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow, wxWindow)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIParentFrame, wxFrame);
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIChildFrame, wxFrame);
+wxIMPLEMENT_DYNAMIC_CLASS(wxMDIClientWindow, wxWindow);
 
-BEGIN_EVENT_TABLE(wxMDIParentFrame, wxFrame)
+wxBEGIN_EVENT_TABLE(wxMDIParentFrame, wxFrame)
+    EVT_ACTIVATE(wxMDIParentFrame::OnActivate)
     EVT_SIZE(wxMDIParentFrame::OnSize)
     EVT_ICONIZE(wxMDIParentFrame::OnIconized)
     EVT_SYS_COLOUR_CHANGED(wxMDIParentFrame::OnSysColourChanged)
@@ -123,15 +127,15 @@ BEGIN_EVENT_TABLE(wxMDIParentFrame, wxFrame)
     EVT_MENU_RANGE(wxID_MDI_WINDOW_FIRST, wxID_MDI_WINDOW_LAST,
                    wxMDIParentFrame::OnMDICommand)
 #endif // wxUSE_MENUS
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
+wxBEGIN_EVENT_TABLE(wxMDIChildFrame, wxFrame)
     EVT_IDLE(wxMDIChildFrame::OnIdle)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
-BEGIN_EVENT_TABLE(wxMDIClientWindow, wxWindow)
+wxBEGIN_EVENT_TABLE(wxMDIClientWindow, wxWindow)
     EVT_SCROLL(wxMDIClientWindow::OnScroll)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 // ===========================================================================
 // wxMDIParentFrame: the frame which contains the client window which manages
@@ -144,6 +148,8 @@ void wxMDIParentFrame::Init()
   // the default menu doesn't have any accelerators (even if we have it)
   m_accelWindowMenu = NULL;
 #endif // wxUSE_MENUS && wxUSE_ACCEL
+
+  m_activationNotHandled = false;
 }
 
 bool wxMDIParentFrame::Create(wxWindow *parent,
@@ -189,7 +195,11 @@ bool wxMDIParentFrame::Create(wxWindow *parent,
   msflags &= ~WS_VSCROLL;
   msflags &= ~WS_HSCROLL;
 
-  if ( !wxWindow::MSWCreate(wxApp::GetRegisteredClassName(wxT("wxMDIFrame")),
+  if ( !wxWindow::MSWCreate(wxApp::GetRegisteredClassName(
+                                    wxT("wxMDIFrame"), -1, 0,
+                                    (style & wxFULL_REPAINT_ON_RESIZE) ? wxApp::RegClass_Default
+                                                                       : wxApp::RegClass_ReturnNR
+                                   ),
                             title.t_str(),
                             pos, size,
                             msflags,
@@ -322,7 +332,12 @@ void wxMDIParentFrame::AddWindowMenu()
         // attach it to the menu bar.
         m_windowMenu->Attach(GetMenuBar());
 
-        MDIInsertWindowMenu(GetClientWindow(), m_hMenu, GetMDIWindowMenu(this));
+        // Store the current translation, we can't use _("Window") later in
+        // case the locale changes.
+        m_currentWindowMenuLabel = _("&Window");
+
+        MDIInsertWindowMenu(GetClientWindow(), m_hMenu, GetMDIWindowMenu(this),
+                            m_currentWindowMenuLabel);
     }
 }
 
@@ -330,7 +345,8 @@ void wxMDIParentFrame::RemoveWindowMenu()
 {
     if ( m_windowMenu )
     {
-        MDIRemoveWindowMenu(GetClientWindow(), m_hMenu);
+        MDIRemoveWindowMenu(GetClientWindow(), m_hMenu,
+                            m_currentWindowMenuLabel);
 
         m_windowMenu->Detach();
     }
@@ -367,15 +383,19 @@ void wxMDIParentFrame::SetWindowMenu(wxMenu* menu)
 {
     if ( menu != m_windowMenu )
     {
-        // notice that Remove/AddWindowMenu() are safe to call even when
-        // m_windowMenu is NULL
-        RemoveWindowMenu();
+        // We may not be showing the window menu currently if we don't have any
+        // children, and in this case we shouldn't remove/add it back right now.
+        const bool hasWindowMenu = GetActiveChild() != NULL;
+
+        if ( hasWindowMenu )
+            RemoveWindowMenu();
 
         delete m_windowMenu;
 
         m_windowMenu = menu;
 
-        AddWindowMenu();
+        if ( hasWindowMenu )
+            AddWindowMenu();
     }
 
 #if wxUSE_ACCEL
@@ -395,12 +415,11 @@ void wxMDIParentFrame::DoMenuUpdates(wxMenu* menu)
     wxMDIChildFrame *child = GetActiveChild();
     if ( child )
     {
-        wxEvtHandler* source = child->GetEventHandler();
         wxMenuBar* bar = child->GetMenuBar();
 
         if (menu)
         {
-            menu->UpdateUI(source);
+            menu->UpdateUI();
         }
         else
         {
@@ -408,7 +427,7 @@ void wxMDIParentFrame::DoMenuUpdates(wxMenu* menu)
             {
                 int nCount = bar->GetMenuCount();
                 for (int n = 0; n < nCount; n++)
-                    bar->GetMenu(n)->UpdateUI(source);
+                    bar->GetMenu(n)->UpdateUI();
             }
         }
     }
@@ -420,16 +439,33 @@ void wxMDIParentFrame::DoMenuUpdates(wxMenu* menu)
 
 wxMenuItem *wxMDIParentFrame::FindItemInMenuBar(int menuId) const
 {
-    wxMenuItem *item = wxFrame::FindItemInMenuBar(menuId);
-    if ( !item && GetActiveChild() )
-    {
-        item = GetActiveChild()->FindItemInMenuBar(menuId);
-    }
+    // We must look in the child menu first: if it has an item with the same ID
+    // as in our own menu bar, the child item should be used to determine
+    // whether it's currently enabled.
+    wxMenuItem *item = GetActiveChild()
+                            ? GetActiveChild()->FindItemInMenuBar(menuId)
+                            : NULL;
+    if ( !item )
+        item = wxFrame::FindItemInMenuBar(menuId);
 
     if ( !item && m_windowMenu )
         item = m_windowMenu->FindItem(menuId);
 
     return item;
+}
+
+wxMenu* wxMDIParentFrame::MSWFindMenuFromHMENU(WXHMENU hMenu)
+{
+    wxMenu* menu = GetActiveChild()
+                        ? GetActiveChild()->MSWFindMenuFromHMENU(hMenu)
+                        : NULL;
+    if ( !menu )
+        menu = wxFrame::MSWFindMenuFromHMENU(hMenu);
+
+    if ( !menu && m_windowMenu && GetHmenuOf(m_windowMenu) == hMenu )
+        menu = m_windowMenu;
+
+    return menu;
 }
 
 WXHMENU wxMDIParentFrame::MSWGetActiveMenu() const
@@ -453,12 +489,17 @@ WXHMENU wxMDIParentFrame::MSWGetActiveMenu() const
 
 void wxMDIParentFrame::UpdateClientSize()
 {
-    if ( GetClientWindow() )
-    {
-        int width, height;
-        GetClientSize(&width, &height);
+    int width, height;
+    GetClientSize(&width, &height);
 
-        GetClientWindow()->SetSize(0, 0, width, height);
+    if ( wxSizer* sizer = GetSizer() )
+    {
+        sizer->SetDimension(0, 0, width, height);
+    }
+    else
+    {
+        if ( GetClientWindow() )
+            GetClientWindow()->SetSize(0, 0, width, height);
     }
 }
 
@@ -562,8 +603,9 @@ WXLRESULT wxMDIParentFrame::MSWWindowProc(WXUINT message,
                 WXHWND hwnd;
                 UnpackCommand(wParam, lParam, &id, &hwnd, &cmd);
 
-                if ( cmd == 0 /* menu */ &&
-                        id >= SC_SIZE /* first system menu command */ )
+                if ( id == wxID_MDI_MORE_WINDOWS ||
+                     (cmd == 0 /* menu */ &&
+                        id >= SC_SIZE /* first system menu command */) )
                 {
                     MSWDefWindowProc(message, wParam, lParam);
                     processed = true;
@@ -591,24 +633,52 @@ WXLRESULT wxMDIParentFrame::MSWWindowProc(WXUINT message,
     return rc;
 }
 
+void wxMDIParentFrame::OnActivate(wxActivateEvent& WXUNUSED(event))
+{
+    // The base class version saves the current focus when we are being
+    // deactivated and restores it when the window is activated again, but this
+    // is not necessary here as DefWindowProc() for MDI parent frame already
+    // takes care of re-activating the MDI child that had been active the last
+    // time, and MDI children remember their own last focused child already,
+    // being subclasses of wxTLW.
+    //
+    // Moreover, in addition to being unnecessary, this can be actively harmful
+    // if we somehow don't have the focus any more at the moment of activation
+    // loss as happens when showing a standard file dialog under Windows 7, see
+    // #16635: in this case the base class just gives the focus to its first
+    // child, meaning that we can switch to a different MDI child, which is
+    // worse than losing focus inside the current child.
+    //
+    // So we don't let the base class have this event to prevent this from
+    // happening. But the event is not really processed, so we set a flag here
+    // which is used in HandleActivate() below to check if the event was really
+    // processed (and not skipped) in the user code or just reached this dummy
+    // handler.
+    m_activationNotHandled = true;
+}
+
 bool wxMDIParentFrame::HandleActivate(int state, bool minimized, WXHWND activate)
 {
     bool processed = false;
 
+    // Set the flag before testing it to ensure the only way for it to be true
+    // is to be set in our OnActivate() -- and not just remain set from the
+    // last time.
+    m_activationNotHandled = false;
+
     if ( wxWindow::HandleActivate(state, minimized, activate) )
     {
-        // already processed
-        processed = true;
+        // already processed, unless we artificially marked the event as
+        // handled in our own handler without really processing it
+        processed = !m_activationNotHandled;
     }
 
-    // If this window is an MDI parent, we must also send an OnActivate message
-    // to the current child.
-    if ( GetActiveChild() &&
-         ((state == WA_ACTIVE) || (state == WA_CLICKACTIVE)) )
+    // Also generate the (de)activation event for the current child, if any, to
+    // allow updating its state and, in particular, remembering or restoring
+    // its last focused window.
+    if ( GetActiveChild() )
     {
-        wxActivateEvent event(wxEVT_ACTIVATE, true, GetActiveChild()->GetId());
-        event.SetEventObject( GetActiveChild() );
-        if ( GetActiveChild()->HandleWindowEvent(event) )
+        if ( GetActiveChild()->HandleActivate(state, minimized, activate) )
             processed = true;
     }
 
@@ -628,9 +698,7 @@ void wxMDIParentFrame::OnMDIChild(wxCommandEvent& event)
             int childId = wxGetWindowId(child->GetHWND());
             if ( childId == event.GetId() )
             {
-                ::SendMessage( GetWinHwnd(GetClientWindow()),
-                        WM_MDIACTIVATE,
-                        (WPARAM)child->GetHWND(), 0);
+                wxStaticCast(child, wxMDIChildFrame)->Activate();
                 return;
             }
         }
@@ -655,7 +723,7 @@ void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
 
         case wxID_MDI_WINDOW_TILE_HORZ:
             wParam |= MDITILE_HORIZONTAL;
-            // fall through
+            wxFALLTHROUGH;
 
         case wxID_MDI_WINDOW_TILE_VERT:
             if ( !wParam )
@@ -687,20 +755,6 @@ void wxMDIParentFrame::OnMDICommand(wxCommandEvent& event)
 }
 
 #endif // wxUSE_MENUS
-
-bool wxMDIParentFrame::TryBefore(wxEvent& event)
-{
-    // menu (and toolbar) events should be sent to the active child frame
-    // first, if any
-    if ( event.GetEventType() == wxEVT_COMMAND_MENU_SELECTED )
-    {
-        wxMDIChildFrame * const child = GetActiveChild();
-        if ( child && child->ProcessWindowEventLocally(event) )
-            return true;
-    }
-
-    return wxMDIParentFrameBase::TryBefore(event);
-}
 
 WXLRESULT wxMDIParentFrame::MSWDefWindowProc(WXUINT message,
                                         WXWPARAM wParam,
@@ -758,7 +812,6 @@ bool wxMDIParentFrame::MSWTranslateMessage(WXMSG* msg)
 void wxMDIChildFrame::Init()
 {
     m_needsResize = true;
-    m_needsInitialShow = true;
 }
 
 bool wxMDIChildFrame::Create(wxMDIParentFrame *parent,
@@ -790,10 +843,11 @@ bool wxMDIChildFrame::Create(wxMDIParentFrame *parent,
 
   MDICREATESTRUCT mcs;
 
-  wxString className =
-      wxApp::GetRegisteredClassName(wxT("wxMDIChildFrame"), COLOR_WINDOW);
-  if ( !(style & wxFULL_REPAINT_ON_RESIZE) )
-      className += wxApp::GetNoRedrawClassSuffix();
+  wxString className = wxApp::GetRegisteredClassName(
+                               wxT("wxMDIChildFrame"), COLOR_WINDOW, 0,
+                               (style & wxFULL_REPAINT_ON_RESIZE) ? wxApp::RegClass_Default
+                                                                  : wxApp::RegClass_ReturnNR
+                              );
 
   mcs.szClass = className.t_str();
   mcs.szTitle = title.t_str();
@@ -827,7 +881,7 @@ bool wxMDIChildFrame::Create(wxMDIParentFrame *parent,
     msflags |= WS_THICKFRAME;
   if (style & wxSYSTEM_MENU)
     msflags |= WS_SYSMENU;
-  if ((style & wxMINIMIZE) || (style & wxICONIZE))
+  if (style & wxMINIMIZE)
     msflags |= WS_MINIMIZE;
   if (style & wxMAXIMIZE)
     msflags |= WS_MAXIMIZE;
@@ -862,7 +916,9 @@ wxMDIChildFrame::~wxMDIChildFrame()
     if ( !m_hWnd )
         return;
 
-    GetMDIParent()->RemoveMDIChild(this);
+    wxMDIParentFrame * const parent = GetMDIParent();
+
+    parent->RemoveMDIChild(this);
 
     // will be destroyed by DestroyChildren() but reset them before calling it
     // to avoid using dangling pointers if a callback comes in the meanwhile
@@ -875,15 +931,19 @@ wxMDIChildFrame::~wxMDIChildFrame()
 
     DestroyChildren();
 
-    MDIRemoveWindowMenu(NULL, m_hMenu);
+    MDIRemoveWindowMenu(NULL, m_hMenu, parent->MSWGetCurrentWindowMenuLabel());
+
+    // MDIRemoveWindowMenu() doesn't update the MDI menu when called with NULL
+    // window, so do it ourselves.
+    MDISetMenu(parent->GetClientWindow(),
+               (HMENU)parent->MSWGetActiveMenu(),
+               GetMDIWindowMenu(parent));
 
     MSWDestroyWindow();
 }
 
 bool wxMDIChildFrame::Show(bool show)
 {
-    m_needsInitialShow = false;
-
     if (!wxFrame::Show(show))
         return false;
 
@@ -992,12 +1052,15 @@ void wxMDIChildFrame::InternalSetMenuBar()
     wxMDIParentFrame * const parent = GetMDIParent();
 
     MDIInsertWindowMenu(parent->GetClientWindow(),
-                     m_hMenu, GetMDIWindowMenu(parent));
+                        m_hMenu, GetMDIWindowMenu(parent),
+                        parent->MSWGetCurrentWindowMenuLabel());
 }
 
 void wxMDIChildFrame::DetachMenuBar()
 {
-    MDIRemoveWindowMenu(NULL, m_hMenu);
+    wxMDIParentFrame * const parent = GetMDIParent();
+
+    MDIRemoveWindowMenu(NULL, m_hMenu, parent->MSWGetCurrentWindowMenuLabel());
     wxFrame::DetachMenuBar();
 }
 
@@ -1016,9 +1079,28 @@ void wxMDIChildFrame::Maximize(bool maximize)
     wxMDIParentFrame * const parent = GetMDIParent();
     if ( parent && parent->GetClientWindow() )
     {
+        if ( !IsShown() )
+        {
+            // Turn off redrawing in the MDI client window because otherwise
+            // maximizing it would also show it and we don't want this for
+            // hidden windows.
+            ::SendMessage(GetWinHwnd(parent->GetClientWindow()), WM_SETREDRAW,
+                          FALSE, 0L);
+        }
+
         ::SendMessage(GetWinHwnd(parent->GetClientWindow()),
                       maximize ? WM_MDIMAXIMIZE : WM_MDIRESTORE,
                       (WPARAM)GetHwnd(), 0);
+
+        if ( !IsShown() )
+        {
+            // Hide back the child window shown by maximizing it.
+            ::ShowWindow(GetHwnd(), SW_HIDE);
+
+            // Turn redrawing in the MDI client back on.
+            ::SendMessage(GetWinHwnd(parent->GetClientWindow()), WM_SETREDRAW,
+                          TRUE, 0L);
+        }
     }
 }
 
@@ -1037,6 +1119,11 @@ void wxMDIChildFrame::Activate()
     wxMDIParentFrame * const parent = GetMDIParent();
     if ( parent && parent->GetClientWindow() )
     {
+        // Activating an iconized MDI frame doesn't do anything, so restore it
+        // first to really present it to the user.
+        if ( IsIconized() )
+            Restore();
+
         ::SendMessage(GetWinHwnd(parent->GetClientWindow()), WM_MDIACTIVATE,
                       (WPARAM) GetHwnd(), 0);
     }
@@ -1067,7 +1154,7 @@ WXLRESULT wxMDIChildFrame::MSWWindowProc(WXUINT message,
 
                 processed = HandleMDIActivate(act, hwndAct, hwndDeact);
             }
-            // fall through
+            wxFALLTHROUGH;
 
         case WM_MOVE:
             // must pass WM_MOVE to DefMDIChildProc() to recalculate MDI client
@@ -1170,32 +1257,13 @@ bool wxMDIChildFrame::HandleWindowPosChanging(void *pos)
 
 bool wxMDIChildFrame::HandleGetMinMaxInfo(void *mmInfo)
 {
-    MINMAXINFO *info = (MINMAXINFO *)mmInfo;
+    // Get the window max size from DefMDIChildProc() as it calculates it
+    // correctly from the size of the MDI parent frame.
+    MSWDefWindowProc(WM_GETMINMAXINFO, 0, (LPARAM)mmInfo);
 
-    // let the default window proc calculate the size of MDI children
-    // frames because it is based on the size of the MDI client window,
-    // not on the values specified in wxWindow m_max variables
-    bool processed = MSWDefWindowProc(WM_GETMINMAXINFO, 0, (LPARAM)mmInfo) != 0;
-
-    int minWidth = GetMinWidth(),
-        minHeight = GetMinHeight();
-
-    // but allow GetSizeHints() to set the min size
-    if ( minWidth != wxDefaultCoord )
-    {
-        info->ptMinTrackSize.x = minWidth;
-
-        processed = true;
-    }
-
-    if ( minHeight != wxDefaultCoord )
-    {
-        info->ptMinTrackSize.y = minHeight;
-
-        processed = true;
-    }
-
-    return processed;
+    // But then handle the message as usual at the base class level to allow
+    // overriding min/max frame size as for the normal frames.
+    return false;
 }
 
 // ---------------------------------------------------------------------------
@@ -1254,24 +1322,20 @@ bool wxMDIChildFrame::ResetWindowStyle(void *vrect)
     if (!pChild || (pChild == this))
     {
         HWND hwndClient = GetWinHwnd(pFrameWnd->GetClientWindow());
-        DWORD dwStyle = ::GetWindowLong(hwndClient, GWL_EXSTYLE);
+
+        wxMSWWinStyleUpdater updateStyle(hwndClient);
 
         // we want to test whether there is a maximized child, so just set
         // dwThisStyle to 0 if there is no child at all
         DWORD dwThisStyle = pChild
             ? ::GetWindowLong(GetWinHwnd(pChild), GWL_STYLE) : 0;
-        DWORD dwNewStyle = dwStyle;
-        if ( dwThisStyle & WS_MAXIMIZE )
-            dwNewStyle &= ~(WS_EX_CLIENTEDGE);
-        else
-            dwNewStyle |= WS_EX_CLIENTEDGE;
+        updateStyle.TurnOnOrOff(!(dwThisStyle & WS_MAXIMIZE), WS_EX_CLIENTEDGE);
 
-        if (dwStyle != dwNewStyle)
+        if ( updateStyle.Apply() )
         {
             // force update of everything
             ::RedrawWindow(hwndClient, NULL, NULL,
                            RDW_INVALIDATE | RDW_ALLCHILDREN);
-            ::SetWindowLong(hwndClient, GWL_EXSTYLE, dwNewStyle);
             ::SetWindowPos(hwndClient, NULL, 0, 0, 0, 0,
                            SWP_FRAMECHANGED | SWP_NOACTIVATE |
                            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER |
@@ -1391,16 +1455,6 @@ void wxMDIClientWindow::DoSetSize(int x, int y, int width, int height, int sizeF
 
 void wxMDIChildFrame::OnIdle(wxIdleEvent& event)
 {
-    // wxMSW prior to 2.5.3 created MDI child frames as visible, which resulted
-    // in flicker e.g. when the frame contained controls with non-trivial
-    // layout. Since 2.5.3, the frame is created hidden as all other top level
-    // windows. In order to maintain backward compatibility, the frame is shown
-    // in OnIdle, unless Show(false) was called by the programmer before.
-    if ( m_needsInitialShow )
-    {
-        Show(true);
-    }
-
     // MDI child frames get their WM_SIZE when they're constructed but at this
     // moment they don't have any children yet so all child windows will be
     // positioned incorrectly when they are added later - to fix this, we
@@ -1426,13 +1480,18 @@ void MDISetMenu(wxWindow *win, HMENU hmenuFrame, HMENU hmenuWindow)
 {
     if ( hmenuFrame || hmenuWindow )
     {
+        // Under XP, the last error seems to be not reset by this function, so
+        // ensure we don't report spurious errors below when setting the menu
+        // initially.
+        ::SetLastError(ERROR_SUCCESS);
+
         if ( !::SendMessage(GetWinHwnd(win),
                             WM_MDISETMENU,
                             (WPARAM)hmenuFrame,
                             (LPARAM)hmenuWindow) )
         {
-            DWORD err = ::GetLastError();
-            if ( err )
+            const DWORD err = ::GetLastError();
+            if ( err != ERROR_SUCCESS )
             {
                 wxLogApiError(wxT("SendMessage(WM_MDISETMENU)"), err);
             }
@@ -1448,32 +1507,79 @@ void MDISetMenu(wxWindow *win, HMENU hmenuFrame, HMENU hmenuWindow)
     ::DrawMenuBar(GetWinHwnd(parent));
 }
 
-void MDIInsertWindowMenu(wxWindow *win, WXHMENU hMenu, HMENU menuWin)
+class MenuIterator
+{
+public:
+    explicit MenuIterator(HMENU hmenu)
+        : m_hmenu(hmenu),
+          m_numItems(::GetMenuItemCount(hmenu)),
+          m_pos(-1)
+    {
+        m_mii.fMask = MIIM_STRING;
+        m_mii.dwTypeData = m_buf;
+    }
+
+    bool GetNext(wxString& str)
+    {
+        // Loop until we get the label of the next menu item.
+        for ( m_pos++; m_pos < m_numItems; m_pos++ )
+        {
+            // As cch field is updated by GetMenuItemInfo(), it's important to
+            // reset it to the size of the buffer before each call.
+            m_mii.cch = WXSIZEOF(m_buf);
+
+            if ( !::GetMenuItemInfo(m_hmenu, m_pos, TRUE, &m_mii) )
+            {
+                wxLogLastError(wxString::Format("GetMenuItemInfo(%d)", m_pos));
+                continue;
+            }
+
+            if ( !m_mii.cch )
+            {
+                // This isn't a string menu at all.
+                continue;
+            }
+
+            str = m_buf;
+            return true;
+        }
+
+        return false;
+    }
+
+    int GetPos() const { return m_pos; }
+
+private:
+    const HMENU m_hmenu;
+    const int m_numItems;
+    int m_pos;
+
+    wxChar m_buf[1024];
+    WinStruct<MENUITEMINFO> m_mii;
+
+    wxDECLARE_NO_COPY_CLASS(MenuIterator);
+};
+
+void MDIInsertWindowMenu(wxWindow *win, WXHMENU hMenu, HMENU menuWin, const wxString& windowMenuLabelTranslated)
 {
     HMENU hmenu = (HMENU)hMenu;
 
     if ( menuWin )
     {
         // Try to insert Window menu in front of Help, otherwise append it.
-        int N = GetMenuItemCount(hmenu);
         bool inserted = false;
-        for ( int i = 0; i < N; i++ )
+        wxString buf;
+        MenuIterator it(hmenu);
+        while ( it.GetNext(buf) )
         {
-            wxChar buf[256];
-            if ( !::GetMenuString(hmenu, i, buf, WXSIZEOF(buf), MF_BYPOSITION) )
-            {
-                wxLogLastError(wxT("GetMenuString"));
-
-                continue;
-            }
-
-            const wxString label = wxStripMenuCodes(buf);
+            const wxString label = wxStripMenuCodes(buf, wxStrip_Menu);
             if ( label == wxGetStockLabel(wxID_HELP, wxSTOCK_NOFLAGS) )
             {
                 inserted = true;
-                ::InsertMenu(hmenu, i, MF_BYPOSITION | MF_POPUP | MF_STRING,
+                ::InsertMenu(hmenu, it.GetPos(),
+                             MF_BYPOSITION | MF_POPUP | MF_STRING,
                              (UINT_PTR)menuWin,
-                             wxString(wxGetTranslation(WINDOW_MENU_LABEL)).t_str());
+                             windowMenuLabelTranslated.t_str());
                 break;
             }
         }
@@ -1482,39 +1588,26 @@ void MDIInsertWindowMenu(wxWindow *win, WXHMENU hMenu, HMENU menuWin)
         {
             ::AppendMenu(hmenu, MF_POPUP,
                          (UINT_PTR)menuWin,
-                         wxString(wxGetTranslation(WINDOW_MENU_LABEL)).t_str());
+                         windowMenuLabelTranslated.t_str());
         }
     }
 
     MDISetMenu(win, hmenu, menuWin);
 }
 
-void MDIRemoveWindowMenu(wxWindow *win, WXHMENU hMenu)
+void MDIRemoveWindowMenu(wxWindow *win, WXHMENU hMenu, const wxString& windowMenuLabelTranslated)
 {
     HMENU hmenu = (HMENU)hMenu;
 
     if ( hmenu )
     {
-        wxChar buf[1024];
-
-        int N = ::GetMenuItemCount(hmenu);
-        for ( int i = 0; i < N; i++ )
+        wxString buf;
+        MenuIterator it(hmenu);
+        while ( it.GetNext(buf) )
         {
-            if ( !::GetMenuString(hmenu, i, buf, WXSIZEOF(buf), MF_BYPOSITION) )
+            if ( wxStrcmp(buf, windowMenuLabelTranslated) == 0 )
             {
-                // Ignore successful read of menu string with length 0 which
-                // occurs, for example, for a maximized MDI child system menu
-                if ( ::GetLastError() != 0 )
-                {
-                    wxLogLastError(wxT("GetMenuString"));
-                }
-
-                continue;
-            }
-
-            if ( wxStrcmp(buf, wxGetTranslation(WINDOW_MENU_LABEL)) == 0 )
-            {
-                if ( !::RemoveMenu(hmenu, i, MF_BYPOSITION) )
+                if ( !::RemoveMenu(hmenu, it.GetPos(), MF_BYPOSITION) )
                 {
                     wxLogLastError(wxT("RemoveMenu"));
                 }

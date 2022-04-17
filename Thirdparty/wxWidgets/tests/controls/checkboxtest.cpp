@@ -3,7 +3,6 @@
 // Purpose:     wCheckBox unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-14
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_CHECKBOX
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -27,8 +23,8 @@ class CheckBoxTestCase : public CppUnit::TestCase
 public:
     CheckBoxTestCase() { }
 
-    void setUp();
-    void tearDown();
+    void setUp() wxOVERRIDE;
+    void tearDown() wxOVERRIDE;
 
 private:
     CPPUNIT_TEST_SUITE( CheckBoxTestCase );
@@ -54,6 +50,7 @@ private:
     // any meaning otherwise.
     bool CreateCheckBox(long style)
     {
+        wxDELETE( m_check );
         m_check = new wxCheckBox(wxTheApp->GetTopWindow(), wxID_ANY, "Check box",
                                  wxDefaultPosition, wxDefaultSize, style);
         return false;
@@ -62,7 +59,7 @@ private:
 
     wxCheckBox* m_check;
 
-    DECLARE_NO_COPY_CLASS(CheckBoxTestCase)
+    wxDECLARE_NO_COPY_CLASS(CheckBoxTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -83,7 +80,7 @@ void CheckBoxTestCase::tearDown()
 
 void CheckBoxTestCase::Check()
 {
-    EventCounter clicked(m_check, wxEVT_COMMAND_CHECKBOX_CLICKED);
+    EventCounter clicked(m_check, wxEVT_CHECKBOX);
 
     //We should be unchecked by default
     CPPUNIT_ASSERT(!m_check->IsChecked());
@@ -111,7 +108,6 @@ void CheckBoxTestCase::Check()
 #ifdef wxHAS_3STATE_CHECKBOX
 void CheckBoxTestCase::ThirdState()
 {
-    wxDELETE(m_check);
     CreateCheckBox(wxCHK_3STATE);
 
     CPPUNIT_ASSERT_EQUAL(wxCHK_UNCHECKED, m_check->Get3StateValue());
@@ -129,7 +125,6 @@ void CheckBoxTestCase::ThirdState()
 
 void CheckBoxTestCase::ThirdStateUser()
 {
-    wxDELETE(m_check);
     CreateCheckBox(wxCHK_3STATE | wxCHK_ALLOW_3RD_STATE_FOR_USER);
 
     CPPUNIT_ASSERT_EQUAL(wxCHK_UNCHECKED, m_check->Get3StateValue());
@@ -148,14 +143,12 @@ void CheckBoxTestCase::ThirdStateUser()
 void CheckBoxTestCase::InvalidStyles()
 {
     // Check that using incompatible styles doesn't work.
-    wxDELETE( m_check );
     WX_ASSERT_FAILS_WITH_ASSERT( CreateCheckBox(wxCHK_2STATE | wxCHK_3STATE) );
 #if !wxDEBUG_LEVEL
     CPPUNIT_ASSERT( !m_check->Is3State() );
     CPPUNIT_ASSERT( !m_check->Is3rdStateAllowedForUser() );
 #endif
 
-    wxDELETE( m_check );
     WX_ASSERT_FAILS_WITH_ASSERT(
         CreateCheckBox(wxCHK_2STATE | wxCHK_ALLOW_3RD_STATE_FOR_USER) );
 #if !wxDEBUG_LEVEL
@@ -164,7 +157,6 @@ void CheckBoxTestCase::InvalidStyles()
 #endif
 
     // wxCHK_ALLOW_3RD_STATE_FOR_USER without wxCHK_3STATE doesn't work.
-    wxDELETE( m_check );
     WX_ASSERT_FAILS_WITH_ASSERT( CreateCheckBox(wxCHK_ALLOW_3RD_STATE_FOR_USER) );
 }
 

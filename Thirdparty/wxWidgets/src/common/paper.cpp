@@ -4,17 +4,13 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PRINTING_ARCHITECTURE
 
@@ -40,8 +36,8 @@
 #endif
  // End __WXMSW__
 
-IMPLEMENT_DYNAMIC_CLASS(wxPrintPaperType, wxObject)
-// IMPLEMENT_DYNAMIC_CLASS(wxPrintPaperDatabase, wxList)
+wxIMPLEMENT_DYNAMIC_CLASS(wxPrintPaperType, wxObject);
+// wxIMPLEMENT_DYNAMIC_CLASS(wxPrintPaperDatabase, wxList);
 
 /*
  * Paper size database for all platforms
@@ -51,16 +47,15 @@ wxPrintPaperType::wxPrintPaperType()
 {
     m_paperId = wxPAPER_NONE;
     m_platformId = 0;
-    m_paperName = wxEmptyString;
     m_width = 0;
     m_height = 0;
 }
 
 wxPrintPaperType::wxPrintPaperType(wxPaperSize paperId, int platformId, const wxString& name, int w, int h)
+    : m_paperName(name)
 {
     m_paperId = paperId;
     m_platformId = platformId;
-    m_paperName = name;
     m_width = w;
     m_height = h;
 }
@@ -79,7 +74,7 @@ WX_DECLARE_LIST(wxPrintPaperType, wxPrintPaperTypeList);
 #include "wx/listimpl.cpp"
 WX_DEFINE_LIST(wxPrintPaperTypeList)
 
-wxPrintPaperDatabase* wxThePrintPaperDatabase = nullptr;
+wxPrintPaperDatabase* wxThePrintPaperDatabase = NULL;
 
 wxPrintPaperDatabase::wxPrintPaperDatabase()
 {
@@ -136,7 +131,7 @@ void wxPrintPaperDatabase::CreateDatabase()
     WXADDPAPER(wxPAPER_FANFOLD_STD_GERMAN, DMPAPER_FANFOLD_STD_GERMAN, wxTRANSLATE("German Std Fanfold, 8 1/2 x 12 in"), 2159, 3048);
     WXADDPAPER(wxPAPER_FANFOLD_LGL_GERMAN, DMPAPER_FANFOLD_LGL_GERMAN, wxTRANSLATE("German Legal Fanfold, 8 1/2 x 13 in"), 2159, 3302);
 
-    WXADDPAPER(wxPAPER_ISO_B4,             DMPAPER_ISO_B4,             wxTRANSLATE("B4 (ISO) 250 x 353 mm"), 2500, 2530);
+    WXADDPAPER(wxPAPER_ISO_B4,             DMPAPER_ISO_B4,             wxTRANSLATE("B4 (ISO) 250 x 353 mm"), 2500, 3530);
     WXADDPAPER(wxPAPER_JAPANESE_POSTCARD,  DMPAPER_JAPANESE_POSTCARD,  wxTRANSLATE("Japanese Postcard 100 x 148 mm"), 1000, 1480);
     WXADDPAPER(wxPAPER_9X11,               DMPAPER_9X11,               wxTRANSLATE("9 x 11 in"), 2286, 2794);
     WXADDPAPER(wxPAPER_10X11,              DMPAPER_10X11,              wxTRANSLATE("10 x 11 in"), 2540, 2794);
@@ -241,16 +236,16 @@ void wxPrintPaperDatabase::AddPaperType(wxPaperSize paperId, int platformId, con
     m_list->push_back(tmp);
 }
 
-wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxString& name)
+wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxString& name) const
 {
     wxStringToPrintPaperTypeHashMap::iterator it = m_map->find(name);
     if (it != m_map->end())
         return it->second;
     else
-        return nullptr;
+        return NULL;
 }
 
-wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(wxPaperSize id)
+wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(wxPaperSize id) const
 {
     typedef wxStringToPrintPaperTypeHashMap::iterator iterator;
 
@@ -261,10 +256,10 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(wxPaperSize id)
             return paperType;
     }
 
-    return nullptr;
+    return NULL;
 }
 
-wxPrintPaperType *wxPrintPaperDatabase::FindPaperTypeByPlatformId(int id)
+wxPrintPaperType *wxPrintPaperDatabase::FindPaperTypeByPlatformId(int id) const
 {
     typedef wxStringToPrintPaperTypeHashMap::iterator iterator;
 
@@ -275,10 +270,10 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperTypeByPlatformId(int id)
             return paperType;
     }
 
-    return nullptr;
+    return NULL;
 }
 
-wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxSize& sz)
+wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxSize& sz) const
 {
     // Take the item ordering into account so that the more common types
     // are likely to be taken into account first. This fixes problems with,
@@ -292,11 +287,11 @@ wxPrintPaperType *wxPrintPaperDatabase::FindPaperType(const wxSize& sz)
             return paperType;
     }
 
-    return nullptr;
+    return NULL;
 }
 
 // Convert name to size id
-wxPaperSize wxPrintPaperDatabase::ConvertNameToId(const wxString& name)
+wxPaperSize wxPrintPaperDatabase::ConvertNameToId(const wxString& name) const
 {
     wxPrintPaperType* type = FindPaperType(name);
     if (type)
@@ -306,7 +301,7 @@ wxPaperSize wxPrintPaperDatabase::ConvertNameToId(const wxString& name)
 }
 
 // Convert size id to name
-wxString wxPrintPaperDatabase::ConvertIdToName(wxPaperSize paperId)
+wxString wxPrintPaperDatabase::ConvertIdToName(wxPaperSize paperId) const
 {
     wxPrintPaperType* type = FindPaperType(paperId);
     if (type)
@@ -316,7 +311,7 @@ wxString wxPrintPaperDatabase::ConvertIdToName(wxPaperSize paperId)
 }
 
 // Get the paper size
-wxSize wxPrintPaperDatabase::GetSize(wxPaperSize paperId)
+wxSize wxPrintPaperDatabase::GetSize(wxPaperSize paperId) const
 {
     wxPrintPaperType* type = FindPaperType(paperId);
     if (type)
@@ -326,7 +321,7 @@ wxSize wxPrintPaperDatabase::GetSize(wxPaperSize paperId)
 }
 
 // Get the paper size
-wxPaperSize wxPrintPaperDatabase::GetSize(const wxSize& size)
+wxPaperSize wxPrintPaperDatabase::GetSize(const wxSize& size) const
 {
     wxPrintPaperType* type = FindPaperType(size);
     if (type)
@@ -351,14 +346,14 @@ wxPrintPaperType* wxPrintPaperDatabase::Item(size_t index) const
 
 class WXDLLEXPORT wxPrintPaperModule: public wxModule
 {
-DECLARE_DYNAMIC_CLASS(wxPrintPaperModule)
+    wxDECLARE_DYNAMIC_CLASS(wxPrintPaperModule);
 public:
     wxPrintPaperModule() {}
-    bool OnInit();
-    void OnExit();
+    bool OnInit() wxOVERRIDE;
+    void OnExit() wxOVERRIDE;
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxPrintPaperModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxPrintPaperModule, wxModule);
 
 /*
  * Initialization/cleanup module

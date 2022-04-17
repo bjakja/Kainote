@@ -2,7 +2,6 @@
 // Name:        vscroll.h
 // Purpose:     interface of wxVarHScrollHelper
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -481,7 +480,7 @@ protected:
     the need to specify class scope in your wxHVScrolledWindow derived class
     when using wxVarScrollHelperBase functionality.
 
-    Like all three of it's scroll helper base classes, this class is mostly
+    Like all three of its scroll helper base classes, this class is mostly
     only useful to those classes built into wxWidgets deriving from here, and
     this documentation is mostly only provided for referencing the functions
     provided by this class. You will likely want to derive your window from

@@ -3,7 +3,6 @@
  * Purpose:     wxGTK-specific settings consistency checks
  * Author:      Vadim Zeitlin
  * Created:     2007-07-19 (extracted from wx/chkconf.h)
- * RCS-ID:      $Id$
  * Copyright:   (c) 2000-2007 Vadim Zeitlin <vadim@wxwidgets.org>
  * Licence:     wxWindows licence
  */
@@ -43,6 +42,11 @@
 #if wxUSE_METAFILE
 #   undef  wxUSE_METAFILE
 #   define wxUSE_METAFILE 0
+#endif
+
+#if wxUSE_ENH_METAFILE
+#   undef  wxUSE_ENH_METAFILE
+#   define wxUSE_ENH_METAFILE 0
 #endif
 
 #ifndef __UNIX__

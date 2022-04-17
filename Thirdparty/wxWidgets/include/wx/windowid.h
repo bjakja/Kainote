@@ -3,7 +3,6 @@
 // Purpose:     wxWindowID class - a class for managing window ids
 // Author:      Brian Vanderburg II
 // Created:     2007-09-21
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Brian Vanderburg II
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,7 @@
 #ifndef _WX_WINDOWID_H_
 #define _WX_WINDOWID_H_
 
-// NB: do not include defs.h as we are included from it
-
-typedef int wxWindowID;
+#include "wx/defs.h"
 
 // ----------------------------------------------------------------------------
 // wxWindowIDRef: reference counted id value
@@ -43,7 +40,7 @@ public:
 
     wxWindowIDRef(long id)
     {
-        Init(id);
+        Init(wxWindowID(id));
     }
 
     wxWindowIDRef(const wxWindowIDRef& id)
@@ -66,7 +63,7 @@ public:
 
     wxWindowIDRef& operator=(long id)
     {
-        Assign(id);
+        Assign(wxWindowID(id));
         return *this;
     }
 

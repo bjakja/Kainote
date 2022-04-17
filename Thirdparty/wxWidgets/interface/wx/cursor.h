@@ -2,7 +2,6 @@
 // Name:        cursor.h
 // Purpose:     interface of wxCursor
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -135,15 +134,16 @@ public:
             platforms:
             - under Windows, it defaults to @c wxBITMAP_TYPE_CUR_RESOURCE.
               Other permitted types under Windows are @c wxBITMAP_TYPE_CUR
-              (to load a cursor from a .cur cursor file) and @c wxBITMAP_TYPE_ICO
-              (to load a cursor from a .ico icon file).
+              (to load a cursor from a .cur cursor file), @c wxBITMAP_TYPE_ICO
+              (to load a cursor from a .ico icon file) and @c wxBITMAP_TYPE_ANI
+              (to load a cursor from a .ani icon file).
             - under MacOS, it defaults to @c wxBITMAP_TYPE_MACCURSOR_RESOURCE;
-              when specifying a string resource name, first the color cursors 'crsr' 
-              and then the black/white cursors 'CURS' in the resource chain are scanned 
-              through. Note that resource forks are deprecated on OS X so this
+              when specifying a string resource name, first the color cursors 'crsr'
+              and then the black/white cursors 'CURS' in the resource chain are scanned
+              through. Note that resource forks are deprecated on macOS so this
               is only available for legacy reasons and should not be used in
               new code.
-            - under GTK, it defaults to @c wxBITMAP_TYPE_XPM. 
+            - under GTK, it defaults to @c wxBITMAP_TYPE_XPM.
               See the wxCursor(const wxImage& image) ctor for more info.
             - under X11, it defaults to @c wxBITMAP_TYPE_XPM.
             - under Motif, it defaults to @c wxBITMAP_TYPE_XBM.
@@ -191,6 +191,17 @@ public:
     wxCursor(const wxImage& image);
 
     /**
+        Constructs a cursor from XPM data.
+
+        In versions of wxWidgets until 3.1.6 constructing wxCursor from XPM
+        data implicitly used wxImage constructor from XPM data and wxCursor
+        constructor from wxImage. Since 3.1.6 this constructor overload is
+        available to allow constructing wxCursor from XPM to still work, even
+        though wxImage constructor from XPM is now @c explicit.
+     */
+    wxCursor(const char* const* xpmData);
+
+    /**
         Copy constructor, uses @ref overview_refcount "reference counting".
 
         @param cursor
@@ -213,6 +224,19 @@ public:
         Returns @true if cursor data is present.
     */
     virtual bool IsOk() const;
+
+    /**
+        Returns the coordinates of the cursor hot spot.
+
+        The hot spot is the point at which the mouse is actually considered to
+        be when this cursor is used.
+
+        This method is currently only implemented in wxMSW and wxGTK2+ and
+        simply returns ::wxDefaultPosition in the other ports.
+
+        @since 3.1.0
+     */
+    wxPoint GetHotSpot() const;
 
     /**
         Assignment operator, using @ref overview_refcount "reference counting".

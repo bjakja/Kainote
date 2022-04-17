@@ -3,7 +3,6 @@
 // Purpose:     File system watcher impl classes
 // Author:      Bartosz Bekier
 // Created:     2009-05-26
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Bartosz Bekier <bartosz.bekier@gmail.com>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -35,7 +34,7 @@ public:
 
             wxDir dir(winfo.GetPath());
             wxCHECK_RET( dir.IsOpened(),
-                  wxString::Format("Unable to open dir '%s'", winfo.GetPath()));
+                  wxString::Format(wxASCII_STR("Unable to open dir '%s'"), winfo.GetPath()));
 
             wxString filename;
             bool ret = dir.GetFirst(&filename);

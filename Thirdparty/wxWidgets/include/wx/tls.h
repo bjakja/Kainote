@@ -3,7 +3,6 @@
 // Purpose:     Implementation of thread local storage
 // Author:      Vadim Zeitlin
 // Created:     2008-08-08
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,7 @@
     #define wxTHREAD_SPECIFIC_DECL __thread
 // MSVC has its own version which might be supported by some other Windows
 // compilers, to be tested
-#elif wxCHECK_VISUALC_VERSION(7)
+#elif defined(__VISUALC__)
     #define wxHAS_COMPILER_TLS
     #define wxTHREAD_SPECIFIC_DECL __declspec(thread)
 #endif // compilers
@@ -45,6 +44,7 @@
 
 #ifdef wxHAS_COMPILER_TLS
     #define wxTLS_TYPE(T) wxTHREAD_SPECIFIC_DECL T
+    #define wxTLS_TYPE_REF(T) T&
     #define wxTLS_PTR(var) (&(var))
     #define wxTLS_VALUE(var) (var)
 #else // !wxHAS_COMPILER_TLS
@@ -56,8 +56,6 @@
 
     #if defined(__WINDOWS__)
         #include "wx/msw/tls.h"
-    #elif defined(__OS2__)
-        #include "wx/os2/tls.h"
     #elif defined(__UNIX__)
         #include "wx/unix/tls.h"
     #else
@@ -132,10 +130,11 @@
     private:
         wxTlsKey m_key;
 
-        DECLARE_NO_COPY_TEMPLATE_CLASS(wxTlsValue, T)
+        wxDECLARE_NO_COPY_TEMPLATE_CLASS(wxTlsValue, T);
     };
 
     #define wxTLS_TYPE(T) wxTlsValue<T>
+    #define wxTLS_TYPE_REF(T) wxTLS_TYPE(T)&
     #define wxTLS_PTR(var) ((var).Get())
     #define wxTLS_VALUE(var) (*(var))
 #endif // wxHAS_COMPILER_TLS/!wxHAS_COMPILER_TLS

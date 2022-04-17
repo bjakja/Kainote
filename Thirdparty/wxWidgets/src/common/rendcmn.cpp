@@ -4,8 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     28.07.03
-// RCS-ID:      $Id$
-// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2003 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +15,9 @@
 // ----------------------------------------------------------------------------
 // headers
 // ----------------------------------------------------------------------------
+
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -58,19 +54,18 @@ public:
             DoInit();
         }
 
-        return get() != nullptr;
+        return get() != NULL;
     }
 
     // return the global and unique wxRendererPtr
     static wxRendererPtr& Get();
 
 private:
-    wxRendererPtr() : wxRendererPtrBase(nullptr) { m_initialized = false; }
+    wxRendererPtr() : wxRendererPtrBase(NULL) { m_initialized = false; }
 
     void DoInit()
     {
-        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
-        if ( traits )
+        if ( wxAppTraits *traits = wxApp::GetTraitsIfExists() )
         {
             // ask the traits object to create a renderer for us
             reset(traits->CreateRenderer());
@@ -173,7 +168,7 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
 
     wxDynamicLibrary dll(fullname);
     if ( !dll.IsLoaded() )
-        return nullptr;
+        return NULL;
 
     // each theme DLL must export a wxCreateRenderer() function with this
     // signature
@@ -181,12 +176,12 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
 
     wxDYNLIB_FUNCTION(wxCreateRenderer_t, wxCreateRenderer, dll);
     if ( !pfnwxCreateRenderer )
-        return nullptr;
+        return NULL;
 
     // create a renderer object
     wxRendererNative *renderer = (*pfnwxCreateRenderer)();
     if ( !renderer )
-        return nullptr;
+        return NULL;
 
     // check that its version is compatible with ours
     wxRendererVersion ver = renderer->GetVersion();
@@ -196,7 +191,7 @@ wxRendererNative *wxRendererNative::Load(const wxString& name)
                    name.c_str(), ver.version, ver.age);
         delete renderer;
 
-        return nullptr;
+        return NULL;
     }
 
     // finally wrap the renderer in an object which will delete it and unload

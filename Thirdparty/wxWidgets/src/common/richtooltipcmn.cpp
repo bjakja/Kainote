@@ -3,7 +3,6 @@
 // Purpose:     wxRichToolTip implementation common to all platforms.
 // Author:      Vadim Zeitlin
 // Created:     2011-10-18
-// RCS-ID:      $Id: wxhead.cpp,v 1.11 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RICHTOOLTIP
 
@@ -57,9 +53,10 @@ void wxRichToolTip::SetIcon(const wxIcon& icon)
     m_impl->SetCustomIcon(icon);
 }
 
-void wxRichToolTip::SetTimeout(unsigned milliseconds)
+void wxRichToolTip::SetTimeout(unsigned milliseconds,
+                               unsigned millisecondsDelay)
 {
-    m_impl->SetTimeout(milliseconds);
+    m_impl->SetTimeout(milliseconds, millisecondsDelay);
 }
 
 void wxRichToolTip::SetTipKind(wxTipKind tipKind)
@@ -72,11 +69,11 @@ void wxRichToolTip::SetTitleFont(const wxFont& font)
     m_impl->SetTitleFont(font);
 }
 
-void wxRichToolTip::ShowFor(wxWindow* win)
+void wxRichToolTip::ShowFor(wxWindow* win, const wxRect* rect)
 {
     wxCHECK_RET( win, wxS("Must have a valid window") );
 
-    m_impl->ShowFor(win);
+    m_impl->ShowFor(win, rect);
 }
 
 wxRichToolTip::~wxRichToolTip()

@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxRichTextCtrl
 // Author:      Julian Smart
 // Created:     2006-11-08
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,14 +14,14 @@
 
 #if wxUSE_XRC && wxUSE_RICHTEXT
 
-class WXDLLIMPEXP_XRC wxRichTextCtrlXmlHandler : public wxXmlResourceHandler
+class WXDLLIMPEXP_RICHTEXT wxRichTextCtrlXmlHandler : public wxXmlResourceHandler
 {
-    DECLARE_DYNAMIC_CLASS(wxRichTextCtrlXmlHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxRichTextCtrlXmlHandler);
 
 public:
     wxRichTextCtrlXmlHandler();
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 };
 
 #endif // wxUSE_XRC && wxUSE_RICHTEXT

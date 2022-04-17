@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,7 @@
 void wxRadioBoxCallback (Widget w, XtPointer clientData,
                     XmToggleButtonCallbackStruct * cbs);
 
-IMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl)
+wxIMPLEMENT_DYNAMIC_CLASS(wxRadioBox, wxControl);
 
 // Radio box item
 void wxRadioBox::Init()
@@ -390,7 +389,7 @@ void wxRadioBoxCallback (Widget w, XtPointer clientData,
   if (item->InSetValue())
     return;
 
-  wxCommandEvent event (wxEVT_COMMAND_RADIOBOX_SELECTED, item->GetId());
+  wxCommandEvent event (wxEVT_RADIOBOX, item->GetId());
   event.SetInt(sel);
   event.SetString(item->GetStringSelection());
   event.SetEventObject(item);

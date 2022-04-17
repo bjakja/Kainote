@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -38,26 +37,27 @@ public:
     virtual ~wxRegion();
 
     // wxRegionBase methods
-    virtual void Clear();
-    virtual bool IsEmpty() const;
+    virtual void Clear() wxOVERRIDE;
+    virtual bool IsEmpty() const wxOVERRIDE;
 
     // Internal
     WXHRGN GetWXHRGN() const ;
 
 protected:
-    virtual wxGDIRefData *CreateGDIRefData() const;
-    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const;
+    virtual wxGDIRefData *CreateGDIRefData() const wxOVERRIDE;
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *data) const wxOVERRIDE;
 
-    virtual bool DoIsEqual(const wxRegion& region) const;
-    virtual bool DoGetBox(wxCoord& x, wxCoord& y, wxCoord& w, wxCoord& h) const;
-    virtual wxRegionContain DoContainsPoint(wxCoord x, wxCoord y) const;
-    virtual wxRegionContain DoContainsRect(const wxRect& rect) const;
+    virtual bool DoIsEqual(const wxRegion& region) const wxOVERRIDE;
+    virtual bool DoGetBox(wxCoord& x, wxCoord& y, wxCoord& w, wxCoord& h) const wxOVERRIDE;
+    virtual wxRegionContain DoContainsPoint(wxCoord x, wxCoord y) const wxOVERRIDE;
+    virtual wxRegionContain DoContainsRect(const wxRect& rect) const wxOVERRIDE;
 
-    virtual bool DoOffset(wxCoord x, wxCoord y);
-    virtual bool DoCombine(const wxRegion& region, wxRegionOp op);
+    virtual bool DoOffset(wxCoord x, wxCoord y) wxOVERRIDE;
+    virtual bool DoCombine(const wxRegion& region, wxRegionOp op) wxOVERRIDE;
+    virtual bool DoUnionWithRect(const wxRect& rect) wxOVERRIDE;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxRegion)
+    wxDECLARE_DYNAMIC_CLASS(wxRegion);
     friend class WXDLLIMPEXP_FWD_CORE wxRegionIterator;
 };
 
@@ -86,7 +86,7 @@ public:
     long GetWidth() const { return GetW(); }
     long GetH() const;
     long GetHeight() const { return GetH(); }
-    wxRect GetRect() const { return wxRect(GetX(), GetY(), GetWidth(), GetHeight()); }
+    wxRect GetRect() const { return wxRect((int)GetX(), (int)GetY(), (int)GetWidth(), (int)GetHeight()); }
 
 private:
     void SetRects(long numRects, wxRect *rects);
@@ -96,7 +96,7 @@ private:
     wxRegion m_region;
     wxRect*  m_rects;
 
-    DECLARE_DYNAMIC_CLASS(wxRegionIterator)
+    wxDECLARE_DYNAMIC_CLASS(wxRegionIterator);
 };
 
 #endif // _WX_MAC_CARBON_REGION_H_

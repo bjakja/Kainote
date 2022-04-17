@@ -4,7 +4,6 @@
 // Author:      Julian Smart, Vadim Zeitlin
 // Modified by:
 // Created:     08/09/2000
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Julian Smart, Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_HELP
 
@@ -53,7 +49,7 @@ public:
         m_contextHelp = contextHelp;
     }
 
-    virtual bool ProcessEvent(wxEvent& event);
+    virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE;
 
 //// Data
     wxContextHelp* m_contextHelp;
@@ -74,7 +70,7 @@ public:
  */
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxContextHelp, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxContextHelp, wxObject);
 
 wxContextHelp::wxContextHelp(wxWindow* win, bool beginHelp)
 {
@@ -232,7 +228,7 @@ bool wxContextHelpEvtHandler::ProcessEvent(wxEvent& event)
 // Dispatch the help event to the relevant window
 bool wxContextHelp::DispatchEvent(wxWindow* win, const wxPoint& pt)
 {
-    wxCHECK_MSG( win, false, wxT("win parameter can't be nullptr") );
+    wxCHECK_MSG( win, false, wxT("win parameter can't be NULL") );
 
     wxHelpEvent helpEvent(wxEVT_HELP, win->GetId(), pt,
                           wxHelpEvent::Origin_HelpButton);
@@ -251,8 +247,6 @@ bool wxContextHelp::DispatchEvent(wxWindow* win, const wxPoint& pt)
  * to put the application into context help mode.
  */
 
-#ifndef __WXPM__
-
 static const char * csquery_xpm[] = {
 "12 11 2 1",
 "  c None",
@@ -269,29 +263,22 @@ static const char * csquery_xpm[] = {
 "     ..     ",
 "            "};
 
-#endif
 
-IMPLEMENT_CLASS(wxContextHelpButton, wxBitmapButton)
+wxIMPLEMENT_CLASS(wxContextHelpButton, wxBitmapButton);
 
-BEGIN_EVENT_TABLE(wxContextHelpButton, wxBitmapButton)
+wxBEGIN_EVENT_TABLE(wxContextHelpButton, wxBitmapButton)
     EVT_BUTTON(wxID_CONTEXT_HELP, wxContextHelpButton::OnContextHelp)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
-wxContextHelpButton::wxContextHelpButton(wxWindow* parent,
+bool wxContextHelpButton::Create(wxWindow* parent,
                                          wxWindowID id,
                                          const wxPoint& pos,
                                          const wxSize& size,
                                          long style)
-#if defined(__WXPM__)
-                   : wxBitmapButton(parent, id, wxBitmap(wxCSQUERY_BITMAP
-                                                         ,wxBITMAP_TYPE_BMP_RESOURCE
-                                                        ),
-                                    pos, size, style)
-#else
-                   : wxBitmapButton(parent, id, wxBitmap(csquery_xpm),
-                                    pos, size, style)
-#endif
 {
+    return wxBitmapButton::Create(parent, id,
+                                  wxBitmap(csquery_xpm),
+                                  pos, size, style);
 }
 
 void wxContextHelpButton::OnContextHelp(wxCommandEvent& WXUNUSED(event))
@@ -303,7 +290,7 @@ void wxContextHelpButton::OnContextHelp(wxCommandEvent& WXUNUSED(event))
 // wxHelpProvider
 // ----------------------------------------------------------------------------
 
-wxHelpProvider *wxHelpProvider::ms_helpProvider = nullptr;
+wxHelpProvider *wxHelpProvider::ms_helpProvider = NULL;
 
 // trivial implementation of some methods which we don't want to make pure
 // virtual for convenience
@@ -332,7 +319,7 @@ wxString wxHelpProvider::GetHelpTextMaybeAtPoint(wxWindowBase *window)
     if ( m_helptextAtPoint != wxDefaultPosition ||
             m_helptextOrigin != wxHelpEvent::Origin_Unknown )
     {
-        wxCHECK_MSG( window, wxEmptyString, wxT("window must not be nullptr") );
+        wxCHECK_MSG( window, wxEmptyString, wxT("window must not be NULL") );
 
         wxPoint pt = m_helptextAtPoint;
         wxHelpEvent::Origin origin = m_helptextOrigin;
@@ -408,13 +395,13 @@ bool wxSimpleHelpProvider::ShowHelp(wxWindowBase *window)
 #endif // wxUSE_MS_HTML_HELP
         {
 #if wxUSE_TIPWINDOW
-            static wxTipWindow* s_tipWindow = nullptr;
+            static wxTipWindow* s_tipWindow = NULL;
 
             if ( s_tipWindow )
             {
                 // Prevent s_tipWindow being nulled in OnIdle, thereby removing
                 // the chance for the window to be closed by ShowHelp
-                s_tipWindow->SetTipWindowPtr(nullptr);
+                s_tipWindow->SetTipWindowPtr(NULL);
                 s_tipWindow->Close();
             }
 
@@ -482,14 +469,14 @@ wxString wxContextId(int id)
 class wxHelpProviderModule : public wxModule
 {
 public:
-    bool OnInit();
-    void OnExit();
+    bool OnInit() wxOVERRIDE;
+    void OnExit() wxOVERRIDE;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxHelpProviderModule)
+    wxDECLARE_DYNAMIC_CLASS(wxHelpProviderModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxHelpProviderModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxHelpProviderModule, wxModule);
 
 bool wxHelpProviderModule::OnInit()
 {
@@ -505,7 +492,7 @@ void wxHelpProviderModule::OnExit()
     if (wxHelpProvider::Get())
     {
         delete wxHelpProvider::Get();
-        wxHelpProvider::Set(nullptr);
+        wxHelpProvider::Set(NULL);
     }
 }
 

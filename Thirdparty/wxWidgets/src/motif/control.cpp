@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -29,10 +28,10 @@
 
 #include "wx/motif/private.h"
 
-IMPLEMENT_ABSTRACT_CLASS(wxControl, wxWindow)
+wxIMPLEMENT_ABSTRACT_CLASS(wxControl, wxWindow);
 
-BEGIN_EVENT_TABLE(wxControl, wxWindow)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(wxControl, wxWindow)
+wxEND_EVENT_TABLE()
 
 // Item members
 wxControl::wxControl()

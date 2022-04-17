@@ -5,7 +5,6 @@
 // Modified by:
 // Created:     14/4/2006
 // Copyright:   (c) Francesco Montorsi
-// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -29,16 +28,9 @@
     /* needs to create the dialog in ::Create() and not for each user      */ \
     /* request in response to the user click as the generic implementation */ \
     /* does.                                                               */ \
-    virtual wxWindow *GetDialogParent()                                       \
+    virtual wxWindow *GetDialogParent() wxOVERRIDE                            \
     {                                                                         \
         return NULL;                                                          \
-    }                                                                         \
-                                                                              \
-    virtual bool Destroy()                                                    \
-    {                                                                         \
-        if (m_dialog)                                                         \
-            m_dialog->Destroy();                                              \
-        return wxButton::Destroy();                                           \
     }                                                                         \
                                                                               \
     /* even if wx derive from wxGenericFileButton, i.e. from wxButton, our */ \
@@ -50,7 +42,7 @@
     /* give us access to the internal GdkWindow of a GtkFileChooserButton  */ \
 protected:                                                                    \
     virtual GdkWindow *                                                       \
-    GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const                  \
+    GTKGetWindow(wxArrayGdkWindows& WXUNUSED(windows)) const wxOVERRIDE       \
         { return NULL; }
 
 
@@ -64,15 +56,15 @@ public:
     wxFileButton() { Init(); }
     wxFileButton(wxWindow *parent,
                  wxWindowID id,
-                 const wxString& label = wxFilePickerWidgetLabel,
+                 const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
                  const wxString &path = wxEmptyString,
-                 const wxString &message = wxFileSelectorPromptStr,
-                 const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
+                 const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
+                 const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = wxFILEBTN_DEFAULT_STYLE,
                  const wxValidator& validator = wxDefaultValidator,
-                 const wxString& name = wxFilePickerWidgetNameStr)
+                 const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr))
     {
         Init();
         m_pickerStyle = style;
@@ -87,21 +79,21 @@ public:     // overrides
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxString& label = wxFilePickerWidgetLabel,
+                const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
                 const wxString &path = wxEmptyString,
-                const wxString &message = wxFileSelectorPromptStr,
-                const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
+                const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
+                const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxFilePickerWidgetNameStr);
+                const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr));
 
     // event handler for the click
     void OnDialogOK(wxCommandEvent &);
 
-    virtual void SetPath(const wxString &str);
-    virtual void SetInitialDirectory(const wxString& dir);
+    virtual void SetPath(const wxString &str) wxOVERRIDE;
+    virtual void SetInitialDirectory(const wxString& dir) wxOVERRIDE;
 
     // see macro defined above
     FILEDIRBTN_OVERRIDES
@@ -109,11 +101,13 @@ public:     // overrides
 protected:
     wxDialog *m_dialog;
 
+    virtual void DoApplyWidgetStyle(GtkRcStyle*) wxOVERRIDE;
+
 private:
     // common part of all ctors
     void Init() { m_dialog = NULL; }
 
-    DECLARE_DYNAMIC_CLASS(wxFileButton)
+    wxDECLARE_DYNAMIC_CLASS(wxFileButton);
 };
 
 
@@ -127,14 +121,14 @@ public:
     wxDirButton() { Init(); }
     wxDirButton(wxWindow *parent,
                 wxWindowID id,
-                const wxString& label = wxFilePickerWidgetLabel,
+                const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
                 const wxString &path = wxEmptyString,
-                const wxString &message = wxFileSelectorPromptStr,
+                const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxDIRBTN_DEFAULT_STYLE,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxFilePickerWidgetNameStr)
+                const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr))
     {
         Init();
 
@@ -151,39 +145,34 @@ public:     // overrides
 
     bool Create(wxWindow *parent,
                 wxWindowID id,
-                const wxString& label = wxFilePickerWidgetLabel,
+                const wxString& label = wxASCII_STR(wxFilePickerWidgetLabel),
                 const wxString &path = wxEmptyString,
-                const wxString &message = wxFileSelectorPromptStr,
-                const wxString &wildcard = wxFileSelectorDefaultWildcardStr,
+                const wxString &message = wxASCII_STR(wxFileSelectorPromptStr),
+                const wxString &wildcard = wxASCII_STR(wxFileSelectorDefaultWildcardStr),
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
                 const wxValidator& validator = wxDefaultValidator,
-                const wxString& name = wxFilePickerWidgetNameStr);
+                const wxString& name = wxASCII_STR(wxFilePickerWidgetNameStr));
 
 
     // GtkFileChooserButton does not support GTK_FILE_CHOOSER_CREATE_FOLDER
     // thus we must ensure that the wxDD_DIR_MUST_EXIST style was given
-    long GetDialogStyle() const
+    long GetDialogStyle() const wxOVERRIDE
     {
         return (wxGenericDirButton::GetDialogStyle() | wxDD_DIR_MUST_EXIST);
     }
 
-    virtual void SetPath(const wxString &str);
-    virtual void SetInitialDirectory(const wxString& dir);
+    virtual void SetPath(const wxString &str) wxOVERRIDE;
+    virtual void SetInitialDirectory(const wxString& dir) wxOVERRIDE;
 
     // see macro defined above
     FILEDIRBTN_OVERRIDES
 
 protected:
-    // common part of all ctors
-    void Init()
-    {
-        m_dialog = NULL;
-        m_bIgnoreNextChange = false;
-    }
-
     wxDialog *m_dialog;
+
+    virtual void DoApplyWidgetStyle(GtkRcStyle*) wxOVERRIDE;
 
 public:    // used by the GTK callback only
 
@@ -192,7 +181,13 @@ public:    // used by the GTK callback only
     void GTKUpdatePath(const char *gtkpath);
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxDirButton)
+    void Init()
+    {
+        m_dialog = NULL;
+        m_bIgnoreNextChange = false;
+    }
+
+    wxDECLARE_DYNAMIC_CLASS(wxDirButton);
 };
 
 #undef FILEDIRBTN_OVERRIDES

@@ -5,7 +5,6 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -18,11 +17,7 @@
 
 #include "wx/helpbase.h"
 
-#ifdef __WXWINCE__
-    #include "wx/msw/wince/helpwce.h"
-
-    #define wxHelpController wxWinceHelpController
-#elif defined(__WXMSW__)
+#if defined(__WXMSW__)
     #include "wx/msw/helpchm.h"
 
     #define wxHelpController wxCHMHelpController

@@ -4,7 +4,6 @@
 // Author:      Ron Lee, Jaakko Salli
 // Modified by:
 // Created:     Sep-20-2006
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/dcbuffer.h"
 
@@ -34,8 +30,8 @@
 // implementation
 // ============================================================================
 
-IMPLEMENT_DYNAMIC_CLASS(wxBufferedDC,wxMemoryDC)
-IMPLEMENT_ABSTRACT_CLASS(wxBufferedPaintDC,wxBufferedDC)
+wxIMPLEMENT_DYNAMIC_CLASS(wxBufferedDC, wxMemoryDC);
+wxIMPLEMENT_ABSTRACT_CLASS(wxBufferedPaintDC, wxBufferedDC);
 
 // ----------------------------------------------------------------------------
 // wxSharedDCBufferManager: helper class maintaining backing store bitmap
@@ -46,28 +42,21 @@ class wxSharedDCBufferManager : public wxModule
 public:
     wxSharedDCBufferManager() { }
 
-    virtual bool OnInit() { return true; }
-    virtual void OnExit() { wxDELETE(ms_buffer); }
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE { wxDELETE(ms_buffer); }
 
-    static wxBitmap* GetBuffer(int w, int h)
+    static wxBitmap* GetBuffer(wxDC* dc, int w, int h)
     {
         if ( ms_usingSharedBuffer )
-            return new wxBitmap(w, h);
+            return DoCreateBuffer(dc, w, h);
 
         if ( !ms_buffer ||
-                w > ms_buffer->GetWidth() ||
-                    h > ms_buffer->GetHeight() )
+                w > ms_buffer->GetLogicalWidth() ||
+                    h > ms_buffer->GetLogicalHeight() )
         {
             delete ms_buffer;
 
-            // we must always return a valid bitmap but creating a bitmap of
-            // size 0 would fail, so create a 1*1 bitmap in this case
-            if ( !w )
-                w = 1;
-            if ( !h )
-                h = 1;
-
-            ms_buffer = new wxBitmap(w, h);
+            ms_buffer = DoCreateBuffer(dc, w, h);
         }
 
         ms_usingSharedBuffer = true;
@@ -88,16 +77,28 @@ public:
     }
 
 private:
+    static wxBitmap* DoCreateBuffer(wxDC* dc, int w, int h)
+    {
+        const double scale = dc ? dc->GetContentScaleFactor() : 1.0;
+        wxBitmap* const buffer = new wxBitmap;
+
+        // we must always return a valid bitmap but creating a bitmap of
+        // size 0 would fail, so create a 1*1 bitmap in this case
+        buffer->CreateWithDIPSize(wxMax(w, 1), wxMax(h, 1), scale);
+
+        return buffer;
+    }
+
     static wxBitmap *ms_buffer;
     static bool ms_usingSharedBuffer;
 
-    DECLARE_DYNAMIC_CLASS(wxSharedDCBufferManager)
+    wxDECLARE_DYNAMIC_CLASS(wxSharedDCBufferManager);
 };
 
-wxBitmap* wxSharedDCBufferManager::ms_buffer = nullptr;
+wxBitmap* wxSharedDCBufferManager::ms_buffer = NULL;
 bool wxSharedDCBufferManager::ms_usingSharedBuffer = false;
 
-IMPLEMENT_DYNAMIC_CLASS(wxSharedDCBufferManager, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxSharedDCBufferManager, wxModule);
 
 // ============================================================================
 // wxBufferedDC
@@ -112,7 +113,7 @@ void wxBufferedDC::UseBuffer(wxCoord w, wxCoord h)
         if ( w == -1 || h == -1 )
             m_dc->GetSize(&w, &h);
 
-        m_buffer = wxSharedDCBufferManager::GetBuffer(w, h);
+        m_buffer = wxSharedDCBufferManager::GetBuffer(m_dc, w, h);
         m_style |= wxBUFFER_USES_SHARED_BUFFER;
         m_area.Set(w,h);
     }
@@ -149,7 +150,7 @@ void wxBufferedDC::UnMask()
     int width = m_area.GetWidth(),
         height = m_area.GetHeight();
 
-    if (! m_style & wxBUFFER_VIRTUAL_AREA)
+    if (!(m_style & wxBUFFER_VIRTUAL_AREA))
     {
         int widthDC,
             heightDC;
@@ -158,8 +159,9 @@ void wxBufferedDC::UnMask()
         height = wxMin(height, heightDC);
     }
 
-    m_dc->Blit(0, 0, width, height, this, -x, -y);
-    m_dc = nullptr;
+    const wxPoint origin = GetLogicalOrigin();
+    m_dc->Blit(-origin.x, -origin.y, width, height, this, -x, -y);
+    m_dc = NULL;
 
     if ( m_style & wxBUFFER_USES_SHARED_BUFFER )
         wxSharedDCBufferManager::ReleaseBuffer(m_buffer);

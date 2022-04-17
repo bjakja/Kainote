@@ -2,7 +2,6 @@
 // Name:        dnd.h
 // Purpose:     interface of wxDropSource and wx*DropTarget
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +132,11 @@ public:
     virtual void OnLeave();
 
     /**
+        Returns the data wxDataObject associated with the drop target
+    */
+    wxDataObject *GetDataObject() const;
+
+    /**
         Sets the data wxDataObject associated with the drop target and deletes
         any previously associated data object.
     */
@@ -141,8 +145,8 @@ public:
 
     /**
        Sets the default action for drag and drop.  Use wxDragMove or
-       wxDragCopy to set deafult action to move or copy and use wxDragNone
-       (default) to set default action specified by initialization of draging
+       wxDragCopy to set default action to move or copy and use wxDragNone
+       (default) to set default action specified by initialization of dragging
        (see wxDropSource::DoDragDrop())
     */
     void SetDefaultAction(wxDragResult action);

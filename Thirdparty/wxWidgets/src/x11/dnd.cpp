@@ -2,7 +2,6 @@
 // Name:        src/x11/dnd.cpp
 // Purpose:     wxDropTarget, wxDropSource classes
 // Author:      Julian Smart
-// Id:          $Id$
 // Copyright:   (c) 1998 Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -10,9 +9,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if defined(__BORLANDC__)
-    #pragma hdrstop
-#endif
 
 #if wxUSE_DRAG_AND_DROP
 
@@ -110,7 +106,7 @@ bool wxFileDropTarget::OnDrop(long x, long y, const void *data, size_t size )
 
   bool ret = OnDropFiles( x, y, 1, files );
 
-  free( files );
+  delete[] files;
 
   return ret;
 }

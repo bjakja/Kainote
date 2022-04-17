@@ -3,7 +3,6 @@
  * Purpose:     Unix-specific config settings consistency checks
  * Author:      Vadim Zeitlin
  * Created:     2007-07-14
- * RCS-ID:      $Id$
  * Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
  * Licence:     wxWindows licence
  */
@@ -42,3 +41,11 @@
 #       endif
 #   endif
 #endif /* wxUSE_GSTREAMER */
+
+#ifndef wxUSE_XTEST
+#   ifdef wxABORT_ON_CONFIG_ERROR
+#       error "wxUSE_XTEST must be defined, please read comment near the top of this file."
+#   else
+#       define wxUSE_XTEST 0
+#   endif
+#endif /* !defined(wxUSE_XTEST) */

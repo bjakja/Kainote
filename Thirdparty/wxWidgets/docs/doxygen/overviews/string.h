@@ -2,7 +2,6 @@
 // Name:        string.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,22 +9,7 @@
 
 @page overview_string wxString Overview
 
-Classes: wxString, wxArrayString, wxStringTokenizer
-
-@li @ref overview_string_intro
-@li @ref overview_string_internal
-@li @ref overview_string_binary
-@li @ref overview_string_comparison
-@li @ref overview_string_advice
-@li @ref overview_string_related
-@li @ref overview_string_tuning
-@li @ref overview_string_settings
-
-
-<hr>
-
-
-@section overview_string_intro Introduction
+@tableofcontents
 
 wxString is a class which represents a Unicode string of arbitrary length and
 containing arbitrary Unicode characters.
@@ -44,24 +28,25 @@ has been done to make existing code using ANSI string literals work as it did
 in previous versions.
 
 
-@section overview_string_internal Internal wxString encoding
+@section overview_string_internal Internal wxString Encoding
 
-Since wxWidgets 3.0 wxString internally uses <b>UTF-16</b> (with Unicode
-code units stored in @c wchar_t) under Windows and <b>UTF-8</b> (with Unicode
-code units stored in @c char) under Unix, Linux and Mac OS X to store its content.
+Since wxWidgets 3.0 wxString may use any of @c UTF-16 (under Windows, using
+the native 16 bit @c wchar_t), @c UTF-32 (under Unix, using the native 32
+bit @c wchar_t) or @c UTF-8 (under both Windows and Unix) to store its
+content. By default, @c wchar_t is used under all platforms, but wxWidgets can
+be compiled with <tt>wxUSE_UNICODE_UTF8=1</tt> to use UTF-8.
 
-For definitions of <em>code units</em> and <em>code points</em> terms, please
-see the @ref overview_unicode_encodings paragraph.
-
-For simplicity of implementation, wxString when <tt>wxUSE_UNICODE_WCHAR==1</tt>
-(e.g. on Windows) uses <em>per code unit indexing</em> instead of
-<em>per code point indexing</em> and doesn't know anything about surrogate pairs;
-in other words it always considers code points to be composed by 1 code unit,
-while this is really true only for characters in the @e BMP (Basic Multilingual Plane).
-Thus when iterating over a UTF-16 string stored in a wxString under Windows, the user
-code has to take care of <em>surrogate pairs</em> himself.
-(Note however that Windows itself has built-in support for surrogate pairs in UTF-16,
-such as for drawing strings on screen.)
+For simplicity of implementation, wxString uses <em>per code unit indexing</em>
+instead of <em>per code point indexing</em> when using UTF-16, i.e. in the
+default <tt>wxUSE_UNICODE_WCHAR==1</tt> build under Windows and doesn't know
+anything about surrogate pairs. In other words it always considers code points
+to be composed by 1 code unit, while this is really true only for characters in
+the @e BMP (Basic Multilingual Plane), as explained in more details in the @ref
+overview_unicode_encodings section. Thus when iterating over a UTF-16 string
+stored in a wxString under Windows, the user code has to take care of
+<em>surrogate pairs</em> himself. (Note however that Windows itself has
+built-in support for surrogate pairs in UTF-16, such as for drawing strings on
+screen.)
 
 @remarks
 Note that while the behaviour of wxString when <tt>wxUSE_UNICODE_WCHAR==1</tt>
@@ -70,10 +55,10 @@ UCS-2 encoded since you can encode code points outside the @e BMP in a wxString
 as two code units (i.e. as a surrogate pair; as already mentioned however wxString
 will "see" them as two different code points)
 
-When instead <tt>wxUSE_UNICODE_UTF8==1</tt> (e.g. on Linux and Mac OS X)
-wxString handles UTF8 multi-bytes sequences just fine also for characters outside
-the BMP (it implements <em>per code point indexing</em>), so that you can use
-UTF8 in a completely transparent way:
+In <tt>wxUSE_UNICODE_UTF8==1</tt> case, wxString handles UTF-8 multi-bytes
+sequences just fine also for characters outside the BMP (it implements <em>per
+code point indexing</em>), so that you can use UTF-8 in a completely transparent
+way:
 
 Example:
 @code
@@ -150,7 +135,7 @@ to buffer overflows. At last, C++ has a standard string class (@c std::string). 
 why the need for wxString? There are several advantages:
 
 @li <b>Efficiency:</b> Since wxWidgets 3.0 wxString uses @c std::string (in UTF8
-    mode under Linux, Unix and OS X) or @c std::wstring (in UTF16 mode under Windows)
+    mode under Linux, Unix and macOS) or @c std::wstring (in UTF16 mode under Windows)
     internally by default to store its contents. wxString will therefore inherit the
     performance characteristics from @c std::string.
 @li <b>Compatibility:</b> This class tries to combine almost full compatibility
@@ -193,10 +178,22 @@ which are deprecated and may disappear in future versions.
 
 @subsection overview_string_implicitconv Implicit conversions
 
-Probably the main trap with using this class is the implicit conversion
-operator to <tt>const char*</tt>. It is advised that you use wxString::c_str()
-instead to clearly indicate when the conversion is done. Specifically, the
-danger of this implicit conversion may be seen in the following code fragment:
+The default behaviour, which can't be changed to avoid breaking compatibility
+with the existing code, is to provide implicit conversions of wxString to
+C-style strings, i.e. <tt>const char*</tt> and/or <tt>const wchar_t*</tt>. As
+explained below, these conversions are dangerous and it is @e strongly
+recommended to predefine @c wxNO_UNSAFE_WXSTRING_CONV for all new projects
+using wxWidgets to disable them. Notice that this preprocessor symbol is
+different from the more usual @c wxUSE_XXX build options, as it only needs to
+be defined when building the application and doesn't require rebuilding the
+library (and so can be used with e.g. system-provided libraries from Linux
+system packages).
+
+If you can't disable the implicit conversions, it is still advised to use
+wxString::c_str() instead of relying on them to clearly indicate when the
+conversion is done as implicit conversions may result in difficult to find
+bugs. For example, some of the dangers of this implicit conversion may be seen
+in the following code fragment:
 
 @code
 // this function converts the input string to uppercase,
@@ -239,14 +236,42 @@ arguments should take <tt>const wxString&</tt> (this makes assignment to the
 strings inside the function faster) and all functions returning strings
 should return wxString - this makes it safe to return local variables.
 
-Finally note that wxString uses the current locale encoding to convert any C string
+Note that wxString uses by default the current locale encoding to convert any C string
 literal to Unicode. The same is done for converting to and from @c std::string
 and for the return value of c_str().
 For this conversion, the @a wxConvLibc class instance is used.
 See wxCSConv and wxMBConv.
 
+It is also possible to disable any automatic conversions from C
+strings to Unicode. This can be useful when the @a wxConvLibc encoding
+is not appropriate for the current software and platform. The macro @c
+wxNO_IMPLICIT_WXSTRING_ENCODING disables all implicit conversions, and
+forces the code to explicitly indicate the encoding of all C strings.
 
-@subsection overview_string_iterating Iterating wxString's characters
+Finally note that encodings, either implicitly or explicitly selected,
+may not be able to represent all the string's characters. The result
+in this case is undefined: the string may be empty, or the
+unrepresentable characters may be missing or wrong.
+
+@code
+wxString s;
+// s = "world"; does not compile with wxNO_IMPLICIT_WXSTRING_ENCODING
+s = wxString::FromAscii("world"); // Always compiles
+s = wxASCII_STR("world"); // shorthand for the above
+s = wxString::FromUTF8("world"); // Always compiles
+s = wxString("world", wxConvLibc); // Always compiles, explicit encoding
+s = wxASCII_STR("Grüße"); // Always compiles but encoding fails
+
+const char *c;
+// c = s.c_str();  does not compile with wxNO_IMPLICIT_WXSTRING_ENCODING
+// c = s.mb_str(); does not compile with wxNO_IMPLICIT_WXSTRING_ENCODING
+c = s.ToAscii(); // Always compiles, encoding may fail
+c = s.ToUTF8(); // Always compiles, encoding never fails
+c = s.utf8_str(); // Alias for the above
+c = s.mb_str(wxConvLibc); // Always compiles, explicit encoding
+@endcode
+
+@subsection overview_string_iterating Iterating wxString Characters
 
 As previously described, when <tt>wxUSE_UNICODE_UTF8==1</tt>, wxString internally
 uses the variable-length UTF8 encoding.
@@ -288,7 +313,7 @@ these problems: wxIsEmpty() verifies whether the string is empty (returning
 case-insensitive string comparison function known either as @c stricmp() or
 @c strcasecmp() on different platforms.
 
-The <tt>@<wx/string.h@></tt> header also defines ::wxSnprintf and ::wxVsnprintf
+The <tt>@<wx/string.h@></tt> header also defines wxSnprintf() and wxVsnprintf()
 functions which should be used instead of the inherently dangerous standard
 @c sprintf() and which use @c snprintf() instead which does buffer size checks
 whenever possible. Of course, you may also use wxString::Printf which is also
@@ -377,18 +402,26 @@ difference the change to @c EXTRA_ALLOC makes to your program.
 
 @section overview_string_settings wxString Related Compilation Settings
 
-Much work has been done to make existing code using ANSI string literals
-work as before version 3.0.
+The main option affecting wxString is @c wxUSE_UNICODE which is now always
+defined as @c 1 by default to indicate Unicode support. You may set it to 0 to
+disable Unicode support in wxString and elsewhere in wxWidgets but this is @e
+strongly not recommended.
 
-If you nonetheless need to have a wxString that uses @c wchar_t
-on Unix and Linux, too, you can specify this on the command line with the
-@c configure @c --disable-utf8 switch or you can consider using wxUString
-or @c std::wstring instead.
+Another option affecting wxWidgets is @c wxUSE_UNICODE_WCHAR which is also 1 by
+default. You may want to set it to 0 and set @c wxUSE_UNICODE_UTF8 to 1 instead
+to use UTF-8 internally. wxString still provides the same API in this case, but
+using UTF-8 has performance implications as explained in @ref
+overview_unicode_performance, so it probably shouldn't be enabled for legacy
+code which might contain a lot of index-using loops.
 
-@c wxUSE_UNICODE is now defined as @c 1 by default to indicate Unicode support.
-If UTF-8 is used for the internal storage in wxString, @c wxUSE_UNICODE_UTF8 is
-also defined, otherwise @c wxUSE_UNICODE_WCHAR is.
-See also @ref page_wxusedef_important.
+As mentioned in @ref overview_string_implicitconv, @c wxNO_UNSAFE_WXSTRING_CONV
+should be defined by all code using this class to opt-in safer, but not
+backwards-compatible, behaviour of @e not providing dangerous implicit
+conversions to C-style strings. This option is convenient when using standard
+build of the library as it doesn't require rebuilding it, but for custom builds
+it is also possible to set @c wxUSE_UNSAFE_WXSTRING_CONV to 0 in order to
+disable the implicit conversions for all applications using it.
+
+See also @ref page_wxusedef_important for a few other options affecting wxString.
 
 */
-

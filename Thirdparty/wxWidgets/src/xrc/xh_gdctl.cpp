@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for wxGenericDirCtrl
 // Author:      Markus Greither
 // Created:     2002/01/20
-// RCS-ID:      $Id$
 // Copyright:   (c) 2002 Markus Greither
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_DIRDLG
 
@@ -25,7 +21,7 @@
 
 #include "wx/dirctrl.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxGenericDirCtrlXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxGenericDirCtrlXmlHandler, wxXmlResourceHandler);
 
 wxGenericDirCtrlXmlHandler::wxGenericDirCtrlXmlHandler()
 : wxXmlResourceHandler()
@@ -33,6 +29,7 @@ wxGenericDirCtrlXmlHandler::wxGenericDirCtrlXmlHandler()
     XRC_ADD_STYLE(wxDIRCTRL_DIR_ONLY);
     XRC_ADD_STYLE(wxDIRCTRL_3D_INTERNAL);
     XRC_ADD_STYLE(wxDIRCTRL_SELECT_FIRST);
+    XRC_ADD_STYLE(wxDIRCTRL_SHOW_FILTERS);
     XRC_ADD_STYLE(wxDIRCTRL_EDIT_LABELS);
     XRC_ADD_STYLE(wxDIRCTRL_MULTIPLE);
     AddWindowStyles();

@@ -3,7 +3,6 @@
 // Purpose:     wxApp class
 // Author:      Vaclav Slavik
 // Created:     2006-08-10
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,7 @@ public:
 private:
     wxVideoMode m_videoMode;
 
-    DECLARE_DYNAMIC_CLASS(wxApp)
+    wxDECLARE_DYNAMIC_CLASS(wxApp);
 };
 
 #endif // _WX_DFB_APP_H_

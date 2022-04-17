@@ -2,7 +2,6 @@
 // Name:        vidmode.h
 // Purpose:     interface of wxVideoMode
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -16,8 +15,6 @@
 
     @stdobjects
     ::wxDefaultVideoMode
-
-    @see wxClientDisplayRect(), wxDisplaySize(), wxDisplaySizeMM()
 */
 struct wxVideoMode
 {
@@ -35,17 +32,17 @@ public:
     bool Matches(const wxVideoMode& other) const;
 
     /**
-        Returns the screen width in pixels (e.g. 640), 0 means unspecified.
+        Returns the screen width in pixels (e.g.\ 640), 0 means unspecified.
     */
     int GetWidth() const;
 
     /**
-        Returns the screen height in pixels (e.g. 480), 0 means unspecified.
+        Returns the screen height in pixels (e.g.\ 480), 0 means unspecified.
     */
     int GetHeight() const;
 
     /**
-        Returns bits per pixel (e.g. 32), 1 is monochrome and 0 means
+        Returns bits per pixel (e.g.\ 32), 1 is monochrome and 0 means
         unspecified/known.
     */
     int GetDepth() const;
@@ -62,17 +59,17 @@ public:
 
 
     /**
-        The screen width in pixels (e.g. 640), 0 means unspecified.
+        The screen width in pixels (e.g.\ 640), 0 means unspecified.
     */
     int w;
 
     /**
-        The screen height in pixels (e.g. 480), 0 means unspecified.
+        The screen height in pixels (e.g.\ 480), 0 means unspecified.
     */
     int h;
 
     /**
-        Bits per pixel (e.g. 32), 1 is monochrome and 0 means
+        Bits per pixel (e.g.\ 32), 1 is monochrome and 0 means
         unspecified/known.
     */
     int bpp;

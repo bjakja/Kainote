@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 // Group box
 class WXDLLIMPEXP_CORE wxGauge : public wxGaugeBase
 {
-    DECLARE_DYNAMIC_CLASS(wxGauge)
+    wxDECLARE_DYNAMIC_CLASS(wxGauge);
 
 public:
     inline wxGauge() { m_rangeMax = 0; m_gaugePos = 0; }
@@ -26,7 +25,7 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxGA_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxGaugeNameStr)
+        const wxString& name = wxASCII_STR(wxGaugeNameStr))
     {
         Create(parent, id, range, pos, size, style, validator, name);
     }
@@ -37,13 +36,11 @@ public:
         const wxSize& size = wxDefaultSize,
         long style = wxGA_HORIZONTAL,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxGaugeNameStr);
+        const wxString& name = wxASCII_STR(wxGaugeNameStr));
 
-    void SetShadowWidth(int w);
     void SetRange(int r);
     void SetValue(int pos);
 
-    int GetShadowWidth() const ;
     int GetRange() const ;
     int GetValue() const ;
 

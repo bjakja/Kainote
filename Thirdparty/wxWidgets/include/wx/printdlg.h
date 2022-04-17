@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
@@ -42,7 +41,7 @@ public:
     virtual wxDC *GetPrintDC() = 0;
 
 private:
-    DECLARE_ABSTRACT_CLASS(wxPrintDialogBase)
+    wxDECLARE_ABSTRACT_CLASS(wxPrintDialogBase);
     wxDECLARE_NO_COPY_CLASS(wxPrintDialogBase);
 };
 
@@ -67,7 +66,7 @@ private:
     wxPrintDialogBase  *m_pimpl;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxPrintDialog)
+    wxDECLARE_DYNAMIC_CLASS(wxPrintDialog);
     wxDECLARE_NO_COPY_CLASS(wxPrintDialog);
 };
 
@@ -89,7 +88,7 @@ public:
     virtual wxPageSetupDialogData& GetPageSetupDialogData() = 0;
 
 private:
-    DECLARE_ABSTRACT_CLASS(wxPageSetupDialogBase)
+    wxDECLARE_ABSTRACT_CLASS(wxPageSetupDialogBase);
     wxDECLARE_NO_COPY_CLASS(wxPageSetupDialogBase);
 };
 
@@ -112,7 +111,7 @@ private:
     wxPageSetupDialogBase  *m_pimpl;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxPageSetupDialog)
+    wxDECLARE_DYNAMIC_CLASS(wxPageSetupDialog);
     wxDECLARE_NO_COPY_CLASS(wxPageSetupDialog);
 };
 

@@ -7,17 +7,12 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/frame.h"
@@ -27,8 +22,8 @@
 #include "wx/mdi.h"
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxQueryLayoutInfoEvent, wxEvent)
-IMPLEMENT_DYNAMIC_CLASS(wxCalculateLayoutEvent, wxEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxQueryLayoutInfoEvent, wxEvent);
+wxIMPLEMENT_DYNAMIC_CLASS(wxCalculateLayoutEvent, wxEvent);
 
 wxDEFINE_EVENT( wxEVT_QUERY_LAYOUT_INFO, wxQueryLayoutInfoEvent );
 wxDEFINE_EVENT( wxEVT_CALCULATE_LAYOUT, wxCalculateLayoutEvent );
@@ -39,11 +34,11 @@ wxDEFINE_EVENT( wxEVT_CALCULATE_LAYOUT, wxCalculateLayoutEvent );
 // ----------------------------------------------------------------------------
 
 #if wxUSE_SASH
-IMPLEMENT_CLASS(wxSashLayoutWindow, wxSashWindow)
-BEGIN_EVENT_TABLE(wxSashLayoutWindow, wxSashWindow)
+wxIMPLEMENT_CLASS(wxSashLayoutWindow, wxSashWindow);
+wxBEGIN_EVENT_TABLE(wxSashLayoutWindow, wxSashWindow)
     EVT_CALCULATE_LAYOUT(wxSashLayoutWindow::OnCalculateLayout)
     EVT_QUERY_LAYOUT_INFO(wxSashLayoutWindow::OnQueryLayoutInfo)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 bool wxSashLayoutWindow::Create(wxWindow *parent, wxWindowID id, const wxPoint& pos,
         const wxSize& size, long style, const wxString& name)

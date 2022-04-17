@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     15.12.00
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_COMBOBOX
 
@@ -94,16 +90,16 @@ protected:
 private:
     friend class wxComboBox; // it accesses our DoGetItemClientData()
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 // ----------------------------------------------------------------------------
 // event tables and such
 // ----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxComboListBox, wxListBox)
+wxBEGIN_EVENT_TABLE(wxComboListBox, wxListBox)
     EVT_LEFT_UP(wxComboListBox::OnLeftUp)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 // ============================================================================
 // implementation
@@ -180,7 +176,7 @@ void wxComboListBox::OnLeftUp(wxMouseEvent& event)
     m_combo->SetValue(wxListBox::GetStringSelection());
 
     // next let the user code have the event
-    wxCommandEvent evt(wxEVT_COMMAND_COMBOBOX_SELECTED,m_combo->GetId());
+    wxCommandEvent evt(wxEVT_COMBOBOX,m_combo->GetId());
     evt.SetInt(wxListBox::GetSelection());
     evt.SetEventObject(m_combo);
     m_combo->ProcessWindowEvent(evt);
@@ -271,17 +267,12 @@ wxComboBox::~wxComboBox()
 // wxComboBox methods forwarded to wxTextCtrl
 // ----------------------------------------------------------------------------
 
-wxString wxComboBox::DoGetValue() const
-{
-    return GetTextCtrl() ? GetTextCtrl()->GetValue() : m_valueString;
-}
-
 void wxComboBox::SetValue(const wxString& value)
 {
-    if ( GetTextCtrl() )
-        GetTextCtrl()->SetValue(value);
+    if ( HasFlag(wxCB_READONLY) )
+        SetStringSelection(value);
     else
-        m_valueString = value;
+        GetTextCtrl()->SetValue(value);
 }
 
 void wxComboBox::WriteText(const wxString& value)

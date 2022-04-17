@@ -2,7 +2,6 @@
 // Name:        nonenglish.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,16 +9,7 @@
 
 @page overview_nonenglish Writing Non-English Applications
 
-
-@li @ref overview_nonenglish_locales
-@li @ref overview_nonenglish_strings
-@li @ref overview_nonenglish_fontmapping
-@li @ref overview_nonenglish_converting
-@li @ref overview_nonenglish_help
-
-
-<hr>
-
+@tableofcontents
 
 This article describes how to write applications that communicate with the user
 in a language other than English. Unfortunately many languages use different
@@ -37,6 +27,7 @@ Please read the @ref overview_i18n which describes the locales concept.
 
 In the following text, wherever @e iso8859-2 and @e windows-1250 are used, any
 encodings are meant and any encodings may be substituted there.
+
 
 
 @section overview_nonenglish_locales Locales
@@ -117,7 +108,7 @@ catalog, you may configure wxWidgets to use non-English msgids and translate to
 English using message catalogs:
 
 @li If you use the program @c xgettext to extract the strings from the source
-    code, specify the option <tt>--from-code=@<source code charset@></tt>.
+    code, specify the option <tt>\--from-code=@<source code charset@></tt>.
 @li Specify the source code language and charset as arguments to
     wxLocale::AddCatalog. For example:
     @code
@@ -174,4 +165,3 @@ This additional entry tells the HTML help controller what encoding is used in
 contents and index tables.
 
 */
-

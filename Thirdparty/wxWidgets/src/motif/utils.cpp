@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,6 +29,7 @@
 
 #include "wx/apptrait.h"
 #include "wx/evtloop.h"
+#include "wx/private/eventloopsourcesmanager.h"
 #include "wx/motif/private/timer.h"
 
 #include <string.h>
@@ -41,8 +41,6 @@
 #ifdef __VMS__
 #pragma message disable nosimpint
 #endif
-
-#include "wx/unix/execute.h"
 
 #include <Xm/Xm.h>
 #include <Xm/Frame.h>
@@ -79,33 +77,93 @@ void wxFlushEvents(WXDisplay* wxdisplay)
     }
 }
 
-// ----------------------------------------------------------------------------
-// wxExecute stuff
-// ----------------------------------------------------------------------------
+#if wxUSE_EVENTLOOP_SOURCE
 
-static void xt_notify_end_process(XtPointer data, int *WXUNUSED(fid),
-                                  XtInputId *id)
+extern "C"
 {
-    wxEndProcessData *proc_data = (wxEndProcessData *)data;
 
-    wxHandleProcessTermination(proc_data);
+static
+void
+wxMotifInputHandler(XtPointer data,
+                    int* WXUNUSED(fd),
+                    XtInputId* WXUNUSED(inputId))
+{
+    wxEventLoopSourceHandler * const
+        handler = static_cast<wxEventLoopSourceHandler *>(data);
 
-    // VZ: I think they should be the same...
-    wxASSERT( (int)*id == proc_data->tag );
-
-    XtRemoveInput(*id);
+    handler->OnReadWaiting();
 }
 
-int wxGUIAppTraits::AddProcessCallback(wxEndProcessData *proc_data, int fd)
+}
+
+// This class exists just to call XtRemoveInput() in its dtor, the real work of
+// dispatching events on the file descriptor to the handler is done by
+// wxMotifInputHandler callback above.
+class wxMotifEventLoopSource : public wxEventLoopSource
 {
-    XtInputId id = XtAppAddInput((XtAppContext) wxTheApp->GetAppContext(),
+public:
+    wxMotifEventLoopSource(XtInputId inputId,
+                           wxEventLoopSourceHandler *handler,
+                           int flags)
+        : wxEventLoopSource(handler, flags),
+          m_inputId(inputId)
+    {
+    }
+
+    virtual ~wxMotifEventLoopSource()
+    {
+        XtRemoveInput(m_inputId);
+    }
+
+private:
+    const XtInputId m_inputId;
+
+    wxDECLARE_NO_COPY_CLASS(wxMotifEventLoopSource);
+};
+
+class wxMotifEventLoopSourcesManager : public wxEventLoopSourcesManagerBase
+{
+public:
+    wxEventLoopSource *
+    AddSourceForFD(int fd, wxEventLoopSourceHandler* handler, int flags)
+    {
+        wxCHECK_MSG( wxTheApp, NULL, "Must create wxTheApp first" );
+
+        // The XtInputXXXMask values cannot be combined (hence "Mask" is a
+        // complete misnomer), and supporting those would make the code more
+        // complicated and we don't need them for now.
+        wxCHECK_MSG( !(flags & (wxEVENT_SOURCE_OUTPUT |
+                                wxEVENT_SOURCE_EXCEPTION)),
+                     NULL,
+                     "Monitoring FDs for output/errors not supported" );
+
+        wxCHECK_MSG( flags & wxEVENT_SOURCE_INPUT,
+                     NULL,
+                     "Should be monitoring for input" );
+
+        XtInputId inputId = XtAppAddInput
+                            (
+                                 (XtAppContext) wxTheApp->GetAppContext(),
                                  fd,
-                                 (XtPointer *) XtInputReadMask,
-                                 (XtInputCallbackProc) xt_notify_end_process,
-                                 (XtPointer) proc_data);
+                                 (XtPointer) XtInputReadMask,
+                                 wxMotifInputHandler,
+                                 handler
+                            );
+        if ( inputId < 0 )
+            return 0;
 
-    return (int)id;
+        return new wxMotifEventLoopSource(inputId, handler, flags);
+    }
+};
+
+wxEventLoopSourcesManagerBase* wxGUIAppTraits::GetEventLoopSourcesManager()
+{
+    static wxMotifEventLoopSourcesManager s_eventLoopSourcesManager;
+
+    return &s_eventLoopSourcesManager;
 }
+
+#endif // wxUSE_EVENTLOOP_SOURCE
 
 // ----------------------------------------------------------------------------
 // misc
@@ -118,13 +176,17 @@ void wxBell()
     XBell (wxGlobalDisplay(), 0);
 }
 
-wxPortId wxGUIAppTraits::GetToolkitVersion(int *verMaj, int *verMin) const
+wxPortId wxGUIAppTraits::GetToolkitVersion(int *verMaj,
+                                           int *verMin,
+                                           int *verMicro) const
 {
     // XmVERSION and XmREVISION are defined in Xm/Xm.h
     if ( verMaj )
         *verMaj = XmVERSION;
     if ( verMin )
         *verMin = XmREVISION;
+    if ( verMicro )
+        *verMicro = 0;
 
     return wxPORT_MOTIF;
 }
@@ -161,41 +223,6 @@ void wxGetMousePosition( int* x, int* y )
     *x = xev.x_root;
     *y = xev.y_root;
 #endif
-}
-
-// Return true if we have a colour display
-bool wxColourDisplay()
-{
-    return wxDisplayDepth() > 1;
-}
-
-// Returns depth of screen
-int wxDisplayDepth()
-{
-    Display *dpy = wxGlobalDisplay();
-
-    return DefaultDepth (dpy, DefaultScreen (dpy));
-}
-
-// Get size of display
-void wxDisplaySize(int *width, int *height)
-{
-    Display *dpy = wxGlobalDisplay();
-
-    if ( width )
-        *width = DisplayWidth (dpy, DefaultScreen (dpy));
-    if ( height )
-        *height = DisplayHeight (dpy, DefaultScreen (dpy));
-}
-
-void wxDisplaySizeMM(int *width, int *height)
-{
-    Display *dpy = wxGlobalDisplay();
-
-    if ( width )
-        *width = DisplayWidthMM(dpy, DefaultScreen (dpy));
-    if ( height )
-        *height = DisplayHeightMM(dpy, DefaultScreen (dpy));
 }
 
 // Configurable display in wxX11 and wxMotif
@@ -602,7 +629,7 @@ wxBitmap wxCreateMaskedBitmap(const wxBitmap& bitmap, const wxColour& colour)
     srcDC.SelectObjectAsSource(bitmap);
     destDC.SelectObject(newBitmap);
 
-    wxBrush brush(colour, wxSOLID);
+    wxBrush brush(colour, wxBRUSHSTYLE_SOLID);
     destDC.SetBackground(brush);
     destDC.Clear();
     destDC.Blit(0, 0, bitmap.GetWidth(), bitmap.GetHeight(),

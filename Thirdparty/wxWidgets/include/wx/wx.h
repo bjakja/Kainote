@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -45,6 +44,7 @@
 #include "wx/gdiobj.h"
 #include "wx/region.h"
 #include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 #include "wx/image.h"
 #include "wx/colour.h"
 #include "wx/font.h"

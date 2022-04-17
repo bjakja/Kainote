@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -33,15 +32,41 @@ void wxDialog::DoShowWindowModal()
     NSWindow* parentWindow = parent->GetWXWindow();
     NSWindow* theWindow = GetWXWindow();
     
-    [NSApp beginSheet: theWindow
-            modalForWindow: parentWindow
-            modalDelegate: theWindow
-            didEndSelector: nil
-            contextInfo: nil];
+    [parentWindow beginSheet:theWindow completionHandler:
+     ^(NSModalResponse returnCode)
+    {
+        this->ModalFinishedCallback(theWindow, returnCode);
+    }];
 }
 
 void wxDialog::EndWindowModal()
 {
     [NSApp endSheet: GetWXWindow()];
     [GetWXWindow() orderOut:GetWXWindow()];
+}
+
+bool wxDialog::OSXGetWorksWhenModal()
+{
+    bool worksWhenModal = false;
+
+    NSWindow* nswindow = IsModal() ? GetWXWindow() : nil;
+    if ( nswindow != nil )
+    {
+        if ( [nswindow isKindOfClass:[NSPanel class]] &&  [(NSPanel*)nswindow worksWhenModal] == YES )
+        {
+            [(NSPanel*)nswindow setWorksWhenModal:NO];
+            worksWhenModal = true;
+        }
+    }
+    return worksWhenModal;
+}
+
+void wxDialog::OSXSetWorksWhenModal(bool worksWhenModal)
+{
+    NSWindow* nswindow = IsModal() ? GetWXWindow() : nil;
+    if ( nswindow != nil )
+    {
+        if ( [nswindow isKindOfClass:[NSPanel class]] &&  [(NSPanel*)nswindow worksWhenModal] == YES )
+            [(NSPanel*)nswindow setWorksWhenModal:worksWhenModal];
+    }
 }

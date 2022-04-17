@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,9 +11,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SPLITTER
 
@@ -35,16 +31,21 @@
     #include "wx/settings.h"
 #endif
 
+#ifdef __WXOSX__
+    #include "wx/osx/private/available.h"
+#endif
+
 #include "wx/renderer.h"
 
 #include <stdlib.h>
 
-wxDEFINE_EVENT( wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, wxSplitterEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING, wxSplitterEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_SPLITTER_DOUBLECLICKED, wxSplitterEvent );
-wxDEFINE_EVENT( wxEVT_COMMAND_SPLITTER_UNSPLIT, wxSplitterEvent );
+wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGED, wxSplitterEvent );
+wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_CHANGING, wxSplitterEvent );
+wxDEFINE_EVENT( wxEVT_SPLITTER_SASH_POS_RESIZE, wxSplitterEvent);
+wxDEFINE_EVENT( wxEVT_SPLITTER_DOUBLECLICKED, wxSplitterEvent );
+wxDEFINE_EVENT( wxEVT_SPLITTER_UNSPLIT, wxSplitterEvent );
 
-IMPLEMENT_DYNAMIC_CLASS(wxSplitterWindow, wxWindow)
+wxIMPLEMENT_DYNAMIC_CLASS(wxSplitterWindow, wxWindow);
 
 /*
     TODO PROPERTIES
@@ -55,18 +56,19 @@ IMPLEMENT_DYNAMIC_CLASS(wxSplitterWindow, wxWindow)
         orientation
 */
 
-IMPLEMENT_DYNAMIC_CLASS(wxSplitterEvent, wxNotifyEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxSplitterEvent, wxNotifyEvent);
 
-BEGIN_EVENT_TABLE(wxSplitterWindow, wxWindow)
+wxBEGIN_EVENT_TABLE(wxSplitterWindow, wxWindow)
     EVT_PAINT(wxSplitterWindow::OnPaint)
     EVT_SIZE(wxSplitterWindow::OnSize)
+    EVT_DPI_CHANGED(wxSplitterWindow::OnDPIChanged)
     EVT_MOUSE_EVENTS(wxSplitterWindow::OnMouseEvent)
     EVT_MOUSE_CAPTURE_LOST(wxSplitterWindow::OnMouseCaptureLost)
 
 #if defined( __WXMSW__ ) || defined( __WXMAC__)
     EVT_SET_CURSOR(wxSplitterWindow::OnSetCursor)
 #endif // wxMSW
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 static bool IsLive(wxSplitterWindow* wnd)
 {
@@ -97,13 +99,24 @@ bool wxSplitterWindow::Create(wxWindow *parent, wxWindowID id,
 
     m_permitUnsplitAlways = (style & wxSP_PERMIT_UNSPLIT) != 0;
 
-    // FIXME: with this line the background is not erased at all under GTK1,
-    //        so temporary avoid it there
-#if !defined(__WXGTK__) || defined(__WXGTK20__)
-    // don't erase the splitter background, it's pointless as we overwrite it
-    // anyhow
-    SetBackgroundStyle(wxBG_STYLE_CUSTOM);
+#ifdef __WXOSX__
+  #if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_16
+    if ( WX_IS_MACOS_AVAILABLE(10, 16) )
+    {
+        // Nothing to do: see OnPaint()
+    }
+    else
+  #endif
 #endif
+    {
+        // FIXME: with this line the background is not erased at all under GTK1,
+        //        so temporary avoid it there
+#if !defined(__WXGTK__) || defined(__WXGTK20__)
+        // don't erase the splitter background, it's pointless as we overwrite it
+        // anyhow
+        SetBackgroundStyle(wxBG_STYLE_PAINT);
+#endif
+    }
 
     return true;
 }
@@ -121,7 +134,6 @@ void wxSplitterWindow::Init()
     m_sashPosition = 0;
     m_requestedSashPosition = INT_MAX;
     m_sashGravity = 0.0;
-    m_lastSize = wxSize(0,0);
     m_minimumPaneSize = 0;
     m_sashCursorWE = wxCursor(wxCURSOR_SIZEWE);
     m_sashCursorNS = wxCursor(wxCURSOR_SIZENS);
@@ -180,11 +192,23 @@ void wxSplitterWindow::OnPaint(wxPaintEvent& WXUNUSED(event))
 {
     wxPaintDC dc(this);
 #ifdef __WXOSX__
-    // as subpanels might have a transparent background we must erase the background
-    // at least on OSX, otherwise traces of the sash will remain
-    // test with: splitter sample->replace right window
-    dc.Clear();
-#endif
+  #if __MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_16
+    if ( WX_IS_MACOS_AVAILABLE(10, 16) )
+    {
+        // Nothing to do: since macOS 10.14, views are layer-backed or using a shared
+        // layer and explicitly clearing the background isn't needed. This only
+        // started mattering here with macOS 11 (aka 10.16 when built with older SDK),
+        // where we must avoid explicitly painting window backgrounds
+    }
+    else
+  #endif
+    {
+        // as subpanels might have a transparent background we must erase the background
+        // at least on OSX, otherwise traces of the sash will remain
+        // test with: splitter sample->replace right window
+        dc.Clear();
+    }
+#endif // __WXOSX__
 
     DrawSash(dc);
 }
@@ -193,21 +217,15 @@ void wxSplitterWindow::OnInternalIdle()
 {
     wxWindow::OnInternalIdle();
 
-    // We may need to update the children sizes in two cases: either because
-    // we're in the middle of a live update as indicated by m_needUpdating or
-    // because we have a requested but not yet set sash position as indicated
-    // by m_requestedSashPosition having a valid value.
+    // We may need to update the children sizes if we're in the middle of
+    // a live update as indicated by m_needUpdating. The other possible case,
+    // when we have a requested but not yet set sash position (as indicated
+    // by m_requestedSashPosition having a valid value) is handled by OnSize.
     if ( m_needUpdating )
     {
         m_needUpdating = false;
+        SizeWindows();
     }
-    else if ( m_requestedSashPosition == INT_MAX )
-    {
-        // We don't need to resize the children.
-        return;
-    }
-
-    SizeWindows();
 }
 
 void wxSplitterWindow::OnMouseEvent(wxMouseEvent& event)
@@ -293,9 +311,9 @@ void wxSplitterWindow::OnMouseEvent(wxMouseEvent& event)
                 m_windowOne = m_windowTwo;
                 m_windowTwo = NULL;
                 OnUnsplit(removedWindow);
-                wxSplitterEvent eventUnsplit(wxEVT_COMMAND_SPLITTER_UNSPLIT, this);
+                wxSplitterEvent eventUnsplit(wxEVT_SPLITTER_UNSPLIT, this);
                 eventUnsplit.m_data.win = removedWindow;
-                (void)DoSendEvent(eventUnsplit);
+                (void)ProcessWindowEvent(eventUnsplit);
                 SetSashPositionAndNotify(0);
             }
             else if ( posSashNew == GetWindowSize() )
@@ -304,9 +322,9 @@ void wxSplitterWindow::OnMouseEvent(wxMouseEvent& event)
                 wxWindow *removedWindow = m_windowTwo;
                 m_windowTwo = NULL;
                 OnUnsplit(removedWindow);
-                wxSplitterEvent eventUnsplit(wxEVT_COMMAND_SPLITTER_UNSPLIT, this);
+                wxSplitterEvent eventUnsplit(wxEVT_SPLITTER_UNSPLIT, this);
                 eventUnsplit.m_data.win = removedWindow;
-                (void)DoSendEvent(eventUnsplit);
+                (void)ProcessWindowEvent(eventUnsplit);
                 SetSashPositionAndNotify(0);
             }
             else
@@ -455,11 +473,38 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
 
             // Apply gravity if we use it.
             int delta = (int) ( (size - old_size)*m_sashGravity );
+
+            // If delta == 0 then sash will be set according to the windows min size.
             if ( delta != 0 )
             {
                 newPosition = m_sashPosition + delta;
                 if( newPosition < m_minimumPaneSize )
                     newPosition = m_minimumPaneSize;
+            }
+
+            // Send an event with the newly calculated position. The handler
+            // can then override the new position by setting the new position.
+            wxSplitterEvent update(wxEVT_SPLITTER_SASH_POS_RESIZE, this);
+            update.m_data.resize.pos = newPosition;
+            update.m_data.resize.oldSize = old_size;
+            update.m_data.resize.newSize = size;
+
+            if ( ProcessWindowEvent(update) )
+            {
+                if (update.IsAllowed())
+                {
+                    // If the user set the sashposition to -1
+                    // we keep the already calculated value,
+                    // otherwise the user provided the new position.
+                    int userPos = update.GetSashPosition();
+                    if (userPos != -1)
+                        newPosition = userPos;
+                }
+                else
+                {
+                    // the event handler vetoed the change
+                    newPosition = -1;
+                }
             }
 
             // Also check if the second window became too small.
@@ -476,6 +521,15 @@ void wxSplitterWindow::OnSize(wxSizeEvent& event)
     SizeWindows();
 }
 
+void wxSplitterWindow::OnDPIChanged(wxDPIChangedEvent& event)
+{
+    m_minimumPaneSize = event.ScaleX(m_minimumPaneSize);
+    m_sashPosition = event.ScaleX(m_sashPosition);
+    m_lastSize = event.Scale(m_lastSize);
+
+    event.Skip();
+}
+
 void wxSplitterWindow::SetSashGravity(double gravity)
 {
     wxCHECK_RET( gravity >= 0. && gravity <= 1.,
@@ -484,16 +538,15 @@ void wxSplitterWindow::SetSashGravity(double gravity)
     m_sashGravity = gravity;
 }
 
-bool wxSplitterWindow::SashHitTest(int x, int y, int tolerance)
+bool wxSplitterWindow::SashHitTest(int x, int y)
 {
     if ( m_windowTwo == NULL || m_sashPosition == 0)
         return false; // No sash
 
     int z = m_splitMode == wxSPLIT_VERTICAL ? x : y;
-    int hitMin = m_sashPosition - tolerance;
-    int hitMax = m_sashPosition + GetSashSize() + tolerance;
+    int hitMax = m_sashPosition + GetSashSize() - 1;
 
-    return z >=  hitMin && z <= hitMax;
+    return z >= m_sashPosition && z <= hitMax;
 }
 
 void wxSplitterWindow::SetSashInvisible(bool invisible)
@@ -653,10 +706,10 @@ void wxSplitterWindow::SetSashPositionAndNotify(int sashPos)
     // must generate a CHANGED event at the end of resizing
     DoSetSashPosition(sashPos);
 
-    wxSplitterEvent event(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED, this);
-    event.m_data.pos = m_sashPosition;
+    wxSplitterEvent event(wxEVT_SPLITTER_SASH_POS_CHANGED, this);
+    event.m_data.resize.pos = m_sashPosition;
 
-    (void)DoSendEvent(event);
+    (void)ProcessWindowEvent(event);
 }
 
 // Position and size subwindows.
@@ -883,11 +936,6 @@ void wxSplitterWindow::UpdateSize()
     SizeWindows();
 }
 
-bool wxSplitterWindow::DoSendEvent(wxSplitterEvent& event)
-{
-    return !GetEventHandler()->ProcessEvent(event) || event.IsAllowed();
-}
-
 wxSize wxSplitterWindow::DoGetBestSize() const
 {
     // get best sizes of subwindows
@@ -989,18 +1037,21 @@ int wxSplitterWindow::OnSashPositionChanging(int newSashPosition)
     //
     // FIXME: shouldn't we do it before the adjustments above so as to ensure
     //        that the sash position is always reasonable?
-    wxSplitterEvent event(wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING, this);
-    event.m_data.pos = newSashPosition;
+    wxSplitterEvent event(wxEVT_SPLITTER_SASH_POS_CHANGING, this);
+    event.m_data.resize.pos = newSashPosition;
 
-    if ( !DoSendEvent(event) )
+    if ( ProcessWindowEvent(event) )
     {
-        // the event handler vetoed the change
-        newSashPosition = -1;
-    }
-    else
-    {
-        // it could have been changed by it
-        newSashPosition = event.GetSashPosition();
+        if (event.IsAllowed())
+        {
+            // it could have been changed by it
+            newSashPosition = event.GetSashPosition();
+        }
+        else
+        {
+            // the event handler vetoed the change
+            newSashPosition = -1;
+        }
     }
 
     return newSashPosition;
@@ -1013,19 +1064,19 @@ void wxSplitterWindow::OnDoubleClickSash(int x, int y)
     wxCHECK_RET(m_windowTwo, wxT("splitter: no window to remove"));
 
     // new code should handle events instead of using the virtual functions
-    wxSplitterEvent event(wxEVT_COMMAND_SPLITTER_DOUBLECLICKED, this);
+    wxSplitterEvent event(wxEVT_SPLITTER_DOUBLECLICKED, this);
     event.m_data.pt.x = x;
     event.m_data.pt.y = y;
-    if ( DoSendEvent(event) )
+    if ( !ProcessWindowEvent(event) || event.IsAllowed() )
     {
         if ( GetMinimumPaneSize() == 0 || m_permitUnsplitAlways )
         {
             wxWindow* win = m_windowTwo;
             if ( Unsplit(win) )
             {
-                wxSplitterEvent unsplitEvent(wxEVT_COMMAND_SPLITTER_UNSPLIT, this);
+                wxSplitterEvent unsplitEvent(wxEVT_SPLITTER_UNSPLIT, this);
                 unsplitEvent.m_data.win = win;
-                (void)DoSendEvent(unsplitEvent);
+                (void)ProcessWindowEvent(unsplitEvent);
             }
         }
     }
@@ -1047,7 +1098,7 @@ void wxSplitterWindow::OnSetCursor(wxSetCursorEvent& event)
     // and like this we explicitly say that our cursor should not be used for
     // children windows which overlap us
 
-    if ( SashHitTest(event.GetX(), event.GetY(), 0) )
+    if ( SashHitTest(event.GetX(), event.GetY()) )
     {
         // default processing is ok
         event.Skip();

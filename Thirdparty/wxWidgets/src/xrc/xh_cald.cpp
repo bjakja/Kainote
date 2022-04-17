@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for wxCalendarCtrl
 // Author:      Brian Gavin
 // Created:     2000/09/09
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Brian Gavin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_CALENDARCTRL
 
@@ -25,7 +21,7 @@
 
 #include "wx/calctrl.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxCalendarCtrlXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxCalendarCtrlXmlHandler, wxXmlResourceHandler);
 
 wxCalendarCtrlXmlHandler::wxCalendarCtrlXmlHandler()
 : wxXmlResourceHandler()
@@ -44,7 +40,7 @@ wxCalendarCtrlXmlHandler::wxCalendarCtrlXmlHandler()
 
 wxObject *wxCalendarCtrlXmlHandler::DoCreateResource()
 {
-    XRC_MAKE_INSTANCE(calendar, wxCalendarCtrl);
+    XRC_MAKE_INSTANCE(calendar, wxCalendarCtrl)
 
     calendar->Create(m_parentAsWindow,
                      GetID(),

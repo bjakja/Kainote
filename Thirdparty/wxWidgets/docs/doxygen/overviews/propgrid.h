@@ -2,7 +2,6 @@
 // Name:        propgrid.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,42 +9,22 @@
 
 @page overview_propgrid wxPropertyGrid Overview
 
-Key Classes:
-@li wxPGProperty
-@li wxPropertyGrid
-@li wxPropertyGridEvent
-@li wxPropertyGridManager
-@li wxPropertyGridPage
+@tableofcontents
 
-  wxPropertyGrid is a specialized grid for editing properties - in other
-words name = value pairs. List of ready-to-use property classes include
-strings, numbers, flag sets, fonts, colours and many others. It is possible,
-for example, to categorize properties, set up a complete tree-hierarchy,
-add more than two columns, and set arbitrary per-property attributes.
+wxPropertyGrid is a specialized grid for editing properties - in other words
+name = value pairs. List of ready-to-use property classes include strings,
+numbers, flag sets, fonts, colours and many others. It is possible, for
+example, to categorize properties, set up a complete tree-hierarchy, add more
+than two columns, and set arbitrary per-property attributes.
 
-  As this version of wxPropertyGrid has some backward-incompatible changes
-from version 1.4, everybody who need to maintain custom property classes
-should carefully read final section in @ref propgrid_compat.
+As this version of wxPropertyGrid has some backward-incompatible changes from
+version 1.4, everybody who need to maintain custom property classes should
+carefully read final section in @ref propgrid_compat.
 
-@li @ref propgrid_basics
-@li @ref propgrid_categories
-@li @ref propgrid_parentprops
-@li @ref propgrid_enumandflags
-@li @ref propgrid_advprops
-@li @ref propgrid_processingvalues
-@li @ref propgrid_iterating
-@li @ref propgrid_events
-@li @ref propgrid_tooltipandhint
-@li @ref propgrid_validating
-@li @ref propgrid_populating
-@li @ref propgrid_cellrender
-@li @ref propgrid_keyhandling
-@li @ref propgrid_customizing
-@li @ref propgrid_usage2
-@li @ref propgrid_subclassing
-@li @ref propgrid_misc
-@li @ref propgrid_proplist
-@li @ref propgrid_compat
+@see wxPropertyGrid, wxPropertyGridEvent, wxPropertyGridManager,
+     wxPropertyGridPage, wxPGProperty
+
+
 
 @section propgrid_basics Creating and Populating wxPropertyGrid
 
@@ -283,9 +262,9 @@ A very simple example:
     // Using wxArrayString
     //
     wxArrayString arrDiet;
-    arr.Add("Herbivore");
-    arr.Add("Carnivore");
-    arr.Add("Omnivore");
+    arrDiet.Add("Herbivore");
+    arrDiet.Add("Carnivore");
+    arrDiet.Add("Omnivore");
 
     pg->Append( new wxEnumProperty("Diet",
                                    wxPG_LABEL,
@@ -311,9 +290,9 @@ Here's extended example using values as well:
     // Using wxArrayString and wxArrayInt
     //
     wxArrayString arrDiet;
-    arr.Add("Herbivore");
-    arr.Add("Carnivore");
-    arr.Add("Omnivore");
+    arrDiet.Add("Herbivore");
+    arrDiet.Add("Carnivore");
+    arrDiet.Add("Omnivore");
 
     wxArrayInt arrIds;
     arrIds.Add(40);
@@ -471,9 +450,9 @@ void MyWindowClass::OnPropertyGridChanged(wxPropertyGridEvent& event)
         return;
 
     // Handle changes in values, as needed
-    if ( property.GetName() == "MyStringProperty" )
+    if ( property->GetName() == "MyStringProperty" )
         OnMyStringPropertyChanged(value.As<wxString>());
-    else if ( property.GetName() == "MyColourProperty" )
+    else if ( property->GetName() == "MyColourProperty" )
         OnMyColourPropertyChanged(value.As<wxColour>());
 }
 
@@ -754,10 +733,10 @@ accomplish the task:
 @code
     // Have property editor focus on Enter
     propgrid->AddActionTrigger( wxPG_ACTION_EDIT, WXK_RETURN );
-    
+
     // Have Enter work as action trigger even when editor is focused
     propgrid->DedicateKey( WXK_RETURN );
-    
+
     // Let Enter also navigate to the next property
     propgrid->AddActionTrigger( wxPG_ACTION_NEXT_PROPERTY, WXK_RETURN );
 
@@ -828,10 +807,9 @@ See wxPGMultiButton class reference.
 
 @subsection propgrid_customeventhandling Handling Events Passed from Properties
 
-<b>wxEVT_COMMAND_BUTTON_CLICKED </b>(corresponds to event table macro EVT_BUTTON):
-Occurs when editor button click is not handled by the property itself
-(as is the case, for example, if you set property's editor to TextCtrlAndButton
-from the original TextCtrl).
+@c wxEVT_BUTTON: Occurs when editor button click is not handled by the property
+itself (as is the case, for example, if you set property's editor
+to TextCtrlAndButton from the original TextCtrl).
 
 @subsection propgrid_attributes Property Attributes
 

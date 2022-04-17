@@ -3,8 +3,7 @@
 // Purpose:     implementation of GTK mnemonics conversion functions
 // Author:      Vadim Zeitlin
 // Created:     2007-11-12
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/log.h"
 #include "wx/gtk1/private/mnemonics.h"

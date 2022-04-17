@@ -9,7 +9,6 @@
 //              beware, inelegant code!
 // Author:      Julian Smart
 // Created:     12/12/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -22,11 +21,11 @@
 class MyApp: public wxApp
 {
 public:
-    bool OnInit();
-    int OnExit();
+    bool OnInit() wxOVERRIDE;
+    int OnExit() wxOVERRIDE;
 };
 
-DECLARE_APP(MyApp)
+wxDECLARE_APP(MyApp);
 
 // Define a new canvas which can receive some events
 class MyCanvas: public wxWindow
@@ -42,7 +41,7 @@ public:
 private:
     wxMenu *m_popupMenu;
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 // Define a new frame
@@ -95,7 +94,7 @@ private:
     // Icons
     wxIcon *m_corners[4];
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 // Menu items

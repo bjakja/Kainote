@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -51,31 +50,34 @@ bool wxButton::Create(wxWindow *parent,
     const wxValidator& validator,
     const wxString& name)
 {
-    DontCreatePeer();
-    
-    m_marginX =
-    m_marginY = 0;
-
     // FIXME: this hack is needed because we're called from
     //        wxBitmapButton::Create() with this style and we currently use a
     //        different wxWidgetImpl method (CreateBitmapButton() rather than
     //        CreateButton()) for creating bitmap buttons, but we really ought
     //        to unify the creation of buttons of all kinds and then remove
     //        this check
-    if ( style & wxBU_NOTEXT )
+    if ( style & wxBU_NOTEXT && !ShouldCreatePeer() )
     {
         return wxControl::Create(parent, id, pos, size, style,
                                  validator, name);
     }
 
+    DontCreatePeer();
+
+    m_marginX =
+    m_marginY = 0;
+
     wxString label;
 
-    // Ignore the standard label for help buttons if possible, they use "?"
-    // label under Mac which looks better.
-    if ( !IsHelpButtonWithStandardLabel(id, labelOrig) )
+    if ( !(style & wxBU_NOTEXT) )
     {
-        label = labelOrig.empty() && wxIsStockID(id) ? wxGetStockLabel(id)
-                                                     : labelOrig;
+        // Ignore the standard label for help buttons if possible, they use "?"
+        // label under Mac which looks better.
+        if ( !IsHelpButtonWithStandardLabel(id, labelOrig) )
+        {
+            label = labelOrig.empty() && wxIsStockID(id) ? wxGetStockLabel(id)
+                                                         : labelOrig;
+        }
     }
 
 
@@ -101,6 +103,9 @@ void wxButton::SetLabel(const wxString& label)
     }
 
     wxAnyButton::SetLabel(label);
+#if wxOSX_USE_COCOA
+    OSXUpdateAfterLabelChange(label);
+#endif
 }
 
 wxWindow *wxButton::SetDefault()
@@ -125,68 +130,14 @@ void wxButton::Command (wxCommandEvent & WXUNUSED(event))
 
 bool wxButton::OSXHandleClicked( double WXUNUSED(timestampsec) )
 {
-    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, m_windowId);
+    wxCommandEvent event(wxEVT_BUTTON, m_windowId);
     event.SetEventObject(this);
     ProcessCommand(event);
     return true;
 }
 
 /* static */
-wxSize wxButtonBase::GetDefaultSize()
+wxSize wxButtonBase::GetDefaultSize(wxWindow* WXUNUSED(win))
 {
     return wxAnyButton::GetDefaultSize();
 }
-
-//-------------------------------------------------------
-// wxDisclosureTriangle
-//-------------------------------------------------------
-
-bool wxDisclosureTriangle::Create(wxWindow *parent, wxWindowID id, const wxString& label,
-   const wxPoint& pos, const wxSize& size, long style,const wxValidator& validator, const wxString& name )
-{    
-    DontCreatePeer();
-    if ( !wxControl::Create(parent, id, pos, size, style, validator, name) )
-        return false;
-
-    SetPeer(wxWidgetImpl::CreateDisclosureTriangle(this, parent, id, label, pos, size, style, GetExtraStyle() ));
-
-    MacPostControlCreate( pos, size );
-    // passing the text in the param doesn't seem to work, so let's do it again
-    SetLabel( label );
-
-    return true;
-}
-
-void wxDisclosureTriangle::SetOpen( bool open )
-{
-    GetPeer()->SetValue( open ? 1 : 0 );
-}
-
-bool wxDisclosureTriangle::IsOpen() const
-{
-   return GetPeer()->GetValue() == 1;
-}
-
-bool wxDisclosureTriangle::OSXHandleClicked( double WXUNUSED(timestampsec) )
-{
-    // Just emit button event for now
-    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, m_windowId);
-    event.SetEventObject(this);
-    ProcessCommand(event);
-
-    return true;
-}
-
-wxSize wxDisclosureTriangle::DoGetBestSize() const
-{
-    wxSize size = wxWindow::DoGetBestSize();
-
-    // under Carbon the base class GetBestSize() implementation doesn't seem to
-    // take the label into account at all, correct for it here
-#if wxOSX_USE_CARBON
-    size.x += GetTextExtent(GetLabel()).x;
-#endif // wxOSX_USE_CARBON
-
-    return size;
-}
-

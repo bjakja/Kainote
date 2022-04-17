@@ -2,7 +2,6 @@
 // Name:        checklst.h
 // Purpose:     interface of wxCheckListBox
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +16,7 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_CHECKLISTBOX(id, func)}
-        Process a @c wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event, when an item in
+        Process a @c wxEVT_CHECKLISTBOX event, when an item in
         the check list box is checked or unchecked. wxCommandEvent::GetInt()
         will contain the index of the item that was checked or unchecked.
         wxCommandEvent::IsChecked() is not valid! Use wxCheckListBox::IsChecked()
@@ -26,7 +25,7 @@
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{checklistbox.png}
+    @appearance{checklistbox}
 
     @see wxListBox, wxChoice, wxComboBox, wxListCtrl, wxCommandEvent
 */
@@ -50,7 +49,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size. 
+            Window size.
             If ::wxDefaultSize is specified then the window is sized appropriately.
         @param n
             Number of strings with which to initialise the control.
@@ -135,7 +134,7 @@ public:
 
     /**
         Checks the given item. Note that calling this method does not result in
-        a @c wxEVT_COMMAND_CHECKLISTBOX_TOGGLE event being emitted.
+        a @c wxEVT_CHECKLISTBOX event being emitted.
 
         @param item
             Index of item to check.
@@ -151,6 +150,19 @@ public:
             Index of item whose check status is to be returned.
     */
     bool IsChecked(unsigned int item) const;
-    
+
+    /**
+        Return the indices of the checked items.
+
+        @param checkedItems
+            A reference to the array that is filled with the indices of the
+            checked items.
+        @return The number of checked items.
+
+        @see Check(), IsChecked()
+
+        @since 2.9.5
+    */
+    unsigned int GetCheckedItems(wxArrayInt& checkedItems) const;
 };
 

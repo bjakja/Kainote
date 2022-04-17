@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/radiobut.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +13,7 @@
 // wxRadioButton
 //-----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxRadioButton: public wxControl
+class WXDLLIMPEXP_CORE wxRadioButton: public wxRadioButtonBase
 {
 public:
     wxRadioButton() { }
@@ -25,7 +24,7 @@ public:
                    const wxSize& size = wxDefaultSize,
                    long style = 0,
                    const wxValidator& validator = wxDefaultValidator,
-                   const wxString& name = wxRadioButtonNameStr )
+                   const wxString& name = wxASCII_STR(wxRadioButtonNameStr) )
     {
         Create( parent, id, label, pos, size, style, validator, name );
     }
@@ -37,7 +36,7 @@ public:
                  const wxSize& size = wxDefaultSize,
                  long style = 0,
                  const wxValidator& validator = wxDefaultValidator,
-                 const wxString& name = wxRadioButtonNameStr );
+                 const wxString& name = wxASCII_STR(wxRadioButtonNameStr) );
 
     virtual void SetLabel(const wxString& label);
     virtual void SetValue(bool val);
@@ -61,7 +60,7 @@ protected:
     virtual wxSize DoGetBestSize() const;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxRadioButton)
+    wxDECLARE_DYNAMIC_CLASS(wxRadioButton);
 };
 
 #endif // __GTKRADIOBUTTONH__

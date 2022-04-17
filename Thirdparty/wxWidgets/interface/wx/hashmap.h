@@ -2,7 +2,6 @@
 // Name:        hashmap.h
 // Purpose:     interface of wxHashMap
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -83,11 +82,11 @@
     @code
     WX_DECLARE_HASH_MAP( int,
                          wxString,
-                         ::wxIntegerHash,
-                         ::wxIntegerEqual,
+                         wxIntegerHash,
+                         wxIntegerEqual,
                          MyHash );
 
-    // using an user-defined class for keys
+    // using a user-defined class for keys
     class MyKey { ... };
 
     // hashing function
@@ -119,8 +118,8 @@
 
     WX_DECLARE_HASH_MAP( MyKey,      // type of the keys
                          SOME_TYPE,  // any type you like
-                         ::MyKeyHash,  // hasher
-                         ::MyKeyEqual, // key equality predicate
+                         MyKeyHash,  // hasher
+                         MyKeyEqual, // key equality predicate
                          CLASSNAME); // name of the class
     @endcode
 
@@ -147,7 +146,7 @@
     ++it ( and it++ ) to move to the next element, *it to access the element pointed to,
     it->first ( it->second ) to access the key ( value ) of the element pointed to.
 
-    Hash maps provide forward only iterators, this means that you can't use --it,
+    Hash maps provide forward only iterators, this means that you can't use \--it,
     it + 3, it1 - it2.
 
 

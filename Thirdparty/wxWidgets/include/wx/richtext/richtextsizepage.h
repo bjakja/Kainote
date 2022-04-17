@@ -1,12 +1,11 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        wx/richtext/richtextsizepage.h
-// Purpose:
+// Purpose:     Declares the rich text formatting dialog size page.
 // Author:      Julian Smart
 // Modified by:
 // Created:     20/10/2010 10:23:24
-// RCS-ID:
 // Copyright:   (c) Julian Smart
-// Licence:
+// Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #ifndef _RICHTEXTSIZEPAGE_H_
@@ -23,6 +22,7 @@
 #include "wx/statline.h"
 #include "wx/valgen.h"
 ////@end includes
+#include "wx/stattext.h"
 
 /*!
  * Forward declarations
@@ -48,8 +48,8 @@
 
 class WXDLLIMPEXP_RICHTEXT wxRichTextSizePage: public wxRichTextDialogPage
 {
-    DECLARE_DYNAMIC_CLASS( wxRichTextSizePage )
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_DYNAMIC_CLASS(wxRichTextSizePage);
+    wxDECLARE_EVENT_TABLE();
     DECLARE_HELP_PROVISION()
 
 public:
@@ -73,14 +73,38 @@ public:
     wxRichTextAttr* GetAttributes();
 
     /// Data transfer
-    virtual bool TransferDataToWindow();
-    virtual bool TransferDataFromWindow();
+    virtual bool TransferDataToWindow() wxOVERRIDE;
+    virtual bool TransferDataFromWindow() wxOVERRIDE;
 
     /// Show/hide position controls
-    void ShowPositionControls(bool show);
+    static void ShowPositionControls(bool show) { sm_showPositionControls = show; }
+
+    /// Show/hide minimum and maximum size controls
+    static void ShowMinMaxSizeControls(bool show) { sm_showMinMaxSizeControls = show; }
+
+    /// Show/hide position mode controls
+    static void ShowPositionModeControls(bool show) { sm_showPositionModeControls = show; }
+
+    /// Show/hide right/bottom position controls
+    static void ShowRightBottomPositionControls(bool show) { sm_showRightBottomPositionControls = show; }
+
+    /// Show/hide floating and alignment controls
+    static void ShowFloatingAndAlignmentControls(bool show) { sm_showFloatingAndAlignmentControls = show; }
 
     /// Show/hide floating controls
-    void ShowFloatingControls(bool show);
+    static void ShowFloatingControls(bool show) { sm_showFloatingControls = show; }
+
+    /// Show/hide alignment controls
+    static void ShowAlignmentControls(bool show) { sm_showAlignmentControls = show; }
+
+    /// Enable the position and size units
+    static void EnablePositionAndSizeUnits(bool enable) { sm_enablePositionAndSizeUnits = enable; }
+
+    /// Enable the checkboxes for position and size
+    static void EnablePositionAndSizeCheckboxes(bool enable) { sm_enablePositionAndSizeCheckboxes = enable; }
+
+    /// Enable the move object controls
+    static void ShowMoveObjectControls(bool enable) { sm_showMoveObjectControls = enable; }
 
 ////@begin wxRichTextSizePage event handler declarations
 
@@ -90,8 +114,14 @@ public:
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_WIDTH
     void OnRichtextWidthUpdate( wxUpdateUIEvent& event );
 
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_UNITS_W
+    void OnRichtextWidthUnitsUpdate( wxUpdateUIEvent& event );
+
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_HEIGHT
     void OnRichtextHeightUpdate( wxUpdateUIEvent& event );
+
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_UNITS_H
+    void OnRichtextHeightUnitsUpdate( wxUpdateUIEvent& event );
 
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_MIN_WIDTH
     void OnRichtextMinWidthUpdate( wxUpdateUIEvent& event );
@@ -109,13 +139,25 @@ public:
     void OnRichtextLeftUpdate( wxUpdateUIEvent& event );
 
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_LEFT_UNITS
+    void OnRichtextLeftUnitsUpdate( wxUpdateUIEvent& event );
+
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_TOP
     void OnRichtextTopUpdate( wxUpdateUIEvent& event );
+
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_TOP_UNITS
+    void OnRichtextTopUnitsUpdate( wxUpdateUIEvent& event );
 
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_RIGHT
     void OnRichtextRightUpdate( wxUpdateUIEvent& event );
 
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_RIGHT_UNITS
+    void OnRichtextRightUnitsUpdate( wxUpdateUIEvent& event );
+
     /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_BOTTOM
     void OnRichtextBottomUpdate( wxUpdateUIEvent& event );
+
+    /// wxEVT_UPDATE_UI event handler for ID_RICHTEXT_BOTTOM_UNITS
+    void OnRichtextBottomUnitsUpdate( wxUpdateUIEvent& event );
 
     /// wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXT_PARA_UP
     void OnRichtextParaUpClick( wxCommandEvent& event );
@@ -142,42 +184,64 @@ public:
 
 ////@begin wxRichTextSizePage member variables
     wxBoxSizer* m_parentSizer;
-    wxBoxSizer* m_floatingControls;
-    wxComboBox* m_float;
-    wxBoxSizer* m_alignmentControls;
+    wxBoxSizer* m_floatingAlignmentSizer;
+    wxBoxSizer* m_floatingSizer;
+    wxChoice* m_float;
+    wxBoxSizer* m_alignmentSizer;
     wxCheckBox* m_verticalAlignmentCheckbox;
-    wxComboBox* m_verticalAlignmentComboBox;
+    wxChoice* m_verticalAlignmentComboBox;
+    wxFlexGridSizer* m_sizeSizer;
+    wxBoxSizer* m_widthSizer;
     wxCheckBox* m_widthCheckbox;
+    wxStaticText* m_widthLabel;
     wxTextCtrl* m_width;
     wxComboBox* m_unitsW;
+    wxBoxSizer* m_heightSizer;
     wxCheckBox* m_heightCheckbox;
+    wxStaticText* m_heightLabel;
     wxTextCtrl* m_height;
     wxComboBox* m_unitsH;
     wxCheckBox* m_minWidthCheckbox;
+    wxBoxSizer* m_minWidthSizer;
     wxTextCtrl* m_minWidth;
     wxComboBox* m_unitsMinW;
     wxCheckBox* m_minHeightCheckbox;
+    wxBoxSizer* m_minHeightSizer;
     wxTextCtrl* m_minHeight;
     wxComboBox* m_unitsMinH;
     wxCheckBox* m_maxWidthCheckbox;
+    wxBoxSizer* m_maxWidthSizer;
     wxTextCtrl* m_maxWidth;
     wxComboBox* m_unitsMaxW;
     wxCheckBox* m_maxHeightCheckbox;
+    wxBoxSizer* m_maxHeightSizer;
     wxTextCtrl* m_maxHeight;
     wxComboBox* m_unitsMaxH;
     wxBoxSizer* m_positionControls;
     wxBoxSizer* m_moveObjectParentSizer;
-    wxComboBox* m_positionModeCtrl;
+    wxBoxSizer* m_positionModeSizer;
+    wxChoice* m_positionModeCtrl;
+    wxFlexGridSizer* m_positionGridSizer;
+    wxBoxSizer* m_leftSizer;
     wxCheckBox* m_positionLeftCheckbox;
+    wxStaticText* m_leftLabel;
     wxTextCtrl* m_left;
     wxComboBox* m_unitsLeft;
+    wxBoxSizer* m_topSizer;
     wxCheckBox* m_positionTopCheckbox;
+    wxStaticText* m_topLabel;
     wxTextCtrl* m_top;
     wxComboBox* m_unitsTop;
+    wxBoxSizer* m_rightSizer;
     wxCheckBox* m_positionRightCheckbox;
+    wxStaticText* m_rightLabel;
+    wxBoxSizer* m_rightPositionSizer;
     wxTextCtrl* m_right;
     wxComboBox* m_unitsRight;
+    wxBoxSizer* m_bottomSizer;
     wxCheckBox* m_positionBottomCheckbox;
+    wxStaticText* m_bottomLabel;
+    wxBoxSizer* m_bottomPositionSizer;
     wxTextCtrl* m_bottom;
     wxComboBox* m_unitsBottom;
     wxBoxSizer* m_moveObjectSizer;
@@ -223,6 +287,17 @@ public:
         ID_RICHTEXT_PARA_DOWN = 10714
     };
 ////@end wxRichTextSizePage member variables
+
+    static bool sm_showFloatingControls;
+    static bool sm_showPositionControls;
+    static bool sm_showMinMaxSizeControls;
+    static bool sm_showPositionModeControls;
+    static bool sm_showRightBottomPositionControls;
+    static bool sm_showAlignmentControls;
+    static bool sm_showFloatingAndAlignmentControls;
+    static bool sm_enablePositionAndSizeUnits;
+    static bool sm_enablePositionAndSizeCheckboxes;
+    static bool sm_showMoveObjectControls;
 };
 
 #endif

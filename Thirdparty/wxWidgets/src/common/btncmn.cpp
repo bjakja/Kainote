@@ -3,8 +3,7 @@
 // Purpose:     implementation of wxButtonBase
 // Author:      Vadim Zeitlin
 // Created:     2007-04-08
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_BUTTON
 
@@ -72,10 +68,10 @@ wxFLAGS_MEMBER(wxBU_BOTTOM)
 wxFLAGS_MEMBER(wxBU_EXACTFIT)
 wxEND_FLAGS( wxButtonStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxButton, wxControl, "wx/button.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxButton, wxControl, "wx/button.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxButton)
-wxEVENT_PROPERTY( Click, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEvent )
+wxEVENT_PROPERTY( Click, wxEVT_BUTTON, wxCommandEvent )
 
 wxPROPERTY( Font, wxFont, SetFont, GetFont, wxEMPTY_PARAMETER_VALUE, \
            0 /*flags*/, wxT("The font associated with the button label"), wxT("group"))
@@ -102,7 +98,7 @@ wxWindow *wxButtonBase::SetDefault()
     wxTopLevelWindow * const
         tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
 
-    wxCHECK_MSG( tlw, nullptr, wxT("button without top level window?") );
+    wxCHECK_MSG( tlw, NULL, wxT("button without top level window?") );
 
     return tlw->SetDefaultItem(this);
 }

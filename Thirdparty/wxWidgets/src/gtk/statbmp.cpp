@@ -2,7 +2,6 @@
 // Name:        src/gtk/statbmp.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:           wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -14,7 +13,8 @@
 
 #include "wx/statbmp.h"
 
-#include <gtk/gtk.h>
+#include "wx/gtk/private/wrapgtk.h"
+#include "wx/gtk/private/image.h"
 
 //-----------------------------------------------------------------------------
 // wxStaticBitmap
@@ -24,14 +24,14 @@ wxStaticBitmap::wxStaticBitmap(void)
 {
 }
 
-wxStaticBitmap::wxStaticBitmap( wxWindow *parent, wxWindowID id, const wxBitmap &bitmap,
+wxStaticBitmap::wxStaticBitmap( wxWindow *parent, wxWindowID id, const wxBitmapBundle &bitmap,
       const wxPoint &pos, const wxSize &size,
       long style, const wxString &name )
 {
     Create( parent, id, bitmap, pos, size, style, name );
 }
 
-bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmap &bitmap,
+bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmapBundle &bitmap,
                              const wxPoint &pos, const wxSize &size,
                              long style, const wxString &name )
 {
@@ -42,9 +42,7 @@ bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmap &bi
         return false;
     }
 
-    m_bitmap = bitmap;
-
-    m_widget = gtk_image_new();
+    m_widget = wxGtkImage::New(this);
     g_object_ref(m_widget);
 
     if (bitmap.IsOk())
@@ -56,16 +54,18 @@ bool wxStaticBitmap::Create( wxWindow *parent, wxWindowID id, const wxBitmap &bi
     return true;
 }
 
-void wxStaticBitmap::SetBitmap( const wxBitmap &bitmap )
+void wxStaticBitmap::SetBitmap( const wxBitmapBundle &bitmap )
 {
-    m_bitmap = bitmap;
+    const wxSize sizeOld(DoGetBestSize());
 
-    if (m_bitmap.IsOk())
+    m_bitmapBundle = bitmap;
+
+    const wxSize sizeNew(DoGetBestSize());
+
+    WX_GTK_IMAGE(m_widget)->Set(bitmap);
+
+    if (sizeNew != sizeOld)
     {
-        // always use pixbuf, because pixmap mask does not
-        // work with disabled images in some themes
-        gtk_image_set_from_pixbuf(GTK_IMAGE(m_widget), m_bitmap.GetPixbuf());
-
         InvalidateBestSize();
         SetSize(GetBestSize());
     }
@@ -75,8 +75,7 @@ void wxStaticBitmap::SetBitmap( const wxBitmap &bitmap )
 wxVisualAttributes
 wxStaticBitmap::GetClassDefaultAttributes(wxWindowVariant WXUNUSED(variant))
 {
-    // TODO: overload to allow using gtk_pixmap_new?
-    return GetDefaultAttributesFromGTKWidget(gtk_label_new);
+    return GetDefaultAttributesFromGTKWidget(gtk_image_new());
 }
 
 #endif // wxUSE_STATBMP

@@ -2,7 +2,6 @@
 // Name:        laywin.h
 // Purpose:     interface of wxLayoutAlgorithm
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -103,7 +102,7 @@ enum wxLayoutAlignment
     previous events in order to calculate window sizes.
 
 
-    @library{wxadv}
+    @library{wxcore}
     @category{winlayout}
 
     @see wxSashEvent, wxSashLayoutWindow, @ref overview_events
@@ -166,7 +165,7 @@ public:
     for you. However, if you use sashes, see wxSashWindow for relevant event information.
     See also wxLayoutAlgorithm for information about the layout events.
 
-    @library{wxadv}
+    @library{wxcore}
     @category{miscwnd}
 
     @see wxLayoutAlgorithm, wxSashWindow, @ref overview_events
@@ -298,7 +297,7 @@ public:
         from a window.
     @endEventTable
 
-    @library{wxadv}
+    @library{wxcore}
     @category{events}
 
     @see wxCalculateLayoutEvent, wxSashLayoutWindow, wxLayoutAlgorithm.
@@ -387,7 +386,7 @@ wxEventType wxEVT_QUERY_LAYOUT_INFO;
         'bite' out of a rectangle provided by the algorithm.
     @endEventTable
 
-    @library{wxadv}
+    @library{wxcore}
     @category{events}
 
     @see wxQueryLayoutInfoEvent, wxSashLayoutWindow, wxLayoutAlgorithm.

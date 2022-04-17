@@ -2,7 +2,6 @@
 // Name:        dcmemory.h
 // Purpose:     interface of wxMemoryDC
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -110,5 +109,12 @@ public:
         safely.
     */
     void SelectObjectAsSource(const wxBitmap& bitmap);
+
+    /**
+       Get the selected bitmap.
+    */
+    const wxBitmap& GetSelectedBitmap() const;
+    wxBitmap& GetSelectedBitmap();
+
 };
 

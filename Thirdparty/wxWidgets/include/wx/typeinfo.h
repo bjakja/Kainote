@@ -3,7 +3,6 @@
 // Purpose:     wxTypeId implementation
 // Author:      Jaakko Salli
 // Created:     2009-11-19
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets Team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,14 +68,14 @@ public:
         m_className = className;
     }
 
-    bool operator==(const wxTypeIdentifier& other)
+    bool operator==(const wxTypeIdentifier& other) const
     {
         return strcmp(m_className, other.m_className) == 0;
     }
 
-    bool operator!=(const wxTypeIdentifier& other)
+    bool operator!=(const wxTypeIdentifier& other) const
     {
-        return strcmp(m_className, other.m_className) != 0;
+        return !(*this == other);
     }
 private:
     const char* m_className;
@@ -107,7 +106,7 @@ typedef void (*wxTypeIdentifier)();
 // WX_DECLARE_TYPEINFO() or WX_DECLARE_TYPEINFO_INLINE() however.
 #define _WX_DECLARE_TYPEINFO_CUSTOM(CLS, IDENTFUNC) \
 public: \
-    virtual wxTypeIdentifier GetWxTypeId() const \
+    virtual wxTypeIdentifier GetWxTypeId() const wxOVERRIDE \
     { \
         return reinterpret_cast<wxTypeIdentifier> \
             (&IDENTFUNC); \

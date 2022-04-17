@@ -2,7 +2,6 @@
 // Name:        src/gtk/dnd.cpp
 // Purpose:     wxDropTarget class
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -25,8 +24,7 @@
 
 #include "wx/scopeguard.h"
 
-#include <gtk/gtk.h>
-#include "wx/gtk/private/gtk2-compat.h"
+#include "wx/gtk/private/wrapgtk.h"
 
 //----------------------------------------------------------------------------
 // global data
@@ -764,7 +762,7 @@ void wxDropSource::PrepareIcon( int action, GdkDragContext *context )
 #ifndef __WXGTK3__
     GdkBitmap *mask;
     if ( icon->GetMask() )
-        mask = icon->GetMask()->GetBitmap();
+        mask = *icon->GetMask();
     else
         mask = NULL;
 
@@ -796,7 +794,9 @@ void wxDropSource::PrepareIcon( int action, GdkDragContext *context )
     cairo_pattern_t* pattern = cairo_get_source(cr);
     gdk_window_set_background_pattern(gtk_widget_get_window(m_iconWindow), pattern);
     cairo_destroy(cr);
-    cairo_surface_t* mask = icon->GetMask()->GetBitmap();
+    cairo_surface_t* mask = NULL;
+    if (icon->GetMask())
+        mask = *icon->GetMask();
     if (mask)
     {
         cairo_region_t* region = gdk_cairo_region_create_from_surface(mask);

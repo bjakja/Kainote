@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: Francesco Montorsi
 // Created:
-// RCS-ID:      $Id$
 // Copyright:   Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,6 +20,12 @@ class WXDLLIMPEXP_FWD_CORE wxColour;
 //
 // It avoids the need to repeat these lines across all colour.h files, since
 // Set() is a virtual function and thus cannot be called by wxColourBase ctors
+#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
+#define wxWXCOLOUR_CTOR_FROM_CHAR \
+    wxColour(const char *colourName) { Init(); Set(colourName); }
+#else // wxNO_IMPLICIT_WXSTRING_ENCODING
+#define wxWXCOLOUR_CTOR_FROM_CHAR
+#endif
 #define DEFINE_STD_WXCOLOUR_CONSTRUCTORS                                      \
     wxColour() { Init(); }                                                    \
     wxColour(ChannelType red,                                                 \
@@ -30,7 +35,7 @@ class WXDLLIMPEXP_FWD_CORE wxColour;
         { Init(); Set(red, green, blue, alpha); }                             \
     wxColour(unsigned long colRGB) { Init(); Set(colRGB    ); }               \
     wxColour(const wxString& colourName) { Init(); Set(colourName); }         \
-    wxColour(const char *colourName) { Init(); Set(colourName); }             \
+    wxWXCOLOUR_CTOR_FROM_CHAR                                                 \
     wxColour(const wchar_t *colourName) { Init(); Set(colourName); }
 
 
@@ -66,7 +71,7 @@ DECLARE_VARIANT_OBJECT_EXPORTED(wxColour,WXDLLIMPEXP_CORE)
     not need the wxGDIObject machinery to handle colors, please add it to the
     list of ports which do not need it.
  */
-#if defined( __WXMAC__ ) || defined( __WXMSW__ ) || defined( __WXPM__ ) || defined( __WXCOCOA__ )
+#if defined( __WXMSW__ ) || defined( __WXQT__ )
 #define wxCOLOUR_IS_GDIOBJECT 0
 #else
 #define wxCOLOUR_IS_GDIOBJECT 1
@@ -120,6 +125,16 @@ public:
     virtual ChannelType Alpha() const
         { return wxALPHA_OPAQUE ; }
 
+    // These getters return the values as unsigned int, which avoids promoting
+    // them to (signed) int in arithmetic expressions, unlike the ones above.
+    unsigned int GetRed() const { return Red(); }
+    unsigned int GetGreen() const { return Green(); }
+    unsigned int GetBlue() const { return Blue(); }
+    unsigned int GetAlpha() const { return Alpha(); }
+
+    virtual bool IsSolid() const
+        { return true; }
+
     // implemented in colourcmn.cpp
     virtual wxString GetAsString(long flags = wxC2S_NAME | wxC2S_CSS_SYNTAX) const;
 
@@ -139,10 +154,10 @@ public:
     }
 
     wxUint32 GetRGB() const
-        { return Red() | (Green() << 8) | (Blue() << 16); }
+        { return GetRed() | (GetGreen() << 8) | (GetBlue() << 16); }
 
     wxUint32 GetRGBA() const
-        { return Red() | (Green() << 8) | (Blue() << 16) | (Alpha() << 24); }
+        { return GetRed() | (GetGreen() << 8) | (GetBlue() << 16) | (GetAlpha() << 24); }
 
 #if !wxCOLOUR_IS_GDIOBJECT
     virtual bool IsOk() const= 0;
@@ -151,6 +166,10 @@ public:
     // because it's still widely used)
     bool Ok() const { return IsOk(); }
 #endif
+
+    // Return the perceived brightness of the colour, with 0 for black and 1
+    // for white.
+    double GetLuminance() const;
 
     // manipulation
     // ------------
@@ -167,14 +186,7 @@ public:
     static void          ChangeLightness(unsigned char* r, unsigned char* g, unsigned char* b, int ialpha);
 
     wxColour ChangeLightness(int ialpha) const;
-
-    // old, deprecated
-    // ---------------
-
-#if WXWIN_COMPATIBILITY_2_6
-    static wxDEPRECATED( wxColour CreateByName(const wxString& name) );
-    wxDEPRECATED( void InitFromName(const wxString& col) );
-#endif
+    wxColour& MakeDisabled(unsigned char brightness = 255);
 
 protected:
     // Some ports need Init() and while we don't, provide a stub so that the
@@ -190,14 +202,14 @@ protected:
     // wxColour doesn't use reference counted data (at least not in all ports)
     // so provide stubs for the functions which need to be defined if we do use
     // them
-    virtual wxGDIRefData *CreateGDIRefData() const
+    virtual wxGDIRefData *CreateGDIRefData() const wxOVERRIDE
     {
         wxFAIL_MSG( "must be overridden if used" );
 
         return NULL;
     }
 
-    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *WXUNUSED(data)) const
+    virtual wxGDIRefData *CloneGDIRefData(const wxGDIRefData *WXUNUSED(data)) const wxOVERRIDE
     {
         wxFAIL_MSG( "must be overridden if used" );
 
@@ -227,10 +239,8 @@ WXDLLIMPEXP_CORE bool wxFromString(const wxString& str, wxColourBase* col);
     #include "wx/x11/colour.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/colour.h"
-#elif defined(__WXCOCOA__)
-    #include "wx/cocoa/colour.h"
-#elif defined(__WXPM__)
-    #include "wx/os2/colour.h"
+#elif defined(__WXQT__)
+    #include "wx/qt/colour.h"
 #endif
 
 #define wxColor wxColour

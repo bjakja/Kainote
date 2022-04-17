@@ -4,28 +4,26 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
-#include "wx/wxprec.h"
 
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
-
-
+#if wxUSE_BMPBUTTON
 
 #include "wx/bmpbuttn.h"
 
-
+#ifndef WX_PRECOMP
     #include "wx/log.h"
     #include "wx/dcmemory.h"
     #include "wx/image.h"
+#endif
 
+#include "wx/artprov.h"
+#include "wx/renderer.h"
 
 // ----------------------------------------------------------------------------
 // XTI
@@ -67,7 +65,7 @@ wxBEGIN_FLAGS( wxBitmapButtonStyle )
     wxFLAGS_MEMBER(wxBU_BOTTOM)
 wxEND_FLAGS( wxBitmapButtonStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxBitmapButton, wxButton, "wx/bmpbuttn.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxBitmapButton, wxButton, "wx/bmpbuttn.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxBitmapButton)
     wxPROPERTY_FLAGS( WindowStyle, wxBitmapButtonStyle, long, \
@@ -91,4 +89,121 @@ bitmap "focus" ,
 bitmap "disabled" ,
 */
 
+namespace
+{
 
+#ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
+
+// Define a specialized bundle that can render the close button at any size.
+class wxBitmapBundleImplCloseButton : public wxBitmapBundleImpl
+{
+public:
+    wxBitmapBundleImplCloseButton(wxWindow* win,
+                                  const wxSize& size,
+                                  const wxColour& colBg,
+                                  int flags)
+        : m_win(win), m_sizeDef(size), m_colBg(colBg), m_flags(flags)
+    {
+    }
+
+    virtual wxSize GetDefaultSize() const wxOVERRIDE
+    {
+        return m_sizeDef;
+    }
+
+    virtual wxSize GetPreferredBitmapSizeAtScale(double scale) const wxOVERRIDE
+    {
+        // We can render the bitmap at any scale.
+        return m_sizeDef*scale;
+    }
+
+    virtual wxBitmap GetBitmap(const wxSize& size) wxOVERRIDE
+    {
+        wxBitmap bmp;
+        bmp.Create(size.x, size.y, wxBITMAP_SCREEN_DEPTH);
+        wxMemoryDC dc(bmp);
+        dc.SetBackground(m_colBg);
+        dc.Clear();
+        wxRendererNative::Get().DrawTitleBarBitmap
+            (
+                m_win, dc, size,
+                wxTITLEBAR_BUTTON_CLOSE, m_flags
+            );
+        return bmp;
+    }
+
+private:
+    wxWindow* const m_win;
+    const wxSize m_sizeDef;
+    const wxColour m_colBg;
+    const int m_flags;
+
+    wxDECLARE_NO_COPY_CLASS(wxBitmapBundleImplCloseButton);
+};
+
+wxBitmapBundle
+GetCloseButtonBitmap(wxWindow* win,
+                     const wxSize& size,
+                     const wxColour& colBg,
+                     int flags = 0)
+{
+    return wxBitmapBundle::FromImpl(new wxBitmapBundleImplCloseButton
+                                        (
+                                            win, size, colBg, flags
+                                        ));
+}
+
+#endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+} // anonymous namespace
+
+bool
+wxBitmapButton::CreateCloseButton(wxWindow* parent,
+                                  wxWindowID winid,
+                                  const wxString& name)
+{
+    wxCHECK_MSG( parent, false, wxS("Must have a valid parent") );
+
+    const wxColour colBg = parent->GetBackgroundColour();
+
+    wxBitmapBundle bb;
+#ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
+    const wxSize sizeBmp = wxArtProvider::GetDIPSizeHint(wxART_BUTTON);
+    bb = GetCloseButtonBitmap(parent, sizeBmp, colBg);
+#else // !wxHAS_DRAW_TITLE_BAR_BITMAP
+    bb = wxArtProvider::GetBitmapBundle(wxART_CLOSE, wxART_BUTTON);
+#endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+    if ( !Create(parent, winid, bb,
+                 wxDefaultPosition, wxDefaultSize,
+                 wxBORDER_NONE, wxDefaultValidator, name) )
+        return false;
+
+#ifdef wxHAS_DRAW_TITLE_BAR_BITMAP
+    SetBitmapPressed(
+        GetCloseButtonBitmap(parent, sizeBmp, colBg, wxCONTROL_PRESSED));
+
+    SetBitmapCurrent(
+        GetCloseButtonBitmap(parent, sizeBmp, colBg, wxCONTROL_CURRENT));
+#endif // wxHAS_DRAW_TITLE_BAR_BITMAP
+
+    // The button should blend with its parent background.
+    SetBackgroundColour(colBg);
+
+    return true;
+}
+
+/* static */
+wxBitmapButton*
+wxBitmapButtonBase::NewCloseButton(wxWindow* parent,
+                                   wxWindowID winid,
+                                   const wxString& name)
+{
+    wxBitmapButton* const button = new wxBitmapButton();
+
+    button->CreateCloseButton(parent, winid, name);
+
+    return button;
+}
+
+#endif // wxUSE_BMPBUTTON

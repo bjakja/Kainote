@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -46,12 +45,22 @@ bool wxStaticText::Create( wxWindow *parent,
     MacPostControlCreate( pos, size );
 
     SetLabel(label);
+    if ( HasFlag(wxST_NO_AUTORESIZE) )
+    {
+        // Normally this is done in SetLabel() below but we avoid doing it when
+        // this style is used, so we need to explicitly do it in the ctor in
+        // this case or otherwise the control would retain its initial tiny size.
+        SetInitialSize(size);
+    }
 
     return true;
 }
 
 void wxStaticText::SetLabel(const wxString& label)
 {
+    if ( label == m_labelOrig )
+        return;
+
     m_labelOrig = label;
 
     // middle/end ellipsization is handled by the OS:
@@ -62,19 +71,14 @@ void wxStaticText::SetLabel(const wxString& label)
     )
     {
         // leave ellipsization to the OS
-        DoSetLabel(GetLabel());
+        WXSetVisibleLabel(GetLabel());
     }
     else // not supported natively
     {
-        DoSetLabel(GetEllipsizedLabel());
+        WXSetVisibleLabel(GetEllipsizedLabel());
     }
 
-    if ( !(GetWindowStyle() & wxST_NO_AUTORESIZE) &&
-         !IsEllipsized() )  // don't resize if we adjust to current size
-    {
-        InvalidateBestSize();
-        SetSize( GetBestSize() );
-    }
+    AutoResizeIfNecessary();
 
     Refresh();
 
@@ -88,17 +92,13 @@ bool wxStaticText::SetFont(const wxFont& font)
 
     if ( ret )
     {
-        if ( !(GetWindowStyle() & wxST_NO_AUTORESIZE) )
-        {
-            InvalidateBestSize();
-            SetSize( GetBestSize() );
-        }
+        AutoResizeIfNecessary();
     }
 
     return ret;
 }
 
-void wxStaticText::DoSetLabel(const wxString& label)
+void wxStaticText::WXSetVisibleLabel(const wxString& label)
 {
     m_label = RemoveMnemonics(label);
     GetPeer()->SetLabel(m_label , GetFont().GetEncoding() );
@@ -118,7 +118,7 @@ bool wxStaticText::DoSetLabelMarkup(const wxString& markup)
 
 #endif // wxUSE_MARKUP && wxOSX_USE_COCOA
 
-wxString wxStaticText::DoGetLabel() const
+wxString wxStaticText::WXGetVisibleLabel() const
 {
     return m_label;
 }

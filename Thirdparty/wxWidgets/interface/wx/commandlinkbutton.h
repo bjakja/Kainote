@@ -2,7 +2,6 @@
 // Name:        wx/commandlinkbutton.h
 // Purpose:     interface of wxCommandLinkButton
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -38,9 +37,9 @@
 
     @since 2.9.2
 
-    @library{wxadv}
+    @library{wxcore}
     @category{ctrl}
-    @appearance{commandlinkbutton.png}
+    @appearance{commandlinkbutton}
 
     @see wxButton, wxBitmapButton
 */

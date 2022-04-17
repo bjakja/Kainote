@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_RADIOBTN
 
@@ -30,11 +26,13 @@
 
 #ifndef WX_PRECOMP
     #include "wx/settings.h"
-    #include "wx/dcscreen.h"
-    #include "wx/toplevel.h"
+    #include "wx/dcclient.h"
 #endif
 
 #include "wx/msw/private.h"
+#include "wx/private/window.h"
+#include "wx/renderer.h"
+#include "wx/msw/uxtheme.h"
 
 // ============================================================================
 // wxRadioButton implementation
@@ -61,25 +59,10 @@ bool wxRadioButton::Create(wxWindow *parent,
     if ( !CreateControl(parent, id, pos, size, style, validator, name) )
         return false;
 
-    long msStyle = WS_TABSTOP;
-    if ( HasFlag(wxRB_GROUP) )
-        msStyle |= WS_GROUP;
+    WXDWORD exstyle = 0;
+    WXDWORD msStyle = MSWGetStyle(style, &exstyle);
 
-    // we use BS_RADIOBUTTON and not BS_AUTORADIOBUTTON because the use of the
-    // latter can easily result in the application entering an infinite loop
-    // inside IsDialogMessage()
-    //
-    // we used to use BS_RADIOBUTTON only for wxRB_SINGLE buttons but there
-    // doesn't seem to be any harm to always use it and it prevents some hangs,
-    // see #9786
-    msStyle |= BS_RADIOBUTTON;
-
-    if ( HasFlag(wxCLIP_SIBLINGS) )
-        msStyle |= WS_CLIPSIBLINGS;
-    if ( HasFlag(wxALIGN_RIGHT) )
-        msStyle |= BS_LEFTTEXT | BS_RIGHT;
-
-    if ( !MSWCreateControl(wxT("BUTTON"), msStyle, pos, size, label, 0) )
+    if ( !MSWCreateControl(wxT("BUTTON"), msStyle, pos, size, label, exstyle) )
         return false;
 
     // for compatibility with wxGTK, the first radio button in a group is
@@ -98,12 +81,15 @@ bool wxRadioButton::Create(wxWindow *parent,
 
 void wxRadioButton::SetValue(bool value)
 {
-    ::SendMessage(GetHwnd(), BM_SETCHECK,
-                  value ? BST_CHECKED : BST_UNCHECKED, 0);
-
     m_isChecked = value;
 
-    if ( !value )
+    if ( !IsOwnerDrawn() )
+        ::SendMessage(GetHwnd(), BM_SETCHECK,
+                      value ? BST_CHECKED : BST_UNCHECKED, 0);
+    else // owner drawn buttons don't react to this message
+        Refresh();
+
+    if ( !value || HasFlag(wxRB_SINGLE) )
         return;
 
     // if we set the value of one radio button we also must clear all the other
@@ -114,23 +100,14 @@ void wxRadioButton::SetValue(bool value)
     // reselected automatically, if a parent window loses the focus and regains
     // it.
     wxWindow * const focus = FindFocus();
-    wxTopLevelWindow * const
-        tlw = wxDynamicCast(wxGetTopLevelParent(this), wxTopLevelWindow);
-    wxCHECK_RET( tlw, wxT("radio button outside of TLW?") );
-    wxWindow * const focusInTLW = tlw->GetLastFocus();
 
     const wxWindowList& siblings = GetParent()->GetChildren();
     wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
     wxCHECK_RET( nodeThis, wxT("radio button not a child of its parent?") );
 
-    // this will be set to true in the code below if the focus is in our TLW
-    // and belongs to one of the other buttons in the same group
+    // this will be set to true in the code below if the focus belongs to one
+    // of the other buttons in the same group
     bool shouldSetFocus = false;
-
-    // this will be set to true if the focus is outside of our TLW currently
-    // but the remembered focus of this TLW is one of the other buttons in the
-    // same group
-    bool shouldSetTLWFocus = false;
 
     // if it's not the first item of the group ...
     if ( !HasFlag(wxRB_GROUP) )
@@ -157,8 +134,6 @@ void wxRadioButton::SetValue(bool value)
 
             if ( btn == focus )
                 shouldSetFocus = true;
-            else if ( btn == focusInTLW )
-                shouldSetTLWFocus = true;
 
             btn->SetValue(false);
 
@@ -190,23 +165,53 @@ void wxRadioButton::SetValue(bool value)
 
         if ( btn == focus )
             shouldSetFocus = true;
-        else if ( btn == focusInTLW )
-            shouldSetTLWFocus = true;
 
         btn->SetValue(false);
     }
 
     if ( shouldSetFocus )
+    {
+        // Change focus immediately, we can't do anything else in this case as
+        // leaving it to the other radio button would put it in an impossible
+        // state: a radio button can't have focus and be unchecked.
         SetFocus();
-    else if ( shouldSetTLWFocus )
-        tlw->SetLastFocus(this);
+    }
+    else
+    {
+        // We don't need to change the focus right now, so avoid doing it as it
+        // could be unexpected (and also would result in focus set/kill events
+        // that wouldn't be generated under the other platforms).
+        if ( !GetParent()->IsDescendant(FindFocus()) )
+        {
+            // However tell the parent to focus this radio button when it
+            // regains the focus the next time, to avoid focusing another one
+            // and this changing the value. Note that this is not ideal: it
+            // would be better to only change pending focus if it currently
+            // points to a radio button, but this is much simpler to do, as
+            // otherwise we'd need to not only check if the pending focus is a
+            // radio button, but also if we'd give the focus to a radio button
+            // when there is no current pending focus, so don't bother with it
+            // until somebody really complains about it being a problem in
+            // practice.
+            GetParent()->WXSetPendingFocus(this);
+        }
+        //else: don't overwrite the pending focus if the window has the focus
+        // currently, as this would make its state inconsistent and would be
+        // useless anyhow, as the problem we're trying to solve here won't
+        // happen in this case (we know that our focused sibling is not a radio
+        // button in the same group, otherwise we would have set shouldSetFocus
+        // to true above).
+    }
 }
 
 bool wxRadioButton::GetValue() const
 {
-    wxASSERT_MSG( m_isChecked ==
-                    (::SendMessage(GetHwnd(), BM_GETCHECK, 0, 0L) != 0),
-                  wxT("wxRadioButton::m_isChecked is out of sync?") );
+    if ( !IsOwnerDrawn() )
+    {
+        wxASSERT_MSG( m_isChecked ==
+                        (::SendMessage(GetHwnd(), BM_GETCHECK, 0, 0L) != 0),
+                      wxT("wxRadioButton::m_isChecked is out of sync?") );
+    }
 
     return m_isChecked;
 }
@@ -232,7 +237,7 @@ bool wxRadioButton::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
         // and not BS_AUTORADIOBUTTON
         SetValue(true);
 
-        wxCommandEvent event(wxEVT_COMMAND_RADIOBUTTON_SELECTED, GetId());
+        wxCommandEvent event(wxEVT_RADIOBUTTON, GetId());
         event.SetEventObject( this );
         event.SetInt(true); // always checked
 
@@ -248,53 +253,86 @@ bool wxRadioButton::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
 
 wxSize wxRadioButton::DoGetBestSize() const
 {
-    static int s_radioSize = 0;
+    static wxPrivate::DpiDependentValue<wxCoord> s_radioSize;
 
-    if ( !s_radioSize )
+    if ( s_radioSize.HasChanged(this) )
     {
-        wxScreenDC dc;
+        wxClientDC dc(const_cast<wxRadioButton*>(this));
         dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
-        s_radioSize = dc.GetCharHeight();
-
-        // radio button bitmap size under CE is bigger than the font height,
-        // adding just one pixel seems to work fine for the default font but it
-        // would be nice to find some better way to find the correct height
-#ifdef __WXWINCE__
-        s_radioSize++;
-#endif // __WXWINCE__
+        s_radioSize.SetAtNewDPI(dc.GetCharHeight());
     }
 
+    wxCoord& radioSize = s_radioSize.Get();
     wxString str = GetLabel();
 
     int wRadio, hRadio;
     if ( !str.empty() )
     {
         GetTextExtent(GetLabelText(str), &wRadio, &hRadio);
-        wRadio += s_radioSize + GetCharWidth();
+        wRadio += radioSize + GetCharWidth();
 
-        if ( hRadio < s_radioSize )
-            hRadio = s_radioSize;
+        if ( hRadio < radioSize )
+            hRadio = radioSize;
     }
     else
     {
-        wRadio = s_radioSize;
-        hRadio = s_radioSize;
+        wRadio = radioSize;
+        hRadio = radioSize;
     }
 
-    wxSize best(wRadio, hRadio);
-    CacheBestSize(best);
-    return best;
+    return wxSize(wRadio, hRadio);
 }
 
 WXDWORD wxRadioButton::MSWGetStyle(long style, WXDWORD *exstyle) const
 {
-    WXDWORD styleMSW = wxControl::MSWGetStyle(style, exstyle);
+    WXDWORD msStyle = wxControl::MSWGetStyle(style, exstyle);
 
-    if ( style & wxRB_GROUP )
-        styleMSW |= WS_GROUP;
+    if ( HasFlag(wxRB_GROUP) )
+        msStyle |= WS_GROUP;
 
-    return styleMSW;
+    // we use BS_RADIOBUTTON and not BS_AUTORADIOBUTTON because the use of the
+    // latter can easily result in the application entering an infinite loop
+    // inside IsDialogMessage()
+    //
+    // we used to use BS_RADIOBUTTON only for wxRB_SINGLE buttons but there
+    // doesn't seem to be any harm to always use it and it prevents some hangs,
+    // see #9786
+    msStyle |= BS_RADIOBUTTON;
+
+    if ( style & wxCLIP_SIBLINGS )
+        msStyle |= WS_CLIPSIBLINGS;
+    if ( style & wxALIGN_RIGHT )
+        msStyle |= BS_LEFTTEXT | BS_RIGHT;
+
+
+    return msStyle;
+}
+
+// ----------------------------------------------------------------------------
+// owner drawn radio button stuff
+// ----------------------------------------------------------------------------
+
+int wxRadioButton::MSWGetButtonStyle() const
+{
+    return BS_RADIOBUTTON;
+}
+
+void wxRadioButton::MSWOnButtonResetOwnerDrawn()
+{
+    // ensure that controls state is consistent with internal state
+    ::SendMessage(GetHwnd(), BM_SETCHECK,
+                  m_isChecked ? BST_CHECKED : BST_UNCHECKED, 0);
+}
+
+int wxRadioButton::MSWGetButtonCheckedFlag() const
+{
+    return m_isChecked ? wxCONTROL_CHECKED : wxCONTROL_NONE;
+}
+
+void wxRadioButton::MSWDrawButtonBitmap(wxDC& dc, const wxRect& rect, int flags)
+{
+    wxRendererNative::Get().DrawRadioBitmap(this, dc, rect, flags);
 }
 
 #endif // wxUSE_RADIOBTN

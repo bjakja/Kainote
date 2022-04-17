@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -64,7 +63,7 @@ wxCursorRefData::~wxCursorRefData()
 
 #define M_CURSORDATA ((wxCursorRefData *)m_refData)
 
-IMPLEMENT_DYNAMIC_CLASS(wxCursor,wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxCursor,wxObject);
 
 wxCursor::wxCursor()
 {
@@ -140,6 +139,11 @@ wxCursor::wxCursor(const wxString& WXUNUSED(name),
 wxCursor::wxCursor( const wxImage & WXUNUSED(image) )
 {
    wxFAIL_MSG( wxT("wxCursor creation from wxImage not yet implemented") );
+}
+
+wxCursor::wxCursor(const char* const* WXUNUSED(xpmData))
+{
+    wxFAIL_MSG( wxT("wxCursor creation from XPM not yet implemented") );
 }
 #endif
 

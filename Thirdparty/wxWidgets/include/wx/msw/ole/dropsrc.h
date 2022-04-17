@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     06.03.98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,12 +57,12 @@ public:
 
     // do it (call this in response to a mouse button press, for example)
     // params: if bAllowMove is false, data can be only copied
-    virtual wxDragResult DoDragDrop(int flags = wxDrag_CopyOnly);
+    virtual wxDragResult DoDragDrop(int flags = wxDrag_CopyOnly) wxOVERRIDE;
 
     // overridable: you may give some custom UI feedback during d&d operation
     // in this function (it's called on each mouse move, so it shouldn't be
     // too slow). Just return false if you want default feedback.
-    virtual bool GiveFeedback(wxDragResult effect);
+    virtual bool GiveFeedback(wxDragResult effect) wxOVERRIDE;
 
 protected:
     void Init();

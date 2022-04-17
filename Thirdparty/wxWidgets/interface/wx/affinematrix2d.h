@@ -83,7 +83,7 @@ public:
 
     //@{
     /**
-        Check that this matrix is identical with @t.
+        Check that this matrix is identical with @a t.
 
         @param t
             The matrix compared with this.
@@ -93,7 +93,7 @@ public:
     //@}
 
     /**
-        Check that this matrix differs from @t.
+        Check that this matrix differs from @a t.
 
         @param t
             The matrix compared with this.
@@ -173,7 +173,7 @@ public:
     void TransformPoint(wxDouble* x, wxDouble* y) const;
 
     /**
-        Applies the linear part of this matrix, i.e. without translation.
+        Applies the linear part of this matrix, i.e.\ without translation.
 
         @param p
             The source receiving the transformations.

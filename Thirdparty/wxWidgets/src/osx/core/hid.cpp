@@ -4,7 +4,6 @@
 // Author:      Ryan Norton
 // Modified by:
 // Created:     11/11/2003
-// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxOSX_USE_COCOA_OR_CARBON
 
@@ -36,7 +32,7 @@
     #include "wx/module.h"
 #endif
 
-#include "wx/osx/core/cfstring.h"
+#include "wx/osx/private.h"
 
 // ============================================================================
 // implementation
@@ -97,7 +93,7 @@ bool wxHIDDevice::Create (int nClass, int nType, int nDev)
         CFRelease(pClass);
     }
 
-    //Now get the maching services
+    //Now get the matching services
     io_iterator_t pIterator;
     if( IOServiceGetMatchingServices(m_pPort,
                         pDictionary, &pIterator) != kIOReturnSuccess )
@@ -261,7 +257,7 @@ size_t wxHIDDevice::GetCount (int nClass, int nType)
         CFRelease(pClass);
     }
 
-    //Now get the maching services
+    //Now get the matching services
     io_iterator_t pIterator;
     if( IOServiceGetMatchingServices(pPort,
                                      pDictionary, &pIterator) != kIOReturnSuccess )
@@ -379,7 +375,7 @@ bool wxHIDDevice::IsActive(int nIndex)
 // ----------------------------------------------------------------------------
 bool wxHIDDevice::HasElement(int nIndex)
 {
-    return (void*) m_pCookies[nIndex] != NULL;
+    return m_pCookies[nIndex] != 0;
 }
 
 // ----------------------------------------------------------------------------
@@ -642,15 +638,15 @@ void wxHIDKeyboard::DoBuildCookies(CFArrayRef Array)
 
 class wxHIDModule : public wxModule
 {
-    DECLARE_DYNAMIC_CLASS(wxHIDModule)
+    wxDECLARE_DYNAMIC_CLASS(wxHIDModule);
 
-    public:
+public:
         static wxArrayPtrVoid sm_keyboards;
-        virtual bool OnInit()
+        virtual bool OnInit() wxOVERRIDE
         {
             return true;
         }
-        virtual void OnExit()
+        virtual void OnExit() wxOVERRIDE
         {
             for(size_t i = 0; i < sm_keyboards.GetCount(); ++i)
                 delete (wxHIDKeyboard*) sm_keyboards[i];
@@ -658,7 +654,7 @@ class wxHIDModule : public wxModule
         }
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxHIDModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxHIDModule, wxModule);
 
 wxArrayPtrVoid wxHIDModule::sm_keyboards;
 
@@ -673,73 +669,8 @@ bool wxGetKeyState (wxKeyCode key)
     wxASSERT_MSG(key != WXK_LBUTTON && key != WXK_RBUTTON && key !=
         WXK_MBUTTON, wxT("can't use wxGetKeyState() for mouse buttons"));
 
-    if (wxHIDModule::sm_keyboards.GetCount() == 0)
-    {
-        int nKeyboards = wxHIDKeyboard::GetCount();
-
-        for(int i = 1; i <= nKeyboards; ++i)
-        {
-            wxHIDKeyboard* keyboard = new wxHIDKeyboard();
-            if(keyboard->Create(i))
-            {
-                wxHIDModule::sm_keyboards.Add(keyboard);
-            }
-            else
-            {
-                delete keyboard;
-                break;
-            }
-        }
-
-        wxASSERT_MSG(wxHIDModule::sm_keyboards.GetCount() != 0,
-                     wxT("No keyboards found!"));
-    }
-
-    for(size_t i = 0; i < wxHIDModule::sm_keyboards.GetCount(); ++i)
-    {
-        wxHIDKeyboard* keyboard = (wxHIDKeyboard*)
-                                wxHIDModule::sm_keyboards[i];
-
-    switch(key)
-    {
-    case WXK_SHIFT:
-            if( keyboard->IsActive(WXK_SHIFT) ||
-                   keyboard->IsActive(WXK_RSHIFT) )
-            {
-                return true;
-            }
-        break;
-    case WXK_ALT:
-            if( keyboard->IsActive(WXK_ALT) ||
-                   keyboard->IsActive(WXK_RALT) )
-            {
-                return true;
-            }
-        break;
-    case WXK_CONTROL:
-            if( keyboard->IsActive(WXK_CONTROL) ||
-                   keyboard->IsActive(WXK_RCONTROL) )
-            {
-                return true;
-            }
-        break;
-    case WXK_RAW_CONTROL:
-            if( keyboard->IsActive(WXK_RAW_CONTROL) ||
-                   keyboard->IsActive(WXK_RAW_RCONTROL) )
-            {
-                return true;
-            }
-        break;
-    default:
-            if( keyboard->IsActive(key) )
-            {
-                return true;
-            }
-        break;
-    }
-    }
-
-    return false; //not down/error
+    CGKeyCode cgcode = wxCharCodeWXToOSX((wxKeyCode)key);
+    return CGEventSourceKeyState(kCGEventSourceStateCombinedSessionState, cgcode);
 }
 
 #endif //__DARWIN__

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,7 +20,7 @@
 
 #include <ctype.h>
 
-IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject);
 
 class WXDLLEXPORT wxAcceleratorRefData: public wxObjectRefData
 {

@@ -3,7 +3,6 @@
 // Purpose:     wxAnyStrPtr class declaration
 // Author:      Vadim Zeitlin
 // Created:     2009-03-23
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,11 +60,12 @@ public:
     // different conversions to pointers)
     operator bool() const { return m_str != NULL; }
 
-    // at least VC6 and VC7 also need this one or they complain about ambiguity
+    // at least VC7 also needs this one or it complains about ambiguity
     // for !anystr expressions
     bool operator!() const { return !((bool)*this); }
 
 
+#ifndef wxNO_IMPLICIT_WXSTRING_ENCODING
     // and these are the conversions operator which allow to assign the result
     // of FuncReturningAnyStrPtr() to either char* or wxChar* (i.e. wchar_t*)
     operator const char *() const
@@ -95,6 +95,7 @@ public:
 
         return p;
     }
+#endif // wxNO_IMPLICIT_WXSTRING_ENCODING
 
     operator const wchar_t *() const
     {
@@ -105,7 +106,7 @@ public:
         // surrogates as we do for now)
         //
         // just remember that this works as long as wxString keeps an internal
-        // buffer with its wide wide char representation, just as with AsChar()
+        // buffer with its wide char representation, just as with AsChar()
         // above
         return m_str->c_str().AsWChar() + (m_iter - m_str->begin());
     }
@@ -113,7 +114,7 @@ public:
     // Because the objects of this class are only used as return type for
     // functions which can return NULL we can skip providing dereferencing
     // operators: the code using this class must test it for NULL first and if
-    // it does anything else with it it has to assign it to either char* or
+    // it does anything else with it has to assign it to either char* or
     // wchar_t* itself, before dereferencing.
     //
     // IOW this
@@ -133,7 +134,7 @@ private:
     const wxString * const m_str;
     const wxString::const_iterator m_iter;
 
-    wxDECLARE_NO_ASSIGN_CLASS(wxAnyStrPtr);
+    wxDECLARE_NO_ASSIGN_DEF_COPY(wxAnyStrPtr);
 };
 
 #endif // _WX_ANYSTR_H_

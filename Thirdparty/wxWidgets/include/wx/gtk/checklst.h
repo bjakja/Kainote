@@ -3,32 +3,18 @@
 // Purpose:     wxCheckListBox class
 // Author:      Robert Roebling
 // Modified by:
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __GTKCHECKLISTH__
-#define __GTKCHECKLISTH__
-
-// ----------------------------------------------------------------------------
-// macros
-// ----------------------------------------------------------------------------
-
-// there is no "right" choice of the checkbox indicators, so allow the user to
-// define them himself if he wants
-#ifndef wxCHECKLBOX_CHECKED
-    #define wxCHECKLBOX_CHECKED   wxT('x')
-    #define wxCHECKLBOX_UNCHECKED wxT(' ')
-
-    #define wxCHECKLBOX_STRING    wxT("[ ] ")
-#endif
+#ifndef _WX_GTKCHECKLIST_H_
+#define _WX_GTKCHECKLIST_H_
 
 //-----------------------------------------------------------------------------
 // wxCheckListBox
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxCheckListBox : public wxListBox
+class WXDLLIMPEXP_CORE wxCheckListBox : public wxCheckListBoxBase
 {
 public:
     wxCheckListBox();
@@ -36,27 +22,27 @@ public:
             const wxPoint& pos = wxDefaultPosition,
             const wxSize& size = wxDefaultSize,
             int nStrings = 0,
-            const wxString *choices = (const wxString *)NULL,
+            const wxString *choices = NULL,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxListBoxNameStr);
+            const wxString& name = wxASCII_STR(wxListBoxNameStr));
     wxCheckListBox(wxWindow *parent, wxWindowID id,
             const wxPoint& pos,
             const wxSize& size,
             const wxArrayString& choices,
             long style = 0,
             const wxValidator& validator = wxDefaultValidator,
-            const wxString& name = wxListBoxNameStr);
+            const wxString& name = wxASCII_STR(wxListBoxNameStr));
 
-    bool IsChecked(unsigned int index) const;
-    void Check(unsigned int index, bool check = true);
+    virtual bool IsChecked(unsigned int index) const wxOVERRIDE;
+    virtual void Check(unsigned int index, bool check = true) wxOVERRIDE;
 
     int GetItemHeight() const;
 
     void DoCreateCheckList();
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxCheckListBox)
+    wxDECLARE_DYNAMIC_CLASS(wxCheckListBox);
 };
 
-#endif   //__GTKCHECKLISTH__
+#endif   // _WX_GTKCHECKLIST_H_

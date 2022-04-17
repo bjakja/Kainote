@@ -2,7 +2,6 @@
 // Name:        brush.h
 // Purpose:     interface of wxBrush
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -361,7 +360,7 @@ wxBrush* wxRED_BRUSH;
 
     @see wxBrush
 */
-class wxBrushList : public wxList
+class wxBrushList
 {
 public:
     /**

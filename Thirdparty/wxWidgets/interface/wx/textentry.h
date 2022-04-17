@@ -3,8 +3,7 @@
 // Purpose:     interface of wxTextEntry
 // Author:      Vadim Zeitlin
 // Created:     2009-03-01 (extracted from wx/textctrl.h)
-// RCS-ID:      $Id$
-// Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -53,9 +52,6 @@ public:
         Call this function to enable auto-completion of the text typed in a
         single-line text control using the given @a choices.
 
-        Notice that currently this function is only implemented in wxGTK2,
-        wxMSW and wxOSX/Cocoa ports and does nothing under the other platforms.
-
         @since 2.9.0
 
         @return
@@ -72,7 +68,7 @@ public:
 
         This method should be used instead of AutoComplete() overload taking
         the array of possible completions if the total number of strings is too
-        big as it allows to return the completions dynamically, depending on
+        big as it allows returning the completions dynamically, depending on
         the text already entered by user and so is more efficient.
 
         The specified @a completer object will be used to retrieve the list of
@@ -81,8 +77,6 @@ public:
 
         Notice that you need to include @c wx/textcompleter.h in order to
         define your class inheriting from wxTextCompleter.
-
-        Currently this method is only implemented in wxMSW and wxOSX/Cocoa.
 
         @since 2.9.2
 
@@ -180,7 +174,7 @@ public:
         The insertion point is set to the start of the control (i.e. position
         0) by this function.
 
-        This functions does not generate the @c wxEVT_COMMAND_TEXT_UPDATED
+        This functions does not generate the @c wxEVT_TEXT
         event but otherwise is identical to SetValue().
 
         See @ref overview_events_prog for more information.
@@ -196,7 +190,7 @@ public:
     /**
         Clears the text in the control.
 
-        Note that this function will generate a @c wxEVT_COMMAND_TEXT_UPDATED
+        Note that this function will generate a @c wxEVT_TEXT
         event, i.e. its effect is identical to calling @c SetValue("").
     */
     virtual void Clear();
@@ -205,6 +199,22 @@ public:
         Copies the selected text to the clipboard.
     */
     virtual void Copy();
+
+    /**
+        Copies the selected text to the clipboard and removes it from the control.
+    */
+    virtual void Cut();
+
+    /**
+        Convert all text entered into the control to upper case.
+
+        Call this method to ensure that all text entered into the control is
+        converted on the fly to upper case. If the control is not empty, its
+        existing contents is also converted to upper case.
+
+        @since 3.1.0
+     */
+    void ForceUpper();
 
     /**
         Returns the insertion point, or cursor, position.
@@ -389,14 +399,14 @@ public:
         This function sets the maximum number of characters the user can enter
         into the control.
 
-        In other words, it allows to limit the text value length to @a len not
+        In other words, it allows limiting the text value length to @a len not
         counting the terminating @c NUL character.
 
         If @a len is 0, the previously set max length limit, if any, is discarded
         and the user may enter as much text as the underlying native text control widget
         supports (typically at least 32Kb).
         If the user tries to enter more characters into the text control when it
-        already is filled up to the maximal length, a @c wxEVT_COMMAND_TEXT_MAXLEN
+        already is filled up to the maximal length, a @c wxEVT_TEXT_MAXLEN
         event is sent to notify the program about it (giving it the possibility
         to show an explanatory message, for example) and the extra input is discarded.
 
@@ -430,6 +440,13 @@ public:
     virtual void SelectAll();
 
     /**
+        Deselects selected text in the control.
+
+        @since 2.9.5
+    */
+    virtual void SelectNone();
+
+    /**
         Sets a hint shown in an empty unfocused text control.
 
         The hints are usually used to indicate to the user what is supposed to
@@ -444,17 +461,28 @@ public:
         controls which are initially empty.
 
         Notice that hints are known as <em>cue banners</em> under MSW or
-        <em>placeholder strings</em> under OS X.
+        <em>placeholder strings</em> under macOS.
 
-        @remarks For the platforms without native hints support (and currently
-            only the MSW port does have it and even there it is only used under
-            Windows Vista and later only), the implementation has several known
-            limitations. Notably, the hint display will not be properly updated
-            if you change wxTextEntry contents programmatically when the hint
-            is displayed using methods other than SetValue() or ChangeValue()
-            or others which use them internally (e.g. Clear()). In other words,
-            currently you should avoid calling methods such as WriteText() or
-            Replace() when using hints and the text control is empty.
+        @remarks Currently implemented natively on Windows (Vista and later
+            only), macOS and GTK+ (3.2 and later).
+
+            For the platforms without native hints support, the implementation
+            has several known limitations. Notably, the hint display will not
+            be properly updated if you change wxTextEntry contents
+            programmatically when the hint is displayed using methods other
+            than SetValue() or ChangeValue() or others which use them
+            internally (e.g. Clear()). In other words, currently you should
+            avoid calling methods such as WriteText() or Replace() when using
+            hints and the text control is empty. If you bind to the control's
+            focus and wxEVT_TEXT events, you must call wxEvent::Skip() on them
+            so that the generic implementation works correctly.
+
+            Another limitation is that hints are ignored for the controls with
+            @c wxTE_PASSWORD style.
+
+        @remarks Hints can be used for single line text controls under all
+            platforms, but only MSW and GTK+ 2 support them for multi-line text
+            controls, they are ignored for them under the other platforms.
 
         @since 2.9.0
      */
@@ -505,10 +533,11 @@ public:
         would return @false immediately after the call to SetValue().
 
         The insertion point is set to the start of the control (i.e. position
-        0) by this function.
+        0) by this function unless the control value doesn't change at all, in
+        which case the insertion point is left at its original position.
 
         Note that, unlike most other functions changing the controls values,
-        this function generates a @c wxEVT_COMMAND_TEXT_UPDATED event. To avoid
+        this function generates a @c wxEVT_TEXT event. To avoid
         this you can use ChangeValue() instead.
 
         @param value

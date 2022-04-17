@@ -4,7 +4,6 @@
 // Author:      Ryan Norton
 // Modified by:
 // Created:     04/04/2003
-// RCS-ID:      $Id$
 // Copyright:   (c) Ryan Norton, 2003
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////
@@ -17,7 +16,7 @@ class WXDLLIMPEXP_FWD_CORE wxMenu;
 
 class WXDLLIMPEXP_ADV wxTaskBarIcon : public wxTaskBarIconBase
 {
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTaskBarIcon);
 public:
     wxTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE);
     virtual ~wxTaskBarIcon();
@@ -31,7 +30,7 @@ public:
     bool IsOk() const { return true; }
 
     bool IsIconInstalled() const;
-    bool SetIcon(const wxIcon& icon, const wxString& tooltip = wxEmptyString);
+    bool SetIcon(const wxBitmapBundle& icon, const wxString& tooltip = wxEmptyString);
     bool RemoveIcon();
     bool PopupMenu(wxMenu *menu);
 

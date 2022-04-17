@@ -5,7 +5,6 @@
 // Modified by: extended to enumerate more than just font facenames and works
 //              not only on Windows now (VZ)
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart, Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -74,6 +73,11 @@ public:
     // convenience function that returns true if the given face name exist
     // in the user's system
     static bool IsValidFacename(const wxString &str);
+
+    // Invalidate cache used by some of the methods of this class internally.
+    // This should be called if the list of the fonts available on the system
+    // changes, for whatever reason.
+    static void InvalidateCache();
 
 private:
 #ifdef wxHAS_UTF8_FONTS

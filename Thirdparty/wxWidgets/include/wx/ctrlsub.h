@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.10.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,6 +17,10 @@
 
 #include "wx/arrstr.h"
 #include "wx/control.h"      // base class
+
+#if wxUSE_STD_CONTAINERS_COMPATIBLY
+#include <vector>
+#endif // wxUSE_STD_CONTAINERS_COMPATIBLY
 
 // ----------------------------------------------------------------------------
 // wxItemContainer defines an interface which is implemented by all controls
@@ -217,6 +220,11 @@ public:
                wxClientData **clientData)
         { return AppendItems(wxArrayStringsAdapter(n, items), clientData); }
 
+#if wxUSE_STD_CONTAINERS_COMPATIBLY
+    int Append(const std::vector<wxString>& items)
+        { return AppendItems(items); }
+#endif // wxUSE_STD_CONTAINERS_COMPATIBLY
+
     // only for RTTI needs (separate name)
     void AppendString(const wxString& item)
         { Append(item); }
@@ -256,6 +264,10 @@ public:
                wxClientData **clientData)
         { return InsertItems(wxArrayStringsAdapter(n, items), pos, clientData); }
 
+#if wxUSE_STD_CONTAINERS_COMPATIBLY
+    int Insert(const std::vector<wxString>& items, unsigned int pos)
+        { return InsertItems(items, pos); }
+#endif // wxUSE_STD_CONTAINERS_COMPATIBLY
 
     // replacing items
     // ---------------
@@ -273,10 +285,15 @@ public:
     void Set(unsigned int n, const wxString *items, wxClientData **clientData)
         { Clear(); Append(n, items, clientData); }
 
+#if wxUSE_STD_CONTAINERS_COMPATIBLY
+    void Set(const std::vector<wxString>& items)
+        { Clear(); Append(items); }
+#endif // wxUSE_STD_CONTAINERS_COMPATIBLY
+
     // deleting items
     // --------------
 
-    void Clear();
+    virtual void Clear();
     void Delete(unsigned int pos);
 
 
@@ -439,7 +456,13 @@ public:
 
     // usually the controls like list/combo boxes have their own background
     // colour
-    virtual bool ShouldInheritColours() const { return false; }
+    virtual bool ShouldInheritColours() const wxOVERRIDE { return false; }
+
+
+    // Implementation only from now on.
+
+    // Generate an event of the given type for the selection change.
+    void SendSelectionChangedEvent(wxEventType eventType);
 
 protected:
     // fill in the client object or data field of the event as appropriate
@@ -457,6 +480,8 @@ private:
     #include "wx/msw/ctrlsub.h"
 #elif defined(__WXMOTIF__)
     #include "wx/motif/ctrlsub.h"
+#elif defined(__WXQT__)
+    #include "wx/qt/ctrlsub.h"
 #else
     class WXDLLIMPEXP_CORE wxControlWithItems : public wxControlWithItemsBase
     {
@@ -464,7 +489,7 @@ private:
         wxControlWithItems() { }
 
     private:
-        DECLARE_ABSTRACT_CLASS(wxControlWithItems)
+        wxDECLARE_ABSTRACT_CLASS(wxControlWithItems);
         wxDECLARE_NO_COPY_CLASS(wxControlWithItems);
     };
 #endif

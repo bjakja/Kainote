@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -25,7 +24,7 @@ public:
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = wxCAPTION | wxCLIP_CHILDREN | wxRESIZE_BORDER,
-              const wxString& name = wxFrameNameStr)
+              const wxString& name = wxASCII_STR(wxFrameNameStr))
   {
       return wxFrame::Create(parent, id, title, pos, size,
                              style |
@@ -39,13 +38,13 @@ public:
               const wxPoint& pos = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = wxCAPTION | wxCLIP_CHILDREN | wxRESIZE_BORDER,
-              const wxString& name = wxFrameNameStr)
+              const wxString& name = wxASCII_STR(wxFrameNameStr))
   {
       Create(parent, id, title, pos, size, style, name);
   }
 
 protected:
-  DECLARE_DYNAMIC_CLASS_NO_COPY(wxMiniFrame)
+  wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMiniFrame);
 };
 
 #endif

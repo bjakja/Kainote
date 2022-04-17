@@ -2,7 +2,6 @@
 // Name:        src/gtk1/popupwin.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -159,11 +158,11 @@ static void wxInsertChildInDialog( wxPopupWindow* parent, wxWindow* child )
 // wxPopupWindow
 //-----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxPopupWindow,wxPopupWindowBase)
+wxBEGIN_EVENT_TABLE(wxPopupWindow,wxPopupWindowBase)
 #ifdef __WXUNIVERSAL__
     EVT_SIZE(wxPopupWindow::OnSize)
 #endif
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 wxPopupWindow::~wxPopupWindow()
 {

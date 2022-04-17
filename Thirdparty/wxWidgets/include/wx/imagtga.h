@@ -2,7 +2,6 @@
 // Name:        wx/imagtga.h
 // Purpose:     wxImage TGA handler
 // Author:      Seth Jackson
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Seth Jackson
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -32,14 +31,14 @@ public:
 
 #if wxUSE_STREAMS
     virtual bool LoadFile(wxImage* image, wxInputStream& stream,
-                            bool verbose = true, int index = -1);
+                            bool verbose = true, int index = -1) wxOVERRIDE;
     virtual bool SaveFile(wxImage* image, wxOutputStream& stream,
-                             bool verbose = true);
+                             bool verbose = true) wxOVERRIDE;
 protected:
-    virtual bool DoCanRead(wxInputStream& stream);
+    virtual bool DoCanRead(wxInputStream& stream) wxOVERRIDE;
 #endif // wxUSE_STREAMS
 
-    DECLARE_DYNAMIC_CLASS(wxTGAHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxTGAHandler);
 };
 
 #endif // wxUSE_TGA

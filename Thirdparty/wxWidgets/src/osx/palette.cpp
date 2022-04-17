@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -16,7 +15,7 @@
 #include "wx/palette.h"
 #include "wx/colour.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxPalette, wxGDIObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxPalette, wxGDIObject);
 
 // ============================================================================
 // wxPaletteRefData
@@ -29,7 +28,7 @@ public:
     wxPaletteRefData(const wxPaletteRefData& data);
     virtual ~wxPaletteRefData();
 
-    virtual bool IsOk() const { return m_count > 0; }
+    virtual bool IsOk() const wxOVERRIDE { return m_count > 0; }
 
 protected:
     wxColour* m_palette;
@@ -90,7 +89,7 @@ bool wxPalette::Create(int n, const unsigned char *red, const unsigned char *gre
         M_PALETTEDATA->m_palette[i].Set( red[i] , green[i] , blue[i] ) ;
     }
 
-    return false;
+    return true;
 }
 
 int wxPalette::GetPixel(unsigned char red, unsigned char green, unsigned char blue) const
@@ -100,11 +99,11 @@ int wxPalette::GetPixel(unsigned char red, unsigned char green, unsigned char bl
 
     long bestdiff = 3 * 256 ;
     long bestpos = 0 ;
-    long currentdiff ;
 
     for ( int i = 0  ; i < M_PALETTEDATA->m_count ; ++i )
     {
         const wxColour& col = M_PALETTEDATA->m_palette[i] ;
+        long currentdiff;
         currentdiff = abs ( col.Red() - red ) + abs( col.Green() - green ) + abs ( col.Blue() - blue )  ;
         if ( currentdiff < bestdiff )
         {
@@ -123,7 +122,7 @@ bool wxPalette::GetRGB(int index, unsigned char *red, unsigned char *green, unsi
     if ( !m_refData )
         return false;
 
-    if (index < 0 || index >= M_PALETTEDATA->m_count)
+    if ( index < 0 || index >= M_PALETTEDATA->m_count )
         return false;
 
     const wxColour& col = M_PALETTEDATA->m_palette[index] ;

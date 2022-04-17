@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.10.99
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,11 +16,8 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include <wx\wxprec.h>
+#include "wx/wxprec.h"
 
-#ifdef    __BORLANDC__
-    #pragma hdrstop
-#endif  //__BORLANDC__
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -55,6 +51,10 @@
     #endif // wxCrtSetDbgFlag
 #endif // __WINDOWS__
 
+#if wxUSE_UNICODE && defined(__WXOSX__)
+    #include <locale.h>
+#endif
+
 // ----------------------------------------------------------------------------
 // private classes
 // ----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ class wxDummyConsoleApp : public wxAppConsole
 public:
     wxDummyConsoleApp() { }
 
-    virtual int OnRun() { wxFAIL_MSG( wxT("unreachable code") ); return 0; }
+    virtual int OnRun() wxOVERRIDE { wxFAIL_MSG( wxT("unreachable code") ); return 0; }
     virtual bool DoYield(bool, long) { return true; }
 
     wxDECLARE_NO_COPY_CLASS(wxDummyConsoleApp);
@@ -79,14 +79,14 @@ wxDEFINE_SCOPED_PTR(wxAppConsole, wxAppPtrBase)
 class wxAppPtr : public wxAppPtrBase
 {
 public:
-    wxEXPLICIT wxAppPtr(wxAppConsole *ptr = nullptr) : wxAppPtrBase(ptr) { }
+    explicit wxAppPtr(wxAppConsole *ptr = NULL) : wxAppPtrBase(ptr) { }
     ~wxAppPtr()
     {
         if ( get() )
         {
             // the pointer is going to be deleted in the base class dtor, don't
             // leave the dangling pointer!
-            wxApp::SetInstance(nullptr);
+            wxApp::SetInstance(NULL);
         }
     }
 
@@ -108,7 +108,7 @@ public:
     wxCallAppCleanup(wxAppConsole *app) : m_app(app) { }
     ~wxCallAppCleanup() { if ( m_app ) m_app->CleanUp(); }
 
-    void Dismiss() { m_app = nullptr; }
+    void Dismiss() { m_app = NULL; }
 
 private:
     wxAppConsole *m_app;
@@ -134,8 +134,8 @@ static struct InitData
         nInitCount = 0;
 
 #if wxUSE_UNICODE
-        argc = 0;
-        // argv = nullptr; -- not even really needed
+        argc = argcOrig = 0;
+        // argv = argvOrig = NULL; -- not even really needed
 #endif // wxUSE_UNICODE
     }
 
@@ -154,6 +154,12 @@ static struct InitData
     // for example), we remember the converted argv here because we'll have to
     // free it when doing cleanup to avoid memory leaks
     wchar_t **argv;
+
+    // we also need to keep two copies, one passed to other functions, and one
+    // unmodified original; somebody may modify the former, so we need to have
+    // the latter to be able to free everything correctly
+    int argcOrig;
+    wchar_t **argvOrig;
 #endif // wxUSE_UNICODE
 
     wxDECLARE_NO_COPY_CLASS(InitData);
@@ -171,7 +177,9 @@ static struct InitData
 
 static void ConvertArgsToUnicode(int argc, char **argv)
 {
+    gs_initData.argvOrig = new wchar_t *[argc + 1];
     gs_initData.argv = new wchar_t *[argc + 1];
+
     int wargc = 0;
     for ( int i = 0; i < argc; i++ )
     {
@@ -187,25 +195,28 @@ static void ConvertArgsToUnicode(int argc, char **argv)
         }
         else // converted ok
         {
-            gs_initData.argv[wargc++] = wxStrdup(buf);
+            gs_initData.argvOrig[wargc] = gs_initData.argv[wargc] = wxStrdup(buf);
+            wargc++;
         }
     }
 
-    gs_initData.argc = wargc;
-    gs_initData.argv[wargc] = nullptr;
+    gs_initData.argcOrig = gs_initData.argc = wargc;
+    gs_initData.argvOrig[wargc] =gs_initData.argv[wargc] = NULL;
 }
 
 static void FreeConvertedArgs()
 {
-    if ( gs_initData.argv )
+    if ( gs_initData.argvOrig )
     {
-        for ( int i = 0; i < gs_initData.argc; i++ )
+        for ( int i = 0; i < gs_initData.argcOrig; i++ )
         {
-            free(gs_initData.argv[i]);
+            free(gs_initData.argvOrig[i]);
+            // gs_initData.argv[i] normally points to the same data
         }
 
+        wxDELETEA(gs_initData.argvOrig);
         wxDELETEA(gs_initData.argv);
-        gs_initData.argc = 0;
+        gs_initData.argcOrig = gs_initData.argc = 0;
     }
 }
 
@@ -218,6 +229,18 @@ static void FreeConvertedArgs()
 // initialization which is always done (not customizable) before wxApp creation
 static bool DoCommonPreInit()
 {
+#if wxUSE_UNICODE && defined(__WXOSX__)
+    // In OS X and iOS, wchar_t CRT functions convert to char* and fail under
+    // some locales. The safest fix is to set LC_CTYPE to UTF-8 to ensure that
+    // they can handle any input.
+    //
+    // Note that this must be done for any app, Cocoa or console, whether or
+    // not it uses wxLocale.
+    //
+    // See https://stackoverflow.com/questions/11713745/why-does-the-printf-family-of-functions-care-about-locale
+    setlocale(LC_CTYPE, "UTF-8");
+#endif // wxUSE_UNICODE && defined(__WXOSX__)
+
 #if wxUSE_LOG
     // Reset logging in case we were cleaned up and are being reinitialized.
     wxLog::DoCreateOnDemand();
@@ -244,7 +267,7 @@ static bool DoCommonPreInit()
     // they may need it too, so set it here if it wasn't done yet
     if ( !wxGetInstance() )
     {
-        wxSetInstance(::GetModuleHandle(nullptr));
+        wxSetInstance(::GetModuleHandle(NULL));
     }
 #endif // __WINDOWS__
 
@@ -282,8 +305,8 @@ bool wxEntryStart(int& argc, wxChar **argv)
     wxAppPtr app(wxTheApp);
     if ( !app.get() )
     {
-        // if not, he might have used IMPLEMENT_APP() to give us a function to
-        // create it
+        // if not, he might have used wxIMPLEMENT_APP() to give us a
+        // function to create it
         wxAppInitializerFunction fnCreate = wxApp::GetInitializerFunction();
 
         if ( fnCreate )
@@ -295,8 +318,8 @@ bool wxEntryStart(int& argc, wxChar **argv)
 
     if ( !app.get() )
     {
-        // either IMPLEMENT_APP() was not used at all or it failed -- in any
-        // case we still need something
+        // either wxIMPLEMENT_APP() was not used at all or it failed -- in
+        // any case we still need something
         app.Set(new wxDummyConsoleApp);
     }
 
@@ -310,7 +333,11 @@ bool wxEntryStart(int& argc, wxChar **argv)
     // remember, possibly modified (e.g. due to removal of toolkit-specific
     // parameters), command line arguments in member variables
     app->argc = argc;
+#if wxUSE_UNICODE
+    app->argv.Init(argc, argv);
+#else
     app->argv = argv;
+#endif
 
     wxCallAppCleanup callAppCleanup(app.get());
 
@@ -333,7 +360,7 @@ bool wxEntryStart(int& argc, wxChar **argv)
     // it before now), we can delete the temporary sink we had created for the
     // initialization messages -- the next time logging function is called, the
     // sink will be recreated but this time wxAppTraits will be used
-    delete wxLog::SetActiveTarget(nullptr);
+    delete wxLog::SetActiveTarget(NULL);
 #endif // wxUSE_LOG
 
     return true;
@@ -374,7 +401,7 @@ static void DoCommonPreCleanup()
     //
     // notice that wxLog will still recreate a default log target if any
     // messages are logged but that one will be safe to use until the very end
-    delete wxLog::SetActiveTarget(nullptr);
+    delete wxLog::SetActiveTarget(NULL);
 #endif // wxUSE_LOG
 }
 
@@ -389,11 +416,16 @@ static void DoCommonPostCleanup()
     FreeConvertedArgs();
 #endif // wxUSE_UNICODE
 
-    // use Set(nullptr) and not Get() to avoid creating a message output object on
+    // use Set(NULL) and not Get() to avoid creating a message output object on
     // demand when we just want to delete it
-    delete wxMessageOutput::Set(nullptr);
+    delete wxMessageOutput::Set(NULL);
 
 #if wxUSE_LOG
+    // call this first as it has a side effect: in addition to flushing all
+    // logs for this thread, it also flushes everything logged from other
+    // threads
+    wxLog::FlushActive();
+
     // and now delete the last logger as well
     //
     // we still don't disable log target auto-vivification even if any log
@@ -401,7 +433,7 @@ static void DoCommonPostCleanup()
     // to leak memory which doesn't matter much considering the application is
     // exiting anyhow than to not show messages which could still be logged
     // from the user code (e.g. static dtors and such)
-    delete wxLog::SetActiveTarget(nullptr);
+    delete wxLog::SetActiveTarget(NULL);
 #endif // wxUSE_LOG
 }
 
@@ -415,11 +447,11 @@ void wxEntryCleanup()
     {
         wxTheApp->CleanUp();
 
-        // reset the global pointer to it to nullptr before destroying it as in
+        // reset the global pointer to it to NULL before destroying it as in
         // some circumstances this can result in executing the code using
         // wxTheApp and using half-destroyed object is no good
         wxAppConsole * const app = wxApp::GetInstance();
-        wxApp::SetInstance(nullptr);
+        wxApp::SetInstance(NULL);
         delete app;
     }
 
@@ -445,7 +477,7 @@ int wxEntryReal(int& argc, wxChar **argv)
     {
 #if wxUSE_LOG
         // flush any log messages explaining why we failed
-        delete wxLog::SetActiveTarget(nullptr);
+        delete wxLog::SetActiveTarget(NULL);
 #endif
         return -1;
     }
@@ -492,10 +524,11 @@ int wxEntry(int& argc, char **argv)
 
 bool wxInitialize()
 {
-    return wxInitialize(0, (wxChar**)nullptr);
+    int argc = 0;
+    return wxInitialize(argc, (wxChar**)NULL);
 }
 
-bool wxInitialize(int argc, wxChar **argv)
+bool wxInitialize(int& argc, wxChar **argv)
 {
     wxCRIT_SECT_LOCKER(lockInit, gs_initData.csInit);
 
@@ -509,7 +542,7 @@ bool wxInitialize(int argc, wxChar **argv)
 }
 
 #if wxUSE_UNICODE
-bool wxInitialize(int argc, char **argv)
+bool wxInitialize(int& argc, char **argv)
 {
     wxCRIT_SECT_LOCKER(lockInit, gs_initData.csInit);
 

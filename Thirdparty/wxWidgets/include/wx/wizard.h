@@ -9,7 +9,6 @@
 //              Added wxWIZARD_HELP event
 //              Robert Vazan (sizers)
 // Created:     15.08.99
-// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -28,7 +27,7 @@
 #include "wx/dialog.h"      // the base class
 #include "wx/panel.h"       // ditto
 #include "wx/event.h"       // wxEVT_XXX constants
-#include "wx/bitmap.h"
+#include "wx/bmpbndl.h"
 
 // Extended style to specify a help button
 #define wxWIZARD_EX_HELPBUTTON   0x00000010
@@ -43,17 +42,17 @@
 #define wxWIZARD_TILE             0x40
 
 // forward declarations
-class WXDLLIMPEXP_FWD_ADV wxWizard;
+class WXDLLIMPEXP_FWD_CORE wxWizard;
 
 // ----------------------------------------------------------------------------
 // wxWizardPage is one of the wizards screen: it must know what are the
-// following and preceding pages (which may be nullptr for the first/last page).
+// following and preceding pages (which may be NULL for the first/last page).
 //
 // Other than GetNext/Prev() functions, wxWizardPage is just a panel and may be
 // used as such (i.e. controls may be placed directly on it &c).
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxWizardPage : public wxPanel
+class WXDLLIMPEXP_CORE wxWizardPage : public wxPanel
 {
 public:
     wxWizardPage() { Init(); }
@@ -63,10 +62,10 @@ public:
     // that no other parameters are needed because the wizard will resize and
     // reposition the page anyhow
     wxWizardPage(wxWizard *parent,
-                 const wxBitmap& bitmap = wxNullBitmap);
+                 const wxBitmapBundle& bitmap = wxBitmapBundle());
 
     bool Create(wxWizard *parent,
-                const wxBitmap& bitmap = wxNullBitmap);
+                const wxBitmapBundle& bitmap = wxBitmapBundle());
 
     // these functions are used by the wizard to show another page when the
     // user chooses "Back" or "Next" button
@@ -77,23 +76,23 @@ public:
     // cases - override this method if you want to create the bitmap to be used
     // dynamically or to do something even more fancy. It's ok to return
     // wxNullBitmap from here - the default one will be used then.
-    virtual wxBitmap GetBitmap() const { return m_bitmap; }
+    virtual wxBitmap GetBitmap() const { return m_bitmap.GetBitmapFor(this); }
 
 #if wxUSE_VALIDATORS
     // Override the base functions to allow a validator to be assigned to this page.
-    virtual bool TransferDataToWindow()
+    virtual bool TransferDataToWindow() wxOVERRIDE
     {
         return GetValidator() ? GetValidator()->TransferToWindow()
                               : wxPanel::TransferDataToWindow();
     }
 
-    virtual bool TransferDataFromWindow()
+    virtual bool TransferDataFromWindow() wxOVERRIDE
     {
         return GetValidator() ? GetValidator()->TransferFromWindow()
                               : wxPanel::TransferDataFromWindow();
     }
 
-    virtual bool Validate()
+    virtual bool Validate() wxOVERRIDE
     {
         return GetValidator() ? GetValidator()->Validate(this)
                               : wxPanel::Validate();
@@ -104,39 +103,39 @@ protected:
     // common part of ctors:
     void Init();
 
-    wxBitmap m_bitmap;
+    wxBitmapBundle m_bitmap;
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxWizardPage)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxWizardPage);
 };
 
 // ----------------------------------------------------------------------------
 // wxWizardPageSimple just returns the pointers given to the ctor and is useful
 // to create a simple wizard where the order of pages never changes.
 //
-// OTOH, it is also possible to dynamicly decide which page to return (i.e.
+// OTOH, it is also possible to dynamically decide which page to return (i.e.
 // depending on the user's choices) as the wizard sample shows - in order to do
 // this, you must derive from wxWizardPage directly.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxWizardPageSimple : public wxWizardPage
+class WXDLLIMPEXP_CORE wxWizardPageSimple : public wxWizardPage
 {
 public:
     wxWizardPageSimple() { Init(); }
 
     // ctor takes the previous and next pages
     wxWizardPageSimple(wxWizard *parent,
-                       wxWizardPage *prev = nullptr,
-                       wxWizardPage *next = nullptr,
-                       const wxBitmap& bitmap = wxNullBitmap)
+                       wxWizardPage *prev = NULL,
+                       wxWizardPage *next = NULL,
+                       const wxBitmapBundle& bitmap = wxBitmapBundle())
     {
         Create(parent, prev, next, bitmap);
     }
 
-    bool Create(wxWizard *parent = nullptr, // let it be default ctor too
-                wxWizardPage *prev = nullptr,
-                wxWizardPage *next = nullptr,
-                const wxBitmap& bitmap = wxNullBitmap)
+    bool Create(wxWizard *parent = NULL, // let it be default ctor too
+                wxWizardPage *prev = NULL,
+                wxWizardPage *next = NULL,
+                const wxBitmapBundle& bitmap = wxBitmapBundle())
     {
         m_prev = prev;
         m_next = next;
@@ -147,25 +146,33 @@ public:
     void SetPrev(wxWizardPage *prev) { m_prev = prev; }
     void SetNext(wxWizardPage *next) { m_next = next; }
 
-    // a convenience function to make the pages follow each other
+    // Convenience functions to make the pages follow each other without having
+    // to call their SetPrev() or SetNext() explicitly.
+    wxWizardPageSimple& Chain(wxWizardPageSimple* next)
+    {
+        SetNext(next);
+        next->SetPrev(this);
+        return *next;
+    }
+
     static void Chain(wxWizardPageSimple *first, wxWizardPageSimple *second)
     {
         wxCHECK_RET( first && second,
-                     wxT("nullptr passed to wxWizardPageSimple::Chain") );
+                     wxT("NULL passed to wxWizardPageSimple::Chain") );
 
         first->SetNext(second);
         second->SetPrev(first);
     }
 
     // base class pure virtuals
-    virtual wxWizardPage *GetPrev() const;
-    virtual wxWizardPage *GetNext() const;
+    virtual wxWizardPage *GetPrev() const wxOVERRIDE;
+    virtual wxWizardPage *GetNext() const wxOVERRIDE;
 
 private:
     // common part of ctors:
     void Init()
     {
-        m_prev = m_next = nullptr;
+        m_prev = m_next = NULL;
     }
 
     // pointers are private, the derived classes shouldn't mess with them -
@@ -173,14 +180,14 @@ private:
     wxWizardPage *m_prev,
                  *m_next;
 
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxWizardPageSimple)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxWizardPageSimple);
 };
 
 // ----------------------------------------------------------------------------
 // wxWizard
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxWizardBase : public wxDialog
+class WXDLLIMPEXP_CORE wxWizardBase : public wxDialog
 {
 public:
     /*
@@ -190,7 +197,7 @@ public:
         wxWizard(wxWindow *parent,
                  int id = wxID_ANY,
                  const wxString& title = wxEmptyString,
-                 const wxBitmap& bitmap = wxNullBitmap,
+                 const wxBitmapBundle& bitmap = wxBitmapBundle(),
                  const wxPoint& pos = wxDefaultPosition,
                  long style = wxDEFAULT_DIALOG_STYLE);
     */
@@ -200,7 +207,7 @@ public:
     // successfully finished, false if user cancelled it
     virtual bool RunWizard(wxWizardPage *firstPage) = 0;
 
-    // get the current page (nullptr if RunWizard() isn't running)
+    // get the current page (NULL if RunWizard() isn't running)
     virtual wxWizardPage *GetCurrentPage() const = 0;
 
     // set the min size which should be available for the pages: a
@@ -231,17 +238,17 @@ public:
     // custom logic for determining the pages order
 
     virtual bool HasNextPage(wxWizardPage *page)
-        { return page->GetNext() != nullptr; }
+        { return page->GetNext() != NULL; }
 
     virtual bool HasPrevPage(wxWizardPage *page)
-        { return page->GetPrev() != nullptr; }
+        { return page->GetPrev() != NULL; }
 
     /// Override these functions to stop InitDialog from calling TransferDataToWindow
     /// for _all_ pages when the wizard starts. Instead 'ShowPage' will call
     /// TransferDataToWindow for the first page only.
-    bool TransferDataToWindow() { return true; }
-    bool TransferDataFromWindow() { return true; }
-    bool Validate() { return true; }
+    bool TransferDataToWindow() wxOVERRIDE { return true; }
+    bool TransferDataFromWindow() wxOVERRIDE { return true; }
+    bool Validate() wxOVERRIDE { return true; }
 
 private:
     wxDECLARE_NO_COPY_CLASS(wxWizardBase);
@@ -256,13 +263,13 @@ private:
 // window hierarchy as usual
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxWizardEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CORE wxWizardEvent : public wxNotifyEvent
 {
 public:
     wxWizardEvent(wxEventType type = wxEVT_NULL,
                   int id = wxID_ANY,
                   bool direction = true,
-                  wxWizardPage* page = nullptr);
+                  wxWizardPage* page = NULL);
 
     // for EVT_WIZARD_PAGE_CHANGING, return true if we're going forward or
     // false otherwise and for EVT_WIZARD_PAGE_CHANGED return true if we came
@@ -272,26 +279,26 @@ public:
 
     wxWizardPage*   GetPage() const { return m_page; }
 
-    virtual wxEvent *Clone() const { return new wxWizardEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxWizardEvent(*this); }
 
 private:
     bool m_direction;
     wxWizardPage*    m_page;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxWizardEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxWizardEvent);
 };
 
 // ----------------------------------------------------------------------------
 // macros for handling wxWizardEvents
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_PAGE_CHANGED, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_PAGE_CHANGING, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_CANCEL, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_HELP, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_FINISHED, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_PAGE_SHOWN, wxWizardEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, wxEVT_WIZARD_BEFORE_PAGE_CHANGED, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_PAGE_CHANGED, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_PAGE_CHANGING, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_CANCEL, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_HELP, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_FINISHED, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_PAGE_SHOWN, wxWizardEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_WIZARD_BEFORE_PAGE_CHANGED, wxWizardEvent );
 
 typedef void (wxEvtHandler::*wxWizardEventFunction)(wxWizardEvent&);
 

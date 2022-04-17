@@ -3,13 +3,13 @@
 // Purpose:     font management for ports that don't have their own
 // Author:      Vaclav Slavik
 // Created:     2006-11-18
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001-2002 SciTech Software, Inc. (www.scitechsoft.com)
 //              (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _WX_PRIVATE_FONTMGR_H_
+#define _WX_PRIVATE_FONTMGR_H_
 
 #include "wx/list.h"
 #include "wx/fontutil.h"
@@ -70,7 +70,7 @@ public:
 
         @param ptSize   point size of the font to create; note that this is
                         a float and not integer, it should be wxFont's point
-                        size multipled by wxDC's scale factor
+                        size multiplied by wxDC's scale factor
         @param aa       should the font be antialiased?
      */
     virtual wxFontInstance *GetFontInstance(float ptSize, bool aa);
@@ -98,7 +98,7 @@ public:
     /// Returns name of the bundle
     virtual wxString GetName() const = 0;
 
-    /// Returns true if the font is fixe-width
+    /// Returns true if the font is fixed-width
     virtual bool IsFixed() const = 0;
 
     /// Type of faces in the bundle
@@ -204,7 +204,7 @@ public:
     wxFontMgrFontRefData(int size = wxDEFAULT,
                   wxFontFamily family = wxFONTFAMILY_DEFAULT,
                   wxFontStyle style = wxFONTSTYLE_NORMAL,
-                  wxFontWeight weight = wxFONTWEIGHT_NORMAL,
+                  int weight = wxFONTWEIGHT_NORMAL,
                   bool underlined = false,
                   const wxString& faceName = wxEmptyString,
                   wxFontEncoding encoding = wxFONTENCODING_DEFAULT);
@@ -218,18 +218,18 @@ public:
 
     const wxNativeFontInfo *GetNativeFontInfo() const { return &m_info; }
 
-    int GetPointSize() const { return m_info.pointSize; }
+    double GetFractionalPointSize() const { return m_info.pointSize; }
     wxString GetFaceName() const { return m_info.faceName; }
     wxFontFamily GetFamily() const { return m_info.family; }
     wxFontStyle GetStyle() const { return m_info.style; }
-    wxFontWeight GetWeight() const { return m_info.weight; }
+    int GetNumericWeight() const { return m_info.weight; }
     bool GetUnderlined() const { return m_info.underlined; }
     wxFontEncoding GetEncoding() const { return m_info.encoding; }
 
-    void SetPointSize(int pointSize);
+    void SetFractionalPointSize(double pointSize);
     void SetFamily(wxFontFamily family);
     void SetStyle(wxFontStyle style);
-    void SetWeight(wxFontWeight weight);
+    void SetNumericWeight(int weight);
     void SetFaceName(const wxString& faceName);
     void SetUnderlined(bool underlined);
     void SetEncoding(wxFontEncoding encoding);
@@ -244,4 +244,4 @@ private:
     bool              m_fontValid;
 };
 
-
+#endif // _WX_PRIVATE_FONTMGR_H_

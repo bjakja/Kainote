@@ -3,7 +3,6 @@
 // Purpose:     wxItemContainer unit test
 // Author:      Steven Lamerton
 // Created:     2010-06-29
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -25,7 +24,7 @@ protected:
 
     // and this one must be overridden to return the window which implements
     // wxItemContainer interface -- usually it will return the same pointer as
-    // GetTestEntry(), just as a different type
+    // GetContainer(), just as a different type
     virtual wxWindow *GetContainerWindow() const = 0;
 
     // this should be inserted in the derived class CPPUNIT_TEST_SUITE
@@ -40,7 +39,9 @@ protected:
         CPPUNIT_TEST( VoidData ); \
         CPPUNIT_TEST( Set ); \
         CPPUNIT_TEST( SetSelection ); \
-        CPPUNIT_TEST( SetString )
+        CPPUNIT_TEST( SetString ); \
+        CPPUNIT_TEST( SelectionAfterDelete ); \
+        WXUISIM_TEST( SimSelect );
 
     void Append();
     void Insert();
@@ -52,6 +53,10 @@ protected:
     void Set();
     void SetSelection();
     void SetString();
+    void SelectionAfterDelete();
+#if wxUSE_UIACTIONSIMULATOR
+    virtual void SimSelect();
+#endif
 
 private:
     wxDECLARE_NO_COPY_CLASS(ItemContainerTestCase);

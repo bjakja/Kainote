@@ -4,7 +4,6 @@
 // Author:      Markus Greither
 // Modified by:
 // Created:     25/05/2001
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -63,9 +62,9 @@ protected:
                *m_textRepl;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxGenericFindReplaceDialog)
+    wxDECLARE_DYNAMIC_CLASS(wxGenericFindReplaceDialog);
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 #endif // _WX_GENERIC_FDREPDLG_H_

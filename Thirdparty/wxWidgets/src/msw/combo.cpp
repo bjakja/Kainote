@@ -4,7 +4,6 @@
 // Author:      Jaakko Salli
 // Modified by:
 // Created:     Apr-30-2006
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_COMBOCTRL
 
@@ -38,81 +34,8 @@
 #include "wx/combo.h"
 
 #include "wx/msw/registry.h"
-#if wxUSE_UXTHEME
 #include "wx/msw/uxtheme.h"
-#endif
 #include "wx/msw/dc.h"
-
-// Change to #if 1 to include tmschema.h for easier testing of theme
-// parameters.
-#if 0
-    #include <tmschema.h>
-    #include <VSStyle.h>
-#else
-    //----------------------------------
-    #define EP_EDITTEXT         1
-    #define ETS_NORMAL          1
-    #define ETS_HOT             2
-    #define ETS_SELECTED        3
-    #define ETS_DISABLED        4
-    #define ETS_FOCUSED         5
-    #define ETS_READONLY        6
-    #define ETS_ASSIST          7
-    #define TMT_FILLCOLOR       3802
-    #define TMT_TEXTCOLOR       3803
-    #define TMT_BORDERCOLOR     3801
-    #define TMT_EDGEFILLCOLOR   3808
-    #define TMT_BGTYPE          4001
-
-    #define BT_IMAGEFILE        0
-    #define BT_BORDERFILL       1
-
-    #define CP_DROPDOWNBUTTON           1
-    #define CP_BACKGROUND               2 // This and above are Vista and later only
-    #define CP_TRANSPARENTBACKGROUND    3
-    #define CP_BORDER                   4
-    #define CP_READONLY                 5
-    #define CP_DROPDOWNBUTTONRIGHT      6
-    #define CP_DROPDOWNBUTTONLEFT       7
-    #define CP_CUEBANNER                8
-
-    #define CBXS_NORMAL                 1
-    #define CBXS_HOT                    2
-    #define CBXS_PRESSED                3
-    #define CBXS_DISABLED               4
-
-    #define CBXSR_NORMAL                1
-    #define CBXSR_HOT                   2
-    #define CBXSR_PRESSED               3
-    #define CBXSR_DISABLED              4
-
-    #define CBXSL_NORMAL                1
-    #define CBXSL_HOT                   2
-    #define CBXSL_PRESSED               3
-    #define CBXSL_DISABLED              4
-
-    #define CBTBS_NORMAL                1
-    #define CBTBS_HOT                   2
-    #define CBTBS_DISABLED              3
-    #define CBTBS_FOCUSED               4
-
-    #define CBB_NORMAL                  1
-    #define CBB_HOT                     2
-    #define CBB_FOCUSED                 3
-    #define CBB_DISABLED                4
-
-    #define CBRO_NORMAL                 1
-    #define CBRO_HOT                    2
-    #define CBRO_PRESSED                3
-    #define CBRO_DISABLED               4
-
-    #define CBCB_NORMAL                 1
-    #define CBCB_HOT                    2
-    #define CBCB_PRESSED                3
-    #define CBCB_DISABLED               4
-
-#endif
-
 
 #define NATIVE_TEXT_INDENT_XP       4
 #define NATIVE_TEXT_INDENT_CLASSIC  2
@@ -129,16 +52,16 @@
 // ============================================================================
 
 
-BEGIN_EVENT_TABLE(wxComboCtrl, wxComboCtrlBase)
+wxBEGIN_EVENT_TABLE(wxComboCtrl, wxComboCtrlBase)
     EVT_PAINT(wxComboCtrl::OnPaintEvent)
     EVT_MOUSE_EVENTS(wxComboCtrl::OnMouseEvent)
 #if wxUSE_COMBOCTRL_POPUP_ANIMATION
     EVT_TIMER(wxID_ANY, wxComboCtrl::OnTimerEvent)
 #endif
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxComboCtrl, wxComboCtrlBase)
+wxIMPLEMENT_DYNAMIC_CLASS(wxComboCtrl, wxComboCtrlBase);
 
 void wxComboCtrl::Init()
 {
@@ -157,21 +80,15 @@ bool wxComboCtrl::Create(wxWindow *parent,
     // Set border
     long border = style & wxBORDER_MASK;
 
-#if wxUSE_UXTHEME
-    wxUxThemeEngine* theme = wxUxThemeEngine::GetIfActive();
-#endif
-
     if ( !border )
     {
-#if wxUSE_UXTHEME
-        if ( theme )
+        if ( wxUxThemeIsActive() )
         {
             // For XP, have 1-width custom border, for older version use sunken
             border = wxBORDER_NONE;
             m_widthCustomBorder = 1;
         }
         else
-#endif
             border = wxBORDER_SUNKEN;
 
         style = (style & ~(wxBORDER_MASK)) | border;
@@ -188,13 +105,8 @@ bool wxComboCtrl::Create(wxWindow *parent,
                            name) )
         return false;
 
-#if wxUSE_UXTHEME
-    if ( theme )
-    {
-        if ( ::wxGetWinVersion() >= wxWinVersion_Vista )
+    if ( wxUxThemeIsActive() && ::wxGetWinVersion() >= wxWinVersion_Vista )
             m_iFlags |= wxCC_BUTTON_STAYS_DOWN |wxCC_BUTTON_COVERS_BORDER;
-    }
-#endif
 
     if ( style & wxCC_STD_BUTTON )
         m_iFlags |= wxCC_POPUP_ON_MOUSE_UP;
@@ -207,9 +119,6 @@ bool wxComboCtrl::Create(wxWindow *parent,
 
     // Create textctrl, if necessary
     CreateTextCtrl( wxNO_BORDER );
-
-    // Add keyboard input handlers for main control and textctrl
-    InstallInputHandlers();
 
     // SetInitialSize should be called last
     SetInitialSize(size);
@@ -228,7 +137,7 @@ void wxComboCtrl::OnResize()
 
     // Technically Classic Windows style combo has more narrow button,
     // but the native renderer doesn't paint it well like that.
-    int btnWidth = 17;
+    int btnWidth = FromDIP(17);
     CalculateAreas(btnWidth);
 
     // Position textctrl using standard routine
@@ -238,7 +147,6 @@ void wxComboCtrl::OnResize()
 // Draws non-XP GUI dotted line around the focus area
 static void wxMSWDrawFocusRect( wxDC& dc, const wxRect& rect )
 {
-#if !defined(__WXWINCE__)
     /*
     RECT mswRect;
     mswRect.left = rect.x;
@@ -263,16 +171,6 @@ static void wxMSWDrawFocusRect( wxDC& dc, const wxRect& rect )
     dc.DrawRectangle(rect);
 
     dc.SetLogicalFunction(wxCOPY);
-#else
-    dc.SetLogicalFunction(wxINVERT);
-
-    dc.SetPen(wxPen(*wxBLACK,1,wxDOT));
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-
-    dc.DrawRectangle(rect);
-
-    dc.SetLogicalFunction(wxCOPY);
-#endif
 }
 
 // draw focus background on area in a way typical on platform
@@ -343,10 +241,6 @@ wxComboCtrl::PrepareBackground( wxDC& dc, const wxRect& rect, int flags ) const
 
     selRect.x += wcp + focusSpacingX;
     selRect.width -= wcp + (focusSpacingX*2);
-
-    //wxUxThemeEngine* theme = NULL;
-    //if ( hTheme )
-    //    theme = wxUxThemeEngine::GetIfActive();
 
     wxColour fgCol;
     wxColour bgCol;
@@ -442,11 +336,7 @@ void wxComboCtrl::OnPaintEvent( wxPaintEvent& WXUNUSED(event) )
     HDC hDc = GetHdcOf(*impl);
     HWND hWnd = GetHwndOf(this);
 
-    wxUxThemeEngine* theme = NULL;
     wxUxThemeHandle hTheme(this, L"COMBOBOX");
-
-    if ( hTheme )
-        theme = wxUxThemeEngine::GetIfActive();
 #endif // wxUSE_UXTHEME
 
     wxRect borderRect(0,0,sz.x,sz.y);
@@ -540,19 +430,19 @@ void wxComboCtrl::OnPaintEvent( wxPaintEvent& WXUNUSED(event) )
         // Draw parent's background, if necessary
         RECT* rUseForTb = NULL;
 
-        if ( theme->IsThemeBackgroundPartiallyTransparent( hTheme, comboBoxPart, bgState ) )
+        if ( ::IsThemeBackgroundPartiallyTransparent( hTheme, comboBoxPart, bgState ) )
             rUseForTb = &rFull;
         else if ( m_iFlags & wxCC_IFLAG_BUTTON_OUTSIDE )
             rUseForTb = &rButton;
 
         if ( rUseForTb )
-            theme->DrawThemeParentBackground( hWnd, hDc, rUseForTb );
+            ::DrawThemeParentBackground( hWnd, hDc, rUseForTb );
 
         //
         // Draw the control background (including the border)
         if ( m_widthCustomBorder > 0 )
         {
-            theme->DrawThemeBackground( hTheme, hDc, comboBoxPart, bgState, rUseForBg, NULL );
+            ::DrawThemeBackground( hTheme, hDc, comboBoxPart, bgState, rUseForBg, NULL );
         }
         else
         {
@@ -588,7 +478,7 @@ void wxComboCtrl::OnPaintEvent( wxPaintEvent& WXUNUSED(event) )
                     butPart = CP_DROPDOWNBUTTONLEFT;
 
             }
-            theme->DrawThemeBackground( hTheme, hDc, butPart, butState, &rButton, NULL );
+            ::DrawThemeBackground( hTheme, hDc, butPart, butState, &rButton, NULL );
         }
         else if ( useVistaComboBox &&
                   (m_iFlags & wxCC_IFLAG_BUTTON_OUTSIDE) )
@@ -732,10 +622,14 @@ void wxComboCtrl::DoTimerEvent()
     }
     else
     {
-        wxLongLong t = ::wxGetLocalTimeMillis();
+        wxMilliClock_t t = ::wxGetLocalTimeMillis();
         const wxRect& rect = m_animRect;
 
+#if wxUSE_LONGLONG
         int pos = (int) (t-m_animStart).GetLo();
+#else
+        int pos = (int) (t-m_animStart);
+#endif
         if ( pos < COMBOBOX_ANIMATION_DURATION )
         {
             int height = rect.height;
@@ -803,10 +697,8 @@ bool wxComboCtrl::AnimateShow( const wxRect& rect, int flags )
 
 wxCoord wxComboCtrl::GetNativeTextIndent() const
 {
-#if wxUSE_UXTHEME
-    if ( wxUxThemeEngine::GetIfActive() )
+    if ( wxUxThemeIsActive() )
         return NATIVE_TEXT_INDENT_XP;
-#endif
     return NATIVE_TEXT_INDENT_CLASSIC;
 }
 

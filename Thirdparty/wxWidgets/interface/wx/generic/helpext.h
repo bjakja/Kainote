@@ -2,7 +2,6 @@
 // Name:        helpext.h
 // Purpose:     interface of wxExtHelpController
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +26,7 @@
 
     Lines starting with ';' will be ignored.
 
-    @library{wxadv}
+    @library{wxcore}
     @category{help}
 
     @see wxHelpController
@@ -112,9 +111,9 @@ public:
 
         @param k
             string to search for, empty string will list all entries
-        
-        @param mode    
-            optional parameter allows the search the index (wxHELP_SEARCH_INDEX) 
+
+        @param mode
+            optional parameter allows the search the index (wxHELP_SEARCH_INDEX)
             but this currently only supported by the wxHtmlHelpController.
 
         @return @true on success
@@ -140,7 +139,7 @@ public:
     /**
         Allows one to override the default settings for the help frame.
     */
-    virtual void SetFrameParameters(const wxString& title,
+    virtual void SetFrameParameters(const wxString& titleFormat,
                                     const wxSize& size,
                                     const wxPoint& pos = wxDefaultPosition,
                                     bool newFrameEachTime = false);

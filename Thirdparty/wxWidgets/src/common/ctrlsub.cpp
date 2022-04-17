@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.10.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CONTROLS
 
@@ -31,7 +27,7 @@
     #include "wx/arrstr.h"
 #endif
 
-IMPLEMENT_ABSTRACT_CLASS(wxControlWithItems, wxControl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxControlWithItems, wxControl);
 
 // ============================================================================
 // wxItemContainerImmutable implementation
@@ -169,10 +165,9 @@ void wxItemContainer::SetClientObject(unsigned int n, wxClientData *data)
 
     if ( HasClientObjectData() )
     {
-        wxClientData * clientDataOld
-            = static_cast<wxClientData *>(DoGetItemClientData(n));
-        if ( clientDataOld )
-            delete clientDataOld;
+        wxClientData * clientDataOld =
+            static_cast<wxClientData *>(DoGetItemClientData(n));
+        delete clientDataOld;
     }
     else // didn't have any client data so far
     {
@@ -187,10 +182,10 @@ void wxItemContainer::SetClientObject(unsigned int n, wxClientData *data)
 
 wxClientData *wxItemContainer::GetClientObject(unsigned int n) const
 {
-    wxCHECK_MSG( HasClientObjectData(), nullptr,
+    wxCHECK_MSG( HasClientObjectData(), NULL,
                   wxT("this window doesn't have object client data") );
 
-    wxCHECK_MSG( IsValid(n), nullptr,
+    wxCHECK_MSG( IsValid(n), NULL,
                  "Invalid index passed to GetClientObject()" );
 
     return static_cast<wxClientData *>(DoGetItemClientData(n));
@@ -202,7 +197,7 @@ wxClientData *wxItemContainer::DetachClientObject(unsigned int n)
     if ( data )
     {
         // reset the pointer as we don't own it any more
-        DoSetItemClientData(n, nullptr);
+        DoSetItemClientData(n, NULL);
     }
 
     return data;
@@ -226,10 +221,10 @@ void wxItemContainer::SetClientData(unsigned int n, void *data)
 
 void *wxItemContainer::GetClientData(unsigned int n) const
 {
-    wxCHECK_MSG( HasClientUntypedData(), nullptr,
+    wxCHECK_MSG( HasClientUntypedData(), NULL,
                   wxT("this window doesn't have void client data") );
 
-    wxCHECK_MSG( IsValid(n), nullptr,
+    wxCHECK_MSG( IsValid(n), NULL,
                  "Invalid index passed to GetClientData()" );
 
     return DoGetItemClientData(n);
@@ -256,7 +251,7 @@ void wxItemContainer::AssignNewItemClientData(unsigned int pos,
 
         default:
             wxFAIL_MSG( wxT("unknown client data type") );
-            // fall through
+            wxFALLTHROUGH;
 
         case wxClientData_None:
             // nothing to do
@@ -270,7 +265,7 @@ void wxItemContainer::ResetItemClientObject(unsigned int n)
     if ( data )
     {
         delete data;
-        DoSetItemClientData(n, nullptr);
+        DoSetItemClientData(n, NULL);
     }
 }
 
@@ -290,6 +285,20 @@ wxControlWithItemsBase::InitCommandEventWithItems(wxCommandEvent& event, int n)
         else if ( HasClientUntypedData() )
             event.SetClientData(GetClientData(n));
     }
+}
+
+void wxControlWithItemsBase::SendSelectionChangedEvent(wxEventType eventType)
+{
+    const int n = GetSelection();
+    if ( n == wxNOT_FOUND )
+        return;
+
+    wxCommandEvent event(eventType, m_windowId);
+    event.SetInt(n);
+    event.SetString(GetStringSelection());
+    InitCommandEventWithItems(event, n);
+
+    HandleWindowEvent(event);
 }
 
 #endif // wxUSE_CONTROLS

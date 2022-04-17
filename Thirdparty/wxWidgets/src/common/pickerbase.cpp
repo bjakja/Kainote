@@ -4,7 +4,6 @@
 // Author:      Francesco Montorsi
 // Modified by:
 // Created:     15/04/2006
-// RCS-ID:      $Id$
 // Copyright:   (c) Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_COLOURPICKERCTRL || \
     wxUSE_DIRPICKERCTRL    || \
@@ -41,7 +37,7 @@
 // implementation
 // ============================================================================
 
-IMPLEMENT_ABSTRACT_CLASS(wxPickerBase, wxControl)
+wxIMPLEMENT_ABSTRACT_CLASS(wxPickerBase, wxControl);
 
 // ----------------------------------------------------------------------------
 // wxPickerBase
@@ -92,19 +88,12 @@ bool wxPickerBase::CreateBase(wxWindow *parent,
         // set the initial contents of the textctrl
         m_text->SetValue(text);
 
-        m_text->Connect(m_text->GetId(), wxEVT_COMMAND_TEXT_UPDATED,
-                wxCommandEventHandler(wxPickerBase::OnTextCtrlUpdate),
-                nullptr, this);
-        m_text->Connect(m_text->GetId(), wxEVT_KILL_FOCUS,
-                wxFocusEventHandler(wxPickerBase::OnTextCtrlKillFocus),
-                nullptr, this);
+        m_text->Bind(wxEVT_TEXT, &wxPickerBase::OnTextCtrlUpdate, this);
+        m_text->Bind(wxEVT_KILL_FOCUS, &wxPickerBase::OnTextCtrlKillFocus, this);
+        m_text->Bind(wxEVT_DESTROY, &wxPickerBase::OnTextCtrlDelete, this);
 
-        m_text->Connect(m_text->GetId(), wxEVT_DESTROY,
-                wxWindowDestroyEventHandler(wxPickerBase::OnTextCtrlDelete),
-                nullptr, this);
-
-        // the text control's proportion values defaults to 2
-        m_sizer->Add(m_text, 2, GetDefaultTextCtrlFlag(), 5);
+        m_sizer->Add(m_text,
+                     wxSizerFlags(1).CentreVertical().Border(wxRIGHT));
     }
 
     return true;
@@ -112,28 +101,34 @@ bool wxPickerBase::CreateBase(wxWindow *parent,
 
 void wxPickerBase::PostCreation()
 {
-    // the picker's proportion value defaults to 1 when there's no text control
-    // associated with it - in that case it defaults to 0
-    m_sizer->Add(m_picker, HasTextCtrl() ? 0 : 1, GetDefaultPickerCtrlFlag(), 5);
+    // the picker grows in the major direction only if there is no text control
+    m_sizer->Add(m_picker,
+                 wxSizerFlags(HasTextCtrl() ? 0 : 1).CentreVertical());
 
     // For aesthetic reasons, make sure the picker is at least as high as the
     // associated text control and is always at least square, unless we are
-    // explicitly using wxPB_SMALL style to force it to take as little space as
-    // possible.
-    if ( !HasFlag(wxPB_SMALL) )
+    // explicitly using wxPB_SMALL style to force it to take as little
+    // horizontal space as possible.
+    const wxSize pickerBestSize(m_picker->GetBestSize());
+    const wxSize textBestSize( HasTextCtrl() ? m_text->GetBestSize() : wxSize());
+    wxSize pickerMinSize;
+    pickerMinSize.y = wxMax(pickerBestSize.y, textBestSize.y);
+    if ( HasFlag(wxPB_SMALL) )
     {
-        const wxSize pickerBestSize(m_picker->GetBestSize());
-        const wxSize textBestSize( HasTextCtrl() ? m_text->GetBestSize() : wxSize());
-        wxSize pickerMinSize;
-        pickerMinSize.y = wxMax(pickerBestSize.y, textBestSize.y);
-        pickerMinSize.x = wxMax(pickerBestSize.x, pickerMinSize.y);
-        if ( pickerMinSize != pickerBestSize )
-            m_picker->SetMinSize(pickerMinSize);
+        pickerMinSize.x = pickerBestSize.x;
     }
+    else
+    {
+        pickerMinSize.x = wxMax(pickerBestSize.x, pickerMinSize.y);
+    }
+    if ( pickerMinSize != pickerBestSize )
+        m_picker->SetMinSize(pickerMinSize);
 
     SetSizer(m_sizer);
 
     SetInitialSize( GetMinSize() );
+
+    Layout();
 }
 
 #if wxUSE_TOOLTIPS
@@ -147,10 +142,30 @@ void wxPickerBase::DoSetToolTip(wxToolTip *tip)
 
     // do a copy as wxWindow will own the pointer we pass
     if ( m_text )
-        m_text->SetToolTip(tip ? new wxToolTip(tip->GetTip()) : nullptr);
+        m_text->SetToolTip(tip ? new wxToolTip(tip->GetTip()) : NULL);
 }
 
 #endif // wxUSE_TOOLTIPS
+
+void wxPickerBase::DoSetGrowableFlagFor(wxSizerItem* item, bool grow)
+{
+    // We assume that our controls use either wxALIGN_CENTER_VERTICAL or wxGROW
+    // style, this code would need to be changed in the unlikely event any
+    // other style is used for them.
+    int f = item->GetFlag();
+    if ( grow )
+    {
+        f &= ~wxALIGN_CENTER_VERTICAL;
+        f |= wxGROW;
+    }
+    else
+    {
+        f &= ~wxGROW;
+        f |= wxALIGN_CENTER_VERTICAL;
+    }
+
+    item->SetFlag(f);
+}
 
 // ----------------------------------------------------------------------------
 // wxPickerBase - event handlers
@@ -168,7 +183,7 @@ void wxPickerBase::OnTextCtrlKillFocus(wxFocusEvent& event)
 void wxPickerBase::OnTextCtrlDelete(wxWindowDestroyEvent &)
 {
     // the textctrl has been deleted; our pointer is invalid!
-    m_text = nullptr;
+    m_text = NULL;
 }
 
 void wxPickerBase::OnTextCtrlUpdate(wxCommandEvent &)

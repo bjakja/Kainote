@@ -2,7 +2,6 @@
 // Name:        src/gtk1/app.cpp
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -378,7 +377,7 @@ GtkWidget* wxGetRootWindow()
 // wxApp
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxApp,wxEvtHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxApp,wxEvtHandler);
 
 wxApp::wxApp()
 {

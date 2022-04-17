@@ -4,7 +4,6 @@
 // Author:      Original from Wolfram Gloger/Guilhem Lavaux
 // Modified by: Vadim Zeitlin to make it work :-)
 // Created:     04/22/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Wolfram Gloger (1996, 1997), Guilhem Lavaux (1998);
 //                  Vadim Zeitlin (1999-2002)
 // Licence:     wxWindows licence
@@ -14,22 +13,21 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#if defined(__BORLANDC__)
-    #pragma hdrstop
-#endif
 
 #if wxUSE_THREADS
 
 #include "wx/thread.h"
 
-
+#ifndef WX_PRECOMP
     #include "wx/intl.h"
     #include "wx/app.h"
+    #include "wx/log.h"
     #include "wx/module.h"
-
+    #include "wx/msgout.h"
+#endif
 
 #include "wx/apptrait.h"
 #include "wx/scopeguard.h"
@@ -39,7 +37,6 @@
 #include "wx/msw/seh.h"
 
 #include "wx/except.h"
-
 #include "wx/dynlib.h"
 
 // must have this symbol defined to get _beginthread/_endthread declarations
@@ -47,29 +44,13 @@
     #define _MT
 #endif
 
-#if defined(__BORLANDC__)
-    #if !defined(__MT__)
-        // I can't set -tWM in the IDE (anyone?) so have to do this
-        #define __MT__
-    #endif
-
-    #if !defined(__MFC_COMPAT__)
-        // Needed to know about _beginthreadex etc..
-        #define __MFC_COMPAT__
-    #endif
-#endif // BC++
-
 // define wxUSE_BEGIN_THREAD if the compiler has _beginthreadex() function
 // which should be used instead of Win32 ::CreateThread() if possible
 #if defined(__VISUALC__) || \
-    (defined(__BORLANDC__) && (__BORLANDC__ >= 0x500)) || \
-    (defined(__GNUG__) && defined(__MSVCRT__)) || \
-    defined(__WATCOMC__)
+    (defined(__GNUG__) && defined(__MSVCRT__))
 
-#ifndef __WXWINCE__
     #undef wxUSE_BEGIN_THREAD
     #define wxUSE_BEGIN_THREAD
-#endif
 
 #endif
 
@@ -110,8 +91,9 @@ enum wxThreadState
 // this module globals
 // ----------------------------------------------------------------------------
 
-// TLS index of the slot where we store the pointer to the current thread
-static DWORD gs_tlsThisThread = 0xFFFFFFFF;
+// TLS index of the slot where we store the pointer to the current thread, the
+// initial value is special and means that it's not initialized yet
+static DWORD gs_tlsThisThread = TLS_OUT_OF_INDEXES;
 
 // id of the main thread - the one which can call GUI functions without first
 // calling wxMutexGuiEnter()
@@ -127,11 +109,6 @@ static wxCriticalSection *gs_critsectGui = NULL;
 
 // critical section which protects gs_nWaitingForGui variable
 static wxCriticalSection *gs_critsectWaitingForGui = NULL;
-
-// critical section which serializes WinThreadStart() and WaitForTerminate()
-// (this is a potential bottleneck, we use a single crit sect for all threads
-// in the system, but normally time spent inside it should be quite short)
-static wxCriticalSection *gs_critsectThreadDelete = NULL;
 
 // number of threads waiting for GUI in wxMutexGuiEnter()
 static size_t gs_nWaitingForGui = 0;
@@ -167,21 +144,7 @@ void wxCriticalSection::Enter()
 
 bool wxCriticalSection::TryEnter()
 {
-#if wxUSE_DYNLIB_CLASS
-    typedef BOOL
-      (WINAPI *TryEnterCriticalSection_t)(LPCRITICAL_SECTION lpCriticalSection);
-
-    static TryEnterCriticalSection_t
-        pfnTryEnterCriticalSection = (TryEnterCriticalSection_t)
-            wxDynamicLibrary(wxT("kernel32.dll")).
-                GetSymbol(wxT("TryEnterCriticalSection"));
-
-    return pfnTryEnterCriticalSection
-            ? (*pfnTryEnterCriticalSection)((CRITICAL_SECTION *)m_buffer) != 0
-            : false;
-#else
-    return false;
-#endif
+    return ::TryEnterCriticalSection((CRITICAL_SECTION *)m_buffer) != 0;
 }
 
 void wxCriticalSection::Leave()
@@ -276,7 +239,7 @@ wxMutexError wxMutexInternal::LockTimeout(DWORD milliseconds)
             // the previous caller died without releasing the mutex, so even
             // though we did get it, log a message about this
             wxLogDebug(wxT("WaitForSingleObject() returned WAIT_ABANDONED"));
-            // fall through
+            wxFALLTHROUGH;
 
         case WAIT_OBJECT_0:
             // ok
@@ -287,7 +250,7 @@ wxMutexError wxMutexInternal::LockTimeout(DWORD milliseconds)
 
         default:
             wxFAIL_MSG(wxT("impossible return value in wxMutex::Lock"));
-            // fall through
+            wxFALLTHROUGH;
 
         case WAIT_FAILED:
             wxLogLastError(wxT("WaitForSingleObject(mutex)"));
@@ -354,7 +317,6 @@ private:
 
 wxSemaphoreInternal::wxSemaphoreInternal(int initialcount, int maxcount)
 {
-#if !defined(_WIN32_WCE) || (_WIN32_WCE >= 300)
     if ( maxcount == 0 )
     {
         // make it practically infinite
@@ -368,7 +330,6 @@ wxSemaphoreInternal::wxSemaphoreInternal(int initialcount, int maxcount)
                         maxcount,
                         NULL            // no name
                     );
-#endif
     if ( !m_semaphore )
     {
         wxLogLastError(wxT("CreateSemaphore()"));
@@ -407,7 +368,6 @@ wxSemaError wxSemaphoreInternal::WaitTimeout(unsigned long milliseconds)
 
 wxSemaError wxSemaphoreInternal::Post()
 {
-#if !defined(_WIN32_WCE) || (_WIN32_WCE >= 300)
     if ( !::ReleaseSemaphore(m_semaphore, 1, NULL /* ptr to previous count */) )
     {
         if ( GetLastError() == ERROR_TOO_MANY_POSTS )
@@ -422,9 +382,6 @@ wxSemaError wxSemaphoreInternal::Post()
     }
 
     return wxSEMA_NO_ERROR;
-#else
-    return wxSEMA_MISC_ERROR;
-#endif
 }
 
 // ----------------------------------------------------------------------------
@@ -442,7 +399,7 @@ public:
         m_thread = thread;
         m_hThread = 0;
         m_state = STATE_NEW;
-        m_priority = WXTHREAD_DEFAULT_PRIORITY;
+        m_priority = wxPRIORITY_DEFAULT;
         m_nRef = 1;
     }
 
@@ -565,6 +522,9 @@ THREAD_RETVAL wxThreadInternal::DoThreadStart(wxThread *thread)
     wxTRY
     {
         // store the thread object in the TLS
+        wxASSERT_MSG( gs_tlsThisThread != TLS_OUT_OF_INDEXES,
+                      "TLS index not set. Is wx initialized?" );
+
         if ( !::TlsSetValue(gs_tlsThisThread, thread) )
         {
             wxLogSysError(_("Cannot start thread: error writing TLS."));
@@ -572,7 +532,7 @@ THREAD_RETVAL wxThreadInternal::DoThreadStart(wxThread *thread)
             return THREAD_ERROR_EXIT;
         }
 
-        rc = wxPtrToUInt(thread->Entry());
+        rc = wxPtrToUInt(thread->CallEntry());
     }
     wxCATCH_ALL( wxTheApp->OnUnhandledException(); )
 
@@ -589,9 +549,14 @@ THREAD_RETVAL THREAD_CALLCONV wxThreadInternal::WinThreadStart(void *param)
     // each thread has its own SEH translator so install our own a.s.a.p.
     DisableAutomaticSETranslator();
 
+    // NB: Notice that we can't use wxCriticalSectionLocker in this function as
+    //     we use SEH and it's incompatible with C++ object dtors.
+
     // first of all, check whether we hadn't been cancelled already and don't
     // start the user code at all then
+    thread->m_critsect.Enter();
     const bool hasExited = thread->m_internal->GetState() == STATE_EXITED;
+    thread->m_critsect.Leave();
 
     // run the thread function itself inside a SEH try/except block
     wxSEH_TRY
@@ -609,10 +574,6 @@ THREAD_RETVAL THREAD_CALLCONV wxThreadInternal::WinThreadStart(void *param)
     const bool isDetached = thread->IsDetached();
     if ( !hasExited )
     {
-        // enter m_critsect before changing the thread state
-        //
-        // NB: can't use wxCriticalSectionLocker here as we use SEH and it's
-        //     incompatible with C++ object dtors
         thread->m_critsect.Enter();
         thread->m_internal->SetState(STATE_EXITED);
         thread->m_critsect.Leave();
@@ -628,6 +589,14 @@ THREAD_RETVAL THREAD_CALLCONV wxThreadInternal::WinThreadStart(void *param)
 void wxThreadInternal::SetPriority(unsigned int priority)
 {
     m_priority = priority;
+
+    if ( !m_hThread )
+    {
+        // The thread hasn't been created yet, so calling SetThreadPriority()
+        // right now would just result in an error -- just skip doing this, as
+        // the priority will be set when Create() is called later.
+        return;
+    }
 
     // translate wxWidgets priority to the Windows one
     int win_priority;
@@ -662,14 +631,6 @@ bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
     // creation instead of Win32 API one because otherwise we will have memory
     // leaks if the thread uses C RTL (and most threads do)
 #ifdef wxUSE_BEGIN_THREAD
-
-    // Watcom is reported to not like 0 stack size (which means "use default"
-    // for the other compilers and is also the default value for stackSize)
-#ifdef __WATCOMC__
-    if ( !stackSize )
-        stackSize = 10240;
-#endif // __WATCOMC__
-
     m_hThread = (HANDLE)_beginthreadex
                         (
                           NULL,                             // default security
@@ -698,7 +659,7 @@ bool wxThreadInternal::Create(wxThread *thread, unsigned int stackSize)
         return false;
     }
 
-    if ( m_priority != WXTHREAD_DEFAULT_PRIORITY )
+    if ( m_priority != wxPRIORITY_DEFAULT )
     {
         SetPriority(m_priority);
     }
@@ -794,6 +755,8 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
         gs_waitingForThread = true;
     }
 
+    wxAppTraits& traits = wxApp::GetValidTraits();
+
     // we can't just wait for the thread to terminate because it might be
     // calling some GUI functions and so it will never terminate before we
     // process the Windows messages that result from these functions
@@ -812,16 +775,9 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
             }
         }
 
-        wxAppTraits *traits = wxTheApp ? wxTheApp->GetTraits() : NULL;
-        if ( traits )
-        {
-            result = traits->WaitForThread(m_hThread, waitMode);
-        }
-        else // can't wait for the thread
-        {
-            // so kill it below
-            result = 0xFFFFFFFF;
-        }
+        // Wait for the thread while still processing events in the GUI apps or
+        // just simply wait for it in the console ones.
+        result = traits.WaitForThread(m_hThread, waitMode);
 
         switch ( result )
         {
@@ -836,9 +792,10 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
                 break;
 
             case WAIT_OBJECT_0 + 1:
-                // new message arrived, process it -- but only if we're the
-                // main thread as we don't support processing messages in
-                // the other ones
+            case WAIT_OBJECT_0 + 2:
+                // Wake up has been signaled or a new message arrived, process
+                // it -- but only if we're the main thread as we don't support
+                // processing messages in the other ones
                 //
                 // NB: we still must include QS_ALLINPUT even when waiting
                 //     in a secondary thread because if it had created some
@@ -846,7 +803,7 @@ wxThreadInternal::WaitForTerminate(wxCriticalSection& cs,
                 //     the system might dead lock then
                 if ( wxThread::IsMain() )
                 {
-                    if ( traits && !traits->DoMessageFromThreadWait() )
+                    if ( !traits.DoMessageFromThreadWait() )
                     {
                         // WM_QUIT received: kill the thread
                         Kill();
@@ -904,9 +861,24 @@ bool wxThreadInternal::Suspend()
     DWORD nSuspendCount = ::SuspendThread(m_hThread);
     if ( nSuspendCount == (DWORD)-1 )
     {
-        wxLogSysError(_("Cannot suspend thread %x"), m_hThread);
+        wxLogSysError(_("Cannot suspend thread %lx"),
+                      static_cast<unsigned long>(wxPtrToUInt(m_hThread)));
 
         return false;
+    }
+
+    // Calling GetThreadContext() forces the thread to actually be suspended:
+    // just calling SuspendThread() is not enough, it just asks the scheduler
+    // to suspend the thread at the next opportunity and by then we may already
+    // exit wxThread::Pause() and leave m_critsect, meaning that the thread
+    // could enter it and end up suspended inside a CS, which will inevitably
+    // result in a deadlock later.
+    CONTEXT ctx;
+    // We don't really need the context, but we still must initialize it.
+    ctx.ContextFlags = CONTEXT_FULL;
+    if ( !::GetThreadContext(m_hThread, &ctx) )
+    {
+        wxLogLastError(wxS("GetThreadContext"));
     }
 
     m_state = STATE_PAUSED;
@@ -919,7 +891,8 @@ bool wxThreadInternal::Resume()
     DWORD nSuspendCount = ::ResumeThread(m_hThread);
     if ( nSuspendCount == (DWORD)-1 )
     {
-        wxLogSysError(_("Cannot resume thread %x"), m_hThread);
+        wxLogSysError(_("Cannot resume thread %lx"),
+                      static_cast<unsigned long>(wxPtrToUInt(m_hThread)));
 
         return false;
     }
@@ -940,6 +913,8 @@ bool wxThreadInternal::Resume()
 
 wxThread *wxThread::This()
 {
+    wxASSERT_MSG( gs_tlsThisThread != TLS_OUT_OF_INDEXES,
+                  "TLS index not set. Is wx initialized?" );
     wxThread *thread = (wxThread *)::TlsGetValue(gs_tlsThisThread);
 
     // be careful, 0 may be a valid return value as well
@@ -973,11 +948,8 @@ unsigned long wxThread::GetCurrentId()
     return (unsigned long)::GetCurrentThreadId();
 }
 
-bool wxThread::SetConcurrency(size_t WXUNUSED_IN_WINCE(level))
+bool wxThread::SetConcurrency(size_t level)
 {
-#ifdef __WXWINCE__
-    return false;
-#else
     wxASSERT_MSG( IsMain(), wxT("should only be called from the main thread") );
 
     // ok only for the default one
@@ -1033,35 +1005,7 @@ bool wxThread::SetConcurrency(size_t WXUNUSED_IN_WINCE(level))
         return false;
     }
 
-    // set it: we can't link to SetProcessAffinityMask() because it doesn't
-    // exist in Win9x, use RT binding instead
-
-    typedef BOOL (WINAPI *SETPROCESSAFFINITYMASK)(HANDLE, DWORD_PTR);
-
-    // can use static var because we're always in the main thread here
-    static SETPROCESSAFFINITYMASK pfnSetProcessAffinityMask = NULL;
-
-    if ( !pfnSetProcessAffinityMask )
-    {
-        HMODULE hModKernel = ::LoadLibrary(wxT("kernel32"));
-        if ( hModKernel )
-        {
-            pfnSetProcessAffinityMask = (SETPROCESSAFFINITYMASK)
-                ::GetProcAddress(hModKernel, "SetProcessAffinityMask");
-        }
-
-        // we've discovered a MT version of Win9x!
-        wxASSERT_MSG( pfnSetProcessAffinityMask,
-                      wxT("this system has several CPUs but no SetProcessAffinityMask function?") );
-    }
-
-    if ( !pfnSetProcessAffinityMask )
-    {
-        // msg given above - do it only once
-        return false;
-    }
-
-    if ( pfnSetProcessAffinityMask(hProcess, dwProcMask) == 0 )
+    if ( ::SetProcessAffinityMask(hProcess, dwProcMask) == 0 )
     {
         wxLogLastError(wxT("SetProcessAffinityMask"));
 
@@ -1069,7 +1013,6 @@ bool wxThread::SetConcurrency(size_t WXUNUSED_IN_WINCE(level))
     }
 
     return true;
-#endif // __WXWINCE__/!__WXWINCE__
 }
 
 // ctor and dtor
@@ -1103,6 +1046,14 @@ wxThreadError wxThread::Create(unsigned int stackSize)
 wxThreadError wxThread::Run()
 {
     wxCriticalSectionLocker lock(m_critsect);
+
+    // Create the thread if it wasn't created yet with an explicit
+    // Create() call:
+    if ( !m_internal->GetHandle() )
+    {
+        if ( !m_internal->Create(this, 0) )
+            return wxTHREAD_NO_RESOURCE;
+    }
 
     wxCHECK_MSG( m_internal->GetState() == STATE_NEW, wxTHREAD_RUNNING,
              wxT("thread may only be started once after Create()") );
@@ -1171,6 +1122,96 @@ wxThreadError wxThread::Kill()
     return rc;
 }
 
+// At least MSVC 2017 version 15.6 is required for observing the
+// thread names set using this method.
+// Windows 10 version 1607 is required for the SetThreadDescription
+// function.
+static bool wxSetThreadNameOnWindows10(const WCHAR *threadName)
+{
+    typedef HRESULT(WINAPI* SetThreadDescription_t)(HANDLE, PCWSTR);
+    static SetThreadDescription_t s_pfnSetThreadDescription = NULL;
+
+    static bool s_initDone = false;
+    if ( !s_initDone )
+    {
+        wxLoadedDLL dllKernel32("kernel32.dll");
+        wxDL_INIT_FUNC(s_pfn, SetThreadDescription, dllKernel32);
+        s_initDone = true;
+    }
+
+    if ( s_pfnSetThreadDescription )
+    {
+        HRESULT r = s_pfnSetThreadDescription(GetCurrentThread(), threadName);
+        if (SUCCEEDED(r))
+            return true;
+        else
+            wxLogApiError("SetThreadDescription", r);
+    }
+    return false;
+}
+
+#ifdef _MSC_VER
+// This function works with all MSVC versions.
+static bool wxSetThreadNameOnAnyMSVC(const char* threadName)
+{
+    // This implementation is taken almost verbatim from:
+    // https://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
+
+    const DWORD MS_VC_EXCEPTION = 0x406D1388;
+#pragma pack(push,8)
+    typedef struct tagTHREADNAME_INFO
+    {
+        DWORD dwType; // Must be 0x1000.
+        LPCSTR szName; // Pointer to name (in user addr space).
+        DWORD dwThreadID; // Thread ID (-1=caller thread).
+        DWORD dwFlags; // Reserved for future use, must be zero.
+    } THREADNAME_INFO;
+#pragma pack(pop)
+
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = threadName;
+    info.dwThreadID = (DWORD)-1;
+    info.dwFlags = 0;
+#pragma warning(push)
+#pragma warning(disable: 6320 6322)
+    __try
+    {
+        RaiseException(MS_VC_EXCEPTION, 0,
+            sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+        return true;
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
+#pragma warning(pop)
+    return false;
+}
+#endif // MSC_VER
+
+bool wxThread::SetName(const wxString &name)
+{
+    wxCHECK_MSG(this == This(), false,
+        "SetName() must be called in the context of the thread to be named");
+
+    return SetNameForCurrent(name);
+}
+
+/* static */
+bool wxThread::SetNameForCurrent(const wxString &name)
+{
+    bool retval = wxSetThreadNameOnWindows10(name.wc_str());
+
+    // Even if the method above succeeded, we can set
+    // the name through this other, independent way also.
+#ifdef _MSC_VER
+    retval |= wxSetThreadNameOnAnyMSVC(name.c_str());
+#endif
+
+    // return true if at least one call succeeded
+    return retval;
+}
+
 void wxThread::Exit(ExitCode status)
 {
     wxThreadInternal::DoThreadOnExit(this);
@@ -1191,7 +1232,7 @@ void wxThread::Exit(ExitCode status)
 #ifdef wxUSE_BEGIN_THREAD
     _endthreadex(wxPtrToUInt(status));
 #else // !VC++
-    ::ExitThread((DWORD)status);
+    ::ExitThread(wxPtrToUInt(status));
 #endif // VC++/!VC++
 
     wxFAIL_MSG(wxT("Couldn't return from ExitThread()!"));
@@ -1219,6 +1260,13 @@ unsigned long wxThread::GetId() const
     wxCriticalSectionLocker lock(const_cast<wxCriticalSection &>(m_critsect));
 
     return (unsigned long)m_internal->GetId();
+}
+
+WXHANDLE wxThread::MSWGetHandle() const
+{
+    wxCriticalSectionLocker lock(const_cast<wxCriticalSection &>(m_critsect));
+
+    return m_internal->GetHandle();
 }
 
 bool wxThread::IsRunning() const
@@ -1257,20 +1305,20 @@ bool wxThread::TestDestroy()
 class wxThreadModule : public wxModule
 {
 public:
-    virtual bool OnInit();
-    virtual void OnExit();
+    virtual bool OnInit() wxOVERRIDE;
+    virtual void OnExit() wxOVERRIDE;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxThreadModule)
+    wxDECLARE_DYNAMIC_CLASS(wxThreadModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxThreadModule, wxModule);
 
 bool wxThreadModule::OnInit()
 {
     // allocate TLS index for storing the pointer to the current thread
     gs_tlsThisThread = ::TlsAlloc();
-    if ( gs_tlsThisThread == 0xFFFFFFFF )
+    if ( gs_tlsThisThread == TLS_OUT_OF_INDEXES )
     {
         // in normal circumstances it will only happen if all other
         // TLS_MINIMUM_AVAILABLE (>= 64) indices are already taken - in other
@@ -1285,7 +1333,7 @@ bool wxThreadModule::OnInit()
     if ( !::TlsSetValue(gs_tlsThisThread, (LPVOID)0) )
     {
         ::TlsFree(gs_tlsThisThread);
-        gs_tlsThisThread = 0xFFFFFFFF;
+        gs_tlsThisThread = TLS_OUT_OF_INDEXES;
 
         wxLogSysError(_("Thread module initialization failed: cannot store value in thread local storage"));
 
@@ -1296,8 +1344,6 @@ bool wxThreadModule::OnInit()
 
     gs_critsectGui = new wxCriticalSection();
     gs_critsectGui->Enter();
-
-    gs_critsectThreadDelete = new wxCriticalSection;
 
     wxThread::ms_idMainThread = wxThread::GetCurrentId();
 
@@ -1311,7 +1357,10 @@ void wxThreadModule::OnExit()
         wxLogLastError(wxT("TlsFree failed."));
     }
 
-    wxDELETE(gs_critsectThreadDelete);
+    // invalidate slot index to make the errors more obvious if we try to use
+    // it from now on, e.g. if any wxThreads are still running (which shouldn't
+    // be the case, of course, but might still happen)
+    gs_tlsThisThread = TLS_OUT_OF_INDEXES;
 
     if ( gs_critsectGui )
     {
@@ -1412,8 +1461,17 @@ void WXDLLIMPEXP_BASE wxWakeUpMainThread()
     // sending any message would do - hopefully WM_NULL is harmless enough
     if ( !::PostThreadMessage(wxThread::GetMainId(), WM_NULL, 0, 0) )
     {
-        // should never happen
-        wxLogLastError(wxT("PostThreadMessage(WM_NULL)"));
+        // should never happen, but log an error if it does, however do not use
+        // wxLog here as it would result in reentrancy because logging from a
+        // thread calls wxWakeUpIdle() which calls this function itself again
+        const unsigned long ec = wxSysErrorCode();
+        wxMessageOutputDebug().Printf
+        (
+            wxS("Failed to wake up main thread: PostThreadMessage(WM_NULL) ")
+            wxS("failed with error 0x%08lx (%s)."),
+            ec,
+            wxSysErrorMsgStr(ec)
+        );
     }
 }
 

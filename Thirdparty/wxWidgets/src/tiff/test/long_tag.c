@@ -1,5 +1,3 @@
-/* $Id$ */
-
 /*
  * Copyright (c) 2004, Andrey Kiselev  <dron@ak4719.spb.edu>
  *
@@ -60,8 +58,10 @@ int
 main(int argc, char **argv)
 {
 	TIFF		*tif;
-	int		i;
+	unsigned int	i;
 	unsigned char	buf[3] = { 0, 127, 255 };
+        (void) argc;
+        (void) argv;
 
 	/* Test whether we can write tags. */
 	tif = TIFFOpen(filename, "w");
@@ -109,7 +109,7 @@ main(int argc, char **argv)
 	}
 
 	/* Write dummy pixel data. */
-	if (!TIFFWriteScanline(tif, buf, 0, 0) < 0) {
+	if (TIFFWriteScanline(tif, buf, 0, 0) == -1) {
 		fprintf (stderr, "Can't write image data.\n");
 		goto failure;
 	}

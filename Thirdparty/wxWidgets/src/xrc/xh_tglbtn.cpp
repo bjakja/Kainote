@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for wxToggleButton
 // Author:      Bob Mitchell
 // Created:     2000/03/21
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Bob Mitchell and Verant Interactive
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,17 +10,18 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_TOGGLEBTN
+
+# if !defined(__WXUNIVERSAL__) && !defined(__WXMOTIF__) && !(defined(__WXGTK__) && !defined(__WXGTK20__))
+#  define wxHAVE_BITMAPS_IN_BUTTON 1
+# endif
 
 #include "wx/xrc/xh_tglbtn.h"
 #include "wx/tglbtn.h"
 #include "wx/button.h" // solely for wxBU_EXACTFIT
 
-IMPLEMENT_DYNAMIC_CLASS(wxToggleButtonXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxToggleButtonXmlHandler, wxXmlResourceHandler);
 
 wxToggleButtonXmlHandler::wxToggleButtonXmlHandler()
     : wxXmlResourceHandler()
@@ -36,7 +36,7 @@ wxObject *wxToggleButtonXmlHandler::DoCreateResource()
 
    wxObject *control = m_instance;
 
-#if !defined(__WXUNIVERSAL__) && !defined(__WXMOTIF__) && !defined(__WXPM__) && !(defined(__WXGTK__) && !defined(__WXGTK20__))
+#ifdef wxHAVE_BITMAPS_IN_BUTTON
 
     if (m_class == wxT("wxBitmapToggleButton"))
     {
@@ -79,17 +79,25 @@ void wxToggleButtonXmlHandler::DoCreateToggleButton(wxObject *control)
                    wxDefaultValidator,
                    GetName());
 
+#ifdef wxHAVE_BITMAPS_IN_BUTTON
+    if ( GetParamNode("bitmap") )
+    {
+        button->SetBitmap(GetBitmapBundle("bitmap", wxART_BUTTON),
+                          GetDirection("bitmapposition"));
+    }
+#endif
+
     button->SetValue(GetBool( wxT("checked")));
 }
 
-#if !defined(__WXUNIVERSAL__) && !defined(__WXMOTIF__) && !defined(__WXPM__) && !(defined(__WXGTK__) && !defined(__WXGTK20__))
+#ifdef wxHAVE_BITMAPS_IN_BUTTON
 void wxToggleButtonXmlHandler::DoCreateBitmapToggleButton(wxObject *control)
 {
     wxBitmapToggleButton *button = wxDynamicCast(control, wxBitmapToggleButton);
 
     button->Create(m_parentAsWindow,
                    GetID(),
-                   GetBitmap(wxT("bitmap"), wxART_BUTTON),
+                   GetBitmapBundle(wxT("bitmap"), wxART_BUTTON),
                    GetPosition(), GetSize(),
                    GetStyle(),
                    wxDefaultValidator,

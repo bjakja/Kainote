@@ -4,7 +4,6 @@
 // Author:      Chris Breeze
 // Modified by:
 // Created:     21/07/97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1993-1998 Chris Breeze
 // Licence:     wxWindows licence
 //---------------------------------------------------------------------------
@@ -17,7 +16,7 @@ class ScoreDialog : public wxDialog
 {
 public:
     ScoreDialog(wxWindow* parent, ScoreFile* file);
-    virtual ~ScoreDialog(){};
+    virtual ~ScoreDialog(){}
 
     void Display();
 
@@ -25,10 +24,7 @@ protected:
     void OnCloseWindow(wxCloseEvent& event);
 
 private:
-    ScoreFile* m_scoreFile;
-    wxButton* m_OK;
-
-DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 #endif

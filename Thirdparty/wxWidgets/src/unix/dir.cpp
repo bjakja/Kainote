@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     08.12.99
-// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,9 +19,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/intl.h"
@@ -31,6 +27,7 @@
 
 #include "wx/dir.h"
 #include "wx/filefn.h"          // for wxMatchWild
+#include "wx/filename.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -149,13 +146,20 @@ bool wxDirData::Read(wxString *filename)
             break;
         }
 
-        // check the type now
-        if ( !(m_flags & wxDIR_FILES) && !wxDir::Exists(path + de_d_name) )
+        // check the type now: notice that we may want to check the type of
+        // the path itself and not whatever it points to in case of a symlink
+        wxFileName fn = wxFileName::DirName(path + de_d_name);
+        if ( m_flags & wxDIR_NO_FOLLOW )
+        {
+            fn.DontFollowLink();
+        }
+
+        if ( !(m_flags & wxDIR_FILES) && !fn.DirExists() )
         {
             // it's a file, but we don't want them
             continue;
         }
-        else if ( !(m_flags & wxDIR_DIRS) && wxDir::Exists(path + de_d_name) )
+        else if ( !(m_flags & wxDIR_DIRS) && fn.DirExists() )
         {
             // it's a dir, and we don't want it
             continue;
@@ -248,9 +252,13 @@ wxString wxDir::GetName() const
     return name;
 }
 
-wxDir::~wxDir()
+void wxDir::Close()
 {
-    delete M_DIR;
+    if ( m_data )
+    {
+        delete m_data;
+        m_data = NULL;
+    }
 }
 
 // ----------------------------------------------------------------------------

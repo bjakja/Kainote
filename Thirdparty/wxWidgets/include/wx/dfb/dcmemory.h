@@ -3,7 +3,6 @@
 // Purpose:     wxMemoryDC class declaration
 // Created:     2006-08-10
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 REA Elektronik GmbH
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -31,7 +30,7 @@ private:
 
     wxBitmap m_bmp;
 
-    DECLARE_DYNAMIC_CLASS(wxMemoryDCImpl)
+    wxDECLARE_DYNAMIC_CLASS(wxMemoryDCImpl);
 };
 
 #endif // _WX_DFB_DCMEMORY_H_

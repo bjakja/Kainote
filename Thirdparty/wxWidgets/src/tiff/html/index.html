@@ -10,51 +10,41 @@
   -->
   </style>
 </head>
-<body lang="en" text="#000000" bgcolor="#ffffff" link="#0000ff" alink="#0000ff" vlink="#0000ff">
+<body lang="en">
   <h1>LibTIFF - TIFF Library and Utilities</h1>
   <hr>
   <table cellspacing="0" cellpadding="0" border="0">
     <tr>
-      <th>Home Page</th>
-      <td><a href="http://www.remotesensing.org/libtiff/" title="Home of the LibTIFF software">http://www.remotesensing.org/libtiff/</a></td>
+      <th>Home Page #1</th>
+      <td><a href="http://www.simplesystems.org/libtiff/" title="Home of the LibTIFF software">http://www.simplesystems.org/libtiff/</a></td>
     </tr>
     <tr>
-      <th>Home Page Mirror</th>
+      <th>Home Page #2</th>
+      <td><a href="https://libtiff.gitlab.io/libtiff/" title="Mirror of the LibTIFF software">https://libtiff.gitlab.io/libtiff/</a></td>
+    </tr>
+    <tr>
+      <th>Home Page #3</th>
       <td><a href="http://libtiff.maptools.org/" title="Mirror of the LibTIFF software">http://libtiff.maptools.org/</a></td>
     </tr>
     <tr>
       <th>Latest Stable Release</th>
-      <td><a href="v3.8.2.html">v3.8.2</a></td>
-    </tr>
-    <tr>
-      <th>Latest Development Release</th>
-      <td><a href="v3.8.2.html">v3.8.2</a></td>
+      <td><a href="v4.2.0.html">v4.2.0</a></td>
     </tr>
     <tr>
       <th>Master Download Site</th>
-      <td><a href="ftp://ftp.remotesensing.org/pub/libtiff">ftp.remotesensing.org</a>, directory pub/libtiff</td>
-    </tr>
-    <tr>
-      <th>Mirror Download Site</th>
-      <td><a href="http://libtiff.maptools.org/dl/">http://libtiff.maptools.org/dl/</a></td>
-    </tr>
-    <tr>
-      <th>Windows Binaries</th>
-      <td><a href="http://gnuwin32.sourceforge.net/packages/libtiff.htm">GnuWin32 Project</a></td>
+      <td><a href="https://download.osgeo.org/libtiff/">download.osgeo.org</a>, directory libtiff</td>
     </tr>
     <tr>
       <th>Mailing List</th>
-      <td><a href="mailto:tiff@lists.maptools.org">tiff@lists.maptools.org</a>,
-        <a href="http://lists.maptools.org/mailman/listinfo/tiff/">Subscription</a>,
+      <td><a href="mailto:tiff@lists.osgeo.org">tiff@lists.osgeo.org</a>,
+        <a href="http://lists.osgeo.org/mailman/listinfo/tiff/">Subscription</a>,
         <a href="http://www.awaresystems.be/imaging/tiff/tml.html">Archive</a>.
         Please, read the <a href="http://www.awaresystems.be/imaging/tiff/faq.html">TIFF FAQ</a>
         before asking questions.</td>
     </tr>
     <tr>
-      <th>Anonymous CVS</th>
-      <td><tt>export CVSROOT=:pserver:cvsanon@cvs.maptools.org:/cvs/maptools/cvsroot<br>
-        cvs login # use empty password"<br>
-        cvs checkout libtiff<br></tt></td>
+      <th>git repository</th>
+      <td><tt><a href="https://gitlab.com/libtiff/libtiff">https://gitlab.com/libtiff/libtiff</a></tt></td>
     </tr>
   </table>
   <hr>
@@ -66,35 +56,37 @@
   </p>
   <p>
     Included in this software distribution is a library, libtiff, for
-    reading and writing TIFF, a small collection of tools for doing simple
-    manipulations of TIFF images on UNIX systems,
-    and documentation on the library and
-    tools.  A small assortment of TIFF-related software for UNIX
-    that has been contributed by others is also included.
+    reading and writing TIFF, a small collection of tools for doing
+    simple manipulations of TIFF images, and documentation on the
+    library and tools.  Libtiff is a portable software, it was built
+    and tested on various systems: UNIX flavors (Linux, BSD, Solaris,
+    MacOS X), Windows, and OpenVMS.  It should be possible to port
+    libtiff and additional tools on other OSes.
   </p>
   <p>
     The library, along with associated tool programs, should handle most of
     your needs for reading and writing TIFF images on 32- and 64-bit
-    machines.  This software can also be used on older 16-bit systems
-    though it may require some effort and you may need to leave out some of
-    the compression support.
+    machines.
   </p>
   <p>
-    The software was orginally authored and maintained by Sam Leffler.
-    While he keeps a fatherly eye on the mailing list, he is no longer
-    responsible for day to day maintenance.
+    The software was originally authored and maintained by Sam Leffler
+    but has been maintained by a cast of others since 1999.
   </p>
   <p>
     Questions should be sent to the TIFF mailing list:
-    <a href="mailto:tiff@lists.maptools.org">tiff@lists.maptools.org</a>, with
+    <a href="mailto:tiff@lists.osgeo.org">tiff@lists.osgeo.org</a>, with
     a subscription interface at
-    <a href="http://lists.maptools.org/mailman/listinfo/tiff">http://lists.maptools.org/mailman/listinfo/tiff</a>.
+    <a href="http://lists.osgeo.org/mailman/listinfo/tiff">http://lists.osgeo.org/mailman/listinfo/tiff</a>.
   </p>
   <p>
-    The persons responsible for putting up this site and putting together
-    versions &gt;= 3.5.1 are
+    The persons currently actively maintaining and releasing libtiff
+    are <a href="mailto:even.rouault@spatialys.com">Even Rouault</a>
+    and <a href="mailto:bfriesen@GraphicsMagick.org">Bob Friesenhahn</a>.
+  </p>
+  <p>Significant maintainers in the past (since the 3.5.1 release) are
     <a href="http://pobox.com/~warmerdam">Frank Warmerdam</a>,
-    <a href="mailto:dron@ak4719.spb.edu">Andrey Kiselev</a> and Mike Welles.
+    <a href="mailto:dron@ak4719.spb.edu">Andrey Kiselev</a>,
+    Joris Van Damme, and Lee Howard.
   </p>
   <p>
     The following sections are included in this documentation:
@@ -108,14 +100,21 @@
     <li><a href="contrib.html">Contributed software</a></li>
     <li><a href="document.html">TIFF documentation</a></li>
     <li><a href="build.html">Building the software distribution</a></li>
-    <li><a href="bugs.html">Bugs, Bugzilla, and the TIFF mailing list</a></li>
+    <li><a href="bugs.html">Bugs, GitLab issues, and the TIFF mailing list</a></li>
     <li><a href="images.html">Test images</a></li>
     <li><a href="misc.html">Acknowledgements and copyright issues</a></li>
     <li><a href="man/index.html">Man Pages</a></li>
   </ul>
+  <p>
+    <b>BigTIFF News</b>
+  </p>
+  <ul>
+    <li><a href="BigTIFFProposal.html">BigTIFF project proposal</a> (work is completed!)</li>
+    <li><a href="bigtiffpr.html">Press release: Currently extending LibTiff</a> (work is completed!)</li>
+  </ul>
   <hr>
   <p>
-    Last updated  $Date: 2006/03/23 14:54:01 $.
+    Last updated  2019-11-03
   </p>
 </body>
 </html>

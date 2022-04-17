@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/dcclient.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -49,9 +48,9 @@ protected:
                                     double sa, double ea );
     virtual void DoDrawPoint( wxCoord x, wxCoord y );
 
-    virtual void DoDrawLines(int n, wxPoint points[],
+    virtual void DoDrawLines(int n, const wxPoint points[],
                              wxCoord xoffset, wxCoord yoffset);
-    virtual void DoDrawPolygon(int n, wxPoint points[],
+    virtual void DoDrawPolygon(int n, const wxPoint points[],
                                wxCoord xoffset, wxCoord yoffset,
                                wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
 
@@ -125,7 +124,7 @@ public:
     GdkWindow *GetWindow() { return m_window; }
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxWindowDCImpl)
+    wxDECLARE_DYNAMIC_CLASS(wxWindowDCImpl);
 };
 
 //-----------------------------------------------------------------------------
@@ -142,7 +141,7 @@ protected:
     virtual void DoGetSize(int *width, int *height) const;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxClientDCImpl)
+    wxDECLARE_DYNAMIC_CLASS(wxClientDCImpl);
 };
 
 //-----------------------------------------------------------------------------
@@ -156,7 +155,7 @@ public:
     wxPaintDCImpl(wxDC *owner, wxWindow *win);
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxPaintDCImpl)
+    wxDECLARE_DYNAMIC_CLASS(wxPaintDCImpl);
 };
 
 #endif // __GTKDCCLIENTH__

@@ -3,7 +3,6 @@
 // Purpose:     Miscellaneous wxThread test cases
 // Author:      Francesco Montorsi (extracted from console sample)
 // Created:     2010-05-10
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,9 +12,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif // WX_PRECOMP
@@ -38,7 +34,7 @@ public:
         { m_n = n; Create(); }
 
     // thread execution starts here
-    virtual ExitCode Entry();
+    virtual ExitCode Entry() wxOVERRIDE;
 
 private:
     size_t m_n;
@@ -46,7 +42,7 @@ private:
 
 wxThread::ExitCode MyJoinableThread::Entry()
 {
-    unsigned long res = 1;
+    wxUIntPtr res = 1;
     for ( size_t n = 1; n < m_n; n++ )
     {
         res *= n;
@@ -71,10 +67,10 @@ public:
     }
 
     // thread execution starts here
-    virtual ExitCode Entry();
+    virtual ExitCode Entry() wxOVERRIDE;
 
     // and stops here
-    virtual void OnExit();
+    virtual void OnExit() wxOVERRIDE;
 
 private:
     size_t m_n; // number of characters to write
@@ -131,7 +127,7 @@ public:
         Create();
     }
 
-    virtual ExitCode Entry()
+    virtual ExitCode Entry() wxOVERRIDE
     {
         //wxPrintf(wxT("Thread %lu has started running.\n"), GetId());
         gs_cond.Post();
@@ -166,8 +162,10 @@ public:
         Create();
     }
 
-    virtual ExitCode Entry()
+    virtual ExitCode Entry() wxOVERRIDE
     {
+        wxUnusedVar(m_i);
+
         //wxPrintf(wxT("%s: Thread #%d (%ld) starting to wait for semaphore...\n"),
         //         wxDateTime::Now().FormatTime().c_str(), m_i, (long)GetId());
 
@@ -222,7 +220,7 @@ private:
     void TestThreadRun();
     void TestThreadConditions();
 
-    DECLARE_NO_COPY_CLASS(MiscThreadTestCase)
+    wxDECLARE_NO_COPY_CLASS(MiscThreadTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -243,9 +241,9 @@ void MiscThreadTestCase::TestJoinable()
     // calc 10! in the background
     MyJoinableThread thread(10);
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread.Run() );
-    CPPUNIT_ASSERT_EQUAL( 362880, (unsigned long)thread.Wait() );
+    CPPUNIT_ASSERT_EQUAL( 362880, (wxUIntPtr)thread.Wait() );
 }
- 
+
 void MiscThreadTestCase::TestDetached()
 {
     static const size_t nThreads = 3;
@@ -257,8 +255,8 @@ void MiscThreadTestCase::TestDetached()
         threads[n] = new MyDetachedThread(10, 'A' + n);
     }
 
-    threads[0]->SetPriority(WXTHREAD_MIN_PRIORITY);
-    threads[1]->SetPriority(WXTHREAD_MAX_PRIORITY);
+    threads[0]->SetPriority(wxPRIORITY_MIN);
+    threads[1]->SetPriority(wxPRIORITY_MAX);
 
     for ( n = 0; n < nThreads; n++ )
     {
@@ -284,7 +282,7 @@ void MiscThreadTestCase::TestSemaphore()
 
     for ( size_t n = 0; n < threads.GetCount(); n++ )
     {
-        CPPUNIT_ASSERT_EQUAL( 0, (long)threads[n]->Wait() );
+        CPPUNIT_ASSERT_EQUAL( 0, (wxUIntPtr)threads[n]->Wait() );
         delete threads[n];
     }
 }
@@ -329,31 +327,31 @@ void MiscThreadTestCase::TestThreadDelete()
     // terminated will lead to a crash!
 
     MyDetachedThread *thread0 = new MyDetachedThread(30, 'W');
-    CPPUNIT_ASSERT_EQUAL( wxTHREAD_MISC_ERROR, thread0->Delete() );    
+    CPPUNIT_ASSERT_EQUAL( wxTHREAD_MISC_ERROR, thread0->Delete() );
         // delete a thread which didn't start to run yet.
 
     MyDetachedThread *thread1 = new MyDetachedThread(30, 'Y');
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread1->Run() );
     wxMilliSleep(300);
-    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread1->Delete() );      
+    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread1->Delete() );
         // delete a running thread
 
     MyDetachedThread *thread2 = new MyDetachedThread(30, 'Z');
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread2->Run() );
     wxMilliSleep(300);
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread2->Pause() );
-    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread2->Delete() );      
+    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread2->Delete() );
         // delete a sleeping thread
 
     MyJoinableThread thread3(20);
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread3.Run() );
-    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread3.Delete() );       
+    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread3.Delete() );
         // delete a joinable running thread
 
     MyJoinableThread thread4(2);
     CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread4.Run() );
     wxMilliSleep(300);
-    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread4.Delete() );       
+    CPPUNIT_ASSERT_EQUAL( wxTHREAD_NO_ERROR, thread4.Delete() );
         // delete a joinable thread which already terminated
 }
 

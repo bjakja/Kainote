@@ -2,9 +2,29 @@
 // Name:        docview.h
 // Purpose:     interface of various doc/view framework classes
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+
+/**
+    A vector of wxDocument pointers.
+
+    @since 2.9.5
+*/
+typedef wxVector<wxDocument*> wxDocVector;
+
+/**
+    A vector of wxView pointers.
+
+    @since 2.9.5
+*/
+typedef wxVector<wxView*> wxViewVector;
+
+/**
+    A vector of wxDocTemplate pointers.
+
+    @since 2.9.5
+*/
+typedef wxVector<wxDocTemplate*> wxDocTemplateVector;
 
 /**
     @class wxDocTemplate
@@ -393,6 +413,19 @@ public:
      */
     wxDocTemplate* FindTemplate(const wxClassInfo* classinfo);
 
+
+    /**
+        Search for the document corresponding to the given file.
+
+        @param path
+            Document file path.
+        @return
+            Pointer to a wxDocument, or @NULL if none found.
+
+        @since 2.9.5
+     */
+    wxDocument* FindDocumentByPath(const wxString& path) const;
+
     /**
         Closes the specified document.
 
@@ -524,15 +557,45 @@ public:
     virtual wxDocTemplate* FindTemplateForPath(const wxString& path);
 
     /**
+        Returns the view to apply a user command to.
+
+        This method tries to find the view that the user wants to interact
+        with. It returns the same view as GetCurrentDocument() if there is any
+        currently active view but falls back to the first view of the first
+        document if there is no active view.
+
+        @since 2.9.5
+     */
+    wxView* GetAnyUsableView() const;
+
+    /**
         Returns the document associated with the currently active view (if
         any).
     */
     wxDocument* GetCurrentDocument() const;
 
     /**
-        Returns the currently active view
+        Returns the currently active view.
+
+        This method can return @NULL if no view is currently active.
+
+        @see GetAnyUsableView()
     */
     virtual wxView* GetCurrentView() const;
+
+    /**
+        Returns a vector of wxDocument pointers.
+
+        @since 2.9.5
+    */
+    wxDocVector GetDocumentsVector() const;
+
+    /**
+        Returns a vector of wxDocTemplate pointers.
+
+        @since 2.9.5
+    */
+    wxDocTemplateVector GetTemplatesVector() const;
 
     /**
         Returns a reference to the list of documents.
@@ -653,7 +716,7 @@ public:
         @beginWxPerlOnly
         In wxPerl @a templates is a reference to a list of templates.
         If you override this method in your document manager it must
-        return two values, eg:
+        return two values, e.g.:
 
         @code
         (doctemplate, path) = My::DocManager->SelectDocumentPath(...);
@@ -859,6 +922,8 @@ public:
     /**
         Closes the view by calling OnClose(). If @a deleteWindow is @true, this
         function should delete the window associated with the view.
+
+        @return @true if the view was closed
     */
     virtual bool Close(bool deleteWindow = true);
 
@@ -908,6 +973,9 @@ public:
         example, if your views all share the same window, you need to
         disassociate the window from the view and perhaps clear the window. If
         @a deleteWindow is @true, delete the frame associated with the view.
+
+        Returning @false from this function prevents the view, and possibly the
+        document, from being closed.
     */
     virtual bool OnClose(bool deleteWindow);
 
@@ -1206,9 +1274,34 @@ public:
     bool AlreadySaved() const;
 
     /**
+        Activate the first view of the document if any.
+
+        This function simply calls the Raise() method of the frame of the first
+        view. You may need to override the Raise() method to get the desired
+        effect if you are not using a standard wxFrame for your view. For
+        instance, if your document is inside its own notebook tab you could
+        implement Raise() like this:
+
+        @code
+        void MyNotebookPage::Raise()
+        {
+            wxNotebook* notebook = wxStaticCast(GetParent(), wxNotebook);
+            notebook->SetSelection(notebook->FindPage(this));
+        }
+        @endcode
+
+        @see GetFirstView()
+
+        @since 2.9.5
+     */
+    void Activate() const;
+
+    /**
         Closes the document, by calling OnSaveModified() and then (if this
         returned @true) OnCloseDocument(). This does not normally delete the
         document object, use DeleteAllViews() to do this implicitly.
+
+        @return @true if the document was closed
     */
     virtual bool Close();
 
@@ -1216,7 +1309,7 @@ public:
         Calls wxView::Close() and deletes each view. Deleting the final view
         will implicitly delete the document itself, because the wxView
         destructor calls RemoveView(). This in turns calls OnChangedViewList(),
-        whose default implemention is to save and delete the document if no
+        whose default implementation is to save and delete the document if no
         views exist.
     */
     virtual bool DeleteAllViews();
@@ -1299,6 +1392,13 @@ public:
     */
     virtual wxString GetUserReadableName() const;
 
+    /**
+        Returns a vector of wxView pointers.
+
+        @since 2.9.5
+    */
+    wxViewVector GetViewsVector() const;
+
     //@{
     /**
         Returns the list whose elements are the views on the document.
@@ -1370,6 +1470,12 @@ public:
         Notice that previous wxWidgets versions used to call this function also
         from OnNewDocument(), rather counter-intuitively. This is no longer the
         case since wxWidgets 2.9.0.
+
+        Returning @false from this function prevents the document from closing.
+        The default implementation does this if the document is modified and
+        the user didn't confirm discarding the modifications to it.
+
+        Return @true to allow the document to be closed.
     */
     virtual bool OnCloseDocument();
 
@@ -1437,8 +1543,12 @@ public:
     virtual bool OnSaveModified();
 
     /**
-        Removes the view from the document's list of views, and calls
-        OnChangedViewList().
+        Removes the view from the document's list of views.
+
+        If the view was really removed, also calls OnChangedViewList().
+
+        @return @true if the view was removed or @false if the document didn't
+            have this view in the first place.
     */
     virtual bool RemoveView(wxView* view);
 

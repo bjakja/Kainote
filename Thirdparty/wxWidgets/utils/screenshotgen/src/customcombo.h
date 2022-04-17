@@ -2,7 +2,6 @@
 // Name:        custom_combo.h
 // Purpose:     Define some custom wxComboCtrls
 // Author:      Utensil Candel (UtensilCandel@@gmail.com)
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -118,7 +117,7 @@ protected:
     int             m_itemHere;     // hot item in popup
 
 private:
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 
@@ -242,7 +241,7 @@ protected:
     wxTreeItemId        m_itemHere;     // hot item in popup
 
 private:
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 };
 
 

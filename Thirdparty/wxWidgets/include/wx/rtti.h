@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: Ron Lee
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1997 Julian Smart
 //              (c) 2001 Ron Lee <ron@debian.org>
 // Licence:     wxWindows licence
@@ -63,7 +62,7 @@ public:
     ~wxClassInfo();
 
     wxObject *CreateObject() const
-        { return m_objectConstructor ? (*m_objectConstructor)() : 0; }
+        { return m_objectConstructor ? (*m_objectConstructor)() : NULL; }
     bool IsDynamic() const { return (NULL != m_objectConstructor); }
 
     const wxChar       *GetClassName() const { return m_className; }
@@ -86,10 +85,22 @@ public:
 
     bool IsKindOf(const wxClassInfo *info) const
     {
-        return info != 0 &&
-               ( info == this ||
-                 ( m_baseInfo1 && m_baseInfo1->IsKindOf(info) ) ||
-                 ( m_baseInfo2 && m_baseInfo2->IsKindOf(info) ) );
+        if ( info == this )
+            return true;
+
+        if ( m_baseInfo1 )
+        {
+            if ( m_baseInfo1->IsKindOf(info) )
+                return true;
+        }
+
+        if ( m_baseInfo2 )
+        {
+            if ( m_baseInfo2->IsKindOf(info) )
+                return true;
+        }
+
+        return false;
     }
 
     wxDECLARE_CLASS_INFO_ITERATORS();
@@ -128,11 +139,17 @@ WXDLLIMPEXP_BASE wxObject *wxCreateDynamicObject(const wxString& name);
 
 #define wxDECLARE_ABSTRACT_CLASS(name)                                        \
     public:                                                                   \
-        static wxClassInfo ms_classInfo;                                      \
-        virtual wxClassInfo *GetClassInfo() const
+        wxWARNING_SUPPRESS_MISSING_OVERRIDE()                                 \
+        virtual wxClassInfo *GetClassInfo() const wxDUMMY_OVERRIDE;           \
+        wxWARNING_RESTORE_MISSING_OVERRIDE()                                  \
+        static wxClassInfo ms_classInfo
 
 #define wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(name)                               \
     wxDECLARE_NO_ASSIGN_CLASS(name);                                          \
+    wxDECLARE_DYNAMIC_CLASS(name)
+
+#define wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(name)                      \
+    wxDECLARE_NO_ASSIGN_DEF_COPY(name);                                       \
     wxDECLARE_DYNAMIC_CLASS(name)
 
 #define wxDECLARE_DYNAMIC_CLASS_NO_COPY(name)                                 \

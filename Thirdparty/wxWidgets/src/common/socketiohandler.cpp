@@ -3,7 +3,6 @@
 // Purpose:     implementation of wxFDIOHandler for wxSocket
 // Author:      Angel Vidal, Lukasz Michalski
 // Created:     08.24.06
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Angel vidal
 //              (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_SOCKETS
 
@@ -42,7 +38,7 @@ bool wxSocketFDBasedManager::OnInit()
         return false;
 
     m_fdioManager = traits->GetFDIOManager();
-    return m_fdioManager != nullptr;
+    return m_fdioManager != NULL;
 }
 
 void wxSocketFDBasedManager::Install_Callback(wxSocketImpl *socket_,

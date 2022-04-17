@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     23.05.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,27 +32,25 @@ public:
     }
 
     // process wxWindow notifications
-    virtual void OnSetFocus();
-    virtual void OnKillFocus();
+    virtual void OnSetFocus() wxOVERRIDE;
+    virtual void OnKillFocus() wxOVERRIDE;
 
 protected:
-    void Init()
-    {
-        wxCaretBase::Init();
-
-        m_hasCaret = false;
-    }
-
     // override base class virtuals
-    virtual void DoMove();
-    virtual void DoShow();
-    virtual void DoHide();
-    virtual void DoSize();
+    virtual void DoMove() wxOVERRIDE;
+    virtual void DoShow() wxOVERRIDE;
+    virtual void DoHide() wxOVERRIDE;
+    virtual void DoSize() wxOVERRIDE;
 
     // helper function which creates the system caret
     bool MSWCreateCaret();
 
 private:
+    void Init()
+    {
+        m_hasCaret = false;
+    }
+
     bool m_hasCaret;
 
     wxDECLARE_NO_COPY_CLASS(wxCaret);

@@ -3,7 +3,6 @@
 // Purpose:     Unit test for wxMessageQueue
 // Author:      Evgeniy Tarassov
 // Created:     31/10/2007
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Evgeniy Tarassov
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -14,9 +13,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/dynarray.h"
@@ -56,7 +52,7 @@ private:
         {}
 
         // thread execution starts here
-        virtual void *Entry();
+        virtual void *Entry() wxOVERRIDE;
 
         // Thread message queue
         Queue& GetQueue()
@@ -81,7 +77,7 @@ private:
     void TestReceive();
     void TestReceiveTimeout();
 
-    DECLARE_NO_COPY_CLASS(QueueTestCase)
+    wxDECLARE_NO_COPY_CLASS(QueueTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -131,6 +127,7 @@ void QueueTestCase::TestReceive()
         // if it returns a negative, then it detected some problem.
         wxThread::ExitCode code = threads[i]->Wait();
         CPPUNIT_ASSERT_EQUAL( code, (wxThread::ExitCode)wxMSGQUEUE_NO_ERROR );
+        delete threads[i];
     }
 }
 
@@ -163,6 +160,8 @@ void QueueTestCase::TestReceiveTimeout()
 
     CPPUNIT_ASSERT_EQUAL( code1, (wxThread::ExitCode)wxMSGQUEUE_NO_ERROR );
     CPPUNIT_ASSERT_EQUAL( code2, (wxThread::ExitCode)wxMSGQUEUE_TIMEOUT );
+    delete thread2;
+    delete thread1;
 }
 
 // every thread tries to read exactly m_maxMsgCount messages from its queue
@@ -193,20 +192,22 @@ void *QueueTestCase::MyThread::Entry()
                 if ( res == wxMSGQUEUE_MISC_ERROR )
                     return (wxThread::ExitCode)wxMSGQUEUE_MISC_ERROR;
 
-                CPPUNIT_ASSERT_EQUAL( wxMSGQUEUE_NO_ERROR, res );
+                // We can't use Catch asserts outside of the main thread
+                // currently, unfortunately.
+                wxASSERT( res == wxMSGQUEUE_NO_ERROR );
             }
             ++messagesReceived;
             continue;
         }
 
-        CPPUNIT_ASSERT_EQUAL ( result, wxMSGQUEUE_TIMEOUT );
+        wxASSERT( result == wxMSGQUEUE_TIMEOUT );
 
         break;
     }
 
     if ( messagesReceived != m_maxMsgCount )
     {
-        CPPUNIT_ASSERT_EQUAL( m_type, WaitWithTimeout );
+        wxASSERT( m_type == WaitWithTimeout );
 
         return (wxThread::ExitCode)wxMSGQUEUE_TIMEOUT;
     }

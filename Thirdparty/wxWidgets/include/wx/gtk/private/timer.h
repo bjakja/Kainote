@@ -2,7 +2,6 @@
 // Name:        wx/gtk/private/timer.h
 // Purpose:     wxTimerImpl for wxGTK
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -23,9 +22,9 @@ class WXDLLIMPEXP_CORE wxGTKTimerImpl : public wxTimerImpl
 public:
     wxGTKTimerImpl(wxTimer* timer) : wxTimerImpl(timer) { m_sourceId = 0; }
 
-    virtual bool Start( int millisecs = -1, bool oneShot = false );
-    virtual void Stop();
-    virtual bool IsRunning() const { return m_sourceId != 0; }
+    virtual bool Start( int millisecs = -1, bool oneShot = false ) wxOVERRIDE;
+    virtual void Stop() wxOVERRIDE;
+    virtual bool IsRunning() const wxOVERRIDE { return m_sourceId != 0; }
 
 protected:
     int m_sourceId;

@@ -3,7 +3,6 @@
 // Purpose:     wxSpinButton
 // Author:      Robert
 // Modified by:
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -103,9 +102,9 @@ static void gtk_spinbutt_callback( GtkWidget *WXUNUSED(widget), wxSpinButton *wi
 // wxSpinButton
 //-----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxSpinButton, wxControl)
+wxBEGIN_EVENT_TABLE(wxSpinButton, wxControl)
     EVT_SIZE(wxSpinButton::OnSize)
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 bool wxSpinButton::Create(wxWindow *parent,
                           wxWindowID id,
@@ -222,9 +221,7 @@ bool wxSpinButton::IsOwnGtkWindow( GdkWindow *window )
 
 wxSize wxSpinButton::DoGetBestSize() const
 {
-    wxSize best(15, 26); // FIXME
-    CacheBestSize(best);
-    return best;
+    return wxSize(15, 26); // FIXME
 }
 
 // static

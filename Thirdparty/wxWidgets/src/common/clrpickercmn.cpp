@@ -4,7 +4,6 @@
 // Author:      Francesco Montorsi (readapted code written by Vadim Zeitlin)
 // Modified by:
 // Created:     15/04/2006
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin, Francesco Montorsi
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_COLOURPICKERCTRL
 
@@ -39,9 +35,12 @@ const char wxColourPickerWidgetNameStr[] = "colourpickerwidget";
 // implementation
 // ============================================================================
 
-wxDEFINE_EVENT(wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent);
-IMPLEMENT_DYNAMIC_CLASS(wxColourPickerCtrl, wxPickerBase)
-IMPLEMENT_DYNAMIC_CLASS(wxColourPickerEvent, wxEvent)
+wxDEFINE_EVENT(wxEVT_COLOURPICKER_CHANGED, wxColourPickerEvent);
+wxDEFINE_EVENT(wxEVT_COLOURPICKER_CURRENT_CHANGED, wxColourPickerEvent);
+wxDEFINE_EVENT(wxEVT_COLOURPICKER_DIALOG_CANCELLED, wxColourPickerEvent);
+
+wxIMPLEMENT_DYNAMIC_CLASS(wxColourPickerCtrl, wxPickerBase);
+wxIMPLEMENT_DYNAMIC_CLASS(wxColourPickerEvent, wxEvent);
 
 // ----------------------------------------------------------------------------
 // wxColourPickerCtrl
@@ -68,9 +67,8 @@ bool wxColourPickerCtrl::Create( wxWindow *parent, wxWindowID id,
     // complete sizer creation
     wxPickerBase::PostCreation();
 
-    m_picker->Connect(wxEVT_COMMAND_COLOURPICKER_CHANGED,
-            wxColourPickerEventHandler(wxColourPickerCtrl::OnColourChange),
-            nullptr, this);
+    m_picker->Bind(wxEVT_COLOURPICKER_CHANGED,
+            &wxColourPickerCtrl::OnColourChange, this);
 
     return true;
 }
@@ -96,13 +94,6 @@ void wxColourPickerCtrl::UpdatePickerFromTextCtrl()
 {
     wxASSERT(m_text);
 
-    if (m_bIgnoreNextTextCtrlUpdate)
-    {
-        // ignore this update
-        m_bIgnoreNextTextCtrlUpdate = false;
-        return;
-    }
-
     // wxString -> wxColour conversion
     wxColour col(m_text->GetValue());
     if ( !col.IsOk() )
@@ -123,11 +114,9 @@ void wxColourPickerCtrl::UpdateTextCtrlFromPicker()
     if (!m_text)
         return;     // no textctrl to update
 
-    // NOTE: this SetValue() will generate an unwanted wxEVT_COMMAND_TEXT_UPDATED
-    //       which will trigger a unneeded UpdateFromTextCtrl(); thus before using
-    //       SetValue() we set the m_bIgnoreNextTextCtrlUpdate flag...
-    m_bIgnoreNextTextCtrlUpdate = true;
-    m_text->SetValue(M_PICKER->GetColour().GetAsString());
+    // Take care to use ChangeValue() here and not SetValue() to avoid
+    // infinite recursion.
+    m_text->ChangeValue(M_PICKER->GetColour().GetAsString());
 }
 
 
@@ -140,10 +129,7 @@ void wxColourPickerCtrl::OnColourChange(wxColourPickerEvent &ev)
 {
     UpdateTextCtrlFromPicker();
 
-    // the wxColourPickerWidget sent us a colour-change notification.
-    // forward this event to our parent
-    wxColourPickerEvent event(this, GetId(), ev.GetColour());
-    GetEventHandler()->ProcessEvent(event);
+    ev.Skip();
 }
 
 #endif  // wxUSE_COLOURPICKERCTRL

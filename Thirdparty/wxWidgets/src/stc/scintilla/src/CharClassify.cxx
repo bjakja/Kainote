@@ -8,11 +8,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <stdexcept>
+
 #include "CharClassify.h"
 
-// Shut up annoying Visual C++ warnings:
-#ifdef _MSC_VER
-#pragma warning(disable: 4514)
+#ifdef SCI_NAMESPACE
+using namespace Scintilla;
 #endif
 
 CharClassify::CharClassify() {
@@ -43,36 +44,18 @@ void CharClassify::SetCharClasses(const unsigned char *chars, cc newCharClass) {
 	}
 }
 
-int CompareCaseInsensitive(const char *a, const char *b) {
-	while (*a && *b) {
-		if (*a != *b) {
-			char upperA = MakeUpperCase(*a);
-			char upperB = MakeUpperCase(*b);
-			if (upperA != upperB)
-				return upperA - upperB;
+int CharClassify::GetCharsOfClass(cc characterClass, unsigned char *buffer) const {
+	// Get characters belonging to the given char class; return the number
+	// of characters (if the buffer is NULL, don't write to it).
+	int count = 0;
+	for (int ch = maxChar - 1; ch >= 0; --ch) {
+		if (charClass[ch] == characterClass) {
+			++count;
+			if (buffer) {
+				*buffer = static_cast<unsigned char>(ch);
+				buffer++;
+			}
 		}
-		a++;
-		b++;
 	}
-	// Either *a or *b is nul
-	return *a - *b;
-}
-
-int CompareNCaseInsensitive(const char *a, const char *b, size_t len) {
-	while (*a && *b && len) {
-		if (*a != *b) {
-			char upperA = MakeUpperCase(*a);
-			char upperB = MakeUpperCase(*b);
-			if (upperA != upperB)
-				return upperA - upperB;
-		}
-		a++;
-		b++;
-		len--;
-	}
-	if (len == 0)
-		return 0;
-	else
-		// Either *a or *b is nul
-		return *a - *b;
+	return count;
 }

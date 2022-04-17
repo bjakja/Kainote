@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: VZ at 11.12.99 (wxScrollableToolBar split off)
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,26 +16,24 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TOOLBAR
 
 #include "wx/toolbar.h"
 
-
+#ifndef WX_PRECOMP
     #include "wx/control.h"
     #include "wx/frame.h"
     #include "wx/settings.h"
     #if WXWIN_COMPATIBILITY_2_8
         #include "wx/image.h"
     #endif // WXWIN_COMPATIBILITY_2_8
-    
-
+    #include "wx/menu.h"
+    #include "wx/vector.h"
+#endif
 
 extern WXDLLEXPORT_DATA(const char) wxToolBarNameStr[] = "toolbar";
 
@@ -44,8 +41,8 @@ extern WXDLLEXPORT_DATA(const char) wxToolBarNameStr[] = "toolbar";
 // wxWidgets macros
 // ----------------------------------------------------------------------------
 
-BEGIN_EVENT_TABLE(wxToolBarBase, wxControl)
-END_EVENT_TABLE()
+wxBEGIN_EVENT_TABLE(wxToolBarBase, wxControl)
+wxEND_EVENT_TABLE()
 
 #include "wx/listimpl.cpp"
 
@@ -59,7 +56,7 @@ WX_DEFINE_LIST(wxToolBarToolsList)
 // wxToolBarToolBase
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxToolBarToolBase, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxToolBarToolBase, wxObject);
 
 wxToolBarToolBase::~wxToolBarToolBase()
 {
@@ -160,8 +157,8 @@ void wxToolBarBase::FixupStyle()
 
 wxToolBarToolBase *wxToolBarBase::DoAddTool(int toolid,
                                             const wxString& label,
-                                            const wxBitmap& bitmap,
-                                            const wxBitmap& bmpDisabled,
+                                            const wxBitmapBundle& bitmap,
+                                            const wxBitmapBundle& bmpDisabled,
                                             wxItemKind kind,
                                             const wxString& shortHelp,
                                             const wxString& longHelp,
@@ -177,14 +174,14 @@ wxToolBarToolBase *wxToolBarBase::DoAddTool(int toolid,
 wxToolBarToolBase *wxToolBarBase::InsertTool(size_t pos,
                                              int toolid,
                                              const wxString& label,
-                                             const wxBitmap& bitmap,
-                                             const wxBitmap& bmpDisabled,
+                                             const wxBitmapBundle& bitmap,
+                                             const wxBitmapBundle& bmpDisabled,
                                              wxItemKind kind,
                                              const wxString& shortHelp,
                                              const wxString& longHelp,
                                              wxObject *clientData)
 {
-    wxCHECK_MSG( pos <= GetToolsCount(), nullptr,
+    wxCHECK_MSG( pos <= GetToolsCount(), NULL,
                  wxT("invalid position in wxToolBar::InsertTool()") );
 
     return DoInsertNewTool(pos, CreateTool(toolid, label, bitmap, bmpDisabled, kind,
@@ -199,12 +196,12 @@ wxToolBarToolBase *wxToolBarBase::AddTool(wxToolBarToolBase *tool)
 wxToolBarToolBase *
 wxToolBarBase::InsertTool(size_t pos, wxToolBarToolBase *tool)
 {
-    wxCHECK_MSG( pos <= GetToolsCount(), nullptr,
+    wxCHECK_MSG( pos <= GetToolsCount(), NULL,
                  wxT("invalid position in wxToolBar::InsertTool()") );
 
     if ( !tool || !DoInsertTool(pos, tool) )
     {
-        return nullptr;
+        return NULL;
     }
 
     m_tools.Insert(pos, tool);
@@ -224,10 +221,10 @@ wxToolBarBase::InsertControl(size_t pos,
                              wxControl *control,
                              const wxString& label)
 {
-    wxCHECK_MSG( control, nullptr,
-                 wxT("toolbar: can't insert nullptr control") );
+    wxCHECK_MSG( control, NULL,
+                 wxT("toolbar: can't insert NULL control") );
 
-    wxCHECK_MSG( control->GetParent() == this, nullptr,
+    wxCHECK_MSG( control->GetParent() == this, NULL,
                  wxT("control must have toolbar as parent") );
 
     return DoInsertNewTool(pos, CreateTool(control, label));
@@ -246,7 +243,7 @@ wxControl *wxToolBarBase::FindControl( int toolid )
 
             if ( !control )
             {
-                wxFAIL_MSG( wxT("nullptr control in toolbar?") );
+                wxFAIL_MSG( wxT("NULL control in toolbar?") );
             }
             else if ( control->GetId() == toolid )
             {
@@ -256,7 +253,7 @@ wxControl *wxToolBarBase::FindControl( int toolid )
         }
     }
 
-   return nullptr;
+   return NULL;
 }
 
 wxToolBarToolBase *wxToolBarBase::AddSeparator()
@@ -307,14 +304,14 @@ wxToolBarToolBase *wxToolBarBase::RemoveTool(int toolid)
     {
         // don't give any error messages - sometimes we might call RemoveTool()
         // without knowing whether the tool is or not in the toolbar
-        return nullptr;
+        return NULL;
     }
 
     wxToolBarToolBase *tool = node->GetData();
-    wxCHECK_MSG( tool, nullptr, "nullptr tool in the tools list?" );
+    wxCHECK_MSG( tool, NULL, "NULL tool in the tools list?" );
 
     if ( !DoDeleteTool(pos, tool) )
-        return nullptr;
+        return NULL;
 
     m_tools.Erase(node);
 
@@ -366,7 +363,7 @@ bool wxToolBarBase::DeleteTool(int toolid)
 
 wxToolBarToolBase *wxToolBarBase::FindById(int toolid) const
 {
-    wxToolBarToolBase *tool = nullptr;
+    wxToolBarToolBase *tool = NULL;
 
     for ( wxToolBarToolsList::compatibility_iterator node = m_tools.GetFirst();
           node;
@@ -379,7 +376,7 @@ wxToolBarToolBase *wxToolBarBase::FindById(int toolid) const
             break;
         }
 
-        tool = nullptr;
+        tool = NULL;
     }
 
     return tool;
@@ -387,7 +384,7 @@ wxToolBarToolBase *wxToolBarBase::FindById(int toolid) const
 
 void wxToolBarBase::UnToggleRadioGroup(wxToolBarToolBase *tool)
 {
-    wxCHECK_RET( tool, wxT("nullptr tool in wxToolBarTool::UnToggleRadioGroup") );
+    wxCHECK_RET( tool, wxT("NULL tool in wxToolBarTool::UnToggleRadioGroup") );
 
     if ( !tool->IsButton() || tool->GetKind() != wxITEM_RADIO )
         return;
@@ -436,23 +433,82 @@ void wxToolBarBase::ClearTools()
     }
 }
 
+void wxToolBarBase::DoSetToolBitmapSize(const wxSize& size)
+{
+    m_defaultWidth = size.x;
+    m_defaultHeight = size.y;
+}
+
+void wxToolBarBase::SetToolBitmapSize(const wxSize& size)
+{
+    m_requestedBitmapSize = size;
+
+    DoSetToolBitmapSize(size);
+}
+
+wxSize wxToolBarBase::GetToolBitmapSize() const
+{
+    return wxSize(m_defaultWidth, m_defaultHeight);
+}
+
 void wxToolBarBase::AdjustToolBitmapSize()
 {
+    if ( HasFlag(wxTB_NOICONS) )
+    {
+        DoSetToolBitmapSize(wxSize(0, 0));
+        return;
+    }
+
     const wxSize sizeOrig(m_defaultWidth, m_defaultHeight);
 
-    wxSize sizeActual(sizeOrig);
+    // Check if we should be using a different size because we have bitmaps
+    // that shouldn't be scaled to the size we use right now.
 
+    wxVector<wxBitmapBundle> bundles;
     for ( wxToolBarToolsList::const_iterator i = m_tools.begin();
           i != m_tools.end();
           ++i )
     {
-        const wxBitmap& bmp = (*i)->GetNormalBitmap();
+        const wxBitmapBundle& bmp = (*i)->GetNormalBitmapBundle();
         if ( bmp.IsOk() )
-            sizeActual.IncTo(bmp.GetSize());
+            bundles.push_back(bmp);
     }
 
-    if ( sizeActual != sizeOrig )
-        SetToolBitmapSize(sizeActual);
+    if ( !bundles.empty() )
+    {
+        wxSize sizePreferred = wxBitmapBundle::GetConsensusSizeFor
+                               (
+                                this,
+                                bundles,
+                                sizeOrig
+                               );
+
+        // Don't do anything if it doesn't change, our current size is supposed
+        // to satisfy any constraints we might have anyhow.
+        if ( sizePreferred == sizeOrig )
+            return;
+
+        // This size is supposed to be in logical units for the platforms where
+        // they differ from physical ones, so convert it.
+        //
+        // Note that this could introduce rounding problems but, in fact,
+        // neither wxGTK nor wxOSX (that are the only ports where contents
+        // scale factor may be different from 1) use this size at all
+        // currently, so it shouldn't matter. But if/when they are modified to
+        // use the size computed here, this would need to be revisited.
+        sizePreferred /= GetContentScaleFactor();
+
+        // Don't decrease the bitmap below the size requested by the application
+        // as using larger bitmaps shouldn't shrink them to the small default
+        // size.
+        sizePreferred.IncTo(m_requestedBitmapSize);
+
+        // Call DoSetToolBitmapSize() and not SetToolBitmapSize() to avoid
+        // changing the requested bitmap size: if we set our own adjusted size
+        // as the preferred one, we wouldn't decrease it later even if we ought
+        // to, as when moving from a monitor with higher DPI to a lower-DPI one.
+        DoSetToolBitmapSize(sizePreferred);
+    }
 }
 
 bool wxToolBarBase::Realize()
@@ -476,7 +532,7 @@ wxToolBarBase::~wxToolBarBase()
     wxFrame *frame = wxDynamicCast(GetParent(), wxFrame);
     if ( frame && frame->GetToolBar() == this )
     {
-        frame->SetToolBar(nullptr);
+        frame->SetToolBar(NULL);
     }
 }
 
@@ -543,7 +599,7 @@ wxObject *wxToolBarBase::GetToolClientData(int toolid) const
 {
     wxToolBarToolBase *tool = FindById(toolid);
 
-    return tool ? tool->GetClientData() : nullptr;
+    return tool ? tool->GetClientData() : NULL;
 }
 
 void wxToolBarBase::SetToolClientData(int toolid, wxObject *clientData)
@@ -623,6 +679,24 @@ bool wxToolBarBase::IsVertical() const
     return HasFlag(wxTB_LEFT | wxTB_RIGHT);
 }
 
+// wxTB_HORIZONTAL is same as wxTB_TOP and wxTB_VERTICAL is same as wxTB_LEFT,
+// so a toolbar created with wxTB_HORIZONTAL | wxTB_BOTTOM style can have set both
+// wxTB_TOP and wxTB_BOTTOM, similarly wxTB_VERTICAL | wxTB_RIGHT == wxTB_LEFT | wxTB_RIGHT.
+// GetDirection() makes things less confusing and returns just one of wxTB_TOP, wxTB_BOTTOM,
+// wxTB_LEFT, wxTB_RIGHT indicating where the toolbar is placed in the associated frame.
+int wxToolBarBase::GetDirection() const
+{
+    if ( HasFlag(wxTB_BOTTOM) )
+        return wxTB_BOTTOM;
+
+    if ( HasFlag(wxTB_RIGHT) )
+        return wxTB_RIGHT;
+
+    if ( HasFlag(wxTB_LEFT) )
+        return wxTB_LEFT;
+
+    return wxTB_TOP;
+}
 
 // ----------------------------------------------------------------------------
 // event processing
@@ -631,7 +705,7 @@ bool wxToolBarBase::IsVertical() const
 // Only allow toggle if returns true
 bool wxToolBarBase::OnLeftClick(int toolid, bool toggleDown)
 {
-    wxCommandEvent event(wxEVT_COMMAND_TOOL_CLICKED, toolid);
+    wxCommandEvent event(wxEVT_TOOL, toolid);
     event.SetEventObject(this);
 
     // we use SetInt() to make wxCommandEvent::IsChecked() return toggleDown
@@ -651,7 +725,7 @@ void wxToolBarBase::OnRightClick(int toolid,
                                  long WXUNUSED(x),
                                  long WXUNUSED(y))
 {
-    wxCommandEvent event(wxEVT_COMMAND_TOOL_RCLICKED, toolid);
+    wxCommandEvent event(wxEVT_TOOL_RCLICKED, toolid);
     event.SetEventObject(this);
     event.SetInt(toolid);
 
@@ -665,11 +739,11 @@ void wxToolBarBase::OnRightClick(int toolid,
 // the tool toolid.
 void wxToolBarBase::OnMouseEnter(int toolid)
 {
-    wxCommandEvent event(wxEVT_COMMAND_TOOL_ENTER, GetId());
+    wxCommandEvent event(wxEVT_TOOL_ENTER, GetId());
     event.SetEventObject(this);
     event.SetInt(toolid);
 
-    wxFrame *frame = wxDynamicCast(GetParent(), wxFrame);
+    wxFrame *frame = wxDynamicCast(wxGetTopLevelParent(this), wxFrame);
     if ( frame )
     {
         wxString help;
@@ -715,6 +789,9 @@ void wxToolBarBase::UpdateWindowUI(long flags)
 
         wxUpdateUIEvent event(toolid);
         event.SetEventObject(this);
+
+        if ( !tool->CanBeToggled() )
+            event.DisallowCheck();
 
         if ( evtHandler->ProcessEvent(event) )
         {

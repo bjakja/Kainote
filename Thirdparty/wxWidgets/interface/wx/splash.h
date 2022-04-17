@@ -2,7 +2,6 @@
 // Name:        splash.h
 // Purpose:     interface of wxSplashScreen
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +35,7 @@
       wxYield();
     @endcode
 
-    @library{wxadv}
+    @library{wxcore}
     @category{managedwnd}
 */
 class wxSplashScreen : public wxFrame

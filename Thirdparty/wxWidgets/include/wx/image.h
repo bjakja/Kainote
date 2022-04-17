@@ -2,7 +2,6 @@
 // Name:        wx/image.h
 // Purpose:     wxImage class
 // Author:      Robert Roebling
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -71,7 +70,17 @@ enum wxImageResizeQuality
     wxIMAGE_QUALITY_NORMAL = wxIMAGE_QUALITY_NEAREST,
 
     // highest (but best) quality
-    wxIMAGE_QUALITY_HIGH
+    wxIMAGE_QUALITY_HIGH = 4
+};
+
+// Constants for wxImage::Paste() for specifying alpha blending option.
+enum wxImageAlphaBlendMode
+{
+    // Overwrite the original alpha values with the ones being pasted.
+    wxIMAGE_ALPHA_BLEND_OVER = 0,
+
+    // Compose the original alpha values with the ones being pasted.
+    wxIMAGE_ALPHA_BLEND_COMPOSE = 1
 };
 
 // alpha channel values: fully transparent, default threshold separating
@@ -172,7 +181,7 @@ protected:
     wxBitmapType m_type;
 
 private:
-    DECLARE_CLASS(wxImageHandler)
+    wxDECLARE_CLASS(wxImageHandler);
 };
 
 //-----------------------------------------------------------------------------
@@ -191,7 +200,7 @@ WX_DECLARE_EXPORTED_HASH_MAP(unsigned long, wxImageHistogramEntry,
                              wxIntegerHash, wxIntegerEqual,
                              wxImageHistogramBase);
 
-class WXDLLIMPEXP_CORE wxImageHistogram : public wxImageHistogramBase
+class wxImageHistogram : public wxImageHistogramBase
 {
 public:
     wxImageHistogram() : wxImageHistogramBase(256) { }
@@ -201,7 +210,7 @@ public:
                                  unsigned char g,
                                  unsigned char b)
     {
-        return (r << 16) | (g << 8) | b;
+        return ((unsigned)r << 16) | ((unsigned)g << 8) | (unsigned)b;
     }
 
     // find first colour that is not used in the image and has higher
@@ -212,9 +221,43 @@ public:
     bool FindFirstUnusedColour(unsigned char *r,
                                unsigned char *g,
                                unsigned char *b,
-                               unsigned char startR = 1,
-                               unsigned char startG = 0,
-                               unsigned char startB = 0 ) const;
+                               unsigned char r2 = 1,
+                               unsigned char g2 = 0,
+                               unsigned char b2 = 0 ) const
+    {
+        unsigned long key = MakeKey(r2, g2, b2);
+
+        while ( find(key) != end() )
+        {
+            // color already used
+            r2++;
+            if ( r2 >= 255 )
+            {
+                r2 = 0;
+                g2++;
+                if ( g2 >= 255 )
+                {
+                    g2 = 0;
+                    b2++;
+                    if ( b2 >= 255 )
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            key = MakeKey(r2, g2, b2);
+        }
+
+        if ( r )
+            *r = r2;
+        if ( g )
+            *g = g2;
+        if ( b )
+            *b = b2;
+
+        return true;
+    }
 };
 
 //-----------------------------------------------------------------------------
@@ -267,7 +310,7 @@ public:
         { LoadFile( name, type, index ); }
     wxImage( const wxString& name, const wxString& mimetype, int index = -1 )
         { LoadFile( name, mimetype, index ); }
-    wxImage( const char* const* xpmData )
+    explicit wxImage( const char* const* xpmData )
         { Create(xpmData); }
 
 #if wxUSE_STREAMS
@@ -278,11 +321,6 @@ public:
 #endif // wxUSE_STREAMS
 
     bool Create( const char* const* xpmData );
-#ifdef __BORLANDC__
-    // needed for Borland 5.5
-    wxImage( char** xpmData ) { Create(const_cast<const char* const*>(xpmData)); }
-    bool Create( char** xpmData ) { return Create(const_cast<const char* const*>(xpmData)); }
-#endif
 
     bool Create( int width, int height, bool clear = true );
     bool Create( int width, int height, unsigned char* data, bool static_data = false );
@@ -315,9 +353,12 @@ public:
     wxImage Size( const wxSize& size, const wxPoint& pos,
                   int r = -1, int g = -1, int b = -1 ) const;
 
-    // pastes image into this instance and takes care of
-    // the mask colour and out of bounds problems
-    void Paste( const wxImage &image, int x, int y );
+    // Copy the data of the given image to the specified position of this one
+    // taking care of the out of bounds problems. Mask is respected, but alpha
+    // is simply replaced by default, use wxIMAGE_ALPHA_BLEND_COMPOSE to
+    // combine it with the original image alpha values if needed.
+    void Paste(const wxImage& image, int x, int y,
+               wxImageAlphaBlendMode alphaBlend = wxIMAGE_ALPHA_BLEND_OVER);
 
     // return the new image with size width*height
     wxImage Scale( int width, int height,
@@ -361,7 +402,7 @@ public:
     // Convert to greyscale image. Uses the luminance component (Y) of the image.
     // The luma value (YUV) is calculated using (R * weight_r) + (G * weight_g) + (B * weight_b), defaults to ITU-T BT.601
     wxImage ConvertToGreyscale(double weight_r, double weight_g, double weight_b) const;
-    wxImage ConvertToGreyscale(void) const;
+    wxImage ConvertToGreyscale() const;
 
     // convert to monochrome image (<r,g,b> will be replaced by white,
     // everything else by black)
@@ -369,6 +410,9 @@ public:
 
     // Convert to disabled (dimmed) image.
     wxImage ConvertToDisabled(unsigned char brightness = 255) const;
+
+    // Convert the image based on the given lightness.
+    wxImage ChangeLightness(int alpha) const;
 
     // these routines are slow but safe
     void SetRGB( int x, int y, unsigned char r, unsigned char g, unsigned char b );
@@ -402,12 +446,28 @@ public:
     // (actually shades of grey) typically when you draw anti-
     // aliased text into a bitmap. The DC drawinf routines
     // draw grey values on the black background although they
-    // actually mean to draw white with differnt alpha values.
+    // actually mean to draw white with different alpha values.
     // This method reverses it, assuming a black (!) background
     // and white text (actually only the red channel is read).
     // The method will then fill up the whole image with the
     // colour given.
     bool ConvertColourToAlpha( unsigned char r, unsigned char g, unsigned char b );
+
+    // Methods for controlling LoadFile() behaviour. Currently they allow to
+    // specify whether the function should log warnings if there are any
+    // problems with the image file not completely preventing it from being
+    // loaded. By default the warnings are logged, but this can be disabled
+    // either globally or for a particular image object.
+    enum
+    {
+        Load_Verbose = 1
+    };
+
+    static void SetDefaultLoadFlags(int flags);
+    static int GetDefaultLoadFlags();
+
+    void SetLoadFlags(int flags);
+    int GetLoadFlags() const;
 
     static bool CanRead( const wxString& name );
     static int GetImageCount( const wxString& name, wxBitmapType type = wxBITMAP_TYPE_ANY );
@@ -498,9 +558,29 @@ public:
     // Returned value: # of entries in the histogram
     unsigned long ComputeHistogram( wxImageHistogram &h ) const;
 
-    // Rotates the hue of each pixel of the image. angle is a double in the range
-    // -1.0..1.0 where -1.0 is -360 degrees and 1.0 is 360 degrees
+    // Rotates the hue of each pixel in the image by angle, which is a double in
+    // the range [-1.0..+1.0], where -1.0 corresponds to -360 degrees and +1.0
+    // corresponds to +360 degrees.
     void RotateHue(double angle);
+
+    // Changes the saturation of each pixel in the image. factor is a double in
+    // the range [-1.0..+1.0], where -1.0 corresponds to -100 percent and +1.0
+    // corresponds to +100 percent.
+    void ChangeSaturation(double factor);
+
+    // Changes the brightness (value) of each pixel in the image. factor is a
+    // double in the range [-1.0..+1.0], where -1.0 corresponds to -100 percent
+    // and +1.0 corresponds to +100 percent.
+    void ChangeBrightness(double factor);
+
+    // Changes the hue, the saturation and the brightness (value) of each pixel
+    // in the image. angleH is a double in the range [-1.0..+1.0], where -1.0
+    // corresponds to -360 degrees and +1.0 corresponds to +360 degrees, factorS
+    // is a double in the range [-1.0..+1.0], where -1.0 corresponds to -100
+    // percent and +1.0 corresponds to +100 percent and factorV is a double in
+    // the range [-1.0..+1.0], where -1.0 corresponds to -100 percent and +1.0
+    // corresponds to +100 percent.
+    void ChangeHSV(double angleH, double factorS, double factorV);
 
     static wxList& GetHandlers() { return sm_handlers; }
     static void AddHandler( wxImageHandler *handler );
@@ -565,14 +645,14 @@ public:
         }
     )
 
-    static wxDEPRECATED(
+    wxDEPRECATED(static
         wxImageHandler *FindHandler(const wxString& ext, long type)
         {
             return FindHandler(ext, (wxBitmapType)type);
         }
     )
 
-    static wxDEPRECATED(
+    wxDEPRECATED(static
         wxImageHandler *FindHandler(long imageType)
         {
             return FindHandler((wxBitmapType)imageType);
@@ -589,8 +669,12 @@ protected:
     // note that index must be multiplied by 3 when using it with RGB array
     long XYToIndex(int x, int y) const;
 
-    virtual wxObjectRefData* CreateRefData() const;
-    virtual wxObjectRefData* CloneRefData(const wxObjectRefData* data) const;
+    virtual wxObjectRefData* CreateRefData() const wxOVERRIDE;
+    virtual wxObjectRefData* CloneRefData(const wxObjectRefData* data) const wxOVERRIDE;
+
+    // Helper function used internally by wxImage class only.
+    template <typename T>
+    void ApplyToAllPixels(void (*filter)(wxImage *, unsigned char *, T), T value);
 
 private:
     friend class WXDLLIMPEXP_FWD_CORE wxImageHandler;
@@ -623,7 +707,7 @@ private:
     bool DoSave(wxImageHandler& handler, wxOutputStream& stream) const;
 #endif // wxUSE_STREAMS
 
-    DECLARE_DYNAMIC_CLASS(wxImage)
+    wxDECLARE_DYNAMIC_CLASS(wxImage);
 };
 
 

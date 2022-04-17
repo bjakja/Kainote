@@ -4,17 +4,13 @@
 // Author:      Guilhem Lavaux
 // Modified by:
 // Created:     07/07/1997
-// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_PROTOCOL
 
@@ -22,6 +18,7 @@
 #include "wx/protocol/log.h"
 
 #ifndef WX_PRECOMP
+    #include "wx/app.h"
     #include "wx/module.h"
 #endif
 
@@ -34,7 +31,7 @@
 // wxProtoInfo
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_CLASS(wxProtoInfo, wxObject)
+wxIMPLEMENT_CLASS(wxProtoInfo, wxObject);
 
 wxProtoInfo::wxProtoInfo(const wxChar *name, const wxChar *serv,
                          const bool need_host1, wxClassInfo *info)
@@ -47,7 +44,7 @@ wxProtoInfo::wxProtoInfo(const wxChar *name, const wxChar *serv,
     next = wxURL::ms_protocols;
     wxURL::ms_protocols = this;
 #else
-    next = nullptr;
+    next = NULL;
 #endif
 }
 
@@ -57,18 +54,19 @@ wxProtoInfo::wxProtoInfo(const wxChar *name, const wxChar *serv,
 // ----------------------------------------------------------------------------
 
 #if wxUSE_SOCKETS
-IMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxSocketClient)
+wxIMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxSocketClient);
 #else
-IMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxObject)
+wxIMPLEMENT_ABSTRACT_CLASS(wxProtocol, wxObject);
 #endif
 
 wxProtocol::wxProtocol()
 #if wxUSE_SOCKETS
- : wxSocketClient()
+    // Only use non blocking sockets if we can dispatch events.
+    : wxSocketClient(wxSocketClient::GetBlockingFlagIfNeeded() | wxSOCKET_WAITALL)
 #endif
 {
     m_lastError = wxPROTO_NOERR;
-    m_log = nullptr;
+    m_log = NULL;
     SetDefaultTimeout(60);      // default timeout is 60 seconds
 }
 
@@ -116,6 +114,11 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
 
     result.clear();
 
+    // Although we're supposed to get 7-bit ASCII from the server, some FTP
+    // servers are known to send 8-bit data, so we try to decode it in
+    // any way that works as this is more useful than just throwing it away.
+    wxWhateverWorksConv conv;
+
     wxCharBuffer buf(LINE_BUF);
     char *pBuf = buf.data();
     while ( sock->WaitForRead() )
@@ -142,7 +145,7 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
                 if ( result.empty() || result.Last() != wxT('\r') )
                 {
                     // ignore the stray '\n'
-                    eol = nullptr;
+                    eol = NULL;
                 }
                 //else: ok, got real EOL
 
@@ -157,7 +160,7 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
                 if ( eol[-1] != '\r' )
                 {
                     // as above, simply ignore stray '\n'
-                    eol = nullptr;
+                    eol = NULL;
                 }
             }
         }
@@ -167,7 +170,7 @@ wxProtocolError wxProtocol::ReadLine(wxSocketBase *sock, wxString& result)
             return wxPROTO_NETERR;
 
         pBuf[nRead] = '\0';
-        result += wxString::FromAscii(pBuf);
+        result += conv.cMB2WX(pBuf);
 
         if ( eol )
         {

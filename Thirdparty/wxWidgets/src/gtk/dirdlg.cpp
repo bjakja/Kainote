@@ -2,7 +2,6 @@
 // Name:        src/gtk/dirdlg.cpp
 // Purpose:     native implementation of wxDirDialog
 // Author:      Robert Roebling, Zbigniew Zagorski, Mart Raudsepp, Francesco Montorsi
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling, 2004 Zbigniew Zagorski, 2005 Mart Raudsepp
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -30,54 +29,18 @@
 #endif
 
 #include "wx/gtk/private.h"
-
-#ifdef __UNIX__
-#include <unistd.h> // chdir
-#endif
-
-//-----------------------------------------------------------------------------
-// "clicked" for OK-button
-//-----------------------------------------------------------------------------
+#include "wx/gtk/private/mnemonics.h"
+#include "wx/stockitem.h"
 
 extern "C" {
-static void gtk_dirdialog_ok_callback(GtkWidget *widget, wxDirDialog *dialog)
-{
-    // change to the directory where the user went if asked
-    if (dialog->HasFlag(wxDD_CHANGE_DIR))
-    {
-        wxGtkString filename(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(widget)));
-        chdir(filename);
-    }
-
-    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, wxID_OK);
-    event.SetEventObject(dialog);
-    dialog->HandleWindowEvent(event);
-}
-}
-
-//-----------------------------------------------------------------------------
-// "clicked" for Cancel-button
-//-----------------------------------------------------------------------------
-
-extern "C" {
-static void gtk_dirdialog_cancel_callback(GtkWidget *WXUNUSED(w),
-                                           wxDirDialog *dialog)
-{
-    wxCommandEvent event(wxEVT_COMMAND_BUTTON_CLICKED, wxID_CANCEL);
-    event.SetEventObject(dialog);
-    dialog->HandleWindowEvent(event);
-}
-}
-
-extern "C" {
-static void gtk_dirdialog_response_callback(GtkWidget *w,
+static void gtk_dirdialog_response_callback(GtkWidget * WXUNUSED(w),
                                              gint response,
                                              wxDirDialog *dialog)
 {
     if (response == GTK_RESPONSE_ACCEPT)
-        gtk_dirdialog_ok_callback(w, dialog);
+        dialog->GTKOnAccept();
     else // GTK_RESPONSE_CANCEL or GTK_RESPONSE_NONE
-        gtk_dirdialog_cancel_callback(w, dialog);
+        dialog->GTKOnCancel();
 }
 }
 
@@ -85,11 +48,7 @@ static void gtk_dirdialog_response_callback(GtkWidget *w,
 // wxDirDialog
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxDirDialog, wxDialog)
-
-BEGIN_EVENT_TABLE(wxDirDialog, wxDirDialogBase)
-    EVT_BUTTON(wxID_OK, wxDirDialog::OnFakeOk)
-END_EVENT_TABLE()
+wxIMPLEMENT_DYNAMIC_CLASS(wxDirDialog, wxDialog);
 
 wxDirDialog::wxDirDialog(wxWindow* parent,
                          const wxString& title,
@@ -112,6 +71,9 @@ bool wxDirDialog::Create(wxWindow* parent,
 {
     m_message = title;
 
+    wxASSERT_MSG( !( (style & wxDD_MULTIPLE) && (style & wxDD_CHANGE_DIR) ),
+                  "wxDD_CHANGE_DIR can't be used together with wxDD_MULTIPLE" );
+
     parent = GetParentForModalDialog(parent, style);
 
     if (!PreCreation(parent, pos, wxDefaultSize) ||
@@ -130,20 +92,38 @@ bool wxDirDialog::Create(wxWindow* parent,
                    wxGTK_CONV(m_message),
                    gtk_parent,
                    GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                   GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+#ifdef __WXGTK4__
+                   static_cast<const char*>(wxGTK_CONV(wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_CANCEL)))),
+#else
+                   "gtk-cancel",
+#endif
+                   GTK_RESPONSE_CANCEL,
+#ifdef __WXGTK4__
+                   static_cast<const char*>(wxGTK_CONV(wxConvertMnemonicsToGTK(wxGetStockLabel(wxID_OPEN)))),
+#else
+                   "gtk-open",
+#endif
+                   GTK_RESPONSE_ACCEPT,
                    NULL);
+
     g_object_ref(m_widget);
 
     gtk_dialog_set_default_response(GTK_DIALOG(m_widget), GTK_RESPONSE_ACCEPT);
+#if GTK_CHECK_VERSION(2,18,0)
+    if (wx_is_at_least_gtk2(18))
+    {
+        gtk_file_chooser_set_create_folders(
+            GTK_FILE_CHOOSER(m_widget), !HasFlag(wxDD_DIR_MUST_EXIST) );
+    }
+#endif
 
-    // gtk_widget_hide_on_delete is used here to avoid that Gtk automatically destroys
-    // the dialog when the user press ESC on the dialog: in that case a second call to
-    // ShowModal() would result in a bunch of Gtk-CRITICAL errors...
-    g_signal_connect (G_OBJECT(m_widget),
-                    "delete_event",
-                    G_CALLBACK (gtk_widget_hide_on_delete),
-                    (gpointer)this);
+    // Enable multiple selection if desired
+    gtk_file_chooser_set_select_multiple(
+        GTK_FILE_CHOOSER(m_widget), HasFlag(wxDD_MULTIPLE) );
+
+    // Enable show hidden folders if desired
+    gtk_file_chooser_set_show_hidden(
+        GTK_FILE_CHOOSER(m_widget), HasFlag(wxDD_SHOW_HIDDEN) );
 
     // local-only property could be set to false to allow non-local files to be loaded.
     // In that case get/set_uri(s) should be used instead of get/set_filename(s) everywhere
@@ -156,15 +136,44 @@ bool wxDirDialog::Create(wxWindow* parent,
         G_CALLBACK (gtk_dirdialog_response_callback), this);
 
     if ( !defaultPath.empty() )
-        gtk_file_chooser_set_current_folder( GTK_FILE_CHOOSER(m_widget),
-                                             wxGTK_CONV_FN(defaultPath) );
+        SetPath(defaultPath);
 
     return true;
 }
 
-void wxDirDialog::OnFakeOk(wxCommandEvent& WXUNUSED(event))
+void wxDirDialog::GTKOnAccept()
 {
+    GSList *fnamesi = gtk_file_chooser_get_filenames(GTK_FILE_CHOOSER(m_widget));
+    GSList *fnames = fnamesi;
+
+    while ( fnamesi )
+    {
+        wxString dir(wxString::FromUTF8(static_cast<gchar *>(fnamesi->data)));
+        m_paths.Add(dir);
+
+        g_free(fnamesi->data);
+        fnamesi = fnamesi->next;
+    }
+
+    g_slist_free(fnames);
+
+    // change to the directory where the user went if asked
+    if (HasFlag(wxDD_CHANGE_DIR))
+    {
+        wxSetWorkingDirectory(m_paths.Last());
+    }
+
+    if (!HasFlag(wxDD_MULTIPLE))
+    {
+        m_path = m_paths.Last();
+    }
+
     EndDialog(wxID_OK);
+}
+
+void wxDirDialog::GTKOnCancel()
+{
+    EndDialog(wxID_CANCEL);
 }
 
 void wxDirDialog::DoSetSize(int x, int y, int width, int height, int sizeFlags)
@@ -182,12 +191,6 @@ void wxDirDialog::SetPath(const wxString& dir)
         gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(m_widget),
                                             wxGTK_CONV_FN(dir));
     }
-}
-
-wxString wxDirDialog::GetPath() const
-{
-    wxGtkString str(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(m_widget)));
-    return wxString::FromUTF8(str);
 }
 
 #endif // wxUSE_DIRDLG

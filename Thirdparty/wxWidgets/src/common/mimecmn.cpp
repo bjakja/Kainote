@@ -5,7 +5,6 @@
 // Modified by:
 //  Chris Elliott (biol75@york.ac.uk) 5 Dec 00: write support for Win32
 // Created:     23.09.98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence (part of wxExtra library)
 /////////////////////////////////////////////////////////////////////////////
@@ -18,12 +17,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_MIMETYPE
 
@@ -48,13 +44,8 @@
 // implementation classes:
 #if defined(__WINDOWS__)
     #include "wx/msw/mimetype.h"
-#elif ( defined(__WXMAC__) )
+#elif ( defined(__DARWIN__) )
     #include "wx/osx/mimetype.h"
-#elif defined(__WXPM__) || defined (__EMX__)
-    #include "wx/os2/mimetype.h"
-    #undef __UNIX__
-#elif defined(__DOS__)
-    #include "wx/msdos/mimetype.h"
 #else // Unix
     #include "wx/unix/mimetype.h"
 #endif
@@ -138,7 +129,7 @@ void wxFileTypeInfo::DoVarArgInit(const wxString& mimeType,
 #endif
         if ( !ext )
         {
-            // nullptr terminates the list
+            // NULL terminates the list
             break;
         }
 
@@ -162,12 +153,11 @@ void wxFileTypeInfo::VarArgInit(const wxString *mimeType,
 
 
 wxFileTypeInfo::wxFileTypeInfo(const wxArrayString& sArray)
+    : m_mimeType(sArray[0u])
+    , m_openCmd( sArray[1u])
+    , m_printCmd(sArray[2u])
+    , m_desc(    sArray[3u])
 {
-    m_mimeType = sArray [0u];
-    m_openCmd  = sArray [1u];
-    m_printCmd = sArray [2u];
-    m_desc     = sArray [3u];
-
     size_t count = sArray.GetCount();
     for ( size_t i = 4; i < count; i++ )
     {
@@ -226,7 +216,7 @@ wxString wxFileType::ExpandCommand(const wxString& command,
                 case wxT('{'):
                     {
                         const wxChar *pEnd = wxStrchr(pc, wxT('}'));
-                        if ( pEnd == nullptr ) {
+                        if ( pEnd == NULL ) {
                             wxString mimetype;
                             wxLogWarning(_("Unmatched '{' in an entry for mime type %s."),
                                          params.GetMimeType().c_str());
@@ -286,19 +276,18 @@ wxString wxFileType::ExpandCommand(const wxString& command,
 wxFileType::wxFileType(const wxFileTypeInfo& info)
 {
     m_info = &info;
-    m_impl = nullptr;
+    m_impl = NULL;
 }
 
 wxFileType::wxFileType()
 {
-    m_info = nullptr;
+    m_info = NULL;
     m_impl = new wxFileTypeImpl;
 }
 
 wxFileType::~wxFileType()
 {
-    if ( m_impl )
-        delete m_impl;
+    delete m_impl;
 }
 
 bool wxFileType::GetExtensions(wxArrayString& extensions)
@@ -434,6 +423,13 @@ wxFileType::GetPrintCommand(wxString *printCmd,
     return m_impl->GetPrintCommand(printCmd, params);
 }
 
+wxString
+wxFileType::GetExpandedCommand(const wxString& verb,
+                               const wxFileType::MessageParameters& params) const
+{
+    return m_impl->GetExpandedCommand(verb, params);
+}
+
 
 size_t wxFileType::GetAllCommands(wxArrayString *verbs,
                                   wxArrayString *commands,
@@ -525,7 +521,7 @@ bool wxFileType::SetDefaultIcon(const wxString& cmd, int index)
 // wxMimeTypesManagerFactory
 // ----------------------------------------------------------------------------
 
-wxMimeTypesManagerFactory *wxMimeTypesManagerFactory::m_factory = nullptr;
+wxMimeTypesManagerFactory *wxMimeTypesManagerFactory::m_factory = NULL;
 
 /* static */
 void wxMimeTypesManagerFactory::Set(wxMimeTypesManagerFactory *factory)
@@ -584,13 +580,12 @@ bool wxMimeTypesManager::IsOfType(const wxString& mimeType,
 
 wxMimeTypesManager::wxMimeTypesManager()
 {
-    m_impl = nullptr;
+    m_impl = NULL;
 }
 
 wxMimeTypesManager::~wxMimeTypesManager()
 {
-    if ( m_impl )
-        delete m_impl;
+    delete m_impl;
 }
 
 bool wxMimeTypesManager::Unassociate(wxFileType *ft)
@@ -615,7 +610,7 @@ wxMimeTypesManager::Associate(const wxFileTypeInfo& ftInfo)
 #else // other platforms
     wxUnusedVar(ftInfo);
     wxFAIL_MSG( wxT("not implemented") ); // TODO
-    return nullptr;
+    return NULL;
 #endif // platforms
 }
 
@@ -632,7 +627,7 @@ wxMimeTypesManager::GetFileTypeFromExtension(const wxString& ext)
     else
         extWithoutDot = ext;
 
-    wxCHECK_MSG( !ext.empty(), nullptr, wxT("extension can't be empty") );
+    wxCHECK_MSG( !ext.empty(), NULL, wxT("extension can't be empty") );
 
     wxFileType *ft = m_impl->GetFileTypeFromExtension(extWithoutDot);
 
@@ -742,21 +737,21 @@ class wxMimeTypeCmnModule: public wxModule
 public:
     wxMimeTypeCmnModule() : wxModule() { }
 
-    virtual bool OnInit() { return true; }
-    virtual void OnExit()
+    virtual bool OnInit() wxOVERRIDE { return true; }
+    virtual void OnExit() wxOVERRIDE
     {
-        wxMimeTypesManagerFactory::Set(nullptr);
+        wxMimeTypesManagerFactory::Set(NULL);
 
-        if ( gs_mimeTypesManager.m_impl != nullptr )
+        if ( gs_mimeTypesManager.m_impl != NULL )
         {
             wxDELETE(gs_mimeTypesManager.m_impl);
             gs_mimeTypesManager.m_fallbacks.Clear();
         }
     }
 
-    DECLARE_DYNAMIC_CLASS(wxMimeTypeCmnModule)
+    wxDECLARE_DYNAMIC_CLASS(wxMimeTypeCmnModule);
 };
 
-IMPLEMENT_DYNAMIC_CLASS(wxMimeTypeCmnModule, wxModule)
+wxIMPLEMENT_DYNAMIC_CLASS(wxMimeTypeCmnModule, wxModule);
 
 #endif // wxUSE_MIMETYPE

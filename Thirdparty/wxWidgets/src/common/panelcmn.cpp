@@ -4,7 +4,6 @@
 // Author:      Julian Smart, Robert Roebling, Vadim Zeitlin
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/object.h"
@@ -68,7 +64,7 @@ wxBEGIN_FLAGS( wxPanelStyle )
     wxFLAGS_MEMBER(wxHSCROLL)
 wxEND_FLAGS( wxPanelStyle )
 
-wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxPanel, wxWindow, "wx/panel.h")
+wxIMPLEMENT_DYNAMIC_CLASS_XTI(wxPanel, wxWindow, "wx/panel.h");
 
 wxBEGIN_PROPERTIES_TABLE(wxPanel)
     wxPROPERTY_FLAGS( WindowStyle, wxPanelStyle, long, \
@@ -104,11 +100,6 @@ bool wxPanelBase::Create(wxWindow *parent, wxWindowID id,
 
     // so that non-solid background renders correctly under GTK+:
     SetThemeEnabled(true);
-
-#if defined(__WXWINCE__) && (defined(__POCKETPC__) || defined(__SMARTPHONE__))
-    // Required to get solid control backgrounds under WinCE
-    SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-#endif
 
     return true;
 }

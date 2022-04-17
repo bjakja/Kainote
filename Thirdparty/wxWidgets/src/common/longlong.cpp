@@ -6,7 +6,6 @@
 //              not documented and is for private use only.
 // Modified by:
 // Created:     10.02.99
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,11 +14,8 @@
 // headers
 // ============================================================================
 
-#include <wx\wxprec.h>
+#include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_LONGLONG
 
@@ -132,22 +128,6 @@ wxULongLongNative& wxULongLongNative::operator=(const class wxULongLongWx &ll)
     return *this;
 }
 #endif
-
-#ifdef __VISUALC6__
-double wxULongLongNative::ToDouble() const
-{
-    // Work around the problem of casting unsigned __int64 to double in VC6
-    // (which for unknown reasons only manifests itself in DLL builds, i.e.
-    // when using /MD).
-    static const __int64 int64_t_max = 9223372036854775807i64;
-    if ( m_ll <= int64_t_max )
-        return wx_truncate_cast(double, (wxLongLong_t)m_ll);
-
-    double d = wx_truncate_cast(double, int64_t_max);
-    d += (__int64)(m_ll - int64_t_max - 1); // The cast is safe because of -1
-    return d + 1;
-}
-#endif // __VISUALC6__
 
 #endif // wxUSE_LONGLONG_NATIVE
 
@@ -1140,7 +1120,7 @@ wxULongLongWx wxULongLongWx::operator%(const wxULongLongWx& ll) const
 // ----------------------------------------------------------------------------
 
 // temporary - just for testing
-void *wxLongLongWx::asArray(void) const
+void *wxLongLongWx::asArray() const
 {
     static unsigned char temp[8];
 
@@ -1156,7 +1136,7 @@ void *wxLongLongWx::asArray(void) const
     return temp;
 }
 
-void *wxULongLongWx::asArray(void) const
+void *wxULongLongWx::asArray() const
 {
     static unsigned char temp[8];
 

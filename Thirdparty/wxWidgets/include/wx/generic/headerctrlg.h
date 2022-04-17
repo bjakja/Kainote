@@ -3,7 +3,6 @@
 // Purpose:     Generic wxHeaderCtrl implementation
 // Author:      Vadim Zeitlin
 // Created:     2008-12-01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2008 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -32,7 +31,7 @@ public:
                  const wxPoint& pos = wxDefaultPosition,
                  const wxSize& size = wxDefaultSize,
                  long style = wxHD_DEFAULT_STYLE,
-                 const wxString& name = wxHeaderCtrlNameStr)
+                 const wxString& name = wxASCII_STR(wxHeaderCtrlNameStr))
     {
         Init();
 
@@ -44,24 +43,24 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxHD_DEFAULT_STYLE,
-                const wxString& name = wxHeaderCtrlNameStr);
+                const wxString& name = wxASCII_STR(wxHeaderCtrlNameStr));
 
     virtual ~wxHeaderCtrl();
 
 protected:
-    virtual wxSize DoGetBestSize() const;
+    virtual wxSize DoGetBestSize() const wxOVERRIDE;
 
-    
+
 private:
     // implement base class pure virtuals
-    virtual void DoSetCount(unsigned int count);
-    virtual unsigned int DoGetCount() const;
-    virtual void DoUpdate(unsigned int idx);
+    virtual void DoSetCount(unsigned int count) wxOVERRIDE;
+    virtual unsigned int DoGetCount() const wxOVERRIDE;
+    virtual void DoUpdate(unsigned int idx) wxOVERRIDE;
 
-    virtual void DoScrollHorz(int dx);
+    virtual void DoScrollHorz(int dx) wxOVERRIDE;
 
-    virtual void DoSetColumnsOrder(const wxArrayInt& order);
-    virtual wxArrayInt DoGetColumnsOrder() const;
+    virtual void DoSetColumnsOrder(const wxArrayInt& order) wxOVERRIDE;
+    virtual wxArrayInt DoGetColumnsOrder() const wxOVERRIDE;
 
     // common part of all ctors
     void Init();
@@ -99,6 +98,10 @@ private:
     // column 1 but close enough to the divider separating it from column 0)
     unsigned int FindColumnAtPoint(int x, bool *onSeparator = NULL) const;
 
+    // return the result of FindColumnAtPoint() if it is a valid column,
+    // otherwise the index of the last (rightmost) displayed column
+    unsigned int FindColumnClosestToPoint(int xPhysical) const;
+
     // return true if a drag resizing operation is currently in progress
     bool IsResizing() const;
 
@@ -117,7 +120,7 @@ private:
 
     // start (if m_colBeingResized is -1) or continue resizing the column
     //
-    // this generates wxEVT_COMMAND_HEADER_BEGIN_RESIZE/RESIZING events and can
+    // this generates wxEVT_HEADER_BEGIN_RESIZE/RESIZING events and can
     // cancel the operation if the user handler decides so
     void StartOrContinueResizing(unsigned int col, int xPhysical);
 
@@ -173,8 +176,9 @@ private:
     // (its size is always m_numColumns)
     wxArrayInt m_colIndices;
 
+    bool m_wasSeparatorDClick;
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxHeaderCtrl);
 };
 

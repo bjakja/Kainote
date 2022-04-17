@@ -5,7 +5,6 @@
 // Modified by:
 // Created:     14/4/2006
 // Copyright:   (c) Vadim Zeitlin, Francesco Montorsi
-// RCS-ID:      $Id$
 // Licence:     wxWindows Licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -41,7 +40,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxColourPickerCtrlNameStr[];
 class WXDLLIMPEXP_CORE wxColourPickerWidgetBase
 {
 public:
-    wxColourPickerWidgetBase() { m_colour = *wxBLACK; }
+    wxColourPickerWidgetBase() : m_colour(*wxBLACK) { }
     virtual ~wxColourPickerWidgetBase() {}
 
     wxColour GetColour() const
@@ -69,17 +68,20 @@ protected:
 // NOTE: this style is supported just by wxColourButtonGeneric and
 //       thus is not exposed in wxColourPickerCtrl
 #define wxCLRP_SHOW_LABEL             0x0008
+#define wxCLRP_SHOW_ALPHA             0x0010
 
 // map platform-dependent controls which implement the wxColourPickerWidgetBase
 // under the name "wxColourPickerWidget".
 // NOTE: wxColourPickerCtrl allocates a wxColourPickerWidget and relies on the
 //       fact that all classes being mapped as wxColourPickerWidget have the
-//       same prototype for their contructor (and also explains why we use
+//       same prototype for their constructor (and also explains why we use
 //       define instead of a typedef)
 // since GTK > 2.4, there is GtkColorButton
 #if defined(__WXGTK20__) && !defined(__WXUNIVERSAL__)
     #include "wx/gtk/clrpicker.h"
     #define wxColourPickerWidget      wxColourButton
+#elif defined(__WXQT__) && !defined(__WXUNIVERSAL__)
+    #include "wx/qt/clrpicker.h"
 #else
     #include "wx/generic/clrpickerg.h"
     #define wxColourPickerWidget      wxGenericColourButton
@@ -98,7 +100,7 @@ protected:
 class WXDLLIMPEXP_CORE wxColourPickerCtrl : public wxPickerBase
 {
 public:
-    wxColourPickerCtrl() : m_bIgnoreNextTextCtrlUpdate(false) {}
+    wxColourPickerCtrl() {}
     virtual ~wxColourPickerCtrl() {}
 
 
@@ -106,8 +108,7 @@ public:
         const wxColour& col = *wxBLACK, const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = wxCLRP_DEFAULT_STYLE,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxColourPickerCtrlNameStr)
-        : m_bIgnoreNextTextCtrlUpdate(false)
+        const wxString& name = wxASCII_STR(wxColourPickerCtrlNameStr))
         { Create(parent, id, col, pos, size, style, validator, name); }
 
     bool Create(wxWindow *parent, wxWindowID id,
@@ -116,7 +117,7 @@ public:
            const wxSize& size = wxDefaultSize,
            long style = wxCLRP_DEFAULT_STYLE,
            const wxValidator& validator = wxDefaultValidator,
-           const wxString& name = wxColourPickerCtrlNameStr);
+           const wxString& name = wxASCII_STR(wxColourPickerCtrlNameStr));
 
 
 public:         // public API
@@ -136,23 +137,20 @@ public:         // public API
 public:        // internal functions
 
     // update the button colour to match the text control contents
-    void UpdatePickerFromTextCtrl();
+    void UpdatePickerFromTextCtrl() wxOVERRIDE;
 
     // update the text control to match the button's colour
-    void UpdateTextCtrlFromPicker();
+    void UpdateTextCtrlFromPicker() wxOVERRIDE;
 
     // event handler for our picker
     void OnColourChange(wxColourPickerEvent &);
 
 protected:
-    virtual long GetPickerStyle(long style) const
-        { return (style & wxCLRP_SHOW_LABEL); }
-
-    // true if the next UpdateTextCtrl() call is to ignore
-    bool m_bIgnoreNextTextCtrlUpdate;
+    virtual long GetPickerStyle(long style) const wxOVERRIDE
+        { return (style & (wxCLRP_SHOW_LABEL | wxCLRP_SHOW_ALPHA)); }
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxColourPickerCtrl)
+    wxDECLARE_DYNAMIC_CLASS(wxColourPickerCtrl);
 };
 
 
@@ -160,14 +158,16 @@ private:
 // wxColourPickerEvent: used by wxColourPickerCtrl only
 // ----------------------------------------------------------------------------
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_COLOURPICKER_CHANGED, wxColourPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COLOURPICKER_CHANGED, wxColourPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COLOURPICKER_CURRENT_CHANGED, wxColourPickerEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COLOURPICKER_DIALOG_CANCELLED, wxColourPickerEvent );
 
 class WXDLLIMPEXP_CORE wxColourPickerEvent : public wxCommandEvent
 {
 public:
     wxColourPickerEvent() {}
-    wxColourPickerEvent(wxObject *generator, int id, const wxColour &col)
-        : wxCommandEvent(wxEVT_COMMAND_COLOURPICKER_CHANGED, id),
+    wxColourPickerEvent(wxObject *generator, int id, const wxColour &col, wxEventType commandType = wxEVT_COLOURPICKER_CHANGED)
+        : wxCommandEvent(commandType, id),
           m_colour(col)
     {
         SetEventObject(generator);
@@ -178,12 +178,12 @@ public:
 
 
     // default copy ctor, assignment operator and dtor are ok
-    virtual wxEvent *Clone() const { return new wxColourPickerEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxColourPickerEvent(*this); }
 
 private:
     wxColour m_colour;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxColourPickerEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxColourPickerEvent);
 };
 
 // ----------------------------------------------------------------------------
@@ -196,8 +196,16 @@ typedef void (wxEvtHandler::*wxColourPickerEventFunction)(wxColourPickerEvent&);
     wxEVENT_HANDLER_CAST(wxColourPickerEventFunction, func)
 
 #define EVT_COLOURPICKER_CHANGED(id, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_COLOURPICKER_CHANGED, id, wxColourPickerEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_COLOURPICKER_CHANGED, id, wxColourPickerEventHandler(fn))
 
+#define EVT_COLOURPICKER_CURRENT_CHANGED(id, fn) \
+    wx__DECLARE_EVT1(wxEVT_COLOURPICKER_CURRENT_CHANGED, id, wxColourPickerEventHandler(fn))
+
+#define EVT_COLOURPICKER_DIALOG_CANCELLED(id, fn) \
+    wx__DECLARE_EVT1(wxEVT_COLOURPICKER_DIALOG_CANCELLED, id, wxColourPickerEventHandler(fn))
+
+// old wxEVT_COMMAND_* constant
+#define wxEVT_COMMAND_COLOURPICKER_CHANGED   wxEVT_COLOURPICKER_CHANGED
 
 #endif // wxUSE_COLOURPICKERCTRL
 

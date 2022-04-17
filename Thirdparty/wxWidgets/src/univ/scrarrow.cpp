@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     22.01.01
-// RCS-ID:      $Id$
 // Copyright:   (c) 2001 SciTech Software, Inc. (www.scitechsoft.com)
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -19,9 +18,6 @@
 
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/window.h"
@@ -34,6 +30,7 @@
 #include "wx/univ/inphand.h"
 #include "wx/univ/theme.h"
 
+#if wxUSE_SCROLLBAR
 // ----------------------------------------------------------------------------
 // wxScrollArrowCaptureData: contains the data used while the arrow is being
 // pressed by the user
@@ -299,3 +296,4 @@ bool wxScrollArrows::HandleMouse(const wxMouseEvent& event) const
 
     return true;
 }
+#endif // wxUSE_SCROLLBAR

@@ -5,7 +5,6 @@
 // Modified by:
 // Created:
 // Copyright:   (c) Julian Smart
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -26,6 +25,8 @@
 #if defined(__WXMSW__)
   #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
   #include "wx/msw/icon.h"
+
+  #define wxICON_DIFFERENT_FROM_BITMAP
 #elif defined(__WXMOTIF__)
   #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
   #include "wx/motif/icon.h"
@@ -48,17 +49,19 @@
 #elif defined(__WXMAC__)
 #if wxOSX_USE_COCOA_OR_CARBON
   #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
-  #include "wx/osx/icon.h"
+  #include "wx/generic/icon.h"
 #else
+  // iOS and others
   #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_PNG_RESOURCE
   #include "wx/generic/icon.h"
 #endif
-#elif defined(__WXCOCOA__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICON_RESOURCE
-  #include "wx/cocoa/icon.h"
-#elif defined(__WXPM__)
-  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_ICO_RESOURCE
-  #include "wx/os2/icon.h"
+#elif defined(__WXQT__)
+  #define wxICON_DEFAULT_TYPE   wxBITMAP_TYPE_XPM
+  #include "wx/generic/icon.h"
+#endif
+
+#ifndef wxICON_DIFFERENT_FROM_BITMAP
+    #define wxICON_IS_BITMAP
 #endif
 
 //-----------------------------------------------------------------------------

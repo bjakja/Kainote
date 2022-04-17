@@ -4,7 +4,6 @@
 // Author:      Guilhem Lavaux
 // Modified by: Vadim Zeitlin to check error codes, added Detach() method
 // Created:     24/06/98
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -78,6 +77,12 @@ public:
     // before the process it started terminates
     void Detach();
 
+    // Activates a GUI process by bringing its (main) window to the front.
+    //
+    // Currently only implemented in wxMSW, simply returns false under the
+    // other platforms.
+    bool Activate() const;
+
 #if wxUSE_STREAMS
     // Pipe handling
     wxInputStream *GetInputStream() const { return m_inputStream; }
@@ -104,6 +109,15 @@ public:
                         wxInputStream *errStream);
 #endif // wxUSE_STREAMS
 
+    // priority
+        // Sets the priority to the given value: see wxPRIORITY_XXX constants.
+        //
+        // NB: the priority can only be set before the process is created
+    void SetPriority(unsigned priority);
+
+        // Get the current priority.
+    unsigned GetPriority() const { return m_priority; }
+
     // implementation only - don't use!
     // --------------------------------
 
@@ -116,6 +130,8 @@ protected:
     int m_id;
     long m_pid;
 
+    unsigned m_priority;
+
 #if wxUSE_STREAMS
     // these streams are connected to stdout, stderr and stdin of the child
     // process respectively (yes, m_inputStream corresponds to stdout -- very
@@ -127,7 +143,7 @@ protected:
 
     bool m_redirect;
 
-    DECLARE_DYNAMIC_CLASS(wxProcess)
+    wxDECLARE_DYNAMIC_CLASS(wxProcess);
     wxDECLARE_NO_COPY_CLASS(wxProcess);
 };
 
@@ -151,19 +167,19 @@ public:
 
     // accessors
         // PID of process which terminated
-    int GetPid() { return m_pid; }
+    int GetPid() const { return m_pid; }
 
         // the exit code
-    int GetExitCode() { return m_exitcode; }
+    int GetExitCode() const { return m_exitcode; }
 
     // implement the base class pure virtual
-    virtual wxEvent *Clone() const { return new wxProcessEvent(*this); }
+    virtual wxEvent *Clone() const wxOVERRIDE { return new wxProcessEvent(*this); }
 
 public:
     int m_pid,
         m_exitcode;
 
-    DECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxProcessEvent)
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxProcessEvent);
 };
 
 typedef void (wxEvtHandler::*wxProcessEventFunction)(wxProcessEvent&);

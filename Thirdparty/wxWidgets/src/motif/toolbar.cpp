@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by: 13.12.99 by VZ during toolbar classes reorganization
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -50,7 +49,7 @@
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl)
+wxIMPLEMENT_DYNAMIC_CLASS(wxToolBar, wxControl);
 
 // ----------------------------------------------------------------------------
 // private functions
@@ -81,8 +80,8 @@ public:
     wxToolBarTool(wxToolBar *tbar,
                   int id,
                   const wxString& label,
-                  const wxBitmap& bmpNormal,
-                  const wxBitmap& bmpToggled,
+                  const wxBitmapBundle& bmpNormal,
+                  const wxBitmapBundle& bmpToggled,
                   wxItemKind kind,
                   wxObject *clientData,
                   const wxString& shortHelp,
@@ -143,8 +142,8 @@ wxString wxToolBarTimer::helpString;
 
 wxToolBarToolBase *wxToolBar::CreateTool(int id,
                                          const wxString& label,
-                                         const wxBitmap& bmpNormal,
-                                         const wxBitmap& bmpToggled,
+                                         const wxBitmapBundle& bmpNormal,
+                                         const wxBitmapBundle& bmpToggled,
                                          wxItemKind kind,
                                          wxObject *clientData,
                                          const wxString& shortHelp,

@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     04.06.02 (extracted from src/*/thread.cpp files)
-// RCS-ID:      $Id$
 // Copyright:   (c) Vadim Zeitlin (2002)
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,11 +14,6 @@
 // wxMutex
 // ----------------------------------------------------------------------------
 
-#include <wx\wxprec.h>
-#include "thread.h"
-
-
-
 wxMutex::wxMutex(wxMutexType mutexType)
 {
     m_internal = new wxMutexInternal(mutexType);
@@ -27,7 +21,7 @@ wxMutex::wxMutex(wxMutexType mutexType)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = nullptr;
+        m_internal = NULL;
     }
 }
 
@@ -38,7 +32,7 @@ wxMutex::~wxMutex()
 
 bool wxMutex::IsOk() const
 {
-    return m_internal != nullptr;
+    return m_internal != NULL;
 }
 
 wxMutexError wxMutex::Lock()
@@ -77,11 +71,11 @@ wxMutexError wxMutex::Unlock()
 // wxConditionInternal
 // --------------------------------------------------------------------------
 
-// Win32 and OS/2 don't have explicit support for the POSIX condition
-// variables and their events/event semaphores have quite different semantics,
+// Win32 doesn't have explicit support for the POSIX condition
+// variables and its events/event semaphores have quite different semantics,
 // so we reimplement the conditions from scratch using the mutexes and
 // semaphores
-#if defined(__WINDOWS__) || defined(__OS2__) || defined(__EMX__)
+#if defined(__WINDOWS__)
 
 class wxConditionInternal
 {
@@ -98,7 +92,7 @@ public:
 
 private:
     // the number of threads currently waiting for this condition
-    long m_numWaiters;
+    LONG m_numWaiters;
 
     // the critical section protecting m_numWaiters
     wxCriticalSection m_csWaiters;
@@ -228,7 +222,7 @@ wxCondError wxConditionInternal::Broadcast()
     return wxCOND_NO_ERROR;
 }
 
-#endif // __WINDOWS__ || __OS2__ || __EMX__
+#endif // __WINDOWS__
 
 // ----------------------------------------------------------------------------
 // wxCondition
@@ -241,7 +235,7 @@ wxCondition::wxCondition(wxMutex& mutex)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = nullptr;
+        m_internal = NULL;
     }
 }
 
@@ -252,7 +246,7 @@ wxCondition::~wxCondition()
 
 bool wxCondition::IsOk() const
 {
-    return m_internal != nullptr;
+    return m_internal != NULL;
 }
 
 wxCondError wxCondition::Wait()
@@ -297,7 +291,7 @@ wxSemaphore::wxSemaphore(int initialcount, int maxcount)
     if ( !m_internal->IsOk() )
     {
         delete m_internal;
-        m_internal = nullptr;
+        m_internal = NULL;
     }
 }
 
@@ -308,7 +302,7 @@ wxSemaphore::~wxSemaphore()
 
 bool wxSemaphore::IsOk() const
 {
-    return m_internal != nullptr;
+    return m_internal != NULL;
 }
 
 wxSemaError wxSemaphore::Wait()
@@ -348,8 +342,16 @@ wxSemaError wxSemaphore::Post()
 // ----------------------------------------------------------------------------
 
 #include "wx/utils.h"
+#include "wx/private/threadinfo.h"
+#include "wx/scopeguard.h"
 
 void wxThread::Sleep(unsigned long milliseconds)
 {
     wxMilliSleep(milliseconds);
+}
+
+void *wxThread::CallEntry()
+{
+    wxON_BLOCK_EXIT0(wxThreadSpecificInfo::ThreadCleanUp);
+    return Entry();
 }

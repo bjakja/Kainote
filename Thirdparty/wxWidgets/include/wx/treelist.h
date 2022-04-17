@@ -3,7 +3,6 @@
 // Purpose:     wxTreeListCtrl class declaration.
 // Author:      Vadim Zeitlin
 // Created:     2011-08-17
-// RCS-ID:      $Id: wxhead.h,v 1.12 2010-04-22 12:44:51 zeitlin Exp $
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -23,10 +22,10 @@
 #include "wx/window.h"
 #include "wx/withimages.h"
 
-class WXDLLIMPEXP_FWD_ADV wxDataViewCtrl;
-class WXDLLIMPEXP_FWD_ADV wxDataViewEvent;
+class WXDLLIMPEXP_FWD_CORE wxDataViewCtrl;
+class WXDLLIMPEXP_FWD_CORE wxDataViewEvent;
 
-extern WXDLLIMPEXP_DATA_ADV(const char) wxTreeListCtrlNameStr[];
+extern WXDLLIMPEXP_DATA_CORE(const char) wxTreeListCtrlNameStr[];
 
 class wxTreeListCtrl;
 class wxTreeListModel;
@@ -47,6 +46,7 @@ enum
     wxTL_CHECKBOX       = 0x0002,       // Show checkboxes in the first column.
     wxTL_3STATE         = 0x0004,       // Allow 3rd state in checkboxes.
     wxTL_USER_3STATE    = 0x0008,       // Allow user to set 3rd state.
+    wxTL_NO_HEADER      = 0x0010,       // Column titles not visible.
 
     wxTL_DEFAULT_STYLE  = wxTL_SINGLE,
     wxTL_STYLE_MASK     = wxTL_SINGLE |
@@ -65,7 +65,7 @@ enum
 class wxTreeListItem : public wxItemId<wxTreeListModelNode*>
 {
 public:
-    wxTreeListItem(wxTreeListModelNode* item = nullptr)
+    wxTreeListItem(wxTreeListModelNode* item = NULL)
         : wxItemId<wxTreeListModelNode*>(item)
     {
     }
@@ -75,8 +75,8 @@ public:
 typedef wxVector<wxTreeListItem> wxTreeListItems;
 
 // Some special "items" that can be used with InsertItem():
-extern WXDLLIMPEXP_DATA_ADV(const wxTreeListItem) wxTLI_FIRST;
-extern WXDLLIMPEXP_DATA_ADV(const wxTreeListItem) wxTLI_LAST;
+extern WXDLLIMPEXP_DATA_CORE(const wxTreeListItem) wxTLI_FIRST;
+extern WXDLLIMPEXP_DATA_CORE(const wxTreeListItem) wxTLI_LAST;
 
 // ----------------------------------------------------------------------------
 // wxTreeListItemComparator: defines order of wxTreeListCtrl items.
@@ -87,7 +87,7 @@ class wxTreeListItemComparator
 public:
     wxTreeListItemComparator() { }
 
-    // The comparison function should return negative, nullptr or positive value
+    // The comparison function should return negative, null or positive value
     // depending on whether the first item is less than, equal to or greater
     // than the second one. The items should be compared using their values for
     // the given column.
@@ -117,7 +117,7 @@ private:
 // with wxDataViewCtrl directly but doing this makes your unportable to possible
 // future non-wxDataViewCtrl-based implementations of this class.
 
-class WXDLLIMPEXP_ADV wxTreeListCtrl
+class WXDLLIMPEXP_CORE wxTreeListCtrl
     : public wxCompositeWindow< wxNavigationEnabled<wxWindow> >,
       public wxWithImages
 {
@@ -131,7 +131,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize,
                    long style = wxTL_DEFAULT_STYLE,
-                   const wxString& name = wxTreeListCtrlNameStr)
+                   const wxString& name = wxASCII_STR(wxTreeListCtrlNameStr))
     {
         Init();
 
@@ -143,7 +143,7 @@ public:
                 const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = wxTL_DEFAULT_STYLE,
-                const wxString& name = wxTreeListCtrlNameStr);
+                const wxString& name = wxASCII_STR(wxTreeListCtrlNameStr));
 
 
     virtual ~wxTreeListCtrl();
@@ -202,7 +202,7 @@ public:
                               const wxString& text,
                               int imageClosed = NO_IMAGE,
                               int imageOpened = NO_IMAGE,
-                              wxClientData* data = nullptr)
+                              wxClientData* data = NULL)
     {
         return DoInsertItem(parent, wxTLI_LAST, text,
                             imageClosed, imageOpened, data);
@@ -213,7 +213,7 @@ public:
                               const wxString& text,
                               int imageClosed = NO_IMAGE,
                               int imageOpened = NO_IMAGE,
-                              wxClientData* data = nullptr)
+                              wxClientData* data = NULL)
     {
         return DoInsertItem(parent, previous, text,
                             imageClosed, imageOpened, data);
@@ -223,7 +223,7 @@ public:
                                const wxString& text,
                                int imageClosed = NO_IMAGE,
                                int imageOpened = NO_IMAGE,
-                               wxClientData* data = nullptr)
+                               wxClientData* data = NULL)
     {
         return DoInsertItem(parent, wxTLI_FIRST, text,
                             imageClosed, imageOpened, data);
@@ -313,6 +313,7 @@ public:
     void SelectAll();
     void UnselectAll();
 
+    void EnsureVisible(wxTreeListItem item);
 
     // Checkbox handling
     // -----------------
@@ -366,7 +367,7 @@ public:
     // parameters with the column which is currently used for sorting and
     // whether we sort using ascending or descending order. Otherwise, i.e. if
     // the control contents is unsorted, simply return false.
-    bool GetSortColumn(unsigned* col, bool* ascendingOrder = nullptr);
+    bool GetSortColumn(unsigned* col, bool* ascendingOrder = NULL);
 
     // Set the object to use for comparing the items. It will be called when
     // the control is being sorted because the user clicked on a sortable
@@ -374,7 +375,7 @@ public:
     //
     // The provided pointer is stored by the control so the object it points to
     // must have a life-time equal or greater to that of the control itself. In
-    // addition, the pointer can be nullptr to stop using custom comparator and
+    // addition, the pointer can be NULL to stop using custom comparator and
     // revert to the default alphabetical comparison.
     void SetItemComparator(wxTreeListItemComparator* comparator);
 
@@ -395,7 +396,7 @@ private:
     void Init();
 
     // Pure virtual method inherited from wxCompositeWindow.
-    virtual wxWindowList GetCompositeWindowParts() const;
+    virtual wxWindowList GetCompositeWindowParts() const wxOVERRIDE;
 
     // Implementation of AppendColumn().
     int DoInsertColumn(const wxString& title,
@@ -453,7 +454,7 @@ private:
 // wxTreeListEvent: event generated by wxTreeListCtrl.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_ADV wxTreeListEvent : public wxNotifyEvent
+class WXDLLIMPEXP_CORE wxTreeListEvent : public wxNotifyEvent
 {
 public:
     // Default ctor is provided for wxRTTI needs only but should never be used.
@@ -470,7 +471,7 @@ public:
     // COLUMN_SORTED event.
     unsigned GetColumn() const { return m_column; }
 
-    virtual wxEvent* Clone() const { return new wxTreeListEvent(*this); }
+    virtual wxEvent* Clone() const wxOVERRIDE { return new wxTreeListEvent(*this); }
 
 private:
     // Common part of all ctors.
@@ -514,7 +515,7 @@ private:
 
     friend class wxTreeListCtrl;
 
-    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN(wxTreeListEvent);
+    wxDECLARE_DYNAMIC_CLASS_NO_ASSIGN_DEF_COPY(wxTreeListEvent);
 };
 
 // Event types and event table macros.
@@ -525,11 +526,11 @@ typedef void (wxEvtHandler::*wxTreeListEventFunction)(wxTreeListEvent&);
     wxEVENT_HANDLER_CAST(wxTreeListEventFunction, func)
 
 #define wxEVT_TREELIST_GENERIC(name, id, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREELIST_##name, id, wxTreeListEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREELIST_##name, id, wxTreeListEventHandler(fn))
 
 #define wxDECLARE_TREELIST_EVENT(name) \
-    wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_ADV, \
-                              wxEVT_COMMAND_TREELIST_##name, \
+    wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, \
+                              wxEVT_TREELIST_##name, \
                               wxTreeListEvent)
 
 wxDECLARE_TREELIST_EVENT(SELECTION_CHANGED);
@@ -561,6 +562,15 @@ wxDECLARE_TREELIST_EVENT(COLUMN_SORTED);
     wxEVT_TREELIST_GENERIC(COLUMN_SORTED, id, fn)
 
 #undef wxDECLARE_TREELIST_EVENT
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_TREELIST_SELECTION_CHANGED   wxEVT_TREELIST_SELECTION_CHANGED
+#define wxEVT_COMMAND_TREELIST_ITEM_EXPANDING      wxEVT_TREELIST_ITEM_EXPANDING
+#define wxEVT_COMMAND_TREELIST_ITEM_EXPANDED       wxEVT_TREELIST_ITEM_EXPANDED
+#define wxEVT_COMMAND_TREELIST_ITEM_CHECKED        wxEVT_TREELIST_ITEM_CHECKED
+#define wxEVT_COMMAND_TREELIST_ITEM_ACTIVATED      wxEVT_TREELIST_ITEM_ACTIVATED
+#define wxEVT_COMMAND_TREELIST_ITEM_CONTEXT_MENU   wxEVT_TREELIST_ITEM_CONTEXT_MENU
+#define wxEVT_COMMAND_TREELIST_COLUMN_SORTED       wxEVT_TREELIST_COLUMN_SORTED
 
 #endif // wxUSE_TREELISTCTRL
 

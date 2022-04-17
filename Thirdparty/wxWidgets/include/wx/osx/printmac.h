@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -20,17 +19,17 @@
 
 class WXDLLIMPEXP_CORE wxMacPrinter: public wxPrinterBase
 {
-  DECLARE_DYNAMIC_CLASS(wxMacPrinter)
+    wxDECLARE_DYNAMIC_CLASS(wxMacPrinter);
 
- public:
+public:
     wxMacPrinter(wxPrintDialogData *data = NULL);
     virtual ~wxMacPrinter();
 
     virtual bool Print(wxWindow *parent,
                        wxPrintout *printout,
-                       bool prompt = true);
-    virtual wxDC* PrintDialog(wxWindow *parent);
-  virtual bool Setup(wxWindow *parent);
+                       bool prompt = true) wxOVERRIDE;
+    virtual wxDC* PrintDialog(wxWindow *parent) wxOVERRIDE;
+    virtual bool Setup(wxWindow *parent) wxOVERRIDE;
 
 };
 
@@ -41,9 +40,9 @@ class WXDLLIMPEXP_CORE wxMacPrinter: public wxPrinterBase
 
 class WXDLLIMPEXP_CORE wxMacPrintPreview: public wxPrintPreviewBase
 {
-  DECLARE_CLASS(wxMacPrintPreview)
+    wxDECLARE_CLASS(wxMacPrintPreview);
 
- public:
+public:
     wxMacPrintPreview(wxPrintout *printout,
                           wxPrintout *printoutForPrinting = NULL,
                           wxPrintDialogData *data = NULL);
@@ -52,8 +51,8 @@ class WXDLLIMPEXP_CORE wxMacPrintPreview: public wxPrintPreviewBase
                           wxPrintData *data);
     virtual ~wxMacPrintPreview();
 
-  virtual bool Print(bool interactive);
-    virtual void DetermineScaling();
+    virtual bool Print(bool interactive) wxOVERRIDE;
+    virtual void DetermineScaling() wxOVERRIDE;
 };
 
 #endif

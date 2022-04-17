@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for bitmap buttons
 // Author:      Brian Gavin
 // Created:     2000/09/09
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Brian Gavin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,19 +10,12 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_BMPBUTTON
 
 #include "wx/xrc/xh_bmpbt.h"
 
-#ifndef WX_PRECOMP
-    #include "wx/bmpbuttn.h"
-#endif
-
-IMPLEMENT_DYNAMIC_CLASS(wxBitmapButtonXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxBitmapButtonXmlHandler, wxXmlResourceHandler);
 
 wxBitmapButtonXmlHandler::wxBitmapButtonXmlHandler()
 : wxXmlResourceHandler()
@@ -37,29 +29,58 @@ wxBitmapButtonXmlHandler::wxBitmapButtonXmlHandler()
     AddWindowStyles();
 }
 
+// Function calls the given setter with the contents of the node with the given
+// name, if present.
+//
+// If alternative parameter name is specified, it is used too.
+void
+wxBitmapButtonXmlHandler::SetBitmapIfSpecified(wxBitmapButton* button,
+                                               BitmapSetter setter,
+                                               const char* paramName,
+                                               const char* paramNameAlt)
+{
+    if ( wxXmlNode* const node = GetParamNode(paramName) )
+    {
+        (button->*setter)(GetBitmapBundle(node));
+    }
+    else if ( paramNameAlt )
+    {
+        if ( wxXmlNode* const nodeAlt = GetParamNode(paramNameAlt) )
+            (button->*setter)(GetBitmap(nodeAlt));
+    }
+}
+
 wxObject *wxBitmapButtonXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(button, wxBitmapButton)
 
-    button->Create(m_parentAsWindow,
-                   GetID(),
-                   GetBitmap(wxT("bitmap"), wxART_BUTTON),
-                   GetPosition(), GetSize(),
-                   GetStyle(wxT("style"), wxBU_AUTODRAW),
-                   wxDefaultValidator,
-                   GetName());
+    if ( GetBool("close", 0) )
+    {
+        button->CreateCloseButton(m_parentAsWindow,
+                                  GetID(),
+                                  GetName());
+    }
+    else
+    {
+        button->Create(m_parentAsWindow,
+                       GetID(),
+                       GetBitmapBundle(wxT("bitmap"), wxART_BUTTON),
+                       GetPosition(), GetSize(),
+                       GetStyle(wxT("style")),
+                       wxDefaultValidator,
+                       GetName());
+    }
+
     if (GetBool(wxT("default"), 0))
         button->SetDefault();
     SetupWindow(button);
 
-    if (GetParamNode(wxT("selected")))
-        button->SetBitmapSelected(GetBitmap(wxT("selected")));
-    if (GetParamNode(wxT("focus")))
-        button->SetBitmapFocus(GetBitmap(wxT("focus")));
-    if (GetParamNode(wxT("disabled")))
-        button->SetBitmapDisabled(GetBitmap(wxT("disabled")));
-    if (GetParamNode(wxT("hover")))
-        button->SetBitmapHover(GetBitmap(wxT("hover")));
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapPressed,
+                         "pressed", "selected");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapFocus, "focus");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapDisabled, "disabled");
+    SetBitmapIfSpecified(button, &wxBitmapButton::SetBitmapCurrent,
+                         "current", "hover");
 
     return button;
 }

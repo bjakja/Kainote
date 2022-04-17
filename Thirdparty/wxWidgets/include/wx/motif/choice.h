@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +23,7 @@
 // Choice item
 class WXDLLIMPEXP_CORE wxChoice: public wxChoiceBase
 {
-    DECLARE_DYNAMIC_CLASS(wxChoice)
+    wxDECLARE_DYNAMIC_CLASS(wxChoice);
 
 public:
     wxChoice();
@@ -36,7 +35,7 @@ public:
         int n = 0, const wxString choices[] = NULL,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxChoiceNameStr)
+        const wxString& name = wxASCII_STR(wxChoiceNameStr))
     {
         Init();
         Create(parent, id, pos, size, n, choices, style, validator, name);
@@ -48,7 +47,7 @@ public:
         const wxArrayString& choices,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxChoiceNameStr)
+        const wxString& name = wxASCII_STR(wxChoiceNameStr))
     {
         Init();
         Create(parent, id, pos, size, choices, style, validator, name);
@@ -60,7 +59,7 @@ public:
         int n = 0, const wxString choices[] = NULL,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxChoiceNameStr);
+        const wxString& name = wxASCII_STR(wxChoiceNameStr));
 
     bool Create(wxWindow *parent, wxWindowID id,
         const wxPoint& pos,
@@ -68,7 +67,7 @@ public:
         const wxArrayString& choices,
         long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxChoiceNameStr);
+        const wxString& name = wxASCII_STR(wxChoiceNameStr));
 
     // implementation of wxControlWithItems
     virtual unsigned int GetCount() const;
@@ -103,7 +102,7 @@ public:
 protected:
     // minimum size for the text ctrl
     wxSize GetItemsSize() const;
-    // common part of all contructors
+    // common part of all constructors
     void Init();
 
     WXWidget      m_menuWidget;

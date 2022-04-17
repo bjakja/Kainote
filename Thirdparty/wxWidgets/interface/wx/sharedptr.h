@@ -2,7 +2,6 @@
 // Name:        sharedptr.h
 // Purpose:     interface of wxSharedPtr<T>
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -27,7 +26,23 @@ public:
         Creates shared pointer from the raw pointer @a ptr and takes ownership
         of it.
     */
-    wxEXPLICIT wxSharedPtr(T* ptr = NULL);
+    explicit wxSharedPtr(T* ptr = NULL);
+
+    /**
+        Constructor.
+
+        Creates shared pointer from the raw pointer @a ptr and deleter @a d
+        and takes ownership of it.
+
+        @param ptr  The raw pointer.
+        @param d    Deleter - a functor that is called instead of delete to
+                    free the @a ptr raw pointer when its reference count drops to
+                    zero.
+
+        @since 3.0
+    */
+    template<typename Deleter>
+    explicit wxSharedPtr(T* ptr, Deleter d);
 
     /**
         Copy constructor.
@@ -88,6 +103,21 @@ public:
         If the reference count of the previously owned pointer was 1 it will be deleted.
     */
     void reset(T* ptr = NULL);
+
+    /**
+        Reset pointer to @a ptr.
+
+        If the reference count of the previously owned pointer was 1 it will be deleted.
+
+        @param ptr  The new raw pointer.
+        @param d    Deleter - a functor that is called instead of delete to
+                    free the @a ptr raw pointer when its reference count drops to
+                    zero.
+
+        @since 3.0
+    */
+    template<typename Deleter>
+    void reset(T* ptr, Deleter d);
 
     /**
         Returns @true if this is the only pointer pointing to its object.

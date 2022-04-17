@@ -3,7 +3,6 @@
 // Purpose:     documentation of wxMouseState
 // Author:      wxWidgets team
 // Created:     2008-09-19
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -108,8 +107,8 @@ public:
 
     void SetX(wxCoord x);
     void SetY(wxCoord y);
-    void SetPosition(wxPoint pos);
-    
+    void SetPosition(const wxPoint& pos);
+
     void SetLeftDown(bool down);
     void SetMiddleDown(bool down);
     void SetRightDown(bool down);
@@ -117,7 +116,7 @@ public:
     void SetAux2Down(bool down);
 
     void SetState(const wxMouseState& state);
-    
+
 };
 
 

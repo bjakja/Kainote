@@ -4,7 +4,6 @@
 // Author:      Ported to Linux by Guilhem Lavaux
 // Modified by:
 // Created:     05/23/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,6 +18,7 @@
 #ifndef WX_PRECOMP
     #include "wx/event.h"
     #include "wx/window.h"
+    #include "wx/log.h"
 #endif //WX_PRECOMP
 
 #include "wx/thread.h"
@@ -52,7 +52,7 @@ enum {
 };
 
 
-IMPLEMENT_DYNAMIC_CLASS(wxJoystick, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxJoystick, wxObject);
 
 
 ////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ class wxJoystickThread : public wxThread
 {
 public:
     wxJoystickThread(int device, int joystick);
-    void* Entry();
+    void* Entry() wxOVERRIDE;
 
 private:
     void      SendEvent(wxEventType type, long ts, int change = 0);
@@ -129,7 +129,12 @@ void* wxJoystickThread::Entry()
         if (wxFD_ISSET(m_device, &read_fds))
         {
             memset(&j_evt, 0, sizeof(j_evt));
-            read(m_device, &j_evt, sizeof(j_evt));
+            if ( read(m_device, &j_evt, sizeof(j_evt)) == -1 )
+            {
+                // We can hardly do anything other than ignoring the error and
+                // hope that we read the next event successfully.
+                continue;
+            }
 
             //printf("time: %d\t value: %d\t type: %d\t number: %d\n",
             //       j_evt.time, j_evt.value, j_evt.type, j_evt.number);
@@ -168,18 +173,17 @@ void* wxJoystickThread::Entry()
                 if (j_evt.value)
                 {
                     m_buttons |= (1 << j_evt.number);
-                    SendEvent(wxEVT_JOY_BUTTON_DOWN, j_evt.time, j_evt.number);
+                    SendEvent(wxEVT_JOY_BUTTON_DOWN, j_evt.time, 1 << j_evt.number);
                 }
                 else
                 {
                     m_buttons &= ~(1 << j_evt.number);
-                    SendEvent(wxEVT_JOY_BUTTON_UP, j_evt.time, j_evt.number);
+                    SendEvent(wxEVT_JOY_BUTTON_UP, j_evt.time, 1 << j_evt.number);
                 }
             }
         }
     }
 
-    close(m_device);
     return NULL;
 }
 
@@ -218,7 +222,8 @@ wxJoystick::~wxJoystick()
     ReleaseCapture();
     if (m_thread)
         m_thread->Delete();  // It's detached so it will delete itself
-    m_device = -1;
+    if (m_device != -1)
+        close(m_device);
 }
 
 
@@ -257,7 +262,7 @@ int wxJoystick::GetButtonState() const
 bool wxJoystick::GetButtonState(unsigned id) const
 {
     if (m_thread && (id < wxJS_MAX_BUTTONS))
-        return (m_thread->m_buttons & (1 << id)) != 0;
+        return (m_thread->m_buttons & (1u << id)) != 0;
     return false;
 }
 

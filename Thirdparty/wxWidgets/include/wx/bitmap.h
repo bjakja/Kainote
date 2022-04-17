@@ -4,7 +4,6 @@
 // Author:      Vaclav Slavik
 // Modified by:
 // Created:     22.04.01
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -26,6 +25,7 @@ class WXDLLIMPEXP_FWD_CORE wxBitmapHandler;
 class WXDLLIMPEXP_FWD_CORE wxIcon;
 class WXDLLIMPEXP_FWD_CORE wxMask;
 class WXDLLIMPEXP_FWD_CORE wxPalette;
+class WXDLLIMPEXP_FWD_CORE wxDC;
 
 // ----------------------------------------------------------------------------
 // wxVariant support
@@ -71,9 +71,9 @@ protected:
 #if defined(__WXDFB__) || \
     defined(__WXMAC__) || \
     defined(__WXGTK__) || \
-    defined(__WXCOCOA__) || \
     defined(__WXMOTIF__) || \
-    defined(__WXX11__)
+    defined(__WXX11__) || \
+    defined(__WXQT__)
     #define wxUSE_BITMAP_BASE 1
 #else
     #define wxUSE_BITMAP_BASE 0
@@ -83,8 +83,28 @@ protected:
 #define wxBITMAP_SCREEN_DEPTH       (-1)
 
 
-// All ports except wxMSW and wxOS2 use wxBitmapHandler and wxBitmapBase as
-// base class for wxBitmapHandler; wxMSW and wxOS2 use wxGDIImageHandler as
+// ----------------------------------------------------------------------------
+// wxBitmapHelpers: container for various bitmap methods common to all ports.
+// ----------------------------------------------------------------------------
+
+// Unfortunately, currently wxBitmap does not inherit from wxBitmapBase on all
+// platforms and this is not easy to fix. So we extract at least some common
+// methods into this class from which both wxBitmapBase (and hence wxBitmap on
+// all platforms where it does inherit from it) and wxBitmap in wxMSW and other
+// exceptional ports (only wxPM and old wxCocoa) inherit.
+class WXDLLIMPEXP_CORE wxBitmapHelpers
+{
+public:
+    // Create a new wxBitmap from the PNG data in the given buffer.
+    static wxBitmap NewFromPNGData(const void* data, size_t size);
+
+    // Rescale the given bitmap to the requested size.
+    static void Rescale(wxBitmap& bmp, const wxSize& sizeNeeded);
+};
+
+
+// All ports except wxMSW use wxBitmapHandler and wxBitmapBase as
+// base class for wxBitmapHandler; wxMSW uses wxGDIImageHandler as
 // base class since it allows some code reuse there.
 #if wxUSE_BITMAP_BASE
 
@@ -129,15 +149,15 @@ private:
     wxString      m_extension;
     wxBitmapType  m_type;
 
-    DECLARE_ABSTRACT_CLASS(wxBitmapHandler)
+    wxDECLARE_ABSTRACT_CLASS(wxBitmapHandler);
 };
-
 
 // ----------------------------------------------------------------------------
 // wxBitmap: class which represents platform-dependent bitmap (unlike wxImage)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapBase : public wxGDIObject
+class WXDLLIMPEXP_CORE wxBitmapBase : public wxGDIObject,
+                                      public wxBitmapHelpers
 {
 public:
     /*
@@ -150,7 +170,7 @@ public:
     wxBitmap(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH);
     wxBitmap(const char* const* bits);
     wxBitmap(const wxString &filename, wxBitmapType type = wxBITMAP_TYPE_XPM);
-    wxBitmap(const wxImage& image, int depth = wxBITMAP_SCREEN_DEPTH);
+    wxBitmap(const wxImage& image, int depth = wxBITMAP_SCREEN_DEPTH, double scale = 1.0);
 
     static void InitStandardHandlers();
     */
@@ -158,12 +178,46 @@ public:
     virtual bool Create(int width, int height, int depth = wxBITMAP_SCREEN_DEPTH) = 0;
     virtual bool Create(const wxSize& sz, int depth = wxBITMAP_SCREEN_DEPTH) = 0;
 
+    bool CreateWithDIPSize(const wxSize& sz,
+                           double scale,
+                           int depth = wxBITMAP_SCREEN_DEPTH)
+        { return DoCreate(sz, scale, depth); }
+    bool CreateWithDIPSize(int width, int height,
+                           double scale,
+                           int depth = wxBITMAP_SCREEN_DEPTH)
+        { return DoCreate(wxSize(width, height), scale, depth); }
+
     virtual int GetHeight() const = 0;
     virtual int GetWidth() const = 0;
     virtual int GetDepth() const = 0;
 
     wxSize GetSize() const
         { return wxSize(GetWidth(), GetHeight()); }
+
+    // Store or return the scale factor, which determines the ratio between the
+    // bitmap physical size and its DIP size (on all platforms). By default
+    // it's just 1.
+    virtual void SetScaleFactor(double scale);
+    virtual double GetScaleFactor() const;
+
+    // This function returns the size divided by the scale factor, so that a
+    // 64x64 bitmap with a scale factor of 2 has DIP size of 32x32 everywhere.
+    wxSize GetDIPSize() const;
+
+    // These functions return the corresponding metrics divided by the scale
+    // factor on platforms with DPI-independent pixels (e.g. GTK, Mac) and just
+    // return the same thing as normal accessors elsewhere (e.g. MSW).
+    double GetLogicalWidth() const;
+    double GetLogicalHeight() const;
+    wxSize GetLogicalSize() const;
+
+    // Old synonyms for CreateWithDIPSize() and GetLogicalXXX() functions,
+    // prefer the new names in the new code.
+    bool CreateScaled(int w, int h, int d, double logicalScale)
+        { return CreateWithDIPSize(w, h, logicalScale, d); }
+    double GetScaledWidth() const { return GetLogicalWidth(); }
+    double GetScaledHeight() const { return GetLogicalHeight(); }
+    wxSize GetScaledSize() const { return GetLogicalSize(); }
 
 #if wxUSE_IMAGE
     virtual wxImage ConvertToImage() const = 0;
@@ -195,12 +249,15 @@ public:
 #endif // wxUSE_PALETTE
 
     // copies the contents and mask of the given (colour) icon to the bitmap
-    virtual bool CopyFromIcon(const wxIcon& icon) = 0;
+    bool CopyFromIcon(const wxIcon& icon);
 
     // implementation:
+#if WXWIN_COMPATIBILITY_3_0
+    // deprecated
     virtual void SetHeight(int height) = 0;
     virtual void SetWidth(int width) = 0;
     virtual void SetDepth(int depth) = 0;
+#endif
 
     // Format handling
     static inline wxList& GetHandlers() { return sm_handlers; }
@@ -226,9 +283,11 @@ public:
     }
 
 protected:
+    virtual bool DoCreate(const wxSize& sz, double scale, int depth);
+
     static wxList sm_handlers;
 
-    DECLARE_ABSTRACT_CLASS(wxBitmapBase)
+    wxDECLARE_ABSTRACT_CLASS(wxBitmapBase);
 };
 
 #endif // wxUSE_BITMAP_BASE
@@ -261,12 +320,9 @@ protected:
 #elif defined(__WXMAC__)
     #define wxBITMAP_DEFAULT_TYPE    wxBITMAP_TYPE_PICT_RESOURCE
     #include "wx/osx/bitmap.h"
-#elif defined(__WXCOCOA__)
-    #define wxBITMAP_DEFAULT_TYPE    wxBITMAP_TYPE_BMP_RESOURCE
-    #include "wx/cocoa/bitmap.h"
-#elif defined(__WXPM__)
-    #define wxBITMAP_DEFAULT_TYPE    wxBITMAP_TYPE_BMP_RESOURCE
-    #include "wx/os2/bitmap.h"
+#elif defined(__WXQT__)
+    #define wxBITMAP_DEFAULT_TYPE    wxBITMAP_TYPE_XPM
+    #include "wx/qt/bitmap.h"
 #endif
 
 #if wxUSE_IMAGE
@@ -279,7 +335,8 @@ wxBitmap::
 #endif
 ConvertToDisabled(unsigned char brightness) const
 {
-    return ConvertToImage().ConvertToDisabled(brightness);
+    const wxImage imgDisabled = ConvertToImage().ConvertToDisabled(brightness);
+    return wxBitmap(imgDisabled, -1, GetScaleFactor());
 }
 #endif // wxUSE_IMAGE
 

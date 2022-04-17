@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Stefan Csomor
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -22,9 +21,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_POPUPWIN
 
@@ -56,16 +52,18 @@ bool wxPopupWindow::Create(wxWindow *parent, int flags)
 
 }
 
+// under
+
 bool wxPopupWindow::Show(bool show)
 {
     if ( !wxWindow::Show(show) )
         return false;
-
+    
     if ( m_nowpeer && show)
         m_nowpeer->ShowWithoutActivating();
     else if ( m_nowpeer )
         m_nowpeer->Show(false);
-
+    
     if ( show )
     {
         // because apps expect a size event to occur at this moment
@@ -73,8 +71,9 @@ bool wxPopupWindow::Show(bool show)
         event.SetEventObject(this);
         HandleWindowEvent(event);
     }
-
+    
     return true;
 }
+
 
 #endif // #if wxUSE_POPUPWIN

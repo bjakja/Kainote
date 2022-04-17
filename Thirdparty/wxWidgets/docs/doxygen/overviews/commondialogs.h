@@ -2,7 +2,6 @@
 // Name:        commondialogs.h
 // Purpose:     topic overview
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -10,18 +9,7 @@
 
 @page overview_cmndlg Common Dialogs
 
-Classes:
-
-@li wxColourDialog
-@li wxFontDialog
-@li wxPrintDialog
-@li wxFileDialog
-@li wxDirDialog
-@li wxTextEntryDialog
-@li wxPasswordEntryDialog
-@li wxMessageDialog
-@li wxSingleChoiceDialog
-@li wxMultiChoiceDialog
+@tableofcontents
 
 Common dialog classes and functions encapsulate commonly-needed dialog box
 requirements. They are all 'modal', grabbing the flow of control until the user
@@ -36,19 +24,8 @@ and a macro defines wxColourDialog to be the same as wxGenericColourDialog on
 non-MS Windows platforms. However, under MS Windows, the generic dialog can
 also be used, for testing or other purposes.
 
-@li @ref overview_cmndlg_colour
-@li @ref overview_cmndlg_font
-@li @ref overview_cmndlg_print
-@li @ref overview_cmndlg_file
-@li @ref overview_cmndlg_dir
-@li @ref overview_cmndlg_textentry
-@li @ref overview_cmndlg_password
-@li @ref overview_cmndlg_msg
-@li @ref overview_cmndlg_singlechoice
-@li @ref overview_cmndlg_multichoice
+@see @ref group_class_cmndlg
 
-
-<hr>
 
 
 @section overview_cmndlg_colour wxColourDialog Overview
@@ -71,11 +48,11 @@ controls to select a precise colour, and add it to the custom colour palette.
 
 Under non-MS Windows platforms, the colour selector is a simulation of most of
 the features of the MS Windows selector. Two palettes of 48 standard and 16
-custom colours are presented, with the right-hand area containing three sliders
-for the user to select a colour from red, green and blue components. This
+custom colours are presented, with the right-hand area containing three or four sliders
+for the user to select a colour from red, green, blue and opacity (optionally) components. This
 colour may be added to the custom colour palette, and will replace either the
 currently selected custom colour, or the first one in the palette if none is
-selected. The RGB colour sliders are not optional in the generic colour
+selected. The RGB or ARGB colour sliders are not optional in the generic colour
 selector. The generic colour selector is also available under MS Windows; use
 the name wxGenericColourDialog.
 
@@ -101,12 +78,13 @@ if (dialog.ShowModal() == wxID_OK)
 {
     wxColourData retData = dialog.GetColourData();
     wxColour col = retData.GetColour();
-    wxBrush brush(col, wxSOLID);
+    wxBrush brush(col, wxBRUSHSTYLE_SOLID);
     myWindow->SetBackground(brush);
     myWindow->Clear();
     myWindow->Refresh();
 }
 @endcode
+
 
 
 @section overview_cmndlg_font wxFontDialog Overview
@@ -155,6 +133,7 @@ if (dialog.ShowModal() == wxID_OK)
 @endcode
 
 
+
 @section overview_cmndlg_print wxPrintDialog Overview
 
 Classes: wxPrintDialog, wxPrintData
@@ -164,6 +143,7 @@ a wxPrinterDC device context from a successfully dismissed print dialog.
 
 The samples/printing example shows how to use it: see @ref overview_printing
 for an excerpt from this example.
+
 
 
 @section overview_cmndlg_file wxFileDialog Overview
@@ -197,12 +177,14 @@ description for each, such as:
 @endverbatim
 
 
+
 @section overview_cmndlg_dir wxDirDialog Overview
 
 Classes: wxDirDialog
 
 This dialog shows a directory selector dialog, allowing the user to select a
 single directory.
+
 
 
 @section overview_cmndlg_textentry wxTextEntryDialog Overview
@@ -213,12 +195,33 @@ This is a dialog with a text entry field. The value that the user entered is
 obtained using wxTextEntryDialog::GetValue().
 
 
+
 @section overview_cmndlg_password wxPasswordEntryDialog Overview
 
 Classes: wxPasswordEntryDialog
 
 This is a dialog with a password entry field. The value that the user entered
 is obtained using wxTextEntryDialog::GetValue().
+
+
+
+@section overview_cmndlg_numeric wxNumberEntryDialog Overview
+
+Classes: wxNumberEntryDialog
+
+This is a dialog with a numeric entry field. The value that the user entered
+is obtained using wxNumberEntryDialog::GetValue().
+
+
+
+@section overview_cmndlg_cred wxCredentialEntryDialog Overview
+
+Classes: wxCredentialEntryDialog
+
+This is a dialog with user and password entry fields. The values that the
+user entered are obtained using wxCredentialEntryDialog::GetUser() and
+wxCredentialEntryDialog::GetPassword().
+
 
 
 @section overview_cmndlg_msg wxMessageDialog Overview
@@ -233,6 +236,7 @@ The return value of wxMessageDialog::ShowModal() indicates which button the
 user pressed.
 
 
+
 @section overview_cmndlg_singlechoice wxSingleChoiceDialog Overview
 
 Classes: wxSingleChoiceDialog
@@ -240,6 +244,7 @@ Classes: wxSingleChoiceDialog
 This dialog shows a list of choices, plus OK and (optionally) Cancel. The user
 can select one of them. The selection can be obtained from the dialog as an
 index, a string or client data.
+
 
 
 @section overview_cmndlg_multichoice wxMultiChoiceDialog Overview
@@ -250,4 +255,3 @@ This dialog shows a list of choices, plus OK and (optionally) Cancel. The user
 can select one or more of them.
 
 */
-

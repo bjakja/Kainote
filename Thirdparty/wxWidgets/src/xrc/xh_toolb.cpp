@@ -3,7 +3,6 @@
 // Purpose:     XRC resource for wxToolBar
 // Author:      Vaclav Slavik
 // Created:     2000/08/11
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_TOOLBAR
 
@@ -26,7 +22,9 @@
     #include "wx/toolbar.h"
 #endif
 
-IMPLEMENT_DYNAMIC_CLASS(wxToolBarXmlHandler, wxXmlResourceHandler)
+#include "wx/xml/xml.h"
+
+wxIMPLEMENT_DYNAMIC_CLASS(wxToolBarXmlHandler, wxXmlResourceHandler);
 
 wxToolBarXmlHandler::wxToolBarXmlHandler()
 : wxXmlResourceHandler(), m_isInside(false), m_toolbar(NULL)
@@ -35,7 +33,6 @@ wxToolBarXmlHandler::wxToolBarXmlHandler()
     XRC_ADD_STYLE(wxTB_DOCKABLE);
     XRC_ADD_STYLE(wxTB_VERTICAL);
     XRC_ADD_STYLE(wxTB_HORIZONTAL);
-    XRC_ADD_STYLE(wxTB_3DBUTTONS);
     XRC_ADD_STYLE(wxTB_TEXT);
     XRC_ADD_STYLE(wxTB_NOICONS);
     XRC_ADD_STYLE(wxTB_NODIVIDER);
@@ -129,15 +126,15 @@ wxObject *wxToolBarXmlHandler::DoCreateResource()
                        (
                           GetID(),
                           GetText(wxT("label")),
-                          GetBitmap(wxT("bitmap"), wxART_TOOLBAR, m_toolSize),
-                          GetBitmap(wxT("bitmap2"), wxART_TOOLBAR, m_toolSize),
+                          GetBitmapBundle(wxT("bitmap"), wxART_TOOLBAR, m_toolSize),
+                          GetBitmapBundle(wxT("bitmap2"), wxART_TOOLBAR, m_toolSize),
                           kind,
                           GetText(wxT("tooltip")),
                           GetText(wxT("longhelp"))
                        );
 
         if ( GetBool(wxT("disabled")) )
-            m_toolbar->EnableTool(GetID(), false);
+            m_toolbar->EnableTool(tool->GetId(), false);
 
         if ( GetBool(wxS("checked")) )
         {
@@ -151,7 +148,7 @@ wxObject *wxToolBarXmlHandler::DoCreateResource()
             }
             else
             {
-                m_toolbar->ToggleTool(GetID(), true);
+                m_toolbar->ToggleTool(tool->GetId(), true);
             }
         }
 
@@ -239,14 +236,14 @@ wxObject *wxToolBarXmlHandler::DoCreateResource()
         m_isInside = false;
         m_toolbar = NULL;
 
-        toolbar->Realize();
-
         if (m_parentAsWindow && !GetBool(wxT("dontattachtoframe")))
         {
             wxFrame *parentFrame = wxDynamicCast(m_parent, wxFrame);
             if (parentFrame)
                 parentFrame->SetToolBar(toolbar);
         }
+
+        toolbar->Realize();
 
         return toolbar;
     }

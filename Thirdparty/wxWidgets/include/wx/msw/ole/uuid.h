@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     11.07.97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 //
@@ -21,7 +20,6 @@
 
 // ----- taken from RPC.H
 #ifndef UUID_DEFINED            // in some cases RPC.H will be already
-  #ifdef  __WIN32__             // included, so avoid redefinition
     typedef struct
     {
       unsigned long   Data1;
@@ -29,7 +27,6 @@
       unsigned short  Data3;
       unsigned char   Data4[8];
     } UUID;                     // UUID = GUID = CLSID = LIBID = IID
-  #endif  // WIN32
 #endif  // UUID_DEFINED
 
 #ifndef GUID_DEFINED

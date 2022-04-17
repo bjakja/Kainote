@@ -2,7 +2,6 @@
 // Name:        wx/gtk1/clipbrd.h
 // Purpose:
 // Author:      Robert Roebling
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -68,7 +67,7 @@ public:
     wxDataObject     *m_receivedData;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxClipboard)
+    wxDECLARE_DYNAMIC_CLASS(wxClipboard);
 };
 
 #endif

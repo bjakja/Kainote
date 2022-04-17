@@ -4,7 +4,6 @@
 // Notes:       Based on htmlhelp.cpp, implementing a monolithic
 //              HTML Help controller class,  by Vaclav Slavik
 // Author:      Harm van der Heijden and Vaclav Slavik
-// RCS-ID:      $Id$
 // Copyright:   (c) Harm van der Heijden and Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -68,11 +67,11 @@ class WXDLLIMPEXP_FWD_HTML wxHtmlHelpWindow;
 
 class WXDLLIMPEXP_HTML wxHtmlHelpFrame : public wxFrame
 {
-    DECLARE_DYNAMIC_CLASS(wxHtmlHelpFrame)
+    wxDECLARE_DYNAMIC_CLASS(wxHtmlHelpFrame);
 
 public:
     wxHtmlHelpFrame(wxHtmlHelpData* data = NULL) { Init(data); }
-    wxHtmlHelpFrame(wxWindow* parent, wxWindowID wxWindowID,
+    wxHtmlHelpFrame(wxWindow* parent, wxWindowID id,
                     const wxString& title = wxEmptyString,
                     int style = wxHF_DEFAULT_STYLE, wxHtmlHelpData* data = NULL
 #if wxUSE_CONFIG
@@ -119,18 +118,13 @@ public:
 
     // we don't want to prevent the app from closing just because a help window
     // remains opened
-    virtual bool ShouldPreventAppExit() const { return m_shouldPreventAppExit; }
+    virtual bool ShouldPreventAppExit() const wxOVERRIDE { return m_shouldPreventAppExit; }
 
 protected:
     void Init(wxHtmlHelpData* data = NULL);
 
     void OnCloseWindow(wxCloseEvent& event);
     void OnActivate(wxActivateEvent& event);
-
-#ifdef __WXMAC__
-    void OnClose(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
-#endif
 
     // Images:
     enum {
@@ -149,7 +143,7 @@ protected:
 
 private:
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
     wxDECLARE_NO_COPY_CLASS(wxHtmlHelpFrame);
 };
 

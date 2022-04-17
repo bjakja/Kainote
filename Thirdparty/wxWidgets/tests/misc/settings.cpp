@@ -3,7 +3,6 @@
 // Purpose:     test wxSettings
 // Author:      Francesco Montorsi
 // Created:     2009-03-24
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Francesco Montorsi
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,9 +12,6 @@
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/settings.h"
 #include "wx/fontenum.h"
@@ -43,14 +39,14 @@ private:
 
     void GetColour();
     void GetFont();
-    
+
     // not really wxSystemSettings stuff but still nice to test:
     void GlobalColours();
     void GlobalFonts();
     void GlobalBrushes();
     void GlobalPens();
 
-    DECLARE_NO_COPY_CLASS(SettingsTestCase)
+    wxDECLARE_NO_COPY_CLASS(SettingsTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -68,7 +64,7 @@ void SettingsTestCase::GetColour()
 
 void SettingsTestCase::GetFont()
 {
-    const wxSystemFont ids[] = 
+    const wxSystemFont ids[] =
     {
         wxSYS_OEM_FIXED_FONT,
         wxSYS_ANSI_FIXED_FONT,
@@ -82,8 +78,8 @@ void SettingsTestCase::GetFont()
     for (unsigned int i=0; i < WXSIZEOF(ids); i++)
     {
         const wxFont& font = wxSystemSettings::GetFont(ids[i]);
-        CPPUNIT_ASSERT( font.IsOk() && 
-                        wxFontEnumerator::IsValidFacename(font.GetFaceName()) );
+        CPPUNIT_ASSERT( font.IsOk() );
+        CPPUNIT_ASSERT( wxFontEnumerator::IsValidFacename(font.GetFaceName()) );
     }
 }
 

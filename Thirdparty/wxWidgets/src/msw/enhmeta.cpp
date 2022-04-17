@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     13.01.00
-// RCS-ID:      $Id$
 // Copyright:   (c) 2000 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ENH_METAFILE
 
@@ -44,7 +40,7 @@
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxEnhMetaFile, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxEnhMetaFile, wxObject);
 
 // ----------------------------------------------------------------------------
 // macros
@@ -121,11 +117,12 @@ void wxEnhMetaFile::Assign(const wxEnhMetaFile& mf)
     }
 }
 
-void wxEnhMetaFile::Free()
+/* static */
+void wxEnhMetaFile::Free(WXHANDLE handle)
 {
-    if ( m_hMF )
+    if ( handle )
     {
-        if ( !::DeleteEnhMetaFile(GetEMF()) )
+        if ( !::DeleteEnhMetaFile((HENHMETAFILE) handle) )
         {
             wxLogLastError(wxT("DeleteEnhMetaFile"));
         }
@@ -230,7 +227,7 @@ public:
     wxEnhMetaFile *Close();
 
 protected:
-    virtual void DoGetSize(int *width, int *height) const;
+    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
 
 private:
     void Create(HDC hdcRef,
@@ -333,7 +330,7 @@ wxEnhMetaFileDCImpl::~wxEnhMetaFileDCImpl()
 // wxEnhMetaFileDC
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_ABSTRACT_CLASS(wxEnhMetaFileDC, wxDC)
+wxIMPLEMENT_ABSTRACT_CLASS(wxEnhMetaFileDC, wxDC);
 
 wxEnhMetaFileDC::wxEnhMetaFileDC(const wxString& filename,
                                  int width, int height,
@@ -480,7 +477,7 @@ bool wxEnhMetaFileDataObject::SetData(const wxDataFormat& format,
 
     if ( format == wxDF_ENHMETAFILE )
     {
-        hEMF = *(HENHMETAFILE *)buf;
+        hEMF = *static_cast<const HENHMETAFILE*>(buf);
 
         wxCHECK_MSG( hEMF, false, wxT("pasting invalid enh metafile") );
     }
@@ -555,7 +552,7 @@ bool wxEnhMetaFileSimpleDataObject::GetDataHere(void *buf) const
 bool wxEnhMetaFileSimpleDataObject::SetData(size_t WXUNUSED(len),
                                             const void *buf)
 {
-    HENHMETAFILE hEMF = *(HENHMETAFILE *)buf;
+    HENHMETAFILE hEMF = *static_cast<const HENHMETAFILE*>(buf);
 
     wxCHECK_MSG( hEMF, false, wxT("pasting invalid enh metafile") );
     m_metafile.SetHENHMETAFILE((WXHANDLE)hEMF);

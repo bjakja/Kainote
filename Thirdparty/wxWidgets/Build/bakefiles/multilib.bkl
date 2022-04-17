@@ -1,5 +1,4 @@
 <?xml version="1.0" ?>
-<!-- $Id$ -->
 
 <makefile>
 
@@ -50,14 +49,14 @@
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_NET</define>
         <sources>$(NET_SRC)</sources>
-        <msvc-headers>$(NET_CMN_HDR) $(NET_PLATFORM_HDR)</msvc-headers>
+        <msvc-headers>$(NET_CMN_HDR)</msvc-headers>
         <library>basedll</library>
     </dll>
 
     <lib id="netlib" template="wx_base_lib"
          cond="SHARED=='0' and MONOLITHIC=='0'">
         <sources>$(NET_SRC)</sources>
-        <msvc-headers>$(NET_CMN_HDR) $(NET_PLATFORM_HDR)</msvc-headers>
+        <msvc-headers>$(NET_CMN_HDR)</msvc-headers>
     </lib>
 
     <wxshortcut id="wxnet" cond="MONOLITHIC=='0'"/>
@@ -74,7 +73,7 @@
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_CORE</define>
         <define>wxUSE_BASE=0</define>
-        <sources>$(BASE_AND_GUI_SRC) $(CORE_SRC)</sources>
+        <sources>$(BASE_AND_GUI_SRC) $(CORE_SRC) $(PLUGIN_SRC)</sources>
         <msvc-headers>$(ALL_GUI_HEADERS)</msvc-headers>
         <library>basedll</library>
     </dll>
@@ -82,7 +81,7 @@
     <lib id="corelib" template="wx_lib"
          cond="SHARED=='0' and USE_GUI=='1' and MONOLITHIC=='0'">
         <define>wxUSE_BASE=0</define>
-        <sources>$(BASE_AND_GUI_SRC) $(CORE_SRC)</sources>
+        <sources>$(BASE_AND_GUI_SRC) $(CORE_SRC) $(PLUGIN_SRC)</sources>
         <msvc-headers>$(ALL_GUI_HEADERS)</msvc-headers>
     </lib>
 
@@ -99,7 +98,7 @@
          cond="SHARED=='1' and USE_GUI=='1' and MONOLITHIC=='0'">
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_ADV</define>
-        <sources>$(ADVANCED_SRC) $(PLUGIN_ADV_SRC)</sources>
+        <sources>$(ADVANCED_SRC)</sources>
         <msvc-headers>$(ADVANCED_HDR)</msvc-headers>
         <library>coredll</library>
         <library>basedll</library>
@@ -108,7 +107,7 @@
 
     <lib id="advlib" template="wx_lib"
          cond="SHARED=='0' and USE_GUI=='1' and MONOLITHIC=='0'">
-        <sources>$(ADVANCED_SRC) $(PLUGIN_ADV_SRC)</sources>
+        <sources>$(ADVANCED_SRC)</sources>
         <msvc-headers>$(ADVANCED_HDR)</msvc-headers>
     </lib>
 
@@ -177,6 +176,34 @@
     <!--                               wxWEBVIEW                          -->
     <!-- ================================================================ -->
 
+    <set var="webview_additional_include">
+        <if cond="TOOLKIT=='MSW'">$(TOP_SRCDIR)3rdparty/webview2/build/native/include</if>
+    </set>
+
+    <set var="webview_additional_include_wrl">
+        <if cond="TOOLKIT=='MSW' and IS_MSVC=='0'">$(TOP_SRCDIR)include/wx/msw/wrl</if>
+    </set>
+
+    <set var="webview_additional_libdirs_arch">
+        <if cond="TARGET_CPU=='amd64'">x64</if>
+        <if cond="TARGET_CPU=='AMD64'">x64</if>
+        <if cond="TARGET_CPU=='arm64'">arm64</if>
+        <if cond="TARGET_CPU=='ARM64'">arm64</if>
+        <if cond="TARGET_CPU=='x64'">x64</if>
+        <if cond="TARGET_CPU=='X64'">x64</if>
+        <if cond="TARGET_CPU=='x86'">x86</if>
+        <if cond="TARGET_CPU=='X86'">x86</if>
+        <if cond="TARGET_CPU==''">x86</if>
+    </set>
+
+    <set var="webview_additional_libdirs">
+        <if cond="IS_MSVC=='1' and TOOLKIT=='MSW'">$(TOP_SRCDIR)3rdparty/webview2/build/native/$(webview_additional_libdirs_arch)</if>
+    </set>
+
+    <set var="webview_edge_pragma_warning">
+        <if cond="TOOLKIT=='MSW' and IS_MSVC=='0'">-Wno-unknown-pragmas</if>
+    </set>
+
     <dll id="webviewdll" template="wx_dll"
          cond="SHARED=='1' and USE_GUI=='1' and USE_WEBVIEW=='1' and MONOLITHIC=='0'">
         <define>WXUSINGDLL</define>
@@ -184,13 +211,22 @@
         <sources>$(WEBVIEW_SRC)</sources>
         <library>coredll</library>
         <library>basedll</library>
+        <lib-path>$(webview_additional_libdirs)</lib-path>
+        <ldlibs>$(EXTRALIBS_WEBVIEW)</ldlibs>
         <msvc-headers>$(WEBVIEW_HDR)</msvc-headers>
+        <include>$(webview_additional_include_wrl)</include>
+        <include>$(webview_additional_include)</include>
+        <cxxflags-mingw>$(webview_edge_pragma_warning)</cxxflags-mingw>
     </dll>
 
     <lib id="webviewlib" template="wx_lib"
          cond="SHARED=='0' and USE_GUI=='1' and USE_WEBVIEW=='1' and MONOLITHIC=='0'">
         <sources>$(WEBVIEW_SRC)</sources>
         <msvc-headers>$(WEBVIEW_HDR)</msvc-headers>
+        <include>$(webview_additional_include_wrl)</include>
+        <include>$(webview_additional_include)</include>
+        <lib-path>$(webview_additional_libdirs)</lib-path>
+        <cxxflags-mingw>$(webview_edge_pragma_warning)</cxxflags-mingw>
     </lib>
 
     <wxshortcut id="wxwebview" cond="MONOLITHIC=='0' and USE_WEBVIEW=='1'"/>
@@ -236,7 +272,7 @@
     <!-- ================================================================ -->
 
     <dll id="xmldll" template="wx_base_dll"
-         cond="SHARED=='1' and MONOLITHIC=='0'">
+         cond="SHARED=='1' and USE_XML=='1' and MONOLITHIC=='0'">
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_XML</define>
         <sources>$(XML_SRC)</sources>
@@ -246,12 +282,12 @@
     </dll>
 
     <lib id="xmllib" template="wx_base_lib"
-         cond="SHARED=='0' and MONOLITHIC=='0'">
+         cond="SHARED=='0' and USE_XML=='1' and MONOLITHIC=='0'">
         <sources>$(XML_SRC)</sources>
         <msvc-headers>$(XML_HDR)</msvc-headers>
     </lib>
 
-    <wxshortcut id="wxxml" cond="MONOLITHIC=='0'"/>
+    <wxshortcut id="wxxml" cond="USE_XML=='1' and MONOLITHIC=='0'"/>
 
     <set var="MSVC6PRJ_MERGED_TARGETS_MULTILIB" append="1">xml=xmllib+xmldll</set>
 
@@ -260,12 +296,11 @@
     <!-- ================================================================ -->
 
     <dll id="xrcdll" template="wx_dll"
-         cond="SHARED=='1' and USE_XRC=='1' and MONOLITHIC=='0'">
+         cond="SHARED=='1' and USE_XML=='1' and USE_XRC=='1' and MONOLITHIC=='0'">
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_XRC</define>
         <sources>$(XRC_SRC)</sources>
         <library>$(htmldll_library_link)</library>
-        <library>advdll</library>
         <library>coredll</library>
         <library>xmldll</library>
         <library>basedll</library>
@@ -291,7 +326,6 @@
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_AUI</define>
         <sources>$(AUI_SRC)</sources>
-        <library>advdll</library>
         <library>coredll</library>
         <library>basedll</library>
         <msvc-headers>$(AUI_HDR)</msvc-headers>
@@ -306,7 +340,7 @@
     <wxshortcut id="wxaui" cond="MONOLITHIC=='0' and USE_AUI=='1'"/>
 
     <set var="MSVC6PRJ_MERGED_TARGETS_MULTILIB" append="1">aui=auilib+auidll</set>
-    
+
     <!-- ================================================================ -->
     <!--                            RIBBON                                -->
     <!-- ================================================================ -->
@@ -316,7 +350,6 @@
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_RIBBON</define>
         <sources>$(RIBBON_SRC)</sources>
-        <library>advdll</library>
         <library>coredll</library>
         <library>basedll</library>
         <msvc-headers>$(RIBBON_HDR)</msvc-headers>
@@ -341,7 +374,6 @@
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_PROPGRID</define>
         <sources>$(PROPGRID_SRC)</sources>
-        <library>advdll</library>
         <library>coredll</library>
         <library>basedll</library>
         <msvc-headers>$(PROPGRID_HDR)</msvc-headers>
@@ -362,11 +394,10 @@
     <!-- ================================================================ -->
 
     <dll id="richtextdll" template="wx_dll"
-         cond="SHARED=='1' and USE_RICHTEXT=='1' and MONOLITHIC=='0'">
+         cond="SHARED=='1' and USE_RICHTEXT=='1' and USE_XML=='1' and MONOLITHIC=='0'">
         <define>WXUSINGDLL</define>
         <define>WXMAKINGDLL_RICHTEXT</define>
         <sources>$(RICHTEXT_SRC)</sources>
-        <library>advdll</library>
         <library>$(htmldll_library_link)</library>
         <library>xmldll</library>
         <library>coredll</library>
@@ -399,6 +430,7 @@
         <sources>$(STC_SRC)</sources>
         <library>coredll</library>
         <library>basedll</library>
+        <ldlibs>$(EXTRALIBS_STC)</ldlibs>
         <msvc-headers>$(STC_HDR)</msvc-headers>
     </dll>
 
@@ -407,7 +439,7 @@
         <sources>$(STC_SRC)</sources>
         <msvc-headers>$(STC_HDR)</msvc-headers>
     </lib>
-    
+
     <wxshortcut id="wxstc" cond="MONOLITHIC=='0' and USE_STC=='1'"/>
 
     <set var="MSVC6PRJ_MERGED_TARGETS_MULTILIB" append="1">stc=stclib+stcdll</set>

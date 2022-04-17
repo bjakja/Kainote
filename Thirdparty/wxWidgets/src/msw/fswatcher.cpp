@@ -3,17 +3,13 @@
 // Purpose:     wxMSWFileSystemWatcher
 // Author:      Bartosz Bekier
 // Created:     2009-05-26
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Bartosz Bekier <bartosz.bekier@gmail.com>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_FSWATCHER
 
@@ -40,12 +36,12 @@ public:
     void SendEvent(wxFileSystemWatcherEvent& evt);
 
 protected:
-    bool Init();
+    bool Init() wxOVERRIDE;
 
     // adds watch to be monitored for file system changes
-    virtual bool DoAdd(wxSharedPtr<wxFSWatchEntryMSW> watch);
+    virtual bool DoAdd(wxSharedPtr<wxFSWatchEntryMSW> watch) wxOVERRIDE;
 
-    virtual bool DoRemove(wxSharedPtr<wxFSWatchEntryMSW> watch);
+    virtual bool DoRemove(wxSharedPtr<wxFSWatchEntryMSW> watch) wxOVERRIDE;
 
 private:
     bool DoSetUpWatch(wxFSWatchEntryMSW& watch);
@@ -141,7 +137,8 @@ bool wxFSWatcherImplMSW::DoSetUpWatch(wxFSWatchEntryMSW& watch)
     switch ( watch.GetType() )
     {
         case wxFSWPath_File:
-            wxLogError(_("Monitoring individual files for changes is not supported currently."));
+            wxLogError(_("Monitoring individual files for changes is not "
+                         "supported currently."));
             return false;
 
         case wxFSWPath_Dir:
@@ -217,19 +214,62 @@ wxThread::ExitCode wxIOCPThread::Entry()
 }
 
 // wait for events to occur, read them and send to interested parties
-// returns false it empty status was read, which means we whould exit
+// returns false it empty status was read, which means we would exit
 //         true otherwise
 bool wxIOCPThread::ReadEvents()
 {
-    unsigned long count = 0;
+    DWORD count = 0;
     wxFSWatchEntryMSW* watch = NULL;
     OVERLAPPED* overlapped = NULL;
-    if (!m_iocp->GetStatus(&count, &watch, &overlapped))
-        return true; // error was logged already, we don't want to exit
+    switch ( m_iocp->GetStatus(&count, &watch, &overlapped) )
+    {
+        case wxIOCPService::Status_OK:
+            break; // nothing special to do, continue normally
 
-    // this is our exit condition, so we return false
-    if (!count && !watch && !overlapped)
-        return false;
+        case wxIOCPService::Status_Error:
+            return true; // error was logged already, we don't want to exit
+
+        case wxIOCPService::Status_Deleted:
+            {
+                wxFileSystemWatcherEvent
+                    removeEvent(wxFSW_EVENT_DELETE,
+                                watch->GetPath(),
+                                wxFileName());
+                SendEvent(removeEvent);
+            }
+
+            // It isn't useful to continue watching this directory as it
+            // doesn't exist any more -- and even recreating a directory with
+            // the same name still wouldn't resume generating events for the
+            // existing wxIOCPService, so it's useless to continue.
+            return false;
+
+        case wxIOCPService::Status_Exit:
+            return false; // stop reading events
+    }
+
+    // if the thread got woken up but we got an empty packet it means that
+    // there was an overflow, too many events and not all could fit in
+    // the watch buffer.  In this case, ReadDirectoryChangesW dumps the
+    // buffer.
+    if (!count && watch)
+    {
+         wxLogTrace(wxTRACE_FSWATCHER, "[iocp] Event queue overflowed: path=\"%s\"",
+                    watch->GetPath());
+
+        if (watch->GetFlags() & wxFSW_EVENT_WARNING)
+        {
+            wxFileSystemWatcherEvent
+                overflowEvent(wxFSW_EVENT_WARNING, wxFSW_WARNING_OVERFLOW);
+            overflowEvent.SetPath(watch->GetPath());
+            SendEvent(overflowEvent);
+        }
+
+        // overflow is not a fatal error, we still want to get future events
+        // reissue the watch
+        (void) m_service->SetUpWatch(*watch);
+        return true;
+    }
 
     // in case of spurious wakeup
     if (!count || !watch)
@@ -283,9 +323,10 @@ void wxIOCPThread::ProcessNativeEvents(wxVector<wxEventProcessingData>& events)
         int flags = Native2WatcherFlags(nativeFlags);
         if (flags & wxFSW_EVENT_WARNING || flags & wxFSW_EVENT_ERROR)
         {
-            // TODO think about this...do we ever have any errors to report?
-            wxString errMsg = "Error occurred";
-            wxFileSystemWatcherEvent event(flags, errMsg);
+            wxFileSystemWatcherEvent
+                event(flags,
+                      flags & wxFSW_EVENT_ERROR ? wxFSW_WARNING_NONE
+                                                : wxFSW_WARNING_GENERAL);
             SendEvent(event);
         }
         // filter out ignored events and those not asked for.
@@ -315,8 +356,12 @@ void wxIOCPThread::ProcessNativeEvents(wxVector<wxEventProcessingData>& events)
             // CHECK I heard that returned path can be either in short on long
             // form...need to account for that!
             wxFileName path = GetEventPath(*watch, e);
-            wxFileSystemWatcherEvent event(flags, path, path);
-            SendEvent(event);
+            // For files, check that it matches any filespec
+            if ( m_service->MatchesFilespec(path, watch->GetFilespec()) )
+            {
+                wxFileSystemWatcherEvent event(flags, path, path);
+                SendEvent(event);
+            }
         }
     }
 }
@@ -340,6 +385,8 @@ int wxIOCPThread::Native2WatcherFlags(int flags)
 
         // ignored as it should always be matched with ***_OLD_NAME
         { FILE_ACTION_RENAMED_NEW_NAME, 0 },
+        // ignore invalid event
+        { 0, 0 },
     };
 
     for (unsigned int i=0; i < WXSIZEOF(flag_mapping); ++i) {
@@ -430,7 +477,7 @@ wxMSWFileSystemWatcher::AddTree(const wxFileName& path,
         return false;
     }
 
-    return DoAdd(path, events, wxFSWPath_Tree);
+    return AddAny(path, events, wxFSWPath_Tree);
 }
 
 #endif // wxUSE_FSWATCHER

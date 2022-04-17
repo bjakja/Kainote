@@ -3,7 +3,6 @@
 // Purpose:
 // Author:      Robert Roebling
 // Modified by: Mart Raudsepp (GetMetric)
-// Id:          $Id$
 // Copyright:   (c) 1998 Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -348,7 +347,7 @@ wxFont wxSystemSettingsNative::GetFont( wxSystemFont index )
         {
             if (!gs_objects.m_fontSystem.IsOk())
             {
-                gs_objects.m_fontSystem = wxFont( 12, wxSWISS, wxNORMAL, wxNORMAL );
+                gs_objects.m_fontSystem = wxFont( 12, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
             }
             return gs_objects.m_fontSystem;
         }
@@ -359,7 +358,7 @@ wxFont wxSystemSettingsNative::GetFont( wxSystemFont index )
 }
 
 int
-wxSystemSettingsNative::GetMetric(wxSystemMetric index, wxWindow* WXUNUSED(win))
+wxSystemSettingsNative::GetMetric(wxSystemMetric index, const wxWindow* WXUNUSED(win))
 {
     switch (index)
     {

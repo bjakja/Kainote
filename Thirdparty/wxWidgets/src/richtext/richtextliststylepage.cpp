@@ -1,10 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////
 // Name:        src/richtext/richtextliststylepage.cpp
-// Purpose:
+// Purpose:     Implements the rich text formatting dialog list style page.
 // Author:      Julian Smart
 // Modified by:
 // Created:     10/18/2006 11:36:37 AM
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -18,13 +17,13 @@
  * wxRichTextListStylePage type definition
  */
 
-IMPLEMENT_DYNAMIC_CLASS( wxRichTextListStylePage, wxRichTextDialogPage )
+wxIMPLEMENT_DYNAMIC_CLASS(wxRichTextListStylePage, wxRichTextDialogPage);
 
 /*!
  * wxRichTextListStylePage event table definition
  */
 
-BEGIN_EVENT_TABLE( wxRichTextListStylePage, wxRichTextDialogPage )
+wxBEGIN_EVENT_TABLE(wxRichTextListStylePage, wxRichTextDialogPage)
 
 ////@begin wxRichTextListStylePage event table entries
     EVT_SPINCTRL( ID_RICHTEXTLISTSTYLEPAGE_LEVEL, wxRichTextListStylePage::OnLevelUpdated )
@@ -91,7 +90,7 @@ BEGIN_EVENT_TABLE( wxRichTextListStylePage, wxRichTextDialogPage )
 
 ////@end wxRichTextListStylePage event table entries
 
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 IMPLEMENT_HELP_PROVISION(wxRichTextListStylePage)
 
@@ -550,7 +549,6 @@ iaculis malesuada. Donec bibendum ipsum ut ante porta fringilla.\n");
     m_previewCtrl->EndStyle();
 
     m_previewCtrl->BeginStyle(attr);
-    long listStart = m_previewCtrl->GetInsertionPoint() + 1;
 
     int i;
     for (i = 0; i < 10; i++)
@@ -562,13 +560,10 @@ iaculis malesuada. Donec bibendum ipsum ut ante porta fringilla.\n");
         m_previewCtrl->EndStyle();
     }
     m_previewCtrl->EndStyle();
-    long listEnd = m_previewCtrl->GetInsertionPoint();
 
     m_previewCtrl->BeginStyle(normalParaAttr);
     m_previewCtrl->WriteText(s_para3);
     m_previewCtrl->EndStyle();
-
-    m_previewCtrl->NumberList(wxRichTextRange(listStart, listEnd), def);
 
     m_previewCtrl->Thaw();
 }
@@ -666,7 +661,13 @@ bool wxRichTextListStylePage::TransferDataFromWindow()
             bulletStyle |= wxTEXT_ATTR_BULLET_STYLE_SYMBOL;
 
         else if (index == wxRICHTEXT_BULLETINDEX_BITMAP)
+        {
             bulletStyle |= wxTEXT_ATTR_BULLET_STYLE_BITMAP;
+            if (m_bulletNameCtrl->GetValue().IsEmpty())
+                attr->SetFlags(attr->GetFlags() & ~wxTEXT_ATTR_BULLET_NAME);
+            else
+                attr->SetBulletName(m_bulletNameCtrl->GetValue());
+        }
 
         else if (index == wxRICHTEXT_BULLETINDEX_STANDARD)
         {
@@ -692,7 +693,10 @@ bool wxRichTextListStylePage::TransferDataFromWindow()
 
     // if (m_hasBulletSymbol)
     {
-        attr->SetBulletText(m_symbolCtrl->GetValue());
+        if (!m_symbolCtrl->GetValue().IsEmpty())
+            attr->SetBulletText(m_symbolCtrl->GetValue());
+        else
+            attr->SetFlags(attr->GetFlags() & ~wxTEXT_ATTR_BULLET_TEXT);
         attr->SetBulletFont(m_symbolFontCtrl->GetValue());
     }
 
@@ -891,7 +895,7 @@ void wxRichTextListStylePage::TransferAndPreview()
 
 
 /*!
- * wxEVT_COMMAND_SPINCTRL_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_LEVEL
+ * wxEVT_SPINCTRL event handler for ID_RICHTEXTLISTSTYLEPAGE_LEVEL
  */
 
 void wxRichTextListStylePage::OnLevelUpdated( wxSpinEvent& WXUNUSED(event) )
@@ -930,7 +934,7 @@ void wxRichTextListStylePage::OnLevelDown( wxSpinEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_LEVEL
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_LEVEL
  */
 
 void wxRichTextListStylePage::OnLevelTextUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -958,7 +962,7 @@ void wxRichTextListStylePage::OnLevelUIUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_LISTBOX_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_STYLELISTBOX
+ * wxEVT_LISTBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_STYLELISTBOX
  */
 
 void wxRichTextListStylePage::OnStylelistboxSelected( wxCommandEvent& WXUNUSED(event) )
@@ -976,7 +980,7 @@ void wxRichTextListStylePage::OnSymbolstaticUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTBULLETSPAGE_SYMBOLCTRL
+ * wxEVT_COMBOBOX event handler for ID_RICHTEXTBULLETSPAGE_SYMBOLCTRL
  */
 
 void wxRichTextListStylePage::OnSymbolctrlSelected( wxCommandEvent& WXUNUSED(event) )
@@ -985,7 +989,7 @@ void wxRichTextListStylePage::OnSymbolctrlSelected( wxCommandEvent& WXUNUSED(eve
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTBULLETSPAGE_SYMBOLCTRL
+ * wxEVT_TEXT event handler for ID_RICHTEXTBULLETSPAGE_SYMBOLCTRL
  */
 
 void wxRichTextListStylePage::OnSymbolctrlUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1003,7 +1007,7 @@ void wxRichTextListStylePage::OnSymbolctrlUIUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXTBULLETSPAGE_CHOOSE_SYMBOL
+ * wxEVT_BUTTON event handler for ID_RICHTEXTBULLETSPAGE_CHOOSE_SYMBOL
  */
 
 void wxRichTextListStylePage::OnChooseSymbolClick( wxCommandEvent& WXUNUSED(event) )
@@ -1039,7 +1043,7 @@ void wxRichTextListStylePage::OnChooseSymbolUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_SYMBOLFONTCTRL
+ * wxEVT_COMBOBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_SYMBOLFONTCTRL
  */
 
 void wxRichTextListStylePage::OnSymbolfontctrlSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1048,7 +1052,7 @@ void wxRichTextListStylePage::OnSymbolfontctrlSelected( wxCommandEvent& WXUNUSED
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_SYMBOLFONTCTRL
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_SYMBOLFONTCTRL
  */
 
 void wxRichTextListStylePage::OnSymbolfontctrlUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1066,7 +1070,7 @@ void wxRichTextListStylePage::OnSymbolfontctrlUIUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTLISTSTYLEPAGE__PARENTHESESCTRL
+ * wxEVT_CHECKBOX event handler for ID_RICHTEXTLISTSTYLEPAGE__PARENTHESESCTRL
  */
 
 void wxRichTextListStylePage::OnParenthesesctrlClick( wxCommandEvent& WXUNUSED(event) )
@@ -1087,7 +1091,7 @@ void wxRichTextListStylePage::OnParenthesesctrlUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTLISTSTYLEPAGE_PERIODCTRL
+ * wxEVT_CHECKBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_PERIODCTRL
  */
 
 void wxRichTextListStylePage::OnPeriodctrlClick( wxCommandEvent& WXUNUSED(event) )
@@ -1108,7 +1112,7 @@ void wxRichTextListStylePage::OnPeriodctrlUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_RADIOBUTTON_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNLEFT
+ * wxEVT_RADIOBUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNLEFT
  */
 
 void wxRichTextListStylePage::OnRichtextliststylepageAlignleftSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1117,7 +1121,7 @@ void wxRichTextListStylePage::OnRichtextliststylepageAlignleftSelected( wxComman
 }
 
 /*!
- * wxEVT_COMMAND_RADIOBUTTON_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNRIGHT
+ * wxEVT_RADIOBUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNRIGHT
  */
 
 void wxRichTextListStylePage::OnRichtextliststylepageAlignrightSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1126,7 +1130,7 @@ void wxRichTextListStylePage::OnRichtextliststylepageAlignrightSelected( wxComma
 }
 
 /*!
- * wxEVT_COMMAND_RADIOBUTTON_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_JUSTIFIED
+ * wxEVT_RADIOBUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_JUSTIFIED
  */
 
 void wxRichTextListStylePage::OnRichtextliststylepageJustifiedSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1135,7 +1139,7 @@ void wxRichTextListStylePage::OnRichtextliststylepageJustifiedSelected( wxComman
 }
 
 /*!
- * wxEVT_COMMAND_RADIOBUTTON_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_CENTERED
+ * wxEVT_RADIOBUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_CENTERED
  */
 
 void wxRichTextListStylePage::OnRichtextliststylepageCenteredSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1144,7 +1148,7 @@ void wxRichTextListStylePage::OnRichtextliststylepageCenteredSelected( wxCommand
 }
 
 /*!
- * wxEVT_COMMAND_RADIOBUTTON_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNINDETERMINATE
+ * wxEVT_RADIOBUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_ALIGNINDETERMINATE
  */
 
 void wxRichTextListStylePage::OnRichtextliststylepageAlignindeterminateSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1153,7 +1157,7 @@ void wxRichTextListStylePage::OnRichtextliststylepageAlignindeterminateSelected(
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTLEFT
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTLEFT
  */
 
 void wxRichTextListStylePage::OnIndentLeftUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1162,7 +1166,7 @@ void wxRichTextListStylePage::OnIndentLeftUpdated( wxCommandEvent& WXUNUSED(even
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTFIRSTLINE
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTFIRSTLINE
  */
 
 void wxRichTextListStylePage::OnIndentFirstLineUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1171,7 +1175,7 @@ void wxRichTextListStylePage::OnIndentFirstLineUpdated( wxCommandEvent& WXUNUSED
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTRIGHT
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_INDENTRIGHT
  */
 
 void wxRichTextListStylePage::OnIndentRightUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1180,7 +1184,7 @@ void wxRichTextListStylePage::OnIndentRightUpdated( wxCommandEvent& WXUNUSED(eve
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_SPACINGBEFORE
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_SPACINGBEFORE
  */
 
 void wxRichTextListStylePage::OnSpacingBeforeUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1189,7 +1193,7 @@ void wxRichTextListStylePage::OnSpacingBeforeUpdated( wxCommandEvent& WXUNUSED(e
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_SPACINGAFTER
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_SPACINGAFTER
  */
 
 void wxRichTextListStylePage::OnSpacingAfterUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1198,7 +1202,7 @@ void wxRichTextListStylePage::OnSpacingAfterUpdated( wxCommandEvent& WXUNUSED(ev
 }
 
 /*!
- * wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_LINESPACING
+ * wxEVT_COMBOBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_LINESPACING
  */
 
 void wxRichTextListStylePage::OnLineSpacingSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1262,11 +1266,11 @@ void wxRichTextListStylePage::OnNumberUpdate( wxUpdateUIEvent& event )
 void wxRichTextListStylePage::OnStandardBulletUpdate( wxUpdateUIEvent& event )
 {
     int sel = m_styleListBox->GetSelection();
-    event.Enable( sel == wxRICHTEXT_BULLETINDEX_STANDARD );
+    event.Enable( sel == wxRICHTEXT_BULLETINDEX_STANDARD || sel == wxRICHTEXT_BULLETINDEX_BITMAP );
 }
 
 /*!
- * wxEVT_COMMAND_BUTTON_CLICKED event handler for ID_RICHTEXTLISTSTYLEPAGE_CHOOSE_FONT
+ * wxEVT_BUTTON event handler for ID_RICHTEXTLISTSTYLEPAGE_CHOOSE_FONT
  */
 
 void wxRichTextListStylePage::OnChooseFontClick( wxCommandEvent& WXUNUSED(event) )
@@ -1294,7 +1298,7 @@ void wxRichTextListStylePage::OnNamestaticUpdate( wxUpdateUIEvent& event )
 }
 
 /*!
- * wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_NAMECTRL
+ * wxEVT_COMBOBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_NAMECTRL
  */
 
 void wxRichTextListStylePage::OnNamectrlSelected( wxCommandEvent& WXUNUSED(event) )
@@ -1303,7 +1307,7 @@ void wxRichTextListStylePage::OnNamectrlSelected( wxCommandEvent& WXUNUSED(event
 }
 
 /*!
- * wxEVT_COMMAND_TEXT_UPDATED event handler for ID_RICHTEXTLISTSTYLEPAGE_NAMECTRL
+ * wxEVT_TEXT event handler for ID_RICHTEXTLISTSTYLEPAGE_NAMECTRL
  */
 
 void wxRichTextListStylePage::OnNamectrlUpdated( wxCommandEvent& WXUNUSED(event) )
@@ -1320,7 +1324,7 @@ void wxRichTextListStylePage::OnNamectrlUIUpdate( wxUpdateUIEvent& event )
     OnStandardBulletUpdate(event);
 }
 /*!
- * wxEVT_COMMAND_CHECKBOX_CLICKED event handler for ID_RICHTEXTLISTSTYLEPAGE_RIGHTPARENTHESISCTRL
+ * wxEVT_CHECKBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_RIGHTPARENTHESISCTRL
  */
 
 void wxRichTextListStylePage::OnRightParenthesisCtrlClick( wxCommandEvent& WXUNUSED(event) )
@@ -1341,12 +1345,10 @@ void wxRichTextListStylePage::OnRightParenthesisCtrlUpdate( wxUpdateUIEvent& eve
 }
 
 /*!
- * wxEVT_COMMAND_COMBOBOX_SELECTED event handler for ID_RICHTEXTLISTSTYLEPAGE_BULLETALIGNMENTCTRL
+ * wxEVT_COMBOBOX event handler for ID_RICHTEXTLISTSTYLEPAGE_BULLETALIGNMENTCTRL
  */
 
 void wxRichTextListStylePage::OnBulletAlignmentCtrlSelected( wxCommandEvent& WXUNUSED(event) )
 {
     TransferAndPreview();
 }
-
-

@@ -4,17 +4,13 @@
 // Author:      Hajo Kirchhoff
 // Modified by:
 // Created:     06/11/2003
-// RCS-ID:      $Id$
 // Copyright:   (c) 2003 Hajo Kirchhoff
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_URL_NATIVE
 
@@ -49,13 +45,13 @@ public:
 protected:
     wxProtocolError m_error;
 
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxHTTPDummyProto)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxHTTPDummyProto);
     DECLARE_PROTOCOL(wxHTTPDummyProto)
 };
 
 // the only "reason for being" for this class is to tell
 // wxURL that there is someone dealing with the http protocol
-IMPLEMENT_DYNAMIC_CLASS(wxHTTPDummyProto, wxProtocol)
+wxIMPLEMENT_DYNAMIC_CLASS(wxHTTPDummyProto, wxProtocol);
 IMPLEMENT_PROTOCOL(wxHTTPDummyProto, wxT("http"), NULL, false)
 USE_PROTOCOL(wxHTTPDummyProto)
 

@@ -3,7 +3,6 @@
 // Purpose:     wxToggleButton unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-14
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_TOGGLEBTN
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -28,8 +24,8 @@ class ToggleButtonTestCase : public CppUnit::TestCase
 public:
     ToggleButtonTestCase() { }
 
-    void setUp();
-    void tearDown();
+    void setUp() wxOVERRIDE;
+    void tearDown() wxOVERRIDE;
 
 private:
     CPPUNIT_TEST_SUITE( ToggleButtonTestCase );
@@ -42,7 +38,7 @@ private:
 
     wxToggleButton* m_button;
 
-    DECLARE_NO_COPY_CLASS(ToggleButtonTestCase)
+    wxDECLARE_NO_COPY_CLASS(ToggleButtonTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -64,7 +60,7 @@ void ToggleButtonTestCase::tearDown()
 void ToggleButtonTestCase::Click()
 {
 #if wxUSE_UIACTIONSIMULATOR
-    EventCounter clicked(m_button, wxEVT_COMMAND_TOGGLEBUTTON_CLICKED);
+    EventCounter clicked(m_button, wxEVT_TOGGLEBUTTON);
 
     wxUIActionSimulator sim;
 
@@ -89,7 +85,7 @@ void ToggleButtonTestCase::Click()
 
 void ToggleButtonTestCase::Value()
 {
-    EventCounter clicked(m_button, wxEVT_COMMAND_BUTTON_CLICKED);
+    EventCounter clicked(m_button, wxEVT_BUTTON);
 
     m_button->SetValue(true);
 

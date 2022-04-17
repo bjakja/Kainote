@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxBitmapComboBox
 // Author:      Jaakko Salli
 // Created:     Sep-10-2006
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Jaakko Salli
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,16 +14,16 @@
 
 #if wxUSE_XRC && wxUSE_BITMAPCOMBOBOX
 
-class WXDLLIMPEXP_FWD_ADV wxBitmapComboBox;
+class WXDLLIMPEXP_FWD_CORE wxBitmapComboBox;
 
 class WXDLLIMPEXP_XRC wxBitmapComboBoxXmlHandler : public wxXmlResourceHandler
 {
-    DECLARE_DYNAMIC_CLASS(wxBitmapComboBoxXmlHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxBitmapComboBoxXmlHandler);
 
 public:
     wxBitmapComboBoxXmlHandler();
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
 private:
     wxBitmapComboBox*    m_combobox;

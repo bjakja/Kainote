@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxGrid
 // Author:      Agron Selimaj
 // Created:     2005/08/11
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Agron Selimaj, Freepour Controls Inc.
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,13 +16,13 @@
 
 class WXDLLIMPEXP_XRC wxGridXmlHandler : public wxXmlResourceHandler
 {
-    DECLARE_DYNAMIC_CLASS(wxGridXmlHandler)
+    wxDECLARE_DYNAMIC_CLASS(wxGridXmlHandler);
 
 public:
     wxGridXmlHandler();
 
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 };
 
 #endif // wxUSE_XRC && wxUSE_GRID

@@ -4,17 +4,13 @@
 // Author:      Vadim Zeitlin
 // Modified by: Marcin Malich
 // Created:     13.11.97
-// RCS-ID:      $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin <zeitlin@dptmaths.ens-cachan.fr>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_OWNER_DRAWN
 
@@ -24,19 +20,15 @@
 #include "wx/msw/private/dc.h"
 #include "wx/msw/wrapcctl.h"            // for HIMAGELIST
 
-#ifndef DSS_HIDEPREFIX
-#define DSS_HIDEPREFIX  0x0200
-#endif
-
-// ----------------------------------------------------------------------------
-// constants for base class
-// ----------------------------------------------------------------------------
-
-int wxOwnerDrawnBase::ms_defaultMargin = 3;
-
 // ============================================================================
 // implementation of wxOwnerDrawn class
 // ============================================================================
+
+int wxOwnerDrawn::MSWGetTextType() const
+{
+    // By default, handle the mnemonics.
+    return DST_PREFIXTEXT;
+}
 
 // draw the item
 bool wxOwnerDrawn::OnDrawItem(wxDC& dc, const wxRect& rc,
@@ -78,7 +70,7 @@ bool wxOwnerDrawn::OnDrawItem(wxDC& dc, const wxRect& rc,
         SIZE sizeRect;
         ::GetTextExtentPoint32(hdc, text.c_str(), text.length(), &sizeRect);
 
-        int flags = DST_PREFIXTEXT;
+        int flags = MSWGetTextType();
         if ( (stat & wxODDisabled) && !(stat & wxODSelected) )
             flags |= DSS_DISABLED;
 

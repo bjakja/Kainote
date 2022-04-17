@@ -3,7 +3,6 @@
 // Purpose:     a generic wxStaticLine class used for mac before adaptation
 // Author:      Vadim Zeitlin
 // Created:     28.06.99
-// Version:     $Id$
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -28,7 +27,7 @@ public:
                   const wxPoint &pos = wxDefaultPosition,
                   const wxSize &size = wxDefaultSize,
                   long style = wxLI_HORIZONTAL,
-                  const wxString &name = wxStaticLineNameStr )
+                  const wxString &name = wxASCII_STR(wxStaticLineNameStr) )
         : m_statbox(NULL)
     {
         Create(parent, id, pos, size, style, name);
@@ -39,7 +38,7 @@ public:
                  const wxPoint &pos = wxDefaultPosition,
                  const wxSize &size = wxDefaultSize,
                  long style = wxLI_HORIZONTAL,
-                 const wxString &name = wxStaticLineNameStr );
+                 const wxString &name = wxASCII_STR(wxStaticLineNameStr) );
 
     // it's necessary to override this wxWindow function because we
     // will want to return the main widget for m_statbox
@@ -50,7 +49,7 @@ protected:
     // we implement the static line using a static box
     wxStaticBox *m_statbox;
 
-    DECLARE_DYNAMIC_CLASS(wxStaticLine)
+    wxDECLARE_DYNAMIC_CLASS(wxStaticLine);
 };
 
 #endif // _WX_GENERIC_STATLINE_H_

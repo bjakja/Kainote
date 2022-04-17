@@ -4,7 +4,6 @@
 // Author:      Guilhem Lavaux
 // Modified by: Vadim Zeitlin to check error codes, added Detach() method
 // Created:     24/06/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Guilhem Lavaux
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -17,12 +16,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/process.h"
 
@@ -32,8 +28,8 @@
 
 wxDEFINE_EVENT( wxEVT_END_PROCESS, wxProcessEvent );
 
-IMPLEMENT_DYNAMIC_CLASS(wxProcess, wxEvtHandler)
-IMPLEMENT_DYNAMIC_CLASS(wxProcessEvent, wxEvent)
+wxIMPLEMENT_DYNAMIC_CLASS(wxProcess, wxEvtHandler);
+wxIMPLEMENT_DYNAMIC_CLASS(wxProcessEvent, wxEvent);
 
 // ============================================================================
 // wxProcess implementation
@@ -50,12 +46,13 @@ void wxProcess::Init(wxEvtHandler *parent, int id, int flags)
 
     m_id         = id;
     m_pid        = 0;
+    m_priority   = wxPRIORITY_DEFAULT;
     m_redirect   = (flags & wxPROCESS_REDIRECT) != 0;
 
 #if wxUSE_STREAMS
-    m_inputStream  = nullptr;
-    m_errorStream  = nullptr;
-    m_outputStream = nullptr;
+    m_inputStream  = NULL;
+    m_errorStream  = NULL;
+    m_outputStream = NULL;
 #endif // wxUSE_STREAMS
 }
 
@@ -69,7 +66,7 @@ wxProcess *wxProcess::Open(const wxString& cmd, int flags)
     {
         // couldn't launch the process
         delete process;
-        return nullptr;
+        return NULL;
     }
 
     process->SetPid(pid);
@@ -108,7 +105,7 @@ void wxProcess::Detach()
     if (m_nextHandler)
         m_nextHandler->SetPreviousHandler(m_previousHandler);
 
-    m_nextHandler = nullptr;
+    m_nextHandler = NULL;
 }
 
 // ----------------------------------------------------------------------------
@@ -169,10 +166,29 @@ bool wxProcess::Exists(int pid)
         case wxKILL_ERROR:
         case wxKILL_BAD_SIGNAL:
             wxFAIL_MSG( wxT("unexpected wxProcess::Kill() return code") );
-            // fall through
+            wxFALLTHROUGH;
 
         case wxKILL_NO_PROCESS:
             return false;
     }
 }
 
+bool wxProcess::Activate() const
+{
+#ifdef __WINDOWS__
+    // This function is defined in src/msw/utils.cpp.
+    extern bool wxMSWActivatePID(long pid);
+
+    return wxMSWActivatePID(m_pid);
+#else
+    return false;
+#endif
+}
+
+void wxProcess::SetPriority(unsigned priority)
+{
+    wxCHECK_RET( priority <= wxPRIORITY_MAX,
+                 wxS("Invalid process priority value.") );
+
+    m_priority = priority;
+}

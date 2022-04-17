@@ -4,17 +4,13 @@
 // Author:      Julian Smart
 // Modified by: Vadim Zeitlin (owner drawn stuff)
 // Created:
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_LISTBOX
 
@@ -26,6 +22,7 @@
     #include "wx/brush.h"
     #include "wx/font.h"
     #include "wx/dc.h"
+    #include "wx/dcclient.h"
     #include "wx/utils.h"
     #include "wx/log.h"
     #include "wx/window.h"
@@ -38,7 +35,13 @@
 
 #if wxUSE_OWNER_DRAWN
     #include  "wx/ownerdrw.h"
-#endif
+
+    namespace
+    {
+        // space beneath/above each row in pixels
+        const int LISTBOX_EXTRA_SPACE = 1;
+    } // anonymous namespace
+#endif // wxUSE_OWNER_DRAWN
 
 // ============================================================================
 // list box item declaration and implementation
@@ -58,7 +61,7 @@ public:
     int GetIndex() const
         { return m_parent->GetItemIndex(const_cast<wxListBoxItem*>(this)); }
 
-    wxString GetName() const
+    wxString GetName() const wxOVERRIDE
         { return m_parent->GetString(GetIndex()); }
 
 private:
@@ -84,7 +87,6 @@ void wxListBox::Init()
 {
     m_noItems = 0;
     m_updateHorizontalExtent = false;
-    m_selectedByKeyboard = false;
 }
 
 bool wxListBox::Create(wxWindow *parent,
@@ -172,7 +174,7 @@ WXDWORD wxListBox::MSWGetStyle(long style, WXDWORD *exstyle) const
     if ( m_windowStyle & wxLB_SORT )
         msStyle |= LBS_SORT;
 
-#if wxUSE_OWNER_DRAWN && !defined(__WXWINCE__)
+#if wxUSE_OWNER_DRAWN
     if ( m_windowStyle & wxLB_OWNERDRAW )
     {
         // we don't support LBS_OWNERDRAWVARIABLE yet and we also always put
@@ -182,7 +184,18 @@ WXDWORD wxListBox::MSWGetStyle(long style, WXDWORD *exstyle) const
     }
 #endif // wxUSE_OWNER_DRAWN
 
+    // tabs stops are expanded by default on linux/GTK and macOS/Cocoa
+    msStyle |= LBS_USETABSTOPS;
+
     return msStyle;
+}
+
+void wxListBox::MSWUpdateFontOnDPIChange(const wxSize& newDPI)
+{
+    wxListBoxBase::MSWUpdateFontOnDPIChange(newDPI);
+
+    if ( m_font.IsOk() )
+        SetFont(m_font);
 }
 
 void wxListBox::OnInternalIdle()
@@ -215,6 +228,54 @@ void wxListBox::MSWOnItemsChanged()
 // ----------------------------------------------------------------------------
 // implementation of wxListBoxBase methods
 // ----------------------------------------------------------------------------
+
+void wxListBox::EnsureVisible(int n)
+{
+    wxCHECK_RET( IsValid(n),
+                 wxT("invalid index in wxListBox::EnsureVisible") );
+
+    // when item is before the first visible item, make the item the first visible item
+    const int firstItem = SendMessage(GetHwnd(), LB_GETTOPINDEX, 0, 0);
+    if ( n <= firstItem )
+    {
+        DoSetFirstItem(n);
+        return;
+    }
+
+    // retrieve item height in order to compute last visible item and scroll amount
+    const int itemHeight = SendMessage(GetHwnd(), LB_GETITEMHEIGHT, 0, 0);
+    if ( itemHeight == LB_ERR || itemHeight == 0)
+        return;
+
+    // compute the amount of fully visible items
+    int countVisible = GetClientSize().y / itemHeight;
+    if ( !countVisible )
+        countVisible = 1;
+
+    // when item is before the last fully visible item, it is already visible
+    const int lastItem = firstItem + countVisible - 1;
+    if ( n <= lastItem )
+        return;
+
+    // make the item the last visible item by setting the first visible item accordingly
+    DoSetFirstItem(n - countVisible + 1);
+}
+
+int wxListBox::GetTopItem() const
+{
+    return SendMessage(GetHwnd(), LB_GETTOPINDEX, 0, 0);
+}
+
+int wxListBox::GetCountPerPage() const
+{
+    const LRESULT lineHeight = SendMessage(GetHwnd(), LB_GETITEMHEIGHT, 0, 0);
+    if ( lineHeight == LB_ERR || lineHeight == 0 )
+        return -1;
+
+    const RECT r = wxGetClientRect(GetHwnd());
+
+    return (r.bottom - r.top) / lineHeight;
+}
 
 void wxListBox::DoSetFirstItem(int N)
 {
@@ -306,6 +367,10 @@ bool wxListBox::IsSelected(int N) const
 
 void *wxListBox::DoGetItemClientData(unsigned int n) const
 {
+    // This is done here for the same reasons as in wxChoice method with the
+    // same name.
+    SetLastError(ERROR_SUCCESS);
+
     LPARAM rc = SendMessage(GetHwnd(), LB_GETITEMDATA, n, 0);
     if ( rc == LB_ERR && GetLastError() != ERROR_SUCCESS )
     {
@@ -539,8 +604,17 @@ void wxListBox::SetHorizontalExtent(const wxString& s)
     }
 
     if ( largestExtent )
+    {
+        largestExtent = MSWGetFullItemSize(largestExtent, 0 /* height */).x;
         SendMessage(GetHwnd(), LB_SETHORIZONTALEXTENT, LOWORD(largestExtent), 0L);
+    }
     //else: it shouldn't change
+}
+
+bool wxListBox::MSWSetTabStops(const wxVector<int>& tabStops)
+{
+    return SendMessage(GetHwnd(), LB_SETTABSTOPS, (WPARAM)tabStops.size(),
+                       (LPARAM)(tabStops.empty() ? NULL : &tabStops[0])) == TRUE;
 }
 
 wxSize wxListBox::DoGetBestClientSize() const
@@ -559,13 +633,13 @@ wxSize wxListBox::DoGetBestClientSize() const
     // give it some reasonable default value if there are no strings in the
     // list
     if ( wListbox == 0 )
-        wListbox = 100;
+        wListbox = 6*GetCharWidth();
 
     // the listbox should be slightly larger than the widest string
     wListbox += 3*GetCharWidth();
 
     // add room for the scrollbar
-    wListbox += wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
+    wListbox += wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, m_parent);
 
     // don't make the listbox too tall (limit height to 10 items) but don't
     // make it too small neither
@@ -582,29 +656,24 @@ wxSize wxListBox::DoGetBestClientSize() const
 bool wxListBox::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
 {
     wxEventType evtType;
-    int n = wxNOT_FOUND;
     if ( param == LBN_SELCHANGE )
     {
         if ( HasMultipleSelection() )
             return CalcAndSendEvent();
 
-        evtType = wxEVT_COMMAND_LISTBOX_SELECTED;
-
-        if ( m_selectedByKeyboard )
-        {
-            // We shouldn't use the mouse position to find the item as mouse
-            // can be anywhere, ask the listbox itself. Notice that this can't
-            // be used when the item is selected using the mouse however as
-            // LB_GETCARETINDEX will always return a valid item, even if the
-            // mouse is clicked below all the items, which is why we find the
-            // item ourselves below in this case.
-            n = SendMessage(GetHwnd(), LB_GETCARETINDEX, 0, 0);
-        }
-        //else: n will be determined below from the mouse position
+        evtType = wxEVT_LISTBOX;
     }
     else if ( param == LBN_DBLCLK )
     {
-        evtType = wxEVT_COMMAND_LISTBOX_DOUBLECLICKED;
+        // Clicking under the last item in the listbox generates double click
+        // event for the currently selected item which is rather surprising.
+        // Avoid the surprise by checking that we do have an item under mouse.
+        const DWORD pos = ::GetMessagePos();
+        const wxPoint pt(GET_X_LPARAM(pos), GET_Y_LPARAM(pos));
+        if ( HitTest(ScreenToClient(pt)) == wxNOT_FOUND )
+            return false;
+
+        evtType = wxEVT_LISTBOX_DCLICK;
     }
     else
     {
@@ -612,14 +681,7 @@ bool wxListBox::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
         return false;
     }
 
-    // Find the item position if it was a mouse-generated selection event or a
-    // double click event (which is always generated using the mouse)
-    if ( n == wxNOT_FOUND )
-    {
-        const DWORD pos = ::GetMessagePos();
-        const wxPoint pt(GET_X_LPARAM(pos), GET_Y_LPARAM(pos));
-        n = HitTest(ScreenToClient(wxPoint(pt)));
-    }
+    const int n = ListBox_GetCurSel(GetHwnd());
 
     // We get events even when mouse is clicked outside of any valid item from
     // Windows, just ignore them.
@@ -636,20 +698,6 @@ bool wxListBox::MSWCommand(WXUINT param, WXWORD WXUNUSED(id))
     return SendEvent(evtType, n, true /* selection */);
 }
 
-WXLRESULT
-wxListBox::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
-{
-    // Remember whether there was a keyboard or mouse event before
-    // LBN_SELCHANGE: this allows us to correctly determine the item affected
-    // by it in MSWCommand() above in any case.
-    if ( WM_KEYFIRST <= nMsg && nMsg <= WM_KEYLAST )
-        m_selectedByKeyboard = true;
-    else if ( WM_MOUSEFIRST <= nMsg && nMsg <= WM_MOUSELAST )
-        m_selectedByKeyboard = false;
-
-    return wxListBoxBase::MSWWindowProc(nMsg, wParam, lParam);
-}
-
 // ----------------------------------------------------------------------------
 // owner-drawn list boxes support
 // ----------------------------------------------------------------------------
@@ -661,14 +709,21 @@ wxListBox::MSWWindowProc(WXUINT nMsg, WXWPARAM wParam, WXLPARAM lParam)
 
 bool wxListBox::SetFont(const wxFont &font)
 {
+    wxListBoxBase::SetFont(font);
+
     if ( HasFlag(wxLB_OWNERDRAW) )
     {
         const unsigned count = m_aItems.GetCount();
         for ( unsigned i = 0; i < count; i++ )
-            m_aItems[i]->SetFont(font);
-    }
+            m_aItems[i]->SetFont(m_font);
 
-    wxListBoxBase::SetFont(font);
+        // Non owner drawn list boxes update the item height on their own, but
+        // we need to do it manually in the owner drawn case.
+        wxClientDC dc(this);
+        dc.SetFont(m_font);
+        SendMessage(GetHwnd(), LB_SETITEMHEIGHT, 0,
+                    dc.GetCharHeight() + 2 * LISTBOX_EXTRA_SPACE);
+    }
 
     return true;
 }
@@ -708,13 +763,6 @@ bool wxListBox::RefreshItem(size_t n)
 // drawing
 // -------
 
-namespace
-{
-    // space beneath/above each row in pixels
-    static const int LISTBOX_EXTRA_SPACE = 1;
-
-} // anonymous namespace
-
 // the height is the same for all items
 // TODO should be changed for LBS_OWNERDRAWVARIABLE style listboxes
 
@@ -727,11 +775,7 @@ bool wxListBox::MSWOnMeasure(WXMEASUREITEMSTRUCT *item)
 
     MEASUREITEMSTRUCT *pStruct = (MEASUREITEMSTRUCT *)item;
 
-#ifdef __WXWINCE__
-    HDC hdc = GetDC(NULL);
-#else
     HDC hdc = CreateIC(wxT("DISPLAY"), NULL, NULL, 0);
-#endif
 
     {
         wxDCTemp dc((WXHDC)hdc);
@@ -741,11 +785,7 @@ bool wxListBox::MSWOnMeasure(WXMEASUREITEMSTRUCT *item)
         pStruct->itemWidth  = dc.GetCharWidth();
     }
 
-#ifdef __WXWINCE__
-    ReleaseDC(NULL, hdc);
-#else
     DeleteDC(hdc);
-#endif
 
     return true;
 }
@@ -762,7 +802,7 @@ bool wxListBox::MSWOnDraw(WXDRAWITEMSTRUCT *item)
     if ( pStruct->itemID == (UINT)-1 )
         return false;
 
-    wxListBoxItem *pItem = (wxListBoxItem *)m_aItems[pStruct->itemID];
+    wxOwnerDrawn *pItem = m_aItems[pStruct->itemID];
 
     wxDCTemp dc((WXHDC)pStruct->hDC);
 

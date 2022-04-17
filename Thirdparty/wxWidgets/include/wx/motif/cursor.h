@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -12,13 +11,12 @@
 #ifndef _WX_CURSOR_H_
 #define _WX_CURSOR_H_
 
-#include "wx/gdiobj.h"
 #include "wx/gdicmn.h"
 
 class WXDLLIMPEXP_FWD_CORE wxImage;
 
 // Cursor
-class WXDLLIMPEXP_CORE wxCursor : public wxGDIObject
+class WXDLLIMPEXP_CORE wxCursor : public wxCursorBase
 {
 public:
     wxCursor();
@@ -34,6 +32,7 @@ public:
 
 #if wxUSE_IMAGE
     wxCursor(const wxImage& image);
+    wxCursor(const char* const* xpmData);
 #endif
 
     wxCursor(wxStockCursor id) { InitFromStock(id); }
@@ -54,6 +53,10 @@ protected:
 private:
     void InitFromStock(wxStockCursor);
 
+#if wxUSE_IMAGE
+    void InitFromImage(const wxImage& image);
+#endif
+
     void Create(const char bits[], int width, int height,
                 int hotSpotX = -1, int hotSpotY = -1,
                 const char maskBits[] = NULL);
@@ -62,10 +65,8 @@ private:
     // Make a cursor from standard id
     WXCursor MakeCursor(WXDisplay* display, wxStockCursor id) const;
 
-    DECLARE_DYNAMIC_CLASS(wxCursor)
+    wxDECLARE_DYNAMIC_CLASS(wxCursor);
 };
-
-extern WXDLLIMPEXP_CORE void wxSetCursor(const wxCursor& cursor);
 
 #endif
 // _WX_CURSOR_H_

@@ -2,17 +2,13 @@
 // Name:        src/common/imagjpeg.cpp
 // Purpose:     wxImage JPEG handler
 // Author:      Vaclav Slavik
-// RCS-ID:      $Id$
 // Copyright:   (c) Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_IMAGE && wxUSE_LIBJPEG
 
@@ -38,17 +34,7 @@
     #define boolean wxHACK_BOOLEAN
 #endif
 
-extern "C"
-{
-    #if defined(__WXMSW__)
-        #define XMD_H
-    #endif
-    #include "jpeglib.h"
-}
-
-#ifndef HAVE_WXJPEG_BOOLEAN
-typedef boolean wxjpeg_boolean;
-#endif
+#include "jpeglib.h"
 
 #include "wx/filefn.h"
 #include "wx/wfstream.h"
@@ -80,7 +66,7 @@ typedef boolean wxjpeg_boolean;
 // wxJPEGHandler
 //-----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxJPEGHandler,wxImageHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxJPEGHandler,wxImageHandler);
 
 #if wxUSE_STREAMS
 
@@ -104,7 +90,7 @@ CPP_METHODDEF(void) wx_init_source ( j_decompress_ptr WXUNUSED(cinfo) )
 {
 }
 
-CPP_METHODDEF(wxjpeg_boolean) wx_fill_input_buffer ( j_decompress_ptr cinfo )
+CPP_METHODDEF(boolean) wx_fill_input_buffer ( j_decompress_ptr cinfo )
 {
     wx_src_ptr src = (wx_src_ptr) cinfo->src;
 
@@ -149,10 +135,25 @@ CPP_METHODDEF(void) wx_term_source ( j_decompress_ptr cinfo )
 
 // JPEG error manager:
 
+#ifdef __VISUALC__
+    // We don't care about the size of this struct, but we still get an
+    // annoying warning C4324 here:
+    //
+    //  'wx_error_mgr' : structure was padded due to __declspec(align())
+    //
+    // and suppressing it seems to be the only way to avoid it.
+    #pragma warning(push)
+    #pragma warning(disable: 4324)
+#endif
+
 struct wx_error_mgr : public jpeg_error_mgr
 {
   jmp_buf setjmp_buffer;    /* for return to caller */
 };
+
+#ifdef __VISUALC__
+    #pragma warning(pop)
+#endif
 
 /*
  * Here's the routine that will replace the standard error_exit method:
@@ -174,18 +175,21 @@ CPP_METHODDEF(void) wx_error_exit (j_common_ptr cinfo)
 /*
  * This will replace the standard output_message method when the user
  * wants us to be silent (verbose==false). We must have such method instead of
- * simply using nullptr for cinfo->err->output_message because it's called
+ * simply using NULL for cinfo->err->output_message because it's called
  * unconditionally from within libjpeg when there's "garbage input".
  */
 CPP_METHODDEF(void) wx_ignore_message (j_common_ptr WXUNUSED(cinfo))
 {
 }
 
+} // extern "C"
+
+static
 void wx_jpeg_io_src( j_decompress_ptr cinfo, wxInputStream& infile )
 {
     wx_src_ptr src;
 
-    if (cinfo->src == nullptr) {    /* first time for this JPEG object? */
+    if (cinfo->src == NULL) {    /* first time for this JPEG object? */
         cinfo->src = (struct jpeg_source_mgr *)
             (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
             sizeof(wx_source_mgr));
@@ -193,7 +197,7 @@ void wx_jpeg_io_src( j_decompress_ptr cinfo, wxInputStream& infile )
     src = (wx_src_ptr) cinfo->src;
     src->pub.bytes_in_buffer = 0; /* forces fill_input_buffer on first read */
     src->buffer = new JOCTET[JPEG_IO_BUFFER_SIZE];
-    src->pub.next_input_byte = nullptr; /* until buffer loaded */
+    src->pub.next_input_byte = NULL; /* until buffer loaded */
     src->stream = &infile;
 
     src->pub.init_source = wx_init_source;
@@ -203,13 +207,11 @@ void wx_jpeg_io_src( j_decompress_ptr cinfo, wxInputStream& infile )
     src->pub.term_source = wx_term_source;
 }
 
-} // extern "C"
-
 static inline void wx_cmyk_to_rgb(unsigned char* rgb, const unsigned char* cmyk)
 {
-    register int k = 255 - cmyk[3];
-    register int k2 = cmyk[3];
-    register int c;
+    int k = 255 - cmyk[3];
+    int k2 = cmyk[3];
+    int c;
 
     c = k + k2 * (255 - cmyk[0]) / 255;
     rgb[0] = (unsigned char)((c > 255) ? 0 : (255 - c));
@@ -229,7 +231,7 @@ static inline void wx_cmyk_to_rgb(unsigned char* rgb, const unsigned char* cmyk)
 
 bool wxJPEGHandler::LoadFile( wxImage *image, wxInputStream& stream, bool verbose, int WXUNUSED(index) )
 {
-    wxCHECK_MSG( image, false, "nullptr image pointer" );
+    wxCHECK_MSG( image, false, "NULL image pointer" );
 
     struct jpeg_decompress_struct cinfo;
     wx_error_mgr jerr;
@@ -372,7 +374,7 @@ CPP_METHODDEF(void) wx_init_destination (j_compress_ptr cinfo)
     dest->pub.free_in_buffer = OUTPUT_BUF_SIZE;
 }
 
-CPP_METHODDEF(wxjpeg_boolean) wx_empty_output_buffer (j_compress_ptr cinfo)
+CPP_METHODDEF(boolean) wx_empty_output_buffer (j_compress_ptr cinfo)
 {
     wx_dest_ptr dest = (wx_dest_ptr) cinfo->dest;
 
@@ -391,11 +393,13 @@ CPP_METHODDEF(void) wx_term_destination (j_compress_ptr cinfo)
         dest->stream->Write(dest->buffer, datacount);
 }
 
-GLOBAL(void) wx_jpeg_io_dest (j_compress_ptr cinfo, wxOutputStream& outfile)
+} // extern "C"
+
+static void wx_jpeg_io_dest(j_compress_ptr cinfo, wxOutputStream& outfile)
 {
     wx_dest_ptr dest;
 
-    if (cinfo->dest == nullptr) {    /* first time for this JPEG object? */
+    if (cinfo->dest == NULL) {    /* first time for this JPEG object? */
         cinfo->dest = (struct jpeg_destination_mgr *)
             (*cinfo->mem->alloc_small) ((j_common_ptr) cinfo, JPOOL_PERMANENT,
             sizeof(wx_destination_mgr));
@@ -407,8 +411,6 @@ GLOBAL(void) wx_jpeg_io_dest (j_compress_ptr cinfo, wxOutputStream& outfile)
     dest->pub.term_destination = wx_term_destination;
     dest->stream = &outfile;
 }
-
-} // extern "C"
 
 bool wxJPEGHandler::SaveFile( wxImage *image, wxOutputStream& stream, bool verbose )
 {
@@ -501,7 +503,11 @@ bool wxJPEGHandler::DoCanRead( wxInputStream& stream )
 
 /*static*/ wxVersionInfo wxJPEGHandler::GetLibraryVersionInfo()
 {
-    return wxVersionInfo("libjpeg", JPEG_LIB_VERSION/10, JPEG_LIB_VERSION%10);
+#if defined(JPEG_LIB_VERSION_MAJOR) && defined(JPEG_LIB_VERSION_MINOR)
+    return wxVersionInfo("libjpeg", JPEG_LIB_VERSION_MAJOR, JPEG_LIB_VERSION_MINOR);
+#else
+    return wxVersionInfo("libjpeg", JPEG_LIB_VERSION / 10, JPEG_LIB_VERSION % 10);
+#endif
 }
 
 #endif   // wxUSE_LIBJPEG

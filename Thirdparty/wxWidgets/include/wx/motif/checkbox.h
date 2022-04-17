@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -15,7 +14,7 @@
 // Checkbox item (single checkbox)
 class WXDLLIMPEXP_CORE wxCheckBox: public wxCheckBoxBase
 {
-    DECLARE_DYNAMIC_CLASS(wxCheckBox)
+    wxDECLARE_DYNAMIC_CLASS(wxCheckBox);
 
 public:
     inline wxCheckBox() { Init(); }
@@ -23,7 +22,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxCheckBoxNameStr)
+        const wxString& name = wxASCII_STR(wxCheckBoxNameStr))
     {
         Init();
 
@@ -34,7 +33,7 @@ public:
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize, long style = 0,
         const wxValidator& validator = wxDefaultValidator,
-        const wxString& name = wxCheckBoxNameStr);
+        const wxString& name = wxASCII_STR(wxCheckBoxNameStr));
     virtual void SetValue(bool);
     virtual bool GetValue() const ;
     virtual void Command(wxCommandEvent& event);
@@ -45,7 +44,7 @@ private:
     // common part of all constructors
     void Init()
     {
-        m_evtType = wxEVT_COMMAND_CHECKBOX_CLICKED;
+        m_evtType = wxEVT_CHECKBOX;
     }
 
     virtual void DoSet3StateValue(wxCheckBoxState state);
@@ -54,7 +53,7 @@ private:
 
     // public for the callback
 public:
-    // either exEVT_COMMAND_CHECKBOX_CLICKED or ..._TOGGLEBUTTON_CLICKED
+    // either wxEVT_CHECKBOX or ..._TOGGLEBUTTON
     wxEventType m_evtType;
 };
 

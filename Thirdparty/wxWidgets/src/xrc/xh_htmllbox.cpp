@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxSimpleHtmlListBox
 // Author:      Francesco Montorsi
 // Created:     2006/10/21
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,9 +10,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_HTML
 
@@ -22,7 +18,9 @@
 #include "wx/htmllbox.h"
 #include "wx/filesys.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxSimpleHtmlListBoxXmlHandler, wxXmlResourceHandler)
+#include "wx/xml/xml.h"
+
+wxIMPLEMENT_DYNAMIC_CLASS(wxSimpleHtmlListBoxXmlHandler, wxXmlResourceHandler);
 
 wxSimpleHtmlListBoxXmlHandler::wxSimpleHtmlListBoxXmlHandler()
 : wxXmlResourceHandler(), m_insideBox(false)
@@ -68,10 +66,7 @@ wxObject *wxSimpleHtmlListBoxXmlHandler::DoCreateResource()
         // handle <item>Label</item>
 
         // add to the list
-        wxString str = GetNodeContent(m_node);
-        if (m_resource->GetFlags() & wxXRC_USE_LOCALE)
-            str = wxGetTranslation(str, m_resource->GetDomain());
-        strList.Add(str);
+        strList.Add(GetNodeText(m_node, wxXRC_TEXT_NO_ESCAPE));
 
         return NULL;
     }

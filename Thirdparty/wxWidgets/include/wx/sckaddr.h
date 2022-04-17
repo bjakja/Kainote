@@ -4,7 +4,6 @@
 // Author:      Guilhem Lavaux
 // Modified by: Vadim Zeitlin to switch to wxSockAddressImpl implementation
 // Created:     26/04/1997
-// RCS-ID:      $Id$
 // Copyright:   (c) 1997, 1998 Guilhem Lavaux
 //              (c) 2008, 2009 Vadim Zeitlin
 // Licence:     wxWindows licence
@@ -65,20 +64,13 @@ protected:
 
 private:
     void Init();
-    DECLARE_ABSTRACT_CLASS(wxSockAddress)
+    wxDECLARE_ABSTRACT_CLASS(wxSockAddress);
 };
 
 // An IP address (either IPv4 or IPv6)
 class WXDLLIMPEXP_NET wxIPaddress : public wxSockAddress
 {
 public:
-    wxIPaddress() : wxSockAddress() { }
-    wxIPaddress(const wxIPaddress& other)
-        : wxSockAddress(other),
-          m_origHostname(other.m_origHostname)
-    {
-    }
-
     bool operator==(const wxIPaddress& addr) const;
 
     bool Hostname(const wxString& name);
@@ -114,43 +106,36 @@ private:
     virtual void DoInitImpl() = 0;
 
 
-    DECLARE_ABSTRACT_CLASS(wxIPaddress)
+    wxDECLARE_ABSTRACT_CLASS(wxIPaddress);
 };
 
 // An IPv4 address
 class WXDLLIMPEXP_NET wxIPV4address : public wxIPaddress
 {
 public:
-    wxIPV4address() : wxIPaddress() { }
-    wxIPV4address(const wxIPV4address& other) : wxIPaddress(other) { }
-
     // implement wxSockAddress pure virtuals:
-    virtual Family Type() { return IPV4; }
-    virtual wxSockAddress *Clone() const { return new wxIPV4address(*this); }
+    virtual Family Type() wxOVERRIDE { return IPV4; }
+    virtual wxSockAddress *Clone() const wxOVERRIDE { return new wxIPV4address(*this); }
 
 
     // implement wxIPaddress pure virtuals:
-    virtual bool IsLocalHost() const;
+    virtual bool IsLocalHost() const wxOVERRIDE;
 
-    virtual wxString IPAddress() const;
+    virtual wxString IPAddress() const wxOVERRIDE;
 
 
     // IPv4-specific methods:
     bool Hostname(unsigned long addr);
 
     // make base class methods hidden by our overload visible
-    //
-    // FIXME-VC6: replace this with "using IPAddress::Hostname" (not supported
-    //            by VC6) when support for it is dropped
-    wxString Hostname() const { return wxIPaddress::Hostname(); }
-    bool Hostname(const wxString& name) { return wxIPaddress::Hostname(name); }
+    using wxIPaddress::Hostname;
 
     bool BroadcastAddress();
 
 private:
-    virtual void DoInitImpl();
+    virtual void DoInitImpl() wxOVERRIDE;
 
-    DECLARE_DYNAMIC_CLASS(wxIPV4address)
+    wxDECLARE_DYNAMIC_CLASS(wxIPV4address);
 };
 
 
@@ -160,18 +145,15 @@ private:
 class WXDLLIMPEXP_NET wxIPV6address : public wxIPaddress
 {
 public:
-    wxIPV6address() : wxIPaddress() { }
-    wxIPV6address(const wxIPV6address& other) : wxIPaddress(other) { }
-
     // implement wxSockAddress pure virtuals:
-    virtual Family Type() { return IPV6; }
-    virtual wxSockAddress *Clone() const { return new wxIPV6address(*this); }
+    virtual Family Type() wxOVERRIDE { return IPV6; }
+    virtual wxSockAddress *Clone() const wxOVERRIDE { return new wxIPV6address(*this); }
 
 
     // implement wxIPaddress pure virtuals:
-    virtual bool IsLocalHost() const;
+    virtual bool IsLocalHost() const wxOVERRIDE;
 
-    virtual wxString IPAddress() const;
+    virtual wxString IPAddress() const wxOVERRIDE;
 
     // IPv6-specific methods:
     bool Hostname(unsigned char addr[16]);
@@ -179,9 +161,9 @@ public:
     using wxIPaddress::Hostname;
 
 private:
-    virtual void DoInitImpl();
+    virtual void DoInitImpl() wxOVERRIDE;
 
-    DECLARE_DYNAMIC_CLASS(wxIPV6address)
+    wxDECLARE_DYNAMIC_CLASS(wxIPV6address);
 };
 
 #endif // wxUSE_IPV6
@@ -197,14 +179,11 @@ private:
 class WXDLLIMPEXP_NET wxUNIXaddress : public wxSockAddress
 {
 public:
-    wxUNIXaddress() : wxSockAddress() { }
-    wxUNIXaddress(const wxUNIXaddress& other) : wxSockAddress(other) { }
-
     void Filename(const wxString& name);
     wxString Filename() const;
 
-    virtual Family Type() { return UNIX; }
-    virtual wxSockAddress *Clone() const { return new wxUNIXaddress(*this); }
+    virtual Family Type() wxOVERRIDE { return UNIX; }
+    virtual wxSockAddress *Clone() const wxOVERRIDE { return new wxUNIXaddress(*this); }
 
 private:
     wxSockAddressImpl& GetUNIX();
@@ -213,7 +192,7 @@ private:
         return const_cast<wxUNIXaddress *>(this)->GetUNIX();
     }
 
-    DECLARE_DYNAMIC_CLASS(wxUNIXaddress)
+    wxDECLARE_DYNAMIC_CLASS(wxUNIXaddress);
 };
 
 #endif // wxHAS_UNIX_DOMAIN_SOCKETS

@@ -2,7 +2,6 @@
 // Name:        notebook.h
 // Purpose:     interface of wxNotebook
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -24,10 +23,9 @@ enum
 #define wxNB_FIXEDWIDTH       0x0100
 #define wxNB_MULTILINE        0x0200
 #define wxNB_NOPAGETHEME      0x0400
-#define wxNB_FLAT             0x0800
 
-wxEventType wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED;
-wxEventType wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING;
+wxEventType wxEVT_NOTEBOOK_PAGE_CHANGED;
+wxEventType wxEVT_NOTEBOOK_PAGE_CHANGING;
 
 
 /**
@@ -59,27 +57,25 @@ wxEventType wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING;
     @style{wxNB_NOPAGETHEME}
            (Windows only) Display a solid colour on notebook pages, and not a
            gradient, which can reduce performance.
-    @style{wxNB_FLAT}
-           (Windows CE only) Show tabs in a flat style.
     @endStyleTable
 
     The styles wxNB_LEFT, RIGHT and BOTTOM are not supported under
-    Microsoft Windows XP when using visual themes.
+    Microsoft Windows when using visual themes.
 
     @beginEventEmissionTable{wxBookCtrlEvent}
     @event{EVT_NOTEBOOK_PAGE_CHANGED(id, func)}
         The page selection was changed.
-        Processes a @c wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED event.
+        Processes a @c wxEVT_NOTEBOOK_PAGE_CHANGED event.
     @event{EVT_NOTEBOOK_PAGE_CHANGING(id, func)}
         The page selection is about to be changed.
-        Processes a @c wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING event.
+        Processes a @c wxEVT_NOTEBOOK_PAGE_CHANGING event.
         This event can be vetoed.
     @endEventTable
 
 
     @section notebook_bg Page backgrounds
 
-    On Windows XP, the default theme paints a gradient on the notebook's pages.
+    On Windows, the default theme paints a background on the notebook's pages.
     If you wish to suppress this theme, for aesthetic or performance reasons,
     there are three ways of doing it.
     You can use @c wxNB_NOPAGETHEME to disable themed drawing for a particular
@@ -110,7 +106,7 @@ wxEventType wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING;
 
     @library{wxcore}
     @category{bookctrl}
-    @appearance{notebook.png}
+    @appearance{notebook}
 
     @see wxBookCtrl, wxBookCtrlEvent, wxImageList, @ref page_samples_notebook
 */

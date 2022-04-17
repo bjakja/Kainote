@@ -3,7 +3,6 @@
 // Purpose:     wxMSWFileSystemWatcher
 // Author:      Bartosz Bekier
 // Created:     2009-05-26
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Bartosz Bekier <bartosz.bekier@gmail.com>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -27,7 +26,7 @@ public:
     // implementation for it using the platform native support for watching the
     // entire directory trees.
     virtual bool AddTree(const wxFileName& path, int events = wxFSW_EVENT_ALL,
-                         const wxString& filter = wxEmptyString);
+                         const wxString& filter = wxEmptyString) wxOVERRIDE;
 
 protected:
     bool Init();

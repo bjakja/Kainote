@@ -4,8 +4,7 @@
 // Author:      Vadim Zeitlin
 // Modified by:
 // Created:     2006-05-27
-// RCS-ID:      $Id$
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,28 +16,95 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif //WX_PRECOMP
 
 #include "wx/power.h"
+#include "wx/atomic.h"
 #include "wx/msw/private.h"
 
-#if !defined(__WINCE_STANDARDSDK__)
+// ----------------------------------------------------------------------------
+// wxPowerResource
+// ----------------------------------------------------------------------------
 
-#ifdef __WXWINCE__
-    typedef SYSTEM_POWER_STATUS_EX SYSTEM_POWER_STATUS;
-    BOOL GetSystemPowerStatus(SYSTEM_POWER_STATUS *status)
+namespace
+{
+
+wxAtomicInt g_powerResourceScreenRefCount = 0;
+wxAtomicInt g_powerResourceSystemRefCount = 0;
+
+bool UpdatePowerResourceExecutionState()
+{
+    EXECUTION_STATE executionState = ES_CONTINUOUS;
+    if ( g_powerResourceScreenRefCount > 0 )
+        executionState |= ES_DISPLAY_REQUIRED;
+
+    if ( g_powerResourceSystemRefCount > 0 )
+        executionState |= ES_SYSTEM_REQUIRED;
+
+    if ( ::SetThreadExecutionState(executionState) == 0 )
     {
-        return GetSystemPowerStatusEx(status, TRUE);
+        wxLogLastError(wxT("SetThreadExecutionState()"));
+        return false;
     }
-#endif
+
+    return true;
+}
+
+} // anonymous namespace
+
+bool
+wxPowerResource::Acquire(wxPowerResourceKind kind,
+                         const wxString& WXUNUSED(reason))
+{
+    switch ( kind )
+    {
+        case wxPOWER_RESOURCE_SCREEN:
+            wxAtomicInc(g_powerResourceScreenRefCount);
+            break;
+
+        case wxPOWER_RESOURCE_SYSTEM:
+            wxAtomicInc(g_powerResourceSystemRefCount);
+            break;
+    }
+
+    return UpdatePowerResourceExecutionState();
+}
+
+void wxPowerResource::Release(wxPowerResourceKind kind)
+{
+    switch ( kind )
+    {
+        case wxPOWER_RESOURCE_SCREEN:
+            if ( g_powerResourceScreenRefCount > 0 )
+            {
+                wxAtomicDec(g_powerResourceScreenRefCount);
+            }
+            else
+            {
+                wxFAIL_MSG( "Screen power resource was not acquired" );
+            }
+            break;
+
+        case wxPOWER_RESOURCE_SYSTEM:
+            if ( g_powerResourceSystemRefCount > 0 )
+            {
+                wxAtomicDec(g_powerResourceSystemRefCount);
+            }
+            else
+            {
+                wxFAIL_MSG( "System power resource was not acquired" );
+            }
+            break;
+    }
+
+    UpdatePowerResourceExecutionState();
+}
+
 
 // ----------------------------------------------------------------------------
 // helper functions
@@ -55,15 +121,12 @@ static inline bool wxGetPowerStatus(SYSTEM_POWER_STATUS *sps)
     return true;
 }
 
-#endif
-
 // ============================================================================
 // implementation
 // ============================================================================
 
 wxPowerType wxGetPowerType()
 {
-#if !defined(__WINCE_STANDARDSDK__)
     SYSTEM_POWER_STATUS sps;
     if ( wxGetPowerStatus(&sps) )
     {
@@ -77,18 +140,17 @@ wxPowerType wxGetPowerType()
 
             default:
                 wxLogDebug(wxT("Unknown ACLineStatus=%u"), sps.ACLineStatus);
+                wxFALLTHROUGH;
             case 255:
                 break;
         }
     }
-#endif
 
     return wxPOWER_UNKNOWN;
 }
 
 wxBatteryState wxGetBatteryState()
 {
-#if !defined(__WINCE_STANDARDSDK__)
     SYSTEM_POWER_STATUS sps;
     if ( wxGetPowerStatus(&sps) )
     {
@@ -106,7 +168,6 @@ wxBatteryState wxGetBatteryState()
                 return wxBATTERY_CRITICAL_STATE;
         }
     }
-#endif
 
     return wxBATTERY_UNKNOWN_STATE;
 }

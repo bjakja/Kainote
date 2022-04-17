@@ -4,17 +4,13 @@
 // Author:      Kevin Smith
 // Modified by:
 // Created:     Jan 22 1999
-// RCS-ID:      $Id$
 // Copyright:   (c) 1999 Kevin Smith
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_VALIDATORS
 
@@ -50,7 +46,7 @@
 
 #include "wx/valgen.h"
 
-IMPLEMENT_CLASS(wxGenericValidator, wxValidator)
+wxIMPLEMENT_CLASS(wxGenericValidator, wxValidator);
 
 wxGenericValidator::wxGenericValidator(bool *val)
 {
@@ -129,7 +125,7 @@ bool wxGenericValidator::Copy(const wxGenericValidator& val)
 }
 
 // Called to transfer data to the window
-bool wxGenericValidator::TransferToWindow(void)
+bool wxGenericValidator::TransferToWindow()
 {
     if ( !m_validatorWindow )
         return false;
@@ -350,7 +346,7 @@ bool wxGenericValidator::TransferToWindow(void)
         }
         else if (m_pFloat)
         {
-            pControl->SetValue(wxString::Format(wxT("%g"), *m_pFloat));
+            pControl->SetValue(wxString::Format(wxS("%g"), double(*m_pFloat)));
             return true;
         }
         else if (m_pDouble)
@@ -415,7 +411,7 @@ bool wxGenericValidator::TransferToWindow(void)
 }
 
 // Called to transfer data from the window
-bool wxGenericValidator::TransferFromWindow(void)
+bool wxGenericValidator::TransferFromWindow()
 {
     if ( !m_validatorWindow )
         return false;
@@ -697,16 +693,16 @@ bool wxGenericValidator::TransferFromWindow(void)
 */
 void wxGenericValidator::Initialize()
 {
-    m_pBool = nullptr;
-    m_pInt = nullptr;
-    m_pString = nullptr;
-    m_pArrayInt = nullptr;
+    m_pBool = NULL;
+    m_pInt = NULL;
+    m_pString = NULL;
+    m_pArrayInt = NULL;
 #if wxUSE_DATETIME
-    m_pDateTime = nullptr;
+    m_pDateTime = NULL;
 #endif // wxUSE_DATETIME
-    m_pFileName = nullptr;
-    m_pFloat = nullptr;
-    m_pDouble = nullptr;
+    m_pFileName = NULL;
+    m_pFloat = NULL;
+    m_pDouble = NULL;
 }
 
 #endif // wxUSE_VALIDATORS

@@ -3,8 +3,7 @@
 // Purpose:     implements wxGenericAboutBox() function
 // Author:      Vadim Zeitlin
 // Created:     2006-10-08
-// RCS-ID:      $Id$
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +18,6 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_ABOUTDLG
 
@@ -85,10 +81,10 @@ wxString wxAboutDialogInfo::GetDescriptionAndCredits() const
 wxIcon wxAboutDialogInfo::GetIcon() const
 {
     wxIcon icon = m_icon;
-    if ( !icon.IsOk() && wxTheApp )
+    if ( !icon.IsOk() )
     {
         const wxTopLevelWindow * const
-            tlw = wxDynamicCast(wxTheApp->GetTopWindow(), wxTopLevelWindow);
+            tlw = wxDynamicCast(wxApp::GetMainTopWindow(), wxTopLevelWindow);
         if ( tlw )
             icon = tlw->GetIcon();
     }
@@ -148,7 +144,7 @@ bool wxGenericAboutDialog::Create(const wxAboutDialogInfo& info, wxWindow* paren
         nameAndVersion << wxT(' ') << info.GetVersion();
     wxStaticText *label = new wxStaticText(this, wxID_ANY, nameAndVersion);
     wxFont fontBig(*wxNORMAL_FONT);
-    fontBig.SetPointSize(fontBig.GetPointSize() + 2);
+    fontBig.SetFractionalPointSize(fontBig.GetFractionalPointSize() + 2.0);
     fontBig.SetWeight(wxFONTWEIGHT_BOLD);
     label->SetFont(fontBig);
 
@@ -221,10 +217,8 @@ bool wxGenericAboutDialog::Create(const wxAboutDialogInfo& info, wxWindow* paren
     CentreOnParent();
 
 #if !wxUSE_MODAL_ABOUT_DIALOG
-    Connect(wxEVT_CLOSE_WINDOW,
-            wxCloseEventHandler(wxGenericAboutDialog::OnCloseWindow));
-    Connect(wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED,
-            wxCommandEventHandler(wxGenericAboutDialog::OnOK));
+    Bind(wxEVT_CLOSE_WINDOW, &wxGenericAboutDialog::OnCloseWindow, this);
+    Bind(wxEVT_BUTTON, &wxGenericAboutDialog::OnOK, this, wxID_OK);
 #endif // !wxUSE_MODAL_ABOUT_DIALOG
 
     return true;
@@ -278,16 +272,24 @@ void wxGenericAboutDialog::AddCollapsiblePane(const wxString& title,
 
 void wxGenericAboutDialog::OnCloseWindow(wxCloseEvent& event)
 {
-    Destroy();
+    // safeguards in case the window is still shown using ShowModal
+    if ( !IsModal() )
+        Destroy();
 
     event.Skip();
 }
 
-void wxGenericAboutDialog::OnOK(wxCommandEvent& WXUNUSED(event))
+void wxGenericAboutDialog::OnOK(wxCommandEvent& event)
 {
-    // By default a modeless dialog would be just hidden, destroy this one
-    // instead.
-    Destroy();
+    // safeguards in case the window is still shown using ShowModal
+    if ( !IsModal() )
+    {
+        // By default a modeless dialog would be just hidden, destroy this one
+        // instead.
+        Destroy();
+    }
+    else
+        event.Skip();
 }
 
 #endif // !wxUSE_MODAL_ABOUT_DIALOG
@@ -310,7 +312,7 @@ void wxGenericAboutBox(const wxAboutDialogInfo& info, wxWindow* parent)
 // currently wxAboutBox is implemented natively only under these platforms, for
 // the others we provide a generic fallback here
 #if !defined(__WXMSW__) && !defined(__WXMAC__) && \
-        (!defined(__WXGTK26__) || defined(__WXUNIVERSAL__))
+        (!defined(__WXGTK20__) || defined(__WXUNIVERSAL__))
 
 void wxAboutBox(const wxAboutDialogInfo& info, wxWindow* parent)
 {

@@ -3,7 +3,6 @@
 // Purpose:     wxGenericRichMessageDialog
 // Author:      Rickard Westerlund
 // Created:     2010-07-04
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,27 +20,27 @@ class WXDLLIMPEXP_CORE wxGenericRichMessageDialog
 public:
     wxGenericRichMessageDialog(wxWindow *parent,
                                const wxString& message,
-                               const wxString& caption,
-                               long style)
+                               const wxString& caption = wxASCII_STR(wxMessageBoxCaptionStr),
+                               long style = wxOK | wxCENTRE)
         : wxRichMessageDialogBase( parent, message, caption, style ),
           m_checkBox(NULL),
           m_detailsPane(NULL)
     { }
 
-    virtual bool IsCheckBoxChecked() const;
+    virtual bool IsCheckBoxChecked() const wxOVERRIDE;
 
 protected:
     wxCheckBox *m_checkBox;
     wxCollapsiblePane *m_detailsPane;
 
     // overrides methods in the base class
-    virtual void AddMessageDialogCheckBox(wxSizer *sizer);
-    virtual void AddMessageDialogDetails(wxSizer *sizer);
+    virtual void AddMessageDialogCheckBox(wxSizer *sizer) wxOVERRIDE;
+    virtual void AddMessageDialogDetails(wxSizer *sizer) wxOVERRIDE;
 
 private:
     void OnPaneChanged(wxCollapsiblePaneEvent& event);
 
-    DECLARE_EVENT_TABLE()
+    wxDECLARE_EVENT_TABLE();
 
     wxDECLARE_NO_COPY_CLASS(wxGenericRichMessageDialog);
 };

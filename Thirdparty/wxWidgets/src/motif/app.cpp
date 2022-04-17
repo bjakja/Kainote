@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     17/09/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ extern bool wxAddIdleCallback();
 
 wxHashTable *wxWidgetHashTable = NULL;
 
-IMPLEMENT_DYNAMIC_CLASS(wxApp, wxEvtHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxApp, wxEvtHandler);
 
 extern "C"
 {
@@ -207,11 +206,8 @@ bool wxApp::Initialize(int& argc_, wxChar **argv_)
             }
         }
 
-        argc = argcX11;
-
         // update internal arg[cv] as X11 may have removed processed options:
-        argc = argc_;
-        argv = argv_;
+        argv.Init(argcX11, argvX11);
     }
     //else: XtOpenDisplay() didn't modify our parameters
 

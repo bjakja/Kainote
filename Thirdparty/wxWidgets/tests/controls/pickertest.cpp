@@ -3,15 +3,16 @@
 // Purpose:     Tests for various wxPickerBase based classes
 // Author:      Steven Lamerton
 // Created:     2010-08-07
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
+#if wxUSE_COLOURPICKERCTRL || \
+    wxUSE_DIRPICKERCTRL    || \
+    wxUSE_FILEPICKERCTRL   || \
+    wxUSE_FONTPICKERCTRL
+
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -21,6 +22,7 @@
 #include "wx/filepicker.h"
 #include "wx/fontpicker.h"
 #include "pickerbasetest.h"
+#include "asserthelper.h"
 
 #if wxUSE_COLOURPICKERCTRL
 
@@ -30,11 +32,11 @@ class ColourPickerCtrlTestCase : public PickerBaseTestCase,
 public:
     ColourPickerCtrlTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxPickerBase *GetBase() const { return m_colour; }
+    virtual wxPickerBase *GetBase() const wxOVERRIDE { return m_colour; }
 
     CPPUNIT_TEST_SUITE( ColourPickerCtrlTestCase );
         wxPICKER_BASE_TESTS();
@@ -42,7 +44,7 @@ private:
 
     wxColourPickerCtrl *m_colour;
 
-    DECLARE_NO_COPY_CLASS(ColourPickerCtrlTestCase)
+    wxDECLARE_NO_COPY_CLASS(ColourPickerCtrlTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -74,11 +76,11 @@ class DirPickerCtrlTestCase : public PickerBaseTestCase,
 public:
     DirPickerCtrlTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxPickerBase *GetBase() const { return m_dir; }
+    virtual wxPickerBase *GetBase() const wxOVERRIDE { return m_dir; }
 
     CPPUNIT_TEST_SUITE( DirPickerCtrlTestCase );
         wxPICKER_BASE_TESTS();
@@ -86,7 +88,7 @@ private:
 
     wxDirPickerCtrl *m_dir;
 
-    DECLARE_NO_COPY_CLASS(DirPickerCtrlTestCase)
+    wxDECLARE_NO_COPY_CLASS(DirPickerCtrlTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -119,11 +121,11 @@ class FilePickerCtrlTestCase : public PickerBaseTestCase,
 public:
     FilePickerCtrlTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxPickerBase *GetBase() const { return m_file; }
+    virtual wxPickerBase *GetBase() const wxOVERRIDE { return m_file; }
 
     CPPUNIT_TEST_SUITE( FilePickerCtrlTestCase );
         wxPICKER_BASE_TESTS();
@@ -131,7 +133,7 @@ private:
 
     wxFilePickerCtrl *m_file;
 
-    DECLARE_NO_COPY_CLASS(FilePickerCtrlTestCase)
+    wxDECLARE_NO_COPY_CLASS(FilePickerCtrlTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -165,19 +167,22 @@ class FontPickerCtrlTestCase : public PickerBaseTestCase,
 public:
     FontPickerCtrlTestCase() { }
 
-    virtual void setUp();
-    virtual void tearDown();
+    virtual void setUp() wxOVERRIDE;
+    virtual void tearDown() wxOVERRIDE;
 
 private:
-    virtual wxPickerBase *GetBase() const { return m_font; }
+    virtual wxPickerBase *GetBase() const wxOVERRIDE { return m_font; }
 
     CPPUNIT_TEST_SUITE( FontPickerCtrlTestCase );
         wxPICKER_BASE_TESTS();
+        CPPUNIT_TEST( ColourSelection );
     CPPUNIT_TEST_SUITE_END();
+
+    void ColourSelection();
 
     wxFontPickerCtrl *m_font;
 
-    DECLARE_NO_COPY_CLASS(FontPickerCtrlTestCase)
+    wxDECLARE_NO_COPY_CLASS(FontPickerCtrlTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -199,4 +204,18 @@ void FontPickerCtrlTestCase::tearDown()
     wxDELETE(m_font);
 }
 
+void FontPickerCtrlTestCase::ColourSelection()
+{
+    wxColour selectedColour(0xFF4269UL);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Default font picker color must be black",
+        m_font->GetSelectedColour(), wxColour(*wxBLACK));
+
+    m_font->SetSelectedColour(selectedColour);
+
+    CPPUNIT_ASSERT_EQUAL_MESSAGE("Font picker did not react to color selection",
+        m_font->GetSelectedColour(), selectedColour);
+}
 #endif //wxUSE_FONTPICKERCTRL
+
+#endif

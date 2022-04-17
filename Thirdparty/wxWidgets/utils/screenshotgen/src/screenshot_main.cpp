@@ -2,16 +2,11 @@
 // Name:        screenshot_main.cpp
 // Purpose:     Implements the window containing all controls.
 // Author:      Utensil Candel (UtensilCandel@@gmail.com)
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
 #include "wx/wxprec.h"
-
-#ifdef __BORLANDC__
-#pragma hdrstop
-#endif
 
 // for all others, include the necessary headers wxWidgets headers)
 #ifndef WX_PRECOMP
@@ -99,9 +94,11 @@ void ScreenshotFrame::OnCaptureAllControls(wxCommandEvent& WXUNUSED(event))
     // check if there are other screenshots taken before
     if (wxFileName::DirExists(dir))
     {
-        int choice = wxMessageBox(_("It seems that you have already generated some screenshots.\n\nClick YES to delete them all (recommended) or NO to preserve them.\nClick CANCEL to cancel this auto-capture operation."),
-                            _("Delete existing screenshots?"),
-                            wxYES_NO|wxCANCEL|wxICON_QUESTION, this);
+        int choice = wxMessageBox(
+            _("It seems that you have already generated some screenshots.\n\nClick YES to delete them all (recommended) or NO to preserve them.\nClick CANCEL to cancel this auto-capture operation."),
+            _("Delete existing screenshots?"),
+            wxYES_NO | wxCANCEL | wxICON_QUESTION, this);
+
         switch(choice)
         {
             case wxYES:

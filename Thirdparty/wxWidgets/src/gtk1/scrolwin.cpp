@@ -5,7 +5,6 @@
 // Modified by: Ron Lee
 //              Vadim Zeitlin: removed 90% of duplicated common code
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Robert Roebling
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,9 +20,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/scrolwin.h"
 #include "wx/gtk1/private.h"
@@ -177,6 +173,11 @@ void wxScrollHelper::DoScroll( int x_pos, int y_pos )
                 &m_xScrollPosition);
     DoScrollOneDir(wxVERTICAL, m_win->m_vAdjust, y_pos, m_yScrollPixelsPerLine,
                 &m_yScrollPosition);
+}
+
+bool wxScrollHelper::IsScrollbarShown(int WXUNUSED(orient)) const
+{
+    return true;
 }
 
 void wxScrollHelper::DoShowScrollbars(wxScrollbarVisibility WXUNUSED(horz),

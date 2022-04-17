@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     2007/05/10
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 Stefan Csomor
 // Licence:     wxWindows licence
 // Notes:       See http://developer.apple.com/documentation/CoreFoundation/Conceptual/CFBinaryData/index.html
@@ -35,14 +34,13 @@ public:
     typedef wxCFRef<CFDataRef> super_type;
 
     /*! @method     wxCFDataRef
-        @abstract   Assumes ownership of p and creates a reference to it.
-        @templatefield otherType    Any type.
-        @param p        The raw pointer to assume ownership of.  May be NULL.
-        @discussion Like shared_ptr, it is assumed that the caller has a strong reference to p and intends
+        @abstract   Assumes ownership of r and creates a reference to it.
+        @param r        The data reference to assume ownership of.  May be NULL.
+        @discussion Like shared_ptr, it is assumed that the caller has a strong reference to r and intends
                     to transfer ownership of that reference to this ref holder.  If the object comes from
                     a Create or Copy method then this is the correct behaviour.  If the object comes from
                     a Get method then you must CFRetain it yourself before passing it to this constructor.
-                    A handy way to do this is to use the non-member wxCFRefFromGet factory funcion.
+                    A handy way to do this is to use the non-member wxCFRefFromGet factory function.
                     This method is templated and takes an otherType *p.  This prevents implicit conversion
                     using an operator refType() in a different ref-holding class type.
     */

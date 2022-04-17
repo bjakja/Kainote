@@ -2,9 +2,26 @@
 // Name:        html/helpctrl.h
 // Purpose:     interface of wxHtmlHelpController
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+
+#define wxID_HTML_HELPFRAME   (wxID_HIGHEST + 1)
+
+/// This style indicates that the window is
+/// embedded in the application and must not be
+/// destroyed by the help controller.
+#define wxHF_EMBEDDED                0x00008000
+
+/// Create a dialog for the help window.
+#define wxHF_DIALOG                  0x00010000
+
+/// Create a frame for the help window.
+#define wxHF_FRAME                   0x00020000
+
+/// Make the dialog modal when displaying help.
+#define wxHF_MODAL                   0x00040000
+
+
 
 /**
     @class wxHtmlHelpController
@@ -177,7 +194,7 @@ public:
         Sets whether the help frame should prevent application from exiting
         if it's the only remaining top level window.
 
-        @enable
+        @param enable
             If @true, the application will not quit unless the help frame is
             closed. Default is @false, i.e. the application does exit if only
             the help window remains opened.
@@ -227,6 +244,31 @@ public:
     */
     virtual void WriteCustomization(wxConfigBase* cfg,
                                     const wxString& path = wxEmptyString);
+
+    /**
+       Get the current help window
+    */
+    wxHtmlHelpWindow* GetHelpWindow();
+
+    /**
+       Set the help window to be managed by this controller.  This makes it
+    possible to have a help window that might not be in a wxHtmlHelpFrame or
+    dialog but is embedded in some other window in the application.  Be sure
+    to use the wxHF_EMBEDDED style in this case.
+    */
+    void SetHelpWindow(wxHtmlHelpWindow* helpWindow);
+
+    /**
+       Returns the current help frame.  (May be NULL.)
+    */
+    wxHtmlHelpFrame* GetFrame();
+
+    /**
+       Returns the current help dialog. (May be NULL.)
+    */
+    wxHtmlHelpDialog* GetDialog();
+
+
 
 protected:
 

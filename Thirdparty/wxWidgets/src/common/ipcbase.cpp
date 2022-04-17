@@ -4,26 +4,22 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
 #endif
 
 #include "wx/ipcbase.h"
 
-wxIMPLEMENT_ABSTRACT_CLASS(wxServerBase, wxObject)
-wxIMPLEMENT_ABSTRACT_CLASS(wxClientBase, wxObject)
-wxIMPLEMENT_ABSTRACT_CLASS(wxConnectionBase, wxObject)
+wxIMPLEMENT_ABSTRACT_CLASS(wxServerBase, wxObject);
+wxIMPLEMENT_ABSTRACT_CLASS(wxClientBase, wxObject);
+wxIMPLEMENT_ABSTRACT_CLASS(wxConnectionBase, wxObject);
 
 wxConnectionBase::wxConnectionBase(void *buffer, size_t bytes)
     : m_buffer((char *)buffer),
@@ -31,7 +27,7 @@ wxConnectionBase::wxConnectionBase(void *buffer, size_t bytes)
       m_deletebufferwhendone(false),
       m_connected(true)
 {
-  if ( buffer == nullptr )
+  if ( buffer == NULL )
   { // behave like next constructor
     m_buffersize = 0;
     m_deletebufferwhendone = true;
@@ -39,7 +35,7 @@ wxConnectionBase::wxConnectionBase(void *buffer, size_t bytes)
 }
 
 wxConnectionBase::wxConnectionBase()
-    : m_buffer(nullptr),
+    : m_buffer(NULL),
       m_buffersize(0),
       m_deletebufferwhendone(true),
       m_connected(true)
@@ -126,6 +122,6 @@ void *wxConnectionBase::GetBufferAtLeast( size_t bytes )
       return m_buffer;
     } // user-supplied buffer, fail
     else
-      return nullptr;
+      return NULL;
   }
 }

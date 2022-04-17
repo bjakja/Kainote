@@ -6,7 +6,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -34,11 +33,11 @@ public:
     virtual ~wxMacPrintDialog();
 
     bool Create(wxWindow *parent, wxPrintDialogData* data = NULL);
-    virtual int ShowModal();
+    virtual int ShowModal() wxOVERRIDE;
 
-    virtual wxPrintDialogData& GetPrintDialogData() { return m_printDialogData; }
-    virtual wxPrintData& GetPrintData() { return m_printDialogData.GetPrintData(); }
-    virtual wxDC *GetPrintDC();
+    virtual wxPrintDialogData& GetPrintDialogData() wxOVERRIDE { return m_printDialogData; }
+    virtual wxPrintData& GetPrintData() wxOVERRIDE { return m_printDialogData.GetPrintData(); }
+    virtual wxDC *GetPrintDC() wxOVERRIDE;
 
 private:
     wxPrintDialogData   m_printDialogData;
@@ -47,7 +46,7 @@ private:
     wxWindow*           m_dialogParent;
 
 private:
-    DECLARE_DYNAMIC_CLASS(wxPrintDialog)
+    wxDECLARE_DYNAMIC_CLASS(wxPrintDialog);
 };
 
 /*
@@ -61,17 +60,17 @@ public:
     wxMacPageSetupDialog(wxWindow *parent, wxPageSetupDialogData *data = NULL);
     virtual ~wxMacPageSetupDialog();
 
-    virtual wxPageSetupDialogData& GetPageSetupDialogData();
+    virtual wxPageSetupDialogData& GetPageSetupDialogData() wxOVERRIDE;
 
     bool Create(wxWindow *parent, wxPageSetupDialogData *data = NULL);
-    virtual int ShowModal();
+    virtual int ShowModal() wxOVERRIDE;
 
 private:
     wxPageSetupDialogData   m_pageSetupData;
     wxWindow*               m_dialogParent;
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxMacPageSetupDialog)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMacPageSetupDialog);
 };
 
 class WXDLLIMPEXP_FWD_CORE wxTextCtrl;
@@ -87,7 +86,7 @@ class WXDLLIMPEXP_CORE wxMacPageMarginsDialog : public wxDialog
 public:
     wxMacPageMarginsDialog(wxFrame* parent, wxPageSetupDialogData* data);
     bool TransferToWindow();
-    bool TransferDataFromWindow();
+    bool TransferDataFromWindow() wxOVERRIDE;
 
     virtual wxPageSetupDialogData& GetPageSetupDialogData() { return *m_pageSetupDialogData; }
 
@@ -105,7 +104,7 @@ private:
     bool CheckValue(wxTextCtrl* textCtrl, int *value, int minValue, const wxString& name);
 
 private:
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxMacPageMarginsDialog)
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxMacPageMarginsDialog);
 };
 
 

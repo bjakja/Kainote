@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,7 @@
     #include "wx/string.h"
 #endif
 
-IMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAcceleratorTable, wxObject);
 
 // ----------------------------------------------------------------------------
 // wxAccelList: a list of wxAcceleratorEntries

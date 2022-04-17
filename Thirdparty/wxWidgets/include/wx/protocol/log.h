@@ -3,7 +3,6 @@
 // Purpose:     wxProtocolLog class for logging network exchanges
 // Author:      Troelsk, Vadim Zeitlin
 // Created:     2009-03-06
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -33,12 +32,12 @@ public:
     // Called by wxProtocol-derived classes to actually log something
     virtual void LogRequest(const wxString& str)
     {
-        DoLogString("==> " + str);
+        DoLogString(wxASCII_STR("==> ") + str);
     }
 
     virtual void LogResponse(const wxString& str)
     {
-        DoLogString("<== " + str);
+        DoLogString(wxASCII_STR("<== ") + str);
     }
 
 protected:

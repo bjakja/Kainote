@@ -3,7 +3,6 @@
 // Purpose:     wxGauge unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-15
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,9 +10,6 @@
 
 #if wxUSE_GAUGE
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -25,8 +21,8 @@ class GaugeTestCase : public CppUnit::TestCase
 public:
     GaugeTestCase() { }
 
-    void setUp();
-    void tearDown();
+    void setUp() wxOVERRIDE;
+    void tearDown() wxOVERRIDE;
 
 private:
     CPPUNIT_TEST_SUITE( GaugeTestCase );
@@ -41,7 +37,7 @@ private:
 
     wxGauge* m_gauge;
 
-    DECLARE_NO_COPY_CLASS(GaugeTestCase)
+    wxDECLARE_NO_COPY_CLASS(GaugeTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default

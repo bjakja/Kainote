@@ -4,7 +4,6 @@
 // Author:      Stefan Csomor
 // Modified by:
 // Created:     1998-01-01
-// RCS-ID:      $Id$
 // Copyright:   (c) Stefan Csomor
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,11 +20,12 @@
     #include "wx/dcclient.h"
 #endif
 
+#include "wx/osx/private/available.h"
 #include "wx/osx/cocoa/private/textimpl.h"
 
 // work in progress
 
-@interface wxNSTableDataSource : NSObject wxOSX_10_6_AND_LATER(<NSComboBoxDataSource>)
+@interface wxNSTableDataSource : NSObject <NSComboBoxDataSource>
 {
     wxNSComboBoxControl* impl;
 }
@@ -35,12 +35,6 @@
 
 @end
 
-
-@interface wxNSComboBox : NSComboBox
-{
-}
-
-@end
 
 @implementation wxNSComboBox
 
@@ -54,6 +48,33 @@
     }
 }
 
+- (void) dealloc
+{
+    [fieldEditor release];
+    [super dealloc];
+}
+
+// Over-riding NSComboBox onKeyDown method doesn't work for key events.
+// Ensure that we can use our own wxNSTextFieldEditor to catch key events.
+// See windowWillReturnFieldEditor in nonownedwnd.mm.
+// Key events will be caught and handled via wxNSTextFieldEditor onkey...
+// methods in textctrl.mm.
+
+- (void) setFieldEditor:(wxNSTextFieldEditor*) editor
+{
+    if ( editor != fieldEditor )
+    {
+        [editor retain];
+        [fieldEditor release];
+        fieldEditor = editor;
+    }
+}
+
+- (wxNSTextFieldEditor*) fieldEditor
+{
+    return fieldEditor;
+}
+
 - (void)controlTextDidChange:(NSNotification *)aNotification
 {
     wxUnusedVar(aNotification);
@@ -62,7 +83,7 @@
     {
         wxWindow* wxpeer = (wxWindow*) impl->GetWXPeer();
         if ( wxpeer ) {
-            wxCommandEvent event(wxEVT_COMMAND_TEXT_UPDATED, wxpeer->GetId());
+            wxCommandEvent event(wxEVT_TEXT, wxpeer->GetId());
             event.SetEventObject( wxpeer );
             event.SetString( static_cast<wxComboBox*>(wxpeer)->GetValue() );
             wxpeer->HandleWindowEvent( event );
@@ -70,34 +91,119 @@
     }
 }
 
-- (void)comboBoxSelectionDidChange:(NSNotification *)notification
+- (void)controlTextDidEndEditing:(NSNotification *) aNotification
+{
+    wxUnusedVar(aNotification);
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
+    if ( impl )
+    {
+        wxNSTextFieldControl* timpl = dynamic_cast<wxNSTextFieldControl*>(impl);
+        if ( timpl )
+            timpl->UpdateInternalSelectionFromEditor(fieldEditor);
+        impl->DoNotifyFocusLost();
+    }
+}
+
+- (void)comboBoxWillPopUp:(NSNotification *)notification
 {
     wxUnusedVar(notification);
     wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
+    if( impl && impl->ShouldSendEvents() )
+    {
+        wxComboBox* wxpeer = static_cast<wxComboBox*>(impl->GetWXPeer());
+        if( wxpeer )
+        {
+            wxCommandEvent event(wxEVT_COMBOBOX_DROPDOWN, wxpeer->GetId());
+            event.SetEventObject( wxpeer );
+            wxpeer->GetEventHandler()->ProcessEvent( event );
+        }
+    }
+}
+
+- (void)comboBoxWillDismiss:(NSNotification *)notification
+{
+    wxUnusedVar(notification);
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
+    if( impl && impl->ShouldSendEvents() )
+    {
+        wxComboBox* wxpeer = static_cast<wxComboBox*>(impl->GetWXPeer());
+        if( wxpeer )
+        {
+            wxCommandEvent event(wxEVT_COMBOBOX_CLOSEUP, wxpeer->GetId());
+            event.SetEventObject( wxpeer );
+            wxpeer->GetEventHandler()->ProcessEvent( event );
+        }
+    }
+}
+
+- (void)comboBoxSelectionDidChange:(NSNotification *)notification
+{
+    wxUnusedVar(notification);
+    wxNSComboBoxControl* const
+        impl = (wxNSComboBoxControl* ) wxWidgetImpl::FindFromWXWidget( self );
     if ( impl && impl->ShouldSendEvents())
     {
         wxComboBox* wxpeer = static_cast<wxComboBox*>(impl->GetWXPeer());
         if ( wxpeer ) {
             const int sel = wxpeer->GetSelection();
+            const wxString& val = wxpeer->GetString(sel);
 
-            wxCommandEvent event(wxEVT_COMMAND_COMBOBOX_SELECTED, wxpeer->GetId());
+            // We need to manually set the new value because at this time it
+            // still contains the old value, but we want GetValue() to return
+            // the new one if it's called from an event handler invoked below.
+            impl->SetStringValue(val);
+
+            wxCommandEvent event(wxEVT_COMBOBOX, wxpeer->GetId());
             event.SetEventObject( wxpeer );
             event.SetInt( sel );
-            event.SetString( wxpeer->GetString(sel) );
-            // For some reason, wxComboBox::GetValue will not return the newly selected item 
-            // while we're inside this callback, so use AddPendingEvent to make sure
-            // GetValue() returns the right value.
-            wxEventLoop* const loop = (wxEventLoop*) wxEventLoopBase::GetActive();
-            if ( loop )
-                loop->OSXUseLowLevelWakeup(true);
+            event.SetString( val );
+            wxpeer->HandleWindowEvent( event );
 
-            wxpeer->GetEventHandler()->AddPendingEvent( event );
-
-            if ( loop )
-                loop->OSXUseLowLevelWakeup(false);
+            wxCommandEvent eventText(wxEVT_TEXT, wxpeer->GetId());
+            eventText.SetEventObject( wxpeer );
+            eventText.SetString( val );
+            wxpeer->HandleWindowEvent( eventText );
         }
     }
 }
+
+
+- (BOOL)control:(NSControl*)control textView:(NSTextView*)textView doCommandBySelector:(SEL)commandSelector
+{
+    wxUnusedVar(textView);
+    wxUnusedVar(control);
+    
+    BOOL handled = NO;
+
+    // send back key events wx' common code knows how to handle
+    
+    wxWidgetCocoaImpl* impl = (wxWidgetCocoaImpl* ) wxWidgetImpl::FindFromWXWidget( self );
+    if ( impl  )
+    {
+        wxWindow* wxpeer = (wxWindow*) impl->GetWXPeer();
+        if ( wxpeer )
+        {
+            if (commandSelector == @selector(insertNewline:))
+            {
+                [textView insertNewlineIgnoringFieldEditor:self];
+                handled = YES;
+            }
+            else if ( commandSelector == @selector(insertTab:))
+            {
+                [textView insertTabIgnoringFieldEditor:self];
+                handled = YES;
+            }
+            else if ( commandSelector == @selector(insertBacktab:))
+            {
+                [textView insertTabIgnoringFieldEditor:self];
+                handled = YES;
+            }
+        }
+    }
+
+    return handled;
+}
+
 @end
 
 wxNSComboBoxControl::wxNSComboBoxControl( wxComboBox *wxPeer, WXWidget w )
@@ -108,6 +214,30 @@ wxNSComboBoxControl::wxNSComboBoxControl( wxComboBox *wxPeer, WXWidget w )
 
 wxNSComboBoxControl::~wxNSComboBoxControl()
 {
+}
+
+void wxNSComboBoxControl::mouseEvent(WX_NSEvent event, WXWidget slf, void *_cmd)
+{
+    // NSComboBox has its own event loop, which reacts very badly to our synthetic
+    // events used to signal when a wxEvent is posted, so during that time we switch
+    // the wxEventLoop::WakeUp implementation to a lower-level version
+    
+    bool reset = false;
+    wxEventLoop* const loop = (wxEventLoop*) wxEventLoopBase::GetActive();
+
+    if ( loop != NULL && [event type] == NSLeftMouseDown )
+    {
+        reset = true;
+        loop->OSXUseLowLevelWakeup(true);
+    }
+    
+    wxOSX_EventHandlerPtr superimpl = (wxOSX_EventHandlerPtr) [[slf superclass] instanceMethodForSelector:(SEL)_cmd];
+    superimpl(slf, (SEL)_cmd, event);
+ 
+    if ( reset )
+    {
+        loop->OSXUseLowLevelWakeup(false);
+    }
 }
 
 int wxNSComboBoxControl::GetSelectedItem() const
@@ -142,12 +272,36 @@ int wxNSComboBoxControl::GetNumberOfItems() const
 
 void wxNSComboBoxControl::InsertItem(int pos, const wxString& item)
 {
-    [m_comboBox insertItemWithObjectValue:wxCFStringRef( item , m_wxPeer->GetFont().GetEncoding() ).AsNSString() atIndex:pos];
+    wxCFStringRef itemLabel(  item, m_wxPeer->GetFont().GetEncoding() );
+    NSString* const cocoaStr = itemLabel.AsNSString();
+
+    if ( m_wxPeer->HasFlag(wxCB_SORT) )
+    {
+        NSArray* const objectValues = m_comboBox.objectValues;
+
+        pos = [objectValues indexOfObject: cocoaStr
+                            inSortedRange: NSMakeRange(0, objectValues.count)
+                            options: NSBinarySearchingInsertionIndex
+                            usingComparator: ^(id obj1, id obj2)
+                                {
+                                    return [obj1 caseInsensitiveCompare: obj2];
+                                }];
+    }
+
+    [m_comboBox insertItemWithObjectValue:cocoaStr atIndex:pos];
 }
 
 void wxNSComboBoxControl::RemoveItem(int pos)
 {
     SendEvents(false);
+
+    // Explicitly deselect item being removed
+    int selIdx = [m_comboBox indexOfSelectedItem];
+    if (selIdx!= -1 && selIdx == pos)
+    {
+        [m_comboBox deselectItemAtIndex:selIdx];
+    }
+
     [m_comboBox removeItemAtIndex:pos];
     SendEvents(true);
 }
@@ -156,6 +310,7 @@ void wxNSComboBoxControl::Clear()
 {
     SendEvents(false);
     [m_comboBox removeAllItems];
+    [m_comboBox setStringValue:@""];
     SendEvents(true);
 }
 
@@ -179,13 +334,22 @@ int wxNSComboBoxControl::FindString(const wxString& text) const
 void wxNSComboBoxControl::Popup()
 {
     id ax = NSAccessibilityUnignoredDescendant(m_comboBox);
-    [ax accessibilitySetValue: [NSNumber numberWithBool: YES] forAttribute: NSAccessibilityExpandedAttribute];
+    [ax setAccessibilityExpanded: YES];
 }
 
 void wxNSComboBoxControl::Dismiss()
 {
     id ax = NSAccessibilityUnignoredDescendant(m_comboBox);
-    [ax accessibilitySetValue: [NSNumber numberWithBool: NO] forAttribute: NSAccessibilityExpandedAttribute];
+    [ax setAccessibilityExpanded: NO];
+}
+
+void wxNSComboBoxControl::SetEditable(bool editable)
+{
+    [m_comboBox setEditable:editable];
+
+    // When the combobox isn't editable, make sure it is still selectable so the text can be copied
+    if ( !editable )
+        [m_comboBox setSelectable:YES];
 }
 
 wxWidgetImplType* wxWidgetImpl::CreateComboBox( wxComboBox* wxpeer, 
@@ -199,9 +363,16 @@ wxWidgetImplType* wxWidgetImpl::CreateComboBox( wxComboBox* wxpeer,
 {
     NSRect r = wxOSXGetFrameForControl( wxpeer, pos , size ) ;
     wxNSComboBox* v = [[wxNSComboBox alloc] initWithFrame:r];
-    if (style & wxCB_READONLY)
-        [v setEditable:NO];
+    if (WX_IS_MACOS_AVAILABLE(10, 13))
+        [v setNumberOfVisibleItems:999];
+    else
+        [v setNumberOfVisibleItems:13];
+
     wxNSComboBoxControl* c = new wxNSComboBoxControl( wxpeer, v );
+
+    if (style & wxCB_READONLY)
+        c->SetEditable(false);
+
     return c;
 }
 

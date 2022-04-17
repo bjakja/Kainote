@@ -4,7 +4,6 @@
 // Author:      Markus Greither
 // Modified by: 31.07.01: VZ: integrated into wxWidgets
 // Created:     23/03/2001
-// RCS-ID:      $Id$
 // Copyright:   (c) Markus Greither
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -38,16 +37,16 @@ public:
     wxFindReplaceDialogImpl *GetImpl() const { return m_impl; }
 
     // override some base class virtuals
-    virtual bool Show(bool show = true);
-    virtual void SetTitle( const wxString& title);
-    virtual wxString GetTitle() const;
+    virtual bool Show(bool show = true) wxOVERRIDE;
+    virtual void SetTitle( const wxString& title) wxOVERRIDE;
+    virtual wxString GetTitle() const wxOVERRIDE;
 
 protected:
-    virtual void DoGetSize(int *width, int *height) const;
-    virtual void DoGetClientSize(int *width, int *height) const;
+    virtual void DoGetSize(int *width, int *height) const wxOVERRIDE;
+    virtual void DoGetClientSize(int *width, int *height) const wxOVERRIDE;
     virtual void DoSetSize(int x, int y,
                            int width, int height,
-                           int sizeFlags = wxSIZE_AUTO);
+                           int sizeFlags = wxSIZE_AUTO) wxOVERRIDE;
 
     void Init();
 
@@ -55,7 +54,7 @@ protected:
 
     wxFindReplaceDialogImpl *m_impl;
 
-    DECLARE_DYNAMIC_CLASS(wxFindReplaceDialog)
+    wxDECLARE_DYNAMIC_CLASS(wxFindReplaceDialog);
     wxDECLARE_NO_COPY_CLASS(wxFindReplaceDialog);
 };
 

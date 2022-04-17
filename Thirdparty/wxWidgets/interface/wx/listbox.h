@@ -2,7 +2,6 @@
 // Name:        listbox.h
 // Purpose:     interface of wxListBox
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -17,11 +16,15 @@
     (clicking an item toggles the item on or off independently of other
     selections).
 
-    List box elements are numbered from zero.
-    Their number may be limited under some platforms.
+    List box elements are numbered from zero and while the maximal number of
+    elements is unlimited, it is usually better to use a virtual control, not
+    requiring to add all the items to it at once, such as wxDataViewCtrl or
+    wxListCtrl with @c wxLC_VIRTUAL style, once more than a few hundreds items
+    need to be displayed because this control is not optimized, neither from
+    performance nor from user interface point of view, for large number of
+    items.
 
-    A listbox callback gets an event @c wxEVT_COMMAND_LISTBOX_SELECTED for
-    single clicks, and @c wxEVT_COMMAND_LISTBOX_DOUBLECLICKED for double clicks.
+    Notice that the list box doesn't support control characters other than @c TAB.
 
     @beginStyleTable
     @style{wxLB_SINGLE}
@@ -40,7 +43,7 @@
     @style{wxLB_NEEDED_SB}
         Only create a vertical scrollbar if needed.
     @style{wxLB_NO_SB}
-        Don't create vertical scrollbar (wxMSW only).
+        Don't create vertical scrollbar (wxMSW and wxGTK only).
     @style{wxLB_SORT}
         The listbox contents are sorted in alphabetical order.
     @endStyleTable
@@ -51,20 +54,23 @@
 
     @beginEventEmissionTable{wxCommandEvent}
     @event{EVT_LISTBOX(id, func)}
-        Process a @c wxEVT_COMMAND_LISTBOX_SELECTED event, when an item on the
+        Process a @c wxEVT_LISTBOX event, when an item on the
         list is selected or the selection changes.
     @event{EVT_LISTBOX_DCLICK(id, func)}
-        Process a @c wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event, when the listbox
-        is double-clicked.
+        Process a @c wxEVT_LISTBOX_DCLICK event, when the listbox
+        is double-clicked. On some platforms (notably wxGTK2)
+        pressing the enter key is handled as an equivalent of a
+        double-click.
     @endEventTable
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{listbox.png}
+    @appearance{listbox}
 
     @see wxEditableListBox, wxChoice, wxComboBox, wxListCtrl, wxCommandEvent
 */
-class wxListBox : public wxControlWithItems
+class wxListBox : public wxControl,
+                  public wxItemContainer
 {
 public:
     /**
@@ -167,9 +173,21 @@ public:
     void Deselect(int n);
 
     virtual void SetSelection(int n);
-    
+
+    /**
+        Returns the index of the selected item or @c wxNOT_FOUND if no item is
+        selected.
+
+        @return The position of the current selection.
+
+        @remarks This method can be used with single selection list boxes only,
+                 you must use wxListBox::GetSelections() for the list
+                 boxes with wxLB_MULTIPLE style.
+
+        @see SetSelection(), GetStringSelection()
+    */
     virtual int GetSelection() const;
-    
+
     virtual bool SetStringSelection(const wxString& s, bool select);
     virtual bool SetStringSelection(const wxString& s);
 
@@ -177,7 +195,7 @@ public:
         Fill an array of ints with the positions of the currently selected items.
 
         @param selections
-            A reference to an wxArrayInt instance that is used to store the result of
+            A reference to a wxArrayInt instance that is used to store the result of
             the query.
 
         @return The number of selections.
@@ -278,12 +296,8 @@ public:
     /**
         Ensure that the item with the given index is currently shown.
 
-        Scroll the listbox if necessary.
-
-        This method is currently only implemented in wxGTK and wxOSX and does
-        nothing in other ports.
-
-        @see SetFirstItem()
+        This method scrolls the listbox only if necessary and doesn't do
+        anything if this item is already shown, unlike SetFirstItem().
      */
     virtual void EnsureVisible(int n);
 
@@ -294,12 +308,54 @@ public:
      */
     virtual bool IsSorted() const;
 
+    /**
+        Return the number of items that can fit vertically in the visible area of
+        the listbox.
+
+        Returns -1 if the number of items per page couldn't be determined. On
+        wxGTK this method can only determine the number of items per page if
+        there is at least one item in the listbox.
+
+        @since 3.1.0
+    */
+    int GetCountPerPage() const;
+
+    /**
+        Return the index of the topmost visible item.
+
+        Returns ::wxNOT_FOUND if the method is not implemented for the current
+        platform.
+
+        @since 3.1.0
+    */
+    int GetTopItem() const;
+
+    /**
+        MSW-specific function for setting custom tab stop distances.
+
+        Tab stops are expressed in dialog unit widths, i.e. "quarters of the
+        average character width for the font that is selected into the list
+        box".
+
+        @param tabStops
+            If this argument is empty, tab stops are reset to their default
+            value (every 32 dialog units). If it contains a single element, tab
+            stops are set at each multiple of the given value. Otherwise tab
+            stops are set at every element of the array, which must be in
+            ascending order.
+
+        @return @true if all specified tabs are set, @false otherwise
+
+        @onlyfor{wxmsw}
+
+        @since 3.1.4
+     */
+    virtual bool MSWSetTabStops(const wxVector<int>& tabStops);
 
     // NOTE: Phoenix needs to see the implementation of pure virtuals so it
     // knows that this class is not abstract.
-    virtual unsigned int GetCount() const; 
-    virtual wxString GetString(unsigned int n) const; 
-    virtual void SetString(unsigned int n, const wxString& s); 
-    virtual int FindString(const wxString& s, bool bCase = false) const;     
+    virtual unsigned int GetCount() const;
+    virtual wxString GetString(unsigned int n) const;
+    virtual void SetString(unsigned int n, const wxString& s);
+    virtual int FindString(const wxString& s, bool bCase = false) const;
 };
-

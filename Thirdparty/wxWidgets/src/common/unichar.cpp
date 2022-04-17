@@ -3,7 +3,6 @@
 // Purpose:     wxUniChar and wxUniCharRef classes
 // Author:      Vaclav Slavik
 // Created:     2007-03-19
-// RCS-ID:      $Id$
 // Copyright:   (c) 2007 REA Elektronik GmbH
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -12,12 +11,9 @@
 // headers
 // ===========================================================================
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/strconv.h"  // wxConvLibc

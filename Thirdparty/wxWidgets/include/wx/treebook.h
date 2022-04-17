@@ -4,7 +4,6 @@
 // Author:      Evgeniy Tarassov, Vadim Zeitlin
 // Modified by:
 // Created:     2005-09-15
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -18,10 +17,12 @@
 
 #include "wx/bookctrl.h"
 #include "wx/containr.h"
-#include "wx/treectrl.h"        // for wxArrayTreeItemIds
+#include "wx/treebase.h"        // for wxTreeItemId
+#include "wx/vector.h"
 
 typedef wxWindow wxTreebookPage;
 
+class WXDLLIMPEXP_FWD_CORE wxTreeCtrl;
 class WXDLLIMPEXP_FWD_CORE wxTreeEvent;
 
 // ----------------------------------------------------------------------------
@@ -37,7 +38,6 @@ public:
     // Default ctor doesn't create the control, use Create() afterwards
     wxTreebook()
     {
-        Init();
     }
 
     // This ctor creates the tree book control
@@ -48,8 +48,6 @@ public:
                long style = wxBK_DEFAULT,
                const wxString& name = wxEmptyString)
     {
-        Init();
-
         (void)Create(parent, id, pos, size, style, name);
     }
 
@@ -65,7 +63,7 @@ public:
     // Page insertion operations
     // -------------------------
 
-    // Notice that page pointer may be nullptr in which case the next non nullptr
+    // Notice that page pointer may be NULL in which case the next non NULL
     // page (usually the first child page of a node) is shown when this page is
     // selected
 
@@ -75,7 +73,7 @@ public:
                             wxWindow *page,
                             const wxString& text,
                             bool bSelect = false,
-                            int imageId = NO_IMAGE);
+                            int imageId = NO_IMAGE) wxOVERRIDE;
 
     // Inserts a new sub-page to the end of children of the page at given pos.
     virtual bool InsertSubPage(size_t pos,
@@ -88,7 +86,7 @@ public:
     virtual bool AddPage(wxWindow *page,
                          const wxString& text,
                          bool bSelect = false,
-                         int imageId = NO_IMAGE);
+                         int imageId = NO_IMAGE) wxOVERRIDE;
 
     // Adds a new child-page to the last top-level page inserted.
     // Useful when constructing 1 level tree structure.
@@ -100,7 +98,7 @@ public:
     // Deletes the page and ALL its children. Could trigger page selection
     // change in a case when selected page is removed. In that case its parent
     // is selected (or the next page if no parent).
-    virtual bool DeletePage(size_t pos);
+    virtual bool DeletePage(size_t pos) wxOVERRIDE;
 
 
     // Tree operations
@@ -127,39 +125,33 @@ public:
     // Standard operations inherited from wxBookCtrlBase
     // -------------------------------------------------
 
-    virtual bool SetPageText(size_t n, const wxString& strText);
-    virtual wxString GetPageText(size_t n) const;
-    virtual int GetPageImage(size_t n) const;
-    virtual bool SetPageImage(size_t n, int imageId);
-    virtual int SetSelection(size_t n) { return DoSetSelection(n, SetSelection_SendEvent); }
-    virtual int ChangeSelection(size_t n) { return DoSetSelection(n); }
-    virtual int HitTest(const wxPoint& pt, long *flags = nullptr) const;
-    virtual void SetImageList(wxImageList *imageList);
-    virtual void AssignImageList(wxImageList *imageList);
-    virtual bool DeleteAllPages();
+    virtual bool SetPageText(size_t n, const wxString& strText) wxOVERRIDE;
+    virtual wxString GetPageText(size_t n) const wxOVERRIDE;
+    virtual int GetPageImage(size_t n) const wxOVERRIDE;
+    virtual bool SetPageImage(size_t n, int imageId) wxOVERRIDE;
+    virtual int SetSelection(size_t n) wxOVERRIDE { return DoSetSelection(n, SetSelection_SendEvent); }
+    virtual int ChangeSelection(size_t n) wxOVERRIDE { return DoSetSelection(n); }
+    virtual int HitTest(const wxPoint& pt, long *flags = NULL) const wxOVERRIDE;
+    virtual bool DeleteAllPages() wxOVERRIDE;
 
 protected:
     // Implementation of a page removal. See DeletPage for comments.
-    wxTreebookPage *DoRemovePage(size_t pos);
+    wxTreebookPage *DoRemovePage(size_t pos) wxOVERRIDE;
 
-    // This subclass of wxBookCtrlBase accepts nullptr page pointers (empty pages)
-    virtual bool AllowNullPage() const { return true; }
+    virtual void OnImagesChanged() wxOVERRIDE;
+
+    // This subclass of wxBookCtrlBase accepts NULL page pointers (empty pages)
+    virtual bool AllowNullPage() const wxOVERRIDE { return true; }
+    virtual wxWindow *TryGetNonNullPage(size_t page) wxOVERRIDE;
 
     // event handlers
     void OnTreeSelectionChange(wxTreeEvent& event);
     void OnTreeNodeExpandedCollapsed(wxTreeEvent& event);
 
-    // array of page ids and page windows
-    wxArrayTreeItemIds m_treeIds;
-
-    // in the situation when m_selection page is not wxNOT_FOUND but page is
-    // nullptr this is the first (sub)child that has a non-nullptr page
-    int m_actualSelection;
+    // array of tree item ids corresponding to the page indices
+    wxVector<wxTreeItemId> m_treeIds;
 
 private:
-    // common part of all constructors
-    void Init();
-
     // The real implementations of page insertion functions
     // ------------------------------------------------------
     // All DoInsert/Add(Sub)Page functions add the page into :
@@ -181,12 +173,11 @@ private:
                          bool bSelect = false,
                          int imageId = NO_IMAGE);
 
-    // Sets selection in the tree control and updates the page being shown.
-    int DoSetSelection(size_t pos, int flags = 0);
-
-    // Returns currently shown page. In a case when selected the node
-    // has empty (nullptr) page finds first (sub)child with not-empty page.
-    wxTreebookPage *DoGetCurrentPage() const;
+    // Overridden methods used by the base class DoSetSelection()
+    // implementation.
+    void UpdateSelectedPage(size_t newsel) wxOVERRIDE;
+    wxBookCtrlEvent* CreatePageChangingEvent() const wxOVERRIDE;
+    void MakeChangedEvent(wxBookCtrlEvent &event) wxOVERRIDE;
 
     // Does the selection update. Called from page insertion functions
     // to update selection if the selected page was pushed by the newly inserted
@@ -204,7 +195,7 @@ private:
     // from m_tree (wxTreeCtrl) component.
     int DoInternalFindPageById(wxTreeItemId page) const;
 
-    // Updates page and wxTreeItemId correspondance.
+    // Updates page and wxTreeItemId correspondence.
     void DoInternalAddPage(size_t newPos, wxWindow *page, wxTreeItemId pageId);
 
     // Removes the page from internal structure.
@@ -217,11 +208,11 @@ private:
 
     // Returns internal number of pages which can be different from
     // GetPageCount() while performing a page insertion or removal.
-    size_t DoInternalGetPageCount() const { return m_treeIds.GetCount(); }
+    size_t DoInternalGetPageCount() const { return m_treeIds.size(); }
 
 
-    DECLARE_EVENT_TABLE()
-    DECLARE_DYNAMIC_CLASS_NO_COPY(wxTreebook)
+    wxDECLARE_EVENT_TABLE();
+    wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxTreebook);
 };
 
 
@@ -235,22 +226,28 @@ typedef wxBookCtrlEventFunction wxTreebookEventFunction;
 #define wxTreebookEventHandler(func) wxBookCtrlEventHandler(func)
 
 
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
-wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_TREEBOOK_PAGE_CHANGED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_TREEBOOK_PAGE_CHANGING, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_TREEBOOK_NODE_COLLAPSED, wxBookCtrlEvent );
+wxDECLARE_EXPORTED_EVENT( WXDLLIMPEXP_CORE, wxEVT_TREEBOOK_NODE_EXPANDED, wxBookCtrlEvent );
 
 #define EVT_TREEBOOK_PAGE_CHANGED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED, winid, wxBookCtrlEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREEBOOK_PAGE_CHANGED, winid, wxBookCtrlEventHandler(fn))
 
 #define EVT_TREEBOOK_PAGE_CHANGING(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING, winid, wxBookCtrlEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREEBOOK_PAGE_CHANGING, winid, wxBookCtrlEventHandler(fn))
 
 #define EVT_TREEBOOK_NODE_COLLAPSED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED, winid, wxBookCtrlEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREEBOOK_NODE_COLLAPSED, winid, wxBookCtrlEventHandler(fn))
 
 #define EVT_TREEBOOK_NODE_EXPANDED(winid, fn) \
-    wx__DECLARE_EVT1(wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED, winid, wxBookCtrlEventHandler(fn))
+    wx__DECLARE_EVT1(wxEVT_TREEBOOK_NODE_EXPANDED, winid, wxBookCtrlEventHandler(fn))
+
+// old wxEVT_COMMAND_* constants
+#define wxEVT_COMMAND_TREEBOOK_PAGE_CHANGED     wxEVT_TREEBOOK_PAGE_CHANGED
+#define wxEVT_COMMAND_TREEBOOK_PAGE_CHANGING    wxEVT_TREEBOOK_PAGE_CHANGING
+#define wxEVT_COMMAND_TREEBOOK_NODE_COLLAPSED   wxEVT_TREEBOOK_NODE_COLLAPSED
+#define wxEVT_COMMAND_TREEBOOK_NODE_EXPANDED    wxEVT_TREEBOOK_NODE_EXPANDED
 
 
 #endif // wxUSE_TREEBOOK

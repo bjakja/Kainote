@@ -4,7 +4,6 @@
 // Author:      Vadim Zeitlin, Robert Roebling
 // Modified by:
 // Created:     26.05.99
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets Team
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ public:
         { m_data = NULL; }
     virtual ~wxDropSourceBase() { }
 
-    // set the data which is transfered by drag and drop
+    // set the data which is transferred by drag and drop
     void SetData(wxDataObject& data)
       { m_data = &data; }
 
@@ -145,7 +144,7 @@ public:
     wxDataObject *GetDataObject() const
         { return m_dataObject; }
     void SetDataObject(wxDataObject *dataObject)
-        { if (m_dataObject) delete m_dataObject;
+        { delete m_dataObject;
     m_dataObject = dataObject; }
 
     // these functions are called when data is moved over position (x, y) and
@@ -188,9 +187,9 @@ public:
     virtual bool GetData() = 0;
 
     // sets the default action for drag and drop:
-    // use wxDragMove or wxDragCopy to set deafult action to move or copy
+    // use wxDragMove or wxDragCopy to set default action to move or copy
     // and use wxDragNone (default) to set default action specified by
-    // initialization of draging (see wxDropSourceBase::DoDragDrop())
+    // initialization of dragging (see wxDropSourceBase::DoDragDrop())
     void SetDefaultAction(wxDragResult action)
         { m_defaultAction = action; }
 
@@ -223,8 +222,8 @@ protected:
     #include "wx/gtk1/dnd.h"
 #elif defined(__WXMAC__)
     #include "wx/osx/dnd.h"
-#elif defined(__WXPM__)
-    #include "wx/os2/dnd.h"
+#elif defined(__WXQT__)
+    #include "wx/qt/dnd.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -240,7 +239,7 @@ public:
 
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& text) = 0;
 
-    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
+    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
 
 private:
     wxDECLARE_NO_COPY_CLASS(wxTextDropTarget);
@@ -256,7 +255,7 @@ public:
     virtual bool OnDropFiles(wxCoord x, wxCoord y,
                              const wxArrayString& filenames) = 0;
 
-    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def);
+    virtual wxDragResult OnData(wxCoord x, wxCoord y, wxDragResult def) wxOVERRIDE;
 
 private:
     wxDECLARE_NO_COPY_CLASS(wxFileDropTarget);

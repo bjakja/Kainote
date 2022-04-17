@@ -1,0 +1,106 @@
+                        Making a new wxWidgets release
+                        ==============================
+
+Before making the release
+-------------------------
+
+Update docs/readme.txt. Please review its contents in addition to just
+changing the version number.
+
+Put a date on the release line in docs/changes.txt.
+
+Update the date in the manual (docs/doxygen/mainpages/manual.h).
+
+
+Creating release files
+----------------------
+
+Currently our release system uses a Python 2.x script to generate releases.
+The script requires Unix utilities such as tar, zip and unix2dos and thus must
+be run either on Unix or using Cygwin on Windows. To generate a release, simply
+run the following command:
+
+build/tools/create-archive.py --compression=all /path/to/output/dir
+
+This will produce zip, gzip and bzip archives of the tree (without
+"compression" argument only .gz is made). Note that this commands produces huge
+amounts of output so redirecting it to a file is recommended.
+
+To add a prefix to the release, such as RC1, the SVN revision, or a date, just
+pass --postfix="postfix" to the script. More info on the options and their
+possible values can be found by calling `create-archive.py --help`.
+
+IMPORTANT NOTE: You *must* run this script from a clean source tree, that is,
+          with no junk files in it or modifications. This is because the
+          release should be a pristine copy of the tree as of the time of
+          release. If you have legitimate modifications in the tree that need
+          to be in the release, commit them first.
+
+To generate the windows installer (.exe) and the documentation files (chm and htb formats)
+run:
+
+build\tools\bld_chm_exe.bat
+
+which depends on the wxwidgets.iss file, and generates output in the %DAILY% directory. It 
+assumes a clean copy of the wxWidgets source tree in %INNO%. Temporary files will be generated 
+in the tree from which the batch file is run. It depends on doxygen, a number of gnu
+win32 tools and Microsofts htmlhelp compiler. The wxwidgets.iss file should not need 
+editing, but you will want to check that the bld_chm_exe.bat has the correct version number.
+
+
+
+Alternative non official release scripts
+----------------------------------------
+
+If you use git-svn, then you can use alternative script that avoids the
+problems such as using non-clean tree and also has better handling of the ends
+of lines conversions. To use it you need to run
+
+- build/tools/svn-find-native-eols.pl
+- build/tools/git-make-release
+- build/tools/make-html-docs
+
+(the last one can also be used without git).
+
+
+Uploading
+---------
+
+Upload the files to SourceForge. This can be done via the web interface or just
+scp to sfusername,wxwindows@frs.sf.net:/home/frs/project/w/wx/wxwindows/x.y.z
+You will need to use the web interface to mark the latest uploaded files as
+being "default downloads" for the appropriate platforms (.zip or .exe for MSW,
+.tar.bz2 for everything else) as otherwise SourceForge would continue to suggest
+people to download old files.
+
+Also upload docs/release_files.mdwn as README.md to display it by default when
+its directory is viewed on the web.
+
+Also upload the files to the FTP mirror at ftp.wxwidgets.org (ask Chris for
+access if you don't have it).
+
+Create http://docs.wxwidgets.org/x.y.z/ (ask Bryan to do it if not done yet).
+
+
+Announcement
+------------
+
+Post announcement at least to wx-announce@googlegroups.com.
+
+TODO: where else to announce it?
+
+Update www.wxwidgets.org, usually a news item is enough but something more can
+be called for for major releases.
+
+Post to wxBlog if necessary.
+
+
+Version updates
+---------------
+
+Trac: mark the milestone corresponding to the release as completed and add a
+new version for it to allow reporting bugs against it and create the next
+milestone (ask Vadim or Robin to do it or to get admin password).
+
+Run misc/scripts/inc_release to increment micro version, i.e. replace x.y.z
+with x.y.z+1 (minor or major versions updates require manual intervention).

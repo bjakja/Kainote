@@ -3,7 +3,6 @@
 // Purpose:     common persistence support classes
 // Author:      Vadim Zeitlin
 // Created:     2009-01-20
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,12 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
+// for compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_CONFIG
 
@@ -33,7 +29,7 @@
 namespace
 {
 
-wxPersistenceManager* gs_manager = nullptr;
+wxPersistenceManager* gs_manager = NULL;
 
 } // anonymous namespace
 
@@ -80,7 +76,7 @@ wxPersistentObject *wxPersistenceManager::Find(void *obj) const
 {
     const wxPersistentObjectsMap::const_iterator
         it = m_persistentObjects.find(obj);
-    return it == m_persistentObjects.end() ? nullptr : it->second;
+    return it == m_persistentObjects.end() ? NULL : it->second;
 }
 
 wxPersistentObject *

@@ -3,7 +3,6 @@
 // Purpose:     File system watcher impl classes
 // Author:      Bartosz Bekier
 // Created:     2009-05-26
-// RCS-ID:      $Id$
 // Copyright:   (c) 2009 Bartosz Bekier <bartosz.bekier@gmail.com>
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -61,9 +60,9 @@ public:
         m_service(service)
     {  }
 
-    virtual void OnReadWaiting();
-    virtual void OnWriteWaiting();
-    virtual void OnExceptionWaiting();
+    virtual void OnReadWaiting() wxOVERRIDE;
+    virtual void OnWriteWaiting() wxOVERRIDE;
+    virtual void OnExceptionWaiting() wxOVERRIDE;
 
 protected:
     wxFSWatcherImplUnix* m_service;

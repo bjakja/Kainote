@@ -2,7 +2,6 @@
 // Name:        choicebk.h
 // Purpose:     interface of wxChoicebook
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +14,8 @@
 #define wxCHB_RIGHT            wxBK_RIGHT
 #define wxCHB_ALIGN_MASK       wxBK_ALIGN_MASK
 
-wxEventType wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED;
-wxEventType wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING;
+wxEventType wxEVT_CHOICEBOOK_PAGE_CHANGED;
+wxEventType wxEVT_CHOICEBOOK_PAGE_CHANGING;
 
 /**
     @class wxChoicebook
@@ -36,7 +35,7 @@ wxEventType wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING;
     @beginStyleTable
     @style{wxCHB_DEFAULT}
            Choose the default location for the labels depending on the current
-           platform (left everywhere except Mac where it is top).
+           platform (but currently it's the same everywhere, namely wxCHB_TOP).
     @style{wxCHB_TOP}
            Place labels above the page area.
     @style{wxCHB_LEFT}
@@ -50,16 +49,16 @@ wxEventType wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING;
     @beginEventEmissionTable{wxBookCtrlEvent}
     @event{EVT_CHOICEBOOK_PAGE_CHANGED(id, func)}
         The page selection was changed.
-        Processes a @c wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED event.
+        Processes a @c wxEVT_CHOICEBOOK_PAGE_CHANGED event.
     @event{EVT_CHOICEBOOK_PAGE_CHANGING(id, func)}
         The page selection is about to be changed.
-        Processes a @c wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING event.
+        Processes a @c wxEVT_CHOICEBOOK_PAGE_CHANGING event.
         This event can be vetoed (using wxNotifyEvent::Veto()).
     @endEventTable
 
     @library{wxcore}
     @category{bookctrl}
-    @appearance{choicebook.png}
+    @appearance{choicebook}
 
     @see @ref overview_bookctrl, wxNotebook, @ref page_samples_notebook
 */
@@ -89,7 +88,7 @@ public:
                 long style = 0,
                 const wxString& name = wxEmptyString);
 
-    
+
     /**
         Returns the wxChoice associated with the control.
     */

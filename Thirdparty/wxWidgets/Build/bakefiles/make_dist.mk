@@ -30,9 +30,7 @@ GTK1DIR  = $(WXDIR)/src/gtk1
 X11DIR   = $(WXDIR)/src/x11
 X11INC   = $(WXDIR)/include/wx/x11
 MOTIFDIR = $(WXDIR)/src/motif
-MSDOSDIR = $(WXDIR)/src/msdos
 MSWDIR   = $(WXDIR)/src/msw
-PMDIR    = $(WXDIR)/src/os2
 MACDIR   = $(WXDIR)/src/osx
 COCOADIR = $(WXDIR)/src/cocoa
 FTDIR    = $(WXDIR)/src/freetype
@@ -95,7 +93,6 @@ ALL_DIST: distrib_clean
 	$(CP_P) $(WXDIR)/setup.h_vms $(DISTDIR)
 	$(CP_P) $(WXDIR)/descrip.mms $(DISTDIR)
 	$(CP_P) $(WXDIR)/Makefile.in $(DISTDIR)
-	$(CP_P) $(WXDIR)/wxBase.spec $(DISTDIR)
 	$(CP_P) $(DOCDIR)/lgpl.txt $(DISTDIR)/COPYING.LIB
 	$(CP_P) $(DOCDIR)/licence.txt $(DISTDIR)/LICENCE.txt
 	$(CP_P) $(DOCDIR)/changes.txt $(DISTDIR)/CHANGES.txt
@@ -103,11 +100,6 @@ ALL_DIST: distrib_clean
 	$(CP_P) $(WXDIR)/lib/vms.opt $(DISTDIR)/lib
 	$(CP_P) $(WXDIR)/lib/vms_gtk.opt $(DISTDIR)/lib
 	mkdir $(DISTDIR)/src
-	# temp hack for common/execcmn.cpp: it's not supported by tmake
-	# yet (it's a header-like file but in src/common directory and it
-	# shouldn't be distributed...)
-	mkdir $(DISTDIR)/src/common
-	$(CP_P) $(SRCDIR)/common/execcmn.cpp $(DISTDIR)/src/common
 	mkdir $(DISTDIR)/src/xml
 	$(CP_P) $(SRCDIR)/xml/*.cpp $(DISTDIR)/src/xml
 	mkdir $(DISTDIR)/src/zlib
@@ -150,7 +142,6 @@ ALL_DIST: distrib_clean
 # but is not used when building wxBase distribution
 ALL_GUI_DIST: ALL_DIST
 	$(CP_P) $(DOCDIR)/readme.txt $(DISTDIR)/README.txt
-	$(CP_P) $(DOCDIR)/$(TOOLKITDIR)/install.txt $(DISTDIR)/INSTALL.txt
 	if test -f $(DOCDIR)/$(TOOLKITDIR)/changes.txt ; then \
 	  $(CP_P) $(DOCDIR)/$(TOOLKITDIR)/changes.txt $(DISTDIR)/CHANGES-$(TOOLKIT).txt ; fi
 	$(CP_P) $(DOCDIR)/$(TOOLKITDIR)/readme.txt $(DISTDIR)/README-$(TOOLKIT).txt
@@ -166,6 +157,7 @@ ALL_GUI_DIST: ALL_DIST
 	mkdir $(DISTDIR)/include/wx/generic/private
 	mkdir $(DISTDIR)/include/wx/html
 	mkdir $(DISTDIR)/include/wx/richtext
+	mkdir $(DISTDIR)/include/wx/richtext/bitmaps
 	mkdir $(DISTDIR)/include/wx/aui
 	mkdir $(DISTDIR)/include/wx/ribbon
 	mkdir $(DISTDIR)/include/wx/persist
@@ -183,6 +175,7 @@ ALL_GUI_DIST: ALL_DIST
 	$(CP_P) $(INCDIR)/wx/generic/private/*.h $(DISTDIR)/include/wx/generic/private
 	$(CP_P) $(INCDIR)/wx/html/*.h $(DISTDIR)/include/wx/html
 	$(CP_P) $(INCDIR)/wx/richtext/*.h $(DISTDIR)/include/wx/richtext
+	$(CP_P) $(INCDIR)/wx/richtext/bitmaps/*.xpm $(DISTDIR)/include/wx/richtext/bitmaps
 	$(CP_P) $(INCDIR)/wx/aui/*.h $(DISTDIR)/include/wx/aui
 	$(CP_P) $(INCDIR)/wx/ribbon/*.h $(DISTDIR)/include/wx/ribbon
 	$(CP_P) $(INCDIR)/wx/persist/*.h $(DISTDIR)/include/wx/persist
@@ -289,10 +282,10 @@ BASE_DIST: ALL_DIST INTL_DIST
 	mkdir $(DISTDIR)/include/wx/protocol
 	mkdir $(DISTDIR)/include/wx/unix
 	mkdir $(DISTDIR)/include/wx/xml
-	mkdir $(DISTDIR)/include/wx/msdos
 	mkdir $(DISTDIR)/include/wx/msw
 	mkdir $(DISTDIR)/include/wx/html
 	mkdir $(DISTDIR)/include/wx/richtext
+	mkdir $(DISTDIR)/include/wx/richtext/bitmaps
 	mkdir $(DISTDIR)/include/wx/aui
 	mkdir $(DISTDIR)/include/wx/ribbon
 	mkdir $(DISTDIR)/include/wx/persist
@@ -301,14 +294,11 @@ BASE_DIST: ALL_DIST INTL_DIST
 	mkdir $(DISTDIR)/include/wx/osx
 	mkdir $(DISTDIR)/include/wx/osx/carbon
 	mkdir $(DISTDIR)/include/wx/osx/core
-	mkdir $(DISTDIR)/include/wx/os2
 	mkdir $(DISTDIR)/src/unix
 	mkdir $(DISTDIR)/src/osx
 	mkdir $(DISTDIR)/src/osx/core
 	mkdir $(DISTDIR)/src/osx/carbon
-	mkdir $(DISTDIR)/src/msdos
 	mkdir $(DISTDIR)/src/msw
-	mkdir $(DISTDIR)/src/os2
 	$(CP_P) $(DOCDIR)/base/readme.txt $(DISTDIR)/README.txt
 	$(CP_P) $(WXDIR)/src/common/*.inc $(DISTDIR)/src/common
 	list='$(ALL_PORTS_BASE_HEADERS)'; for p in $$list; do \
@@ -321,7 +311,6 @@ BASE_DIST: ALL_DIST INTL_DIST
 	mkdir $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/Makefile.in $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/makefile.* $(DISTDIR)/samples
-	$(CP_P) $(SAMPDIR)/Info.plist $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/sample.* $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/samples.* $(DISTDIR)/samples
 
@@ -330,12 +319,10 @@ BASE_DIST: ALL_DIST INTL_DIST
 	$(CP_P) $(SAMPDIR)/console/makefile.unx $(DISTDIR)/samples/console
 	$(CP_P) $(SAMPDIR)/console/console.cpp $(DISTDIR)/samples/console
 	$(CP_P) $(SAMPDIR)/console/console.dsp $(DISTDIR)/samples/console
-	$(CP_P) $(SAMPDIR)/console/testdata.fc $(DISTDIR)/samples/console
 
 	mv $(DISTDIR) $(BASEDISTDIR)
 
 GTK_DIST: UNIV_DIST
-	$(CP_P) $(WXDIR)/wxGTK.spec $(DISTDIR)
 	$(CP_P) $(INCDIR)/wx/gtk/*.h $(DISTDIR)/include/wx/gtk
 	$(CP_P) $(GTKDIR)/*.h $(DISTDIR)/src/gtk
 	$(CP_P) $(GTKDIR)/*.cpp $(DISTDIR)/src/gtk
@@ -358,11 +345,6 @@ GTK_DIST: UNIV_DIST
 	$(CP_P) $(INCDIR)/wx/gtk/gnome/*.h $(DISTDIR)/include/wx/gtk/gnome
 	$(CP_P) $(GTKDIR)/gnome/*.cpp $(DISTDIR)/src/gtk/gnome
 
-	mkdir $(DISTDIR)/include/wx/gtk/hildon
-	mkdir $(DISTDIR)/src/gtk/hildon
-	$(CP_P) $(INCDIR)/wx/gtk/hildon/*.h $(DISTDIR)/include/wx/gtk/hildon
-	$(CP_P) $(GTKDIR)/hildon/*.cpp $(DISTDIR)/src/gtk/hildon
-
 	mkdir $(DISTDIR)/src/osx
 	mkdir $(DISTDIR)/src/osx/core
 	$(CP_P) $(WXDIR)/src/osx/core/*.cpp $(DISTDIR)/src/osx/core
@@ -371,7 +353,6 @@ GTK_DIST: UNIV_DIST
 	$(CP_P) $(WXDIR)/include/wx/osx/core/*.h $(DISTDIR)/include/wx/osx/core
 
 X11_DIST: UNIV_DIST
-	$(CP_P) $(WXDIR)/wxX11.spec $(DISTDIR)
 	$(CP_P) $(INCDIR)/wx/x11/*.h $(DISTDIR)/include/wx/x11
 	mkdir $(DISTDIR)/include/wx/x11/private
 	$(CP_P) $(INCDIR)/wx/x11/private/*.h $(DISTDIR)/include/wx/x11/private
@@ -388,7 +369,6 @@ X11_DIST: UNIV_DIST
 	$(CP_P) $(WXDIR)/include/wx/osx/core/*.h $(DISTDIR)/include/wx/osx/core
 
 MOTIF_DIST: ALL_GUI_DIST
-	$(CP_P) $(WXDIR)/wxMotif.spec $(DISTDIR)
 	$(CP_P) $(INCDIR)/wx/motif/*.h $(DISTDIR)/include/wx/motif
 	$(CP_P) $(MOTIFDIR)/*.cpp $(DISTDIR)/src/motif
 	$(CP_P) $(MOTIFDIR)/*.xbm $(DISTDIR)/src/motif
@@ -429,9 +409,6 @@ OSX_CARBON_DIST: ALL_GUI_DIST
 	$(CP_P) $(MACDIR)/cocoa/*.mm $(DISTDIR)/src/osx/cocoa
 	mkdir $(DISTDIR)/src/osx/iphone
 	$(CP_P) $(MACDIR)/iphone/*.mm $(DISTDIR)/src/osx/iphone
-	mkdir $(DISTDIR)/src/html/htmlctrl
-	mkdir $(DISTDIR)/src/html/htmlctrl/webkit
-	$(CP_P) $(WXDIR)/src/html/htmlctrl/webkit/*.mm $(DISTDIR)/src/html/htmlctrl/webkit
 	mkdir $(DISTDIR)/src/osx/carbon
 	$(CP_P) $(MACDIR)/carbon/*.cpp $(DISTDIR)/src/osx/carbon
 	$(CP_P) $(MACDIR)/carbon/*.mm $(DISTDIR)/src/osx/carbon
@@ -457,7 +434,6 @@ COCOA_DIST: ALL_GUI_DIST
 
 MSW_DIST: UNIV_DIST
 	mkdir $(DISTDIR)/include/wx/msw/ole
-	mkdir $(DISTDIR)/include/wx/msw/wince
 	$(CP_P) $(INCDIR)/wx/msw/*.h $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.cur $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.ico $(DISTDIR)/include/wx/msw
@@ -465,9 +441,7 @@ MSW_DIST: UNIV_DIST
 	$(CP_P) $(INCDIR)/wx/msw/*.rc $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.manifest $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/ole/*.h $(DISTDIR)/include/wx/msw/ole
-	$(CP_P) $(INCDIR)/wx/msw/wince/*.h $(DISTDIR)/include/wx/msw/wince
 	mkdir $(DISTDIR)/src/msw/ole
-	mkdir $(DISTDIR)/src/msw/wince
 	$(CP_P) $(MSWDIR)/*.cpp $(DISTDIR)/src/msw
 	$(CP_P) $(MSWDIR)/*.c $(DISTDIR)/src/msw
 	$(CP_P) $(MSWDIR)/*.rc $(DISTDIR)/src/msw
@@ -478,19 +452,15 @@ MSW_ZIP_TEXT_DIST: ALL_GUI_DIST
 	$(CP_P) $(WXDIR)/build/msw/* $(DISTDIR)/build/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.h $(DISTDIR)/include/wx/msw
 	mkdir $(DISTDIR)/include/wx/msw/ole
-	mkdir $(DISTDIR)/include/wx/msw/wince
 	$(CP_P) $(INCDIR)/wx/msw/*.h $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.rc $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/*.manifest $(DISTDIR)/include/wx/msw
 	$(CP_P) $(INCDIR)/wx/msw/ole/*.h $(DISTDIR)/include/wx/msw/ole
-	$(CP_P) $(INCDIR)/wx/msw/wince/*.h $(DISTDIR)/include/wx/msw/wince
 	mkdir $(DISTDIR)/src/msw/ole
-	mkdir $(DISTDIR)/src/msw/wince
 	$(CP_P) $(MSWDIR)/*.cpp $(DISTDIR)/src/msw
 	$(CP_P) $(MSWDIR)/*.rc $(DISTDIR)/src/msw
 	$(CP_P) $(MSWDIR)/*.c $(DISTDIR)/src/msw
 	$(CP_P) $(MSWDIR)/ole/*.cpp $(DISTDIR)/src/msw/ole
-	$(CP_P) $(MSWDIR)/wince/*.* $(DISTDIR)/src/msw/wince
 	$(CP_P) $(SRCDIR)/*.??? $(DISTDIR)/src
 
 UNIV_DIST: ALL_GUI_DIST
@@ -498,7 +468,6 @@ UNIV_DIST: ALL_GUI_DIST
 	mkdir $(DISTDIR)/src/univ
 	mkdir $(DISTDIR)/src/univ/themes
 	$(CP_P) $(INCDIR)/wx/univ/*.h $(DISTDIR)/include/wx/univ
-	$(CP_P) $(INCDIR)/wx/univ/setup0.h $(DISTDIR)/include/wx/univ/setup.h
 	$(CP_P) $(SRCDIR)/univ/*.cpp $(DISTDIR)/src/univ
 	$(CP_P) $(SRCDIR)/univ/themes/*.cpp $(DISTDIR)/src/univ/themes
 
@@ -563,7 +532,6 @@ SAMPLES_DIST: ALL_GUI_DIST
 	mkdir $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/Makefile.in $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/makefile.* $(DISTDIR)/samples
-	$(CP_P) $(SAMPDIR)/Info.plist $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/sample.* $(DISTDIR)/samples
 	$(CP_P) $(SAMPDIR)/samples.* $(DISTDIR)/samples
 
@@ -875,56 +843,3 @@ win-dist: MSW_ZIP_TEXT_DIST SAMPLES_DIST DEMOS_DIST UTILS_DIST MISC_DIST INTL_DI
 	@cd _dist_dir && zip -r ../$(WXARCHIVE_ZIP) wxMSW/include/wx/msw/*.cur
 	@cd _dist_dir && zip -r ../$(WXARCHIVE_ZIP) wxMSW/include/wx/msw/*.ico
 	@cd _dist_dir && zip -r ../$(WXARCHIVE_ZIP) wxMSW/include/wx/msw/*.bmp
-
-debian-dist: DEBIAN_SOURCE_DIR = $(WXDIR)/../wxwidgets@WX_RELEASE@@WX_FLAVOUR@-@WX_SUBVERSION@
-debian-dist: debian-native-dist debian-msw-dirs MSW_DIST
-	mkdir $(DISTDIR)/debian
-	-$(CP_P) $(WXDIR)/debian/* $(DISTDIR)/debian
-	$(CP_P) $(DOCDIR)/licence.txt $(DISTDIR)/docs
-	$(CP_P) $(DOCDIR)/licendoc.txt $(DISTDIR)/docs
-	$(CP_P) $(DOCDIR)/preamble.txt $(DISTDIR)/docs
-	rm -f $(DISTDIR)/*.spec
-
-	@# now prune away a lot of the crap included by using cp -R
-	@# in other dist targets.  Ugly and hardly portable but it
-	@# will run on any Debian box and that's enough for now.
-
-	find $(DISTDIR) \( -name "CVS" -o -name ".cvsignore" -o -name "*.dsp"    \
-			   -o -name "*.dsw" -o -name "*.hh*" -o -name "*.mms"    \
-			   -o -name "*.mcp" -o -name "*M*.xml" -o -name "*.r"    \
-			   -o -name "*.pro"  \
-			   -o -name "*.vpj"  \
-			   -o \( -name "makefile.*" -a ! -name "makefile.unx" \) \
-			\) -print0 | xargs -0 rm -rf
-
-	rm -rf $(DISTDIR)/wxPython/SWIG
-	rm -rf $(DISTDIR)/wxPython/distrib
-	rm -rf $(DISTDIR)/wxPython/distutils
-	rm -rf $(DISTDIR)/wxPython/samples
-	rm -rf $(DISTDIR)/wxPython/contrib/iewin
-	find $(DISTDIR)/wxPython \( -name "mac" -o -name "msw" \) -print0 | xargs -0 rm -rf
-
-	rm -rf $(DEBIAN_SOURCE_DIR)
-	mv $(DISTDIR) $(DEBIAN_SOURCE_DIR)
-
-
-debian-native-dist: @GUIDIST@ UNIV_DIST MANUAL_DIST PYTHON_DIST
-
-debian-msw-dirs:
-	mkdir $(DISTDIR)/include/wx/msw
-	mkdir $(DISTDIR)/src/msw
-
-
-RPMTOP=_dist_dir/_rpm_top
-
-rpm: bzip-dist
-	@echo "*** Building RPMs ***"
-	-mkdir $(RPMTOP)
-	-mkdir $(RPMTOP)/SOURCES
-	-mkdir $(RPMTOP)/SPECS
-	-mkdir $(RPMTOP)/BUILD
-	-mkdir $(RPMTOP)/RPMS
-	-mkdir $(RPMTOP)/SRPMS
-	cp -f $(WXARCHIVE_BZIP) $(RPMTOP)/SOURCES
-	rpmbuild -ba --define "_topdir `pwd`/$(RPMTOP)" $(WXDIR)/wx$(TOOLKIT).spec
-	mv -f `find $(RPMTOP) -name "wx-*.rpm"` .

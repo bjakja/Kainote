@@ -4,7 +4,6 @@
 // Author:      Julian Smart, Guillermo Rodriguez, Vadim Zeitlin
 // Modified by: VZ: extracted all non-wxTimer stuff in stopwatch.cpp (20.06.03)
 // Created:     04/01/98
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 //              (c) 1999 Guillermo Rodriguez <guille@iies.es>
 // Licence:     wxWindows licence
@@ -18,12 +17,9 @@
 // wxWin headers
 // ----------------------------------------------------------------------------
 
+// For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_TIMER
 
@@ -39,7 +35,9 @@
 // wxWin macros
 // ----------------------------------------------------------------------------
 
-IMPLEMENT_DYNAMIC_CLASS(wxTimerEvent, wxEvent)
+// This class is not really abstract, but this macro has to be used because it
+// doesn't have a default ctor.
+wxIMPLEMENT_ABSTRACT_CLASS(wxTimerEvent, wxEvent);
 
 wxDEFINE_EVENT(wxEVT_TIMER, wxTimerEvent);
 
@@ -56,8 +54,8 @@ wxTimer::~wxTimer()
 
 void wxTimer::Init()
 {
-    wxAppTraits * const traits = wxTheApp ? wxTheApp->GetTraits() : nullptr;
-    m_impl = traits ? traits->CreateTimerImpl(this) : nullptr;
+    wxAppTraits * const traits = wxApp::GetTraitsIfExists();
+    m_impl = traits ? traits->CreateTimerImpl(this) : NULL;
     if ( !m_impl )
     {
         wxFAIL_MSG( wxT("No timer implementation for this platform") );
@@ -78,7 +76,7 @@ void wxTimer::SetOwner(wxEvtHandler *owner, int timerid)
 
 wxEvtHandler *wxTimer::GetOwner() const
 {
-    wxCHECK_MSG( m_impl, nullptr, wxT("uninitialized timer") );
+    wxCHECK_MSG( m_impl, NULL, wxT("uninitialized timer") );
 
     return m_impl->GetOwner();
 }

@@ -3,8 +3,7 @@
 // Purpose:     wxMotif-specific wxTextEntry implementation
 // Author:      Vadim Zeitlin
 // Created:     2007-11-05
-// RCS-ID:      $Id$
-// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2007 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 

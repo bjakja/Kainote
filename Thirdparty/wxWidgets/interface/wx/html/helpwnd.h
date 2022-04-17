@@ -2,9 +2,42 @@
 // Name:        html/helpwnd.h
 // Purpose:     interface of wxHtmlHelpWindow
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+
+/*!
+ * Command IDs
+ */
+enum
+{
+    //wxID_HTML_HELPFRAME = wxID_HIGHEST + 1,
+    wxID_HTML_PANEL = wxID_HIGHEST + 10,
+    wxID_HTML_BACK,
+    wxID_HTML_FORWARD,
+    wxID_HTML_UPNODE,
+    wxID_HTML_UP,
+    wxID_HTML_DOWN,
+    wxID_HTML_PRINT,
+    wxID_HTML_OPENFILE,
+    wxID_HTML_OPTIONS,
+    wxID_HTML_BOOKMARKSLIST,
+    wxID_HTML_BOOKMARKSADD,
+    wxID_HTML_BOOKMARKSREMOVE,
+    wxID_HTML_TREECTRL,
+    wxID_HTML_INDEXPAGE,
+    wxID_HTML_INDEXLIST,
+    wxID_HTML_INDEXTEXT,
+    wxID_HTML_INDEXBUTTON,
+    wxID_HTML_INDEXBUTTONALL,
+    wxID_HTML_NOTEBOOK,
+    wxID_HTML_SEARCHPAGE,
+    wxID_HTML_SEARCHTEXT,
+    wxID_HTML_SEARCHLIST,
+    wxID_HTML_SEARCHBUTTON,
+    wxID_HTML_SEARCHCHOICE,
+    wxID_HTML_COUNTINFO
+};
+
 
 /**
     @class wxHtmlHelpWindow
@@ -44,9 +77,9 @@ public:
         For the values of @a helpStyle, please see the documentation for
         wxHtmlHelpController.
     */
-    wxHtmlHelpWindow(wxWindow* parent, int wxWindowID,
+    wxHtmlHelpWindow(wxWindow* parent, wxWindowID id,
                      const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& pos = wxDefaultSize,
+                     const wxSize& size = wxDefaultSize,
                      int style = wxTAB_TRAVERSAL|wxBORDER_NONE,
                      int helpStyle = wxHF_DEFAULT_STYLE,
                      wxHtmlHelpData* data = NULL);
@@ -77,7 +110,7 @@ public:
         This form takes numeric ID as the parameter (uses an extension to MS format,
         param name="ID" value=id).
     */
-    bool Display(const int id);
+    bool Display(int id);
 
     /**
         Displays contents panel.
@@ -129,6 +162,10 @@ public:
         Refresh all panels. This is necessary if a new book was added.
     */
     void RefreshLists();
+
+
+    wxHtmlHelpController* GetController() const;
+    void SetController(wxHtmlHelpController* controller);
 
 protected:
 

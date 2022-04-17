@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxDatePickerCtrl
 // Author:      Vaclav Slavik
 // Created:     2005-02-07
-// RCS-ID:      $Id$
 // Copyright:   (c) 2005 Vaclav Slavik
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,16 +10,13 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_DATEPICKCTRL
 
 #include "wx/xrc/xh_datectrl.h"
 #include "wx/datectrl.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxDateCtrlXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxDateCtrlXmlHandler, wxXmlResourceHandler);
 
 wxDateCtrlXmlHandler::wxDateCtrlXmlHandler() : wxXmlResourceHandler()
 {
@@ -45,6 +41,10 @@ wxObject *wxDateCtrlXmlHandler::DoCreateResource()
                   GetName());
 
     SetupWindow(picker);
+
+    // Note that we want to set this one even if it's empty.
+    if ( HasParam(wxS("null-text")) )
+        picker->SetNullText(GetText(wxS("null-text")));
 
     return picker;
 }

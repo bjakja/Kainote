@@ -3,8 +3,7 @@
 // Purpose:     native wxAboutBox() implementation for wxMac
 // Author:      Vadim Zeitlin
 // Created:     2006-10-08
-// RCS-ID:      $Id$
-// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwindows.org>
+// Copyright:   (c) 2006 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -81,7 +80,8 @@ void wxAboutBox(const wxAboutDialogInfo& info, wxWindow *parent)
         if ( info.HasVersion() )
         {
             opts.Set(CFSTR("Version"),info.GetVersion());
-            opts.Set(CFSTR("ApplicationVersion"),info.GetLongVersion());
+            if ( info.GetLongVersion() != (_("Version ")+info.GetVersion()))
+                opts.Set(CFSTR("ApplicationVersion"),info.GetLongVersion());
         }
 
         if ( info.HasCopyright() )

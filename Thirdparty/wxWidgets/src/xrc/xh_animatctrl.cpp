@@ -3,7 +3,6 @@
 // Purpose:     XML resource handler for wxAnimationCtrl
 // Author:      Francesco Montorsi
 // Created:     2006-10-15
-// RCS-ID:      $Id$
 // Copyright:   (c) 2006 Francesco Montorsi
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -11,16 +10,15 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #if wxUSE_XRC && wxUSE_ANIMATIONCTRL
 
 #include "wx/xrc/xh_animatctrl.h"
 #include "wx/animate.h"
+#include "wx/generic/animate.h"
+#include "wx/scopedptr.h"
 
-IMPLEMENT_DYNAMIC_CLASS(wxAnimationCtrlXmlHandler, wxXmlResourceHandler)
+wxIMPLEMENT_DYNAMIC_CLASS(wxAnimationCtrlXmlHandler, wxXmlResourceHandler);
 
 wxAnimationCtrlXmlHandler::wxAnimationCtrlXmlHandler() : wxXmlResourceHandler()
 {
@@ -31,18 +29,42 @@ wxAnimationCtrlXmlHandler::wxAnimationCtrlXmlHandler() : wxXmlResourceHandler()
 
 wxObject *wxAnimationCtrlXmlHandler::DoCreateResource()
 {
-    XRC_MAKE_INSTANCE(ctrl, wxAnimationCtrl)
+    wxAnimationCtrlBase *ctrl = NULL;
+    if ( m_instance )
+        ctrl = wxStaticCast(m_instance, wxAnimationCtrlBase);
 
-    ctrl->Create(m_parentAsWindow,
-                  GetID(),
-                  GetAnimation(wxT("animation")),
-                  GetPosition(), GetSize(),
-                  GetStyle(wxT("style"), wxAC_DEFAULT_STYLE),
-                  GetName());
+    if ( !ctrl )
+    {
+        if ( m_class == "wxAnimationCtrl" )
+        {
+            ctrl = new wxAnimationCtrl(m_parentAsWindow,
+                                       GetID(),
+                                       wxNullAnimation,
+                                       GetPosition(), GetSize(),
+                                       GetStyle("style", wxAC_DEFAULT_STYLE),
+                                       GetName());
+        }
+        else
+        {
+            ctrl = new wxGenericAnimationCtrl(m_parentAsWindow,
+                                              GetID(),
+                                              wxNullAnimation,
+                                              GetPosition(), GetSize(),
+                                              GetStyle("style", wxAC_DEFAULT_STYLE),
+                                              GetName());
+        }
+    }
+    if ( GetBool("hidden", 0) == 1 )
+        ctrl->Hide();
 
-    // if no inactive-bitmap has been provided, GetBitmap() will return wxNullBitmap
-    // which just tells wxAnimationCtrl to use the default for inactive status
-    ctrl->SetInactiveBitmap(GetBitmap(wxT("inactive-bitmap")));
+    wxScopedPtr<wxAnimation> animation(GetAnimation("animation", ctrl));
+    if ( animation )
+        ctrl->SetAnimation(*animation);
+
+    // if no inactive-bitmap has been provided, GetBitmapBundle() will return
+    // an empty bundle, which just tells wxAnimationCtrl to use the default
+    // bitmap for inactive status
+    ctrl->SetInactiveBitmap(GetBitmapBundle(wxT("inactive-bitmap")));
 
     SetupWindow(ctrl);
 
@@ -51,7 +73,43 @@ wxObject *wxAnimationCtrlXmlHandler::DoCreateResource()
 
 bool wxAnimationCtrlXmlHandler::CanHandle(wxXmlNode *node)
 {
-    return IsOfClass(node, wxT("wxAnimationCtrl"));
+    return IsOfClass(node, wxT("wxAnimationCtrl")) ||
+           IsOfClass(node, wxT("wxGenericAnimationCtrl"));
+}
+
+wxAnimation* wxXmlResourceHandlerImpl::GetAnimation(const wxString& param,
+                                                    wxAnimationCtrlBase* ctrl)
+{
+    wxString name = GetFilePath(GetParamNode(param));
+    if ( name.empty() )
+        return NULL;
+
+    // load the animation from file
+    wxScopedPtr<wxAnimation> ani(ctrl ? new wxAnimation(ctrl->CreateAnimation())
+                                      : new wxAnimation);
+#if wxUSE_FILESYSTEM
+    wxFSFile * const
+        fsfile = GetCurFileSystem().OpenFile(name, wxFS_READ | wxFS_SEEKABLE);
+    if ( fsfile )
+    {
+        ani->Load(*fsfile->GetStream());
+        delete fsfile;
+    }
+#else
+    ani->LoadFile(name);
+#endif
+
+    if ( !ani->IsOk() )
+    {
+        ReportParamError
+        (
+            param,
+            wxString::Format("cannot create animation from \"%s\"", name)
+        );
+        return NULL;
+    }
+
+    return ani.release();
 }
 
 #endif // wxUSE_XRC && wxUSE_ANIMATIONCTRL

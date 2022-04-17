@@ -5,7 +5,6 @@
 // Modified by: Vadim Zeitlin on 31.08.00: wxScrollHelper allows to implement.
 //              Ron Lee on 10.4.02:  virtual size / auto scrollbars et al.
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) wxWidgets team
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -21,9 +20,6 @@
 // For compilers that support precompilation, includes "wx.h".
 #include "wx/wxprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #include "wx/scrolwin.h"
 
@@ -39,8 +35,6 @@
 #ifdef __WXMAC__
 #include "wx/scrolbar.h"
 #endif
-
-#include "wx/recguard.h"
 
 #ifdef __WXMSW__
     #include <windows.h> // for DLGC_WANTARROWS
@@ -77,14 +71,10 @@ public:
         m_scrollHelper = scrollHelper;
     }
 
-    virtual bool ProcessEvent(wxEvent& event);
-
-    void ResetDrawnFlag() { m_hasDrawnWindow = false; }
+    virtual bool ProcessEvent(wxEvent& event) wxOVERRIDE;
 
 private:
     wxScrollHelperBase *m_scrollHelper;
-
-    bool m_hasDrawnWindow;
 
     wxDECLARE_NO_COPY_CLASS(wxScrollHelperEvtHandler);
 };
@@ -103,7 +93,7 @@ public:
                       wxEventType eventTypeToSend,
                       int pos, int orient);
 
-    virtual void Notify();
+    virtual void Notify() wxOVERRIDE;
 
 private:
     wxWindow *m_win;
@@ -147,6 +137,7 @@ void wxAutoScrollTimer::Notify()
         // first scroll the window if we are allowed to do it
         wxScrollWinEvent event1(m_eventType, m_pos, m_orient);
         event1.SetEventObject(m_win);
+        event1.SetId(m_win->GetId());
         if ( m_scrollHelper->SendAutoScrollEvents(event1) &&
                 m_win->GetEventHandler()->ProcessEvent(event1) )
         {
@@ -165,7 +156,16 @@ void wxAutoScrollTimer::Notify()
 
             event2.SetEventObject(m_win);
 
-            // FIXME: we don't fill in the other members - ok?
+            wxMouseState mouseState = wxGetMouseState();
+
+            event2.m_leftDown = mouseState.LeftIsDown();
+            event2.m_middleDown = mouseState.MiddleIsDown();
+            event2.m_rightDown = mouseState.RightIsDown();
+
+            event2.m_shiftDown = mouseState.ShiftDown();
+            event2.m_controlDown = mouseState.ControlDown();
+            event2.m_altDown = mouseState.AltDown();
+            event2.m_metaDown = mouseState.MetaDown();
 
             m_win->GetEventHandler()->ProcessEvent(event2);
         }
@@ -181,27 +181,12 @@ void wxAutoScrollTimer::Notify()
 // wxScrollHelperEvtHandler
 // ----------------------------------------------------------------------------
 
+// Notice that this method is currently duplicated in the method with the same
+// name in wxVarScrollHelperEvtHandler class, until this is fixed, the other
+// copy of the method needs to be modified every time this version is.
 bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 {
     wxEventType evType = event.GetEventType();
-
-    // the explanation of wxEVT_PAINT processing hack: for historic reasons
-    // there are 2 ways to process this event in classes deriving from
-    // wxScrolledWindow. The user code may
-    //
-    //  1. override wxScrolledWindow::OnDraw(dc)
-    //  2. define its own OnPaint() handler
-    //
-    // In addition, in wxUniversal wxWindow defines OnPaint() itself and
-    // always processes the draw event, so we can't just try the window
-    // OnPaint() first and call our HandleOnPaint() if it doesn't process it
-    // (the latter would never be called in wxUniversal).
-    //
-    // So the solution is to have a flag telling us whether the user code drew
-    // anything in the window. We set it to true here but reset it to false in
-    // wxScrolledWindow::OnPaint() handler (which wouldn't be called if the
-    // user code defined OnPaint() in the derived class)
-    m_hasDrawnWindow = true;
 
     // Pass it on to the real handler: notice that we must not call
     // ProcessEvent() on this object itself as it wouldn't pass it to the next
@@ -221,26 +206,31 @@ bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
     if ( evType == wxEVT_SIZE )
     {
         m_scrollHelper->HandleOnSize((wxSizeEvent &)event);
-
         return true;
     }
 
-    if ( processed )
-    {
-        // normally, nothing more to do here - except if it was a paint event
-        // which wasn't really processed, then we'll try to call our
-        // OnDraw() below (from HandleOnPaint)
-        if ( m_hasDrawnWindow || event.IsCommandEvent() )
-        {
-            return true;
-        }
-    }
-
-    if ( evType == wxEVT_PAINT )
+    // For wxEVT_PAINT the user code can either handle this event as usual or
+    // override virtual OnDraw(), so if the event hasn't been handled we need
+    // to call this virtual function ourselves.
+    if (
+#ifndef __WXUNIVERSAL__
+          // in wxUniversal "processed" will always be true, because
+          // all windows use the paint event to draw themselves.
+          // In this case we can't use this flag to determine if a custom
+          // paint event handler already drew our window and we just
+          // call OnDraw() anyway.
+          !processed &&
+#endif // !__WXUNIVERSAL__
+            evType == wxEVT_PAINT )
     {
         m_scrollHelper->HandleOnPaint((wxPaintEvent &)event);
         return true;
     }
+
+    // If the user code handled this event, it should prevent the default
+    // handling from taking place, so don't do anything else in this case.
+    if ( processed )
+        return true;
 
     if ( evType == wxEVT_CHILD_FOCUS )
     {
@@ -320,17 +310,30 @@ bool wxScrollHelperEvtHandler::ProcessEvent(wxEvent& event)
 }
 
 // ============================================================================
-// wxScrollHelperBase implementation
+// wxAnyScrollHelperBase and wxScrollHelperBase implementation
 // ============================================================================
+
+// ----------------------------------------------------------------------------
+// wxAnyScrollHelperBase
+// ----------------------------------------------------------------------------
+
+wxAnyScrollHelperBase::wxAnyScrollHelperBase(wxWindow* win)
+{
+    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
+
+    m_win = win;
+    m_targetWindow = NULL;
+
+    m_kbdScrollingEnabled = true;
+}
 
 // ----------------------------------------------------------------------------
 // wxScrollHelperBase construction
 // ----------------------------------------------------------------------------
 
 wxScrollHelperBase::wxScrollHelperBase(wxWindow *win)
+    : wxAnyScrollHelperBase(win)
 {
-    wxASSERT_MSG( win, wxT("associated window can't be NULL in wxScrollHelper") );
-
     m_xScrollPixelsPerLine =
     m_yScrollPixelsPerLine =
     m_xScrollPosition =
@@ -343,22 +346,15 @@ wxScrollHelperBase::wxScrollHelperBase(wxWindow *win)
     m_xScrollingEnabled =
     m_yScrollingEnabled = true;
 
-    m_kbdScrollingEnabled = true;
-
     m_scaleX =
     m_scaleY = 1.0;
 #if wxUSE_MOUSEWHEEL
     m_wheelRotation = 0;
 #endif
 
-    m_win =
-    m_targetWindow = NULL;
-
     m_timerAutoScroll = NULL;
 
     m_handler = NULL;
-
-    m_win = win;
 
     m_win->SetScrollHelper(static_cast<wxScrollHelper *>(this));
 
@@ -461,12 +457,6 @@ void wxScrollHelperBase::DeleteEvtHandler()
     }
 }
 
-void wxScrollHelperBase::ResetDrawnFlag()
-{
-    wxCHECK_RET( m_handler, "invalid use of ResetDrawnFlag - no handler?" );
-    m_handler->ResetDrawnFlag();
-}
-
 void wxScrollHelperBase::DoSetTargetWindow(wxWindow *target)
 {
     m_targetWindow = target;
@@ -495,11 +485,6 @@ void wxScrollHelperBase::SetTargetWindow(wxWindow *target)
         return;
 
     DoSetTargetWindow(target);
-}
-
-wxWindow *wxScrollHelperBase::GetTargetWindow() const
-{
-    return m_targetWindow;
 }
 
 // ----------------------------------------------------------------------------
@@ -576,6 +561,12 @@ void wxScrollHelperBase::HandleOnScroll(wxScrollWinEvent& event)
     {
         m_targetWindow->ScrollWindow(dx, dy, GetScrollRect());
     }
+#ifdef __WXUNIVERSAL__
+    if (m_win != m_targetWindow)
+    {
+        m_win->Refresh(true, GetScrollRect());
+    }
+#endif // __WXUNIVERSAL__
 }
 
 int wxScrollHelperBase::CalcScrollInc(wxScrollWinEvent& event)
@@ -670,7 +661,7 @@ int wxScrollHelperBase::CalcScrollInc(wxScrollWinEvent& event)
 void wxScrollHelperBase::DoPrepareDC(wxDC& dc)
 {
     wxPoint pt = dc.GetDeviceOrigin();
-#ifdef __WXGTK__
+#if defined(__WXGTK__) && !defined(__WXGTK3__)
     // It may actually be correct to always query
     // the m_sign from the DC here, but I leave the
     // #ifdef GTK for now.
@@ -779,10 +770,18 @@ bool wxScrollHelperBase::ScrollLayout()
         // If we're the scroll target, take into account the
         // virtual size and scrolled position of the window.
 
-        int x = 0, y = 0, w = 0, h = 0;
-        CalcScrolledPosition(0,0, &x,&y);
-        m_win->GetVirtualSize(&w, &h);
-        m_win->GetSizer()->SetDimension(x, y, w, h);
+        wxSize size = m_win->GetVirtualSize();
+
+        // However we should use the real window size in the direction in which
+        // scrolling is disabled, if any.
+        const wxSize clientSize = m_win->GetClientSize();
+        if ( !IsScrollbarShown(wxHORIZONTAL) )
+            size.x = clientSize.x;
+        if ( !IsScrollbarShown(wxVERTICAL) )
+            size.y = clientSize.y;
+
+        m_win->GetSizer()->SetDimension(CalcScrolledPosition(wxPoint(0, 0)),
+                                        size);
         return true;
     }
 
@@ -832,7 +831,7 @@ void wxScrollHelperBase::HandleOnSize(wxSizeEvent& WXUNUSED(event))
 
 // This calls OnDraw, having adjusted the origin according to the current
 // scroll position
-void wxScrollHelperBase::HandleOnPaint(wxPaintEvent& WXUNUSED(event))
+void wxAnyScrollHelperBase::HandleOnPaint(wxPaintEvent& WXUNUSED(event))
 {
     // don't use m_targetWindow here, this is always called for ourselves
     wxPaintDC dc(m_win);
@@ -845,7 +844,7 @@ void wxScrollHelperBase::HandleOnPaint(wxPaintEvent& WXUNUSED(event))
 // compatibility here - if we used OnKeyDown(), the programs which process
 // arrows themselves in their OnChar() would never get the message and like
 // this they always have the priority
-void wxScrollHelperBase::HandleOnChar(wxKeyEvent& event)
+void wxAnyScrollHelperBase::HandleOnChar(wxKeyEvent& event)
 {
     if ( !m_kbdScrollingEnabled )
     {
@@ -858,6 +857,7 @@ void wxScrollHelperBase::HandleOnChar(wxKeyEvent& event)
 
     newEvent.SetPosition(0);
     newEvent.SetEventObject(m_win);
+    newEvent.SetId(m_win->GetId());
 
     // this is the default, it's changed to wxHORIZONTAL below if needed
     newEvent.SetOrientation(wxVERTICAL);
@@ -891,7 +891,7 @@ void wxScrollHelperBase::HandleOnChar(wxKeyEvent& event)
 
         case WXK_LEFT:
             newEvent.SetOrientation(wxHORIZONTAL);
-            // fall through
+            wxFALLTHROUGH;
 
         case WXK_UP:
             newEvent.SetEventType(wxEVT_SCROLLWIN_LINEUP);
@@ -899,7 +899,7 @@ void wxScrollHelperBase::HandleOnChar(wxKeyEvent& event)
 
         case WXK_RIGHT:
             newEvent.SetOrientation(wxHORIZONTAL);
-            // fall through
+            wxFALLTHROUGH;
 
         case WXK_DOWN:
             newEvent.SetEventType(wxEVT_SCROLLWIN_LINEDOWN);
@@ -1032,6 +1032,9 @@ void wxScrollHelperBase::HandleOnMouseWheel(wxMouseEvent& event)
         newEvent.SetOrientation( event.GetWheelAxis() == 0 ? wxVERTICAL : wxHORIZONTAL);
         newEvent.SetEventObject(m_win);
 
+        if ( event.GetWheelAxis() == wxMOUSE_WHEEL_HORIZONTAL )
+            lines = -lines;
+
         if (event.IsPageScroll())
         {
             if (lines > 0)
@@ -1070,12 +1073,13 @@ void wxScrollHelperBase::HandleOnChildFocus(wxChildFocusEvent& event)
     if ( win == m_targetWindow )
         return; // nothing to do
 
-#if defined( __WXOSX__ ) && wxUSE_SCROLLBAR
-    if (wxDynamicCast(win, wxScrollBar))
+    if ( !ShouldScrollToChildOnFocus(win) )
+    {
+        // the window does not require to be scrolled into view
         return;
-#endif
+    }
 
-    // Fixing ticket: http://trac.wxwidgets.org/ticket/9563
+    // Fixing ticket: https://github.com/wxWidgets/wxWidgets/issues/9563
     // When a child inside a wxControlContainer receives a focus, the
     // wxControlContainer generates an artificial wxChildFocusEvent for
     // itself, telling its parent that 'it' received the focus. The effect is
@@ -1087,22 +1091,28 @@ void wxScrollHelperBase::HandleOnChildFocus(wxChildFocusEvent& event)
     // window again to make the child widget visible. This leads to ugly
     // flickering when using nested wxPanels/wxScrolledWindows.
     //
-    // Ignore this event if 'win' is derived from wxControlContainer AND its
-    // parent is the m_targetWindow AND 'win' is not actually reciving the
-    // focus (win != FindFocus).  TODO: This affects all wxControlContainer
-    // objects, but wxControlContainer is not part of the wxWidgets RTTI and
-    // so wxDynamicCast(win, wxControlContainer) does not compile.  Find a way
-    // to determine if 'win' derives from wxControlContainer. Until then,
-    // testing if 'win' derives from wxPanel will probably get >90% of all
-    // cases.
+    // Ignore this event if 'win', or any of its ancestors, is derived from
+    // wxControlContainer AND its parent is the m_targetWindow AND 'win' is not
+    // actually receiving the focus (win != FindFocus).
+    //
+    // TODO: This affects all wxControlContainer objects, but
+    // wxControlContainer is not part of the wxWidgets RTTI and so
+    // wxDynamicCast(win, wxControlContainer) does not compile.  Find a way to
+    // determine if 'win' derives from wxControlContainer. Until then, testing
+    // if 'win' derives from wxPanel will probably get >90% of all cases.
 
-    wxWindow *actual_focus=wxWindow::FindFocus();
-    if (win != actual_focus &&
-        wxDynamicCast(win, wxPanel) != 0 &&
-        win->GetParent() == m_targetWindow)
-        // if win is a wxPanel and receives the focus, it should not be
-        // scrolled into view
-        return;
+    wxWindow * const actual_focus = wxWindow::FindFocus();
+    for ( wxWindow* w = win; w; w = w->GetParent() )
+    {
+        if ( w != actual_focus &&
+             wxDynamicCast(w, wxPanel) != NULL &&
+             w->GetParent() == m_targetWindow )
+        {
+            // if it is a wxPanel and receives the focus, it should not be
+            // scrolled into view
+            return;
+        }
+    }
 
     const wxRect viewRect(m_targetWindow->GetClientRect());
 
@@ -1211,6 +1221,15 @@ wxScrollHelper::wxScrollHelper(wxWindow *winToScroll)
 {
     m_xVisibility =
     m_yVisibility = wxSHOW_SB_DEFAULT;
+    m_adjustScrollFlagReentrancy = 0;
+}
+
+bool wxScrollHelper::IsScrollbarShown(int orient) const
+{
+    wxScrollbarVisibility visibility = orient == wxHORIZONTAL ? m_xVisibility
+                                                              : m_yVisibility;
+
+    return visibility != wxSHOW_SB_NEVER;
 }
 
 void wxScrollHelper::DoShowScrollbars(wxScrollbarVisibility horz,
@@ -1290,7 +1309,7 @@ wxScrollHelper::DoAdjustScrollbar(int orient,
 
         default:
             wxFAIL_MSG( wxS("unknown scrollbar visibility") );
-            // fall through
+            wxFALLTHROUGH;
 
         case wxSHOW_SB_DEFAULT:
             range = scrollUnits;
@@ -1303,8 +1322,7 @@ wxScrollHelper::DoAdjustScrollbar(int orient,
 
 void wxScrollHelper::AdjustScrollbars()
 {
-    static wxRecursionGuardFlag s_flagReentrancy;
-    wxRecursionGuard guard(s_flagReentrancy);
+    wxRecursionGuard guard(m_adjustScrollFlagReentrancy);
     if ( guard.IsInside() )
     {
         // don't reenter AdjustScrollbars() while another call to
@@ -1535,15 +1553,15 @@ wxSize wxScrolledT_Helper::FilterBestSize(const wxWindow *win,
         //     the window into sizer as expandable so that it can use all space
         //     available to it.
         //
-        //     See also http://svn.wxwidgets.org/viewvc/wx?view=rev&revision=45864
+        //     See also https://github.com/wxWidgets/wxWidgets/commit/7e0f7539
 
         wxSize minSize = win->GetMinSize();
 
         if ( ppuX > 0 )
-            best.x = minSize.x + wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
+            best.x = minSize.x + wxSystemSettings::GetMetric(wxSYS_VSCROLL_X, win);
 
         if ( ppuY > 0 )
-            best.y = minSize.y + wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y);
+            best.y = minSize.y + wxSystemSettings::GetMetric(wxSYS_HSCROLL_Y, win);
     }
 
     return best;
@@ -1552,17 +1570,15 @@ wxSize wxScrolledT_Helper::FilterBestSize(const wxWindow *win,
 #ifdef __WXMSW__
 WXLRESULT wxScrolledT_Helper::FilterMSWWindowProc(WXUINT nMsg, WXLRESULT rc)
 {
-#ifndef __WXWINCE__
     // we need to process arrows ourselves for scrolling
     if ( nMsg == WM_GETDLGCODE )
     {
         rc |= DLGC_WANTARROWS;
     }
-#endif
     return rc;
 }
 #endif // __WXMSW__
 
-// NB: skipping wxScrolled<T> in wxRTTI information because being a templte,
+// NB: skipping wxScrolled<T> in wxRTTI information because being a template,
 //     it doesn't and can't implement wxRTTI support
-IMPLEMENT_DYNAMIC_CLASS(wxScrolledWindow, wxPanel)
+wxIMPLEMENT_DYNAMIC_CLASS(wxScrolledWindow, wxPanel);

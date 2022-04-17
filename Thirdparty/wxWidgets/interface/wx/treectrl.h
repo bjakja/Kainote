@@ -2,7 +2,6 @@
 // Name:        treectrl.h
 // Purpose:     interface of wxTreeItemData
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -15,8 +14,33 @@
     wxTreeItemId handles, which may be tested for validity by calling
     wxTreeItemId::IsOk().
 
-    A similar control with a fully native implementation for GTK+ and OS X
+    A similar control with a fully native implementation for GTK+ and macOS
     as well is wxDataViewTreeCtrl.
+
+    @section treectrl_images Images in wxTreeCtrl
+
+    wxTreeCtrl inherits from wxWithImages classes providing the functions for
+    associating images with the control items. Each item refers to its image
+    using an index, which can possibly by wxWithImages::NO_IMAGE to indicate
+    that the item doesn't use any image at all, and the corresponding image is
+    taken either from the vector passed to wxWithImages::SetImages() or from
+    the image list passed to wxWithImages::SetImageList() or
+    wxWithImages::AssignImageList() functions.
+
+    In addition to normal images, handled with the methods mentioned above,
+    wxTreeCtrl also provides optional state images that may be used to indicate
+    some additional state of the item, e.g. checked or unchecked status. These
+    images can be set using SetStateImageList() and AssignStateImageList()
+    functions that behave in the same way as the corresponding methods of
+    wxWithImages.
+
+    Finally, in the generic version of this control (wxGenericTreeCtrl), also
+    provides SetButtonsImageList() and AssignButtonsImageList(), which can be
+    used to change the images used for the control buttons, used to expand or
+    collapse its branches. These methods are not available in the native wxMSW
+    and wxQt implementations.
+
+    @section treectrl_events Events
 
     To intercept events from a tree control, use the event table macros
     described in wxTreeEvent.
@@ -33,10 +57,8 @@
         Selects alternative style of @c +/@c - buttons and shows rotating
         ("twisting") arrows instead. Currently this style is only implemented
         under Microsoft Windows Vista and later Windows versions and is ignored
-        under the other platforms. Notice that under Vista this style results
-        in the same appearance as used by the tree control in Explorer and
-        other built-in programs and so using it may be preferable to the
-        default style.
+        under the other platforms as enabling it is equivalent to using
+        wxSystemThemedControl::EnableSystemTheme().
     @style{wxTR_NO_LINES}
         Use this style to hide vertical level connectors.
     @style{wxTR_FULL_ROW_HIGHLIGHT}
@@ -45,8 +67,11 @@
         flag is ignored under Windows unless you specify @c wxTR_NO_LINES as
         well.)
     @style{wxTR_LINES_AT_ROOT}
-        Use this style to show lines between root nodes. Only applicable if @c
-        wxTR_HIDE_ROOT is set and @c wxTR_NO_LINES is not set.
+        Use this style to show lines leading to the root nodes (unless no
+        @c wxTR_NO_LINES is also used, in which case no lines are shown). Note
+        that in the MSW version, if this style is omitted, not only the lines,
+        but also the button used for expanding the root item is not shown,
+        which can be unexpected, so it is recommended to always use it.
     @style{wxTR_HIDE_ROOT}
         Use this style to suppress the display of the root node, effectively
         causing the first-level nodes to appear as a series of root nodes.
@@ -73,73 +98,76 @@
           Begin dragging with the left mouse button.
           If you want to enable left-dragging you need to intercept this event
           and explicitly call wxTreeEvent::Allow(), as it's vetoed by default.
-          Processes a @c wxEVT_COMMAND_TREE_BEGIN_DRAG event type.
+          Processes a @c wxEVT_TREE_BEGIN_DRAG event type.
     @event{EVT_TREE_BEGIN_RDRAG(id, func)}
           Begin dragging with the right mouse button.
           If you want to enable right-dragging you need to intercept this event
           and explicitly call wxTreeEvent::Allow(), as it's vetoed by default.
-          Processes a @c wxEVT_COMMAND_TREE_BEGIN_RDRAG event type.
+          Processes a @c wxEVT_TREE_BEGIN_RDRAG event type.
     @event{EVT_TREE_END_DRAG(id, func)}
           End dragging with the left or right mouse button.
-          Processes a @c wxEVT_COMMAND_TREE_END_DRAG event type.
+          Processes a @c wxEVT_TREE_END_DRAG event type.
     @event{EVT_TREE_BEGIN_LABEL_EDIT(id, func)}
           Begin editing a label. This can be prevented by calling Veto().
-          Processes a @c wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT event type.
+          Processes a @c wxEVT_TREE_BEGIN_LABEL_EDIT event type.
     @event{EVT_TREE_END_LABEL_EDIT(id, func)}
           Finish editing a label. This can be prevented by calling Veto().
-          Processes a @c wxEVT_COMMAND_TREE_END_LABEL_EDIT event type.
+          Processes a @c wxEVT_TREE_END_LABEL_EDIT event type.
     @event{EVT_TREE_DELETE_ITEM(id, func)}
           An item was deleted.
-          Processes a @c wxEVT_COMMAND_TREE_DELETE_ITEM event type.
+          Processes a @c wxEVT_TREE_DELETE_ITEM event type.
     @event{EVT_TREE_GET_INFO(id, func)}
           Request information from the application.
-          Processes a @c wxEVT_COMMAND_TREE_GET_INFO event type.
+          Processes a @c wxEVT_TREE_GET_INFO event type.
     @event{EVT_TREE_SET_INFO(id, func)}
           Information is being supplied.
-          Processes a @c wxEVT_COMMAND_TREE_SET_INFO event type.
+          Processes a @c wxEVT_TREE_SET_INFO event type.
     @event{EVT_TREE_ITEM_ACTIVATED(id, func)}
           The item has been activated, i.e. chosen by double clicking it with
           mouse or from keyboard.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_ACTIVATED event type.
+          Processes a @c wxEVT_TREE_ITEM_ACTIVATED event type.
     @event{EVT_TREE_ITEM_COLLAPSED(id, func)}
           The item has been collapsed.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_COLLAPSED event type.
+          Processes a @c wxEVT_TREE_ITEM_COLLAPSED event type.
     @event{EVT_TREE_ITEM_COLLAPSING(id, func)}
           The item is being collapsed. This can be prevented by calling Veto().
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_COLLAPSING event type.
+          Processes a @c wxEVT_TREE_ITEM_COLLAPSING event type.
     @event{EVT_TREE_ITEM_EXPANDED(id, func)}
           The item has been expanded.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_EXPANDED event type.
+          Processes a @c wxEVT_TREE_ITEM_EXPANDED event type.
     @event{EVT_TREE_ITEM_EXPANDING(id, func)}
           The item is being expanded. This can be prevented by calling Veto().
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_EXPANDING event type.
+          Processes a @c wxEVT_TREE_ITEM_EXPANDING event type.
     @event{EVT_TREE_ITEM_RIGHT_CLICK(id, func)}
           The user has clicked the item with the right mouse button.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK event type.
+          Processes a @c wxEVT_TREE_ITEM_RIGHT_CLICK event type.
     @event{EVT_TREE_ITEM_MIDDLE_CLICK(id, func)}
           The user has clicked the item with the middle mouse button. This is
           only supported by the generic control.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK event type.
+          Processes a @c wxEVT_TREE_ITEM_MIDDLE_CLICK event type.
     @event{EVT_TREE_SEL_CHANGED(id, func)}
           Selection has changed.
-          Processes a @c wxEVT_COMMAND_TREE_SEL_CHANGED event type.
+          Processes a @c wxEVT_TREE_SEL_CHANGED event type.
     @event{EVT_TREE_SEL_CHANGING(id, func)}
           Selection is changing. This can be prevented by calling Veto().
-          Processes a @c wxEVT_COMMAND_TREE_SEL_CHANGING event type.
+          Processes a @c wxEVT_TREE_SEL_CHANGING event type.
     @event{EVT_TREE_KEY_DOWN(id, func)}
           A key has been pressed.
-          Processes a @c wxEVT_COMMAND_TREE_KEY_DOWN event type.
+          Processes a @c wxEVT_TREE_KEY_DOWN event type.
     @event{EVT_TREE_ITEM_GETTOOLTIP(id, func)}
           The opportunity to set the item tooltip is being given to the application
           (call wxTreeEvent::SetToolTip). Windows only.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP event type.
+          Processes a @c wxEVT_TREE_ITEM_GETTOOLTIP event type.
     @event{EVT_TREE_ITEM_MENU(id, func)}
           The context menu for the selected item has been requested, either by a
-          right click or by using the menu key.
-          Processes a @c wxEVT_COMMAND_TREE_ITEM_MENU event type.
+          right click or by using the menu key. Notice that these events always
+          carry a valid tree item and so are not generated when (right)
+          clicking outside of the items area. If you need to handle such
+          events, consider using @c wxEVT_CONTEXT_MENU instead.
+          Processes a @c wxEVT_TREE_ITEM_MENU event type.
     @event{EVT_TREE_STATE_IMAGE_CLICK(id, func)}
-          The state image has been clicked. Windows only.
-          Processes a @c wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK event type.
+          The state image has been clicked.
+          Processes a @c wxEVT_TREE_STATE_IMAGE_CLICK event type.
     @endEventTable
 
 
@@ -158,12 +186,12 @@
 
     @library{wxcore}
     @category{ctrl}
-    @appearance{treectrl.png}
+    @appearance{treectrl}
 
     @see wxDataViewTreeCtrl, wxTreeEvent, wxTreeItemData, @ref overview_treectrl,
-         wxListBox, wxListCtrl, wxImageList
+         wxListBox, wxListCtrl, wxWithImages
 */
-class wxTreeCtrl : public wxControl
+class wxTreeCtrl : public wxControl, public wxWithImages
 {
 public:
     /**
@@ -182,7 +210,7 @@ public:
             Window position.
             If ::wxDefaultPosition is specified then a default position is chosen.
         @param size
-            Window size. 
+            Window size.
             If ::wxDefaultSize is specified then the window is sized appropriately.
         @param style
             Window style. See wxTreeCtrl.
@@ -211,7 +239,7 @@ public:
 
         The @a image and @a selImage parameters are an index within the normal
         image list specifying the image to use for unselected and selected
-        items, respectively. If @a image -1 and @a selImage is -1, the same
+        items, respectively. If @a image > -1 and @a selImage is -1, the same
         image is used for both selected and unselected items.
     */
     virtual wxTreeItemId AddRoot(const wxString& text, int image = -1,
@@ -224,7 +252,7 @@ public:
 
         The @a image and @a selImage parameters are an index within the normal
         image list specifying the image to use for unselected and selected
-        items, respectively. If @a image -1 and @a selImage is -1, the same
+        items, respectively. If @a image > -1 and @a selImage is -1, the same
         image is used for both selected and unselected items.
     */
     wxTreeItemId AppendItem(const wxTreeItemId& parent,
@@ -247,15 +275,6 @@ public:
         @see SetButtonsImageList().
     */
     void AssignButtonsImageList(wxImageList* imageList);
-
-    /**
-        Sets the normal image list. The image list assigned with this method
-        will be automatically deleted by wxTreeCtrl as appropriate (i.e. it
-        takes ownership of the list).
-
-        @see SetImageList().
-    */
-    void AssignImageList(wxImageList* imageList);
 
     /**
         Sets the state image list. Image list assigned with this method will be
@@ -310,15 +329,19 @@ public:
     virtual void Delete(const wxTreeItemId& item);
 
     /**
-        Deletes all items in the control. Note that this may not generate
-        @c EVT_TREE_DELETE_ITEM events under some Windows versions although
-        normally such event is generated for each removed item.
+        Deletes all items in the control.
+
+        This function generates @c wxEVT_TREE_DELETE_ITEM events for each item
+        being deleted, including the root one if it is shown, i.e. unless
+        wxTR_HIDE_ROOT style is used.
     */
     virtual void DeleteAllItems();
 
     /**
-        Deletes all children of the given item (but not the item itself). Note
-        that this will @b not generate any events unlike Delete() method.
+        Deletes all children of the given item (but not the item itself).
+
+        A @c wxEVT_TREE_DELETE_ITEM event will be generated for every item
+        being deleted.
 
         If you have called SetItemHasChildren(), you may need to call it again
         since DeleteChildren() does not automatically clear the setting.
@@ -340,6 +363,18 @@ public:
                                   wxClassInfo* textCtrlClass = wxCLASSINFO(wxTextCtrl));
 
     /**
+        Enable or disable a beep if there is no match for the currently
+        entered text when searching for the item from keyboard.
+
+        The default is to not beep in this case except in wxMSW where the
+        beep is always generated by the native control and cannot be disabled,
+        i.e. calls to this function do nothing there.
+
+        @since 2.9.5
+    */
+    void EnableBellOnNoMatch(bool on = true);
+
+    /**
         Ends label editing. If @a cancelEdit is @true, the edit will be
         cancelled.
 
@@ -352,6 +387,9 @@ public:
 
     /**
         Scrolls and/or expands items to ensure that the given item is visible.
+
+        This method can be used, and will work, even while the window is frozen
+        (see wxWindow::Freeze()).
     */
     virtual void EnsureVisible(const wxTreeItemId& item);
 
@@ -451,7 +489,7 @@ public:
         Returns the item last clicked or otherwise selected.
         Unlike GetSelection(), it can be used whether or not
         the control has the @c wxTR_MULTIPLE style.
-        
+
         @since 2.9.1
     */
     virtual wxTreeItemId GetFocusedItem() const;
@@ -473,16 +511,16 @@ public:
     */
     virtual void SetFocusedItem(const wxTreeItemId& item);
 
-
-    /**
-        Returns the normal image list.
-    */
-    wxImageList* GetImageList() const;
-
     /**
         Returns the current tree control indentation.
     */
     virtual unsigned int GetIndent() const;
+
+    /**
+        Returns the current tree control spacing.  This is the number of
+        horizontal pixels between the buttons and the state images.
+    */
+    unsigned int GetSpacing() const;
 
     /**
         Returns the background colour of the item.
@@ -505,6 +543,11 @@ public:
 
     /**
         Returns the font of the item label.
+
+        If the font hadn't been explicitly set for the specified @a item with
+        SetItemFont(), returns an invalid ::wxNullFont font. GetFont() can be
+        used to retrieve the global tree control font used for the items
+        without any specific font.
     */
     virtual wxFont GetItemFont(const wxTreeItemId& item) const;
 
@@ -623,7 +666,7 @@ public:
     /**
         Returns the selection, or an invalid item if there is no selection. This
         function only works with the controls without @c wxTR_MULTIPLE style,
-        use GetSelections() for the controls which do have this style 
+        use GetSelections() for the controls which do have this style
         or, if a single item is wanted, use GetFocusedItem().
     */
     virtual wxTreeItemId GetSelection() const;
@@ -679,7 +722,7 @@ public:
 
         The @a image and @a selImage parameters are an index within the normal
         image list specifying the image to use for unselected and selected
-        items, respectively. If @a image -1 and @a selImage is -1, the same
+        items, respectively. If @a image > -1 and @a selImage is -1, the same
         image is used for both selected and unselected items.
     */
     wxTreeItemId InsertItem(const wxTreeItemId& parent,
@@ -691,16 +734,16 @@ public:
 
     /**
         Inserts an item before one identified
-        by its position (@a before). @a before must be less than the number of
-        children.
+        by its position (@a pos). @a pos must be less than or equal to
+        the number of children.
 
         The @a image and @a selImage parameters are an index within the normal
         image list specifying the image to use for unselected and selected
-        items, respectively. If @a image -1 and @a selImage is -1, the same
+        items, respectively. If @a image > -1 and @a selImage is -1, the same
         image is used for both selected and unselected items.
     */
     wxTreeItemId InsertItem(const wxTreeItemId& parent,
-                            size_t before,
+                            size_t pos,
                             const wxString& text,
                             int image = -1,
                             int selImage = -1,
@@ -714,7 +757,7 @@ public:
     virtual bool IsBold(const wxTreeItemId& item) const;
 
     /**
-        Returns @true if the control is empty (i.e. has no items, even no root
+        Returns @true if the control is empty (i.e.\ has no items, even no root
         one).
     */
     bool IsEmpty() const;
@@ -762,7 +805,7 @@ public:
 
         The @a image and @a selImage parameters are an index within the normal
         image list specifying the image to use for unselected and selected
-        items, respectively. If @a image -1 and @a selImage is -1, the same
+        items, respectively. If @a image > -1 and @a selImage is -1, the same
         image is used for both selected and unselected items.
     */
     wxTreeItemId PrependItem(const wxTreeItemId& parent,
@@ -773,6 +816,11 @@ public:
 
     /**
         Scrolls the specified item into view.
+
+        Note that this method doesn't work while the window is frozen (See
+        wxWindow::Freeze()), at least under MSW.
+
+        @see EnsureVisible()
     */
     virtual void ScrollTo(const wxTreeItemId& item);
 
@@ -783,7 +831,7 @@ public:
         currently selected item if the value of @a select is @false.
 
         Notice that calling this method will generate
-        @c wxEVT_COMMAND_TREE_SEL_CHANGING and @c wxEVT_COMMAND_TREE_SEL_CHANGED
+        @c wxEVT_TREE_SEL_CHANGING and @c wxEVT_TREE_SEL_CHANGED
         events and that the change could be vetoed by the former event handler.
     */
     virtual void SelectItem(const wxTreeItemId& item, bool select = true);
@@ -805,18 +853,16 @@ public:
     void SetButtonsImageList(wxImageList* imageList);
 
     /**
-        Sets the normal image list. The image list assigned with this method
-        will @b not be deleted by @ref wxTreeCtrl "wxTreeCtrl"'s destructor, you
-        must delete it yourself.
-
-        @see AssignImageList().
-    */
-    virtual void SetImageList(wxImageList* imageList);
-
-    /**
         Sets the indentation for the tree control.
     */
     virtual void SetIndent(unsigned int indent);
+
+    /**
+        Sets the spacing for the tree control. Spacing is the number of
+        horizontal pixels between the buttons and the state images.
+        This has no effect under wxMSW.
+    */
+    void SetSpacing(unsigned int spacing);
 
     /**
         Sets the colour of the item's background.
@@ -885,7 +931,8 @@ public:
                               wxTreeItemIcon which = wxTreeItemIcon_Normal);
 
     /**
-        Sets the specified item state. The value of @a state may be:
+        Sets the specified item state. The value of @a state may be an index
+        into the state image list, or one of the special values:
         - @c wxTREE_ITEMSTATE_NONE: to disable the item state (the state image will
             be not displayed).
         - @c wxTREE_ITEMSTATE_NEXT: to set the next item state.
@@ -1043,7 +1090,7 @@ public:
         The state image has been clicked.
     @endEventTable
 
-    @library{wxbase}
+    @library{wxcore}
     @category{events}
 
     @see wxTreeCtrl
@@ -1058,7 +1105,12 @@ public:
                 const wxTreeItemId& item = wxTreeItemId());
 
     /**
-        Returns the item (valid for all events).
+        Returns the item.
+
+        Note that the item may be invalid for wxEVT_TREE_SEL_CHANGED events
+        when the previously selected item has been deselected and there is no
+        new selection any longer, as it notably happens when deleting all tree
+        control items.
     */
     wxTreeItemId GetItem() const;
 
@@ -1079,8 +1131,8 @@ public:
     const wxString& GetLabel() const;
 
     /**
-        Returns the old item index (valid for @c EVT_TREE_ITEM_CHANGING and
-        @c EVT_TREE_ITEM_CHANGED events).
+        Returns the old item index (valid for @c EVT_TREE_SEL_CHANGING and
+        @c EVT_TREE_SEL_CHANGED events).
     */
     wxTreeItemId GetOldItem() const;
 
@@ -1108,25 +1160,25 @@ public:
 };
 
 
-wxEventType wxEVT_COMMAND_TREE_BEGIN_DRAG;
-wxEventType wxEVT_COMMAND_TREE_BEGIN_RDRAG;
-wxEventType wxEVT_COMMAND_TREE_BEGIN_LABEL_EDIT;
-wxEventType wxEVT_COMMAND_TREE_END_LABEL_EDIT;
-wxEventType wxEVT_COMMAND_TREE_DELETE_ITEM;
-wxEventType wxEVT_COMMAND_TREE_GET_INFO;
-wxEventType wxEVT_COMMAND_TREE_SET_INFO;
-wxEventType wxEVT_COMMAND_TREE_ITEM_EXPANDED;
-wxEventType wxEVT_COMMAND_TREE_ITEM_EXPANDING;
-wxEventType wxEVT_COMMAND_TREE_ITEM_COLLAPSED;
-wxEventType wxEVT_COMMAND_TREE_ITEM_COLLAPSING;
-wxEventType wxEVT_COMMAND_TREE_SEL_CHANGED;
-wxEventType wxEVT_COMMAND_TREE_SEL_CHANGING;
-wxEventType wxEVT_COMMAND_TREE_KEY_DOWN;
-wxEventType wxEVT_COMMAND_TREE_ITEM_ACTIVATED;
-wxEventType wxEVT_COMMAND_TREE_ITEM_RIGHT_CLICK;
-wxEventType wxEVT_COMMAND_TREE_ITEM_MIDDLE_CLICK;
-wxEventType wxEVT_COMMAND_TREE_END_DRAG;
-wxEventType wxEVT_COMMAND_TREE_STATE_IMAGE_CLICK;
-wxEventType wxEVT_COMMAND_TREE_ITEM_GETTOOLTIP;
-wxEventType wxEVT_COMMAND_TREE_ITEM_MENU;
+wxEventType wxEVT_TREE_BEGIN_DRAG;
+wxEventType wxEVT_TREE_BEGIN_RDRAG;
+wxEventType wxEVT_TREE_BEGIN_LABEL_EDIT;
+wxEventType wxEVT_TREE_END_LABEL_EDIT;
+wxEventType wxEVT_TREE_DELETE_ITEM;
+wxEventType wxEVT_TREE_GET_INFO;
+wxEventType wxEVT_TREE_SET_INFO;
+wxEventType wxEVT_TREE_ITEM_EXPANDED;
+wxEventType wxEVT_TREE_ITEM_EXPANDING;
+wxEventType wxEVT_TREE_ITEM_COLLAPSED;
+wxEventType wxEVT_TREE_ITEM_COLLAPSING;
+wxEventType wxEVT_TREE_SEL_CHANGED;
+wxEventType wxEVT_TREE_SEL_CHANGING;
+wxEventType wxEVT_TREE_KEY_DOWN;
+wxEventType wxEVT_TREE_ITEM_ACTIVATED;
+wxEventType wxEVT_TREE_ITEM_RIGHT_CLICK;
+wxEventType wxEVT_TREE_ITEM_MIDDLE_CLICK;
+wxEventType wxEVT_TREE_END_DRAG;
+wxEventType wxEVT_TREE_STATE_IMAGE_CLICK;
+wxEventType wxEVT_TREE_ITEM_GETTOOLTIP;
+wxEventType wxEVT_TREE_ITEM_MENU;
 

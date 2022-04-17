@@ -3,15 +3,11 @@
 // Purpose:     wxFrame  unit test
 // Author:      Steven Lamerton
 // Created:     2010-07-10
-// RCS-ID:      $Id$
 // Copyright:   (c) 2010 Steven Lamerton
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "testprec.h"
 
-#ifdef __BORLANDC__
-    #pragma hdrstop
-#endif
 
 #ifndef WX_PRECOMP
     #include "wx/app.h"
@@ -25,8 +21,8 @@ class FrameTestCase : public CppUnit::TestCase
 public:
     FrameTestCase() { }
 
-    void setUp();
-    void tearDown();
+    void setUp() wxOVERRIDE;
+    void tearDown() wxOVERRIDE;
 
 private:
     CPPUNIT_TEST_SUITE( FrameTestCase );
@@ -39,7 +35,7 @@ private:
 
     wxFrame *m_frame;
 
-    DECLARE_NO_COPY_CLASS(FrameTestCase)
+    wxDECLARE_NO_COPY_CLASS(FrameTestCase);
 };
 
 // register in the unnamed registry so that these tests are run by default
@@ -56,7 +52,7 @@ void FrameTestCase::setUp()
 
 void FrameTestCase::tearDown()
 {
-    wxDELETE(m_frame);
+    m_frame->Destroy();
 }
 
 void FrameTestCase::Iconize()

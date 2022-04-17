@@ -3,7 +3,6 @@
 // Purpose:     Declaration of wxBannerWindow XRC handler.
 // Author:      Vadim Zeitlin
 // Created:     2011-08-16
-// RCS-ID:      $Id$
 // Copyright:   (c) 2011 Vadim Zeitlin <vadim@wxwidgets.org>
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
@@ -20,8 +19,8 @@ class WXDLLIMPEXP_XRC wxBannerWindowXmlHandler : public wxXmlResourceHandler
 public:
     wxBannerWindowXmlHandler();
 
-    virtual wxObject *DoCreateResource();
-    virtual bool CanHandle(wxXmlNode *node);
+    virtual wxObject *DoCreateResource() wxOVERRIDE;
+    virtual bool CanHandle(wxXmlNode *node) wxOVERRIDE;
 
     wxDECLARE_DYNAMIC_CLASS(wxBannerWindowXmlHandler);
 };

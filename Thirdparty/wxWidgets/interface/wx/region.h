@@ -2,7 +2,6 @@
 // Name:        region.h
 // Purpose:     interface of wxRegionIterator
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -322,7 +321,7 @@ public:
     virtual bool IsEmpty() const;
 
     /**
-        Returns @true if the region is equal to, i.e. covers the same area as,
+        Returns @true if the region is equal to, i.e.\ covers the same area as,
         another one.
 
         If both this region and @a region are both invalid, they are considered

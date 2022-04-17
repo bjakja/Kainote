@@ -2,7 +2,6 @@
 // Name:        stream.h
 // Purpose:     interface of wxStreamBase and its derived classes
 // Author:      wxWidgets team
-// RCS-ID:      $Id$
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
@@ -537,6 +536,20 @@ public:
     */
     wxOutputStream& Write(wxInputStream& stream_in);
 
+    /**
+        Writes exactly the specified number of bytes from the buffer.
+
+        Returns @true if exactly @a size bytes were written. Otherwise, returns
+        @false and LastWrite() should be used to retrieve the exact amount of
+        the data written if necessary.
+
+        This method uses repeated calls to Write() (which may return writing
+        only part of the data) if necessary.
+
+        @since 2.9.5
+    */
+    bool WriteAll(const void* buffer, size_t size);
+
 protected:
     /**
         Internal function. It is called when the stream wants to write data of the
@@ -630,9 +643,26 @@ public:
     wxInputStream& Read(wxOutputStream& stream_out);
 
     /**
+        Reads exactly the specified number of bytes into the buffer.
+
+        Returns @true only if the entire amount of data was read, otherwise
+        @false is returned and the number of bytes really read can be retrieved
+        using LastRead(), as with Read().
+
+        This method uses repeated calls to Read() (which may return after
+        reading less than the requested number of bytes) if necessary.
+
+        @warning
+        The buffer absolutely needs to have at least the specified size.
+
+        @since 2.9.5
+    */
+    bool ReadAll(void* buffer, size_t size);
+
+    /**
         Changes the stream current position.
 
-        This operation in general is possible only for seekable streams 
+        This operation in general is possible only for seekable streams
         (see wxStreamBase::IsSeekable()); non-seekable streams support only
         seeking positive amounts in mode @c wxFromCurrent (this is implemented
         by reading data and simply discarding it).
@@ -722,9 +752,11 @@ public:
     virtual ~wxCountingOutputStream();
 
     /**
-        Returns the current size of the stream.
+        Returns the current length of the stream.
+
+        This is the amount of data written to the stream so far, in bytes.
     */
-    size_t GetSize() const;
+    virtual wxFileOffset GetLength() const;
 };
 
 

@@ -4,7 +4,6 @@
 // Author:      Julian Smart
 // Modified by:
 // Created:     01/02/97
-// RCS-ID:      $Id$
 // Copyright:   (c) Julian Smart
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
@@ -156,12 +155,45 @@ enum wxStockCursor
     #define wxCURSOR_CLOSED_HAND    wxCURSOR_HAND
 #endif
 
+// ----------------------------------------------------------------------------
+// Ellipsize() constants
+// ----------------------------------------------------------------------------
+
+enum wxEllipsizeFlags
+{
+    wxELLIPSIZE_FLAGS_NONE = 0,
+    wxELLIPSIZE_FLAGS_PROCESS_MNEMONICS = 1,
+    wxELLIPSIZE_FLAGS_EXPAND_TABS = 2,
+
+    wxELLIPSIZE_FLAGS_DEFAULT = wxELLIPSIZE_FLAGS_PROCESS_MNEMONICS |
+    wxELLIPSIZE_FLAGS_EXPAND_TABS
+};
+
+// NB: Don't change the order of these values, they're the same as in
+//     PangoEllipsizeMode enum.
+enum wxEllipsizeMode
+{
+    wxELLIPSIZE_NONE,
+    wxELLIPSIZE_START,
+    wxELLIPSIZE_MIDDLE,
+    wxELLIPSIZE_END
+};
+
 // ---------------------------------------------------------------------------
 // macros
 // ---------------------------------------------------------------------------
 
-#if defined(__WINDOWS__) || defined(__WXPM__)
+// The difference between wxHAS_IMAGES_IN_RESOURCES and wxHAS_IMAGE_RESOURCES
+// is that the former is, historically, only defined under MSW while the latter
+// is also defined under macOS, which uses a different resource concept, and
+// may be also defined for any other ports where images don't need to be
+// embedded into the program text in order to be available during run-time.
+#if defined(__WINDOWS__) && wxUSE_WXDIB
     #define wxHAS_IMAGES_IN_RESOURCES
+#endif
+
+#if defined(wxHAS_IMAGES_IN_RESOURCES) || defined(__WXOSX__)
+    #define wxHAS_IMAGE_RESOURCES
 #endif
 
 /* Useful macro for creating icons portably, for example:
@@ -174,10 +206,7 @@ enum wxStockCursor
     wxIcon *icon = new wxIcon(sample_xpm);    // On wxGTK/Linux
  */
 
-#ifdef __WINDOWS__
-    // Load from a resource
-    #define wxICON(X) wxIcon(wxT(#X))
-#elif defined(__WXPM__)
+#ifdef wxHAS_IMAGES_IN_RESOURCES
     // Load from a resource
     #define wxICON(X) wxIcon(wxT(#X))
 #elif defined(__WXDFB__)
@@ -195,28 +224,52 @@ enum wxStockCursor
 #elif defined(__WXX11__)
     // Initialize from an included XPM
     #define wxICON(X) wxIcon( X##_xpm )
+#elif defined(__WXQT__)
+    // Initialize from an included XPM
+    #define wxICON(X) wxIcon( X##_xpm )
 #else
     // This will usually mean something on any platform
     #define wxICON(X) wxIcon(wxT(#X))
 #endif // platform
 
 /* Another macro: this one is for portable creation of bitmaps. We assume that
-   under Unix bitmaps live in XPMs and under Windows they're in ressources.
+   under Unix bitmaps live in XPMs and under Windows they're in resources.
  */
 
-#if defined(__WINDOWS__) || defined(__WXPM__)
+#if defined(__WINDOWS__) && wxUSE_WXDIB
     #define wxBITMAP(name) wxBitmap(wxT(#name), wxBITMAP_TYPE_BMP_RESOURCE)
 #elif defined(__WXGTK__)   || \
       defined(__WXMOTIF__) || \
       defined(__WXX11__)   || \
       defined(__WXMAC__)   || \
-      defined(__WXDFB__)   || \
-      defined(__WXCOCOA__)
+      defined(__WXDFB__)
     // Initialize from an included XPM
     #define wxBITMAP(name) wxBitmap(name##_xpm)
 #else // other platforms
     #define wxBITMAP(name) wxBitmap(name##_xpm, wxBITMAP_TYPE_XPM)
 #endif // platform
+
+// Macro for creating wxBitmap from in-memory PNG data.
+//
+// It reads PNG data from name_png static byte arrays that can be created using
+// e.g. misc/scripts/png2c.py.
+//
+// This macro exists mostly as a helper for wxBITMAP_PNG() below but also
+// because it's slightly more convenient to use than NewFromPNGData() directly.
+#define wxBITMAP_PNG_FROM_DATA(name) \
+    wxBitmap::NewFromPNGData(name##_png, WXSIZEOF(name##_png))
+
+// Similar to wxBITMAP but used for the bitmaps in PNG format.
+//
+// Under Windows they should be embedded into the resource file using RT_RCDATA
+// resource type and under OS X the PNG file with the specified name must be
+// available in the resource subdirectory of the bundle. Elsewhere, this is
+// exactly the same thing as wxBITMAP_PNG_FROM_DATA() described above.
+#ifdef wxHAS_IMAGE_RESOURCES
+    #define wxBITMAP_PNG(name) wxBitmap(wxS(#name), wxBITMAP_TYPE_PNG_RESOURCE)
+#else
+    #define wxBITMAP_PNG(name) wxBITMAP_PNG_FROM_DATA(name)
+#endif
 
 // ===========================================================================
 // classes
@@ -248,13 +301,20 @@ public:
     wxSize& operator*=(long i) { x *= i; y *= i; return *this; }
     wxSize& operator/=(unsigned long i) { x /= i; y /= i; return *this; }
     wxSize& operator*=(unsigned long i) { x *= i; y *= i; return *this; }
-    wxSize& operator/=(double i) { x = int(x/i); y = int(y/i); return *this; }
-    wxSize& operator*=(double i) { x = int(x*i); y = int(y*i); return *this; }
+    wxSize& operator/=(double i) { x = wxRound(x/i); y = wxRound(y/i); return *this; }
+    wxSize& operator*=(double i) { x = wxRound(x*i); y = wxRound(y*i); return *this; }
 
     void IncTo(const wxSize& sz)
         { if ( sz.x > x ) x = sz.x; if ( sz.y > y ) y = sz.y; }
     void DecTo(const wxSize& sz)
         { if ( sz.x < x ) x = sz.x; if ( sz.y < y ) y = sz.y; }
+    void DecToIfSpecified(const wxSize& sz)
+    {
+        if ( sz.x != wxDefaultCoord && sz.x < x )
+            x = sz.x;
+        if ( sz.y != wxDefaultCoord && sz.y < y )
+            y = sz.y;
+    }
 
     void IncBy(int dx, int dy) { x += dx; y += dy; }
     void IncBy(const wxPoint& pt);
@@ -267,8 +327,8 @@ public:
     void DecBy(int d) { DecBy(d, d); }
 
 
-    wxSize& Scale(float xscale, float yscale)
-        { x = (int)(x*xscale); y = (int)(y*yscale); return *this; }
+    wxSize& Scale(double xscale, double yscale)
+        { x = wxRound(x*xscale); y = wxRound(y*yscale); return *this; }
 
     // accessors
     void Set(int xx, int yy) { x = xx; y = yy; }
@@ -352,37 +412,42 @@ inline wxSize operator/(const wxSize& s, long i)
 
 inline wxSize operator*(const wxSize& s, long i)
 {
-    return wxSize(s.x * i, s.y * i);
+    return wxSize(int(s.x * i), int(s.y * i));
 }
 
 inline wxSize operator*(long i, const wxSize& s)
 {
-    return wxSize(s.x * i, s.y * i);
+    return wxSize(int(s.x * i), int(s.y * i));
 }
 
 inline wxSize operator/(const wxSize& s, unsigned long i)
 {
-    return wxSize(s.x / i, s.y / i);
+    return wxSize(int(s.x / i), int(s.y / i));
 }
 
 inline wxSize operator*(const wxSize& s, unsigned long i)
 {
-    return wxSize(s.x * i, s.y * i);
+    return wxSize(int(s.x * i), int(s.y * i));
 }
 
 inline wxSize operator*(unsigned long i, const wxSize& s)
 {
-    return wxSize(s.x * i, s.y * i);
+    return wxSize(int(s.x * i), int(s.y * i));
+}
+
+inline wxSize operator/(const wxSize& s, double i)
+{
+    return wxSize(wxRound(s.x / i), wxRound(s.y / i));
 }
 
 inline wxSize operator*(const wxSize& s, double i)
 {
-    return wxSize(int(s.x * i), int(s.y * i));
+    return wxSize(wxRound(s.x * i), wxRound(s.y * i));
 }
 
 inline wxSize operator*(double i, const wxSize& s)
 {
-    return wxSize(int(s.x * i), int(s.y * i));
+    return wxSize(wxRound(s.x * i), wxRound(s.y * i));
 }
 
 
@@ -496,12 +561,12 @@ inline wxRealPoint operator*(unsigned long i, const wxRealPoint& s)
 
 inline wxRealPoint operator*(const wxRealPoint& s, double i)
 {
-    return wxRealPoint(int(s.x * i), int(s.y * i));
+    return wxRealPoint(s.x * i, s.y * i);
 }
 
 inline wxRealPoint operator*(double i, const wxRealPoint& s)
 {
-    return wxRealPoint(int(s.x * i), int(s.y * i));
+    return wxRealPoint(s.x * i, s.y * i);
 }
 
 
@@ -516,7 +581,7 @@ public:
 
     wxPoint() : x(0), y(0) { }
     wxPoint(int xx, int yy) : x(xx), y(yy) { }
-    wxPoint(const wxRealPoint& pt) : x(int(pt.x)), y(int(pt.y)) { }
+    wxPoint(const wxRealPoint& pt) : x(wxRound(pt.x)), y(wxRound(pt.y)) { }
 
     // no copy ctor or assignment operator - the defaults are ok
 
@@ -626,12 +691,12 @@ inline wxPoint operator/(const wxPoint& s, long i)
 
 inline wxPoint operator*(const wxPoint& s, long i)
 {
-    return wxPoint(s.x * i, s.y * i);
+    return wxPoint(int(s.x * i), int(s.y * i));
 }
 
 inline wxPoint operator*(long i, const wxPoint& s)
 {
-    return wxPoint(s.x * i, s.y * i);
+    return wxPoint(int(s.x * i), int(s.y * i));
 }
 
 inline wxPoint operator/(const wxPoint& s, unsigned long i)
@@ -641,12 +706,12 @@ inline wxPoint operator/(const wxPoint& s, unsigned long i)
 
 inline wxPoint operator*(const wxPoint& s, unsigned long i)
 {
-    return wxPoint(s.x * i, s.y * i);
+    return wxPoint(int(s.x * i), int(s.y * i));
 }
 
 inline wxPoint operator*(unsigned long i, const wxPoint& s)
 {
-    return wxPoint(s.x * i, s.y * i);
+    return wxPoint(int(s.x * i), int(s.y * i));
 }
 
 inline wxPoint operator*(const wxPoint& s, double i)
@@ -774,18 +839,11 @@ public:
         return r;
     }
 
-    // return true if the point is (not strcitly) inside the rect
+    // return true if the point is (not strictly) inside the rect
     bool Contains(int x, int y) const;
     bool Contains(const wxPoint& pt) const { return Contains(pt.x, pt.y); }
     // return true if the rectangle 'rect' is (not strictly) inside this rect
     bool Contains(const wxRect& rect) const;
-
-#if WXWIN_COMPATIBILITY_2_6
-    // use Contains() instead
-    wxDEPRECATED( bool Inside(int x, int y) const );
-    wxDEPRECATED( bool Inside(const wxPoint& pt) const );
-    wxDEPRECATED( bool Inside(const wxRect& rect) const );
-#endif // WXWIN_COMPATIBILITY_2_6
 
     // return true if the rectangles have a non empty intersection
     bool Intersects(const wxRect& rect) const;
@@ -793,7 +851,7 @@ public:
     // like Union() but don't ignore empty rectangles
     wxRect& operator+=(const wxRect& rect);
 
-    // intersections of two rectrangles not testing for empty rectangles
+    // intersections of two rectangles not testing for empty rectangles
     wxRect& operator*=(const wxRect& rect);
 
     // centre this rectangle in the given (usually, but not necessarily,
@@ -833,16 +891,6 @@ WXDLLIMPEXP_CORE wxRect operator+(const wxRect& r1, const wxRect& r2);
 // intersections of two rectangles
 WXDLLIMPEXP_CORE wxRect operator*(const wxRect& r1, const wxRect& r2);
 
-
-
-
-#if WXWIN_COMPATIBILITY_2_6
-inline bool wxRect::Inside(int cx, int cy) const { return Contains(cx, cy); }
-inline bool wxRect::Inside(const wxPoint& pt) const { return Contains(pt); }
-inline bool wxRect::Inside(const wxRect& rect) const { return Contains(rect); }
-#endif // WXWIN_COMPATIBILITY_2_6
-
-
 // define functions which couldn't be defined above because of declarations
 // order
 inline void wxSize::IncBy(const wxPoint& pt) { IncBy(pt.x, pt.y); }
@@ -878,18 +926,6 @@ public:
     // add a new colour to the database
     void AddColour(const wxString& name, const wxColour& colour);
 
-#if WXWIN_COMPATIBILITY_2_6
-    // deprecated, use Find() instead
-    wxDEPRECATED( wxColour *FindColour(const wxString& name) );
-#endif // WXWIN_COMPATIBILITY_2_6
-
-
-#ifdef __WXPM__
-    // PM keeps its own type of colour table
-    long*                           m_palTable;
-    size_t                          m_nSize;
-#endif
-
 private:
     // load the database with the built in colour values when called for the
     // first time, do nothing after this
@@ -903,7 +939,7 @@ class WXDLLIMPEXP_CORE wxResourceCache: public wxList
 public:
     wxResourceCache() { }
 #if !wxUSE_STD_CONTAINERS
-    wxResourceCache(const unsigned int keyType) : wxList(keyType) { }
+    wxResourceCache(unsigned int keyType) : wxList(keyType) { }
 #endif
     virtual ~wxResourceCache();
 };
@@ -917,7 +953,7 @@ public:
 
   wxStockGDI creates the stock GDI objects on demand.  Pointers to the
   created objects are stored in the ms_stockObject array, which is indexed
-  by the Item enum values.  Platorm-specific fonts can be created by
+  by the Item enum values.  Platform-specific fonts can be created by
   implementing a derived class with an override for the GetFont function.
   wxStockGDI operates as a singleton, accessed through the ms_instance
   pointer.  By default this pointer is set to an instance of wxStockGDI.
@@ -1057,6 +1093,9 @@ extern WXDLLIMPEXP_DATA_CORE(const wxPoint) wxDefaultPosition;
 // resource management
 extern void WXDLLIMPEXP_CORE wxInitializeStockLists();
 extern void WXDLLIMPEXP_CORE wxDeleteStockLists();
+
+// Note: all the display-related functions here exist for compatibility only,
+// please use wxDisplay class in the new code
 
 // is the display colour (or monochrome)?
 extern bool WXDLLIMPEXP_CORE wxColourDisplay();
