@@ -203,7 +203,7 @@
     </ClCompile>
     <Lib>
       <AdditionalDependencies>strmiids.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>strmbase.lib</OutputFile>
+      <OutputFile>$(OutDir)BaseClasses.lib</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

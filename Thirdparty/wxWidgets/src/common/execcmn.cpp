@@ -13,6 +13,7 @@
 
 #pragma once
 
+
 // this file should never be compiled directly, just included by other code
 #ifndef _WX_USED_BY_WXEXECUTE_
     //#error "You should never directly build this file!"
@@ -40,7 +41,11 @@
    needed! However it's not easy to devise a way to do this keeping backwards
    compatibility with the existing wxExecute(wxEXEC_SYNC)...
 */
+
+#include <wx\wxprec.h>
 #include <malloc.h>
+
+class wxPipeInputStream;
 
 class wxStreamTempInputBuffer
 {

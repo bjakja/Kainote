@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // get the value of wxUSE_THREADS configuration flag
-#include "wx/defs.h"
+#include "L:\Kainote\Thirdparty\wxWidgets\include\wx/defs.h"
 
 #if wxUSE_THREADS
 
@@ -120,11 +120,11 @@ enum wxMutexType
 };
 
 // forward declarations
-class /*WXDLLIMPEXP_FWD_BASE*/ wxThreadHelper;
-class /*WXDLLIMPEXP_FWD_BASE*/ wxConditionInternal;
+class WXDLLIMPEXP_FWD_BASE wxThreadHelper;
+class WXDLLIMPEXP_FWD_BASE wxConditionInternal;
 class WXDLLIMPEXP_FWD_BASE wxMutexInternal;
 class WXDLLIMPEXP_FWD_BASE wxSemaphoreInternal;
-class /*WXDLLIMPEXP_FWD_BASE*/ wxThreadInternal;
+class WXDLLIMPEXP_FWD_BASE wxThreadInternal;
 
 // ----------------------------------------------------------------------------
 // A mutex object is a synchronization object whose state is set to signaled

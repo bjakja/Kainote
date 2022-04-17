@@ -14,7 +14,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
 #include "wx/wxprec.h"
 
 #if defined(__BORLANDC__)
@@ -25,11 +25,11 @@
 
 #include "wx/thread.h"
 
-#ifndef WX_PRECOMP
+
     #include "wx/intl.h"
     #include "wx/app.h"
     #include "wx/module.h"
-#endif
+
 
 #include "wx/apptrait.h"
 #include "wx/scopeguard.h"

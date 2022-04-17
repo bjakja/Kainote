@@ -44,7 +44,7 @@ class WXDLLIMPEXP_FWD_CORE wxWindowBase;
 // standard icons from the resources
 // ---------------------------------------------------------------------------
 
-#if wxUSE_GUI
+
 
 extern WXDLLIMPEXP_DATA_CORE(HICON) wxSTD_FRAME_ICON;
 extern WXDLLIMPEXP_DATA_CORE(HICON) wxSTD_MDIPARENTFRAME_ICON;
@@ -54,7 +54,7 @@ extern WXDLLIMPEXP_DATA_CORE(HICON) wxDEFAULT_MDIPARENTFRAME_ICON;
 extern WXDLLIMPEXP_DATA_CORE(HICON) wxDEFAULT_MDICHILDFRAME_ICON;
 extern WXDLLIMPEXP_DATA_CORE(HFONT) wxSTATUS_LINE_FONT;
 
-#endif // wxUSE_GUI
+#
 
 // ---------------------------------------------------------------------------
 // global data
@@ -233,7 +233,7 @@ struct WinStruct : public T
 #define wxMSW_CONV_LPARAM(s) reinterpret_cast<LPARAM>(wxMSW_CONV_LPCTSTR(s))
 
 
-#if wxUSE_GUI
+
 
 #include "wx/gdicmn.h"
 #include "wx/colour.h"
@@ -860,7 +860,6 @@ private:
 #define GetHrgn()               ((HRGN)GetHRGN())
 #define GetHrgnOf(rgn)          ((HRGN)(rgn).GetHRGN())
 
-#endif // wxUSE_GUI
 
 // ---------------------------------------------------------------------------
 // global functions
@@ -932,7 +931,7 @@ enum wxWinVersion
 
 WXDLLIMPEXP_BASE wxWinVersion wxGetWinVersion();
 
-#if wxUSE_GUI
+
 
 // cursor stuff
 extern HCURSOR wxGetCurrentBusyCursor();    // from msw/utils.cpp
@@ -1069,6 +1068,6 @@ inline void *wxSetWindowUserData(HWND hwnd, void *data)
 
 #endif // __WIN64__/__WIN32__
 
-#endif // wxUSE_GUI
+
 
 

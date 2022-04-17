@@ -12,7 +12,7 @@
 // Note: this is intended to be used in wxDC at some point to replace
 // the current system of scaling/translation. It is not yet used.
 
-// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
 
 
 #ifdef __BORLANDC__

@@ -8,14 +8,14 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-// For compilers that support precompilation, includes "wx.h".
-
+#include "wx/wxprec.h"
+#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
 #endif
 
-#if wxUSE_IMAGE && wxUSE_PCX
+//#if wxUSE_IMAGE && wxUSE_PCX
 
 #ifndef WX_PRECOMP
     #include "wx/object.h"
@@ -499,4 +499,4 @@ bool wxPCXHandler::DoCanRead( wxInputStream& stream )
 
 #endif // wxUSE_STREAMS
 
-#endif // wxUSE_IMAGE && wxUSE_PCX
+//#endif // wxUSE_IMAGE && wxUSE_PCX

@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_EVTLOOP_H_
-#define _WX_EVTLOOP_H_
+#pragma once
 
 #include "wx/event.h"
 #include "wx/utils.h"
@@ -242,7 +241,7 @@ private:
     // CoreFoundation-based event loop is currently in wxBase so include it in
     // any case too (although maybe it actually shouldn't be there at all)
     #include "wx/osx/evtloop.h"
-#elif wxUSE_GUI
+
 
 // include the appropriate header defining wxGUIEventLoop
 
@@ -360,7 +359,7 @@ private:
     wxWindowDisabler *m_windowDisabler;
 };
 
-#endif //wxUSE_GUI
+
 
 // ----------------------------------------------------------------------------
 // wxEventLoopActivator: helper class for wxEventLoop implementations
@@ -418,4 +417,4 @@ private:
 
 #endif // wxUSE_CONSOLE_EVENTLOOP
 
-#endif // _WX_EVTLOOP_H_
+#endif

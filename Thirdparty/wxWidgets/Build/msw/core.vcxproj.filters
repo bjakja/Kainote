@@ -150,9 +150,6 @@
     <ClCompile Include="..\..\src\common\dseldlg.cpp">
       <Filter>Common Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\common\dummy.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\common\effects.cpp">
       <Filter>Common Sources</Filter>
     </ClCompile>

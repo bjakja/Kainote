@@ -13,8 +13,7 @@
 // headers
 // ---------------------------------------------------------------------------
 
-// For compilers that support precompilation, includes "wx.h".
-
+#include "wx/wxprec.h"
 
 #if defined(__BORLANDC__)
     #pragma hdrstop

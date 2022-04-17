@@ -21,6 +21,7 @@
  *****************************************************************************/
 
 // needed to resolve the conflict between global T and macro parameter T
+#include <wx\wxprec.h>
 
 #define _WX_ERROR_REMOVE2(x)     wxT("bad index in ") wxT(#x) wxT("::RemoveAt()")
 

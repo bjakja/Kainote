@@ -24,7 +24,7 @@
 /*  compiler and OS identification */
 /*  ---------------------------------------------------------------------------- */
 
-#include "wx/platform.h"
+#include "L:\Kainote\Thirdparty\wxWidgets\include\wx/platform.h"
 
 #ifdef __cplusplus
 /*  Make sure the environment is set correctly */

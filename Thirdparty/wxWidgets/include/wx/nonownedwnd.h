@@ -12,7 +12,7 @@
 #pragma once
 
 
-#include "wx/window.h"
+#include <L:\Kainote\Thirdparty\wxWidgets\include\wx\window.h>
 
 // Styles that can be used with any wxNonOwnedWindow:
 #define wxFRAME_SHAPED          0x0010  // Create a window that is able to be shaped

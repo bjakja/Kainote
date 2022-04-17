@@ -11,7 +11,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-// For compilers that support precompilation, includes "wx.h".
+#include "wx/wxprec.h"
 
 
 #ifdef __BORLANDC__

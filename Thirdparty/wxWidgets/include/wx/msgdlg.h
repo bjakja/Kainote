@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MSGDLG_H_BASE_
-#define _WX_MSGDLG_H_BASE_
+#pragma once
 
 #include "wx/defs.h"
 
@@ -314,4 +313,4 @@ int WXDLLIMPEXP_CORE wxMessageBox(const wxString& message,
 
 #endif // wxUSE_MSGDLG
 
-#endif // _WX_MSGDLG_H_BASE_
+

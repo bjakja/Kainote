@@ -8,6 +8,7 @@
 // Copyright:   (c) 1998 Vadim Zeitlin
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
+#include <wx\wxprec.h>
 
 #if wxUSE_STD_CONTAINERS
 

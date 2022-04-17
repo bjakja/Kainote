@@ -65,6 +65,7 @@
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>XY_SUB_FILTER_CONSUMER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</MultiProcessorCompilation>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>XY_SUB_FILTER_CONSUMER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
