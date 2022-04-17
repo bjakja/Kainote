@@ -9,8 +9,7 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_PRIVATE_FONTMGR_H_
-#define _WX_PRIVATE_FONTMGR_H_
+#pragma once
 
 #include "wx/list.h"
 #include "wx/fontutil.h"
@@ -245,4 +244,4 @@ private:
     bool              m_fontValid;
 };
 
-#endif // _WX_PRIVATE_FONTMGR_H_
+
