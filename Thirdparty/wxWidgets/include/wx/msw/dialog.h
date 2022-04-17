@@ -9,10 +9,10 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_DIALOG_H_
-#define _WX_DIALOG_H_
+#pragma once
 
 #include "wx/panel.h"
+#include "wx/dialog.h"
 
 // this option is always enabled (there doesn't seem to be any good reason to
 // disable it) for desktop Windows versions but Windows CE dialogs are usually
@@ -139,5 +139,3 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxDialog);
 };
 
-#endif
-    // _WX_DIALOG_H_

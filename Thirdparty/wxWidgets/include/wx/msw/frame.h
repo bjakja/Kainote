@@ -9,8 +9,8 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_FRAME_H_
-#define _WX_FRAME_H_
+#pragma once
+#include <wx/toplevel.h>
 
 class WXDLLIMPEXP_CORE wxFrame : public wxFrameBase
 {
@@ -175,5 +175,4 @@ private:
     DECLARE_DYNAMIC_CLASS_NO_COPY(wxFrame)
 };
 
-#endif
-    // _WX_FRAME_H_
+

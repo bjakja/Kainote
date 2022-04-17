@@ -17,7 +17,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "windows.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop

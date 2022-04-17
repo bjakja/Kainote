@@ -21,6 +21,7 @@
 #include "wx/iconbndl.h"
 #include "wx/containr.h"
 #include "wx/weakref.h"
+#include "wx/wx.h"
 
 // the default names for various classes
 extern WXDLLIMPEXP_DATA_CORE(const char) wxFrameNameStr[];

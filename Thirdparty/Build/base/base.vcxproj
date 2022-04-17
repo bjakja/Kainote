@@ -194,9 +194,22 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\zlib\;$(SolutionDir)\Thirdparty\wxWidgets\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PreprocessorDefinitions>_MBCS;WIN32;_LIB;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_GUI=1;wxUSE_POPUPWIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(solutionDir)obj\$(platform)\$(configuration)\$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ClCompile>
+        <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
+        <Optimization>MaxSpeed</Optimization>
+        <ExceptionHandling>Sync</ExceptionHandling>
+        <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+        <RuntimeTypeInfo>true</RuntimeTypeInfo>
+        <ObjectFileName>vc_mswu\base\$(Platform)\</ObjectFileName>
+        <WarningLevel>Level4</WarningLevel>
+        <SuppressStartupBanner>true</SuppressStartupBanner>
+        <DebugInformationFormat>None</DebugInformationFormat>
+        <ProgramDataBaseFileName>$(Platform)\$(Configuration)\$(ProjectName).pdb</ProgramDataBaseFileName>
+        <LanguageStandard>stdcpp20</LanguageStandard>
+      </ClCompile>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
@@ -209,7 +222,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\wxWidgets\include\wx\arrimpl.cpp" />
-    <ClCompile Include="..\..\wxWidgets\include\wx\listimpl.cpp" />
     <ClCompile Include="..\..\wxWidgets\include\wx\thrimpl.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\accelcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\accesscmn.cpp" />
@@ -235,24 +247,19 @@
     <ClCompile Include="..\..\wxWidgets\src\common\cairo.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\calctrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\checkboxcmn.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\checklstcmn.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\choiccmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\clipcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\clntdata.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\clrpickercmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\cmdline.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\cmdproc.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\cmndata.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\colourcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\colourdata.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\combocmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\config.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\containr.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\convauto.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\cshelp.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\ctrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\ctrlsub.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\datavcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\datetime.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\datetimefmt.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\datstrm.cpp" />
@@ -347,14 +354,11 @@
     <ClCompile Include="..\..\wxWidgets\src\common\layout.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\lboxcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\list.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\listctrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\log.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\longlong.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\markupparser.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\matrix.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\mediactrlcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\memory.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\menucmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\mimecmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\module.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\mousemanager.cpp" />
@@ -377,22 +381,17 @@
     <ClCompile Include="..\..\wxWidgets\src\common\process.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\protocol.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\quantize.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\radiobtncmn.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\radiocmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\rearrangectrl.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\regex.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\rendcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\rgncmn.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\richtooltipcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\sckaddr.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\sckfile.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\sckipc.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\sckstrm.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\scrolbarcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\selectdispatcher.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\settcmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\sizer.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\slidercmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\socket.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\socketiohandler.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\spinbtncmn.cpp" />
@@ -441,8 +440,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\valnum.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\valtext.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\variant.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\webview.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\common\webviewarchivehandler.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\wfstream.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\wincmn.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\common\windowid.cpp" />
@@ -469,13 +466,10 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\caret.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\checkbox.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\checklst.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\choice.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\clipbrd.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\colordlg.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\colour.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\combo.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\combobox.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\commandlinkbutton.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\control.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\crashrpt.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\cursor.cpp" />
@@ -523,25 +517,16 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\imaglist.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\iniconf.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\joystick.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\listbox.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\listctrl.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\main.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\mdi.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_am.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_qt.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_wmp10.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\menu.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\menuitem.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\metafile.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\microwin.c" />
     <ClCompile Include="..\..\wxWidgets\src\msw\mimetype.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\minifram.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\msgdlg.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\mslu.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\nativdlg.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\nativewin.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\nonownedwnd.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\notebook.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\notifmsg.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\ownerdrw.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\palette.cpp" />
@@ -552,18 +537,11 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\power.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\printdlg.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\printwin.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\progdlg.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\radiobox.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\radiobut.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\regconf.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\region.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\registry.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\renderer.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\richmsgdlg.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\richtooltip.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\scrolbar.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\settings.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\slider.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\snglinst.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\sockmsw.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\sound.cpp" />
@@ -594,7 +572,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\utilsgui.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\uxtheme.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\volume.cpp" />
-    <ClCompile Include="..\..\wxWidgets\src\msw\webview_ie.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\window.cpp" />
     <ClCompile Include="..\..\wxWidgets\src\msw\winestub.c" />
   </ItemGroup>
@@ -655,7 +632,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\colour.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\colourdata.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\combo.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\combobox.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\commandlinkbutton.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\compositewin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\confbase.h" />
@@ -671,7 +647,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\cursor.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\custombgwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\dataobj.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\dataview.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\datectrl.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\dateevt.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\datetime.h" />
@@ -796,28 +771,20 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\laywin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\link.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\list.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbase.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbook.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbox.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\listctrl.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\log.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\longlong.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\math.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\matrix.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\mdi.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\mediactrl.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\memconf.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\memory.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\memtext.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\menu.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\menuitem.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\metafile.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\mimetype.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\minifram.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\module.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\mousemanager.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\mousestate.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msgdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msgout.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msgqueue.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\mstream.h" />
@@ -841,7 +808,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\colordlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\colour.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\combo.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\combobox.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\commandlinkbutton.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\control.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\crashrpt.h" />
@@ -886,21 +852,15 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\init.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\joystick.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\libraries.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\listbox.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\listctrl.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\mdi.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\menu.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\menuitem.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\metafile.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\microwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\mimetype.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\minifram.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\missing.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\msgdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\mslu.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\msvcrt.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\nonownedwnd.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\notebook.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\notifmsg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\ole\access.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\ole\activex.h" />
@@ -928,22 +888,15 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\hiddenwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\keyboard.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\metrics.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\msgdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\sockmsw.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\timer.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\progdlg.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\radiobox.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\radiobut.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\rcdefs.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\regconf.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\region.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\registry.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\richmsgdlg.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\scrolbar.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\seh.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\setup.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\setup_inc.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\slider.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\sound.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\spinbutt.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\spinctrl.h" />
@@ -967,8 +920,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\treectrl.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\uxtheme.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\uxthemep.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\webviewhistoryitem_ie.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\webview_ie.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\wince\checklst.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\wince\chkconf.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\wince\choicece.h" />
@@ -990,7 +941,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\wrapwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\nativewin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\nonownedwnd.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\notebook.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\notifmsg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\numdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\numformatter.h" />
@@ -1013,13 +963,9 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\printdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\prntbase.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\process.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\progdlg.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\propdlg.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\ptr_scpd.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\ptr_shrd.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\quantize.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\radiobox.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\radiobut.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\range.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\rawbmp.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\rearrangectrl.h" />
@@ -1027,8 +973,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\regex.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\region.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\renderer.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\richmsgdlg.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\richtooltip.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\rtti.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\sashwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\sckaddr.h" />
@@ -1037,8 +981,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\scopedarray.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\scopedptr.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\scopeguard.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\scrolbar.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\scrolwin.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\selstore.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\settings.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\setup.h" />
@@ -1046,7 +988,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\setup_redirect.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\sharedptr.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\sizer.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\slider.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\snglinst.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\socket.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\sound.h" />
@@ -1127,8 +1068,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\volume.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\vscroll.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\weakref.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\webview.h" />
-    <ClInclude Include="..\..\wxWidgets\include\wx\webviewarchivehandler.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\wfstream.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\window.h" />
     <ClInclude Include="..\..\wxWidgets\include\wx\windowid.h" />

@@ -24,7 +24,7 @@
     // If user did not request NOCPH and we're not building using configure
     // then assume user wants precompiled headers.
     #if !defined(NOPCH) && !defined(__WX_SETUP_H__)
-        #define WX_PRECOMP
+        //#define WX_PRECOMP
     #endif
 #endif
 

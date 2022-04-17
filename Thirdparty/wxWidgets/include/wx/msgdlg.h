@@ -311,6 +311,6 @@ int WXDLLIMPEXP_CORE wxMessageBox(const wxString& message,
                              wxWindow *parent = NULL,
                              int x = wxDefaultCoord, int y = wxDefaultCoord);
 
-#endif // wxUSE_MSGDLG
+#endif
 
 

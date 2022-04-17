@@ -211,13 +211,13 @@
 #define wxUSE_LOG 1
 
 // Recommended setting: 1
-#define wxUSE_LOGWINDOW 1
+#define wxUSE_LOGWINDOW 0
 
 // Recommended setting: 1
 #define wxUSE_LOGGUI 1
 
 // Recommended setting: 1
-#define wxUSE_LOG_DIALOG 1
+#define wxUSE_LOG_DIALOG 0
 
 // Support for command line parsing using wxCmdLineParser class.
 //
@@ -841,47 +841,47 @@
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_ANIMATIONCTRL 1   // wxAnimationCtrl
-#define wxUSE_BANNERWINDOW  1   // wxBannerWindow
+#define wxUSE_ANIMATIONCTRL 0   // wxAnimationCtrl
+#define wxUSE_BANNERWINDOW  0   // wxBannerWindow
 #define wxUSE_BUTTON        1   // wxButton
 #define wxUSE_BMPBUTTON     1   // wxBitmapButton
-#define wxUSE_CALENDARCTRL  1   // wxCalendarCtrl
-#define wxUSE_CHECKBOX      1   // wxCheckBox
-#define wxUSE_CHECKLISTBOX  1   // wxCheckListBox (requires wxUSE_OWNER_DRAWN)
-#define wxUSE_CHOICE        1   // wxChoice
-#define wxUSE_COLLPANE      1   // wxCollapsiblePane
-#define wxUSE_COLOURPICKERCTRL 1    // wxColourPickerCtrl
-#define wxUSE_COMBOBOX      1   // wxComboBox
-#define wxUSE_COMMANDLINKBUTTON 1   // wxCommandLinkButton
-#define wxUSE_DATAVIEWCTRL  1   // wxDataViewCtrl
-#define wxUSE_DATEPICKCTRL  1   // wxDatePickerCtrl
-#define wxUSE_DIRPICKERCTRL 1   // wxDirPickerCtrl
-#define wxUSE_EDITABLELISTBOX 1 // wxEditableListBox
-#define wxUSE_FILECTRL      1   // wxFileCtrl
+#define wxUSE_CALENDARCTRL  0   // wxCalendarCtrl
+#define wxUSE_CHECKBOX      0   // wxCheckBox
+#define wxUSE_CHECKLISTBOX  0   // wxCheckListBox (requires wxUSE_OWNER_DRAWN)
+#define wxUSE_CHOICE        0   // wxChoice
+#define wxUSE_COLLPANE      0   // wxCollapsiblePane
+#define wxUSE_COLOURPICKERCTRL 0    // wxColourPickerCtrl
+#define wxUSE_COMBOBOX      0   // wxComboBox
+#define wxUSE_COMMANDLINKBUTTON 0   // wxCommandLinkButton
+#define wxUSE_DATAVIEWCTRL  0   // wxDataViewCtrl
+#define wxUSE_DATEPICKCTRL  0   // wxDatePickerCtrl
+#define wxUSE_DIRPICKERCTRL 0   // wxDirPickerCtrl
+#define wxUSE_EDITABLELISTBOX 0 // wxEditableListBox
+#define wxUSE_FILECTRL      0   // wxFileCtrl
 #define wxUSE_FILEPICKERCTRL 1  // wxFilePickerCtrl
-#define wxUSE_FONTPICKERCTRL 1  // wxFontPickerCtrl
-#define wxUSE_GAUGE         1   // wxGauge
+#define wxUSE_FONTPICKERCTRL 0  // wxFontPickerCtrl
+#define wxUSE_GAUGE         0   // wxGauge
 #define wxUSE_HEADERCTRL    1   // wxHeaderCtrl
 #define wxUSE_HYPERLINKCTRL 1   // wxHyperlinkCtrl
-#define wxUSE_LISTBOX       1   // wxListBox
-#define wxUSE_LISTCTRL      1   // wxListCtrl
-#define wxUSE_RADIOBOX      1   // wxRadioBox
-#define wxUSE_RADIOBTN      1   // wxRadioButton
-#define wxUSE_RICHMSGDLG    1   // wxRichMessageDialog
-#define wxUSE_SCROLLBAR     1   // wxScrollBar
-#define wxUSE_SEARCHCTRL    1   // wxSearchCtrl
-#define wxUSE_SLIDER        1   // wxSlider
-#define wxUSE_SPINBTN       1   // wxSpinButton
-#define wxUSE_SPINCTRL      1   // wxSpinCtrl
-#define wxUSE_STATBOX       1   // wxStaticBox
+#define wxUSE_LISTBOX       0   // wxListBox
+#define wxUSE_LISTCTRL      0   // wxListCtrl
+#define wxUSE_RADIOBOX      0   // wxRadioBox
+#define wxUSE_RADIOBTN      0   // wxRadioButton
+#define wxUSE_RICHMSGDLG    0   // wxRichMessageDialog
+#define wxUSE_SCROLLBAR     0   // wxScrollBar
+#define wxUSE_SEARCHCTRL    0   // wxSearchCtrl
+#define wxUSE_SLIDER        0   // wxSlider
+#define wxUSE_SPINBTN       0   // wxSpinButton
+#define wxUSE_SPINCTRL      0   // wxSpinCtrl
+#define wxUSE_STATBOX       0   // wxStaticBox
 #define wxUSE_STATLINE      1   // wxStaticLine
 #define wxUSE_STATTEXT      1   // wxStaticText
 #define wxUSE_STATBMP       1   // wxStaticBitmap
-#define wxUSE_TEXTCTRL      1   // wxTextCtrl
-#define wxUSE_TIMEPICKCTRL  1   // wxTimePickerCtrl
-#define wxUSE_TOGGLEBTN     1   // requires wxButton
-#define wxUSE_TREECTRL      1   // wxTreeCtrl
-#define wxUSE_TREELISTCTRL  1   // wxTreeListCtrl
+#define wxUSE_TEXTCTRL      0   // wxTextCtrl
+#define wxUSE_TIMEPICKCTRL  0   // wxTimePickerCtrl
+#define wxUSE_TOGGLEBTN     0   // requires wxButton
+#define wxUSE_TREECTRL      0   // wxTreeCtrl
+#define wxUSE_TREELISTCTRL  0   // wxTreeListCtrl
 
 // Use a status bar class? Depending on the value of wxUSE_NATIVE_STATUSBAR
 // below either wxStatusBar95 or a generic wxStatusBar will be used.
@@ -907,8 +907,8 @@
 // Default is 1 for all settings.
 //
 // Recommended setting: 1 for wxUSE_TOOLBAR and wxUSE_TOOLBAR_NATIVE.
-#define wxUSE_TOOLBAR 1
-#define wxUSE_TOOLBAR_NATIVE 1
+#define wxUSE_TOOLBAR 0
+#define wxUSE_TOOLBAR_NATIVE 0
 
 // wxNotebook is a control with several "tabs" located on one of its sides. It
 // may be used to logically organise the data presented to the user instead of
@@ -918,7 +918,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_NOTEBOOK 1
+#define wxUSE_NOTEBOOK 0
 
 // wxListbook control is similar to wxNotebook but uses wxListCtrl instead of
 // the tabs
@@ -926,7 +926,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_LISTBOOK 1
+#define wxUSE_LISTBOOK 0
 
 // wxChoicebook control is similar to wxNotebook but uses wxChoice instead of
 // the tabs
@@ -934,7 +934,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_CHOICEBOOK 1
+#define wxUSE_CHOICEBOOK 0
 
 // wxTreebook control is similar to wxNotebook but uses wxTreeCtrl instead of
 // the tabs
@@ -942,7 +942,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_TREEBOOK 1
+#define wxUSE_TREEBOOK 0
 
 // wxToolbook control is similar to wxNotebook but uses wxToolBar instead of
 // tabs
@@ -950,7 +950,7 @@
 // Default is 1.
 //
 // Recommended setting: 1
-#define wxUSE_TOOLBOOK 1
+#define wxUSE_TOOLBOOK 0
 
 // wxTaskBarIcon is a small notification icon shown in the system toolbar or
 // dock.
@@ -958,7 +958,7 @@
 // Default is 1.
 //
 // Recommended setting: 1 (but can be set to 0 if you don't need it)
-#define wxUSE_TASKBARICON 1
+#define wxUSE_TASKBARICON 0
 
 // wxGrid class
 //
@@ -967,14 +967,14 @@
 //
 // Recommended setting: 1
 //
-#define wxUSE_GRID         1
+#define wxUSE_GRID         0
 
 // wxMiniFrame class: a frame with narrow title bar
 //
 // Default is 1.
 //
 // Recommended setting: 1 (it doesn't cost almost anything)
-#define wxUSE_MINIFRAME 1
+#define wxUSE_MINIFRAME 0
 
 // wxComboCtrl and related classes: combobox with custom popup window and
 // not necessarily a listbox.
@@ -983,7 +983,7 @@
 //
 // Recommended setting: 1 but can be safely set to 0 except for wxUniv where it
 //                      it used by wxComboBox
-#define wxUSE_COMBOCTRL 1
+#define wxUSE_COMBOCTRL 0
 
 // wxOwnerDrawnComboBox is a custom combobox allowing to paint the combobox
 // items.
@@ -992,14 +992,14 @@
 //
 // Recommended setting: 1 but can be safely set to 0, except where it is
 //                      needed as a base class for generic wxBitmapComboBox.
-#define wxUSE_ODCOMBOBOX 1
+#define wxUSE_ODCOMBOBOX 0
 
 // wxBitmapComboBox is a combobox that can have images in front of text items.
 //
 // Default is 1.
 //
 // Recommended setting: 1 but can be safely set to 0
-#define wxUSE_BITMAPCOMBOBOX 1
+#define wxUSE_BITMAPCOMBOBOX 0
 
 // wxRearrangeCtrl is a wxCheckListBox with two buttons allowing to move items
 // up and down in it. It is also used as part of wxRearrangeDialog.
@@ -1008,7 +1008,7 @@
 //
 // Recommended setting: 1 but can be safely set to 0 (currently used only by
 // wxHeaderCtrl)
-#define wxUSE_REARRANGECTRL 1
+#define wxUSE_REARRANGECTRL 0
 
 // ----------------------------------------------------------------------------
 // Miscellaneous GUI stuff
@@ -1166,14 +1166,14 @@
 // Default is 1
 //
 // Recommended setting: 1 (used in the library itself)
-#define wxUSE_CHOICEDLG     1
+#define wxUSE_CHOICEDLG     0
 
 // Use colour picker dialog
 //
 // Default is 1
 //
 // Recommended setting: 1
-#define wxUSE_COLOURDLG     1
+#define wxUSE_COLOURDLG     0
 
 // wxDirDlg class for getting a directory name from user
 #define wxUSE_DIRDLG 1
@@ -1209,7 +1209,7 @@
 #define wxUSE_MSGDLG        1
 
 // progress dialog class for lengthy operations
-#define wxUSE_PROGRESSDLG 1
+#define wxUSE_PROGRESSDLG 0
 
 // support for startup tips (wxShowTip &c)
 #define wxUSE_STARTUP_TIPS 1
@@ -1276,15 +1276,15 @@
 #define wxUSE_MDI 1
 
 // Set to 0 to disable document/view architecture
-#define wxUSE_DOC_VIEW_ARCHITECTURE 1
+#define wxUSE_DOC_VIEW_ARCHITECTURE 0
 
 // Set to 0 to disable MDI document/view architecture
 //
 // Requires wxUSE_MDI && wxUSE_DOC_VIEW_ARCHITECTURE
-#define wxUSE_MDI_ARCHITECTURE    1
+#define wxUSE_MDI_ARCHITECTURE    0
 
 // Set to 0 to disable print/preview architecture code
-#define wxUSE_PRINTING_ARCHITECTURE  1
+#define wxUSE_PRINTING_ARCHITECTURE  0
 
 // wxHTML sublibrary allows to display HTML in wxWindow programs and much,
 // much more.

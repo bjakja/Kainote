@@ -68,12 +68,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\variant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\webview.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\webviewarchivehandler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\wfstream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -179,19 +173,10 @@
     <ClCompile Include="..\..\wxWidgets\src\common\checkboxcmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\checklstcmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\choiccmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\clipcmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\clntdata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\clrpickercmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\cmdline.cpp">
@@ -207,9 +192,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\colourdata.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\combocmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\config.cpp">
@@ -228,9 +210,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\ctrlsub.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\datavcmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\datetime.cpp">
@@ -515,9 +494,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\list.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\listctrlcmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\log.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -530,13 +506,7 @@
     <ClCompile Include="..\..\wxWidgets\src\common\matrix.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\mediactrlcmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\memory.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\menucmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\mimecmn.cpp">
@@ -605,12 +575,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\quantize.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\radiobtncmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\radiocmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\rearrangectrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -621,9 +585,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\rgncmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\richtooltipcmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\sckaddr.cpp">
@@ -638,9 +599,6 @@
     <ClCompile Include="..\..\wxWidgets\src\common\sckstrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\scrolbarcmn.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\selectdispatcher.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -648,9 +606,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\sizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\common\slidercmn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\common\socket.cpp">
@@ -743,9 +698,6 @@
     <ClCompile Include="..\..\wxWidgets\include\wx\arrimpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\include\wx\listimpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\include\wx\thrimpl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -800,9 +752,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\checklst.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\choice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\clipbrd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -813,12 +762,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\combo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\combobox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\commandlinkbutton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\control.cpp">
@@ -962,31 +905,10 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\joystick.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\listbox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\listctrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\mdi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_am.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_qt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\mediactrl_wmp10.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\menu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\menuitem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\metafile.cpp">
@@ -1001,9 +923,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\minifram.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\msgdlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\mslu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1014,9 +933,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\nonownedwnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\notebook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\notifmsg.cpp">
@@ -1049,15 +965,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\printwin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\progdlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\radiobox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\radiobut.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\regconf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1070,19 +977,7 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\richmsgdlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\richtooltip.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\scrolbar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\settings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\slider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\snglinst.cpp">
@@ -1169,9 +1064,6 @@
     <ClCompile Include="..\..\wxWidgets\src\msw\volume.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\msw\webview_ie.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\msw\window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1243,9 +1135,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\combo.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\combobox.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\commandlinkbutton.h">
@@ -1380,19 +1269,7 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\libraries.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\listbox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\listctrl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\mdi.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\menu.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\menuitem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\metafile.h">
@@ -1410,9 +1287,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\missing.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\msgdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\mslu.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1420,9 +1294,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\nonownedwnd.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\notebook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\notifmsg.h">
@@ -1503,9 +1374,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\metrics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\msgdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private\sockmsw.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1513,15 +1381,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\private.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\progdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\radiobox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\radiobut.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\rcdefs.h">
@@ -1536,12 +1395,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\registry.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\richmsgdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\scrolbar.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\seh.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1549,9 +1402,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\setup_inc.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\slider.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\sound.h">
@@ -1621,12 +1471,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\uxthemep.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\webviewhistoryitem_ie.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msw\webview_ie.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msw\wince\checklst.h">
@@ -1845,9 +1689,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\combo.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\combobox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\commandlinkbutton.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -1891,9 +1732,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\dataobj.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\dataview.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\datectrl.h">
@@ -2268,18 +2106,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\list.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbase.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbook.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\listbox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\listctrl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\log.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2295,9 +2121,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\mdi.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\mediactrl.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\memconf.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2305,12 +2128,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\memtext.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\menu.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\menuitem.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\metafile.h">
@@ -2331,9 +2148,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\mousestate.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\msgdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\msgout.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2347,9 +2161,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\nonownedwnd.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\notebook.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\notifmsg.h">
@@ -2418,12 +2229,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\process.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\progdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\propdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\ptr_scpd.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2431,12 +2236,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\quantize.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\radiobox.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\radiobut.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\range.h">
@@ -2458,12 +2257,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\renderer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\richmsgdlg.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\richtooltip.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\rtti.h">
@@ -2490,12 +2283,6 @@
     <ClInclude Include="..\..\wxWidgets\include\wx\scopeguard.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\scrolbar.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\scrolwin.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\selstore.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -2515,9 +2302,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\sizer.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\slider.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\snglinst.h">
@@ -2758,12 +2542,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\weakref.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\webview.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\wxWidgets\include\wx\webviewarchivehandler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\wxWidgets\include\wx\wfstream.h">

@@ -9,8 +9,8 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_GENERIC_CHOICDGG_H_
-#define _WX_GENERIC_CHOICDGG_H_
+#ifdef _WX_GENERIC_CHOICDGG_H_
+
 
 #include "wx/dynarray.h"
 #include "wx/dialog.h"

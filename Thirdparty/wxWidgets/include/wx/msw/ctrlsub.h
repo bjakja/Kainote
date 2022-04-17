@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_MSW_CTRLSUB_H_
-#define _WX_MSW_CTRLSUB_H_
+#pragma once
 
 // ----------------------------------------------------------------------------
 // wxControlWithItems
@@ -39,5 +38,5 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxControlWithItems);
 };
 
-#endif // _WX_MSW_CTRLSUB_H_
+
 
