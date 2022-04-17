@@ -41,7 +41,7 @@
 #include "MappedButton.h"
 #include "KaiCheckBox.h"
 
-class ColorPickerSpectrum : public wxControl {
+class ColorPickerSpectrum : public wxWindow {
 private:
 	int x, y;
 	wxBitmap *background;
@@ -67,7 +67,7 @@ public:
 DECLARE_EVENT_TYPE(wxSPECTRUM_CHANGE, -1)
 
 
-class ColorPickerRecent : public wxControl {
+class ColorPickerRecent : public wxWindow {
 private:
 	int rows, cols;
 	int cellsize;
@@ -100,7 +100,7 @@ public:
 DECLARE_EVENT_TYPE(wxRECENT_SELECT, -1)
 
 
-class ColorPickerScreenDropper : public wxControl {
+class ColorPickerScreenDropper : public wxWindow {
 private:
 	wxBitmap capture;
 	int resx, resy;
