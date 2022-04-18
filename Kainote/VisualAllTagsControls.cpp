@@ -200,17 +200,18 @@ void AllTagsSlider::OnDraw()
 	float thumbtop = top - 7;
 	float thumbbottom = bottom + 7;
 
-	D3DCOLOR fill = 0xAA121150;
+	D3DXCOLOR fill = 0xAA121150;
+	D3DXCOLOR border = 0xAA121150;
 	vertex v9[9];
-	CreateVERTEX(&v9[0], left, top, fill);
-	CreateVERTEX(&v9[1], right, top, fill);
-	CreateVERTEX(&v9[2], left, bottom, fill);
-	CreateVERTEX(&v9[3], right, bottom, fill);
-	CreateVERTEX(&v9[4], left, top, 0xFFBB0000);
-	CreateVERTEX(&v9[5], right, top, 0xFFBB0000);
-	CreateVERTEX(&v9[6], right, bottom, 0xFFBB0000);
-	CreateVERTEX(&v9[7], left, bottom, 0xFFBB0000);
-	CreateVERTEX(&v9[8], left, top, 0xFFBB0000);
+	CreateVERTEX(&v9[0], left, top, &fill);
+	CreateVERTEX(&v9[1], right, top, &fill);
+	CreateVERTEX(&v9[2], left, bottom, &fill);
+	CreateVERTEX(&v9[3], right, bottom, &fill);
+	CreateVERTEX(&v9[4], left, top, &border);
+	CreateVERTEX(&v9[5], right, top, &border);
+	CreateVERTEX(&v9[6], right, bottom, &border);
+	CreateVERTEX(&v9[7], left, bottom, &border);
+	CreateVERTEX(&v9[8], left, top, &border);
 
 	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");
@@ -246,16 +247,16 @@ void AllTagsSlider::OnDraw()
 	float thumbpos = ((thumbValue + thumbposdiff) * coeff) + left;
 	float thumbleft = thumbpos - 4;
 	float thumbright = thumbpos + 4;
-	fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
-	CreateVERTEX(&v9[0], thumbleft, thumbtop, fill);
-	CreateVERTEX(&v9[1], thumbright, thumbtop, fill);
-	CreateVERTEX(&v9[2], thumbleft, thumbbottom, fill);
-	CreateVERTEX(&v9[3], thumbright, thumbbottom, fill);
-	CreateVERTEX(&v9[4], thumbleft, thumbtop, 0xFFBB0000);
-	CreateVERTEX(&v9[5], thumbright, thumbtop, 0xFFBB0000);
-	CreateVERTEX(&v9[6], thumbright, thumbbottom, 0xFFBB0000);
-	CreateVERTEX(&v9[7], thumbleft, thumbbottom, 0xFFBB0000);
-	CreateVERTEX(&v9[8], thumbleft, thumbtop, 0xFFBB0000);
+	D3DXCOLOR fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
+	CreateVERTEX(&v9[0], thumbleft, thumbtop, &fill);
+	CreateVERTEX(&v9[1], thumbright, thumbtop, &fill);
+	CreateVERTEX(&v9[2], thumbleft, thumbbottom,&fill);
+	CreateVERTEX(&v9[3], thumbright, thumbbottom, &fill);
+	CreateVERTEX(&v9[4], thumbleft, thumbtop, &border);
+	CreateVERTEX(&v9[5], thumbright, thumbtop, &border);
+	CreateVERTEX(&v9[6], thumbright, thumbbottom, &border);
+	CreateVERTEX(&v9[7], thumbleft, thumbbottom, &border);
+	CreateVERTEX(&v9[8], thumbleft, thumbtop, &border);
 
 	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");

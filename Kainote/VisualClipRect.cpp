@@ -76,33 +76,33 @@ void ClipRect::DrawVisual(int time)
 	if (v2[0].y > v2[1].y){
 		v2[1].y = v2[2].y = v2[0].y;
 	}
-
+	D3DXCOLOR color(0x88000000);
 	if (!invClip){
 
-
+		
 		vertex v24[12];
-		CreateVERTEX(&v24[0], 0, 0, 0x88000000);
-		CreateVERTEX(&v24[1], s.x, 0, 0x88000000);
-		CreateVERTEX(&v24[2], v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[3], v2[0].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[4], v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[5], 0, s.y, 0x88000000);
-		CreateVERTEX(&v24[6], s.x, s.y, 0x88000000);
-		CreateVERTEX(&v24[7], 0, s.y, 0x88000000);
-		CreateVERTEX(&v24[8], v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[9], v2[2].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
+		CreateVERTEX(&v24[0], 0, 0, &color);
+		CreateVERTEX(&v24[1], s.x, 0, &color);
+		CreateVERTEX(&v24[2], v2[2].x, v2[0].y, &color);
+		CreateVERTEX(&v24[3], v2[0].x, v2[0].y, &color);
+		CreateVERTEX(&v24[4], v2[0].x, v2[2].y, &color);
+		CreateVERTEX(&v24[5], 0, s.y, &color);
+		CreateVERTEX(&v24[6], s.x, s.y, &color);
+		CreateVERTEX(&v24[7], 0, s.y, &color);
+		CreateVERTEX(&v24[8], v2[0].x, v2[2].y, &color);
+		CreateVERTEX(&v24[9], v2[2].x, v2[2].y, &color);
+		CreateVERTEX(&v24[10], v2[2].x, v2[0].y, &color);
+		CreateVERTEX(&v24[11], s.x, 0, &color);
 
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(vertex)), L"primitive failed");
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(vertex)), L"primitive failed");
 	}
 	else{
 		vertex v24[4];
-		CreateVERTEX(&v24[0], v2[0].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[1], v2[2].x, v2[0].y, 0x88000000);
-		CreateVERTEX(&v24[2], v2[0].x, v2[2].y, 0x88000000);
-		CreateVERTEX(&v24[3], v2[2].x, v2[2].y, 0x88000000);
+		CreateVERTEX(&v24[0], v2[0].x, v2[0].y, &color);
+		CreateVERTEX(&v24[1], v2[2].x, v2[0].y, &color);
+		CreateVERTEX(&v24[2], v2[0].x, v2[2].y, &color);
+		CreateVERTEX(&v24[3], v2[2].x, v2[2].y, &color);
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v24, sizeof(vertex)), L"primitive failed");
 	}
 	line->SetWidth(1);

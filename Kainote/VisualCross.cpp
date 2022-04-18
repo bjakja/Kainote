@@ -20,7 +20,8 @@
 #include "TabPanel.h"
 #include "VideoCtrl.h"
 #include "SubsGrid.h"
-#include "EditBox.h
+#include "EditBox.h"
+
 
 Cross::Cross()
 {

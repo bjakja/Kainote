@@ -49,6 +49,9 @@
 #include "FindReplaceDialog.h"
 #include "SelectLines.h"
 #include "MisspellReplacer.h"
+#include "EditBox.h"
+#include "TabPanel.h"
+#include "ShiftTimes.h"
 
 #include <wx/accel.h>
 #include <wx/dir.h>
