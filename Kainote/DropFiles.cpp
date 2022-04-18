@@ -15,7 +15,7 @@
 
 
 #include "DropFiles.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include <wx/event.h>
 
 DragnDrop::DragnDrop(KainoteFrame* kfparent)

@@ -20,6 +20,7 @@
 #include "SubsGrid.h"
 #include "EditBox.h"
 #include "VideoCtrl.h"
+#include "Notebook.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>

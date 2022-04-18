@@ -70,6 +70,7 @@ class DShowPlayer;
 class Menu;
 class Provider;
 class VideoCtrl;
+class SubtitlesProviderManager;
 
 class RendererVideo
 {

@@ -19,6 +19,9 @@
 #include "SelectLines.h"
 #include "KaiStaticBoxSizer.h"
 #include "config.h"
+#include "Notebook.h"
+#include "TabPanel.h"
+
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 

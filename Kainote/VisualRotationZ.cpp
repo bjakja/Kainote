@@ -19,6 +19,7 @@
 #include "RendererVideo.h"
 #include "VideoCtrl.h"
 #include "SubsGrid.h"
+#include "EditBox.h"
 
 
 RotationZ::RotationZ()
@@ -60,18 +61,20 @@ void RotationZ::DrawVisual(int time)
 	float radius = sqrtf(powf(fabs(org.x - from.x), 2) + powf(fabs(org.y - from.y), 2)) + 40;
 	D3DXVECTOR2 v2[6];
 	vertex v5[726];
-	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), 0xAA121150);
-	CreateVERTEX(&v5[1], org.x, org.y + radius, 0xAA121150);
+	D3DXCOLOR color(0xAA121150);
+	D3DXCOLOR color1(0xAAFF0000);
+	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), &color);
+	CreateVERTEX(&v5[1], org.x, org.y + radius, &color);
 	for (int j = 0; j < 181; j++){
 		float xx = org.x + ((radius + 10.f) * sin((j * 2) * rad));
 		float yy = org.y + ((radius + 10.f) * cos((j * 2) * rad));
 		float xx1 = org.x + (radius * sin((j * 2) * rad));
 		float yy1 = org.y + (radius * cos((j * 2) * rad));
-		CreateVERTEX(&v5[j + 364], xx, yy, 0xAAFF0000);
-		CreateVERTEX(&v5[j + 545], xx1, yy1, 0xAAFF0000);
+		CreateVERTEX(&v5[j + 364], xx, yy, &color1);
+		CreateVERTEX(&v5[j + 545], xx1, yy1, &color1);
 		if (j < 1){ continue; }
-		CreateVERTEX(&v5[(j * 2)], xx, yy, 0xAA121150);
-		CreateVERTEX(&v5[(j * 2) + 1], xx1, yy1, 0xAA121150);
+		CreateVERTEX(&v5[(j * 2)], xx, yy, &color);
+		CreateVERTEX(&v5[(j * 2) + 1], xx1, yy1, &color);
 
 	}
 	if (radius){

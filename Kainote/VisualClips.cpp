@@ -152,10 +152,11 @@ void DrawingAndClip::DrawVisual(int time)
 		D3DXVECTOR2 pos = Points[lastpos].GetVector(this);
 		int rcsize = 3;
 		vertex v9[4];
-		CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, 0xAACC8748);
-		CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, 0xAACC8748);
-		CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, 0xAACC8748);
-		CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, 0xAACC8748);
+		D3DXCOLOR color(0xAACC8748);
+		CreateVERTEX(&v9[0], pos.x - rcsize, pos.y - rcsize, &color);
+		CreateVERTEX(&v9[1], pos.x + rcsize, pos.y - rcsize, &color);
+		CreateVERTEX(&v9[2], pos.x - rcsize, pos.y + rcsize, &color);
+		CreateVERTEX(&v9[3], pos.x + rcsize, pos.y + rcsize, &color);
 		HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	}
 	if (drawCross){

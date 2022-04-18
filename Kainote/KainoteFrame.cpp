@@ -40,12 +40,16 @@
 #include "AutoSaveOpen.h"
 #include "AutoSavesRemoving.h"
 #include "DummyVideo.h"
+#include "Notebook.h"
+#include "Toolbar.h"
+#include "KaiStatusBar.h"
 
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include <wx/filedlg.h>
 #include <wx/msw/private.h>
+#include "UtilsWindows.h"
 
 #include <boost/locale/generator.hpp>
 #ifdef TEST_FFMPEG

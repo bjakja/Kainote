@@ -26,6 +26,7 @@
 #include "FontEnumerator.h"
 #include "SubsGrid.h"
 #include "VideoCtrl.h"
+#include "Notebook.h"
 #include <wx/image.h>
 #include <wx/ipc.h>
 #include <wx/utils.h>

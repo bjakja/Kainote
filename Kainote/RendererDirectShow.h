@@ -16,6 +16,10 @@
 #pragma once
 
 #include "RendererVideo.h"
+#include "include/ffms.h"
+#include <dxva2api.h>
+
+
 
 struct CUSTOMVERTEX
 {

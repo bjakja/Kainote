@@ -12,7 +12,6 @@
 
 #include <wx/pen.h>
 #include <wx/font.h>
-//#include <wx/wx.h>
 #include <wx/dcclient.h>
 
 

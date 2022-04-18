@@ -17,12 +17,13 @@
 #pragma once
 
 #include "MappedButton.h"
-#include "KaiStaticText.h"
 #include <wx/dialog.h>
-#include "KaiGauge.h"
 #include <functional>
 
 struct ITaskbarList3;
+class KaiGauge;
+class KaiStaticText;
+
 class ProgresDialog : public wxDialog
 {
 private:

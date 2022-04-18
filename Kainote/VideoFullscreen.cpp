@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "VideoFullscreen.h"
-#include "Videobox.h"
+#include "VideoCtrl.h"
 #include "KainoteApp.h"
 #include "Config.h"
 

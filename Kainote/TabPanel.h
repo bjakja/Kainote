@@ -17,7 +17,8 @@
 #pragma once
 
 #include "KaiPanel.h"
-#include "ShiftTimes.h"
+#include "VideoCtrl.h"
+#include <wx/sizer.h>
 
 class SubsGrid;
 class VideoCtrl;

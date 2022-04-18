@@ -16,7 +16,11 @@
 
 #include "SubsResampleDialog.h"
 #include "KaiStaticBoxSizer.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
+#include "SubsGrid.h"
+#include "Notebook.h"
+#include "KaiStaticText.h"
+#include "TabPanel.h"
 
 SubsResampleDialog::SubsResampleDialog(wxWindow *parent, const wxSize &subsSize, const wxSize &videoSize, const wxString &subsMatrix, const wxString &videoMatrix)
 	: KaiDialog(parent, -1, _("Zmień rozdzielczość"))

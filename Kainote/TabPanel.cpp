@@ -23,6 +23,8 @@
 #include "ShiftTimes.h"
 #include "SubsGrid.h"
 #include "Notebook.h"
+#include <wx/sizer.h>
+#include "KaiWindowResizer.h"
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)

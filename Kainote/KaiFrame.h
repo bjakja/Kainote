@@ -19,7 +19,7 @@
 #include <wx/toplevel.h>
 #include <wx/sizer.h>
 #include <vector>
-#undef CreateDialog
+//#undef CreateDialog
 
 //class GraphicsContext;
 
