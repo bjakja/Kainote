@@ -486,7 +486,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="TimeCtrl.cpp" />
     <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="Toolbar.cpp" />
-    <ClCompile Include="Videobox.cpp" />
+    <ClCompile Include="VideoCtrl.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
@@ -640,7 +640,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
-    <ClInclude Include="Videobox.h" />
+    <ClInclude Include="VideoCtrl.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />

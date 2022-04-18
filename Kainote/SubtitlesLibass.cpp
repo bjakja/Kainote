@@ -21,8 +21,8 @@
 #include <wx/thread.h>
 #include <boost/gil/algorithm.hpp>
 #include <process.h>
-//#include "UtilsWindows.h"
-
+#include "config.h"
+#include "utilswindows.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
 wxMutex SubtitlesLibass::openMutex;
@@ -271,4 +271,3 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 	}
 }
 
-#endif

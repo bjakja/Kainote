@@ -26,8 +26,11 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer,
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
 {
-	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { 
-		KaiLogSilent(_("Nie można wczytać opcji audio"), _("Błąd")); }
+	if (!Options.AudioOpts && !Options.LoadAudioOpts()) 
+	{ 
+		KaiLogSilent(_("Nie można wczytać opcji audio")); 
+	}
+
 	m_discCache = !Options.GetBool(AUDIO_RAM_CACHE);
 
 	m_success = false;

@@ -18,8 +18,8 @@
 #pragma once
 
 #include <wx/wxprec.h>
-//#include <stdint.h>
-//#include <mmsystem.h>
+#include <stdint.h>
+#include <mmsystem.h>
 #include <dsound.h>
 
 #include "Provider.h"

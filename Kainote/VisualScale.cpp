@@ -16,6 +16,7 @@
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
+#include ""
 
 enum {
 	LEFT = 1,

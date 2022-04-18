@@ -23,6 +23,9 @@
 #include "config.h"
 #include <vector>
 #include <map>
+
+#include "GraphicsD2D.h"
+
 enum COLOR;
 
 class TextStyle{
@@ -110,9 +113,9 @@ protected:
 	void GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight);
 	void MakeCursorVisible(bool refresh = true);
 	wxString KText;
-	wxBitmap* bmp;
+	wxBitmap* bmp = nullptr;
 	wxFont font;
-	wxCaret *caret;
+	wxCaret *caret = nullptr;
 	wxTimer timer;
 
 	int oldstart, oldend;

@@ -12,12 +12,14 @@
 
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
-
 #include "KaiTextCtrl.h"
-#include "Menu.h"
 #include <wx/clipbrd.h>
-//#include "Utils.h"
-#include "GraphicsD2D.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
+
+#include "Menu.h"
+//
 #include "config.h"
 
 
@@ -270,9 +272,9 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
-	if (gc){
-		gc->SetFont(font, L"#000000");
+	GraphicsContext * graphicsContext = nullptr;//renderer->CreateMeasuringContext();
+	if (graphicsContext){
+		graphicsContext->SetFont(font, L"#000000");
 	}
 	double gfw = 0, gfh = 0;
 
@@ -294,8 +296,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		size_t len = KText.length();
 		int mesureSize = w - 20;
 		if (mesureSize <= 10){ for (size_t t = 1; t < len; t++){ wraps.push_back(t);  positioning.push_back(5); return; } }
-		if (gc) {
-			CalcWrapsD2D(gc, w, currentPosition);
+		if (graphicsContext) {
+			CalcWrapsD2D(graphicsContext, w, currentPosition);
 		}
 		else {
 			CalcWrapsGDI(w, currentPosition);
@@ -307,8 +309,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		positioning.clear();
 		positioning.push_back(0);
 		wraps.push_back(KText.length());
-		if (gc){
-			GetTextExtent(gc, KText, &gfw, &gfh);
+		if (graphicsContext){
+			GetTextExtent(graphicsContext, KText, &gfw, &gfh);
 			fw = gfw + 0.5;
 		}
 		else
@@ -321,8 +323,8 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 		if (pos < 5){ pos = 5; }
 		positioning.push_back(pos);
 	}
-	if (gc)
-		delete gc;
+	if (graphicsContext)
+		delete graphicsContext;
 	int rightPos = h - Fheight;
 	posY = (style & wxALIGN_CENTER_VERTICAL) ? (rightPos / 2) : (style & wxALIGN_BOTTOM) ? rightPos - 2 : 2;
 	if (posY < 2){ posY = 2; }
@@ -405,7 +407,7 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 	//}
 }
 
-void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int currentPosition)
+void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *graphicsContext, int windowWidth, int currentPosition)
 {
 	double gfw, gfh;
 	size_t i = currentPosition;
@@ -423,7 +425,7 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 		}
 		else {
 			if (ch == L'\t') {
-				gc->GetTextExtent(L"        ", &gfw, &gfh);
+				graphicsContext->GetTextExtent(L"        ", &gfw, &gfh);
 				fontSizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			}//calculate size of \r to 0 to not slow code when splitting it on \n
 			else if (ch == L'\r') {
@@ -431,7 +433,7 @@ void KaiTextCtrl::CalcWrapsD2D(GraphicsContext *gc, int windowWidth, int current
 				fontSizes.insert(std::pair<wxUniChar, int>(ch, 0));
 			}
 			else {
-				gc->GetTextExtent(ch, &gfw, &gfh);
+				graphicsContext->GetTextExtent(ch, &gfw, &gfh);
 				fontSizes.insert(std::pair<wxUniChar, double>(ch, gfw));
 			}
 			widthCount += gfw;
@@ -890,13 +892,13 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 	bmpDC.SelectObject(*bmp);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = nullptr;//renderer->CreateContext(bmpDC);
-	if (!gc){
+	GraphicsContext *graphicsContext = nullptr;//renderer->CreateContext(bmpDC);
+	if (!graphicsContext){
 		DrawFld(bmpDC, w, h);
 	}
 	else{
-		DrawFieldD2D(gc, w, h);
-		delete gc;
+		DrawFieldD2D(graphicsContext, w, h);
+		delete graphicsContext;
 	}
 	dc.Blit(0, 0, w, h, &bmpDC, 0, 0);
 }
@@ -1097,7 +1099,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 
 }
 
-void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
+void KaiTextCtrl::DrawFieldD2D(GraphicsContext *graphicsContext, int w, int h)
 {
 	double fw = 0, fh = 0;
 	bool enabled = IsThisEnabled();
@@ -1108,9 +1110,9 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 		(HasFocus()) ? Options.GetColour(TEXT_FIELD_BORDER_ON_FOCUS) :
 		(enabled) ? Options.GetColour(TEXT_FIELD_BORDER) :
 		Options.GetColour((style & wxBORDER_NONE) ? WINDOW_BACKGROUND_INACTIVE : BUTTON_BORDER_INACTIVE);
-	gc->SetBrush(wxBrush(bg));
-	gc->SetPen(wxPen(border));
-	gc->DrawRectangle(0, 0, w - 1, h - 1);
+	graphicsContext->SetBrush(wxBrush(bg));
+	graphicsContext->SetPen(wxPen(border));
+	graphicsContext->DrawRectangle(0, 0, w - 1, h - 1);
 	if (wraps.size() < 2 || positioning.size() < 2){ return; }
 	const wxColour &cselection = (HasFocus()) ? Options.GetColour(TEXT_FIELD_SELECTION) :
 		Options.GetColour(TEXT_FIELD_SELECTION_NO_FOCUS);
@@ -1125,21 +1127,21 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 	int wline = 0;
 	int wchar = 0;
 
-	gc->SetFont(font, L"#000000");
+	graphicsContext->SetFont(font, L"#000000");
 	wxString alltext = KText + L" ";
 	int len = alltext.length();
 	//wxUniChar bchar = alltext[Cursor.x];
 
 
 	double fww;
-	gc->SetPen(*wxTRANSPARENT_PEN);
+	graphicsContext->SetPen(*wxTRANSPARENT_PEN);
 
 	if (Cursor.x != Selend.x || Cursor.y != Selend.y){
 		wxPoint fst, scd;
 		if ((Cursor.x + Cursor.y) > (Selend.x + Selend.y)){ fst = Selend; scd = Cursor; }
 		else{ fst = Cursor, scd = Selend; }
 
-		gc->SetBrush(wxBrush(wxColour(cselection)));
+		graphicsContext->SetBrush(wxBrush(wxColour(cselection)));
 		fww = 0;
 		//rysowanie zaznaczenia
 		for (int j = fst.y; j <= scd.y; j++){
@@ -1150,18 +1152,18 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 				wxString ftext = KText.SubString(wraps[j], fst.x - 1);
 				if (wraps[j] > fst.x - 1){ fw = 0; }
 				else{
-					GetTextExtent(gc, ftext, &fw, &fh);
+					GetTextExtent(graphicsContext, ftext, &fw, &fh);
 				}
 				wxString stext = KText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
-				GetTextExtent(gc, stext, &fww, &fh);
+				GetTextExtent(graphicsContext, stext, &fww, &fh);
 
 			}
 			else{
 				fw = 0;
 				wxString selText = KText.SubString(wraps[j], (j == scd.y) ? scd.x - 1 : wraps[j + 1] - 1);
-				GetTextExtent(gc, selText, &fww, &fh);
+				GetTextExtent(graphicsContext, selText, &fww, &fh);
 			}
-			gc->DrawRectangle(positioning[j + 1] + fw + tmpPosX, (j*Fheight) + tmpPosY, fww, Fheight);
+			graphicsContext->DrawRectangle(positioning[j + 1] + fw + tmpPosX, (j*Fheight) + tmpPosY, fww, Fheight);
 		}
 	}
 	int cursorPos = Cursor.x;
@@ -1173,7 +1175,7 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 			size_t start = wraps[cursorI];
 			size_t end = (cursorPos < wraps[cursorI + 1]) ? cursorPos - 1 : wraps[cursorI + 1] - 1;
 			wxString beforeCursor = KText.SubString(start, end);
-			GetTextExtent(gc, beforeCursor, &fww, &fh);
+			GetTextExtent(graphicsContext, beforeCursor, &fww, &fh);
 		}
 		caret->Move(positioning[cursorI + 1] + fww + tmpPosX, tmpPosY + (Fheight * cursorI));
 
@@ -1206,26 +1208,26 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 					if (lastto < from - 1){
 						if (lastto > linefrom + 1){
 							wxString normalstyle = line.SubString(0, lastto - linefrom - 1);
-							GetTextExtent(gc, normalstyle, &fww, 0);
+							GetTextExtent(graphicsContext, normalstyle, &fww, 0);
 						}
 						else{ fww = 0; }
-						gc->SetFont(font, fg);
+						graphicsContext->SetFont(font, fg);
 						wxString normalText = line.SubString((lastto < linefrom) ? 0 : lastto - linefrom, newto);
 						normalText.Replace(L"\r", emptyString);
 						normalText.Replace(L"\n", emptyString);
 						normalText.Replace(L"\t", L"        ");
-						gc->DrawTextU(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
+						graphicsContext->DrawTextU(normalText, positioning[i] + tmpPosX + fww, tmpPosY);
 					}
 					wxString preline = line.SubString(0, newto);
 					GetTextExtent(preline, &drawX, 0);
 				}
 				else{ drawX = 0; }
-				gc->SetFont(font, textStyles[k].color);
+				graphicsContext->SetFont(font, textStyles[k].color);
 				wxString colorizedText = line.SubString((from < linefrom) ? 0 : from - linefrom, (to < lineto) ? to - linefrom : line.length() - 1);
 				colorizedText.Replace(L"\r", emptyString);
 				colorizedText.Replace(L"\n", emptyString);
 				colorizedText.Replace(L"\t", L"        ");
-				gc->DrawTextU(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
+				graphicsContext->DrawTextU(colorizedText, positioning[i] + tmpPosX + drawX, tmpPosY);
 				drawed = true;
 				if (to <= lineto){
 					blockSkip = false;
@@ -1251,23 +1253,23 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 					GetTextExtent(preline, &drawX, nullptr);
 				}
 				else{ drawX = 0; }
-				gc->SetFont(font, fg);
+				graphicsContext->SetFont(font, fg);
 				wxString normalText = line.SubString(lastto >= linefrom ? lastto - linefrom : 0, line.length() - 1);
 				normalText.Replace(L"\r", emptyString);
 				normalText.Replace(L"\n", emptyString);
 				normalText.Replace(L"\t", L"        ");
-				gc->DrawTextU(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
+				graphicsContext->DrawTextU(normalText, positioning[i] + tmpPosX + drawX, tmpPosY);
 			}
 		}
 		else{
 			line.Replace(L"\r", emptyString);
 			line.Replace(L"\n", emptyString);
 			line.Replace(L"\t", L"        ");
-			gc->SetFont(font, (enabled) ? fg : textInactive);
+			graphicsContext->SetFont(font, (enabled) ? fg : textInactive);
 			size_t tlen = line.length();
 			int posx = positioning[i] + tmpPosX;
 			if (posx > -100){
-				gc->DrawTextU(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+				graphicsContext->DrawTextU(line.Mid(0, (1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
 			}
 			else{
 				int tmpfw = 0;
@@ -1279,16 +1281,16 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 					posx += tmpfw;
 					startPos += 50;
 				}
-				gc->DrawTextU(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
+				graphicsContext->DrawTextU(line.Mid(startPos, (startPos + 1000 < tlen) ? 1000 : wxString::npos), posx, tmpPosY);
 			}
 		}
 
 		tmpPosY += Fheight;
 
 	}
-	gc->SetBrush(*wxTRANSPARENT_BRUSH);
-	gc->SetPen(wxPen(border));
-	gc->DrawRectangle(0, 0, w, h);
+	graphicsContext->SetBrush(*wxTRANSPARENT_BRUSH);
+	graphicsContext->SetPen(wxPen(border));
+	graphicsContext->DrawRectangle(0, 0, w, h);
 }
 
 bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
@@ -1313,15 +1315,15 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	int fww = 0;
 	double gfww = 0.;
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
-	if (gc)
-		gc->SetFont(font, L"#000000");
+	GraphicsContext *graphicsContext = nullptr;//renderer->CreateMeasuringContext();
+	if (graphicsContext)
+		graphicsContext->SetFont(font, L"#000000");
 
 	for (int i = cur->x; i < wraps[cur->y + 1] + 1; i++)
 	{
-		if (gc){
-			GetTextExtent(gc, txt.SubString(cur->x, i), &gfw, &gfh);
-			GetTextExtent(gc, txt[i], &gfww, &gfh);
+		if (graphicsContext){
+			GetTextExtent(graphicsContext, txt.SubString(cur->x, i), &gfw, &gfh);
+			GetTextExtent(graphicsContext, txt[i], &gfww, &gfh);
 			gfw += positioning[cur->y + 1];
 			if (gfw - (gfww / 2) - 1 > pos.x){ cur->x = i; find = true; break; }
 		}
@@ -1335,8 +1337,8 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	if (!find){
 		cur->x = wraps[cur->y + 1];
 	}
-	if (gc)
-		delete gc;
+	if (graphicsContext)
+		delete graphicsContext;
 
 	return find;
 }
@@ -1584,13 +1586,13 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y], cur.x - 1);
 		//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
-		if (gc){
-			gc->SetFont(font, L"#000000");
+		GraphicsContext *graphicsContext = nullptr;//renderer->CreateMeasuringContext();
+		if (graphicsContext){
+			graphicsContext->SetFont(font, L"#000000");
 			double gfw = 0, gfh;
-			GetTextExtent(gc, beforeCursor, &gfw, &gfh);
+			GetTextExtent(graphicsContext, beforeCursor, &gfw, &gfh);
 			fw = gfw + 0.5;
-			delete gc;
+			delete graphicsContext;
 		}
 		GetTextExtent(beforeCursor, &fw, &fh);
 	}
@@ -1649,13 +1651,13 @@ void KaiTextCtrl::GetTextExtent(const wxString &textToMesure, int *textWidth, in
 	wxWindow::GetTextExtent(txt, textWidth, textHeight, 0, 0, &font);
 
 }
-void KaiTextCtrl::GetTextExtent(GraphicsContext *gc, const wxString &textToMesure, double *textWidth, double *textHeight)
+void KaiTextCtrl::GetTextExtent(GraphicsContext *graphicsContext, const wxString &textToMesure, double *textWidth, double *textHeight)
 {
 	wxString txt = textToMesure;
 	txt.Replace(L"\r", emptyString);
 	txt.Replace(L"\n", emptyString);
 	txt.Replace(L"\t", L"        ");
-	gc->GetTextExtent(txt, textWidth, textHeight);
+	graphicsContext->GetTextExtent(txt, textWidth, textHeight);
 }
 
 void KaiTextCtrl::SetWindowStyle(long _style){
@@ -1682,12 +1684,12 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 
 			int fh, fw;
 			//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
-			if (gc){
-				gc->SetFont(font, L"#000000");
+			GraphicsContext *graphicsContext = nullptr;//renderer->CreateMeasuringContext();
+			if (graphicsContext){
+				graphicsContext->SetFont(font, L"#000000");
 				double gfw = 0, gfh;
-				GetTextExtent(gc, KText, &gfw, &gfh);
-				delete gc;
+				GetTextExtent(graphicsContext, KText, &gfw, &gfh);
+				delete graphicsContext;
 				fw = gfw + 0.5;
 			}
 			GetTextExtent(KText, &fw, &fh);

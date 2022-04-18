@@ -16,12 +16,14 @@
 
 #pragma once
 
-#include "SubsGrid.h"
-#include "Videobox.h"
-#include "EditBox.h"
-#include "ShiftTimes.h"
-#include "KaiWindowResizer.h"
 #include "KaiPanel.h"
+
+class SubsGrid;
+class VideoCtrl;
+class EditBox;
+class ShiftTimes;
+class ShiftTimesWindow;
+class KaiWindowResizer;
 
 class TabPanel : public KaiPanel
 {
@@ -31,10 +33,10 @@ public:
 	bool Hide();
 	//bool Show(bool show=true);
 
-	SubsGrid* Grid;
-	EditBox* Edit;
-	VideoCtrl* Video;
-	ShiftTimesWindow* ShiftTimes;
+	SubsGrid* grid;
+	EditBox* edit;
+	VideoCtrl* video;
+	ShiftTimes* shiftTimes;
 
 	wxBoxSizer* MainSizer;
 	wxBoxSizer* VideoEditboxSizer;

@@ -15,27 +15,21 @@
 
 #pragma once
 
-#include "TimeCtrl.h"
-#include "SubsTime.h"
-#include "NumCtrl.h"
-#include "MappedButton.h"
-#include "ListControls.h"
-#include "KaiRadioButton.h"
-#include <wx/window.h>
+
 #include "KaiPanel.h"
-#include "KaiStaticBoxSizer.h"
+
 
 class KainoteFrame;
 class TabPanel;
 
 
-class ShiftTimesWindow: public KaiPanel
+class ShiftTimes: public KaiPanel
 {
 public:
 	
-	ShiftTimesWindow(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
+	ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style=0);
-	virtual ~ShiftTimesWindow();
+	virtual ~ShiftTimes();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;

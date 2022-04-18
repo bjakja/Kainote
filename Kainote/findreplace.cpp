@@ -19,6 +19,8 @@
 #include "FindReplaceDialog.h"
 #include "FindReplaceResultsDialog.h"
 #include "OpennWrite.h"
+#include "SubsGrid.h"
+#include "TabPanel.h"
 #include <wx/clipbrd.h>
 #include <wx/dir.h>
 #include "UtilsWindows.h"
@@ -65,15 +67,15 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 	if (tab){
 		for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 			if (Kai->Tabs->Page(i) == tab){
-				if (keyLine < tab->Grid->file->GetCount()){
+				if (keyLine < tab->grid->file->GetCount()){
 					if (i != Kai->Tabs->iter)
 						Kai->Tabs->ChangePage(i);
 					//check if it's not out of range
-					if (keyLine < tab->Grid->GetCount()){
-						tab->Edit->SetLine(keyLine);
-						tab->Grid->SelectRow(keyLine);
-						tab->Grid->ScrollTo(keyLine, true);
-						tab->Edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
+					if (keyLine < tab->grid->GetCount()){
+						tab->edit->SetLine(keyLine);
+						tab->grid->SelectRow(keyLine);
+						tab->grid->ScrollTo(keyLine, true);
+						tab->edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
 					}
 				}
 				break;
@@ -95,11 +97,11 @@ void FindReplace::ShowResult(TabPanel *tab, const wxString &path, int keyLine, c
 			Kai->OpenFile(path);
 		}
 		TabPanel *ntab = Kai->GetTab();
-		if (keyLine < ntab->Grid->GetCount()){
-			ntab->Edit->SetLine(keyLine);
-			ntab->Grid->SelectRow(keyLine);
-			ntab->Grid->ScrollTo(keyLine, true);
-			ntab->Edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
+		if (keyLine < ntab->grid->GetCount()){
+			ntab->edit->SetLine(keyLine);
+			ntab->grid->SelectRow(keyLine);
+			ntab->grid->ScrollTo(keyLine, true);
+			ntab->edit->GetEditor(text)->SetSelection(pos.x, pos.x + pos.y);
 		}
 	}
 }
@@ -183,10 +185,10 @@ void FindReplace::ReplaceChecked()
 				lastIsTextTl = false;
 			}
 			//skip lines when are out of table range and not existed tab
-			if (skipTab || SeekResult->keyLine >= tab->Grid->file->GetCount())
+			if (skipTab || SeekResult->keyLine >= tab->grid->file->GetCount())
 				continue;
 
-			Dialogue *Dialc = tab->Grid->file->CopyDialogue(SeekResult->keyLine, true, false);
+			Dialogue *Dialc = tab->grid->file->CopyDialogue(SeekResult->keyLine, true, false);
 
 			wxString & lineText = Dialc->Text.CheckTlRef(Dialc->TextTl, SeekResult->isTextTL);
 			//skip lines with different texts
@@ -206,9 +208,9 @@ void FindReplace::ReplaceChecked()
 			numOfChanges += ReplaceCheckedLine(&lineText, SeekResult->findPosition, &replacementDiff);
 
 			if (tab != oldtab && oldtab && numOfChanges){
-				oldtab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
-				oldtab->Grid->SpellErrors.clear();
-				oldtab->Grid->Refresh(false);
+				oldtab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+				oldtab->grid->SpellErrors.clear();
+				oldtab->grid->Refresh(false);
 				numOfChanges = 0;
 			}
 
@@ -219,9 +221,9 @@ void FindReplace::ReplaceChecked()
 		}
 
 		if (tab && numOfChanges){
-			tab->Grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
-			tab->Grid->SpellErrors.clear();
-			tab->Grid->Refresh(false);
+			tab->grid->SetModified(REPLACED_BY_MISSPELL_REPLACER);
+			tab->grid->SpellErrors.clear();
+			tab->grid->Refresh(false);
 		}
 	}
 
@@ -261,8 +263,8 @@ void FindReplace::Find(TabWindow *window)
 		fnext = false; 
 		oldfind = findString; 
 	}
-	if (!fromstart && lastActive != tab->Grid->currentLine){
-		lastActive = tab->Grid->currentLine;
+	if (!fromstart && lastActive != tab->grid->currentLine){
+		lastActive = tab->grid->currentLine;
 	}
 
 	wxString txt;
@@ -273,7 +275,7 @@ seekFromStart:
 
 	bool foundsome = false;
 	if (fromstart){
-		linePosition = tab->Grid->FirstSelection();
+		linePosition = tab->grid->FirstSelection();
 		//is it possible to get it -1 if id exists, key also should exist
 		linePosition = (!allLines && linePosition != -1) ? linePosition : 0;
 		textPosition = 0;
@@ -281,8 +283,8 @@ seekFromStart:
 	if (window && CheckStyles(window, tab))
 		return;
 	bool styles = !stylesAsText.empty();
-	SubsFile *Subs = tab->Grid->file;
-	bool tlmode = tab->Grid->hasTLMode;
+	SubsFile *Subs = tab->grid->file;
+	bool tlmode = tab->grid->hasTLMode;
 
 	while (linePosition < Subs->GetCount())
 	{
@@ -291,7 +293,7 @@ seekFromStart:
 		
 		if ((!styles && !selectedLines) ||
 			(styles && stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-			(selectedLines && tab->Grid->file->IsSelected(linePosition))){
+			(selectedLines && tab->grid->file->IsSelected(linePosition))){
 			Dial->GetTextElement(dialogueColumn, &txt, tlmode);
 
 			foundPosition = -1;
@@ -341,12 +343,12 @@ seekFromStart:
 				findstart = foundPosition;
 				findend = textPosition;
 				lastActive = reprow = linePosition;
-				if (!selectedLines){ tab->Grid->SelectRow(linePosition, false, true); }
-				tab->Edit->SetLine(linePosition);
-				tab->Grid->ScrollTo(linePosition, true);
-				if (selectedLines){ tab->Grid->Refresh(false); }
+				if (!selectedLines){ tab->grid->SelectRow(linePosition, false, true); }
+				tab->edit->SetLine(linePosition);
+				tab->grid->ScrollTo(linePosition, true);
+				if (selectedLines){ tab->grid->Refresh(false); }
 				if (dialogueColumn == STYLE){
-					//pan->Edit->StyleChoice->SetFocus();
+					//pan->edit->StyleChoice->SetFocus();
 				}
 				else if (dialogueColumn == TXT){
 					//find if is txt or txttl
@@ -354,19 +356,19 @@ seekFromStart:
 					if (tlmode && txt.Find(L'\n') != -1){
 						size_t pos = txt.Find(L'\n');
 						if(foundPosition > pos)
-							tab->Edit->TextEdit->SetSelection(foundPosition - pos - 1, findend - pos - 1);
+							tab->edit->TextEdit->SetSelection(foundPosition - pos - 1, findend - pos - 1);
 						else
-							tab->Edit->TextEditOrig->SetSelection(foundPosition, findend);
+							tab->edit->TextEditOrig->SetSelection(foundPosition, findend);
 					}else
-						tab->Edit->TextEdit->SetSelection(foundPosition, findend);
+						tab->edit->TextEdit->SetSelection(foundPosition, findend);
 				}
 				if (dialogueColumn == ACTOR){
-					//pan->Edit->ActorEdit->SetFocus();
-					tab->Edit->ActorEdit->SetTextSelection(foundPosition, findend);
+					//pan->edit->ActorEdit->SetFocus();
+					tab->edit->ActorEdit->SetTextSelection(foundPosition, findend);
 				}
 				if (dialogueColumn == EFFECT){
-					//pan->Edit->EffectEdit->SetFocus();
-					tab->Edit->EffectEdit->SetTextSelection(foundPosition, findend);
+					//pan->edit->EffectEdit->SetFocus();
+					tab->edit->EffectEdit->SetTextSelection(foundPosition, findend);
 				}
 
 				foundsome = true;
@@ -436,14 +438,14 @@ unsigned long FindReplace::FindAllInTab(void *data)
 	//<= for range from 1 to 1 
 	for (int i = tabRange.x; i <= tabRange.y; i++){
 		TabPanel *tab = tabs->Page(i);
-		bool hasTlMode = tab->Grid->hasTLMode;
+		bool hasTlMode = tab->grid->hasTLMode;
 
 		int positionId = 0;
 		wxString subsPath = tab->SubsName;
 		bool isfirst = true;
 
 		size_t firstSelectedId = 0;
-		int tabLinePosition = tab->Grid->FirstSelection(&firstSelectedId);
+		int tabLinePosition = tab->grid->FirstSelection(&firstSelectedId);
 		tabLinePosition = (!window->AllLines->GetValue() && tabLinePosition != -1) ? tabLinePosition : 0;
 		if (tabLinePosition > 0 && firstSelectedId != -1)
 			positionId = firstSelectedId;
@@ -451,7 +453,7 @@ unsigned long FindReplace::FindAllInTab(void *data)
 		bool styles = !fr->stylesAsText.empty();
 
 		bool onlySelections = window->SelectedLines->GetValue();
-		SubsFile *Subs = tab->Grid->file;
+		SubsFile *Subs = tab->grid->file;
 
 		for (; tabLinePosition < Subs->GetCount(); tabLinePosition++)
 		{
@@ -461,7 +463,7 @@ unsigned long FindReplace::FindAllInTab(void *data)
 
 			if ((!styles && !onlySelections) ||
 				(styles && fr->stylesAsText.Find(L"," + Dial->Style + L",") != -1) ||
-				(onlySelections && tab->Grid->file->IsSelected(tabLinePosition))){
+				(onlySelections && tab->grid->file->IsSelected(tabLinePosition))){
 
 				Dial->GetTextElement(dialogueColumn, &txt, hasTlMode);
 
@@ -1002,7 +1004,7 @@ void FindReplace::Replace(TabWindow *window)
 		return;
 	}
 	TabPanel *tab = Kai->GetTab();
-	if (lastActive != tab->Grid->currentLine){ Find(window); }
+	if (lastActive != tab->grid->currentLine){ Find(window); }
 	long wrep = TXT;
 	if (window->CollumnStyle->GetValue()){ wrep = STYLE; }
 	else if (window->CollumnActor->GetValue()){ wrep = ACTOR; }
@@ -1018,12 +1020,12 @@ void FindReplace::Replace(TabWindow *window)
 	if (findstart == -1 || findend == -1){ return; }
 	fnext = true;
 	wxString rep = window->ReplaceText->GetValue();
-	SubsGrid *grid = tab->Grid;
+	SubsGrid *grid = tab->grid;
 
 	Dialogue *Dialc = grid->CopyDialogue(reprow);
 	bool hasRegEx = window->RegEx->GetValue();
 	wxString replacedText;
-	Dialc->GetTextElement(wrep, &replacedText, tab->Grid->hasTLMode);
+	Dialc->GetTextElement(wrep, &replacedText, tab->grid->hasTLMode);
 	if (hasRegEx && findReplaceRegEx.IsValid()){
 		wxString place = replacedText.Mid(findstart, findend - findstart);
 		int reps = findReplaceRegEx.Replace(&place, rep, 1);
@@ -1034,25 +1036,25 @@ void FindReplace::Replace(TabWindow *window)
 	}
 
 	if (wrep == STYLE){
-		tab->Edit->StyleChoice->SetSelection(tab->Edit->StyleChoice->FindString(replacedText));
+		tab->edit->StyleChoice->SetSelection(tab->edit->StyleChoice->FindString(replacedText));
 	}
 	else if (wrep == TXT){
-		if (tab->Grid->hasTLMode && replacedText.Find(L'\n') != -1){
+		if (tab->grid->hasTLMode && replacedText.Find(L'\n') != -1){
 			wxString textTl;
 			wxString text = replacedText.BeforeFirst(L'\n', &textTl);
-			tab->Edit->TextEditOrig->SetTextS(text);
-			tab->Edit->TextEdit->SetTextS(textTl);
+			tab->edit->TextEditOrig->SetTextS(text);
+			tab->edit->TextEdit->SetTextS(textTl);
 		}
 		else
-			tab->Edit->TextEdit->SetTextS(replacedText);
+			tab->edit->TextEdit->SetTextS(replacedText);
 	}
 	else if (wrep == ACTOR){
-		tab->Edit->ActorEdit->SetValue(replacedText);
+		tab->edit->ActorEdit->SetValue(replacedText);
 	}
 	else if (wrep == EFFECT){
-		tab->Edit->EffectEdit->SetValue(replacedText);
+		tab->edit->EffectEdit->SetValue(replacedText);
 	}
-	Dialc->SetTextElement(wrep, replacedText, tab->Grid->hasTLMode);
+	Dialc->SetTextElement(wrep, replacedText, tab->grid->hasTLMode);
 	grid->SetModified(REPLACE_SINGLE);
 	grid->Refresh(false);
 	textPosition = findstart + rep.length();
@@ -1069,10 +1071,10 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 
 	bool onlysel = window->SelectedLines->GetValue();
 
-	size_t firstSelection = tab->Grid->FirstSelection();
-	SubsFile *Subs = tab->Grid->file;
-	bool skipFiltered = !tab->Grid->ignoreFiltered;
-	bool hasTlMode = tab->Grid->hasTLMode;
+	size_t firstSelection = tab->grid->FirstSelection();
+	SubsFile *Subs = tab->grid->file;
+	bool skipFiltered = !tab->grid->ignoreFiltered;
+	bool hasTlMode = tab->grid->hasTLMode;
 
 	for (size_t i = (!window->AllLines->GetValue() && firstSelection != -1) ? firstSelection : 0; i < Subs->GetCount(); i++)
 	{
@@ -1080,12 +1082,12 @@ int FindReplace::ReplaceAllInTab(TabPanel *tab, TabWindow *window)
 		if (skipFiltered && !Dial->isVisible || Dial->NonDialogue || (skipComments && Dial->IsComment)){ continue; }
 		
 		if ((notstyles || stylesAsText.Find(L"," + Dial->Style + L",") != -1) &&
-			!(onlysel && !(tab->Grid->file->IsSelected(i)))){
+			!(onlysel && !(tab->grid->file->IsSelected(i)))){
 
 			Dial->GetTextElement(dialogueColumn, &txt, hasTlMode);
 			allreps = ReplaceInSubsLine(&txt);
 			if (allreps > 0){
-				Dialogue *Dialc = tab->Grid->file->CopyDialogue(i);
+				Dialogue *Dialc = tab->grid->file->CopyDialogue(i);
 				Dialc->SetTextElement(dialogueColumn, txt, hasTlMode);
 				allRelpacements += allreps;
 			}
@@ -1115,12 +1117,12 @@ void FindReplace::ReplaceAll(TabWindow *window)
 		return;
 	}
 	else if (allReplacements){
-		tab->Grid->SpellErrors.clear();
-		tab->Grid->SetModified(REPLACE_ALL);
+		tab->grid->SpellErrors.clear();
+		tab->grid->SetModified(REPLACE_ALL);
 		if (dialogueColumn < TXT)
-			tab->Grid->RefreshColumns(dialogueColumn);
+			tab->grid->RefreshColumns(dialogueColumn);
 		else
-			tab->Grid->Refresh(false);
+			tab->grid->Refresh(false);
 	}
 	blockTextChange = true;
 	KaiMessageBox(wxString::Format(_("Zmieniono %i razy."), allReplacements), _("Szukaj Zamień"));
@@ -1150,15 +1152,15 @@ void FindReplace::ReplaceInAllOpenedSubs(TabWindow *window)
 			return;
 		}
 		if (allReplacements){
-			tab->Grid->SpellErrors.clear();
-			tab->Grid->SetModified(REPLACE_ALL);
+			tab->grid->SpellErrors.clear();
+			tab->grid->SetModified(REPLACE_ALL);
 			if (dialogueColumn < TXT){
-				tab->Grid->RefreshColumns(dialogueColumn);
+				tab->grid->RefreshColumns(dialogueColumn);
 			}
 			else{
-				tab->Grid->Refresh(false);
+				tab->grid->Refresh(false);
 			}
-			Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
+			Kai->Label(tab->grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
 			allTabsReplacements += allReplacements;
 		}
 	}
@@ -1306,7 +1308,7 @@ bool FindReplace::CheckStyles(TabWindow *window, TabPanel *tab)
 
 	while (tknzr.HasMoreTokens()){
 		wxString styleName = tknzr.GetNextToken();
-		int result = tab->Grid->FindStyle(styleName);
+		int result = tab->grid->FindStyle(styleName);
 		if (result == -1){
 			notFoundStyles << styleName << L", ";
 		}

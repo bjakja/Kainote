@@ -18,6 +18,9 @@
 #include "Config.h"
 #include "Hotkeys.h"
 #include "KainoteMain.h"
+#include "VideoCtrl.h"
+#include "EditBox.h"
+#include "ShiftTimes.h"
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
@@ -31,36 +34,36 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	int vw, vh;
 	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 	if (vw < 200){ vw = 550; vh = 400; }
-	Video = new VideoCtrl(this, kai, wxSize(vw, vh));
-	Video->Hide();
-	Edit = new EditBox(this, -1);
+	video = new VideoCtrl(this, kai, wxSize(vw, vh));
+	video->Hide();
+	edit = new EditBox(this, -1);
 
 	GridShiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
 	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
-	Edit->SetGrid1(Grid);
+	edit->SetGrid1(Grid);
 
-	ShiftTimes = new ShiftTimesWindow(this, kai, -1);
+	ShiftTimes = new ShiftTimes(this, kai, -1);
 	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	GridShiftTimesSizer->Add(Grid, 1, wxEXPAND, 0);
 	GridShiftTimesSizer->Add(ShiftTimes, 0, wxEXPAND, 0);
-	VideoEditboxSizer->Add(Video, 0, wxEXPAND | wxALIGN_TOP, 0);
-	VideoEditboxSizer->Add(Edit, 1, wxEXPAND | wxALIGN_TOP, 0);
+	VideoEditboxSizer->Add(video, 0, wxEXPAND | wxALIGN_TOP, 0);
+	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 
 	//check if there is nothing in constructor that crash or get something wrong when construct
-	Edit->StartEdit->SetVideoCtrl(Video);
-	Edit->EndEdit->SetVideoCtrl(Video);
-	Edit->DurEdit->SetVideoCtrl(Video);
-	Edit->SetMinSize(wxSize(-1, 200));
-	Edit->SetLine(0);
+	edit->StartEdit->SetVideoCtrl(video);
+	edit->EndEdit->SetVideoCtrl(video);
+	edit->DurEdit->SetVideoCtrl(video);
+	edit->SetMinSize(wxSize(-1, 200));
+	edit->SetLine(0);
 
 	windowResizer = new KaiWindowResizer(this, [=](int newpos){
 		int mw, mh;
 		GetClientSize(&mw, &mh);
-		int limit = (Video->GetState() != None && Video->IsShown()) ? 350 : 150;
+		int limit = (video->GetState() != None && video->IsShown()) ? 350 : 150;
 		return newpos > limit && newpos < mh - 5;
 	}, [=](int newpos, bool shiftDown){
 		int w, h;
-		Edit->GetClientSize(&w, &h);
+		edit->GetClientSize(&w, &h);
 		SetVideoWindowSizes(w, newpos, shiftDown);
 	});
 
@@ -79,7 +82,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 
 TabPanel::~TabPanel(){
 	//fix of crashes caused by destroying of editbox on the end
-	if (Edit->ABox){ Edit->ABox->audioDisplay->Stop(false); }
+	if (edit->ABox){ edit->ABox->audioDisplay->Stop(false); }
 }
 
 
@@ -110,33 +113,33 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		if (itype.Type != AUDIO_HOTKEY){
 			if (itype.id >= 2000 && itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
 				if (itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else{
-					Edit->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, Video, id);
+					edit->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
 					eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				continue;
 			}
 			else if (itype.id >= 3000 && itype.id < 4000 && itype.Type != EDITBOX_HOTKEY){
 				if (itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else{
-					Video->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					video->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
 					ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				continue;
 			}
 			else if (itype.id >= 4000 && itype.id < 5000 && itype.Type != GRID_HOTKEY){
 				if (itype.Type == VIDEO_HOTKEY){
-					Video->Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
+					video->Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
 					ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else if(itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, Edit, id);
+					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				continue;
@@ -166,7 +169,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		}
 		else if (cur->first.Type == VIDEO_HOTKEY){//video
 			ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-			if (id >= 2000 && id < 2999){ Video->ConnectAcc(id); }
+			if (id >= 2000 && id < 2999){ video->ConnectAcc(id); }
 			if (id >= VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				Grid->ConnectAcc(id);
@@ -179,13 +182,13 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 	Grid->SetAcceleratorTable(accelg);
 	if (!onlyGridAudio){
 		wxAcceleratorTable accelv(ventries.size(), &ventries[0]);
-		Video->SetAcceleratorTable(accelv);
+		video->SetAcceleratorTable(accelv);
 		wxAcceleratorTable accele(eentries.size(), &eentries[0]);
-		Edit->SetAcceleratorTable(accele);
+		edit->SetAcceleratorTable(accele);
 	}
 
-	if (Edit->ABox && !onlyGridAudio)
-		Edit->ABox->SetAccels();
+	if (edit->ABox && !onlyGridAudio)
+		edit->ABox->SetAccels();
 }
 
 void TabPanel::OnFocus(wxChildFocusEvent& event)
@@ -205,16 +208,16 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 {
 	Notebook *nb = Notebook::GetTabs();
 
-	if (Video->GetState() != None && Video->IsShown()){
+	if (video->GetState() != None && video->IsShown()){
 		int ww, hh;
-		int panelHeight = Video->GetPanelHeight();
-		Video->CalcSize(&ww, &hh, w, h, false, true);
+		int panelHeight = video->GetPanelHeight();
+		video->CalcSize(&ww, &hh, w, h, false, true);
 		if (ww < 450)
 			ww = 450;
-		Video->SetMinSize(wxSize(ww, hh + panelHeight));
+		video->SetMinSize(wxSize(ww, hh + panelHeight));
 		Options.SetCoords(VIDEO_WINDOW_SIZE, ww, hh + panelHeight);
 	}
-	Edit->SetMinSize(wxSize(-1, h));
+	edit->SetMinSize(wxSize(-1, h));
 	MainSizer->Layout();
 	if (!allTabs)
 		return;
@@ -222,14 +225,14 @@ void TabPanel::SetVideoWindowSizes(int w, int h, bool allTabs)
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
 		if (tab == this){ continue; }
-		if (tab->Video->GetState() != None){
+		if (tab->video->GetState() != None){
 			int ww, hh;
-			tab->Video->CalcSize(&ww, &hh, w, h, false, true);
+			tab->video->CalcSize(&ww, &hh, w, h, false, true);
 			if (ww < 450)
 				ww = 450;
-			tab->Video->SetMinSize(wxSize(ww, hh + tab->Video->GetPanelHeight()));
+			tab->video->SetMinSize(wxSize(ww, hh + tab->video->GetPanelHeight()));
 		}
-		tab->Edit->SetMinSize(wxSize(-1, h));
+		tab->edit->SetMinSize(wxSize(-1, h));
 		tab->MainSizer->Layout();
 	}
 }
@@ -258,8 +261,8 @@ bool TabPanel::Hide()
 //		if (Grid1->IsShown()){
 //			Grid1->SetFocus();
 //		}
-//		else if (Video->IsShown()){
-//			Video->SetFocus();
+//		else if (video->IsShown()){
+//			video->SetFocus();
 //		}
 //	}
 //	return ret;
@@ -267,8 +270,8 @@ bool TabPanel::Hide()
 
 bool TabPanel::SetFont(const wxFont &font)
 {
-	Video->SetFont(font);
-	Edit->SetFont(font);
+	video->SetFont(font);
+	edit->SetFont(font);
 	ShiftTimes->SetFont(font);
 
 	return wxWindow::SetFont(font);
@@ -276,9 +279,9 @@ bool TabPanel::SetFont(const wxFont &font)
 
 void TabPanel::OnSize(wxSizeEvent & evt)
 {
-	if (!Edit->IsShown() && !ShiftTimes->IsShown() && !Grid->IsShown()) {
+	if (!edit->IsShown() && !ShiftTimes->IsShown() && !Grid->IsShown()) {
 		wxSize tabSize = GetClientSize();
-		Video->SetMinSize(tabSize);
+		video->SetMinSize(tabSize);
 		//Layout();
 	}
 	evt.Skip();

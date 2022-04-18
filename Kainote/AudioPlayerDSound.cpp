@@ -18,7 +18,7 @@
 ///////////
 // Headers
 
-#include <wx/wx.h>
+//#include <wx/wx.h>
 #include <mmsystem.h>
 #include <dsound.h>
 #include <process.h>
@@ -30,11 +30,11 @@
 
 
 class DirectSoundPlayer2Thread {
-	static unsigned int __stdcall ThreadProc(void *parameter);
+	static unsigned int __stdcall ThreadProc(void* parameter);
 	void Run();
 
-	unsigned int FillAndUnlockBuffers(unsigned char *buf1, unsigned int buf1sz, unsigned char * buf2, 
-		unsigned int buf2sz, long long &input_frame, IDirectSoundBuffer8 *audioBuffer);
+	unsigned int FillAndUnlockBuffers(unsigned char* buf1, unsigned int buf1sz, unsigned char* buf2,
+		unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer);
 
 	void CheckError();
 
@@ -54,7 +54,7 @@ class DirectSoundPlayer2Thread {
 		is_playing,
 		error_happened;
 
-	const wxChar *error_message;
+	const wxChar* error_message;
 	double volume;
 	long long start_frame;
 	long long end_frame;
@@ -65,10 +65,10 @@ class DirectSoundPlayer2Thread {
 	//std::chrono::system_clock::time_point last_playback_restart;
 	int last_playback_restart;
 
-	Provider *provider;
+	Provider* provider;
 
 public:
-	DirectSoundPlayer2Thread(Provider *provider, int WantedLatency, int BufferLength);
+	DirectSoundPlayer2Thread(Provider* provider, int WantedLatency, int BufferLength);
 	~DirectSoundPlayer2Thread();
 
 	void Play(long long start, long long count);
@@ -395,7 +395,7 @@ do_fill_buffer:
 //KaiLogSilent("Cound not create DirectSound object");
 
 DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char * buf1, unsigned long buf1sz, 
-	unsigned char * buf2, unsigned long buf2sz, long long &input_frame, IDirectSoundBuffer8 *audioBuffer)
+	unsigned char * buf2, unsigned long buf2sz, long long &input_frame, audioBuffer)
 {
 	// Assume buffers have been locked and are ready to be filled
 

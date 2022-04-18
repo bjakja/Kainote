@@ -19,7 +19,6 @@
 #include "config.h"
 #include "kainoteMain.h"
 #include "Hotkeys.h"
-#include <wx/dir.h>
 #include "NumCtrl.h"
 #include "ColorPicker.h"
 #include "KaiTextCtrl.h"
@@ -31,8 +30,10 @@
 #include "StyleChange.h"
 #include "SubtitlesProviderManager.h"
 #include "SpellChecker.h"
-#include "config.h"
 
+#include <wx/dir.h>
+//config have Windows trash
+#include "config.h"
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
 {

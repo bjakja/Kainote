@@ -170,7 +170,7 @@
     <ClCompile Include="SubsTime.cpp">
       <Filter>Subs</Filter>
     </ClCompile>
-    <ClCompile Include="Videobox.cpp">
+    <ClCompile Include="VideoCtrl.cpp">
       <Filter>Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoFullscreen.cpp">
@@ -655,7 +655,7 @@
     <ClInclude Include="KeyframesLoader.h">
       <Filter>Video</Filter>
     </ClInclude>
-    <ClInclude Include="Videobox.h">
+    <ClInclude Include="VideoCtrl.h">
       <Filter>Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoFullscreen.h">

@@ -361,7 +361,7 @@ void KaiDialog::OnNavigation(wxNavigationKeyEvent& evt)
 {
 	SetNextControl(evt.GetDirection());
 }
-
+#undef GetWindowStyle
 void KaiDialog::OnCharHook(wxKeyEvent &evt)
 {
 	const int key = evt.GetKeyCode();
