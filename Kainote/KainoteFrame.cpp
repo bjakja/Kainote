@@ -43,6 +43,12 @@
 #include "Notebook.h"
 #include "Toolbar.h"
 #include "KaiStatusBar.h"
+#include "StyleStore.h"
+#include "Automation.h"
+#include "SubsGrid.h"
+#include "FindReplaceDialog.h"
+#include "SelectLines.h"
+#include "MisspellReplacer.h"
 
 #include <wx/accel.h>
 #include <wx/dir.h>

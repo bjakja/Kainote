@@ -21,7 +21,8 @@
 #include "config.h"
 #include "Notebook.h"
 #include "TabPanel.h"
-
+#include "SubsGrid.h"
+#include "EditBox.h"
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
 
