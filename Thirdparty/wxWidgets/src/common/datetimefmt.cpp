@@ -24,24 +24,24 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if !defined(wxUSE_DATETIME) || wxUSE_DATETIME
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
-    #include "wx/string.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/stopwatch.h"           // for wxGetLocalTimeMillis()
-    #include "wx/module.h"
-    #include "wx/crt.h"
+    #include "wx\string.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\stopwatch.h"           // for wxGetLocalTimeMillis()
+    #include "wx\module.h"
+    #include "wx\crt.h"
 #endif // WX_PRECOMP
 
-#include "wx/thread.h"
+#include "wx\thread.h"
 
 #include <ctype.h>
 
@@ -50,8 +50,8 @@
     #include <locale.h>
 #endif
 
-#include "wx/datetime.h"
-#include "wx/time.h"
+#include "wx\datetime.h"
+#include "wx\time.h"
 
 // ============================================================================
 // implementation of wxDateTime

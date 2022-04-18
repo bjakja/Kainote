@@ -9,12 +9,12 @@
 #ifndef _WX_ARCHIVE_H__
 #define _WX_ARCHIVE_H__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_STREAMS && wxUSE_ARCHIVE_STREAMS
 
-#include "wx/stream.h"
-#include "wx/filename.h"
+#include "wx\stream.h"
+#include "wx\filename.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

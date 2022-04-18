@@ -341,9 +341,9 @@ wxSemaError wxSemaphore::Post()
 // wxThread
 // ----------------------------------------------------------------------------
 
-#include "wx/utils.h"
-#include "wx/private/threadinfo.h"
-#include "wx/scopeguard.h"
+#include "wx\utils.h"
+#include "wx\private/threadinfo.h"
+#include "wx\scopeguard.h"
 
 void wxThread::Sleep(unsigned long milliseconds)
 {

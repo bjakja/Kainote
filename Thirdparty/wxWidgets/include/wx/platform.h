@@ -143,7 +143,7 @@
 
 #ifdef __ANDROID__
 #   define __WXANDROID__
-#   include "wx/android/config_android.h"
+#   include "wx\android/config_android.h"
 #endif
 
 #include "wx/compiler.h"
@@ -156,7 +156,7 @@
    could be already defined by configure but it must be included after defining
    the compiler macros above as msvc/wx/setup.h relies on them under Windows.
  */
-#include "wx/setup.h"
+#include "wx\msw/setup.h"
 
 /*
    Convenience for any optional classes that use the wxAnyButton base class.
@@ -340,7 +340,7 @@
     ( defined( __CYGWIN__ ) && defined( __WINDOWS__ ) ) ) && \
     !defined(__WXMOTIF__) && \
     !defined(__WXX11__)
-#    include "wx/msw/gccpriv.h"
+#    include "wx\msw/gccpriv.h"
 #else
 #    undef wxCHECK_W32API_VERSION
 #    define wxCHECK_W32API_VERSION(maj, min) (0)

@@ -10,7 +10,7 @@
 #ifndef _WX_TIME_H_
 #define _WX_TIME_H_
 
-#include "wx/longlong.h"
+#include "wx\longlong.h"
 
 // Returns the difference between UTC and local time in seconds.
 WXDLLIMPEXP_BASE int wxGetTimeZone();

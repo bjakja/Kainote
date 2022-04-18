@@ -17,20 +17,20 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/platinfo.h"
+#include "wx\platinfo.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
-    #include "wx/utils.h"
+    #include "wx\app.h"
+    #include "wx\utils.h"
 #endif //WX_PRECOMP
 
-#include "wx/apptrait.h"
+#include "wx\apptrait.h"
 
 #ifdef __WINDOWS__
-    #include "wx/dynlib.h"
+    #include "wx\dynlib.h"
 #endif
 
 // global object

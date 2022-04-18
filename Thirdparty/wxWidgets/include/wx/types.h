@@ -16,7 +16,7 @@
     Don't include wx/defs.h from here as we're included from it, but do include
     wx/platform.h which will take care of including wx/setup.h too.
  */
-#include "wx/platform.h"
+#include "wx\platform.h"
 
 /*  ---------------------------------------------------------------------------- */
 /*  standard wxWidgets types */

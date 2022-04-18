@@ -7,12 +7,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/stream.h"
+#include "wx\stream.h"
 
 // These functions are in a separate file so that statically linked apps
 // that do not call them to search for filter handlers will only link in

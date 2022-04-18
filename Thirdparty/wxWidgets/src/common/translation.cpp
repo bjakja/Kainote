@@ -18,44 +18,44 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_INTL
 
 #ifndef WX_PRECOMP
-    #include "wx/dynarray.h"
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/hashmap.h"
-    #include "wx/module.h"
+    #include "wx\dynarray.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\hashmap.h"
+    #include "wx\module.h"
 #endif // WX_PRECOMP
 
 // standard headers
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "wx/arrstr.h"
-#include "wx/dir.h"
-#include "wx/file.h"
-#include "wx/filename.h"
-#include "wx/tokenzr.h"
-#include "wx/fontmap.h"
-#include "wx/scopedptr.h"
-#include "wx/stdpaths.h"
-#include "wx/version.h"
-#include "wx/private/threadinfo.h"
+#include "wx\arrstr.h"
+#include "wx\dir.h"
+#include "wx\file.h"
+#include "wx\filename.h"
+#include "wx\tokenzr.h"
+#include "wx\fontmap.h"
+#include "wx\scopedptr.h"
+#include "wx\stdpaths.h"
+#include "wx\version.h"
+#include "wx\private/threadinfo.h"
 
 #ifdef __WINDOWS__
-    #include "wx/dynlib.h"
-    #include "wx/scopedarray.h"
-    #include "wx/msw/wrapwin.h"
-    #include "wx/msw/missing.h"
+    #include "wx\dynlib.h"
+    #include "wx\scopedarray.h"
+    #include "wx\msw/wrapwin.h"
+    #include "wx\msw/missing.h"
 #endif
 #ifdef __WXOSX__
-    #include "wx/osx/core/cfstring.h"
+    #include "wx\osx/core/cfstring.h"
     #include <CoreFoundation/CFBundle.h>
     #include <CoreFoundation/CFLocale.h>
 #endif

@@ -17,29 +17,29 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\utils.h"
+    #include "wx\app.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif  //WX_PRECOMP
 
-#include "wx/msw/registry.h"
-#include "wx/apptrait.h"
-#include "wx/dynlib.h"
-#include "wx/dynload.h"
-#include "wx/scopeguard.h"
-#include "wx/filename.h"
-#include "wx/fontenc.h"
+#include "wx\msw/registry.h"
+#include "wx\apptrait.h"
+#include "wx\dynlib.h"
+#include "wx\dynload.h"
+#include "wx\scopeguard.h"
+#include "wx\filename.h"
+#include "wx\fontenc.h"
 
-#include "wx/confbase.h"        // for wxExpandEnvVars()
+#include "wx\confbase.h"        // for wxExpandEnvVars()
 
-#include "wx/msw/private.h"     // includes <windows.h>
-#include "wx/msw/private/hiddenwin.h"
-#include "wx/msw/missing.h"     // for CHARSET_HANGUL
+#include "wx\msw/private.h"     // includes <windows.h>
+#include "wx\msw/private/hiddenwin.h"
+#include "wx\msw/missing.h"     // for CHARSET_HANGUL
 
 #if defined(__CYGWIN__)
     //CYGWIN gives annoying warning about runtime stuff if we don't do this
@@ -1579,7 +1579,7 @@ extern WXDLLIMPEXP_BASE long wxEncodingToCodepage(wxFontEncoding encoding)
 
 #if wxUSE_FONTMAP
 
-#include "wx/fontmap.h"
+#include "wx\fontmap.h"
 
 extern long wxCharsetToCodepage(const char *name)
 {
@@ -1597,7 +1597,7 @@ extern long wxCharsetToCodepage(const char *name)
 
 #else // !wxUSE_FONTMAP
 
-#include "wx/msw/registry.h"
+#include "wx\msw/registry.h"
 
 // this should work if Internet Exploiter is installed
 extern long wxCharsetToCodepage(const char *name)

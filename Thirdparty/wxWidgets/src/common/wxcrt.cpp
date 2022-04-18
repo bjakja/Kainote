@@ -13,11 +13,11 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/crt.h"
-#include "wx/strconv.h" // wxMBConv::cWC2MB()
+#include "wx\crt.h"
+#include "wx\strconv.h" // wxMBConv::cWC2MB()
 
 #define _ISOC9X_SOURCE 1 // to get vsscanf()
 #define _BSD_SOURCE    1 // to still get strdup()
@@ -40,10 +40,10 @@
 #include <locale.h>
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/hash.h"
-    #include "wx/utils.h"     // for wxMin and wxMax
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\hash.h"
+    #include "wx\utils.h"     // for wxMin and wxMax
+    #include "wx\log.h"
 #endif
 
 #ifdef HAVE_LANGINFO_H
@@ -53,9 +53,9 @@
 #include <errno.h>
 
 #if defined(__DARWIN__)
-    #include "wx/osx/core/cfref.h"
+    #include "wx\osx/core/cfref.h"
     #include <CoreFoundation/CFLocale.h>
-    #include "wx/osx/core/cfstring.h"
+    #include "wx\osx/core/cfstring.h"
     #include <xlocale.h>
 #endif
 

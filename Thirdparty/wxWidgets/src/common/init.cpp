@@ -16,26 +16,26 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
-    #include "wx/filefn.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/module.h"
+    #include "wx\app.h"
+    #include "wx\filefn.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/init.h"
-#include "wx/thread.h"
+#include "wx\init.h"
+#include "wx\thread.h"
 
-#include "wx/scopedptr.h"
-#include "wx/except.h"
+#include "wx\scopedptr.h"
+#include "wx\except.h"
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/private.h"
-    #include "wx/msw/msvcrt.h"
+    #include "wx\msw/private.h"
+    #include "wx\msw/msvcrt.h"
 
     #ifdef wxCrtSetDbgFlag
         static struct EnableMemLeakChecking

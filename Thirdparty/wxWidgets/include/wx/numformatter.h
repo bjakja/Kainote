@@ -10,7 +10,7 @@
 #ifndef _WX_NUMFORMATTER_H_
 #define _WX_NUMFORMATTER_H_
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 // Helper class for formatting numbers with thousands separators which also
 // supports parsing the numbers formatted by it.

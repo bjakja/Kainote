@@ -7,24 +7,24 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_TARSTREAM
 
-#include "wx/tarstrm.h"
+#include "wx\tarstrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
 #endif
 
-#include "wx/buffer.h"
-#include "wx/datetime.h"
-#include "wx/scopedptr.h"
-#include "wx/filename.h"
-#include "wx/thread.h"
+#include "wx\buffer.h"
+#include "wx\datetime.h"
+#include "wx\scopedptr.h"
+#include "wx\filename.h"
+#include "wx\thread.h"
 
 #include <ctype.h>
 

@@ -16,19 +16,19 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STACKWALKER
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
+    #include "wx\string.h"
 #endif
 
-#include "wx/stackwalk.h"
+#include "wx\stackwalk.h"
 
-#include "wx/msw/debughlp.h"
-#include "wx/msw/seh.h"
+#include "wx\msw/debughlp.h"
+#include "wx\msw/seh.h"
 
 // ============================================================================
 // implementation

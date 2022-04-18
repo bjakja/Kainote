@@ -17,16 +17,16 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
+    #include "wx\app.h"
 #endif //WX_PRECOMP
-#include "wx/apptrait.h"
+#include "wx\apptrait.h"
 
-#include "wx/filename.h"
-#include "wx/stdpaths.h"
+#include "wx\filename.h"
+#include "wx\stdpaths.h"
 
 // ----------------------------------------------------------------------------
 // module globals

@@ -8,7 +8,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx/version.h"
+#include "wx\version.h"
 
 // see http://msdn.microsoft.com/library/psdk/winui/rc_7x2d.htm for values: we
 // don't use symbolic constants because older compilers might not have them

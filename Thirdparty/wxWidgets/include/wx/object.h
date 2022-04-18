@@ -16,7 +16,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/memory.h"
+#include "wx\memory.h"
 
 #define wxDECLARE_CLASS_INFO_ITERATORS()                                     \
 class WXDLLIMPEXP_BASE const_iterator                                    \
@@ -53,8 +53,8 @@ class WXDLLIMPEXP_BASE const_iterator                                    \
 // only one of the RTTI system will be compiled:
 // - the "old" one (defined by rtti.h) or
 // - the "new" one (defined by xti.h)
-#include "wx/xti.h"
-#include "wx/rtti.h"
+#include "wx\xti.h"
+#include "wx\rtti.h"
 
 #define wxIMPLEMENT_CLASS(name, basename)                                     \
     wxIMPLEMENT_ABSTRACT_CLASS(name, basename)
@@ -468,7 +468,7 @@ inline wxObject *wxCheckDynamicCast(wxObject *obj, wxClassInfo *classInfo)
     return obj && obj->GetClassInfo()->IsKindOf(classInfo) ? obj : NULL;
 }
 
-#include "wx/xti2.h"
+#include "wx\xti2.h"
 
 // ----------------------------------------------------------------------------
 // more debugging macros
@@ -482,7 +482,7 @@ inline wxObject *wxCheckDynamicCast(wxObject *obj, wxClassInfo *classInfo)
     #elif defined(__VISUALC__)
         // Including this file redefines new and allows leak reports to
         // contain line numbers
-        #include "wx/msw/msvcrt.h"
+        #include "wx\msw/msvcrt.h"
     #endif
 #endif // wxUSE_DEBUG_NEW_ALWAYS
 

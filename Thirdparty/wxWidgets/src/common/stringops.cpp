@@ -13,14 +13,14 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/stringops.h"
+    #include "wx\stringops.h"
 #endif
 
-#include "wx/private/unicode.h"
+#include "wx\private/unicode.h"
 
 // ===========================================================================
 // implementation

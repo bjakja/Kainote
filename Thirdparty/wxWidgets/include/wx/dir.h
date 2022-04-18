@@ -11,9 +11,9 @@
 #ifndef _WX_DIR_H_
 #define _WX_DIR_H_
 
-#include "wx/longlong.h"
-#include "wx/string.h"
-#include "wx/filefn.h"      // for wxS_DIR_DEFAULT
+#include "wx\longlong.h"
+#include "wx\string.h"
+#include "wx\filefn.h"      // for wxS_DIR_DEFAULT
 
 class WXDLLIMPEXP_FWD_BASE wxArrayString;
 

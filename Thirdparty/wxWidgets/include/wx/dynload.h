@@ -16,13 +16,13 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_DYNAMIC_LOADER
 
-#include "wx/dynlib.h"
-#include "wx/hashmap.h"
-#include "wx/module.h"
+#include "wx\dynlib.h"
+#include "wx\hashmap.h"
+#include "wx\module.h"
 
 class WXDLLIMPEXP_FWD_BASE wxPluginLibrary;
 

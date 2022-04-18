@@ -8,10 +8,10 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/encconv.h"
+#include "wx\encconv.h"
 
 #include <stdlib.h>
 
@@ -23,7 +23,7 @@
 #endif
 
 #ifdef __WXMAC__
-    #include "wx/osx/core/cfstring.h"
+    #include "wx\osx/core/cfstring.h"
     #include <CoreFoundation/CFString.h>
     #include <CoreFoundation/CFStringEncodingExt.h>
 

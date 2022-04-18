@@ -8,24 +8,24 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx\wx.h".
+#include "wx\wxprec.h"
 
 
-#include "wx/any.h"
+#include "wx\any.h"
 
 #if wxUSE_ANY
 
 #ifndef WX_PRECOMP
-    #include "wx/math.h"
-    #include "wx/crt.h"
+    #include "wx\math.h"
+    #include "wx\crt.h"
 #endif
 
-#include "wx/vector.h"
-#include "wx/module.h"
-#include "wx/hashmap.h"
-#include "wx/hashset.h"
-#include "wx/scopedptr.h"
+#include "wx\vector.h"
+#include "wx\module.h"
+#include "wx\hashmap.h"
+#include "wx\hashset.h"
+#include "wx\scopedptr.h"
 
 using namespace wxPrivate;
 
@@ -536,7 +536,7 @@ WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImpl<wxAnyNullValue>)
 wxAnyValueType* wxAnyNullValueType =
     wxAnyValueTypeImpl<wxAnyNullValue>::GetInstance();
 
-#include "wx/listimpl.cpp"
+#include "wx\listimpl.cpp"
 WX_DEFINE_LIST(wxAnyList)
 
 #endif // wxUSE_ANY

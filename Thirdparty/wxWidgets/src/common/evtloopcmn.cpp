@@ -9,18 +9,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/evtloop.h"
+#include "wx\evtloop.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
+    #include "wx\app.h"
 #endif //WX_PRECOMP
 
-#include "wx/scopeguard.h"
-#include "wx/apptrait.h"
-#include "wx/private/eventloopsourcesmanager.h"
+#include "wx\scopeguard.h"
+#include "wx\apptrait.h"
+#include "wx\private/eventloopsourcesmanager.h"
 
 // Counts currently existing event loops.
 //

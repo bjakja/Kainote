@@ -12,11 +12,11 @@
 #ifndef _WX_LONGLONG_H
 #define _WX_LONGLONG_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_LONGLONG
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 #include <limits.h>     // for LONG_MAX
 
@@ -99,7 +99,7 @@
 // ----------------------------------------------------------------------------
 
 // we use iostream for wxLongLong output
-#include "wx/iosfwrap.h"
+#include "wx\iosfwrap.h"
 
 #if wxUSE_LONGLONG_NATIVE
 
@@ -1109,7 +1109,7 @@ namespace std
 // wx/string.h which includes wx/strvararg.h too, so to avoid the circular
 // dependencies we can only do it here (or add another header just for this but
 // it doesn't seem necessary).
-#include "wx/strvararg.h"
+#include "wx\strvararg.h"
 
 template<>
 struct WXDLLIMPEXP_BASE wxArgNormalizer<wxLongLong>

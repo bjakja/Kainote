@@ -12,11 +12,11 @@
 #ifndef _XTICTOR_H_
 #define _XTICTOR_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_EXTENDED_RTTI
 
-#include "wx/xti.h"
+#include "wx\xti.h"
 
 // ----------------------------------------------------------------------------
 // Constructor Bridges

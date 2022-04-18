@@ -11,7 +11,7 @@
 #ifndef _WX_BUILD_H_
 #define _WX_BUILD_H_
 
-#include "wx/version.h"
+#include "wx\version.h"
 
 // NB: This file contains macros for checking binary compatibility of libraries
 //     in multilib builds, plugins and user components.

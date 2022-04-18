@@ -7,19 +7,19 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FILESYSTEM
 
-#include "wx/private/fileback.h"
+#include "wx\private/fileback.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/utils.h"
-    #include "wx/log.h"
+    #include "wx\utils.h"
+    #include "wx\log.h"
 #endif
 
-#include "wx/private/filename.h"
+#include "wx\private/filename.h"
 
 // Prefer wxFFile unless wxFile has large file support but wxFFile does not.
 //

@@ -17,27 +17,27 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/ffile.h"
-    #include "wx/app.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\ffile.h"
+    #include "wx\app.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
     #if wxUSE_GUI
-        #include "wx/msgdlg.h"
+        #include "wx\msgdlg.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx/msgout.h"
-#include "wx/apptrait.h"
+#include "wx\msgout.h"
+#include "wx\apptrait.h"
 #include <stdarg.h>
 #include <stdio.h>
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif
 
 // ===========================================================================

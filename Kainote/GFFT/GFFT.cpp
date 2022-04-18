@@ -17,12 +17,12 @@
 //using Loki library for make template
 //Adapted by me
 
-#include <iostream>
-#include <cmath>
-#include <math.h>
+//#include <iostream>
+//#include <cmath>
+//#include <math.h>
 #include "Factory.h"
 #include "../Provider.h"
-#include "../GFFT/GFFT.h"
+#include "GFFT.h"
 
 #define PI 3.1415926535897932384626433832795f
 #define PI2 2 * 3.1415926535897932384626433832795f

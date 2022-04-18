@@ -53,26 +53,26 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if !defined(wxUSE_DATETIME) || wxUSE_DATETIME
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
-    #include "wx/string.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/stopwatch.h"           // for wxGetLocalTimeMillis()
-    #include "wx/module.h"
-    #include "wx/crt.h"
+    #include "wx\string.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\stopwatch.h"           // for wxGetLocalTimeMillis()
+    #include "wx\module.h"
+    #include "wx\crt.h"
 #endif // WX_PRECOMP
 
-#include "wx/thread.h"
-#include "wx/time.h"
-#include "wx/tokenzr.h"
+#include "wx\thread.h"
+#include "wx\time.h"
+#include "wx\tokenzr.h"
 
 #include <ctype.h>
 
@@ -81,7 +81,7 @@
     #include <locale.h>
 #endif
 
-#include "wx/datetime.h"
+#include "wx\datetime.h"
 
 // ----------------------------------------------------------------------------
 // wxXTI
@@ -572,7 +572,7 @@ bool wxDateTime::IsLeapYear(int year, wxDateTime::Calendar cal)
 }
 
 #ifdef __WINDOWS__
-#include "wx/msw/registry.h"
+#include "wx\msw/registry.h"
 
 /* static */
 bool wxDateTime::GetFirstWeekDay(wxDateTime::WeekDay *firstDay)
@@ -2174,7 +2174,7 @@ void wxDateTime::UseEffectiveWeekDayFlags(WeekFlags &flags) const
 // wxDateTimeHolidayAuthority and related classes
 // ============================================================================
 
-#include "wx/arrimpl.cpp"
+#include "wx\arrimpl.cpp"
 
 WX_DEFINE_OBJARRAY(wxDateTimeArray)
 

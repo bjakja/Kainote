@@ -46,7 +46,7 @@ defined. */
 
 #ifndef PCRE2_PCRE2TEST           /* We're compiling the library */
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 #include "pcre2_internal.h"
 #endif /* PCRE2_PCRE2TEST */

@@ -15,18 +15,20 @@
 
 
 #pragma once
-#include <d3d9.h>
-#include <d3dx9.h>
-#undef DrawText
+#include "VisualAllTagsControls.h"
+#include "VisualAllTagsEdition.h"
+#include "TagFindReplace.h"
 #include <wx/string.h>
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/thread.h>
 #include <vector>
 #include <map>
-#include "VisualAllTagsEdition.h"
-#include "TagFindReplace.h"
-#include "VisualAllTagsControls.h"
+
+
+#include <d3d9.h>
+#include <d3dx9.h>
+#undef DrawText
 
 
 enum{

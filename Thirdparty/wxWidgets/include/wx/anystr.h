@@ -10,7 +10,7 @@
 #ifndef _WX_ANYSTR_H_
 #define _WX_ANYSTR_H_
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 // ----------------------------------------------------------------------------
 // wxAnyStrPtr

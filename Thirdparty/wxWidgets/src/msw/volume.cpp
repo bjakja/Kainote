@@ -16,33 +16,33 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FSVOLUME
 
-#include "wx/volume.h"
+#include "wx\volume.h"
 
 #ifndef WX_PRECOMP
     #if wxUSE_GUI
-        #include "wx/icon.h"
+        #include "wx\icon.h"
     #endif
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/hashmap.h"
-    #include "wx/filefn.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\hashmap.h"
+    #include "wx\filefn.h"
 #endif // WX_PRECOMP
 
-#include "wx/dir.h"
-#include "wx/dynlib.h"
-#include "wx/arrimpl.cpp"
+#include "wx\dir.h"
+#include "wx\dynlib.h"
+#include "wx\arrimpl.cpp"
 
 // some compilers require including <windows.h> before <shellapi.h> so do it
 // even if this is not necessary with most of them
-#include "wx/msw/wrapwin.h"
+#include "wx\msw/wrapwin.h"
 #include <shellapi.h>
-#include "wx/msw/wrapshl.h"
-#include "wx/msw/missing.h"
+#include "wx\msw/wrapshl.h"
+#include "wx\msw/missing.h"
 
 #if wxUSE_BASE
 

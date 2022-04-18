@@ -12,11 +12,11 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/numformatter.h"
-#include "wx/uilocale.h"
+#include "wx\numformatter.h"
+#include "wx\uilocale.h"
 
 // ============================================================================
 // wxNumberFormatter implementation

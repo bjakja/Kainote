@@ -11,27 +11,27 @@
 #ifndef _WX_EVENT_H_
 #define _WX_EVENT_H_
 
-#include "wx/defs.h"
-#include "wx/cpp.h"
-#include "wx/object.h"
-#include "wx/clntdata.h"
-#include "wx/math.h"
+#include "wx\defs.h"
+#include "wx\cpp.h"
+#include "wx\object.h"
+#include "wx\clntdata.h"
+#include "wx\math.h"
 
 #if wxUSE_GUI
-    #include "wx/gdicmn.h"
-    #include "wx/cursor.h"
-    #include "wx/mousestate.h"
+    #include "wx\gdicmn.h"
+    #include "wx\cursor.h"
+    #include "wx\mousestate.h"
 #endif
 
-#include "wx/dynarray.h"
-#include "wx/thread.h"
-#include "wx/tracker.h"
-#include "wx/typeinfo.h"
-#include "wx/any.h"
-#include "wx/vector.h"
+#include "wx\dynarray.h"
+#include "wx\thread.h"
+#include "wx\tracker.h"
+#include "wx\typeinfo.h"
+#include "wx\any.h"
+#include "wx\vector.h"
 
-#include "wx/meta/convertible.h"
-#include "wx/meta/removeref.h"
+#include "wx\meta/convertible.h"
+#include "wx\meta/removeref.h"
 
 // This is now always defined, but keep it for backwards compatibility.
 #define wxHAS_CALL_AFTER

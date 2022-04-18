@@ -12,24 +12,24 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // for compilers that support precompilation, includes "wx.h".
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 
 #if wxUSE_REGKEY
 
 #ifndef WX_PRECOMP
-    #include "wx/msw/wrapwin.h"
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/crt.h"
-    #include "wx/utils.h"
+    #include "wx\msw/wrapwin.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\crt.h"
+    #include "wx\utils.h"
 #endif
 
-#include "wx/dynlib.h"
-#include "wx/file.h"
-#include "wx/wfstream.h"
-#include "wx/msw/private.h"
+#include "wx\dynlib.h"
+#include "wx\file.h"
+#include "wx\wfstream.h"
+#include "wx\msw/private.h"
 
 // other std headers
 #include  <stdlib.h>      // for _MAX_PATH
@@ -40,7 +40,7 @@
 
 // our header
 #define   HKEY_DEFINED    // already defined in windows.h
-#include  "wx/msw/registry.h"
+#include  "wx\msw/registry.h"
 
 // some registry functions don't like signed chars
 typedef unsigned char *RegString;

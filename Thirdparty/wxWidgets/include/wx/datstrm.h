@@ -11,9 +11,9 @@
 #ifndef _WX_DATSTREAM_H_
 #define _WX_DATSTREAM_H_
 
-#include "wx/stream.h"
-#include "wx/longlong.h"
-#include "wx/convauto.h"
+#include "wx\stream.h"
+#include "wx\longlong.h"
+#include "wx\convauto.h"
 
 #if wxUSE_STREAMS
 

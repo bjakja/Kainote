@@ -12,15 +12,15 @@
 #ifndef _WX_INTL_H_
 #define _WX_INTL_H_
 
-#include "wx/defs.h"
-#include "wx/localedefs.h"
-#include "wx/string.h"
-#include "wx/translation.h"
+#include "wx\defs.h"
+#include "wx\localedefs.h"
+#include "wx\string.h"
+#include "wx\translation.h"
 
 #if wxUSE_INTL
 
-#include "wx/fontenc.h"
-#include "wx/language.h"
+#include "wx\fontenc.h"
+#include "wx\language.h"
 
 // ============================================================================
 // global decls

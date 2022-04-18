@@ -12,7 +12,7 @@
 // headers
 // ============================================================================
 
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 
 #if !wxUSE_FILE || !wxUSE_TEXTBUFFER
@@ -23,15 +23,15 @@
 #if wxUSE_TEXTFILE
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/file.h"
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\file.h"
+    #include "wx\log.h"
 #endif
 
-#include "wx/textfile.h"
-#include "wx/filename.h"
-#include "wx/buffer.h"
+#include "wx\textfile.h"
+#include "wx\filename.h"
+#include "wx\buffer.h"
 
 // ============================================================================
 // wxTextFile class implementation

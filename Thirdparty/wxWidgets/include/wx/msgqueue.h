@@ -14,15 +14,15 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/thread.h"
+#include "wx\thread.h"
 
 #if wxUSE_THREADS
 
-#include "wx/stopwatch.h"
+#include "wx\stopwatch.h"
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <queue>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 enum wxMessageQueueError
 {

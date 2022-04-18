@@ -11,15 +11,15 @@
 // headers
 // ============================================================================
 
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 #ifndef WX_PRECOMP
-    #include  "wx/string.h"
-    #include  "wx/intl.h"
-    #include  "wx/log.h"
+    #include  "wx\string.h"
+    #include  "wx\intl.h"
+    #include  "wx\log.h"
 #endif
 
-#include "wx/textbuf.h"
+#include "wx\textbuf.h"
 
 // ============================================================================
 // wxTextBuffer class implementation

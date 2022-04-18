@@ -9,12 +9,12 @@
 #ifndef _WX_WXZIPSTREAM_H__
 #define _WX_WXZIPSTREAM_H__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_ZIPSTREAM
 
-#include "wx/archive.h"
-#include "wx/filename.h"
+#include "wx\archive.h"
+#include "wx\filename.h"
 
 // some methods from wxZipInputStream and wxZipOutputStream stream do not get
 // exported/imported when compiled with Mingw versions before 3.4.2. So they

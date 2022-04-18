@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------
 
 // get the value of wxUSE_THREADS configuration flag
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 // constraints on the various functions:
 //  - wxAtomicDec must return a zero value if the value is zero once
@@ -45,7 +45,7 @@ inline wxUint32 wxAtomicDec (wxUint32 &value)
 #elif defined(__WINDOWS__)
 
 // include standard Windows headers
-#include "wx/msw/wrapwin.h"
+#include "wx\msw/wrapwin.h"
 
 inline void wxAtomicInc (wxUint32 &value)
 {
@@ -106,7 +106,7 @@ inline wxUint32 wxAtomicDec (wxUint32 &value) { return --value; }
 
 #ifdef wxNEEDS_GENERIC_ATOMIC_OPS
 
-#include "wx/thread.h" // for wxCriticalSection
+#include "wx\thread.h" // for wxCriticalSection
 
 class wxAtomicInt32
 {

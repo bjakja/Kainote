@@ -40,7 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 /* These defines enable debugging code */

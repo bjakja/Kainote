@@ -39,7 +39,7 @@
         values. We really want to predefine them ourselves instead, so do it
         before including _mingw.h.
      */
-    #include "wx/msw/winver.h"
+    #include "wx\msw/winver.h"
 
     #include <_mingw.h>
 

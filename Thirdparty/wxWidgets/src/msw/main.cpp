@@ -17,27 +17,27 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/event.h"
-    #include "wx/app.h"
-    #include "wx/utils.h"
+    #include "wx\event.h"
+    #include "wx\app.h"
+    #include "wx\utils.h"
 #endif //WX_PRECOMP
 
 // wxCmdLineParser is only used when we can't use ::CommandLineToArgvW().
 #if !wxUSE_UNICODE
-    #include "wx/cmdline.h"
+    #include "wx\cmdline.h"
 #endif
-#include "wx/dynlib.h"
+#include "wx\dynlib.h"
 
-#include "wx/msw/private.h"
-#include "wx/msw/seh.h"
+#include "wx\msw/private.h"
+#include "wx\msw/seh.h"
 
 #if wxUSE_ON_FATAL_EXCEPTION
-    #include "wx/datetime.h"
-    #include "wx/msw/crashrpt.h"
+    #include "wx\datetime.h"
+    #include "wx\msw/crashrpt.h"
 #endif // wxUSE_ON_FATAL_EXCEPTION
 
 // defined in common/init.cpp

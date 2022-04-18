@@ -15,9 +15,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/defs.h"
-#include "wx/chartype.h"
-#include "wx/strvararg.h"
+#include "wx\defs.h"
+#include "wx\chartype.h"
+#include "wx\strvararg.h"
 
 // ----------------------------------------------------------------------------
 // wxMessageOutput is a class abstracting formatted output target, i.e.

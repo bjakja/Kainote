@@ -13,27 +13,27 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #ifndef wxUSE_CONFIG_NATIVE
     #define wxUSE_CONFIG_NATIVE 1
 #endif
 
-#include "wx/config.h"
+#include "wx\config.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/app.h"
-    #include "wx/utils.h"
-    #include "wx/arrstr.h"
-    #include "wx/math.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\app.h"
+    #include "wx\utils.h"
+    #include "wx\arrstr.h"
+    #include "wx\math.h"
 #endif //WX_PRECOMP
 
 #if wxUSE_CONFIG && ((wxUSE_FILE && wxUSE_TEXTFILE) || wxUSE_CONFIG_NATIVE)
 
-#include "wx/apptrait.h"
-#include "wx/file.h"
+#include "wx\apptrait.h"
+#include "wx\file.h"
 
 #include <stdlib.h>
 #include <ctype.h>

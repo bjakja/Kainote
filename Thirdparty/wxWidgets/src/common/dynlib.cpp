@@ -20,25 +20,25 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 
 #if wxUSE_DYNLIB_CLASS
 
-#include "wx/dynlib.h"
+#include "wx\dynlib.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/app.h"
-    #include "wx/utils.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\app.h"
+    #include "wx\utils.h"
 #endif //WX_PRECOMP
 
-#include "wx/filefn.h"
-#include "wx/filename.h"        // for SplitPath()
-#include "wx/platinfo.h"
+#include "wx\filefn.h"
+#include "wx\filename.h"        // for SplitPath()
+#include "wx\platinfo.h"
 
-#include "wx/arrimpl.cpp"
+#include "wx\arrimpl.cpp"
 
 WX_DEFINE_USER_EXPORTED_OBJARRAY(wxDynamicLibraryDetailsArray)
 

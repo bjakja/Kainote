@@ -15,18 +15,18 @@
 
 #include "kainoteApp.h"
 #include "KaiFrame.h"
+#include "config.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
-#include "config.h"
-#include "UtilsWindows.h"
 #include "wx/msw/private.h"
+#include "UtilsWindows.h"
 #include <Dwmapi.h>
 //#include "GraphicsD2D.h"
 //#include <shellscalingapi.h>
-#pragma comment(lib, "Dwmapi.lib")
-//#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
-//#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+
+#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
 
 KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/, const wxPoint& pos/*=wxDefaultPosition*/, const wxSize& size/*=wxDefaultSize*/, long _style/*=0*/, const wxString &name /*= ""*/)

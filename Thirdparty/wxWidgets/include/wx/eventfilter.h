@@ -10,7 +10,7 @@
 #ifndef _WX_EVENTFILTER_H_
 #define _WX_EVENTFILTER_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 class WXDLLIMPEXP_FWD_BASE wxEvent;
 class WXDLLIMPEXP_FWD_BASE wxEvtHandler;

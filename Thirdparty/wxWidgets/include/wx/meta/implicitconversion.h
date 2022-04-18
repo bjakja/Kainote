@@ -10,8 +10,8 @@
 #ifndef _WX_META_IMPLICITCONVERSION_H_
 #define _WX_META_IMPLICITCONVERSION_H_
 
-#include "wx/defs.h"
-#include "wx/meta/if.h"
+#include "wx\defs.h"
+#include "wx\meta/if.h"
 
 // C++ hierarchy of data types is:
 //

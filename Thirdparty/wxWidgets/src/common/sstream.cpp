@@ -17,12 +17,12 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/sstream.h"
+#include "wx\sstream.h"
 
 // ============================================================================
 // wxStringInputStream implementation

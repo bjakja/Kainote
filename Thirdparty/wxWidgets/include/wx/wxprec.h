@@ -23,22 +23,22 @@
 
 #ifdef WX_PRECOMP
 
-// include "wx/chartype.h" first to ensure that UNICODE macro is correctly set
+// include "wx\chartype.h" first to ensure that UNICODE macro is correctly set
 // _before_ including <windows.h>
-#include "wx/chartype.h"
+#include "wx\chartype.h"
 
 // include standard Windows headers
 #if defined(__WINDOWS__)
-    #include "wx/msw/wrapwin.h"
-    #include "wx/msw/private.h"
+    #include "wx\msw/wrapwin.h"
+    #include "wx\msw/private.h"
 #endif
 #if defined(__WXMSW__)
-    #include "wx/msw/wrapcctl.h"
-    #include "wx/msw/wrapcdlg.h"
-    #include "wx/msw/missing.h"
+    #include "wx\msw/wrapcctl.h"
+    #include "wx\msw/wrapcdlg.h"
+    #include "wx\msw/missing.h"
 #endif
 
 // include the most common wx headers
-#include "wx/wx.h"
+#include "wx\wx.h"
 
 #endif // WX_PRECOMP

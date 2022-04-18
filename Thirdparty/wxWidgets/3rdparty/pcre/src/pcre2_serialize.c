@@ -43,7 +43,7 @@ a sequence of compiled codes. */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 

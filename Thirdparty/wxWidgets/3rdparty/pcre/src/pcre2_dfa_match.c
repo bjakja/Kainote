@@ -73,7 +73,7 @@ in others, so I abandoned this code. */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 #define NLBLOCK mb             /* Block containing newline information */

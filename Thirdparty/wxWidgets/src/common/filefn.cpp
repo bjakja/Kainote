@@ -17,25 +17,25 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/filefn.h"
+#include "wx\filefn.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/crt.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\crt.h"
 #endif
 
-#include "wx/dynarray.h"
-#include "wx/file.h"
-#include "wx/filename.h"
-#include "wx/dir.h"
+#include "wx\dynarray.h"
+#include "wx\file.h"
+#include "wx\filename.h"
+#include "wx\dir.h"
 
-#include "wx/scopedptr.h"
-#include "wx/tokenzr.h"
+#include "wx\scopedptr.h"
+#include "wx\tokenzr.h"
 
 // there are just too many of those...
 #ifdef __VISUALC__
@@ -49,12 +49,12 @@
 #include <errno.h>
 
 #if defined(__WXMAC__)
-    #include  "wx/osx/private.h"  // includes mac headers
+    #include  "wx\osx/private.h"  // includes mac headers
 #endif
 
 #ifdef __WINDOWS__
-    #include "wx/msw/private.h"
-    #include "wx/msw/missing.h"
+    #include "wx\msw/private.h"
+    #include "wx\msw/missing.h"
 
     // sys/cygwin.h is needed for cygwin_conv_to_full_win32_path()
     // and for cygwin_conv_path()

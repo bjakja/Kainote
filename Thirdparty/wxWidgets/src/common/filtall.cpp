@@ -7,13 +7,13 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
 #if wxUSE_ZLIB
-#include "wx/zstream.h"
+#include "wx\zstream.h"
 #endif
 
 // Reference filter classes to ensure they are linked into a statically

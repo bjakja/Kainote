@@ -7,64 +7,64 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\png\png.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\png.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngerror.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngerror.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngget.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngget.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngmem.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngmem.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngpread.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngpread.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngread.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngread.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngrio.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngrio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngrtran.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngrtran.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngrutil.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngrutil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngset.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngset.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngtrans.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngtrans.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngwio.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwio.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngwrite.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwrite.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngwtran.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwtran.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\pngwutil.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\pngwutil.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\arm\arm_init.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\arm_init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\arm\filter_neon_intrinsics.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\filter_neon_intrinsics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\arm\palette_neon_intrinsics.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\arm\palette_neon_intrinsics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\intel\intel_init.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\intel\intel_init.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\png\intel\filter_sse2_intrinsics.c">
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\png\intel\filter_sse2_intrinsics.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

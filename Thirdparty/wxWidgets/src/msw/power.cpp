@@ -17,15 +17,15 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
 #endif //WX_PRECOMP
 
-#include "wx/power.h"
-#include "wx/atomic.h"
-#include "wx/msw/private.h"
+#include "wx\power.h"
+#include "wx\atomic.h"
+#include "wx\msw/private.h"
 
 // ----------------------------------------------------------------------------
 // wxPowerResource

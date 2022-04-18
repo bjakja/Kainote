@@ -10,7 +10,7 @@
 #ifndef _WX_KBDSTATE_H_
 #define _WX_KBDSTATE_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 // ----------------------------------------------------------------------------
 // wxKeyboardState stores the state of the keyboard modifier keys

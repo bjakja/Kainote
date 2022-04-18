@@ -13,17 +13,17 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/arrstr.h"
-#include "wx/scopedarray.h"
-#include "wx/wxcrt.h"
+#include "wx\arrstr.h"
+#include "wx\scopedarray.h"
+#include "wx\wxcrt.h"
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <algorithm>
 #include <functional>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 // ============================================================================
 // ArrayString
@@ -55,7 +55,7 @@ wxArrayString::wxArrayString(size_t sz, const wxString* a)
 
 #if wxUSE_STD_CONTAINERS
 
-#include "wx/arrstr.h"
+#include "wx\arrstr.h"
 
 #if __cplusplus >= 201103L || wxCHECK_VISUALC_VERSION(14)
 
@@ -84,9 +84,9 @@ int wxArrayString::Index(const wxString& str, bool bCase, bool bFromEnd) const
 
 #else // C++98 version
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <functional>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 // some compilers (Sun CC being the only known example) distinguish between
 // extern "C" functions and the functions with C++ linkage and ptr_fun and
@@ -641,7 +641,7 @@ bool wxArrayString::operator==(const wxArrayString& a) const
 // wxJoin and wxSplit
 // ===========================================================================
 
-#include "wx/tokenzr.h"
+#include "wx\tokenzr.h"
 
 wxString wxJoin(const wxArrayString& arr, const wxChar sep, const wxChar escape)
 {

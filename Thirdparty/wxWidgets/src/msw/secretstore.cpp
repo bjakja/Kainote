@@ -16,21 +16,21 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_SECRETSTORE
 
-#include "wx/secretstore.h"
-#include "wx/private/secretstore.h"
+#include "wx\secretstore.h"
+#include "wx\private/secretstore.h"
 
-#include "wx/log.h"                     // wxSysErrorMsgStr()
+#include "wx\log.h"                     // wxSysErrorMsgStr()
 
 // Somewhat surprisingly, wincred.h is not self-contained and relies on some
 // standard Windows macros being defined without including the headers defining
 // them on its own, so we must include <windows.h> (from our private header)
 // before including it.
-#include "wx/msw/private.h"
+#include "wx\msw/private.h"
 #include <wincred.h>
 
 namespace

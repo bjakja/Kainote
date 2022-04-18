@@ -10,29 +10,29 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_EXTENDED_RTTI
 
 #ifndef WX_PRECOMP
-    #include "wx/object.h"
-    #include "wx/list.h"
-    #include "wx/hash.h"
+    #include "wx\object.h"
+    #include "wx\list.h"
+    #include "wx\hash.h"
 #endif
 
-#include "wx/xti.h"
-#include "wx/xml/xml.h"
-#include "wx/tokenzr.h"
-#include "wx/range.h"
+#include "wx\xti.h"
+#include "wx\xml/xml.h"
+#include "wx\tokenzr.h"
+#include "wx\range.h"
 
 #include <string.h>
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <map>
 #include <string>
 #include <list>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 using namespace std;
 

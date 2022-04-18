@@ -9,13 +9,13 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
 #endif
 
-#include "wx/ipcbase.h"
+#include "wx\ipcbase.h"
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxServerBase, wxObject);
 wxIMPLEMENT_ABSTRACT_CLASS(wxClientBase, wxObject);

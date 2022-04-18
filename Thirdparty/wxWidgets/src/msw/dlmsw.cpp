@@ -16,16 +16,16 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 
 #if wxUSE_DYNLIB_CLASS
 
-#include "wx/dynlib.h"
+#include "wx\dynlib.h"
 
-#include "wx/msw/private.h"
-#include "wx/msw/debughlp.h"
-#include "wx/filename.h"
+#include "wx\msw/private.h"
+#include "wx\msw/debughlp.h"
+#include "wx\filename.h"
 
 // For MSVC we can link in the required library explicitly, for the other
 // compilers (e.g. MinGW) this needs to be done at makefiles level.

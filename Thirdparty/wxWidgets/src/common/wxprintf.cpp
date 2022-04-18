@@ -13,17 +13,17 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/hash.h"
-    #include "wx/utils.h"     // for wxMin and wxMax
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\hash.h"
+    #include "wx\utils.h"     // for wxMin and wxMax
+    #include "wx\log.h"
 #endif
 
-#include "wx/private/wxprintf.h"
+#include "wx\private/wxprintf.h"
 
 #include <errno.h>
 

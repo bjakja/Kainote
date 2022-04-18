@@ -10,8 +10,8 @@
 #ifndef _WX_META_MOVABLE_H_
 #define _WX_META_MOVABLE_H_
 
-#include "wx/meta/pod.h"
-#include "wx/string.h" // for wxIsMovable<wxString> specialization
+#include "wx\meta/pod.h"
+#include "wx\string.h" // for wxIsMovable<wxString> specialization
 
 // Helper to decide if an object of type T is "movable", i.e. if it can be
 // copied to another memory location using memmove() or realloc() C functions.

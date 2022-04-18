@@ -14,24 +14,24 @@
 // headers
 // ============================================================================
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_LONGLONG
 
-#include "wx/longlong.h"
+#include "wx\longlong.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/math.h"       // for fabs()
+    #include "wx\math.h"       // for fabs()
 #endif
 
 #if wxUSE_STREAMS
-    #include "wx/txtstrm.h"
+    #include "wx\txtstrm.h"
 #endif
 
 #include <string.h>            // for memset()
 
-#include "wx/ioswrap.h"
+#include "wx\ioswrap.h"
 
 // ============================================================================
 // implementation

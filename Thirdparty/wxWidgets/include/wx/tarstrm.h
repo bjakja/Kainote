@@ -9,12 +9,12 @@
 #ifndef _WX_WXTARSTREAM_H__
 #define _WX_WXTARSTREAM_H__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_TARSTREAM
 
-#include "wx/archive.h"
-#include "wx/hashmap.h"
+#include "wx\archive.h"
+#include "wx\hashmap.h"
 
 
 /////////////////////////////////////////////////////////////////////////////

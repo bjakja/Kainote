@@ -13,7 +13,7 @@
 // ==========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS && wxUSE_STD_IOSTREAM
@@ -21,7 +21,7 @@
 #ifndef WX_PRECOMP
 #endif
 
-#include "wx/stdstream.h"
+#include "wx\stdstream.h"
 
 #include <ios>
 #include <istream>

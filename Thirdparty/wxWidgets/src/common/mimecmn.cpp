@@ -18,36 +18,36 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_MIMETYPE
 
-#include "wx/mimetype.h"
+#include "wx\mimetype.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/dynarray.h"
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/module.h"
-    #include "wx/crt.h"
+    #include "wx\dynarray.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\module.h"
+    #include "wx\crt.h"
 #endif //WX_PRECOMP
 
-#include "wx/file.h"
-#include "wx/iconloc.h"
-#include "wx/confbase.h"
+#include "wx\file.h"
+#include "wx\iconloc.h"
+#include "wx\confbase.h"
 
 // other standard headers
 #include <ctype.h>
 
 // implementation classes:
 #if defined(__WINDOWS__)
-    #include "wx/msw/mimetype.h"
+    #include "wx\msw/mimetype.h"
 #elif ( defined(__DARWIN__) )
-    #include "wx/osx/mimetype.h"
+    #include "wx\osx/mimetype.h"
 #else // Unix
-    #include "wx/unix/mimetype.h"
+    #include "wx\unix/mimetype.h"
 #endif
 
 // ============================================================================
@@ -165,7 +165,7 @@ wxFileTypeInfo::wxFileTypeInfo(const wxArrayString& sArray)
     }
 }
 
-#include "wx/arrimpl.cpp"
+#include "wx\arrimpl.cpp"
 WX_DEFINE_OBJARRAY(wxArrayFileTypeInfo)
 
 // ============================================================================

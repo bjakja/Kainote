@@ -13,7 +13,7 @@
 #ifndef _WX_LANGUAGE_H_
 #define _WX_LANGUAGE_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_INTL
 

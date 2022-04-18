@@ -18,14 +18,14 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/crt.h"
+    #include "wx\crt.h"
 #endif
 
-#include "wx/uri.h"
+#include "wx\uri.h"
 
 // ---------------------------------------------------------------------------
 // definitions

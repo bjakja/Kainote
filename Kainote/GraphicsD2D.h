@@ -10,30 +10,27 @@
 
 #pragma once
 
-#include "wx/wx.h"
-//#include "wx/colour.h"
-//#include "wx/gdicmn.h"  // for wxDash
-//#include <wx/object.h>
+#include "GraphicsD2D.h"
 
-enum wxAntialiasMode;
-//{
-//	wxANTIALIAS_NONE, // should be 0
-//	wxANTIALIAS_DEFAULT
-//};
+enum wxAntialiasMode
+{
+	wxANTIALIAS_NONE, // should be 0
+	wxANTIALIAS_DEFAULT
+};
 
-enum wxInterpolationQuality;
-//{
-//	// default interpolation
-//	wxINTERPOLATION_DEFAULT,
-//	// no interpolation
-//	wxINTERPOLATION_NONE,
-//	// fast interpolation, suited for interactivity
-//	wxINTERPOLATION_FAST,
-//	// better quality
-//	wxINTERPOLATION_GOOD,
-//	// best quality, not suited for interactivity
-//	wxINTERPOLATION_BEST
-//};
+enum wxInterpolationQuality
+{
+	// default interpolation
+	wxINTERPOLATION_DEFAULT,
+	// no interpolation
+	wxINTERPOLATION_NONE,
+	// fast interpolation, suited for interactivity
+	wxINTERPOLATION_FAST,
+	// better quality
+	wxINTERPOLATION_GOOD,
+	// best quality, not suited for interactivity
+	wxINTERPOLATION_BEST
+};
 
 enum wxGradientType
 {
@@ -42,34 +39,9 @@ enum wxGradientType
 	wxGRADIENT_RADIAL
 };
 
-enum wxPenStyle;
-//{
-//	wxPENSTYLE_INVALID = -1,
-//
-//	//wxPENSTYLE_SOLID = wxSOLID,
-//	wxPENSTYLE_DOT = wxDOT,
-//	wxPENSTYLE_LONG_DASH = wxLONG_DASH,
-//	wxPENSTYLE_SHORT_DASH = wxSHORT_DASH,
-//	wxPENSTYLE_DOT_DASH = wxDOT_DASH,
-//	wxPENSTYLE_USER_DASH = wxUSER_DASH,
-//
-//	wxPENSTYLE_TRANSPARENT = wxTRANSPARENT,
-//
-//	wxPENSTYLE_STIPPLE_MASK_OPAQUE = wxSTIPPLE_MASK_OPAQUE,
-//	wxPENSTYLE_STIPPLE_MASK = wxSTIPPLE_MASK,
-//	wxPENSTYLE_STIPPLE = wxSTIPPLE,
-//
-//	wxPENSTYLE_BDIAGONAL_HATCH = wxHATCHSTYLE_BDIAGONAL,
-//	wxPENSTYLE_CROSSDIAG_HATCH = wxHATCHSTYLE_CROSSDIAG,
-//	wxPENSTYLE_FDIAGONAL_HATCH = wxHATCHSTYLE_FDIAGONAL,
-//	wxPENSTYLE_CROSS_HATCH = wxHATCHSTYLE_CROSS,
-//	wxPENSTYLE_HORIZONTAL_HATCH = wxHATCHSTYLE_HORIZONTAL,
-//	wxPENSTYLE_VERTICAL_HATCH = wxHATCHSTYLE_VERTICAL,
-//	wxPENSTYLE_FIRST_HATCH = wxHATCHSTYLE_FIRST,
-//	wxPENSTYLE_LAST_HATCH = wxHATCHSTYLE_LAST
-//};
 
-enum wxPenJoin;
+
+//enum wxPenJoin
 //{
 //	wxJOIN_INVALID = -1,
 //
@@ -78,14 +50,14 @@ enum wxPenJoin;
 //	wxJOIN_ROUND
 //};
 
-enum wxPenCap;
-//{
-//	wxCAP_INVALID = -1,
-//
-//	wxCAP_ROUND = 130,
-//	wxCAP_PROJECTING,
-//	wxCAP_BUTT
-//};
+enum wxPenCap
+{
+	wxCAP_INVALID = -1,
+
+	wxCAP_ROUND = 130,
+	wxCAP_PROJECTING,
+	wxCAP_BUTT
+};
 
 // ----------------------------------------------------------------------------
 // wxPenInfoBase is a common base for wxPenInfo and wxGraphicsPenInfo

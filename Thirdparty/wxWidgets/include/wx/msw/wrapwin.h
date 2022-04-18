@@ -10,11 +10,11 @@
 #ifndef _WX_WRAPWIN_H_
 #define _WX_WRAPWIN_H_
 
-#include "wx/platform.h"
+#include "wx\platform.h"
 
 // before including windows.h, define version macros at (currently) maximal
 // values because we do all our checks at run-time anyhow
-#include "wx/msw/winver.h"
+#include "wx\msw/winver.h"
 
 // strict type checking to detect conversion from HFOO to HBAR at compile-time
 #ifndef STRICT
@@ -53,6 +53,6 @@
 #endif
 
 // #undef the macros defined in windows.h which conflict with code elsewhere
-#include "wx/msw/winundef.h"
+#include "wx\msw/winundef.h"
 
 #endif // _WX_WRAPWIN_H_

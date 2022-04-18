@@ -26,7 +26,7 @@ enum wxLayoutDirection
 
 #if wxUSE_INTL
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 // ----------------------------------------------------------------------------
 // wxLocaleCategory: the category of locale settings

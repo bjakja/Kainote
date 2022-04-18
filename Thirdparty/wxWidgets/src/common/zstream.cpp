@@ -9,18 +9,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_ZLIB && wxUSE_STREAMS
 
-#include "wx/zstream.h"
-#include "wx/versioninfo.h"
+#include "wx\zstream.h"
+#include "wx\versioninfo.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
 #endif
 
 

@@ -39,7 +39,7 @@ POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 /* Save the configured link size, which is in bytes. In 16-bit and 32-bit modes

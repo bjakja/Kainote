@@ -11,11 +11,11 @@
 #ifndef _WX_STACKWALK_H_
 #define _WX_STACKWALK_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_STACKWALKER
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 class WXDLLIMPEXP_FWD_BASE wxStackFrame;
 
@@ -148,9 +148,9 @@ protected:
 };
 
 #ifdef __WINDOWS__
-    #include "wx/msw/stackwalk.h"
+    #include "wx\msw/stackwalk.h"
 #elif defined(__UNIX__)
-    #include "wx/unix/stackwalk.h"
+    #include "wx\unix/stackwalk.h"
 #else
     #error "wxStackWalker is not supported, set wxUSE_STACKWALKER to 0"
 #endif

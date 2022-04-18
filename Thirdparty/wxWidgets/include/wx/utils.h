@@ -15,17 +15,17 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/object.h"
-#include "wx/list.h"
-#include "wx/filefn.h"
-#include "wx/hashmap.h"
-#include "wx/versioninfo.h"
-#include "wx/meta/implicitconversion.h"
+#include "wx\object.h"
+#include "wx\list.h"
+#include "wx\filefn.h"
+#include "wx\hashmap.h"
+#include "wx\versioninfo.h"
+#include "wx\meta/implicitconversion.h"
 
 #if wxUSE_GUI
-    #include "wx/gdicmn.h"
-    #include "wx/mousestate.h"
-    #include "wx/vector.h"
+    #include "wx\gdicmn.h"
+    #include "wx\mousestate.h"
+    #include "wx\vector.h"
 #endif
 
 class WXDLLIMPEXP_FWD_BASE wxArrayString;
@@ -33,10 +33,10 @@ class WXDLLIMPEXP_FWD_BASE wxArrayInt;
 
 // need this for wxGetDiskSpace() as we can't, unfortunately, forward declare
 // wxLongLong
-#include "wx/longlong.h"
+#include "wx\longlong.h"
 
 // needed for wxOperatingSystemId, wxLinuxDistributionInfo
-#include "wx/platinfo.h"
+#include "wx\platinfo.h"
 
 #if defined(__X__)
     #include <dirent.h>

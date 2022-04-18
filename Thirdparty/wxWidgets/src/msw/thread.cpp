@@ -14,30 +14,30 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_THREADS
 
-#include "wx/thread.h"
+#include "wx\thread.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/app.h"
-    #include "wx/log.h"
-    #include "wx/module.h"
-    #include "wx/msgout.h"
+    #include "wx\intl.h"
+    #include "wx\app.h"
+    #include "wx\log.h"
+    #include "wx\module.h"
+    #include "wx\msgout.h"
 #endif
 
-#include "wx/apptrait.h"
-#include "wx/scopeguard.h"
+#include "wx\apptrait.h"
+#include "wx\scopeguard.h"
 
-#include "wx/msw/private.h"
-#include "wx/msw/missing.h"
-#include "wx/msw/seh.h"
+#include "wx\msw/private.h"
+#include "wx\msw/missing.h"
+#include "wx\msw/seh.h"
 
-#include "wx/except.h"
-#include "wx/dynlib.h"
+#include "wx\except.h"
+#include "wx\dynlib.h"
 
 // must have this symbol defined to get _beginthread/_endthread declarations
 #ifndef _MT
@@ -1484,6 +1484,6 @@ bool WXDLLIMPEXP_BASE wxIsWaitingForThread()
 // include common implementation code
 // ----------------------------------------------------------------------------
 
-#include "wx/thrimpl.cpp"
+#include "wx\thrimpl.cpp"
 
 #endif // wxUSE_THREADS

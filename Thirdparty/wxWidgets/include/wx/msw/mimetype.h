@@ -11,11 +11,11 @@
 #ifndef _MIMETYPE_IMPL_H
 #define _MIMETYPE_IMPL_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_MIMETYPE
 
-#include "wx/mimetype.h"
+#include "wx\mimetype.h"
 
 // ----------------------------------------------------------------------------
 // wxFileTypeImpl is the MSW version of wxFileType, this is a private class

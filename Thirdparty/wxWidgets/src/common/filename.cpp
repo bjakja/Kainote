@@ -69,46 +69,46 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h" // For GetShort/LongPathName
+        #include "wx\msw/wrapwin.h" // For GetShort/LongPathName
     #endif
-    #include "wx/dynarray.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/crt.h"
+    #include "wx\dynarray.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\crt.h"
 #endif
 
-#include "wx/filename.h"
-#include "wx/private/filename.h"
-#include "wx/tokenzr.h"
-#include "wx/config.h"          // for wxExpandEnvVars
-#include "wx/dynlib.h"
-#include "wx/dir.h"
-#include "wx/longlong.h"
-#include "wx/uri.h"
+#include "wx\filename.h"
+#include "wx\private/filename.h"
+#include "wx\tokenzr.h"
+#include "wx\config.h"          // for wxExpandEnvVars
+#include "wx\dynlib.h"
+#include "wx\dir.h"
+#include "wx\longlong.h"
+#include "wx\uri.h"
 
 #if defined(wxHAS_NATIVE_READLINK)
-    #include "wx/vector.h"
+    #include "wx\vector.h"
 #endif
 
 #if defined(__WIN32__) && defined(__MINGW32__)
-    #include "wx/msw/gccpriv.h"
+    #include "wx\msw/gccpriv.h"
 #endif
 
 #ifdef __WINDOWS__
-    #include "wx/msw/private.h"
-    #include "wx/msw/wrapshl.h"         // for CLSID_ShellLink
-    #include "wx/msw/missing.h"
-    #include "wx/msw/ole/oleutils.h"
-    #include "wx/msw/private/comptr.h"
+    #include "wx\msw/private.h"
+    #include "wx\msw/wrapshl.h"         // for CLSID_ShellLink
+    #include "wx\msw/missing.h"
+    #include "wx\msw/ole/oleutils.h"
+    #include "wx\msw/private/comptr.h"
 #endif
 
 #if defined(__WXMAC__)
-  #include  "wx/osx/private.h"  // includes mac headers
+  #include  "wx\osx/private.h"  // includes mac headers
 #endif
 
 // utime() is POSIX so should normally be available on all Unices

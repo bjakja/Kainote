@@ -17,12 +17,12 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/hash.h"
-    #include "wx/object.h"
+    #include "wx\hash.h"
+    #include "wx\object.h"
 #endif
 
 wxHashTableBase_Node::wxHashTableBase_Node( long key, void* value,

@@ -16,11 +16,11 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/convauto.h"
-#include "wx/private/unicode.h"
+#include "wx\convauto.h"
+#include "wx\private/unicode.h"
 
 // we use latin1 by default as it seems the least bad choice: the files we need
 // to detect input of don't always come from the user system (they are often

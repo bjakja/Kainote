@@ -16,17 +16,17 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_SECRETSTORE
 
-#include "wx/secretstore.h"
+#include "wx\secretstore.h"
 
-#include "wx/log.h"
-#include "wx/translation.h"
+#include "wx\log.h"
+#include "wx\translation.h"
 
-#include "wx/private/secretstore.h"
+#include "wx\private/secretstore.h"
 
 #include <string.h>
 

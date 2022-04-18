@@ -9,35 +9,35 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_MIMETYPE
 
-#include "wx/msw/mimetype.h"
+#include "wx\msw/mimetype.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/dynarray.h"
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/crt.h"
+    #include "wx\dynarray.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\crt.h"
     #if wxUSE_GUI
-        #include "wx/icon.h"
-        #include "wx/msgdlg.h"
+        #include "wx\icon.h"
+        #include "wx\msgdlg.h"
     #endif
 #endif //WX_PRECOMP
 
-#include "wx/file.h"
-#include "wx/iconloc.h"
-#include "wx/confbase.h"
-#include "wx/dynlib.h"
+#include "wx\file.h"
+#include "wx\iconloc.h"
+#include "wx\confbase.h"
+#include "wx\dynlib.h"
 
 #ifdef __WINDOWS__
-    #include "wx/msw/registry.h"
-    #include "wx/msw/private.h"
+    #include "wx\msw/registry.h"
+    #include "wx\msw/private.h"
     #include <shlwapi.h>
-    #include "wx/msw/wrapshl.h"
+    #include "wx\msw/wrapshl.h"
 
     // For MSVC we can link in the required library explicitly, for the other
     // compilers (e.g. MinGW) this needs to be done at makefiles level.

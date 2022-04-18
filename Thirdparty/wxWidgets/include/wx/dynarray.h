@@ -11,9 +11,9 @@
 #ifndef   _DYNARRAY_H
 #define   _DYNARRAY_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
-#include "wx/vector.h"
+#include "wx\vector.h"
 
 /*
   This header defines legacy dynamic arrays and object arrays (i.e. arrays

@@ -19,6 +19,7 @@
 #include <wx/stdpaths.h>
 #include <ShlObj.h>
 
+
 Registry::Registry(HKEY hKey, const wxString &strKey, bool &success, bool canWrite /*= false*/)
 {
 	success = OpenNewRegistry(hKey, strKey, canWrite);

@@ -8,4 +8,4 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // do not include this file in any new code, include wx/sharedptr.h instead
-#include "wx/sharedptr.h"
+#include "wx\sharedptr.h"

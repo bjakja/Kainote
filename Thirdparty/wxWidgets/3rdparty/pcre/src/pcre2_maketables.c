@@ -47,7 +47,7 @@ PCRE2_DFTABLES is defined. */
 
 #ifndef PCRE2_DFTABLES    /* Compiling the library */
 #  ifdef HAVE_CONFIG_H
-#  include "config.h"
+#  include "wx\config.h"
 #  endif
 #  include "pcre2_internal.h"
 #endif

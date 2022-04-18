@@ -11,8 +11,8 @@
 #ifndef _WX_MODULE_H_
 #define _WX_MODULE_H_
 
-#include "wx/object.h"
-#include "wx/vector.h"
+#include "wx\object.h"
+#include "wx\vector.h"
 
 class wxModule;
 

@@ -9,25 +9,25 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_TIMER
 
-#include "wx/msw/private/timer.h"
+#include "wx\msw/private/timer.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/list.h"
-    #include "wx/event.h"
-    #include "wx/app.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/hashmap.h"
-    #include "wx/module.h"
+    #include "wx\list.h"
+    #include "wx\event.h"
+    #include "wx\app.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\hashmap.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/msw/private.h"
-#include "wx/msw/private/hiddenwin.h"
+#include "wx\msw/private.h"
+#include "wx\msw/private/hiddenwin.h"
 
 // ----------------------------------------------------------------------------
 // private globals

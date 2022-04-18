@@ -12,9 +12,9 @@
 #ifndef _WX_TEXTBUFFER_H
 #define _WX_TEXTBUFFER_H
 
-#include "wx/defs.h"
-#include "wx/arrstr.h"
-#include "wx/convauto.h"
+#include "wx\defs.h"
+#include "wx\arrstr.h"
+#include "wx\convauto.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -30,11 +30,11 @@ enum wxTextFileType
     wxTextFileType_Os2    //                         'CR' 'LF'
 };
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 #if wxUSE_TEXTBUFFER
 
-#include "wx/dynarray.h"
+#include "wx\dynarray.h"
 
 // ----------------------------------------------------------------------------
 // wxTextBuffer

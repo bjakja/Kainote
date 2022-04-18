@@ -16,16 +16,16 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/intl.h"
-#include "wx/uilocale.h"
+#include "wx\intl.h"
+#include "wx\uilocale.h"
 
 #if wxUSE_INTL
 
 #ifdef __WIN32__
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif
 
 // ----------------------------------------------------------------------------
@@ -33,7 +33,7 @@
 // ----------------------------------------------------------------------------
 
 // Hash maps to look up language script aliases from script names and vice versa
-#include "wx/hashmap.h"
+#include "wx\hashmap.h"
 static wxStringToStringHashMap gs_scmap_name2alias;
 static wxStringToStringHashMap gs_scmap_alias2name;
 

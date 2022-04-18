@@ -17,33 +17,33 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FONTMAP
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/module.h"
-    #include "wx/wxcrtvararg.h"
+    #include "wx\app.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\module.h"
+    #include "wx\wxcrtvararg.h"
 #endif //WX_PRECOMP
 
 #if defined(__WINDOWS__)
-    #include  "wx/msw/private.h"  // includes windows.h for LOGFONT
-    #include  "wx/msw/winundef.h"
+    #include  "wx\msw/private.h"  // includes windows.h for LOGFONT
+    #include  "wx\msw/winundef.h"
 #endif
 
-#include "wx/fontmap.h"
-#include "wx/fmappriv.h"
+#include "wx\fontmap.h"
+#include "wx\fmappriv.h"
 
-#include "wx/apptrait.h"
+#include "wx\apptrait.h"
 
 // wxMemoryConfig uses wxFileConfig
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
-    #include "wx/config.h"
-    #include "wx/memconf.h"
+    #include "wx\config.h"
+    #include "wx\memconf.h"
 #endif
 
 // ----------------------------------------------------------------------------

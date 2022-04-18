@@ -16,17 +16,17 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #if wxUSE_INTL
 
-#include "wx/uilocale.h"
-#include "wx/private/uilocale.h"
+#include "wx\uilocale.h"
+#include "wx\private/uilocale.h"
 
-#include "wx/msw/private/uilocale.h"
+#include "wx\msw/private/uilocale.h"
 
-#include "wx/scopedarray.h"
-#include "wx/dynlib.h"
+#include "wx\scopedarray.h"
+#include "wx\dynlib.h"
 
 #ifndef LOCALE_NAME_USER_DEFAULT
     #define LOCALE_NAME_USER_DEFAULT NULL

@@ -16,9 +16,7 @@
 
 #pragma once
 
-//#include <wx/wx.h>
-#undef GetCharWidth
-#undef GetClassInfo
+
 
 #include "VideoSlider.h"
 #include "BitmapButton.h"
@@ -84,11 +82,11 @@ public:
 	bool SetCursor(int cursorId){ 
 		if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId){
 			m_LastFullScreenCursor = cursorId;
-			return m_FullScreenWindow->SetCursor(cursorId);
+			return m_FullScreenWindow->SetCursor((wxStockCursor)cursorId);
 		} 
 		else if(m_LastCursor != cursorId){
 			m_LastCursor = cursorId;
-			return wxWindow::SetCursor(cursorId);
+			return wxWindow::SetCursor((wxStockCursor)cursorId);
 		} 
 		return false;
 	};

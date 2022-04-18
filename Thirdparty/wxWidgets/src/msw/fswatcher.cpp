@@ -8,17 +8,17 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FSWATCHER
 
-#include "wx/fswatcher.h"
-#include "wx/thread.h"
-#include "wx/sharedptr.h"
-#include "wx/msw/fswatcher.h"
-#include "wx/msw/private.h"
-#include "wx/private/fswatcher.h"
+#include "wx\fswatcher.h"
+#include "wx\thread.h"
+#include "wx\sharedptr.h"
+#include "wx\msw/fswatcher.h"
+#include "wx\msw/private.h"
+#include "wx\private/fswatcher.h"
 
 // ============================================================================
 // wxFSWatcherImplMSW implementation

@@ -6,17 +6,17 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FILESYSTEM
 
-#include "wx/fs_filter.h"
+#include "wx\fs_filter.h"
 
 #ifndef WX_PRECOMP
 #endif
 
-#include "wx/scopedptr.h"
+#include "wx\scopedptr.h"
 
 wxDEFINE_SCOPED_PTR_TYPE(wxFSFile)
 wxDEFINE_SCOPED_PTR_TYPE(wxInputStream)

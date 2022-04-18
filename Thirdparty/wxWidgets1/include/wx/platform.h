@@ -494,7 +494,7 @@
 #ifdef __WXWINCE__
 #   include "wx/msw/wince/libraries.h"
 #elif defined __WINDOWS__
-#   include "wx/msw/libraries.h"
+#   include "L:\Kainote\Thirdparty\wxWidgets1\include\wx/msw/libraries.h"
 #endif
 
 /*
@@ -686,7 +686,7 @@
    done after setting wxUSE_UNICODE correctly as it is used in wx/chkconf.h
    and after defining the compiler macros which are used in it too
  */
-#include "wx/chkconf.h"
+#include "L:\Kainote\Thirdparty\wxWidgets1\include\wx/chkconf.h"
 
 
 /*

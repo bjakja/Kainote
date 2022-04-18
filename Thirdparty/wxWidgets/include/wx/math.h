@@ -13,7 +13,7 @@
 #ifndef _WX_MATH_H_
 #define _WX_MATH_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #include <math.h>
 

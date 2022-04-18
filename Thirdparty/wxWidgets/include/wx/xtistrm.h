@@ -11,11 +11,11 @@
 #ifndef _WX_XTISTRMH__
 #define _WX_XTISTRMH__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_EXTENDED_RTTI
 
-#include "wx/object.h"
+#include "wx\object.h"
 
 const int wxInvalidObjectID = -2;
 const int wxNullObjectID = -3;

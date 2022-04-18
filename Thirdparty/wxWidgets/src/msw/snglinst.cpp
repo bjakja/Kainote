@@ -18,19 +18,19 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_SNGLINST_CHECKER
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\log.h"
 #endif //WX_PRECOMP
 
-#include "wx/snglinst.h"
+#include "wx\snglinst.h"
 
-#include "wx/msw/private.h"
+#include "wx\msw/private.h"
 
 // ----------------------------------------------------------------------------
 // wxSingleInstanceCheckerImpl: the real implementation class

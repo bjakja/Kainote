@@ -24,7 +24,8 @@
 #include "wx/dcclient.h"
 #include "wx/msw/private.h"
 #include <Dwmapi.h>
-#pragma comment(lib, "Dwmapi.lib")
+#include <Windowsx.h>
+
 
 //#define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
 //#define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))

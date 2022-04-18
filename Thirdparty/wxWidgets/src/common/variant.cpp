@@ -8,20 +8,20 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-// For compilers that support precompilation, includes "wx/wx.h".
-#include "wx/wxprec.h"
+// For compilers that support precompilation, includes "wx\wx.h".
+#include "wx\wxprec.h"
 
 
-#include "wx/variant.h"
+#include "wx\variant.h"
 
 #if wxUSE_VARIANT
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/math.h"
-    #include "wx/crt.h"
+    #include "wx\string.h"
+    #include "wx\math.h"
+    #include "wx\crt.h"
     #if wxUSE_STREAMS
-        #include "wx/stream.h"
+        #include "wx\stream.h"
     #endif
 #endif
 
@@ -30,16 +30,16 @@
 #endif
 
 #if wxUSE_STREAMS
-    #include "wx/txtstrm.h"
+    #include "wx\txtstrm.h"
 #endif
 
-#include "wx/string.h"
-#include "wx/tokenzr.h"
+#include "wx\string.h"
+#include "wx\tokenzr.h"
 
 wxVariant WXDLLIMPEXP_BASE wxNullVariant;
 
 
-#include "wx/listimpl.cpp"
+#include "wx\listimpl.cpp"
 WX_DEFINE_LIST(wxVariantList)
 
 /*

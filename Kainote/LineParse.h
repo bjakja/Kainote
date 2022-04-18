@@ -56,7 +56,7 @@ public:
 	size_t size() { return errors.GetCount(); }
 	//void insert(_wxArraywxArrayInt *it, size_t n, const _wxArraywxArrayInt &val) { errors.insert(it, n, val); }
 	void Add(int val) { errors.Add(val); };
-	_wxArraywxArrayInt & operator[](size_t i) const { return errors[i]; }
+	const wxArrayInt & operator[](size_t i) const { return (&errors)[i]; }//_wxArraywxArrayInt & operator[](size_t i) const { return errors[i]; }
 	void Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen);
 	void Init2(const wxString &text, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspels);
 	void SetEmpty() {

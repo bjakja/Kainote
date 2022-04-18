@@ -11,7 +11,7 @@
 #ifndef _WX_HASHSET_H_
 #define _WX_HASHSET_H_
 
-#include "wx/hashmap.h"
+#include "wx\hashmap.h"
 
 // see comment in wx/hashmap.h which also applies to different standard hash
 // set classes

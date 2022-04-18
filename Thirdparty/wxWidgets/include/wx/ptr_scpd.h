@@ -9,5 +9,5 @@
 
 // do not include this file in any new code, include either wx/scopedptr.h or
 // wx/scopedarray.h (or both) instead
-#include "wx/scopedarray.h"
-#include "wx/scopedptr.h"
+#include "wx\scopedarray.h"
+#include "wx\scopedptr.h"

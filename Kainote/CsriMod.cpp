@@ -29,7 +29,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE
  ****************************************************************************/
 
-#include <windows.h>
+//#include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

@@ -10,7 +10,7 @@
 #ifndef _WX_FSWATCHER_MSW_H_
 #define _WX_FSWATCHER_MSW_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_FSWATCHER
 

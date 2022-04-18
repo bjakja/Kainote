@@ -10,7 +10,7 @@
 #ifndef _WX_MEMTEXT_H
 #define _WX_MEMTEXT_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 // there is no separate setting for wxMemoryText, it's smallish anyhow
 #if wxUSE_TEXTBUFFER

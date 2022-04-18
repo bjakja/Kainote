@@ -6,26 +6,26 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 
 #if wxUSE_FILESYSTEM
 
-#include "wx/filesys.h"
+#include "wx\filesys.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
-    #include "wx/module.h"
+    #include "wx\log.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/sysopt.h"
-#include "wx/wfstream.h"
-#include "wx/mimetype.h"
-#include "wx/filename.h"
-#include "wx/tokenzr.h"
-#include "wx/private/fileback.h"
-#include "wx/utils.h"
+#include "wx\sysopt.h"
+#include "wx\wfstream.h"
+#include "wx\mimetype.h"
+#include "wx\filename.h"
+#include "wx\tokenzr.h"
+#include "wx\private/fileback.h"
+#include "wx\utils.h"
 
 // ----------------------------------------------------------------------------
 // wxFSFile

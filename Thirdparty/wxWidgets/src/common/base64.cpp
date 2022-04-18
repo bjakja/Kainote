@@ -6,12 +6,12 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_BASE64
 
-#include "wx/base64.h"
+#include "wx\base64.h"
 
 size_t
 wxBase64Encode(char *dst, size_t dstLen, const void *src_, size_t srcLen)

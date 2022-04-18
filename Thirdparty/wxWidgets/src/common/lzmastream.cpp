@@ -16,16 +16,16 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_LIBLZMA && wxUSE_STREAMS
 
-#include "wx/lzmastream.h"
+#include "wx\lzmastream.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
-    #include "wx/translation.h"
+    #include "wx\log.h"
+    #include "wx\translation.h"
 #endif // WX_PRECOMP
 
 #include <lzma.h>

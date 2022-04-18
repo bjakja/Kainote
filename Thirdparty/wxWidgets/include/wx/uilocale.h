@@ -10,13 +10,13 @@
 #ifndef _WX_UILOCALE_H_
 #define _WX_UILOCALE_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_INTL
 
-#include "wx/localedefs.h"
-#include "wx/string.h"
-#include "wx/vector.h"
+#include "wx\localedefs.h"
+#include "wx\string.h"
+#include "wx\vector.h"
 
 class wxUILocaleImpl;
 

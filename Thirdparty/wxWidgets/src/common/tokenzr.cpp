@@ -17,14 +17,14 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/tokenzr.h"
+#include "wx\tokenzr.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/arrstr.h"
-    #include "wx/crt.h"
+    #include "wx\arrstr.h"
+    #include "wx\crt.h"
 #endif
 
 // Required for wxIs... functions

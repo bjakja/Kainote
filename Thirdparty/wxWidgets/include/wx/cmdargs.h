@@ -10,7 +10,7 @@
 #ifndef _WX_CMDARGS_H_
 #define _WX_CMDARGS_H_
 
-#include "wx/arrstr.h"
+#include "wx\arrstr.h"
 
 // ----------------------------------------------------------------------------
 // wxCmdLineArgsArray: helper class used by wxApp::argv

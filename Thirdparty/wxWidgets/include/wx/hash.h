@@ -11,11 +11,11 @@
 #ifndef _WX_HASH_H__
 #define _WX_HASH_H__
 
-#include "wx/defs.h"
-#include "wx/string.h"
+#include "wx\defs.h"
+#include "wx\string.h"
 
 #if !wxUSE_STD_CONTAINERS
-    #include "wx/object.h"
+    #include "wx\object.h"
 #else
     class WXDLLIMPEXP_FWD_BASE wxObject;
 #endif

@@ -31,7 +31,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_EXTENDED_RTTI
 
@@ -55,8 +55,8 @@ class WXDLLIMPEXP_FWD_BASE wxObjectAllocator;
 
 #define wx_dynamic_cast(t, x) dynamic_cast<t>(x)
 
-#include "wx/xtitypes.h"
-#include "wx/xtihandler.h"
+#include "wx\xtitypes.h"
+#include "wx\xtihandler.h"
 
 // ----------------------------------------------------------------------------
 // wxClassInfo

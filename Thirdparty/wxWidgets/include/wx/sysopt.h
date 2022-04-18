@@ -11,7 +11,7 @@
 #ifndef _WX_SYSOPT_H_
 #define _WX_SYSOPT_H_
 
-#include "wx/object.h"
+#include "wx\object.h"
 
 // ----------------------------------------------------------------------------
 // Enables an application to influence the wxWidgets implementation

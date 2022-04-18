@@ -16,17 +16,17 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/time.h"
+#include "wx\time.h"
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif
 
 #ifndef WX_GMTOFF_IN_TM

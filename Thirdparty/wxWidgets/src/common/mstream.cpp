@@ -17,15 +17,15 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/mstream.h"
+#include "wx\mstream.h"
 
 #ifndef   WX_PRECOMP
-    #include  "wx/stream.h"
+    #include  "wx\stream.h"
 #endif  //WX_PRECOMP
 
 #include <stdlib.h>

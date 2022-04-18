@@ -12,16 +12,16 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/hashmap.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\hashmap.h"
 #endif
 
-#include "wx/strconv.h"
+#include "wx\strconv.h"
 
 #include <errno.h>
 
@@ -30,22 +30,22 @@
 #include <stdlib.h>
 
 #if defined(__WIN32__)
-    #include "wx/msw/private.h"
-    #include "wx/msw/missing.h"
+    #include "wx\msw/private.h"
+    #include "wx\msw/missing.h"
     #define wxHAVE_WIN32_MB2WC
 #endif
 
 #ifdef HAVE_ICONV
     #include <iconv.h>
-    #include "wx/thread.h"
+    #include "wx\thread.h"
 #endif
 
-#include "wx/encconv.h"
-#include "wx/fontmap.h"
-#include "wx/private/unicode.h"
+#include "wx\encconv.h"
+#include "wx\fontmap.h"
+#include "wx\private/unicode.h"
 
 #ifdef __DARWIN__
-#include "wx/osx/core/private/strconv_cf.h"
+#include "wx\osx/core/private/strconv_cf.h"
 #endif //def __DARWIN__
 
 

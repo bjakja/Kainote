@@ -17,19 +17,19 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/filefn.h"
-    #include "wx/arrstr.h"
+    #include "wx\string.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\filefn.h"
+    #include "wx\arrstr.h"
 #endif //WX_PRECOMP
 
-#include "wx/dir.h"
-#include "wx/filename.h"
+#include "wx\dir.h"
+#include "wx\filename.h"
 
 // ============================================================================
 // implementation

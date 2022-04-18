@@ -47,7 +47,7 @@ matching length. */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 #include "pcre2_internal.h"

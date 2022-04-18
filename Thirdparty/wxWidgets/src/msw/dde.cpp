@@ -17,24 +17,24 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_IPC
 
 #ifndef WX_PRECOMP
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/hashmap.h"
-    #include "wx/module.h"
+    #include "wx\utils.h"
+    #include "wx\app.h"
+    #include "wx\hashmap.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/dde.h"
-#include "wx/intl.h"
-#include "wx/buffer.h"
-#include "wx/strconv.h"
+#include "wx\dde.h"
+#include "wx\intl.h"
+#include "wx\buffer.h"
+#include "wx\strconv.h"
 
-#include "wx/msw/private.h"
+#include "wx\msw/private.h"
 
 #include <string.h>
 #include <ddeml.h>
@@ -95,7 +95,7 @@ static DWORD DDEIdInst = 0L;
 static wxDDEConnection *DDECurrentlyConnecting = NULL;
 static wxAtomMap wxAtomTable;
 
-#include "wx/listimpl.cpp"
+#include "wx\listimpl.cpp"
 
 WX_DEFINE_LIST(wxDDEClientList)
 WX_DEFINE_LIST(wxDDEServerList)

@@ -10,14 +10,14 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/object.h"
-    #include "wx/hash.h"
-    #include "wx/memory.h"
-    #include "wx/crt.h"
+    #include "wx\object.h"
+    #include "wx\hash.h"
+    #include "wx\memory.h"
+    #include "wx\crt.h"
 #endif
 
 #include <string.h>

@@ -10,14 +10,14 @@
 
 #if wxUSE_STD_IOSTREAM
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 
 #include <iostream>
 
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 #ifdef __WINDOWS__
-#   include "wx/msw/winundef.h"
+#   include "wx\msw/winundef.h"
 #endif
 
 #endif

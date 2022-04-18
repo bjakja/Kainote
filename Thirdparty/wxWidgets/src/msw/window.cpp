@@ -6661,7 +6661,7 @@ int ChooseNormalOrExtended(int lParam, int keyNormal, int keyExtended)
 }
 
 // this array contains the Windows virtual key codes which map one to one to
-// WXK_xxx constants and is used in wxMSWKeyboard::VKToWX/WXToVK() below
+// WXK_xxx constants and is used in wxMSWKeyboard::VKTowx/WXToVK() below
 //
 // note that keys having a normal and numpad version (e.g. WXK_HOME and
 // WXK_NUMPAD_HOME) are not included in this table as the mapping is not 1-to-1

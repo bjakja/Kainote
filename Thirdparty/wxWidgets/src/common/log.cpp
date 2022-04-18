@@ -17,30 +17,30 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_LOG
 
 // wxWidgets
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
-    #include "wx/app.h"
-    #include "wx/arrstr.h"
-    #include "wx/intl.h"
-    #include "wx/string.h"
-    #include "wx/utils.h"
+    #include "wx\log.h"
+    #include "wx\app.h"
+    #include "wx\arrstr.h"
+    #include "wx\intl.h"
+    #include "wx\string.h"
+    #include "wx\utils.h"
 #endif //WX_PRECOMP
 
-#include "wx/apptrait.h"
-#include "wx/datetime.h"
-#include "wx/file.h"
-#include "wx/msgout.h"
-#include "wx/textfile.h"
-#include "wx/thread.h"
-#include "wx/private/threadinfo.h"
-#include "wx/crt.h"
-#include "wx/vector.h"
+#include "wx\apptrait.h"
+#include "wx\datetime.h"
+#include "wx\file.h"
+#include "wx\msgout.h"
+#include "wx\textfile.h"
+#include "wx\thread.h"
+#include "wx\private/threadinfo.h"
+#include "wx\crt.h"
+#include "wx\vector.h"
 
 // other standard headers
 #include <errno.h>
@@ -50,7 +50,7 @@
 #include <stdlib.h>
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/private.h" // includes windows.h
+    #include "wx\msw/private.h" // includes windows.h
 #endif
 
 #undef wxLOG_COMPONENT
@@ -908,7 +908,7 @@ void wxLogStderr::DoLogText(const wxString& msg)
 // ----------------------------------------------------------------------------
 
 #if wxUSE_STD_IOSTREAM
-#include "wx/ioswrap.h"
+#include "wx\ioswrap.h"
 wxLogStream::wxLogStream(wxSTD ostream *ostr, const wxMBConv& conv)
     : wxMessageOutputWithConv(conv)
 {

@@ -12,16 +12,16 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/strconv.h"  // wxConvLibc
-    #include "wx/log.h"
+    #include "wx\strconv.h"  // wxConvLibc
+    #include "wx\log.h"
 #endif
 
-#include "wx/unichar.h"
-#include "wx/string.h"
+#include "wx\unichar.h"
+#include "wx\string.h"
 
 // ===========================================================================
 // implementation

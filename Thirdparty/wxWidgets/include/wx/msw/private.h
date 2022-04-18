@@ -13,12 +13,12 @@
 #ifndef _WX_PRIVATE_H_
 #define _WX_PRIVATE_H_
 
-#include "wx/msw/wrapwin.h"
+#include "wx\msw/wrapwin.h"
 
-#include "wx/log.h"
+#include "wx\log.h"
 
 #if wxUSE_GUI
-    #include "wx/window.h"
+    #include "wx\window.h"
 #endif // wxUSE_GUI
 
 class WXDLLIMPEXP_FWD_CORE wxFont;
@@ -211,8 +211,8 @@ struct WinStruct : public T
 
 #if wxUSE_GUI
 
-#include "wx/gdicmn.h"
-#include "wx/colour.h"
+#include "wx\gdicmn.h"
+#include "wx\colour.h"
 
 #ifdef COM_DECLSPEC_NOTHROW
     #define wxSTDMETHODIMP COM_DECLSPEC_NOTHROW STDMETHODIMP

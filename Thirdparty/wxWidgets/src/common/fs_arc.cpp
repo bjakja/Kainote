@@ -6,19 +6,19 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #if wxUSE_FS_ARCHIVE
 
-#include "wx/fs_arc.h"
+#include "wx\fs_arc.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif
 
-#include "wx/archive.h"
-#include "wx/private/fileback.h"
+#include "wx\archive.h"
+#include "wx\private/fileback.h"
 
 //---------------------------------------------------------------------------
 // wxArchiveFSCacheDataImpl

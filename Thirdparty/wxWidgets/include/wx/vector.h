@@ -12,7 +12,7 @@
 #ifndef _WX_VECTOR_H_
 #define _WX_VECTOR_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_STD_CONTAINERS
 
@@ -34,16 +34,16 @@ inline bool wxVectorContains(const wxVector<T>& v, const T& obj)
 
 #else // !wxUSE_STD_CONTAINERS
 
-#include "wx/scopeguard.h"
-#include "wx/meta/movable.h"
-#include "wx/meta/if.h"
+#include "wx\scopeguard.h"
+#include "wx\meta/movable.h"
+#include "wx\meta/if.h"
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #if wxUSE_STD_CONTAINERS_COMPATIBLY
 #include <iterator>
 #endif
 #include <new> // for placement new
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 // wxQsort is declared in wx/utils.h, but can't include that file here,
 // it indirectly includes this file. Just lovely...

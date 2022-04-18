@@ -9,14 +9,14 @@
 #ifndef __FILESYS_H__
 #define __FILESYS_H__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_FILESYSTEM
 
-#include "wx/stream.h"
-#include "wx/datetime.h"
-#include "wx/filename.h"
-#include "wx/hashmap.h"
+#include "wx\stream.h"
+#include "wx\datetime.h"
+#include "wx\filename.h"
+#include "wx\hashmap.h"
 
 class WXDLLIMPEXP_FWD_BASE wxFSFile;
 class WXDLLIMPEXP_FWD_BASE wxFileSystemHandler;

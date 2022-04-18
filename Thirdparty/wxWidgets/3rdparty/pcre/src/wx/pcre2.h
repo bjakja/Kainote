@@ -828,7 +828,7 @@ pcre2_compile are called by application code. */
 
 #define PCRE2_JOIN(a,b) a ## b
 #define PCRE2_GLUE(a,b) PCRE2_JOIN(a,b)
-#define PCRE2_SUFFIX(a) PCRE2_GLUE(a,PCRE2_LOCAL_WIDTH)
+//#define PCRE2_SUFFIX(a) PCRE2_GLUE(a,PCRE2_LOCAL_WIDTH)
 
 
 /* Data types */
@@ -999,8 +999,8 @@ PCRE2_SUFFIX a no-op. Otherwise, generate an error. */
 
 #undef PCRE2_SUFFIX
 #ifndef PCRE2_CODE_UNIT_WIDTH
-#error PCRE2_CODE_UNIT_WIDTH must be defined before including pcre2.h.
-#error Use 8, 16, or 32; or 0 for a multi-width application.
+//#error PCRE2_CODE_UNIT_WIDTH must be defined before including pcre2.h.
+//#error Use 8, 16, or 32; or 0 for a multi-width application.
 #else  /* PCRE2_CODE_UNIT_WIDTH is defined */
 #if PCRE2_CODE_UNIT_WIDTH == 8 || \
     PCRE2_CODE_UNIT_WIDTH == 16 || \

@@ -17,15 +17,15 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
-    #include "wx/msw/private.h"
+    #include "wx\log.h"
+    #include "wx\msw/private.h"
 #endif //WX_PRECOMP
 
-#include "wx/evtloop.h"
+#include "wx\evtloop.h"
 
 // ============================================================================
 // wxMSWEventLoopBase implementation

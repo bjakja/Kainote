@@ -17,23 +17,23 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STDPATHS
 
-#include "wx/stdpaths.h"
+#include "wx\stdpaths.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/utils.h"
+    #include "wx\utils.h"
 #endif //WX_PRECOMP
 
-#include "wx/dynlib.h"
-#include "wx/filename.h"
+#include "wx\dynlib.h"
+#include "wx\filename.h"
 
-#include "wx/msw/private.h"
-#include "wx/msw/wrapshl.h"
-#include "wx/msw/private/cotaskmemptr.h"
+#include "wx\msw/private.h"
+#include "wx\msw/wrapshl.h"
+#include "wx\msw/private/cotaskmemptr.h"
 #include <initguid.h>
 
 // ----------------------------------------------------------------------------

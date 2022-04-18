@@ -21,9 +21,9 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/defs.h"        // everybody should include this
-#include "wx/chartype.h"    // for wxChar
-#include "wx/wxcrtbase.h"   // for wxStrlen() etc.
+#include "wx\defs.h"        // everybody should include this
+#include "wx\chartype.h"    // for wxChar
+#include "wx\wxcrtbase.h"   // for wxStrlen() etc.
 
 #include <stdlib.h>
 
@@ -62,9 +62,9 @@ extern WXDLLIMPEXP_DATA_BASE(const wxStringCharType*) wxEmptyStringImpl;
 // in both cases we need to define wxStdString
 #if wxUSE_STL_BASED_WXSTRING || wxUSE_STD_STRING
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <string>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 #ifdef HAVE_STD_WSTRING
     typedef std::wstring wxStdWideString;

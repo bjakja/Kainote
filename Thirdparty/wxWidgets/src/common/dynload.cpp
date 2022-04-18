@@ -13,26 +13,26 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_DYNAMIC_LOADER
 
 #ifdef __WINDOWS__
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif
 
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/hash.h"
-    #include "wx/utils.h"
-    #include "wx/module.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\hash.h"
+    #include "wx\utils.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/strconv.h"
+#include "wx\strconv.h"
 
-#include "wx/dynload.h"
+#include "wx\dynload.h"
 
 
 // ---------------------------------------------------------------------------

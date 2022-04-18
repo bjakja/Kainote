@@ -10,16 +10,16 @@
 #ifndef _WX_DLIST_H_
 #define _WX_DLIST_H_
 
-#include "wx/defs.h"
-#include "wx/utils.h"
+#include "wx\defs.h"
+#include "wx\utils.h"
 
 #if wxUSE_STD_CONTAINERS
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <algorithm>
 #include <iterator>
 #include <list>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 template<typename T>
 class wxDList: public std::list<T*>

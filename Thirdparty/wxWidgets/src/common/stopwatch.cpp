@@ -21,19 +21,19 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/stopwatch.h"
+#include "wx\stopwatch.h"
 
 #if wxUSE_STOPWATCH
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
-    #include "wx/log.h"
-    #include "wx/thread.h"
+    #include "wx\log.h"
+    #include "wx\thread.h"
 #endif //WX_PRECOMP
 
 // ============================================================================

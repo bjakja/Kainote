@@ -17,10 +17,10 @@
 
 #if wxUSE_FONTMAP
 
-#include "wx/fontenc.h"         // for wxFontEncoding
+#include "wx\fontenc.h"         // for wxFontEncoding
 
 #if wxUSE_GUI
-    #include "wx/fontutil.h"    // for wxNativeEncodingInfo
+    #include "wx\fontutil.h"    // for wxNativeEncodingInfo
 #endif // wxUSE_GUI
 
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
@@ -280,7 +280,7 @@ private:
 
 #if wxUSE_GUI
     // wxEncodingToCodepage (utils.cpp) needs wxGetNativeFontEncoding
-    #include "wx/fontutil.h"
+    #include "wx\fontutil.h"
 #endif
 
 #endif // wxUSE_FONTMAP/!wxUSE_FONTMAP

@@ -11,8 +11,8 @@
 #ifndef _WX_APPTRAIT_H_
 #define _WX_APPTRAIT_H_
 
-#include "wx/string.h"
-#include "wx/platinfo.h"
+#include "wx\string.h"
+#include "wx\platinfo.h"
 
 class WXDLLIMPEXP_FWD_BASE wxArrayString;
 class WXDLLIMPEXP_FWD_BASE wxConfigBase;
@@ -184,9 +184,9 @@ private:
 //      Unix code (and otherwise __UNIX__ wouldn't be defined)
 // ABX: check __WIN32__ instead of __WXMSW__ for the same MSWBase in any Win32 port
 #if defined(__WIN32__)
-    #include "wx/msw/apptbase.h"
+    #include "wx\msw/apptbase.h"
 #elif defined(__UNIX__)
-    #include "wx/unix/apptbase.h"
+    #include "wx\unix/apptbase.h"
 #else // no platform-specific methods to add to wxAppTraits
     // wxAppTraits must be a class because it was forward declared as class
     class WXDLLIMPEXP_BASE wxAppTraits : public wxAppTraitsBase
@@ -289,9 +289,9 @@ public:
 
 // ABX: check __WIN32__ instead of __WXMSW__ for the same MSWBase in any Win32 port
 #if defined(__WIN32__)
-    #include "wx/msw/apptrait.h"
+    #include "wx\msw/apptrait.h"
 #elif defined(__UNIX__)
-    #include "wx/unix/apptrait.h"
+    #include "wx\unix/apptrait.h"
 #else
     #if wxUSE_GUI
         class wxGUIAppTraits : public wxGUIAppTraitsBase

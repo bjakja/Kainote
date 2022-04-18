@@ -12,14 +12,14 @@
 #ifndef   _FILECONF_H
 #define   _FILECONF_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_CONFIG
 
-#include "wx/textfile.h"
-#include "wx/string.h"
-#include "wx/confbase.h"
-#include "wx/filename.h"
+#include "wx\textfile.h"
+#include "wx\string.h"
+#include "wx\confbase.h"
+#include "wx\filename.h"
 
 // ----------------------------------------------------------------------------
 // wxFileConfig

@@ -17,7 +17,7 @@
 // -----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #include <stdarg.h>
@@ -25,8 +25,8 @@
 #include <string.h>
 
 #ifndef WX_PRECOMP
-    #include "wx/list.h"
-    #include "wx/crt.h"
+    #include "wx\list.h"
+    #include "wx\crt.h"
 #endif
 
 #if !wxUSE_STD_CONTAINERS
@@ -732,7 +732,7 @@ wxNode *wxStringList::Prepend(const wxChar *s)
 
 #else // wxUSE_STD_CONTAINERS = 1
 
-    #include "wx/listimpl.cpp"
+    #include "wx\listimpl.cpp"
     WX_DEFINE_LIST(wxObjectList)
 
 // with wxUSE_STD_CONTAINERS wxStringList contains wxString objects, not pointers

@@ -11,7 +11,7 @@
 #ifndef _WX_MSW_STACKWALK_H_
 #define _WX_MSW_STACKWALK_H_
 
-#include "wx/arrstr.h"
+#include "wx\arrstr.h"
 
 // these structs are declared in windows headers
 struct _CONTEXT;

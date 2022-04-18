@@ -17,10 +17,10 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/process.h"
+#include "wx\process.h"
 
 // ----------------------------------------------------------------------------
 // event tables and such

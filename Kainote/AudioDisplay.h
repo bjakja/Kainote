@@ -38,16 +38,16 @@
 
 ///////////
 // Headers
-#include <wx/window.h>
-#include <wx/bitmap.h>
-#include <stdint.h>
-
 #include "AudioSpectrum.h"
-//#include "AVSAudio.h"
 #include "AudioPlayerDSound.h"
 #include "SubsDialogue.h"
 #include "KaraokeSplitting.h"
 #include "KaiScrollbar.h"
+#include <wx/window.h>
+#include <wx/bitmap.h>
+#include <stdint.h>
+
+
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <atomic>

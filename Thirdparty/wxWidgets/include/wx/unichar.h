@@ -10,9 +10,9 @@
 #ifndef _WX_UNICHAR_H_
 #define _WX_UNICHAR_H_
 
-#include "wx/defs.h"
-#include "wx/chartype.h"
-#include "wx/stringimpl.h"
+#include "wx\defs.h"
+#include "wx\chartype.h"
+#include "wx\stringimpl.h"
 
 // We need to get std::swap() declaration in order to specialize it below and
 // it is declared in different headers for C++98 and C++11. Instead of testing

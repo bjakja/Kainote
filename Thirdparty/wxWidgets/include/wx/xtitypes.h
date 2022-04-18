@@ -12,16 +12,16 @@
 #ifndef _XTITYPES_H_
 #define _XTITYPES_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_EXTENDED_RTTI
 
-#include "wx/string.h"
-#include "wx/hashmap.h"
-#include "wx/arrstr.h"
-#include "wx/flags.h"
-#include "wx/intl.h"
-#include "wx/log.h"
+#include "wx\string.h"
+#include "wx\hashmap.h"
+#include "wx\arrstr.h"
+#include "wx\flags.h"
+#include "wx\intl.h"
+#include "wx\log.h"
 #include <typeinfo>
 
 class WXDLLIMPEXP_BASE wxClassInfo;

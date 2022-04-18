@@ -17,6 +17,8 @@
 #include "SpellChecker.h"
 #include "SubsDialogue.h"
 #include "GraphicsD2D.h"
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
 
 void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen) {
 	if (isInit)

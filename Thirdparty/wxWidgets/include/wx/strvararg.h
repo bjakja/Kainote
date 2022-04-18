@@ -10,13 +10,13 @@
 #ifndef _WX_STRVARARG_H_
 #define _WX_STRVARARG_H_
 
-#include "wx/platform.h"
+#include "wx\platform.h"
 
-#include "wx/cpp.h"
-#include "wx/chartype.h"
-#include "wx/strconv.h"
-#include "wx/buffer.h"
-#include "wx/unichar.h"
+#include "wx\cpp.h"
+#include "wx\chartype.h"
+#include "wx\strconv.h"
+#include "wx\buffer.h"
+#include "wx\unichar.h"
 
 #if defined(HAVE_TYPE_TRAITS)
     #include <type_traits>
@@ -778,7 +778,7 @@ WX_ARG_NORMALIZER_FORWARD(const wxWCharBuffer&, const wchar_t*);
 // versions for std::[w]string:
 #if wxUSE_STD_STRING
 
-#include "wx/stringimpl.h"
+#include "wx\stringimpl.h"
 
 // And also string_view, if we have it (notice that <string> was included from
 // wx/stringimpl.h above, so __cpp_lib_string_view should be defined if it's

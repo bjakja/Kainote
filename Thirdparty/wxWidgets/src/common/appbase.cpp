@@ -17,32 +17,32 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include  "wx/msw/wrapwin.h"  // includes windows.h for MessageBox()
+        #include  "wx\msw/wrapwin.h"  // includes windows.h for MessageBox()
     #endif
-    #include "wx/list.h"
-    #include "wx/app.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/wxcrtvararg.h"
+    #include "wx\list.h"
+    #include "wx\app.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\crtvararg.h"
 #endif //WX_PRECOMP
 
-#include "wx/apptrait.h"
-#include "wx/cmdline.h"
-#include "wx/confbase.h"
-#include "wx/evtloop.h"
-#include "wx/filename.h"
-#include "wx/msgout.h"
-#include "wx/scopedptr.h"
-#include "wx/sysopt.h"
-#include "wx/tokenzr.h"
-#include "wx/thread.h"
-#include "wx/stdpaths.h"
+#include "wx\apptrait.h"
+#include "wx\cmdline.h"
+#include "wx\confbase.h"
+#include "wx\evtloop.h"
+#include "wx\filename.h"
+#include "wx\msgout.h"
+#include "wx\scopedptr.h"
+#include "wx\sysopt.h"
+#include "wx\tokenzr.h"
+#include "wx\thread.h"
+#include "wx\stdpaths.h"
 
 #if wxUSE_EXCEPTIONS
     // Do we have a C++ compiler with enough C++11 support for
@@ -92,18 +92,18 @@
 #include <locale.h>
 
 #if wxUSE_FONTMAP
-    #include "wx/fontmap.h"
+    #include "wx\fontmap.h"
 #endif // wxUSE_FONTMAP
 
 #if wxDEBUG_LEVEL
     #if wxUSE_STACKWALKER
-        #include "wx/stackwalk.h"
+        #include "wx\stackwalk.h"
         #ifdef __WINDOWS__
-            #include "wx/msw/debughlp.h"
+            #include "wx\msw/debughlp.h"
         #endif
     #endif // wxUSE_STACKWALKER
 
-    #include "wx/recguard.h"
+    #include "wx\recguard.h"
 #endif // wxDEBUG_LEVEL
 
 // wxABI_VERSION can be defined when compiling applications but it should be

@@ -18,18 +18,18 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_REGEX
 
-#include "wx/regex.h"
+#include "wx\regex.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/object.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/crt.h"
+    #include "wx\object.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\crt.h"
 #endif //WX_PRECOMP
 
 // At least FreeBSD requires this.

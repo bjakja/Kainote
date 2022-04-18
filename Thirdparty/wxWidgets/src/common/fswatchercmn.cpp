@@ -8,13 +8,13 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FSWATCHER
 
-#include "wx/fswatcher.h"
-#include "wx/private/fswatcher.h"
+#include "wx\fswatcher.h"
+#include "wx\private/fswatcher.h"
 
 // ============================================================================
 // helpers

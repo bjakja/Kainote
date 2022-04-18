@@ -21,10 +21,9 @@
 #include "CsriMod.h"
 #include "OpennWrite.h"
 
-#pragma comment(lib, "Dxva2.lib")
-#ifndef TEST_FFMPEG
+
 const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02 }};
-#endif
+
 
 RendererDirectShow::RendererDirectShow(VideoCtrl *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)

@@ -6,23 +6,23 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FILESYSTEM && wxUSE_STREAMS
 
-#include "wx/fs_mem.h"
+#include "wx\fs_mem.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/wxcrtvararg.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\wxcrtvararg.h"
     #if wxUSE_GUI
-        #include "wx/image.h"
+        #include "wx\image.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx/mstream.h"
+#include "wx\mstream.h"
 
 // represents a file entry in wxMemoryFS
 class wxMemoryFSFile

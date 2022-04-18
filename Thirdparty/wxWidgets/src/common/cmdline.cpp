@@ -17,29 +17,29 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/dynarray.h"
-    #include "wx/string.h"
-    #include "wx/log.h"
-    #include "wx/intl.h"
-    #include "wx/app.h"
+    #include "wx\dynarray.h"
+    #include "wx\string.h"
+    #include "wx\log.h"
+    #include "wx\intl.h"
+    #include "wx\app.h"
 #endif //WX_PRECOMP
 
-#include "wx/cmdline.h"
+#include "wx\cmdline.h"
 
 #if wxUSE_CMDLINE_PARSER
 
 #include <ctype.h>
 #include <locale.h>             // for LC_ALL
 
-#include "wx/datetime.h"
-#include "wx/msgout.h"
-#include "wx/filename.h"
-#include "wx/apptrait.h"
-#include "wx/scopeguard.h"
+#include "wx\datetime.h"
+#include "wx\msgout.h"
+#include "wx\filename.h"
+#include "wx\apptrait.h"
+#include "wx\scopeguard.h"
 
 // ----------------------------------------------------------------------------
 // private functions
@@ -182,7 +182,7 @@ WX_DECLARE_OBJARRAY(wxCmdLineOption, wxArrayOptions);
 WX_DECLARE_OBJARRAY(wxCmdLineParam, wxArrayParams);
 WX_DECLARE_OBJARRAY(wxCmdLineArgImpl, wxArrayArgs);
 
-#include "wx/arrimpl.cpp"
+#include "wx\arrimpl.cpp"
 
 WX_DEFINE_OBJARRAY(wxArrayOptions)
 WX_DEFINE_OBJARRAY(wxArrayParams)

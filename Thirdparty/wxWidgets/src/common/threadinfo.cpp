@@ -8,17 +8,17 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/private/threadinfo.h"
+#include "wx\private/threadinfo.h"
 
 #if wxUSE_THREADS
 
-#include "wx/tls.h"
-#include "wx/thread.h"
-#include "wx/sharedptr.h"
-#include "wx/vector.h"
+#include "wx\tls.h"
+#include "wx\thread.h"
+#include "wx\sharedptr.h"
+#include "wx\vector.h"
 
 namespace
 {

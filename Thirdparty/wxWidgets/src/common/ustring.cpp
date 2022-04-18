@@ -8,15 +8,15 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/ustring.h"
-#include "wx/private/unicode.h"
+#include "wx\ustring.h"
+#include "wx\private/unicode.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/crt.h"
-    #include "wx/log.h"
+    #include "wx\crt.h"
+    #include "wx\log.h"
 #endif
 
 wxUString &wxUString::assignFromAscii( const char *str )

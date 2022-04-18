@@ -16,11 +16,9 @@
 
 #pragma once
 
-//#include <wx/window.h>
-//#include <wx/stattext.h>
 #include "TimeCtrl.h"
 #include "SubsDialogue.h"
-#include "MyTextEditor.h"
+#include "DialogueTextEditor.h"
 #include "NumCtrl.h"
 #include "ListControls.h"
 #include "AudioBox.h"

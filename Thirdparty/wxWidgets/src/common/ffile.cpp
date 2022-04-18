@@ -17,19 +17,19 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FFILE
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/crt.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\crt.h"
 #endif
 
-#include "wx/filename.h"
-#include "wx/ffile.h"
+#include "wx\filename.h"
+#include "wx\ffile.h"
 
 // ============================================================================
 // implementation of wxFFile

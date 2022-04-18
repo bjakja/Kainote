@@ -9,23 +9,23 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_CONFIG && wxUSE_REGKEY
 
-#include "wx/config.h"
+#include "wx\config.h"
 
 #ifndef WX_PRECOMP
-    #include  "wx/string.h"
-    #include  "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/event.h"
-    #include "wx/app.h"
+    #include  "wx\string.h"
+    #include  "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\event.h"
+    #include "wx\app.h"
 #endif //WX_PRECOMP
 
-#include "wx/msw/registry.h"
-#include "wx/msw/regconf.h"
+#include "wx\msw/registry.h"
+#include "wx\msw/regconf.h"
 
 // ----------------------------------------------------------------------------
 // constants

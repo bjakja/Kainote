@@ -9,31 +9,31 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_MEMORY_TRACING || wxUSE_DEBUG_CONTEXT
 
-#include "wx/memory.h"
+#include "wx\memory.h"
 
 #ifndef WX_PRECOMP
     #ifdef __WINDOWS__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/hash.h"
-    #include "wx/log.h"
-    #include "wx/wxcrtvararg.h" // for wxVsnprintf
+    #include "wx\utils.h"
+    #include "wx\app.h"
+    #include "wx\hash.h"
+    #include "wx\log.h"
+    #include "wx\wxcrtvararg.h" // for wxVsnprintf
 #endif
 
 #if wxUSE_THREADS
-    #include "wx/thread.h"
+    #include "wx\thread.h"
 #endif
 
 #include <stdlib.h>
 
-#include "wx/ioswrap.h"
+#include "wx\ioswrap.h"
 
 #if !(defined(__VMS__) && ( __VMS_VER < 70000000 ) )
 #include <memory.h>

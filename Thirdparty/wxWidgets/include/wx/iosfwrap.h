@@ -13,7 +13,7 @@
 #include <iosfwd>
 
 #ifdef __WINDOWS__
-#   include "wx/msw/winundef.h"
+#   include "wx\msw/winundef.h"
 #endif
 
 #endif // wxUSE_STD_IOSTREAM

@@ -17,18 +17,18 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif // PCH
 
-#include "wx/dir.h"
+#include "wx\dir.h"
 
 #ifdef __WINDOWS__
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif
 
 // ----------------------------------------------------------------------------

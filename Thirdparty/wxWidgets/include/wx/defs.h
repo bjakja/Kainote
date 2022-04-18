@@ -30,7 +30,7 @@
         own __WINDOWS__, which is not defined yet.
      */
 #   ifdef _WINDOWS_
-#       include "wx/msw/winundef.h"
+#       include "msw/winundef.h"
 #   endif /* WIN32 */
 #endif /* __cplusplus */
 
@@ -3148,11 +3148,11 @@ typedef const void* WXWidget;
 #endif /*  DFB */
 
 #ifdef __WXQT__
-#include "wx/qt/defs.h"
+#include "wx\qt/defs.h"
 #endif
 
 /*  include the feature test macros */
-#include "wx/features.h"
+#include "wx\features.h"
 
 /*  --------------------------------------------------------------------------- */
 /*  macros to define a class without copy ctor nor assignment operator */

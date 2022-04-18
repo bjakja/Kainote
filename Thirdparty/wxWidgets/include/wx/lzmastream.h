@@ -10,12 +10,12 @@
 #ifndef _WX_LZMASTREAM_H_
 #define _WX_LZMASTREAM_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_LIBLZMA && wxUSE_STREAMS
 
-#include "wx/stream.h"
-#include "wx/versioninfo.h"
+#include "wx\stream.h"
+#include "wx\versioninfo.h"
 
 namespace wxPrivate
 {

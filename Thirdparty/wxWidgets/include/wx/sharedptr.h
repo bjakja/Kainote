@@ -10,8 +10,8 @@
 #ifndef _WX_SHAREDPTR_H_
 #define _WX_SHAREDPTR_H_
 
-#include "wx/defs.h"
-#include "wx/atomic.h"
+#include "wx\defs.h"
+#include "wx\atomic.h"
 
 // ----------------------------------------------------------------------------
 // wxSharedPtr: A smart pointer with non-intrusive reference counting.

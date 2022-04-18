@@ -11,10 +11,10 @@
 #ifndef _WX_WXSTRINGOPS_H__
 #define _WX_WXSTRINGOPS_H__
 
-#include "wx/chartype.h"
-#include "wx/stringimpl.h"
-#include "wx/unichar.h"
-#include "wx/buffer.h"
+#include "wx\chartype.h"
+#include "wx\stringimpl.h"
+#include "wx\unichar.h"
+#include "wx\buffer.h"
 
 // This header contains wxStringOperations "namespace" class that implements
 // elementary operations on string data as static methods; wxString methods and

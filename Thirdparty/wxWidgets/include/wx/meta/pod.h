@@ -10,7 +10,7 @@
 #ifndef _WX_META_POD_H_
 #define _WX_META_POD_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 //
 // TODO: Use TR1 is_pod<> implementation where available. VC9 SP1 has it

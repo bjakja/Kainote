@@ -21,12 +21,12 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/stringimpl.h"
-    #include "wx/wxcrt.h"
+    #include "wx\stringimpl.h"
+    #include "wx\wxcrt.h"
 #endif
 
 #include <ctype.h>

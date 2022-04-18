@@ -32,13 +32,13 @@
     #define wxServer        wxDDEServer
     #define wxClient        wxDDEClient
 
-    #include "wx/dde.h"
+    #include "wx\dde.h"
 #else // !wxUSE_DDE_FOR_IPC
     #define wxConnection    wxTCPConnection
     #define wxServer        wxTCPServer
     #define wxClient        wxTCPClient
 
-    #include "wx/sckipc.h"
+    #include "wx\sckipc.h"
 #endif // wxUSE_DDE_FOR_IPC/!wxUSE_DDE_FOR_IPC
 
 #endif // _WX_IPC_H_

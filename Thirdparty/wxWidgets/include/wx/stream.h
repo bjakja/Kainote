@@ -11,14 +11,14 @@
 #ifndef _WX_WXSTREAM_H__
 #define _WX_WXSTREAM_H__
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_STREAMS
 
 #include <stdio.h>
-#include "wx/object.h"
-#include "wx/string.h"
-#include "wx/filefn.h"  // for wxFileOffset, wxInvalidOffset and wxSeekMode
+#include "wx\object.h"
+#include "wx\string.h"
+#include "wx\filefn.h"  // for wxFileOffset, wxInvalidOffset and wxSeekMode
 
 class WXDLLIMPEXP_FWD_BASE wxStreamBase;
 class WXDLLIMPEXP_FWD_BASE wxInputStream;

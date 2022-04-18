@@ -7,25 +7,25 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_ZIPSTREAM
 
-#include "wx/zipstrm.h"
+#include "wx\zipstrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/hashmap.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
+    #include "wx\hashmap.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
 #endif
 
-#include "wx/datstrm.h"
-#include "wx/zstream.h"
-#include "wx/mstream.h"
-#include "wx/scopedptr.h"
-#include "wx/wfstream.h"
+#include "wx\datstrm.h"
+#include "wx\zstream.h"
+#include "wx\mstream.h"
+#include "wx\scopedptr.h"
+#include "wx\wfstream.h"
 #include "zlib.h"
 
 // value for the 'version needed to extract' field (20 means 2.0)
@@ -2168,7 +2168,7 @@ size_t wxZipInputStream::OnSysRead(void *buffer, size_t size)
 /////////////////////////////////////////////////////////////////////////////
 // Output stream
 
-#include "wx/listimpl.cpp"
+#include "wx\listimpl.cpp"
 WX_DEFINE_LIST(wxZipEntryList_)
 
 wxZipOutputStream::wxZipOutputStream(wxOutputStream& stream,

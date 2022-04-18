@@ -17,28 +17,28 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\utils.h"
+    #include "wx\app.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
     #if wxUSE_STREAMS
-        #include "wx/stream.h"
+        #include "wx\stream.h"
     #endif
-    #include "wx/module.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/process.h"
-#include "wx/thread.h"
-#include "wx/apptrait.h"
-#include "wx/evtloop.h"
-#include "wx/vector.h"
+#include "wx\process.h"
+#include "wx\thread.h"
+#include "wx\apptrait.h"
+#include "wx\evtloop.h"
+#include "wx\vector.h"
 
 
-#include "wx/msw/private.h"
+#include "wx\msw/private.h"
 
 #include <ctype.h>
 
@@ -66,11 +66,11 @@
 #include <stdarg.h>
 
 #if wxUSE_IPC
-    #include "wx/dde.h"         // for WX_DDE hack in wxExecute
+    #include "wx\dde.h"         // for WX_DDE hack in wxExecute
 #endif // wxUSE_IPC
 
-#include "wx/msw/private/hiddenwin.h"
-#include "wx/msw/private/event.h"
+#include "wx\msw/private/hiddenwin.h"
+#include "wx\msw/private/event.h"
 
 // ----------------------------------------------------------------------------
 // constants
@@ -190,8 +190,8 @@ wxIMPLEMENT_DYNAMIC_CLASS(wxExecuteModule, wxModule);
 
 #if wxUSE_STREAMS
 
-#include "wx/private/pipestream.h"
-#include "wx/private/streamtempinput.h"
+#include "wx\private/pipestream.h"
+#include "wx\private/streamtempinput.h"
 
 // ----------------------------------------------------------------------------
 // wxPipe represents a Win32 anonymous pipe

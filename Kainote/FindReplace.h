@@ -20,7 +20,7 @@
 #include <wx/gdicmn.h>
 #include <vector>
 #include <atomic> 
-#include <windows.h>
+//#include <windows.h>
 
 
 class KainoteFrame;

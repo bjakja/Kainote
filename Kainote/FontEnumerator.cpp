@@ -21,7 +21,7 @@
 #include <Usp10.h>
 #include <unicode/utf16.h>
 #include <ShlObj.h>
-//#pragma comment(lib,"Usp10.lib")
+
 	
 
 

@@ -12,15 +12,15 @@
 #ifndef _WX_TIMER_H_BASE_
 #define _WX_TIMER_H_BASE_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_TIMER
 
-#include "wx/object.h"
-#include "wx/longlong.h"
-#include "wx/event.h"
-#include "wx/stopwatch.h" // for backwards compatibility
-#include "wx/utils.h"
+#include "wx\object.h"
+#include "wx\longlong.h"
+#include "wx\event.h"
+#include "wx\stopwatch.h" // for backwards compatibility
+#include "wx\utils.h"
 
 
 // more readable flags for Start():

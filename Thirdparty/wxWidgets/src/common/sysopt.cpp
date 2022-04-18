@@ -17,18 +17,18 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_SYSTEM_OPTIONS
 
-#include "wx/sysopt.h"
+#include "wx\sysopt.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
-    #include "wx/list.h"
-    #include "wx/string.h"
-    #include "wx/arrstr.h"
+    #include "wx\app.h"
+    #include "wx\list.h"
+    #include "wx\string.h"
+    #include "wx\arrstr.h"
 #endif
 
 // ----------------------------------------------------------------------------

@@ -14,36 +14,36 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include  "wx/wxprec.h"
+#include  "wx\wxprec.h"
 
 
 #if wxUSE_CONFIG && wxUSE_FILECONFIG
 
 #ifndef   WX_PRECOMP
-    #include  "wx/dynarray.h"
-    #include  "wx/string.h"
-    #include  "wx/intl.h"
-    #include  "wx/log.h"
-    #include  "wx/app.h"
-    #include  "wx/utils.h"    // for wxGetHomeDir
+    #include  "wx\dynarray.h"
+    #include  "wx\string.h"
+    #include  "wx\intl.h"
+    #include  "wx\log.h"
+    #include  "wx\app.h"
+    #include  "wx\utils.h"    // for wxGetHomeDir
     #if wxUSE_STREAMS
-        #include  "wx/stream.h"
+        #include  "wx\stream.h"
     #endif // wxUSE_STREAMS
 #endif  //WX_PRECOMP
 
-#include  "wx/file.h"
-#include  "wx/textfile.h"
-#include  "wx/memtext.h"
-#include  "wx/config.h"
-#include  "wx/fileconf.h"
-#include  "wx/filefn.h"
+#include  "wx\file.h"
+#include  "wx\textfile.h"
+#include  "wx\memtext.h"
+#include  "wx\config.h"
+#include  "wx\fileconf.h"
+#include  "wx\filefn.h"
 
-#include "wx/base64.h"
+#include "wx\base64.h"
 
-#include  "wx/stdpaths.h"
+#include  "wx\stdpaths.h"
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif  //windows.h
 
 #include  <stdlib.h>

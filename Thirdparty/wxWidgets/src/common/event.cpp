@@ -17,42 +17,42 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/event.h"
-#include "wx/eventfilter.h"
-#include "wx/evtloop.h"
+#include "wx\event.h"
+#include "wx\eventfilter.h"
+#include "wx\evtloop.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/list.h"
-    #include "wx/log.h"
-    #include "wx/app.h"
-    #include "wx/utils.h"
-    #include "wx/stopwatch.h"
-    #include "wx/module.h"
+    #include "wx\list.h"
+    #include "wx\log.h"
+    #include "wx\app.h"
+    #include "wx\utils.h"
+    #include "wx\stopwatch.h"
+    #include "wx\module.h"
 
     #if wxUSE_GUI
-        #include "wx/window.h"
-        #include "wx/control.h"
-        #include "wx/dc.h"
-        #include "wx/spinbutt.h"
-        #include "wx/textentry.h"
-        #include "wx/validate.h"
+        #include "wx\window.h"
+        #include "wx\control.h"
+        #include "wx\dc.h"
+        #include "wx\spinbutt.h"
+        #include "wx\textentry.h"
+        #include "wx\validate.h"
     #endif // wxUSE_GUI
 #endif
 
-#include "wx/thread.h"
+#include "wx\thread.h"
 
 #if wxUSE_BASE
-    #include "wx/scopedptr.h"
+    #include "wx\scopedptr.h"
 
     wxDECLARE_SCOPED_PTR(wxEvent, wxEventPtr)
     wxDEFINE_SCOPED_PTR(wxEvent, wxEventPtr)
 #endif // wxUSE_BASE
 
 #if wxUSE_GUI
-    #include "wx/private/rescale.h"
+    #include "wx\private/rescale.h"
 #endif
 
 // ----------------------------------------------------------------------------

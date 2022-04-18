@@ -12,7 +12,7 @@
 #ifndef _WX_DATETIME_H
 #define _WX_DATETIME_H
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_DATETIME
 
@@ -20,8 +20,8 @@
 
 #include <limits.h>             // for INT_MIN
 
-#include "wx/longlong.h"
-#include "wx/anystr.h"
+#include "wx\longlong.h"
+#include "wx\anystr.h"
 
 class WXDLLIMPEXP_FWD_BASE wxDateTime;
 class WXDLLIMPEXP_FWD_BASE wxTimeSpan;
@@ -30,7 +30,7 @@ class WXDLLIMPEXP_FWD_BASE wxDateSpan;
 struct _SYSTEMTIME;
 #endif
 
-#include "wx/dynarray.h"
+#include "wx\dynarray.h"
 
 // not all c-runtimes are based on 1/1/1970 being (time_t) 0
 // set this to the corresponding value in seconds 1/1/1970 has on your

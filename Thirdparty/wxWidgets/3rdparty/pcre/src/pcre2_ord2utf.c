@@ -44,7 +44,7 @@ into a UTF string. The behaviour is different for each code unit width. */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 #include "pcre2_internal.h"

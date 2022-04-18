@@ -13,7 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "MyTextEditor.h"
+#include "DialogueTextEditor.h"
+#include "GraphicsD2D.h"
+#include "BidiConversion.h"
 #include "EditBox.h"
 #include "Spellchecker.h"
 #include "config.h"
@@ -24,9 +26,7 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
-#include "GraphicsD2D.h"
-//#include "Utils.h"
-#include "BidiConversion.h"
+
 
 #undef DrawText
 

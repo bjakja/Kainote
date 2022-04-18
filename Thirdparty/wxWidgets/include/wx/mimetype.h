@@ -16,14 +16,14 @@
 // headers and such
 // ----------------------------------------------------------------------------
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_MIMETYPE
 
 // the things we really need
-#include "wx/string.h"
-#include "wx/dynarray.h"
-#include "wx/arrstr.h"
+#include "wx\string.h"
+#include "wx\dynarray.h"
+#include "wx\arrstr.h"
 
 #include <stdarg.h>
 

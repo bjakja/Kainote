@@ -11,7 +11,7 @@
 #ifndef _WX_EXCEPT_H_
 #define _WX_EXCEPT_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 // ----------------------------------------------------------------------------
 // macros working whether wxUSE_EXCEPTIONS is 0 or 1

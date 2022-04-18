@@ -46,7 +46,7 @@ support, because some compilers do not like functionless source files. */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 

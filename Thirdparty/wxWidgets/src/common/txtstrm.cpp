@@ -9,15 +9,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/txtstrm.h"
+#include "wx\txtstrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/crt.h"
+    #include "wx\crt.h"
 #endif
 
 #include <ctype.h>

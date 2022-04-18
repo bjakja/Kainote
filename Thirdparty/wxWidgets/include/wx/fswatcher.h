@@ -10,16 +10,16 @@
 #ifndef _WX_FSWATCHER_BASE_H_
 #define _WX_FSWATCHER_BASE_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_FSWATCHER
 
-#include "wx/log.h"
-#include "wx/event.h"
-#include "wx/evtloop.h"
-#include "wx/filename.h"
-#include "wx/dir.h"
-#include "wx/hashmap.h"
+#include "wx\log.h"
+#include "wx\event.h"
+#include "wx\evtloop.h"
+#include "wx\filename.h"
+#include "wx\dir.h"
+#include "wx\hashmap.h"
 
 #define wxTRACE_FSWATCHER "fswatcher"
 
@@ -385,20 +385,20 @@ protected:
 // inheriting from wxFileSystemWatcherBase
 
 #ifdef wxHAS_INOTIFY
-    #include "wx/unix/fswatcher_inotify.h"
+    #include "wx\unix/fswatcher_inotify.h"
     #define wxFileSystemWatcher wxInotifyFileSystemWatcher
 #elif  defined(wxHAS_KQUEUE) && defined(wxHAVE_FSEVENTS_FILE_NOTIFICATIONS)
-    #include "wx/unix/fswatcher_kqueue.h"
-    #include "wx/osx/fswatcher_fsevents.h"
+    #include "wx\unix/fswatcher_kqueue.h"
+    #include "wx\osx/fswatcher_fsevents.h"
     #define wxFileSystemWatcher wxFsEventsFileSystemWatcher
 #elif defined(wxHAS_KQUEUE)
-    #include "wx/unix/fswatcher_kqueue.h"
+    #include "wx\unix/fswatcher_kqueue.h"
     #define wxFileSystemWatcher wxKqueueFileSystemWatcher
 #elif defined(__WINDOWS__)
-    #include "wx/msw/fswatcher.h"
+    #include "wx\msw/fswatcher.h"
     #define wxFileSystemWatcher wxMSWFileSystemWatcher
 #else
-    #include "wx/generic/fswatcher.h"
+    #include "wx\generic/fswatcher.h"
     #define wxFileSystemWatcher wxPollingFileSystemWatcher
 #endif
 

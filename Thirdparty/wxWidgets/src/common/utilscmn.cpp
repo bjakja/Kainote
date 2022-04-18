@@ -17,9 +17,9 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
-#include "wx/debug.h"
+#include "wx\debug.h"
 
 
 // This is a needed to get the declaration of the global "environ" variable
@@ -46,35 +46,35 @@
 #endif
 
 #ifndef WX_PRECOMP
-    #include "wx/app.h"
-    #include "wx/string.h"
-    #include "wx/utils.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\app.h"
+    #include "wx\string.h"
+    #include "wx\utils.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 
     #if wxUSE_GUI
-        #include "wx/window.h"
-        #include "wx/frame.h"
-        #include "wx/menu.h"
-        #include "wx/msgdlg.h"
-        #include "wx/textdlg.h"
-        #include "wx/textctrl.h"    // for wxTE_PASSWORD
+        #include "wx\window.h"
+        #include "wx\frame.h"
+        #include "wx\menu.h"
+        #include "wx\msgdlg.h"
+        #include "wx\textdlg.h"
+        #include "wx\textctrl.h"    // for wxTE_PASSWORD
         #if wxUSE_ACCEL
-            #include "wx/menuitem.h"
-            #include "wx/accel.h"
+            #include "wx\menuitem.h"
+            #include "wx\accel.h"
         #endif // wxUSE_ACCEL
     #endif // wxUSE_GUI
 #endif // WX_PRECOMP
 
-#include "wx/apptrait.h"
+#include "wx\apptrait.h"
 
-#include "wx/process.h"
-#include "wx/txtstrm.h"
-#include "wx/uri.h"
-#include "wx/mimetype.h"
-#include "wx/config.h"
-#include "wx/versioninfo.h"
-#include "wx/math.h"
+#include "wx\process.h"
+#include "wx\txtstrm.h"
+#include "wx\uri.h"
+#include "wx\mimetype.h"
+#include "wx\config.h"
+#include "wx\versioninfo.h"
+#include "wx\math.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -83,30 +83,30 @@
 #include <errno.h>
 
 #if wxUSE_GUI
-    #include "wx/filename.h"
-    #include "wx/filesys.h"
-    #include "wx/notebook.h"
-    #include "wx/statusbr.h"
-    #include "wx/private/launchbrowser.h"
+    #include "wx\filename.h"
+    #include "wx\filesys.h"
+    #include "wx\notebook.h"
+    #include "wx\statusbr.h"
+    #include "wx\private/launchbrowser.h"
 #endif // wxUSE_GUI
 
 #include <time.h>
 
 #ifdef __WXMAC__
-    #include "wx/osx/private.h"
+    #include "wx\osx/private.h"
 #endif
 
 #include <sys/types.h>
 #include <sys/stat.h>
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/private.h"
+    #include "wx\msw/private.h"
 #endif
 
 #if wxUSE_GUI
     // Include the definitions of GTK_XXX_VERSION constants.
     #ifdef __WXGTK20__
-        #include "wx/gtk/private/wrapgtk.h"
+        #include "wx\gtk/private/wrapgtk.h"
     #elif defined(__WXGTK__)
         #include <gtk/gtk.h>
     #elif defined(__WXQT__)

@@ -10,7 +10,7 @@
 #ifndef _WX_CHECKEDDELETE_H_
 #define _WX_CHECKEDDELETE_H_
 
-#include "wx/cpp.h"
+#include "wx\cpp.h"
 
 // TODO: provide wxCheckedDelete[Array]() template functions too
 

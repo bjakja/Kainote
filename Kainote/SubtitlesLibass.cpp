@@ -21,6 +21,7 @@
 #include "OpennWrite.h"
 #include "kainoteMain.h"
 #include "DshowRenderer.h"
+#include <wx/thread.h>
 #include <boost/gil/algorithm.hpp>
 #include <process.h>
 

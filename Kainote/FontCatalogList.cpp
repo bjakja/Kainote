@@ -15,7 +15,6 @@
 
 #include "FontCatalogList.h"
 #include "config.h"
-//#include "Utils.h"
 #include "KaiCheckBox.h"
 #include "KaiStaticText.h"
 #include "FontEnumerator.h"
@@ -27,6 +26,7 @@
 #include "LogHandler.h"
 #include <wx/tokenzr.h>
 #include <wx/filedlg.h>
+#include <wx/window.h>
 
 wxDEFINE_EVENT(CATALOG_CHANGED, wxCommandEvent);
 

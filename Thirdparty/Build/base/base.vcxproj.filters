@@ -24,941 +24,320 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\common\any.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\appbase.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\arcall.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\arcfind.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\archive.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\arrstr.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\base64.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\clntdata.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\cmdline.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\config.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\convauto.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\datetime.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\datetimefmt.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\datstrm.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\dircmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\dummy.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\dynlib.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\dynload.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\encconv.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\event.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\evtloopcmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\extended.c">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\ffile.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\file.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fileback.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fileconf.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\filefn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\filename.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\filesys.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\filtall.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\filtfind.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fmapbase.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fs_arc.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fs_filter.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fs_mem.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\fswatchercmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\hash.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\hashmap.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\init.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\intl.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\ipcbase.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\languageinfo.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\list.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\log.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\longlong.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\lzmastream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\memory.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\mimecmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\module.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\msgout.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\mstream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\numformatter.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\object.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\platinfo.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\powercmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\process.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\regex.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\secretstore.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\sstream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stdpbase.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stdstream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stopwatch.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\strconv.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\string.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stringimpl.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\stringops.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\strvararg.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\sysopt.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\tarstrm.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\textbuf.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\textfile.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\threadinfo.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\time.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\timercmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\timerimpl.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\tokenzr.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\translation.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\txtstrm.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\uilocale.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\unichar.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\uri.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\ustring.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\utilscmn.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\variant.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\wfstream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\wxcrt.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\wxprintf.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\xlocale.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\xti.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\xtistrm.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\zipstrm.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\common\zstream.cpp">
-      <Filter>Common Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\generic\fswatcherg.cpp">
-      <Filter>Generic Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\basemsw.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\crashrpt.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\dde.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\debughlp.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\dir.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\dlmsw.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\evtloopconsole.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\fswatcher.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\main.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\mimetype.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\power.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\regconf.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\registry.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\secretstore.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\snglinst.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\stackwalk.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\stdpaths.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\thread.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\timer.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\uilocale.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\utils.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\utilsexc.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\msw\volume.cpp">
-      <Filter>MSW Sources</Filter>
-    </ClCompile>
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\any.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\appbase.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\arcall.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\arcfind.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\archive.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\arrstr.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\base64.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\clntdata.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\cmdline.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\config.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\convauto.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datetime.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datetimefmt.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datstrm.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dircmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dynlib.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dynload.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\encconv.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\event.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\evtloopcmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\extended.c" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ffile.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\file.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fileback.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fileconf.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filefn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filename.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filesys.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filtall.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filtfind.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fmapbase.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_arc.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_filter.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_mem.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fswatchercmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\hash.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\hashmap.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\init.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\intl.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ipcbase.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\languageinfo.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\list.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\log.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\longlong.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\memory.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\mimecmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\module.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\msgout.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\mstream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\numformatter.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\object.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\platinfo.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\powercmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\process.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\regex.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\sstream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stdpbase.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stdstream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stopwatch.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\strconv.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\string.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stringimpl.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stringops.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\strvararg.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\sysopt.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tarstrm.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textbuf.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textfile.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\threadinfo.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\time.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timercmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timerimpl.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tokenzr.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\translation.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\txtstrm.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\unichar.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\uri.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ustring.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\utilscmn.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\variant.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wfstream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wxcrt.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wxprintf.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xlocale.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xti.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xtistrm.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\zipstrm.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\zstream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\basemsw.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\crashrpt.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dde.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\debughlp.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dir.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dlmsw.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\evtloopconsole.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\fswatcher.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\main.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\mimetype.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\power.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\regconf.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\registry.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\snglinst.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\stackwalk.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\stdpaths.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\thread.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\timer.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\utils.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\utilsexc.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\volume.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\generic\fswatcherg.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\secretstore.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\secretstore.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\lzmastream.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\uilocale.cpp" />
+    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\uilocale.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="..\..\src\msw\version.rc">
-      <Filter>MSW Sources</Filter>
-    </ResourceCompile>
+    <ResourceCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\version.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\include\wx\afterstd.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\any.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\anystr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\app.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\apptrait.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\archive.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\arrimpl.cpp">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\arrstr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\atomic.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\base64.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\beforestd.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\buffer.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\build.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\chartype.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\checkeddelete.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\chkconf.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\clntdata.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\cmdargs.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\cmdline.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\compiler.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\confbase.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\config.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\containr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\convauto.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\cpp.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\crt.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\datetime.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\datstrm.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dde.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\debug.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\defs.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dir.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dlimpexp.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dlist.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dynarray.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dynlib.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\dynload.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\encconv.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\event.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\eventfilter.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\evtloop.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\evtloopsrc.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\except.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\features.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ffile.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\file.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fileconf.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\filefn.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\filename.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\filesys.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\flags.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fontenc.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fontmap.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fs_arc.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fs_filter.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fs_mem.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fs_zip.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\fswatcher.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\generic\fswatcher.h">
-      <Filter>Generic Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\hash.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\hashmap.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\hashset.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\iconloc.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\init.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\intl.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\iosfwrap.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ioswrap.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ipc.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ipcbase.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\kbdstate.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\language.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\link.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\list.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\listimpl.cpp">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\localedefs.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\log.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\longlong.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\lzmastream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\math.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\memconf.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\memory.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\memtext.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\convertible.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\if.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\implicitconversion.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\int2type.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\movable.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\pod.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\meta\removeref.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\mimetype.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\module.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\mousestate.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msgout.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msgqueue.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\mstream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\apptbase.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\apptrait.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\chkconf.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\crashrpt.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\dde.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\debughlp.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\evtloopconsole.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\fswatcher.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\gccpriv.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\libraries.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\mimetype.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\private.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\regconf.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\registry.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\seh.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\stackwalk.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\stdpaths.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\winundef.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\winver.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\wrapcctl.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\wrapcdlg.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\msw\wrapwin.h">
-      <Filter>MSW Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\numformatter.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\object.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\platform.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\platinfo.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\power.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\process.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ptr_scpd.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ptr_shrd.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\recguard.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\regex.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\rtti.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\scopedarray.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\scopedptr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\scopeguard.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\secretstore.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\sharedptr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\snglinst.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\sstream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stack.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stackwalk.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stdpaths.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stdstream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stockitem.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stopwatch.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\strconv.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\string.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stringimpl.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\stringops.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\strvararg.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\sysopt.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\tarstrm.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\textbuf.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\textfile.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\thread.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\thrimpl.cpp">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\time.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\timer.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\tls.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\tokenzr.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\tracker.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\translation.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\txtstrm.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\typeinfo.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\types.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\uilocale.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\unichar.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\uri.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\ustring.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\utils.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\variant.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\vector.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\version.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\versioninfo.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\volume.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\weakref.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wfstream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wx.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wxchar.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wxcrt.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wxcrtbase.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wxcrtvararg.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\wxprec.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xlocale.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xti.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xti2.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xtictor.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xtihandler.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xtiprop.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xtistrm.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\xtitypes.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\zipstrm.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\wx\zstream.h">
-      <Filter>Common Headers</Filter>
-    </ClInclude>
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\apptbase.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\apptrait.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\chkconf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\crashrpt.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\dde.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\debughlp.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\evtloopconsole.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\fswatcher.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\gccpriv.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\libraries.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\mimetype.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\private.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\regconf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\registry.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\seh.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stackwalk.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stdpaths.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\winundef.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\winver.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcctl.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcdlg.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapwin.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\generic\fswatcher.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\afterstd.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\any.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\anystr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\app.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\apptrait.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\archive.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\arrstr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\atomic.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\base64.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\beforestd.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\buffer.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\build.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\chartype.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\checkeddelete.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\chkconf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\clntdata.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\cmdargs.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\cmdline.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\confbase.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\config.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\containr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\convauto.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\convertible.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\cpp.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\crt.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\datetime.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\datstrm.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dde.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\debug.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\defs.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dir.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dlimpexp.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dlist.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dynarray.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dynlib.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dynload.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\encconv.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\event.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\eventfilter.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\evtloop.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\except.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\features.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ffile.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\file.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fileconf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filefn.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filename.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filesys.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\flags.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fontenc.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fontmap.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_arc.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_filter.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_mem.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_zip.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fswatcher.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hash.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hashmap.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hashset.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\iconloc.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\if.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\implicitconversion.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\init.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\int2type.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\intl.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\iosfwrap.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ioswrap.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ipc.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ipcbase.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\kbdstate.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\language.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\link.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\list.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\log.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\longlong.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\math.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memconf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memory.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memtext.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mimetype.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\module.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mousestate.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\movable.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msgout.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msgqueue.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mstream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\numformatter.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\object.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\platform.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\platinfo.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\pod.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\power.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\process.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ptr_scpd.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ptr_shrd.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\recguard.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\regex.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\rtti.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopedarray.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopedptr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopeguard.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sharedptr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\snglinst.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sstream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stack.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stackwalk.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stdpaths.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stdstream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stockitem.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stopwatch.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\strconv.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\string.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stringimpl.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stringops.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\strvararg.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sysopt.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tarstrm.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\textbuf.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\textfile.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\thread.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\time.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\timer.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tls.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tokenzr.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tracker.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\translation.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\txtstrm.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\typeinfo.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\types.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\unichar.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\uri.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ustring.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\utils.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\variant.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\vector.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\version.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\versioninfo.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\volume.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\weakref.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wfstream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wx.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxchar.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrt.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrtbase.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrtvararg.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxprec.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xlocale.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xti.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xti2.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtictor.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtihandler.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtiprop.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtistrm.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtitypes.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zipstrm.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zstream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\listimpl.cpp" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\removeref.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\compiler.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\thrimpl.cpp" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\arrimpl.cpp" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\secretstore.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\evtloopsrc.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\lzmastream.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\localedefs.h" />
+    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\uilocale.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\include\wx\msw\setup.h">
-      <Filter>Setup Headers</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\include\wx\msw\genrcdefs.h">
-      <Filter>MSW Headers</Filter>
-    </CustomBuild>
+    <CustomBuild Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\setup.h" />
+    <CustomBuild Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\genrcdefs.h" />
   </ItemGroup>
 </Project>

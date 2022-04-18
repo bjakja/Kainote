@@ -10,7 +10,7 @@
 #ifndef _WX_VERSIONINFO_H_
 #define _WX_VERSIONINFO_H_
 
-#include "wx/string.h"
+#include "wx\string.h"
 
 // ----------------------------------------------------------------------------
 // wxVersionInfo: represents version information

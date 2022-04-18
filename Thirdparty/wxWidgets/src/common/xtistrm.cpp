@@ -9,29 +9,29 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_EXTENDED_RTTI
 
-#include "wx/xtistrm.h"
+#include "wx\xtistrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/object.h"
-    #include "wx/hash.h"
-    #include "wx/event.h"
+    #include "wx\object.h"
+    #include "wx\hash.h"
+    #include "wx\event.h"
 #endif
 
-#include "wx/tokenzr.h"
-#include "wx/txtstrm.h"
+#include "wx\tokenzr.h"
+#include "wx\txtstrm.h"
 
 // STL headers:
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <map>
 #include <vector>
 #include <string>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 using namespace std;
 
 

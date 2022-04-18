@@ -11,9 +11,9 @@
 #ifndef _WX_ARRSTR_H
 #define _WX_ARRSTR_H
 
-#include "wx/defs.h"
-#include "wx/string.h"
-#include "wx/dynarray.h"
+#include "wx\defs.h"
+#include "wx\string.h"
+#include "wx\dynarray.h"
 
 #if wxUSE_STD_CONTAINERS_COMPATIBLY
     #include <vector>
@@ -150,9 +150,9 @@ private:
 
 #else // if !wxUSE_STD_CONTAINERS
 
-#include "wx/beforestd.h"
+#include "wx\beforestd.h"
 #include <iterator>
-#include "wx/afterstd.h"
+#include "wx\afterstd.h"
 
 class WXDLLIMPEXP_BASE wxArrayString
 {

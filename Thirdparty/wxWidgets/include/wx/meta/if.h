@@ -10,7 +10,7 @@
 #ifndef _WX_META_IF_H_
 #define _WX_META_IF_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 namespace wxPrivate
 {

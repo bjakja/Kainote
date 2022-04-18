@@ -11,8 +11,8 @@
 #ifndef _WX_HASHMAP_H_
 #define _WX_HASHMAP_H_
 
-#include "wx/string.h"
-#include "wx/wxcrt.h"
+#include "wx\string.h"
+#include "wx\wxcrt.h"
 
 // In wxUSE_STD_CONTAINERS build we prefer to use the standard hash map class
 // but it can be either in non-standard hash_map header (old g++ and some other

@@ -11,7 +11,7 @@
 #ifndef _WX_DDE_H_BASE_
 #define _WX_DDE_H_BASE_
 
-#include "wx/list.h"
+#include "wx\list.h"
 
 class WXDLLIMPEXP_FWD_BASE wxDDEClient;
 class WXDLLIMPEXP_FWD_BASE wxDDEServer;
@@ -22,7 +22,7 @@ WX_DECLARE_USER_EXPORTED_LIST(wxDDEServer, wxDDEServerList, WXDLLIMPEXP_BASE);
 WX_DECLARE_USER_EXPORTED_LIST(wxDDEConnection, wxDDEConnectionList, WXDLLIMPEXP_BASE);
 
 #if defined(__WINDOWS__)
-    #include "wx/msw/dde.h"
+    #include "wx\msw/dde.h"
 #else
     #error DDE is only supported under Windows
 #endif

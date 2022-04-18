@@ -22,7 +22,7 @@
 #include <unicode/localpointer.h>
 #include <unicode/putil.h>
 #include <unicode/ushape.h>
-#include <windows.h>
+//#include <windows.h>
 
 void ConvertToRTL(wxString* textin, wxString* textout)
 {
@@ -343,7 +343,7 @@ void BIDIConvert(wxString* text)
 
 	ubiditransform_close(transform);
 	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
+	const wchar_t* result = reinterpret_cast<const wchar_t*>(result16.c_str());
 
 	(*text) = wxString(result);
 	free(text2);
@@ -374,7 +374,7 @@ void BIDIReverseConvert(wxString* text)
 
 	ubiditransform_close(transform);
 	std::u16string result16(text2);
-	const wchar_t* result = reinterpret_cast<LPCWSTR>(result16.c_str());
+	const wchar_t* result = reinterpret_cast<const wchar_t*>(result16.c_str());
 
 	(*text) = wxString(result);
 	free(text2);

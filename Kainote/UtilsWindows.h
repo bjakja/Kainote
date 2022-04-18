@@ -16,9 +16,10 @@
 #pragma once
 #undef GetClassInfo
 
-#include <windows.h>
+//
 #include <vector>
 #include <wx/dc.h>
+#include <windows.h>
 
 wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
 wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect);

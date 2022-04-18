@@ -10,11 +10,11 @@
 #ifndef _WX_WEAKREF_H_
 #define _WX_WEAKREF_H_
 
-#include "wx/tracker.h"
+#include "wx\tracker.h"
 
 
-#include "wx/meta/convertible.h"
-#include "wx/meta/int2type.h"
+#include "wx\meta/convertible.h"
+#include "wx\meta/int2type.h"
 
 template <class T>
 struct wxIsStaticTrackable

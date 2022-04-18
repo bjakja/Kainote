@@ -18,19 +18,19 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_INTL
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
-    #include "wx/utils.h"
-    #include "wx/app.h"
-    #include "wx/hashmap.h"
-    #include "wx/module.h"
+    #include "wx\string.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
+    #include "wx\utils.h"
+    #include "wx\app.h"
+    #include "wx\hashmap.h"
+    #include "wx\module.h"
 #endif // WX_PRECOMP
 
 #include <locale.h>
@@ -42,28 +42,28 @@
     #include <langinfo.h>
 #endif
 
-#include "wx/file.h"
-#include "wx/filename.h"
-#include "wx/tokenzr.h"
-#include "wx/fontmap.h"
-#include "wx/scopedptr.h"
-#include "wx/apptrait.h"
-#include "wx/stdpaths.h"
-#include "wx/hashset.h"
-#include "wx/uilocale.h"
+#include "wx\file.h"
+#include "wx\filename.h"
+#include "wx\tokenzr.h"
+#include "wx\fontmap.h"
+#include "wx\scopedptr.h"
+#include "wx\apptrait.h"
+#include "wx\stdpaths.h"
+#include "wx\hashset.h"
+#include "wx\uilocale.h"
 
-#include "wx/private/uilocale.h"
+#include "wx\private/uilocale.h"
 
 #ifdef __WIN32__
-    #include "wx/msw/private/uilocale.h"
+    #include "wx\msw/private/uilocale.h"
 #elif defined(__WXOSX__)
-    #include "wx/osx/core/cfref.h"
-    #include "wx/osx/core/cfstring.h"
+    #include "wx\osx/core/cfref.h"
+    #include "wx\osx/core/cfstring.h"
     #include <CoreFoundation/CFLocale.h>
     #include <CoreFoundation/CFDateFormatter.h>
     #include <CoreFoundation/CFString.h>
 #elif defined(__UNIX__)
-    #include "wx/unix/private/uilocale.h"
+    #include "wx\unix/private/uilocale.h"
 #endif
 
 // ----------------------------------------------------------------------------

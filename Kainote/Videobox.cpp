@@ -14,14 +14,6 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-#include <wx/clipbrd.h>
-#include <wx/gdicmn.h>
-#include <wx/regex.h>
-#include <wx/dir.h>
-#include <wx/dc.h>
-#include <wx/dcclient.h>
-#include "UtilsWindows.h"
 #include "Videobox.h"
 #include "KainoteMain.h"
 #include "Hotkeys.h"
@@ -30,6 +22,13 @@
 #include "KaiStaticText.h"
 #include "RendererDirectShow.h"
 #include "RendererFFMS2.h"
+#include <wx/clipbrd.h>
+#include <wx/gdicmn.h>
+#include <wx/regex.h>
+#include <wx/dir.h>
+#include <wx/dc.h>
+#include <wx/dcclient.h>
+#include "UtilsWindows.h"
 #include <shellapi.h>
 
 #undef DrawText

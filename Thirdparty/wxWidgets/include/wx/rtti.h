@@ -18,7 +18,7 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/memory.h"
+#include "wx\memory.h"
 
 // ----------------------------------------------------------------------------
 // forward declarations
@@ -214,7 +214,7 @@ WXDLLIMPEXP_BASE wxObject *wxCreateDynamicObject(const wxString& name);
 // XTI-compatible macros
 // -----------------------------------
 
-#include "wx/flags.h"
+#include "wx\flags.h"
 
 // these macros only do something when wxUSE_EXTENDED_RTTI=1
 // (and in that case they are defined by xti.h); however to avoid

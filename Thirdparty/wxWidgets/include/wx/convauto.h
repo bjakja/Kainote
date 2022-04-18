@@ -10,8 +10,8 @@
 #ifndef _WX_CONVAUTO_H_
 #define _WX_CONVAUTO_H_
 
-#include "wx/strconv.h"
-#include "wx/fontenc.h"
+#include "wx\strconv.h"
+#include "wx\fontenc.h"
 
 // ----------------------------------------------------------------------------
 // wxConvAuto: uses BOM to automatically detect input encoding

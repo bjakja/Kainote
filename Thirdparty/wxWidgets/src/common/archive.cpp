@@ -7,12 +7,12 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS && wxUSE_ARCHIVE_STREAMS
 
-#include "wx/archive.h"
+#include "wx\archive.h"
 
 wxIMPLEMENT_ABSTRACT_CLASS(wxArchiveEntry, wxObject);
 wxIMPLEMENT_ABSTRACT_CLASS(wxArchiveClassFactory, wxFilterClassFactoryBase);

@@ -10,7 +10,7 @@
 #ifndef _WX_TLS_H_
 #define _WX_TLS_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 // ----------------------------------------------------------------------------
 // check for compiler support of thread-specific variables
@@ -55,9 +55,9 @@
     }
 
     #if defined(__WINDOWS__)
-        #include "wx/msw/tls.h"
+        #include "wx\msw/tls.h"
     #elif defined(__UNIX__)
-        #include "wx/unix/tls.h"
+        #include "wx\unix/tls.h"
     #else
         // TODO: we could emulate TLS for such platforms...
         #error Neither compiler nor OS support thread-specific variables.

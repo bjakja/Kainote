@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_FILE
@@ -48,7 +48,7 @@
     #include  <time.h>
     #include  <sys/stat.h>
     #ifdef __GNUWIN32__
-        #include "wx/msw/wrapwin.h"
+        #include "wx\msw/wrapwin.h"
     #endif
 #elif (defined(__WXSTUBS__))
     // Have to ifdef this for different environments
@@ -83,15 +83,15 @@
 
 // wxWidgets
 #ifndef WX_PRECOMP
-    #include  "wx/string.h"
-    #include  "wx/intl.h"
-    #include  "wx/log.h"
-    #include "wx/crt.h"
+    #include  "wx\string.h"
+    #include  "wx\intl.h"
+    #include  "wx\log.h"
+    #include "wx\crt.h"
 #endif // !WX_PRECOMP
 
-#include  "wx/filename.h"
-#include  "wx/file.h"
-#include  "wx/filefn.h"
+#include  "wx\filename.h"
+#include  "wx\file.h"
+#include  "wx\filefn.h"
 
 // there is no distinction between text and binary files under Unix, so define
 // O_BINARY as 0 if the system headers don't do it already

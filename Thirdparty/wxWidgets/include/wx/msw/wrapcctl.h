@@ -11,12 +11,12 @@
 #ifndef _WX_MSW_WRAPCCTL_H_
 #define _WX_MSW_WRAPCCTL_H_
 
-#include "wx/msw/wrapwin.h"
+#include "wx\msw/wrapwin.h"
 
 #include <commctrl.h>
 
 // define things which might be missing from our commctrl.h
-#include "wx/msw/missing.h"
+#include "wx\msw/missing.h"
 
 // Set Unicode format for a common control
 inline void wxSetCCUnicodeFormat(HWND hwnd)

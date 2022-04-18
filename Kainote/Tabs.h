@@ -20,7 +20,7 @@
 #include <wx/timer.h>
 #include <wx/dialog.h>
 #include <vector>
-#include <windows.h>
+//#include <windows.h>
 
 class TabPanel;
 class SubsGrid;

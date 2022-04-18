@@ -18,21 +18,21 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/stream.h"
+#include "wx\stream.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/log.h"
+    #include "wx\log.h"
 #endif
 
 #include <ctype.h>
-#include "wx/datstrm.h"
-#include "wx/textfile.h"
-#include "wx/scopeguard.h"
+#include "wx\datstrm.h"
+#include "wx\textfile.h"
+#include "wx\scopeguard.h"
 
 // ----------------------------------------------------------------------------
 // constants

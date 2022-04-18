@@ -44,7 +44,7 @@ pcre2_def_match(). */
 
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+#include "wx\config.h"
 #endif
 
 

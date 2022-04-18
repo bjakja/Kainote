@@ -14,14 +14,14 @@
 // ===========================================================================
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #ifndef WX_PRECOMP
-    #include "wx/string.h"
-    #include "wx/wxcrtvararg.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\string.h"
+    #include "wx\wxcrtvararg.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif
 
 #include <ctype.h>
@@ -31,12 +31,12 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "wx/hashmap.h"
-#include "wx/vector.h"
-#include "wx/xlocale.h"
+#include "wx\hashmap.h"
+#include "wx\vector.h"
+#include "wx\xlocale.h"
 
 #ifdef __WINDOWS__
-    #include "wx/msw/wrapwin.h"
+    #include "wx\msw/wrapwin.h"
 #endif // __WINDOWS__
 
 #if wxUSE_STD_IOSTREAM

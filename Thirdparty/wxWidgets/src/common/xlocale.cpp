@@ -16,16 +16,16 @@
 // headers
 // ----------------------------------------------------------------------------
 
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_XLOCALE
 
 #ifndef WX_PRECOMP
-    #include "wx/module.h"
+    #include "wx\module.h"
 #endif
 
-#include "wx/xlocale.h"
+#include "wx\xlocale.h"
 
 #include <errno.h>
 #include <locale.h>

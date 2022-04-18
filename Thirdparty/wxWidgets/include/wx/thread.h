@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------
 
 // get the value of wxUSE_THREADS configuration flag
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_THREADS
 

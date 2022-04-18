@@ -14,8 +14,8 @@
 
 #if wxUSE_SNGLINST_CHECKER
 
-#include "wx/app.h"
-#include "wx/utils.h"
+#include "wx\app.h"
+#include "wx\utils.h"
 
 // ----------------------------------------------------------------------------
 // wxSingleInstanceChecker

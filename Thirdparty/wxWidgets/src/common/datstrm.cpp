@@ -9,15 +9,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
 #if wxUSE_STREAMS
 
-#include "wx/datstrm.h"
+#include "wx\datstrm.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/math.h"
+    #include "wx\math.h"
 #endif //WX_PRECOMP
 
 namespace

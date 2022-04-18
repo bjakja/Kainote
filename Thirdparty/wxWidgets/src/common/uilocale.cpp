@@ -16,20 +16,20 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 #if wxUSE_INTL
 
-#include "wx/uilocale.h"
+#include "wx\uilocale.h"
 
-#include "wx/arrstr.h"
-#include "wx/intl.h"
+#include "wx\arrstr.h"
+#include "wx\intl.h"
 
 #ifndef __WINDOWS__
-    #include "wx/language.h"
+    #include "wx\language.h"
 #endif
 
-#include "wx/private/uilocale.h"
+#include "wx\private/uilocale.h"
 
 // ----------------------------------------------------------------------------
 // helper functions

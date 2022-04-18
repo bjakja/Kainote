@@ -11,11 +11,11 @@
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_APPLE_IEEE
 
-#include "wx/math.h"
+#include "wx\math.h"
 
 /* Copyright (C) 1989-1991 Ken Turkowski. <turk@computer.org>
  *

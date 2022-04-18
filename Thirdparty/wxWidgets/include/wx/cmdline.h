@@ -12,11 +12,11 @@
 #ifndef _WX_CMDLINE_H_
 #define _WX_CMDLINE_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
-#include "wx/string.h"
-#include "wx/arrstr.h"
-#include "wx/cmdargs.h"
+#include "wx\string.h"
+#include "wx\arrstr.h"
+#include "wx\cmdargs.h"
 
 // determines ConvertStringToArgs() behaviour
 enum wxCmdLineSplitType

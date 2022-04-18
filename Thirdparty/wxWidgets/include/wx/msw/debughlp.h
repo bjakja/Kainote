@@ -10,12 +10,12 @@
 #ifndef _WX_MSW_DEBUGHLPH_H_
 #define _WX_MSW_DEBUGHLPH_H_
 
-#include "wx/defs.h"
+#include "wx\defs.h"
 
 #if wxUSE_DBGHELP
 
-#include "wx/dynlib.h"
-#include "wx/msw/wrapwin.h"
+#include "wx\dynlib.h"
+#include "wx\msw/wrapwin.h"
 
 #ifdef __VISUALC__
     // Disable a warning that we can do nothing about: we get it at least for
@@ -32,7 +32,7 @@
   #pragma warning(pop)
 #endif
 
-#include "wx/msw/private.h"
+#include "wx\msw/private.h"
 
 /*
 

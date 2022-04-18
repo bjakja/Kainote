@@ -13,6 +13,6 @@
 
 // This header used to define CRT functions wrappers in wxWidgets 2.8. This is
 // now done in (headers included by) wx/crt.h, so include it for compatibility:
-#include "wx/crt.h"
+#include "wx\crt.h"
 
 #endif /* _WX_WXCHAR_H_ */

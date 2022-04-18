@@ -20,20 +20,37 @@
  **************************************************************/
 
 #include "KainoteApp.h"
+#include "OpennWrite.h"
+#include "Hotkeys.h"
+#include "KaiMessageBox.h"
+#include "FontEnumerator.h"
 #include <wx/image.h>
 #include <wx/ipc.h>
 #include <wx/utils.h>
-#include <locale.h>
-#include "UtilsWindows.h"
-#include "OpennWrite.h"
-#include "Hotkeys.h"
 #include <wx/intl.h>
-#include "KaiMessageBox.h"
-#include "FontEnumerator.h"
+//#include <locale.h>
+#include "UtilsWindows.h"
+
 #include <DbgHelp.h>
 #include <signal.h>
 
-//wxDEFINE_EVENT(EVT_OPEN, wxThreadEvent);
+//typedef struct _SYMBOL_INFO {
+//	ULONG       SizeOfStruct;
+//	ULONG       TypeIndex;        // Type Index of symbol
+//	ULONG64     Reserved[2];
+//	ULONG       Index;
+//	ULONG       Size;
+//	ULONG64     ModBase;          // Base Address of module comtaining this symbol
+//	ULONG       Flags;
+//	ULONG64     Value;            // Value of symbol, ValuePresent should be 1
+//	ULONG64     Address;          // Address of symbol including base address of module
+//	ULONG       Register;         // register holding value or pointer to value
+//	ULONG       Scope;            // scope of the symbol
+//	ULONG       Tag;              // pdb classification
+//	ULONG       NameLen;          // Actual length of name
+//	ULONG       MaxNameLen;
+//	CHAR        Name[1];          // Name of symbol
+//} SYMBOL_INFO, * PSYMBOL_INFO;
 
 void seg_handler(int sig)
 {

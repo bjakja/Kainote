@@ -9,15 +9,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include "wx\wxprec.h"
 
 
-#include "wx/module.h"
+#include "wx\module.h"
 
 #ifndef WX_PRECOMP
-    #include "wx/hash.h"
-    #include "wx/intl.h"
-    #include "wx/log.h"
+    #include "wx\hash.h"
+    #include "wx\intl.h"
+    #include "wx\log.h"
 #endif
 
 #define TRACE_MODULE wxT("module")
