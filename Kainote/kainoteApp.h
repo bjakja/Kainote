@@ -20,7 +20,7 @@
  **************************************************************/
 
 #pragma once
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include <wx/app.h>
 #include <wx/snglinst.h>
 

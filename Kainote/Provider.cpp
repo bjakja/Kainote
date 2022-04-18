@@ -167,8 +167,8 @@ void Provider::OpenKeyframes(const wxString& filename)
 	if (keyframes.size()) {
 		m_keyFrames = keyframes;
 		TabPanel* tab = (m_renderer) ? (TabPanel*)m_renderer->videoControl->GetParent() : Notebook::GetTab();
-		if (tab->Edit->ABox) {
-			tab->Edit->ABox->SetKeyframes(keyframes);
+		if (tab->edit->ABox) {
+			tab->edit->ABox->SetKeyframes(keyframes);
 		}
 	}
 	else {

@@ -79,10 +79,10 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	bool fromFile = false;
 	switch (flag){
 	case OPEN_DUMMY:
-		textsubs = tab->Grid->GetVisible();
+		textsubs = tab->grid->GetVisible();
 		break;
 	case OPEN_WHOLE_SUBTITLES:
-		textsubs = tab->Grid->SaveText();
+		textsubs = tab->grid->SaveText();
 		fromFile = true;
 		break;
 	case CLOSE_SUBTITLES:
@@ -92,7 +92,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 		break;
 	}
 
-	RendererVideo* renderer = tab->Video->GetRenderer();
+	RendererVideo* renderer = tab->video->GetRenderer();
 	if (!renderer){
 		delete textsubs;
 		return false;

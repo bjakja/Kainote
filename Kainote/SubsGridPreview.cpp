@@ -16,7 +16,7 @@
 #include "SubsGridPreview.h"
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "Config.h"
 #include <wx/regex.h>
 
@@ -84,11 +84,11 @@ void SubsGridPreview::DestroyPreview(bool refresh, bool destroyingPreviewTab)
 	previewGrid->thisPreview = nullptr;
 	if (!Options.GetClosing()){
 		TabPanel *tab = (destroyingPreviewTab) ? (TabPanel*)previewGrid->GetParent() : (TabPanel*)parent->GetParent();
-		tab->Edit->SetGrid(tab->Grid);
-		if (tab->Edit->TextEditOrig->IsShown() != tab->Grid->hasTLMode){
-			tab->Edit->SetTlMode(tab->Grid->hasTLMode, true);
+		tab->edit->SetGrid(tab->grid);
+		if (tab->edit->TextEditOrig->IsShown() != tab->grid->hasTLMode){
+			tab->edit->SetTlMode(tab->grid->hasTLMode, true);
 		}
-		tab->Edit->SetLine(tab->Grid->currentLine);
+		tab->edit->SetLine(tab->grid->currentLine);
 
 		if (refresh)
 			parent->Refresh(false);
@@ -201,7 +201,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	Dialogue *acdial = previewGrid->GetDialogue(previewGrid->currentLine);
 	Dialogue *Dial = nullptr;
 
-	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
+	int VideoPos = tab->video->GetState() != None ? tab->video->Tell() : -1;
 
 	int fw, fh, bfw, bfh;
 	wxColour kol;
@@ -304,8 +304,8 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
 
-			if (previewGrid->showFrames && tab->Video->HasFFMS2()){
-				Provider *FFMS2 = tab->Video->GetFFMS2();
+			if (previewGrid->showFrames && tab->video->HasFFMS2()){
+				Provider *FFMS2 = tab->video->GetFFMS2();
 				wxString frame;
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
@@ -534,7 +534,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
 
 	if (event.ButtonDown())
-		tabp->Edit->SetGrid(previewGrid, true);
+		tabp->edit->SetGrid(previewGrid, true);
 
 	int ScrollAndBord = scrollbar->GetThickness() + 4;
 
@@ -602,10 +602,10 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 						if (previewGrid->currentLine < size)
 							previewGrid->file->InsertSelection(previewGrid->currentLine);
 						else
-							tab->Edit->SetLine(size - 1);
+							tab->edit->SetLine(size - 1);
 					}
 					else
-						tab->Edit->SetLine(firstSel);
+						tab->edit->SetLine(firstSel);
 				}
 			}
 			else if (right){
@@ -616,10 +616,10 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 	}
 	// Seeking video by click on numeration column
 	if (click && isNumerizeColumn){
-		if (tabp->Video->GetState() != None && !(row < previewGrid->scrollPosition || row >= size)){
-			if (tabp->Video->GetState() != Paused){
-				if (tabp->Video->GetState() == Stopped){ tabp->Video->Play(); }
-				tabp->Video->Pause();
+		if (tabp->video->GetState() != None && !(row < previewGrid->scrollPosition || row >= size)){
+			if (tabp->video->GetState() != Paused){
+				if (tabp->video->GetState() == Stopped){ tabp->video->Play(); }
+				tabp->video->Pause();
 			}
 			int vtime = 0;
 			bool isstart = true;
@@ -632,7 +632,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 				isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tabp->Video->Seek(MAX(0, vtime), isstart, true, false);
+			tabp->video->Seek(MAX(0, vtime), isstart, true, false);
 		}
 		return;
 	}
@@ -701,7 +701,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		Refresh(false);
 		return;
 	}
-	VideoCtrl *video = tabp->Video;
+	VideoCtrl *video = tabp->video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	if (!(row < previewGrid->scrollPosition || row >= size)) {
 
@@ -725,11 +725,11 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			//jakbym chcia³ znów daæ zmianê edytowanej linii z ctrl to muszê dorobiæ mu refresh
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				previewGrid->lastActiveLine = previewGrid->currentLine;
-				tabp->Edit->SetLine(row, true, true, true, !ctrl);
+				tabp->edit->SetLine(row, true, true, true, !ctrl);
 				if (!previewGrid->Comparison)
-					tab->Edit->SetLine(row, true, true, true, !ctrl);
+					tab->edit->SetLine(row, true, true, true, !ctrl);
 
-				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
+				if (previewGrid->hasTLMode){ tab->edit->SetActiveLineToDoubtful(); }
 				if (changeActive)
 					Refresh(false);
 				if (!ctrl || dclick){
@@ -749,7 +749,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			//3-klikniêcie lewym i edycja na pauzie i odtwarzaniu
 
 			//if (dclick || (click && previewGrid->lastActiveLine != row && mvtal < 4 && mvtal > 0) && pas < 2){
-			//tabp->Grid->SetVideoLineTime(event, mvtal);
+			//tabp->grid->SetVideoLineTime(event, mvtal);
 			//}
 
 			if (click || dclick || left_up)
@@ -797,8 +797,8 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 			previewGrid->file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				previewGrid->lastActiveLine = previewGrid->currentLine;
-				tab->Edit->SetLine(row, true, true, false);
-				if (previewGrid->hasTLMode){ tab->Edit->SetActiveLineToDoubtful(); }
+				tab->edit->SetLine(row, true, true, false);
+				if (previewGrid->hasTLMode){ tab->edit->SetActiveLineToDoubtful(); }
 
 			}
 			previewGrid->lastsel = row;
@@ -838,7 +838,7 @@ void SubsGridPreview::SeekForOccurences()
 {
 	if (lastData.grid){ lastData.grid->thisPreview = nullptr; }
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	Dialogue * actualDial = parent->GetDialogue(tabp->Grid->currentLine);
+	Dialogue * actualDial = parent->GetDialogue(tabp->grid->currentLine);
 	int startTime = actualDial->Start.mstime;
 	int endTime = actualDial->End.mstime;
 	Notebook * nb = Notebook::GetTabs();
@@ -847,7 +847,7 @@ void SubsGridPreview::SeekForOccurences()
 	int tabI = 0;
 	for (int i = 0; i < nb->Size(); i++){
 		TabPanel *tab = nb->Page(i);
-		SubsFile *subs = tab->Grid->file;
+		SubsFile *subs = tab->grid->file;
 		if (thisSubs == subs){ continue; }
 		int lastLine = -2;
 		int startMin = INT_MAX;
@@ -866,7 +866,7 @@ void SubsGridPreview::SeekForOccurences()
 				}
 				else{
 					lastLine = j;
-					previewData.push_back(MultiPreviewData(tab, tab->Grid, j));
+					previewData.push_back(MultiPreviewData(tab, tab->grid, j));
 				}
 			}
 			else {
@@ -905,7 +905,7 @@ void SubsGridPreview::SeekForOccurences()
 				bestJ = bestJE;
 			}
 			//bestJ jest naszym wynikiem w tym przypadku, nie potrzebujemy samego czasu który jest najlepszy
-			previewData.push_back(MultiPreviewData(tab, tab->Grid, bestJ, 0));
+			previewData.push_back(MultiPreviewData(tab, tab->grid, bestJ, 0));
 		}
 		tabI++;
 	}
@@ -938,7 +938,7 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	if (lastData.grid){ lastData.grid->thisPreview = nullptr; }
 	lastData = previewData[line];
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
-	tabp->Edit->SetGrid(parent);
+	tabp->edit->SetGrid(parent);
 	previewGrid = previewData[line].grid;
 	previewGrid->thisPreview = this;
 	previewGrid->ChangeActiveLine(previewData[line].lineRangeStart);

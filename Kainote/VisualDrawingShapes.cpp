@@ -191,7 +191,7 @@ void ShapesEdition::OnListChanged(wxCommandEvent& evt)
 void ShapesEdition::OnGetShapeFromLine(wxCommandEvent& evt)
 {
 	wxString tags[] = { L"p" };
-	ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
+	ParseData* pdata = tab->edit->line->ParseTags(tags, 1);
 	if (pdata->tags.size()) {
 		for (size_t i = 0; i < pdata->tags.size(); i++) {
 			TagData* tag = pdata->tags[i];
@@ -359,7 +359,7 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 	int x, y;
 	evt.GetPosition(&x, &y);
 	if (evt.ButtonUp()) {
-		if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()) { tab->video->ReleaseMouse(); }
 		if (rectangleVisible) {
 			if (drawingRectangle[1].y == drawingRectangle[0].y ||
 				drawingRectangle[1].x == drawingRectangle[0].x)
@@ -372,7 +372,7 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 			SetClip(false);
 		}
 
-		if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
 	}
 
 	if (!holding && rectangleVisible) {
@@ -381,14 +381,14 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 		int test = HitTest(D3DXVECTOR2(x, y));
 		if (test < INSIDE) {
 			setarrow = true;
-			tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+			tab->video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 				(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 				(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 		}
-		if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!setarrow) { tab->video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click || evt.LeftDClick()) {
-		if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+		if (!tab->video->HasCapture()) { tab->video->CaptureMouse(); }
 		grabbed = OUTSIDE;
 		D3DXVECTOR2 point = PointToSubtitles(x, y);
 		if (rectangleVisible) {
@@ -460,7 +460,7 @@ void Shapes::OnMouseEvent(wxMouseEvent& evt)
 		if (rectangleVisible)
 			SetClip(true);
 		else
-			tab->Video->Render(false);
+			tab->video->Render(false);
 	}
 }
 

@@ -38,7 +38,7 @@
 // Headers
 //#include "Utils.h"
 #include "AudioBox.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 //#include "Config.h"
 #include "MappedButton.h"
 #include <math.h>
@@ -67,7 +67,7 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 
 	audioDisplay->ScrollBar = audioScroll;
 	audioDisplay->box = this;
-	audioDisplay->Edit = (EditBox*)parent;
+	audioDisplay->edit = (EditBox*)parent;
 	audioDisplay->grid = (SubsGrid*)Wgrid;
 	audioDisplay->tab = (TabPanel *)parent->GetParent();
 	// Zoom
@@ -613,13 +613,13 @@ void AudioBox::SetAccels()
 			//do nothing
 		}
 		else if (itype.id < 3000){
-			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->Video, itype.id);
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->video, itype.id);
 		}
 		else if (itype.id < 4000){
-			Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, tab->Edit, itype.id);
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, tab->edit, itype.id);
 		}
 		else if (itype.id < 5000){
-			Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, tab->Grid, itype.id);
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, tab->grid, itype.id);
 		}
 		/*else{
 			Notebook *nt = Notebook::GetTabs();

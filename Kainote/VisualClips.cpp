@@ -207,11 +207,11 @@ void DrawingAndClip::SetCurVisual()
 	}
 	else{
 		isDrawing = true;
-		bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == emptyString);
+		bool isOriginal = (tab->grid->hasTLMode && tab->edit->TextEdit->GetValue() == emptyString);
 		//editor
-		//TextEditor *editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+		//TextEditor *editor = (isOriginal) ? tab->edit->TextEditOrig : tab->edit->TextEdit;
 		wxString tags[] = { L"p" };
-		ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
+		ParseData* pdata = tab->edit->line->ParseTags(tags, 1);
 		if (pdata->tags.size() >= 2){
 			size_t i = 1;
 			while (i < pdata->tags.size()){
@@ -229,7 +229,7 @@ void DrawingAndClip::SetCurVisual()
 				i++;
 			}
 		}
-		tab->Edit->line->ClearParse();
+		tab->edit->line->ClearParse();
 		_x = linepos.x / scale.x;
 		_y = (linepos.y / scale.y);
 		coeffW /= scale.x;
@@ -241,7 +241,7 @@ void DrawingAndClip::SetCurVisual()
 			frz = frzd;
 		}
 		else {
-			Styles* actualStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+			Styles* actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
 			double result = 0.;
 			actualStyle->Angle.ToDouble(&result);
 			frz = result;
@@ -343,8 +343,8 @@ void DrawingAndClip::GetVisual(wxString *visual)
 void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 {
 
-	EditBox *edit = tab->Edit;
-	SubsGrid *grid = tab->Grid;
+	EditBox *edit = tab->edit;
+	SubsGrid *grid = tab->grid;
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == emptyString);
 	//GLOBAL_EDITOR
 	TextEditor *editor = (isOriginal) ? edit->TextEditOrig : edit->TextEdit;
@@ -355,7 +355,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		wxString *dtxt;
 		wxArrayInt sels;
 		grid->file->GetSelections(sels);
-		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
+		bool skipInvisible = dummy && tab->video->GetState() != Playing;
 		if ((dummy && !dummytext) || selPositions.size() != sels.size()) {
 			bool visible = false;
 			selPositions.clear();
@@ -366,9 +366,9 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			}
 		}
 		if (dummy) { dtxt = new wxString(*dummytext); }
-		int _time = tab->Video->Tell();
+		int _time = tab->video->Tell();
 		int moveLength = 0;
-		const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
+		const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++) {
 
 			Dialogue *Dial = grid->GetDialogue(sels[i]);
@@ -404,7 +404,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 		}
 
 		if (!dummy) {
-			tab->Video->SetVisualEdition(true);
+			tab->video->SetVisualEdition(true);
 			if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
 			//dummy = true cause of deselecting points with multiline editing
 			//SetClip() should not be used
@@ -432,8 +432,8 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			}
 			return;
 		}
-		tab->Video->SetVisualEdition(false);
-		RenderSubs(tab->Grid->GetVisible(), redraw);
+		tab->video->SetVisualEdition(false);
+		RenderSubs(tab->grid->GetVisible(), redraw);
 		return;
 	}
 	if (dummy) {
@@ -505,7 +505,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 			}
 		}
 
-		//tab->Video->SetVisualEdition(false);
+		//tab->video->SetVisualEdition(false);
 		wxString *dtxt = new wxString(*dummytext);
 		RenderSubs(dtxt, redraw);
 
@@ -514,7 +514,7 @@ void DrawingAndClip::SetClip(bool dummy, bool redraw, bool changeEditorText)
 
 		editor->SetModified();
 		edit->UpdateChars();
-		tab->Video->SetVisualEdition(true);
+		tab->video->SetVisualEdition(true);
 		if (edit->splittedTags) { edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == VECTORCLIP) ? VISUAL_VECTOR_CLIP : VISUAL_DRAWING, false, false, true);
 	}
@@ -850,7 +850,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if (event.GetWheelRotation() != 0) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		tool -= step;
-		VideoCtrl *vc = tab->Video;
+		VideoCtrl *vc = tab->video;
 		vc->GetVideoToolbar()->SetItemToggled(&tool);
 		return;
 	}
@@ -872,30 +872,30 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		if (pos != -1/* && hasArrow*//* && !ctrl*/){
 			acpoint = Points[pos];
 			lastpos = pos;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 			
 		}
-		else if (pos == -1 /*&& !tab->Video->HasArrow()*/){
+		else if (pos == -1 /*&& !tab->video->HasArrow()*/){
 			if (lastpos >= 0 && lastpos < (int)psize){
 				lastpos = -1;
-				tab->Video->Render(false);
+				tab->video->Render(false);
 			}
 		}
 		if (tool >= 1 && tool <= 3 && pos == -1 && !event.Leaving()){
 			if (psize < 1){ return; }
 			drawToolLines = true;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 		else if (drawToolLines){
 			drawToolLines = false;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 		if (!drawSelection){
-			if (tool == 0 || pos != -1 || tool > 3){ drawCross = true; tab->Video->Render(false); }
+			if (tool == 0 || pos != -1 || tool > 3){ drawCross = true; tab->video->Render(false); }
 		}
 		if (event.Leaving() && drawCross){
 			drawCross = false;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 	}
 
@@ -907,10 +907,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		}
 		else{
 			drawSelection = false;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
-		if (tab->Video->HasCapture()){
-			tab->Video->ReleaseMouse();
+		if (tab->video->HasCapture()){
+			tab->video->ReleaseMouse();
 		}
 		return;
 	}
@@ -1001,7 +1001,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 				grabbed = i;
 				diffs.x = pointx - zx;
 				diffs.y = pointy - zy;
-				tab->Video->CaptureMouse();
+				tab->video->CaptureMouse();
 				firstmove = D3DXVECTOR2(zx, zy);
 				break;
 			}
@@ -1056,10 +1056,10 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 			AddMove(xy, pos);
 			SetClip(true);
 			tool = 1;
-			tab->Video->GetVideoToolbar()->SetItemToggled(&tool);
+			tab->video->GetVideoToolbar()->SetItemToggled(&tool);
 		}
 		else if (grabbed == -1){
-			tab->Video->CaptureMouse();
+			tab->video->CaptureMouse();
 			drawSelection = true;
 			drawCross = false;
 			selection = wxRect(x, y, x, y);
@@ -1114,7 +1114,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		selection.width = x;
 		selection.height = y;
 		SelectPoints();
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 
 
@@ -1201,7 +1201,7 @@ void DrawingAndClip::OnKeyPress(wxKeyEvent &evt)
 	int keyCode = evt.GetKeyCode();
 	if (evt.ControlDown() && keyCode == L'A'){
 		ChangeSelection(true);
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 	else if(keyCode == L'W' || keyCode == L'S' || keyCode == L'A' || keyCode == L'D'){
 		float x = 0; float y = 0;
@@ -1296,7 +1296,7 @@ void DrawingAndClip::CreateClipMask(const wxString& clip, wxString * clipTag)
 {
 	int nx = SubsSize.x, ny = SubsSize.y;
 	
-	Dialogue *maskDialogue = tab->Edit->line->Copy();
+	Dialogue *maskDialogue = tab->edit->line->Copy();
 	wxString tmp;
 
 	if (!clip.empty() && (clipTag || 
@@ -1317,7 +1317,7 @@ void DrawingAndClip::CreateClipMask(const wxString& clip, wxString * clipTag)
 
 void DrawingAndClip::InvertClip()
 {
-	SubsGrid* grid = tab->Grid;
+	SubsGrid* grid = tab->grid;
 	wxArrayInt sels;
 	grid->file->GetSelections(sels);
 	wxRegEx re(L"\\\\(i?clip)\\(([^)]*)\\)", wxRE_ADVANCED);
@@ -1413,7 +1413,7 @@ void DrawingAndClip::ChangeTool(int _tool, bool blockSetCurVisual) {
 		}
 		shapeSelection = shapeSelectionNew;
 		if (needRefresh) {
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 	}
 

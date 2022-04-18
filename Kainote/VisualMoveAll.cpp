@@ -106,12 +106,12 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 	evt.GetPosition(&x, &y);
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){
-			tab->Video->ReleaseMouse();
+		if (tab->video->HasCapture()){
+			tab->video->ReleaseMouse();
 		}
 		drawingOriginalPos = D3DXVECTOR2(0, 0);
 		if (numElem >= 0){ ChangeInLines(true); }
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW);}
 		numElem = -1;
 	}
 
@@ -125,8 +125,8 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 				beforeMove = lastmove = elems[i]->elem;
 				diffs.x = elems[i]->elem.x - x;
 				diffs.y = elems[i]->elem.y - y;
-				if (!tab->Video->HasCapture()){
-					tab->Video->CaptureMouse();
+				if (!tab->video->HasCapture()){
+					tab->video->CaptureMouse();
 				}
 			}
 		}
@@ -141,8 +141,8 @@ void MoveAll::OnMouseEvent(wxMouseEvent &evt)
 			beforeMove = lastmove = elems[i]->elem;
 			diffs.x = elems[i]->elem.x - x;
 			diffs.y = elems[i]->elem.y - y;
-			if (!tab->Video->HasCapture()){
-				tab->Video->CaptureMouse();
+			if (!tab->video->HasCapture()){
+				tab->video->CaptureMouse();
 			}
 			break;
 		}
@@ -281,7 +281,7 @@ void MoveAll::SetCurVisual()
 	if (FindTag(L"p([0-9]+)", emptyString, 1)){
 		wxString tags[] = { L"p" };
 		wxString res;
-		ParseData* pdata = tab->Edit->line->ParseTags(tags, 1);
+		ParseData* pdata = tab->edit->line->ParseTags(tags, 1);
 		if (pdata->tags.size() >= 2) {
 			size_t i = 1;
 			while (i < pdata->tags.size()) {
@@ -299,7 +299,7 @@ void MoveAll::SetCurVisual()
 				i++;
 			}
 		}
-		tab->Edit->line->ClearParse();
+		tab->edit->line->ClearParse();
 		wxRegEx re(L"m ([.0-9-]+) ([.0-9-]+)", wxRE_ADVANCED);
 		if (re.Matches(res)){
 			moveElems* elem = new moveElems();
@@ -320,7 +320,7 @@ void MoveAll::SetCurVisual()
 					frz = frzd;
 				}
 				else {
-					Styles* actualStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+					Styles* actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
 					double result = 0.;
 					actualStyle->Angle.ToDouble(&result);
 					frz = result;
@@ -392,9 +392,9 @@ void MoveAll::ChangeInLines(bool all)
 	//D3DXVECTOR2 moving;
 	D3DXVECTOR2 moving = elems[numElem]->elem - beforeMove;
 	drawingOriginalPos = moving;
-	int _time = tab->Video->Tell();
+	int _time = tab->video->Tell();
 	wxArrayInt sels;
-	tab->Grid->file->GetSelections(sels);
+	tab->grid->file->GetSelections(sels);
 	wxString *dtxt;
 	if (!all){
 		if (!dummytext || selPositions.size() != sels.size()){
@@ -402,7 +402,7 @@ void MoveAll::ChangeInLines(bool all)
 			bool visible = false;
 			// release dummy text when sels size is different
 			SAFE_DELETE(dummytext);
-			dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
+			dummytext = tab->grid->GetVisible(&visible, 0, &selPositions);
 			if (selPositions.size() != sels.size()){
 				//KaiLog(L"Sizes mismatch");
 				return;
@@ -411,20 +411,20 @@ void MoveAll::ChangeInLines(bool all)
 
 		dtxt = new wxString(*dummytext);
 	}
-	bool skipInvisible = !all && tab->Video->GetState() != Playing;
+	bool skipInvisible = !all && tab->video->GetState() != Playing;
 	wxString tmp;
-	//bool isOriginal=(tab->Grid1->transl && tab->Edit->TextEdit->GetValue()==emptyString);
-	//MTextEditor *GLOBAL_EDITOR=(isOriginal)? tab->Edit->TextEditTl : tab->Edit->TextEdit;
+	//bool isOriginal=(tab->Grid1->transl && tab->edit->TextEdit->GetValue()==emptyString);
+	//MTextEditor *GLOBAL_EDITOR=(isOriginal)? tab->edit->TextEditTl : tab->edit->TextEdit;
 	//wxString origText=GLOBAL_EDITOR->GetValue();
-	const wxString &tlModeStyle = tab->Grid->GetSInfo(L"TLMode Style");
+	const wxString &tlModeStyle = tab->grid->GetSInfo(L"TLMode Style");
 	int moveLength = 0;
 
 	for (size_t i = 0; i < sels.size(); i++){
 		wxString txt;
-		Dialogue *Dial = tab->Grid->GetDialogue(sels[i]);
+		Dialogue *Dial = tab->grid->GetDialogue(sels[i]);
 
 		if (skipInvisible && !(_time >= Dial->Start.mstime && _time <= Dial->End.mstime)){ continue; }
-		bool istexttl = (tab->Grid->hasTLMode && Dial->TextTl != emptyString);
+		bool istexttl = (tab->grid->hasTLMode && Dial->TextTl != emptyString);
 		txt = (istexttl) ? Dial->TextTl : Dial->Text;
 
 		for (int k = 0; k < 6; k++){
@@ -509,7 +509,7 @@ void MoveAll::ChangeInLines(bool all)
 
 		}
 		if (all){
-			tab->Grid->CopyDialogue(sels[i])->SetText(txt);
+			tab->grid->CopyDialogue(sels[i])->SetText(txt);
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
@@ -552,7 +552,7 @@ void MoveAll::ChangeTool(int _tool, bool blockSetCurVisual)
 	if ((_tool & TAGPOS || _tool & TAGMOVES || _tool & TAGMOVEE) && _tool & TAGP){
 		selectedTags ^= TAGP;
 	}
-	tab->Video->Render(false);
+	tab->video->Render(false);
 }
 
 void MoveAll::OnKeyPress(wxKeyEvent &evt)

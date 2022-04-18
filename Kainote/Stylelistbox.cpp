@@ -15,7 +15,8 @@
 
 #include "Stylelistbox.h"
 #include "config.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
+#include "KaiStaticBoxSizer.h"
 
 
 Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr, const wxPoint& pos, int style)
@@ -69,7 +70,7 @@ wxString GetCheckedElements(wxWindow *parent)
 
 	wxString styletext;
 	wxString *elems;
-	const std::vector<Styles*> *styles = Notebook::GetTab()->Grid->file->GetStyleTable();
+	const std::vector<Styles*> *styles = Notebook::GetTab()->grid->file->GetStyleTable();
 	elems = new wxString[styles->size()];
 	for (size_t j = 0; j < styles->size(); j++){
 		Styles *acstyl = (*styles)[j];

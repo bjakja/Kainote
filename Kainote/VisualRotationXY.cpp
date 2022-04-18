@@ -182,15 +182,15 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 	evt.GetPosition(&x, &y);
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		SetVisual(false);
 		oldAngle = angle;
-		if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
 	}
 
 	if (click){
-		tab->Video->CaptureMouse();
+		tab->video->CaptureMouse();
 		if (leftc){ type = 0; }//fry
 		if (rightc){ type = 1; }//frx
 		if (middlec){ type = 2; }//frx + fry
@@ -201,9 +201,9 @@ void RotationXY::OnMouseEvent(wxMouseEvent &evt)
 			diffs.y = org.y - y;
 		}
 		firstmove = D3DXVECTOR2(x, y);
-		if (type == 0){ tab->Video->SetCursor(wxCURSOR_SIZEWE); }
-		if (type == 1){ tab->Video->SetCursor(wxCURSOR_SIZENS); }
-		if (type == 2){ tab->Video->SetCursor(wxCURSOR_SIZING); }
+		if (type == 0){ tab->video->SetCursor(wxCURSOR_SIZEWE); }
+		if (type == 1){ tab->video->SetCursor(wxCURSOR_SIZENS); }
+		if (type == 2){ tab->video->SetCursor(wxCURSOR_SIZING); }
 	}
 	else if (holding){
 		if (isOrg){
@@ -374,6 +374,6 @@ void RotationXY::ChangeTool(int _tool, bool blockSetCurVisual)
 		if(!blockSetCurVisual)
 			SetCurVisual();
 
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 }

@@ -15,7 +15,7 @@
 
 #include "config.h"
 #include "Visuals.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 
 Cross::Cross()
 {
@@ -24,12 +24,12 @@ Cross::Cross()
 
 void Cross::OnMouseEvent(wxMouseEvent &event)
 {
-	if ((tab->Video->IsFullScreen() && tab->Video->GetFullScreenWindow() &&
-		!tab->Video->GetFullScreenWindow()->showToolbar->GetValue()) || event.RightUp() || tab->Video->IsMenuShown()){
+	if ((tab->video->IsFullScreen() && tab->video->GetFullScreenWindow() &&
+		!tab->video->GetFullScreenWindow()->showToolbar->GetValue()) || event.RightUp() || tab->video->IsMenuShown()){
 		if (cross){
-			tab->Video->SetCursor(wxCURSOR_ARROW);
+			tab->video->SetCursor(wxCURSOR_ARROW);
 			cross = false;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 		return;
 	}
@@ -40,24 +40,24 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	if (event.Leaving()){
 		if (cross){
 			cross = false;
-			RendererVideo *renderer = tab->Video->GetRenderer();
-			tab->Video->SetCursor(wxCURSOR_ARROW); 
+			RendererVideo *renderer = tab->video->GetRenderer();
+			tab->video->SetCursor(wxCURSOR_ARROW); 
 				
-			if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){ 
-				tab->Video->Render(false); 
+			if (tab->video->GetState() <= Paused && !renderer->m_BlockResize){ 
+				tab->video->Render(false); 
 			}
 		}
 		return;
 	}
 
 	if (event.Entering()){
-		//tab->Video->SetCursor(wxCURSOR_BLANK);
+		//tab->video->SetCursor(wxCURSOR_BLANK);
 		//KaiLog(L"Cross blank");
 		cross = true;
 		int nx = 0, ny = 0;
 		int w = 0, h = 0;
 		int diffW = 1, diffH = 1;
-		RendererVideo *renderer = tab->Video->GetRenderer();
+		RendererVideo *renderer = tab->video->GetRenderer();
 		if (renderer){
 			diffX = renderer->m_BackBufferRect.left;
 			diffY = renderer->m_BackBufferRect.top;
@@ -69,11 +69,11 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 				diffH = 0;
 		}
 		else{
-			tab->Video->GetClientSize(&w, &h);
+			tab->video->GetClientSize(&w, &h);
 			diffX = diffY = 0;
-			h -= tab->Video->GetPanelHeight();
+			h -= tab->video->GetPanelHeight();
 		}
-		tab->Grid->GetASSRes(&nx, &ny);
+		tab->grid->GetASSRes(&nx, &ny);
 		coeffX = (float)nx / (float)(w - diffW);
 		coeffY = (float)ny / (float)(h - diffH);
 	}
@@ -86,8 +86,8 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 	DrawLines(wxPoint(x, y));
 
 	if (event.MiddleDown() || (event.LeftDown() && event.ControlDown())){
-		Dialogue *aline = tab->Edit->line;
-		bool istl = (tab->Grid->hasTLMode && aline->TextTl != emptyString);
+		Dialogue *aline = tab->edit->line;
+		bool istl = (tab->grid->hasTLMode && aline->TextTl != emptyString);
 		wxString ltext = (istl) ? aline->TextTl : aline->Text;
 		wxRegEx posmov(L"\\\\(pos|move)([^\\\\}]+)", wxRE_ADVANCED);
 		posmov.ReplaceAll(&ltext, emptyString);
@@ -106,9 +106,9 @@ void Cross::OnMouseEvent(wxMouseEvent &event)
 		}
 		if (istl){ aline->TextTl = ltext; }
 		else{ aline->Text = ltext; }
-		tab->Grid->ChangeCell((istl) ? TXTTL : TXT, tab->Grid->currentLine, aline);
-		tab->Grid->Refresh(false);
-		tab->Grid->SetModified(VISUAL_POSITION);
+		tab->grid->ChangeCell((istl) ? TXTTL : TXT, tab->grid->currentLine, aline);
+		tab->grid->Refresh(false);
+		tab->grid->SetModified(VISUAL_POSITION);
 	}
 }
 
@@ -147,7 +147,7 @@ void Cross::Draw(int time)
 
 void Cross::DrawLines(wxPoint point)
 {
-	RendererVideo *renderer = tab->Video->GetRenderer();
+	RendererVideo *renderer = tab->video->GetRenderer();
 	if (!renderer)
 		return;
 
@@ -164,14 +164,14 @@ void Cross::DrawLines(wxPoint point)
 
 	{
 		int w, h, fw, fh;
-		tab->Video->GetWindowSize(&w, &h);
+		tab->video->GetWindowSize(&w, &h);
 		RECT rcRect = { 0, 0, 0, 0 };
 		if (calcfont && calcfont->DrawTextW(nullptr, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
 			fw = rcRect.right - rcRect.left;
 			fh = rcRect.bottom - rcRect.top;
 		}
 		else {
-			tab->Video->GetTextExtent(coords, &fw, &fh, nullptr, nullptr, Options.GetFont(4));
+			tab->video->GetTextExtent(coords, &fw, &fh, nullptr, nullptr, Options.GetFont(4));
 		}
 		int margin = fh * 0.25f;
 		w /= 2; h /= 2;
@@ -192,19 +192,19 @@ void Cross::DrawLines(wxPoint point)
 	}
 	done:
 	//play and pause
-	if (tab->Video->GetState() <= Paused && !renderer->m_BlockResize){
-		tab->Video->Render(renderer->m_VideoResized);
+	if (tab->video->GetState() <= Paused && !renderer->m_BlockResize){
+		tab->video->Render(renderer->m_VideoResized);
 	}
 }
 
 void Cross::SetCurVisual()
 {
-	if ((tab->Video->IsFullScreen() && tab->Video->GetFullScreenWindow() && 
-		!tab->Video->GetFullScreenWindow()->showToolbar->GetValue()) || tab->Video->IsMenuShown()){
+	if ((tab->video->IsFullScreen() && tab->video->GetFullScreenWindow() && 
+		!tab->video->GetFullScreenWindow()->showToolbar->GetValue()) || tab->video->IsMenuShown()){
 		if (cross){
-			tab->Video->SetCursor(wxCURSOR_ARROW);
+			tab->video->SetCursor(wxCURSOR_ARROW);
 			cross = false;
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 		return;
 	}
@@ -215,7 +215,7 @@ void Cross::SetCurVisual()
 	int nx = 0, ny = 0;
 	int w = 0, h = 0;
 	int diffW = 1, diffH = 1;
-	RendererVideo *renderer = tab->Video->GetRenderer();
+	RendererVideo *renderer = tab->video->GetRenderer();
 	
 	if (renderer){
 		
@@ -229,11 +229,11 @@ void Cross::SetCurVisual()
 			diffH = 0;
 	}
 	else{
-		tab->Video->GetClientSize(&w, &h);
-		h -= tab->Video->GetPanelHeight();
+		tab->video->GetClientSize(&w, &h);
+		h -= tab->video->GetPanelHeight();
 		diffX = diffY = 0;
 	}
-	tab->Grid->GetASSRes(&nx, &ny);
+	tab->grid->GetASSRes(&nx, &ny);
 	coeffX = (float)nx / (float)(w - diffW);
 	coeffY = (float)ny / (float)(h - diffH);
 }

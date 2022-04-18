@@ -132,11 +132,11 @@ namespace Auto{
 		int ms = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
-		if (tab && tab->Video->GetState() != None) {
+		if (tab && tab->video->GetState() != None) {
 			float FPS;
-			tab->Video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
-			int frame = (tab->Video->IsDirectShow()) ? ((float)ms / 1000.f) * FPS :
-				tab->Video->GetFFMS2()->GetFramefromMS(ms, 0, false);
+			tab->video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
+			int frame = (tab->video->IsDirectShow()) ? ((float)ms / 1000.f) * FPS :
+				tab->video->GetFFMS2()->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
 		}
 		else {
@@ -151,11 +151,11 @@ namespace Auto{
 		int frame = (int)lua_tonumber(L, -1);
 		lua_pop(L, 1);
 		TabPanel *tab = Notebook::GetTab();
-		if (tab && tab->Video->GetState() != None) {
+		if (tab && tab->video->GetState() != None) {
 			float FPS;
-			tab->Video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
-			int ms = (tab->Video->IsDirectShow()) ? ((frame * 1000) / FPS) :
-				tab->Video->GetFFMS2()->GetMSfromFrame(frame);
+			tab->video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
+			int ms = (tab->video->IsDirectShow()) ? ((frame * 1000) / FPS) :
+				tab->video->GetFFMS2()->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
 		}
 		else {
@@ -167,10 +167,10 @@ namespace Auto{
 	int video_size(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab && tab->Video->GetState() != None) {
-			wxSize sz = tab->Video->GetVideoSize();
+		if (tab && tab->video->GetState() != None) {
+			wxSize sz = tab->video->GetVideoSize();
 			int AspectRatioX, AspectRatioY;
-			tab->Video->GetFPSAndAspectRatio(nullptr, nullptr, &AspectRatioX, &AspectRatioY);
+			tab->video->GetFPSAndAspectRatio(nullptr, nullptr, &AspectRatioX, &AspectRatioY);
 			float AR = (float)AspectRatioX / AspectRatioY;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
@@ -188,8 +188,8 @@ namespace Auto{
 	int get_keyframes(lua_State *L)
 	{
 		TabPanel *tab = Notebook::GetTab();
-		if (tab->Video->GetState() != None && tab->Video->HasFFMS2()){
-			const wxArrayInt & value = tab->Video->GetFFMS2()->GetKeyframes();
+		if (tab->video->GetState() != None && tab->video->HasFFMS2()){
+			const wxArrayInt & value = tab->video->GetFFMS2()->GetKeyframes();
 			lua_createtable(L, value.size(), 0);
 			for (size_t i = 0; i < value.size(); ++i) {
 				push_value(L, value[i]);
@@ -341,7 +341,7 @@ namespace Auto{
 			lua_pushnil(L);
 		else {
 			lua_createtable(L, 0, 14);
-#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->Grid->GetSInfo(#name))
+#define PUSH_FIELD(name, fieldname) set_field(L, #name, c->grid->GetSInfo(#name))
 			PUSH_FIELD(automation_scripts, "Automation Scripts");
 			PUSH_FIELD(export_filters, "");
 			PUSH_FIELD(export_encoding, "");
@@ -351,8 +351,8 @@ namespace Auto{
 			PUSH_FIELD(scroll_position, "Active Line");
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
-			set_field(L, "video_position", (c->Video->HasFFMS2()) ? 
-				c->Video->GetFFMS2()->GetFramefromMS(c->Video->Tell()) : 0);
+			set_field(L, "video_position", (c->video->HasFFMS2()) ? 
+				c->video->GetFFMS2()->GetFramefromMS(c->video->Tell()) : 0);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->VideoPath);
 			set_field(L, "video_file", c->VideoPath);
@@ -748,8 +748,8 @@ namespace Auto{
 
 	static std::vector<int> selected_rows(const TabPanel *c)
 	{
-		auto const& sels = c->Grid->file->GetSelectionsAsKeys();
-		int offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
+		auto const& sels = c->grid->file->GetSelectionsAsKeys();
+		int offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
 		std::vector<int> rows;
 		rows.reserve(sels.size());
 		for (auto line : sels)
@@ -765,10 +765,10 @@ namespace Auto{
 		lua_pushcclosure(L, add_stack_trace, 0);
 
 		GetFeatureFunction("validate");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid->file->GetSubs(), true, c->grid->subsFormat);
 
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->currentLine + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 2, -5 /* three args, function, error handler */);
 		SAFE_DELETE(subsobj);
@@ -799,18 +799,18 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
-		File *subs = c->Grid->file->GetSubs();
-		auto subsobj = new AutoToFile(L, subs, true, c->Grid->subsFormat);
+		File *subs = c->grid->file->GetSubs();
+		auto subsobj = new AutoToFile(L, subs, true, c->grid->subsFormat);
 
-		int original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
+		int original_offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
 		auto original_sel = selected_rows(c);
 		// original active do not have offset
-		int original_active = c->Grid->currentLine;
+		int original_active = c->grid->currentLine;
 
 		push_value(L, original_sel);
 		push_value(L, original_active + original_offset);
 
-		c->Grid->SaveSelections();
+		c->grid->SaveSelections();
 
 		LuaProgressSink *ps = new LuaProgressSink(L, c);
 
@@ -823,19 +823,19 @@ namespace Auto{
 
 		if (ps->lpd->cancelled || failed){
 			SAFE_DELETE(subsobj);
-			c->Grid->file->DummyUndo();
+			c->grid->file->DummyUndo();
 
 			delete ps;
 			return;
 		}
 
-		//c->Grid->file->ReloadVisibleDialogues();
+		//c->grid->file->ReloadVisibleDialogues();
 		//if(ps->lpd->cancelled && ps->lpd->IsModal()){ps->lpd->EndModal(0);}
-		//c->Grid->SaveSelections(true);
-		original_offset = c->Grid->SInfoSize() + c->Grid->StylesSize() + 1;
+		//c->grid->SaveSelections(true);
+		original_offset = c->grid->SInfoSize() + c->grid->StylesSize() + 1;
 		int active_idx = -1;
 
-		size_t dialsCount = c->Grid->file->GetCount();
+		size_t dialsCount = c->grid->file->GetCount();
 
 		// Check for a new active row
 		if (lua_isnumber(L, -1)) {
@@ -845,7 +845,7 @@ namespace Auto{
 				active_idx = original_active;
 			}
 			else
-				c->Grid->file->ClearSelections();
+				c->grid->file->ClearSelections();
 		}
 
 		//stackcheck.check_stack(2);
@@ -853,7 +853,7 @@ namespace Auto{
 
 		// top of stack will be selected lines array, if any was returned
 		if (lua_istable(L, -1)) {
-			c->Grid->file->ClearSelections();
+			c->grid->file->ClearSelections();
 			lua_for_each(L, [&] {
 				if (!lua_isnumber(L, -1))
 					return;
@@ -864,7 +864,7 @@ namespace Auto{
 				}
 				if (active_idx == -1)
 					active_idx = cur;
-				c->Grid->file->InsertSelection(cur);
+				c->grid->file->InsertSelection(cur);
 			});
 
 		}
@@ -874,15 +874,15 @@ namespace Auto{
 		}
 		if (active_idx == -1)
 			active_idx = original_active;
-		c->Grid->SpellErrors.clear();
+		c->grid->SpellErrors.clear();
 		//refresh styles in style manager
 		if (StyleStore::HasStore() && StyleStore::Get()->IsShown())
 			StyleStore::ShowStore();
 		//refresh styles in editbox
-		c->Edit->RefreshStyle();
+		c->edit->RefreshStyle();
 
-		c->Grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
-		c->Grid->RefreshColumns();
+		c->grid->SetModified(AUTOMATION_SCRIPT, true, false, active_idx);
+		c->grid->RefreshColumns();
 		SAFE_DELETE(subsobj);
 		SAFE_DELETE(ps);
 		//stackcheck.check_stack(0);
@@ -897,9 +897,9 @@ namespace Auto{
 		stackcheck.check_stack(0);
 
 		GetFeatureFunction("isactive");
-		auto subsobj = new AutoToFile(L, c->Grid->file->GetSubs(), true, c->Grid->subsFormat);
+		auto subsobj = new AutoToFile(L, c->grid->file->GetSubs(), true, c->grid->subsFormat);
 		push_value(L, selected_rows(c));
-		push_value(L, c->Grid->currentLine + c->Grid->SInfoSize() + c->Grid->StylesSize() + 1);
+		push_value(L, c->grid->currentLine + c->grid->SInfoSize() + c->grid->StylesSize() + 1);
 
 		int err = lua_pcall(L, 3, 1, 0);
 
@@ -972,7 +972,7 @@ namespace Auto{
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
 		if (!autoload && addToSinfo){
-			SubsGrid *grid = Notebook::GetTab()->Grid;
+			SubsGrid *grid = Notebook::GetTab()->grid;
 			wxString scriptpaths = grid->GetSInfo(L"Automation Scripts");
 			scriptpaths << L"|" << filename;
 			grid->AddSInfo(L"Automation Scripts", scriptpaths);
@@ -1075,7 +1075,7 @@ namespace Auto{
 
 	bool Automation::AddFromSubs()
 	{
-		wxString paths = Notebook::GetTab()->Grid->GetSInfo(L"Automation Scripts");
+		wxString paths = Notebook::GetTab()->grid->GetSInfo(L"Automation Scripts");
 
 		if (paths == emptyString){ return false; }
 		if (paths == scriptpaths && ASSScripts.size() > 0){ return false; }

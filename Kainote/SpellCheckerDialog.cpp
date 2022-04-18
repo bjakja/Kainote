@@ -17,7 +17,7 @@
 #include "SpellCheckerDialog.h"
 #include "KaiStaticText.h"
 #include "SpellChecker.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
 #include "Stylelistbox.h"
@@ -99,16 +99,16 @@ wxString SpellCheckerDialog::FindNextMisspell()
 	bool ignoreUpperCase = ignoreUpper->GetValue();
 
 	tab = Kai->GetTab();
-	if (lastActiveLine != tab->Grid->currentLine){
-		lastLine = lastActiveLine = tab->Grid->currentLine;
+	if (lastActiveLine != tab->grid->currentLine){
+		lastLine = lastActiveLine = tab->grid->currentLine;
 		lastMisspell = 0;
 	}
-	for (size_t i = lastLine; i < tab->Grid->GetCount(); i++){
+	for (size_t i = lastLine; i < tab->grid->GetCount(); i++){
 		errors.clear();
-		Dialogue *Dial = tab->Grid->GetDialogue(i);
+		Dialogue *Dial = tab->grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
-		const wxString &Text = (tab->Grid->hasTLMode) ? Dial->TextTl : Dial->Text;
-		SpellChecker::Get()->CheckText(Text, &errors, tab->Grid->subsFormat);
+		const wxString &Text = (tab->grid->hasTLMode) ? Dial->TextTl : Dial->Text;
+		SpellChecker::Get()->CheckText(Text, &errors, tab->grid->subsFormat);
 		if (i != lastLine){ lastMisspell = 0; }
 		while (lastMisspell < errors.size()){
 			wxString misspellWord = errors[lastMisspell].misspell;
@@ -147,17 +147,17 @@ void SpellCheckerDialog::SetNextMisspell()
 	}
 	tab = Kai->GetTab();
 	if (lastActiveLine != lastLine){
-		tab->Grid->SelectRow(lastLine, false, true, true);
-		tab->Grid->ScrollTo(lastLine, true);
-		tab->Edit->SetLine(lastLine);
+		tab->grid->SelectRow(lastLine, false, true, true);
+		tab->grid->ScrollTo(lastLine, true);
+		tab->edit->SetLine(lastLine);
 		lastActiveLine = lastLine;
 	}
-	else/* if(tab->Grid1->Edit->ebrow != lastActiveLine)*/{
-		tab->Grid->ScrollTo(lastLine, true);
+	else/* if(tab->Grid1->edit->ebrow != lastActiveLine)*/{
+		tab->grid->ScrollTo(lastLine, true);
 	}
-	lastText = (tab->Grid->hasTLMode) ? tab->Edit->line->TextTl : tab->Edit->line->Text;
-	//tab->Edit->TextEdit->SetFocus();
-	tab->Edit->TextEdit->SetSelection(errors[lastMisspell].posStart, errors[lastMisspell].posEnd + 1);
+	lastText = (tab->grid->hasTLMode) ? tab->edit->line->TextTl : tab->edit->line->Text;
+	//tab->edit->TextEdit->SetFocus();
+	tab->edit->TextEdit->SetSelection(errors[lastMisspell].posStart, errors[lastMisspell].posEnd + 1);
 }
 
 void SpellCheckerDialog::Replace(wxCommandEvent &evt)
@@ -172,12 +172,12 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	wxString replaceTxt = replaceWord->GetValue();
 	if (replaceTxt.IsEmpty() || !errors.size()){ return; }
 	tab = Kai->GetTab();
-	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
-	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
+	Dialogue *Dial = tab->grid->CopyDialogue(lastLine);
+	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->grid->hasTLMode);
 	SpellChecker::Get()->ReplaceMisspell(errors[lastMisspell].misspell, replaceTxt, 
 		errors[lastMisspell].posStart, errors[lastMisspell].posEnd, &Text, nullptr);
-	tab->Grid->SetModified(SPELL_CHECKER);
-	tab->Grid->Refresh(false);
+	tab->grid->SetModified(SPELL_CHECKER);
+	tab->grid->Refresh(false);
 	int oldPos = errors[lastMisspell].posStart;
 	SetNextMisspell();
 	if (errors[lastMisspell].posStart == oldPos) {
@@ -199,30 +199,30 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 	int lenMismatch = 0;
 	int textPos = 0;
 
-	for (size_t i = 0; i < tab->Grid->GetCount(); i++){
-		Dialogue *Dial = tab->Grid->GetDialogue(i);
+	for (size_t i = 0; i < tab->grid->GetCount(); i++){
+		Dialogue *Dial = tab->grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
-		wxString lineText = (tab->Grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
+		wxString lineText = (tab->grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 		text = lineText.Lower();
 		if (text.find(misspellTxtLower) != -1) {
 			std::vector<MisspellData> misspells;
-			if (SpellChecker::Get()->FindMisspells(lineText, misspellTxtLower, &misspells, tab->Grid->subsFormat)) {
+			if (SpellChecker::Get()->FindMisspells(lineText, misspellTxtLower, &misspells, tab->grid->subsFormat)) {
 				for (size_t k = misspells.size(); k > 0; k--) {
 					MisspellData &misspell = misspells[k - 1];
 					SpellChecker::Get()->ReplaceMisspell(misspell.misspell,
 						GetRightCase(replaceTxt, misspell.misspell), misspell.posStart, misspell.posEnd, &lineText, nullptr);
 				}
-				Dialogue *Dialc = tab->Grid->CopyDialogue(i);
-				wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);
+				Dialogue *Dialc = tab->grid->CopyDialogue(i);
+				wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->grid->hasTLMode);
 				TextToChange = lineText;
-				if (tab->Grid->SpellErrors.size() > i)
-					tab->Grid->SpellErrors[i].clear();
+				if (tab->grid->SpellErrors.size() > i)
+					tab->grid->SpellErrors[i].clear();
 			}
 		}
 	}
 
-	tab->Grid->SetModified(SPELL_CHECKER);
-	tab->Grid->Refresh(false);
+	tab->grid->SetModified(SPELL_CHECKER);
+	tab->grid->Refresh(false);
 	SetNextMisspell();
 }
 
@@ -245,7 +245,7 @@ void SpellCheckerDialog::AddWord(wxCommandEvent &evt)
 		//lastMisspell -= 1;
 	//we have checked for example first misspell and after add and check again the next misspell will be first;
 	SetNextMisspell();
-	Notebook::GetTab()->Edit->ClearErrs();
+	Notebook::GetTab()->edit->ClearErrs();
 }
 
 void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
@@ -257,7 +257,7 @@ void SpellCheckerDialog::RemoveWord(wxCommandEvent &evt)
 		wxArrayString checkedWords;
 		listOfAddedWords->GetCheckedElements(checkedWords);
 		SpellChecker::Get()->RemoveWords(checkedWords);
-		Notebook::GetTab()->Edit->ClearErrs();
+		Notebook::GetTab()->edit->ClearErrs();
 	}
 }
 
@@ -325,8 +325,8 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 	if (evt.GetActive()){
 		if (blockOnActive){ blockOnActive = false; return; }
 		TabPanel *tab1 = Kai->GetTab();
-		wxString &ActualText = tab1->Edit->line->Text.CheckTlRef(tab1->Edit->line->TextTl, tab->Grid->hasTLMode);
-		if (tab != tab1 || lastActiveLine != tab1->Grid->currentLine || lastText != ActualText){
+		wxString &ActualText = tab1->edit->line->Text.CheckTlRef(tab1->edit->line->TextTl, tab->grid->hasTLMode);
+		if (tab != tab1 || lastActiveLine != tab1->grid->currentLine || lastText != ActualText){
 			lastMisspell = 0;
 			SetNextMisspell();
 		}

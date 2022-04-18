@@ -210,7 +210,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 		Dialogue *acdial = GetDialogue(MID(0, currentLine, size - 1));
 		Dialogue *Dial = nullptr;
-		int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
+		int VideoPos = tab->video->GetState() != None ? tab->video->Tell() : -1;
 
 		int fw, fh, bfw, bfh;
 		wxColour kol;
@@ -274,8 +274,8 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					strings.push_back(wxString::Format(L"%i", Dial->Layer));
 				}
 				
-				if (showFrames && tab->Video->HasFFMS2()){
-					Provider *FFMS2 = tab->Video->GetFFMS2();
+				if (showFrames && tab->video->HasFFMS2()){
+					Provider *FFMS2 = tab->video->GetFFMS2();
 					wxString frame;
 					frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 					strings.push_back(frame);
@@ -596,7 +596,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 
 	Dialogue *acdial = GetDialogue(MID(0, currentLine, size - 1));
 	Dialogue *Dial = nullptr;
-	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
+	int VideoPos = tab->video->GetState() != None ? tab->video->Tell() : -1;
 
 	double fw, fh, bfw, bfh;
 	wxColour col;
@@ -663,8 +663,8 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 			if (subsFormat < SRT){
 				strings.push_back(wxString::Format(L"%i", Dial->Layer));
 			}
-			if (showFrames && tab->Video->HasFFMS2()){
-				Provider *FFMS2 = tab->Video->GetFFMS2();
+			if (showFrames && tab->video->HasFFMS2()){
+				Provider *FFMS2 = tab->video->GetFFMS2();
 				wxString frame;
 				frame << FFMS2->GetFramefromMS(Dial->Start.mstime);
 				strings.push_back(frame);
@@ -1039,7 +1039,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->video->GetFFMS2();
 			if (FFMS2)
 				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
@@ -1052,7 +1052,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->video->GetFFMS2();
 			if (FFMS2)
 				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else
@@ -1205,7 +1205,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->video->GetFFMS2();
 			if (FFMS2)
 				start.orgframe = FFMS2->GetFramefromMS(start.mstime);
 			else
@@ -1218,7 +1218,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		STime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
-			Provider *FFMS2 = tab->Video->GetFFMS2();
+			Provider *FFMS2 = tab->video->GetFFMS2();
 			if (FFMS2)
 				end.orgframe = FFMS2->GetFramefromMS(end.mstime);
 			else
@@ -1306,11 +1306,11 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 {
-	if (tab->Video->GetState() != None){
-		if (tab->Video->GetState() != Paused){
-			if (tab->Video->GetState() == Stopped){ tab->Video->Play(); tab->Video->Pause(); }
+	if (tab->video->GetState() != None){
+		if (tab->video->GetState() != Paused){
+			if (tab->video->GetState() == Stopped){ tab->video->Play(); tab->video->Pause(); }
 			else if (mvtal)
-				tab->Video->Pause();
+				tab->video->Pause();
 		}
 		short wh = (subsFormat < SRT) ? 2 : 1;
 		int whh = 2;
@@ -1321,16 +1321,16 @@ void SubsGridWindow::SetVideoLineTime(wxMouseEvent &evt, int mvtal)
 		int vczas;
 		bool getEndTime = evt.GetX() >= whh && evt.GetX() < whh + GridWidth[wh + 1] && subsFormat != TMP;
 		if (getEndTime){
-			vczas = Edit->line->End.mstime; isstart = false;
+			vczas = edit->line->End.mstime; isstart = false;
 		}
 		else{
-			vczas = Edit->line->Start.mstime; isstart = true;
+			vczas = edit->line->Start.mstime; isstart = true;
 		}
 		if (evt.LeftDClick() && evt.ControlDown()){ vczas -= 1000; }
-		tab->Video->Seek(MAX(0, vczas), isstart, true, false);
-		if (Edit->ABox){ Edit->ABox->audioDisplay->Update(getEndTime); }
-		if (Edit->Visual > CHANGEPOS){
-			tab->Video->SetVisual(true, true);
+		tab->video->Seek(MAX(0, vczas), isstart, true, false);
+		if (edit->ABox){ edit->ABox->audioDisplay->Update(getEndTime); }
+		if (edit->Visual > CHANGEPOS){
+			tab->video->SetVisual(true, true);
 		}
 	}
 }
@@ -1340,7 +1340,7 @@ void SubsGridWindow::SetActive(int active)
 	SelectRow(active);
 	lastRow = active;
 	markedLine = active;
-	Edit->SetLine(active);
+	edit->SetLine(active);
 }
 
 void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
@@ -1362,7 +1362,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 	int curY = event.GetY();
 	if (preview){
 		if (event.ButtonDown())
-			Edit->SetGrid((SubsGrid*)this);
+			edit->SetGrid((SubsGrid*)this);
 
 		wxPoint previewpos = preview->GetPosition();
 		wxSize previewsize = preview->GetSize();
@@ -1414,10 +1414,10 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 						if (currentLine < size)
 							file->InsertSelection(currentLine);
 						else
-							Edit->SetLine(size - 1);
+							edit->SetLine(size - 1);
 					}
 					else
-						Edit->SetLine(firstSel);
+						edit->SetLine(firstSel);
 				}
 			}
 			else if (right){
@@ -1429,10 +1429,10 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 	// Seeking video by click on numeration column
 	if ((click || dclick) && isNumerizeColumn){
-		if (tab->Video->GetState() != None && !outOfPosition){
-			if (tab->Video->GetState() != Paused){
-				if (tab->Video->GetState() == Stopped){ tab->Video->Play(); }
-				tab->Video->Pause();
+		if (tab->video->GetState() != None && !outOfPosition){
+			if (tab->video->GetState() != Paused){
+				if (tab->video->GetState() == Stopped){ tab->video->Play(); }
+				tab->video->Pause();
 			}
 			int vtime = 0;
 			bool isstart = true;
@@ -1443,10 +1443,10 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 				vtime = GetDialogue(row)->Start.mstime; isstart = true;
 			}
 			if (ctrl){ vtime -= 1000; }
-			tab->Video->Seek(MAX(0, vtime), isstart, true, false, true, false);
-			if (Edit->ABox){ Edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
-			if (Edit->Visual > CHANGEPOS){
-				tab->Video->SetVisual(true, true);
+			tab->video->Seek(MAX(0, vtime), isstart, true, false, true, false);
+			if (edit->ABox){ edit->ABox->audioDisplay->Update(shift && subsFormat != TMP); }
+			if (edit->Visual > CHANGEPOS){
+				tab->video->SetVisual(true, true);
 			}
 		}
 		return;
@@ -1522,7 +1522,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		Refresh(false);
 		return;
 	}
-	VideoCtrl *video = tab->Video;
+	VideoCtrl *video = tab->video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int seekAfter = 0, playAfter = 0;
 	video->GetVideoListsOptions(&playAfter, &seekAfter);
@@ -1557,8 +1557,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 
 			if (click && (changeActive || !ctrl) || (dclick && ctrl)) {
 				lastActiveLine = currentLine;
-				Edit->SetLine(row, true, true, true, !ctrl);
-				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
+				edit->SetLine(row, true, true, true, !ctrl);
+				if (hasTLMode){ edit->SetActiveLineToDoubtful(); }
 				if (changeActive){ Refresh(false); }
 				if (!ctrl || dclick){
 					SelectRow(row);
@@ -1585,8 +1585,8 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		if (middle){
 			if (ctrl){
 				lastActiveLine = currentLine;
-				Edit->SetLine(row, true, true, true, !ctrl);
-				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
+				edit->SetLine(row, true, true, true, !ctrl);
+				if (hasTLMode){ edit->SetActiveLineToDoubtful(); }
 				Refresh(false);
 				extendRow = -1;
 				if (Comparison){ ShowSecondComparedLine(row); }
@@ -1632,12 +1632,12 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 			file->InsertSelections(i1, i2, !ctrl);
 			if (changeActive){
 				lastActiveLine = currentLine;
-				Edit->SetLine(row, true, true, false);
-				if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
+				edit->SetLine(row, true, true, false);
+				if (hasTLMode){ edit->SetActiveLineToDoubtful(); }
 			}
 			lastsel = row;
 			Refresh(false);
-			if (Edit->Visual == CHANGEPOS){
+			if (edit->Visual == CHANGEPOS){
 				video->SetVisual(false, true);
 			}
 		}
@@ -1692,8 +1692,8 @@ void SubsGridWindow::SelectRow(int row, bool addToSelected /*= false*/, bool sel
 		Refresh(false);
 	}
 	
-	if (Edit->Visual == CHANGEPOS){
-		tab->Video->SetVisual(false, true);
+	if (edit->Visual == CHANGEPOS){
+		tab->video->SetVisual(false, true);
 	}
 }
 
@@ -1781,7 +1781,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 		dir = GetCount();
 	}
 	if (key == WXK_RETURN){
-		Edit->TextEdit->SetFocus();
+		edit->TextEdit->SetFocus();
 	}
 
 	// Moving
@@ -1796,7 +1796,7 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			}
 
 			int next = GetKeyFromPosition(currentLine, dir);
-			Edit->SetLine(next);
+			edit->SetLine(next);
 			SelectRow(next);
 			MakeVisible(next);
 			if (Comparison){ ShowSecondComparedLine(next); }
@@ -1845,11 +1845,11 @@ void SubsGridWindow::OnKeyPress(wxKeyEvent &event) {
 			file->InsertSelections(i1, i2, true);
 			if (changeActive) {
 				lastActiveLine = currentLine;
-				Edit->SetLine(i11, true, true, false);
+				edit->SetLine(i11, true, true, false);
 			}
 			MakeVisible(changeActive? currentLine : extendRow);
 		}
-		if (hasTLMode){ Edit->SetActiveLineToDoubtful(); }
+		if (hasTLMode){ edit->SetActiveLineToDoubtful(); }
 	}
 
 }
@@ -1899,7 +1899,7 @@ void SubsGridWindow::HideOverrideTags()
 void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*/, bool scroll /*= false*/, bool changeEditboxLine /*= true*/)
 {
 	if (changeEditboxLine)
-		Edit->SetLine(newActiveLine);
+		edit->SetLine(newActiveLine);
 	//there is no editbox change cause of loaded in editbox preview
 	else
 		currentLine = markedLine = newActiveLine;
@@ -1912,11 +1912,11 @@ void SubsGridWindow::ChangeActiveLine(int newActiveLine, bool refresh /*= false*
 
 void SubsGridWindow::SelVideoLine(int curtime)
 {
-	if (tab->Video->GetState() == None && curtime < 0){ return; }
+	if (tab->video->GetState() == None && curtime < 0){ return; }
 
-	int time = (curtime < 0) ? tab->Video->Tell() : curtime;
+	int time = (curtime < 0) ? tab->video->Tell() : curtime;
 	int prevtime = 0;
-	int durtime = (curtime < 0) ? tab->Video->GetDuration() : 36000000;
+	int durtime = (curtime < 0) ? tab->video->GetDuration() : 36000000;
 	int idr = 0, ip = 0;
 
 	for (size_t i = 0; i < GetCount(); i++)
@@ -1928,7 +1928,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 		if (!dial->IsComment && (dial->Text != emptyString || dial->TextTl != emptyString)){
 			if (time >= dial->Start.mstime && time <= dial->End.mstime)
 			{
-				Edit->SetLine(i); 
+				edit->SetLine(i); 
 				SelectRow(i); 
 				MakeVisible(i);
 				return;
@@ -1941,12 +1941,12 @@ void SubsGridWindow::SelVideoLine(int curtime)
 	}
 	
 	if ((time - prevtime) > (durtime - time)){
-		Edit->SetLine(idr);
+		edit->SetLine(idr);
 		SelectRow(idr);
 		MakeVisible(idr);
 	}
 	else{
-		Edit->SetLine(ip);
+		edit->SetLine(ip);
 		SelectRow(ip);
 		MakeVisible(ip);
 	}

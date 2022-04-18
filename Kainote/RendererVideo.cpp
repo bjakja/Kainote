@@ -710,7 +710,7 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 	wxMutexLocker lock(m_MutexVisualChange);
 
 	m_HasVisualEdition = false;
-	int vis = tab->Edit->Visual;
+	int vis = tab->edit->Visual;
 	if (!m_Visual) {
 		m_Visual = Visuals::Get(vis, videoControl);
 	}
@@ -724,8 +724,8 @@ void RendererVideo::SetVisual(bool settext/*=false*/, bool noRefresh /*= false*/
 	m_Visual->SizeChanged(wxRect(m_BackBufferRect.left, m_BackBufferRect.top,
 		m_BackBufferRect.right, m_BackBufferRect.bottom), m_D3DLine, m_D3DFont, m_D3DDevice);
 	SetVisualZoom();
-	int tool = tab->Video->GetVideoToolbar()->GetItemToggled();
-	m_Visual->SetVisual(tab->Edit->line, tool, noRefresh);
+	int tool = tab->video->GetVideoToolbar()->GetItemToggled();
+	m_Visual->SetVisual(tab->edit->line, tool, noRefresh);
 	bool vectorclip = m_Visual->Visual == VECTORCLIP;
 	if (vectorclip || settext) { OpenSubs(OPEN_DUMMY); }
 	Render(!noRefresh);
@@ -736,8 +736,8 @@ void RendererVideo::ResetVisual()
 {
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
-	int tool = tab->Video->GetVideoToolbar()->GetItemToggled();
-	m_Visual->SetVisual(tab->Edit->line, tool);
+	int tool = tab->video->GetVideoToolbar()->GetItemToggled();
+	m_Visual->SetVisual(tab->edit->line, tool);
 	m_HasVisualEdition = true;
 	Render();
 }
@@ -747,11 +747,11 @@ bool RendererVideo::RemoveVisual(bool noRefresh, bool disable)
 	wxMutexLocker lock(m_MutexVisualChange);
 	m_HasVisualEdition = false;
 	if (disable) {
-		tab->Edit->Visual = -1;
+		tab->edit->Visual = -1;
 		SAFE_DELETE(m_Visual);
 	}
 	else {
-		tab->Edit->Visual = 0;
+		tab->edit->Visual = 0;
 		SetVisual();
 	}
 	return true;

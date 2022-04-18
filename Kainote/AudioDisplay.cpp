@@ -614,11 +614,11 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		}
 		// Draw current frame
 		if (drawVideoPos) {
-			VideoCtrl *Video = tab->Video;
-			if (Video->GetState() == Paused) {
+			VideoCtrl *video = tab->video;
+			if (video->GetState() == Paused) {
 				d3dLine->SetWidth(2);
 
-				float x = GetXAtMS(Video->Tell());
+				float x = GetXAtMS(video->Tell());
 				d3dLine->Begin();
 				D3DXVECTOR2 v2[2] = { D3DXVECTOR2(x, 0), D3DXVECTOR2(x, h) };
 				DrawDashedLine(v2, 2, AudioCursor);
@@ -1275,7 +1275,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	if (!file.IsEmpty()) {
 		try {
 			// Get provider
-			VideoCtrl *vb = tab->Video;
+			VideoCtrl *vb = tab->video;
 			Provider *FFMS2 = vb->GetFFMS2();
 			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
@@ -1436,7 +1436,7 @@ void AudioDisplay::ChangeOptions()
 // Play
 void AudioDisplay::Play(int start, int end, bool pause) {
 	
-	if (pause && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
+	if (pause && tab->video->GetState() == Playing){ tab->video->Pause(); }
 
 	// Check provider
 	if (!provider) {
@@ -1472,7 +1472,7 @@ void AudioDisplay::Play(int start, int end, bool pause) {
 ////////
 // Stop
 void AudioDisplay::Stop(bool stopVideo) {
-	if (stopVideo && tab->Video->GetState() == Playing){ tab->Video->Pause(); }
+	if (stopVideo && tab->video->GetState() == Playing){ tab->video->Pause(); }
 	else if (player) {
 		player->Stop();
 		stopPlayThread = true;	
@@ -1585,17 +1585,17 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 
 	// Update dialogues
 	blockUpdate = true;
-	STime gtime = STime(Edit->line->Start);
+	STime gtime = STime(edit->line->Start);
 	gtime.NewTime(curStartMS);
-	Edit->StartEdit->SetTime(gtime, true, 1);
+	edit->StartEdit->SetTime(gtime, true, 1);
 	gtime.NewTime(curEndMS);
-	Edit->EndEdit->SetTime(gtime, true, 2);
+	edit->EndEdit->SetTime(gtime, true, 2);
 	gtime.NewTime(curEndMS - curStartMS);
-	Edit->DurEdit->SetTime(gtime, true, 1);
+	edit->DurEdit->SetTime(gtime, true, 1);
 	if (Save){
-		Edit->Send(AUDIO_CHANGE_TIME, nextLine);
-		if (!nextLine){ Edit->UpdateChars(); }
-		VideoCtrl *vb = ((TabPanel *)Edit->GetParent())->Video;
+		edit->Send(AUDIO_CHANGE_TIME, nextLine);
+		if (!nextLine){ edit->UpdateChars(); }
+		VideoCtrl *vb = ((TabPanel *)edit->GetParent())->video;
 		if (vb && vb->GetState() != None)
 			vb->RefreshTime();
 	}
@@ -1706,7 +1706,7 @@ void AudioDisplay::OnMouseEvent(wxMouseEvent& event) {
 	if (((leftDown && event.GetModifiers() == wxMOD_CONTROL) || middleDown) && !onScale)
 	{
 		int pos = GetMSAtX(x);
-		tab->Video->Seek(pos);
+		tab->video->Seek(pos);
 		UpdateImage(true);
 
 	}
@@ -2419,7 +2419,7 @@ void AudioDisplay::Prev(bool play) {
 
 	}
 	else{
-		//if(tab->Video->GetState()==Playing){tab->Video->Pause();}
+		//if(tab->video->GetState()==Playing){tab->video->Pause();}
 		ChangeLine(-1);
 	}
 
@@ -2458,8 +2458,8 @@ bool AudioDisplay::UpdateTimeEditCtrls() {
 	// this is why binary OR instead of logical OR is used.
 	// All three time edits must always be updated.
 
-	Edit->StartEdit->SetTime(curStartMS, true, 1);
-	Edit->EndEdit->SetTime(curEndMS, true, 2);
+	edit->StartEdit->SetTime(curStartMS, true, 1);
+	edit->EndEdit->SetTime(curEndMS, true, 2);
 	return true;
 }
 
@@ -2467,7 +2467,7 @@ void AudioDisplay::Commit(bool moveToEnd)
 {
 	bool autocommit = Options.GetBool(AUDIO_AUTO_COMMIT);
 	if (hasKara){
-		Edit->TextEdit->SetTextS(karaoke->GetText(), true, true, true);
+		edit->TextEdit->SetTextS(karaoke->GetText(), true, true, true);
 	}
 
 	if (autocommit) {
@@ -2479,7 +2479,7 @@ void AudioDisplay::Commit(bool moveToEnd)
 	}
 	if (!Options.GetBool(DISABLE_LIVE_VIDEO_EDITING)){ 
 		wxCommandEvent evt;
-		Edit->OnEdit(evt); 
+		edit->OnEdit(evt); 
 	}
 }
 

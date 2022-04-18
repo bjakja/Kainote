@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Hotkeys.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "Config.h"
 #include "OpennWrite.h"
 

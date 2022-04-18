@@ -113,15 +113,15 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	if (hasLineToMove) {
 
 		if (evt.ButtonUp()) {
-			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
-			int time = tab->Video->Tell();
+			if (tab->video->HasCapture()) { tab->video->ReleaseMouse(); }
+			int time = tab->video->Tell();
 			if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
 				bool bad = true;
 			}
 			else {
 				SetVisual(false);
 			}
-			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
 			grabbed = -1;
 			moveDistance = to - from;
 			movingHelperLine = false;
@@ -129,12 +129,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 		if (movingHelperLine) {
 			helperLinePos = evt.GetPosition();
-			tab->Video->Render(false);
+			tab->video->Render(false);
 			return;
 		}
 
 		if (click) {
-			tab->Video->CaptureMouse();
+			tab->video->CaptureMouse();
 			if (IsInPos(evt.GetPosition(), helperLinePos, 4)) {
 				movingHelperLine = true;
 				return;
@@ -145,7 +145,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				lineToMoveVisibility[0] = true;
 				lineToMoveStart.x = x;
 				lineToMoveStart.y = y;
-				tab->Video->Render(false);
+				tab->video->Render(false);
 				return;
 			}
 			else if (abs(lineToMoveStart.x - x) < 8 && abs(lineToMoveStart.y - y) < 8) {
@@ -181,12 +181,12 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 			}
 			lastmove = lastTo = to;
 			firstmove = lastFrom = from;
-			tab->Video->SetCursor(wxCURSOR_SIZING);
+			tab->video->SetCursor(wxCURSOR_SIZING);
 			if (SetMove()) {
 				SetVisual(true);
 			}
 			else {
-				tab->Video->Render(false);
+				tab->video->Render(false);
 			}
 		}
 
@@ -208,7 +208,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 				SetVisual(true);
 			}
 			else {
-				tab->Video->Render(false);
+				tab->video->Render(false);
 			}
 		}
 
@@ -216,9 +216,9 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		SetVisual(false);
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW); }
 		grabbed = -1;
 		moveDistance = to - from;
 		movingHelperLine = false;
@@ -226,17 +226,17 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 	if (movingHelperLine){
 		helperLinePos = evt.GetPosition();
-		tab->Video->Render(false);
+		tab->video->Render(false);
 		return;
 	}
 
 	if (click){
-		tab->Video->CaptureMouse();
+		tab->video->CaptureMouse();
 		if (IsInPos(evt.GetPosition(), helperLinePos, 4)){
 			movingHelperLine = true;
 			return;
 		}
-		tab->Video->SetCursor(wxCURSOR_SIZING);
+		tab->video->SetCursor(wxCURSOR_SIZING);
 		if (leftc){ type = 0; }
 		if (rightc){ type = 1; }
 
@@ -305,7 +305,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 		wxPoint mousePos = evt.GetPosition();
 		hasHelperLine = (hasHelperLine && IsInPos(mousePos, helperLinePos, 4)) ? false : true;
 		helperLinePos = mousePos;
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 }
 
@@ -362,7 +362,7 @@ void Move::ChangeVisual(wxString *txt, Dialogue *_dial, size_t numOfSelections)
 wxPoint Move::ChangeVisual(wxString* txt)
 {
 	FindTag(L"(move|pos).+", *txt, 1);
-	int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+	int startTime = ZEROIT(tab->edit->line->Start.mstime);
 	wxString visual = L"\\move(" + getfloat(((from.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
 		getfloat(((from.y / zoomScale.y) + zoomMove.y) * coeffH) + L"," +
 		getfloat(((to.x / zoomScale.x) + zoomMove.x) * coeffW) + L"," +
@@ -382,7 +382,7 @@ void Move::OnKeyPress(wxKeyEvent &evt)
 
 bool Move::SetMove()
 {
-	int time = tab->Video->Tell();
+	int time = tab->video->Tell();
 	if (!lineToMoveVisibility[1] || time == lineStartTime || lineStartTime == -1) {
 		if(time == lineStartTime)
 			KaiLog(_("Wideo musi być ustawione minimum jedną klatkę po czasie początkowym linijki"));

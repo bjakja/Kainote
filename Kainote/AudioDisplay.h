@@ -171,7 +171,7 @@ private:
 
 public:
 	SubsGrid *grid = nullptr;
-	EditBox *Edit = nullptr;
+	EditBox *edit = nullptr;
 	TabPanel *tab = nullptr;
 	Provider *provider = nullptr;
 	DirectSoundPlayer2 *player = nullptr;

@@ -21,24 +21,20 @@
  **************************************************************/
 
 #pragma once
-//#include <windows.h>
-#include "Tabs.h"
-#include <vector>
-#include "TabPanel.h"
-#include "StyleStore.h"
-#include "FindReplaceDialog.h"
-#include "SelectLines.h"
-#include "Automation.h"
-#include "Toolbar.h"
-#include "KaiStatusBar.h"
-#include "LogHandler.h"
-#include "MisspellReplacer.h"
+
 #include "KaiFrame.h"
 #include <wx/timer.h>
+
 
 class FontCollector;
 struct tagRECT;
 typedef RECT tagRECT;
+class FindReplaceDialog;
+class SelectLines;
+class MisspellReplacer;
+class Automation;
+class Notebook;
+class KaiStatusBar
 
 class KainoteFrame : public KaiFrame
 {

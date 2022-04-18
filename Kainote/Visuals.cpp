@@ -98,13 +98,13 @@ Visuals::~Visuals()
 void Visuals::GetDialoguesWithoutPosition(Dialogue* dialogue)
 {
 	dialoguesWithoutPosition.clear();
-	int time = tab->Video->Tell();
+	int time = tab->video->Tell();
 	if (time >= dialogue->Start.mstime && time < dialogue->End.mstime) {
-		SubsGrid* grid = tab->Grid;
+		SubsGrid* grid = tab->grid;
 
 		wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
-		bool tlMode = tab->Grid->hasTLMode;
-		int activeLineKey = tab->Grid->currentLine;
+		bool tlMode = tab->grid->hasTLMode;
+		int activeLineKey = tab->grid->currentLine;
 
 		for (size_t i = 0; i < grid->file->GetCount(); i++) {
 			Dialogue* dial = grid->file->GetDialogue(i);
@@ -112,7 +112,7 @@ void Visuals::GetDialoguesWithoutPosition(Dialogue* dialogue)
 				continue;
 			}
 
-			if (i == activeLineKey && dialogue == tab->Edit->line)
+			if (i == activeLineKey && dialogue == tab->edit->line)
 				break;
 			if (dial == dialogue)
 				break;
@@ -138,9 +138,9 @@ D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 
 	size_t dialoguesSize = dialoguesWithoutPosition.size();
 
-	bool tlMode = tab->Grid->hasTLMode;
+	bool tlMode = tab->grid->hasTLMode;
 	wxRegEx an(L"\\\\an([0-9]+)", wxRE_ADVANCED);
-	Styles* currentDialogueStyle = tab->Grid->GetStyle(0, dialogue->Style);
+	Styles* currentDialogueStyle = tab->grid->GetStyle(0, dialogue->Style);
 	int curlineAn = wxAtoi(currentDialogueStyle->Alignment);
 	const wxString& txt = dialogue->GetTextNoCopy();
 	if (an.Matches(txt)) {
@@ -161,7 +161,7 @@ D3DXVECTOR2 Visuals::GetDialogueAdditionalPosition(Dialogue* dialogue)
 
 	for (size_t i = 0; i < dialoguesSize; i++){
 		Dialogue *dial = dialoguesWithoutPosition[i];
-		Styles *currentStyle = tab->Grid->GetStyle(0, dial->Style);
+		Styles *currentStyle = tab->grid->GetStyle(0, dial->Style);
 		const wxString &txt = dial->GetTextNoCopy();
 		int newan = wxAtoi(currentStyle->Alignment);
 		if (an.Matches(txt)){
@@ -263,16 +263,16 @@ void Visuals::SetPositionByAn(D3DXVECTOR2* pos, int an, Dialogue* dial, Styles* 
 void Visuals::RenderSubs(wxString *subs, bool redraw /*= true*/)
 {
 	//visual, renderer should exist
-	RendererVideo *renderer = tab->Video->GetRenderer();
+	RendererVideo *renderer = tab->video->GetRenderer();
 	if (renderer && !renderer->OpenSubs(OPEN_HAS_OWN_TEXT, true, subs)){ KaiLog(_("Nie można otworzyć napisów")); }
-	tab->Video->SetVisualEdition(true);
-	if (redraw){ tab->Video->Render(); }
+	tab->video->SetVisualEdition(true);
+	if (redraw){ tab->video->Render(); }
 }
 
 void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 {
 	int nx = 0, ny = 0;
-	tab->Grid->GetASSRes(&nx, &ny);
+	tab->grid->GetASSRes(&nx, &ny);
 	SubsSize = wxSize(nx, ny);
 	start = dial->Start.mstime;
 	end = dial->End.mstime;
@@ -280,12 +280,12 @@ void Visuals::SetVisual(Dialogue* dial, int tool, bool noRefresh)
 
 	coeffW = ((float)SubsSize.x / (float)(VideoSize.width - VideoSize.x));
 	coeffH = ((float)SubsSize.y / (float)(VideoSize.height - VideoSize.y));
-	tab->Video->SetVisualEdition(true);
+	tab->video->SetVisualEdition(true);
 
 	//set copy of editbox text that every dummy edition have the same text
 	//not changed by other dummy editions to avoid mismatches when moving
-	bool isOriginal = (tab->Grid->hasTLMode && tab->Edit->TextEdit->GetValue() == emptyString);
-	editor = (isOriginal) ? tab->Edit->TextEditOrig : tab->Edit->TextEdit;
+	bool isOriginal = (tab->grid->hasTLMode && tab->edit->TextEdit->GetValue() == emptyString);
+	editor = (isOriginal) ? tab->edit->TextEditOrig : tab->edit->TextEdit;
 	currentLineText = editor->GetValue();
 	ChangeTool(tool, true);
 	SetCurVisual();
@@ -453,7 +453,7 @@ void Visuals::DrawWarning(bool comment)
 D3DXVECTOR2 Visuals::CalcMovePos()
 {
 	D3DXVECTOR2 ppos;
-	int time = tab->Video->Tell();
+	int time = tab->video->Tell();
 	if (moveValues[6] < 6){ moveValues[4] = start; moveValues[5] = end; }
 	float tmpt = time - moveValues[4];
 	float tmpt1 = moveValues[5] - moveValues[4];
@@ -512,8 +512,8 @@ void Visuals::GetVectorPoints(const wxString& vector, std::vector<ClipPoint>* po
 
 void Visuals::GetMoveTimes(int *start, int *end)
 {
-	VideoCtrl *video = tab->Video;
-	EditBox *edit = tab->Edit;
+	VideoCtrl *video = tab->video;
+	EditBox *edit = tab->edit;
 	Provider *FFMS2 = video->GetFFMS2();
 	float fps;
 	video->GetFPSAndAspectRatio(&fps, nullptr, nullptr, nullptr);
@@ -539,8 +539,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 
 	bool draw = (Visual == VECTORCLIP || Visual == VECTORDRAW);
 	D3DXVECTOR2 ppos(0.0f, 0.0f);
-	EditBox *edit = tab->Edit;
-	SubsGrid *grid = tab->Grid;
+	EditBox *edit = tab->edit;
+	SubsGrid *grid = tab->grid;
 	wxString txt = edit->TextEdit->GetValue();
 	TextEditor *editor = edit->TextEdit;
 	if (grid->hasTLMode && txt == emptyString){ 
@@ -636,8 +636,8 @@ D3DXVECTOR2 Visuals::GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl)
 //Put visuals in line text
 void Visuals::SetVisual(bool dummy)
 {
-	EditBox *edit = tab->Edit;
-	SubsGrid *grid = tab->Grid;
+	EditBox *edit = tab->edit;
+	SubsGrid *grid = tab->grid;
 
 	bool isOriginal = (grid->hasTLMode && edit->TextEdit->GetValue() == emptyString);
 	//Get editor
@@ -648,7 +648,7 @@ void Visuals::SetVisual(bool dummy)
 		wxString *dtxt;
 		wxArrayInt sels;
 		grid->file->GetSelections(sels);
-		bool skipInvisible = dummy && tab->Video->GetState() != Playing;
+		bool skipInvisible = dummy && tab->video->GetState() != Playing;
 		size_t selsSize = sels.size();
 		if (dummy && (!dummytext || selPositions.size() != selsSize)){
 			bool visible = false;
@@ -662,9 +662,9 @@ void Visuals::SetVisual(bool dummy)
 			}
 		}
 		if (dummy){ dtxt = new wxString(*dummytext); }
-		int _time = tab->Video->Tell();
+		int _time = tab->video->Tell();
 		int moveLength = 0;
-		const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
+		const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
 		for (size_t i = 0; i < sels.size(); i++){
 
 			Dialogue *Dial = grid->GetDialogue(sels[i]);
@@ -732,7 +732,7 @@ void Visuals::SetVisual(bool dummy)
 	else{
 		editor->SetModified();
 		currentLineText = editor->GetValue();
-		tab->Video->SetVisualEdition(true);
+		tab->video->SetVisualEdition(true);
 		if (edit->splittedTags){ edit->TextEditOrig->SetModified(); }
 		edit->Send((Visual == MOVE) ? VISUAL_MOVE :
 			(Visual == SCALE) ? VISUAL_SCALE : (Visual == ROTATEZ) ? VISUAL_ROTATION_Z :
@@ -750,7 +750,7 @@ D3DXVECTOR2 Visuals::GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *Te
 	//calculate right position and pass results to positioning and move.
 	*putinBracket = false;
 	D3DXVECTOR2 result;
-	Styles *currentStyle = tab->Grid->GetStyle(0, Dial->Style);
+	Styles *currentStyle = tab->grid->GetStyle(0, Dial->Style);
 	const wxString &txt = Dial->GetText();
 	bool foundpos = false;
 	wxRegEx pos(L"\\\\(pos|move)\\(([^\\)]+)\\)", wxRE_ADVANCED);
@@ -825,18 +825,18 @@ void Visuals::ChangeOrg(wxString *txt, Dialogue *_dial, float coordx, float coor
 
 void Visuals::SetModified(int action, bool dummy)
 {
-	tab->Video->SetVisualEdition(true);
-	if (tab->Edit->splittedTags){ 
-		tab->Edit->TextEditOrig->SetModified(); 
+	tab->video->SetVisualEdition(true);
+	if (tab->edit->splittedTags){ 
+		tab->edit->TextEditOrig->SetModified(); 
 	}
-	tab->Grid->SetModified(action, true, dummy);
+	tab->grid->SetModified(action, true, dummy);
 	if (dummy) {
-		VideoCtrl* vb = tab->Video;
+		VideoCtrl* vb = tab->video;
 		if (vb->IsShown() || vb->IsFullScreen()) { vb->OpenSubs(OPEN_DUMMY); }
 		if (vb->GetState() == Paused)
 			vb->Render();
 	}
-	tab->Grid->Refresh();
+	tab->grid->Refresh();
 }
 
 bool Visuals::GetTextExtents(const wxString & text, Styles *style, float* width, float* height, float* descent, float* extlead)
@@ -932,7 +932,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	if (style)
 		measuringStyle = style->Copy();
 	else
-		measuringStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style)->Copy();
+		measuringStyle = tab->grid->GetStyle(0, tab->edit->line->Style)->Copy();
 
 	ParseData* presult = dial->ParseTags(tags, 14, true);
 	float bord = measuringStyle->GetOtlineDouble();

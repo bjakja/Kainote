@@ -472,7 +472,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	if (vobsub)
 		subsFlag = CLOSE_SUBTITLES;
 	else {
-		SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"), false);
+		SetColorSpace(tab->grid->GetSInfo(L"YCbCr Matrix"), false);
 	}
 
 	OpenSubs(subsFlag, false, nullptr, true);
@@ -757,9 +757,9 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 	SetPosition(tmptime);
 	if (m_State == Paused){ m_DirectShowPlayer->Play(); m_DirectShowPlayer->Pause(); }
 	else if (m_State == Playing){ m_DirectShowPlayer->Play(); }
-	int pos = tab->Video->m_VolumeSlider->GetValue();
+	int pos = tab->video->m_VolumeSlider->GetValue();
 	SetVolume(-(pos * pos));
-	tab->Video->ChangeStream();
+	tab->video->ChangeStream();
 }
 
 bool RendererDirectShow::EnumFilters(Menu *menu)

@@ -8,6 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "GraphicsD2D.h"
+#include <d2d1.h>
 
 #ifndef wxFALLTHROUGH
 #define wxFALLTHROUGH ((void)0)

@@ -314,7 +314,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbase.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Dxva2.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib;Dwmapi.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -412,7 +412,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="KaiListCtrl.cpp" />
     <ClCompile Include="KaiMessageBox.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
-    <ClCompile Include="KainoteMain.cpp" />
+    <ClCompile Include="KainoteFrame.cpp" />
     <ClCompile Include="KaiRadioButton.cpp" />
     <ClCompile Include="KaiScrollbar.cpp" />
     <ClCompile Include="KaiSlider.cpp" />
@@ -572,7 +572,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="KaiListCtrl.h" />
     <ClInclude Include="KaiMessageBox.h" />
     <ClInclude Include="KainoteApp.h" />
-    <ClInclude Include="KainoteMain.h" />
+    <ClInclude Include="KainoteFrame.h" />
     <ClInclude Include="KaiRadioButton.h" />
     <ClInclude Include="KaiScrollbar.h" />
     <ClInclude Include="KaiSlider.h" />

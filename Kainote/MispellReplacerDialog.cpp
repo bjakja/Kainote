@@ -16,7 +16,7 @@
 #include "Config.h"
 #include "MispellReplacerDialog.h"
 #include "MisspellReplacer.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 
 
 // header element of the results list

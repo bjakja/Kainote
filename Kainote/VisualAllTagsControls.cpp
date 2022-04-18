@@ -50,7 +50,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 				parent->currentTag = 0;
 			int tool = parent->mode << 20;
 			tool += parent->currentTag;
-			VideoCtrl* vc = parent->tab->Video;
+			VideoCtrl* vc = parent->tab->video;
 			vc->GetVideoToolbar()->SetItemToggled(&tool);
 			parent->ChangeTool(tool, false);
 			return;
@@ -69,7 +69,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 			onSlider = false;
 			//set holding before us to know what value use
 			holding = true;
-			if (parent->tab->Edit->IsCursorOnStart()) {
+			if (parent->tab->edit->IsCursorOnStart()) {
 				parent->SetVisual(false);
 			}
 			else {
@@ -91,7 +91,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 	if (evt.Leaving()) {
 		if (thumbState != 0) {
 			thumbState = 0;
-			parent->tab->Video->Render(false);
+			parent->tab->video->Render(false);
 		}
 	}
 
@@ -104,7 +104,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 			if (thumbState != 0 || onSlider || onThumb) {
 				thumbState = 0;
 				onSlider = onThumb = false;
-				parent->tab->Video->Render(false);
+				parent->tab->video->Render(false);
 			}
 		}
 
@@ -115,7 +115,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 			onThumb = true;
 			if (!evt.LeftDown() && !evt.LeftDClick() && !evt.LeftUp() && thumbState != 1) {
 				thumbState = 1;
-				parent->tab->Video->Render(false);
+				parent->tab->video->Render(false);
 			}
 		}//on slider
 		else {
@@ -124,7 +124,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 			}
 			if (!evt.LeftDown() && !evt.LeftDClick() && !evt.LeftUp()) {
 				thumbState = 0;
-				parent->tab->Video->Render(false);
+				parent->tab->video->Render(false);
 			}
 		}
 
@@ -150,10 +150,10 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 
 		if (onThumb) {
 			thumbState = 2;
-			if (!parent->tab->Video->HasCapture()) {
-				parent->tab->Video->CaptureMouse();
+			if (!parent->tab->video->HasCapture()) {
+				parent->tab->video->CaptureMouse();
 			}
-			parent->tab->Video->Render(false);
+			parent->tab->video->Render(false);
 			holding = true;
 		}
 		else if (onSlider) {
@@ -162,7 +162,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 			thumbValue = MID(parent->actualTag.rangeMin, thumbValue, parent->actualTag.rangeMax);
 			//set holding before use setVisual to know what value use
 			holding = true;
-			if (parent->tab->Edit->IsCursorOnStart()) {
+			if (parent->tab->edit->IsCursorOnStart()) {
 				parent->SetVisual(false);
 			}
 			else {
@@ -175,8 +175,8 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 
 	if (evt.LeftUp() && holding) {
 		thumbState = 0;
-		if (parent->tab->Video->HasCapture()) {
-			parent->tab->Video->ReleaseMouse();
+		if (parent->tab->video->HasCapture()) {
+			parent->tab->video->ReleaseMouse();
 		}
 		parent->SetVisual(false);
 		holding = false;

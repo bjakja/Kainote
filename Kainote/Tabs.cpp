@@ -127,7 +127,7 @@ TabPanel *Notebook::GetPage()
 
 void Notebook::AddPage(bool refresh, bool saveLastSession)
 {
-	if (iter < Pages.size() && Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
+	if (iter < Pages.size() && Pages[iter]->video->GetState() == Playing){ Pages[iter]->video->Pause(); }
 	int w, h;
 	GetClientSize(&w, &h);
 	if(refresh){Freeze();}
@@ -839,7 +839,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		tabsMenu.Append(MENU_CHOOSE + g, Page(g)->SubsName, emptyString, true, 0, 0, (g == iter) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	tabsMenu.AppendSeparator();
-	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->Grid->file->CanSave());
+	tabsMenu.Append(MENU_SAVE + i, _("Zapisz"), _("Zapisz"))->Enable(i >= 0 && Pages[i]->grid->file->CanSave());
 	tabsMenu.Append(MENU_SAVE - 1, _("Zapisz wszystko"), _("Zapisz wszystko"));
 	tabsMenu.Append(MENU_CHOOSE - 1, _("Zamknij wszystkie zakładki"), _("Zamknij wszystkie zakładki"));
 	int num;
@@ -867,7 +867,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	Menu *styleComparisonMenu = new Menu();
 	if (canCompare){
 		wxArrayString availableStyles;
-		Pages[iter]->Grid->GetCommonStyles(Pages[i]->Grid, availableStyles);
+		Pages[iter]->grid->GetCommonStyles(Pages[i]->grid, availableStyles);
 		wxArrayString optionsCompareStyles;
 		Options.GetTable(SUBS_COMPARISON_STYLES, optionsCompareStyles);
 		for (size_t i = 0; i < availableStyles.size(); i++){
@@ -882,7 +882,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 	Menu *comparisonMenu = new Menu();
 	comparisonMenu->Append(MENU_COMPARE + 1, _("Porównaj według czasów"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check(compareBy & COMPARE_BY_TIMES);
 	comparisonMenu->Append(MENU_COMPARE + 2, _("Porównaj według widocznych linijek"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_VISIBLE)>0);
-	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->Grid->file->SelectionsSize() > 0 && Pages[i]->Grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
+	comparisonMenu->Append(MENU_COMPARE + 3, _("Porównaj według zaznaczeń"), nullptr, emptyString, ITEM_CHECK, canCompare && Pages[iter]->grid->file->SelectionsSize() > 0 && Pages[i]->grid->file->SelectionsSize() > 0)->Check((compareBy & COMPARE_BY_SELECTIONS) > 0);
 	comparisonMenu->Append(MENU_COMPARE + 4, _("Porównaj według stylów"), nullptr, emptyString, ITEM_CHECK, canCompare)->Check((compareBy & COMPARE_BY_STYLES) > 0);
 	comparisonMenu->Append(MENU_COMPARE + 5, _("Porównaj według wybranych stylów"), styleComparisonMenu, emptyString, ITEM_CHECK, canCompare)->Check(SubsGridBase::compareStyles.size() > 0);
 	comparisonMenu->Append(MENU_COMPARE, _("Porównaj"))->Enable(canCompare);
@@ -896,8 +896,8 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 		OnTabSel(id);
 	}
 	else if (id == MENU_COMPARE){
-		SubsGridBase::CG1 = Pages[iter]->Grid;
-		SubsGridBase::CG2 = Pages[i]->Grid;
+		SubsGridBase::CG1 = Pages[iter]->grid;
+		SubsGridBase::CG2 = Pages[i]->grid;
 		SubsGridBase::SubsComparison();
 		SubsGridBase::hasCompare = true;
 		SubsGridBase::CG1->ShowSecondComparedLine(SubsGridBase::CG2->GetScrollPosition(), false, false, true);
@@ -921,7 +921,7 @@ void Notebook::ContextMenu(const wxPoint &pos, int i)
 void Notebook::OnTabSel(int id)
 {
 	int wtab = id - MENU_CHOOSE;
-	if (Pages[iter]->Video->GetState() == Playing){ Pages[iter]->Video->Pause(); }
+	if (Pages[iter]->video->GetState() == Playing){ Pages[iter]->video->Pause(); }
 	if (wtab < -1){
 		wtab = abs(wtab + 2);
 		Split(wtab);
@@ -1080,18 +1080,18 @@ bool Notebook::LoadSubtitles(TabPanel *tab, const wxString & path, int active /*
 		return false;
 	}
 	else{
-		tab->Grid->LoadSubtitles(s, ext);
+		tab->grid->LoadSubtitles(s, ext);
 	}
 
 	tab->SubsPath = path;
 	if (ext == L"ssa"){ ext = L"ass"; tab->SubsPath = tab->SubsPath.BeforeLast(L'.') + L".ass"; }
 	tab->SubsName = tab->SubsPath.AfterLast(L'\\');
-	tab->Video->DisableVisuals(ext != L"ass");
-	if (active != -1 && active != tab->Grid->currentLine && active < tab->Grid->GetCount()){
-		tab->Grid->SetActive(active);
+	tab->video->DisableVisuals(ext != L"ass");
+	if (active != -1 && active != tab->grid->currentLine && active < tab->grid->GetCount()){
+		tab->grid->SetActive(active);
 	}
 	if (scroll != -1)
-		tab->Grid->ScrollTo(scroll);
+		tab->grid->ScrollTo(scroll);
 	loadedRecoverySubs = false;
 	return true;
 }
@@ -1110,11 +1110,11 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 	if (hasEditor) {
 		wxString subsPath = (path.empty()) ?
 			tab->SubsPath.BeforeLast(L'\\') + L"\\" : path.BeforeLast(L'\\') + L"\\";
-		audiopath = tab->Grid->GetSInfo(L"Audio File");
-		keyframespath = tab->Grid->GetSInfo(L"Keyframes File");
+		audiopath = tab->grid->GetSInfo(L"Audio File");
+		keyframespath = tab->grid->GetSInfo(L"Keyframes File");
 
 		if (loadPrompt) {
-			videopath = tab->Grid->GetSInfo(L"Video File");
+			videopath = tab->grid->GetSInfo(L"video File");
 			hasVideoPath = (!videopath.empty() && ((wxFileExists(videopath) && videopath.find(L':') == 1) ||
 				videopath.StartsWith(L"?dummy") || wxFileExists(videopath.Prepend(subsPath))));
 
@@ -1204,7 +1204,7 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 			hasAudioPath = false;
 	}
 	if (found) {
-		if (!tab->Video->LoadVideo((hasVideoPath) ? videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
+		if (!tab->video->LoadVideo((hasVideoPath) ? videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
 			fullscreen, !hasAudioPath && !dontLoadAudio, (position != -1) ? isFFMS2 : -1, (position != -1))) {
 			return 0;
 		}
@@ -1216,17 +1216,17 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 		}
 
 		if (hasKeyframePath) {
-			tab->Video->OpenKeyframes(keyframespath);
+			tab->video->OpenKeyframes(keyframespath);
 			tab->KeyframesPath = keyframespath;
 		}
 
 	}
 
-	tab->Edit->Frames->Enable(!tab->Video->IsDirectShow());
-	tab->Edit->Times->Enable(!tab->Video->IsDirectShow());
+	tab->edit->Frames->Enable(!tab->video->IsDirectShow());
+	tab->edit->Times->Enable(!tab->video->IsDirectShow());
 	
 	if (position != -1)
-		tab->Video->Seek(position);
+		tab->video->Seek(position);
 
 	return 1;
 }
@@ -1273,12 +1273,12 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 		TabPanel *tab = *it;
 		//put path to recovery on crash
 		result << L"Tab: " << numtab << L"\r\nVideo: " << tab->VideoPath <<
-			L"\r\nPosition: " << tab->Video->Tell() << L"\r\nFFMS2: " << !tab->Video->IsDirectShow() <<
+			L"\r\nPosition: " << tab->video->Tell() << L"\r\nFFMS2: " << !tab->video->IsDirectShow() <<
 			L"\r\nSubtitles: ";
 		if (recovery){
-			wxString ext = (tab->Grid->subsFormat < SRT) ? L"ass" : (tab->Grid->subsFormat == SRT) ? L"srt" : L"txt";
+			wxString ext = (tab->grid->subsFormat < SRT) ? L"ass" : (tab->grid->subsFormat == SRT) ? L"srt" : L"txt";
 			wxString fullPath = recoveryPath + tab->SubsName.BeforeLast(L'.') + L"." + ext;
-			tab->Grid->SaveFile(fullPath);
+			tab->grid->SaveFile(fullPath);
 			//recovery path for crash close
 			result << fullPath;
 		}
@@ -1286,8 +1286,8 @@ void Notebook::SaveLastSession(bool beforeClose, bool recovery, const wxString &
 			//normal path for end close
 			result << tab->SubsPath;
 		}
-		result << L"\r\nActive: " << tab->Grid->currentLine <<
-			L"\r\nScroll: " << tab->Grid->GetScrollPosition() <<
+		result << L"\r\nActive: " << tab->grid->currentLine <<
+			L"\r\nScroll: " << tab->grid->GetScrollPosition() <<
 			L"\r\nEditor: " << tab->editor << L"\r\n";
 		if (tab->AudioPath != emptyString && tab->AudioPath != tab->VideoPath) {
 			result << L"Audio: " << tab->AudioPath << L"\r\n";
@@ -1348,7 +1348,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 		while (true)
 		{
 			wxString token = tokenizer.GetNextToken();
-			if (token.StartsWith(L"Video: ", &rest))
+			if (token.StartsWith(L"video: ", &rest))
 				video = rest;
 			else if (token.StartsWith(L"Position: ", &rest))
 				videoPosition = wxAtoi(rest);
@@ -1385,7 +1385,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 						sthis->Kai->SetRecent();
 					}
 					if (!keyframes.empty()) {
-						tab->Video->OpenKeyframes(keyframes);
+						tab->video->OpenKeyframes(keyframes);
 						tab->KeyframesPath = keyframes;
 					}
 					if (!video.empty()){
@@ -1419,7 +1419,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 		sthis->Thaw();
 		TabPanel *tab = sthis->GetTab();
 		tab->Show();
-		tab->Video->DeleteAudioCache();
+		tab->video->DeleteAudioCache();
 		sthis->Kai->SetSubsResolution(false);
 		sthis->Kai->UpdateToolbar();
 		Options.SaveOptions(true, false);
@@ -1540,12 +1540,12 @@ LRESULT __stdcall Notebook::PauseOnMinimalize(int code, WPARAM wParam, LPARAM lP
 {
 
 	if (code == HCBT_MINMAX){
-		if (lParam == 7 && sthis->GetTab()->Video->GetState() == Playing){
-			sthis->GetTab()->Video->Pause();
+		if (lParam == 7 && sthis->GetTab()->video->GetState() == Playing){
+			sthis->GetTab()->video->Pause();
 		}
 	}
 	//if (wParam == SC_RESTORE){
-		//sthis->GetTab()->Grid->SetFocus();//Refresh(false);
+		//sthis->GetTab()->grid->SetFocus();//Refresh(false);
 	//}
 	return CallNextHookEx(0, code, wParam, lParam);
 }
@@ -1561,7 +1561,7 @@ void Notebook::ChangePage(int page, bool makeActiveVisible /*= false*/)
 	if (split && splititer == page){
 		ChangeActive(); return;
 	}
-	if (Pages[olditer]->Video->GetState() == Playing){ Pages[olditer]->Video->Pause(); }
+	if (Pages[olditer]->video->GetState() == Playing){ Pages[olditer]->video->Pause(); }
 	if (split){
 		Pages[page]->SetPosition(Pages[iter]->GetPosition());
 		Pages[page]->SetSize(Pages[iter]->GetSize());
@@ -1591,7 +1591,7 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	int ukey = event.GetUnicodeKey();
 	//bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
-	VideoCtrl *vb = GetTab()->Video;
+	VideoCtrl *vb = GetTab()->video;
 	if (ukey == 179){ vb->Pause(); }
 	//else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
 	else if (ukey == 177){ vb->PrevChap(); }
@@ -1670,8 +1670,8 @@ void Notebook::RefreshVideo(bool reloadLibass /*= false*/)
 	if (!noReopenSubs) {
 		for (int i = 0; i < sthis->Size(); i++) {
 			TabPanel *tab = sthis->Page(i);
-			if (tab->Video->GetState() != None) {
-				tab->Video->OpenSubs(OPEN_DUMMY, true, true, true);
+			if (tab->video->GetState() != None) {
+				tab->video->OpenSubs(OPEN_DUMMY, true, true, true);
 			}
 		}
 	}

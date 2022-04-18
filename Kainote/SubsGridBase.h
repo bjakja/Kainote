@@ -144,7 +144,7 @@ public:
 	std::vector<TextData> SpellErrors;
 	std::vector<compareData> *Comparison;
 	SubsFile* file;
-	EditBox *Edit;
+	EditBox *edit;
 	//comparison static pointers needs short name because we not use this class
 	static SubsGrid* CG1;
 	static SubsGrid* CG2;

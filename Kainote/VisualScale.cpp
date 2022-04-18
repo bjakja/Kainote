@@ -121,7 +121,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 	if (hasScaleToRenctangle) {
 		type = ((hasScaleX && hasScaleY) || preserveAspectRatio) ? 2 : hasScaleY ? 1 : 0;
 		if (evt.ButtonUp()) {
-			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+			if (tab->video->HasCapture()) { tab->video->ReleaseMouse(); }
 			if (rectangleVisible) {
 				if (sizingRectangle[1].y == sizingRectangle[0].y || 
 					sizingRectangle[1].x == sizingRectangle[0].x)
@@ -139,7 +139,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				SetVisual(false);
 			}
 
-			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
 		}
 
 		if (!holding && (rectangleVisible || originalRectangleVisible)) {
@@ -148,7 +148,7 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			int test = HitTest(D3DXVECTOR2(x, y));
 			if (test < INSIDE) {
 				setarrow = true;
-				tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+				tab->video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 					(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 					(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 			}
@@ -156,15 +156,15 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 				int test = HitTest(D3DXVECTOR2(x, y), true);
 				if (test < INSIDE) {
 					setarrow = true;
-					tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+					tab->video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 						(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 						(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 				}
 			}
-			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (!setarrow) { tab->video->SetCursor(wxCURSOR_ARROW); }
 		}
 		if (click) {
-			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+			if (!tab->video->HasCapture()) { tab->video->CaptureMouse(); }
 			rightHolding = evt.RightDown() && hasOriginalRectangle;
 			grabbed = OUTSIDE;
 			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
@@ -263,30 +263,30 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 			if (rectangleVisible)
 				SetVisual(true);
 			else
-				tab->Video->Render(false);
+				tab->video->Render(false);
 		}
 
 		return;
 	}
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		SetVisual(false);
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW); }
 		wasUsedShift = false;
 	}
 
 	if (!holding){
 		if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ 
-			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZING); } 
+			if (tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_SIZING); } 
 		}
 		else if (abs(to.x - x) < 11 && abs(from.y - y) < 11){ 
-			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZEWE); } 
+			if (tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_SIZEWE); } 
 		}
 		else if (abs(to.y - y) < 11 && abs(from.x - x) < 11){ 
-			if (tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_SIZENS); } 
+			if (tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_SIZENS); } 
 		}
-		else if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		else if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click || wasUsedShift != evt.ShiftDown()){
 		if (leftc){ type = 0; }
@@ -297,11 +297,11 @@ void Scale::OnMouseEvent(wxMouseEvent &evt)
 		else if (abs(to.x - x) < 11 && abs(to.y - y) < 11){ grabbed = 2; type = 2; }
 		diffs.x = to.x - x;
 		diffs.y = to.y - y;
-		if (type == 0) { tab->Video->SetCursor(wxCURSOR_SIZEWE); }
-		if (type == 1) { tab->Video->SetCursor(wxCURSOR_SIZENS); }
-		if (type == 2) { tab->Video->SetCursor(wxCURSOR_SIZING); }
+		if (type == 0) { tab->video->SetCursor(wxCURSOR_SIZEWE); }
+		if (type == 1) { tab->video->SetCursor(wxCURSOR_SIZENS); }
+		if (type == 2) { tab->video->SetCursor(wxCURSOR_SIZING); }
 		if (((leftc || evt.LeftIsDown()) && evt.ShiftDown()) || preserveProportions){
-			tab->Video->SetCursor(wxCURSOR_SIZING);
+			tab->video->SetCursor(wxCURSOR_SIZING);
 			type = 2;
 			diffs.x = x;
 			diffs.y = y;
@@ -379,7 +379,7 @@ void Scale::SetCurVisual()
 	to.y = from.y + (scale.y * arrowLengths.y);
 
 	if (hasScaleToRenctangle) {
-		originalSize = GetTextSize(tab->Edit->line, &border, nullptr, false);
+		originalSize = GetTextSize(tab->edit->line, &border, nullptr, false);
 	}
 }
 
@@ -400,7 +400,7 @@ void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 		SetCurVisual();
 	}
 	else if(hasScaleToRenctangle){
-		originalSize = GetTextSize(tab->Edit->line, &border, nullptr, false);
+		originalSize = GetTextSize(tab->edit->line, &border, nullptr, false);
 	}
 	if (oldHasOriginalRectangle != hasOriginalRectangle || hasOriginalRectangle) {
 		if (hasOriginalRectangle) {
@@ -412,7 +412,7 @@ void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 			originalRectangleVisible = false;
 	}
 	
-	tab->Video->Render(false);
+	tab->video->Render(false);
 }
 
 void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
@@ -440,7 +440,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 		wxString posstr = L"\\pos(" + getfloat(pos.x) + "," + getfloat(pos.y) + ")";
 		if (moveValues[6] > 2) {
 			D3DXVECTOR2 pos1(moveValues[2] - moveValues[0], moveValues[3] - moveValues[1]);
-			int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+			int startTime = ZEROIT(tab->edit->line->Start.mstime);
 			posstr = L"\\move(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L"," +
 				getfloat(pos.x + pos1.x) + L"," + getfloat(pos.y + pos1.y) + L"," +
 				getfloat(moveValues[4] - startTime, L"6.0f") + L"," +
@@ -456,7 +456,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 	}
 	Styles* style = nullptr;
 	if (changeAllTags) {
-		style = tab->Grid->GetStyle(0, dial->Style);
+		style = tab->grid->GetStyle(0, dial->Style);
 	}
 	if (type != 1){
 		//change all tags fscx that are in line and add first one

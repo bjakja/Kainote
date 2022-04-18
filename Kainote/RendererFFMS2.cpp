@@ -220,7 +220,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 		Provider *tmp = m_FFMS2;
 		m_FFMS2 = tmpvff;
 		Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-		m_AudioPlayer = tab->Edit->ABox->audioDisplay;
+		m_AudioPlayer = tab->edit->ABox->audioDisplay;
 		m_FFMS2 = tmp;
 		return false;
 	}
@@ -249,7 +249,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	if (changeAudio){
 		if (m_FFMS2->GetSampleRate() > 0){
 			Kaia->Frame->OpenAudioInTab(tab, 40000, fname);
-			m_AudioPlayer = tab->Edit->ABox->audioDisplay;
+			m_AudioPlayer = tab->edit->ABox->audioDisplay;
 		}
 		else if (m_AudioPlayer){ Kaia->Frame->OpenAudioInTab(tab, GLOBAL_CLOSE_AUDIO, emptyString); }
 	}
@@ -501,8 +501,8 @@ void RendererFFMS2::SetVolume(int vol)
 	vol = 7600 + vol;
 	double dvol = vol / 7600.0;
 	int sliderValue = (dvol * 99) + 1;
-	if (tab->Edit->ABox){
-		tab->Edit->ABox->SetVolume(sliderValue);
+	if (tab->edit->ABox){
+		tab->edit->ABox->SetVolume(sliderValue);
 	}
 }
 

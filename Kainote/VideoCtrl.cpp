@@ -15,7 +15,7 @@
 
 
 #include "Videobox.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "Hotkeys.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
@@ -207,7 +207,7 @@ bool VideoCtrl::Pause(bool skipWhenOnEnd)
 	if (!renderer){
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		if (index->IsChecked() && index->IsEnabled()){
-			EditBox *eb = tab->Edit;
+			EditBox *eb = tab->edit;
 			if (eb->ABox){
 				eb->ABox->audioDisplay->Play(eb->line->Start.mstime, eb->line->End.mstime);
 				return true;
@@ -379,11 +379,11 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 
 	if (tab->editor && (!m_IsFullscreen || IsShown()) &&
 		tab->SubsPath != emptyString && Options.GetBool(OPEN_VIDEO_AT_ACTIVE_LINE)){
-		Seek(tab->Edit->line->Start.mstime);
+		Seek(tab->edit->line->Start.mstime);
 	}
 	if (Options.GetBool(EDITBOX_TIMES_TO_FRAMES_SWITCH)){
-		tab->Edit->SetLine(tab->Grid->currentLine);
-		tab->Grid->RefreshColumns(START | END);
+		tab->edit->SetLine(tab->grid->currentLine);
+		tab->grid->RefreshColumns(START | END);
 	}
 	SetScaleAndZoom();
 	ChangeStream();
@@ -494,7 +494,7 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 		}
 		else if (!renderer->HasVisual(true)){
 			if (!m_IsDirectShow){
-				AudioBox *box = tab->Edit->ABox;
+				AudioBox *box = tab->edit->ABox;
 				if (box){
 					int vol = box->GetVolume();
 					int step = event.GetWheelRotation() / event.GetWheelDelta();
@@ -528,8 +528,8 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 	if (event.LeftDClick() && event.GetModifiers() == 0){
 		SetFullscreen();
 		if (!m_IsFullscreen && tab->SubsPath != emptyString && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
-			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
-			tab->Grid->SelVideoLine();
+			tab->edit->Send(EDITBOX_LINE_EDITION, false);
+			tab->grid->SelVideoLine();
 		}
 		
 
@@ -607,8 +607,8 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 	else if ((key == L'B' || key == WXK_ESCAPE) && m_IsFullscreen){
 		SetFullscreen();
 		if (tab->SubsPath != emptyString && Options.GetBool(GRID_SET_VISIBLE_LINE_AFTER_FULL_SCREEN)){
-			tab->Edit->Send(EDITBOX_LINE_EDITION, false);
-			tab->Grid->SelVideoLine();
+			tab->edit->Send(EDITBOX_LINE_EDITION, false);
+			tab->grid->SelVideoLine();
 		}
 		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
@@ -722,7 +722,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 				Kai->SetSize(sx + xDiff, sy + yDiff);
 			}
 		}
-		else if(tab->Edit->IsShown() && tab->Grid->IsShown()) {
+		else if(tab->edit->IsShown() && tab->grid->IsShown()) {
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
 			SetMinSize(wxSize(sx, sy + m_PanelHeight));
@@ -1031,7 +1031,7 @@ void VideoCtrl::OpenEditor(bool esc)
 		if (GetState() == Playing){ Pause(); }
 		Options.SetBool(EDITOR_ON, true);
 		if (tab->SubsPath != emptyString){
-			tab->Grid->SelVideoLine();
+			tab->grid->SelVideoLine();
 		}
 
 		SetFullscreen();
@@ -1104,7 +1104,7 @@ void VideoCtrl::OnSMinus()
 		}
 	}
 	else{
-		AudioBox *box = tab->Edit->ABox;
+		AudioBox *box = tab->edit->ABox;
 		if (box){
 			int vol = box->GetVolume();
 			vol -= 2;
@@ -1131,7 +1131,7 @@ void VideoCtrl::OnSPlus()
 	}
 	else{
 
-		AudioBox *box = tab->Edit->ABox;
+		AudioBox *box = tab->edit->ABox;
 		if (box){
 			int vol = box->GetVolume();
 			vol += 2;
@@ -1230,7 +1230,7 @@ void VideoCtrl::RefreshTime()
 		if (m_FullScreenWindow->panel->IsShown()){
 			wxString times;
 			times << videoTime.raw(SRT) << L";  ";
-			Dialogue* line = tab->Edit->line;
+			Dialogue* line = tab->edit->line;
 			if (!m_IsDirectShow){
 				times << renderer->m_Frame << L";  ";
 				if (renderer->HasFFMS2()){
@@ -1267,7 +1267,7 @@ void VideoCtrl::RefreshTime()
 		m_SeekingSlider->Update();
 		wxString times;
 		times << videoTime.raw(SRT) << L";  ";
-		Dialogue* line = tab->Edit->line;
+		Dialogue* line = tab->edit->line;
 		if (!m_IsDirectShow){
 			times << renderer->m_Frame << L";  ";
 			if (renderer->HasFFMS2()){
@@ -1290,7 +1290,7 @@ void VideoCtrl::RefreshTime()
 			int sdiff = videoTime.mstime - ZEROIT(line->Start.mstime);
 			int ediff = videoTime.mstime - ZEROIT(line->End.mstime);
 			times << sdiff << L" ms, " << ediff << L" ms";
-			tab->Grid->RefreshIfVisible(videoTime.mstime);
+			tab->grid->RefreshIfVisible(videoTime.mstime);
 		}
 		m_TimesTextField->SetValue(times);
 		m_TimesTextField->Update();
@@ -1304,7 +1304,7 @@ void VideoCtrl::OnCopyCoords(const wxPoint &pos)
 	int w, h;
 	GetClientSize(&w, &h);
 	int nx = 0, ny = 0;
-	tab->Grid->GetASSRes(&nx, &ny);
+	tab->grid->GetASSRes(&nx, &ny);
 	float coeffX = (float)nx / (float)(w - 1);
 	float coeffY = (float)ny / (float)(h - m_PanelHeight - 1);
 	int posx = (float)pos.x * coeffX;
@@ -1424,7 +1424,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 	if (!renderer)
 		return;
 
-	EditBox *eb = tab->Edit;
+	EditBox *eb = tab->edit;
 	int vis = evt.GetInt();
 	
 	if (vis == eb->Visual){ return; }
@@ -1611,9 +1611,9 @@ void VideoCtrl::OpenKeyframes(const wxString &filename)
 		m_KeyframesFileName.Empty();
 		return;
 	}
-	else if (tab->Edit->ABox) {
+	else if (tab->edit->ABox) {
 		// skip return when audio do not have own provider or file didn't have video for take timecodes.
-		if (tab->Edit->ABox->OpenKeyframes(filename)) {
+		if (tab->edit->ABox->OpenKeyframes(filename)) {
 			m_KeyframesFileName.Empty();
 			return;
 		}
@@ -1639,7 +1639,7 @@ void VideoCtrl::DisableVisuals(bool disable)
 		if(disable)
 			renderer->RemoveVisual(false, true);
 		else if (!renderer->HasVisual()) {
-			tab->Edit->Visual = CROSS;
+			tab->edit->Visual = CROSS;
 			renderer->SetVisual();
 		}
 	}

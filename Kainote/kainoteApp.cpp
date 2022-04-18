@@ -24,6 +24,8 @@
 #include "Hotkeys.h"
 #include "KaiMessageBox.h"
 #include "FontEnumerator.h"
+#include "SubsGrid.h"
+#include "VideoCtrl.h"
 #include <wx/image.h>
 #include <wx/ipc.h>
 #include <wx/utils.h>
@@ -67,7 +69,7 @@ void seg_handler(int sig)
 	TabPanel* tab = Kai->GetTab();
 	wxWindow* messageWindow = nullptr;
 	if (tab) {
-		messageWindow = tab->Video->GetMessageWindowParent();
+		messageWindow = tab->video->GetMessageWindowParent();
 	}
 
 	Notebook::SaveLastSession(false, true);
@@ -112,8 +114,8 @@ void kainoteApp::OnOutofMemory()
 {
 	TabPanel *tab = Notebook::GetTab();
 
-	if (tab->Grid->file->maxx() > 3){
-		tab->Grid->file->RemoveFirst(2);
+	if (tab->grid->file->maxx() > 3){
+		tab->grid->file->RemoveFirst(2);
 		KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
 		return;
 	}
@@ -121,8 +123,8 @@ void kainoteApp::OnOutofMemory()
 		for (size_t i = 0; i < Notebook::GetTabs()->Size(); i++)
 		{
 			if (i != Notebook::GetTabs()->GetSelection()){
-				if (Notebook::GetTabs()->Page(i)->Grid->file->maxx()>3){
-					Notebook::GetTabs()->Page(i)->Grid->file->RemoveFirst(2);
+				if (Notebook::GetTabs()->Page(i)->grid->file->maxx()>3){
+					Notebook::GetTabs()->Page(i)->grid->file->RemoveFirst(2);
 					KaiLog(_("Zabrakło pamięci RAM, usunięto część historii"));
 					return;
 				}
@@ -267,7 +269,7 @@ bool kainoteApp::OnInit()
 		if (hasPaths){
 			if (Options.GetBool(VIDEO_FULL_SCREEN_ON_START)){
 				Frame->OpenFiles(paths, false, true);
-				Frame->GetTab()->Video->Layout();
+				Frame->GetTab()->video->Layout();
 			}
 			else{
 				opevent = true;
@@ -368,7 +370,7 @@ int kainoteApp::OnExit()
 //		//recover<<"Sub"<<i<<": "<<Frame->Tabs->Page(i)->SubsPath<<"\r\n"
 //			//<<"Vid"<<i<<": "<<Frame->Tabs->Page(i)->VideoPath<<"\r\n";
 //		//}
-//	//recover<<Options.GetString("Subs Recent")<<Options.GetString("Video Recent");
+//	//recover<<Options.GetString("Subs Recent")<<Options.GetString("video Recent");
 //	//OpenWrite op;
 //	//op.FileWrite(Options.pathfull+"\\recover.txt",Options.pathfull+"\\recover.txt");
 //	//Options.SaveOptions();
@@ -384,7 +386,7 @@ void kainoteApp::OnFatalException()
 	//recover<<"Sub"<<i<<": "<<Frame->Tabs->Page(i)->SubsPath<<"\r\n"
 	//<<"Vid"<<i<<": "<<Frame->Tabs->Page(i)->VideoPath<<"\r\n";
 	//}
-	//recover<<Options.GetString("Subs Recent")<<"\r\n"<<Options.GetString("Video Recent");
+	//recover<<Options.GetString("Subs Recent")<<"\r\n"<<Options.GetString("video Recent");
 	//OpenWrite op;
 	//op.FileWrite(Options.pathfull+"\\recover.txt",recover);
 	//Options.SaveOptions();

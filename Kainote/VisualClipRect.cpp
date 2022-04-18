@@ -119,7 +119,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 	evt.GetPosition(&x, &y);
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		if (showClip ){
 			if (Corner[1].y == Corner[0].y || Corner[1].x == Corner[0].x)
 				showClip = false;
@@ -138,7 +138,7 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 		if (showClip)
 			SetVisual(false);
 
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW); }
 	}
 
 	if (!holding && showClip){
@@ -147,14 +147,14 @@ void ClipRect::OnMouseEvent(wxMouseEvent &evt)
 		int test = HitTest(D3DXVECTOR2(x, y), false);
 		if (test < INSIDE){
 			setarrow = true;
-			tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+			tab->video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 				(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 				(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 		}
-		if (!setarrow ){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		if (!setarrow ){ tab->video->SetCursor(wxCURSOR_ARROW); }
 	}
 	if (click){
-		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }
+		if (!tab->video->HasCapture()){ tab->video->CaptureMouse(); }
 		grabbed = OUTSIDE;
 		int pointx = ((x / zoomScale.x) + zoomMove.x) *coeffW,
 			pointy = ((y / zoomScale.y) + zoomMove.y) *coeffH;
@@ -372,7 +372,7 @@ void ClipRect::OnKeyPress(wxKeyEvent &evt)
 
 void ClipRect::InvertClip()
 {
-	SubsGrid* grid = tab->Grid;
+	SubsGrid* grid = tab->grid;
 	wxArrayInt sels;
 	grid->file->GetSelections(sels);
 	wxRegEx re(L"\\\\(i?clip)\\(([^)]*)\\)", wxRE_ADVANCED);

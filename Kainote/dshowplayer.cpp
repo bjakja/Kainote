@@ -80,7 +80,7 @@ DShowPlayer::~DShowPlayer()
 bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
 	PTR(InitializeGraph(), _("Błąd inicjalizacji Direct Show"));
-	VideoCtrl *Video = (VideoCtrl*)parent;
+	VideoCtrl *video = (VideoCtrl*)parent;
 
 
 	Selfdest<IBaseFilter> pSource;
@@ -93,13 +93,13 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 
 	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, nullptr, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
 	{
-	HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV Video Decoder"), L"Nie można dodać LAV Video Decodera");
+	HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV video Decoder"), L"Nie można dodać LAV video Decodera");
 	}else{wLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
 	*/
 	HRESULT hr;//renderer here have to be created
-	CD2DVideoRender *renderer = new CD2DVideoRender(Video->GetRenderer(), &hr);
+	CD2DVideoRender *renderer = new CD2DVideoRender(video->GetRenderer(), &hr);
 	renderer->QueryInterface(IID_IBaseFilter, (void**)&frend.obj);
-	HR(m_pGraph->AddFilter(frend.obj, L"Kainote Video Renderer"), _("Nie można dodać renderera wideo"));
+	HR(m_pGraph->AddFilter(frend.obj, L"Kainote video Renderer"), _("Nie można dodać renderera wideo"));
 
 	//code to get run direct show video with chosen audio device
 	//#include "AudioDeviceEnumeration.h"

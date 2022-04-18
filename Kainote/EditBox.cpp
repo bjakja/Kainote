@@ -363,14 +363,14 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	bool rowChanged = currentLine != Row;
 	//when preview is shown do not block setline 
 	//cause after click on preview and click back on original shit happens
-	if (nochangeline && !rowChanged && !tab->Grid->preview){ goto done; }
+	if (nochangeline && !rowChanged && !tab->grid->preview){ goto done; }
 	// space for guard by mutex
 	// don't use editionMutex with OpenSubs opened later
 	{
 		wxMutexLocker lock(grid->GetMutex());
 		//showing / hiding tlmode controls when subs preview is on
 		//it must hide it after return to original grid
-		if (tab->Grid->preview && TextEditOrig->IsShown() != grid->hasTLMode) {
+		if (tab->grid->preview && TextEditOrig->IsShown() != grid->hasTLMode) {
 			SetTlMode(grid->hasTLMode, true);
 		}
 
@@ -434,16 +434,16 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	}
 
 	//block show audio and video when preview enabled
-	//and editbox shows line from preview grid != tab->Grid
-	if (tab->Grid->preview && tab->Grid != grid)
+	//and editbox shows line from preview grid != tab->grid
+	if (tab->grid->preview && tab->grid != grid)
 		return;
 
 	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 
 done:
-	VideoCtrl *vb = tab->Video;
+	VideoCtrl *vb = tab->video;
 	int playAfter = 0, seekAfter = 0;
-	tab->Video->GetVideoListsOptions(&playAfter, &seekAfter);
+	tab->video->GetVideoListsOptions(&playAfter, &seekAfter);
 
 	if (seekAfter == 1 && playAfter < 2 && !nochangeline && rowChanged){
 		if (vb->GetState() != None){
@@ -462,23 +462,23 @@ done:
 			}
 		}
 		else{
-			if (tab->Video->IsShown() || tab->Video->IsFullScreen()){
+			if (tab->video->IsShown() || tab->video->IsFullScreen()){
 				Dialogue *next = grid->GetDialogue(grid->GetKeyFromPosition(currentLine, 1));
 				int ed = line->End.mstime, nst = next->Start.mstime;
 				int playend = (nst > ed && playAfter > 2) ? nst : ed;
-				tab->Video->PlayLine(line->Start.mstime, tab->Video->GetPlayEndTime(playend));
+				tab->video->PlayLine(line->Start.mstime, tab->video->GetPlayEndTime(playend));
 			}
 		}
 	}
 
 	if (Visual > CHANGEPOS && rowChanged/* && !nochangeline*/){
 		bool visualClip = Visual == VECTORCLIP;
-		tab->Video->SetVisual(false, !visualClip);
+		tab->video->SetVisual(false, !visualClip);
 	}
 
 	//Set time and differents in video text field
-	if (tab->Video->IsShown() && tab->Video->GetState() != None && seekAfter == 0){
-		tab->Video->RefreshTime();
+	if (tab->video->IsShown() && tab->video->GetState() != None && seekAfter == 0){
+		tab->video->RefreshTime();
 	}
 
 }
@@ -938,7 +938,7 @@ void EditBox::OnColorRightClick(wxMouseEvent& event)
 void EditBox::OnCommit(wxCommandEvent& event)
 {
 	///test it too if it's needed
-	//tab->Video->m_blockRender = true;
+	//tab->video->m_blockRender = true;
 	if (splittedTags && (TextEdit->IsModified() || TextEditOrig->IsModified())){
 		TextEdit->SetModified(); TextEditOrig->SetModified(); splittedTags = false;
 	}
@@ -949,11 +949,11 @@ void EditBox::OnCommit(wxCommandEvent& event)
 			(line->Effect->StartsWith(L"code")) ? 3 : 1, true);
 	}
 	if (Visual){
-		tab->Video->SetVisual(true);
+		tab->video->SetVisual(true);
 	}
 	if (StyleChoice->HasFocus() || Comment->HasFocus()){ grid->SetFocus(); }
 	if (ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
-	//tab->Video->m_blockRender = false;
+	//tab->video->m_blockRender = false;
 }
 
 void EditBox::OnNewline(wxCommandEvent& event)
@@ -967,7 +967,7 @@ void EditBox::OnNewline(wxCommandEvent& event)
 	if (!noNewLine && ABox){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 	Send(EDITBOX_LINE_EDITION, noNewLine);
 	if (Visual == CHANGEPOS){
-		tab->Video->SetVisual(true, true);
+		tab->video->SetVisual(true, true);
 	}
 	splittedTags = false;
 }
@@ -1395,11 +1395,11 @@ void EditBox::ClearErrs(bool spellcheckerOnOff/*=false*/, bool enableSpellchecke
 	for (size_t i = 0; i < nb->Size(); i++)
 	{
 		TabPanel* tab = nb->Page(i);
-		tab->Grid->SpellErrors.clear();
+		tab->grid->SpellErrors.clear();
 		if (spellcheckerOnOff)
-			tab->Edit->TextEdit->SpellcheckerOnOff(enableSpellchecker);
+			tab->edit->TextEdit->SpellcheckerOnOff(enableSpellchecker);
 		else
-			tab->Edit->TextEdit->ClearSpellcheckerTable();
+			tab->edit->TextEdit->ClearSpellcheckerTable();
 	}
 	grid->Refresh(false);
 	TextEdit->Refresh(false);
@@ -1439,9 +1439,9 @@ void EditBox::OnHideOriginal(wxCommandEvent& event)
 
 void EditBox::OnPasteDifferents(wxCommandEvent& event)
 {
-	if (tab->Video->GetState() == None){ wxBell(); return; }
+	if (tab->video->GetState() == None){ wxBell(); return; }
 	int idd = event.GetId();
-	int vidtime = tab->Video->Tell();
+	int vidtime = tab->video->Tell();
 	if (vidtime < line->Start.mstime || vidtime > line->End.mstime){ wxBell(); return; }
 	int diff = (idd == EDITBOX_START_DIFFERENCE) ? vidtime - ZEROIT(line->Start.mstime) : abs(vidtime - ZEROIT(line->End.mstime));
 	long startPosition, endPosition;
@@ -1499,7 +1499,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 	if (saveAfter && EditCounter >= saveAfter){
 		Send(EDITBOX_LINE_EDITION, false, false, true);
 		if (hasPreviewGrid){
-			tab->Grid->RefreshPreview();
+			tab->grid->RefreshPreview();
 		}
 		EditCounter = 1;
 		if (ABox && ABox->audioDisplay->hasKara && event.GetId() > 0)
@@ -1511,12 +1511,12 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		return;
 
 	if (Visual > 0){
-		tab->Video->SetVisual(true);
+		tab->video->SetVisual(true);
 		return;
 	}
 
 	int openFlag = CLOSE_SUBTITLES;
-	if (tab->Video->GetState() != None){
+	if (tab->video->GetState() != None){
 		//visible=true;
 		visible = grid->IsLineVisible();
 		if (!visible && (lastVisible != visible || grid->file->IsSelected(currentLine))){ 
@@ -1526,17 +1526,17 @@ void EditBox::OnEdit(wxCommandEvent& event)
 		else{ lastVisible = visible; }
 		//make sure that dummy edition is true when line is not visible
 		if (!visible){
-			tab->Video->GetRenderer()->m_HasDummySubs = true;
+			tab->video->GetRenderer()->m_HasDummySubs = true;
 		}
 		else {
 			openFlag = OPEN_DUMMY;
 		}
 	}
 
-	if (visible && (tab->Video->IsShown() || tab->Video->IsFullScreen())){
-		tab->Video->OpenSubs(openFlag);
-		if (Visual > 0){ tab->Video->ResetVisual(); }
-		else if (tab->Video->GetState() == Paused){ tab->Video->Render(); }
+	if (visible && (tab->video->IsShown() || tab->video->IsFullScreen())){
+		tab->video->OpenSubs(openFlag);
+		if (Visual > 0){ tab->video->ResetVisual(); }
+		else if (tab->video->GetState() == Paused){ tab->video->Render(); }
 	}
 
 }
@@ -1803,7 +1803,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true, false, false); }
 done:
 	if (RefreshVideo){
-		VideoCtrl *vb = tab->Video;
+		VideoCtrl *vb = tab->video;
 		if (vb->GetState() != None){
 			vb->OpenSubs(OPEN_DUMMY);
 			vb->Render();
@@ -1816,7 +1816,7 @@ void EditBox::OnCursorMoved(wxCommandEvent& event)
 	if (Visual == SCALE || Visual == ROTATEZ || Visual == ROTATEXY || Visual == CLIPRECT || Visual == ALL_TAGS){
 		//here grid has nothing to do if someone would want to make effect by visual on this video, 
 		//he can without problems
-		tab->Video->ResetVisual();
+		tab->video->ResetVisual();
 	}
 }
 
@@ -2036,9 +2036,9 @@ void EditBox::SetGrid(SubsGrid *_grid, bool isPreview){
 		RebuildActorEffectLists();
 		RefreshStyle();
 		if (isPreview){
-			tab->Video->RemoveVisual();
+			tab->video->RemoveVisual();
 		}
-		tab->Video->DisableVisuals(isPreview);
+		tab->video->DisableVisuals(isPreview);
 	}
 }
 
@@ -2068,7 +2068,7 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 			BoxSizer1->Prepend(windowResizer, 0, wxEXPAND);
 			BoxSizer1->Prepend(ABox, 0, wxLEFT | wxRIGHT | wxEXPAND, 4);
 
-			if (!tab->Video->IsShown()){
+			if (!tab->video->IsShown()){
 				int audioHeight = Options.GetInt(AUDIO_BOX_HEIGHT);
 				int minEBSize = (TextEditOrig->IsShown()) ? 200 : 150;
 				SetMinSize(wxSize(500, audioHeight + minEBSize));

@@ -200,7 +200,7 @@
     <ClCompile Include="KainoteApp.cpp">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="KainoteMain.cpp">
+    <ClCompile Include="KainoteFrame.cpp">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="NewCatalog.cpp">
@@ -685,7 +685,7 @@
     <ClInclude Include="KainoteApp.h">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="KainoteMain.h">
+    <ClInclude Include="KainoteFrame.h">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="MispellReplacerDialog.h">

@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "AutoSaveOpen.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include <wx/dir.h>
 #include <wx/tokenzr.h>
 

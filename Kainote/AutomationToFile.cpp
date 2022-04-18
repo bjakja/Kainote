@@ -992,7 +992,7 @@ namespace Auto{
 	int AutoToFile::LuaGetScriptResolution(lua_State *L)
 	{
 		int w, h;
-		Notebook::GetTab()->Grid->GetASSRes(&w, &h);
+		Notebook::GetTab()->grid->GetASSRes(&w, &h);
 		push_value(L, w);
 		push_value(L, h);
 		return 2;
@@ -1006,14 +1006,14 @@ namespace Auto{
 			return 0;
 		}
 		TabPanel *tab = Notebook::GetTab();
-		Provider* FFMS2 = tab->Video->GetFFMS2();
+		Provider* FFMS2 = tab->video->GetFFMS2();
 		if (!FFMS2){
-			if (!tab->Edit->ABox){
+			if (!tab->edit->ABox){
 				lua_pushstring(L, "GetFreqencyReach needs loaded audio by FFMS2");
 				lua_error(L);
 				return 0;
 			}
-			FFMS2 = tab->Edit->ABox->audioDisplay->provider;
+			FFMS2 = tab->edit->ABox->audioDisplay->provider;
 			if (!FFMS2){
 				lua_pushstring(L, "GetFreqencyReach cannot get audio provider");
 				lua_error(L);

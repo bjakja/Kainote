@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
 #include "SelectLines.h"
@@ -262,7 +262,7 @@ void SelectLines::OnSelectInAllTabs(wxCommandEvent& event)
 		bool refreshTabLabel = false;
 		selectionsOnAllTabs += SelectOnTab(tab, &refreshTabLabel);
 		if (refreshTabLabel)
-			Kai->Label(tab->Grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
+			Kai->Label(tab->grid->file->GetActualHistoryIter(), false, i, i != Kai->Tabs->iter);
 	}
 
 	wxString messagetxt = (selectOptions == 0) ? wxString::Format(_("Zaznaczono %i linijek."), selectionsOnAllTabs) :
@@ -284,9 +284,9 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 	wxString txt, whatcopy;
 	std::vector<Dialogue *> mdial;
 	if (!matchcase && !regex){ find.MakeLower(); }
-	tab->Grid->SaveSelections(selectOptions == 0);
-	SubsFile *Subs = tab->Grid->file;
-	bool skipFiltered = !tab->Grid->ignoreFiltered;
+	tab->grid->SaveSelections(selectOptions == 0);
+	SubsFile *Subs = tab->grid->file;
+	bool skipFiltered = !tab->grid->ignoreFiltered;
 	wxRegEx rgx;
 	if (regex){
 		int rxflags = wxRE_ADVANCED;
@@ -306,7 +306,7 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			txt = Dial->Style;
 		}
 		else if (selectColumn == TXT){
-			txt = (tab->Grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
+			txt = (tab->grid->hasTLMode && Dial->TextTl != emptyString) ? Dial->TextTl : Dial->Text;
 		}
 		else if (selectColumn == ACTOR){
 			txt = Dial->Actor;
@@ -342,26 +342,26 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 			&& ((selectDialogues && !Dial->IsComment) || (selectComments && Dial->IsComment))){
 			bool select = (selectOptions == 2) ? false : true;
 			if (select){
-				tab->Grid->file->InsertSelection(i);
+				tab->grid->file->InsertSelection(i);
 				allSelections++;
 			}
 			else{
-				if (tab->Grid->file->IsSelected(i)){
-					tab->Grid->file->EraseSelection(i);
+				if (tab->grid->file->IsSelected(i)){
+					tab->grid->file->EraseSelection(i);
 					allSelections++;
 				}
 			}
 		}
 
-		if (tab->Grid->file->IsSelected(i) && action != 0){
-			if (action < 3){ Dial->GetRaw(&whatcopy, tab->Grid->hasTLMode && Dial->TextTl != emptyString); }
+		if (tab->grid->file->IsSelected(i) && action != 0){
+			if (action < 3){ Dial->GetRaw(&whatcopy, tab->grid->hasTLMode && Dial->TextTl != emptyString); }
 			else if (action < 5){
 				Dialogue *copydial = Dial->Copy();
 				//Dial->ChangeDialogueState(1);
 				mdial.push_back(copydial);
 			}
 			else if (action < 6){
-				Dialogue *dialc = tab->Grid->file->CopyDialogue(i);
+				Dialogue *dialc = tab->grid->file->CopyDialogue(i);
 				dialc->ChangeDialogueState(1);
 				dialc->IsComment = true;
 			}
@@ -378,42 +378,42 @@ int SelectLines::SelectOnTab(TabPanel *tab, bool *refreshTabLabel)
 		}
 	}//przenoszenie na początek / koniec
 	if (action == 2 || action == 6 || action == 3 || action == 4){
-		tab->Grid->file->DeleteSelectedDialogues();
-		tab->Grid->SaveSelections(true);
-		tab->Grid->SpellErrors.clear();
+		tab->grid->file->DeleteSelectedDialogues();
+		tab->grid->SaveSelections(true);
+		tab->grid->SpellErrors.clear();
 		if ((action == 3 || action == 4) && mdial.size())
 		{
 			// we add lines to destroyer cause of it must be copied
-			tab->Grid->InsertRows((action == 3) ? 0 : -1, mdial, true);
-			size_t size = tab->Grid->GetCount();
+			tab->grid->InsertRows((action == 3) ? 0 : -1, mdial, true);
+			size_t size = tab->grid->GetCount();
 			size_t mdialsize = size - mdial.size();
-			tab->Grid->file->InsertSelections((action == 3) ? 0 : mdialsize, (action == 3) ? mdial.size() - 1 : size - 1);
+			tab->grid->file->InsertSelections((action == 3) ? 0 : mdialsize, (action == 3) ? mdial.size() - 1 : size - 1);
 
 			mdial.clear();
 		}
-		if (tab->Grid->GetCount() < 1){ 
-			tab->Grid->AddLine(new Dialogue()); 
+		if (tab->grid->GetCount() < 1){ 
+			tab->grid->AddLine(new Dialogue()); 
 		}
 	}
-	size_t firstSelected = tab->Grid->FirstSelection();
+	size_t firstSelected = tab->grid->FirstSelection();
 	if (firstSelected == -1) {
-		size_t gridGetCount = tab->Grid->GetCount();
-		if (tab->Grid->currentLine < gridGetCount){
-			firstSelected = tab->Grid->currentLine;
+		size_t gridGetCount = tab->grid->GetCount();
+		if (tab->grid->currentLine < gridGetCount){
+			firstSelected = tab->grid->currentLine;
 		}
 		else {
 			firstSelected = gridGetCount - 1;
 		}
 	}
 	if (action > 1 && allSelections){
-		tab->Grid->SetModified(SELECT_LINES, true, false, firstSelected);
+		tab->grid->SetModified(SELECT_LINES, true, false, firstSelected);
 		*refreshTabLabel = true;
 	}
 	else{
-		tab->Edit->SetLine(firstSelected);
+		tab->edit->SetLine(firstSelected);
 		*refreshTabLabel = false;
 	}
-	tab->Grid->RefreshColumns();
+	tab->grid->RefreshColumns();
 
 	return allSelections;
 }

@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FindReplace.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "FindReplaceDialog.h"
 #include "FindReplaceResultsDialog.h"

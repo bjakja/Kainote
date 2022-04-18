@@ -276,7 +276,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	wxWindow *Hotkeyss = new wxWindow(OptionsTree, -1);
 	wxWindow *AudioMain = new wxWindow(OptionsTree, -1);
 	wxWindow *AudioSecond = new wxWindow(OptionsTree, -1);
-	wxWindow *Video = new wxWindow(OptionsTree, -1);
+	wxWindow *video = new wxWindow(OptionsTree, -1);
 	wxWindow *Themes = new wxWindow(OptionsTree, -1);
 	wxWindow *Assocs = new wxWindow(OptionsTree, -1);
 	wxWindow *SubsProps = new SubtitlesProperties(OptionsTree, this);
@@ -531,7 +531,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 
 		ConvOpt->SetSizerAndFit(ConvOptSizer1);
 	}
-	//Video
+	//video
 	{
 		wxString voptspl[] = { _("Otwórz wideo z menu kontekstowego na pełnym ekranie"), _("Lewy przycisk myszy pauzuje wideo"),
 			_("Otwieraj wideo z czasem aktywnej linii"), _("Preferowane ścieżki audio (oddzielone średnikiem)"),
@@ -541,32 +541,32 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		wxBoxSizer *MainSizer = new wxBoxSizer(wxVERTICAL);
 		for (int i = 0; i < 3; i++)
 		{
-			KaiCheckBox *opt = new KaiCheckBox(Video, -1, voptspl[i]);
+			KaiCheckBox *opt = new KaiCheckBox(video, -1, voptspl[i]);
 			opt->SetValue(Options.GetBool(vopts[i]));
 			ConOpt(opt, vopts[i]);
 			MainSizer->Add(opt, 0, wxALL, 2);
 		}
-		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[3]);
-		KaiTextCtrl *tc = new KaiTextCtrl(Video, -1, Options.GetString(vopts[3]), 
+		KaiStaticBoxSizer *prefaudio = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[3]);
+		KaiTextCtrl *tc = new KaiTextCtrl(video, -1, Options.GetString(vopts[3]), 
 			wxDefaultPosition, wxSize(250, -1), wxTE_PROCESS_ENTER);
 		ConOpt(tc, vopts[3]);
 		prefaudio->Add(tc, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(prefaudio, 0, wxRIGHT | wxEXPAND, 5);
-		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[4]);
+		KaiStaticBoxSizer *seekingsizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[4]);
 
 		wxString seekingOpts[] = { _("Liniowe"), _("Normalne"), 
 			_("Niebezpieczne (szybkie w każdym przypadku)"), _("Agresywne (szybkie przy cofaniu)") };
-		KaiChoice *sopts = new KaiChoice(Video, ID_KAI_CHOICE, 
+		KaiChoice *sopts = new KaiChoice(video, ID_KAI_CHOICE, 
 			wxDefaultPosition, wxSize(200, -1), 4, seekingOpts, wxTE_PROCESS_ENTER);
 		sopts->SetSelection(Options.GetInt(vopts[4]));
 		seekingsizer->Add(sopts, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(seekingsizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(sopts, vopts[4]);
 
-		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, Video, voptspl[5]);
+		KaiStaticBoxSizer *filtersizer = new KaiStaticBoxSizer(wxHORIZONTAL, video, voptspl[5]);
 		wxArrayString vsfilters;
 		SubtitlesProviderManager::GetProviders(&vsfilters);
-		KaiChoice *vsfiltersList = new KaiChoice(Video, ID_VSFILTER_PROVIDER, 
+		KaiChoice *vsfiltersList = new KaiChoice(video, ID_VSFILTER_PROVIDER, 
 			wxDefaultPosition, wxSize(200, -1), vsfilters, wxTE_PROCESS_ENTER);
 		wxString name = Options.GetString(vopts[5]);
 		int result = vsfilters.Index(name);
@@ -576,7 +576,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 		filtersizer->Add(vsfiltersList, 1, wxALL /*| wxALIGN_CENTER*/ | wxEXPAND, 2);
 		MainSizer->Add(filtersizer, 0, wxRIGHT | wxEXPAND, 5);
 		ConOpt(vsfiltersList, vopts[5]);
-		Video->SetSizerAndFit(MainSizer);
+		video->SetSizerAndFit(MainSizer);
 	}
 	//Hotkeys
 	{
@@ -949,7 +949,7 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	//After adding page before convert change it in function Convert in SubsGridBase.cpp!!!
 	OptionsTree->AddSubPage(ConvOpt, _("Konwersja"));
 	OptionsTree->AddSubPage(EditorAdvanced, _("Zaawansowane"));
-	OptionsTree->AddPage(Video, _("Wideo"));
+	OptionsTree->AddPage(video, _("Wideo"));
 	OptionsTree->AddPage(AudioMain, _("Audio"));
 	OptionsTree->AddSubPage(AudioSecond, _("Zaawansowane"));
 	OptionsTree->AddPage(Themes, _("Motywy"));
@@ -990,7 +990,7 @@ OptionsDialog::~OptionsDialog()
 		if(hkeymodif==1){Hkeys.SaveHkeys();Kai->SetAccels();}
 		else if(hkeymodif==2){
 		Hkeys.SaveHkeys(true);
-		if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
+		if(Kai->GetTab()->edit->ABox){Kai->GetTab()->edit->ABox->SetAccels();}
 		}
 		}*/
 	delete[] windowNames;
@@ -1011,7 +1011,7 @@ void OptionsDialog::OnSaveClick(wxCommandEvent& event)
 	/*if(hkeymodif==1){Hkeys.SaveHkeys();Kai->SetAccels();}
 	else if(hkeymodif==2){
 	Hkeys.SaveHkeys(true);
-	if(Kai->GetTab()->Edit->ABox){Kai->GetTab()->Edit->ABox->SetAccels();}
+	if(Kai->GetTab()->edit->ABox){Kai->GetTab()->edit->ABox->SetAccels();}
 	}*/
 	if (event.GetId() == wxID_OK){ EndModal(wxID_OK); }
 }
@@ -1032,7 +1032,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetBool(OB.option, value);
 				if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM){ audio = true; }
 				if (OB.option == SPELLCHECKER_ON){
-					Kai->Tabs->GetTab()->Edit->ClearErrs(true, value);
+					Kai->Tabs->GetTab()->edit->ClearErrs(true, value);
 				}
 			}
 		}
@@ -1074,7 +1074,7 @@ void OptionsDialog::SetOptions(bool saveall)
 						if (Options.GetString(OB.option) != language){
 							Options.SetString(OB.option, language);
 							SpellChecker::Destroy();
-							Kai->Tabs->GetTab()->Edit->ClearErrs();
+							Kai->Tabs->GetTab()->edit->ClearErrs();
 						}
 					}
 				}//program language
@@ -1115,7 +1115,7 @@ void OptionsDialog::SetOptions(bool saveall)
 					if (OB.option == GRID_TAGS_SWAP_CHARACTER){
 						for (size_t i = 0; i < Kai->Tabs->Size(); i++){
 							TabPanel *tab = Kai->Tabs->Page(i);
-							tab->Grid->SpellErrors.clear();
+							tab->grid->SpellErrors.clear();
 						}
 					}
 				}
@@ -1172,22 +1172,22 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 	}
 	if (fontmod){
-		Kai->GetTab()->Grid->SetStyle();
-		Kai->GetTab()->Grid->RefreshColumns();
+		Kai->GetTab()->grid->SetStyle();
+		Kai->GetTab()->grid->RefreshColumns();
 		if (Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->Grid->SetStyle();
-			Kai->Tabs->GetSecondPage()->Grid->RefreshColumns();
+			Kai->Tabs->GetSecondPage()->grid->SetStyle();
+			Kai->Tabs->GetSecondPage()->grid->RefreshColumns();
 		}
 	}
 	if (colmod){
-		Kai->GetTab()->Grid->Refresh(false);
-		//if (Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeColours(); }
+		Kai->GetTab()->grid->Refresh(false);
+		//if (Kai->GetTab()->edit->ABox){ Kai->GetTab()->edit->ABox->audioDisplay->ChangeColours(); }
 		if (Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->Grid->Refresh(false);
-			//if (Kai->Tabs->GetSecondPage()->Edit->ABox){ Kai->Tabs->GetSecondPage()->Edit->ABox->audioDisplay->ChangeColours(); }
+			Kai->Tabs->GetSecondPage()->grid->Refresh(false);
+			//if (Kai->Tabs->GetSecondPage()->edit->ABox){ Kai->Tabs->GetSecondPage()->edit->ABox->audioDisplay->ChangeColours(); }
 		}
 	}
-	if (audio && Kai->GetTab()->Edit->ABox){ Kai->GetTab()->Edit->ABox->audioDisplay->ChangeOptions(); }
+	if (audio && Kai->GetTab()->edit->ABox){ Kai->GetTab()->edit->ABox->audioDisplay->ChangeOptions(); }
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }
@@ -1237,8 +1237,8 @@ void OptionsDialog::ChangeColors(){
 		TabPanel *tab = nb->Page(i);
 		tab->SetBackgroundColour(windowColor);
 		tab->SetForegroundColour(textColor);
-		if (tab->Edit->ABox){
-			tab->Edit->ABox->audioDisplay->ChangeOptions();
+		if (tab->edit->ABox){
+			tab->edit->ABox->audioDisplay->ChangeOptions();
 		}
 		const wxWindowList& siblings = tab->GetChildren();
 		for (auto it = siblings.begin(); it != siblings.end(); it++){

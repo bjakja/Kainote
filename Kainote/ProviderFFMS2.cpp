@@ -384,7 +384,7 @@ done:
 		}
 
 		if (m_renderer) {
-			SubsGrid* grid = ((TabPanel*)m_renderer->videoControl->GetParent())->Grid;
+			SubsGrid* grid = ((TabPanel*)m_renderer->videoControl->GetParent())->grid;
 			const wxString& colormatrix = grid->GetSInfo(L"YCbCr Matrix");
 			bool changeMatrix = false;
 			if (m_CS == FFMS_CS_UNSPECIFIED) {

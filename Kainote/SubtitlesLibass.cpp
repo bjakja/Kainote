@@ -155,7 +155,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 		m_AssTrack = nullptr;
 	}
 
-	RendererVideo* renderer = tab->Video->GetRenderer();
+	RendererVideo* renderer = tab->video->GetRenderer();
 	if (!renderer) {
 		SAFE_DELETE(text);
 		return false;
@@ -164,13 +164,13 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	wxString *textsubs = text;
 	switch (flag){
 	case OPEN_DUMMY:
-		textsubs = tab->Grid->GetVisible();
+		textsubs = tab->grid->GetVisible();
 		renderer->m_HasDummySubs = true;
 		break;
 	case OPEN_WHOLE_SUBTITLES:
 		//make here some function to buffor
 		//or even add olny here a bool
-		textsubs = tab->Grid->GetVisible(nullptr, nullptr, nullptr, true);
+		textsubs = tab->grid->GetVisible(nullptr, nullptr, nullptr, true);
 		renderer->m_HasDummySubs = false;
 		break;
 	case OPEN_HAS_OWN_TEXT:

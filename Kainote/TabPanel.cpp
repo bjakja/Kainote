@@ -17,7 +17,7 @@
 #include "TabPanel.h"
 #include "Config.h"
 #include "Hotkeys.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "VideoCtrl.h"
 #include "EditBox.h"
 #include "ShiftTimes.h"
@@ -39,12 +39,12 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	edit = new EditBox(this, -1);
 
 	GridShiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
-	Grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
-	edit->SetGrid1(Grid);
+	grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
+	edit->SetGrid1(grid);
 
 	ShiftTimes = new ShiftTimes(this, kai, -1);
 	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
-	GridShiftTimesSizer->Add(Grid, 1, wxEXPAND, 0);
+	GridShiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
 	GridShiftTimesSizer->Add(ShiftTimes, 0, wxEXPAND, 0);
 	VideoEditboxSizer->Add(video, 0, wxEXPAND | wxALIGN_TOP, 0);
 	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
@@ -113,7 +113,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		if (itype.Type != AUDIO_HOTKEY){
 			if (itype.id >= 2000 && itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
 				if (itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
+					grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else{
@@ -124,7 +124,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 			}
 			else if (itype.id >= 3000 && itype.id < 4000 && itype.Type != EDITBOX_HOTKEY){
 				if (itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
+					grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else{
@@ -135,11 +135,11 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 			}
 			else if (itype.id >= 4000 && itype.id < 5000 && itype.Type != GRID_HOTKEY){
 				if (itype.Type == VIDEO_HOTKEY){
-					video->Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, Grid, id);
+					video->Bind(wxEVT_COMMAND_MENU_SELECTED, &SubsGrid::OnAccelerator, grid, id);
 					ventries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else if(itype.Type == GRID_HOTKEY){
-					Grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
+					grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, edit, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				continue;
@@ -160,7 +160,7 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 
 			gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 			if ((id >= 4000 && id < 5000) || (id < 1999 && id >= 1000)){
-				Grid->ConnectAcc((id < AUDIO_COMMIT) ? id + 10 : id);
+				grid->ConnectAcc((id < AUDIO_COMMIT) ? id + 10 : id);
 				if (id < 1999){
 					audioHotkeysLoaded = true;
 				}
@@ -172,14 +172,14 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 			if (id >= 2000 && id < 2999){ video->ConnectAcc(id); }
 			if (id >= VIDEO_PLAY_PAUSE && id <= VIDEO_5_SECONDS_BACKWARD){
 				gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
-				Grid->ConnectAcc(id);
+				grid->ConnectAcc(id);
 			}
 		}
 
 	}
 
 	wxAcceleratorTable accelg(gentries.size(), &gentries[0]);
-	Grid->SetAcceleratorTable(accelg);
+	grid->SetAcceleratorTable(accelg);
 	if (!onlyGridAudio){
 		wxAcceleratorTable accelv(ventries.size(), &ventries[0]);
 		video->SetAcceleratorTable(accelv);
@@ -279,7 +279,7 @@ bool TabPanel::SetFont(const wxFont &font)
 
 void TabPanel::OnSize(wxSizeEvent & evt)
 {
-	if (!edit->IsShown() && !ShiftTimes->IsShown() && !Grid->IsShown()) {
+	if (!edit->IsShown() && !ShiftTimes->IsShown() && !grid->IsShown()) {
 		wxSize tabSize = GetClientSize();
 		video->SetMinSize(tabSize);
 		//Layout();

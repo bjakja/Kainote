@@ -164,13 +164,13 @@ namespace Auto{
 	};
 
 	/// A single-line text edit control
-	class Edit : public LuaDialogControl {
+	class edit : public LuaDialogControl {
 	protected:
 		wxString text;
 		KaiTextCtrl *cw;
 
 	public:
-		Edit(lua_State *L)
+		edit(lua_State *L)
 			: LuaDialogControl(L)
 			, text(get_field(L, "value"))
 		{
@@ -230,9 +230,9 @@ namespace Auto{
 	};
 
 	/// A multiline text edit control
-	class Textbox : public Edit {
+	class Textbox : public edit {
 	public:
-		Textbox(lua_State *L) : Edit(L) { }
+		Textbox(lua_State *L) : edit(L) { }
 
 		// Same serialisation interface as single-line edit
 		wxWindow *Create(wxWindow *parent) {
@@ -408,7 +408,7 @@ namespace Auto{
 			if (controlclass == "label")
 				ctl = new Label(L);
 			else if (controlclass == "edit")
-				ctl = new Edit(L);
+				ctl = new edit(L);
 			else if (controlclass == "intedit")
 				ctl = new IntEdit(L);
 			else if (controlclass == "floatedit")
@@ -425,7 +425,7 @@ namespace Auto{
 				ctl = new Color(L, true);
 			else if (controlclass == "alpha")
 				// FIXME
-				ctl = new Edit(L);
+				ctl = new edit(L);
 			else
 				error(L, "bad control table entry");
 

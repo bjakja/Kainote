@@ -16,7 +16,7 @@
 #include "AutomationHotkeysDialog.h"
 #include "MappedButton.h"
 #include "KaiMessageBox.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include <map>
 
 class AutomationHotkeyItem : public Item{

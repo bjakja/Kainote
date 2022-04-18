@@ -17,7 +17,7 @@
 #include "ShiftTimes.h"
 #include "Config.h"
 #include "Stylelistbox.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "EditBox.h"
 #include "KaiDialog.h"
 #include "KaiMessageBox.h"
@@ -139,8 +139,8 @@ bool ShiftTimes::SetForegroundColour(const wxColour &col)
 void ShiftTimes::Contents(bool addopts)
 {
 	bool state;
-	form = tab->Grid->subsFormat;
-	VideoCtrl *vb = tab->Video;
+	form = tab->grid->subsFormat;
+	VideoCtrl *vb = tab->video;
 	Provider *FFMS2 = vb->GetFFMS2();
 	if (form < SRT){
 		state = true;
@@ -176,7 +176,7 @@ void ShiftTimes::Contents(bool addopts)
 		if (vb->GetState() != None){ state = true; }
 		else{ state = false; }
 		MoveToVideoTime->Enable(state);
-		state = (tab->Edit->ABox && tab->Edit->ABox->audioDisplay->hasMark);
+		state = (tab->edit->ABox && tab->edit->ABox->audioDisplay->hasMark);
 		MoveToAudioTime->Enable(state);
 	}
 	if (LeadIn){
@@ -455,20 +455,20 @@ void ShiftTimes::OnOKClick(wxCommandEvent& event)
 	SaveOptions();
 	int acid = event.GetId();
 	if (acid == GLOBAL_SHIFT_TIMES){
-		tab->Grid->ChangeTimes((!LeadIn) ? TimeText->HasShownFrames() : false);
+		tab->grid->ChangeTimes((!LeadIn) ? TimeText->HasShownFrames() : false);
 	}
 	else if (acid == ID_CLOSE){
 		Hide();
 		tab->MainSizer->Layout();
 	}
-	tab->Grid->SetFocus();
+	tab->grid->SetFocus();
 }
 
 
 void ShiftTimes::OnSize(wxSizeEvent& event)
 {
 	int h, gw, gh;
-	tab->Grid->GetClientSize(&gw, &gh);
+	tab->grid->GetClientSize(&gw, &gh);
 	int w;
 	panel->GetBestSize(&w, &h);
 	int ctw, cth;
@@ -583,7 +583,7 @@ void ShiftTimes::RefVals(ShiftTimes *secondWindow)
 			ChangeDisplayUnits(!DisplayFrames->GetValue());
 			
 		}
-		else if (!tab->Video->HasFFMS2()){
+		else if (!tab->video->HasFFMS2()){
 			if (DisplayFrames->GetValue()){ ChangeDisplayUnits(true); }
 			DisplayFrames->Enable(false);
 		}
@@ -664,7 +664,7 @@ void ShiftTimes::CollapsePane(wxCommandEvent &event)
 		//OnSize(evt);
 		int w, h, gw, gh;
 		TabPanel* cur = (TabPanel*)GetParent();
-		cur->Grid->GetClientSize(&gw, &gh);
+		cur->grid->GetClientSize(&gw, &gh);
 		panel->GetBestSize(&w, &h);
 		scPos = 0;
 		if (gh < h)//pojawianie scrollbara
@@ -851,7 +851,7 @@ void ShiftTimes::SetProfile(const wxString &name)
 		bool displayFrames = DisplayFrames->GetValue();
 		bool newDisplayFrames = token == L"1";
 		if (displayFrames != newDisplayFrames){
-			if (tab->Video->HasFFMS2()){
+			if (tab->video->HasFFMS2()){
 				//there are times as true
 				ChangeDisplayUnits(!newDisplayFrames);
 			}

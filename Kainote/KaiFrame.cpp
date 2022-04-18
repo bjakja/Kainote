@@ -15,7 +15,11 @@
 
 #include "kainoteApp.h"
 #include "KaiFrame.h"
-#include "config.h"
+#include "Config.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
+#include "EditBox.h"
+#include "VideoCtrl.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -194,91 +198,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	dc.Blit(0, h - frameBorder, w, frameBorder, &mdc, 0, h - frameBorder);
 }
 
-//void KaiFrame::PaintD2D(GraphicsContext *gc, int w, int h)
-//{
-//	wxColour text = (isActive) ? Options.GetColour(WINDOW_HEADER_TEXT) : Options.GetColour(WINDOW_HEADER_TEXT_INACTIVE);
-//	gc->SetFont(GetFont(), text);
-//	wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
-//	gc->SetBrush(bg);
-//	gc->SetPen((isActive) ? Options.GetColour(WINDOW_BORDER) : Options.GetColour(WINDOW_BORDER_INACTIVE));
-//	gc->DrawRectangle(0, 0, w - 1, h - 1);
-//	
-//	int maximizeDiff = (IsMaximized()) ? 3 : 0;
-//	wxIconBundle icons = GetIcons();
-//	int iconScale = ((frameTopBorder - 10) / 2) * 2;
-//	iconScale = (iconScale < 16) ? 16 : iconScale;
-//	if (icons.GetIconCount()){
-//		//if(icons.GetIconByIndex(0).GetHeight()!=16){
-//		wxImage img = wxBitmap(icons.GetIconByIndex(0)).ConvertToImage();
-//		img = img.Scale(iconScale, iconScale, wxIMAGE_QUALITY_BICUBIC);
-//		gc->DrawBitmap(wxBitmap(img), 8 + maximizeDiff, ((frameTopBorder - iconScale) / 2) + maximizeDiff + 1, img.GetWidth(), img.GetHeight());
-//		//}else{
-//		//gc->DrawIcon(icons.GetIconByIndex(0), 4, 4);
-//		//}
-//	}
-//	if (GetTitle() != emptyString){
-//		int startX = icons.GetIconCount() ? iconScale + 14 : 6 + maximizeDiff;
-//		int maxWidth = w - 75 - maximizeDiff - startX;
-//		gc->DrawTextU(GetTruncateText(GetTitle(), maxWidth, this), startX, 5 + maximizeDiff);
-//	}
-//
-//	int buttonScale = ((frameTopBorder - 8) / 2) * 2;
-//	buttonScale = (buttonScale < 18) ? 18 : buttonScale;
-//
-//	if (enterClose || pushedClose){
-//		wxColour buttonxbg = (enterClose && !pushedClose) ? Options.GetColour(WINDOW_HOVER_CLOSE_BUTTON) :
-//			Options.GetColour(WINDOW_PUSHED_CLOSE_BUTTON);
-//		gc->SetBrush(buttonxbg);
-//		gc->SetPen(buttonxbg);
-//		gc->DrawRectangle(w - frameTopBorder - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
-//	}
-//	else if (enterMaximize || pushedMaximize){
-//		wxColour buttonxbg = (enterMaximize && !pushedMaximize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
-//			Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
-//		gc->SetBrush(buttonxbg);
-//		gc->SetPen(buttonxbg);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
-//	}
-//	else if (enterMinimize || pushedMinimize){
-//		wxColour buttonxbg = (enterMinimize && !pushedMinimize) ? Options.GetColour(WINDOW_HOVER_HEADER_ELEMENT) :
-//			Options.GetColour(WINDOW_PUSHED_HEADER_ELEMENT);
-//		gc->SetBrush(buttonxbg);
-//		gc->SetPen(buttonxbg);
-//		gc->DrawRectangle(w - (frameTopBorder * 3) - maximizeDiff, 5 + maximizeDiff, buttonScale - 1, buttonScale - 1);
-//	}
-//	gc->SetPen(wxPen(text), 2.);
-//	gc->SetBrush(wxBrush(text));
-//	//draw X
-//	GraphicsPathData *path = gc->CreatePath();
-//	path->MoveToPoint(w - frameTopBorder + 3 - maximizeDiff, 8 + maximizeDiff);
-//	path->AddLineToPoint(w - (frameBorder + 6) - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
-//	path->MoveToPoint(w - (frameBorder + 6) - maximizeDiff, 8 + maximizeDiff);
-//	path->AddLineToPoint(w - frameTopBorder + 3 - maximizeDiff, frameTopBorder - 8 + maximizeDiff);
-//	gc->StrokePath(path);
-//
-//	//draw maximize
-//
-//	if (IsMaximized()){
-//		int realButtonScale = (buttonScale - 6);
-//		int processScale = (realButtonScale / 3);
-//		int processScalex2 = processScale * 2;
-//		gc->SetPen(text);
-//		gc->SetBrush(*wxTRANSPARENT_BRUSH);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 + realButtonScale - processScalex2 - 1 - maximizeDiff, 8 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 8 + realButtonScale - processScalex2 + 0 + maximizeDiff, processScalex2 + 1, processScalex2 - 1);
-//		gc->SetPen(*wxTRANSPARENT_PEN);
-//	}
-//	else{
-//		gc->SetPen(*wxTRANSPARENT_PEN);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff, buttonScale - 6, 2);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + 3 - maximizeDiff, 7 + maximizeDiff + buttonScale - 6 + maximizeDiff, buttonScale - 6, 1);
-//		gc->DrawRectangle(w - (frameTopBorder * 2) + (buttonScale - 4) - maximizeDiff, 7 + maximizeDiff, 1, buttonScale - 6);
-//	}
-//	//draw minimize
-//	gc->SetBrush(wxBrush(text));
-//	gc->DrawRectangle(w - (frameTopBorder * 3) + 3 - maximizeDiff, buttonScale - 1 + maximizeDiff, buttonScale - 6, 2);
-//}
+
 
 void KaiFrame::SetLabel(const wxString &text)
 {
@@ -289,24 +209,6 @@ void KaiFrame::SetLabel(const wxString &text)
 	Refresh(false, &rc);
 }
 
-//void KaiFrame::OnSize(wxSizeEvent &evt)
-//{
-//	//Refresh(false);
-//	int w, h;
-//	GetSize(&w, &h);
-//	wxRect rc(0, 0, w, ftopBorder);
-//	Refresh(false, &rc);
-//	if (!IsMaximized()){
-//		wxRect rc1(0, ftopBorder, fborder, h - fborder - ftopBorder);
-//		Refresh(false, &rc1);
-//		wxRect rc2(w - fborder, ftopBorder, fborder, h - fborder - ftopBorder);
-//		Refresh(false, &rc2);
-//		wxRect rc3(0, h - fborder, w, fborder);
-//		Refresh(false, &rc3);
-//	}
-//	//Update();
-//	evt.Skip();
-//}
 
 void KaiFrame::OnMouseEvent(wxMouseEvent &evt)
 {
@@ -402,7 +304,6 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 			wxRect rc3(0, h - frameBorder, w, frameBorder);
 			Refresh(false, &rc3);
 		}
-		//Options.SetCoords(WINDOW_SIZE, w, h);
 		//Cannot use update here cause window blinking even when video is paused
 		//and there is some trash on left top border
 		//Update();
@@ -552,23 +453,23 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 
 		for (size_t i = 0; i < tabs->Size(); i++) {
 			TabPanel *tab = tabs->Page(i);
-			wxSize minVideoSize = tab->Video->GetMinSize();
-			int panelHeight = tab->Video->GetPanelHeight();
+			wxSize minVideoSize = tab->video->GetMinSize();
+			int panelHeight = tab->video->GetPanelHeight();
 			minVideoSize.y -= panelHeight;
 			minVideoSize.x *= scalex;
 			minVideoSize.y *= scaley;
 			minVideoSize.y += panelHeight;
-			tab->Video->SetMinSize(minVideoSize);
-			tab->Edit->SetMinSize(wxSize(-1, minVideoSize.y));
-			if (tab->Edit->ABox) {
-				wxSize asize = tab->Edit->ABox->GetMinSize();
+			tab->video->SetMinSize(minVideoSize);
+			tab->edit->SetMinSize(wxSize(-1, minVideoSize.y));
+			if (tab->edit->ABox) {
+				wxSize asize = tab->edit->ABox->GetMinSize();
 				asize.y *= scaley;
-				tab->Edit->ABox->SetMinSize(asize);
-				tab->Edit->BoxSizer1->Layout();
+				tab->edit->ABox->SetMinSize(asize);
+				tab->edit->BoxSizer1->Layout();
 			}
-			tab->Grid->SetStyle();
-			tab->Grid->RefreshColumns();
-			if (!tab->Video->IsShown()) {
+			tab->grid->SetStyle();
+			tab->grid->RefreshColumns();
+			if (!tab->video->IsShown()) {
 				tab->MainSizer->Layout();
 			}
 		}

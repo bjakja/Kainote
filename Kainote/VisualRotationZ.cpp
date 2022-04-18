@@ -138,43 +138,43 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 	float pointCatch = 5;
 
 	if (evt.ButtonUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		SetVisual(false);
 		to = org;
 		if (isOrg){
 			lastmove.x = atan2((org.y - y), (org.x - x)) * (180.f / 3.1415926536f);
 			lastmove.x += lastmove.y;
 		}
-		tab->Video->Render();
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW); }
+		tab->video->Render();
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW); }
 		isOrg = false;
 		grabbed = -1;
 	}
 	if (hasTwoPoints && evt.Moving()) {
 		if (fabs(twoPoints[0].x - x) < pointCatch && fabs(twoPoints[0].y - y) < pointCatch) {
 			hover[0] = true;
-			tab->Video->Render();
+			tab->video->Render();
 		}
 		else if (fabs(twoPoints[1].x - x) < pointCatch && fabs(twoPoints[1].y - y) < pointCatch) {
 			hover[1] = true;
-			tab->Video->Render();
+			tab->video->Render();
 		}
 		else if (hover[0] || hover[1]) {
 			hover[0] = false;
 			hover[1] = false;
-			tab->Video->Render();
+			tab->video->Render();
 		}
 
 	}
 
 	if (click){
-		tab->Video->CaptureMouse();
+		tab->video->CaptureMouse();
 		if (hasTwoPoints) {
 			if (!visibility[0]) {
 				visibility[0] = true;
 				twoPoints[0].x = x;
 				twoPoints[0].y = y;
-				tab->Video->Render(false);
+				tab->video->Render(false);
 				return;
 			}
 			else if (fabs(twoPoints[0].x - x) < pointCatch && fabs(twoPoints[0].y - y) < pointCatch) {
@@ -199,11 +199,11 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 				lastAngle = lastmove.y;
 			}
 			isfirst = true;
-			tab->Video->SetCursor(wxCURSOR_SIZING);
+			tab->video->SetCursor(wxCURSOR_SIZING);
 			SetVisual(true);
 		}
 		else {
-			tab->Video->SetCursor(wxCURSOR_SIZING);
+			tab->video->SetCursor(wxCURSOR_SIZING);
 			if (fabs(org.x - x) < pointCatch && fabs(org.y - y) < pointCatch) {
 				isOrg = true;
 				lastOrg = org;
@@ -260,7 +260,7 @@ void RotationZ::SetCurVisual()
 		lastmove.x += lastmove.y;
 	}
 	else{
-		Styles *actualStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+		Styles *actualStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
 		double result = 0.; 
 		actualStyle->Angle.ToDouble(&result);
 		lastmove.y = result;
@@ -328,7 +328,7 @@ void RotationZ::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelectio
 			wxString posstr = L"\\pos(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L")";
 			if (moveValues[6] > 2) {
 				D3DXVECTOR2 pos1(moveValues[2] - moveValues[0], moveValues[3] - moveValues[1]);
-				int startTime = ZEROIT(tab->Edit->line->Start.mstime);
+				int startTime = ZEROIT(tab->edit->line->Start.mstime);
 				posstr = L"\\move(" + getfloat(pos.x) + L"," + getfloat(pos.y) + L"," + 
 					getfloat(pos.x + pos1.x) + L"," + getfloat(pos.y + pos1.y) + L"," +
 					getfloat(moveValues[4] - startTime, L"6.0f") + L"," +
@@ -419,7 +419,7 @@ void RotationZ::ChangeTool(int _tool, bool blockSetCurVisual) {
 	if (oldChangeAllTags != changeAllTags) {
 		if (!blockSetCurVisual) {
 			SetCurVisual();
-			tab->Video->Render(false);
+			tab->video->Render(false);
 		}
 	}
 	else if (twoPointsTool != hasTwoPoints) {
@@ -427,7 +427,7 @@ void RotationZ::ChangeTool(int _tool, bool blockSetCurVisual) {
 		visibility[0] = false;
 		visibility[1] = false;
 		if (!blockSetCurVisual)
-			tab->Video->Render(false);
+			tab->video->Render(false);
 	}
 };
 
@@ -439,7 +439,7 @@ void RotationZ::OnKeyPress(wxKeyEvent &evt)
 	if (evt.ControlDown() && evt.GetKeyCode() == L'A') {
 		selection[0] = true;
 		selection[1] = true;
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}*/
 }
 

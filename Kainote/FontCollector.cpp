@@ -390,7 +390,7 @@ void FontCollectorDialog::OpenStyle(int numtab, const wxString &style)
 	Notebook * tabs = Notebook::GetTabs();
 	tabs->ChangePage(numtab, true);
 	TabPanel *tab = tabs->GetTab();
-	SubsGrid *grid = tab->Grid;
+	SubsGrid *grid = tab->grid;
 	bool lineSet = false;
 	for (size_t i = 0; i < grid->GetCount(); i++){
 		Dialogue *dial = grid->GetDialogue(i);
@@ -409,7 +409,7 @@ void FontCollectorDialog::SetLine(int numtab, int line)
 	Notebook * tabs = Notebook::GetTabs();
 	tabs->ChangePage(numtab, true);
 	TabPanel *tab = tabs->GetTab();
-	tab->Grid->ChangeActiveLine(line, true, true);
+	tab->grid->ChangeActiveLine(line, true, true);
 }
 
 void FontCollectorDialog::OnButtonPath(wxCommandEvent &event)
@@ -755,9 +755,9 @@ void FontCollector::CheckOrCopyFonts()
 		//HANDLE *threads = new HANDLE[tabsSize];
 
 		for (size_t i = 0; i < tabsSize; i++){
-			GetAssFonts(tabs->Page(i)->Grid->file, i);
+			GetAssFonts(tabs->Page(i)->grid->file, i);
 			//std::tuple<FontCollector*, SubsFile*, int*> *data = 
-				//new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->Grid->file, new int(i));
+				//new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->grid->file, new int(i));
 			
 			//threads[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
 			
@@ -766,7 +766,7 @@ void FontCollector::CheckOrCopyFonts()
 		//delete[] threads;
 	}
 	else{
-		GetAssFonts(Notebook::GetTab()->Grid->file, Notebook::GetTabs()->iter);
+		GetAssFonts(Notebook::GetTab()->grid->file, Notebook::GetTabs()->iter);
 	}
 
 	bool allglyphs = CheckPathAndGlyphs(&found, &notFound, &notCopied);

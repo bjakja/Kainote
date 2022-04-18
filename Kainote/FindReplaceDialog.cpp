@@ -16,7 +16,7 @@
 #include "Config.h"
 #include "FindReplaceDialog.h"
 #include "FindReplace.h"
-#include "KainoteMain.h"
+#include "KainoteFrame.h"
 #include "Stylelistbox.h"
 
 TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)
@@ -500,7 +500,7 @@ void FindReplaceDialog::OnActivate(wxActivateEvent& event)
 	TabWindow *currentTab = GetTab();
 	long from, to, fromO, toO;
 	TabPanel *tab = Kai->GetTab();
-	EditBox *edit = tab->Edit;
+	EditBox *edit = tab->edit;
 	edit->TextEdit->GetSelection(&from, &to);
 	edit->TextEditOrig->GetSelection(&fromO, &toO);
 	KaiChoice * findOrReplace = currentTab->FindText;

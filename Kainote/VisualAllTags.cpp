@@ -51,7 +51,7 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	// move sliders
 	if (rholding) {
 		SetupSlidersPosition(y + sliderPositionDiff);
-		tab->Video->Render(false);
+		tab->video->Render(false);
 		for (size_t i = 0; i < actualTag.numOfValues; i++) {
 			slider[i].ResetOnThumbAndSlider();
 		}
@@ -61,16 +61,16 @@ void AllTags::OnMouseEvent(wxMouseEvent& event)
 	}
 
 	if (event.RightDown() || event.RightDClick()) {
-		if (!tab->Video->HasCapture()) {
-			tab->Video->CaptureMouse();
+		if (!tab->video->HasCapture()) {
+			tab->video->CaptureMouse();
 		}
 		sliderPositionDiff = sliderPositionY - y;
 		rholding = true;
 	}
 
 	if (event.RightUp()) {
-		if (tab->Video->HasCapture()) {
-			tab->Video->ReleaseMouse();
+		if (tab->video->HasCapture()) {
+			tab->video->ReleaseMouse();
 		}
 		rholding = false;
 	}
@@ -91,17 +91,17 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 	bool hkeystart = evt.GetModifiers() == accel.GetFlags() && key == accel.GetKeyCode();
 	bool hkeyend = evt.GetModifiers() == accel1.GetFlags() && key == accel1.GetKeyCode();
 	if (hkeystart || hkeyend) {
-		if (tab->Video->GetState() == None) { 
+		if (tab->video->GetState() == None) { 
 			wxBell(); return; 
 		}
-		int vidtime = tab->Video->Tell();
-		if (vidtime < tab->Edit->line->Start.mstime ||
-			vidtime > tab->Edit->line->End.mstime) {
+		int vidtime = tab->video->Tell();
+		if (vidtime < tab->edit->line->Start.mstime ||
+			vidtime > tab->edit->line->End.mstime) {
 			wxBell(); return;
 		}
 		int diff = (hkeystart || tagMode & IS_T_ANIMATION) ?
-			vidtime - ZEROIT(tab->Edit->line->Start.mstime) :
-			abs(vidtime - ZEROIT(tab->Edit->line->End.mstime));
+			vidtime - ZEROIT(tab->edit->line->Start.mstime) :
+			abs(vidtime - ZEROIT(tab->edit->line->End.mstime));
 		if (hkeystart) {
 			slider[0].SetThumbValue(diff);
 		}
@@ -109,7 +109,7 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 			slider[1].SetThumbValue(diff);
 		}
 		slider[hkeystart? 0 : 1].SetHolding(true);
-		if (tab->Edit->IsCursorOnStart()) {
+		if (tab->edit->IsCursorOnStart()) {
 			SetVisual(false);
 		}
 		else {
@@ -122,7 +122,7 @@ void AllTags::OnKeyPress(wxKeyEvent& evt)
 
 wxString AllTags::GetSelectedTag(FindData* result)
 {
-	TextEditor *editor = tab->Edit->GetEditor();
+	TextEditor *editor = tab->edit->GetEditor();
 	long start = 0, end = 0;
 	editor->GetSelection(&start, &end);
 	if (start != end) {
@@ -219,12 +219,12 @@ void AllTags::SetCurVisual()
 			slider[i].SetThumbValue(actualTag.values[i]);
 		}
 	}
-	tab->Video->Render(false);
+	tab->video->Render(false);
 }
 
 void AllTags::FindTagValues()
 {
-	Styles* currentStyle = tab->Grid->GetStyle(0, tab->Edit->line->Style);
+	Styles* currentStyle = tab->grid->GetStyle(0, tab->edit->line->Style);
 	wxString value;
 	TagValueFromStyle(currentStyle, actualTag.tag, &value);
 	double doubleValue = 0.;
@@ -242,7 +242,7 @@ void AllTags::FindTagValues()
 	else if (actualTag.tag == L"pos") {
 		bool putInBracket = false;
 		wxPoint textPosition;
-		D3DXVECTOR2 pos = GetPosition(tab->Edit->line, &putInBracket, &textPosition);
+		D3DXVECTOR2 pos = GetPosition(tab->edit->line, &putInBracket, &textPosition);
 		actualTag.values[0] = pos.x;
 		actualTag.values[1] = pos.y;
 	}

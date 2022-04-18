@@ -42,7 +42,7 @@ void Position::Draw(int time)
 	bool nothintoshow = true;
 	for (size_t i = 0; i < data.size(); i++){
 		auto pos = data[i];
-		Dialogue* dial = tab->Grid->GetDialogue(pos.numpos);
+		Dialogue* dial = tab->grid->GetDialogue(pos.numpos);
 		if (!dial)
 			continue;
 		//don't forget to check if times are in range time >= start && time < end
@@ -112,7 +112,7 @@ void Position::ChangeTool(int _tool, bool blockSetCurVisual)
 		ChangeMultiline(true);
 	}
 	else {
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 }
 
@@ -128,7 +128,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 	if (hasPositionToRenctangle) {
 		if (evt.ButtonUp()) {
-			if (tab->Video->HasCapture()) { tab->Video->ReleaseMouse(); }
+			if (tab->video->HasCapture()) { tab->video->ReleaseMouse(); }
 			if (rectangleVisible) {
 				if (PositionRectangle[1].y == PositionRectangle[0].y ||
 					PositionRectangle[1].x == PositionRectangle[0].x)
@@ -141,7 +141,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 				ChangeMultiline(true);
 			}
 
-			if (!tab->Video->HasArrow()) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (!tab->video->HasArrow()) { tab->video->SetCursor(wxCURSOR_ARROW); }
 		}
 
 		if (!holding && rectangleVisible) {
@@ -150,14 +150,14 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			int test = HitTest(D3DXVECTOR2(x, y));
 			if (test < INSIDE) {
 				setarrow = true;
-				tab->Video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
+				tab->video->SetCursor((test < 4) ? wxCURSOR_SIZEWE :
 					(test >= 4 && test % 4 == 0) ? wxCURSOR_SIZENS :
 					(test == (TOP + LEFT) || test == (BOTTOM + RIGHT)) ? wxCURSOR_SIZENWSE : wxCURSOR_SIZENESW);
 			}
-			if (!setarrow) { tab->Video->SetCursor(wxCURSOR_ARROW); }
+			if (!setarrow) { tab->video->SetCursor(wxCURSOR_ARROW); }
 		}
 		if (click || evt.LeftDClick()) {
-			if (!tab->Video->HasCapture()) { tab->Video->CaptureMouse(); }
+			if (!tab->video->HasCapture()) { tab->video->CaptureMouse(); }
 			grabbed = OUTSIDE;
 			float pointx = ((x / zoomScale.x) + zoomMove.x) * coeffW,
 				pointy = ((y / zoomScale.y) + zoomMove.y) * coeffH;
@@ -228,7 +228,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 			if (rectangleVisible)
 				ChangeMultiline(false);
 			else
-				tab->Video->Render(false);
+				tab->video->Render(false);
 		}
 
 		return;
@@ -236,7 +236,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 
 	if (evt.RightDown() || evt.LeftDClick()){
 		for (size_t i = 0; i < data.size(); i++){
-			if (data[i].numpos == tab->Grid->currentLine){
+			if (data[i].numpos == tab->grid->currentLine){
 				data[i].pos.x = x;
 				data[i].pos.y = y;
 				D3DXVECTOR2 diff(data[i].pos.x - data[i].lastpos.x, data[i].pos.y - data[i].lastpos.y);
@@ -256,30 +256,30 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 	}
 
 	if (evt.LeftUp()){
-		if (tab->Video->HasCapture()){ tab->Video->ReleaseMouse(); }
+		if (tab->video->HasCapture()){ tab->video->ReleaseMouse(); }
 		ChangeMultiline(true);
 		for (size_t i = 0; i < data.size(); i++){
 			data[i].lastpos = data[i].pos;
 		}
-		if (!tab->Video->HasArrow()){ tab->Video->SetCursor(wxCURSOR_ARROW);}
+		if (!tab->video->HasArrow()){ tab->video->SetCursor(wxCURSOR_ARROW);}
 		movingHelperLine = false;
 	}
 	if (movingHelperLine){
 		helperLinePos = evt.GetPosition();
-		tab->Video->Render(false);
+		tab->video->Render(false);
 		return;
 	}
 
 	if (click){
-		if (!tab->Video->HasCapture()){ tab->Video->CaptureMouse(); }
+		if (!tab->video->HasCapture()){ tab->video->CaptureMouse(); }
 		if (IsInPos(evt.GetPosition(), helperLinePos, 4)){
 			movingHelperLine = true;
 			return;
 		}
-		tab->Video->SetCursor(wxCURSOR_SIZING);
+		tab->video->SetCursor(wxCURSOR_SIZING);
 		wxArrayInt sels;
-		tab->Grid->file->GetSelections(sels);
-		if (sels.size() != data.size()){ SetCurVisual(); tab->Video->Render(); }
+		tab->grid->file->GetSelections(sels);
+		if (sels.size() != data.size()){ SetCurVisual(); tab->video->Render(); }
 		firstmove.x = x;
 		firstmove.y = y;
 		axis = 0;
@@ -308,7 +308,7 @@ void Position::OnMouseEvent(wxMouseEvent &evt)
 		wxPoint mousePos = evt.GetPosition();
 		hasHelperLine = (hasHelperLine && IsInPos(mousePos, helperLinePos, 4)) ? false : true;
 		helperLinePos = mousePos;
-		tab->Video->Render(false);
+		tab->video->Render(false);
 	}
 }
 
@@ -326,13 +326,13 @@ void Position::SetCurVisual()
 	GetPosnScale(nullptr, &curLineAlingment, moveValues);
 	data.clear();
 	wxArrayInt sels;
-	tab->Grid->file->GetSelections(sels);
+	tab->grid->file->GetSelections(sels);
 	bool putInBracket; 
 	wxPoint textPosition;
 
 	for (size_t i = 0; i < sels.size(); i++){
 		//fix to work with editbox changes
-		Dialogue *dial = (sels[i] == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(sels[i]);
+		Dialogue *dial = (sels[i] == tab->grid->currentLine) ? tab->edit->line : tab->grid->GetDialogue(sels[i]);
 		if (dial->IsComment){ continue; }
 		D3DXVECTOR2 pos = GetPosition(dial, &putInBracket, &textPosition);
 		data.push_back(PosData(sels[i], D3DXVECTOR2(((pos.x / coeffW) - zoomMove.x)*zoomScale.x,
@@ -357,7 +357,7 @@ void Position::ChangeMultiline(bool all, bool dummy)
 	if (!all && !dummytext){
 		bool visible = false;
 		selPositions.clear();
-		dummytext = tab->Grid->GetVisible(&visible, 0, &selPositions);
+		dummytext = tab->grid->GetVisible(&visible, 0, &selPositions);
 		if (selPositions.size() != data.size()){
 			//do not show info cause it popup only when a comment is selected with other lines
 			//and only first time it don't change anything it can be disabled.
@@ -365,13 +365,13 @@ void Position::ChangeMultiline(bool all, bool dummy)
 		}
 	}
 	if (!all){ dtxt = new wxString(*dummytext); }
-	bool skipInvisible = !all && tab->Video->GetState() != Playing;
-	int _time = tab->Video->Tell();
+	bool skipInvisible = !all && tab->video->GetState() != Playing;
+	int _time = tab->video->Tell();
 	int moveLength = 0;
-	const wxString &tlStyle = tab->Grid->GetSInfo(L"TLMode Style");
+	const wxString &tlStyle = tab->grid->GetSInfo(L"TLMode Style");
 	for (size_t i = 0; i < data.size(); i++){
 		size_t k = data[i].numpos;
-		Dialogue *Dial = (k == tab->Grid->currentLine) ? tab->Edit->line : tab->Grid->GetDialogue(k);
+		Dialogue *Dial = (k == tab->grid->currentLine) ? tab->edit->line : tab->grid->GetDialogue(k);
 		if (!Dial)
 			continue;
 
@@ -383,11 +383,11 @@ void Position::ChangeMultiline(bool all, bool dummy)
 		if (data[i].putinBracket){ visual = L"{" + visual + L"}"; }
 		txt.replace(data[i].TextPos.x, data[i].TextPos.y, visual);
 		if (all){
-			tab->Grid->CopyDialogue(data[i].numpos)->SetText(txt);
+			tab->grid->CopyDialogue(data[i].numpos)->SetText(txt);
 		}
 		else{
 			Dialogue Cpy = Dialogue(*Dial);
-			if (Dial->TextTl != emptyString && tab->Grid->hasTLMode) {
+			if (Dial->TextTl != emptyString && tab->grid->hasTLMode) {
 				Cpy.TextTl = txt;
 				wxString tlLines;
 				if (showOriginalOnVideo)
@@ -585,7 +585,7 @@ void Position::SetPosition()
 		}
 		
 		for (size_t i = 0; i < data.size(); i++) {
-			if (data[i].numpos == tab->Grid->currentLine) {
+			if (data[i].numpos == tab->grid->currentLine) {
 				if(hasPositionX)
 					data[i].pos.x = x + curLinePosition.x;
 				if (hasPositionY)
@@ -616,7 +616,7 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool chan
 
 void Position::GetPositioningData()
 {
-	textSize = GetTextSize(tab->Edit->line, nullptr, nullptr, true, &extlead, &drawingPosition, border);
+	textSize = GetTextSize(tab->edit->line, nullptr, nullptr, true, &extlead, &drawingPosition, border);
 	curLinePosition = drawingPosition;
 	//no alignment? get it
 	if(curLineAlingment == -1)
