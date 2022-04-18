@@ -133,12 +133,12 @@ void TagButton::OnMouseEvent(wxMouseEvent& event)
 EditBox::EditBox(wxWindow *parent, int idd)
 	: KaiPanel(parent, idd)
 	, EditCounter(1)
-	, ABox(NULL)
-	, line(NULL)
+	, ABox(nullptr)
+	, line(nullptr)
 	, lastVisible(true)
 	, CurrentDoubtful(0)
 	, CurrentUntranslated(0)
-	, TagButtonManager(NULL)
+	, TagButtonManager(nullptr)
 {
 	//Warning don't use any grid in constructor cause editbox is constructed
 	//before Subsgrid cause of tab shortcut order
@@ -311,7 +311,7 @@ EditBox::EditBox(wxWindow *parent, int idd)
 	BoxSizer1->Add(TextEdit, 3, wxEXPAND | wxLEFT | wxRIGHT, 4);
 	BoxSizer1->Add(BoxSizer2, 0, wxEXPAND | wxALL, 2);
 	
-	BoxSizer3 = NULL;
+	BoxSizer3 = nullptr;
 
 	SetSizer(BoxSizer1);
 
@@ -768,8 +768,8 @@ void EditBox::OnFontChange(wxCommandEvent& event){
 	FontDialog *FD = (FontDialog *)event.GetClientData();
 	if (!FD)
 		return;
-	Styles * input = NULL;
-	Styles * output = NULL;
+	Styles * input = nullptr;
+	Styles * output = nullptr;
 	FD->GetStyles(&input, &output);
 	if (input && output)
 		ChangeFont(output, input);
@@ -1318,7 +1318,7 @@ void EditBox::OnSize(wxSizeEvent& event)
 		BoxSizer2->Add(MarginREdit, 0, wxLEFT, 2);
 		BoxSizer2->Add(MarginVEdit, 0, wxLEFT, 2);
 		BoxSizer2->Add(EffectEdit, 5, wxLEFT | wxRIGHT | wxEXPAND, 2);
-		delete BoxSizer3; BoxSizer3 = NULL;
+		delete BoxSizer3; BoxSizer3 = nullptr;
 		SetSizer(BoxSizer1);
 
 		isdetached = false;
@@ -1618,7 +1618,7 @@ void EditBox::OnButtonTag(wxCommandEvent& event)
 		}
 		else if(!isR){
 			wxString tagTofind = (isFN) ? wxString(L"fn") : findtag;
-			if (!TagValueFromStyle(NULL, tagTofind, &result))
+			if (!TagValueFromStyle(nullptr, tagTofind, &result))
 				result = L"0";
 		}
 		wxString resetTag = result.empty() ? emptyString : (isFN) ? L"\\fn" + result : (isR) ? L"\\" + result : L"\\" + findtag + result;
@@ -2078,13 +2078,13 @@ bool EditBox::LoadAudio(const wxString &audioFileName, bool fromVideo)
 			
 			ABox->audioDisplay->SetFocus();
 		}
-		else{ ABox->Destroy(); ABox = NULL; }
+		else{ ABox->Destroy(); ABox = nullptr; }
 	}
 	if (!ABox)
 		return false;
 	else if (!ABox->audioDisplay->loaded){
 		ABox->Destroy();
-		ABox = NULL;
+		ABox = nullptr;
 		return false;
 	}
 
@@ -2099,9 +2099,9 @@ void EditBox::CloseAudio()
 	BoxSizer1->Remove(1);
 	BoxSizer1->Remove(0);
 	windowResizer->Destroy();
-	windowResizer = NULL;
+	windowResizer = nullptr;
 	ABox->Destroy();
-	ABox = NULL;
+	ABox = nullptr;
 	Layout();
 }
 

@@ -100,8 +100,8 @@ public:
 	void FindReplaceInSubs(TabWindow *window);
 	void FindInSubsLine(wxString *onlyString, Dialogue *dial, TabPanel *tab, bool *isFirst, 
 		int linePos, int linePosId, const wxString &subsPath, int thread, bool hasTlMode);
-	static DWORD FindReplaceInFiles(void *data);
-	static DWORD FindAllInTab(void *data);
+	static unsigned long FindReplaceInFiles(void *data);
+	static unsigned long FindAllInTab(void *data);
 	int ReplaceInSubsLine(wxString *onlyString);
 	void Replace(TabWindow *window);
 	int ReplaceAllInTab(TabPanel *tab, TabWindow *window);
@@ -120,8 +120,8 @@ private:
 	bool UpdateValues(TabWindow *window);
 	int ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const wxString &copyPath);
 	int ReplaceCheckedLine(wxString *line, const wxPoint &pos, int *replacementDiff);
-	FindReplaceDialog *FRD = NULL;
-	FindReplaceResultsDialog *FRRD = NULL;
+	FindReplaceDialog *FRD = nullptr;
+	FindReplaceResultsDialog *FRRD = nullptr;
 	std::atomic<int> AllReplacements = 0;
 	int numOfProcessors = 4;
 };

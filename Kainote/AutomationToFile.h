@@ -62,7 +62,7 @@ namespace Auto{
 	
 	private:
 		File *file;
-		AudioSpectrum *spectrum = NULL;
+		AudioSpectrum *spectrum = nullptr;
 		lua_State *L;
 
 		bool can_modify;

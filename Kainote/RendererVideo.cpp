@@ -55,31 +55,31 @@ RendererVideo::RendererVideo(VideoCtrl *control, bool visualDisabled)
 	m_Time = 0;
 	m_PlayEndTime = 0;
 	m_State = None;
-	m_D3DObject = NULL;
-	m_D3DDevice = NULL;
-	m_BlackBarsSurface = NULL;
-	m_D3DLine = NULL;
-	m_Visual = (tab->editor && !visualDisabled)? Visuals::Get(CROSS, videoControl) : NULL;
+	m_D3DObject = nullptr;
+	m_D3DDevice = nullptr;
+	m_BlackBarsSurface = nullptr;
+	m_D3DLine = nullptr;
+	m_Visual = (tab->editor && !visualDisabled)? Visuals::Get(CROSS, videoControl) : nullptr;
 	m_VideoResized = m_DirectShowSeeking = m_BlockResize = m_HasVisualEdition = false;
 	m_DeviceLost = false;
-	m_MainSurface = NULL;
-	m_FrameBuffer = NULL;
-	m_AudioPlayer = NULL;
+	m_MainSurface = nullptr;
+	m_FrameBuffer = nullptr;
+	m_AudioPlayer = nullptr;
 	m_WindowRect.bottom = 0;
 	m_WindowRect.right = 0;
 	m_WindowRect.left = 0;
 	m_WindowRect.top = 0;
-	m_D3DFont = NULL;
+	m_D3DFont = nullptr;
 	m_Frame = 0;
 	diff = 0;
 	m_AverangeFrameTime = 42;
 	m_ZoomParcent = 1.f;
 #if byvertices
-	vertex = NULL;
-	texture = NULL;
+	vertex = nullptr;
+	texture = nullptr;
 #endif
-	m_DXVAProcessor = NULL;
-	m_DXVAService = NULL;
+	m_DXVAProcessor = nullptr;
+	m_DXVAService = nullptr;
 }
 
 RendererVideo::~RendererVideo()
@@ -89,7 +89,7 @@ RendererVideo::~RendererVideo()
 	SAFE_DELETE(m_Visual);
 	SAFE_RELEASE(m_SubsProvider);
 
-	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = nullptr; }
 
 }
 
@@ -289,13 +289,13 @@ bool RendererVideo::InitDX()
 	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 	HR(hr, _("Zawiodło któreś z ustawień DirectX vertices"));
 	HR(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, D3DUSAGE_RENDERTARGET,
-		D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, NULL), "Nie można utworzyć tekstury");
+		D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr), "Nie można utworzyć tekstury");
 
 	HR(texture->GetSurfaceLevel(0, &m_BlackBarsSurface), "nie można utworzyć powierzchni");
 
 	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0), "Nie można utworzyć powierzchni");
 
-	HR(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &vertex, NULL),
+	HR(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &vertex, nullptr),
 		"Nie można utworzyć bufora wertex")
 
 		CUSTOMVERTEX* pVertices;
@@ -655,12 +655,12 @@ void RendererVideo::DrawProgressBar(const wxString &timesString)
 	m_ProgressBarTime = timesString;
 	int fw, fh;
 	RECT rcRect = { 0, 0, 0, 0 };
-	if (m_D3DCalcFont->DrawTextW(NULL, m_ProgressBarTime.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000)) {
+	if (m_D3DCalcFont->DrawTextW(nullptr, m_ProgressBarTime.wchar_str(), -1, &rcRect, DT_CALCRECT, 0xFF000000)) {
 		fw = rcRect.right - rcRect.left;
 		fh = rcRect.bottom - rcRect.top;
 	}
 	else {
-		videoControl->GetTextExtent(m_ProgressBarTime, &fw, &fh, NULL, NULL, Options.GetFont(4));
+		videoControl->GetTextExtent(m_ProgressBarTime, &fw, &fh, nullptr, nullptr, Options.GetFont(4));
 	}
 	int progresbarHeight = fh * 0.6f;
 	int margin = fh * 0.25f;
@@ -778,7 +778,7 @@ bool RendererVideo::HasVisual(bool hasDefault)
 	if (hasDefault)
 		return m_Visual && m_Visual->Visual != CROSS;
 	else
-		return m_Visual != NULL;
+		return m_Visual != nullptr;
 }
 
 Visuals *RendererVideo::GetVisual()

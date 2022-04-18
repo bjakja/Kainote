@@ -31,7 +31,7 @@ KaiSlider::KaiSlider(wxWindow *parent, int id, int _value, int _minRange, int _m
 	, maxRange(_maxRange)
 	, thumbPos(0)
 	, thumbSize(10)
-	, bmp(NULL)
+	, bmp(nullptr)
 	, enter(false)
 	, holding(false)
 	, pushed(false)
@@ -105,7 +105,7 @@ void KaiSlider::OnPaint(wxPaintEvent& evt)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);

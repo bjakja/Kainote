@@ -19,13 +19,13 @@
 //#include "Videobox.h"
 //#include "dshowplayer.h"
 #include "Visuals.h"
-#include <dxva2api.h>
-#include <vector>
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
-
+#include <vector>
+#include <dxva2api.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+
 
 #undef DrawText
 
@@ -86,7 +86,7 @@ public:
 	virtual bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true){
 		return false; 
 	};
-	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL, bool resetParameters = false){ return false; };
+	virtual bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false){ return false; };
 	virtual bool Play(int end = -1){ return false; };
 	virtual bool Pause(){ return false; };
 	virtual bool Stop(){ return false; };
@@ -98,7 +98,7 @@ public:
 	virtual void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd){};
 	virtual int GetFrameTimeFromTime(int time, bool start = true){ return 0; };
 	virtual int GetFrameTimeFromFrame(int frame, bool start = true){ return 0; };
-	//if nothing loaded or loaded via Direct Show VFF is NULL
+	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
 	//bool GetStartEndDurationFromMS(Dialogue *dial, STime &duration);
 	virtual int GetPlayEndTime(int time){ return 0; };
@@ -107,14 +107,14 @@ public:
 	virtual void GetVideoSize(int *width, int *height){};
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
-	virtual bool DrawTexture(byte *nframe = NULL, bool copy = false) { return false; };
+	virtual bool DrawTexture(byte *nframe = nullptr, bool copy = false) { return false; };
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
 	virtual void ChangePositionByFrame(int cpos){};
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
-	virtual byte *GetFramewithSubs(bool subs, bool *del){ return NULL; };
+	virtual byte *GetFramewithSubs(bool subs, bool *del){ return nullptr; };
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
@@ -141,9 +141,9 @@ public:
 	float m_FrameDuration;
 	float m_ZoomParcent;
 	wxString m_ProgressBarTime;
-	ID3DXLine *m_D3DLine = NULL;
-	LPD3DXFONT m_D3DFont = NULL;
-	LPD3DXFONT m_D3DCalcFont = NULL;
+	ID3DXLine *m_D3DLine = nullptr;
+	LPD3DXFONT m_D3DFont = nullptr;
+	LPD3DXFONT m_D3DCalcFont = nullptr;
 	wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
@@ -158,7 +158,7 @@ public:
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
 	VideoCtrl *videoControl;
-	Visuals *m_Visual/* = NULL*/;
+	Visuals *m_Visual/* = nullptr*/;
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
 	LPDIRECT3DTEXTURE9 texture;
@@ -167,7 +167,7 @@ public:
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
 	virtual bool HasFFMS2(){ return false; };
-	virtual Provider * GetFFMS2(){ return NULL; };
+	virtual Provider * GetFFMS2(){ return nullptr; };
 	virtual void ZoomChanged() {};
 	// Non virtual functions
 	void DrawProgressBar(const wxString &timesString);
@@ -217,6 +217,6 @@ private:
 	int m_ProgressBarLineWidth = 1;
 	AudioDisplay *m_AudioPlayer;
 	TabPanel* tab;
-	SubtitlesProviderManager *m_SubsProvider = NULL;
+	SubtitlesProviderManager *m_SubsProvider = nullptr;
 
 };

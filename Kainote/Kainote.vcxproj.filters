@@ -311,15 +311,6 @@
     <ClCompile Include="RendererVideo.cpp">
       <Filter>Video</Filter>
     </ClCompile>
-    <ClCompile Include="SubtitlesVSFilter.cpp">
-      <Filter>Video</Filter>
-    </ClCompile>
-    <ClCompile Include="SubtitlesLibass.cpp">
-      <Filter>Video</Filter>
-    </ClCompile>
-    <ClCompile Include="SubtitlesProviderManager.cpp">
-      <Filter>Video</Filter>
-    </ClCompile>
     <ClCompile Include="VisualClipRect.cpp">
       <Filter>Video\Visuals</Filter>
     </ClCompile>
@@ -457,6 +448,15 @@
     </ClCompile>
     <ClCompile Include="GraphicsD2D.cpp">
       <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesVSFilter.cpp">
+      <Filter>Utils &amp; Config</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesProviderManager.cpp">
+      <Filter>Subs</Filter>
+    </ClCompile>
+    <ClCompile Include="SubtitlesLibass.cpp">
+      <Filter>Subs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -739,12 +739,6 @@
     <ClInclude Include="RendererVideo.h">
       <Filter>Video</Filter>
     </ClInclude>
-    <ClInclude Include="SubtitlesProvider.h">
-      <Filter>Video</Filter>
-    </ClInclude>
-    <ClInclude Include="SubtitlesProviderManager.h">
-      <Filter>Video</Filter>
-    </ClInclude>
     <ClInclude Include="Visuals.h">
       <Filter>Video\Visuals</Filter>
     </ClInclude>
@@ -853,20 +847,14 @@
     <ClInclude Include="GFFT\Factory.h">
       <Filter>Audio</Filter>
     </ClInclude>
-    <ClInclude Include="GFFT\LokiTypeInfo.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="GFFT\NullType.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="GFFT\Typelist.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
-    <ClInclude Include="GFFT\TypeManip.h">
-      <Filter>Audio</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsD2D.h">
       <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProvider.h">
+      <Filter>Subs</Filter>
+    </ClInclude>
+    <ClInclude Include="SubtitlesProviderManager.h">
+      <Filter>Subs</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

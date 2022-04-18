@@ -122,8 +122,8 @@ public:
 	TagListItem *GetItem(int pos);
 	void InitList(int option);
 private:
-	PopupWindow *popup = NULL;
-	wxWindow *Parent = NULL;
+	PopupWindow *popup = nullptr;
+	wxWindow *Parent = nullptr;
 	wxSize controlSize;
 	wxPoint position;
 	wxString keyWord;

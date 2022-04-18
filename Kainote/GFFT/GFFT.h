@@ -29,15 +29,15 @@ public:
 	FFT(){};
 	~FFT();
 	void Set(Provider *_prov);
-	void Transform(int64_t whre);
+	void Transform(long long whre);
 	float Get(int i);
-	void SetAudio(int64_t from, int64_t to);
+	void SetAudio(long long from, long long to);
 	float * output;
 private:
 	Provider *prov;
 	short * input;
 	AbstractFFT<float>* gfft;
-	int64_t inputSize = 0;
-	int64_t from = 0;
+	long long inputSize = 0;
+	long long from = 0;
 	//size_t lastend = 0;
 };

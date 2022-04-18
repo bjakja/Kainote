@@ -35,7 +35,7 @@ public:
 		AutomationHotkeysDialog::allHotkeys[idAndType(id, GLOBAL_HOTKEY)] = hdata(name, accelerator);
 		//modified = true;
 	}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= nullptr*/)
 	{
 		if (enter){
 			if (needTooltip)

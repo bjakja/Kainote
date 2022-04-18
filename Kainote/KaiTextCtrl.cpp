@@ -29,7 +29,7 @@ KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const w
 {
 	KText = text;
 
-	bmp = NULL;
+	bmp = nullptr;
 	fsize = 10;
 	posY = 0;
 	scPos = 0;
@@ -270,7 +270,7 @@ void KaiTextCtrl::CalcWrap(bool sendevent/*=true*/, size_t position /*= 0*/)
 {
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+	GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
 	if (gc){
 		gc->SetFont(font, L"#000000");
 	}
@@ -347,7 +347,7 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 		}
 		else {
 			if (ch == L'\t') {
-				wxWindow::GetTextExtent(L"        ", &gfw, &gfh, NULL, NULL, &font);
+				wxWindow::GetTextExtent(L"        ", &gfw, &gfh, nullptr, nullptr, &font);
 				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			}//calculate size of \r to 0 to not slow code when splitting it on \n
 			else if (ch == L'\r') {
@@ -355,7 +355,7 @@ void KaiTextCtrl::CalcWrapsGDI(int windowWidth, int currentPosition)
 				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, 0));
 			}
 			else {
-				wxWindow::GetTextExtent(ch, &gfw, &gfh, NULL, NULL, &font);
+				wxWindow::GetTextExtent(ch, &gfw, &gfh, nullptr, nullptr, &font);
 				fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			}
 			widthCount += gfw;
@@ -878,7 +878,7 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 
@@ -890,7 +890,7 @@ void KaiTextCtrl::OnPaint(wxPaintEvent& event)
 	bmpDC.SelectObject(*bmp);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = NULL;//renderer->CreateContext(bmpDC);
+	GraphicsContext *gc = nullptr;//renderer->CreateContext(bmpDC);
 	if (!gc){
 		DrawFld(bmpDC, w, h);
 	}
@@ -1053,7 +1053,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 			if (lastto < lineto){
 				if (lastto - 1 >= linefrom){
 					wxString preline = line.SubString(0, (lastto - linefrom) - 1);
-					GetTextExtent(preline, &drawX, NULL);
+					GetTextExtent(preline, &drawX, nullptr);
 				}
 				else{ drawX = 0; }
 				dc.SetTextForeground(fg);
@@ -1078,7 +1078,7 @@ void KaiTextCtrl::DrawFld(wxDC &dc, int w, int h)
 				int tmpfw = 0;
 				size_t startPos = 0;
 				while (posx < -200){
-					GetTextExtent(line.Mid(startPos, 50), &tmpfw, NULL);
+					GetTextExtent(line.Mid(startPos, 50), &tmpfw, nullptr);
 					if (posx + tmpfw > 0)
 						break;
 					posx += tmpfw;
@@ -1248,7 +1248,7 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 			if (lastto < lineto){
 				if (lastto - 1 >= linefrom){
 					wxString preline = line.SubString(0, (lastto - linefrom) - 1);
-					GetTextExtent(preline, &drawX, NULL);
+					GetTextExtent(preline, &drawX, nullptr);
 				}
 				else{ drawX = 0; }
 				gc->SetFont(font, fg);
@@ -1273,7 +1273,7 @@ void KaiTextCtrl::DrawFieldD2D(GraphicsContext *gc, int w, int h)
 				int tmpfw = 0;
 				size_t startPos = 0;
 				while (posx < -200){
-					GetTextExtent(line.Mid(startPos, 50), &tmpfw, NULL);
+					GetTextExtent(line.Mid(startPos, 50), &tmpfw, nullptr);
 					if (posx + tmpfw > 0)
 						break;
 					posx += tmpfw;
@@ -1313,7 +1313,7 @@ bool KaiTextCtrl::HitTest(wxPoint pos, wxPoint *cur)
 	int fww = 0;
 	double gfww = 0.;
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+	GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
 	if (gc)
 		gc->SetFont(font, L"#000000");
 
@@ -1409,7 +1409,7 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 	wxString wfind = L" }])-—'`\"\\;:,.({[><?!*~@#$%^&/+=\t\n";
 	int len = KText.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
-	bool fromend = (start != NULL);
+	bool fromend = (start != nullptr);
 
 	if (!fromend){ pos--; }
 	pos = MID(0, pos, len - 1);
@@ -1434,7 +1434,7 @@ void KaiTextCtrl::FindWord(int pos, int *start, int *end)
 		}
 	}
 	if (!end){ return; }
-	*end = (fromend && end == NULL) ? 0 : len;
+	*end = (fromend && end == nullptr) ? 0 : len;
 	for (int i = pos; i < len; i++){
 		int res = wfind.Find(KText[i]);
 		if (res != -1 && !hasres){
@@ -1584,7 +1584,7 @@ wxPoint KaiTextCtrl::PosFromCursor(wxPoint cur, bool correctToScroll)
 	else{
 		wxString beforeCursor = KText.SubString(wraps[cur.y], cur.x - 1);
 		//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+		GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
 		if (gc){
 			gc->SetFont(font, L"#000000");
 			double gfw = 0, gfh;
@@ -1682,7 +1682,7 @@ void KaiTextCtrl::MakeCursorVisible(bool refreshit)
 
 			int fh, fw;
 			//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-			GraphicsContext *gc = NULL;//renderer->CreateMeasuringContext();
+			GraphicsContext *gc = nullptr;//renderer->CreateMeasuringContext();
 			if (gc){
 				gc->SetFont(font, L"#000000");
 				double gfw = 0, gfh;

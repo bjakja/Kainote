@@ -188,7 +188,7 @@ void  ContextDX9::DrawLines(D3DXVECTOR2 *vector, size_t vectorSize, unsigned int
 int ContextDX9::CreateFont(const wxString &fontName, int height, bool bold, bool italic)
 {
 	size_t size = m_D3DFonts.size();
-	LPD3DXFONT D3DFont = NULL;
+	LPD3DXFONT D3DFont = nullptr;
 	HRESULT hr = D3DXCreateFontW(m_D3DDevice, height, 0, bold? FW_BOLD : 0, 0, italic, DEFAULT_CHARSET, 
 		OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_DONTCARE, fontName.wc_str(), &D3DFont);
 
@@ -211,10 +211,10 @@ void  ContextDX9::DrawOutlinedText(int fontIndex, const wxString &text, RECT tex
 	for (int i = 0; i < 9; i++)
 	{
 		if (i % 3 == 0 && i > 0) { tmpr.left = textRect.left - 1; tmpr.right = textRect.right - 1; tmpr.top++; tmpr.bottom++; }
-			if (i != 4) { font->DrawTextW(NULL, text.wchar_str(), -1, &tmpr, textAlign, 0xFF000000); }
+			if (i != 4) { font->DrawTextW(nullptr, text.wchar_str(), -1, &tmpr, textAlign, 0xFF000000); }
 				tmpr.left++; tmpr.right++; 
 	}
-	font->DrawTextW(NULL, text.wchar_str(), -1, &textRect, textAlign, color);
+	font->DrawTextW(nullptr, text.wchar_str(), -1, &textRect, textAlign, color);
 }
 void  ContextDX9::DrawNormalText(int fontIndex, const wxString &text, RECT textRect, unsigned int textAlign, unsigned int color)
 { 
@@ -222,7 +222,7 @@ void  ContextDX9::DrawNormalText(int fontIndex, const wxString &text, RECT textR
 		KaiLogDebug(L"Font index not exist");
 	}
 	LPD3DXFONT font = m_D3DFonts[fontIndex];
-	font->DrawTextW(NULL, text.wchar_str(), -1, &textRect, textAlign, color);
+	font->DrawTextW(nullptr, text.wchar_str(), -1, &textRect, textAlign, color);
 }
 void  ContextDX9::DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, unsigned int PrimitiveCount, const void* pVertexStreamZeroData, unsigned int VertexStreamZeroStride)
 { 

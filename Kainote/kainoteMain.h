@@ -93,11 +93,11 @@ public:
 	void OnSize(wxSizeEvent& event);
 	bool Layout();
 	void DestroyDialogs();
-	FindReplaceDialog *FR = NULL;
-	SelectLines *SL = NULL;
-	Auto::Automation *Auto = NULL;
-	FontCollector *FC = NULL;
-	MisspellReplacer *MR = NULL;
+	FindReplaceDialog *FR = nullptr;
+	SelectLines *SL = nullptr;
+	Auto::Automation *Auto = nullptr;
+	FontCollector *FC = nullptr;
+	MisspellReplacer *MR = nullptr;
 	RECT borders;
 private:
 

@@ -323,7 +323,7 @@ wxString Position::GetVisual(int datapos)
 void Position::SetCurVisual()
 {
 	int oldalignment = curLineAlingment;
-	GetPosnScale(NULL, &curLineAlingment, moveValues);
+	GetPosnScale(nullptr, &curLineAlingment, moveValues);
 	data.clear();
 	wxArrayInt sels;
 	tab->Grid->file->GetSelections(sels);
@@ -353,7 +353,7 @@ void Position::SetCurVisual()
 void Position::ChangeMultiline(bool all, bool dummy)
 {
 	bool showOriginalOnVideo = !Options.GetBool(TL_MODE_HIDE_ORIGINAL_ON_VIDEO);
-	wxString *dtxt = NULL;
+	wxString *dtxt = nullptr;
 	if (!all && !dummytext){
 		bool visible = false;
 		selPositions.clear();
@@ -616,11 +616,11 @@ D3DXVECTOR2 Position::PositionToVideo(D3DXVECTOR2 point, bool changeX, bool chan
 
 void Position::GetPositioningData()
 {
-	textSize = GetTextSize(tab->Edit->line, NULL, NULL, true, &extlead, &drawingPosition, border);
+	textSize = GetTextSize(tab->Edit->line, nullptr, nullptr, true, &extlead, &drawingPosition, border);
 	curLinePosition = drawingPosition;
 	//no alignment? get it
 	if(curLineAlingment == -1)
-		GetPosnScale(NULL, &curLineAlingment, moveValues);
+		GetPosnScale(nullptr, &curLineAlingment, moveValues);
 
 	//make from current line position an7
 	if (curLineAlingment % 3 == 0) {

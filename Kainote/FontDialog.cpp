@@ -36,10 +36,10 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 
 	font = *Options.GetFont(4);
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	Height = fh + 4;
 
-	bmp = NULL;
+	bmp = nullptr;
 	scPos = 0;
 	sel = 0;
 	holding = false;
@@ -50,7 +50,7 @@ FontList::FontList(wxWindow *parent, long id, const wxPoint &pos, const wxSize &
 
 FontList::~FontList(){
 	if (bmp){ delete bmp; bmp = 0; }
-	if (fonts) { delete fonts; fonts = NULL; }
+	if (fonts) { delete fonts; fonts = nullptr; }
 }
 
 
@@ -69,7 +69,7 @@ void FontList::OnPaint(wxPaintEvent& event)
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 	if (!bmp) bmp = new wxBitmap(w, h);
@@ -321,7 +321,7 @@ int FontList::GetSelection()
 void FontList::PutArray(wxArrayString* newList)
 {
 	delete fonts;
-	fonts = NULL;
+	fonts = nullptr;
 	fonts = new wxArrayString(*newList);
 	size_t size = fonts->size();
 	if (sel >= size)
@@ -366,7 +366,7 @@ EVT_MOUSE_EVENTS(FontList::OnMouseEvent)
 //EVT_KEY_DOWN(FontList::OnKeyPress)
 END_EVENT_TABLE()
 
-FontDialog *FontDialog::FDialog = NULL;
+FontDialog *FontDialog::FDialog = nullptr;
 
 FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	: KaiDialog(parent, -1, _("Wybierz czcionkę"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
@@ -501,7 +501,7 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 		if (editedStyle) {
 			delete editedStyle;
 			editedStyle = resultStyle;
-			resultStyle = NULL;
+			resultStyle = nullptr;
 		}
 	}, 12345);
 
@@ -517,11 +517,11 @@ FontDialog::FontDialog(wxWindow *parent, Styles *acst, bool changePointToPixel)
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent & evt){
 		if (editedStyle){
 			delete editedStyle;
-			editedStyle = NULL;
+			editedStyle = nullptr;
 		}
 		if (resultStyle){
 			delete resultStyle;
-			resultStyle = NULL;
+			resultStyle = nullptr;
 		}
 		if (IsModal())
 			EndModal(wxID_CANCEL);
@@ -549,19 +549,19 @@ FontDialog::~FontDialog()
 {
 	if (editedStyle){
 		delete editedStyle;
-		editedStyle = NULL;
+		editedStyle = nullptr;
 	}
 	if (resultStyle){
 		delete resultStyle;
-		resultStyle = NULL;
+		resultStyle = nullptr;
 	}
-	FDialog = NULL;
+	FDialog = nullptr;
 	FontEnum.RemoveClient(this);
 }
 
 void FontDialog::GetStyles(Styles **inputStyle, Styles **outputStyle)
 {
-	if (inputStyle != NULL && outputStyle != NULL){
+	if (inputStyle != nullptr && outputStyle != nullptr){
 		*inputStyle = editedStyle;
 		*outputStyle = (resultStyle) ? resultStyle : GetFont();
 	}
@@ -571,7 +571,7 @@ Styles * FontDialog::GetFont()
 {
 	if (resultStyle){
 		delete resultStyle;
-		resultStyle = NULL;
+		resultStyle = nullptr;
 	}
 	resultStyle = new Styles();
 	resultStyle->Bold = Bold->GetValue();
@@ -587,19 +587,19 @@ FontDialog * FontDialog::Get(wxWindow *parent, Styles *actualStyle, bool changeP
 {
 	if (FDialog && FDialog->GetParent() != parent){
 		FDialog->Destroy();
-		FDialog = NULL;
+		FDialog = nullptr;
 	}
 	if (!FDialog)
 		FDialog = new FontDialog(parent, actualStyle, changePointToPixel);
 	else{
 		if (FDialog->editedStyle){
 			delete FDialog->editedStyle;
-			FDialog->editedStyle = NULL;
+			FDialog->editedStyle = nullptr;
 		}
 		FDialog->editedStyle = actualStyle;
 		if (FDialog->resultStyle)
 			delete FDialog->resultStyle;
-		FDialog->resultStyle = NULL;
+		FDialog->resultStyle = nullptr;
 		FDialog->SetStyle();
 		MoveToMousePosition(FDialog);
 	}

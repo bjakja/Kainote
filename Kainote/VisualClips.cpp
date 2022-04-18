@@ -168,7 +168,7 @@ void DrawingAndClip::DrawVisual(int time)
 
 void DrawingAndClip::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : NULL);
+	D3DXVECTOR2 linepos = GetPosnScale(&scale, &alignment, (Visual == VECTORDRAW) ? moveValues : nullptr);
 	bool isDrawing = false;
 	wxString clip;
 	if (Visual != VECTORDRAW){

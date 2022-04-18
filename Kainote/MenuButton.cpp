@@ -20,7 +20,7 @@
 MenuButton::MenuButton(wxWindow *parent, int id, const wxString &tooltip, const wxPoint &pos, const wxSize &size)
 	: MappedButton(parent, id, tooltip, wxBITMAP_PNG(L"ARROW_LIST_DOUBLE"), pos, size, -1, MAKE_SQUARE_BUTTON)
 	, IsMenuShown(false)
-	, menu(NULL)
+	, menu(nullptr)
 {
 	//SetToolTip(tooltip);
 	Bind(wxEVT_LEFT_DOWN, &MenuButton::OnMouseEvent, this);
@@ -42,6 +42,6 @@ void MenuButton::OnMouseEvent(wxMouseEvent &evt)
 
 void MenuButton::PutMenu(Menu *_menu)
 {
-	if(menu){delete menu; menu = NULL;}
+	if(menu){delete menu; menu = nullptr;}
 	menu = _menu;
 }

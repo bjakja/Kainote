@@ -40,7 +40,7 @@ public:
 	bool GetHolding();
 	void ResetOnThumbAndSlider();
 private:
-	AllTags* parent = NULL;
+	AllTags* parent = nullptr;
 	bool holding = false;
 	//bool changeMoveDiff = false;
 	float thumbValue = 0.f;

@@ -55,7 +55,7 @@ public:
 	//errors table for both
 	//misspells table for MyTextEditor
 	//tags replacement for SubsGrid
-	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspells = NULL, int replaceTagsLen = -1);
+	void CheckTextAndBrackets(const wxString &text, TextData *errs, bool spellchecker, int subsFormat, std::vector<MisspellData> *misspells = nullptr, int replaceTagsLen = -1);
 	//for spellchecker window
 	void CheckText(const wxString &text, std::vector<MisspellData> *errs, int subsFormat);
 	bool FindMisspells(const wxString &text, const wxString &textToFind, std::vector<MisspellData> *misspells, int subsFormat);

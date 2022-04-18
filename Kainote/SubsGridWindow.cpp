@@ -32,7 +32,7 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 {
 	visibleColumns = Options.GetInt(GRID_HIDE_COLUMNS);
 	hideOverrideTags = Options.GetBool(GRID_HIDE_TAGS);
-	bmp = NULL;
+	bmp = nullptr;
 	SetStyle();
 	AdjustWidths();
 	//SetFocus();
@@ -57,9 +57,9 @@ SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoin
 
 SubsGridWindow::~SubsGridWindow()
 {
-	if (bmp){ delete bmp; bmp = NULL; }
-	if (preview){ preview->DestroyPreview(false, true); preview = NULL; }
-	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = NULL; }
+	if (bmp){ delete bmp; bmp = nullptr; }
+	if (preview){ preview->DestroyPreview(false, true); preview = nullptr; }
+	if (thisPreview){ thisPreview->DestroyPreview(); thisPreview = nullptr; }
 }
 
 void SubsGridWindow::SetStyle()
@@ -72,7 +72,7 @@ void SubsGridWindow::SetStyle()
 	wxFont* defaultFont = Options.GetFont(Options.GetInt(GRID_FONT_SIZE) - 10);
 	font.SetPixelSize(defaultFont->GetPixelSize());
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	GridHeight = ((fh + 3) * 2) / 2;
 	Refresh(false);
 }
@@ -147,7 +147,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 	if (bmp) {
 		if (bmp->GetWidth() < w + scHor || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 	if (!bmp) bmp = new wxBitmap(w + scHor, h);
@@ -158,7 +158,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 
 	
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext* gc = renderer? renderer->CreateContext(tdc) : NULL;
+	GraphicsContext* gc = renderer? renderer->CreateContext(tdc) : nullptr;
 	if (gc)
 		PaintD2D(gc, w, h, size, scrows, previewpos, previewsize, bg);
 	else
@@ -209,7 +209,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 		}
 
 		Dialogue *acdial = GetDialogue(MID(0, currentLine, size - 1));
-		Dialogue *Dial = NULL;
+		Dialogue *Dial = nullptr;
 		int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 		int fw, fh, bfw, bfh;
@@ -445,11 +445,11 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 							wxString bcmp;
 							if (Comparison->at(key)[c]>0){
 								bcmp = text.Mid(0, Comparison->at(key)[c]);
-								GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &font);
+								GetTextExtent(bcmp, &bfw, &bfh, nullptr, nullptr, &font);
 							}
 							else{ bfw = 0; }
 
-							GetTextExtent(cmp, &fw, &fh, NULL, NULL, &font);
+							GetTextExtent(cmp, &fw, &fh, nullptr, nullptr, &font);
 
 							tdc.DrawText(cmp, posX + bfw + 2, posY);
 							tdc.DrawText(cmp, posX + bfw + 4, posY);
@@ -478,7 +478,7 @@ void SubsGridWindow::OnPaint(wxPaintEvent& event)
 					tdc.DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 					wxBitmap arrow = wxBITMAP_PNG(L"arrow_list");
 					// GetDialogueKey was made for loops no checks
-					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
+					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
 					if (nextDial && nextDial->treeState == TREE_CLOSED)
 						if(arrow.IsOk())
 							tdc.DrawBitmap(arrow, posX + 6, posY + 5);
@@ -595,7 +595,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 	}
 
 	Dialogue *acdial = GetDialogue(MID(0, currentLine, size - 1));
-	Dialogue *Dial = NULL;
+	Dialogue *Dial = nullptr;
 	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
 	double fw, fh, bfw, bfh;
@@ -882,7 +882,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 					gc->SetPen(*wxTRANSPARENT_PEN);
 					gc->DrawRectangle(posX + 1, posY, w - 1, GridHeight);
 					// GetDialogueKey was made for loops no checks
-					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
+					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
 					if (nextDial && nextDial->treeState == TREE_CLOSED) {
 						wxBitmap bmpal(wxBITMAP_PNG(L"arrow_list"));
 						if (bmpal.IsOk())
@@ -904,7 +904,7 @@ void SubsGridWindow::PaintD2D(GraphicsContext *gc, int w, int h, int size, int s
 				else {
 					gc->SetBrush(*wxTRANSPARENT_BRUSH);
 					gc->SetPen(textcol);
-					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : NULL;
+					Dialogue *nextDial = (key < file->GetCount() - 1) ? file->GetDialogue(key + 1) : nullptr;
 
 					gc->StrokeLine(posX, posY, posX, posY + GridHeight + 1);
 					gc->StrokeLine(w - 1, posY, w - 1, posY + GridHeight + 1);
@@ -1140,7 +1140,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 void SubsGridWindow::AdjustWidths(int cell)
 {
 	GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : NULL;
+	GraphicsContext* gc = renderer? renderer->CreateMeasuringContext() : nullptr;
 	if (gc){
 		gc->SetFont(font, L"#FFFFFF");
 		AdjustWidthsD2D(gc, cell);
@@ -1956,7 +1956,7 @@ void SubsGridWindow::SelVideoLine(int curtime)
 void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
 {
 	SubsGrid *thisgrid = (SubsGrid*)this;
-	SubsGrid *secondgrid = NULL;
+	SubsGrid *secondgrid = nullptr;
 	if (thisgrid == CG1)
 		secondgrid = CG2;
 	else if (thisgrid == CG2)

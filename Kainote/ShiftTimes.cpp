@@ -156,7 +156,7 @@ void ShiftTimesWindow::Contents(bool addopts)
 	}
 	if (!LeadIn){
 		bool lastEnable = DisplayFrames->IsEnabled();
-		DisplayFrames->Enable(FFMS2 != NULL);
+		DisplayFrames->Enable(FFMS2 != nullptr);
 		bool Enable = DisplayFrames->IsEnabled();
 		bool dispFrames = DisplayFrames->GetValue();
 		if (lastEnable != Enable){
@@ -354,7 +354,7 @@ void ShiftTimesWindow::CreateControls(bool normal /*= true*/)
 		EndTimeCorrection->SetSelection(0);
 		cesizer->Add(EndTimeCorrection, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 
-		LeadIn = NULL;
+		LeadIn = nullptr;
 		Main->Add(profileSizer, 0, wxEXPAND | wxALL, 2);
 		Main->Add(timesizer, 0, wxEXPAND | wxALL, 2);
 		Main->Add(VAtiming, 0, wxEXPAND | wxALL, 2);
@@ -636,14 +636,14 @@ void ShiftTimesWindow::RefVals(ShiftTimesWindow *secondWindow)
 
 void ShiftTimesWindow::CollapsePane(wxCommandEvent &event)
 {
-	bool collapsed = (LeadIn == NULL);
+	bool collapsed = (LeadIn == nullptr);
 	SaveOptions();
 	int pe = Options.GetInt(POSTPROCESSOR_ON);
 	Options.SetInt(POSTPROCESSOR_ON, pe ^ 16);
 	
 	Freeze();
 	panel->Destroy();
-	LeadIn = NULL;
+	LeadIn = nullptr;
 	panel = new KaiPanel(this, -1);
 	CreateControls(!collapsed);
 	Thaw();
@@ -997,9 +997,9 @@ bool ShiftTimesWindow::SetFont(const wxFont &font)
 	//panel->Layout();
 	SaveOptions();
 	Freeze();
-	bool normal = LeadIn == NULL;
+	bool normal = LeadIn == nullptr;
 	panel->Destroy();
-	LeadIn = NULL;
+	LeadIn = nullptr;
 	panel = new KaiPanel(this, -1);
 	CreateControls(normal);
 	Thaw();

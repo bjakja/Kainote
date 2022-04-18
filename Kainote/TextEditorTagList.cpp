@@ -28,8 +28,8 @@ PopupWindow::PopupWindow(wxWindow *DialogParent, PopupTagList *Parent, int Heigh
 : wxPopupWindow(DialogParent)
 , sel(0)
 , scrollPositionV(0)
-, scroll(NULL)
-, bmp(NULL)
+, scroll(nullptr)
+, bmp(nullptr)
 , parent(Parent)
 , height(Height)
 {
@@ -87,7 +87,7 @@ void PopupTagList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &cont
 	if (size->x < controlSize.x){ size->x = controlSize.x; }
 	size->y = height * isize + 2;
 	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
-	wxRect workArea = GetMonitorWorkArea(0, NULL, ScreenPos, true);
+	wxRect workArea = GetMonitorWorkArea(0, nullptr, ScreenPos, true);
 	int h = workArea.height + workArea.y;
 	if ((ScreenPos.y + size->y) > h){
 		pos->y -= (size->y + controlSize.y);
@@ -129,9 +129,9 @@ void PopupWindow::OnMouseEvent(wxMouseEvent &evt)
 	else if (evt.RightUp()){
 		int options = Options.GetInt(TEXT_EDITOR_TAG_LIST_OPTIONS);
 		Menu listMenu;
-		listMenu.Append(ID_SHOW_DESCRIPTION, _("Pokaż opis"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
-		listMenu.Append(ID_SHOW_ALL_TAGS, _("Pokaż wszystkie tagi"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
-		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("Pokaż tagi VSFiltermoda"), NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
+		listMenu.Append(ID_SHOW_DESCRIPTION, _("Pokaż opis"), nullptr, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & SHOW_DESCRIPTION) != 0);
+		listMenu.Append(ID_SHOW_ALL_TAGS, _("Pokaż wszystkie tagi"), nullptr, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_USED_IN_VISUAL) != 0);
+		listMenu.Append(ID_SHOW_VSFILTER_MOD_TAGS, _("Pokaż tagi VSFiltermoda"), nullptr, emptyString, ITEM_CHECK_AND_HIDE)->Check((options & TYPE_TAG_VSFILTER_MOD) != 0);
 		
 		int id = listMenu.GetPopupMenuSelection(evt.GetPosition(), this);
 		if (id < 1)
@@ -177,13 +177,13 @@ void PopupWindow::OnPaint(wxPaintEvent &event)
 	}
 	else if (scroll){
 		scroll->Destroy();
-		scroll = NULL;
+		scroll = nullptr;
 	}
 
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
@@ -321,7 +321,7 @@ TagListItem * PopupTagList::GetItem(int pos)
 	if (keyPos >= 0)
 		return itemsList[keyPos];
 
-	return NULL;
+	return nullptr;
 }
 
 void PopupWindow::OnScroll(wxScrollEvent& event)
@@ -429,7 +429,7 @@ void PopupTagList::Popup(const wxPoint & pos, const wxSize & _controlSize, int s
 		popup->Popup(pos, size, selectedItem);
 	}
 	else
-		popup = NULL;
+		popup = nullptr;
 
 	position = pos;
 	controlSize = _controlSize;

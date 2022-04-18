@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-//#include <windows.h>
+
 #include <wx/window.h>
 #include <wx/statbox.h>
 #include <wx/sizer.h>
@@ -30,7 +30,7 @@ public:
 	wxSize CalcBorders();
 	bool Enable(bool enable = true);
 private:
-	void PaintForeground(wxDC& dc, const RECT& rc);
+	void PaintForeground(wxDC& dc, const wxRect& rc);
 	wxArrayString labels;
 	int heightText;
 };

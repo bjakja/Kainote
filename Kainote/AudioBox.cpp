@@ -588,7 +588,7 @@ void AudioBox::OnLeadOut(wxCommandEvent &event) {
 
 void AudioBox::OnScrollSpectrum(wxCommandEvent &event)
 {
-	int64_t pos = audioDisplay->Position;
+	long long pos = audioDisplay->Position;
 	if (event.GetId() == AUDIO_SCROLL_RIGHT)
 		pos -= 50;
 	else

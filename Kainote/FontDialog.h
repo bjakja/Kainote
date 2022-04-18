@@ -97,10 +97,10 @@ private:
 	KaiTextCtrl *FontName;
 	ToggleButton* Filter;
 	KaiChoice* fontCatalog;
-	Styles *editedStyle = NULL;
-	Styles *resultStyle = NULL;
+	Styles *editedStyle = nullptr;
+	Styles *resultStyle = nullptr;
 	wxTimer fontChangedTimer;
-	FontCatalogList* FCL = NULL;
+	FontCatalogList* FCL = nullptr;
 	bool pointToPixel = false;
 
 	void OnUpdatePreview(wxCommandEvent& event);

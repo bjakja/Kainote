@@ -107,7 +107,7 @@ wxWindow * KaiTabBar::GetTab(int i)
 	if (i < 0)
 		i = currentTab;
 	if (i < 0 || i >= tabs.size())
-		return NULL;
+		return nullptr;
 
 	return tabs[i]->tab;
 }

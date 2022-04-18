@@ -52,7 +52,7 @@ public:
 	}
 	virtual ~CatalogList(){
 	};
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new CatalogList(*this); }
 	wxSize GetTextExtents(KaiListCtrl *theList);
@@ -79,7 +79,7 @@ public:
 	virtual ~FontItem(){};
 	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new FontItem(*this); }
 	bool enter = false;
@@ -145,7 +145,7 @@ public:
 	wxArrayString* GetCatalogFonts(const wxString& catalog);
 	bool IsFontInCatalog(const wxString& catalog, const wxString& font);
 	void AddToCatalog(const wxString& font, const wxPoint &pos, wxWindow *parent);
-	void AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator *it = NULL);
+	void AddCatalog(const wxString& catalog, std::map<wxString, fontList>::iterator *it = nullptr);
 	bool ChangeCatalogName(wxWindow *messagesParent, const wxString& oldCatalog, const wxString& newCatalog);
 	void RemoveCatalog(const wxString& catalog);
 	void AddCatalogFont(const wxString& catalog, const wxString& font, bool AutoSave = true);

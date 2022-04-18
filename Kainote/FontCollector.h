@@ -139,7 +139,7 @@ private:
 	void SetLine(int tab, int line);
 
 	FontCollector *fc;
-	wxWindowDisabler *disabler = NULL;
+	wxWindowDisabler *disabler = nullptr;
 };
 
 class FontCollector

@@ -28,7 +28,7 @@ public:
 	virtual ~RendererFFMS2();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
-	bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL, bool resetParameters = false);
+	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false);
 	bool Play(int end = -1);
 	bool Pause();
 	bool Stop();
@@ -40,7 +40,7 @@ public:
 	void GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd);
 	int GetFrameTimeFromTime(int time, bool start = true);
 	int GetFrameTimeFromFrame(int frame, bool start = true);
-	//if nothing loaded or loaded via Direct Show VFF is NULL
+	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
 	//bool GetStartEndDurationFromMS(Dialogue *dial, STime &duration);
 	int GetPlayEndTime(int time);
@@ -49,7 +49,7 @@ public:
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+	bool DrawTexture(byte *nframe = nullptr, bool copy = false);
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void ChangePositionByFrame(int cpos);
 	//it's safe to not exist visual

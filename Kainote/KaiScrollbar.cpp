@@ -27,7 +27,7 @@ KaiScrollbar::KaiScrollbar(wxWindow *parent, int id, const wxPoint &pos, const w
 	, isVertical((style & wxVERTICAL) != 0)
 	, holding(false)
 	, rholding(false)
-	, bmp(NULL)
+	, bmp(nullptr)
 	, enter(false)
 	, integrated(false)
 	, pushed(false)
@@ -166,7 +166,7 @@ int KaiScrollbar::SetScrollPos(int pos)
 int KaiScrollbar::CalculateThickness(wxWindow *win)
 {
 	int fw, fh;
-	win->GetTextExtent(L"XX#%", &fw, &fh, NULL, NULL, Options.GetFont());
+	win->GetTextExtent(L"XX#%", &fw, &fh, nullptr, nullptr, Options.GetFont());
 	return fh + 1;
 }
 
@@ -230,7 +230,7 @@ void KaiScrollbar::OnPaint(wxPaintEvent& evt)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < oh)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, oh); }
 	tdc.SelectObject(*bmp);
@@ -412,8 +412,8 @@ END_EVENT_TABLE();
 KaiScrolledWindow::KaiScrolledWindow(wxWindow *parent, int id, const wxPoint& pos,
 const wxSize& size, long style, const wxString& name)
 : wxWindow(parent, id, pos, size, 0, name)
-, vertical(NULL)
-, horizontal(NULL)
+, vertical(nullptr)
+, horizontal(nullptr)
 {
 	if (style & wxHORIZONTAL){
 		style ^= wxHORIZONTAL;
@@ -443,7 +443,7 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 	if (orientation & wxHORIZONTAL){
 		if (horizontal && maxVisible >= allItems){
 			horizontal->Destroy();
-			horizontal = NULL;
+			horizontal = nullptr;
 			if (vertical){ vertical->SetTwoscrolbars(false); }
 			return true;
 		}
@@ -472,7 +472,7 @@ bool KaiScrolledWindow::SetScrollBar(int orientation, int pos, int maxVisible, i
 	if (orientation & wxVERTICAL){
 		if (vertical && maxVisible >= allItems){
 			vertical->Destroy();
-			vertical = NULL;
+			vertical = nullptr;
 			if (horizontal){ horizontal->SetTwoscrolbars(false); }
 			return true;
 		}

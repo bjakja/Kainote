@@ -15,12 +15,12 @@
 
 
 #pragma once
-#undef CreateDialog
+
+#include "MappedButton.h"
+#include "KaiStaticText.h"
 #include <wx/dialog.h>
 #include "KaiGauge.h"
 #include <functional>
-#include "MappedButton.h"
-#include "KaiStaticText.h"
 
 struct ITaskbarList3;
 class ProgresDialog : public wxDialog

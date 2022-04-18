@@ -15,10 +15,8 @@
 
 #pragma once
 
-typedef wchar_t* PTCHAR;
-#include <d3d9.h>
-#include <dxva2api.h>
-#include <Dvdmedia.h>
+//typedef wchar_t* PTCHAR;
+
 #include <streams.h>
 
 enum {    
@@ -37,15 +35,12 @@ struct VideoInf{
 	float fps;
 	int ARatioX;
 	int ARatioY;
-	byte CT;
+	unsigned char CT;
 	float bytes;
 };
 
 #define HR1(x) if(FAILED(x)) { return x; }
 
-//#ifndef SRELEASE
-//#define SRELEASE(x) if (x != NULL) { x->Release(); x = NULL; }
-//#endif
 class RendererVideo;
 
 class CD2DVideoRender : public CBaseVideoRenderer
@@ -55,15 +50,15 @@ public:
 	CD2DVideoRender(RendererVideo *_Vrend, HRESULT* phr);
 	virtual ~CD2DVideoRender();
 
-	HRESULT Render(IMediaSample *pMediaSample);
-	HRESULT DoRenderSample(IMediaSample *pMediaSample){return 0;}
-	HRESULT CheckMediaType(const CMediaType *pmt);
-	HRESULT SetMediaType(const CMediaType *pmt);
-	HRESULT EndOfStream();
-	HRESULT StopStreaming();
+	long Render(IMediaSample *pMediaSample);
+	long DoRenderSample(IMediaSample *pMediaSample){return 0;}
+	long CheckMediaType(const CMediaType *pmt);
+	long SetMediaType(const CMediaType *pmt);
+	long EndOfStream();
+	long StopStreaming();
 	void OnReceiveFirstSample(IMediaSample *pMediaSample);
 	
-	HRESULT GetVidInfo(VideoInf &vi);
+	long GetVidInfo(VideoInf &vi);
 
 private:
 	RendererVideo *Vrend;

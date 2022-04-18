@@ -24,7 +24,7 @@
 
 MisspellReplacer::MisspellReplacer(wxWindow *parent)
 	: KaiDialog(parent, -1, _("Korekcja drobnych błędów"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
-	, resultDialog(NULL)
+	, resultDialog(nullptr)
 {
 	DialogSizer *MainSizer = new DialogSizer(wxHORIZONTAL);
 	wxBoxSizer *ListSizer = new wxBoxSizer(wxVERTICAL);
@@ -175,8 +175,8 @@ void MisspellReplacer::ReplaceChecked()
 
 
 	KaiListCtrl *List = resultDialog->ResultsList;
-	TabPanel *oldtab = NULL;
-	TabPanel *tab = NULL;
+	TabPanel *oldtab = nullptr;
+	TabPanel *tab = nullptr;
 	Notebook * tabs = Notebook::GetTabs();
 	int oldKeyLine = -1;
 	bool skipTab = false;

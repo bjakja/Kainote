@@ -40,7 +40,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 	useSpellchecker = _spell;
 	SpellCheckerOnOff = (_spell)? Options.GetBool(SPELLCHECKER_ON) : false;
 	MText = emptyString;
-	bmp = NULL;
+	bmp = nullptr;
 	//fontSize = 10;
 	posY = 0;
 	scrollPositionV = 0;
@@ -110,7 +110,7 @@ TextEditor::TextEditor(wxWindow *parent, int id, bool _spell, const wxPoint& pos
 		fontSize = 10;
 
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	fontHeight = fh;
 	scroll = new KaiScrollbar(this, 3333, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
 	scroll->SetCursor(wxCURSOR_DEFAULT);
@@ -227,7 +227,7 @@ void TextEditor::CalcWrapsGDI(int windowWidth)
 			widthCount += it->second;
 		}
 		else {
-			GetTextExtent(ch, &gfw, &gfh, NULL, NULL, &font);
+			GetTextExtent(ch, &gfw, &gfh, nullptr, nullptr, &font);
 			fontGDISizes.insert(std::pair<wxUniChar, int>(ch, gfw));
 			widthCount += gfw;
 		}
@@ -444,7 +444,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 
 					/*if (!tagList->GetCount()){
 						delete tagList;
-						tagList = NULL;
+						tagList = nullptr;
 						return;
 					}*/
 
@@ -486,7 +486,7 @@ void TextEditor::OnCharPress(wxKeyEvent& event)
 			tagList->AppendToKeyword(key);
 			if (!tagList->GetCount()){
 				delete tagList;
-				tagList = NULL;
+				tagList = nullptr;
 				//return;
 			}
 		}
@@ -503,7 +503,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	if (ctrl && key == L'0'){
 		font.SetPointSize(10);
 		int fw, fh;
-		GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+		GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 		fontHeight = fh;
 		caret->SetSize(1, fh);
 		CalcWraps(false, false);
@@ -526,7 +526,7 @@ void TextEditor::OnKeyPress(wxKeyEvent& event)
 	if (tagList){
 		if (key == WXK_ESCAPE || key == WXK_HOME || key == WXK_END || (ctrl && key == L'0')){
 			delete tagList;
-			tagList = NULL;
+			tagList = nullptr;
 		}
 	}
 	if (key == WXK_TAB) {
@@ -560,7 +560,7 @@ void TextEditor::OnAccelerator(wxCommandEvent& event)
 	//maybe only for now
 	if (tagList && ID != ID_DOWN && ID != ID_UP && ID != EDITBOX_COMMIT_GO_NEXT_LINE){
 		delete tagList;
-		tagList = NULL;
+		tagList = nullptr;
 	}
 	if (hasRTL) {
 		int originalID = ID;
@@ -824,7 +824,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 	if (event.ButtonDown()){ 
 		if (tagList){
 			delete tagList;
-			tagList = NULL;
+			tagList = nullptr;
 		}
 		SetFocus(); 
 		if (!click){ Refresh(false); } 
@@ -1012,7 +1012,7 @@ void TextEditor::OnMouseEvent(wxMouseEvent& event)
 			if (fontSize < 7 || fontSize > 70){ fontSize = MID(7, fontSize, 70); return; }
 			font.SetPointSize(fontSize);
 			int fw, fh;
-			GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 			fontHeight = fh;
 			caret->SetSize(1, fh);
 			fontSizes.clear();
@@ -1106,7 +1106,7 @@ void TextEditor::OnPaint(wxPaintEvent& event)
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 
@@ -1709,21 +1709,21 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				wxString ftext = fieldText.SubString(startWrap, fst.x - 1);
 				ftext.Replace(L"\t", emptyString);
 				if (startWrap > fst.x - 1){ fw = 0; }
-				else{ GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font); }
+				else{ GetTextExtent(ftext, &fw, &fh, nullptr, nullptr, &font); }
 				wxString stext = fieldText.SubString(fst.x, (fst.y == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", emptyString);
-				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(stext, &fww, &fh, nullptr, nullptr, &font);
 			}
 			else{
 				fw = 0;
 				wxString stext = fieldText.SubString(startWrap, (j == scd.y) ? scd.x - 1 : endWrap - 1);
 				stext.Replace(L"\t", emptyString);
-				GetTextExtent(stext, &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(stext, &fww, &fh, nullptr, nullptr, &font);
 			}
 			if (hasRTL) {
 				wxString rowText = fieldText.Mid(startWrap, endWrap - startWrap);
 				int fww1 = 0.f;
-				GetTextExtent(rowText, &fww1, &fh, NULL, NULL, &font);
+				GetTextExtent(rowText, &fww1, &fh, nullptr, nullptr, &font);
 				dc.DrawRectangle(fw + posX - fww1, ((j * fontHeight) + 1) - scrollPositionV, fww, fontHeight);
 			}
 			else {
@@ -1761,13 +1761,13 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		if (i == wraps[wline]){
 			if (Cursor.x + Cursor.y == wchar){
 				int fww = 0;
-				GetTextExtent(mestext + parttext, &fww, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext + parttext, &fww, &fh, nullptr, nullptr, &font);
 				caret->Move(fww + posX, posY);
 				cursorWasSet = true;
 			}
 
 			if (parttext != emptyString){
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				wxColour kol = (val || (isTemplateLine && IsNumberFloat(parttext) && (tags || templateCode))) ? cvalues : (slash) ? cnames :
 					(templateString) ? ctstrings : (isTemplateLine && ch == L'(') ? ctfunctions :
 					(isTemplateLine && CheckIfKeyword(parttext)) ? ctkeywords : templateCode ? ctvariables : 
@@ -1781,7 +1781,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					for (size_t i = 0; i < parttext.size(); i++) {
 						const wxUniChar& ch = parttext[i];
 						dc.DrawText(ch, fw + posX + chpos, posY);
-						GetTextExtent(ch, &chfw, &fh, NULL, NULL, &font);
+						GetTextExtent(ch, &chfw, &fh, nullptr, nullptr, &font);
 						chpos += chfw;
 					}
 				}
@@ -1803,10 +1803,10 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				if (hasRTL) {
 					int start = i - (mestext + parttext).length();
 					wxString measureTxt = RTLText.Mid(start, i - start);
-					GetTextExtent(measureTxt, &fw, &fh, NULL, NULL, &font);
+					GetTextExtent(measureTxt, &fw, &fh, nullptr, nullptr, &font);
 				}
 				else {
-					GetTextExtent(mestext + parttext, &fw, &fh, NULL, NULL, &font);
+					GetTextExtent(mestext + parttext, &fw, &fh, nullptr, nullptr, &font);
 				}
 			}
 			caret->Move(fw + posX, posY);
@@ -1820,9 +1820,9 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			//dc.SetPen(wxPen(col));
 			wxString text = fieldText.SubString(wraps[bry], i - 1);
 			text.Replace(L"\t", emptyString);
-			if (i > 0){ GetTextExtent(text, &fw, &fh, NULL, NULL, &font); }
+			if (i > 0){ GetTextExtent(text, &fw, &fh, nullptr, nullptr, &font); }
 			else{ fw = 0; }
-			GetTextExtent(fieldText[i], &fww, &fh, NULL, NULL, &font);
+			GetTextExtent(fieldText[i], &fww, &fh, nullptr, nullptr, &font);
 			dc.DrawRectangle(fw + posX, ((bry*fontHeight) + 2) - scrollPositionV, fww, fontHeight);
 			wxFont fnt = dc.GetFont();
 			fnt = fnt.Bold();
@@ -1835,13 +1835,13 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		if (isTemplateLine){
 			if (!templateString && (ch == L'!' || (ch == L'.' && !(IsNumberFloat(parttext) || val)) || ch == L',' || ch == L'+' || ch == L'-' || ch == L'=' || ch == L'(' ||
 				ch == L')' || ch == L'>' || ch == L'<' || ch == L'[' || ch == L']' || ch == L'*' || ch == L'/' || ch == L':' || ch == L';')){
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground((IsNumberFloat(parttext) || val) ? cvalues : (slash) ? cnames :
 					(ch == L'(' && !slash) ? ctfunctions : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + posX, posY);
 				mestext << parttext;
 				parttext.clear();
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground((ch == L'!') ? ctcodemarks : coperators);
 				dc.DrawText(ch, fw + posX, posY);
 				mestext << ch;
@@ -1855,7 +1855,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			if (ch == L'"'){
 				if (templateString){
 					parttext << ch;
-					GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+					GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 					dc.SetTextForeground(ctstrings);
 					dc.DrawText(parttext, fw + posX, posY);
 					mestext << parttext;
@@ -1867,7 +1867,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				templateString = !templateString;
 			}
 			if (!templateString && ch == L' '){
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground((!templateCode && !val && !slash) ? ctext : (IsNumberFloat(parttext) || val) ? cvalues :
 					(slash) ? cnames : (CheckIfKeyword(parttext)) ? ctkeywords : ctvariables);
 				dc.DrawText(parttext, fw + posX, posY);
@@ -1890,7 +1890,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 		}
 		if (hasSplit) {
 			if (ch == L'N' || ch == L'n' || ch == L'h') {
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground(csplitanddrawings);
 				dc.DrawText(parttext, fw + posX, posY);
 				mestext << parttext;
@@ -1904,7 +1904,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				tags = ch == L'{';
 				hasSplit = ch == L'\\';
 				wxString bef = parttext.BeforeLast(ch);
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground(hasDrawing ? csplitanddrawings : ctext);
 				if (hasRTL || isRTL) {
 					int chfw = 0;
@@ -1912,7 +1912,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					for (size_t i = 0; i < bef.size(); i++) {
 						const wxUniChar& ch = bef[i];
 						dc.DrawText(ch, fw + posX + chpos, posY);
-						GetTextExtent(ch, &chfw, &fh, NULL, NULL, &font);
+						GetTextExtent(ch, &chfw, &fh, nullptr, nullptr, &font);
 						chpos += chfw;
 					}
 				}
@@ -1924,7 +1924,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 			}
 			else{
 				wxString &tmp = parttext.RemoveLast(1);
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground((val) ? cvalues : (slash) ? cnames : ctext);
 				dc.DrawText(tmp, fw + posX, posY);
 				mestext << tmp;
@@ -1932,7 +1932,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 				tags = slash = val = false;
 			}
 			if (ch != L'\\') {
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground(ccurlybraces);
 				dc.DrawText(parttext, fw + posX, posY);
 				mestext << parttext;
@@ -1953,7 +1953,7 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 					hasDrawing = pnum > 0;
 				}
 				wxString tmp = (tagtest == L"fn") ? parttext : parttext.RemoveLast(1);
-				GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+				GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 				dc.SetTextForeground(cnames);
 				dc.DrawText(tmp, fw + posX, posY);
 				mestext << tmp;
@@ -1966,13 +1966,13 @@ void TextEditor::DrawFieldGDI(wxDC &dc, int w, int h, int windowh)
 
 		if ((ch == L'\\' || ch == L'(' || ch == L')' || ch == L',') && tags){
 			wxString tmp = parttext.RemoveLast(1);
-			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 			dc.SetTextForeground((val && (ch == L'\\' || ch == L')' || ch == L',')) ? cvalues : slash ? cnames : ctext);
 			dc.DrawText(tmp, fw + posX, posY);
 			mestext << tmp;
 			parttext = ch;
 			if (ch == L'\\'){ slash = true; }
-			GetTextExtent(mestext, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(mestext, &fw, &fh, nullptr, nullptr, &font);
 			dc.SetTextForeground(coperators);
 			dc.DrawText(parttext, fw + posX, posY);
 			mestext << parttext;
@@ -2054,7 +2054,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 		}
 		else {
 			int fwidth = 0, fheight = 0;
-			GetTextExtent(rowText, &fwidth, &fheight, NULL, NULL, &font);
+			GetTextExtent(rowText, &fwidth, &fheight, nullptr, nullptr, &font);
 			pos.x -= (w - fwidth - 8);
 		}
 	}
@@ -2073,7 +2073,7 @@ bool TextEditor::HitTest(wxPoint pos, wxPoint *cur)
 			gcfw1 = gcfw;
 		}
 		else{
-			GetTextExtent(text, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(text, &fw, &fh, nullptr, nullptr, &font);
 			if (fw + 1 - ((fw - fw1) / 2) > pos.x) {
 				cur->x = i;
 				find = true;
@@ -2181,7 +2181,7 @@ void TextEditor::OnKillFocus(wxFocusEvent& event)
 {
 	if (tagList){
 		delete tagList;
-		tagList = NULL;
+		tagList = nullptr;
 	}
 	Refresh(false);
 }
@@ -2191,7 +2191,7 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 	wxString& text = (hasRTL) ? RTLText : MText;
 	int len = text.length();
 	if (len < 1){ Cursor.x = Cursor.y = 0; *start = 0; *end = 0; return; }
-	bool fromend = (start != NULL);
+	bool fromend = (start != nullptr);
 
 	if (!fromend){ pos--; }
 	pos = MID(0, pos, len - 1);
@@ -2221,7 +2221,7 @@ void TextEditor::FindWord(int pos, int *start, int *end)
 		}
 	}
 	if (!end){ return; }
-	*end = (fromend && end == NULL) ? 0 : len;
+	*end = (fromend && end == nullptr) ? 0 : len;
 	for (int i = pos; i < len; i++){
 		const wxUniChar &ch = text[i];
 		int res = iswctype(wint_t(ch), _SPACE | _PUNCT);
@@ -2278,10 +2278,10 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 		const wxString &language = Options.FindLanguage(Options.GetString(DICTIONARY_LANGUAGE));
 		Menu *languageMenu = new Menu();
 		menut.Append(MENU_SPELLCHECKER_ON, _("Sprawdzanie pisowni"), emptyString, true, 
-			NULL, NULL, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SPELLCHECKER_ON));
+			nullptr, nullptr, ITEM_CHECK_AND_HIDE)->Check(Options.GetBool(SPELLCHECKER_ON));
 		for (int k = 0; k < numOfLanguages; k++){
 			languageMenu->Append(MENU_SPELLCHECKER_ON + k + 1, dics[k], emptyString, true, 
-				NULL, NULL, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
+				nullptr, nullptr, (language == dics[k])? ITEM_RADIO : ITEM_NORMAL);
 		}
 		menut.Append(MENU_SPELLCHECKER_ON - 1, _("Zainstalowane języki"), languageMenu);
 	}
@@ -2291,10 +2291,10 @@ void TextEditor::ContextMenu(wxPoint mpos, int error)
 	}
 
 	menut.Append(TEXTM_DEL, _("&Usuń"))->Enable(Selend.x != Cursor.x);
-	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), NULL, emptyString, 
+	menut.Append(MENU_SHOW_STATUS_BAR, _("Pokaż pasek stanu"), nullptr, emptyString, 
 		ITEM_CHECK)->Check(!Options.GetBool(TEXT_EDITOR_HIDE_STATUS_BAR));
 	menut.Append(MENU_CHANGE_QUOTES, _("Automatycznie zamieniaj cudzysłów"), 
-		NULL, emptyString, ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
+		nullptr, emptyString, ITEM_CHECK)->Check(Options.GetBool(TEXT_EDITOR_CHANGE_QUOTES));
 	
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		MenuItem * item = (MenuItem*)evt.GetClientData();
@@ -2500,7 +2500,7 @@ wxPoint TextEditor::PosFromCursor(wxPoint cur)
 			fw = gcfw + 0.5f;
 		}
 		else{
-			GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(MText.SubString(wraps[cur.y], cur.x), &fw, &fh, nullptr, nullptr, &font);
 		}
 	}
 	wxPoint result;
@@ -2664,17 +2664,17 @@ void TextEditor::DrawWordRectangles(int type, wxDC &dc, int h, int posX)
 		else{
 			wxString ftext = text.SubString(wraps[fsty], startWord - 1);
 			ftext.Replace(L"\t", emptyString);
-			GetTextExtent(ftext, &fw, &fh, NULL, NULL, &font);
+			GetTextExtent(ftext, &fw, &fh, nullptr, nullptr, &font);
 		}
 		int scndy = FindY(endWord);
 		wxString etext = text.SubString(startWord, (fsty == scndy) ? endWord : wraps[fsty + 1] - 1);
 		etext.Replace(L"\t", emptyString);
-		GetTextExtent(etext, &fww, &fh, NULL, NULL, &font);
+		GetTextExtent(etext, &fww, &fh, nullptr, nullptr, &font);
 		for (int q = fsty + 1; q <= scndy; q++){
 			int rest = (q == scndy) ? endWord : wraps[q + 1];
 			wxString btext = text.SubString(wraps[q], rest);
 			btext.Replace(L"\t", emptyString);
-			GetTextExtent(btext, &fwww, &fh, NULL, NULL, &font);
+			GetTextExtent(btext, &fwww, &fh, nullptr, nullptr, &font);
 			dc.DrawRectangle(3, ((q * fontHeight) + 1) - scrollPositionV, fwww, fontHeight);
 		}if (hasRTL) {
 			int misspellLineStart = wraps[fsty];
@@ -2799,7 +2799,7 @@ void TextEditor::PutTag()
 				Replace(i + 1, Cursor.x, tag);
 				SetSelection(newPosition, newPosition);
 				delete tagList;//tagList->Destroy();
-				tagList = NULL;
+				tagList = nullptr;
 				return;
 			}
 		}
@@ -2849,10 +2849,10 @@ GraphicsContext* TextEditor::GetGraphicsContext(const wxMemoryDC& dc)
 {
 	if (graphicsRendering) {
 		GraphicsRenderer* renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext* gc = renderer ? renderer->CreateContext(dc) : NULL;
+		GraphicsContext* gc = renderer ? renderer->CreateContext(dc) : nullptr;
 		return gc;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //context for measuring
@@ -2860,10 +2860,10 @@ GraphicsContext* TextEditor::GetGraphicsContext()
 {
 	if (graphicsRendering) {
 		GraphicsRenderer* renderer = GraphicsRenderer::GetDirect2DRenderer();
-		GraphicsContext* gc = renderer ? renderer->CreateMeasuringContext() : NULL;
+		GraphicsContext* gc = renderer ? renderer->CreateMeasuringContext() : nullptr;
 		return gc;
 	}
-	return NULL;
+	return nullptr;
 }
 
 //state here is for template and for disable spellchecker and wraps
@@ -2888,7 +2888,7 @@ bool TextEditor::SetFont(const wxFont &_font)
 	wxWindow::SetFont(font);
 	
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	fontHeight = fh;
 	caret->SetSize(1, fh);
 	fontSizes.clear();
@@ -2901,7 +2901,7 @@ bool TextEditor::SetFont(const wxFont &_font)
 const TextData &TextEditor::GetTextData() {
 	if (!useSpellchecker) {
 		errors.clear();
-		errors.Init2(MText, false, EB->GetFormat(), NULL);
+		errors.Init2(MText, false, EB->GetFormat(), nullptr);
 	}
 	return errors;
 }

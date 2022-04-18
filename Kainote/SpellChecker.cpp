@@ -40,13 +40,13 @@
 #include <boost/locale/boundary/types.hpp>
 #include <set>
 
-SpellChecker *SpellChecker::SC = NULL;
+SpellChecker *SpellChecker::SC = nullptr;
 
 SpellChecker::SpellChecker()
 {
-	hunspell = NULL;
-	conv = NULL;
-	SC = NULL;
+	hunspell = nullptr;
+	conv = nullptr;
+	SC = nullptr;
 	dictionaryPath = Options.pathfull + L"\\Dictionary\\";
 	userDictionaryPath = dictionaryPath + L"UserDic.udic";
 
@@ -63,7 +63,7 @@ SpellChecker *SpellChecker::Get()
 }
 void SpellChecker::Destroy()
 {
-	if (SC){ delete SC; SC = NULL; }
+	if (SC){ delete SC; SC = nullptr; }
 }
 
 SpellChecker::~SpellChecker()
@@ -73,8 +73,8 @@ SpellChecker::~SpellChecker()
 
 void SpellChecker::Cleaning()
 {
-	if (hunspell){ delete hunspell; hunspell = NULL; }
-	if (conv){ delete conv; conv = NULL; }
+	if (hunspell){ delete hunspell; hunspell = nullptr; }
+	if (conv){ delete conv; conv = nullptr; }
 
 }
 

@@ -53,9 +53,9 @@ config::config()
 	AudioOpts = false;
 	defaultColour = wxColour();
 	InitLanguagesTable();
-	HDC dc = ::GetDC(NULL);
+	HDC dc = ::GetDC(nullptr);
 	fontDPI = ::GetDeviceCaps(dc, LOGPIXELSY);
-	::ReleaseDC(NULL, dc);
+	::ReleaseDC(nullptr, dc);
 }
 
 
@@ -983,11 +983,11 @@ bool LoadDataFromResource(char*& t_data, DWORD& t_dataSize, const wxString& t_na
 
 	if (0 != a_resource)
 	{
-		a_resHandle = LoadResource(NULL, a_resource);
+		a_resHandle = LoadResource(nullptr, a_resource);
 		if (0 != a_resHandle)
 		{
 			t_data = (char*)LockResource(a_resHandle);
-			t_dataSize = SizeofResource(NULL, a_resource);
+			t_dataSize = SizeofResource(nullptr, a_resource);
 			r_result = true;
 		}
 	}
@@ -1019,7 +1019,7 @@ wxBitmap CreateBitmapFromPngResource(const wxString& t_name)
 
 wxBitmap* CreateBitmapPointerFromPngResource(const wxString& t_name)
 {
-	wxBitmap* r_bitmapPtr = NULL;
+	wxBitmap* r_bitmapPtr = nullptr;
 
 	char* a_data = 0;
 	DWORD       a_dataSize = 0;
@@ -1054,7 +1054,7 @@ void MoveToMousePosition(wxWindow* win)
 	wxPoint mst = wxGetMousePosition();
 	wxSize siz = win->GetSize();
 	siz.x;
-	wxRect rc = GetMonitorWorkArea(0, NULL, mst, true);
+	wxRect rc = GetMonitorWorkArea(0, nullptr, mst, true);
 	mst.x -= (siz.x / 2);
 	mst.x = MID(rc.x, mst.x, (rc.width + rc.x) - siz.x);
 	mst.y += 15;

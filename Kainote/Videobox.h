@@ -177,7 +177,7 @@ private:
 	int m_ToolBarHeight = 22;
 	wxArrayString files;
 	bool m_IsMenuShown;
-	RendererVideo *renderer = NULL;
+	RendererVideo *renderer = nullptr;
 	wxSize m_VideoWindowLastSize;
 	Fullscreen *m_FullScreenWindow;
 	//bool m_HasArrow;
@@ -243,10 +243,10 @@ enum
 	for(int i=0; i<9; i++)\
 			{\
 		if(i%3==0 && i>0){tmpr.left=rect.left-1; tmpr.right=rect.right-1; tmpr.top++;tmpr.bottom++;}\
-		if(i!=4){font->DrawTextW(NULL, text.wchar_str(), -1, &tmpr, align, 0xFF000000 );}\
+		if(i!=4){font->DrawTextW(nullptr, text.wchar_str(), -1, &tmpr, align, 0xFF000000 );}\
 		tmpr.left++;tmpr.right++;\
 			}\
-	font->DrawTextW(NULL, text.wchar_str(), -1, &rect, align, color );
+	font->DrawTextW(nullptr, text.wchar_str(), -1, &rect, align, color );
 #endif
 
 

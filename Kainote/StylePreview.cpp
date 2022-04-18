@@ -24,7 +24,7 @@
 StylePreview::StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size)
 	: wxWindow(parent, id, pos, size)
 {
-	previewStyle = NULL;
+	previewStyle = nullptr;
 	m_SubtitlesProvider = SubtitlesProviderManager::Get();
 	Bind(wxEVT_SIZE, [=](wxSizeEvent &evt){ DrawPreview(0); });
 	Bind(wxEVT_ERASE_BACKGROUND, [=](wxEraseEvent &evt){});
@@ -147,7 +147,7 @@ void StylePreview::OnMouseEvent(wxMouseEvent& event)
 			DrawPreview();
 			Options.SaveOptions();
 			PrevText->Destroy();
-			PrevText = NULL;
+			PrevText = nullptr;
 		}
 		else{
 			wxSize siz = GetClientSize();

@@ -86,7 +86,7 @@ Visuals::Visuals()
 	axis = 0;
 	blockevents = false;
 	zoomScale = D3DXVECTOR2(1.0f, 1.0f);
-	dummytext = NULL;
+	dummytext = nullptr;
 }
 
 Visuals::~Visuals()
@@ -516,7 +516,7 @@ void Visuals::GetMoveTimes(int *start, int *end)
 	EditBox *edit = tab->Edit;
 	Provider *FFMS2 = video->GetFFMS2();
 	float fps;
-	video->GetFPSAndAspectRatio(&fps, NULL, NULL, NULL);
+	video->GetFPSAndAspectRatio(&fps, nullptr, nullptr, nullptr);
 	int startTime = ZEROIT(edit->line->Start.mstime);
 	int endTime = ZEROIT(edit->line->End.mstime);
 	int framestart = (!FFMS2) ? (((float)startTime / 1000.f) * fps) + 1 : FFMS2->GetFramefromMS(startTime);
@@ -928,7 +928,7 @@ D3DXVECTOR2 Visuals::GetTextSize(Dialogue* dial, D3DXVECTOR2* border, Styles* st
 	if (!text.length())
 		return result;
 
-	Styles* measuringStyle = NULL;
+	Styles* measuringStyle = nullptr;
 	if (style)
 		measuringStyle = style->Copy();
 	else

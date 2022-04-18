@@ -13,15 +13,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "UtilsWindows.h"
 #include "FindReplace.h"
 #include "KainoteMain.h"
 #include "KaiMessageBox.h"
-#include <wx/clipbrd.h>
-#include <wx/dir.h>
 #include "FindReplaceDialog.h"
 #include "FindReplaceResultsDialog.h"
 #include "OpennWrite.h"
+#include <wx/clipbrd.h>
+#include <wx/dir.h>
+#include "UtilsWindows.h"
 
 FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	:FRD(_FRD)
@@ -161,8 +161,8 @@ void FindReplace::ReplaceChecked()
 		}
 	}
 	else{
-		TabPanel *oldtab = NULL;
-		TabPanel *tab = NULL;
+		TabPanel *oldtab = nullptr;
+		TabPanel *tab = nullptr;
 		int oldKeyLine = -1;
 		int numOfChanges = 0;
 		bool skipTab = false;
@@ -420,7 +420,7 @@ void FindReplace::OnFind(TabWindow *window)
 //it will inform if pattern is not valid
 //instead of ignoring all seeking
 //tabLinePosition and positionId must be set
-DWORD FindReplace::FindAllInTab(void *data)
+unsigned long FindReplace::FindAllInTab(void *data)
 {
 	std::tuple<FindReplace*, wxPoint, TabWindow*, int> *actualData = 
 		(std::tuple<FindReplace*, wxPoint, TabWindow*, int>*)data;
@@ -508,7 +508,7 @@ void FindReplace::FindInAllOpenedSubs(TabWindow *window)
 		
 		std::tuple<FindReplace*, wxPoint, TabWindow*, int> *data =
 			new std::tuple<FindReplace *, wxPoint, TabWindow*, int>(this, tabRange, window, i);
-		threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FindAllInTab, data, 0, 0);
+		threads[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)FindAllInTab, data, 0, 0);
 		tabPos += (pathsPerThreads + diff);
 	}//for
 	WaitForMultipleObjects(loopNumber, threads, TRUE, INFINITE);
@@ -629,7 +629,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 		wxStringTokenizer tokenizer(subsText, L"\n", wxTOKEN_STRTOK);
 		wxString token;
 		wxString dialtxt;
-		Dialogue *dial = NULL;
+		Dialogue *dial = nullptr;
 		bool isFirst = true;
 
 		while (tokenizer.HasMoreTokens()){
@@ -685,7 +685,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 
 
 			if (fr->find){
-				fr->FindInSubsLine(&dialtxt, dial, NULL, &isFirst, tabLinePosition, positionId, subsPath, thread, false);
+				fr->FindInSubsLine(&dialtxt, dial, nullptr, &isFirst, tabLinePosition, positionId, subsPath, thread, false);
 			}
 			else{
 				int numOfReps = fr->ReplaceInSubsLine(&dialtxt);
@@ -716,7 +716,7 @@ DWORD FindReplace::FindReplaceInFiles(void *data)
 
 			if (dial){
 				delete dial;
-				dial = NULL;
+				dial = nullptr;
 			}
 			token.clear();
 		}//while
@@ -799,7 +799,7 @@ void FindReplace::FindReplaceInSubs(TabWindow *window)
 			paths.begin() + filePos + (pathsPerThreads + diff));
 		std::tuple<FindReplace*, wxArrayString*, int> *data =
 			new std::tuple<FindReplace *, wxArrayString *, int>(this, threadPaths, i);
-		threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)FindReplaceInFiles, data, 0, 0);
+		threads[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)FindReplaceInFiles, data, 0, 0);
 		filePos += (pathsPerThreads + diff);
 	}//for
 	WaitForMultipleObjects(loopNumber, threads, TRUE, INFINITE);
@@ -1521,7 +1521,7 @@ int FindReplace::ReplaceCheckedInSubs(std::vector<SeekResults *> &results, const
 	wxStringTokenizer tokenizer(subsText, L"\n", wxTOKEN_STRTOK);
 	wxString token;
 	wxString dialtxt;
-	Dialogue *dial = NULL;
+	Dialogue *dial = nullptr;
 	size_t lineNum = 0;
 	while (tokenizer.HasMoreTokens()){
 

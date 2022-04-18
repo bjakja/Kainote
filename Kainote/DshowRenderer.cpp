@@ -19,6 +19,9 @@
 #include "Videobox.h"
 #include "Hotkeys.h"
 #include <wmsdkidl.h>
+//#include <d3d9.h>
+#include <dxva2api.h>
+#include <Dvdmedia.h>
 
 
 static const GUID CLSID_KVideoRenderer =
@@ -49,7 +52,7 @@ void CD2DVideoRender::OnReceiveFirstSample(IMediaSample *pMediaSample)
 	REFERENCE_TIME start = 0, end = 0;
 	pMediaSample->GetTime(&start, &end);
 
-	BYTE* pBuffer = NULL;
+	BYTE* pBuffer = nullptr;
 	pMediaSample->GetPointer(&pBuffer);
 
 	if (Vrend->m_DirectShowSeeking){
@@ -74,7 +77,7 @@ HRESULT CD2DVideoRender::Render(IMediaSample *pMediaSample)
 
 	if (pMediaSample->IsPreroll() == S_OK || norender){ norender = false; return S_OK; }
 
-	BYTE* pBuffer = NULL;
+	BYTE* pBuffer = nullptr;
 	HR1(pMediaSample->GetPointer(&pBuffer));
 
 	REFERENCE_TIME start = 0, end = 0;
@@ -106,7 +109,7 @@ HRESULT CD2DVideoRender::CheckMediaType(const CMediaType *pmt)
 	}
 	const GUID *SubType = pmt->Subtype();
 
-	if (SubType == NULL)
+	if (SubType == nullptr)
 	{
 		return E_FAIL;
 	}
@@ -138,7 +141,7 @@ HRESULT CD2DVideoRender::StopStreaming()
 	//CAutoLock m_lock(this->m_pLock);
 	if (m_pMediaSample && Vrend->m_State == Paused)
 	{
-		BYTE* pBuffer = NULL;
+		BYTE* pBuffer = nullptr;
 		m_pMediaSample->GetPointer(&pBuffer);
 		if (pBuffer){
 			Vrend->DrawTexture(pBuffer, true);
@@ -159,14 +162,14 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 	CAutoLock m_lock(this->m_pLock);
 
 
-	VIDEOINFOHEADER* vInfo = NULL;
-	VIDEOINFOHEADER2* vInfo2 = NULL;
+	VIDEOINFOHEADER* vInfo = 0;
+	VIDEOINFOHEADER2* vInfo2 = 0;
 	double tpf;
 
 	if (pmt->formattype == FORMAT_VideoInfo)
 	{
 		vInfo = (VIDEOINFOHEADER*)pmt->pbFormat;
-		if (vInfo == NULL || vInfo->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
+		if (vInfo == nullptr || vInfo->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
 		{
 			return E_INVALIDARG;
 		}
@@ -179,7 +182,7 @@ HRESULT CD2DVideoRender::SetMediaType(const CMediaType *pmt)
 	else if (pmt->formattype == FORMAT_VideoInfo2)
 	{
 		vInfo2 = (VIDEOINFOHEADER2*)pmt->pbFormat;
-		if (vInfo2 == NULL || vInfo2->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
+		if (vInfo2 == nullptr || vInfo2->bmiHeader.biSize != sizeof(BITMAPINFOHEADER))
 		{
 			return E_INVALIDARG;
 		}

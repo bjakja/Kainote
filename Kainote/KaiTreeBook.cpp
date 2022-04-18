@@ -44,7 +44,7 @@ KaiTreebook::KaiTreebook(wxWindow *parent, int id,
 	: wxWindow(parent, id, pos, size, style | wxWANTS_CHARS)
 	, treeWidth(20)
 	, selection(0)
-	, bmp(NULL)
+	, bmp(nullptr)
 {
 	Bind(wxEVT_SET_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
 	Bind(wxEVT_KILL_FOCUS, [=](wxFocusEvent& evt) {RefreshTree(); });
@@ -229,7 +229,7 @@ void KaiTreebook::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);

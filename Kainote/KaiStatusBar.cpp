@@ -21,7 +21,7 @@
 
 KaiStatusBar::KaiStatusBar(wxWindow *parent, int id, int style)
 	:wxWindow(parent, id, wxDefaultPosition, wxSize(-1, 26))
-	, bmp(NULL)
+	, bmp(nullptr)
 {
 	Bind(wxEVT_SIZE, &KaiStatusBar::OnSize, this);
 	Bind(wxEVT_PAINT, &KaiStatusBar::OnPaint, this);
@@ -67,7 +67,7 @@ void KaiStatusBar::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);

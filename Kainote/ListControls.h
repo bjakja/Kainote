@@ -66,7 +66,7 @@ class KaiChoice :public wxWindow
 public:
 	//normal list wxString[]
 	KaiChoice(wxWindow *parent, int id, const wxPoint& pos = wxDefaultPosition,
-		const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = NULL,
+		const wxSize& size = wxDefaultSize, int n = 0, const wxString choices[] = nullptr,
 		long style = 0, const wxValidator& validator = wxDefaultValidator);
 	//normal list wxArrayString
 	KaiChoice(wxWindow *parent, int id, const wxPoint& pos,

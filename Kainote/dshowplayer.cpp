@@ -53,17 +53,17 @@ const IID IID_IAMExtendedSeeking = { 0xFA2AA8F9, 0x8B62, 0x11D0, { 0xA5, 0x20, 0
 DShowPlayer::DShowPlayer(wxWindow*_parent) :
 m_state(None),
 hwndVid(_parent->GetHWND()),
-m_pGraph(NULL),
-m_pControl(NULL),
-m_pSeek(NULL),
-m_pBA(NULL),
-//frend(NULL),
-stream(NULL),
-chapters(NULL)
+m_pGraph(nullptr),
+m_pControl(nullptr),
+m_pSeek(nullptr),
+m_pBA(nullptr),
+//frend(nullptr),
+stream(nullptr),
+chapters(nullptr)
 {
 	parent = _parent;
 
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 	if (FAILED(hr)){ KaiLog(_("Nie można zainicjalizować COM")); }
 }
 
@@ -91,7 +91,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 
 	HR(m_pGraph->AddSourceFilter(sFileName.wc_str(), L"Source Filter", &pSource.obj), _("Filtr źródła nie został dodany"));
 
-	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
+	/*if(SUCCEEDED(CoCreateInstance(CLSID_LAVVIDEO, nullptr, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&LAVVideo.obj)))
 	{
 	HR(m_pGraph->AddFilter(LAVVideo.obj, L"LAV Video Decoder"), L"Nie można dodać LAV Video Decodera");
 	}else{wLogStatus("Jeśli masz zieloną plamę zamiast wideo zainstaluj Lav filter");}
@@ -111,11 +111,11 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 	else {
 		if (!GetGuid(arr[0], IID_IBaseFilter, CLSCTX_INPROC, (LPVOID*)&pAudioRenderer.obj)) {
 			KaiLog("Can't get audio device, load default");
-			HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
+			HR(CoCreateInstance(CLSID_DSoundRender, nullptr, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 		}
 	}*/
 	//
-	HR(CoCreateInstance(CLSID_DSoundRender, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
+	HR(CoCreateInstance(CLSID_DSoundRender, nullptr, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID*)&pAudioRenderer.obj), _("Nie można utworzyć instancji renderera dźwięku"));
 
 	HR(m_pGraph->AddFilter(pAudioRenderer.obj, L"Direct Sound Renderer"), _("Nie można dodać renderera Direct Sound"));
 
@@ -124,18 +124,18 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 
 	if (vobsub){
 		Selfdest<IBaseFilter> pVobsub;
-		CoCreateInstance(CLSID_VobsubAutoload, NULL, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pVobsub.obj);
+		CoCreateInstance(CLSID_VobsubAutoload, nullptr, CLSCTX_INPROC, IID_IBaseFilter, (LPVOID *)&pVobsub.obj);
 		if (pVobsub.obj){
 			m_pGraph->AddFilter(pVobsub.obj, L"VSFilter Autoload");//}
 			Selfdest<IEnumPins> pEnum;
 			Selfdest<IPin> pPin;
-			//m_pGraph->RenderFile(sFileName.wc_str(),NULL);
+			//m_pGraph->RenderFile(sFileName.wc_str(),nullptr);
 			HR(hr = pSource->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-			//MessageBox(NULL, L"enumpins Initialized!", L"Open file", MB_OK);
+			//MessageBox(nullptr, L"enumpins Initialized!", L"Open file", MB_OK);
 			// Loop through all the pins
 			bool anypin = false;
 
-			while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
+			while (S_OK == pEnum->Next(1, &pPin.obj, nullptr))
 			{
 				// Try to render this pin.
 				// It's OK if we fail some pins, if at least one pin renders.
@@ -152,7 +152,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 			SAFE_RELEASE(pEnum.obj);
 			Selfdest<IPin> tmpPin;
 			HR(hr = pVobsub->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-			while (S_OK == pEnum->Next(1, &pPin.obj, NULL))
+			while (S_OK == pEnum->Next(1, &pPin.obj, nullptr))
 			{
 				if (SUCCEEDED(pPin->ConnectedTo(&tmpPin.obj)))
 				{
@@ -192,7 +192,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 
 		}*/
 
-		AM_MEDIA_TYPE *info = NULL;
+		AM_MEDIA_TYPE *info = nullptr;
 
 		while (Enumsrc->Next(1, &spin.obj, 0) == S_OK)
 		{
@@ -254,7 +254,7 @@ bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 		Selfdest<IPin> strpin;
 		Selfdest<IEnumPins> pEnum;
 		HR(hr = pSource->EnumPins(&pEnum.obj), _("Nie można wyliczyć pinów źródła"));
-		HR(pEnum->Next(1, &spin.obj, NULL), _("Nie można pobrać pinu źródła"));
+		HR(pEnum->Next(1, &spin.obj, nullptr), _("Nie można pobrać pinu źródła"));
 		spin->ConnectedTo(&strpin.obj);
 		PIN_INFO pinfo;
 		HR(strpin.obj->QueryPinInfo(&pinfo), _("Nie można pobrać informacji o pinie splittera"));
@@ -343,7 +343,7 @@ void DShowPlayer::Stop()
 
 void DShowPlayer::SetPosition(int pos)
 {
-	if (m_pControl == NULL || m_pSeek == NULL)
+	if (m_pControl == nullptr || m_pSeek == nullptr)
 	{
 		return;
 	}
@@ -354,7 +354,7 @@ void DShowPlayer::SetPosition(int pos)
 
 
 	hr = m_pSeek->SetPositions(&ppos, AM_SEEKING_AbsolutePositioning,
-		NULL, AM_SEEKING_NoPositioning);
+		nullptr, AM_SEEKING_NoPositioning);
 
 	if (SUCCEEDED(hr))
 	{
@@ -377,7 +377,7 @@ void DShowPlayer::SetPosition(int pos)
 
 int DShowPlayer::GetPosition()
 {
-	if (m_pSeek == NULL)
+	if (m_pSeek == nullptr)
 	{
 		return 0;
 	}
@@ -401,7 +401,7 @@ bool DShowPlayer::InitializeGraph()
 	TearDownGraph();
 
 	// Create the Filter Graph Manager.
-	HR(hr = CoCreateInstance(CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&m_pGraph), _("Nie można stworzyć interfejsu filtrów"));
+	HR(hr = CoCreateInstance(CLSID_FilterGraph, nullptr, CLSCTX_INPROC_SERVER, IID_IGraphBuilder, (void**)&m_pGraph), _("Nie można stworzyć interfejsu filtrów"));
 
 	// Query for graph interfaces. (These interfaces are exposed by the graph
 	// manager regardless of which filters are in the graph.)
@@ -496,9 +496,9 @@ wxArrayString DShowPlayer::GetStreams()
 	if (streams > 0){
 		wxString names;
 		DWORD st;
-		LPWSTR text = NULL;
+		LPWSTR text = nullptr;
 		for (DWORD i = 0; i < streams; i++){
-			stream->Info(i, NULL, &st, NULL, NULL, &text, NULL, NULL);
+			stream->Info(i, nullptr, &st, nullptr, nullptr, &text, nullptr, nullptr);
 			wxString enable = (st != 0) ? L"1" : L"0";
 			streamnames.Add(wxString(text) + L" " + enable);
 			CoTaskMemFree(text);
@@ -558,12 +558,12 @@ bool DShowPlayer::FilterConfig(wxString name, int idx, wxPoint pos)
 	int numfilter = 0;
 	Selfdest<ISpecifyPropertyPages> ppages;
 	CAUUID caGUID;
-	caGUID.pElems = NULL;
+	caGUID.pElems = nullptr;
 	HR(m_pGraph->FindFilterByName(name.wc_str(), &bfilter.obj), _("Nie można wyliczyć filtrów"));
 	bfilter->QueryInterface(__uuidof(ISpecifyPropertyPages), (void**)&ppages.obj);
 	if (ppages.obj == 0){ return false; }
 	HR(ppages->GetPages(&caGUID), _("Nie można pobrać konfiguracji filtra"));
-	IUnknown* lpUnk = NULL;
+	IUnknown* lpUnk = nullptr;
 	ppages->QueryInterface(&lpUnk);
 	try
 	{
@@ -580,38 +580,38 @@ bool DShowPlayer::FilterConfig(wxString name, int idx, wxPoint pos)
 /*void DShowPlayer::Disconvobsub()
 	{
 	if(!m_pGraph||vobsub){return;}
-	IBaseFilter *Avobsub=NULL;
+	IBaseFilter *Avobsub=nullptr;
 	m_pGraph->FindFilterByName(L"Vobsub Autoload",&Avobsub);
 	if(!Avobsub){return;}
 	if(m_state==Playing){Pause();}
-	IEnumPins *enumIn=NULL;
-	IPin *vobpin1=NULL;
-	IPin *vobpin2=NULL;
-	IPin *vobpin3=NULL;
-	IPin *Outpin1=NULL;
-	IPin *Outpin2=NULL;
-	IPin *Outpin3=NULL;
+	IEnumPins *enumIn=nullptr;
+	IPin *vobpin1=nullptr;
+	IPin *vobpin2=nullptr;
+	IPin *vobpin3=nullptr;
+	IPin *Outpin1=nullptr;
+	IPin *Outpin2=nullptr;
+	IPin *Outpin3=nullptr;
 
 	HRESULT hr;
 	CHECK_HR1(hr=Avobsub->EnumPins(&enumIn),L"Enum Pins");
-	if(S_OK == enumIn->Next(1, &vobpin1, NULL)){
-	vobpin1->ConnectedTo(&Outpin1);if(Outpin1){CHECK_HR1(hr=Outpin1->Disconnect(),L"Cannot Disconnect Outpin1");MessageBox(NULL, L"Outpin1!", L"vinfo", MB_OK);}
-	if(S_OK == enumIn->Next(1, &vobpin2, NULL)){
-	vobpin2->ConnectedTo(&Outpin2);if(Outpin2){CHECK_HR1(hr=Outpin2->Disconnect(),L"Cannot Disconnect Outpin2");MessageBox(NULL, L"Outpin2!", L"vinfo", MB_OK);}}
-	if(S_OK == enumIn->Next(1, &vobpin3, NULL)){
+	if(S_OK == enumIn->Next(1, &vobpin1, nullptr)){
+	vobpin1->ConnectedTo(&Outpin1);if(Outpin1){CHECK_HR1(hr=Outpin1->Disconnect(),L"Cannot Disconnect Outpin1");MessageBox(nullptr, L"Outpin1!", L"vinfo", MB_OK);}
+	if(S_OK == enumIn->Next(1, &vobpin2, nullptr)){
+	vobpin2->ConnectedTo(&Outpin2);if(Outpin2){CHECK_HR1(hr=Outpin2->Disconnect(),L"Cannot Disconnect Outpin2");MessageBox(nullptr, L"Outpin2!", L"vinfo", MB_OK);}}
+	if(S_OK == enumIn->Next(1, &vobpin3, nullptr)){
 	vobpin3->ConnectedTo(&Outpin3);if(Outpin3){
 
 	PIN_DIRECTION pd2;CHECK_HR1(hr=Outpin3->QueryDirection(&pd2),L"pin dir outpin3");
-	if(pd2==PINDIR_INPUT){MessageBox(NULL, L"Pindir input outpin3", L"vinfo", MB_OK);}else{MessageBox(NULL, L"Pindir output outpin3!", L"vinfo", MB_OK);}
+	if(pd2==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin3", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin3!", L"vinfo", MB_OK);}
 	}}
-	MessageBox(NULL, L"Connection!", L"vinfo", MB_OK);
+	MessageBox(nullptr, L"Connection!", L"vinfo", MB_OK);
 	Outpin1->
 
 	if(Outpin3){PIN_DIRECTION pd;CHECK_HR1(hr=Outpin3->QueryDirection(&pd),L"pin dir outpin1");
-	if(pd==PINDIR_INPUT){MessageBox(NULL, L"Pindir input outpin1!", L"vinfo", MB_OK);}else{MessageBox(NULL, L"Pindir output outpin1!", L"vinfo", MB_OK);}
+	if(pd==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin1!", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin1!", L"vinfo", MB_OK);}
 
 	if(Outpin2){PIN_DIRECTION pd1;CHECK_HR1(hr=Outpin2->QueryDirection(&pd1),L"pin dir outpin1");
-	if(pd1==PINDIR_INPUT){MessageBox(NULL, L"Pindir input outpin2!", L"vinfo", MB_OK);}else{MessageBox(NULL, L"Pindir output outpin2!", L"vinfo", MB_OK);}
+	if(pd1==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin2!", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin2!", L"vinfo", MB_OK);}
 
 	CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin2:Outpin3,(pd==PINDIR_INPUT)?Outpin3:Outpin2),L"Connect outpin1 and 2 failed");}
 	//if(Outpin3){CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin3:Outpin1,(pd==PINDIR_INPUT)?Outpin1:Outpin3),L"Connect outpin1 and 3 failed");}

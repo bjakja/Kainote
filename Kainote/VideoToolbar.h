@@ -121,7 +121,7 @@ public:
 	bool isNormalButton = false;
 	bool isDrawing = false;
 	static const int ID_SHAPE_LIST = 6789;
-	KaiChoice* shapeList = NULL;
+	KaiChoice* shapeList = nullptr;
 	int shapeListWidth = 0;
 	int shapeListSelection = 0;
 };
@@ -151,9 +151,9 @@ public:
 	void ShowContols(VideoToolbar* vt) override;
 	void OnSize(VideoToolbar* vt) override;
 private:
-	KaiChoice* tagList = NULL;
-	KaiChoice* options = NULL;
-	MappedButton* edition = NULL;
+	KaiChoice* tagList = nullptr;
+	KaiChoice* options = nullptr;
+	MappedButton* edition = nullptr;
 	int maxWidth = -1;
 	int selection = 0;
 	int mode = 1;
@@ -235,7 +235,7 @@ private:
 	static const int numIcons = 3;
 	bool Toggled[numIcons] = { false, true, true };
 	int an = 0;
-	KaiChoice* alignment = NULL;
+	KaiChoice* alignment = nullptr;
 };
 
 class MoveItem :public VisualItem
@@ -279,7 +279,7 @@ public:
 		}
 		if (bmp){ 
 			delete bmp; 
-			bmp = NULL; 
+			bmp = nullptr; 
 		}
 	};
 

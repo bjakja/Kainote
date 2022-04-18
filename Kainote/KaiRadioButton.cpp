@@ -193,7 +193,7 @@ void KaiRadioButton::SelectNext(bool last)
 	wxWindowList::compatibility_iterator nodeThis = siblings.Find(this);
 	wxCHECK_RET(nodeThis, wxT("radio button not a child of its parent?"));
 	bool done = false;
-	KaiRadioButton *btntmp = NULL;
+	KaiRadioButton *btntmp = nullptr;
 
 	for (wxWindowList::compatibility_iterator nodeAfter = nodeThis->GetNext();
 		nodeAfter;

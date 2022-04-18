@@ -33,7 +33,7 @@ public:
 	virtual ~RendererDirectShow();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);
-	bool OpenSubs(int flag, bool redraw = true, wxString *text = NULL, bool resetParameters = false);
+	bool OpenSubs(int flag, bool redraw = true, wxString *text = nullptr, bool resetParameters = false);
 	bool Play(int end = -1);
 	bool Pause();
 	bool Stop();
@@ -48,7 +48,7 @@ public:
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
-	bool DrawTexture(byte *nframe = NULL, bool copy = false);
+	bool DrawTexture(byte *nframe = nullptr, bool copy = false);
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void RecreateSurface();
 	void EnableStream(long index);
@@ -77,13 +77,13 @@ private:
 	void SetupVertices();
 	void ZoomChanged();
 	DShowPlayer *m_DirectShowPlayer;
-	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = NULL;
-	LPDIRECT3DTEXTURE9 m_BlitTexture = NULL;
-	LPDIRECT3DVERTEXBUFFER9 m_D3DVertex = NULL;
-	//LPDIRECT3DVERTEXBUFFER9 m_D3DFrameVertex = NULL;
+	LPDIRECT3DTEXTURE9 m_SubtitlesTexture = nullptr;
+	LPDIRECT3DTEXTURE9 m_BlitTexture = nullptr;
+	LPDIRECT3DVERTEXBUFFER9 m_D3DVertex = nullptr;
+	//LPDIRECT3DVERTEXBUFFER9 m_D3DFrameVertex = nullptr;
 	//LPDIRECT3DTEXTURE9 m_FrameTexture;
-	//LPDIRECT3DPIXELSHADER9 m_CompiledShader = NULL;
-	unsigned char * m_SubtitlesBuffer = NULL;
+	//LPDIRECT3DPIXELSHADER9 m_CompiledShader = nullptr;
+	unsigned char * m_SubtitlesBuffer = nullptr;
 	//CUSTOMVERTEX pVertices[4];
 	D3DTEXTUREFILTERTYPE filtering = D3DTEXF_POINT;
 	int m_WindowWidth = -1;

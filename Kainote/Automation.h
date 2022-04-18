@@ -170,7 +170,7 @@ namespace Auto {
 			if (macro < (int)macros.size()){
 				return macros[macro];
 			}
-			else{ return NULL; }
+			else{ return nullptr; }
 		}
 		std::vector<LuaCommand*> GetMacros() const{ return macros; }
 		bool CheckLastModified(bool check = true);
@@ -202,7 +202,7 @@ namespace Auto {
 		std::vector<Auto::LuaScript*> Scripts;
 		std::vector<Auto::LuaScript*> ASSScripts;
 		HANDLE handle;
-		HANDLE eventEndAutoload = NULL;
+		HANDLE eventEndAutoload = nullptr;
 	private:
 		wxString AutoloadPath;
 		bool HasChanges;

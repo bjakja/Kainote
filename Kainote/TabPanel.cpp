@@ -22,7 +22,7 @@
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
 	: KaiPanel(parent, -1, pos, size)
-	, windowResizer(NULL)
+	, windowResizer(nullptr)
 	, editor(true)
 	, holding(false)
 {
@@ -329,7 +329,7 @@ void TabPanel::OnSize(wxSizeEvent & evt)
 //							break;
 //					}
 //					else
-//						fparent = NULL;
+//						fparent = nullptr;
 //				}
 //				if(!nextWindow)
 //					nextWindow = next ? list.GetFirst() : list.GetLast();
@@ -343,7 +343,7 @@ void TabPanel::OnSize(wxSizeEvent & evt)
 //						//if panel is empty then just continue
 //						//don't give it focus
 //						if (!list1.GetCount()) {
-//							win = NULL;
+//							win = nullptr;
 //							break;
 //						}
 //						nextWindow = next ? list1.GetFirst() : list1.GetLast();

@@ -107,7 +107,7 @@ private:
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
 	D3DXVECTOR2 CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* points);
-	std::vector<ShapesSetting> *shapes = NULL;
+	std::vector<ShapesSetting> *shapes = nullptr;
 	int shape = -1;
 	ShapesSetting currentShape;
 	std::vector<ClipPoint> points;

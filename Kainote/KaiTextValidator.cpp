@@ -174,7 +174,7 @@ KaiTextCtrl *KaiTextValidator::GetKaiTextCtrl()
         "KaiTextValidator can only be used with KaiTextCtrl"
     );
 
-    return NULL;
+    return nullptr;
 }
 
 // IRIX mipsPro refuses to compile wxStringCheck<func>() if func is inline so

@@ -14,9 +14,6 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubtitlesProvider.h"
-#ifdef subsProvider
-
-#include "UtilsWindows.h"
 #include "RendererVideo.h"
 #include "OpennWrite.h"
 #include "kainoteMain.h"
@@ -24,6 +21,7 @@
 #include <wx/thread.h>
 #include <boost/gil/algorithm.hpp>
 #include <process.h>
+//#include "UtilsWindows.h"
 
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
@@ -54,9 +52,9 @@ unsigned int __stdcall  ProcessLibassCache(void *data)
 	libass->m_Libass = ass_renderer_init(libass->m_Library);
 	if (libass->m_Libass) {
 		ass_set_font_scale(libass->m_Libass, 1.);
-		ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, NULL, true);
+		ass_set_fonts(libass->m_Libass, "Arial", "Arial", 1, nullptr, true);
 	}
-	libass->m_IsReady.store(libass->m_Libass != NULL);
+	libass->m_IsReady.store(libass->m_Libass != nullptr);
 	//reload all tabs to shows subtitles
 	Notebook::RefreshVideo();
 
@@ -91,7 +89,7 @@ void SubtitlesLibass::Draw(unsigned char* buffer, int time)
 	if (m_IsReady.load() && m_AssTrack){
 		ass_set_frame_size(m_Libass, m_VideoSize.GetWidth(), m_VideoSize.GetHeight());
 
-		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, NULL);
+		ASS_Image* img = ass_render_frame(m_Libass, m_AssTrack, time, nullptr);
 		int videoPitch = m_VideoSize.GetWidth() * m_BytesPerColor;
 		// libass actually returns several alpha-masked monochrome images.
 		// Here, we loop through their linked list, get the colour of the current, and blend into the frame.
@@ -154,7 +152,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 
 	if (m_AssTrack){
 		ass_free_track(m_AssTrack);
-		m_AssTrack = NULL;
+		m_AssTrack = nullptr;
 	}
 
 	RendererVideo* renderer = tab->Video->GetRenderer();
@@ -172,7 +170,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 	case OPEN_WHOLE_SUBTITLES:
 		//make here some function to buffor
 		//or even add olny here a bool
-		textsubs = tab->Grid->GetVisible(NULL, NULL, NULL, true);
+		textsubs = tab->Grid->GetVisible(nullptr, nullptr, nullptr, true);
 		renderer->m_HasDummySubs = false;
 		break;
 	case OPEN_HAS_OWN_TEXT:
@@ -200,7 +198,7 @@ bool SubtitlesLibass::Open(TabPanel *tab, int flag, wxString *text)
 
 	wxScopedCharBuffer buffer = textsubs->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, NULL);
+	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
 	delete textsubs;
 
 	if (!m_AssTrack){
@@ -220,12 +218,12 @@ bool SubtitlesLibass::OpenString(wxString *text)
 
 	if (m_AssTrack){
 		ass_free_track(m_AssTrack);
-		m_AssTrack = NULL;
+		m_AssTrack = nullptr;
 	}
 
 	wxScopedCharBuffer buffer = text->mb_str(wxConvUTF8);
 	int size = strlen(buffer);
-	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, NULL);
+	m_AssTrack = ass_read_memory(m_Library, buffer.data(), size, nullptr);
 
 	delete text;
 
@@ -252,18 +250,18 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 		m_IsReady.store(false);
 		if (m_Libass) {
 			ass_renderer_done(m_Libass);
-			m_Libass = NULL;
+			m_Libass = nullptr;
 		}
 		if (m_Library) {
 			ass_library_done(m_Library);
-			m_Library = NULL;
+			m_Library = nullptr;
 		}
 	}
 	if (!m_Library) {
 		//KaiLog("Libass create");
 		m_IsReady.store(false);
 		m_Library = ass_library_init();
-		ass_set_message_cb(m_Library, MessageCallback, NULL);
+		ass_set_message_cb(m_Library, MessageCallback, nullptr);
 		if (!m_Libass) {
 			unsigned int threadid = 0;
 			thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);

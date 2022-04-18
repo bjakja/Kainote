@@ -24,7 +24,7 @@ KaiStaticText::KaiStaticText(wxWindow *parent, int id, const wxString& _text, co
 	, text(_text)
 	, textColour(WINDOW_TEXT)
 	, textHeight(0)
-	, textScroll(NULL)
+	, textScroll(nullptr)
 	, scPos(0)
 {
 	int fullw = size.x;
@@ -190,7 +190,7 @@ void KaiStaticText::OnPaint(wxPaintEvent &evt)
 	}
 	else if (textScroll){
 		textScroll->Destroy();
-		textScroll = NULL;
+		textScroll = nullptr;
 	}
 
 

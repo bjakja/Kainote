@@ -175,7 +175,7 @@ void SpellCheckerDialog::Replace(wxCommandEvent &evt)
 	Dialogue *Dial = tab->Grid->CopyDialogue(lastLine);
 	wxString &Text = Dial->Text.CheckTlRef(Dial->TextTl, tab->Grid->hasTLMode);
 	SpellChecker::Get()->ReplaceMisspell(errors[lastMisspell].misspell, replaceTxt, 
-		errors[lastMisspell].posStart, errors[lastMisspell].posEnd, &Text, NULL);
+		errors[lastMisspell].posStart, errors[lastMisspell].posEnd, &Text, nullptr);
 	tab->Grid->SetModified(SPELL_CHECKER);
 	tab->Grid->Refresh(false);
 	int oldPos = errors[lastMisspell].posStart;
@@ -210,7 +210,7 @@ void SpellCheckerDialog::ReplaceAll(wxCommandEvent &evt)
 				for (size_t k = misspells.size(); k > 0; k--) {
 					MisspellData &misspell = misspells[k - 1];
 					SpellChecker::Get()->ReplaceMisspell(misspell.misspell,
-						GetRightCase(replaceTxt, misspell.misspell), misspell.posStart, misspell.posEnd, &lineText, NULL);
+						GetRightCase(replaceTxt, misspell.misspell), misspell.posStart, misspell.posEnd, &lineText, nullptr);
 				}
 				Dialogue *Dialc = tab->Grid->CopyDialogue(i);
 				wxString &TextToChange = Dialc->Text.CheckTlRef(Dialc->TextTl, tab->Grid->hasTLMode);

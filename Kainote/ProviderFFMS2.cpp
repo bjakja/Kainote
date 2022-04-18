@@ -14,18 +14,20 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 #include "UtilsWindows.h"
 #include "ProviderFFMS2.h"
-#include "KaiMessageBox.h"
+#include "LogHandler.h"
 #include "Videobox.h"
 #include "kainoteApp.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
 
 
-ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* _success)
+ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
+	wxWindow* progressSinkWindow, bool* _success)
 	: Provider(filename, renderer)
 	, m_eventAudioComplete(CreateEvent(0, FALSE, FALSE, 0))
 {
-	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { KaiMessageBox(_("Nie można wczytać opcji audio"), _("Błąd")); }
+	if (!Options.AudioOpts && !Options.LoadAudioOpts()) { 
+		KaiLogSilent(_("Nie można wczytać opcji audio"), _("Błąd")); }
 	m_discCache = !Options.GetBool(AUDIO_RAM_CACHE);
 
 	m_success = false;
@@ -34,7 +36,7 @@ ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	if (renderer) {
 		unsigned int threadid = 0;
 		m_thread = (HANDLE)_beginthreadex(0, 0, FFMS2Proc, this, 0, &threadid);
-		//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
+		//CreateThread( nullptr, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
 		SetThreadPriority(m_thread, THREAD_PRIORITY_TIME_CRITICAL);
 		SetThreadName(threadid, "VideoThread");
 		progress->ShowDialog();
@@ -278,7 +280,7 @@ done:
 		else if (FFMS_IndexBelongsToFile(m_index, m_filename.utf8_str(), &m_errInfo))
 		{
 			FFMS_DestroyIndex(m_index);
-			m_index = NULL;
+			m_index = nullptr;
 		}
 		else {
 			FFMS_CancelIndexing(Indexer);
@@ -291,7 +293,7 @@ done:
 		FFMS_SetProgressCallback(Indexer, UpdateProgress, (void*)progress);
 		m_index = FFMS_DoIndexing2(Indexer, FFMS_IEH_IGNORE, &m_errInfo);
 		//in this moment indexer was released, there no need to release it
-		if (m_index == NULL) {
+		if (m_index == nullptr) {
 			if (wxString(m_errInfo.Buffer).StartsWith(L"Cancelled")) {
 				//No need spam user that he clicked cancel button
 				//KaiLog(_("Indeksowanie anulowane przez użytkownika"));
@@ -333,7 +335,7 @@ done:
 		//Since the index is copied into the video source object upon its creation,
 		//we can and should now destroy the index object. 
 
-		if (m_videoSource == NULL) {
+		if (m_videoSource == nullptr) {
 			if (audiotrack == -1) {
 				KaiLog(_("Nie można utworzyć VideoSource."));
 				return 0;
@@ -403,12 +405,12 @@ done:
 		}
 
 		FFMS_Track* FrameData = FFMS_GetTrackFromVideo(m_videoSource);
-		if (FrameData == NULL) {
+		if (FrameData == nullptr) {
 			KaiLog(_("Nie można pobrać ścieżki wideo"));
 			return 0;
 		}
 		const FFMS_TrackTimeBase* TimeBase = FFMS_GetTimeBase(FrameData);
-		if (TimeBase == NULL) {
+		if (TimeBase == nullptr) {
 			KaiLog(_("Nie można pobrać informacji o wideo"));
 			return 0;
 		}
@@ -419,7 +421,7 @@ done:
 		// build list of keyframes and timecodes
 		for (int CurFrameNum = 0; CurFrameNum < videoprops->NumFrames; CurFrameNum++) {
 			CurFrameData = FFMS_GetFrameInfo(FrameData, CurFrameNum);
-			if (CurFrameData == NULL) {
+			if (CurFrameData == nullptr) {
 				continue;
 			}
 
@@ -438,7 +440,7 @@ audio:
 
 	if (audiotrack != -1) {
 		m_audioSource = FFMS_CreateAudioSource(m_filename.utf8_str(), audiotrack, m_index, FFMS_DELAY_FIRST_VIDEO_TRACK, &m_errInfo);
-		if (m_audioSource == NULL) {
+		if (m_audioSource == nullptr) {
 			KaiLog(wxString::Format(_("Wystąpił błąd tworzenia źródła audio: %s"), m_errInfo.Buffer));
 			return 0;
 		}
@@ -491,7 +493,7 @@ ProviderFFMS2::~ProviderFFMS2()
 	m_timecodes.clear();
 
 	if (m_videoSource) {
-		FFMS_DestroyVideoSource(m_videoSource); m_videoSource = NULL;
+		FFMS_DestroyVideoSource(m_videoSource); m_videoSource = nullptr;
 	}
 
 	if (m_discCache) { ClearDiskCache(); }
@@ -505,7 +507,7 @@ ProviderFFMS2::~ProviderFFMS2()
 
 
 
-int FFMS_CC ProviderFFMS2::UpdateProgress(int64_t Current, int64_t Total, void* ICPrivate)
+int FFMS_CC ProviderFFMS2::UpdateProgress(long long Current, long long Total, void* ICPrivate)
 {
 	ProgressSink* progress = (ProgressSink*)ICPrivate;
 	progress->Progress(((double)Current / (double)Total) * 100);
@@ -525,10 +527,10 @@ void ProviderFFMS2::AudioLoad(ProviderFFMS2* vf, bool newIndex, int audiotrack)
 	}
 	vf->audioNotInitialized = false;
 done:
-	if (vf->m_audioSource) { FFMS_DestroyAudioSource(vf->m_audioSource); vf->m_audioSource = NULL; }
+	if (vf->m_audioSource) { FFMS_DestroyAudioSource(vf->m_audioSource); vf->m_audioSource = nullptr; }
 	vf->m_lockGetFrame = false;
 	SetEvent(vf->m_eventAudioComplete);
-	if (vf->m_audioLoadThread) { delete vf->m_audioLoadThread; vf->m_audioLoadThread = NULL; }
+	if (vf->m_audioLoadThread) { delete vf->m_audioLoadThread; vf->m_audioLoadThread = nullptr; }
 
 }
 
@@ -545,19 +547,19 @@ void ProviderFFMS2::GetFFMSFrame()
 	m_FFMS2frame = FFMS_GetFrame(m_videoSource, m_renderer->m_Frame, &m_errInfo);
 }
 
-void ProviderFFMS2::GetAudio(void* buf, int64_t start, int64_t count)
+void ProviderFFMS2::GetAudio(void* buf, long long start, long long count)
 {
 
 	if (count == 0 || !m_audioSource) return;
 	if (start + count > m_numSamples) {
-		int64_t oldcount = count;
+		long long oldcount = count;
 		count = m_numSamples - start;
 		if (count < 0) count = 0;
 
 		// Fill beyond with zero
 
 		short* temp = (short*)buf;
-		for (int64_t i = count; i < oldcount; i++) {
+		for (long long i = count; i < oldcount; i++) {
 			temp[i] = 0;
 		}
 
@@ -569,12 +571,12 @@ void ProviderFFMS2::GetAudio(void* buf, int64_t start, int64_t count)
 
 }
 
-void ProviderFFMS2::GetBuffer(void* buf, int64_t start, int64_t count, double volume)
+void ProviderFFMS2::GetBuffer(void* buf, long long start, long long count, double volume)
 {
 	if (audioNotInitialized) { return; }
 
 	if (start + count > m_numSamples) {
-		int64_t oldcount = count;
+		long long oldcount = count;
 		count = m_numSamples - start;
 		if (count < 0) count = 0;
 
@@ -600,7 +602,7 @@ void ProviderFFMS2::GetBuffer(void* buf, int64_t start, int64_t count, double vo
 			int i = (start * m_bytesPerSample) >> 22;
 			int blsize = (1 << 22);
 			int offset = (start * m_bytesPerSample) & (blsize - 1);
-			int64_t remaining = count * m_bytesPerSample;
+			long long remaining = count * m_bytesPerSample;
 			int readsize = remaining;
 
 			while (remaining) {
@@ -620,7 +622,7 @@ void ProviderFFMS2::GetBuffer(void* buf, int64_t start, int64_t count, double vo
 		int value;
 
 		// Modify
-		for (int64_t i = 0; i < count; i++) {
+		for (long long i = 0; i < count; i++) {
 			value = (int)(buffer[i] * volume + 0.5);
 			if (value < -0x8000) value = -0x8000;
 			if (value > 0x7FFF) value = 0x7FFF;
@@ -634,15 +636,15 @@ bool ProviderFFMS2::RAMCache()
 {
 	//progress->Title(_("Zapisywanie do pamięci RAM"));
 	m_audioProgress = 0;
-	int64_t end = m_numSamples * m_bytesPerSample;
+	long long end = m_numSamples * m_bytesPerSample;
 
 	int blsize = (1 << 22);
 	m_blockNum = ((float)end / (float)blsize) + 1;
-	m_cache = NULL;
+	m_cache = nullptr;
 	m_cache = new char* [m_blockNum];
-	if (m_cache == NULL) { KaiMessageBox(_("Za mało pamięci RAM")); return false; }
+	if (m_cache == nullptr) { KaiLogSilent(_("Za mało pamięci RAM")); return false; }
 
-	int64_t pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
+	long long pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
 	int halfsize = (blsize / m_bytesPerSample);
 
 
@@ -725,8 +727,8 @@ bool ProviderFFMS2::DiskCache(bool newIndex)
 	try {
 		char* data = new char[block * m_bytesPerSample];
 		int all = (m_numSamples / block) + 1;
-		//int64_t pos=0;
-		int64_t pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
+		//long long pos=0;
+		long long pos = (m_delay < 0) ? -(m_sampleRate * m_delay * m_bytesPerSample) : 0;
 		for (int i = 0; i < all; i++) {
 			if (block + pos > m_numSamples) block = m_numSamples - pos;
 			GetAudio(data, pos, block);
@@ -751,7 +753,7 @@ bool ProviderFFMS2::DiskCache(bool newIndex)
 
 void ProviderFFMS2::ClearDiskCache()
 {
-	if (m_fp) { fclose(m_fp); m_fp = NULL; }
+	if (m_fp) { fclose(m_fp); m_fp = nullptr; }
 }
 
 void ProviderFFMS2::DeleteOldAudioCache()
@@ -846,5 +848,5 @@ void ProviderFFMS2::SetColorSpace(const wxString& matrix)
 
 bool ProviderFFMS2::HasVideo()
 {
-	return m_videoSource != NULL;
+	return m_videoSource != nullptr;
 }

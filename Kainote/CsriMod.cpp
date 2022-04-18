@@ -48,7 +48,7 @@ static const char *get_errstr()
 	
 	if (!FormatMessageA(
 		FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-		NULL, err, 0, msg, sizeof(msg), NULL))
+		nullptr, err, 0, msg, sizeof(msg), nullptr))
 		strcpy(msg, "Unknown Error");
 	else {
 		size_t msglen = strlen(msg) - 1;
@@ -73,7 +73,7 @@ static void csrilib_add(csri_rend *rend,
 
 static void csrilib_do_load(const wchar_t *filename)
 {
-	HMODULE dlhandle = LoadLibraryExW(filename, NULL,
+	HMODULE dlhandle = LoadLibraryExW(filename, nullptr,
 		LOAD_WITH_ALTERED_SEARCH_PATH);
 	struct csri_wrap_rend tmp;
 	csri_rend *rend;
@@ -112,7 +112,7 @@ static void csrilib_do_load(const wchar_t *filename)
 #define dl_map_function(x) _dl_map_function(x, tmp.x)
 	dl_map_function(query_ext);
 	//subhelp_logging_pass((struct csri_logging_ext *)
-		//tmp.query_ext(NULL, CSRI_EXT_LOGGING));
+		//tmp.query_ext(nullptr, CSRI_EXT_LOGGING));
 	dl_map_function(open_file);
 	dl_map_function(open_mem);
 	dl_map_function(close);
@@ -180,7 +180,7 @@ static void csrilib_enum_dir(const wchar_t *dir)
 void csrilib_os_init()
 {
 	wchar_t filename[MAX_PATH], *slash;
-	DWORD rv = GetModuleFileNameW(NULL, filename, MAX_PATH);
+	DWORD rv = GetModuleFileNameW(nullptr, filename, MAX_PATH);
 	if (!rv)
 		*filename = L'\0';
 	slash = wcsrchr(filename, L'\\');
@@ -191,7 +191,7 @@ void csrilib_os_init()
 	//csrilib_do_load(L"vsfilter_kainote.dll");
 }
 
-struct csri_wrap_rend *wraprends = NULL;
+struct csri_wrap_rend *wraprends = nullptr;
 
 struct csri_wrap_rend *csrilib_rend_lookup(csri_rend *rend)
 {
@@ -199,7 +199,7 @@ struct csri_wrap_rend *csrilib_rend_lookup(csri_rend *rend)
 	for (; wrap; wrap = wrap->next)
 		if (wrap->rend == rend)
 			return wrap;
-	return NULL;
+	return nullptr;
 }
 
 //list
@@ -224,14 +224,14 @@ csri_inst *csrilib_inst_initadd(struct csri_wrap_rend *wrend,
 	
 	if (!winst) {
 		wrend->close(inst);
-		return NULL;
+		return nullptr;
 	}
 	winst->wrend = wrend;
 	winst->inst = inst;
 	winst->close = wrend->close;
 	winst->request_fmt = wrend->request_fmt;
 	winst->render = wrend->render;
-	winst->next = NULL;
+	winst->next = nullptr;
 	pnext = &wrapinsts[HASH(inst)];
 	while (*pnext)
 		pnext = &(*pnext)->next;
@@ -265,7 +265,7 @@ csri_rend *csri_renderer_default()
 		//initialized = 1;
 	}
 	if (!wraprends)
-		return NULL;
+		return nullptr;
 	return wraprends->rend;
 }
 
@@ -273,7 +273,7 @@ csri_rend *csri_renderer_next(csri_rend *prev)
 {
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(prev);
 	if (!wrend || !wrend->next)
-		return NULL;
+		return nullptr;
 	return wrend->next->rend;
 }
 
@@ -285,7 +285,7 @@ csri_rend *csri_renderer_byname(const char *name, const char *specific)
 		//initialized = 1;
 	}
 	if (!name)
-		return NULL;
+		return nullptr;
 	for (wrend = wraprends; wrend; wrend = wrend->next) {
 		if (strcmp(wrend->info->name, name))
 			continue;
@@ -293,7 +293,7 @@ csri_rend *csri_renderer_byname(const char *name, const char *specific)
 			continue;
 		return wrend->rend;
 	}
-	return NULL;
+	return nullptr;
 }
 
 csri_rend *csri_renderer_byext(unsigned n_ext, csri_ext_id *ext)
@@ -312,7 +312,7 @@ csri_rend *csri_renderer_byext(unsigned n_ext, csri_ext_id *ext)
 		if (i == n_ext)
 			return wrend->rend;
 	}
-	return NULL;
+	return nullptr;
 }
 
 void csri_close_renderer(csri_rend *renderer)
@@ -320,13 +320,13 @@ void csri_close_renderer(csri_rend *renderer)
 	//std::unique_lock<std::mutex> lck (mtx);
 	if(wraprends){
 		csri_wrap_rend * wraprend = wraprends;
-		csri_wrap_rend * next = NULL;
+		csri_wrap_rend * next = nullptr;
 		while (wraprend){
 			next = wraprend->next;
 			free(wraprend);
 			wraprend = next;
 		}
-		wraprends=NULL;
+		wraprends=nullptr;
 	}
 }
 
@@ -336,7 +336,7 @@ csri_inst *csri_open_file(csri_rend *rend,
 	std::unique_lock<std::mutex> lck (mtx);
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(rend);
 	if (!wrend)
-		return NULL;
+		return nullptr;
 	return csrilib_inst_initadd(wrend,
 		wrend->open_file(rend, filename, flags));
 }
@@ -348,7 +348,7 @@ csri_inst *wrapname(csri_rend *rend, \
 	std::unique_lock<std::mutex> lck (mtx);\
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(rend); \
 	if (!wrend) \
-		return NULL; \
+		return nullptr; \
 	return csrilib_inst_initadd(wrend, \
 		wrend->funcname(rend, data, length, flags)); \
 }
@@ -363,11 +363,11 @@ void *csri_query_ext(csri_rend *rend, csri_ext_id extname)
 	void *rv;
 
 	if (!rend)
-		return NULL;
+		return nullptr;
 
 	wrend = csrilib_rend_lookup(rend);
 	if (!wrend)
-		return NULL;
+		return nullptr;
 	rv = wrend->query_ext(rend, extname);
 	if (rv && !strcmp(extname, CSRI_EXT_STREAM_ASS)) {
 		struct csri_stream_ext *e = (struct csri_stream_ext *)rv;
@@ -390,7 +390,7 @@ struct csri_info *csri_renderer_info(csri_rend *rend)
 {
 	struct csri_wrap_rend *wrend = csrilib_rend_lookup(rend);
 	if (!wrend)
-		return NULL;
+		return nullptr;
 	return wrend->info;
 }
 

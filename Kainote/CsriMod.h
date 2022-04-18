@@ -73,7 +73,7 @@ struct csri_stream_ext {
 	 * \param headerlen byte length of header data.
 	 * \param flags openflags.
 	 *
-	 * not NULL if this extension is supported.
+	 * not nullptr if this extension is supported.
 	 * may take various flags like csri_openerr_flag.
 	 *
 	 * the returned instance can be used with
@@ -104,7 +104,7 @@ struct csri_stream_ext {
 	 *   beyond its end timestamp yet.
 	 *
 	 * frees up memory, or can force a clean renderer.
-	 * may be NULL if unsupported, check before calling!
+	 * may be nullptr if unsupported, check before calling!
 	 */
 	void (*discard)(csri_inst *inst, int all);
 };

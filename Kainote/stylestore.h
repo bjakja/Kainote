@@ -69,7 +69,7 @@ public:
 	static void ShowStyleEdit(const wxString &styleName = emptyString);
 	static StyleStore *Get();
 	static void DestroyStore();
-	static bool HasStore(){ return (SS != NULL); }
+	static bool HasStore(){ return (SS != nullptr); }
 
 private:
 

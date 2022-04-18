@@ -32,7 +32,7 @@ public:
 		modified = true;
 	}
 	virtual ~ResultsHeader(){};
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ResultsHeader(*this); }
 	wxSize GetTextExtents(KaiListCtrl *theList);
@@ -57,7 +57,7 @@ public:
 		isTextTL = isTextTl;
 	}
 	virtual ~SeekResults(){};
-	TabPanel *tab = NULL;
+	TabPanel *tab = nullptr;
 	wxString path;
 	int keyLine;
 	int idLine;
@@ -65,7 +65,7 @@ public:
 	wxPoint findPosition;
 	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new SeekResults(*this); }
 	int OnVisibilityChange(int mode){
@@ -120,6 +120,6 @@ private:
 	//only for regex
 	wxString findString;
 	typedef std::vector<Item*> ItemList;
-	ItemList *multiThreadList = NULL;
+	ItemList *multiThreadList = nullptr;
 	int multiThreadListSize = 0;
 };

@@ -20,9 +20,10 @@
 #include "KaiTabBar.h"
 #include "KaiTreeBook.h"
 #include "config.h"
-#include "wx/dcmemory.h"
-#include "wx/dcclient.h"
-#include "wx/msw/private.h"
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
+#include <wx/msw/private.h>
+#include <wx/wx.h>
 #include <Dwmapi.h>
 #include <Windowsx.h>
 
@@ -71,7 +72,7 @@ KaiDialog::KaiDialog(wxWindow *parent, wxWindowID id,
 	const wxPoint& pos,
 	const wxSize& size,
 	long _style)
-	:loop(NULL)
+	:loop(nullptr)
 	, escapeId(wxID_CANCEL)
 	, enterId(wxID_OK)
 	, enter(false)
@@ -117,7 +118,7 @@ int KaiDialog::ShowModal()
 		if (!loop){ return result; }
 		result = loop->Run();
 		delete loop;
-		loop = NULL;
+		loop = nullptr;
 	}
 	return result;
 }
@@ -130,7 +131,7 @@ void KaiDialog::EndModal(int retCode)
 
 bool KaiDialog::IsModal() const
 {
-	return (loop != NULL);
+	return (loop != nullptr);
 }
 
 bool KaiDialog::Show(bool show)
@@ -195,7 +196,7 @@ bool KaiDialog::IsButtonFocused()
 
 wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
 {
-	wxWindow* tab = NULL;
+	wxWindow* tab = nullptr;
 	//every new multitab controls have to be added here
 	if (focused->IsKindOf(CLASSINFO(KaiTabBar))) {
 		KaiTabBar* ktb = wxDynamicCast(focused, KaiTabBar);
@@ -211,12 +212,12 @@ wxWindowListNode* KaiDialog::GetTabControl(bool next, wxWindow* focused)
 		const wxWindowList& tablist = tab->GetChildren();
 		return next ? tablist.GetFirst() : tablist.GetLast();
 	}
-	return NULL;
+	return nullptr;
 }
 
 wxWindow* KaiDialog::FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused)
 {
-	wxWindow* result = NULL;
+	wxWindow* result = nullptr;
 	bool beforeGroup = false;
 	while (1) {
 		if ((*listWithRadioButton)) {
@@ -273,7 +274,7 @@ void KaiDialog::SetNextControl(bool next)
 		focusedParent = focused->GetParent();
 	}
 
-	wxWindow* focusedGrandParent = (focusedParent->IsTopLevel())? NULL : focusedParent->GetParent();
+	wxWindow* focusedGrandParent = (focusedParent->IsTopLevel())? nullptr : focusedParent->GetParent();
 	bool hasMultiplePages = focused->HasMultiplePages();
 
 	const wxWindowList& list = focusedParent->GetChildren();
@@ -561,7 +562,7 @@ void KaiDialog::SetLabel(const wxString &text)
 WXLRESULT KaiDialog::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 {
 	//if(uMsg == WM_SIZING){
-	//	RedrawWindow(m_hWnd, NULL, NULL, RDW_INVALIDATE | RDW_INTERNALPAINT);//| RDW_NOERASE
+	//	RedrawWindow(m_hWnd, nullptr, nullptr, RDW_INVALIDATE | RDW_INTERNALPAINT);//| RDW_NOERASE
 	//}
 	if (uMsg == WM_ACTIVATE){
 		isActive = (wParam != 0);//evt.GetActive();

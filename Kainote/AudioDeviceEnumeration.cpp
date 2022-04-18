@@ -26,13 +26,13 @@ const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 bool EnumerateAudioDevices(wxArrayString* devices)
 {
 	HRESULT hr = S_OK;
-	IMMDeviceEnumerator* pEnumerator = NULL;
-	IMMDeviceCollection* pCollection = NULL;
-	IMMDevice* pEndpoint = NULL;
-	IPropertyStore* pProps = NULL;
-	//LPWSTR pwszID = NULL;
+	IMMDeviceEnumerator* pEnumerator = nullptr;
+	IMMDeviceCollection* pCollection = nullptr;
+	IMMDevice* pEndpoint = nullptr;
+	IPropertyStore* pProps = nullptr;
+	//LPWSTR pwszID = nullptr;
 
-	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL,
+	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr,
 		CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
 	if (FAILED(hr)) { goto Exit; };
 
@@ -73,7 +73,7 @@ bool EnumerateAudioDevices(wxArrayString* devices)
 		devices->Add(varName.pwszVal);
 
 		//CoTaskMemFree(pwszID);
-		//pwszID = NULL;
+		//pwszID = nullptr;
 		PropVariantClear(&varName);
 		SAFE_RELEASE(pProps);
 		SAFE_RELEASE(pEndpoint);
@@ -91,16 +91,16 @@ Exit:
 	return false;
 }
 
-bool GetGuid(const wxString& name, REFIID iid, DWORD dwClsCtx, void** ppInterface)
+bool GetGuid(const wxString& name, REFIID iid, unsigned int dwClsCtx, void** ppInterface)
 {
 	HRESULT hr = S_OK;
-	IMMDeviceEnumerator* pEnumerator = NULL;
-	IMMDeviceCollection* pCollection = NULL;
-	IMMDevice* pEndpoint = NULL;
-	IPropertyStore* pProps = NULL;
-	//LPWSTR pwszID = NULL;
+	IMMDeviceEnumerator* pEnumerator = nullptr;
+	IMMDeviceCollection* pCollection = nullptr;
+	IMMDevice* pEndpoint = nullptr;
+	IPropertyStore* pProps = nullptr;
+	//LPWSTR pwszID = nullptr;
 
-	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, NULL,
+	hr = CoCreateInstance(CLSID_MMDeviceEnumerator, nullptr,
 		CLSCTX_ALL, IID_IMMDeviceEnumerator, (void**)&pEnumerator);
 	if (FAILED(hr)) { goto Exit; };
 
@@ -140,7 +140,7 @@ bool GetGuid(const wxString& name, REFIID iid, DWORD dwClsCtx, void** ppInterfac
 
 		if (wxString(varName.pwszVal) == name) {
 			PropVariantClear(&varName);
-			hr = pEndpoint->Activate(iid, dwClsCtx, NULL, ppInterface);
+			hr = pEndpoint->Activate(iid, dwClsCtx, nullptr, ppInterface);
 			if (FAILED(hr)) { goto Exit; };
 			SAFE_RELEASE(pProps);
 			SAFE_RELEASE(pEndpoint);
@@ -150,7 +150,7 @@ bool GetGuid(const wxString& name, REFIID iid, DWORD dwClsCtx, void** ppInterfac
 		}
 
 		//CoTaskMemFree(pwszID);
-		//pwszID = NULL;
+		//pwszID = nullptr;
 		PropVariantClear(&varName);
 		SAFE_RELEASE(pProps);
 		SAFE_RELEASE(pEndpoint);

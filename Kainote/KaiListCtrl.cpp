@@ -35,7 +35,7 @@ wxSize Item::GetTextExtents(KaiListCtrl *theList){
 	return size;
 }
 
-void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= NULL*/)
+void ItemText::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /*= nullptr*/)
 {
 	if (enter){
 		if (needTooltip)
@@ -188,7 +188,7 @@ void ItemCheckBox::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Ka
 //custom multilist
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL | wxHORIZONTAL)
-	, bmp(NULL)
+	, bmp(nullptr)
 	, sel(-1)
 	, lastSelX(-1)
 	, lastSelY(-1)
@@ -235,7 +235,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxPoint &pos, const wxS
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, const wxPoint &pos,
 	const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
-	, bmp(NULL)
+	, bmp(nullptr)
 	, sel(-1)
 	, lastSelX(-1)
 	, lastSelY(-1)
@@ -272,7 +272,7 @@ KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, int numelem, wxString *list, 
 KaiListCtrl::KaiListCtrl(wxWindow *parent, int id, const wxArrayString &list, const wxPoint &pos,
 	const wxSize &size, int style)
 	:KaiScrolledWindow(parent, id, pos, size, style | wxVERTICAL)
-	, bmp(NULL)
+	, bmp(nullptr)
 	, sel(-1)
 	, lastSelX(-1)
 	, lastSelY(-1)
@@ -423,7 +423,7 @@ int KaiListCtrl::SetItem(size_t row, size_t col, Item *item)
 
 Item *KaiListCtrl::GetItem(size_t row, size_t col)
 {
-	if (row < 0 || row >= itemList->size() || col < 0 || col >= (*itemList)[row]->row.size()){ return NULL; }
+	if (row < 0 || row >= itemList->size() || col < 0 || col >= (*itemList)[row]->row.size()){ return nullptr; }
 	return (*itemList)[row]->row[col];
 }
 
@@ -494,7 +494,7 @@ void KaiListCtrl::OnPaint(wxPaintEvent& evt)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < bitmapw || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(bitmapw, h); }
 
@@ -677,7 +677,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		}
 		return;
 	}
-	Item* copy = NULL;
+	Item* copy = nullptr;
 	int elemYID = ((cursor.y - headerHeight) / lineHeight) + scPosV;
 	//size_t startI = 0;
 	int elemY = elemYID;//FindItemsRow(elemYID, startI);
@@ -740,7 +740,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 			if (isFiltered)
 				evt.SetX(evt.GetX() - 12);
 			filteredList[elemY]->row[elemX]->OnMouseEvent(evt, enter, false, this, &copy);
-			if (copy != NULL){
+			if (copy != nullptr){
 				ItemRow *newRow = new ItemRow();
 				for (size_t g = 0; g < filteredList[elemY]->row.size(); g++){
 					if (g == elemX){
@@ -757,7 +757,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 					PushHistory();
 					Refresh(false);
 				}
-				copy = NULL;
+				copy = nullptr;
 			}
 			break;
 		}
@@ -767,7 +767,7 @@ void KaiListCtrl::OnMouseEvent(wxMouseEvent &evt)
 		&& lastSelX != -1 && lastSelY != -1 && lastSelY < filteredList.size()
 		&& lastSelX < filteredList[lastSelY]->row.size()){
 		filteredList[lastSelY]->row[lastSelX]->OnMouseEvent(evt, false, true, this, &copy);
-		if (copy){ delete copy; copy = NULL; }
+		if (copy){ delete copy; copy = nullptr; }
 	}
 
 	if (evt.LeftDown()){
@@ -1084,7 +1084,7 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 		itemList->push_back(newRow);
 		filteredList.push_back(newRow);
 		int newy = itemList->size() - 1;
-		if (x < 0 || x >= (int)(*itemList)[newy]->row.size()){ return NULL; }
+		if (x < 0 || x >= (int)(*itemList)[newy]->row.size()){ return nullptr; }
 		return (*itemList)[newy]->row[x];
 	}
 	else{
@@ -1093,7 +1093,7 @@ Item *KaiListCtrl::CopyRow(int y, int x, bool pushBack)
 		if (id != -1)
 			filteredList[id] = newRow;
 	}
-	if (x < 0 || x >= (int)(*itemList)[y]->row.size()){ return NULL; }
+	if (x < 0 || x >= (int)(*itemList)[y]->row.size()){ return nullptr; }
 	return (*itemList)[y]->row[x];
 }
 

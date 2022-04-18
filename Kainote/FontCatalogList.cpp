@@ -30,10 +30,10 @@
 
 wxDEFINE_EVENT(CATALOG_CHANGED, wxCommandEvent);
 
-wxArrayString* CatalogList::catalogList = NULL;
-PopupList* CatalogList::floatingList = NULL;
+wxArrayString* CatalogList::catalogList = nullptr;
+PopupList* CatalogList::floatingList = nullptr;
 wxString FontSample::previewText;
-FontCatalogList* FontCatalogList::This = NULL;
+FontCatalogList* FontCatalogList::This = nullptr;
 
 class CatalogEdition : public KaiDialog
 {
@@ -190,11 +190,11 @@ FontCatalogList::FontCatalogList(wxWindow* parent, const wxString& styleFont)
 	fontStyle = Styles(L"FontPreview,Arial,80,&H00FFFFFF,&HFF0000FF,&H00301946,&H7A301946,-1,0,0,0,100,100,1.13208,0,1,3.5,0,2,120,120,40,1");
 
 	Bind(wxEVT_SHOW, [=](wxShowEvent& evt) {
-		bool show = evt.GetShow();
-		if (!show) {
+		//bool show = evt.();
+		//if (!show) {
 			wxCommandEvent event(CATALOG_CHANGED, GetId());
 			parent->GetEventHandler()->AddPendingEvent(event);
-		}
+		//}
 	});
 	autoSaveTimer.SetOwner(this, ID_EDIT_TIMER);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent& evt) {
@@ -227,7 +227,7 @@ void FontCatalogList::ClearList()
 
 void FontCatalogList::GenerateList(const wxString& styleFont)
 {
-	wxArrayString * fonts = FontEnum.GetFonts(NULL, [=](){});
+	wxArrayString * fonts = FontEnum.GetFonts(nullptr, [=](){});
 	int sel = 0;
 	const wxString& previewText = Options.GetString(STYLE_PREVIEW_TEXT);
 	FontSample::SetPreviewText(previewText);
@@ -358,7 +358,7 @@ void FontCatalogList::StartEditionTimer(int ms)
 		This->autoSaveTimer.Start(ms, true);
 }
 
-void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool click = event.LeftUp();
 	if(isMenuShown && event.LeftDown())
@@ -389,7 +389,7 @@ void CatalogList::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, Kai
 		int i = 0;
 		for (auto& catalog : *catalogList) {
 			bool checked = FCManagement.IsFontInCatalog(catalog, thisItem->name);
-			menuList.Append(3000 + i, catalog, NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
+			menuList.Append(3000 + i, catalog, nullptr, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
 			i++;
 		}
 		menuList.SelectOnStart(choice);
@@ -475,7 +475,7 @@ void CatalogList::RefreshCatalogList()
 	catalogList = FCManagement.GetCatalogNames();
 }
 
-void FontItem::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void FontItem::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool isOnCheckbox = event.GetX() < 23;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox && !leave)){
@@ -682,7 +682,7 @@ void FontCatalogManagement::AddToCatalog(const wxString& font, const wxPoint& po
 	int i = 0;
 	for (auto& catalog : fontCatalogsNames) {
 		bool checked = IsFontInCatalog(catalog, font);
-		menuList.Append(3000 + i, catalog, NULL, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
+		menuList.Append(3000 + i, catalog, nullptr, emptyString, ITEM_CHECK_AND_HIDE)->Check(checked);
 		checkTable.push_back(checked);
 		i++;
 	}
@@ -728,7 +728,7 @@ void FontCatalogManagement::AddCatalog(const wxString& catalog, std::map<wxStrin
 
 bool FontCatalogManagement::ChangeCatalogName(wxWindow* messagesParent, const wxString& oldCatalog, const wxString& newCatalog)
 {
-	wxArrayString* fontTable = NULL;
+	wxArrayString* fontTable = nullptr;
 	auto itn = fontCatalogs.find(newCatalog);
 	if (itn != fontCatalogs.end()) {
 		KaiMessageDialog dlg(messagesParent, wxString::Format(_("Katalog o nazwie \"%s\" istnieje, co zrobić?"), newCatalog), _("Pytanie"), wxYES_NO | wxCANCEL);

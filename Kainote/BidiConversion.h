@@ -16,15 +16,15 @@
 #pragma once
 #include <wx/string.h>
 
-//when textout is NULL result puts to textIn
-void ConvertToRTLChars(wxString* textin, wxString* textout = NULL);
+//when textout is nullptr result puts to textIn
+void ConvertToRTLChars(wxString* textin, wxString* textout = nullptr);
 void ConvertToRTLCharsSpellchecker(wxString* textin, wxString* textout);
-void ConvertToRTL(wxString* textin, wxString* textout = NULL);
+void ConvertToRTL(wxString* textin, wxString* textout = nullptr);
 void BIDIConvert(wxString* text);
 void BIDIReverseConvert(wxString* text);
-//when textout is NULL result puts to textIn
-void ConvertToLTR(wxString* textin, wxString* textout = NULL);
-void ConvertToLTRChars(wxString* textin, wxString* textout = NULL);
+//when textout is nullptr result puts to textIn
+void ConvertToLTR(wxString* textin, wxString* textout = nullptr);
+void ConvertToLTRChars(wxString* textin, wxString* textout = nullptr);
 //check all rtl chars
 bool IsRTLCharacter(const wxUniChar& ch);
 //check converted rtl chars

@@ -134,7 +134,7 @@ namespace Auto{
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
 			float FPS;
-			tab->Video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
+			tab->Video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
 			int frame = (tab->Video->IsDirectShow()) ? ((float)ms / 1000.f) * FPS :
 				tab->Video->GetFFMS2()->GetFramefromMS(ms, 0, false);
 			lua_pushnumber(L, frame);
@@ -153,7 +153,7 @@ namespace Auto{
 		TabPanel *tab = Notebook::GetTab();
 		if (tab && tab->Video->GetState() != None) {
 			float FPS;
-			tab->Video->GetFPSAndAspectRatio(&FPS, NULL, NULL, NULL);
+			tab->Video->GetFPSAndAspectRatio(&FPS, nullptr, nullptr, nullptr);
 			int ms = (tab->Video->IsDirectShow()) ? ((frame * 1000) / FPS) :
 				tab->Video->GetFFMS2()->GetMSfromFrame(frame);
 			lua_pushnumber(L, ms);
@@ -170,7 +170,7 @@ namespace Auto{
 		if (tab && tab->Video->GetState() != None) {
 			wxSize sz = tab->Video->GetVideoSize();
 			int AspectRatioX, AspectRatioY;
-			tab->Video->GetFPSAndAspectRatio(NULL, NULL, &AspectRatioX, &AspectRatioY);
+			tab->Video->GetFPSAndAspectRatio(nullptr, nullptr, &AspectRatioX, &AspectRatioY);
 			float AR = (float)AspectRatioX / AspectRatioY;
 			lua_pushnumber(L, sz.x);
 			lua_pushnumber(L, sz.y);
@@ -352,7 +352,7 @@ namespace Auto{
 			PUSH_FIELD(active_row, "Active Line");
 			PUSH_FIELD(ar_mode, "");
 			set_field(L, "video_position", (c->Video->HasFFMS2()) ? 
-				c->Video->GetFFMS2()->GetFramefromMS(c->Video->Tell()) : NULL);
+				c->Video->GetFFMS2()->GetFramefromMS(c->Video->Tell()) : 0);
 #undef PUSH_FIELD
 			set_field(L, "audio_file", c->VideoPath);
 			set_field(L, "video_file", c->VideoPath);
@@ -372,7 +372,7 @@ namespace Auto{
 
 	LuaScript::LuaScript(wxString const& filename)
 		: filename(filename)
-		, L(NULL)
+		, L(nullptr)
 	{
 		include_path.push_back(filename.BeforeLast(L'\\') + L"\\");
 		include_path.push_back(Options.pathfull + L"\\Automation\\automation\\Include\\");
@@ -517,7 +517,7 @@ namespace Auto{
 		macros.clear();
 
 		lua_close(L);
-		L = NULL;
+		L = nullptr;
 	}
 
 
@@ -696,7 +696,7 @@ namespace Auto{
 		//, display(check_string(L, 1))
 		//, help(get_string(L, 2))
 		, cmd_type(COMMAND_NORMAL)
-		//, wxMenuItem(NULL,-1,display,help)
+		//, wxMenuItem(nullptr,-1,display,help)
 	{
 
 
@@ -944,8 +944,8 @@ namespace Auto{
 		if (loadMethod < 2){
 			initialized = true;
 			if (loadMethod == 0 && !loadNow){
-				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
-				CreateTimerQueueTimer(&handle, NULL, callbackfunc, this, 20, 0, 0);
+				eventEndAutoload = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+				CreateTimerQueueTimer(&handle, nullptr, callbackfunc, this, 20, 0, 0);
 			}
 			else{
 				ReloadScripts(true);
@@ -967,7 +967,7 @@ namespace Auto{
 		std::vector<Auto::LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
 		Auto::LuaScript *ls = new Auto::LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {
-			if (ls->GetFilename() == scripts[i]->GetFilename()){ delete ls; ls = NULL; return false; }
+			if (ls->GetFilename() == scripts[i]->GetFilename()){ delete ls; ls = nullptr; return false; }
 		}
 		ls->CheckLastModified(false);
 		scripts.push_back(ls);
@@ -1156,8 +1156,8 @@ namespace Auto{
 		if (!initialized){
 			int loadMethod = Options.GetInt(AUTOMATION_LOADING_METHOD);
 			if (loadMethod % 2 == 0){
-				eventEndAutoload = CreateEvent(NULL, FALSE, FALSE, NULL);
-				CreateTimerQueueTimer(&handle, NULL, callbackfunc, this, 5, 0, 0);
+				eventEndAutoload = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+				CreateTimerQueueTimer(&handle, nullptr, callbackfunc, this, 5, 0, 0);
 			}
 			else{
 				ReloadScripts(true);
@@ -1287,7 +1287,7 @@ namespace Auto{
 		for (size_t g = 0; g < ASSScripts.size(); g++){
 			if (ASSScripts[g]->GetFilename() == path){ return ASSScripts[g]; }
 		}
-		return NULL;
+		return nullptr;
 	}
 
 

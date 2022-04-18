@@ -30,8 +30,8 @@ FontEnumerator::FontEnumerator()
 {
 	Fonts = new wxArrayString();
 	FontsTmp = new wxArrayString();
-	FilteredFonts = NULL;
-	FilteredFontsTmp = NULL;
+	FilteredFonts = nullptr;
+	FilteredFontsTmp = nullptr;
 }
 
 FontEnumerator::~FontEnumerator()
@@ -55,7 +55,7 @@ void FontEnumerator::StartListening(KainoteFrame* _parent)
 	//it means that user have Windows 8 without SP
 	for (int i = 0; i < 2; i++){
 		int * threadNum = new int(i);
-		checkFontsThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
+		checkFontsThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)CheckFontsProc, threadNum, 0, 0);
 		SetThreadPriority(checkFontsThread, THREAD_PRIORITY_LOWEST);
 	}
 }
@@ -69,7 +69,7 @@ void FontEnumerator::EnumerateFonts(bool reenumerate)
 	lf.lfCharSet = DEFAULT_CHARSET;
 	wxStrlcpy(lf.lfFaceName, L"\0", WXSIZEOF(lf.lfFaceName));
 	lf.lfPitchAndFamily = 0;
-	hdc = ::GetDC(NULL);
+	hdc = ::GetDC(nullptr);
 	EnumFontFamiliesEx(hdc, &lf, (FONTENUMPROC)FontEnumeratorProc,
 		(LPARAM)this, 0 /* reserved */);
 	FontsTmp->Sort([](const wxString &i, const wxString &j){return i.CmpNoCase(j);});
@@ -83,8 +83,8 @@ void FontEnumerator::EnumerateFonts(bool reenumerate)
 		FilteredFonts = tmp;
 	}
 
-	::ReleaseDC(NULL, hdc);
-	hdc = NULL;
+	::ReleaseDC(nullptr, hdc);
+	hdc = nullptr;
 }
 
 wxArrayString *FontEnumerator::GetFonts(const wxWindow *client, std::function<void()> func)
@@ -168,7 +168,7 @@ int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lpt
 		if(Enum->CheckGlyphsExists(Enum->hdc, Enum->filter, missing) && missing.empty()){
 			Enum->FilteredFontsTmp->Add(lplf->lfFaceName);
 		}
-		SelectObject(Enum->hdc, NULL);
+		SelectObject(Enum->hdc, nullptr);
 		DeleteObject(hfont);
 	}
 	return true;
@@ -184,7 +184,7 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 		fontrealpath = wxGetOSDirectory() + L"\\fonts\\";
 	else{
 		WCHAR appDataPath[MAX_PATH];
-		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){
+		if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, appDataPath))){
 			fontrealpath = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
 		}
 		else{
@@ -194,7 +194,7 @@ DWORD FontEnumerator::CheckFontsProc(int *threadNum)
 		}
 	}
 
-	HANDLE hDir = NULL;
+	HANDLE hDir = nullptr;
 	hDir = FindFirstChangeNotification( fontrealpath.wc_str(), TRUE, FILE_NOTIFY_CHANGE_FILE_NAME);// | FILE_NOTIFY_CHANGE_LAST_WRITE
 
 	if (hDir == INVALID_HANDLE_VALUE){ 
@@ -242,7 +242,7 @@ bool FontEnumerator::CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxS
 	
 	bool succeeded = true;
 	//code taken from Aegisub, fixed by me.
-	//SCRIPT_CACHE cache = NULL;
+	//SCRIPT_CACHE cache = nullptr;
 	WORD *indices = new WORD[utf16characters.size()];
 
 	// First try to check glyph coverage with Uniscribe, since it

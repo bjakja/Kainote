@@ -15,14 +15,13 @@
 
 
 #include "kainoteApp.h"
-//#include "CsriMod.h"
 #include "OpennWrite.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 
 RendererFFMS2::RendererFFMS2(VideoCtrl *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
-	, m_FFMS2(NULL)
+	, m_FFMS2(nullptr)
 {
 	
 }
@@ -46,7 +45,7 @@ bool RendererFFMS2::DrawTexture(byte *nframe, bool copy)
 	if (!m_MainSurface)
 		return false;
 
-	byte *fdata = NULL;
+	byte *fdata = nullptr;
 	byte *texbuf;
 	byte bytes = 4;
 
@@ -152,7 +151,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 		m_DeviceLost = false;
 	}
 
-	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = m_D3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	
 	hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
@@ -166,7 +165,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 
 	// Render the vertex buffer contents
 	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
-	hr = m_D3DDevice->SetVertexShader(NULL);
+	hr = m_D3DDevice->SetVertexShader(nullptr);
 	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 	hr = m_D3DDevice->SetTexture(0, texture);
 	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
@@ -189,7 +188,7 @@ void RendererFFMS2::Render(bool redrawSubsOnFrame, bool wait)
 	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
 	hr = m_D3DDevice->EndScene();
-	hr = m_D3DDevice->Present(NULL, &m_WindowRect, NULL, NULL);
+	hr = m_D3DDevice->Present(nullptr, &m_WindowRect, nullptr, nullptr);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
@@ -204,7 +203,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 {
 	wxMutexLocker lock(m_MutexOpen);
 	kainoteApp *Kaia = (kainoteApp*)wxTheApp;
-	Provider *tmpvff = NULL;
+	Provider *tmpvff = nullptr;
 	if (m_State == Playing){ videoControl->Stop(); }
 
 	bool success;
@@ -267,7 +266,7 @@ bool RendererFFMS2::OpenFile(const wxString &fname, int subsFlag, bool vobsub, b
 	m_MainStreamRect.right = m_Width;
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
-	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = nullptr; }
 	m_FrameBuffer = new byte[m_Height * m_Pitch];
 
 	UpdateRects();
@@ -572,7 +571,7 @@ void RendererFFMS2::GoToPrevKeyframe()
 
 bool RendererFFMS2::HasFFMS2()
 {
-	return m_FFMS2 != NULL;
+	return m_FFMS2 != nullptr;
 }
 
 Provider* RendererFFMS2::GetFFMS2()

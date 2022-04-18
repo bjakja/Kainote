@@ -76,7 +76,7 @@ SubsLoader::SubsLoader(SubsGrid *_grid, const wxString &text, wxString &ext)
 		else{ validFormat = true; }
 	}
 	//WARNING! table can not be empty
-	//text helper class will crash when gets NULL in = operator
+	//text helper class will crash when gets nullptr in = operator
 	if (!succeeded){ 
 		grid->LoadDefault(); 
 		KaiMessageBox(_("Niepoprawny format (plik uszkodzony lub zawiera błędy)")); 

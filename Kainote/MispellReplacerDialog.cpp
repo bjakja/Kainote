@@ -20,7 +20,7 @@
 
 
 // header element of the results list
-void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void ReplacerResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool isOnCheckbox = event.GetX() < 19;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){
@@ -83,7 +83,7 @@ wxSize ReplacerResultsHeader::GetTextExtents(KaiListCtrl *theList){
 
 
 // Seek results element
-void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void ReplacerSeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool isOnCheckbox = event.GetX() < 19;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){

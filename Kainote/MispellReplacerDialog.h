@@ -40,7 +40,7 @@ public:
 		modified = true;
 	}
 	virtual ~ReplacerResultsHeader(){};
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ReplacerResultsHeader(*this); }
 	wxSize GetTextExtents(KaiListCtrl *theList);
@@ -64,7 +64,7 @@ public:
 		modified = true;
 	}
 	virtual ~ReplacerSeekResults(){};
-	TabPanel *tab = NULL;
+	TabPanel *tab = nullptr;
 	//wxString path;
 	int idLine;
 	int keyLine;
@@ -72,7 +72,7 @@ public:
 	wxPoint findPosition;
 	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new ReplacerSeekResults(*this); }
 	int OnVisibilityChange(int mode){

@@ -224,7 +224,7 @@ StyleStore::~StyleStore()
 {
 	if (cc){
 		cc->Destroy();
-		cc = NULL;
+		cc = nullptr;
 	}
 }
 
@@ -396,7 +396,7 @@ void StyleStore::OnAssDelete(wxCommandEvent& event)
 void StyleStore::StylesWindow(wxString newname)
 {
 	SubsGrid* grid = Notebook::GetTab()->Grid;
-	Styles *tab = NULL;
+	Styles *tab = nullptr;
 	if (selnum < 0){ tab = new Styles(); }
 	else if (ASSStyle){ tab = grid->GetStyle(selnum)->Copy(); }
 	else{ tab = Options.GetStyle(selnum)->Copy(); }
@@ -548,7 +548,7 @@ void StyleStore::OnDeleteCatalog(wxCommandEvent& event)
 	wxString Cat = catalogList->GetString(cat);
 	if (Cat == L"Default"){ wxBell(); return; }
 	if (KaiMessageBox(wxString::Format(("Naprawdę chcesz usunąć katalog o nazwie \"%s\"?"), Cat), _("Pytanie"), 
-		wxYES_NO, NULL, wxDefaultPosition, wxNO) == wxNO)
+		wxYES_NO, nullptr, wxDefaultPosition, wxNO) == wxNO)
 		return;
 
 	catalogList->Delete(cat);
@@ -753,7 +753,7 @@ void StyleStore::OnCleanStyles(wxCommandEvent& event)
 	}
 	if (existsStyles.IsEmpty()){ existsStyles = _("Brak"); }
 	if (delStyles.IsEmpty()){ delStyles = _("Brak"); }
-	wxWindow *parent = (tab->Video->IsFullScreen()) ? tab->Video->GetFullScreenWindow() : NULL;
+	wxWindow *parent = (tab->Video->IsFullScreen()) ? tab->Video->GetFullScreenWindow() : nullptr;
 	KaiMessageBox(wxString::Format(_("Używane style:\n%s\nUsunięte style:\n%s"), existsStyles, delStyles), 
 		_("Status usuniętych stylów"), 4L, parent);
 }
@@ -900,7 +900,7 @@ void StyleStore::OnDetachEdit(wxCommandEvent& event)
 	Options.SetBool(STYLE_MANAGER_DETACH_EDIT_WINDOW, detach);
 }
 
-StyleStore *StyleStore::SS = NULL;
+StyleStore *StyleStore::SS = nullptr;
 
 void StyleStore::ShowStore()
 {
@@ -962,7 +962,7 @@ StyleStore *StyleStore::Get()
 
 void StyleStore::DestroyStore()
 {
-	if (SS){ delete SS; SS = NULL; }
+	if (SS){ delete SS; SS = nullptr; }
 }
 
 void StyleStore::OnStyleMove(wxCommandEvent& event)

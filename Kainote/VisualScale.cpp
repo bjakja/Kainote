@@ -378,7 +378,7 @@ void Scale::SetCurVisual()
 	to.y = from.y + (scale.y * arrowLengths.y);
 
 	if (hasScaleToRenctangle) {
-		originalSize = GetTextSize(tab->Edit->line, &border, NULL, false);
+		originalSize = GetTextSize(tab->Edit->line, &border, nullptr, false);
 	}
 }
 
@@ -399,7 +399,7 @@ void Scale::ChangeTool(int _tool, bool blockSetCurVisual)
 		SetCurVisual();
 	}
 	else if(hasScaleToRenctangle){
-		originalSize = GetTextSize(tab->Edit->line, &border, NULL, false);
+		originalSize = GetTextSize(tab->Edit->line, &border, nullptr, false);
 	}
 	if (oldHasOriginalRectangle != hasOriginalRectangle || hasOriginalRectangle) {
 		if (hasOriginalRectangle) {
@@ -453,7 +453,7 @@ void Scale::ChangeVisual(wxString *txt, Dialogue *dial, size_t numOfSelections)
 		ChangeClipScale(txt, activeLinePos, Scalex, Scaley);
 		type = 2;
 	}
-	Styles* style = NULL;
+	Styles* style = nullptr;
 	if (changeAllTags) {
 		style = tab->Grid->GetStyle(0, dial->Style);
 	}

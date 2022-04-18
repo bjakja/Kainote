@@ -31,5 +31,5 @@ public:
 	static void CheckFileAssociation(const wxString *extensions, int numExt, std::vector<bool> &output);
 	static void RefreshRegistry();
 private:
-	HKEY regHKey = NULL;
+	HKEY regHKey = nullptr;
 };

@@ -111,7 +111,7 @@ private:
 	NumCtrl* step;
 	KaiChoice* mode;
 	NumCtrl* digitAfterDot;
-	NumCtrl* values[4] = { NULL, NULL, NULL, NULL };
+	NumCtrl* values[4] = { nullptr, nullptr, nullptr, nullptr };
 	KaiChoice* numOfValues;
 	KaiChoice* tagInsertMode;
 	std::vector<AllTagsSetting> tags;

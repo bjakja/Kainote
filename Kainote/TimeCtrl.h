@@ -58,7 +58,7 @@ private:
 	void OnKeyEvent(wxKeyEvent& event);
 	//void OnPaste(wxCommandEvent &event);
 	//void OnCopy(wxCommandEvent &event);
-	VideoCtrl *vb = NULL;
+	VideoCtrl *vb = nullptr;
 
 	DECLARE_EVENT_TABLE()
 };

@@ -15,7 +15,6 @@
 
 #pragma once
 
-//#include <wx/window.h>
 #include "RendererVideo.h"
 #include <vector>
 #include <thread>
@@ -32,7 +31,7 @@ public:
 	virtual ~Provider();
 	virtual void GetFrameBuffer(byte** buffer) {};
 	virtual void GetFrame(int frame, byte* buff) {};
-	virtual void GetBuffer(void* buf, int64_t start, int64_t count, double vol = 1.0) {};
+	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
 	virtual void SetColorSpace(const wxString& matrix) {};
@@ -42,8 +41,8 @@ public:
 	int GetSampleRate();
 	int GetBytesPerSample();
 	int GetChannels();
-	int64_t GetNumSamples();
-	void GetWaveForm(int* min, int* peak, int64_t start, int w, int h, int samples, float scale);
+	long long GetNumSamples();
+	void GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale);
 	int TimefromFrame(int nframe);
 	int FramefromTime(int time);
 	int GetMSfromFrame(int frame);
@@ -58,8 +57,8 @@ public:
 	}
 	float GetFPS() { return m_FPS; }
 	void SetFPS(float FPS) { m_FPS = FPS; }
-	int64_t GetNumFrames() { return m_numFrames; }
-	void SetNumFrames(int64_t numFrames) { m_numFrames = numFrames; }
+	long long GetNumFrames() { return m_numFrames; }
+	void SetNumFrames(long long numFrames) { m_numFrames = numFrames; }
 	void OpenKeyframes(const wxString& filename);
 	void SetPosition(int time, bool starttime);
 	bool AudioNotInitialized() {
@@ -72,7 +71,7 @@ protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
 	volatile bool audioNotInitialized = true;
 	volatile float m_audioProgress = 0;
-	RendererVideo* m_renderer = NULL;
+	RendererVideo* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height;
 	int m_arwidth;
@@ -88,8 +87,8 @@ protected:
 	bool m_isStartTime = false;
 	double m_duration = 0;
 	float m_FPS;
-	int64_t m_numSamples;
-	HANDLE m_thread = NULL;
+	long long m_numSamples;
+	HANDLE m_thread = nullptr;
 	HANDLE m_eventStartPlayback,
 		m_eventSetPosition,
 		m_eventKillSelf,

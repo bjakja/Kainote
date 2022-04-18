@@ -298,7 +298,7 @@ VolSlider::VolSlider(wxWindow *parent, const long int id, int apos, const wxPoin
 	end = wxBitmap(prb.GetSubBitmap(wxRect(76, 0, 10, 5)));
 	prbh = CreateBitmapFromPngResource(L"pbarhandle");
 	onslider = false;
-	bmp = NULL;
+	bmp = nullptr;
 }
 
 VolSlider::~VolSlider()
@@ -317,7 +317,7 @@ void VolSlider::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);

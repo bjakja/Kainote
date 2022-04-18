@@ -33,7 +33,7 @@ public:
 	}
 	~StoreHelper(){
 		if (*deleteReference < 1 && stored){
-			delete stored; stored = NULL; delete deleteReference; deleteReference = NULL;
+			delete stored; stored = nullptr; delete deleteReference; deleteReference = nullptr;
 		}
 		else{
 			(*deleteReference)--;
@@ -42,8 +42,8 @@ public:
 	void Store(const StoreHelper &sh, bool copy){
 		assert(sh.stored);
 		if (*deleteReference < 1 && stored != sh.stored){
-			delete stored; stored = NULL;
-			delete deleteReference; deleteReference = NULL;
+			delete stored; stored = nullptr;
+			delete deleteReference; deleteReference = nullptr;
 		}
 		if (copy){
 			stored = new unsigned char(*sh.stored);
@@ -111,8 +111,8 @@ public:
 		}*/
 	~StoreTextHelper(){
 		if (*deleteReference < 1){
-			delete stored; stored = NULL;
-			delete deleteReference; deleteReference = NULL;
+			delete stored; stored = nullptr;
+			delete deleteReference; deleteReference = nullptr;
 		}
 		else{
 			(*deleteReference)--;
@@ -120,8 +120,8 @@ public:
 	};
 	void Store(const StoreTextHelper &sh){
 		if (*deleteReference < 1){
-			delete stored; stored = NULL;
-			delete deleteReference; deleteReference = NULL;
+			delete stored; stored = nullptr;
+			delete deleteReference; deleteReference = nullptr;
 		}
 		else{
 			(*deleteReference)--;
@@ -133,8 +133,8 @@ public:
 	};
 	void StoreText(const wxString &txt){
 		if (*deleteReference < 1){
-			delete stored; stored = NULL;
-			delete deleteReference; deleteReference = NULL;
+			delete stored; stored = nullptr;
+			delete deleteReference; deleteReference = nullptr;
 		}
 		else{
 			(*deleteReference)--;
@@ -257,7 +257,7 @@ private:
 	bool StartsWithNoBlock(const wxString &text, wxUniChar ch, size_t *pos);
 	bool EndsWith(const wxString &text, wxUniChar ch, size_t *pos);
 	//StoreTextHelper Text, TextTl;
-	ParseData* parseData = NULL;
+	ParseData* parseData = nullptr;
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
 	STime Start, End;

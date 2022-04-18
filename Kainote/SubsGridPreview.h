@@ -31,8 +31,8 @@ public:
 		lineRangeLen = _lineRangeEnd;
 	};
 	bool operator ==(const MultiPreviewData &data){ return data.grid == grid && data.lineRangeStart == lineRangeStart; }
-	TabPanel *tab = NULL;
-	SubsGrid *grid = NULL;
+	TabPanel *tab = nullptr;
+	SubsGrid *grid = nullptr;
 	int lineRangeStart = 0;
 	int lineRangeLen = 1;
 };
@@ -62,7 +62,7 @@ private:
 
 	SubsGrid *previewGrid;
 	SubsGrid *parent;
-	wxBitmap *bmp=NULL;
+	wxBitmap *bmp=nullptr;
 	//int scrollPosition = 0;
 	//int scrollPositionId = 0;
 	int scHor = 0;
@@ -71,8 +71,8 @@ private:
 	bool holding = false;
 	bool onX = false;
 	bool pushedX = false;
-	KaiScrollbar *scrollbar=NULL;
-	KaiListCtrl *occurencesList = NULL;
+	KaiScrollbar *scrollbar=nullptr;
+	KaiListCtrl *occurencesList = nullptr;
 	std::vector<MultiPreviewData> previewData;
 	MultiPreviewData lastData;
 };

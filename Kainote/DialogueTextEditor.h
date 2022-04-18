@@ -102,7 +102,7 @@ protected:
 	wxUniChar lastKey;
 	wxBitmap* bmp;
 	KaiScrollbar *scroll;
-	PopupTagList *tagList = NULL;
+	PopupTagList *tagList = nullptr;
 	wxFont font;
 	std::vector<MisspellData> misspells;
 	wxCaret *caret;

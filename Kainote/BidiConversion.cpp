@@ -380,7 +380,7 @@ void BIDIReverseConvert(wxString* text)
 	free(text2);
 }
 
-//put normal RTL text and get converted to LTR when text == NULL or len = 0 function fail
+//put normal RTL text and get converted to LTR when text == nullptr or len = 0 function fail
 void ConvertToLTR(wxString* textin, wxString* textout)
 {
 	//if (!textin)

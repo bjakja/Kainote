@@ -361,7 +361,7 @@ public:
 	std::map<int, wxString> keys;
 	bool AudioKeys;
 	int lastScriptId;
-	HotkeysNaming *hotkeysNaming = NULL;
+	HotkeysNaming *hotkeysNaming = nullptr;
 };
 
 

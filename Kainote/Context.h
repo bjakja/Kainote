@@ -37,7 +37,7 @@ public:
 	virtual bool Init() {};
 	virtual void Clear(bool device = false) {};
 	virtual void Render(bool recreateFrame) {};
-	virtual bool DrawTexture(unsigned char *nframe = NULL, bool copy = false) {};
+	virtual bool DrawTexture(unsigned char *nframe = nullptr, bool copy = false) {};
 	virtual void DrawProgressBar() {};
 	virtual void DrawZoom() {};
 	virtual void DrawRect(D3DXVECTOR2 position, bool sel = false, float size = 5.0f) {};

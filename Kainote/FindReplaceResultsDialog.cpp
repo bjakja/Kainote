@@ -108,7 +108,7 @@ void FindReplaceResultsDialog::EndMultiThreading()
 	}
 	if (multiThreadList)
 		delete[] multiThreadList;
-	multiThreadList = NULL;
+	multiThreadList = nullptr;
 	multiThreadListSize = 0;
 }
 
@@ -129,7 +129,7 @@ void FindReplaceResultsDialog::GetReplaceString(wxString *replaceString)
 	*replaceString = ReplaceText->GetValue();
 }
 
-void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void ResultsHeader::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool isOnCheckbox = event.GetX() < 19;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox)){
@@ -192,7 +192,7 @@ wxSize ResultsHeader::GetTextExtents(KaiListCtrl *theList){
 	return size;
 }
 
-void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = NULL */)
+void SeekResults::OnMouseEvent(wxMouseEvent &event, bool _enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */)
 {
 	bool isOnCheckbox = event.GetX() < 19;
 	if ((_enter && isOnCheckbox) || (!enter && isOnCheckbox && !leave)){

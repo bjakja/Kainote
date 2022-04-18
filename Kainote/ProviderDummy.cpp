@@ -30,7 +30,7 @@ ProviderDummy::~ProviderDummy()
 	}
 
 	delete[] m_FrameBuffer;
-	m_FrameBuffer = NULL;
+	m_FrameBuffer = nullptr;
 }
 
 ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success)
@@ -43,7 +43,7 @@ ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, 
 			if (renderer) {
 				unsigned int threadid = 0;
 				m_thread = (HANDLE)_beginthreadex(0, 0, DummyProc, this, 0, &threadid);
-				//CreateThread( NULL, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
+				//CreateThread( nullptr, 0,  (LPTHREAD_START_ROUTINE)FFMS2Proc, this, 0, 0);
 				SetThreadPriority(m_thread, THREAD_PRIORITY_TIME_CRITICAL);
 				SetThreadName(threadid, "DummyThread");
 			}
@@ -67,7 +67,7 @@ void ProviderDummy::GetFrame(int frame, byte* buff)
 	GetFrameBuffer(&buff);
 }
 
-void ProviderDummy::GetBuffer(void* buf, int64_t start, int64_t count, double vol)
+void ProviderDummy::GetBuffer(void* buf, long long start, long long count, double vol)
 {
 	//buff has two bits
 	memset(buf, 0, count * 2);
@@ -110,7 +110,7 @@ void ProviderDummy::GenerateFrame()
 	byte b = m_frameColor.Blue();
 	if (m_FrameBuffer) {
 		delete[] m_FrameBuffer;
-		m_FrameBuffer = NULL;
+		m_FrameBuffer = nullptr;
 	}
 	m_FrameBuffer = new byte[m_framePlane];
 	byte* buff = m_FrameBuffer;
@@ -159,7 +159,7 @@ bool ProviderDummy::ParseDummyData(const wxString& data)
 		m_channels = 1;
 		m_sampleRate = 44100;
 		m_bytesPerSample = 2;
-		m_numSamples = (int64_t)5 * 30 * 60 * 1000 * m_sampleRate / 1000;
+		m_numSamples = (long long)5 * 30 * 60 * 1000 * m_sampleRate / 1000;
 		audioNotInitialized = false;
 		return true;
 	}

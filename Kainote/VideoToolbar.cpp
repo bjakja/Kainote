@@ -30,7 +30,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 	, sel(-1)
 	, clicked(false)
 	, blockScroll(false)
-	, bmp(NULL)
+	, bmp(nullptr)
 {
 	if (icons.size() == 0){
 		//Remember! Adding here elements you must change all in h file!!
@@ -95,7 +95,7 @@ VideoToolbar::VideoToolbar(wxWindow *parent, const wxPoint &pos, const wxSize &s
 
 	}
 	//adding visual second toolbar elements
-	visualItems.push_back(NULL);//cross
+	visualItems.push_back(nullptr);//cross
 	visualItems.push_back(new PositionItem());
 	visualItems.push_back(new MoveItem());
 	visualItems.push_back(new ScaleItem());
@@ -238,7 +238,7 @@ void VideoToolbar::OnPaint(wxPaintEvent &evt)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ 
 		bmp = new wxBitmap(w, h); 
@@ -491,7 +491,7 @@ void VectorItem::HideContols()
 	if (shapeList) {
 		shapeListSelection = shapeList->GetSelection();
 		shapeList->Destroy();
-		shapeList = NULL;
+		shapeList = nullptr;
 	}
 }
 
@@ -712,9 +712,9 @@ void AllTagsItem::HideContols()
 			mode = options->GetSelection();
 			options->Destroy();
 		}
-		tagList = NULL;
-		edition = NULL;
-		options = NULL;
+		tagList = nullptr;
+		edition = nullptr;
+		options = nullptr;
 	}
 }
 
@@ -1060,7 +1060,7 @@ void PositionItem::HideContols()
 {
 	if (alignment) {
 		alignment->Destroy();
-		alignment = NULL;
+		alignment = nullptr;
 	}
 }
 

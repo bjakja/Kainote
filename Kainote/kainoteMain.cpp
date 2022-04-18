@@ -128,10 +128,10 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	int lastSessionConfig = Options.GetInt(LAST_SESSION_CONFIG);
 	lastSession->Append(GLOBAL_ASK_FOR_LOAD_LAST_SESSION, 
 		_("Pytaj o wczytanie ostatniej sesji przy starcie programu"), 
-		NULL, _("Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"), 
+		nullptr, _("Pyta, czy wczytać ostatnio zaczytane pliki przy starcie programu"), 
 		ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 1);
 	lastSession->Append(GLOBAL_LOAD_LAST_SESSION_ON_START, 
-		_("Wczytaj ostatnią sesję przy starcie programu"), NULL, 
+		_("Wczytaj ostatnią sesję przy starcie programu"), nullptr, 
 		_("Wczytuje poprzednio zaczytane pliki przy starcie programu"), 
 		ITEM_CHECK_AND_HIDE)->Check(lastSessionConfig == 2);
 	
@@ -152,7 +152,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		_("Usuń napisy z edytora"), PTR_BITMAP_PNG(L"close"));
 	FileMenu->Append(GLOBAL_SAVE_WITH_VIDEO_NAME, _("Zapisuj napisy z nazwą wideo"), 
 		_("Zapisuj napisy z nazwą wideo"), true, 
-		PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), NULL, ITEM_CHECK)->Check(Options.GetBool(SUBS_AUTONAMING));
+		PTR_BITMAP_PNG(L"SAVEWITHVIDEONAME"), nullptr, ITEM_CHECK)->Check(Options.GetBool(SUBS_AUTONAMING));
 	Toolbar->AddID(GLOBAL_SAVE_WITH_VIDEO_NAME);
 	FileMenu->Append(GLOBAL_OPEN_AUTO_SAVE, _("Otwórz autozapis"), _("Otwiera autozapis wybrany z listy"));
 	FileMenu->Append(GLOBAL_DELETE_TEMPORARY_FILES, _("Usuń pliki tymczasowe"), 
@@ -437,7 +437,7 @@ KainoteFrame::~KainoteFrame()
 		if (sizex >= 600 && sizey >= 400)
 			Options.SetCoords(WINDOW_SIZE, sizex, sizey);
 
-		wxRect monRect = GetMonitorRect1(0, NULL, wxRect(posx, posy, sizex, sizey));
+		wxRect monRect = GetMonitorRect1(0, nullptr, wxRect(posx, posy, sizex, sizey));
 		Options.SetCoords(MONITOR_POSITION, monRect.x, monRect.y);
 		Options.SetCoords(MONITOR_SIZE, monRect.GetWidth(), monRect.GetHeight());
 	}
@@ -451,25 +451,25 @@ KainoteFrame::~KainoteFrame()
 	GetTab()->Video->SaveVolume();
 	Notebook::SaveLastSession(true);
 	//Tabs->Destroy();
-	//Tabs = NULL;
+	//Tabs = nullptr;
 	//destroy findreplace before saving options it saving findreplace options in destructor
-	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
-	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
+	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = nullptr; }
+	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = nullptr; }
 	Options.SaveOptions();
 
 	StyleStore::DestroyStore();
-	if (Auto){ delete Auto; Auto = NULL; }
-	if (FC){ delete FC; FC = NULL; }
+	if (Auto){ delete Auto; Auto = nullptr; }
+	if (FC){ delete FC; FC = nullptr; }
 	SpellChecker::Destroy();
 	VideoToolbar::DestroyIcons();
 	LogHandler::Destroy();
 }
 
 void KainoteFrame::DestroyDialogs(){
-	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = NULL; }
-	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = NULL; }
-	if (FC){ delete FC; FC = NULL; }
-	if (MR){ MR->Destroy(); MR = NULL; }
+	if (FR){ FR->SaveOptions(); FR->Destroy(); FR = nullptr; }
+	if (SL){ SL->SaveOptions(); SL->Destroy(); SL = nullptr; }
+	if (FC){ delete FC; FC = nullptr; }
+	if (MR){ MR->Destroy(); MR = nullptr; }
 	StyleStore::DestroyStore();
 };
 
@@ -1515,7 +1515,7 @@ void KainoteFrame::SetAccels(bool _all)
 			MenuItem *item = Menubar->FindItem(id);
 			if (!item){ /*KaiLog(wxString::Format("no id %i", id));*/ continue; }
 			if (emptyAccel){
-				item->SetAccel(NULL);
+				item->SetAccel(nullptr);
 				continue;
 			}
 			else{
@@ -1909,7 +1909,7 @@ void KainoteFrame::OpenAudioInTab(TabPanel *tab, int id, const wxString &path)
 		if (tab->Edit->ABox){
 			RendererVideo *renderer = tab->Video->GetRenderer();
 			if (renderer)
-				renderer->SetAudioPlayer(NULL);
+				renderer->SetAudioPlayer(nullptr);
 
 			tab->Edit->CloseAudio();
 			tab->AudioPath.clear();
@@ -2007,7 +2007,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 					break;
 				case GLOBAL_SET_AUDIO_FROM_VIDEO:
 				case GLOBAL_SET_AUDIO_MARK_FROM_VIDEO:
-					vitem->Enable(tab->Edit->ABox != NULL && editor);
+					vitem->Enable(tab->Edit->ABox != nullptr && editor);
 					break;
 				case GLOBAL_PLAY_PAUSE:
 				case GLOBAL_PREVIOUS_FRAME:
@@ -2040,7 +2040,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			if (aitem) {
 				int aid = aitem->GetId();
 				if(aid == GLOBAL_CLOSE_AUDIO)
-					aitem->Enable(editor && tab->Edit->ABox != NULL);
+					aitem->Enable(editor && tab->Edit->ABox != nullptr);
 				else if(aid == GLOBAL_AUDIO_FROM_VIDEO)
 					aitem->Enable(editor && tab->Video->GetState() != None);
 				else
@@ -2169,7 +2169,7 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 					viitem->Enable(editor && hasVideoLoaded && !isOnAnotherMonitor);
 					break;
 				case GLOBAL_VIEW_AUDIO:
-					viitem->Enable(editor && tab->Edit->ABox != NULL);
+					viitem->Enable(editor && tab->Edit->ABox != nullptr);
 					break;
 				default://only subs
 					viitem->Enable(editor);

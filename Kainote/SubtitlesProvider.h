@@ -15,7 +15,6 @@
 
 #pragma  once
 #include "SubtitlesProviderManager.h"
-#ifdef subsProvider
 #include "CsriMod.h"
 #include <wx/window.h>
 #include <wx/arrstr.h>
@@ -51,7 +50,7 @@ protected:
 	bool m_IsSwapped;
 	bool m_HasParameters = false;
 	char m_BytesPerColor = 4;
-	static csri_rend *m_CsriRenderer;
+	const csri_rend *m_CsriRenderer = 0;
 };
 
 
@@ -66,10 +65,10 @@ public:
 	static void GetProviders(wxArrayString *providerList);
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 private:
-	csri_frame *m_CsriFrame = NULL;
-	csri_fmt *m_CsriFormat = NULL;
-	csri_inst *m_CsriInstance = NULL;
-	csri_rend *GetVSFilter();
+	struct csri_frame *m_CsriFrame = nullptr;
+	struct csri_fmt *m_CsriFormat = nullptr;
+	struct csri_inst *m_CsriInstance = nullptr;
+	struct csri_rend *GetVSFilter();
 };
 
 class SubtitlesLibass : public SubtitlesProvider
@@ -83,12 +82,11 @@ public:
 	void SetVideoParameters(const wxSize& size, unsigned char format, bool isSwapped);
 	void ReloadLibraries(bool destroyExisted = false) override;
 	bool IsLibass() { return true; }
-	ASS_Track *m_AssTrack = NULL;
+	ASS_Track *m_AssTrack = nullptr;
 	static std::atomic<bool> m_IsReady;
-	HANDLE thread = NULL;
+	HANDLE thread = nullptr;
 	wxSize m_VideoSize;
 	volatile bool m_SubsSkipped = false;
 	static wxMutex openMutex;
 };
 
-#endif

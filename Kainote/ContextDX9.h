@@ -27,7 +27,7 @@ public:
 	bool Init() override;
 	void Clear(bool device = false) override;
 	void Render(bool recreateFrame) override;
-	bool DrawTexture(unsigned char *nframe = NULL, bool copy = false) override;
+	bool DrawTexture(unsigned char *nframe = nullptr, bool copy = false) override;
 	void DrawProgressBar() override;
 	void DrawZoom() override;
 	void DrawRect(D3DXVECTOR2 position, bool sel = false, float size = 5.0f) override;
@@ -43,14 +43,14 @@ public:
 	void DrawPrimitiveUP(D3DPRIMITIVETYPE PrimitiveType, unsigned int PrimitiveCount, const void* pVertexStreamZeroData, unsigned int VertexStreamZeroStride) override;
 
 private:
-	IDirectXVideoProcessorService *m_DXVAService = NULL;
-	IDirectXVideoProcessor *m_DXVAProcessor = NULL;
-	LPDIRECT3D9 m_D3DObject = NULL;
-	LPDIRECT3DSURFACE9 m_BlackBarsSurface = NULL;
-	LPDIRECT3DSURFACE9 m_MainSurface = NULL;
-	LPDIRECT3DDEVICE9 m_D3DDevice = NULL;
+	IDirectXVideoProcessorService *m_DXVAService = nullptr;
+	IDirectXVideoProcessor *m_DXVAProcessor = nullptr;
+	LPDIRECT3D9 m_D3DObject = nullptr;
+	LPDIRECT3DSURFACE9 m_BlackBarsSurface = nullptr;
+	LPDIRECT3DSURFACE9 m_MainSurface = nullptr;
+	LPDIRECT3DDEVICE9 m_D3DDevice = nullptr;
 	D3DFORMAT m_D3DFormat;
-	ID3DXLine *m_D3DLine = NULL;
+	ID3DXLine *m_D3DLine = nullptr;
 	std::vector<LPD3DXFONT> m_D3DFonts;
 	D3DXVECTOR2 vectors[12];
 };

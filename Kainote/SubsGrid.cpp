@@ -85,7 +85,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			Options.SetTable(GRID_FILTER_STYLES, filterStyles);
 			if (filterStyles.size() > 0 && !(filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GRID_FILTER_BY, filterBy | FILTER_BY_STYLES);
-				Menu *parentMenu = NULL;
+				Menu *parentMenu = nullptr;
 				MenuItem * parentItem = Menu::FindItemGlobally(GRID_FILTER_BY_STYLES, &parentMenu);
 				if (parentItem){
 					parentItem->Check(true);
@@ -95,7 +95,7 @@ SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, cons
 			}
 			else if (filterStyles.size() < 1 && (filterBy & FILTER_BY_STYLES)){
 				Options.SetInt(GRID_FILTER_BY, filterBy ^ FILTER_BY_STYLES);
-				Menu *parentMenu = NULL;
+				Menu *parentMenu = nullptr;
 				MenuItem * parentItem = Menu::FindItemGlobally(GRID_FILTER_BY_STYLES, &parentMenu);
 				if (parentItem){
 					parentItem->Check(false);
@@ -155,7 +155,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	Options.GetTable(GRID_FILTER_STYLES, optionsFilterStyles);
 	filterStyles.clear();
 	for (size_t i = 0; i < StylesSize(); i++){
-		MenuItem * styleItem = stylesMenu->Append(ID_FILTERING_STYLES, (*styles)[i]->Name, emptyString, true, NULL, NULL, ITEM_CHECK);
+		MenuItem * styleItem = stylesMenu->Append(ID_FILTERING_STYLES, (*styles)[i]->Name, emptyString, true, nullptr, nullptr, ITEM_CHECK);
 		if (optionsFilterStyles.Index((*styles)[i]->Name) != -1){ styleItem->Check(); filterStyles.Add((*styles)[i]->Name); }
 	}
 	//filter submenu
@@ -164,7 +164,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 	filterMenu->SetAccMenu(GRID_FILTER_AFTER_SUBS_LOAD, _("Filtruj po wczytaniu napisów"), _("Nie obejmuje zaznaczonych linii"), isASS, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_AFTER_LOAD));
 	filterMenu->SetAccMenu(GRID_FILTER_INVERT, _("Filtrowanie odwrócone"), _("Filtrowanie odwrócone"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_FILTER_INVERTED));
 	filterMenu->SetAccMenu(GRID_FILTER_DO_NOT_RESET, _("Nie resetuj wcześniejszego filtrowania"), _("Nie resetuj wcześniejszego filtrowania"), true, ITEM_CHECK)->Check(Options.GetBool(GRID_ADD_TO_FILTER));
-	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, NULL, stylesMenu, ITEM_CHECK);
+	MenuItem *Item = new MenuItem(GRID_FILTER_BY_STYLES, _("Ukryj linie ze stylami"), _("Ukryj linie ze stylami"), isASS, nullptr, stylesMenu, ITEM_CHECK);
 	filterMenu->SetAccMenu(Item, Item->label)->Check(filterStyles.size() > 0);
 	filterMenu->SetAccMenu(GRID_FILTER_BY_SELECTIONS, _("Ukryj zaznaczone linie"), _("Ukryj zaznaczone linie"), sels > 0, ITEM_CHECK)->Check(filterBy & FILTER_BY_SELECTIONS && sels > 0);
 	filterMenu->SetAccMenu(GRID_FILTER_BY_DIALOGUES, _("Ukryj komentarze"), _("Ukryj komentarze"), isASS, ITEM_CHECK)->Check((filterBy & FILTER_BY_DIALOGUES) != 0);
@@ -524,7 +524,7 @@ void SubsGrid::OnPaste(int id)
 	bool hasTree = false;
 	while (wpaste.HasMoreTokens())
 	{
-		Dialogue *newdial = NULL;
+		Dialogue *newdial = nullptr;
 		token = (tmptoken.empty()) ? wpaste.NextToken().Trim(false).Trim() : tmptoken;
 		if (IsNumber(token)){
 			token.Empty();
@@ -1323,7 +1323,7 @@ void SubsGrid::OnShowPreview()
 		ShowSecondComparedLine(currentLine, true);
 	}
 	else{
-		ShowPreviewWindow(NULL, this, currentLine, currentLine - scrollPosition);
+		ShowPreviewWindow(nullptr, this, currentLine, currentLine - scrollPosition);
 	}
 }
 

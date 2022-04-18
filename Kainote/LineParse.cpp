@@ -16,9 +16,10 @@
 #include "LineParse.h"
 #include "SpellChecker.h"
 #include "SubsDialogue.h"
-#include "GraphicsD2D.h"
+
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
+#include "GraphicsD2D.h"
 
 void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int tagReplaceLen) {
 	if (isInit)
@@ -28,7 +29,7 @@ void TextData::Init(const wxString &text, bool spellchecker, int subsFormat, int
 		return;
 	}
 
-	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, NULL, tagReplaceLen);
+	SpellChecker::Get()->CheckTextAndBrackets(text, this, spellchecker, subsFormat, nullptr, tagReplaceLen);
 	isInit = true;
 }
 
@@ -86,11 +87,11 @@ void TextData::DrawMisspells(wxString &text, const wxPoint & pos, wxWindow * gri
 			if (errors[s] > 0) {
 
 				wxString berr = text.Mid(0, errors[s]);
-				grid->GetTextExtent(berr, &bfw, &bfh, NULL, NULL, &font);
+				grid->GetTextExtent(berr, &bfw, &bfh, nullptr, nullptr, &font);
 			}
 			else { bfw = 0; }
 
-			grid->GetTextExtent(err, &fw, &fh, NULL, NULL, &font);
+			grid->GetTextExtent(err, &fw, &fh, nullptr, nullptr, &font);
 			dc->DrawRectangle(pos.x + bfw + 3, pos.y, fw, gridHeight);
 		}
 	}

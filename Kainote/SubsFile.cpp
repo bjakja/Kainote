@@ -324,7 +324,7 @@ void SubsFile::AppendDialogue(Dialogue *dial)
 Dialogue * SubsFile::CopyVisibleDialogue(size_t i, bool push /*= true*/, bool keepstate/*=false*/)
 {
 	if (i >= subs->dialogues.size() || !subs->dialogues[i]->isVisible)
-		return NULL;
+		return nullptr;
 
 	return CopyDialogue(i, push, keepstate);
 }
@@ -342,7 +342,7 @@ Dialogue * SubsFile::CopyDialogue(size_t i, bool push /*= true*/, bool keepstate
 Dialogue * SubsFile::GetVisibleDialogue(size_t i)
 {
 	if (i >= subs->dialogues.size() || !subs->dialogues[i]->isVisible)
-		return NULL;
+		return nullptr;
 
 	return subs->dialogues[i];
 }
@@ -350,7 +350,7 @@ Dialogue * SubsFile::GetVisibleDialogue(size_t i)
 Dialogue *SubsFile::GetDialogue(size_t i)
 {
 	if (i >= subs->dialogues.size())
-		return NULL;
+		return nullptr;
 
 	return subs->dialogues[i];
 }
@@ -811,7 +811,7 @@ SInfo *SubsFile::GetSInfoP(const wxString &key, int *ii)
 		i++;
 	}
 	*ii = -1;
-	return NULL;
+	return nullptr;
 }
 
 void SubsFile::DeleteSInfo(size_t i)
@@ -835,7 +835,7 @@ void SubsFile::SaveSelections(bool clear, int currentLine, int markedLine, int s
 	if (clear){ ClearSelections(); }
 }
 
-size_t SubsFile::FirstSelection(size_t *id /*= NULL*/)
+size_t SubsFile::FirstSelection(size_t *id /*= nullptr*/)
 {
 	if (!subs->Selections.empty()){
 		// return only visible element when nothing is visible, return -1;
@@ -898,7 +898,7 @@ void SubsFile::AddSInfo(const wxString &SI, wxString val, bool save)
 		val.Trim(true);
 	}
 	else{ key = SI; }
-	SInfo *oldinfo = NULL;
+	SInfo *oldinfo = nullptr;
 	int ii = -1;
 	oldinfo = GetSInfoP(key, &ii);
 

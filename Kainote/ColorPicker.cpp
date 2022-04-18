@@ -59,7 +59,7 @@ static const int spectrum_horz_vert_arrow_size = 4;
 
 ColorPickerSpectrum::ColorPickerSpectrum(wxWindow *parent, wxWindowID id, wxBitmap *_background, 
 	int xx, int yy, bool vert, wxSize _size)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE), 
+	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE), 
 		x(xx), y(yy), background(_background), vertical(vert)
 {
 	_size.x += 2;
@@ -190,7 +190,7 @@ void ColorPickerSpectrum::OnMouse(wxMouseEvent &evt)
 
 
 ColorPickerRecent::ColorPickerRecent(wxWindow *parent, wxWindowID id, int _cols, int _rows, int _cellsize)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
+	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
 	, rows(_rows)
 	, cols(_cols)
 	, cellsize(_cellsize)
@@ -324,7 +324,7 @@ void ColorPickerRecent::OnSize(wxSizeEvent &evt)
 
 ColorPickerScreenDropper::ColorPickerScreenDropper(wxWindow *parent, wxWindowID id, 
 	int _resx, int _resy, int _magnification, bool _integrated_dropper)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, STATIC_BORDER_FLAG), 
+	: wxWindow(parent, id, wxDefaultPosition, wxDefaultSize, STATIC_BORDER_FLAG), 
 	resx(_resx), resy(_resy), magnification(_magnification), integrated_dropper(_integrated_dropper)
 {
 	SetClientSize(resx * magnification, resy * magnification);
@@ -687,7 +687,7 @@ DialogColorPicker::~DialogColorPicker()
 	delete alpha_slider;
 
 	if (screen_dropper_icon->HasCapture()) screen_dropper_icon->ReleaseMouse();
-	DCP = NULL;
+	DCP = nullptr;
 }
 
 
@@ -1175,14 +1175,14 @@ void DialogColorPicker::OnMouse(wxMouseEvent &evt)
 
 
 
-DialogColorPicker *DialogColorPicker::DCP = NULL;
+DialogColorPicker *DialogColorPicker::DCP = nullptr;
 
 DialogColorPicker * DialogColorPicker::Get(wxWindow *parent, AssColor color /*= wxColour("#000000")*/, int colorType /*= -1*/)
 {
 	int x = -1, y = -1;
 	if (DCP && parent != DCP->GetParent()){
 		DCP->GetPosition(&x, &y);
-		DCP->Destroy(); DCP = NULL;
+		DCP->Destroy(); DCP = nullptr;
 	}
 	if (!DCP){
 		DCP = new DialogColorPicker(parent, color, colorType);

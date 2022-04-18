@@ -246,7 +246,7 @@ void RotationZ::OnMouseEvent(wxMouseEvent &evt)
 
 void RotationZ::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
+	D3DXVECTOR2 linepos = GetPosnScale(nullptr, nullptr, moveValues);
 	if (moveValues[6] > 3){ linepos = CalcMovePos(); }
 	from = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);

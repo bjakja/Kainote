@@ -57,7 +57,7 @@ MenuItem::MenuItem(int _id, const wxString& _label, const wxString& _help, bool 
 	if (Submenu){ disableMapping = true; }
 	check = false;
 	help = _help;
-	//accel=NULL;
+	//accel=nullptr;
 }
 MenuItem::~MenuItem()
 {
@@ -95,8 +95,8 @@ wxString MenuItem::GetAccel(){
 
 Menu::Menu(char window)
 	:Mnemonics()
-	, dialog(NULL)
-	, parentMenu(NULL)
+	, dialog(nullptr)
+	, parentMenu(nullptr)
 	, wnd(window)
 {
 }
@@ -118,7 +118,7 @@ int Menu::GetPopupMenuSelection(const wxPoint &pos, wxWindow *parent, int *accel
 	if (dialog && ret > -5){
 		if (accels){ *accels = dialog->accel; }
 		dialog->Destroy();
-		dialog = NULL;
+		dialog = nullptr;
 	}
 	return ret;
 }
@@ -150,7 +150,7 @@ void Menu::CalcPosAndSize(wxWindow *parent, wxPoint *pos, wxSize *size, bool cli
 	if (isize > (size_t)maxVisible) { size->x += 20; isize = maxVisible; }
 	size->y = height * isize + 4;
 	int w, h;
-	wxRect workArea = GetMonitorWorkArea(0, NULL, wxPoint(pos->x + size->x, pos->y), true);
+	wxRect workArea = GetMonitorWorkArea(0, nullptr, wxPoint(pos->x + size->x, pos->y), true);
 	w = workArea.width + workArea.x;
 	h = workArea.height + workArea.y;
 	//It was probably the last bug of this element or maybe there are some wonder monitors combination
@@ -306,7 +306,7 @@ MenuItem *Menu::FindItem(int id, Menu **menu)
 			if (item){ return item; }
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 MenuItem *Menu::FindItem(const wxString& label)
@@ -321,7 +321,7 @@ MenuItem *Menu::FindItem(const wxString& label)
 		}
 
 	}
-	return NULL;
+	return nullptr;
 }
 
 MenuItem *Menu::FindItemGlobally(int id, Menu **menu)
@@ -329,12 +329,12 @@ MenuItem *Menu::FindItemGlobally(int id, Menu **menu)
 	if (MenuDialog::ParentMenu && MenuDialog::ParentMenu->parent){
 		return MenuDialog::ParentMenu->parent->FindItem(id, menu);
 	}
-	return NULL;
+	return nullptr;
 }
 
 MenuItem *Menu::FindItemByPosition(int pos)
 {
-	if (pos > (int)items.size() || pos < 0){ return NULL; }
+	if (pos > (int)items.size() || pos < 0){ return nullptr; }
 	return items[pos];
 }
 
@@ -355,7 +355,7 @@ void Menu::AppendSeparator()
 void Menu::DestroyDialog()
 {
 	if (dialog){
-		dialog->Destroy(); dialog = NULL;
+		dialog->Destroy(); dialog = nullptr;
 	}
 }
 
@@ -403,8 +403,8 @@ MenuItem *Menu::SetAccMenu(MenuItem *menuitem, const wxString &name)
 //	}
 //}
 
-MenuDialog* MenuDialog::ParentMenu = NULL;
-MenuDialog* MenuDialog::lastActiveMenu = NULL;
+MenuDialog* MenuDialog::ParentMenu = nullptr;
+MenuDialog* MenuDialog::lastActiveMenu = nullptr;
 
 
 MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos, const wxSize &size, bool sendEvent)
@@ -416,10 +416,10 @@ MenuDialog::MenuDialog(Menu *_parent, wxWindow *DialogParent, const wxPoint &pos
 	, isPartialModal(false)
 	, submenuShown(-1)
 	, submenuToHide(-1)
-	, bmp(NULL)
-	, scroll(NULL)
+	, bmp(nullptr)
+	, scroll(nullptr)
 	, accel(0)
-	, loop(NULL)
+	, loop(nullptr)
 {
 	if (!ParentMenu){
 		ParentMenu = this;
@@ -558,7 +558,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	}
 	if (elem != sel){
 		sel = elem;
-		if (item->submenu && item->submenu->dialog == NULL && item->enabled){
+		if (item->submenu && item->submenu->dialog == nullptr && item->enabled){
 			submenuShown = elem;
 			if (submenuToHide == -1){ showSubmenuTimer.Start((leftdown) ? 1 : 200, true); }
 		}
@@ -574,7 +574,7 @@ void MenuDialog::OnMouseEvent(wxMouseEvent &evt)
 	if (evt.LeftUp() && !item->submenu){
 		SendEvent(item, evt.GetModifiers());
 	}
-	else if (leftdown && item->submenu && item->submenu->dialog == NULL && item->enabled && submenuShown != elem){
+	else if (leftdown && item->submenu && item->submenu->dialog == nullptr && item->enabled && submenuShown != elem){
 		submenuShown = elem;
 		showSubmenuTimer.Start(1, true);
 	}
@@ -639,7 +639,7 @@ void MenuDialog::OnPaint(wxPaintEvent &event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
@@ -748,7 +748,7 @@ void MenuDialog::HideMenus(int id)
 	if (!ParentMenu){ return; }
 	KainoteFrame * frame = ((kainoteApp*)wxTheApp)->Frame;
 	frame->SetStatusText(emptyString, 0);
-	MenuBar::Menubar->md = NULL;
+	MenuBar::Menubar->md = nullptr;
 	int subMenu = ParentMenu->submenuToHide;
 	Menu *menu = ParentMenu->parent;
 	ParentMenu->submenuToHide = -1;
@@ -771,7 +771,7 @@ void MenuDialog::HideMenus(int id)
 			ParentMenu->Destroy();
 	}
 	else{ ParentMenu->parent->DestroyDialog(); }
-	ParentMenu = NULL;
+	ParentMenu = nullptr;
 	showIcons = true;
 	minWidth = 0;
 
@@ -794,7 +794,7 @@ int MenuDialog::ShowPartialModal()
 		resid = looplocal->Run();
 		delete looplocal;
 		if (resid > -5)
-			loop = NULL;
+			loop = nullptr;
 	}
 	return resid;
 }
@@ -830,16 +830,16 @@ END_EVENT_TABLE()
 
 static int menuIndent = 20;
 static int halfIndent = 10;
-MenuBar *MenuBar::Menubar = NULL;
+MenuBar *MenuBar::Menubar = nullptr;
 wxFont MenuBar::font = wxFont();
 
 MenuBar::MenuBar(wxWindow *_parent)
 	: wxWindow(_parent, -1, wxDefaultPosition, wxSize(-1, height))
 	, Mnemonics()
-	, bmp(NULL)
+	, bmp(nullptr)
 	, sel(-1)
 	, clicked(false)
-	, md(NULL)
+	, md(nullptr)
 	, oldelem(-1)
 	, shownMenu(-1)
 	, altDown(false)
@@ -857,10 +857,10 @@ MenuBar::MenuBar(wxWindow *_parent)
 	//Refresh(false);
 	
 	Menubar = this;
-	HookKey = NULL;
-	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, NULL, GetCurrentThreadId());
-	HookMouse = NULL;
-	HookMouse = SetWindowsHookEx(WH_GETMESSAGE, &OnMouseClick, NULL, GetCurrentThreadId());
+	HookKey = nullptr;
+	HookKey = SetWindowsHookEx(WH_KEYBOARD, &OnKey, nullptr, GetCurrentThreadId());
+	HookMouse = nullptr;
+	HookMouse = SetWindowsHookEx(WH_GETMESSAGE, &OnMouseClick, nullptr, GetCurrentThreadId());
 	
 }
 
@@ -871,7 +871,7 @@ MenuBar::~MenuBar(){
 	wxDELETE(bmp);
 	UnhookWindowsHookEx(HookKey);
 	UnhookWindowsHookEx(HookMouse);
-	Menubar = NULL;
+	Menubar = nullptr;
 }
 
 void MenuBar::ShowMenu(){
@@ -925,7 +925,7 @@ void MenuBar::OnMouseEvent(wxMouseEvent &evt)
 		return;
 	}
 	if (evt.Entering() || elem == -1){
-		if (shownMenu != -1 && Menus[shownMenu]->dialog == NULL){ shownMenu = -1; }
+		if (shownMenu != -1 && Menus[shownMenu]->dialog == nullptr){ shownMenu = -1; }
 		oldelem = -1;
 		if (shownMenu == elem && !showMnemonics){
 			oldelem = sel = elem; 
@@ -973,7 +973,7 @@ void MenuBar::OnPaint(wxPaintEvent &event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
@@ -1056,12 +1056,12 @@ int MenuBar::CalcMousePos(wxPoint *pos)
 
 MenuItem *MenuBar::FindItem(int id)
 {
-	MenuItem *item = NULL;
+	MenuItem *item = nullptr;
 	for (auto menu : Menus){
 		item = menu->FindItem(id);
 		if (item) { return item; }
 	}
-	return NULL;
+	return nullptr;
 }
 
 void MenuBar::Enable(int id, bool enable)
@@ -1260,7 +1260,7 @@ LRESULT CALLBACK MenuBar::OnMouseClick(int code, WPARAM wParam, LPARAM lParam)
 		DWORD threadid;
 		GetWindowThreadProcessId(hWndPointed, &threadid);
 		DWORD currentthreadid = GetCurrentProcessId();
-		if (currentthreadid == threadid && hWndPointed != NULL && msg->hwnd != hWndPointed){
+		if (currentthreadid == threadid && hWndPointed != nullptr && msg->hwnd != hWndPointed){
 			msg->hwnd = hWndPointed;
 		}
 		else if (currentthreadid != threadid){

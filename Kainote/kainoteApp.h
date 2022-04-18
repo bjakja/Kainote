@@ -20,11 +20,11 @@
  **************************************************************/
 
 #pragma once
-
+#include "KainoteMain.h"
 #include <wx/app.h>
 #include <wx/snglinst.h>
 
-#include "KainoteMain.h"
+
 
 #if _DEBUG
 //#define _CRTDBG_MAP_ALLOC
@@ -44,8 +44,6 @@ class kainoteApp : public wxApp
 public:
 	bool OnInit();
 	int OnExit();
-	//bool OnSecondInstance(wxString _paths);
-	//void OnUnhandledException();
 	void OnFatalException();
 	void OnOpen(wxTimerEvent &evt);
 	bool IsBusy();

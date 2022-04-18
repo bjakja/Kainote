@@ -311,7 +311,7 @@ void Move::OnMouseEvent(wxMouseEvent &evt)
 
 void Move::SetCurVisual()
 {
-	D3DXVECTOR2 linepos = GetPosnScale(NULL, NULL, moveValues);
+	D3DXVECTOR2 linepos = GetPosnScale(nullptr, nullptr, moveValues);
 	from = to = D3DXVECTOR2(((linepos.x / coeffW) - zoomMove.x) * zoomScale.x,
 		((linepos.y / coeffH) - zoomMove.y) * zoomScale.y);
 

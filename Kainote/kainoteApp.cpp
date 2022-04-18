@@ -29,28 +29,13 @@
 #include <wx/utils.h>
 #include <wx/intl.h>
 //#include <locale.h>
-#include "UtilsWindows.h"
+
 
 #include <DbgHelp.h>
 #include <signal.h>
+#include "UtilsWindows.h"
 
-//typedef struct _SYMBOL_INFO {
-//	ULONG       SizeOfStruct;
-//	ULONG       TypeIndex;        // Type Index of symbol
-//	ULONG64     Reserved[2];
-//	ULONG       Index;
-//	ULONG       Size;
-//	ULONG64     ModBase;          // Base Address of module comtaining this symbol
-//	ULONG       Flags;
-//	ULONG64     Value;            // Value of symbol, ValuePresent should be 1
-//	ULONG64     Address;          // Address of symbol including base address of module
-//	ULONG       Register;         // register holding value or pointer to value
-//	ULONG       Scope;            // scope of the symbol
-//	ULONG       Tag;              // pdb classification
-//	ULONG       NameLen;          // Actual length of name
-//	ULONG       MaxNameLen;
-//	CHAR        Name[1];          // Name of symbol
-//} SYMBOL_INFO, * PSYMBOL_INFO;
+
 
 void seg_handler(int sig)
 {
@@ -61,8 +46,8 @@ void seg_handler(int sig)
 	HANDLE         process;
 
 	process = GetCurrentProcess();
-	SymInitialize(process, NULL, TRUE);
-	frames = CaptureStackBackTrace(0, 100, stack, NULL);
+	SymInitialize(process, nullptr, TRUE);
+	frames = CaptureStackBackTrace(0, 100, stack, nullptr);
 	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
 	symbol->MaxNameLen = 255;
 	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
@@ -80,7 +65,7 @@ void seg_handler(int sig)
 	Options.SaveOptions(true, false, true);
 	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
 	TabPanel* tab = Kai->GetTab();
-	wxWindow* messageWindow = NULL;
+	wxWindow* messageWindow = nullptr;
 	if (tab) {
 		messageWindow = tab->Video->GetMessageWindowParent();
 	}
@@ -178,7 +163,7 @@ bool kainoteApp::OnInit()
 			Options.SetString(DICTIONARY_LANGUAGE, L"en_US");
 		}
 			
-		locale = NULL;
+		locale = nullptr;
 		wxString lang = Options.GetString(PROGRAM_LANGUAGE);
 		if (lang == L"0"){
 			lang = emptyString; Options.SetString(PROGRAM_LANGUAGE, lang);
@@ -225,7 +210,7 @@ bool kainoteApp::OnInit()
 		Options.GetCoords(WINDOW_SIZE, &sizex, &sizey);
 		Options.GetCoords(MONITOR_SIZE, &msizex, &msizey);
 		if (msizex && msizey) {
-			wxRect rt = GetMonitorRect1(-1, NULL, wxRect(posx, posy, sizex, sizey));
+			wxRect rt = GetMonitorRect1(-1, nullptr, wxRect(posx, posy, sizex, sizey));
 			if (rt.width != msizex || rt.height != msizey) {
 				int mposx, mposy, vsizex, vsizey;
 				Options.GetCoords(MONITOR_POSITION, &mposx, &mposy);
@@ -267,7 +252,7 @@ bool kainoteApp::OnInit()
 		}
 		
 
-		Frame = NULL;
+		Frame = nullptr;
 		Frame = new KainoteFrame(wxPoint(posx, posy), wxSize(sizex, sizey));
 		//handler for out of memory in new
 		std::set_new_handler(OnOutofMemory);
@@ -336,12 +321,12 @@ bool kainoteApp::OnInit()
 		}
 
 		delete m_checker; // OnExit() won't be called if we return false
-		m_checker = NULL;
+		m_checker = nullptr;
 		if (subs.empty())
 			return false;
 		//damn wxwidgets, why class name is not customizable?    
 		int count = 0;
-		HWND hWnd = NULL;
+		HWND hWnd = nullptr;
 		while (!hWnd){
 			//prevent to total dedlock, when main Kainote is crashed or closed
 			if (count > 100){

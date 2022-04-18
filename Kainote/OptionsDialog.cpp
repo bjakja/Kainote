@@ -1,4 +1,4 @@
-﻿//  Copyright (c) 2016 - 2020, Marcin Drob
+﻿//  Copyright (c) 2016 - 2022, Marcin Drob
 
 //  Kainote is free software: you can redistribute it and/or modify
 //  it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include "StyleChange.h"
 #include "SubtitlesProviderManager.h"
 #include "SpellChecker.h"
+#include "config.h"
 
 
 void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList)
@@ -251,7 +252,7 @@ int ItemHotkey::OnVisibilityChange(int mode){
 	}
 }
 
-wxString *OptionsDialog::windowNames = NULL;
+wxString *OptionsDialog::windowNames = nullptr;
 std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
 
 OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
@@ -261,8 +262,8 @@ OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
 	OptionsTree = new KaiTreebook(this, -1);
 
 	Kai = kaiparent;
-	Stylelist = NULL;
-	Katlist = NULL;
+	Stylelist = nullptr;
+	Katlist = nullptr;
 
 	wxIcon icn;
 	icn.CopyFromBitmap(CreateBitmapFromPngResource(L"SETTINGS"));

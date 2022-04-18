@@ -45,9 +45,9 @@ namespace Auto{
 
 	SubsEntry::SubsEntry()
 	{
-		adial = NULL;
-		astyle = NULL;
-		info = NULL;
+		adial = nullptr;
+		astyle = nullptr;
+		info = nullptr;
 	}
 	SubsEntry::~SubsEntry()
 	{
@@ -56,13 +56,13 @@ namespace Auto{
 		SAFE_DELETE(info);
 	}
 
-	AutoToFile *AutoToFile::laf = NULL;
+	AutoToFile *AutoToFile::laf = nullptr;
 
 	AutoToFile::~AutoToFile()
 	{
 		if (spectrum){
 			delete spectrum;
-			spectrum = NULL;
+			spectrum = nullptr;
 		}
 	}
 
@@ -255,7 +255,7 @@ namespace Auto{
 
 	SubsEntry *AutoToFile::LuaToLine(lua_State *L)
 	{
-		SubsEntry *e = NULL;
+		SubsEntry *e = nullptr;
 
 		if (!lua_istable(L, -1)) {
 			lua_pushstring(L, "Cannot convert non table value");//nie można przekonwertować wartości która nie jest tablicą");

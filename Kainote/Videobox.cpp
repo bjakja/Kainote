@@ -61,7 +61,7 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 
 	wFunc = FO_DELETE;
 	pFrom = buf;
-	pTo = NULL;
+	pTo = nullptr;
 	if (bDelete) {
 		fFlags &= ~FOF_ALLOWUNDO;
 	}
@@ -115,7 +115,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	, m_ArrowEater(false)
 	, actualFile(0)
 	, prevchap(-1)
-	, m_FullScreenWindow(NULL)
+	, m_FullScreenWindow(nullptr)
 	, m_blockRender(false)
 	, m_IsOnAnotherMonitor(false)
 	, m_ShownKeyframe(false)
@@ -900,7 +900,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 
 	menu->SetAccMenu(VIDEO_DELETE_FILE, _("Usuń plik wideo"))->Enable(GetState() != None);
 
-	Menu* menu3 = NULL;
+	Menu* menu3 = nullptr;
 	int numfilters = 0;
 	if (GetState() != None && m_IsDirectShow){
 		menu3 = new Menu();
@@ -1534,7 +1534,7 @@ int VideoCtrl::GetDuration()
 bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetParameters)
 {
 	if (renderer){
-		bool success = renderer->OpenSubs(flag, recreateFrame, NULL, resetParameters);
+		bool success = renderer->OpenSubs(flag, recreateFrame, nullptr, resetParameters);
 		if (refresh){
 			Render();
 		}
@@ -1688,7 +1688,7 @@ Provider *VideoCtrl::GetFFMS2()
 	if (renderer)
 		return renderer->GetFFMS2();
 
-	return NULL;
+	return nullptr;
 }
 
 void VideoCtrl::SetVisualEdition(bool value)

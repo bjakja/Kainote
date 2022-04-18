@@ -161,14 +161,14 @@ public:
 	void GetSInfos(wxString &textSinfo, bool addTlMode = false);
 	size_t SInfoSize();
 	void SaveSelections(bool clear, int currentLine, int markedLine, int scrollPos);
-	size_t FirstSelection(size_t *id = NULL);
+	size_t FirstSelection(size_t *id = nullptr);
 	File *GetSubs(){ return subs; }
 	void GetSelections(wxArrayInt &selections, bool deselect=false, bool checkVisible = true);
 	const std::set<int> & GetSelectionsAsKeys(){ return subs->Selections; };
 	void InsertSelection(size_t i);
 	void InsertSelections(size_t from, size_t to, bool deselect = false, bool skipHidden = true);
 	void EraseSelection(size_t i);
-	size_t FindVisibleKey(size_t key, int *corrected = NULL);
+	size_t FindVisibleKey(size_t key, int *corrected = nullptr);
 	bool IsSelected(size_t i);
 	size_t SelectionsSize();
 	int GetActiveLine(){ return subs->activeLine; }
@@ -198,8 +198,8 @@ public:
 	const wxString &GetUndoName();
 	const wxString &GetRedoName();
 	bool edited;
-	wxString *historyNames = NULL;
-	wxMutex *historyGuard = NULL;
+	wxString *historyNames = nullptr;
+	wxMutex *historyGuard = nullptr;
 };
 
 class HistoryDialog : public KaiDialog

@@ -166,12 +166,12 @@ void Cross::DrawLines(wxPoint point)
 		int w, h, fw, fh;
 		tab->Video->GetWindowSize(&w, &h);
 		RECT rcRect = { 0, 0, 0, 0 };
-		if (calcfont && calcfont->DrawTextW(NULL, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
+		if (calcfont && calcfont->DrawTextW(nullptr, coords.wc_str(), -1, &rcRect, DT_CALCRECT, 0xFFFFFFFF)) {
 			fw = rcRect.right - rcRect.left;
 			fh = rcRect.bottom - rcRect.top;
 		}
 		else {
-			tab->Video->GetTextExtent(coords, &fw, &fh, NULL, NULL, Options.GetFont(4));
+			tab->Video->GetTextExtent(coords, &fw, &fh, nullptr, nullptr, Options.GetFont(4));
 		}
 		int margin = fh * 0.25f;
 		w /= 2; h /= 2;

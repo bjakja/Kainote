@@ -24,7 +24,7 @@ public:
 	static bool CanCreate();
 	bool Init();
 	void Render(bool recreateFrame);
-	bool DrawTexture(unsigned char *nframe = NULL, bool copy = false);
+	bool DrawTexture(unsigned char *nframe = nullptr, bool copy = false);
 	void DrawProgressBar();
 	void DrawZoom();
 	void DrawRect(D3DXVECTOR2 position, bool sel = false, float size = 5.0f);

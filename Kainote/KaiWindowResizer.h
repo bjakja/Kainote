@@ -31,11 +31,11 @@ private:
 	bool AcceptsFocus() const { return false; }
 	bool AcceptsFocusFromKeyboard() const { return false; }
 	bool AcceptsFocusRecursively() const { return false; }
-	wxDialog* splitLine = NULL;
+	wxDialog* splitLine = nullptr;
 	std::function<bool(int)> canResize;
 	std::function<void(int, bool)> doResize;
 	wxWindow *resizerParent;
 	bool holding = false;
 	int oldy = -1;
-	wxBitmap *bmp = NULL;
+	wxBitmap *bmp = nullptr;
 };

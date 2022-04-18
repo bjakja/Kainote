@@ -30,7 +30,7 @@ KaiGauge::KaiGauge(wxWindow *parent, int id, const wxPoint &pos, const wxSize &s
 	if (size.y < 1){
 		int fw, fh;
 		wxFont parentFont = parent->GetFont();
-		GetTextExtent(L"TEX{}", &fw, &fh, NULL, NULL, &parentFont);
+		GetTextExtent(L"TEX{}", &fw, &fh, nullptr, nullptr, &parentFont);
 		newSize.y = fh + 6;
 		sizeChanged = true;
 	}

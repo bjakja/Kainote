@@ -82,7 +82,7 @@ KaiFrame::KaiFrame(wxWindow *parent, wxWindowID id, const wxString& title/*=""*/
 	Bind(wxEVT_LEFT_DCLICK, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_LEAVE_WINDOW, &KaiFrame::OnMouseEvent, this);
 	Bind(wxEVT_MOTION, &KaiFrame::OnMouseEvent, this);
-	LastMonitorRect = GetMonitorRect1(-1, NULL, wxRect(0, 0, 0, 0));
+	LastMonitorRect = GetMonitorRect1(-1, nullptr, wxRect(0, 0, 0, 0));
 	SetSize(pos.x, pos.y, size.x, size.y);
 	Options.SetCoords(WINDOW_SIZE, size.x, size.y);
 }
@@ -102,7 +102,7 @@ void KaiFrame::OnPaint(wxPaintEvent &evt)
 	mdc.SelectObject(KaiFrameBitmap);
 
 	//GraphicsRenderer *renderer = GraphicsRenderer::GetDirect2DRenderer();
-	GraphicsContext* gc = NULL;//renderer->CreateContext(mdc);
+	GraphicsContext* gc = nullptr;//renderer->CreateContext(mdc);
 	if (!gc){
 		mdc.SetFont(GetFont());
 		wxColour bg = (isActive) ? Options.GetColour(WINDOW_BORDER_BACKGROUND) : Options.GetColour(WINDOW_BORDER_BACKGROUND_INACTIVE);
@@ -444,7 +444,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	}
 	if (uMsg == WM_NCHITTEST){
 		//RECT rcFrame = { 0 };
-		//AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, NULL);
+		//AdjustWindowRectEx(&rcFrame, WS_OVERLAPPEDWINDOW & ~WS_CAPTION, FALSE, nullptr);
 		RECT WindowRect;
 		int x, y;
 

@@ -120,12 +120,12 @@ private:
 	void CloseWindow();
 
 	Styles *updateStyle;
-	Styles *CompareStyle = NULL;
+	Styles *CompareStyle = nullptr;
 	AssColor lastColor;
 	wxArrayString encs;
 	wxString fontFilterText;
 	KaiDialog *SCD;
-	FontCatalogList* FCL = NULL;
+	FontCatalogList* FCL = nullptr;
 };
 
 

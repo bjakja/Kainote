@@ -149,7 +149,7 @@ protected:
 //class KaiTextValidator : public wxValidator
 //{
 //public:
-//	KaiTextValidator(long style=wxFILTER_NONE, wxString *valPtr=NULL) :wxTextValidator(style, valPtr){};
+//	KaiTextValidator(long style=wxFILTER_NONE, wxString *valPtr=nullptr) :wxTextValidator(style, valPtr){};
 //	virtual ~KaiTextValidator(){}
 //	virtual bool Validate(wxWindow *parent);
 //    virtual bool TransferToWindow();

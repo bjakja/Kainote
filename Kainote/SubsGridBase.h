@@ -59,9 +59,9 @@ public:
 	void Clearing();
 	void Convert(char type);
 
-	int FindStyle(const wxString &name, int *multiplication = NULL);
+	int FindStyle(const wxString &name, int *multiplication = nullptr);
 	void GetStyles(wxString &stylesText, bool tld = false);
-	//this function is safe, do not return NULL, when failed returns i
+	//this function is safe, do not return nullptr, when failed returns i
 	Styles *GetStyle(size_t i, const wxString &name = emptyString);
 	std::vector<Styles*> *GetStyleTable();
 	bool IsModified();
@@ -91,7 +91,7 @@ public:
 	void GetSInfos(wxString &textSinfo, bool tld = false);
 	const wxString &GetSInfo(const wxString &key, int *ii = 0);
 	SInfo *GetSInfoP(const wxString &key, int *ii = 0);
-	size_t FirstSelection(size_t *firstSelectionId = NULL);
+	size_t FirstSelection(size_t *firstSelectionId = nullptr);
 	void SwapRows(int frst, int scnd, bool sav = false);
 	void LoadSubtitles(const wxString &str, wxString &ext);
 	bool MoveRows(int step, bool keyStep = false);
@@ -113,7 +113,7 @@ public:
 	// returns null when there's no visible dialogue with that offset or it is out of the table
 	Dialogue *GetDialogueWithOffset(size_t i, int offset);
 	// returns visible lines as string for Vsfilter
-	wxString *GetVisible(bool *visible = 0, wxPoint *point = NULL, wxArrayInt *selected = NULL, bool allSubs = false);
+	wxString *GetVisible(bool *visible = 0, wxPoint *point = nullptr, wxArrayInt *selected = nullptr, bool allSubs = false);
 	bool IsLineVisible();
 	//Get line key from scrollPosition.
 	//Every value will be stored as key.

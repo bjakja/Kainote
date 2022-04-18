@@ -30,7 +30,7 @@ class StylePreview : public wxWindow
 		StylePreview(wxWindow *parent, int id, const wxPoint& pos, const wxSize& size);
 		virtual ~StylePreview();
 
-		void DrawPreview(Styles *styl = NULL);
+		void DrawPreview(Styles *styl = nullptr);
 
 
 
@@ -39,8 +39,8 @@ class StylePreview : public wxWindow
 		int pitch, width, height, b, g, r, b1, g1, r1;
 		
 
-		wxBitmap *bmpframe = NULL;
-		KaiTextCtrl *PrevText = NULL;
+		wxBitmap *bmpframe = nullptr;
+		KaiTextCtrl *PrevText = nullptr;
 		Styles *previewStyle;
 
 		void OnPaint(wxPaintEvent& event);
@@ -49,6 +49,6 @@ class StylePreview : public wxWindow
 
 		DECLARE_EVENT_TABLE()
 
-		SubtitlesProviderManager *m_SubtitlesProvider = NULL;
+		SubtitlesProviderManager *m_SubtitlesProvider = nullptr;
 	};
 

@@ -95,7 +95,7 @@ void LogWindow::OnGetLog(wxThreadEvent &evt)
 	isReady = true;
 }
 
-LogHandler *LogHandler::sthis = NULL;
+LogHandler *LogHandler::sthis = nullptr;
 
 LogHandler::LogHandler(wxWindow *_parent)
 {
@@ -127,7 +127,7 @@ void LogHandler::Destroy()
 {
 	if (sthis){
 		delete sthis;
-		sthis = NULL;
+		sthis = nullptr;
 	}
 }
 

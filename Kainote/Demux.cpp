@@ -55,7 +55,7 @@ void Demux::Close()
 
 	if (indexer) {
 		FFMS_CancelIndexing(indexer);
-		indexer = NULL;
+		indexer = nullptr;
 	}
 }
 
@@ -166,7 +166,7 @@ bool Demux::GetSubtitles(SubsGrid* target)
 		progress->ShowDialog();
 		bool isgood = ((int)progress->Wait() == 1);
 		delete progress; 
-		progress = NULL;
+		progress = nullptr;
 		return isgood;
 	}
 	return false;
@@ -224,7 +224,7 @@ bool Demux::SaveFont(int i, const wxString& path, wxZipOutputStream* zip)
 	return isgood;
 }
 
-int __stdcall Demux::GetSubtitles(int64_t Start, int64_t Duration, int64_t Total, const char* Line, void* ICPrivate)
+int __stdcall Demux::GetSubtitles(long long Start, long long Duration, long long Total, const char* Line, void* ICPrivate)
 {
 	Demux* demux = (Demux*)ICPrivate;
 	wxString blockString(Line, wxConvUTF8);

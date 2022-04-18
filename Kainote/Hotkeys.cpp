@@ -222,7 +222,7 @@ Hotkeys::~Hotkeys()
 	hkeys.clear();
 	if (hotkeysNaming){
 		delete hotkeysNaming;
-		hotkeysNaming = NULL;
+		hotkeysNaming = nullptr;
 	}
 }
 
@@ -589,7 +589,7 @@ HkeysDialog::HkeysDialog(wxWindow *parent, wxString name, char hotkeyWindow, boo
 {
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
-	global = NULL;
+	global = nullptr;
 	const int elems = 5;
 	wxString windows[elems] = { _("Skrót globalny"), _("Skrót pola napisów"), 
 		_("Skrót pola edycji"), _("Skrót wideo"), _("Skrót audio") };

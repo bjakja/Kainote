@@ -65,7 +65,7 @@ void SubsGridFiltering::Filter(bool autoFiltering, bool removeFiltering)
 		if (autoFiltering){ filterBy ^= FILTER_BY_SELECTIONS; }
 		else{ grid->file->GetSelections(keySelections); }
 	}
-	Dialogue *lastDial = NULL;
+	Dialogue *lastDial = nullptr;
 	for (size_t i = 0; i < grid->file->GetCount(); i++){
 		Dialogue *dial = grid->file->GetDialogue(i);
 		if (dial->NonDialogue) continue;
@@ -94,7 +94,7 @@ void SubsGridFiltering::Filter(bool autoFiltering, bool removeFiltering)
 
 void SubsGridFiltering::FilterPartial(int from)
 {
-	Dialogue *lastDial = NULL;
+	Dialogue *lastDial = nullptr;
 	int keyFrom = from? from + 1 : from;
 	int keyTo = keyFrom;
 	bool hide = true;
@@ -124,7 +124,7 @@ void SubsGridFiltering::FilterPartial(int from)
 void SubsGridFiltering::HideSelections()
 {
 	grid->file->GetSelections(keySelections);
-	Dialogue *lastDial = NULL;
+	Dialogue *lastDial = nullptr;
 	int selssize = keySelections.size();
 	int j = 0;
 	for (int i = 0; i < grid->file->GetCount(); i++){
@@ -149,7 +149,7 @@ void SubsGridFiltering::HideSelections()
 void SubsGridFiltering::MakeTree()
 {
 	grid->file->GetSelections(keySelections);
-	//Dialogue *lastDial = NULL;
+	//Dialogue *lastDial = nullptr;
 	int selssize = keySelections.size();
 	int j = 0;
 	int treeDiff = 0;

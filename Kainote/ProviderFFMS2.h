@@ -26,7 +26,7 @@ public:
 	virtual ~ProviderFFMS2();
 	void GetFrameBuffer(byte** buffer) override;
 	void GetFrame(int frame, byte* buff) override;
-	void GetBuffer(void* buf, int64_t start, int64_t count, double vol = 1.0) override;
+	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
 	int Init();
 	void GetChapters(std::vector<chapter>* _chapters) override {
@@ -35,8 +35,8 @@ public:
 		}
 	};
 
-	ProgressSink* progress = NULL;
-	static int __stdcall UpdateProgress(int64_t Current, int64_t Total, void* ICPrivate);
+	ProgressSink* progress = nullptr;
+	static int __stdcall UpdateProgress(long long Current, long long Total, void* ICPrivate);
 	static void AudioLoad(ProviderFFMS2* parent, bool newIndex, int audiotrack);
 	void ClearRAMCache();
 	bool DiskCache(bool newIndex);
@@ -52,28 +52,28 @@ public:
 	int m_CR;
 	int m_CS;
 	double m_delay = 0;
-	HANDLE m_eventAudioComplete = NULL;
+	HANDLE m_eventAudioComplete = nullptr;
 	wxString m_diskCacheFilename;
 	wxString m_colorSpace;
 	wxString m_realColorSpace;
 	wxString m_indexPath;
-	FILE* m_fp = NULL;
+	FILE* m_fp = nullptr;
 	std::vector<chapter> m_chapters;
-	std::thread* m_audioLoadThread = NULL;
+	std::thread* m_audioLoadThread = nullptr;
 private:
 	char m_errmsg[1024];
-	char** m_cache = NULL;
+	char** m_cache = nullptr;
 	int m_blockNum = 0;
-	void GetAudio(void* buf, int64_t start, int64_t count);
+	void GetAudio(void* buf, long long start, long long count);
 	void GetFFMSFrame();
 	static unsigned int __stdcall FFMS2Proc(void* cls);
 	void Processing();
 	volatile bool m_stopLoadingAudio = false;
 	wxCriticalSection m_blockAudio;
 	wxCriticalSection m_blockFrame;
-	FFMS_VideoSource* m_videoSource = NULL;
-	FFMS_AudioSource* m_audioSource = NULL;
+	FFMS_VideoSource* m_videoSource = nullptr;
+	FFMS_AudioSource* m_audioSource = nullptr;
 	FFMS_ErrorInfo m_errInfo;
-	FFMS_Index* m_index = NULL;
-	const FFMS_Frame* m_FFMS2frame = NULL;
+	FFMS_Index* m_index = nullptr;
+	const FFMS_Frame* m_FFMS2frame = nullptr;
 };

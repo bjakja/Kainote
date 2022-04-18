@@ -46,7 +46,7 @@ public:
 	void ShowSecondComparedLine(int Line, bool showPreview = false, bool fromPreview = false, bool setViaScroll = false);
 	void RefreshPreview();
 
-	SubsGridPreview *preview = NULL;
+	SubsGridPreview *preview = nullptr;
 
 protected:
 	void OnKeyPress(wxKeyEvent &event);
@@ -70,7 +70,7 @@ protected:
 
 	wxBitmap* bmp;
 	wxFont font;
-	SubsGridPreview *thisPreview = NULL;
+	SubsGridPreview *thisPreview = nullptr;
 private:
 	virtual void ContextMenu(const wxPoint &pos) {};
 	virtual void ContextMenuTree(const wxPoint &pos, int treeLine) {};

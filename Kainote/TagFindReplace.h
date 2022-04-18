@@ -92,7 +92,7 @@ private:
 	int ReplaceValue(wxString* txt, const wxString& what, const FindData& fdata);
 	FindData result;
 	wxRegEx regex;
-	TabPanel* currentTab = NULL;
+	TabPanel* currentTab = nullptr;
 	wxString lastPattern;
 	wxPoint lastSelection;
 	long from = 0, to = 0;

@@ -24,9 +24,9 @@
 #include "DshowRenderer.h"
 
 
-csri_rend *SubtitlesProvider::m_CsriRenderer = NULL;
-ASS_Renderer *SubtitlesProvider::m_Libass = NULL;
-ASS_Library *SubtitlesProvider::m_Library = NULL;
+csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
+ASS_Renderer *SubtitlesProvider::m_Libass = nullptr;
+ASS_Library *SubtitlesProvider::m_Library = nullptr;
 
 
 void SubtitlesProvider::DestroySubtitlesProvider()
@@ -73,7 +73,7 @@ void SubtitlesVSFilter::Draw(unsigned char* buffer, int time)
 bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 {
 	if (m_CsriInstance) csri_close(m_CsriInstance);
-	m_CsriInstance = NULL;
+	m_CsriInstance = nullptr;
 
 	wxString *textsubs = text;
 	bool fromFile = false;
@@ -129,7 +129,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ KaiLog(_("Nie można zinicjalizować CSRI.")); delete textsubs; return false; }
 
-	m_CsriInstance = (fromFile) ? csri_open_file(vobsub, buffer, NULL) : csri_open_mem(vobsub, buffer, size, NULL);
+	m_CsriInstance = (fromFile) ? csri_open_file(vobsub, buffer, nullptr) : csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ KaiLog(_("Nie można utworzyć instancji CSRI.")); delete textsubs; return false; }
 
 
@@ -143,7 +143,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
-		m_CsriInstance = NULL;
+		m_CsriInstance = nullptr;
 		delete textsubs; return false;
 	}
 
@@ -154,7 +154,7 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 bool SubtitlesVSFilter::OpenString(wxString *text)
 {
 	if (m_CsriInstance) csri_close(m_CsriInstance);
-	m_CsriInstance = NULL;
+	m_CsriInstance = nullptr;
 
 	if (!m_HasParameters){
 		delete text;
@@ -173,7 +173,7 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		return false; 
 	}
 
-	m_CsriInstance = csri_open_mem(vobsub, buffer, size, NULL);
+	m_CsriInstance = csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ 
 		KaiLog(_("Nie można utworzyć instancji CSRI.")); 
 		delete text; 
@@ -189,7 +189,7 @@ bool SubtitlesVSFilter::OpenString(wxString *text)
 		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
-		m_CsriInstance = NULL;
+		m_CsriInstance = nullptr;
 		delete text;
 		return false;
 	}
@@ -234,10 +234,10 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 	}
 	csri_close_renderer(filter);
 	//test if current renderer is removed
-	//if yes than just set NULL to renderer
+	//if yes than just set nullptr to renderer
 	//without destroying it it makes memory leaks
 	csri_close_renderer(m_CsriRenderer);
-	m_CsriRenderer = NULL;
+	m_CsriRenderer = nullptr;
 }
 
 void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
@@ -253,8 +253,8 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 		m_CsriFrame = new csri_frame;
 		//we only uses first planes and strides rest can be reset just once
 		for (int i = 1; i < 4; i++) {
-			m_CsriFrame->planes[i] = NULL;
-			m_CsriFrame->strides[i] = NULL;
+			m_CsriFrame->planes[i] = nullptr;
+			m_CsriFrame->strides[i] = nullptr;
 		}
 	}
 	if (!m_CsriFormat) { m_CsriFormat = new csri_fmt; }
@@ -273,7 +273,7 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 		}
 		KaiLog(_("CSRI nie obsługuje tego formatu."));
 		csri_close(m_CsriInstance);
-		m_CsriInstance = NULL;
+		m_CsriInstance = nullptr;
 	}
 }
 

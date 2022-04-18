@@ -38,13 +38,13 @@ class Item{
 public:
 	Item(unsigned char _type=TYPE_TEXT){type=_type; modified=false;}
 	virtual ~Item(){}
-	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL){};
+	virtual void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = nullptr){};
 	virtual void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList){};
 	virtual void Save(){};
 	virtual void OnChangeHistory(){/*modified = true;*/};
 	virtual int OnVisibilityChange(int mode){ return VISIBLE; }
 	virtual wxSize GetTextExtents(KaiListCtrl *theList);
-	virtual Item* Copy(){return NULL;}
+	virtual Item* Copy(){return nullptr;}
 	bool modified;
 	bool needTooltip = false;
 	unsigned char type;
@@ -55,7 +55,7 @@ class ItemText : public Item{
 public:
 	ItemText(const wxString &txt) : Item(){name = txt;}
 	virtual ~ItemText(){}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = nullptr);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	wxString GetName(){return name;}
 	virtual void Save(){};
@@ -66,7 +66,7 @@ class ItemColor : public Item{
 public:
 	ItemColor(const AssColor &color, int i) : Item(TYPE_COLOR){col = color;colOptNum=i;}
 	virtual ~ItemColor(){}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = nullptr);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save();
 	Item* Copy(){return new ItemColor(*this);}
@@ -79,7 +79,7 @@ class ItemCheckBox : public Item{
 public:
 	ItemCheckBox(bool check, const wxString &_label) : Item(TYPE_CHECKBOX){modified = check; enter=false; name = _label;}
 	virtual ~ItemCheckBox(){}
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = NULL);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed = nullptr);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	void Save(){};
 	Item* Copy(){return new ItemCheckBox(*this);}
@@ -107,7 +107,7 @@ public:
 		if (i < row.size())
 			return row[i]; 
 
-		return NULL;
+		return nullptr;
 	}
 	std::vector< Item*> row;
 	StoreHelper isVisible;

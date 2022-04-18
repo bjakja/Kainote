@@ -243,16 +243,16 @@ void FFT::Set(Provider *_prov){
 
 	gfft = gfft_factory.CreateObject(doublelen);
 	prov = _prov;
-	input = NULL;
+	input = nullptr;
 	output = new float[doublelen * 2];
 }
 
-void FFT::SetAudio(int64_t _from, int64_t len)
+void FFT::SetAudio(long long _from, long long len)
 {
 	from = _from;
 	if (inputSize != len){
 		if (input && inputSize < len){
-			delete[] input; input = NULL;
+			delete[] input; input = nullptr;
 		}
 		inputSize = len;
 	}
@@ -262,8 +262,8 @@ void FFT::SetAudio(int64_t _from, int64_t len)
 	prov->GetBuffer(input, from, inputSize);
 }
 
-void FFT::Transform(int64_t whre){
-	int64_t start = (whre - from);
+void FFT::Transform(long long whre){
+	long long start = (whre - from);
 	if (start + doublelen > inputSize){
 		//assert(false);
 		return;

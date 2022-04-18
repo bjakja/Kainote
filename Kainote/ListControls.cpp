@@ -63,10 +63,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, int n, const wxString choices[],
 	long style, const wxValidator& validator)
 	:wxWindow(parent, id, pos, size, style/* | wxWANTS_CHARS*/)
-	, bmp(NULL)
-	, list(NULL)
-	, itemList(NULL)
-	, choiceText(NULL)
+	, bmp(nullptr)
+	, list(nullptr)
+	, itemList(nullptr)
+	, choiceText(nullptr)
 	, listIsShown(false)
 	, enter(false)
 	, clicked(false)
@@ -95,10 +95,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxPoint& pos,
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
 	:wxWindow(parent, id, pos, size, style/* | wxWANTS_CHARS*/)
-	, bmp(NULL)
-	, list(NULL)
-	, itemList(NULL)
-	, choiceText(NULL)
+	, bmp(nullptr)
+	, list(nullptr)
+	, itemList(nullptr)
+	, choiceText(nullptr)
 	, listIsShown(false)
 	, enter(false)
 	, clicked(false)
@@ -128,10 +128,10 @@ KaiChoice::KaiChoice(wxWindow *parent, int id, const wxString &comboBoxText, con
 	const wxSize& size, const wxArrayString &choices,
 	long style, const wxValidator& validator)
 	:wxWindow(parent, id, pos, size, style | KAI_COMBO_BOX /*| wxWANTS_CHARS*/)
-	, bmp(NULL)
-	, list(NULL)
-	, itemList(NULL)
-	, choiceText(NULL)
+	, bmp(nullptr)
+	, list(nullptr)
+	, itemList(nullptr)
+	, choiceText(nullptr)
 	, listIsShown(false)
 	, enter(false)
 	, clicked(false)
@@ -261,7 +261,7 @@ void KaiChoice::OnPaint(wxPaintEvent& event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
@@ -494,7 +494,7 @@ void KaiChoice::PutArray(wxArrayString *arr)
 	if (list){ delete list; }
 	list = new wxArrayString(*arr);
 	if (list->size() < 1){ choice = -1; ce = emptyString; }
-	if (itemList){ itemList->Destroy(); itemList = NULL; }
+	if (itemList){ itemList->Destroy(); itemList = nullptr; }
 	if (ce != emptyString){
 		if (choice >= (int)list->size()){
 			SetSelection(0);
@@ -754,9 +754,9 @@ PopupList::PopupList(wxWindow *DialogParent, wxArrayString *list, std::map<int, 
 : wxPopupWindow(DialogParent/*, wxBORDER_NONE | wxWANTS_CHARS*/)
 , sel(0)
 , scPos(0)
-, scroll(NULL)
+, scroll(nullptr)
 , orgY(0)
-, bmp(NULL)
+, bmp(nullptr)
 , Parent(DialogParent)
 , itemsList(list)
 , disabledItems(disabled)
@@ -811,7 +811,7 @@ void PopupList::CalcPosAndSize(wxPoint *pos, wxSize *size, const wxSize &control
 	if (size->x < controlSize.x){ size->x = controlSize.x; }
 	size->y = height * isize + 2;
 	wxPoint ScreenPos = Parent->ClientToScreen(*pos);
-	wxRect workArea = GetMonitorWorkArea(0, NULL, ScreenPos, true);
+	wxRect workArea = GetMonitorWorkArea(0, nullptr, ScreenPos, true);
 	int h = workArea.height + workArea.y;
 	//fix for new wxWidgets
 	//*pos = ScreenPos;
@@ -892,13 +892,13 @@ void PopupList::OnPaint(wxPaintEvent &event)
 	}
 	else if (scroll) {
 		scroll->Destroy();
-		scroll = NULL;
+		scroll = nullptr;
 	}
 
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);
@@ -928,7 +928,7 @@ void PopupList::OnPaint(wxPaintEvent &event)
 		if (isFontList) {
 			int textw = 0, texth = 0;
 			copyFont.SetFaceName(desc);
-			GetTextExtent(previewText, &textw, &texth, NULL, NULL, &copyFont);
+			GetTextExtent(previewText, &textw, &texth, nullptr, nullptr, &copyFont);
 			//fix for not working fonts that gives random values
 			if (texth > 50 || textw > 500) {
 				textw = 0;
@@ -939,12 +939,12 @@ void PopupList::OnPaint(wxPaintEvent &event)
 				int pointSize = copyFont.GetPointSize() - 1;
 				while (texth > height + 10 && pointSize >= 1) {
 					copyFont.SetPointSize(pointSize);
-					GetTextExtent(previewText, &textw, &texth, NULL, NULL, &copyFont);
+					GetTextExtent(previewText, &textw, &texth, nullptr, nullptr, &copyFont);
 					pointSize--;
 				}
 			}
 			int descw = 0, desch = 0;
-			GetTextExtent(desc, &descw, &desch, NULL, NULL, &font);
+			GetTextExtent(desc, &descw, &desch, nullptr, nullptr, &font);
 			//the font name cannot have 1000+ chars that's why not check it 
 			if (descw + textw + 12 > w) {
 				SetSize(wxSize(descw + textw + 40, h));

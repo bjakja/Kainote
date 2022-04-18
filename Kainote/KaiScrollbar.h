@@ -90,7 +90,7 @@ public:
 	int GetScrollPos (int orientation) const {return (orientation == wxHORIZONTAL && horizontal)? horizontal->unitPos : (orientation == wxVERTICAL && vertical)? vertical->unitPos : 0;}
  	int GetScrollRange (int orientation) const{return (orientation == wxHORIZONTAL && horizontal)? horizontal->allSize : (orientation == wxVERTICAL && vertical)?vertical->allSize : 0;}
  	int GetScrollThumb (int orientation) const{return (orientation == wxHORIZONTAL && horizontal)? horizontal->visibleSize : (orientation == wxVERTICAL && vertical)?vertical->visibleSize : 0;}
-	bool HasScrollbar (int orient) const {return (orient == wxHORIZONTAL)? (horizontal!=NULL) : (vertical!=NULL);};
+	bool HasScrollbar (int orient) const {return (orient == wxHORIZONTAL)? (horizontal!=nullptr) : (vertical!=nullptr);};
 	bool IsScrollbarAlwaysShown (int orient) const{return false;};
  	bool ScrollLines (int lines);
  	bool ScrollPages (int pages);

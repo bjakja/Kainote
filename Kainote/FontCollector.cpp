@@ -192,7 +192,7 @@ FontCollectorDialog::FontCollectorDialog(wxWindow *parent, FontCollector *_fc)
 	bOpenFontFolder->Enable(false);
 	bClose = new MappedButton(this, 9881, _("Zamknij"));
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-		fc->fcd = NULL;
+		fc->fcd = nullptr;
 		Destroy();
 	}, 9881);
 	Connect(9879, 9880, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&FontCollectorDialog::OnButtonStart);
@@ -247,7 +247,7 @@ void FontCollectorDialog::EnableControls(bool enable)
 	if (enable){
 		if (disabler){
 			delete disabler;
-			disabler = NULL;
+			disabler = nullptr;
 		}
 	}
 	else{
@@ -551,8 +551,8 @@ void FontCollectorDialog::OnChangeOpt(wxCommandEvent &event)
 }
 
 FontCollector::FontCollector(wxWindow *parent)
-	:zip(NULL)
-	, fcd(NULL)
+	:zip(nullptr)
+	, fcd(nullptr)
 	, reloadFonts(false)
 {
 	FontEnum.AddClient(parent, [=](){reloadFonts = true; });
@@ -721,7 +721,7 @@ void FontCollector::CheckOrCopyFonts()
 
 		WCHAR appDataPath[MAX_PATH];
 		
-		if (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, NULL, 0, appDataPath))){
+		if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, nullptr, 0, appDataPath))){
 			fontFolderLocal = wxString(appDataPath) + L"\\Microsoft\\Windows\\Fonts\\";
 			wxString localPath = fontFolderLocal + L"*";
 			WIN32_FIND_DATAW data1;
@@ -741,7 +741,7 @@ void FontCollector::CheckOrCopyFonts()
 		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
 	}
 	
-	zip = NULL;
+	zip = nullptr;
 	int found = 0;
 	int notFound = 0;
 	int notCopied = 0;
@@ -759,7 +759,7 @@ void FontCollector::CheckOrCopyFonts()
 			//std::tuple<FontCollector*, SubsFile*, int*> *data = 
 				//new std::tuple<FontCollector *, SubsFile *, int*>(this, tabs->Page(i)->Grid->file, new int(i));
 			
-			//threads[i] = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
+			//threads[i] = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)ThreadFunction, data, 0, 0);
 			
 		}
 		//WaitForMultipleObjects(tabsSize, threads, TRUE, INFINITE);
@@ -860,7 +860,7 @@ bool FontCollector::SaveFont(const wxString &fontPath, FontLogContent *flc)
 
 void FontCollector::CopyMKVFonts()
 {
-	zip = NULL;
+	zip = nullptr;
 	
 	if (operation & ON_ALL_TABS){
 		Notebook *tabs = Notebook::GetTabs();
@@ -981,7 +981,7 @@ void FontCollector::CloseZip()
 	if (zip){
 		zip->Close();
 		delete zip;
-		zip = NULL;
+		zip = nullptr;
 	}
 }
 
@@ -1003,7 +1003,7 @@ void FontCollector::EnumerateFonts()
 	LOGFONTW lf;
 	lf.lfCharSet = DEFAULT_CHARSET;
 	lf.lfPitchAndFamily = 0;
-	HDC dc = ::CreateCompatibleDC(NULL);
+	HDC dc = ::CreateCompatibleDC(nullptr);
 	memcpy(lf.lfFaceName, L"\0", LF_FACESIZE);
 	EnumFontFamiliesEx(dc, &lf, (FONTENUMPROCW)[](const LOGFONT *lf, const TEXTMETRIC *mt, DWORD style, LPARAM lParam) -> int {
 		FontCollector * fc = reinterpret_cast<FontCollector*>(lParam);
@@ -1019,7 +1019,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 	bool allfound = true;
 	bool needInit = true;
 	bool copyFonts = !(operation & CHECK_FONTS);
-	HDC dc = ::CreateCompatibleDC(NULL);
+	HDC dc = ::CreateCompatibleDC(nullptr);
 	auto it = foundFonts.begin();
 	wxString lastfn;
 	for (size_t k = 0; k < foundFonts.size(); k++){
@@ -1176,7 +1176,7 @@ bool FontCollector::CheckPathAndGlyphs(int *found, int *notFound, int *notCopied
 		//rest fonts it's just bold/italic version not count it
 	done:
 
-		SelectObject(dc, NULL);
+		SelectObject(dc, nullptr);
 		DeleteObject(hfont);
 	}
 	::DeleteDC(dc);
@@ -1212,7 +1212,7 @@ void FontCollector::MuxVideoWithSubs()
 
 	STARTUPINFO si = { sizeof(si) };
 	PROCESS_INFORMATION pi;
-	if (!CreateProcessW(NULL, (LPWSTR)fullcommand.wc_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)){
+	if (!CreateProcessW(nullptr, (LPWSTR)fullcommand.wc_str(), nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi)){
 		KaiLog(_("Nie można stworzyć procesu, muxowanie przerwane"));
 	}
 

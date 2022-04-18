@@ -116,14 +116,14 @@ public:
 	void RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot);
 	void GetMoveTimes(int *start, int *end);
 	void SetModified(int action, bool dummy = false);
-	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = NULL, float* extlead = NULL);
+	bool GetTextExtents(const wxString &text, Styles *style, float* width, float* height, float* descent = nullptr, float* extlead = nullptr);
 	void Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline = false, int nBsplinePoints = 4, int currentPoint = 0);
 	//bordshad must be 2 elements table
-	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = NULL, 
-		bool keepExtraLead = false, D3DXVECTOR2* extralead = NULL, 
-		D3DXVECTOR2* drawingPosition = NULL, D3DXVECTOR2* bordshad = NULL);
+	D3DXVECTOR2 GetTextSize(Dialogue* dial, D3DXVECTOR2 *bord, Styles* style = nullptr, 
+		bool keepExtraLead = false, D3DXVECTOR2* extralead = nullptr, 
+		D3DXVECTOR2* drawingPosition = nullptr, D3DXVECTOR2* bordshad = nullptr);
 	D3DXVECTOR2 CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment = false);
-	D3DXVECTOR2 GetDrawingSize(const wxString& drawing, D3DXVECTOR2 *position = NULL);
+	D3DXVECTOR2 GetDrawingSize(const wxString& drawing, D3DXVECTOR2 *position = nullptr);
 	D3DXVECTOR2 GetPosnScale(D3DXVECTOR2 *scale, byte *AN, double *tbl);
 	D3DXVECTOR2 CalcMovePos();
 	D3DXVECTOR2 GetPosition(Dialogue *Dial, bool *putinBracket, wxPoint *TextPos);
@@ -162,7 +162,7 @@ public:
 	wxArrayInt selPositions;
 	wxString currentLineText;
 private:
-	TextEditor* editor = NULL;
+	TextEditor* editor = nullptr;
 	//int activeLineInTable = -1;
 	//Dialogue adresses are valid only for one modification
 	//need recreate on every checking
@@ -279,7 +279,7 @@ private:
 class moveElems
 {
 public:
-	moveElems(D3DXVECTOR2 element, byte tagtype, std::vector<ClipPoint>* vPoints = NULL) {
+	moveElems(D3DXVECTOR2 element, byte tagtype, std::vector<ClipPoint>* vPoints = nullptr) {
 		elem = element;
 		type = tagtype;
 		vectorPoints = vPoints;
@@ -291,7 +291,7 @@ public:
 	}
 	D3DXVECTOR2 elem;
 	byte type;
-	std::vector<ClipPoint>* vectorPoints = NULL;
+	std::vector<ClipPoint>* vectorPoints = nullptr;
 };
 
 class MoveAll : public Visuals
@@ -454,7 +454,7 @@ public:
 	void DrawVisual(int time);
 	virtual void OnMouseEvent(wxMouseEvent &event);
 	virtual void GetVisual(wxString *visual);
-	void ChangeVectorVisual(wxString *txt, wxString *visualText, wxPoint *changePos = NULL, wxString *clipMaskTag = NULL);
+	void ChangeVectorVisual(wxString *txt, wxString *visualText, wxPoint *changePos = nullptr, wxString *clipMaskTag = nullptr);
 	void SetClip(bool dummy, bool redraw = true, bool changeEditorText = true);
 	void SetCurVisual();
 	void SetPos(int x, int y);
@@ -478,7 +478,7 @@ public:
 	void OnMoveSelected(float x, float y);
 	int CheckCurve(int pos, bool checkSpline = true);
 	void AppendClipMask(wxString *mask);
-	void CreateClipMask(const wxString &clip, wxString *clipTag = NULL);
+	void CreateClipMask(const wxString &clip, wxString *clipTag = nullptr);
 	void InvertClip();
 	void SetZoom(D3DXVECTOR2 move, D3DXVECTOR2 scale) override;
 	virtual void SetShape(int shape) {};

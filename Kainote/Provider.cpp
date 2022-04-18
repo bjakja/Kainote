@@ -67,12 +67,12 @@ int Provider::GetChannels()
 	return m_channels;
 }
 
-int64_t Provider::GetNumSamples()
+long long Provider::GetNumSamples()
 {
 	return m_numSamples;
 }
 
-void Provider::GetWaveForm(int* min, int* peak, int64_t start, int w, int h, int samples, float scale) {
+void Provider::GetWaveForm(int* min, int* peak, long long start, int w, int h, int samples, float scale) {
 	if (audioNotInitialized) { return; }
 	int n = w * samples;
 	for (int i = 0; i < w; i++) {

@@ -14,10 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubtitlesProvider.h"
-#ifdef subsProvider
-
 #include "Config.h"
-//#include "Utils.h"
+
 
 std::vector< SubtitlesProviderManager*> SubtitlesProviderManager::gs_Base;
 
@@ -121,5 +119,3 @@ bool SubtitlesProviderManager::ReloadLibraries()
 	}
 	return false;
 }
-
-#endif

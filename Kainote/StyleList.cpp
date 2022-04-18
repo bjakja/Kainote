@@ -43,10 +43,10 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 
 	
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	Height = fh;
 
-	bmp = NULL;
+	bmp = nullptr;
 	scPos = 0;
 	lastsel = 0;
 	lastRow = -1;
@@ -59,7 +59,7 @@ StyleList::StyleList(wxWindow *parent, long id, std::vector<Styles*> *stylearray
 }
 
 StyleList::~StyleList(){
-	if (bmp){ delete bmp; bmp = NULL; }
+	if (bmp){ delete bmp; bmp = nullptr; }
 }
 
 
@@ -87,7 +87,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 	if (bmp) {
 		if (bmp->GetWidth() < w || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 	if (!bmp) bmp = new wxBitmap(w, h);
@@ -104,7 +104,7 @@ void StyleList::OnPaint(wxPaintEvent& event)
 		Options.GetColour(STATICLIST_BORDER)));
 	bdc.SetBrush(wxBrush(background));
 	bdc.DrawRectangle(0, 0, w, h);
-	wxArrayString *fonts = FontEnum.GetFonts(NULL, [](){});
+	wxArrayString *fonts = FontEnum.GetFonts(nullptr, [](){});
 
 	for (int i = scPos; i < scrows; i++)
 	{
@@ -452,7 +452,7 @@ bool StyleList::SetFont(const wxFont &_font)
 {
 	font = _font;
 	int fw, fh;
-	GetTextExtent(L"#TWFfGH", &fw, &fh, NULL, NULL, &font);
+	GetTextExtent(L"#TWFfGH", &fw, &fh, nullptr, nullptr, &font);
 	Height = fh;
 	Refresh(false);
 	return true;

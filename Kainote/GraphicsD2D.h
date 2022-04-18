@@ -10,7 +10,11 @@
 
 #pragma once
 
-#include "GraphicsD2D.h"
+#include <wx/pen.h>
+#include <wx/font.h>
+#include <wx/wx.h>
+#include <wx/dcclient.h>
+
 
 enum wxAntialiasMode
 {
@@ -50,14 +54,7 @@ enum wxGradientType
 //	wxJOIN_ROUND
 //};
 
-enum wxPenCap
-{
-	wxCAP_INVALID = -1,
 
-	wxCAP_ROUND = 130,
-	wxCAP_PROJECTING,
-	wxCAP_BUTT
-};
 
 // ----------------------------------------------------------------------------
 // wxPenInfoBase is a common base for wxPenInfo and wxGraphicsPenInfo
@@ -118,7 +115,7 @@ protected:
 		: m_colour(colour)
 	{
 		m_nb_dashes = 0;
-		m_dash = NULL;
+		m_dash = nullptr;
 		m_join = wxJOIN_ROUND;
 		m_cap = wxCAP_ROUND;
 		m_style = style;
@@ -311,16 +308,16 @@ public:
 	static int ToIntPointSize(float pointSize) { return wxRound(pointSize); }
 	static float ToFloatPointSize(int pointSize)
 	{
-		wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
-			-1, "Invalid font point size");
+		//wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
+			//-1, "Invalid font point size");
 
 		// Huge values are not exactly representable as floats, so don't accept
 		// those neither as they can only be due to a mistake anyhow: nobody
 		// could possibly need a font of size 16777217pt (which is the first
 		// value for which this fails).
 		const float f = static_cast<float>(pointSize);
-		wxCHECK_MSG(static_cast<int>(f) == pointSize,
-			-1, "Font point size out of range");
+		//wxCHECK_MSG(static_cast<int>(f) == pointSize,
+			//-1, "Font point size out of range");
 
 		return f;
 	}
@@ -332,8 +329,12 @@ public:
 	// contains backwards compatibility hacks, but we don't need it here).
 	static wxFontWeight GetWeightClosestToNumericValue(int numWeight)
 	{
-		wxASSERT(numWeight > 0);
-		wxASSERT(numWeight <= 1000);
+		if (numWeight > 0) {
+			return;
+		};
+		if(numWeight <= 1000) {
+			return;
+		};
 
 		// round to nearest hundredth = wxFONTWEIGHT_ constant
 		int weight = ((numWeight + 50) / 100) * 100;
@@ -429,8 +430,8 @@ public:
 		wxDouble tx = 0.0, wxDouble ty = 0.0) = 0;
 
 	// gets the component valuess of the matrix
-	virtual void Get(wxDouble* a = NULL, wxDouble* b = NULL, wxDouble* c = NULL,
-		wxDouble* d = NULL, wxDouble* tx = NULL, wxDouble* ty = NULL) const = 0;
+	virtual void Get(wxDouble* a = nullptr, wxDouble* b = nullptr, wxDouble* c = nullptr,
+		wxDouble* d = nullptr, wxDouble* tx = nullptr, wxDouble* ty = nullptr) const = 0;
 
 	// makes this the inverse matrix
 	virtual void Invert() = 0;
@@ -552,7 +553,7 @@ public:
 
 	virtual void ResetClip(){};
 	// The native context used by GraphicsContext is a Direct2D render target.
-	virtual void* GetNativeContext(){ return NULL; };
+	virtual void* GetNativeContext(){ return nullptr; };
 
 	virtual bool SetAntialiasMode(wxAntialiasMode antialias){ return false; };
 
@@ -572,7 +573,7 @@ public:
 
 	virtual void SetTransform(GraphicsMatrixData* matrix){};
 
-	virtual GraphicsMatrixData *GetTransform() const{ return NULL; };
+	virtual GraphicsMatrixData *GetTransform() const{ return nullptr; };
 
 	virtual void StrokePath(GraphicsPathData * p){};
 
@@ -588,7 +589,7 @@ public:
 
 	virtual void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
 
-	virtual GraphicsPathData * CreatePath(){ return NULL; };
+	virtual GraphicsPathData * CreatePath(){ return nullptr; };
 
 	virtual void SetPen(const wxPen& pen, double width = 1.0){};
 
@@ -603,9 +604,9 @@ public:
 	virtual void GetTextExtent(
 		const wxString& str,
 		wxDouble* width,
-		wxDouble* height = NULL,
-		wxDouble* descent = NULL,
-		wxDouble* externalLeading = NULL) const {};
+		wxDouble* height = nullptr,
+		wxDouble* descent = nullptr,
+		wxDouble* externalLeading = nullptr) const {};
 
 	virtual void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const {};
 
@@ -633,23 +634,23 @@ public:
 
 	static GraphicsRenderer * GetDirect2DRenderer();
 
-	virtual GraphicsContext * CreateContext(const wxWindowDC& dc){ return NULL; };
+	virtual GraphicsContext * CreateContext(const wxWindowDC& dc){ return nullptr; };
 
-	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return NULL; };
+	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeContext(void* context){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeContext(void* context){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeWindow(void* window){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeWindow(void* window){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc){ return nullptr; };
 
-	virtual GraphicsContext * CreateContext(wxWindow* window){ return NULL; };
+	virtual GraphicsContext * CreateContext(wxWindow* window){ return nullptr; };
 
 #if wxUSE_IMAGE
-	virtual GraphicsContext * CreateContextFromImage(wxImage& image){ return NULL; };
+	virtual GraphicsContext * CreateContextFromImage(wxImage& image){ return nullptr; };
 #endif // wxUSE_IMAGE
 
-	virtual GraphicsContext * CreateMeasuringContext(){ return NULL; };
+	virtual GraphicsContext * CreateMeasuringContext(){ return nullptr; };
 
 };
 

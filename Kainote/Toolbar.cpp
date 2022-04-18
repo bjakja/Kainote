@@ -22,7 +22,7 @@
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(thickness, -1))
-	, bmp(NULL)
+	, bmp(nullptr)
 	, Clicked(false)
 	, wasmoved(false)
 	, wh(thickness)
@@ -78,7 +78,7 @@ void KaiToolbar::InitToolbar()
 		wxString desc = item->GetLabelText();
 		bool isToogleButton = item->type == ITEM_CHECK;
 		AddItem(IDS[i], desc, item->icon, item->IsEnabled(), (isToogleButton) ? 2 :
-			(item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
+			(item->GetSubMenu() != nullptr) ? 1 : 0, (isToogleButton) ? item->check : false);
 	}
 	tools.push_back(new toolitem(3, 16, 32566, true));
 
@@ -118,7 +118,7 @@ toolitem * KaiToolbar::FindItem(int id)
 			return (*i);
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 void KaiToolbar::UpdateId(int id, bool enable)
@@ -228,7 +228,7 @@ void KaiToolbar::OnPaint(wxPaintEvent &event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < w || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(w, h); }
 	tdc.SelectObject(*bmp);
@@ -446,7 +446,7 @@ ToolbarMenu::ToolbarMenu(KaiToolbar*_parent, const wxPoint &pos, const wxSize &s
 	, sel(-1)
 	, scPos(0)
 	, parent(_parent)
-	, bmp(NULL)
+	, bmp(nullptr)
 {
 	fh = height;
 	SetFont(parent->GetFont());
@@ -514,7 +514,7 @@ void ToolbarMenu::OnMouseEvent(wxMouseEvent &evt)
 			MenuItem *item = parent->mb->FindItem(parent->ids[elem]);
 			bool isToogleButton = item->type == ITEM_CHECK;
 			parent->AddItem(parent->ids[elem], item->GetLabelText(), item->icon, item->IsEnabled(),
-				(isToogleButton) ? 2 : (item->GetSubMenu() != NULL) ? 1 : 0, (isToogleButton) ? item->check : false);
+				(isToogleButton) ? 2 : (item->GetSubMenu() != nullptr) ? 1 : 0, (isToogleButton) ? item->check : false);
 		}
 		else{
 			delete parent->tools[result];
@@ -560,7 +560,7 @@ void ToolbarMenu::OnPaint(wxPaintEvent &event)
 	wxMemoryDC tdc;
 	if (bmp && (bmp->GetWidth() < ow || bmp->GetHeight() < h)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp){ bmp = new wxBitmap(ow, h); }
 	tdc.SelectObject(*bmp);

@@ -439,8 +439,8 @@ public:
 	void GetRawOptions(wxString &options, bool Audio = false);
 	void AddStyle(Styles *styl);
 	void ChangeStyle(Styles *styl, int i);
-	Styles *GetStyle(int i, const wxString &name = emptyString, Styles* styl = NULL);
-	int FindStyle(const wxString &name, int *multiplication = NULL);
+	Styles *GetStyle(int i, const wxString &name = emptyString, Styles* styl = nullptr);
+	int FindStyle(const wxString &name, int *multiplication = nullptr);
 	void DelStyle(int i);
 	int StoreSize();
 	void CatchValsLabs(const wxString &rawoptions);
@@ -449,11 +449,11 @@ public:
 	void LoadColors(const wxString &themeName = emptyString);
 	//if you want to use defaultOptions alocate table for configSize
 	//use with AudioConfig
-	void LoadDefaultConfig(wxString * defaultOptions = NULL);
-	void LoadDefaultColors(bool dark = true, wxColour *table = NULL);
+	void LoadDefaultConfig(wxString * defaultOptions = nullptr);
+	void LoadDefaultColors(bool dark = true, wxColour *table = nullptr);
 	//if you want to use defaultOptions alocate table for configSize
 	//use with AudioConfig
-	void LoadDefaultAudioConfig(wxString * defaultOptions = NULL);
+	void LoadDefaultAudioConfig(wxString * defaultOptions = nullptr);
 	void LoadMissingColours(const wxString &path);
 	bool LoadAudioOpts();
 	void ResetDefault();
@@ -482,11 +482,11 @@ public:
 };
 
 #ifndef SAFE_DELETE
-#define SAFE_DELETE(x) if (x !=NULL) { delete x; x = NULL; }
+#define SAFE_DELETE(x) if (x !=nullptr) { delete x; x = nullptr; }
 #endif
 
 #ifndef SAFE_RELEASE
-#define SAFE_RELEASE(x) if (x != NULL) { x->Release(); x = NULL; } 
+#define SAFE_RELEASE(x) if (x != nullptr) { x->Release(); x = nullptr; } 
 #endif
 
 

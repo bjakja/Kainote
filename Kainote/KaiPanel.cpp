@@ -59,7 +59,7 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 							break;
 					}
 					else
-						fparent = NULL;
+						fparent = nullptr;
 				}
 				if (!nextWindow)
 					nextWindow = next ? list.GetFirst() : list.GetLast();
@@ -82,7 +82,7 @@ void KaiContainer::OnNavigation(wxNavigationKeyEvent& evt)
 						//	//if panel is empty then just continue
 						//	//don't give it focus
 						//	if (!list1.GetCount()) {
-						//		win = NULL;
+						//		win = nullptr;
 						//		break;
 						//	}
 						//	nextWindow = next ? list1.GetFirst() : list1.GetLast();
@@ -124,7 +124,7 @@ void KaiContainer::FindFocusable(bool next, wxWindowListNode** node, wxWindow** 
 
 wxWindow* KaiContainer::FindCheckedRadiobutton(bool next, wxWindowListNode** listWithRadioButton, wxWindow* focused)
 {
-	wxWindow* result = NULL;
+	wxWindow* result = nullptr;
 	bool beforeGroup = false;
 	while (1) {
 		if ((*listWithRadioButton)) {
@@ -174,7 +174,7 @@ void KaiContainer::OnSetFocus(wxFocusEvent& evt)
 	while (thiswindow) {
 		wxWindowList& list = thiswindow->GetChildren();
 		wxWindowListNode* node = list.GetFirst();
-		wxWindow* win = NULL;
+		wxWindow* win = nullptr;
 		FindFocusable(true, &node, &win);
 		if (win) {
 			win->SetFocus();

@@ -153,17 +153,17 @@ namespace Auto{
 	//	scoped_holder<HANDLE, BOOL (__stdcall *)(HANDLE)> h;//{INVALID_HANDLE_VALUE, FindClose};
 	//};
 
-	DirectoryIterator::DirectoryIterator() {handle = NULL; }
+	DirectoryIterator::DirectoryIterator() {handle = nullptr; }
 	DirectoryIterator::DirectoryIterator(path const& p, std::string const& filter)
 	//: privdata(new PrivData)
 	{
-		handle = NULL;
+		handle = nullptr;
 		WIN32_FIND_DATA data;
 		handle = FindFirstFileEx((p/(filter.empty() ? "*.*" : filter)).c_str(), find_info_level(), &data, FindExSearchNameMatch, nullptr, 0);
 		if (handle == INVALID_HANDLE_VALUE) {
 			//privdata.reset();
-			//if(privdata){delete privdata; privdata=NULL;}
-			handle = NULL;
+			//if(privdata){delete privdata; privdata=nullptr;}
+			handle = nullptr;
 			return;
 		}
 
@@ -182,14 +182,14 @@ namespace Auto{
 			value = wxString(data.cFileName).ToStdString();
 		else {
 			//if(privdata){privdata.reset();}
-			//if(privdata){delete privdata; privdata=NULL;}
-			handle = NULL;
+			//if(privdata){delete privdata; privdata=nullptr;}
+			handle = nullptr;
 			value.clear();
 		}
 		return *this;
 	}
 
-	DirectoryIterator::~DirectoryIterator() { if (handle){ FindClose(handle); handle=NULL; }}
+	DirectoryIterator::~DirectoryIterator() { if (handle){ FindClose(handle); handle=nullptr; }}
 
 	template<typename Func>
 	auto wrap(char **err, Func f) -> decltype(f()) {

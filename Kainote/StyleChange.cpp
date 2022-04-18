@@ -34,15 +34,15 @@ wxColour Blackorwhite(wxColour kol)
 
 StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 //: wxWindow(parent,-1,pos)
-	: SCD(NULL)
+	: SCD(nullptr)
 	, SS((StyleStore*)parent)
 {
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
-	DialogSizer *ds = NULL;
-	wxBoxSizer *Main1 = NULL;
-	wxBoxSizer *Main2 = NULL;
-	wxBoxSizer *Main3 = NULL;
+	DialogSizer *ds = nullptr;
+	wxBoxSizer *Main1 = nullptr;
+	wxBoxSizer *Main2 = nullptr;
+	wxBoxSizer *Main3 = nullptr;
 	if (!window){
 		SCD = new KaiDialog(parent->GetParent(), -1, _("Edycja Stylu"), pos, wxDefaultSize, wxRESIZE_BORDER);
 		Create(SCD, -1);
@@ -54,8 +54,8 @@ StyleChange::StyleChange(wxWindow* parent, bool window, const wxPoint& pos)
 	else{
 		Create(parent, -1);
 	}
-	Preview = NULL;
-	updateStyle = NULL;
+	Preview = nullptr;
+	updateStyle = nullptr;
 	block = true;
 	wxWindow::SetFont(*Options.GetFont(-2));
 
@@ -338,8 +338,8 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 	if (Options.GetBool(COLORPICKER_SWITCH_CLICKS))
 		leftClick = !leftClick;
 
-	MappedButton *color = NULL;
-	NumCtrl *alpha = NULL;
+	MappedButton *color = nullptr;
+	NumCtrl *alpha = nullptr;
 	GetColorControls(&color, &alpha, numColor);
 	wxColour actualColor = color->GetBackgroundColour();
 	//this color will replace original colors;
@@ -350,8 +350,8 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 		int colorDialogId = ColourDialog->GetId();
 		MoveToMousePosition(ColourDialog);
 		ColourDialog->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
-			MappedButton *colorButton = NULL;
-			NumCtrl *alphaButton = NULL;
+			MappedButton *colorButton = nullptr;
+			NumCtrl *alphaButton = nullptr;
 			GetColorControls(&colorButton, &alphaButton, evt.GetInt());
 			lastColor = AssColor(colorButton->GetBackgroundColour(), alphaButton->GetInt());
 			ColourDialog->SetColor(lastColor, 0, false);
@@ -379,8 +379,8 @@ void StyleChange::OnAllCols(int numColor, bool leftClick /*= true*/)
 			UpdateColor(evt.GetColor(), evt.GetColorType());
 		}, spcdId);
 		scpd->Bind(COLOR_TYPE_CHANGED, [=](wxCommandEvent &evt){
-			MappedButton *colorButton = NULL;
-			NumCtrl *alphaButton = NULL;
+			MappedButton *colorButton = nullptr;
+			NumCtrl *alphaButton = nullptr;
 			GetColorControls(&colorButton, &alphaButton, evt.GetInt());
 			lastColor = AssColor(colorButton->GetBackgroundColour(), alphaButton->GetInt());
 			scpd->SetColor(lastColor);
@@ -731,8 +731,8 @@ void StyleChange::GetColorControls(MappedButton** color, NumCtrl** alpha, int nu
 
 void StyleChange::UpdateColor(const AssColor &pickedColor, int numColor)
 {
-	MappedButton *color = NULL;
-	NumCtrl *alpha = NULL;
+	MappedButton *color = nullptr;
+	NumCtrl *alpha = nullptr;
 	GetColorControls(&color, &alpha, numColor);
 	color->SetForegroundColour(Blackorwhite(pickedColor.GetWX()));
 	color->SetBackgroundColour(pickedColor.GetWX());

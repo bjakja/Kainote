@@ -1,53 +1,33 @@
-// Copyright (c) 2005, 2006, Rodrigo Braz Monteiro
-// Copyright (c) 2006, 2007, Niels Martin Hansen
-// Copyright(c) 2014, 2017, Marcin Drob
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//   * Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   * Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   * Neither the name of the Aegisub Group nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
-//
-// -----------------------------------------------------------------------------
-//
-// AEGISUB
-//
-// Website: http://aegisub.cellosoft.com
-// Contact: mailto:zeratul@cellosoft.com
-//
+//  Copyright (c) 2016-2022, Marcin Drob
+
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+//this code piervously was taken from Aegisub 2 it's rewritten by me almost all.
 
 
 #include "Config.h"
-#include "UtilsWindows.h"
-#include <assert.h>
-#include <vector>
-#include <list>
-#include <utility>
-#include <algorithm>
 #include "AudioSpectrum.h"
 
 #include "ColorSpace.h"
 #include <wx/log.h>
 #include <process.h>
+#include <assert.h>
+#include <vector>
+#include <list>
+#include <utility>
+#include <algorithm>
+#include "UtilsWindows.h"
 
 
 const unsigned int orgsubcachelen = 16;//original subcache length when overlaps = 1
@@ -86,10 +66,10 @@ public:
 		//test it
 		unsigned int overlap_offset = doublelen / overlaps;
 
-		//int64_t sample=start;
-		int64_t fftStart = start;
+		//long long sample=start;
+		long long fftStart = start;
 		fftStart = (fftStart * doublelen) / (overlaps);
-		int64_t sample = fftStart;
+		long long sample = fftStart;
 		//float scale_factor = 10 / sqrt(2 * (float)(doublelen));
 
 		for (unsigned long i = 0; i < subcachelen; ++i) {
@@ -157,7 +137,7 @@ void AudioSpectrum::SetupSpectrum(int _overlaps)
 	subcachelen = orgsubcachelen * overlaps;
 }
 
-void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent)
+void AudioSpectrum::RenderRange(long long range_start, long long range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent)
 {
 	wxCriticalSectionLocker locker(CritSec);
 	int newOverlaps = ceil(((float)imgwidth / ((float)(range_end - range_start) / (float)doublelen)) * ((100 - percent) / 100.f)) + 1;
@@ -283,14 +263,14 @@ void AudioSpectrum::RenderRange(int64_t range_start, int64_t range_end, unsigned
 	
 }
 
-void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &intensities, int64_t timeStart, int64_t timeEnd, wxPoint frequency, int peek)
+void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &intensities, long long timeStart, long long timeEnd, wxPoint frequency, int peek)
 {
 	wxCriticalSectionLocker locker(CritSec);
 	overlaps = 1;
 	subcachelen = 16;
 	int sampleRate = provider->GetSampleRate();
-	int64_t range_start = timeStart * sampleRate / 1000;
-	int64_t range_end = timeEnd * sampleRate / 1000;
+	long long range_start = timeStart * sampleRate / 1000;
+	long long range_end = timeEnd * sampleRate / 1000;
 	unsigned long first_line = (unsigned long)(range_start / doublelen);
 	unsigned long last_line = (unsigned long)(range_end / doublelen);
 	unsigned long startcache = first_line / subcachelen;
@@ -315,10 +295,10 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 	AudioThreads->CreateCache(startcache, endcache);
 
 	// Note that here "lines" are actually bands of power data
-	int64_t lasttime = -1;
+	long long lasttime = -1;
 	unsigned long subcache = AudioThreads->lastCachePosition;
 	SpectrumCache *cache = sub_caches[subcache];
-	//int64_t g = range_start;
+	//long long g = range_start;
 	int lastintensity = 0;
 	int lastintensitytime = 0;
 	for (unsigned long i = first_line; i <= last_line; ++i) {
@@ -328,8 +308,8 @@ void AudioSpectrum::CreateRange(std::vector<int> &output, std::vector<int> &inte
 			cache = sub_caches[subcache];
 		}
 		CacheLine &line = cache->GetLine(i);
-		int64_t lli = i;
-		int64_t time = (lli * doublelen * 1000) / sampleRate;
+		long long lli = i;
+		long long time = (lli * doublelen * 1000) / sampleRate;
 		//g += doublelen;
 		
 		bool reached = false;
@@ -528,12 +508,12 @@ void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *
 	//size_t offset = (doublelen / overlaps) ;
 	//size_t sampleend = ((_start + _len - 1) * subcachelen) * doublelen;
 	//sampleend += ((subcachelen-1) * doublelen);
-	int64_t samplestart = ((_start /*/ overlaps*/) * orgsubcachelen) * doublelen;
-	int64_t offset = (doublelen / overlaps);
-	int64_t sampleend = (((_start + _len - 1) /*/ overlaps*/) * orgsubcachelen) * doublelen;
+	long long samplestart = ((_start /*/ overlaps*/) * orgsubcachelen) * doublelen;
+	long long offset = (doublelen / overlaps);
+	long long sampleend = (((_start + _len - 1) /*/ overlaps*/) * orgsubcachelen) * doublelen;
 	sampleend += /*((overlaps - 1) * offset) + */((subcachelen - 1) * offset/*doublelen*/);
 
 	fft->SetAudio(samplestart, (sampleend - samplestart) + doublelen);
 }
 
-AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = NULL;
+AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = nullptr;

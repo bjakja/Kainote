@@ -60,7 +60,7 @@ SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw,
 
 SubsGridPreview::~SubsGridPreview()
 {
-	if (bmp){ delete bmp; bmp = NULL; }
+	if (bmp){ delete bmp; bmp = nullptr; }
 }
 
 void SubsGridPreview::MakeVisible()
@@ -80,8 +80,8 @@ void SubsGridPreview::MakeVisible()
 
 void SubsGridPreview::DestroyPreview(bool refresh, bool destroyingPreviewTab)
 {
-	parent->preview = NULL;
-	previewGrid->thisPreview = NULL;
+	parent->preview = nullptr;
+	previewGrid->thisPreview = nullptr;
 	if (!Options.GetClosing()){
 		TabPanel *tab = (destroyingPreviewTab) ? (TabPanel*)previewGrid->GetParent() : (TabPanel*)parent->GetParent();
 		tab->Edit->SetGrid(tab->Grid);
@@ -136,7 +136,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	if (bmp) {
 		if (bmp->GetWidth() < w + scHor || bmp->GetHeight() < h) {
 			delete bmp;
-			bmp = NULL;
+			bmp = nullptr;
 		}
 	}
 	if (!bmp) bmp = new wxBitmap(w + scHor, h);
@@ -199,7 +199,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 	TabPanel *tab = (TabPanel*)previewGrid->GetParent();
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
 	Dialogue *acdial = previewGrid->GetDialogue(previewGrid->currentLine);
-	Dialogue *Dial = NULL;
+	Dialogue *Dial = nullptr;
 
 	int VideoPos = tab->Video->GetState() != None ? tab->Video->Tell() : -1;
 
@@ -269,7 +269,7 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 			tdc.SetBrush(wxBrush(Options.GetColour(hasFocus ? WINDOW_BORDER_BACKGROUND : WINDOW_BORDER_BACKGROUND_INACTIVE)));
 			tdc.SetPen(*wxTRANSPARENT_PEN);
 			tdc.DrawRectangle(0, posY, w + scHor, previewGrid->GridHeight);
-			GetTextExtent(tab->SubsName, &fw, &fh, NULL, NULL, &previewGrid->font);
+			GetTextExtent(tab->SubsName, &fw, &fh, nullptr, nullptr, &previewGrid->font);
 			int center = ((w - fw) / 2) + scHor;
 			tdc.SetTextForeground(Options.GetColour(WINDOW_HEADER_TEXT));
 			tdc.DrawText(tab->SubsName, center, 1);
@@ -437,11 +437,11 @@ void SubsGridPreview::OnPaint(wxPaintEvent &evt)
 						wxString bcmp;
 						if (previewGrid->Comparison->at(key)[c]>0){
 							bcmp = strings[j].Mid(0, previewGrid->Comparison->at(key)[c]);
-							GetTextExtent(bcmp, &bfw, &bfh, NULL, NULL, &previewGrid->font);
+							GetTextExtent(bcmp, &bfw, &bfh, nullptr, nullptr, &previewGrid->font);
 						}
 						else{ bfw = 0; }
 
-						GetTextExtent(cmp, &fw, &fh, NULL, NULL, &previewGrid->font);
+						GetTextExtent(cmp, &fw, &fh, nullptr, nullptr, &previewGrid->font);
 						tdc.DrawText(cmp, posX + bfw + 2, posY);
 						tdc.DrawText(cmp, posX + bfw + 4, posY);
 						tdc.DrawText(cmp, posX + bfw + 2, posY + 2);
@@ -836,7 +836,7 @@ void SubsGridPreview::OnAccelerator(wxCommandEvent &evt)
 
 void SubsGridPreview::SeekForOccurences()
 {
-	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
+	if (lastData.grid){ lastData.grid->thisPreview = nullptr; }
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
 	Dialogue * actualDial = parent->GetDialogue(tabp->Grid->currentLine);
 	int startTime = actualDial->Start.mstime;
@@ -929,13 +929,13 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 	for (int i = 0; i < previewData.size(); i++){
 		wxString name = previewData[i].tab->SubsName + L" (" + std::to_wstring(previewData[i].lineRangeStart) +
 			L" " + std::to_wstring(previewData[i].lineRangeLen) + L")";
-		MenuItem * Item = menu->Append(4880 + i, name, emptyString, true, NULL, NULL, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
+		MenuItem * Item = menu->Append(4880 + i, name, emptyString, true, nullptr, nullptr, (lastData == previewData[i]) ? ITEM_RADIO : ITEM_NORMAL);
 	}
 	int result = menu->GetPopupMenuSelection(pos, this);
 	delete menu;
 	if (result < 0){ return; }
 	int line = result - 4880;
-	if (lastData.grid){ lastData.grid->thisPreview = NULL; }
+	if (lastData.grid){ lastData.grid->thisPreview = nullptr; }
 	lastData = previewData[line];
 	TabPanel *tabp = (TabPanel*)parent->GetParent();
 	tabp->Edit->SetGrid(parent);

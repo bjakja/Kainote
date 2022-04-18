@@ -77,7 +77,7 @@ public:
 	wxWindow *panel; 
 
 	void Contents(bool addopts = true);
-	void RefVals(ShiftTimesWindow *from = NULL);
+	void RefVals(ShiftTimesWindow *from = nullptr);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);

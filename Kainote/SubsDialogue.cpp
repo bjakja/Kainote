@@ -74,7 +74,7 @@ Dialogue::~Dialogue()
 
 void Dialogue::ClearParse()
 {
-	if (parseData){ delete parseData; parseData = NULL; }
+	if (parseData){ delete parseData; parseData = nullptr; }
 }
 
 void Dialogue::AddResetOnMDVDWraps(const wxString & prefix)
@@ -249,7 +249,7 @@ void Dialogue::SetTextElement(int replaceColumn, const wxString &elementText, bo
 
 Dialogue::Dialogue(const wxString &ldial, const wxString &txttl)
 {
-	parseData = NULL;
+	parseData = nullptr;
 	TextTl = txttl;
 	SetRaw(ldial);
 }
@@ -631,7 +631,7 @@ void Dialogue::Convert(char type, const wxString &prefix)
 Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 {
 	Dialogue *dial = new Dialogue();
-	//if(!dial){return NULL;}
+	//if(!dial){return nullptr;}
 	dial->Actor = Actor;
 	dial->Effect = Effect;
 	dial->End = End;
@@ -652,7 +652,7 @@ Dialogue *Dialogue::Copy(bool keepstate, bool copyIsVisible)
 	dial->TextTl = TextTl;
 	dial->treeState = treeState;
 	dial->isVisible.Store(isVisible, copyIsVisible);
-	dial->parseData = NULL;
+	dial->parseData = nullptr;
 	return dial;
 }
 
@@ -662,7 +662,7 @@ ParseData* Dialogue::ParseTags(wxString *tags, size_t ntags, bool plainText)
 {
 	if (parseData) {
 		delete parseData; 
-		parseData = NULL;
+		parseData = nullptr;
 	}
 	wxString txt = (TextTl != emptyString) ? TextTl : Text;
 	size_t pos = 0;

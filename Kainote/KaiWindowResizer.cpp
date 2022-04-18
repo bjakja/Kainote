@@ -33,7 +33,7 @@ KaiWindowResizer::KaiWindowResizer(wxWindow *parent, std::function<bool(int)> _c
 		holding = false;
 		if (splitLine){
 			splitLine->Destroy();
-			splitLine = NULL;
+			splitLine = nullptr;
 		}
 	});
 	Bind(wxEVT_PAINT, &KaiWindowResizer::OnPaint, this);
@@ -67,7 +67,7 @@ void KaiWindowResizer::OnMouseEvent(wxMouseEvent &evt)
 			splitLine->GetPosition(&x, &newPosition);
 			resizerParent->ScreenToClient(&x, &newPosition);
 			splitLine->Destroy();
-			splitLine = NULL;
+			splitLine = nullptr;
 			doResize(newPosition, evt.ShiftDown());
 		}
 
@@ -109,7 +109,7 @@ void KaiWindowResizer::OnPaint(wxPaintEvent& evt)
 	wxSize size = GetClientSize();
 	if (bmp && (bmp->GetWidth() < size.x || bmp->GetHeight() < size.y)) {
 		delete bmp;
-		bmp = NULL;
+		bmp = nullptr;
 	}
 	if (!bmp) { bmp = new wxBitmap(size.x, size.y); }
 	wxMemoryDC mdc(*bmp);

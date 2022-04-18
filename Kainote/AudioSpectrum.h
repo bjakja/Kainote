@@ -37,7 +37,7 @@
 #pragma once
 
 #include <wx/wxprec.h>
-#include <stdint.h>
+//#include <stdint.h>
 #include "GFFT/GFFT.h"
 #include "Provider.h"
 
@@ -69,8 +69,8 @@ public:
 	AudioSpectrum(Provider *_provider);
 	~AudioSpectrum();
 	
-	void RenderRange(int64_t range_start, int64_t range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent);
-	void CreateRange(std::vector<int> &output, std::vector<int> &intensities, int64_t timeStart, int64_t timeEnd, wxPoint frequency, int peek);
+	void RenderRange(long long range_start, long long range_end, unsigned char *img, int imgwidth, int imgpitch, int imgheight, int percent);
+	void CreateRange(std::vector<int> &output, std::vector<int> &intensities, long long timeStart, long long timeEnd, wxPoint frequency, int peek);
 	void SetScaling(float _power_scale);
 	void ChangeColours();
 	void SetNonLinear(bool _nonlinear){ nonlinear = _nonlinear; }
@@ -93,10 +93,10 @@ private:
 	std::vector<SpectrumCache*> *sub_caches;
 	unsigned long len;
 	//unsigned int overlaps;
-	FFT *ffttable = NULL;
-	HANDLE *threads=NULL;
-	HANDLE *eventCacheCopleted = NULL;
-	HANDLE *eventMakeCache = NULL;
+	FFT *ffttable = nullptr;
+	HANDLE *threads=nullptr;
+	HANDLE *eventCacheCopleted = nullptr;
+	HANDLE *eventMakeCache = nullptr;
 	HANDLE eventKillSelf;
 	static AudioSpectrumMultiThreading *sthread;
 };

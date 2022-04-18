@@ -39,17 +39,17 @@ public:
 	void Reset(wxCommandEvent& evt);
 	void OnStylesChoose(wxCommandEvent& event);
 	KaiChoice* FindText;
-	KaiChoice* ReplaceText = NULL;
-	KaiChoice* FindInSubsPattern = NULL;
-	KaiChoice* FindInSubsPath = NULL;
+	KaiChoice* ReplaceText = nullptr;
+	KaiChoice* FindInSubsPattern = nullptr;
+	KaiChoice* FindInSubsPath = nullptr;
 	KaiRadioButton* CollumnText;
 	KaiRadioButton* CollumnStyle;
 	KaiRadioButton* CollumnActor;
 	KaiRadioButton* CollumnEffect;
-	KaiRadioButton* AllLines = NULL;
-	KaiRadioButton* SelectedLines = NULL;
-	KaiRadioButton* FromSelection = NULL;
-	KaiTextCtrl *ChoosenStyleText = NULL;
+	KaiRadioButton* AllLines = nullptr;
+	KaiRadioButton* SelectedLines = nullptr;
+	KaiRadioButton* FromSelection = nullptr;
+	KaiTextCtrl *ChoosenStyleText = nullptr;
 	KaiCheckBox* MatchCase;
 	KaiCheckBox* RegEx;
 	KaiCheckBox* StartLine;
@@ -57,8 +57,8 @@ public:
 	KaiCheckBox* UseComments;
 	KaiCheckBox* OnlyText;
 	KaiCheckBox* OnlyTags;
-	KaiCheckBox *SeekInSubFolders = NULL;
-	KaiCheckBox *SeekInHiddenFolders = NULL;
+	KaiCheckBox *SeekInSubFolders = nullptr;
+	KaiCheckBox *SeekInHiddenFolders = nullptr;
 	FindReplace *FR;
 	int windowType = 0;
 };
@@ -78,9 +78,9 @@ private:
 	void OnActivate(wxActivateEvent& event);
 	void OnEnterConfirm(wxCommandEvent& event);
 	void SetSelection(TabWindow *tab);
-	FindReplace *FR = NULL;
-	KainoteFrame *Kai = NULL;
-	KaiTabBar * findReplaceTabs = NULL;
+	FindReplace *FR = nullptr;
+	KainoteFrame *Kai = nullptr;
+	KaiTabBar * findReplaceTabs = nullptr;
 	int lastFocusedId = -1;
 };
 

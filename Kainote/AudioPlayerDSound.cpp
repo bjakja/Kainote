@@ -1,126 +1,31 @@
-// Copyright (c) 2008, 2010, Niels Martin Hansen
-// All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//   * Redistributions of source code must retain the above copyright notice,
-//     this list of conditions and the following disclaimer.
-//   * Redistributions in binary form must reproduce the above copyright notice,
-//     this list of conditions and the following disclaimer in the documentation
-//     and/or other materials provided with the distribution.
-//   * Neither the name of the Aegisub Group nor the names of its contributors
-//     may be used to endorse or promote products derived from this software
-//     without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
-//
-// -----------------------------------------------------------------------------
-//
-// AEGISUB
-//
-// Website: http://www.aegisub.net/
-// Contact: mailto:jiifurusu@gmail.com
-//
+//  Copyright (c) 2016-2022, Marcin Drob
 
+//  Kainote is free software: you can redistribute it and/or modify
+//  it under the terms of the GNU General Public License as published by
+//  the Free Software Foundation, either version 3 of the License, or
+//  (at your option) any later version.
+
+//  Kainote is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+
+//  You should have received a copy of the GNU General Public License
+//  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+//this code piervously was taken from Aegisub 2 it's rewritten by me almost all.
 
 ///////////
 // Headers
-//#include "config.h"
-#pragma comment(lib, "dsound.lib")
-#pragma comment(lib, "dxguid.lib")
 
-#include "UtilsWindows.h"
-#include <wx/wxprec.h>
+#include <wx/wx.h>
 #include <mmsystem.h>
 #include <dsound.h>
 #include <process.h>
-
+#include "LogHandler.h"
 #include "KainoteApp.h"
 #include "AudioPlayerDSound.h"
-
-
-struct COMInitialization {
-	bool inited;
-
-	COMInitialization()
-	{
-		inited = false;
-	}
-
-	~COMInitialization()
-	{
-		if (inited) CoUninitialize();
-	}
-
-	void Init()
-	{
-		if (!inited)
-		{
-			if (FAILED(CoInitialize(NULL)))
-				throw std::exception();
-			inited = true;
-		}
-	}
-};
-
-
-template<class T>
-struct COMObjectRetainer {
-	T *obj;
-
-	COMObjectRetainer()
-	{
-		obj = 0;
-	}
-
-	COMObjectRetainer(T *_obj)
-	{
-		obj = _obj;
-	}
-
-	~COMObjectRetainer()
-	{
-		if (obj) obj->Release();
-	}
-
-	T * operator -> ()
-	{
-		return obj;
-	}
-};
-
-
-struct Win32KernelHandle {
-	/// HANDLE value being managed
-	HANDLE handle;
-
-	/// @brief Create with a managed handle
-	/// @param handle Win32 handle to manage
-	Win32KernelHandle(HANDLE handle = 0)
-		: handle(handle)
-	{
-	}
-
-	/// @brief Destructor, closes the managed handle
-	~Win32KernelHandle()
-	{
-		if (handle) CloseHandle(handle);
-	}
-
-	/// @brief Returns the managed handle
-	operator HANDLE () const { return handle; }
-};
+#include "UtilsWindows.h"
 
 
 
@@ -128,14 +33,15 @@ class DirectSoundPlayer2Thread {
 	static unsigned int __stdcall ThreadProc(void *parameter);
 	void Run();
 
-	DWORD FillAndUnlockBuffers(void *buf1, DWORD buf1sz, void *buf2, DWORD buf2sz, int64_t &input_frame, IDirectSoundBuffer8 *bfr);
+	unsigned int FillAndUnlockBuffers(unsigned char *buf1, unsigned int buf1sz, unsigned char * buf2, 
+		unsigned int buf2sz, long long &input_frame, IDirectSoundBuffer8 *audioBuffer);
 
 	void CheckError();
 
-	Win32KernelHandle thread_handle;
+	HANDLE thread_handle;
 
 	// Used to signal state-changes to thread
-	Win32KernelHandle
+	HANDLE
 		event_start_playback,
 		event_stop_playback,
 		event_update_end_time,
@@ -143,15 +49,15 @@ class DirectSoundPlayer2Thread {
 		event_kill_self;
 
 	// Thread communicating back
-	Win32KernelHandle
+	HANDLE
 		thread_running,
 		is_playing,
 		error_happened;
 
 	const wxChar *error_message;
 	double volume;
-	int64_t start_frame;
-	int64_t end_frame;
+	long long start_frame;
+	long long end_frame;
 
 	int wanted_latency;
 	int buffer_length;
@@ -165,19 +71,19 @@ public:
 	DirectSoundPlayer2Thread(Provider *provider, int WantedLatency, int BufferLength);
 	~DirectSoundPlayer2Thread();
 
-	void Play(int64_t start, int64_t count);
+	void Play(long long start, long long count);
 	void Stop();
-	void SetEndFrame(int64_t new_end_frame);
+	void SetEndFrame(long long new_end_frame);
 	void SetVolume(double new_volume);
 
 	bool IsPlaying();
-	int64_t GetStartFrame();
-	int64_t GetCurrentFrame();
+	long long GetStartFrame();
+	long long GetCurrentFrame();
 	int GetCurrentMS();
-	int64_t GetEndFrame();
+	long long GetEndFrame();
 	double GetVolume();
 	bool IsDead();
-	//wxStopWatch sw;
+
 };
 
 
@@ -190,37 +96,24 @@ unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
 
 void DirectSoundPlayer2Thread::Run()
 {
-#define REPORT_ERROR(msg) { error_message = _T("DirectSoundPlayer2Thread: ") _T(msg); SetEvent(error_happened); return; }
 
-	COMInitialization COM_library;
-	try	{ COM_library.Init(); }
-	catch (std::exception e)
-		REPORT_ERROR("Could not initialise COM");
+	//COMInitialization COM_library;
+	//try	{ COM_library.Init(); }
+	//catch (std::exception e) {
+		//KaiLogSilent("Could not initialise COM");
+	//}
 
 
 	// Create DirectSound object
-	COMObjectRetainer<IDirectSound8> ds;
-	//code to get run direct show video with chosen audio device
-	//#include "AudioDeviceEnumeration.h"
-	/*wxArrayString arr;
-	EnumerateAudioDevices(&arr);
-	if (arr.GetCount() == 0) {
-		REPORT_ERROR("No audio devices");
-	}
-	else {
-		if (!GetGuid(arr[0], IID_IDirectSound8, CLSCTX_ALL, (LPVOID*)&ds.obj)) {
-			REPORT_ERROR("Can't get audio device, load default");
-			if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
-				REPORT_ERROR("Cound not create DirectSound object");
-		}
-	}*/
-	if (FAILED(DirectSoundCreate8(&DSDEVID_DefaultPlayback, &ds.obj, NULL)))
-		REPORT_ERROR("Cound not create DirectSound object")
+	IDirectSound8 * defaultPlayback = nullptr;
+	
+	if (DirectSoundCreate8(&DSDEVID_DefaultPlayback, &defaultPlayback, 0))
+		KaiLogSilent("Cound not create DirectSound object");
 
 
 		// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
 		kainoteApp *app = (kainoteApp*) wxTheApp;
-	ds->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
+		defaultPlayback->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
 
 	// Describe the wave format
 	WAVEFORMATEX waveFormat;
@@ -246,16 +139,16 @@ void DirectSoundPlayer2Thread::Run()
 	desc.guid3DAlgorithm = GUID_NULL;
 
 	// And then create the buffer
-	IDirectSoundBuffer *bfr7 = 0;
-	if FAILED(ds->CreateSoundBuffer(&desc, &bfr7, 0))
-		REPORT_ERROR("Could not create buffer")
+	IDirectSoundBuffer *audioBuffer7 = 0;
+	if FAILED(defaultPlayback->CreateSoundBuffer(&desc, &audioBuffer7, 0))
+		KaiLogSilent("Could not create buffer");
 
 		// But it's an old version interface we get, query it for the DSound8 interface
-		COMObjectRetainer<IDirectSoundBuffer8> bfr;
-	if (FAILED(bfr7->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&bfr.obj)))
-		REPORT_ERROR("Buffer doesn't support version 8 interface")
-		bfr7->Release();
-	bfr7 = 0;
+		IDirectSoundBuffer8 * audioBuffer = nullptr;
+		if (FAILED(defaultPlayback->QueryInterface(IID_IDirectSoundBuffer8, (LPVOID*)&audioBuffer)))
+			KaiLogSilent("Buffer doesn't support version 8 interface");
+		audioBuffer7->Release();
+	audioBuffer7 = 0;
 
 
 	// Now we're ready to roll!
@@ -270,13 +163,13 @@ void DirectSoundPlayer2Thread::Run()
 		event_kill_self
 	};
 
-	int64_t next_input_frame = 0;
-	DWORD buffer_offset = 0;
+	long long next_input_frame = 0;
+	unsigned long buffer_offset = 0;
 	bool playback_should_be_running = false;
 	int current_latency = wanted_latency;
 	const DWORD wanted_latency_bytes = wanted_latency * waveFormat.nSamplesPerSec * provider->GetBytesPerSample() / 1000;
 
-	while (running)
+	while (running);
 	{
 		DWORD wait_result = WaitForMultipleObjects(sizeof(events_to_wait)/sizeof(HANDLE), events_to_wait, FALSE, current_latency);
 
@@ -285,59 +178,59 @@ void DirectSoundPlayer2Thread::Run()
 		case WAIT_OBJECT_0 + 0:
 			{
 				// Start or restart playback
-				bfr->Stop();
+				audioBuffer->Stop();
 				ResetEvent(is_playing);
 
 				next_input_frame = start_frame;
 
-				DWORD buf_size; // size of buffer locked for filling
-				void *buf;
+				unsigned long buf_size; // size of buffer locked for filling
+				unsigned char *buf = nullptr;
 				buffer_offset = 0;
 
-				if (FAILED(bfr->SetCurrentPosition(0)))
-					REPORT_ERROR("Could not reset playback buffer cursor before filling first buffer.")
+				if (FAILED(audioBuffer->SetCurrentPosition(0)))
+					KaiLogSilent("Could not reset playback buffer cursor before filling first buffer.");
 
-					HRESULT res = bfr->Lock(buffer_offset, 0, &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
+					HRESULT res = audioBuffer->Lock(buffer_offset, 0, (void **) buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER);
 				while (FAILED(res)) // yes, while, so I can break out of it without a goto!
 				{
 					if (res == DSERR_BUFFERLOST)
 					{
 						// Try to regain the buffer
-						if (SUCCEEDED(bfr->Restore()) &&
-							SUCCEEDED(bfr->Lock(buffer_offset, 0, &buf, &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
+						if (SUCCEEDED(audioBuffer->Restore()) &&
+							SUCCEEDED(audioBuffer->Lock(buffer_offset, 0, ((void**) buf), &buf_size, 0, 0, DSBLOCK_ENTIREBUFFER)))
 						{
 							break;
 						}
 
-						REPORT_ERROR("Lost buffer and could not restore it.")
+						KaiLogSilent("Lost buffer and could not restore it.");
 					}
 
-					REPORT_ERROR("Could not lock buffer for playback.")
+					KaiLogSilent("Could not lock buffer for playback.");
 				}
 
 				// Clear the buffer in case we can't fill it completely
 				memset(buf, 0, buf_size);
 
-				DWORD bytes_filled = FillAndUnlockBuffers(buf, buf_size, 0, 0, next_input_frame, bfr.obj);
+				DWORD bytes_filled = FillAndUnlockBuffers(buf, buf_size, 0, 0, next_input_frame, audioBuffer);
 				buffer_offset += bytes_filled;
 				if (buffer_offset >= bufSize) buffer_offset -= bufSize;
 
-				if (FAILED(bfr->SetCurrentPosition(0)))
-					REPORT_ERROR("Could not reset playback buffer cursor before playback.")
+				if (FAILED(audioBuffer->SetCurrentPosition(0)))
+					KaiLogSilent("Could not reset playback buffer cursor before playback.");
 
 					if (bytes_filled < wanted_latency_bytes)
 					{
 						// Very short playback length, do without streaming playback
 						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
-						if (FAILED(bfr->Play(0, 0, 0)))
-							REPORT_ERROR("Could not start single-buffer playback.")
+						if (FAILED(audioBuffer->Play(0, 0, 0)))
+							KaiLogSilent("Could not start single-buffer playback.");
 					}
 					else
 					{
 						// We filled the entire buffer so there's reason to do streaming playback
 						current_latency = wanted_latency;
-						if (FAILED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
-							REPORT_ERROR("Could not start looping playback.")
+						if (FAILED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
+							KaiLogSilent("Could not start looping playback.");
 					}
 
 					SetEvent(is_playing);
@@ -349,7 +242,7 @@ void DirectSoundPlayer2Thread::Run()
 		case WAIT_OBJECT_0 + 1:
 			{
 				// Stop playing
-				bfr->Stop();
+				audioBuffer->Stop();
 				ResetEvent(is_playing);
 				playback_should_be_running = false;
 				break;
@@ -360,7 +253,7 @@ void DirectSoundPlayer2Thread::Run()
 				// Set end frame
 				if (end_frame <= next_input_frame)
 				{
-					bfr->Stop();
+					audioBuffer->Stop();
 					ResetEvent(is_playing);
 					playback_should_be_running = false;
 				}
@@ -386,7 +279,7 @@ void DirectSoundPlayer2Thread::Run()
 		case WAIT_OBJECT_0 + 4:
 			{
 				// Perform suicide
-				bfr->Stop();
+				audioBuffer->Stop();
 				ResetEvent(is_playing);
 				playback_should_be_running = false;
 				running = false;
@@ -402,22 +295,22 @@ do_fill_buffer:
 					break;
 
 				DWORD status;
-				if (FAILED(bfr->GetStatus(&status)))
-					REPORT_ERROR("Could not get playback buffer status")
+				if (FAILED(audioBuffer->GetStatus(&status)))
+					KaiLogDebug("Could not get playback buffer status");
 
 					if (!(status & DSBSTATUS_LOOPING))
 					{
 						// Not looping playback...
 						// hopefully we only triggered timeout after being done with the buffer
-						bfr->Stop();
+						audioBuffer->Stop();
 						ResetEvent(is_playing);
 						playback_should_be_running = false;
 						break;
 					}
 
 					DWORD play_cursor;
-					if (FAILED(bfr->GetCurrentPosition(&play_cursor, 0)))
-						REPORT_ERROR("Could not get play cursor position for filling buffer.")
+					if (FAILED(audioBuffer->GetCurrentPosition(&play_cursor, 0)))
+						KaiLogDebug("Could not get play cursor position for filling buffer.");
 
 						int bytes_needed = (int)play_cursor - (int)buffer_offset;
 					if (bytes_needed < 0) bytes_needed += (int)bufSize;
@@ -428,44 +321,44 @@ do_fill_buffer:
 					if (bytes_needed == 0)
 						break;
 
-					DWORD buf1sz, buf2sz;
-					void *buf1, *buf2;
+					unsigned long buf1sz, buf2sz;
+					unsigned char *buf1 = nullptr, *buf2 = nullptr;
 
 					assert(bytes_needed > 0);
 					assert(buffer_offset < bufSize);
-					assert((DWORD)bytes_needed <= bufSize);
+					assert((unsigned long)bytes_needed <= bufSize);
 
-					HRESULT res = bfr->Lock(buffer_offset, bytes_needed, &buf1, &buf1sz, &buf2, &buf2sz, 0);
+					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )buf1, &buf1sz, (void** )buf2, &buf2sz, 0);
 					switch (res)
 					{
 					case DSERR_BUFFERLOST:
 						// Try to regain the buffer
 						// When the buffer was lost the entire contents was lost too, so we have to start over
-						if (SUCCEEDED(bfr->Restore()) &&
-							SUCCEEDED(bfr->Lock(0, bufSize, &buf1, &buf1sz, &buf2, &buf2sz, 0)) &&
-							SUCCEEDED(bfr->Play(0, 0, DSBPLAY_LOOPING)))
+						if (SUCCEEDED(audioBuffer->Restore()) &&
+							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)buf1, &buf1sz, (void**)buf2, &buf2sz, 0)) &&
+							SUCCEEDED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
 						{
 							wxLogDebug(_T("DirectSoundPlayer2: Lost and restored buffer"));
 							break;
 						}
-						REPORT_ERROR("Lost buffer and could not restore it.")
+						KaiLogDebug("Lost buffer and could not restore it.");
 
 					case DSERR_INVALIDPARAM:
-						REPORT_ERROR("Invalid parameters to IDirectSoundBuffer8::Lock().")
+						KaiLogDebug("Invalid parameters to IDirectSoundBuffer8::Lock().");
 
 					case DSERR_INVALIDCALL:
-						REPORT_ERROR("Invalid call to IDirectSoundBuffer8::Lock().")
+						KaiLogDebug("Invalid call to IDirectSoundBuffer8::Lock().");
 
 					case DSERR_PRIOLEVELNEEDED:
-						REPORT_ERROR("Incorrect priority level set on DirectSoundBuffer8 object.")
+						KaiLogDebug("Incorrect priority level set on DirectSoundBuffer8 object.");
 
 					default:
 						if (FAILED(res))
-							REPORT_ERROR("Could not lock audio buffer, unknown error.")
+							KaiLogDebug("Could not lock , unknown error.");
 							break;
 					}
 
-					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, bfr.obj);
+					DWORD bytes_filled = FillAndUnlockBuffers(buf1, buf1sz, buf2, buf2sz, next_input_frame, audioBuffer);
 					buffer_offset += bytes_filled;
 					if (buffer_offset >= bufSize) buffer_offset -= bufSize;
 
@@ -490,16 +383,19 @@ do_fill_buffer:
 			}
 
 		default:
-			REPORT_ERROR("Something bad happened while waiting on events in playback loop, either the wait failed or an event object was abandoned.")
+			KaiLogDebug("Something bad happened while waiting on events in playback loop,"\
+				"either the wait failed or an event object was abandoned.");
 				break;
 		}
 	}
 
 #undef REPORT_ERROR
 }
+//if (DirectSoundCreate8(&DSDEVID_DefaultPlayback, &defaultPlayback, 0))
+//KaiLogSilent("Cound not create DirectSound object");
 
-
-DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(void *buf1, DWORD buf1sz, void *buf2, DWORD buf2sz, int64_t &input_frame, IDirectSoundBuffer8 *bfr)
+DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char * buf1, unsigned long buf1sz, 
+	unsigned char * buf2, unsigned long buf2sz, long long &input_frame, IDirectSoundBuffer8 *audioBuffer)
 {
 	// Assume buffers have been locked and are ready to be filled
 
@@ -519,7 +415,7 @@ DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(void *buf1, DWORD buf1sz, v
 
 		input_frame += buf1szf + buf2szf;
 
-		bfr->Unlock(buf1, buf1sz, buf2, buf2sz); // should be checking for success
+		audioBuffer->Unlock(buf1, buf1sz, buf2, buf2sz); // should be checking for success
 
 		return buf1sz + buf2sz;
 	}
@@ -552,7 +448,7 @@ DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(void *buf1, DWORD buf1sz, v
 		input_frame += buf2szf;
 	}
 
-	bfr->Unlock(buf1, buf1sz, buf2, buf2sz); // bad? should check for success
+	audioBuffer->Unlock(buf1, buf1sz, buf2, buf2sz); // bad? should check for success
 
 	return buf1sz + buf2sz;
 }
@@ -638,7 +534,7 @@ DirectSoundPlayer2Thread::~DirectSoundPlayer2Thread()
 }
 
 
-void DirectSoundPlayer2Thread::Play(int64_t start, int64_t count)
+void DirectSoundPlayer2Thread::Play(long long start, long long count)
 {
 	CheckError();
 
@@ -661,7 +557,7 @@ void DirectSoundPlayer2Thread::Stop()
 }
 
 
-void DirectSoundPlayer2Thread::SetEndFrame(int64_t new_end_frame)
+void DirectSoundPlayer2Thread::SetEndFrame(long long new_end_frame)
 {
 	CheckError();
 
@@ -703,7 +599,7 @@ bool DirectSoundPlayer2Thread::IsPlaying()
 }
 
 
-int64_t DirectSoundPlayer2Thread::GetStartFrame()
+long long DirectSoundPlayer2Thread::GetStartFrame()
 {
 	CheckError();
 
@@ -722,7 +618,7 @@ int DirectSoundPlayer2Thread::GetCurrentMS()
 	return start_frame + milliseconds_elapsed;
 }
 
-int64_t DirectSoundPlayer2Thread::GetCurrentFrame()
+long long DirectSoundPlayer2Thread::GetCurrentFrame()
 {
 	CheckError();
 
@@ -732,11 +628,11 @@ int64_t DirectSoundPlayer2Thread::GetCurrentFrame()
 	int milliseconds_elapsed = (int)(timeGetTime() - last_playback_restart);
 	//int milliseconds_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - last_playback_restart).count();
 
-	return start_frame + (int64_t)milliseconds_elapsed * provider->GetSampleRate() / 1000;
+	return start_frame + (long long)milliseconds_elapsed * provider->GetSampleRate() / 1000;
 }
 
 
-int64_t DirectSoundPlayer2Thread::GetEndFrame()
+long long DirectSoundPlayer2Thread::GetEndFrame()
 {
 	CheckError();
 
@@ -855,7 +751,7 @@ void DirectSoundPlayer2::SetProvider(Provider *_provider)
 }
 
 
-void DirectSoundPlayer2::Play(int64_t start, int64_t count)
+void DirectSoundPlayer2::Play(long long start, long long count)
 {
 	try
 	{
@@ -903,7 +799,7 @@ bool DirectSoundPlayer2::IsPlaying()
 }
 
 
-int64_t DirectSoundPlayer2::GetStartPosition()
+long long DirectSoundPlayer2::GetStartPosition()
 {
 	try
 	{
@@ -918,7 +814,7 @@ int64_t DirectSoundPlayer2::GetStartPosition()
 }
 
 
-int64_t DirectSoundPlayer2::GetEndPosition()
+long long DirectSoundPlayer2::GetEndPosition()
 {
 	try
 	{
@@ -933,7 +829,7 @@ int64_t DirectSoundPlayer2::GetEndPosition()
 }
 
 
-int64_t DirectSoundPlayer2::GetCurrentPosition()
+long long DirectSoundPlayer2::GetCurrentPosition()
 {
 	try
 	{
@@ -962,7 +858,7 @@ int DirectSoundPlayer2::GetCurPositionMS()
 }
 
 
-void DirectSoundPlayer2::SetEndPosition(int64_t pos)
+void DirectSoundPlayer2::SetEndPosition(long long pos)
 {
 	try
 	{
@@ -975,7 +871,7 @@ void DirectSoundPlayer2::SetEndPosition(int64_t pos)
 }
 
 
-void DirectSoundPlayer2::SetCurrentPosition(int64_t pos)
+void DirectSoundPlayer2::SetCurrentPosition(long long pos)
 {
 	try
 	{

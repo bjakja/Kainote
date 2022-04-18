@@ -50,7 +50,7 @@ public:
 	int GetType(){
 		return type;
 	}
-	wxBitmap *icon = NULL;
+	wxBitmap *icon = nullptr;
 	wxString label;
 	short id;
 	byte size;

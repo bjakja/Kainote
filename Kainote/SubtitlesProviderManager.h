@@ -15,16 +15,13 @@
 
 #pragma  once
 
-#define subsProvider 0
-
-#ifdef subsProvider
 #include "wx/arrstr.h"
 #include "wx/window.h"
 #include <vector>
 
 enum
 {
-	//set close subtitles to 0 to work with NULL
+	//set close subtitles to 0 to work with nullptr
 	CLOSE_SUBTITLES,
 	OPEN_DUMMY,
 	OPEN_WHOLE_SUBTITLES,
@@ -56,9 +53,8 @@ private:
 	~SubtitlesProviderManager();
 	SubtitlesProviderManager() {};
 	SubtitlesProviderManager(const SubtitlesProviderManager &copy) = delete;
-	SubtitlesProvider *SP = NULL;
+	SubtitlesProvider *SP = nullptr;
 	SubtitlesProvider *GetProvider();
 	static std::vector< SubtitlesProviderManager*> gs_Base;
 };
 
-#endif

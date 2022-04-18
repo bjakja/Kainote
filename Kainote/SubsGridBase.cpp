@@ -90,7 +90,7 @@ SubsGridBase::SubsGridBase(wxWindow *parent, const long int id, const wxPoint& p
 	makebackup = true;
 	ismenushown = false;
 	showFrames = false;
-	Comparison = NULL;
+	Comparison = nullptr;
 	numsave = 0;
 
 	LoadDefault();
@@ -215,7 +215,7 @@ void SubsGridBase::Convert(char type)
 	const wxString & prefix = Options.GetString(CONVERT_ASS_TAGS_TO_INSERT_IN_LINE);
 
 	size_t i = 0;
-	Dialogue *lastDialc = NULL;
+	Dialogue *lastDialc = nullptr;
 	while (i < file->GetCount())
 	{
 		if ((type > ASS) && (subsFormat < SRT) && file->GetDialogue(i)->IsComment){
@@ -1067,7 +1067,7 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 
 		if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
 		int seekAfter = 0;
-		vb->GetVideoListsOptions(NULL, &seekAfter);
+		vb->GetVideoListsOptions(nullptr, &seekAfter);
 		if (seekAfter > 1){
 			if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
 				vb->Seek(Edit->line->Start.mstime);
@@ -1114,7 +1114,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	}
 }
 
-size_t SubsGridBase::FirstSelection(size_t *firstSelectionId /*= NULL*/)
+size_t SubsGridBase::FirstSelection(size_t *firstSelectionId /*= nullptr*/)
 {
 	return file->FirstSelection();
 }
@@ -1221,7 +1221,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 				if (vb->IsShown() || vb->IsFullScreen()){ vb->OpenSubs(OPEN_DUMMY); }
 
 				int seekAfter;
-				vb->GetVideoListsOptions(NULL, &seekAfter);
+				vb->GetVideoListsOptions(nullptr, &seekAfter);
 				if (seekAfter > 1){
 					if (vb->GetState() == Paused || (vb->GetState() == Playing && (seekAfter == 3 || seekAfter == 5))){
 						vb->Seek(Edit->line->Start.mstime);
@@ -1386,7 +1386,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 	}
 	else{
 		if (KaiMessageBox(_("Czy na pewno chcesz wyłączyć tryb tłumacza?\nObcojęzyczny tekst przetłumaczonych linijek zostanie usunięty."), 
-			_("Potwierdzenie"), wxYES_NO, NULL, wxDefaultPosition, wxNO) == wxNO){
+			_("Potwierdzenie"), wxYES_NO, nullptr, wxDefaultPosition, wxNO) == wxNO){
 			return true;
 		}
 
@@ -1406,7 +1406,7 @@ bool SubsGridBase::SetTlMode(bool mode)
 		for (size_t i = 0; i < file->GetCount(); i++)
 		{
 			Dialogue *dial = file->GetDialogue(i);
-			Dialogue *dialc = NULL;
+			Dialogue *dialc = nullptr;
 			if (dial->TextTl != emptyString)
 			{
 				dialc = file->CopyDialogue(i);
@@ -1507,7 +1507,7 @@ Dialogue * SubsGridBase::CopyDialogueWithOffset(size_t i, int offset, bool push 
 	if (newPos != -1){
 		return CopyDialogue(newPos);
 	}
-	return NULL;
+	return nullptr;
 }
 
 Dialogue *SubsGridBase::GetDialogue(size_t i)
@@ -1521,7 +1521,7 @@ Dialogue * SubsGridBase::GetDialogueWithOffset(size_t i, int offset)
 	if (newPos != -1){
 		return GetDialogue(newPos);
 	}
-	return NULL;
+	return nullptr;
 }
 
 const wxString & SubsGridBase::GetSInfo(const wxString &key, int *ii/*=0*/)
@@ -1629,7 +1629,7 @@ wxString *SubsGridBase::GetVisible(bool *visible, wxPoint *point, wxArrayInt *se
 		}
 		else{
 			delete txt;
-			return NULL;
+			return nullptr;
 		}
 	}
 
@@ -1782,7 +1782,7 @@ void SubsGridBase::CompareTexts(compareData &firstCompare, compareData &secondCo
 	size_t i1, i2;
 	dpt = new size_t[sz];
 
-	if (dpt == NULL)
+	if (dpt == nullptr)
 	{
 		KaiLog(L"memory allocation failed");
 		return;
@@ -1854,16 +1854,16 @@ void SubsGridBase::RemoveComparison()
 	if (hasCompare){
 		if (CG1){
 			delete CG1->Comparison;
-			CG1->Comparison = NULL;
+			CG1->Comparison = nullptr;
 			CG1->Refresh(false);
 		}
 		if (CG2){
 			delete CG2->Comparison;
-			CG2->Comparison = NULL;
+			CG2->Comparison = nullptr;
 			CG2->Refresh(false);
 		}
-		CG1 = NULL;
-		CG2 = NULL;
+		CG1 = nullptr;
+		CG2 = nullptr;
 		hasCompare = false;
 	}
 }
@@ -1933,7 +1933,7 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 }
 
 
-SubsGrid* SubsGridBase::CG1 = NULL;
-SubsGrid* SubsGridBase::CG2 = NULL;
+SubsGrid* SubsGridBase::CG1 = nullptr;
+SubsGrid* SubsGridBase::CG2 = nullptr;
 bool SubsGridBase::hasCompare = false;
 wxArrayString SubsGridBase::compareStyles = wxArrayString();

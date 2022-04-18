@@ -14,12 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "UtilsWindows.h"
+
 #include "LogHandler.h"
 #include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>
 #include <vector>
+#include "UtilsWindows.h"
 
 
 
@@ -45,7 +46,7 @@ BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMon
 wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea) {
 	std::vector<RECT> MonRects;
 	std::pair<std::vector<RECT>, bool> *pair = new std::pair<std::vector<RECT>, bool>(MonRects, workArea);
-	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc1, (LPARAM)pair);
+	EnumDisplayMonitors(nullptr, nullptr, MonitorEnumProc1, (LPARAM)pair);
 	MonRects = pair->first;
 	delete pair;
 	if (MonitorRects)
@@ -78,7 +79,7 @@ wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, cons
 wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect) {
 	std::vector<RECT> MonRects;
 	std::pair<std::vector<RECT>, bool> *pair = new std::pair<std::vector<RECT>, bool>(MonRects, false);
-	EnumDisplayMonitors(NULL, NULL, MonitorEnumProc1, (LPARAM)pair);
+	EnumDisplayMonitors(nullptr, nullptr, MonitorEnumProc1, (LPARAM)pair);
 	MonRects = pair->first;
 	delete pair;
 	if (MonitorRects)

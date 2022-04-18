@@ -25,7 +25,7 @@ public:
 	ProviderDummy(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
 	void GetFrameBuffer(byte** buffer) override;
 	void GetFrame(int frame, byte* buff) override;
-	void GetBuffer(void* buf, int64_t start, int64_t count, double vol = 1.0) override;
+	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	void GetChapters(std::vector<chapter>* _chapters) override;
 	void DeleteOldAudioCache() override;
 	void SetColorSpace(const wxString& matrix) override;
@@ -36,7 +36,7 @@ private:
 	void GenerateTimecodes();
 	void GenerateFrame();
 	bool ParseDummyData(const wxString& data);
-	byte *m_FrameBuffer = NULL;
+	byte *m_FrameBuffer = nullptr;
 	wxColour m_frameColor;
 	bool m_pattern = false;
 };

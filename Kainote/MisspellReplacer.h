@@ -36,7 +36,7 @@ class TabPanel;
 //	virtual ~CheckBoxListButton(){};
 //	void GetChecked(wxArrayInt & checks);
 //private:
-//	CustomCheckListBox *checkList = NULL;
+//	CustomCheckListBox *checkList = nullptr;
 //};
 
 class Rule{
@@ -61,7 +61,7 @@ public:
 	virtual ~MisspellReplacer();
 	void ReplaceChecked();
 	void ShowResult(TabPanel *tab, int keyLine, const wxPoint &pos);
-	void RemoveDialog(){ resultDialog = NULL; };
+	void RemoveDialog(){ resultDialog = nullptr; };
 private:
 	
 	void FillRulesList();

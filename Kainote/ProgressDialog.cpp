@@ -32,7 +32,7 @@ ProgresDialog::ProgresDialog(wxWindow *_parent, const wxString &title, const wxP
 	SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	SetFont(*Options.GetFont());
-	taskbar = NULL;
+	taskbar = nullptr;
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	text = new KaiStaticText(this, -1, title);
 	gauge = new KaiGauge(this, -1, wxDefaultPosition, wxSize(300, 20), wxGA_HORIZONTAL);

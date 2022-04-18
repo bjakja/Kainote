@@ -19,7 +19,7 @@
 #include "KaiStaticBoxSizer.h"
 #include "Tabs.h"
 #include "LogHandler.h"
-//#include <ctime>
+#include <ctime>
 #include <wx/filedlg.h>
 #include <wx/dir.h>
 

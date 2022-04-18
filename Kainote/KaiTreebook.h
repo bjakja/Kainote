@@ -57,7 +57,7 @@ private:
 	void OnPaint(wxPaintEvent& event);
 	void ChangePage(int page);
 	void CalcWidth();
-	int CalcElement(int element, int *lastPage = NULL);
+	int CalcElement(int element, int *lastPage = nullptr);
 	bool HasMultiplePages() const {
 		return true;
 	};

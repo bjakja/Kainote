@@ -291,7 +291,7 @@ private:
 
 class SimpleColorPicker
 {
-	SimpleColorPickerDialog *scpd = NULL;
+	SimpleColorPickerDialog *scpd = nullptr;
 public:
 	SimpleColorPicker(wxWindow *parent, const AssColor &actualColor, int colorType = -1);
 	~SimpleColorPicker();

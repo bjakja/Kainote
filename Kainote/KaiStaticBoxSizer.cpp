@@ -58,12 +58,12 @@ KaiStaticBox::KaiStaticBox(wxWindow *parent, int numLabels, wxString * _labels)
 //	Refresh(false);
 //}
 //	
-void KaiStaticBox::PaintForeground(wxDC& tdc, const RECT& rc)
+void KaiStaticBox::PaintForeground(wxDC& tdc, const wxRect &rc)
 {
 	int w = 0;
 	int h = 0;
-	w = rc.right - rc.left;
-	h = rc.bottom - rc.top;
+	w = rc.GetWidth();
+	h = rc.GetHeight();
 	if (w == 0 || h == 0 || !IsShown() || !IsShownOnScreen()){ return; }
 
 	wxColour background = GetParent()->GetBackgroundColour();
@@ -115,7 +115,7 @@ KaiStaticBoxSizer::KaiStaticBoxSizer(int orient, wxWindow *parent, int n, wxStri
 }
 
 KaiStaticBoxSizer::~KaiStaticBoxSizer(){
-	if (box){ delete box; box = NULL; }
+	if (box){ delete box; box = nullptr; }
 };
 
 void KaiStaticBoxSizer::RecalcSizes()
@@ -164,7 +164,7 @@ bool KaiStaticBoxSizer::Detach(wxWindow *window)
 {
 	if (window == box)
 	{
-		box = NULL;
+		box = nullptr;
 		return true;
 	}
 

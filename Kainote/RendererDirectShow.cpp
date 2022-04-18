@@ -27,7 +27,7 @@ const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0x
 
 RendererDirectShow::RendererDirectShow(VideoCtrl *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
-	, m_DirectShowPlayer(NULL)
+	, m_DirectShowPlayer(nullptr)
 {
 
 }
@@ -66,10 +66,10 @@ bool RendererDirectShow::InitRendererDX()
 	videoDesc.OutputFrameFreq.Denominator = 1;
 
 	UINT count, count1;
-	GUID* guids = NULL;
+	GUID* guids = nullptr;
 
 	HR(m_DXVAService->GetVideoProcessorDeviceGuids(&videoDesc, &count, &guids), _("Nie można pobrać GUIDów DXVA"));
-	D3DFORMAT* formats = NULL;
+	D3DFORMAT* formats = nullptr;
 	bool isgood = false;
 	GUID dxvaGuid;
 	DXVA2_VideoProcessorCaps DXVAcaps;
@@ -98,7 +98,7 @@ bool RendererDirectShow::InitRendererDX()
 
 		//if(DXVAcaps.DeviceCaps!=4){continue;}//DXVAcaps.InputPool
 		hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, m_D3DFormat, D3DPOOL_DEFAULT, 0,
-			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, NULL);
+			DXVA2_VideoSoftwareRenderTarget, &m_MainSurface, nullptr);
 		if (FAILED(hr)){ KaiLog(wxString::Format(_("Nie można stworzyć powierzchni DXVA %i"), (int)i)); continue; }
 
 		hr = m_DXVAService->CreateVideoProcessor(guids[i], &videoDesc, D3DFMT_X8R8G8B8, 0, &m_DXVAProcessor);
@@ -134,11 +134,11 @@ bool RendererDirectShow::InitRendererDX()
 
 	
 	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
-		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_SubtitlesTexture, NULL),
+		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_SYSTEMMEM, &m_SubtitlesTexture, nullptr),
 		_("Nie można storzyć tekstury napisów"));
 
 	HR(m_D3DDevice->CreateTexture(m_WindowWidth, m_WindowHeight, 1,
-		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_BlitTexture, NULL),
+		D3DUSAGE_DYNAMIC, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_BlitTexture, nullptr),
 		_("Nie można storzyć tekstury napisów"));
 
 	
@@ -149,7 +149,7 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 {
 
 	wxCriticalSectionLocker lock(m_MutexRendering);
-	byte *fdata = NULL;
+	byte *fdata = nullptr;
 	byte *texbuf;
 	byte bytes = (m_Format == RGB32) ? 4 : (m_Format == YUY2) ? 2 : 1;
 
@@ -175,7 +175,8 @@ bool RendererDirectShow::DrawTexture(byte *nframe, bool copy)
 	
 
 	RECT dirtySubs = { 0, 0, m_WindowWidth, m_WindowHeight };
-	HR(m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, NULL), _("Nie można zablokować bufora tekstury napisów"));
+	//HR(
+	m_SubtitlesTexture->LockRect(0, &d3dSubslr, &dirtySubs, 0);//, _("Nie można zablokować bufora tekstury napisów"));
 	memcpy(d3dSubslr.pBits, m_SubtitlesBuffer, m_LastBufferSize);
 	/*int fwidth = m_WindowWidth * 4;
 	byte *subsdst = (byte*)d3dSubslr.pBits;
@@ -292,7 +293,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	}
 
 	bool isLibass = m_SubsProvider->IsLibass();
-	hr = m_D3DDevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+	hr = m_D3DDevice->Clear(0, nullptr, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
 	DXVA2_VideoProcessBltParams blt = { 0 };
 	DXVA2_VideoSample samples = { 0 };
@@ -347,7 +348,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	// DXVA2_VideoProcess_PlanarAlpha
 	samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 
-	hr = m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &samples, 1, NULL);
+	hr = m_DXVAProcessor->VideoProcessBlt(m_BlackBarsSurface, &blt, &samples, 1, nullptr);
 	
 
 	/*hr = m_D3DDevice->StretchRect(m_MainSurface, &m_MainStreamRect, m_BlackBarsSurface, &m_BackBufferRect, D3DTEXF_LINEAR);
@@ -370,7 +371,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	// blend alpha for visuals it's changed for libass
 	hr = m_D3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 	// set texture to null to show visuals primitive
-	hr = m_D3DDevice->SetTexture(0, NULL);
+	hr = m_D3DDevice->SetTexture(0, nullptr);
 	hr = m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
 	
 #if byvertices
@@ -378,7 +379,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 
 	// Render the vertex buffer contents
 	hr = m_D3DDevice->SetStreamSource(0, vertex, 0, sizeof(CUSTOMVERTEX));
-	hr = m_D3DDevice->SetVertexShader(NULL);
+	hr = m_D3DDevice->SetVertexShader(nullptr);
 	hr = m_D3DDevice->SetFVF(D3DFVF_CUSTOMVERTEX);
 	hr = m_D3DDevice->SetTexture(0, texture);
 	hr = m_D3DDevice->DrawPrimitive(D3DPT_TRIANGLEFAN, 0, 2);
@@ -401,7 +402,7 @@ void RendererDirectShow::Render(bool redrawSubsOnFrame, bool wait)
 	if (m_HasZoom){ DrawZoom(); }
 	// End the scene
 	hr = m_D3DDevice->EndScene();
-	hr = m_D3DDevice->Present(NULL, &m_WindowRect, NULL, NULL);
+	hr = m_D3DDevice->Present(nullptr, &m_WindowRect, nullptr, nullptr);
 	if (D3DERR_DEVICELOST == hr ||
 		D3DERR_DRIVERINTERNALERROR == hr){
 		if (!m_DeviceLost){
@@ -461,7 +462,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 	m_MainStreamRect.right = m_Width;
 	m_MainStreamRect.left = 0;
 	m_MainStreamRect.top = 0;
-	if (m_FrameBuffer ){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+	if (m_FrameBuffer ){ delete[] m_FrameBuffer; m_FrameBuffer = nullptr; }
 	m_FrameBuffer = new byte[m_Height * m_Pitch];
 	
 	UpdateRects();
@@ -474,7 +475,7 @@ bool RendererDirectShow::OpenFile(const wxString &fname, int subsFlag, bool vobs
 		SetColorSpace(tab->Grid->GetSInfo(L"YCbCr Matrix"), false);
 	}
 
-	OpenSubs(subsFlag, false, NULL, true);
+	OpenSubs(subsFlag, false, nullptr, true);
 
 	m_State = Stopped;
 	m_DirectShowPlayer->GetChapters(&m_Chapters);
@@ -647,7 +648,7 @@ void RendererDirectShow::SetupVertices()
 	int windowWidth = m_BackBufferRect.right - m_BackBufferRect.left;
 	int windowHeight = m_BackBufferRect.bottom - m_BackBufferRect.top;
 
-	HRN(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &m_D3DVertex, NULL),
+	HRN(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &m_D3DVertex, nullptr),
 		"Nie można utworzyć bufora wertex")
 	CUSTOMVERTEX* pVertices;
 	HRESULT hr;
@@ -748,7 +749,7 @@ void RendererDirectShow::ChangeVobsub(bool vobsub)
 		int tmppitch = m_Width * m_DirectShowPlayer->inf.bytes;
 		if (tmppitch != m_Pitch){
 			m_Pitch = tmppitch;
-			if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = NULL; }
+			if (m_FrameBuffer){ delete[] m_FrameBuffer; m_FrameBuffer = nullptr; }
 			m_FrameBuffer = new byte[m_Height * m_Pitch];
 		}
 		UpdateVideoWindow();
@@ -779,16 +780,16 @@ byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 			RecreateSurface();
 		}
 		else {
-			return NULL;
+			return nullptr;
 		}
 	}
-	LPDIRECT3DSURFACE9 tmp = NULL;
+	LPDIRECT3DSURFACE9 tmp = nullptr;
 	HRESULT hr = m_DXVAService->CreateSurface(m_Width, m_Height, 0, D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, 0,
-		DXVA2_VideoProcessorRenderTarget, &tmp, NULL);
+		DXVA2_VideoProcessorRenderTarget, &tmp, nullptr);
 	
 	if (FAILED(hr) || !tmp) {
 		KaiLog(_("Nie można stworzyć plain surface"));
-		return NULL;
+		return nullptr;
 	}
 
 	DXVA2_VideoProcessBltParams blt = { 0 };
@@ -844,10 +845,10 @@ byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 	// DXVA2_VideoProcess_PlanarAlpha
 	samples.PlanarAlpha = DXVA2_Fixed32OpaqueAlpha();
 
-	hr = m_DXVAProcessor->VideoProcessBlt(tmp, &blt, &samples, 1, NULL);
+	hr = m_DXVAProcessor->VideoProcessBlt(tmp, &blt, &samples, 1, nullptr);
 	if (FAILED(hr)) {
 		KaiLog(_("Nie można nałożyć powierzchni na siebie"));
-		return NULL;
+		return nullptr;
 	}
 
 	D3DLOCKED_RECT d3dlr;
@@ -858,7 +859,7 @@ byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
 	tmp->LockRect(&d3dlr, &dirty, 0/*D3DLOCK_NOSYSLOCK*/);
 	if (FAILED(hr)) {
 		KaiLog(_("Nie można zablokować bufora tekstury"));
-		return NULL;
+		return nullptr;
 	}
 	byte* texbuf = static_cast<byte*>(d3dlr.pBits);
 	memcpy(cpy, texbuf, buffsize);

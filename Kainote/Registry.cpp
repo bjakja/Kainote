@@ -27,11 +27,11 @@ Registry::Registry(HKEY hKey, const wxString &strKey, bool &success, bool canWri
 
 bool Registry::OpenNewRegistry(HKEY hKey, const wxString &strKey, bool canWrite /*= false*/)
 {
-	LONG nError = RegOpenKeyEx(hKey, strKey.wc_str(), NULL, KEY_ALL_ACCESS, &regHKey);
+	LONG nError = RegOpenKeyEx(hKey, strKey.wc_str(), 0, KEY_ALL_ACCESS, &regHKey);
 
 	if (nError == ERROR_FILE_NOT_FOUND && canWrite)
 	{
-		nError = RegCreateKeyEx(hKey, strKey.wc_str(), NULL, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &regHKey, NULL);
+		nError = RegCreateKeyEx(hKey, strKey.wc_str(), 0, nullptr, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &regHKey, nullptr);
 		if (nError){
 			return false;
 		}
@@ -47,7 +47,7 @@ void Registry::CloseRegistry()
 {
 	if (regHKey){
 		RegCloseKey(regHKey);
-		regHKey = NULL;
+		regHKey = nullptr;
 	}
 }
 
@@ -61,7 +61,7 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 	if (!regHKey) return;
 
 	const wchar_t *data = value.wc_str();
-	LONG nError = RegSetValueExW(regHKey, (strKey != emptyString)? strKey.wc_str() : NULL, NULL, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
+	LONG nError = RegSetValueExW(regHKey, (strKey != emptyString)? strKey.wc_str() : 0, 0, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
 	if (nError){
 		KaiLog(wxString::Format(L"cannot create key %s", strKey));
 	}
@@ -73,7 +73,7 @@ bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 	DWORD type = REG_SZ;
 	wchar_t data[20048];
 	DWORD size = 20048;
-	LONG nError = RegQueryValueExW(regHKey, (strKey != emptyString) ? strKey.wc_str() : NULL, NULL, &type, (LPBYTE)&data, &size);
+	LONG nError = RegQueryValueExW(regHKey, (strKey != emptyString) ? strKey.wc_str() : nullptr, nullptr, &type, (LPBYTE)&data, &size);
 	if (nError){
 		return false;
 	}
@@ -115,7 +115,7 @@ bool Registry::AddFileAssociation(const wxString &extension, const wxString &ext
 	else{
 		KaiLog(wxString::Format(L"Can not add open with %s", progName)); return false;
 	}
-	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
+	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 	return true;
 }
 
@@ -129,7 +129,7 @@ bool Registry::RemoveFileAssociation(const wxString &extension)
 		reg.CloseRegistry();
 	}
 	else{ KaiLog(wxString::Format(L"Can not remove extension %s", extension)); return false; }
-	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
+	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 	return true;
 }
 
@@ -160,5 +160,5 @@ void Registry::CheckFileAssociation(const wxString *extensions, int numExt, std:
 
 void Registry::RefreshRegistry()
 {
-	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, NULL, NULL);
+	SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nullptr, nullptr);
 }

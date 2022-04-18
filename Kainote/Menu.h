@@ -35,7 +35,7 @@ wxDECLARE_EVENT(EVT_MENU_OPENED, MenuEvent);
 class  MenuEvent : public wxEvent
 {
 public:
-	MenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, Menu* menu = NULL)
+	MenuEvent(wxEventType type = wxEVT_NULL, int winid = 0, Menu* menu = nullptr)
 		: wxEvent(winid, type)
 	{
 		m_menuId = winid; m_menu = menu;
@@ -68,7 +68,7 @@ class MenuItem
 {
 	//friend class MenuBar;
 public:
-	MenuItem(int _id, const wxString& _label, const wxString& _help = emptyString, bool _enable = true, wxBitmap *_icon = NULL, Menu *Submenu = 0, byte _type = 0);
+	MenuItem(int _id, const wxString& _label, const wxString& _help = emptyString, bool _enable = true, wxBitmap *_icon = nullptr, Menu *Submenu = 0, byte _type = 0);
 	~MenuItem();
 	bool Enable(bool enable);
 	wxBitmap GetBitmap();
@@ -185,15 +185,15 @@ public:
 	MenuItem *AppendTool(KaiToolbar *ktb, int id, wxString text, wxString help,
 		wxBitmap *bitmap, bool enable = true, Menu *SubMenu = 0);
 	MenuItem *Append(int _id, const wxString& _label, const wxString& _help = emptyString,
-		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+		bool _enable = true, wxBitmap *_icon = nullptr, Menu* Submenu = nullptr, byte _type = 0);
 	MenuItem *Append(int _id, const wxString& _label, Menu* Submenu, const wxString& _help = emptyString,
-		byte _type = 0, bool _enable = true, wxBitmap *_icon = NULL);
+		byte _type = 0, bool _enable = true, wxBitmap *_icon = nullptr);
 	MenuItem *Append(MenuItem *item);
 	MenuItem *Prepend(int _id, const wxString& _label, const wxString& _help = emptyString,
-		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+		bool _enable = true, wxBitmap *_icon = nullptr, Menu* Submenu = nullptr, byte _type = 0);
 	MenuItem *Prepend(MenuItem *item);
 	MenuItem *Insert(int position, int _id, const wxString& _label, const wxString& _help = emptyString,
-		bool _enable = true, wxBitmap *_icon = NULL, Menu* Submenu = NULL, byte _type = 0);
+		bool _enable = true, wxBitmap *_icon = nullptr, Menu* Submenu = nullptr, byte _type = 0);
 	MenuItem *Insert(int position, MenuItem *item);
 	MenuItem *SetAccMenu(int id, const wxString &txt, const wxString &help = emptyString, bool enable = true, int kind = 0);
 	MenuItem *SetAccMenu(MenuItem *menuitem, const wxString &name);
@@ -206,8 +206,8 @@ public:
 	}
 	bool Destroy(MenuItem *item);
 	int GetMenuItemCount();
-	MenuItem *FindItem(int id, Menu **menu = NULL);
-	static MenuItem *FindItemGlobally(int id, Menu **menu = NULL);
+	MenuItem *FindItem(int id, Menu **menu = nullptr);
+	static MenuItem *FindItemGlobally(int id, Menu **menu = nullptr);
 	MenuItem *FindItem(const wxString& label);
 	MenuItem *FindItemByPosition(int pos);
 	void Check(int id, bool check);
