@@ -52,6 +52,8 @@
 #include "EditBox.h"
 #include "TabPanel.h"
 #include "ShiftTimes.h"
+#include "Menu.h"
+#include "MenuBar.h"
 
 #include <wx/accel.h>
 #include <wx/dir.h>

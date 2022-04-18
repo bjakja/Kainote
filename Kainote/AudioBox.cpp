@@ -36,14 +36,16 @@
 
 ///////////
 // Headers
-//#include "Utils.h"
+#include "Editbox.h"
 #include "AudioBox.h"
 #include "KainoteFrame.h"
-//#include "Config.h"
+#include "Notebook.h"
 #include "MappedButton.h"
-#include <math.h>
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
+#include "SubsGrid.h"
+#include <math.h>
+
 
 ///////////////
 // Constructor

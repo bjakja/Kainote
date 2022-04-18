@@ -17,6 +17,10 @@
 #include "TabPanel.h"
 #include "VideoToolbar.h"
 #include "Hotkeys.h"
+#include "Editbox.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
+
 
 AllTags::AllTags()
 {

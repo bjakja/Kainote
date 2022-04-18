@@ -43,6 +43,7 @@ struct lua_State;
 
 
 class Menu;
+class MenuEvent;
 #ifndef HANDLE
 typedef void* HANDLE;
 #endif

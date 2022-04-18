@@ -24,6 +24,7 @@
 #include "VideoFullscreen.h"
 #include "KaiTextCtrl.h"
 #include "VideoToolbar.h"
+#include "VideoCtrl.h"
 
 class KainoteFrame;
 class TabPanel;
