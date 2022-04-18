@@ -17,6 +17,7 @@
 //#include "Toolbar.h"
 #include "Hotkeys.h"
 #include "KainoteApp.h"
+#include "MenuItem.h"
 #include "wx/utils.h"
 #include "Config.h"
 

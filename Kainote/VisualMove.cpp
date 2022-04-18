@@ -17,6 +17,7 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "VideoCtrl.h"
+#include "EditBox.h"
 
 Move::Move()
 	: Visuals()

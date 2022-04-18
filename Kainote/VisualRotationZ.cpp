@@ -17,7 +17,8 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "RendererVideo.h"
-
+#include "VideoCtrl.h"
+#include "SubsGrid.h"
 
 
 RotationZ::RotationZ()
@@ -113,9 +114,9 @@ void RotationZ::DrawVisual(int time)
 	v2[5].y = org.y + 10.0f;
 	line->SetWidth(5.f);
 
-	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(VERTEX)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(VERTEX)), L"primitive failed");
-	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(VERTEX)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 360, v5, sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[364], sizeof(vertex)), L"primitive failed");
+	HRN(device->DrawPrimitiveUP(D3DPT_LINESTRIP, 180, &v5[545], sizeof(vertex)), L"primitive failed");
 	line->SetWidth(2.f);
 	line->Begin();
 	line->Draw(&v2[2], 2, 0xFFBB0000);

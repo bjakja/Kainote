@@ -17,6 +17,8 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "VideoCtrl.h"
+#include "SubsGrid.h"
+#include "EditBox.h"
 
 enum {
 	LEFT = 1,

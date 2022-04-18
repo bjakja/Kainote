@@ -19,6 +19,7 @@
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
+#include "VideoCtrl.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 
@@ -440,7 +441,7 @@ void RendererVideo::DrawZoom()
 	v2[4].y = v2[0].y;
 
 
-	VERTEX v24[12];
+	vertex v24[12];
 	CreateVERTEX(&v24[0], 0, 0, 0x88000000);
 	CreateVERTEX(&v24[1], s.x, 0, 0x88000000);
 	CreateVERTEX(&v24[2], v2[2].x, v2[0].y, 0x88000000);
@@ -455,8 +456,8 @@ void RendererVideo::DrawZoom()
 	CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
 
 	HRN(m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(VERTEX)), L"Primitive failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(VERTEX)), L"Primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(vertex)), L"Primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &v24[6], sizeof(vertex)), L"Primitive failed");
 	m_D3DLine->SetWidth(1);
 	m_D3DLine->Begin();
 	m_D3DLine->Draw(v2, 5, 0xFFBB0000);

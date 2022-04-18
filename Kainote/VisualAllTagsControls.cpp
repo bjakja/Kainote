@@ -201,7 +201,7 @@ void AllTagsSlider::OnDraw()
 	float thumbbottom = bottom + 7;
 
 	D3DCOLOR fill = 0xAA121150;
-	VERTEX v9[9];
+	vertex v9[9];
 	CreateVERTEX(&v9[0], left, top, fill);
 	CreateVERTEX(&v9[1], right, top, fill);
 	CreateVERTEX(&v9[2], left, bottom, fill);
@@ -212,8 +212,8 @@ void AllTagsSlider::OnDraw()
 	CreateVERTEX(&v9[7], left, bottom, 0xFFBB0000);
 	CreateVERTEX(&v9[8], left, top, 0xFFBB0000);
 
-	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
-	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
+	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
+	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");
 
 	float lastPos = 0;
 	parent->line->Begin();
@@ -257,8 +257,8 @@ void AllTagsSlider::OnDraw()
 	CreateVERTEX(&v9[7], thumbleft, thumbbottom, 0xFFBB0000);
 	CreateVERTEX(&v9[8], thumbleft, thumbtop, 0xFFBB0000);
 
-	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
-	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
+	HRN(parent->device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
+	HRN(parent->device->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");
 
 	if (onThumb) {
 		RECT rect = { (long)thumbleft - 50, (long)thumbbottom + 10, (long)thumbright + 50, (long)thumbbottom + 50 };

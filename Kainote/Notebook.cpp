@@ -23,7 +23,9 @@
 #include "VideoCtrl.h"
 #include "ShiftTimes.h"
 #include "TabPanel.h"
-
+#include "Editbox.h"
+#include "SubsGrid.h"
+#include "Toolbar.h"
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)

@@ -16,13 +16,13 @@
 #pragma once
 
 
-//#include "Videobox.h"
-//#include "dshowplayer.h"
 #include "Visuals.h"
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
 
 
+class IDirectXVideoProcessorService;
+class IDirectXVideoProcessor;
 
 
 enum PlaybackState
@@ -35,12 +35,14 @@ enum PlaybackState
 
 class chapter
 {
+public:
 	wxString name;
 	int time;
 };
 
 class vertex
 {
+public:
 	float floatX;
 	float floatY;
 	float floatZ;
@@ -130,9 +132,9 @@ public:
 	int m_Pitch;
 	int m_Time;
 	int m_Frame;
-	byte *m_FrameBuffer;
+	unsigned char *m_FrameBuffer;
 	RECT m_BackBufferRect;
-	byte m_Format;
+	unsigned char m_Format;
 	float m_FrameDuration;
 	float m_ZoomParcent;
 	wxString m_ProgressBarTime;

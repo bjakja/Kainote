@@ -16,6 +16,7 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "VideoCtrl.h"
+#include "RendererVideo.h"
 
 RotationXY::RotationXY()
 	: Visuals()
@@ -83,7 +84,7 @@ void RotationXY::DrawVisual(int time)
 	device->SetTransform(D3DTS_WORLD, &matRotate);
 
 	device->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
-	VERTEX vertices[199];
+	vertex vertices[199];
 	bool ster = true;
 
 	float mm = 60.0f / 12.0f;
@@ -113,7 +114,7 @@ void RotationXY::DrawVisual(int time)
 			g -= gg;
 		}
 	}
-	device->DrawPrimitiveUP(D3DPT_LINELIST, 44, vertices, sizeof(VERTEX));
+	device->DrawPrimitiveUP(D3DPT_LINELIST, 44, vertices, sizeof(vertex));
 	float addy = (AN < 4) ? 9.f : -9.f, addx = (AN % 3 == 0) ? -9.f : 9.f;
 	float add1y = (AN < 4) ? 10.f : -10.f, add1x = (AN % 3 == 0) ? -10.f : 10.f;
 	CreateVERTEX(&vertices[176], 0.f, addy, 0xFFBB0000);//line y
@@ -139,11 +140,11 @@ void RotationXY::DrawVisual(int time)
 	CreateVERTEX(&vertices[196], 0.6f, 0.f, 0xFFBB0000, 9.f);
 	CreateVERTEX(&vertices[197], 0.f, -0.6f, 0xFFBB0000, 9.f);
 	CreateVERTEX(&vertices[198], -0.6f, 0.f, 0xFFBB0000, 9.f);
-	device->DrawPrimitiveUP(D3DPT_LINESTRIP, 2, &vertices[176], sizeof(VERTEX));
-	device->DrawPrimitiveUP(D3DPT_LINELIST, 1, &vertices[179], sizeof(VERTEX));
-	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[181], sizeof(VERTEX));
-	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[187], sizeof(VERTEX));
-	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[193], sizeof(VERTEX));
+	device->DrawPrimitiveUP(D3DPT_LINESTRIP, 2, &vertices[176], sizeof(vertex));
+	device->DrawPrimitiveUP(D3DPT_LINELIST, 1, &vertices[179], sizeof(vertex));
+	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[181], sizeof(vertex));
+	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[187], sizeof(vertex));
+	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[193], sizeof(vertex));
 	D3DXMATRIX matOrtho;
 	D3DXMATRIX matIdentity;
 

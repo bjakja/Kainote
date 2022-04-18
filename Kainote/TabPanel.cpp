@@ -274,14 +274,14 @@ bool TabPanel::SetFont(const wxFont &font)
 {
 	video->SetFont(font);
 	edit->SetFont(font);
-	ShiftTimes->SetFont(font);
+	shiftTimes->SetFont(font);
 
 	return wxWindow::SetFont(font);
 }
 
 void TabPanel::OnSize(wxSizeEvent & evt)
 {
-	if (!edit->IsShown() && !ShiftTimes->IsShown() && !grid->IsShown()) {
+	if (!edit->IsShown() && !shiftTimes->IsShown() && !grid->IsShown()) {
 		wxSize tabSize = GetClientSize();
 		video->SetMinSize(tabSize);
 		//Layout();

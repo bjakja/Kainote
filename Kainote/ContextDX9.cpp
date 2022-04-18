@@ -16,7 +16,7 @@
 #include "ContextDX9.h"
 #include "config.h"
 
-struct VERTEX
+struct vertex
 {
 	float fX;
 	float fY;
@@ -24,7 +24,7 @@ struct VERTEX
 	D3DCOLOR Color;
 };
 
-void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 1.f)
+void CreateVERTEX(vertex *v, float X, float Y, D3DCOLOR Color, float Z = 1.f)
 {
 	v->fX = X;
 	v->fY = Y;
@@ -76,7 +76,7 @@ void  ContextDX9::DrawZoom()
 void  ContextDX9::DrawRect(D3DXVECTOR2 position, bool sel, float size)
 { 
 	D3DCOLOR fill = (sel) ? 0xAAFCE6B1 : 0xAA121150;
-	VERTEX v9[9];
+	vertex v9[9];
 	CreateVERTEX(&v9[0], position.x - size, position.y - size, fill);
 	CreateVERTEX(&v9[1], position.x + size, position.y - size, fill);
 	CreateVERTEX(&v9[2], position.x - size, position.y + size, fill);
@@ -87,14 +87,14 @@ void  ContextDX9::DrawRect(D3DXVECTOR2 position, bool sel, float size)
 	CreateVERTEX(&v9[7], position.x - size, position.y + size, 0xFFBB0000);
 	CreateVERTEX(&v9[8], position.x - size, position.y - size, 0xFFBB0000);
 
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(VERTEX)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 4, &v9[4], sizeof(vertex)), L"primitive failed");
 }
 
 void  ContextDX9::DrawCircle(D3DXVECTOR2 position, bool sel, float size)
 { 
 	D3DCOLOR fill = (sel) ? 0xAAFCE6B1 : 0xAA121150;
-	VERTEX v5[41];
+	vertex v5[41];
 	float rad = 0.01745329251994329576923690768489f;
 
 	float xx = position.x;
@@ -111,8 +111,8 @@ void  ContextDX9::DrawCircle(D3DXVECTOR2 position, bool sel, float size)
 
 	}
 
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, sizeof(VERTEX)), L"primitive failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], sizeof(VERTEX)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 18, v5, sizeof(vertex)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 18, &v5[21], sizeof(vertex)), L"primitive failed");
 }
 
 void  ContextDX9::DrawCross(D3DXVECTOR2 position, unsigned int color, bool useBegin)
@@ -141,7 +141,7 @@ void  ContextDX9::DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd,
 	D3DXVECTOR2 pend = (*positionEnd) + (diffUnits * (12 + diff));
 	D3DXVECTOR2 halfbase = D3DXVECTOR2(-diffUnits.y, diffUnits.x) * 5.f;
 
-	VERTEX v4[7];
+	vertex v4[7];
 	D3DXVECTOR2 v3[3];
 	v3[0] = pend - diffUnits * 12;
 	v3[1] = pend + halfbase;
@@ -155,8 +155,8 @@ void  ContextDX9::DrawArrow(D3DXVECTOR2 positionStart, D3DXVECTOR2 *positionEnd,
 	CreateVERTEX(&v4[5], v3[2].x, v3[2].y, 0xFFBB0000);
 	CreateVERTEX(&v4[6], v3[0].x, v3[0].y, 0xFFBB0000);
 
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(VERTEX)), L"primitive failed");
-	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(VERTEX)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v4, sizeof(vertex)), L"primitive failed");
+	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 3, &v4[3], sizeof(vertex)), L"primitive failed");
 	*positionEnd = pend;
 }
 

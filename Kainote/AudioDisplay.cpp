@@ -401,12 +401,12 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			D3DCOLOR fill;
 			if (NeedCommit) fill = selectionBackgroundModified;
 			else fill = selectionBackground;
-			VERTEX v9[4];
+			vertex v9[4];
 			CreateVERTEX(&v9[0], drawSelStart, 0, fill);
 			CreateVERTEX(&v9[1], drawSelEnd + 1, 0, fill);
 			CreateVERTEX(&v9[2], drawSelStart, h, fill);
 			CreateVERTEX(&v9[3], drawSelEnd + 1, h, fill);
-			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
+			HRN(hr = d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 
 		}
 
@@ -465,7 +465,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			d3dLine->Begin();
 			d3dLine->Draw(v2, 2, lineStartBondaryColor);
 			d3dLine->End();
-			VERTEX v6[6];
+			vertex v6[6];
 			CreateVERTEX(&v6[0], startDraw, 0, lineStartBondaryColor);
 			CreateVERTEX(&v6[1], startDraw + 10, 0, lineStartBondaryColor);
 			CreateVERTEX(&v6[2], startDraw, 10, lineStartBondaryColor);
@@ -473,10 +473,10 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			CreateVERTEX(&v6[4], startDraw + 10, h, lineStartBondaryColor);
 			CreateVERTEX(&v6[5], startDraw, h, lineStartBondaryColor);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
 
 			// Draw end boundary
 
@@ -494,10 +494,10 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			CreateVERTEX(&v6[4], startDraw - 10, h, lineEndBondaryColor);
 			CreateVERTEX(&v6[5], startDraw, h, lineEndBondaryColor);
 
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(VERTEX)), L"primitive failed");
-			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(VERTEX)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, v6, sizeof(vertex)), L"primitive failed");
+			HRN(d3dDevice->DrawPrimitiveUP(D3DPT_LINESTRIP, 1, &v6[3], sizeof(vertex)), L"primitive failed");
 
 			// Draw karaoke
 			if (hasKara) {
@@ -740,17 +740,17 @@ void AudioDisplay::DrawInactiveLines() {
 		x1 = MIN(x1, selX1);
 		x2 = MIN(x2, selX1);
 
-		VERTEX v9[4];
+		vertex v9[4];
 		CreateVERTEX(&v9[0], x1, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[1], x2 + 1, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[2], x1, h, inactiveLinesBackground);
 		CreateVERTEX(&v9[3], x2 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"inactive lines primitive failed");
 		CreateVERTEX(&v9[0], x3, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[1], x4 + 1, 0, inactiveLinesBackground);
 		CreateVERTEX(&v9[2], x3, h, inactiveLinesBackground);
 		CreateVERTEX(&v9[3], x4 + 1, h, inactiveLinesBackground);
-		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"inactive lines primitive failed");
+		HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"inactive lines primitive failed");
 
 		if (!spectrum) {
 			d3dLine->Begin();
@@ -792,14 +792,14 @@ void AudioDisplay::DrawInactiveLines() {
 void AudioDisplay::DrawTimescale() {
 
 	// Set colours
-	VERTEX v9[4];
+	vertex v9[4];
 	D3DXVECTOR2 v2[2];
 	CreateVERTEX(&v9[0], 0, h, timescaleBackground);
 	CreateVERTEX(&v9[1], w, h, timescaleBackground);
 	CreateVERTEX(&v9[2], 0, h + timelineHeight, timescaleBackground);
 	CreateVERTEX(&v9[3], w, h + timelineHeight, timescaleBackground);
 
-	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(VERTEX)), L"primitive failed");
+	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	d3dLine->Begin();
 	v2[0] = D3DXVECTOR2(0, h);
 	v2[1] = D3DXVECTOR2(w, h);
