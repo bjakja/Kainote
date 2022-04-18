@@ -18,28 +18,28 @@
 #include "SubsDialogue.h"
 #include <wx/log.h>
 
-STime::STime(){
+SubsTime::SubsTime(){
 	mstime = 0;
 	form = ASS;
 	orgframe = 0;
 }
 
-STime::STime(int ms, int orgFrame){
+SubsTime::SubsTime(int ms, int orgFrame){
 	mstime = ms;
 	form = ASS;
 	orgframe = orgFrame;
 }
 
-STime::~STime(){
+SubsTime::~SubsTime(){
 }
 
-void STime::SetRaw(wxString rawtime, char format)
+void SubsTime::SetRaw(wxString rawtime, char format)
 {
 	form = format;
 	ParseMS(rawtime);
 }
 
-void STime::ParseMS(wxString raw)
+void SubsTime::ParseMS(wxString raw)
 {
 
 	int csec1 = 0, sec1, min1, godz1;
@@ -80,7 +80,7 @@ void STime::ParseMS(wxString raw)
 
 }
 
-wxString STime::raw(char ft)//,float custfps
+wxString SubsTime::raw(char ft)//,float custfps
 {
 	wxString rawtxt;
 	if (ft == 0){ ft = form; }
@@ -113,7 +113,7 @@ wxString STime::raw(char ft)//,float custfps
 	return rawtxt;
 }
 
-void STime::Change(int ms)
+void SubsTime::Change(int ms)
 {
 	mstime += ms;
 	if (mstime < 0){ mstime = 0; }
@@ -122,12 +122,12 @@ void STime::Change(int ms)
 		orgframe = ceil(mstime * (25.f / 1000.f));
 	}
 }
-void STime::ChangeFrame(int frame)
+void SubsTime::ChangeFrame(int frame)
 {
 	orgframe += frame;
 	if (orgframe < 0){ orgframe = 0; }
 }
-void STime::NewTime(int ms)
+void SubsTime::NewTime(int ms)
 {
 	mstime = ms; if (mstime < 0){ mstime = 0; }
 	if (form == MDVD){
@@ -137,17 +137,17 @@ void STime::NewTime(int ms)
 
 }
 
-void STime::NewFrame(int frame)
+void SubsTime::NewFrame(int frame)
 {
 	orgframe = frame;
 	if (orgframe < 0){ orgframe = 0; }
 }
 
-char STime::GetFormat()
+char SubsTime::GetFormat()
 {
 	return form;
 }
-void STime::ChangeFormat(char format, float fps)
+void SubsTime::ChangeFormat(char format, float fps)
 {
 	if (format == form)
 		return;
@@ -165,44 +165,44 @@ void STime::ChangeFormat(char format, float fps)
 	form = format;
 }
 
-wxString STime::GetFormatted(char format)
+wxString SubsTime::GetFormatted(char format)
 {
 	return raw(format);
 }
 
-bool STime::operator> (const STime &comp)
+bool SubsTime::operator> (const SubsTime &comp)
 {
 	return mstime > comp.mstime;
 }
 
-bool STime::operator< (const STime &comp)
+bool SubsTime::operator< (const SubsTime &comp)
 {
 	return mstime < comp.mstime;
 }
 
-bool STime::operator>= (const STime &comp)
+bool SubsTime::operator>= (const SubsTime &comp)
 {
 	return mstime > comp.mstime;
 }
 
-bool STime::operator<= (const STime &comp)
+bool SubsTime::operator<= (const SubsTime &comp)
 {
 	return mstime < comp.mstime;
 }
 
-bool STime::operator== (const STime &comp)
+bool SubsTime::operator== (const SubsTime &comp)
 {
 	return mstime == comp.mstime;
 }
 
-bool STime::operator!= (const STime &comp)
+bool SubsTime::operator!= (const SubsTime &comp)
 {
 	return mstime != comp.mstime;
 }
 
-STime STime::operator- (const STime &comp)
+SubsTime SubsTime::operator- (const SubsTime &comp)
 {
-	STime tmp = STime(comp);
+	SubsTime tmp = SubsTime(comp);
 	tmp.mstime = mstime - comp.mstime;
 	tmp.orgframe = orgframe - comp.orgframe;
 	if (tmp.mstime < 0){ tmp.mstime = 0; }
@@ -210,9 +210,9 @@ STime STime::operator- (const STime &comp)
 	return tmp;
 }
 
-STime STime::operator+ (const STime &comp)
+SubsTime SubsTime::operator+ (const SubsTime &comp)
 {
-	STime tmp = STime(comp);
+	SubsTime tmp = SubsTime(comp);
 	tmp.mstime = mstime + comp.mstime;
 	tmp.orgframe = orgframe + comp.orgframe;
 	return tmp;

@@ -71,7 +71,7 @@ void VideoSlider::OnPaint(wxPaintEvent& event)
 					isChapter = true;
 					chapterTime = ch.time;
 					chapterPos = chpos - 15;
-					STime kkk;
+					SubsTime kkk;
 					kkk.mstime = chapterTime;
 					wxString time = kkk.raw(SRT);
 					time.Prepend(ch.name + L" ");
@@ -218,7 +218,7 @@ void VideoSlider::OnMouseEvent(wxMouseEvent& event)
 			showlabel = true;
 			labelpos = curX;
 
-			STime kkk;
+			SubsTime kkk;
 			kkk.mstime = msTimePosition;
 			label = kkk.raw(SRT);
 			Refresh(false);

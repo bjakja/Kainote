@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma  once
-
+#include "TabPanel.h"
 #include "wx/arrstr.h"
 #include "wx/window.h"
 #include <vector>
@@ -28,7 +28,6 @@ enum
 	OPEN_HAS_OWN_TEXT
 };
 
-class TabPanel;
 class SubtitlesProvider;
 
 class SubtitlesProviderManager

@@ -14,6 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 #include "Visuals.h"
 #include "TabPanel.h"
+#include "SubsGrid.h"
+#include "KaiTextCtrl.h"
+#include "EditBox.h"
+#include "VideoCtrl.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <math.h> 

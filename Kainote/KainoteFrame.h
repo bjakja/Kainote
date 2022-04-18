@@ -34,7 +34,13 @@ class SelectLines;
 class MisspellReplacer;
 class Automation;
 class Notebook;
-class KaiStatusBar
+class KaiStatusBar;
+class Menu;
+class MenuBar;
+class KaiToolbar;
+class TabPanel;
+
+
 
 class KainoteFrame : public KaiFrame
 {
@@ -81,8 +87,8 @@ public:
 	bool SavePrompt(char mode = 1, int wtab = -1);
 	void UpdateToolbar();
 	void OnOpenAudio(wxCommandEvent& event);
-	void SetStatusText(const wxString &label, int field){ StatusBar->SetLabelText(field, label); }
-	wxString GetStatusText(int field){ return StatusBar->GetStatusText(field); }
+	void SetStatusText(const wxString& label, int field);
+	wxString GetStatusText(int field);
 	void SetSubsResolution(bool dialog = false);
 	void SetVideoResolution(int w, int h, bool dialog = false);
 	void ShowBadResolutionDialog(const wxSize &videoRes, const wxSize &subsRes);
@@ -91,7 +97,7 @@ public:
 	void DestroyDialogs();
 	FindReplaceDialog *FR = nullptr;
 	SelectLines *SL = nullptr;
-	Auto::Automation *Auto = nullptr;
+	Automation *Auto = nullptr;
 	FontCollector *FC = nullptr;
 	MisspellReplacer *MR = nullptr;
 	RECT borders;

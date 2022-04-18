@@ -30,9 +30,9 @@ public:
 	virtual ~TimeCtrl();
 	void SetVideoCtrl(VideoCtrl *_vb){ vb = _vb; };
 	//0 dont setup frame, 1 start frame, 2 end frame,
-	void SetTime(const STime &newtime, bool stillModified = false, int opt = 0);
+	void SetTime(const SubsTime &newtime, bool stillModified = false, int opt = 0);
 	//0 nothing, 1 -halframe (start), 2 +halfframe (end),
-	STime GetTime(char opt = 0);
+	SubsTime GetTime(char opt = 0);
 	void ChangeFormat(char frm, float fps = 0);
 	char GetFormat();
 	bool HasShownFrames(){ return showFrames; }
@@ -43,7 +43,7 @@ public:
 private:
 	void OnMouseLost(wxMouseCaptureLostEvent& event){ if (HasCapture()){ ReleaseMouse(); }; holding = false; };
 	char form;
-	STime mTime;
+	SubsTime mTime;
 	bool pastes;
 	bool holding;
 	int oldposy;

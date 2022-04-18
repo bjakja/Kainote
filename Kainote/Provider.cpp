@@ -19,7 +19,7 @@
 #include "ProviderFFMS2.h"
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include "TabPanel.h"
 
 Provider::Provider(const wxString& filename, RendererVideo* renderer)

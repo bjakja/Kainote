@@ -23,7 +23,7 @@
 #include "kainoteMain.h"
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include <wx/tokenzr.h>
 #include <wx/event.h>
 #include <wx/regex.h>

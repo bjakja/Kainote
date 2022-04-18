@@ -598,7 +598,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 				d3dLine->End();
 				d3dLine->SetWidth(1.f);
 				//dc.DrawRectangle(selMark,0,2,h);
-				STime time(curMarkMS);
+				SubsTime time(curMarkMS);
 				wxString text = time.raw();
 				int dx, dy;
 				GetTextExtent(text, &dx, &dy, 0, 0, &verdana11);
@@ -639,7 +639,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 			d3dLine->SetAntialias(FALSE);
 			d3dLine->SetWidth(1);
 			if (!player->IsPlaying()){
-				STime time;
+				SubsTime time;
 				time.NewTime(GetMSAtX(curpos));
 				wxString text = time.GetFormatted(ASS);
 				RECT rect;
@@ -1585,7 +1585,7 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 
 	// Update dialogues
 	blockUpdate = true;
-	STime gtime = STime(edit->line->Start);
+	SubsTime gtime = SubsTime(edit->line->Start);
 	gtime.NewTime(curStartMS);
 	edit->StartEdit->SetTime(gtime, true, 1);
 	gtime.NewTime(curEndMS);

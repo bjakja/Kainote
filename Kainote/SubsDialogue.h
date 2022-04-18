@@ -260,7 +260,7 @@ private:
 	ParseData* parseData = nullptr;
 public:
 	StoreTextHelper Style, Actor, Effect, Text, TextTl;
-	STime Start, End;
+	SubsTime Start, End;
 	int Layer;
 	short MarginL, MarginR, MarginV;
 	char Format, treeState = 0;

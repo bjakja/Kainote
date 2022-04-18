@@ -17,12 +17,12 @@
 #pragma once
 
 #include "KaiPanel.h"
+#include "ShiftTimes.h"
 
 class SubsGrid;
 class VideoCtrl;
 class EditBox;
 class ShiftTimes;
-class ShiftTimesWindow;
 class KaiWindowResizer;
 
 class TabPanel : public KaiPanel

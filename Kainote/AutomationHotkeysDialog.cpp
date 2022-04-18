@@ -62,7 +62,7 @@ public:
 
 std::map<idAndType, hdata> AutomationHotkeysDialog::allHotkeys;
 
-AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automation *Auto)
+AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Automation *Auto)
 	: KaiDialog(parent, -1, _("Lista skrótów klawiszowych skryptów automatyzacji"))
 	, automation(Auto)
 {
@@ -99,7 +99,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 
 	hotkeysList->AppendItem(new ItemText(_("Folder automatycznego wczytywania")));
 	for (int i = 0; i < automation->Scripts.size(); i++){
-		Auto::LuaScript * script = automation->Scripts[i];
+		LuaScript * script = automation->Scripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){
@@ -116,7 +116,7 @@ AutomationHotkeysDialog::AutomationHotkeysDialog(wxWindow *parent, Auto::Automat
 	}
 	hotkeysList->AppendItem(new ItemText(_("Z napisów")));
 	for (int i = 0; i < automation->ASSScripts.size(); i++){
-		Auto::LuaScript * script = automation->ASSScripts[i];
+		LuaScript * script = automation->ASSScripts[i];
 		auto macros = script->GetMacros();
 
 		for (int k = 0; k < macros.size(); k++){

@@ -15,7 +15,7 @@
 
 #include "VideoToolbar.h"
 #include "Config.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>

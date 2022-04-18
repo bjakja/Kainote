@@ -21,7 +21,7 @@
 #include "EnumFactory.h"
 #include "KaiDialog.h"
 
-//Po zmianie VIDEO_PLAY_PAUSE nale¿y go zmieniæ w dshowrenderer by pauzowanie po odtwarzaniu linii zadzia³a³o
+//After change VIDEO_PLAY_PAUSE edit this list 
 
 #define IDS(XX) \
 	XX( AUDIO_COMMIT_ALT,=1000 ) \

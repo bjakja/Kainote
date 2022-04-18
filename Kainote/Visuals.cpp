@@ -18,6 +18,7 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "VisualDrawingShapes.h"
+#include "SubsGrid.h"
 #include <wx/regex.h>
 
 

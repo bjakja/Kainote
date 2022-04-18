@@ -22,6 +22,9 @@
 #include "KaiDialog.h"
 #include "KaiMessageBox.h"
 #include "KaiPanel.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
+#include "VideoCtrl.h"
 
 class ProfileEdition : public KaiDialog
 {
@@ -575,7 +578,7 @@ void ShiftTimes::RefVals(ShiftTimes *secondWindow)
 
 	if (!LeadIn){
 
-		STime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : STime(Options.GetInt(SHIFT_TIMES_TIME), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES));
+		SubsTime ct = (secondWindow) ? secondWindow->TimeText->GetTime() : SubsTime(Options.GetInt(SHIFT_TIMES_TIME), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES));
 		bool dispTimes = DisplayFrames->GetValue();
 		DisplayFrames->SetValue((secondWindow) ? secondWindow->DisplayFrames->GetValue() : (mto & 16) > 0);
 		if (DisplayFrames->GetValue() != dispTimes){
@@ -723,7 +726,7 @@ void ShiftTimes::OnChangeDisplayUnits(wxCommandEvent& event)
 
 void ShiftTimes::ChangeDisplayUnits(bool times)
 {
-	STime ct = TimeText->GetTime();
+	SubsTime ct = TimeText->GetTime();
 	if (times){
 		TimeText->ShowFrames(false);
 		ct.mstime = Options.GetInt(SHIFT_TIMES_TIME);
@@ -831,7 +834,7 @@ void ShiftTimes::SetProfile(const wxString &name)
 	tokenizer.GetNextToken();
 	//time
 	if (tokenizer.HasMoreTokens()){
-		TimeText->SetTime(STime(wxAtoi(tokenizer.GetNextToken()), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES)));
+		TimeText->SetTime(SubsTime(wxAtoi(tokenizer.GetNextToken()), Options.GetInt(SHIFT_TIMES_DISPLAY_FRAMES)));
 		tokenizer.GetNextToken();
 	}
 	//forward backward

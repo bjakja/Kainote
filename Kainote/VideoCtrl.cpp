@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Videobox.h"
+#include "VideoCtrl.h"
 #include "KainoteFrame.h"
 #include "Hotkeys.h"
 #include "Menu.h"
@@ -22,12 +22,18 @@
 #include "KaiStaticText.h"
 #include "RendererDirectShow.h"
 #include "RendererFFMS2.h"
+#include "KaiSlider.h"
+#include "AudioBox.h"
+#include "EditBox.h"
+#include "SubsGrid.h"
 #include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
 #include <wx/dir.h>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
+#include <wx/filedlg.h>
+#include <wx/slider.h>
 #include "UtilsWindows.h"
 #include <shellapi.h>
 
@@ -90,7 +96,8 @@ AspectRatioDialog::AspectRatioDialog(VideoCtrl *parent, float AspectRatio)
 	_parent = parent;
 	DialogSizer *sizer = new DialogSizer(wxVERTICAL);
 	actual = new KaiStaticText(this, -1, wxString::Format(_("Proporcje ekranu: %5.3f"), 1.f / AspectRatio));
-	slider = new KaiSlider(this, 7767, AspectRatio * 700000, 100000, 1000000, wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
+	slider = new KaiSlider(this, 7767, AspectRatio * 700000, 100000, 1000000, 
+		wxDefaultPosition, wxSize(400, -1), wxHORIZONTAL | wxSL_INVERSE);
 	Connect(7767, wxEVT_SCROLL_THUMBTRACK, (wxObjectEventFunction)&AspectRatioDialog::OnSlider);
 	sizer->Add(actual, 0, wxALL, 3);
 	sizer->Add(slider, 1, wxEXPAND | wxALL, 3);
@@ -372,7 +379,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 	wxString tar;
 	tar << m_AspectRatioX << L" : " << m_AspectRatioY;
 	Kai->SetStatusText(tar, 6);
-	STime duration;
+	SubsTime duration;
 	duration.mstime = renderer->GetDuration();
 	Kai->SetStatusText(duration.raw(SRT), 3);
 	Kai->SetRecent(1);
@@ -922,7 +929,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 		menu->Append(MENU_STREAMS + i, name, emptyString, true, 0, 0, (enable == L"1") ? ITEM_RADIO : ITEM_NORMAL);//->Check(enable=="1");
 		prev = ident;
 	}
-	STime timee;
+	SubsTime timee;
 	for (size_t j = 0; j < renderer->m_Chapters.size(); j++){
 		if (j == 0){ menu->AppendSeparator(); }
 		timee.NewTime(renderer->m_Chapters[j].time);
@@ -1012,16 +1019,16 @@ void VideoCtrl::OnOpVideo()
 void VideoCtrl::OnOpSubs()
 {
 	if (Kai->SavePrompt(2)){ return; }
-	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
+	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
 		(tab->VideoPath != emptyString) ? tab->VideoPath.BeforeLast(L'\\') :
 		(Kai->subsrec.size() > 0) ? Kai->subsrec[Kai->subsrec.size() - 1].BeforeLast(L'\\') : emptyString, emptyString,
 		_("Pliki napisów (*.ass),(*.sub),(*.txt)|*.ass;*.sub;*.txt"),
 		wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
-	if (FileDialog2->ShowModal() == wxID_OK){
-		Kai->OpenFile(FileDialog2->GetPath());
+	if (FileDialog->ShowModal() == wxID_OK){
+		Kai->OpenFile(FileDialog->GetPath());
 	}
-	FileDialog2->Destroy();
+	FileDialog->Destroy();
 }
 
 void VideoCtrl::OpenEditor(bool esc)
@@ -1220,7 +1227,7 @@ void VideoCtrl::RefreshTime()
 	if (!renderer && GetState() != None)
 		return;
 
-	STime videoTime;
+	SubsTime videoTime;
 	videoTime.mstime = renderer->m_Time;
 	float dur = renderer->GetDuration();
 	float val = (dur > 0) ? videoTime.mstime / dur : 0.0;
@@ -1258,7 +1265,7 @@ void VideoCtrl::RefreshTime()
 			m_FullScreenWindow->mstimes->Update();
 		}
 		if (!m_FullScreenProgressBar){ return; }
-		STime DurationTime;
+		SubsTime DurationTime;
 		DurationTime.mstime = dur;
 		renderer->DrawProgressBar(videoTime.raw(TMP) + L" / " + DurationTime.raw(TMP));
 	}

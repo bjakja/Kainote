@@ -21,6 +21,10 @@
 
 class KainoteFrame;
 class TabPanel;
+class Notebook;
+class KaiRadioButton;
+class KaiChoice;
+class KaiCheckBox;
 
 
 class ShiftTimes: public KaiPanel
@@ -71,7 +75,7 @@ public:
 	wxWindow *panel; 
 
 	void Contents(bool addopts = true);
-	void RefVals(ShiftTimesWindow *from = nullptr);
+	void RefVals(ShiftTimes *from = nullptr);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);

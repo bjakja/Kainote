@@ -16,6 +16,11 @@
 #include "config.h"
 #include "Visuals.h"
 #include "KainoteFrame.h"
+#include "RendererVideo.h"
+#include "TabPanel.h"
+#include "VideoCtrl.h"
+#include "SubsGrid.h"
+#include "EditBox.h
 
 Cross::Cross()
 {

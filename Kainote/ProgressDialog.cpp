@@ -16,6 +16,8 @@
 
 #include "ProgressDialog.h"
 #include "kainoteApp.h"
+#include "SubsTime.h"
+#include "wx/gauge.h"
 #include <ShObjIdl.h>
 
 
@@ -102,7 +104,7 @@ void ProgresDialog::Progress(int num)
 			kainoteApp * Kaia = (kainoteApp *)wxTheApp;
 			taskbar->SetProgressValue(Kaia->Frame->GetHWND(), (ULONGLONG)num, 100);
 		}
-		STime progressTime;
+		SubsTime progressTime;
 		progressTime.NewTime(newtime);
 		text1->SetLabelText(wxString::Format(_("Upłynęło %s sekund"), progressTime.raw()));
 	}

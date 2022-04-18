@@ -829,7 +829,7 @@ void RendererVideo::SaveFrame(int id)
 			num++;
 		}
 		path = tab->VideoPath.BeforeLast(L'.');
-		STime currentTime;
+		SubsTime currentTime;
 		currentTime.mstime = m_Time;
 		wxString timestring = currentTime.raw(SRT);
 		timestring.Replace(L":", L";");

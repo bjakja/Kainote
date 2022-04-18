@@ -19,12 +19,18 @@
 #include "Config.h"
 #include "Demux.h"
 #include "FontEnumerator.h"
+#include "Notebook.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
+#include "StyleStore.h"
 #include <wx/wfstream.h>
 #include <wx/dir.h>
 #include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include <ShlObj.h>
 #include "UtilsWindows.h"
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
@@ -737,7 +743,7 @@ void FontCollector::CheckOrCopyFonts()
 				FindClose(h1);
 			}
 		}
-		STime processTime(sw.Time());
+		SubsTime processTime(sw.Time());
 		SendMessageD(wxString::Format(_("Pobrano rozmiary i nazwy %i czcionek, upłynęło %sms.\n\n"), (int)fontSizes.size() - 2, processTime.GetFormatted(SRT)), fcd->normal);
 	}
 	
@@ -1269,7 +1275,7 @@ wxThread::ExitCode FontCollectorThread::Entry()
 	}
 
 	wxThreadEvent *evt = new wxThreadEvent(EVT_ENABLE_BUTTONS, fc->fcd->GetId());
-	STime processTime(fc->sw.Time());
+	SubsTime processTime(fc->sw.Time());
 	fc->SendMessageD(wxString::Format(_("\nZakończono w %sms"), processTime.GetFormatted(SRT)), fc->fcd->normal);
 	fc->sw.Pause();
 	wxQueueEvent(fc->fcd, evt);

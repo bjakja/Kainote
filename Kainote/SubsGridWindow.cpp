@@ -1036,7 +1036,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 
 
 	if (START & cell){
-		STime start(startMax);
+		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
 			Provider *FFMS2 = tab->video->GetFFMS2();
@@ -1049,7 +1049,7 @@ void SubsGridWindow::AdjustWidthsD2D(GraphicsContext *gc, int cell)
 		stw = fw + 10;
 	}
 	if (END & cell){
-		STime end(endMax);
+		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
 			Provider *FFMS2 = tab->video->GetFFMS2();
@@ -1202,7 +1202,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 
 
 	if (START & cell){
-		STime start(startMax);
+		SubsTime start(startMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
 			Provider *FFMS2 = tab->video->GetFFMS2();
@@ -1215,7 +1215,7 @@ void SubsGridWindow::AdjustWidths(int cell)
 		stw = fw + 10;
 	}
 	if (END & cell){
-		STime end(endMax);
+		SubsTime end(endMax);
 		bool canShowFrames = showFrames;
 		if (showFrames){
 			Provider *FFMS2 = tab->video->GetFFMS2();

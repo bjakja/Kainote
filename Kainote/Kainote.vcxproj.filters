@@ -227,7 +227,7 @@
     <ClCompile Include="TabPanel.cpp">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClCompile>
-    <ClCompile Include="Tabs.cpp">
+    <ClCompile Include="Notebook.cpp">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClCompile>
     <ClCompile Include="TLDialog.cpp">
@@ -721,7 +721,7 @@
     <ClInclude Include="TabPanel.h">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClInclude>
-    <ClInclude Include="Tabs.h">
+    <ClInclude Include="Notebook.h">
       <Filter>Windows &amp; Dialogs</Filter>
     </ClInclude>
     <ClInclude Include="TLDialog.h">

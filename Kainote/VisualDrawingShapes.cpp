@@ -21,6 +21,8 @@
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
+#include "EditBox.h"
+#include "VideoCtrl.h"
 
 enum {
 	LEFT = 1,

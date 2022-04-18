@@ -42,7 +42,7 @@ public:
 	int GetFrameTimeFromFrame(int frame, bool start = true);
 	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
-	//bool GetStartEndDurationFromMS(Dialogue *dial, STime &duration);
+	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
 	int GetPlayEndTime(int time);
 	int GetDuration();
 	int GetVolume();

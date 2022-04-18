@@ -124,7 +124,7 @@ wxString DummyVideo::GetDummyText()
 		KaiMessageBox(_("Nieprawidłowa wartość fps."));
 		return wxString();
 	}
-	STime dur = duration->GetTime();
+	SubsTime dur = duration->GetTime();
 
 	float frametime = 1000.f / fps;
 	int frames = dur.mstime / frametime;

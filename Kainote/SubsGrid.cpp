@@ -26,10 +26,15 @@
 #include "Demux.h"
 #include "Stylelistbox.h"
 #include "Menu.h"
-#include <wx/regex.h>
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridDialogs.h"
+#include "TabPanel.h"
+#include "EditBox.h"
+#include "ShiftTimes.h"
+#include "VideoCtrl.h"
+#include "Notebook.h"
+#include <wx/regex.h>
 
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)

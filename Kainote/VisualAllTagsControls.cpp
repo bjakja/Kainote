@@ -16,7 +16,8 @@
 #include "VisualAllTagsControls.h"
 #include "Visuals.h"
 #include "TabPanel.h"
-
+#include "VideoCtrl.h"
+#include "EditBox.h"
 
 void AllTagsSlider::SetAllTags(AllTags* _parent)
 {

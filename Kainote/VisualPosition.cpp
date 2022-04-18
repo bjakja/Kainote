@@ -16,6 +16,9 @@
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
+#include "SubsGrid.h"
+#include "VideoCtrl.h"
+#include "EditBox.h"
 #include <wx/regex.h>
 
 enum {

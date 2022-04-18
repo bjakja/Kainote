@@ -44,20 +44,19 @@
 #include "AutomationScriptReader.h"
 #include "KaiMessageBox.h"
 #include "AutomationHotkeysDialog.h"
+#include "SubsGrid.h"
 
 #include <algorithm>
 #include <cassert>
 #include <mutex>
 #include <wx/clipbrd.h>
-//#include <wx/wx.h>
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
-//#include <thread>
-//#include <tuple>
 
 
-namespace Auto{
+
+
 
 
 	int get_file_name(lua_State *L)
@@ -637,7 +636,7 @@ namespace Auto{
 				// if the call failed, log the error here
 				wxString errmsg(get_string_or_default(L, -1));
 				errmsg.Prepend(_("Wystąpił błąd podczas wykonywania skryptu Lua:\n"));
-				ps->SafeQueue(Auto::EVT_MESSAGE, errmsg);
+				ps->SafeQueue(EVT_MESSAGE, errmsg);
 				hasMessage = true;
 			}
 			lua_pop(L, 2);
@@ -964,8 +963,8 @@ namespace Auto{
 
 	bool Automation::Add(wxString filename, bool addToSinfo, bool autoload)
 	{
-		std::vector<Auto::LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
-		Auto::LuaScript *ls = new Auto::LuaScript(filename);
+		std::vector<LuaScript*> &scripts = (autoload) ? Scripts : ASSScripts;
+		LuaScript *ls = new LuaScript(filename);
 		for (size_t i = 0; i < scripts.size(); i++) {
 			if (ls->GetFilename() == scripts[i]->GetFilename()){ delete ls; ls = nullptr; return false; }
 		}
@@ -985,7 +984,7 @@ namespace Auto{
 	void Automation::Remove(int script)
 	{
 		HasChanges = true;
-		std::vector<Auto::LuaScript*>::iterator i = ASSScripts.begin() + script;
+		std::vector<LuaScript*>::iterator i = ASSScripts.begin() + script;
 		delete *i;
 		ASSScripts.erase(i);
 	}
@@ -1069,7 +1068,7 @@ namespace Auto{
 		}
 
 
-		//STime countTime(sw.Time());
+		//SubsTime countTime(sw.Time());
 		//KaiLog("Upłynęło %sms",countTime.GetFormatted(SRT));
 	}
 
@@ -1291,4 +1290,3 @@ namespace Auto{
 	}
 
 
-}

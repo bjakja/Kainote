@@ -15,6 +15,7 @@
 
 #include "AutoSaveOpen.h"
 #include "KainoteFrame.h"
+#include "KaiStaticBoxSizer.h"
 #include <wx/dir.h>
 #include <wx/tokenzr.h>
 

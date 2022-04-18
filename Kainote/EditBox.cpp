@@ -18,10 +18,11 @@
 #include "SubsGrid.h"
 #include "KainoteApp.h"
 #include <wx/regex.h>
-//#include <wx/tglbtn.h>
+#include "TabPanel.h"
 #include "FontDialog.h"
 #include "Visuals.h"
 #include "KaiMessageBox.h"
+#include "TabPanel.h"
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
@@ -408,7 +409,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		StartEdit->SetTime(line->Start, false, 1);
 		EndEdit->SetTime(line->End, false, 2);
 		if (grid->showFrames) {
-			STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
+			SubsTime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
 			durationTime.orgframe++;
 			DurEdit->SetTime(durationTime);
 		}
@@ -1481,7 +1482,7 @@ void EditBox::OnEdit(wxCommandEvent& event)
 			EndEdit->SetForegroundColour(WINDOW_TEXT);
 		}
 
-		STime durTime = line->End - line->Start;
+		SubsTime durTime = line->End - line->Start;
 		if (durTime.mstime < 0){ durTime.mstime = 0; }
 		DurEdit->SetTime(durTime, false, 1);
 	}
@@ -1832,7 +1833,7 @@ void EditBox::OnChangeTimeDisplay(wxCommandEvent& event)
 	StartEdit->SetTime(line->Start, false, 1);
 	EndEdit->SetTime(line->End, false, 2);
 	if (frame){
-		STime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
+		SubsTime durationTime = EndEdit->GetTime() - StartEdit->GetTime();
 		durationTime.orgframe++;
 		DurEdit->SetTime(durationTime);
 	}

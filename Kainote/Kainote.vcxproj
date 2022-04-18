@@ -480,7 +480,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="SubsDialogue.cpp" />
     <ClCompile Include="SubsFile.cpp" />
     <ClCompile Include="SubsGridBase.cpp" />
-    <ClCompile Include="Tabs.cpp" />
+    <ClCompile Include="Notebook.cpp" />
     <ClCompile Include="TabPanel.cpp" />
     <ClCompile Include="SubsTime.cpp" />
     <ClCompile Include="TimeCtrl.cpp" />
@@ -635,7 +635,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsDialogue.h" />
     <ClInclude Include="SubsFile.h" />
     <ClInclude Include="SubsGridBase.h" />
-    <ClInclude Include="Tabs.h" />
+    <ClInclude Include="Notebook.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="TimeCtrl.h" />

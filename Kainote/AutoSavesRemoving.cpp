@@ -17,7 +17,7 @@
 #include "config.h"
 #include "MappedButton.h"
 #include "KaiStaticBoxSizer.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include "LogHandler.h"
 #include <ctime>
 #include <wx/filedlg.h>

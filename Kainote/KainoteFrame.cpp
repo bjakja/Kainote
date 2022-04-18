@@ -386,7 +386,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	if (!Options.GetBool(EDITOR_ON)){ HideEditor(false); }
 	
 	SetSubsResolution(false);
-	Auto = new Auto::Automation();
+	Auto = new Automation();
 	sendFocus.SetOwner(this, 6789);
 
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
@@ -691,7 +691,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->Layout();
 	}
 	else if (id == GLOBAL_AUTOMATION_LOAD_SCRIPT){
-		//if (!Auto){ Auto = new Auto::Automation(); }
+		//if (!Auto){ Auto = new Automation(); }
 		if (Auto->ASSScripts.size() < 1)
 			Auto->AddFromSubs();
 		wxFileDialog *FileDialog1 = new wxFileDialog(this, _("Wybierz sktypt"),
@@ -1703,7 +1703,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 		SetStatusText(tar, 5);
 		cur->video->RefreshTime();
 
-		STime kkk1;
+		SubsTime kkk1;
 		kkk1.mstime = cur->video->GetDuration();
 		SetStatusText(kkk1.raw(SRT), 3);
 		if (cur->editor){
@@ -2334,15 +2334,15 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 	if (time != snaptime && abs(time - snaptime) < 5000){
 		if (snapStartTime){
 			if (snaptime >= time2){ return; }
-			tab->edit->StartEdit->SetTime(STime(snaptime), false, 1);
+			tab->edit->StartEdit->SetTime(SubsTime(snaptime), false, 1);
 			tab->edit->StartEdit->SetModified(true);
 		}
 		else{
 			if (snaptime <= time2){ return; }
-			tab->edit->EndEdit->SetTime(STime(snaptime), false, 2);
+			tab->edit->EndEdit->SetTime(SubsTime(snaptime), false, 2);
 			tab->edit->EndEdit->SetModified(true);
 		}
-		STime durTime = tab->edit->EndEdit->GetTime() - tab->edit->StartEdit->GetTime();
+		SubsTime durTime = tab->edit->EndEdit->GetTime() - tab->edit->StartEdit->GetTime();
 		if (durTime.mstime < 0){ durTime.mstime = 0; }
 		tab->edit->DurEdit->SetTime(durTime, false, 1);
 		tab->edit->Send(SNAP_TO_KEYFRAME_OR_LINE_TIME, false);
@@ -2354,7 +2354,7 @@ void KainoteFrame::OnAudioSnap(wxCommandEvent& event)
 
 void KainoteFrame::OnRunScript(wxCommandEvent& event)
 {
-	//if (!Auto){ Auto = new Auto::Automation(true, true); }
+	//if (!Auto){ Auto = new Automation(true, true); }
 	//else 
 	if (Auto->Scripts.size() < 1){ Auto->ReloadScripts(true); }
 	wxString name = Hkeys.GetName(idAndType(event.GetId()));
@@ -2369,7 +2369,7 @@ void KainoteFrame::OnRunScript(wxCommandEvent& event)
 		Hkeys.SaveHkeys(false);
 		return;
 	}
-	Auto::LuaScript *script = Auto->FindScript(path);
+	LuaScript *script = Auto->FindScript(path);
 	if (!script){
 		Auto->Add(path);
 		script = Auto->ASSScripts[Auto->ASSScripts.size() - 1];

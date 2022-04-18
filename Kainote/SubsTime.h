@@ -19,7 +19,7 @@
 #include <wx/thread.h>
 
 
-class STime
+class SubsTime
 {
 private:
 
@@ -30,9 +30,9 @@ public:
 	//wxString raw;
 	int mstime;
 
-	STime();
-	STime(int ms, int orgFrame = 0);
-	~STime();
+	SubsTime();
+	SubsTime(int ms, int orgFrame = 0);
+	~SubsTime();
 	void SetRaw(wxString rawtime, char format);
 	void NewTime(int ms);
 	void NewFrame(int frame);
@@ -43,14 +43,14 @@ public:
 	wxString GetFormatted(char format);
 	void Change(int ms);
 	void ChangeFrame(int ms);
-	bool operator> (const STime &comp);
-	bool operator< (const STime &comp);
-	bool operator>= (const STime &comp);
-	bool operator<= (const STime &comp);
-	bool operator== (const STime &comp);
-	bool operator!= (const STime &comp);
-	STime operator- (const STime &comp);
-	STime operator+ (const STime &comp);
+	bool operator> (const SubsTime &comp);
+	bool operator< (const SubsTime &comp);
+	bool operator>= (const SubsTime &comp);
+	bool operator<= (const SubsTime &comp);
+	bool operator== (const SubsTime &comp);
+	bool operator!= (const SubsTime &comp);
+	SubsTime operator- (const SubsTime &comp);
+	SubsTime operator+ (const SubsTime &comp);
 };
 
 

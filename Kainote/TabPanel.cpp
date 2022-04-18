@@ -21,6 +21,9 @@
 #include "VideoCtrl.h"
 #include "EditBox.h"
 #include "ShiftTimes.h"
+#include "SubsGrid.h"
+#include "ShiftTimes.h"
+#include "OptionsPanels.h
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)

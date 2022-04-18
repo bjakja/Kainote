@@ -17,7 +17,7 @@
 #include "MisspellReplacer.h"
 #include "OpennWrite.h"
 #include "KaiStaticBoxSizer.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include "KainoteFrame.h"
 #include <algorithm>
 

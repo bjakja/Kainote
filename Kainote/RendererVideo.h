@@ -100,7 +100,7 @@ public:
 	virtual int GetFrameTimeFromFrame(int frame, bool start = true){ return 0; };
 	//if nothing loaded or loaded via Direct Show VFF is nullptr
 	//return true if VFF is present
-	//bool GetStartEndDurationFromMS(Dialogue *dial, STime &duration);
+	//bool GetStartEndDurationFromMS(Dialogue *dial, SubsTime &duration);
 	virtual int GetPlayEndTime(int time){ return 0; };
 	virtual int GetDuration(){ return 0; };
 	virtual int GetVolume(){ return 0; };

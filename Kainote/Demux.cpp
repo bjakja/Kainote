@@ -230,7 +230,7 @@ int __stdcall Demux::GetSubtitles(long long Start, long long Duration, long long
 	wxString blockString(Line, wxConvUTF8);
 
 	// Get start and end times
-	STime subStart, subEnd;
+	SubsTime subStart, subEnd;
 	int startTime = Start;
 	int endTime = startTime + Duration;
 	if (demux->codecType < 2) {

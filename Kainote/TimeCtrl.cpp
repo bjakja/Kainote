@@ -224,7 +224,7 @@ void TimeCtrl::OnKeyEvent(wxKeyEvent& event)
 }
 
 
-void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
+void TimeCtrl::SetTime(const SubsTime &newtime, bool stillModified, int opt)
 {
 	if (mTime == newtime && stillModified){ return; }
 	timeUnchanged = true;
@@ -246,12 +246,12 @@ void TimeCtrl::SetTime(const STime &newtime, bool stillModified, int opt)
 	}
 }
 //0 nothing, 1 -halframe (start), 2 +halfframe (end)
-STime TimeCtrl::GetTime(char opt)
+SubsTime TimeCtrl::GetTime(char opt)
 {
 	bool canShowFrames = showFrames && vb && vb->HasFFMS2();
 	mTime.SetRaw(GetValue(), canShowFrames || (showFrames && !vb)? FRAME : form);
 	if (canShowFrames && !timeUnchanged){
-		STime cpy = STime(mTime);
+		SubsTime cpy = SubsTime(mTime);
 		cpy.ChangeFormat(form);
 		int time = (!opt) ? vb->GetFFMS2()->GetMSfromFrame(cpy.orgframe) :
 			vb->GetRenderer()->GetFrameTimeFromFrame(cpy.orgframe, opt == 1);

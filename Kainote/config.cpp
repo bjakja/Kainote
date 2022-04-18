@@ -23,7 +23,7 @@
 #include <wx/string.h>
 #include <wx/log.h>
 #include "CsriMod.h"
-#include "Tabs.h"
+#include "Notebook.h"
 #include "gitparams.h"
 //#include <windows.h>
 #include "ConfigConverter.h"

@@ -13,12 +13,16 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Tabs.h"
+#include "Notebook.h"
 #include "TabPanel.h"
 #include "kainoteApp.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
+#include "SubsGridBase.h"
+#include "VideoCtrl.h"
+#include "ShiftTimes.h"
+#include "TabPanel.h"
 
 
 Notebook::Notebook(wxWindow *parent, int id)

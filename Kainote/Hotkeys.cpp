@@ -20,6 +20,9 @@
 
 #include "KaiMessageBox.h"
 #include "ConfigConverter.h"
+#include "TabPanel.h"
+#include "KaiStaticText.h"
+#include "Notebook.h"
 #include <wx/regex.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
