@@ -46,7 +46,7 @@ public:
 	float floatX;
 	float floatY;
 	float floatZ;
-	unsigned long * Color;
+	D3DXCOLOR * Color;
 };
 
 class FloatRect
@@ -62,7 +62,7 @@ public:
 	float height;
 };
 
-void CreateVERTEX(vertex *v, float X, float Y, unsigned long* Color, float Z = 0.0f);
+void CreateVERTEX(vertex *v, float X, float Y, D3DXCOLOR *Color, float Z = 0.0f);
 
 
 class AudioDisplay;

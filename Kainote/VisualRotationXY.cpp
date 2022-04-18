@@ -97,14 +97,15 @@ void RotationXY::DrawVisual(int time)
 	{
 		if (i == 20){ re = 255; gr = 155; }
 		else{ re = 122; gr = 57; }
-		CreateVERTEX(&vertices[i], j, -30.f, D3DCOLOR_ARGB((int)(g * 155), re, gr, bl));
-		CreateVERTEX(&vertices[i + 1], j, 0.f, D3DCOLOR_ARGB((int)(255), re, gr, bl));
-		CreateVERTEX(&vertices[i + 2], j, 0.f, D3DCOLOR_ARGB((int)(255), re, gr, bl));
-		CreateVERTEX(&vertices[i + 3], j, 30.f, D3DCOLOR_ARGB((int)(g * 155), re, gr, bl));
-		CreateVERTEX(&vertices[i + 44], -30.f, j, D3DCOLOR_ARGB((int)(g * 155), re, gr, bl));
-		CreateVERTEX(&vertices[i + 45], 0.f, j, D3DCOLOR_ARGB((int)(255), re, gr, bl));
-		CreateVERTEX(&vertices[i + 46], 0.f, j, D3DCOLOR_ARGB((int)(255), re, gr, bl));
-		CreateVERTEX(&vertices[i + 47], 30.f, j, D3DCOLOR_ARGB((int)(g * 155), re, gr, bl));
+		D3DXCOLOR color(D3DCOLOR_ARGB((int)(g * 155), re, gr, bl));
+		CreateVERTEX(&vertices[i], j, -30.f, &color);
+		CreateVERTEX(&vertices[i + 1], j, 0.f, &color);
+		CreateVERTEX(&vertices[i + 2], j, 0.f, &color);
+		CreateVERTEX(&vertices[i + 3], j, 30.f, &color);
+		CreateVERTEX(&vertices[i + 44], -30.f, j, &color);
+		CreateVERTEX(&vertices[i + 45], 0.f, j, &color);
+		CreateVERTEX(&vertices[i + 46], 0.f, j, &color);
+		CreateVERTEX(&vertices[i + 47], 30.f, j, &color);
 		j -= mm;
 		if (g == 1.f){ ster = false; }
 		if (ster){
@@ -117,29 +118,30 @@ void RotationXY::DrawVisual(int time)
 	device->DrawPrimitiveUP(D3DPT_LINELIST, 44, vertices, sizeof(vertex));
 	float addy = (AN < 4) ? 9.f : -9.f, addx = (AN % 3 == 0) ? -9.f : 9.f;
 	float add1y = (AN < 4) ? 10.f : -10.f, add1x = (AN % 3 == 0) ? -10.f : 10.f;
-	CreateVERTEX(&vertices[176], 0.f, addy, 0xFFBB0000);//line y
-	CreateVERTEX(&vertices[177], 0.f, 0.f, 0xFFBB0000);
-	CreateVERTEX(&vertices[178], addx, 0.f, 0xFFBB0000); //line x
-	CreateVERTEX(&vertices[179], 0.f, 0.f, 0xFFBB0000); //line z
-	CreateVERTEX(&vertices[180], 0.f, 0.f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[181], 0.f, add1y, 0xFFBB0000); //arrow y
-	CreateVERTEX(&vertices[182], 0.f, addy, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[183], -0.6f, addy, 0xFFBB0000);
-	CreateVERTEX(&vertices[184], 0.f, addy, 0xFFBB0000, 0.6f);
-	CreateVERTEX(&vertices[185], 0.6f, addy, 0xFFBB0000);
-	CreateVERTEX(&vertices[186], 0.f, addy, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[187], add1x, 0.f, 0xFFBB0000);//arrow x
-	CreateVERTEX(&vertices[188], addx, 0.f, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[189], addx, -0.6f, 0xFFBB0000);
-	CreateVERTEX(&vertices[190], addx, 0.f, 0xFFBB0000, 0.6f);
-	CreateVERTEX(&vertices[191], addx, 0.6f, 0xFFBB0000, 0.f);
-	CreateVERTEX(&vertices[192], addx, 0.f, 0xFFBB0000, -0.6f);
-	CreateVERTEX(&vertices[193], 0.f, 0.f, 0xFFBB0000, 10.f); //arrow z
-	CreateVERTEX(&vertices[194], -0.6f, 0.f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[195], 0.f, 0.6f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[196], 0.6f, 0.f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[197], 0.f, -0.6f, 0xFFBB0000, 9.f);
-	CreateVERTEX(&vertices[198], -0.6f, 0.f, 0xFFBB0000, 9.f);
+	D3DXCOLOR color(0xFFBB0000);
+	CreateVERTEX(&vertices[176], 0.f, addy, &color);//line y
+	CreateVERTEX(&vertices[177], 0.f, 0.f, &color);
+	CreateVERTEX(&vertices[178], addx, 0.f, &color); //line x
+	CreateVERTEX(&vertices[179], 0.f, 0.f, &color); //line z
+	CreateVERTEX(&vertices[180], 0.f, 0.f, &color, 9.f);
+	CreateVERTEX(&vertices[181], 0.f, add1y, &color); //arrow y
+	CreateVERTEX(&vertices[182], 0.f, addy, &color, -0.6f);
+	CreateVERTEX(&vertices[183], -0.6f, addy, &color);
+	CreateVERTEX(&vertices[184], 0.f, addy, &color, 0.6f);
+	CreateVERTEX(&vertices[185], 0.6f, addy, &color);
+	CreateVERTEX(&vertices[186], 0.f, addy, &color, -0.6f);
+	CreateVERTEX(&vertices[187], add1x, 0.f, &color);//arrow x
+	CreateVERTEX(&vertices[188], addx, 0.f, &color, -0.6f);
+	CreateVERTEX(&vertices[189], addx, -0.6f, &color);
+	CreateVERTEX(&vertices[190], addx, 0.f, &color, 0.6f);
+	CreateVERTEX(&vertices[191], addx, 0.6f, &color, 0.f);
+	CreateVERTEX(&vertices[192], addx, 0.f, &color, -0.6f);
+	CreateVERTEX(&vertices[193], 0.f, 0.f, &color, 10.f); //arrow z
+	CreateVERTEX(&vertices[194], -0.6f, 0.f, &color, 9.f);
+	CreateVERTEX(&vertices[195], 0.f, 0.6f, &color, 9.f);
+	CreateVERTEX(&vertices[196], 0.6f, 0.f, &color, 9.f);
+	CreateVERTEX(&vertices[197], 0.f, -0.6f, &color, 9.f);
+	CreateVERTEX(&vertices[198], -0.6f, 0.f, &color, 9.f);
 	device->DrawPrimitiveUP(D3DPT_LINESTRIP, 2, &vertices[176], sizeof(vertex));
 	device->DrawPrimitiveUP(D3DPT_LINELIST, 1, &vertices[179], sizeof(vertex));
 	device->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, &vertices[181], sizeof(vertex));

@@ -20,6 +20,7 @@
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 #include "VideoCtrl.h"
+#include "EditBox.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 
@@ -28,7 +29,7 @@
 #include <d3d9.h>
 #include <d3dx9.h>
 
-void CreateVERTEX(vertex *v, float X, float Y, unsigned long * Color, float Z)
+void CreateVERTEX(vertex *v, float X, float Y, D3DXCOLOR* Color, float Z)
 {
 	v->floatX = X;
 	v->floatX = Y;
@@ -440,20 +441,20 @@ void RendererVideo::DrawZoom()
 	v2[4].x = v2[0].x;
 	v2[4].y = v2[0].y;
 
-
+	D3DXCOLOR color = 0x88000000;
 	vertex v24[12];
-	CreateVERTEX(&v24[0], 0, 0, 0x88000000);
-	CreateVERTEX(&v24[1], s.x, 0, 0x88000000);
-	CreateVERTEX(&v24[2], v2[2].x, v2[0].y, 0x88000000);
-	CreateVERTEX(&v24[3], v2[0].x, v2[0].y, 0x88000000);
-	CreateVERTEX(&v24[4], v2[0].x, v2[2].y, 0x88000000);
-	CreateVERTEX(&v24[5], 0, s.y, 0x88000000);
-	CreateVERTEX(&v24[6], s.x, s.y, 0x88000000);
-	CreateVERTEX(&v24[7], 0, s.y, 0x88000000);
-	CreateVERTEX(&v24[8], v2[0].x, v2[2].y, 0x88000000);
-	CreateVERTEX(&v24[9], v2[2].x, v2[2].y, 0x88000000);
-	CreateVERTEX(&v24[10], v2[2].x, v2[0].y, 0x88000000);
-	CreateVERTEX(&v24[11], s.x, 0, 0x88000000);
+	CreateVERTEX(&v24[0], 0, 0, &color);
+	CreateVERTEX(&v24[1], s.x, 0, &color);
+	CreateVERTEX(&v24[2], v2[2].x, v2[0].y, &color);
+	CreateVERTEX(&v24[3], v2[0].x, v2[0].y, &color);
+	CreateVERTEX(&v24[4], v2[0].x, v2[2].y, &color);
+	CreateVERTEX(&v24[5], 0, s.y, &color);
+	CreateVERTEX(&v24[6], s.x, s.y, &color);
+	CreateVERTEX(&v24[7], 0, s.y, &color);
+	CreateVERTEX(&v24[8], v2[0].x, v2[2].y, &color);
+	CreateVERTEX(&v24[9], v2[2].x, v2[2].y, &color);
+	CreateVERTEX(&v24[10], v2[2].x, v2[0].y, &color);
+	CreateVERTEX(&v24[11], s.x, 0, &color);
 
 	HRN(m_D3DDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE), L"FVF failed");
 	HRN(m_D3DDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 4, v24, sizeof(vertex)), L"Primitive failed");
