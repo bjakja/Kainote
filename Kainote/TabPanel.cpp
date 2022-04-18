@@ -22,8 +22,7 @@
 #include "EditBox.h"
 #include "ShiftTimes.h"
 #include "SubsGrid.h"
-#include "ShiftTimes.h"
-#include "OptionsPanels.h
+#include "Notebook.h"
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
@@ -45,10 +44,10 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
 	edit->SetGrid1(grid);
 
-	ShiftTimes = new ShiftTimes(this, kai, -1);
-	ShiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
+	shiftTimes = new ShiftTimes(this, kai, -1);
+	shiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	GridShiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
-	GridShiftTimesSizer->Add(ShiftTimes, 0, wxEXPAND, 0);
+	GridShiftTimesSizer->Add(shiftTimes, 0, wxEXPAND, 0);
 	VideoEditboxSizer->Add(video, 0, wxEXPAND | wxALIGN_TOP, 0);
 	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 

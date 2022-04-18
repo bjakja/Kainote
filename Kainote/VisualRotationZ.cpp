@@ -16,6 +16,9 @@
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
+#include "RendererVideo.h"
+
+
 
 RotationZ::RotationZ()
 	: Visuals()
@@ -55,7 +58,7 @@ void RotationZ::DrawVisual(int time)
 	//changed every function to float version
 	float radius = sqrtf(powf(fabs(org.x - from.x), 2) + powf(fabs(org.y - from.y), 2)) + 40;
 	D3DXVECTOR2 v2[6];
-	VERTEX v5[726];
+	vertex v5[726];
 	CreateVERTEX(&v5[0], org.x, org.y + (radius + 10.f), 0xAA121150);
 	CreateVERTEX(&v5[1], org.x, org.y + radius, 0xAA121150);
 	for (int j = 0; j < 181; j++){

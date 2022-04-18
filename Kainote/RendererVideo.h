@@ -21,13 +21,8 @@
 #include "Visuals.h"
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
-#include <vector>
-#include <dxva2api.h>
-#include <d3d9.h>
-#include <d3dx9.h>
 
 
-#undef DrawText
 
 
 enum PlaybackState
@@ -38,18 +33,18 @@ enum PlaybackState
 	None
 };
 
-struct chapter
+class chapter
 {
 	wxString name;
 	int time;
 };
 
-struct VERTEX
+class vertex
 {
-	float fX;
-	float fY;
-	float fZ;
-	D3DCOLOR Color;
+	float floatX;
+	float floatY;
+	float floatZ;
+	unsigned long * Color;
 };
 
 class FloatRect
@@ -65,7 +60,7 @@ public:
 	float height;
 };
 
-void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z = 0.0f);
+void CreateVERTEX(vertex *v, float X, float Y, unsigned long* Color, float Z = 0.0f);
 
 
 class AudioDisplay;

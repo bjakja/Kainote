@@ -15,28 +15,23 @@
 
 #include "RendererVideo.h"
 #include "Config.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 
+#include <vector>
+#include <dxva2api.h>
+#include <d3d9.h>
+#include <d3dx9.h>
 
-#if byvertices
-struct CUSTOMVERTEX
+void CreateVERTEX(vertex *v, float X, float Y, unsigned long * Color, float Z)
 {
-	D3DXVECTOR3 position; // The position
-	FLOAT       tu, tv;   // The texture coordinates
-};
-#define D3DFVF_CUSTOMVERTEX (D3DFVF_XYZ|D3DFVF_TEX1)
-#endif
-
-void CreateVERTEX(VERTEX *v, float X, float Y, D3DCOLOR Color, float Z)
-{
-	v->fX = X;
-	v->fY = Y;
-	v->fZ = Z;
+	v->floatX = X;
+	v->floatX = Y;
+	v->floatX = Z;
 	v->Color = Color;
 }
 

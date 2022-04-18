@@ -25,6 +25,9 @@ class Notebook;
 class KaiRadioButton;
 class KaiChoice;
 class KaiCheckBox;
+class TimeCtrl;
+class KaiScrollbar;
+class KaiStaticBoxSizer;
 
 
 class ShiftTimes: public KaiPanel
