@@ -23,6 +23,7 @@
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "VideoBox.h"
+//#include <d3dx9.h>
 
 enum {
 	LEFT = 1,

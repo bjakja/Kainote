@@ -397,7 +397,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	
 	SetSubsResolution(false);
 	Auto = new Automation();
-	m_sendFocus.SetOwner(this, 6789);
+	m_SendFocus.SetOwner(this, 6789);
 
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		//if it will crash on last focused window
@@ -1116,7 +1116,7 @@ void KainoteFrame::Save(bool showDialog, int tabToSave, bool changeLabel)
 
 bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool freeze /*= true*/)
 {
-	wxMutexLocker lock(blockOpen);
+	wxMutexLocker lock(m_BlockOpen);
 	wxString ext = filename.AfterLast(L'.').Lower();
 	if (ext == L"exe" || ext == L"zip" || ext == L"rar" || ext == L"7z"){ return false; }
 	TabPanel* tab = GetTab();
@@ -1589,7 +1589,7 @@ bool comp(wxString first, wxString second)
 //OpenFiles automatically cleares files table
 void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bool newtab)
 {
-	wxMutexLocker lock(blockOpen);
+	wxMutexLocker lock(m_BlockOpen);
 	std::sort(files.begin(), files.end(), comp);
 	wxArrayString subs;
 	wxArrayString videos;
@@ -2241,7 +2241,7 @@ void KainoteFrame::OnActivate(wxActivateEvent &evt)
 		Menubar->HideMnemonics();
 	}
 	if (evt.GetActive()){
-		sendFocus.Start(50, true);
+		m_SendFocus.Start(50, true);
 	}
 }
 

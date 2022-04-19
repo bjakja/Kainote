@@ -15,12 +15,13 @@
 
 #pragma once
 
-#include <wx/dc.h>
-#include <wx/dcmemory.h>
-#include <vector>
 #include "KaiScrollbar.h"
 #include "SubsDialogue.h"
 #include "Styles.h"
+
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <vector>
 
 wxDECLARE_EVENT(LIST_ITEM_LEFT_CLICK, wxCommandEvent);
 wxDECLARE_EVENT(LIST_ITEM_DOUBLECLICKED, wxCommandEvent);

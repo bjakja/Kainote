@@ -52,7 +52,6 @@ void ItemHotkey::OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, Ka
 	dc->SetClippingRegion(cur);
 	dc->DrawLabel(accel, cur, wxALIGN_CENTER_VERTICAL);
 	dc->DestroyClippingRegion();
-	//if (modified){ }
 }
 
 void ItemHotkey::OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed)
@@ -74,7 +73,7 @@ void ItemHotkey::OnMapHotkey(KaiListCtrl *theList, int y)
 			OptionsDialog::hotkeysCopy = std::map<idAndType, hdata>(Hkeys.GetHotkeysMap());
 
 		wxString hotkey = accel;
-		//const idAndType *itype = new idAndType(hotkeyId.id, hkd.type);
+		
 		std::vector< std::map<idAndType, hdata>::iterator> idtypes;
 		for (auto cur = OptionsDialog::hotkeysCopy.begin(); cur != OptionsDialog::hotkeysCopy.end(); cur++){
 			if (cur->second.Accel == hkd.hotkey && cur->first.id != hotkeyId.id){
@@ -229,7 +228,6 @@ void ItemHotkey::Save()
 
 void ItemHotkey::OnChangeHistory(){
 	OptionsDialog::hotkeysCopy[hotkeyId] = hdata(name, accel);
-	//modified = true;
 }
 //modes 0 All
 //1 setted

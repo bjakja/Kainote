@@ -89,7 +89,7 @@ void ProviderFFMS2::Processing()
 
 		if (wait_result == WAIT_OBJECT_0 + 0)
 		{
-			byte* buff = (byte*)m_renderer->m_FrameBuffer;
+			unsigned char* buff = m_renderer->m_FrameBuffer;
 			int acttime;
 			while (1) {
 

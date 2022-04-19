@@ -41,18 +41,18 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	int vw, vh;
 	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 	if (vw < 200){ vw = 550; vh = 400; }
-	video = new VideoBox(this, kai, wxSize(vw, vh));
+	video = new VideoBox(this, wxSize(vw, vh));
 	video->Hide();
 	edit = new EditBox(this, -1);
 
-	GridshiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
+	GridShiftTimesSizer = new wxBoxSizer(wxHORIZONTAL);
 	grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
 	edit->SetGrid1(grid);
 
 	shiftTimes = new shiftTimes(this, kai, -1);
 	shiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
-	GridshiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
-	GridshiftTimesSizer->Add(shiftTimes, 0, wxEXPAND, 0);
+	GridShiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
+	GridShiftTimesSizer->Add(shiftTimes, 0, wxEXPAND, 0);
 	VideoEditboxSizer->Add(video, 0, wxEXPAND | wxALIGN_TOP, 0);
 	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 
@@ -77,7 +77,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	MainSizer = new wxBoxSizer(wxVERTICAL);
 	MainSizer->Add(VideoEditboxSizer, 0, wxEXPAND | wxALIGN_TOP, 0);
 	MainSizer->Add(windowResizer, 0, wxEXPAND, 0);//AddSpacer(3);
-	MainSizer->Add(GridshiftTimesSizer, 1, wxEXPAND, 0);
+	MainSizer->Add(GridShiftTimesSizer, 1, wxEXPAND, 0);
 	SetSizerAndFit(MainSizer);
 
 	SubsName = _("Bez tytułu");

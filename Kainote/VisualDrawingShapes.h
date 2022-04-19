@@ -20,7 +20,6 @@
 #include "KaiTextCtrl.h"
 #include <vector>
 #include "Visuals.h"
-#include <d3dx9.h>
 
 class ShapesSetting
 {
@@ -94,12 +93,12 @@ private:
 class Shapes : public DrawingAndClip {
 public:
 	Shapes();
-	//~Shapes() { };
-	void OnMouseEvent(wxMouseEvent& evt) override;
-	void DrawVisual(int time) override;
-	void SetShape(int shape) override;
-	void GetVisual(wxString* drawing) override;
-	void SetScale(wxString* txt, size_t position, int* diff) override;
+	
+	virtual void OnMouseEvent(wxMouseEvent& evt) override;
+	virtual void DrawVisual(int time) override;
+	virtual void SetShape(int shape) override;
+	virtual void GetVisual(wxString* drawing) override;
+	virtual void SetScale(wxString* txt, size_t position, int* diff) override;
 private:
 	void SortPoints();
 	void SetDrawingScale();

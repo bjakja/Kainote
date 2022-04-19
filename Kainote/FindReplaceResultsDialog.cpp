@@ -18,14 +18,15 @@
 #include "FindReplace.h"
 #include "MappedButton.h"
 #include "KaiCheckBox.h"
+#include "KaiListCtrl.h"
 
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
 FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool _findInFiles)
-	 : KaiDialog(parent, -1, _("Wyniki szukania"), wxPoint(-1, -1), wxSize(-1, -1), wxRESIZE_BORDER)
+	 : KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
-	resultsList = new KaiListCtrl(this, 23323, wxPoint(-1, -1), wxSize(700, 300));
+	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
 	resultsList->InsertColumn(0, emptyString, TYPE_TEXT, -1);
 	resultsList->SetHeaderHeight(0);
 	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);
@@ -40,9 +41,9 @@ FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace
 	}, 23323);
 	wxBoxSizer *buttonsSizer = new wxBoxSizer(wxHORIZONTAL);
 
-	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"));
-	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"));
-	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"));
+	MappedButton *checkAll = new MappedButton(this, ID_CHECK_ALL, _("Zahacz wszystko"), -1);
+	MappedButton *unCheckAll = new MappedButton(this, ID_UNCHECK_ALL, _("Odhacz wszystko"), -1);
+	replaceChecked = new MappedButton(this, ID_REPLACE_CHECKED, _("Zamień"), -1);
 	ReplaceText = new KaiChoice(this, -1, FR->actualReplace, wxDefaultPosition, wxDefaultSize, FR->replaceRecent);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
 		CheckUncheckAll(true);

@@ -481,7 +481,7 @@ void shiftTimes::OnSize(wxSizeEvent& event)
 		isscrollbar = true;
 		int thickness = scroll->GetThickness();
 		SetMinSize(wxSize(w + thickness, h));
-		tab->GridshiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 		scroll->SetSize(w - 1, 0, thickness, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
@@ -495,13 +495,13 @@ void shiftTimes::OnSize(wxSizeEvent& event)
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		SetMinSize(wxSize(w, h));
 		panel->SetPosition(wxPoint(0, scPos));
-		tab->GridshiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 	}
 	else if (scroll->IsShown()){
 		int thickness = scroll->GetThickness();
 		if (ctw != w + thickness) {
 			SetMinSize(wxSize(w + thickness, h));
-			tab->GridshiftTimesSizer->Layout();
+			tab->GridShiftTimesSizer->Layout();
 			scPos = 0;
 		}
 		scroll->SetSize(ctw - thickness - 1, 0, thickness, gh);
@@ -514,7 +514,7 @@ void shiftTimes::OnSize(wxSizeEvent& event)
 	}
 	else if (!isscrollbar && ctw != w){
 		SetMinSize(wxSize(w, h));
-		tab->GridshiftTimesSizer->Layout();
+		tab->GridShiftTimesSizer->Layout();
 	}
 
 }
@@ -674,7 +674,7 @@ void shiftTimes::CollapsePane(wxCommandEvent &event)
 		{
 			int thickness = scroll->GetThickness();
 			SetMinSize(wxSize(w + thickness, h));
-			cur->GridshiftTimesSizer->Layout();
+			cur->GridShiftTimesSizer->Layout();
 			scroll->SetSize(w, 0, thickness, gh);
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 
@@ -685,7 +685,7 @@ void shiftTimes::CollapsePane(wxCommandEvent &event)
 			scroll->Hide();
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 			SetMinSize(wxSize(w, h));
-			cur->GridshiftTimesSizer->Layout();
+			cur->GridShiftTimesSizer->Layout();
 		}
 
 		panel->SetPosition(wxPoint(0, -scPos));
@@ -1011,7 +1011,7 @@ bool shiftTimes::SetFont(const wxFont &font)
 	OnSize(evt);
 	RefVals();
 	TabPanel* cur = (TabPanel*)GetParent();
-	cur->GridshiftTimesSizer->Layout();
+	cur->GridShiftTimesSizer->Layout();
 	return true;
 }
 

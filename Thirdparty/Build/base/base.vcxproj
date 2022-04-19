@@ -58,7 +58,7 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);L:\Kainote\Thirdparty\wxWidgets\include\wx\msw;L:\Kainote\Thirdparty\wxWidgets\include\;L:\Kainote\Thirdparty\zlib;L:\Kainote\Thirdparty\wxWidgets\3rdparty;L:\Kainote\Thirdparty\wxWidgets\3rdparty\pcre\src\wx</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
-    <IncludePath />
+    <IncludePath>$(SolutionDir)\ThirdParty\wxWidgets\include</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -144,6 +144,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
+      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeaderFile>wx\wxprec.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\lib.pch</PrecompiledHeaderOutputFile>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

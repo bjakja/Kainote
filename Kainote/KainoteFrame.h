@@ -24,10 +24,10 @@
 
 #include "KaiFrame.h"
 #include <wx/timer.h>
+#include <windows.h>
 
 
 class FontCollector;
-struct tagRECT;
 class FindReplaceDialog;
 class SelectLines;
 class MisspellReplacer;
@@ -100,7 +100,7 @@ public:
 	Automation *Auto = nullptr;
 	FontCollector *FC = nullptr;
 	MisspellReplacer *MR = nullptr;
-	tagRECT borders;
+	RECT borders;
 private:
 
 
@@ -131,8 +131,8 @@ private:
 
 	bool badResolution;
 
-	wxMutex m_blockOpen;
-	wxTimer m_sendFocus;
+	wxMutex m_BlockOpen;
+	wxTimer m_SendFocus;
 };
 
 

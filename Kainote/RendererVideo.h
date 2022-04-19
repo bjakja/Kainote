@@ -19,7 +19,7 @@
 #include "Visuals.h"
 #include "Menu.h"
 #include "SubtitlesProviderManager.h"
-
+#include <d3dx9.h>
 
 class IDirectXVideoProcessorService;
 class IDirectXVideoProcessor;
@@ -70,7 +70,6 @@ class DShowPlayer;
 class Menu;
 class Provider;
 class VideoBox;
-class SubtitlesProviderManager;
 
 class RendererVideo
 {

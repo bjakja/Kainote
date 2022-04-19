@@ -1809,7 +1809,7 @@ void VideoBox::GetWindowSize(int* x, int* y)
 
 PlaybackState VideoBox::GetState() {
 	if (renderer)
-		return renderer->m_State;
+		return renderer->GetState();
 	else
 		return None;
 }

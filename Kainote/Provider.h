@@ -20,14 +20,15 @@
 #include <thread>
 #include "include\ffms.h"
 
+class chapter;
 
-class RendererVideo;
 
 class Provider
 {
 	friend class RendererFFMS2;
 public:
-	static Provider* Get(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
+	static Provider* Get(const wxString& filename, RendererVideo* renderer, 
+		wxWindow* progressSinkWindow, bool* success);
 	virtual ~Provider();
 	virtual void GetFrameBuffer(byte** buffer) {};
 	virtual void GetFrame(int frame, byte* buff) {};

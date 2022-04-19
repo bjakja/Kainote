@@ -309,7 +309,7 @@ public:
 		return &shapes;
 	}
 	static void SetShapesSettings(std::vector<ShapesSetting>* _shapes) {
-		shapes = *_shapes;
+		shapes = *(_shapes);
 	}
 	void DisableVisuals(bool Disable){ 
 		iconsEnabled = !Disable; 

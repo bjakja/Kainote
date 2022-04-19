@@ -27,7 +27,7 @@
 #include "VideoBox.h"
 #include "Provider.h"
 
-
+enum PlaybackState;
 
 class VideoBox : public wxWindow
 {
