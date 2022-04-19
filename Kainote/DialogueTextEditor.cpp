@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+
 #include "DialogueTextEditor.h"
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
@@ -26,6 +28,7 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
+#undef DRAWTEXT;
 
 
 #undef DrawText

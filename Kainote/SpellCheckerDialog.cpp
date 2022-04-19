@@ -15,12 +15,16 @@
 
 
 #include "SpellCheckerDialog.h"
+#include "SubsGrid.h"
 #include "KaiStaticText.h"
 #include "SpellChecker.h"
 #include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
 #include "Stylelistbox.h"
+#include "TabPanel.h"
+#include "EditBox.h"
+#include "Notebook.h"
 #include <wx/regex.h>
 
 SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)

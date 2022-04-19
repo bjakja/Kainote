@@ -15,12 +15,15 @@
 
 
 #pragma once
+//#include "ShiftTimes.h
 #include "config.h"
 #include <wx/window.h>
 #include <wx/timer.h>
 #include <wx/dialog.h>
 #include <vector>
-//#include <windows.h>
+
+#undef DRAWTEXT
+
 
 class TabPanel;
 class SubsGrid;

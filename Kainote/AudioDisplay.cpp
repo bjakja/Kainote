@@ -32,6 +32,7 @@
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 #include "RendererVideo.h"
+#include "ShiftTimes.h"
 #include <math.h>
 #include <process.h>
 #include <wx/filename.h>
@@ -798,10 +799,11 @@ void AudioDisplay::DrawTimescale() {
 	// Set colours
 	vertex v9[4];
 	D3DXVECTOR2 v2[2];
-	CreateVERTEX(&v9[0], 0, h, timescaleBackground);
-	CreateVERTEX(&v9[1], w, h, timescaleBackground);
-	CreateVERTEX(&v9[2], 0, h + timelineHeight, timescaleBackground);
-	CreateVERTEX(&v9[3], w, h + timelineHeight, timescaleBackground);
+	D3DXCOLOR timescaleBackGround(timescaleBackground);
+	CreateVERTEX(&v9[0], 0, h, &timescaleBackGround);
+	CreateVERTEX(&v9[1], w, h, &timescaleBackGround);
+	CreateVERTEX(&v9[2], 0, h + timelineHeight, &timescaleBackGround);
+	CreateVERTEX(&v9[3], w, h + timelineHeight, &timescaleBackGround);
 
 	HRN(d3dDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, v9, sizeof(vertex)), L"primitive failed");
 	d3dLine->Begin();

@@ -28,7 +28,6 @@
 
 class FontCollector;
 struct tagRECT;
-typedef RECT tagRECT;
 class FindReplaceDialog;
 class SelectLines;
 class MisspellReplacer;
@@ -39,6 +38,7 @@ class Menu;
 class MenuBar;
 class KaiToolbar;
 class TabPanel;
+class MenuEvent;
 
 
 

@@ -15,8 +15,11 @@
 #include "UtilsWindows.h"
 #include "ProviderFFMS2.h"
 #include "LogHandler.h"
-#include "Videobox.h"
+#include "Videoctrl.h"
 #include "kainoteApp.h"
+#include "ListControls.h"
+#include "Stylelistbox.h"
+#include "SubsGrid.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
 

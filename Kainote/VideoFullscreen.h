@@ -15,13 +15,13 @@
 
 #pragma once
 
-#include <wx/panel.h>
-#include <wx/frame.h>
 #include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiStaticText.h"
 #include "KaiCheckBox.h"
+#include <wx/panel.h>
+#include <wx/frame.h>
 
 #undef GetClassInfo
 class VideoToolbar;

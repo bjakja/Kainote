@@ -14,8 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "config.h"
-#include "Visuals.h"
+
 #include "TabPanel.h"
 #include "VisualDrawingShapes.h"
 #include "SubsGrid.h"
@@ -24,6 +23,8 @@
 #include "RendererVideo.h"
 #include <wx/regex.h>
 
+#include "Visuals.h"
+#include "config.h"
 
 Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 {

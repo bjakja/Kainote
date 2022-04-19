@@ -15,16 +15,19 @@
 
 
 #include "TabPanel.h"
-#include "Config.h"
-#include "Hotkeys.h"
-#include "KainoteFrame.h"
+#include "KaiWindowResizer.h"
+
 #include "VideoCtrl.h"
 #include "EditBox.h"
 #include "ShiftTimes.h"
 #include "SubsGrid.h"
 #include "Notebook.h"
-#include <wx/sizer.h>
-#include "KaiWindowResizer.h"
+
+#include "KainoteFrame.h"
+#include "Config.h"
+#include "Hotkeys.h
+#include <wx/sizer.h>"
+#undef DRAWTEXT
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)

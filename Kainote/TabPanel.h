@@ -18,6 +18,8 @@
 
 #include "KaiPanel.h"
 #include "VideoCtrl.h"
+#include "KainoteFrame.h"
+#include "TabPanel.h"
 #include <wx/sizer.h>
 
 class SubsGrid;

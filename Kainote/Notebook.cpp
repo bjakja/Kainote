@@ -14,18 +14,21 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Notebook.h"
-#include "TabPanel.h"
+
 #include "kainoteApp.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
 #include "SubsGridBase.h"
 #include "VideoCtrl.h"
-#include "ShiftTimes.h"
-#include "TabPanel.h"
+
+
 #include "Editbox.h"
 #include "SubsGrid.h"
 #include "Toolbar.h"
+#include "TabPanel.h"
+#include "ShiftTimes.h"
+
 
 Notebook::Notebook(wxWindow *parent, int id)
 	: wxWindow(parent, id)

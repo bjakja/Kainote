@@ -19,6 +19,9 @@
 #include "KaiStaticBoxSizer.h"
 #include "Notebook.h"
 #include "KainoteFrame.h"
+#include "KaiStaticText.h"
+#include "SubsGrid.h"
+#include "TabPanel.h"
 #include <algorithm>
 
 

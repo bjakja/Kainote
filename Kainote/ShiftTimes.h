@@ -17,10 +17,10 @@
 
 
 #include "KaiPanel.h"
-
+#include "TabPanel.h"
 
 class KainoteFrame;
-class TabPanel;
+
 class Notebook;
 class KaiRadioButton;
 class KaiChoice;

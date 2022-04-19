@@ -23,6 +23,7 @@
 #include "LineParse.h"
 #include <vector>
 #include <set>
+#undef DRAWTEXT
 
 
 class EditBox;

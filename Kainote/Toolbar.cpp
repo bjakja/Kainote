@@ -17,9 +17,15 @@
 //#include "Toolbar.h"
 #include "Hotkeys.h"
 #include "KainoteApp.h"
-#include "MenuItem.h"
+#include "Toolbar.h"
+#include "KaiScrollbar.h"
+#include "Notebook.h"
 #include "wx/utils.h"
+#include "wx/dc.h"
+#include "wx/dcmemory.h"
+#include "wx/dcclient.h"
 #include "Config.h"
+
 
 KaiToolbar::KaiToolbar(wxWindow *Parent, MenuBar *mainm, int id)
 	:wxWindow(Parent, -1, wxDefaultPosition, wxSize(thickness, -1))

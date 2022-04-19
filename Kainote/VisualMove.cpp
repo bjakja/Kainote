@@ -13,11 +13,11 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "config.h"
-#include "Visuals.h"
 #include "TabPanel.h"
 #include "VideoCtrl.h"
 #include "EditBox.h"
+#include "config.h"
+#include "Visuals.h"
 
 Move::Move()
 	: Visuals()

@@ -15,8 +15,7 @@
 
 
 #include "VideoCtrl.h"
-#include "KainoteFrame.h"
-#include "Hotkeys.h"
+
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
@@ -34,8 +33,10 @@
 #include <wx/dcclient.h>
 #include <wx/filedlg.h>
 #include <wx/slider.h>
-#include "UtilsWindows.h"
 #include <shellapi.h>
+#include "KainoteFrame.h"
+#include "Hotkeys.h"
+#include "UtilsWindows.h"
 
 #undef DrawText
 

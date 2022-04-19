@@ -13,13 +13,18 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#undef DRAWTEXT
 #include "TimeCtrl.h"
+#include "NumCtrl.h"
+#include "SubsDialogue.h"
+#include "Provider.h"
+
 #include <wx/regex.h>
 #include <wx/clipbrd.h>
-#include "Config.h"
-#include "NumCtrl.h"
+
 #include "kainoteFrame.h"
+#include "Config.h"
+
 
 TimeCtrl::TimeCtrl(wxWindow* parent, const long int id, const wxString& val, const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator, const wxString& name)
 	: KaiTextCtrl(parent, id, val, pos, size, style)

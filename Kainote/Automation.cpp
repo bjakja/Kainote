@@ -45,6 +45,8 @@
 #include "KaiMessageBox.h"
 #include "AutomationHotkeysDialog.h"
 #include "SubsGrid.h"
+#include "TabPanel.h"
+#include "Notebook.h"
 
 #include <algorithm>
 #include <cassert>

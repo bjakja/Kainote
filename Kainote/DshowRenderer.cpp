@@ -16,7 +16,7 @@
 
 #include "DshowRenderer.h"
 #include "RendererVideo.h"
-#include "Videobox.h"
+#include "Videoctrl.h"
 #include "Hotkeys.h"
 #include <wmsdkidl.h>
 //#include <d3d9.h>
