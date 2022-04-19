@@ -10,12 +10,12 @@
 #include "GraphicsD2D.h"
 #include <d2d1.h>
 
-#ifndef wxFALLTHROUGH
-#define wxFALLTHROUGH ((void)0)
-#endif
+//#ifndef wxFALLTHROUGH
+//#define wxFALLTHROUGH ((void)0)
+//#endif
 
-#define wxUSE_GRAPHICS_DIRECT2D 1
-#if wxUSE_GRAPHICS_DIRECT2D
+//#define wxUSE_GRAPHICS_DIRECT2D 1
+//#if wxUSE_GRAPHICS_DIRECT2D
 
 // Minimum supported client: Windows 8 and Platform Update for Windows 7
 #define wxD2D_DEVICE_CONTEXT_SUPPORTED 0
@@ -37,10 +37,6 @@
 // in the standard d2d1helper.h header resulting in C4458 with VC14,
 // so disable this warning for this file as there is no other way to
 // avoid it.
-#ifdef __VISUALC__
-	#pragma warning(push)
-	#pragma warning(disable:4458) // declaration of 'xxx' hides class member
-#endif
 
 
 #include "D2DInit.h"

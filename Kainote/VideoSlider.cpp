@@ -20,8 +20,6 @@
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
-//#include "Config.h"
-//#include "Utils.h"
 #include "UtilsWindows.h"
 
 VideoSlider::VideoSlider(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)

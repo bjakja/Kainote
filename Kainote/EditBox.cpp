@@ -23,7 +23,9 @@
 #include "Visuals.h"
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
-#include "stylestore.h"
+#include "StyleStore.h"
+#include "Notebook.h"
+#include "kainoteApp.h"
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)

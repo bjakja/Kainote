@@ -24,10 +24,10 @@
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 
-#include <vector>
-#include <dxva2api.h>
-#include <d3d9.h>
-#include <d3dx9.h>
+//#include <vector>
+//#include <dxva2api.h>
+//#include <d3d9.h>
+//#include <d3dx9.h>
 
 void CreateVERTEX(vertex *v, float X, float Y, D3DXCOLOR* Color, float Z)
 {

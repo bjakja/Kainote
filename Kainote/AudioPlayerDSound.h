@@ -19,7 +19,7 @@
 
 
 #include "Provider.h"
-#include <dsound.h>
+//#include <dsound.h>
 
 
 class DirectSoundPlayer2Thread {

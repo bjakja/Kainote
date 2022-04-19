@@ -9,6 +9,15 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+//#include <..\shared\dxgitype.h>
+//#include <d2d1.h>
+//#include <dwrite.h>
+
+//#include <..\um\wincodec.h>
+
+IWICImagingFactory* wxWICImagingFactory();
+ID2D1Factory* wxD2D1Factory();
+IDWriteFactory* wxDWriteFactory();
 
 #include <wx/pen.h>
 #include <wx/font.h>
@@ -537,68 +546,68 @@ public:
 	virtual bool Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) const = 0;
 };
 
-class GraphicsContext 
+class GraphicsContext
 {
 public:
-	static wxGraphicsContext * Create(const wxWindowDC& dc);
-	static wxGraphicsContext * Create(const wxMemoryDC& dc);
-	static wxGraphicsContext * Create(wxWindow* window);
+	wxGraphicsContext* Create(const wxWindowDC& dc);
+	wxGraphicsContext* Create(const wxMemoryDC& dc);
+	wxGraphicsContext* Create(wxWindow* window);
 
-	virtual ~GraphicsContext(){};
+	virtual ~GraphicsContext() {};
 
-	virtual void Clip(const wxRegion& region){};
+	virtual void Clip(const wxRegion& region) {};
 
-	virtual void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void ResetClip(){};
+	virtual void ResetClip() {};
 	// The native context used by GraphicsContext is a Direct2D render target.
-	virtual void* GetNativeContext(){ return nullptr; };
+	virtual void* GetNativeContext() { return nullptr; };
 
-	virtual bool SetAntialiasMode(wxAntialiasMode antialias){ return false; };
+	virtual bool SetAntialiasMode(wxAntialiasMode antialias) { return false; };
 
-	virtual bool SetInterpolationQuality(wxInterpolationQuality interpolation){ return false; };
+	virtual bool SetInterpolationQuality(wxInterpolationQuality interpolation) { return false; };
 
-	virtual void BeginLayer(wxDouble opacity){};
+	virtual void BeginLayer(wxDouble opacity) {};
 
-	virtual void EndLayer(){};
+	virtual void EndLayer() {};
 
-	virtual void Translate(wxDouble dx, wxDouble dy){};
+	virtual void Translate(wxDouble dx, wxDouble dy) {};
 
-	virtual void Scale(wxDouble xScale, wxDouble yScale){};
+	virtual void Scale(wxDouble xScale, wxDouble yScale) {};
 
-	virtual void Rotate(wxDouble angle){};
+	virtual void Rotate(wxDouble angle) {};
 
-	virtual void ConcatTransform(GraphicsMatrixData* matrix){};
+	virtual void ConcatTransform(GraphicsMatrixData* matrix) {};
 
-	virtual void SetTransform(GraphicsMatrixData* matrix){};
+	virtual void SetTransform(GraphicsMatrixData* matrix) {};
 
-	virtual GraphicsMatrixData *GetTransform() const{ return nullptr; };
+	virtual GraphicsMatrixData* GetTransform() const { return nullptr; };
 
-	virtual void StrokePath(GraphicsPathData * p){};
+	virtual void StrokePath(GraphicsPathData* p) {};
 
-	virtual void FillPath(GraphicsPathData * p, wxPolygonFillMode fillStyle = wxODDEVEN_RULE){};
+	virtual void FillPath(GraphicsPathData* p, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) {};
 
-	virtual void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius){};
+	virtual void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius) {};
 
-	virtual void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual GraphicsPathData * CreatePath(){ return nullptr; };
+	virtual GraphicsPathData* CreatePath() { return nullptr; };
 
-	virtual void SetPen(const wxPen& pen, double width = 1.0){};
+	virtual void SetPen(const wxPen& pen, double width = 1.0) {};
 
-	virtual void SetBrush(const wxBrush& brush){};
+	virtual void SetBrush(const wxBrush& brush) {};
 
-	virtual void SetFont(const wxFont& font, const wxColour& col){};
+	virtual void SetFont(const wxFont& font, const wxColour& col) {};
 
-	virtual void PushState(){};
+	virtual void PushState() {};
 
-	virtual void PopState(){};
+	virtual void PopState() {};
 
 	virtual void GetTextExtent(
 		const wxString& str,
@@ -609,7 +618,7 @@ public:
 
 	virtual void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const {};
 
-	virtual void Flush(){};
+	virtual void Flush() {};
 
 	virtual void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const {};
 	// non virtual functions
@@ -617,7 +626,7 @@ public:
 
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:
-	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y){};
+	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y) {};
 };
 
 //-----------------------------------------------------------------------------

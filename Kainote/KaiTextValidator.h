@@ -11,27 +11,14 @@
 
 #pragma once
 
-#include "wx/defs.h"
+
 
 class KaiTextCtrl;
 
+#include "wx/defs.h"
 #include "wx/validate.h"
 #include "wx/valtext.h"
 
-//enum KaiTextValidatorStyle
-//{
-//    wxFILTER_NONE = 0x0,
-//    wxFILTER_EMPTY = 0x1,
-//    wxFILTER_ASCII = 0x2,
-//    wxFILTER_ALPHA = 0x4,
-//    wxFILTER_ALPHANUMERIC = 0x8,
-//    wxFILTER_DIGITS = 0x10,
-//    wxFILTER_NUMERIC = 0x20,
-//    wxFILTER_INCLUDE_LIST = 0x40,
-//    wxFILTER_INCLUDE_CHAR_LIST = 0x80,
-//    wxFILTER_EXCLUDE_LIST = 0x100,
-//    wxFILTER_EXCLUDE_CHAR_LIST = 0x200
-//};
 
 class KaiTextValidator: public wxValidator
 {

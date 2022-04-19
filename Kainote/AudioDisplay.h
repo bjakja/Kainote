@@ -26,12 +26,12 @@
 #include "KaiScrollbar.h"
 #include <wx/window.h>
 #include <wx/bitmap.h>
-#include <stdint.h>
+//#include <stdint.h>
 
 
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <atomic>
+//#include <d3d9.h>
+//#include <d3dx9.h>
+//#include <atomic>
 
 //////////////
 // Prototypes

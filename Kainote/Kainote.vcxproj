@@ -26,7 +26,7 @@
     <ProjectGuid>{180DEA91-88AF-4FEB-8B82-7F3716E118BB}</ProjectGuid>
     <RootNamespace>Kaiplayer</RootNamespace>
     <ProjectName>KaiNote</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -307,6 +307,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>__WXMSW__;__WXDEBUG__;_WINDOWS;NOPCH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -555,7 +556,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="ShiftTimes.h" />
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
-    <ClInclude Include="D2DInit.h" />
     <ClInclude Include="DShowPlayer.h" />
     <ClInclude Include="FindReplace.h" />
     <ClInclude Include="FindReplaceDialog.h" />

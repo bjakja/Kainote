@@ -247,7 +247,6 @@
     <ClInclude Include="ColorSpace.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="ConfigConverter.h" />
-    <ClInclude Include="D2DInit.h" />
     <ClInclude Include="Demux.h" />
     <ClInclude Include="DropFiles.h" />
     <ClInclude Include="EnumFactory.h" />

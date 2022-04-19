@@ -14,18 +14,18 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
+#include "UtilsWindows.h"
 #include "LogHandler.h"
-#include <wx/msw/private.h>
+//#include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>
 #include <vector>
-#include "UtilsWindows.h"
 
 
 
 
-BOOL CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+
+int CALLBACK MonitorEnumProc1(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
 	std::pair<std::vector<RECT>, bool> *pair = (std::pair<std::vector<RECT>, bool> *)dwData;
 	WinStruct<MONITORINFO> monitorinfo;

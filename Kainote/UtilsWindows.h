@@ -16,7 +16,7 @@
 #pragma once
 #undef GetClassInfo
 
-
+struct tagRECT;
 
 wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
 wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect);

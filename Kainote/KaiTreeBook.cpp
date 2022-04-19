@@ -18,6 +18,8 @@
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include <wx/event.h>
+#include <wx/rtti.h>
 #include "config.h"
 //#include "Utils.h"
 #undef GetClassInfo

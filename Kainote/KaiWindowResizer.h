@@ -15,9 +15,10 @@
 
 #pragma once
 
-#include "wx/window.h"
-#include "wx/dialog.h"
+//#include "wx/window.h"
+//#include "wx/dialog.h"
 #include <functional>
+
 
 class KaiWindowResizer : public wxWindow
 {

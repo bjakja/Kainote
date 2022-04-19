@@ -40,42 +40,42 @@
 #include "KaiGauge.h"
 
 
-	wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
-	class LuaProgressDialog :public wxDialog
-	{
-	public:
-		LuaProgressDialog(wxWindow *parent, lua_State *L);
-		virtual ~LuaProgressDialog();
-		wxBoxSizer *sizer;
-		KaiGauge *progress_display;
-		KaiStaticText *title_display;
-		KaiStaticText *task_display;
-		KaiTextCtrl *debug_output;
-		MappedButton *cancel_button;
-		wxMutex data_mutex;
-		//float progress;
-		//wxString task;
-		//wxString title;
-		//wxString log;
-		wxString pending_debug_output;
-		volatile bool cancelled;
-		volatile bool finished;
-		//volatile bool data_updated;
-		volatile bool closedialog;
-	private:
-		wxTimer update_timer;
-		void SetTitle(wxThreadEvent &evt);
-		void SetTask(wxThreadEvent &evt);
-		void SetProgress(wxThreadEvent &evt);
-		void AddDebugOutput(wxThreadEvent &evt);
-		void ShowConfigDialog(wxThreadEvent &evt);
-		void ShowProgressDialog(wxThreadEvent &evt);
-		void ShowOpenDialog(wxThreadEvent &evt);
-		void ShowSaveDialog(wxThreadEvent &evt);
-		void OnUpdate(wxTimerEvent &event);
-		void OnCancel(wxCommandEvent &evt);
-		lua_State *L;
-	};
+wxDECLARE_EVENT(EVT_MESSAGE, wxThreadEvent);
+class LuaProgressDialog :public wxDialog
+{
+public:
+	LuaProgressDialog(wxWindow *parent, lua_State *L);
+	virtual ~LuaProgressDialog();
+	wxBoxSizer *sizer;
+	KaiGauge *progress_display;
+	KaiStaticText *title_display;
+	KaiStaticText *task_display;
+	KaiTextCtrl *debug_output;
+	MappedButton *cancel_button;
+	wxMutex data_mutex;
+	//float progress;
+	//wxString task;
+	//wxString title;
+	//wxString log;
+	wxString pending_debug_output;
+	volatile bool cancelled;
+	volatile bool finished;
+	//volatile bool data_updated;
+	volatile bool closedialog;
+private:
+	wxTimer update_timer;
+	void SetTitle(wxThreadEvent &evt);
+	void SetTask(wxThreadEvent &evt);
+	void SetProgress(wxThreadEvent &evt);
+	void AddDebugOutput(wxThreadEvent &evt);
+	void ShowConfigDialog(wxThreadEvent &evt);
+	void ShowProgressDialog(wxThreadEvent &evt);
+	void ShowOpenDialog(wxThreadEvent &evt);
+	void ShowSaveDialog(wxThreadEvent &evt);
+	void OnUpdate(wxTimerEvent &event);
+	void OnCancel(wxCommandEvent &evt);
+	lua_State *L;
+};
 
 class LuaProgressSink : public wxEvtHandler{
 	private:
