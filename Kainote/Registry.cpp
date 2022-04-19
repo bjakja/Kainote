@@ -27,7 +27,7 @@ Registry::Registry(HKEY hKey, const wxString &strKey, bool &success, bool canWri
 
 bool Registry::OpenNewRegistry(HKEY hKey, const wxString &strKey, bool canWrite /*= false*/)
 {
-	LONG nError = RegOpenKeyEx(hKey, strKey.wc_str(), 0, KEY_ALL_ACCESS, &regHKey);
+	long nError = RegOpenKeyEx(hKey, strKey.wc_str(), 0, KEY_ALL_ACCESS, &regHKey);
 
 	if (nError == ERROR_FILE_NOT_FOUND && canWrite)
 	{
@@ -61,7 +61,7 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 	if (!regHKey) return;
 
 	const wchar_t *data = value.wc_str();
-	LONG nError = RegSetValueExW(regHKey, (strKey != emptyString)? strKey.wc_str() : 0, 0, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
+	long nError = RegSetValueExW(regHKey, (strKey != emptyString)? strKey.wc_str() : 0, 0, REG_SZ, (LPBYTE)data, (wcslen(data) + 1) * 2);
 	if (nError){
 		KaiLog(wxString::Format(L"cannot create key %s", strKey));
 	}
@@ -70,10 +70,10 @@ void Registry::SetStringValue(const wxString &strKey, const wxString &value)
 bool Registry::GetStringValue(const wxString &strKey, wxString &outValue)
 {
 	if (!regHKey) return false;
-	DWORD type = REG_SZ;
+	unsigned long type = REG_SZ;
 	wchar_t data[20048];
-	DWORD size = 20048;
-	LONG nError = RegQueryValueExW(regHKey, (strKey != emptyString) ? strKey.wc_str() : nullptr, nullptr, &type, (LPBYTE)&data, &size);
+	unsigned long size = 20048;
+	long nError = RegQueryValueExW(regHKey, (strKey != emptyString) ? strKey.wc_str() : nullptr, nullptr, &type, (LPBYTE)&data, &size);
 	if (nError){
 		return false;
 	}

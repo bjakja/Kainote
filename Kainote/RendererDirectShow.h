@@ -31,9 +31,9 @@ struct CUSTOMVERTEX
 class RendererDirectShow : public RendererVideo
 {
 	friend class RendererVideo;
-	friend class VideoCtrl;
+	friend class VideoBox;
 public:
-	RendererDirectShow(VideoCtrl *control, bool visualDisabled);
+	RendererDirectShow(VideoBox *control, bool visualDisabled);
 	virtual ~RendererDirectShow();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);

@@ -17,7 +17,7 @@
 #include "Registry.h"
 #include "OptionsDialog.h"
 #include "config.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include "Hotkeys.h"
 #include "NumCtrl.h"
 #include "ColorPicker.h"
@@ -30,6 +30,10 @@
 #include "StyleChange.h"
 #include "SubtitlesProviderManager.h"
 #include "SpellChecker.h"
+#include "TabPanel.h"
+#include "EditBox.h"
+#include "Notebook.h"
+#include "SubsGrid.h"
 
 #include <wx/dir.h>
 //config have Windows trash
@@ -256,13 +260,12 @@ int ItemHotkey::OnVisibilityChange(int mode){
 wxString *OptionsDialog::windowNames = nullptr;
 std::map<idAndType, hdata> OptionsDialog::hotkeysCopy;
 
-OptionsDialog::OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent)
+OptionsDialog::OptionsDialog(wxWindow *parent)
 	: KaiDialog(parent, -1, _("Opcje"))
 {
 	windowNames = new wxString[5]{ _("Globalny"), _("Napisy"), _("Edytor"), _("Wideo"), _("Audio") };
 	OptionsTree = new KaiTreebook(this, -1);
 
-	Kai = kaiparent;
 	Stylelist = nullptr;
 	Katlist = nullptr;
 
@@ -1032,7 +1035,7 @@ void OptionsDialog::SetOptions(bool saveall)
 				Options.SetBool(OB.option, value);
 				if (OB.option <= AUDIO_WHEEL_DEFAULT_TO_ZOOM){ audio = true; }
 				if (OB.option == SPELLCHECKER_ON){
-					Kai->Tabs->GetTab()->edit->ClearErrs(true, value);
+					Notebook::GetTab()->edit->ClearErrs(true, value);
 				}
 			}
 		}
@@ -1052,6 +1055,9 @@ void OptionsDialog::SetOptions(bool saveall)
 			}
 			if (OB.option == PROGRAM_FONT && fontmod){
 				Options.FontsClear();
+				KainoteFrame* Kai =
+					/*wxDynamicCast<*/(KainoteFrame*)Notebook::GetTabs()->GetParent();//>
+				Kai->SetAccels();
 				Kai->DestroyDialogs();
 				Kai->SetFont(*Options.GetFont());
 				Kai->Layout();
@@ -1074,7 +1080,7 @@ void OptionsDialog::SetOptions(bool saveall)
 						if (Options.GetString(OB.option) != language){
 							Options.SetString(OB.option, language);
 							SpellChecker::Destroy();
-							Kai->Tabs->GetTab()->edit->ClearErrs();
+							Notebook::GetTab()->edit->ClearErrs();
 						}
 					}
 				}//program language
@@ -1113,9 +1119,10 @@ void OptionsDialog::SetOptions(bool saveall)
 				if (Options.GetString(OB.option) != str){
 					Options.SetString(OB.option, str);
 					if (OB.option == GRID_TAGS_SWAP_CHARACTER){
-						for (size_t i = 0; i < Kai->Tabs->Size(); i++){
-							TabPanel *tab = Kai->Tabs->Page(i);
-							tab->grid->SpellErrors.clear();
+						Notebook* tabs = Notebook::GetTabs();
+						for (size_t i = 0; i < tabs->Size(); i++) {
+							TabPanel *page = tabs->Page(i);
+							page->grid->SpellErrors.clear();
 						}
 					}
 				}
@@ -1147,6 +1154,8 @@ void OptionsDialog::SetOptions(bool saveall)
 						Hkeys.SetHotkeysMap(hotkeysCopy);
 						Hkeys.SaveHkeys();
 						Hkeys.SaveHkeys(true);
+						KainoteFrame* Kai =
+							/*wxDynamicCast<*/(KainoteFrame*)Notebook::GetTabs()->GetParent();//>
 						Kai->SetAccels();
 					}
 				}
@@ -1172,22 +1181,23 @@ void OptionsDialog::SetOptions(bool saveall)
 		}
 	}
 	if (fontmod){
-		Kai->GetTab()->grid->SetStyle();
-		Kai->GetTab()->grid->RefreshColumns();
-		if (Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->grid->SetStyle();
-			Kai->Tabs->GetSecondPage()->grid->RefreshColumns();
+		Notebook::GetTab()->grid->SetStyle();
+		Notebook::GetTab()->grid->RefreshColumns();
+		if (Notebook::GetTabs()->split){
+			Notebook::GetTabs()->GetSecondPage()->grid->SetStyle();
+			Notebook::GetTabs()->GetSecondPage()->grid->RefreshColumns();
 		}
 	}
 	if (colmod){
-		Kai->GetTab()->grid->Refresh(false);
-		//if (Kai->GetTab()->edit->ABox){ Kai->GetTab()->edit->ABox->audioDisplay->ChangeColours(); }
-		if (Kai->Tabs->split){
-			Kai->Tabs->GetSecondPage()->grid->Refresh(false);
-			//if (Kai->Tabs->GetSecondPage()->edit->ABox){ Kai->Tabs->GetSecondPage()->edit->ABox->audioDisplay->ChangeColours(); }
+		Notebook::GetTab()->grid->Refresh(false);
+		if (Notebook::GetTabs()->split){
+			Notebook::GetTabs()->GetSecondPage()->grid->Refresh(false);
+
 		}
 	}
-	if (audio && Kai->GetTab()->edit->ABox){ Kai->GetTab()->edit->ABox->audioDisplay->ChangeOptions(); }
+	if (audio && Notebook::GetTab()->edit->ABox){ 
+		Notebook::GetTab()->edit->ABox->audioDisplay->ChangeOptions();
+	}
 	Options.SaveOptions();
 	Options.SaveAudioOpts();
 }

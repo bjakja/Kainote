@@ -3,51 +3,30 @@
 // Purpose:     Implementation of Direct2D Render Context
 // Author:      Pana Alexandru <astronothing@gmail.com>
 // Created:     2014-05-20
-// Copyright:   (c) 2014 wxWidgets development team
-// Licence:     wxWindows licence
+// Copyright:   (c) 2014 KaiWidgets development team
+// Licence:     KaiWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
 #include "GraphicsD2D.h"
 #include <d2d1.h>
 
-//#ifndef wxFALLTHROUGH
-//#define wxFALLTHROUGH ((void)0)
-//#endif
-
-//#define wxUSE_GRAPHICS_DIRECT2D 1
-//#if wxUSE_GRAPHICS_DIRECT2D
-
 // Minimum supported client: Windows 8 and Platform Update for Windows 7
-#define wxD2D_DEVICE_CONTEXT_SUPPORTED 0
+#define KaiD2D_DEVICE_CONTEXT_SUPPORTED 0
 
 // We load these functions at runtime from the d2d1.dll.
 // However, since they are also used inside the d2d1.h header we must provide
 // implementations matching the exact declarations. These defines ensures we
 // are not violating the ODR rule.
-#define D2D1CreateFactory wxD2D1CreateFactory
-#define D2D1MakeRotateMatrix wxD2D1MakeRotateMatrix
-#define D2D1MakeSkewMatrix wxD2D1MakeSkewMatrix
-#define D2D1IsMatrixInvertible wxD2D1IsMatrixInvertible
-#define D2D1InvertMatrix wxD2D1InvertMatrix
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-#define D3D11CreateDevice wxD3D11CreateDevice
+#define D2D1CreateFactory KaiD2D1CreateFactory
+#define D2D1MakeRotateMatrix KaiD2D1MakeRotateMatrix
+#define D2D1MakeSkewMatrix KaiD2D1MakeSkewMatrix
+#define D2D1IsMatrixInvertible KaiD2D1IsMatrixInvertible
+#define D2D1InvertMatrix KaiD2D1InvertMatrix
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+#define D3D11CreateDevice KaiD3D11CreateDevice
 #endif
 
-// There are clashes between the names of the member fields and parameters
-// in the standard d2d1helper.h header resulting in C4458 with VC14,
-// so disable this warning for this file as there is no other way to
-// avoid it.
-
-
-#include "D2DInit.h"
-
-#ifdef __MINGW64_TOOLCHAIN__
-#ifndef DWRITE_E_NOFONT
-#define DWRITE_E_NOFONT _HRESULT_TYPEDEF_(0x88985002L)
-#endif
-#endif
-
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
 #include <d3d11.h>
 #include <d2d1_1.h>
 #include <dxgi1_2.h>
@@ -63,18 +42,8 @@
 
 #include <float.h> // for FLT_MAX, FLT_MIN
 
-#ifndef WX_PRECOMP
-	#include "wx/dc.h"
-	#include "wx/dcclient.h"
-	#include "wx/dcmemory.h"
-	#include "wx/image.h"
-	#include "wx/module.h"
-	#include "wx/window.h"
-	#include "wx/msw/private.h"
-#endif // !WX_PRECOMP
-
 #include "GraphicsD2D.h"
-//#include "wx/graphics.h"
+//#include "Kai/graphics.h"
 #include "wx/dynlib.h"
 #include "wx/msw/private/comptr.h"
 #include "wx/private/graphics.h"
@@ -84,52 +53,35 @@
 // This must be the last header included to only affect the DEFINE_GUID()
 // occurrences below but not any GUIDs declared in the standard files included
 // above.
-#include <initguid.h>
 
-// Generic error message for a failed direct2d operation
-#define wxFAILED_HRESULT_MSG(result) \
-	wxString::Format("Direct2D failed with HRESULT %x", (result))
-
-// Checks a HRESULT value for success, otherwise displays an error message and
-// returns from the enclosing function.
-#define wxCHECK_HRESULT_RET(result) \
-	wxCHECK_RET(SUCCEEDED(result), wxFAILED_HRESULT_MSG(result))
-
-#define wxCHECK2_HRESULT_RET(result, returnValue)                             \
-	wxCHECK2_MSG(SUCCEEDED(result), return returnValue,                       \
-		wxFAILED_HRESULT_MSG(result))
-
-// Variation of wxCHECK_HRESULT_RET for functions which must return a pointer
-#define wxCHECK_HRESULT_RET_PTR(result) wxCHECK2_HRESULT_RET(result, nullptr)
-
-// Checks the precondition of wxManagedResourceHolder::AcquireResource, namely
+// Checks the precondition of KaiManagedResourceHolder::AcquireResource, namely
 // that it is bound to a manager.
-#define wxCHECK_RESOURCE_HOLDER_PRE()                                         \
+#define KaiCHECK_RESOURCE_HOLDER_PRE()                                         \
 	{                                                                         \
 	if (IsResourceAcquired()) return;                                         \
-	wxCHECK_RET(IsBound(),                                                    \
+	KaiCHECK_RET(IsBound(),                                                    \
 		"Cannot acquire a native resource without being bound to a manager"); \
 	}
 
-// Checks the postcondition of wxManagedResourceHolder::AcquireResource, namely
+// Checks the postcondition of KaiManagedResourceHolder::AcquireResource, namely
 // that it was successful in acquiring the native resource.
-#define wxCHECK_RESOURCE_HOLDER_POST() \
-	wxCHECK_RET(m_nativeResource != nullptr, "Could not acquire native resource");
+#define KaiCHECK_RESOURCE_HOLDER_POST() \
+	KaiCHECK_RET(m_nativeResource != nullptr, "Could not acquire native resource");
 
-inline double wxRadToDeg(double rad) { return (rad * 180.0) / M_PI; }
+inline double KaiRadToDeg(double rad) { return (rad * 180.0) / M_PI; }
 
 
 // Helper class used to check for direct2d availability at runtime and to
 // dynamically load the required symbols from d2d1.dll and dwrite.dll
-class wxDirect2D
+class KaiDirect2D
 {
 public:
 
-	enum wxD2DVersion
+	enum KaiD2DVersion
 	{
-		wxD2D_VERSION_1_0,
-		wxD2D_VERSION_1_1,
-		wxD2D_VERSION_NONE
+		KaiD2D_VERSION_1_0,
+		KaiD2D_VERSION_1_1,
+		KaiD2D_VERSION_NONE
 	};
 
 	static bool Initialize()
@@ -150,7 +102,7 @@ public:
 		return m_hasDirect2DSupport;
 	}
 
-	static wxD2DVersion GetDirect2DVersion()
+	static KaiD2DVersion GetDirect2DVersion()
 	{
 		return m_D2DRuntimeVersion;
 	}
@@ -158,34 +110,26 @@ public:
 private:
 	static bool LoadLibraries()
 	{
-		if ( !m_dllDirect2d.Load(wxT("d2d1.dll"), wxDL_VERBATIM | wxDL_QUIET) )
+		if ( !m_dllDirect2d.Load(L"d2d1.dll", wxDL_VERBATIM | wxDL_QUIET) )
 			return false;
 
-		if ( !m_dllDirectWrite.Load(wxT("dwrite.dll"), wxDL_VERBATIM | wxDL_QUIET) )
+		if ( !m_dllDirectWrite.Load(L"dwrite.dll", wxDL_VERBATIM | wxDL_QUIET) )
 			return false;
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-		if (!m_dllDirect3d.Load(wxT("d3d11.dll"), wxDL_VERBATIM | wxDL_QUIET))
-			return false;
-#endif
-
-		#define wxLOAD_FUNC(dll, name)                    \
+		#define KaiLOAD_FUNC(dll, name)                    \
 		name = (name##_t)dll.RawGetSymbol(#name);         \
 			if ( !name )                                  \
 			return false;
 
-		wxLOAD_FUNC(m_dllDirect2d, D2D1CreateFactory);
-		wxLOAD_FUNC(m_dllDirect2d, D2D1MakeRotateMatrix);
-		wxLOAD_FUNC(m_dllDirect2d, D2D1MakeSkewMatrix);
-		wxLOAD_FUNC(m_dllDirect2d, D2D1IsMatrixInvertible);
-		wxLOAD_FUNC(m_dllDirect2d, D2D1InvertMatrix);
-		wxLOAD_FUNC(m_dllDirectWrite, DWriteCreateFactory);
+		KaiLOAD_FUNC(m_dllDirect2d, D2D1CreateFactory);
+		KaiLOAD_FUNC(m_dllDirect2d, D2D1MakeRotateMatrix);
+		KaiLOAD_FUNC(m_dllDirect2d, D2D1MakeSkewMatrix);
+		KaiLOAD_FUNC(m_dllDirect2d, D2D1IsMatrixInvertible);
+		KaiLOAD_FUNC(m_dllDirect2d, D2D1InvertMatrix);
+		KaiLOAD_FUNC(m_dllDirectWrite, DWriteCreateFactory);
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-		wxLOAD_FUNC(m_dllDirect3d, D3D11CreateDevice);
-#endif
 
-		m_D2DRuntimeVersion = wxD2D_VERSION_1_0;
+		m_D2DRuntimeVersion = KaiD2D_VERSION_1_0;
 
 		return true;
 	}
@@ -209,57 +153,53 @@ public:
 	typedef HRESULT (WINAPI *DWriteCreateFactory_t)(DWRITE_FACTORY_TYPE, REFIID, IUnknown**);
 	static DWriteCreateFactory_t DWriteCreateFactory;
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-	typedef HRESULT (WINAPI *D3D11CreateDevice_t)(IDXGIAdapter*, D3D_DRIVER_TYPE, HMODULE, UINT, CONST D3D_FEATURE_LEVEL*, UINT, UINT, ID3D11Device**, D3D_FEATURE_LEVEL*, ID3D11DeviceContext**);
-	static D3D11CreateDevice_t D3D11CreateDevice;
-#endif
 
 private:
 	static bool m_initialized;
 	static bool m_hasDirect2DSupport;
-	static wxD2DVersion m_D2DRuntimeVersion;
+	static KaiD2DVersion m_D2DRuntimeVersion;
 
 	static wxDynamicLibrary m_dllDirect2d;
 	static wxDynamicLibrary m_dllDirectWrite;
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-	static wxDynamicLibrary m_dllDirect3d;
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+	static KaiDynamicLibrary m_dllDirect3d;
 #endif
 };
 
 // define the members
-bool wxDirect2D::m_initialized = false;
-bool wxDirect2D::m_hasDirect2DSupport = false;
-wxDirect2D::wxD2DVersion wxDirect2D::m_D2DRuntimeVersion = wxD2D_VERSION_NONE;
+bool KaiDirect2D::m_initialized = false;
+bool KaiDirect2D::m_hasDirect2DSupport = false;
+KaiDirect2D::KaiD2DVersion KaiDirect2D::m_D2DRuntimeVersion = KaiD2D_VERSION_NONE;
 
-wxDynamicLibrary wxDirect2D::m_dllDirect2d;
-wxDynamicLibrary wxDirect2D::m_dllDirectWrite;
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-wxDynamicLibrary wxDirect2D::m_dllDirect3d;
+wxDynamicLibrary KaiDirect2D::m_dllDirect2d;
+wxDynamicLibrary KaiDirect2D::m_dllDirectWrite;
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+KaiDynamicLibrary KaiDirect2D::m_dllDirect3d;
 #endif
 
 // define the (not yet imported) functions
-wxDirect2D::D2D1CreateFactory_t wxDirect2D::D2D1CreateFactory = nullptr;
-wxDirect2D::D2D1MakeRotateMatrix_t wxDirect2D::D2D1MakeRotateMatrix = nullptr;
-wxDirect2D::D2D1MakeSkewMatrix_t wxDirect2D::D2D1MakeSkewMatrix = nullptr;
-wxDirect2D::D2D1IsMatrixInvertible_t wxDirect2D::D2D1IsMatrixInvertible = nullptr;
-wxDirect2D::D2D1InvertMatrix_t wxDirect2D::D2D1InvertMatrix = nullptr;
-wxDirect2D::DWriteCreateFactory_t wxDirect2D::DWriteCreateFactory = nullptr;
+KaiDirect2D::D2D1CreateFactory_t KaiDirect2D::D2D1CreateFactory = nullptr;
+KaiDirect2D::D2D1MakeRotateMatrix_t KaiDirect2D::D2D1MakeRotateMatrix = nullptr;
+KaiDirect2D::D2D1MakeSkewMatrix_t KaiDirect2D::D2D1MakeSkewMatrix = nullptr;
+KaiDirect2D::D2D1IsMatrixInvertible_t KaiDirect2D::D2D1IsMatrixInvertible = nullptr;
+KaiDirect2D::D2D1InvertMatrix_t KaiDirect2D::D2D1InvertMatrix = nullptr;
+KaiDirect2D::DWriteCreateFactory_t KaiDirect2D::DWriteCreateFactory = nullptr;
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-wxDirect2D::D3D11CreateDevice_t wxDirect2D::D3D11CreateDevice = nullptr;
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+KaiDirect2D::D3D11CreateDevice_t KaiDirect2D::D3D11CreateDevice = nullptr;
 #endif
 
 // define the interface GUIDs
-DEFINE_GUID(wxIID_IWICImagingFactory,
+DEFINE_GUID(KaiIID_IWICImagingFactory,
 			0xec5ec8a9, 0xc395, 0x4314, 0x9c, 0x77, 0x54, 0xd7, 0xa9, 0x35, 0xff, 0x70);
 
-DEFINE_GUID(wxIID_ID2D1Factory,
+DEFINE_GUID(KaiIID_ID2D1Factory,
 			0x06152247, 0x6f50, 0x465a, 0x92, 0x45, 0x11, 0x8b, 0xfd, 0x3b, 0x60, 0x07);
 
-DEFINE_GUID(wxIID_IDWriteFactory,
+DEFINE_GUID(KaiIID_IDWriteFactory,
 			0xb859ee5a, 0xd838, 0x4b5b, 0xa2, 0xe8, 0x1a, 0xdc, 0x7d, 0x93, 0xdb, 0x48);
 
-DEFINE_GUID(wxIID_IWICBitmapSource,
+DEFINE_GUID(KaiIID_IWICBitmapSource,
 			0x00000120, 0xa8f2, 0x4877, 0xba, 0x0a, 0xfd, 0x2b, 0x66, 0x45, 0xfb, 0x94);
 
 DEFINE_GUID(GUID_WICPixelFormat32bppPBGRA,
@@ -268,7 +208,7 @@ DEFINE_GUID(GUID_WICPixelFormat32bppPBGRA,
 DEFINE_GUID(GUID_WICPixelFormat32bppBGR,
 			0x6fddc324, 0x4e03, 0x4bfe, 0xb1, 0x85, 0x3d, 0x77, 0x76, 0x8d, 0xc9, 0x0e);
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
 DEFINE_GUID(IID_IDXGIDevice,
 			0x54ec77fa, 0x1377, 0x44e6, 0x8c, 0x32, 0x88, 0xfd, 0x5f, 0x44, 0xc8, 0x4c);
 #endif
@@ -279,65 +219,65 @@ DEFINE_GUID(CLSID_WICImagingFactory,
 #endif
 
 // Implementation of the Direct2D functions
-HRESULT WINAPI wxD2D1CreateFactory(
+HRESULT WINAPI KaiD2D1CreateFactory(
 	D2D1_FACTORY_TYPE factoryType,
 	REFIID riid,
 	CONST D2D1_FACTORY_OPTIONS *pFactoryOptions,
 	void **ppIFactory)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return S_FALSE;
 
-	return wxDirect2D::D2D1CreateFactory(
+	return KaiDirect2D::D2D1CreateFactory(
 		factoryType,
 		riid,
 		pFactoryOptions,
 		ppIFactory);
 }
 
-void WINAPI wxD2D1MakeRotateMatrix(
+void WINAPI KaiD2D1MakeRotateMatrix(
 	FLOAT angle,
 	D2D1_POINT_2F center,
 	D2D1_MATRIX_3X2_F *matrix)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return;
 
-	wxDirect2D::D2D1MakeRotateMatrix(angle, center, matrix);
+	KaiDirect2D::D2D1MakeRotateMatrix(angle, center, matrix);
 }
 
-void WINAPI wxD2D1MakeSkewMatrix(
+void WINAPI KaiD2D1MakeSkewMatrix(
 	FLOAT angleX,
 	FLOAT angleY,
 	D2D1_POINT_2F center,
 	D2D1_MATRIX_3X2_F *matrix)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return;
 
-	wxDirect2D::D2D1MakeSkewMatrix(angleX, angleY, center, matrix);
+	KaiDirect2D::D2D1MakeSkewMatrix(angleX, angleY, center, matrix);
 }
 
-BOOL WINAPI wxD2D1IsMatrixInvertible(
+BOOL WINAPI KaiD2D1IsMatrixInvertible(
 	const D2D1_MATRIX_3X2_F *matrix)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return FALSE;
 
-	return wxDirect2D::D2D1IsMatrixInvertible(matrix);
+	return KaiDirect2D::D2D1IsMatrixInvertible(matrix);
 }
 
-BOOL WINAPI wxD2D1InvertMatrix(
+BOOL WINAPI KaiD2D1InvertMatrix(
 	D2D1_MATRIX_3X2_F *matrix)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return FALSE;
 
-	return wxDirect2D::D2D1InvertMatrix(matrix);
+	return KaiDirect2D::D2D1InvertMatrix(matrix);
 }
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-HRESULT WINAPI wxD3D11CreateDevice(
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+HRESULT WINAPI KaiD3D11CreateDevice(
 	IDXGIAdapter* pAdapter,
 	D3D_DRIVER_TYPE DriverType,
 	HMODULE Software,
@@ -349,10 +289,10 @@ HRESULT WINAPI wxD3D11CreateDevice(
 	D3D_FEATURE_LEVEL* pFeatureLevel,
 	ID3D11DeviceContext** ppImmediateContext)
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return S_FALSE;
 
-	return wxDirect2D::D3D11CreateDevice(
+	return KaiDirect2D::D3D11CreateDevice(
 		pAdapter,
 		DriverType,
 		Software,
@@ -368,25 +308,25 @@ HRESULT WINAPI wxD3D11CreateDevice(
 
 static IWICImagingFactory* gs_WICImagingFactory = nullptr;
 
-IWICImagingFactory* wxWICImagingFactory()
+IWICImagingFactory* KaiWICImagingFactory()
 {
 	if (gs_WICImagingFactory == nullptr) {
 		HRESULT hr = CoCreateInstance(
 			CLSID_WICImagingFactory,
 			nullptr,
 			CLSCTX_INPROC_SERVER,
-			wxIID_IWICImagingFactory,
+			KaiIID_IWICImagingFactory,
 			(LPVOID*)&gs_WICImagingFactory);
-		wxCHECK_HRESULT_RET_PTR(hr);
+		KaiCHECK_HRESULT_RET_PTR(hr);
 	}
 	return gs_WICImagingFactory;
 }
 
 static ID2D1Factory* gs_ID2D1Factory = nullptr;
 
-ID2D1Factory* wxD2D1Factory()
+ID2D1Factory* KaiD2D1Factory()
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return nullptr;
 
 	if (gs_ID2D1Factory == nullptr)
@@ -397,51 +337,51 @@ ID2D1Factory* wxD2D1Factory()
 		// https://msdn.microsoft.com/en-us/library/windows/desktop/ee794287(v=vs.85).aspx
 		// the Direct2D Debug Layer is only available starting with Windows 8
 		// and Visual Studio 2012.
-#if defined(__WXDEBUG__) && defined(__VISUALC__) && wxCHECK_VISUALC_VERSION(11)
-		if (wxGetWinVersion() >= 0x602)
+#if defined(__WXDEBUG__) && defined(__VISUALC__) && KaiCHECK_VISUALC_VERSION(11)
+		if (KaiGetWinVersion() >= 0x602)
 		{
 			factoryOptions.debugLevel = D2D1_DEBUG_LEVEL_WARNING;
 		}
 #endif  //__WXDEBUG__
 
-		HRESULT hr = wxDirect2D::D2D1CreateFactory(
+		HRESULT hr = KaiDirect2D::D2D1CreateFactory(
 			D2D1_FACTORY_TYPE_SINGLE_THREADED,
-			wxIID_ID2D1Factory,
+			KaiIID_ID2D1Factory,
 			&factoryOptions,
 			reinterpret_cast<void**>(&gs_ID2D1Factory)
 			);
-		wxCHECK_HRESULT_RET_PTR(hr);
+		KaiCHECK_HRESULT_RET_PTR(hr);
 	}
 	return gs_ID2D1Factory;
 }
 
 static IDWriteFactory* gs_IDWriteFactory = nullptr;
 
-IDWriteFactory* wxDWriteFactory()
+IDWriteFactory* KaiDWriteFactory()
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return nullptr;
 
 	if (gs_IDWriteFactory == nullptr)
 	{
-		wxDirect2D::DWriteCreateFactory(
+		KaiDirect2D::DWriteCreateFactory(
 			DWRITE_FACTORY_TYPE_SHARED,
-			wxIID_IDWriteFactory,
+			KaiIID_IDWriteFactory,
 			reinterpret_cast<IUnknown**>(&gs_IDWriteFactory)
 			);
 	}
 	return gs_IDWriteFactory;
 }
 
-//extern WXDLLIMPEXP_DATA_CORE(wxGraphicsPen) wxNullGraphicsPen;
-//extern WXDLLIMPEXP_DATA_CORE(wxGraphicsBrush) wxNullGraphicsBrush;
+//extern WXDLLIMPEXP_DATA_CORE(KaiGraphicsPen) KaiNullGraphicsPen;
+//extern WXDLLIMPEXP_DATA_CORE(KaiGraphicsBrush) KaiNullGraphicsBrush;
 
 // We use the notion of a context supplier because the context
 // needed to create Direct2D resources (namely the RenderTarget)
 // is itself device-dependent and might change during the lifetime
 // of the resources which were created from it.
 template <typename C>
-class wxContextSupplier
+class KaiContextSupplier
 {
 public:
 	typedef C ContextType;
@@ -449,11 +389,11 @@ public:
 	virtual C GetContext() = 0;
 };
 
-typedef wxContextSupplier<ID2D1RenderTarget*> wxD2DContextSupplier;
+typedef KaiContextSupplier<ID2D1RenderTarget*> KaiD2DContextSupplier;
 
 // A resource holder manages a generic resource by acquiring
 // and releasing it on demand.
-class wxResourceHolder
+class KaiResourceHolder
 {
 public:
 	// Acquires the managed resource if necessary (not already acquired)
@@ -469,26 +409,26 @@ public:
 	// was not previously acquired
 	virtual void* GetResource() = 0;
 
-	virtual ~wxResourceHolder() {}
+	virtual ~KaiResourceHolder() {}
 };
 
-class wxD2DResourceManager;
+class KaiD2DResourceManager;
 
-class wxD2DManagedObject
+class KaiD2DManagedObject
 {
 public:
-	virtual void Bind(wxD2DResourceManager* manager) = 0;
+	virtual void Bind(KaiD2DResourceManager* manager) = 0;
 	virtual void UnBind() = 0;
 	virtual bool IsBound() = 0;
-	virtual wxD2DResourceManager* GetManager() = 0;
+	virtual KaiD2DResourceManager* GetManager() = 0;
 
-	virtual ~wxD2DManagedObject() {}
+	virtual ~KaiD2DManagedObject() {}
 };
 
-class wxManagedResourceHolder : public wxResourceHolder, public wxD2DManagedObject
+class KaiManagedResourceHolder : public KaiResourceHolder, public KaiD2DManagedObject
 {
 public:
-	virtual ~wxManagedResourceHolder() {}
+	virtual ~KaiManagedResourceHolder() {}
 };
 
 // A Direct2D resource manager handles the device-dependent
@@ -496,26 +436,26 @@ public:
 // release their resources when the API invalidates.
 // NOTE: We're using a list because we expect to have multiple
 // insertions but very rarely a traversal (if ever).
-WX_DECLARE_LIST(wxManagedResourceHolder, wxManagedResourceListType);
-#include <wx/listimpl.cpp>
-WX_DEFINE_LIST(wxManagedResourceListType);
+WX_DECLARE_LIST(KaiManagedResourceHolder, KaiManagedResourceListType);
+#include <Kai/listimpl.cpp>
+WX_DEFINE_LIST(KaiManagedResourceListType);
 
-class wxD2DResourceManager: public wxD2DContextSupplier
+class KaiD2DResourceManager: public KaiD2DContextSupplier
 {
 public:
-	void RegisterResourceHolder(wxManagedResourceHolder* resourceHolder)
+	void RegisterResourceHolder(KaiManagedResourceHolder* resourceHolder)
 	{
 		m_resources.push_back(resourceHolder);
 	}
 
-	void UnregisterResourceHolder(wxManagedResourceHolder* resourceHolder)
+	void UnregisterResourceHolder(KaiManagedResourceHolder* resourceHolder)
 	{
 		m_resources.remove(resourceHolder);
 	}
 
 	void ReleaseResources()
 	{
-		wxManagedResourceListType::iterator it;
+		KaiManagedResourceListType::iterator it;
 		for (it = m_resources.begin(); it != m_resources.end(); ++it)
 		{
 			(*it)->ReleaseResource();
@@ -524,11 +464,11 @@ public:
 		// Check that all resources were released
 		for (it = m_resources.begin(); it != m_resources.end(); ++it)
 		{
-			wxCHECK_RET(!(*it)->IsResourceAcquired(), "One or more device-dependent resources failed to release");
+			KaiCHECK_RET(!(*it)->IsResourceAcquired(), "One or more device-dependent resources failed to release");
 		}
 	}
 
-	virtual ~wxD2DResourceManager()
+	virtual ~KaiD2DResourceManager()
 	{
 		while (!m_resources.empty())
 		{
@@ -538,21 +478,21 @@ public:
 	}
 
 private:
-	wxManagedResourceListType m_resources;
+	KaiManagedResourceListType m_resources;
 };
 
 // A Direct2D resource holder manages device dependent resources
 // by storing any information necessary for acquiring the resource
 // and releasing the resource when the API invalidates it.
 template<typename T>
-class wxD2DResourceHolder: public wxManagedResourceHolder
+class KaiD2DResourceHolder: public KaiManagedResourceHolder
 {
 public:
-	wxD2DResourceHolder() : m_resourceManager(nullptr)
+	KaiD2DResourceHolder() : m_resourceManager(nullptr)
 	{
 	}
 
-	virtual ~wxD2DResourceHolder()
+	virtual ~KaiD2DResourceHolder()
 	{
 		UnBind();
 		ReleaseResource();
@@ -568,7 +508,7 @@ public:
 		return GetD2DResource();
 	}
 
-	wxCOMPtr<T>& GetD2DResource()
+	KaiCOMPtr<T>& GetD2DResource()
 	{
 		if (!IsResourceAcquired())
 		{
@@ -580,11 +520,11 @@ public:
 
 	void AcquireResource() override
 	{
-		wxCHECK_RESOURCE_HOLDER_PRE();
+		KaiCHECK_RESOURCE_HOLDER_PRE();
 
 		DoAcquireResource();
 
-		wxCHECK_RESOURCE_HOLDER_POST();
+		KaiCHECK_RESOURCE_HOLDER_POST();
 	}
 
 	void ReleaseResource() override
@@ -592,12 +532,12 @@ public:
 		m_nativeResource.reset();
 	}
 
-	wxD2DContextSupplier::ContextType GetContext()
+	KaiD2DContextSupplier::ContextType GetContext()
 	{
 		return m_resourceManager->GetContext();
 	}
 
-	void Bind(wxD2DResourceManager* manager) override
+	void Bind(KaiD2DResourceManager* manager) override
 	{
 		if (IsBound())
 			return;
@@ -620,7 +560,7 @@ public:
 		return m_resourceManager != nullptr;
 	}
 
-	wxD2DResourceManager* GetManager() override
+	KaiD2DResourceManager* GetManager() override
 	{
 		return m_resourceManager;
 	}
@@ -629,18 +569,18 @@ protected:
 	virtual void DoAcquireResource() = 0;
 
 private:
-	wxD2DResourceManager* m_resourceManager;
+	KaiD2DResourceManager* m_resourceManager;
 
 protected:
-	wxCOMPtr<T> m_nativeResource;
+	KaiCOMPtr<T> m_nativeResource;
 };
 
 // Used as super class for graphics data objects
 // to forward the bindings to their internal resource holder.
-class wxD2DManagedGraphicsData : public wxD2DManagedObject
+class KaiD2DManagedGraphicsData : public KaiD2DManagedObject
 {
 public:
-	void Bind(wxD2DResourceManager* manager) override
+	void Bind(KaiD2DResourceManager* manager) override
 	{
 		GetManagedObject()->Bind(manager);
 	}
@@ -655,100 +595,100 @@ public:
 		return GetManagedObject()->IsBound();
 	}
 
-	wxD2DResourceManager* GetManager() override
+	KaiD2DResourceManager* GetManager() override
 	{
 		return GetManagedObject()->GetManager();
 	}
 
-	virtual wxD2DManagedObject* GetManagedObject() = 0;
+	virtual KaiD2DManagedObject* GetManagedObject() = 0;
 
-	~wxD2DManagedGraphicsData() {}
+	~KaiD2DManagedGraphicsData() {}
 };
 
-D2D1_CAP_STYLE wxD2DConvertPenCap(wxPenCap cap)
+D2D1_CAP_STYLE KaiD2DConvertPenCap(KaiPenCap cap)
 {
 	switch (cap)
 	{
-	case wxCAP_ROUND:
+	case KaiCAP_ROUND:
 		return D2D1_CAP_STYLE_ROUND;
-	case wxCAP_PROJECTING:
+	case KaiCAP_PROJECTING:
 		return D2D1_CAP_STYLE_SQUARE;
-	case wxCAP_BUTT:
+	case KaiCAP_BUTT:
 		return D2D1_CAP_STYLE_FLAT;
-	case wxCAP_INVALID:
+	case KaiCAP_INVALID:
 		return D2D1_CAP_STYLE_FLAT;
 	}
 
-	wxFAIL_MSG("unknown pen cap");
+	KaiFAIL_MSG("unknown pen cap");
 	return D2D1_CAP_STYLE_FLAT;
 }
 
-D2D1_LINE_JOIN wxD2DConvertPenJoin(wxPenJoin join)
+D2D1_LINE_JOIN KaiD2DConvertPenJoin(KaiPenJoin join)
 {
 	switch (join)
 	{
-	case wxJOIN_BEVEL:
+	case KaiJOIN_BEVEL:
 		return D2D1_LINE_JOIN_BEVEL;
-	case wxJOIN_MITER:
+	case KaiJOIN_MITER:
 		return D2D1_LINE_JOIN_MITER;
-	case wxJOIN_ROUND:
+	case KaiJOIN_ROUND:
 		return D2D1_LINE_JOIN_ROUND;
-	case wxJOIN_INVALID:
+	case KaiJOIN_INVALID:
 		return D2D1_LINE_JOIN_MITER;
 	}
 
-	wxFAIL_MSG("unknown pen join");
+	KaiFAIL_MSG("unknown pen join");
 	return D2D1_LINE_JOIN_MITER;
 }
 
-D2D1_DASH_STYLE wxD2DConvertPenStyle(wxPenStyle dashStyle)
+D2D1_DASH_STYLE KaiD2DConvertPenStyle(KaiPenStyle dashStyle)
 {
 	switch (dashStyle)
 	{
-	case wxPENSTYLE_SOLID:
+	case KaiPENSTYLE_SOLID:
 		return D2D1_DASH_STYLE_SOLID;
-	case wxPENSTYLE_DOT:
+	case KaiPENSTYLE_DOT:
 		return D2D1_DASH_STYLE_DOT;
-	case wxPENSTYLE_LONG_DASH:
+	case KaiPENSTYLE_LONG_DASH:
 		return D2D1_DASH_STYLE_DASH;
-	case wxPENSTYLE_SHORT_DASH:
+	case KaiPENSTYLE_SHORT_DASH:
 		return D2D1_DASH_STYLE_DASH;
-	case wxPENSTYLE_DOT_DASH:
+	case KaiPENSTYLE_DOT_DASH:
 		return D2D1_DASH_STYLE_DASH_DOT;
-	case wxPENSTYLE_USER_DASH:
+	case KaiPENSTYLE_USER_DASH:
 		return D2D1_DASH_STYLE_CUSTOM;
 
 	// NB: These styles cannot be converted to a D2D1_DASH_STYLE
 	// and must be handled separately.
-	case wxPENSTYLE_TRANSPARENT:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_INVALID:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_STIPPLE_MASK_OPAQUE:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_STIPPLE_MASK:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_STIPPLE:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_BDIAGONAL_HATCH:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_CROSSDIAG_HATCH:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_FDIAGONAL_HATCH:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_CROSS_HATCH:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_HORIZONTAL_HATCH:
-		wxFALLTHROUGH;
-	case wxPENSTYLE_VERTICAL_HATCH:
+	case KaiPENSTYLE_TRANSPARENT:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_INVALID:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_STIPPLE_MASK_OPAQUE:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_STIPPLE_MASK:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_STIPPLE:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_BDIAGONAL_HATCH:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_CROSSDIAG_HATCH:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_FDIAGONAL_HATCH:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_CROSS_HATCH:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_HORIZONTAL_HATCH:
+		KaiFALLTHROUGH;
+	case KaiPENSTYLE_VERTICAL_HATCH:
 		return D2D1_DASH_STYLE_SOLID;
 	}
 
-	wxFAIL_MSG("unknown pen style");
+	KaiFAIL_MSG("unknown pen style");
 	return D2D1_DASH_STYLE_SOLID;
 }
 
-D2D1_COLOR_F wxD2DConvertColour(wxColour colour)
+D2D1_COLOR_F KaiD2DConvertColour(KaiColour colour)
 {
 	return D2D1::ColorF(
 		colour.Red() / 255.0f,
@@ -757,24 +697,24 @@ D2D1_COLOR_F wxD2DConvertColour(wxColour colour)
 		colour.Alpha() / 255.0f);
 }
 
-D2D1_ANTIALIAS_MODE wxD2DConvertAntialiasMode(wxAntialiasMode antialiasMode)
+D2D1_ANTIALIAS_MODE KaiD2DConvertAntialiasMode(KaiAntialiasMode antialiasMode)
 {
 	switch (antialiasMode)
 	{
-	case wxANTIALIAS_NONE:
+	case KaiANTIALIAS_NONE:
 		return D2D1_ANTIALIAS_MODE_ALIASED;
-	case wxANTIALIAS_DEFAULT:
+	case KaiANTIALIAS_DEFAULT:
 		return D2D1_ANTIALIAS_MODE_PER_PRIMITIVE;
 	}
 
-	wxFAIL_MSG("unknown antialias mode");
+	KaiFAIL_MSG("unknown antialias mode");
 	return D2D1_ANTIALIAS_MODE_ALIASED;
 }
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-bool wxD2DCompositionModeSupported(wxCompositionMode compositionMode)
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+bool KaiD2DCompositionModeSupported(KaiCompositionMode compositionMode)
 {
-	if (compositionMode == wxCOMPOSITION_CLEAR || compositionMode == wxCOMPOSITION_INVALID)
+	if (compositionMode == KaiCOMPOSITION_CLEAR || compositionMode == KaiCOMPOSITION_INVALID)
 	{
 		return false;
 	}
@@ -782,97 +722,97 @@ bool wxD2DCompositionModeSupported(wxCompositionMode compositionMode)
 	return true;
 }
 
-D2D1_COMPOSITE_MODE wxD2DConvertCompositionMode(wxCompositionMode compositionMode)
+D2D1_COMPOSITE_MODE KaiD2DConvertCompositionMode(KaiCompositionMode compositionMode)
 {
 	switch (compositionMode)
 	{
-	case wxCOMPOSITION_SOURCE:
+	case KaiCOMPOSITION_SOURCE:
 		return D2D1_COMPOSITE_MODE_SOURCE_COPY;
-	case wxCOMPOSITION_OVER:
+	case KaiCOMPOSITION_OVER:
 		return D2D1_COMPOSITE_MODE_SOURCE_OVER;
-	case wxCOMPOSITION_IN:
+	case KaiCOMPOSITION_IN:
 		return D2D1_COMPOSITE_MODE_SOURCE_IN;
-	case wxCOMPOSITION_OUT:
+	case KaiCOMPOSITION_OUT:
 		return D2D1_COMPOSITE_MODE_SOURCE_OUT;
-	case wxCOMPOSITION_ATOP:
+	case KaiCOMPOSITION_ATOP:
 		return D2D1_COMPOSITE_MODE_SOURCE_ATOP;
-	case wxCOMPOSITION_DEST_OVER:
+	case KaiCOMPOSITION_DEST_OVER:
 		return D2D1_COMPOSITE_MODE_DESTINATION_OVER;
-	case wxCOMPOSITION_DEST_IN:
+	case KaiCOMPOSITION_DEST_IN:
 		return D2D1_COMPOSITE_MODE_DESTINATION_IN;
-	case wxCOMPOSITION_DEST_OUT:
+	case KaiCOMPOSITION_DEST_OUT:
 		return D2D1_COMPOSITE_MODE_DESTINATION_OUT;
-	case wxCOMPOSITION_DEST_ATOP:
+	case KaiCOMPOSITION_DEST_ATOP:
 		return D2D1_COMPOSITE_MODE_DESTINATION_ATOP;
-	case wxCOMPOSITION_XOR:
+	case KaiCOMPOSITION_XOR:
 		return D2D1_COMPOSITE_MODE_XOR;
-	case wxCOMPOSITION_ADD:
+	case KaiCOMPOSITION_ADD:
 		return D2D1_COMPOSITE_MODE_PLUS;
 
 	// unsupported composition modes
-	case wxCOMPOSITION_DEST:
-		wxFALLTHROUGH;
-	case wxCOMPOSITION_CLEAR:
-		wxFALLTHROUGH;
-	case wxCOMPOSITION_INVALID:
+	case KaiCOMPOSITION_DEST:
+		KaiFALLTHROUGH;
+	case KaiCOMPOSITION_CLEAR:
+		KaiFALLTHROUGH;
+	case KaiCOMPOSITION_INVALID:
 		return D2D1_COMPOSITE_MODE_SOURCE_COPY;
 	}
 
-	wxFAIL_MSG("unknown composition mode");
+	KaiFAIL_MSG("unknown composition mode");
 	return D2D1_COMPOSITE_MODE_SOURCE_COPY;
 }
-#endif // wxD2D_DEVICE_CONTEXT_SUPPORTED
+#endif // KaiD2D_DEVICE_CONTEXT_SUPPORTED
 
 // Direct2D 1.1 introduces a new enum for specifying the interpolation quality
 // which is only used with the ID2D1DeviceContext::DrawImage method.
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-D2D1_INTERPOLATION_MODE wxD2DConvertInterpolationMode(wxInterpolationQuality interpolationQuality)
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+D2D1_INTERPOLATION_MODE KaiD2DConvertInterpolationMode(KaiInterpolationQuality interpolationQuality)
 {
 	switch (interpolationQuality)
 	{
-	case wxINTERPOLATION_DEFAULT:
-		wxFALLTHROUGH;
-	case wxINTERPOLATION_NONE:
-		wxFALLTHROUGH;
-	case wxINTERPOLATION_FAST:
+	case KaiINTERPOLATION_DEFAULT:
+		KaiFALLTHROUGH;
+	case KaiINTERPOLATION_NONE:
+		KaiFALLTHROUGH;
+	case KaiINTERPOLATION_FAST:
 		return D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-	case wxINTERPOLATION_GOOD:
+	case KaiINTERPOLATION_GOOD:
 		return D2D1_INTERPOLATION_MODE_LINEAR;
-	case wxINTERPOLATION_BEST:
+	case KaiINTERPOLATION_BEST:
 		return D2D1_INTERPOLATION_MODE_CUBIC;
 	}
 
-	wxFAIL_MSG("unknown interpolation quality");
+	KaiFAIL_MSG("unknown interpolation quality");
 	return D2D1_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 }
-#endif // wxD2D_DEVICE_CONTEXT_SUPPORTED
+#endif // KaiD2D_DEVICE_CONTEXT_SUPPORTED
 
-D2D1_BITMAP_INTERPOLATION_MODE wxD2DConvertBitmapInterpolationMode(wxInterpolationQuality interpolationQuality)
+D2D1_BITMAP_INTERPOLATION_MODE KaiD2DConvertBitmapInterpolationMode(KaiInterpolationQuality interpolationQuality)
 {
 	switch (interpolationQuality)
 	{
-	case wxINTERPOLATION_DEFAULT:
-		wxFALLTHROUGH;
-	case wxINTERPOLATION_NONE:
-		wxFALLTHROUGH;
-	case wxINTERPOLATION_FAST:
-		wxFALLTHROUGH;
-	case wxINTERPOLATION_GOOD:
+	case KaiINTERPOLATION_DEFAULT:
+		KaiFALLTHROUGH;
+	case KaiINTERPOLATION_NONE:
+		KaiFALLTHROUGH;
+	case KaiINTERPOLATION_FAST:
+		KaiFALLTHROUGH;
+	case KaiINTERPOLATION_GOOD:
 		return D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
-	case wxINTERPOLATION_BEST:
+	case KaiINTERPOLATION_BEST:
 		return D2D1_BITMAP_INTERPOLATION_MODE_LINEAR;
 	}
 
-	wxFAIL_MSG("unknown interpolation quality");
+	KaiFAIL_MSG("unknown interpolation quality");
 	return D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR;
 }
 
-D2D1_RECT_F wxD2DConvertRect(const wxRect& rect)
+D2D1_RECT_F KaiD2DConvertRect(const KaiRect& rect)
 {
 	return D2D1::RectF(rect.GetLeft(), rect.GetTop(), rect.GetRight(), rect.GetBottom());
 }
 
-wxCOMPtr<ID2D1Geometry> wxD2DConvertRegionToGeometry(ID2D1Factory* direct2dFactory, const wxRegion& region)
+KaiCOMPtr<ID2D1Geometry> KaiD2DConvertRegionToGeometry(ID2D1Factory* direct2dFactory, const KaiRegion& region)
 {
 	// Build the array of geometries
 	HRESULT hr;
@@ -890,12 +830,12 @@ wxCOMPtr<ID2D1Geometry> wxD2DConvertRegionToGeometry(ID2D1Factory* direct2dFacto
 		hr = direct2dFactory->CreateRectangleGeometry(
 						D2D1::RectF(0.0F, 0.0F, 0.0F, 0.0F),
 						(ID2D1RectangleGeometry**)(&geometries[0]));
-		wxFAILED_HRESULT_MSG(hr);
+		KaiFAILED_HRESULT_MSG(hr);
 	}
 	else
 	{
 		// Count the number of rectangles which compose the region
-		wxRegionIterator regionIterator(region);
+		KaiRegionIterator regionIterator(region);
 		rectCount = 0;
 		while(regionIterator++)
 			rectCount++;
@@ -908,14 +848,14 @@ wxCOMPtr<ID2D1Geometry> wxD2DConvertRegionToGeometry(ID2D1Factory* direct2dFacto
 		{
 			geometries[i] = nullptr;
 
-			wxRect rect = regionIterator.GetRect();
+			KaiRect rect = regionIterator.GetRect();
 			rect.SetWidth(rect.GetWidth() + 1);
 			rect.SetHeight(rect.GetHeight() + 1);
 
 			hr = direct2dFactory->CreateRectangleGeometry(
-				wxD2DConvertRect(rect),
+				KaiD2DConvertRect(rect),
 				(ID2D1RectangleGeometry**)(&geometries[i]));
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 
 			i++;
 			++regionIterator;
@@ -923,13 +863,13 @@ wxCOMPtr<ID2D1Geometry> wxD2DConvertRegionToGeometry(ID2D1Factory* direct2dFacto
 	}
 
 	// Create a geometry group to hold all the rectangles
-	wxCOMPtr<ID2D1GeometryGroup> resultGeometry;
+	KaiCOMPtr<ID2D1GeometryGroup> resultGeometry;
 	hr = direct2dFactory->CreateGeometryGroup(
 		D2D1_FILL_MODE_WINDING,
 		geometries,
 		rectCount,
 		&resultGeometry);
-	wxFAILED_HRESULT_MSG(hr);
+	KaiFAILED_HRESULT_MSG(hr);
 
 	// Cleanup temporaries
 	for (i = 0; i < rectCount; ++i)
@@ -939,7 +879,7 @@ wxCOMPtr<ID2D1Geometry> wxD2DConvertRegionToGeometry(ID2D1Factory* direct2dFacto
 
 	delete[] geometries;
 
-	return wxCOMPtr<ID2D1Geometry>(resultGeometry);
+	return KaiCOMPtr<ID2D1Geometry>(resultGeometry);
 }
 
 
@@ -952,24 +892,24 @@ bool operator==(const D2D1::Matrix3x2F& lhs, const D2D1::Matrix3x2F& rhs)
 }
 
 //-----------------------------------------------------------------------------
-// wxD2DMatrixData declaration
+// KaiD2DMatrixData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DMatrixData : public GraphicsMatrixData
+class KaiD2DMatrixData : public GraphicsMatrixData
 {
 public:
-	wxD2DMatrixData(wxD2DRenderer* renderer);
-	wxD2DMatrixData(wxD2DRenderer* renderer, const D2D1::Matrix3x2F& matrix);
+	KaiD2DMatrixData(KaiD2DRenderer* renderer);
+	KaiD2DMatrixData(KaiD2DRenderer* renderer, const D2D1::Matrix3x2F& matrix);
 
 	//virtual GraphicsObjectRefData* Clone() const override;
 
 	void Concat(const GraphicsMatrixData* t) override;
 
-	void Set(wxDouble a = 1.0, wxDouble b = 0.0, wxDouble c = 0.0, wxDouble d = 1.0,
-		wxDouble tx = 0.0, wxDouble ty = 0.0) override;
+	void Set(KaiDouble a = 1.0, KaiDouble b = 0.0, KaiDouble c = 0.0, KaiDouble d = 1.0,
+		KaiDouble tx = 0.0, KaiDouble ty = 0.0) override;
 
-	void Get(wxDouble* a = nullptr, wxDouble* b = nullptr,  wxDouble* c = nullptr,
-		wxDouble* d = nullptr, wxDouble* tx = nullptr, wxDouble* ty = nullptr) const override;
+	void Get(KaiDouble* a = nullptr, KaiDouble* b = nullptr,  KaiDouble* c = nullptr,
+		KaiDouble* d = nullptr, KaiDouble* tx = nullptr, KaiDouble* ty = nullptr) const override;
 
 	void Invert() override;
 
@@ -977,15 +917,15 @@ public:
 
 	bool IsIdentity() const override;
 
-	void Translate(wxDouble dx, wxDouble dy) override;
+	void Translate(KaiDouble dx, KaiDouble dy) override;
 
-	void Scale(wxDouble xScale, wxDouble yScale) override;
+	void Scale(KaiDouble xScale, KaiDouble yScale) override;
 
-	void Rotate(wxDouble angle) override;
+	void Rotate(KaiDouble angle) override;
 
-	void TransformPoint(wxDouble* x, wxDouble* y) const override;
+	void TransformPoint(KaiDouble* x, KaiDouble* y) const override;
 
-	void TransformDistance(wxDouble* dx, wxDouble* dy) const override;
+	void TransformDistance(KaiDouble* dx, KaiDouble* dy) const override;
 
 	void* GetNativeMatrix() const override;
 
@@ -996,35 +936,35 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DMatrixData implementation
+// KaiD2DMatrixData implementation
 //-----------------------------------------------------------------------------
 
-wxD2DMatrixData::wxD2DMatrixData(wxD2DRenderer* renderer) : GraphicsMatrixData(renderer)
+KaiD2DMatrixData::KaiD2DMatrixData(KaiD2DRenderer* renderer) : GraphicsMatrixData(renderer)
 {
 	m_matrix = D2D1::Matrix3x2F::Identity();
 }
 
-wxD2DMatrixData::wxD2DMatrixData(wxD2DRenderer* renderer, const D2D1::Matrix3x2F& matrix) :
+KaiD2DMatrixData::KaiD2DMatrixData(KaiD2DRenderer* renderer, const D2D1::Matrix3x2F& matrix) :
 	GraphicsMatrixData(renderer), m_matrix(matrix)
 {
 }
 
-//GraphicsObjectRefData* wxD2DMatrixData::Clone() const
+//GraphicsObjectRefData* KaiD2DMatrixData::Clone() const
 //{
-//    return new wxD2DMatrixData(GetRenderer(), m_matrix);
+//    return new KaiD2DMatrixData(GetRenderer(), m_matrix);
 //}
 
-void wxD2DMatrixData::Concat(const GraphicsMatrixData* t)
+void KaiD2DMatrixData::Concat(const GraphicsMatrixData* t)
 {
 	// Elements of resulting matrix are modified in-place in SetProduct()
 	// so multiplied matrices cannot be the instances of the resulting matrix.
 	// Note that parameter matrix (t) is the multiplicand.
-	const D2D1::Matrix3x2F m1(static_cast<const wxD2DMatrixData*>(t)->m_matrix);
+	const D2D1::Matrix3x2F m1(static_cast<const KaiD2DMatrixData*>(t)->m_matrix);
 	const D2D1::Matrix3x2F m2(m_matrix);
 	m_matrix.SetProduct(m1, m2);
 }
 
-void wxD2DMatrixData::Set(wxDouble a, wxDouble b, wxDouble c, wxDouble d, wxDouble tx, wxDouble ty)
+void KaiD2DMatrixData::Set(KaiDouble a, KaiDouble b, KaiDouble c, KaiDouble d, KaiDouble tx, KaiDouble ty)
 {
 	m_matrix._11 = a;
 	m_matrix._12 = b;
@@ -1034,7 +974,7 @@ void wxD2DMatrixData::Set(wxDouble a, wxDouble b, wxDouble c, wxDouble d, wxDoub
 	m_matrix._32 = ty;
 }
 
-void wxD2DMatrixData::Get(wxDouble* a, wxDouble* b,  wxDouble* c, wxDouble* d, wxDouble* tx, wxDouble* ty) const
+void KaiD2DMatrixData::Get(KaiDouble* a, KaiDouble* b,  KaiDouble* c, KaiDouble* d, KaiDouble* tx, KaiDouble* ty) const
 {
 	*a = m_matrix._11;
 	*b = m_matrix._12;
@@ -1044,44 +984,44 @@ void wxD2DMatrixData::Get(wxDouble* a, wxDouble* b,  wxDouble* c, wxDouble* d, w
 	*ty = m_matrix._32;
 }
 
-void wxD2DMatrixData::Invert()
+void KaiD2DMatrixData::Invert()
 {
 	m_matrix.Invert();
 }
 
-bool wxD2DMatrixData::IsEqual(const GraphicsMatrixData* t) const
+bool KaiD2DMatrixData::IsEqual(const GraphicsMatrixData* t) const
 {
-	return m_matrix == static_cast<const wxD2DMatrixData*>(t)->m_matrix;
+	return m_matrix == static_cast<const KaiD2DMatrixData*>(t)->m_matrix;
 }
 
-bool wxD2DMatrixData::IsIdentity() const
+bool KaiD2DMatrixData::IsIdentity() const
 {
 	return m_matrix.IsIdentity();
 }
 
-void wxD2DMatrixData::Translate(wxDouble dx, wxDouble dy)
+void KaiD2DMatrixData::Translate(KaiDouble dx, KaiDouble dy)
 {
 	m_matrix = D2D1::Matrix3x2F::Translation(dx, dy) * m_matrix;
 }
 
-void wxD2DMatrixData::Scale(wxDouble xScale, wxDouble yScale)
+void KaiD2DMatrixData::Scale(KaiDouble xScale, KaiDouble yScale)
 {
 	m_matrix = D2D1::Matrix3x2F::Scale(xScale, yScale) * m_matrix;
 }
 
-void wxD2DMatrixData::Rotate(wxDouble angle)
+void KaiD2DMatrixData::Rotate(KaiDouble angle)
 {
-	m_matrix = D2D1::Matrix3x2F::Rotation(wxRadToDeg(angle)) * m_matrix;
+	m_matrix = D2D1::Matrix3x2F::Rotation(KaiRadToDeg(angle)) * m_matrix;
 }
 
-void wxD2DMatrixData::TransformPoint(wxDouble* x, wxDouble* y) const
+void KaiD2DMatrixData::TransformPoint(KaiDouble* x, KaiDouble* y) const
 {
 	D2D1_POINT_2F result = m_matrix.TransformPoint(D2D1::Point2F(*x, *y));
 	*x = result.x;
 	*y = result.y;
 }
 
-void wxD2DMatrixData::TransformDistance(wxDouble* dx, wxDouble* dy) const
+void KaiD2DMatrixData::TransformDistance(KaiDouble* dx, KaiDouble* dy) const
 {
 	D2D1::Matrix3x2F noTranslationMatrix = m_matrix;
 	noTranslationMatrix._31 = 0;
@@ -1091,23 +1031,23 @@ void wxD2DMatrixData::TransformDistance(wxDouble* dx, wxDouble* dy) const
 	*dy = result.y;
 }
 
-void* wxD2DMatrixData::GetNativeMatrix() const
+void* KaiD2DMatrixData::GetNativeMatrix() const
 {
 	return (void*)&m_matrix;
 }
 
-D2D1::Matrix3x2F wxD2DMatrixData::GetMatrix3x2F() const
+D2D1::Matrix3x2F KaiD2DMatrixData::GetMatrix3x2F() const
 {
 	return m_matrix;
 }
 
-//const wxD2DMatrixData* wxGetD2DMatrixData(const wxGraphicsMatrix& matrix)
+//const KaiD2DMatrixData* KaiGetD2DMatrixData(const KaiGraphicsMatrix& matrix)
 //{
-//    return static_cast<const wxD2DMatrixData*>(matrix.GetMatrixData());
+//    return static_cast<const KaiD2DMatrixData*>(matrix.GetMatrixData());
 //}
 
 //-----------------------------------------------------------------------------
-// wxD2DPathData declaration
+// KaiD2DPathData declaration
 //-----------------------------------------------------------------------------
 
 bool operator==(const D2D1_POINT_2F& lhs, const D2D1_POINT_2F& rhs)
@@ -1115,17 +1055,17 @@ bool operator==(const D2D1_POINT_2F& lhs, const D2D1_POINT_2F& rhs)
 	return lhs.x == rhs.x && lhs.y == rhs.y;
 }
 
-class wxD2DPathData : public GraphicsPathData
+class KaiD2DPathData : public GraphicsPathData
 {
 public :
 
 	// ID2D1PathGeometry objects are device-independent resources created
 	// from a ID2D1Factory. This means we can safely create the resource outside
-	// (the wxD2DRenderer handles this) and store it here since it never gets
+	// (the KaiD2DRenderer handles this) and store it here since it never gets
 	// thrown away by the GPU.
-	wxD2DPathData(wxD2DRenderer* renderer, ID2D1Factory* d2dFactory);
+	KaiD2DPathData(KaiD2DRenderer* renderer, ID2D1Factory* d2dFactory);
 
-	~wxD2DPathData();
+	~KaiD2DPathData();
 
 	void SetFillMode(D2D1_FILL_MODE fillMode)
 	{
@@ -1147,19 +1087,19 @@ public :
 	//GraphicsObjectRefData* Clone() const override;
 
 	// begins a new subpath at (x,y)
-	void MoveToPoint(wxDouble x, wxDouble y) override;
+	void MoveToPoint(KaiDouble x, KaiDouble y) override;
 
 	// adds a straight line from the current point to (x,y)
-	void AddLineToPoint(wxDouble x, wxDouble y) override;
+	void AddLineToPoint(KaiDouble x, KaiDouble y) override;
 
 	// adds a cubic Bezier curve from the current point, using two control points and an end point
-	void AddCurveToPoint(wxDouble cx1, wxDouble cy1, wxDouble cx2, wxDouble cy2, wxDouble x, wxDouble y) override;
+	void AddCurveToPoint(KaiDouble cx1, KaiDouble cy1, KaiDouble cx2, KaiDouble cy2, KaiDouble x, KaiDouble y) override;
 
 	// adds an arc of a circle centering at (x,y) with radius (r) from startAngle to endAngle
-	void AddArc(wxDouble x, wxDouble y, wxDouble r, wxDouble startAngle, wxDouble endAngle, bool clockwise) override;
+	void AddArc(KaiDouble x, KaiDouble y, KaiDouble r, KaiDouble startAngle, KaiDouble endAngle, bool clockwise) override;
 
 	// gets the last point of the current path, (0,0) if not yet set
-	void GetCurrentPoint(wxDouble* x, wxDouble* y) const override;
+	void GetCurrentPoint(KaiDouble* x, KaiDouble* y) const override;
 
 	// adds another path
 	void AddPath(const GraphicsPathData* path) override;
@@ -1177,15 +1117,15 @@ public :
 	void Transform(const GraphicsMatrixData* matrix) override;
 
 	// gets the bounding box enclosing all points (possibly including control points)
-	void GetBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble *h) const override;
+	void GetBox(KaiDouble* x, KaiDouble* y, KaiDouble* w, KaiDouble *h) const override;
 
-	bool Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) const override;
+	bool Contains(KaiDouble x, KaiDouble y, KaiPolygonFillMode fillStyle = KaiODDEVEN_RULE) const override;
 
 	// appends an ellipsis as a new closed subpath fitting the passed rectangle
-	void AddCircle(wxDouble x, wxDouble y, wxDouble r) override;
+	void AddCircle(KaiDouble x, KaiDouble y, KaiDouble r) override;
 
 	// appends an ellipse
-	void AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h) override;
+	void AddEllipse(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h) override;
 
 private:
 	void EnsureGeometryOpen();
@@ -1214,14 +1154,14 @@ private:
 	void RestoreGeometryState(const GeometryStateData& data);
 
 private :
-	wxCOMPtr<ID2D1PathGeometry> m_pathGeometry;
+	KaiCOMPtr<ID2D1PathGeometry> m_pathGeometry;
 
-	wxCOMPtr<ID2D1GeometrySink> m_geometrySink;
+	KaiCOMPtr<ID2D1GeometrySink> m_geometrySink;
 
-	wxCOMPtr<ID2D1Factory> m_direct2dfactory;
+	KaiCOMPtr<ID2D1Factory> m_direct2dfactory;
 
-	mutable wxCOMPtr<ID2D1GeometryGroup> m_combinedGeometry;
-	wxVector<ID2D1Geometry*> m_pTransformedGeometries;
+	mutable KaiCOMPtr<ID2D1GeometryGroup> m_combinedGeometry;
+	KaiVector<ID2D1Geometry*> m_pTransformedGeometries;
 
 	bool m_currentPointSet;
 	D2D1_POINT_2F m_currentPoint;
@@ -1237,10 +1177,10 @@ private :
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DPathData implementation
+// KaiD2DPathData implementation
 //-----------------------------------------------------------------------------
 
-wxD2DPathData::wxD2DPathData(wxD2DRenderer* renderer, ID2D1Factory* d2dFactory) :
+KaiD2DPathData::KaiD2DPathData(KaiD2DRenderer* renderer, ID2D1Factory* d2dFactory) :
 	GraphicsPathData(renderer),
 	m_direct2dfactory(d2dFactory),
 	m_currentPointSet(false),
@@ -1258,7 +1198,7 @@ wxD2DPathData::wxD2DPathData(wxD2DRenderer* renderer, ID2D1Factory* d2dFactory) 
 	m_pathGeometry->Open(&m_geometrySink);
 }
 
-wxD2DPathData::~wxD2DPathData()
+KaiD2DPathData::~KaiD2DPathData()
 {
 	Flush();
 	for( size_t i = 0; i < m_pTransformedGeometries.size(); i++ )
@@ -1267,14 +1207,14 @@ wxD2DPathData::~wxD2DPathData()
 	}
 }
 
-ID2D1PathGeometry* wxD2DPathData::GetPathGeometry()
+ID2D1PathGeometry* KaiD2DPathData::GetPathGeometry()
 {
 	return m_pathGeometry;
 }
 
-//wxD2DPathData::GraphicsObjectRefData* wxD2DPathData::Clone() const
+//KaiD2DPathData::GraphicsObjectRefData* KaiD2DPathData::Clone() const
 //{
-//    wxD2DPathData* newPathData = new wxD2DPathData(GetRenderer(), m_direct2dfactory);
+//    KaiD2DPathData* newPathData = new KaiD2DPathData(GetRenderer(), m_direct2dfactory);
 //
 //    newPathData->EnsureGeometryOpen();
 //
@@ -1285,7 +1225,7 @@ ID2D1PathGeometry* wxD2DPathData::GetPathGeometry()
 //
 //    // Transfer geometry to the new geometry sink.
 //    HRESULT hr = m_pathGeometry->Stream(newPathData->m_geometrySink);
-//    wxASSERT_MSG( SUCCEEDED(hr), wxS("Current geometry is in invalid state") );
+//    KaiASSERT_MSG( SUCCEEDED(hr), KaiS("Current geometry is in invalid state") );
 //    if ( FAILED(hr) )
 //    {
 //        delete newPathData;
@@ -1300,7 +1240,7 @@ ID2D1PathGeometry* wxD2DPathData::GetPathGeometry()
 //        hr = m_direct2dfactory->CreateTransformedGeometry(
 //                    m_pTransformedGeometries[i],
 //                    D2D1::Matrix3x2F::Identity(), &pTransformedGeometry);
-//        wxASSERT_MSG( SUCCEEDED(hr), wxFAILED_HRESULT_MSG(hr) );
+//        KaiASSERT_MSG( SUCCEEDED(hr), KaiFAILED_HRESULT_MSG(hr) );
 //        newPathData->m_pTransformedGeometries.push_back(pTransformedGeometry);
 //    }
 //
@@ -1312,7 +1252,7 @@ ID2D1PathGeometry* wxD2DPathData::GetPathGeometry()
 //    return newPathData;
 //}
 
-void wxD2DPathData::Flush()
+void KaiD2DPathData::Flush()
 {
 	if (m_geometrySink != nullptr)
 	{
@@ -1325,29 +1265,29 @@ void wxD2DPathData::Flush()
 		if( m_geometryWritable )
 		{
 			HRESULT hr = m_geometrySink->Close();
-			wxCHECK_HRESULT_RET(hr);
+			KaiCHECK_HRESULT_RET(hr);
 			m_geometryWritable = false;
 		}
 	}
 }
 
-void wxD2DPathData::EnsureGeometryOpen()
+void KaiD2DPathData::EnsureGeometryOpen()
 {
 	if (!m_geometryWritable)
 	{
-		wxCOMPtr<ID2D1PathGeometry> newPathGeometry;
+		KaiCOMPtr<ID2D1PathGeometry> newPathGeometry;
 		HRESULT hr;
 		hr = m_direct2dfactory->CreatePathGeometry(&newPathGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		m_geometrySink.reset();
 		hr = newPathGeometry->Open(&m_geometrySink);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		if (m_pathGeometry != nullptr)
 		{
 			hr = m_pathGeometry->Stream(m_geometrySink);
-			wxCHECK_HRESULT_RET(hr);
+			KaiCHECK_HRESULT_RET(hr);
 		}
 
 		m_pathGeometry = newPathGeometry;
@@ -1355,18 +1295,18 @@ void wxD2DPathData::EnsureGeometryOpen()
 	}
 }
 
-void wxD2DPathData::EnsureSinkOpen()
+void KaiD2DPathData::EnsureSinkOpen()
 {
 	EnsureGeometryOpen();
 
 	if (m_geometrySink == nullptr)
 	{
 		HRESULT hr = m_pathGeometry->Open(&m_geometrySink);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 }
 
-void wxD2DPathData::EnsureFigureOpen(const D2D1_POINT_2F& pos)
+void KaiD2DPathData::EnsureFigureOpen(const D2D1_POINT_2F& pos)
 {
 	EnsureSinkOpen();
 
@@ -1379,7 +1319,7 @@ void wxD2DPathData::EnsureFigureOpen(const D2D1_POINT_2F& pos)
 	}
 }
 
-void wxD2DPathData::EndFigure(D2D1_FIGURE_END figureEnd)
+void KaiD2DPathData::EndFigure(D2D1_FIGURE_END figureEnd)
 {
 	if (m_figureOpened)
 	{
@@ -1416,7 +1356,7 @@ void wxD2DPathData::EndFigure(D2D1_FIGURE_END figureEnd)
 	}
 }
 
-ID2D1Geometry* wxD2DPathData::GetFullGeometry(D2D1_FILL_MODE fillMode) const
+ID2D1Geometry* KaiD2DPathData::GetFullGeometry(D2D1_FILL_MODE fillMode) const
 {
 	// Our final path geometry is represented by geometry group
 	// which contains all transformed geometries plus current geometry.
@@ -1434,19 +1374,19 @@ ID2D1Geometry* wxD2DPathData::GetFullGeometry(D2D1_FILL_MODE fillMode) const
 	m_combinedGeometry.reset();
 	HRESULT hr = m_direct2dfactory->CreateGeometryGroup(fillMode,
 								  pGeometries, numGeometries+1, &m_combinedGeometry);
-	wxFAILED_HRESULT_MSG(hr);
+	KaiFAILED_HRESULT_MSG(hr);
 	delete []pGeometries;
 
 	return m_combinedGeometry;
 }
 
-bool wxD2DPathData::IsEmpty() const
+bool KaiD2DPathData::IsEmpty() const
 {
 	return !m_currentPointSet && !m_figureOpened &&
 			m_pTransformedGeometries.size() == 0;
 }
 
-bool wxD2DPathData::IsStateSafeForFlush() const
+bool KaiD2DPathData::IsStateSafeForFlush() const
 {
 	// Only geometry with not yet started figure
 	// or with started but empty figure can be fully
@@ -1459,7 +1399,7 @@ bool wxD2DPathData::IsStateSafeForFlush() const
 	return m_currentPoint == actFigureStart;
 }
 
-void wxD2DPathData::SaveGeometryState(GeometryStateData& data) const
+void KaiD2DPathData::SaveGeometryState(GeometryStateData& data) const
 {
 	data.m_isFigureOpen = m_figureOpened;
 	data.m_isFigureLogStartSet = m_figureLogStartSet;
@@ -1469,7 +1409,7 @@ void wxD2DPathData::SaveGeometryState(GeometryStateData& data) const
 	data.m_figureLogStart = m_figureLogStart;
 }
 
-void wxD2DPathData::RestoreGeometryState(const GeometryStateData& data)
+void KaiD2DPathData::RestoreGeometryState(const GeometryStateData& data)
 {
 	if( data.m_isFigureOpen )
 	{
@@ -1505,7 +1445,7 @@ void wxD2DPathData::RestoreGeometryState(const GeometryStateData& data)
 				data.m_currentPoint : D2D1::Point2F(0.0F, 0.0F);
 }
 
-void wxD2DPathData::MoveToPoint(wxDouble x, wxDouble y)
+void KaiD2DPathData::MoveToPoint(KaiDouble x, KaiDouble y)
 {
 	// Close current sub-path (leaving the figure as is).
 	EndFigure(D2D1_FIGURE_END_OPEN);
@@ -1515,7 +1455,7 @@ void wxD2DPathData::MoveToPoint(wxDouble x, wxDouble y)
 }
 
 // adds a straight line from the current point to (x,y)
-void wxD2DPathData::AddLineToPoint(wxDouble x, wxDouble y)
+void KaiD2DPathData::AddLineToPoint(KaiDouble x, KaiDouble y)
 {
 	// If current point is not yet set then
 	// this function should behave as MoveToPoint.
@@ -1532,7 +1472,7 @@ void wxD2DPathData::AddLineToPoint(wxDouble x, wxDouble y)
 }
 
 // adds a cubic Bezier curve from the current point, using two control points and an end point
-void wxD2DPathData::AddCurveToPoint(wxDouble cx1, wxDouble cy1, wxDouble cx2, wxDouble cy2, wxDouble x, wxDouble y)
+void KaiD2DPathData::AddCurveToPoint(KaiDouble cx1, KaiDouble cy1, KaiDouble cx2, KaiDouble cy2, KaiDouble x, KaiDouble y)
 {
 	// If no current point is set then this function should behave
 	// as if preceded by a call to MoveToPoint(cx1, cy1).
@@ -1551,7 +1491,7 @@ void wxD2DPathData::AddCurveToPoint(wxDouble cx1, wxDouble cy1, wxDouble cx2, wx
 }
 
 // adds an arc of a circle centering at (x,y) with radius (r) from startAngle to endAngle
-void wxD2DPathData::AddArc(wxDouble x, wxDouble y, wxDouble r, wxDouble startAngle, wxDouble endAngle, bool clockwise)
+void KaiD2DPathData::AddArc(KaiDouble x, KaiDouble y, KaiDouble r, KaiDouble startAngle, KaiDouble endAngle, bool clockwise)
 {
 	double angle;
 
@@ -1586,8 +1526,8 @@ void wxD2DPathData::AddArc(wxDouble x, wxDouble y, wxDouble r, wxDouble startAng
 		angle = startAngle - endAngle;
 	}
 
-	wxPoint2DDouble start = wxPoint2DDouble(cos(startAngle) * r, sin(startAngle) * r);
-	wxPoint2DDouble end = wxPoint2DDouble(cos(endAngle) * r, sin(endAngle) * r);
+	KaiPoint2DDouble start = KaiPoint2DDouble(cos(startAngle) * r, sin(startAngle) * r);
+	KaiPoint2DDouble end = KaiPoint2DDouble(cos(endAngle) * r, sin(endAngle) * r);
 
 	// To ensure compatibility with Cairo an initial
 	// line segment to the beginning of the arc needs
@@ -1617,7 +1557,7 @@ void wxD2DPathData::AddArc(wxDouble x, wxDouble y, wxDouble r, wxDouble startAng
 		// Remarks:
 		// 1. Parity of the number of the circles has to be
 		// preserved because this matters when path would be
-		// filled with wxODDEVEN_RULE flag set (using
+		// filled with KaiODDEVEN_RULE flag set (using
 		// D2D1_FILL_MODE_ALTERNATE mode) when number of the
 		// edges is counted.
 		// 2. ID2D1GeometrySink::AddArc() doesn't work
@@ -1672,20 +1612,20 @@ void wxD2DPathData::AddArc(wxDouble x, wxDouble y, wxDouble r, wxDouble startAng
 }
 
 // appends an ellipsis as a new closed subpath fitting the passed rectangle
-void wxD2DPathData::AddCircle(wxDouble x, wxDouble y, wxDouble r)
+void KaiD2DPathData::AddCircle(KaiDouble x, KaiDouble y, KaiDouble r)
 {
 	AddEllipse(x - r, y - r, r * 2, r * 2);
 }
 
 // appends an ellipse
-void wxD2DPathData::AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DPathData::AddEllipse(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
 	if ( w <= 0.0 || h <= 0.0 )
 	  return;
 
 	// Calculate radii
-	const wxDouble rx = w / 2.0;
-	const wxDouble ry = h / 2.0;
+	const KaiDouble rx = w / 2.0;
+	const KaiDouble ry = h / 2.0;
 
 	MoveToPoint(x + w, y + ry);
 	// Open new subpath
@@ -1715,17 +1655,17 @@ void wxD2DPathData::AddEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
 }
 
 // gets the last point of the current path, (0,0) if not yet set
-void wxD2DPathData::GetCurrentPoint(wxDouble* x, wxDouble* y) const
+void KaiD2DPathData::GetCurrentPoint(KaiDouble* x, KaiDouble* y) const
 {
 	if (x != nullptr) *x = m_currentPoint.x;
 	if (y != nullptr) *y = m_currentPoint.y;
 }
 
 // adds another path
-void wxD2DPathData::AddPath(const GraphicsPathData* path)
+void KaiD2DPathData::AddPath(const GraphicsPathData* path)
 {
-	wxD2DPathData* pathSrc =
-		 const_cast<wxD2DPathData*>(static_cast<const wxD2DPathData*>(path));
+	KaiD2DPathData* pathSrc =
+		 const_cast<KaiD2DPathData*>(static_cast<const KaiD2DPathData*>(path));
 
 	// Nothing to do if geometry of appended path is not initialized.
 	if ( pathSrc->m_pathGeometry == nullptr || pathSrc->m_geometrySink == nullptr )
@@ -1767,7 +1707,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 	// Add current geometry to the collection transformed geometries.
 	hr = m_direct2dfactory->CreateTransformedGeometry(m_pathGeometry,
 						D2D1::Matrix3x2F::Identity(), &pTransformedGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 	m_pTransformedGeometries.push_back(pTransformedGeometry);
 
 	// Add to the collection transformed geometries from the appended path.
@@ -1777,7 +1717,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 		hr = m_direct2dfactory->CreateTransformedGeometry(
 					pathSrc->m_pTransformedGeometries[i],
 					D2D1::Matrix3x2F::Identity(), &pTransformedGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 		m_pTransformedGeometries.push_back(pTransformedGeometry);
 	}
 
@@ -1787,7 +1727,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 
 	// Transfer appended geometry to the current geometry sink.
 	hr = pathSrc->m_pathGeometry->Stream(m_geometrySink);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	// Apply to the current path positional data from the appended path.
 	// This operation fully sets geometry to the required state
@@ -1805,7 +1745,7 @@ void wxD2DPathData::AddPath(const GraphicsPathData* path)
 }
 
 // closes the current sub-path
-void wxD2DPathData::CloseSubpath()
+void KaiD2DPathData::CloseSubpath()
 {
 	// If we have a sub-path open by call to MoveToPoint(),
 	// which doesn't open a new figure by itself,
@@ -1822,12 +1762,12 @@ void wxD2DPathData::CloseSubpath()
 	}
 }
 
-void* wxD2DPathData::GetNativePath() const
+void* KaiD2DPathData::GetNativePath() const
 {
 	return GetFullGeometry(GetFillMode());
 }
 
-void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
+void KaiD2DPathData::Transform(const GraphicsMatrixData* matrix)
 {
 	// Unfortunately, it looks there is no straightforward way to apply
 	// transformation to the current underlying path geometry
@@ -1844,7 +1784,7 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	// (D2D1_COMBINE_MODE_UNION produces kind of outline). Moreover the result
 	// is stored in ID2D1SimplifiedGeometrySink not in ID2DGeometrySink.
 
-	// So, it seems that ability to transform the wxGraphicsPath
+	// So, it seems that ability to transform the KaiGraphicsPath
 	// (several times) and still use it after this operation(s)
 	// can be achieved (only?) by using a geometry group object
 	// (ID2D1GeometryGroup) this way:
@@ -1885,7 +1825,7 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	{
 		pTransformedGeometry = nullptr;
 		hr = m_direct2dfactory->CreateTransformedGeometry(m_pTransformedGeometries[i], m, &pTransformedGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		m_pTransformedGeometries[i]->Release();
 		m_pTransformedGeometries[i] = pTransformedGeometry;
@@ -1895,7 +1835,7 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	// to the collection of transformed geometries.
 	pTransformedGeometry = nullptr;
 	hr = m_direct2dfactory->CreateTransformedGeometry(m_pathGeometry, m, &pTransformedGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 	m_pTransformedGeometries.push_back(pTransformedGeometry);
 
 	// Clear and reopen current geometry.
@@ -1910,12 +1850,12 @@ void wxD2DPathData::Transform(const GraphicsMatrixData* matrix)
 	RestoreGeometryState(curState);
 }
 
-void wxD2DPathData::GetBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble *h) const
+void KaiD2DPathData::GetBox(KaiDouble* x, KaiDouble* y, KaiDouble* w, KaiDouble *h) const
 {
 	D2D1_RECT_F bounds;
 	ID2D1Geometry *curGeometry = GetFullGeometry(GetFillMode());
 	HRESULT hr = curGeometry->GetBounds(D2D1::Matrix3x2F::Identity(), &bounds);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 	// Check if bounds are empty
 	if ( bounds.left > bounds.right )
 	{
@@ -1927,31 +1867,31 @@ void wxD2DPathData::GetBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble *h) c
 	if (h) *h = bounds.bottom - bounds.top;
 }
 
-bool wxD2DPathData::Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle) const
+bool KaiD2DPathData::Contains(KaiDouble x, KaiDouble y, KaiPolygonFillMode fillStyle) const
 {
 	BOOL result;
-	D2D1_FILL_MODE fillMode = (fillStyle == wxODDEVEN_RULE) ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING;
+	D2D1_FILL_MODE fillMode = (fillStyle == KaiODDEVEN_RULE) ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING;
 	ID2D1Geometry *curGeometry = GetFullGeometry(fillMode);
 	curGeometry->FillContainsPoint(D2D1::Point2F(x, y), D2D1::Matrix3x2F::Identity(), &result);
 	return result != FALSE;
 }
 
-//wxD2DPathData* wxGetD2DPathData(const GraphicsPathData& path)
+//KaiD2DPathData* KaiGetD2DPathData(const GraphicsPathData& path)
 //{
-//    return static_cast<wxD2DPathData*>(path.GetGraphicsData());
+//    return static_cast<KaiD2DPathData*>(path.GetGraphicsData());
 //}
 
 // This utility class is used to read a color value with the format
 // PBGRA from a byte stream and to write a color back to the stream.
 // It's used in conjunction with the IWICBitmapSource or IWICBitmap
 // pixel data to easily read and write color values.
-struct wxPBGRAColor
+struct KaiPBGRAColor
 {
-	wxPBGRAColor(BYTE* stream) :
+	KaiPBGRAColor(BYTE* stream) :
 		b(*stream), g(*(stream + 1)), r(*(stream + 2)), a(*(stream + 3))
 	{}
 
-	wxPBGRAColor(const wxColor& color) :
+	KaiPBGRAColor(const KaiColor& color) :
 		b(color.Blue()), g(color.Green()), r(color.Red()), a(color.Alpha())
 	{}
 
@@ -1968,17 +1908,17 @@ struct wxPBGRAColor
 	BYTE b, g, r, a;
 };
 
-wxCOMPtr<IWICBitmapSource> wxCreateWICBitmap(const WXHBITMAP sourceBitmap, bool hasAlpha = false)
+KaiCOMPtr<IWICBitmapSource> KaiCreateWICBitmap(const WXHBITMAP sourceBitmap, bool hasAlpha = false)
 {
 	HRESULT hr;
 
-	wxCOMPtr<IWICBitmap> wicBitmap;
-	hr = wxWICImagingFactory()->CreateBitmapFromHBITMAP(sourceBitmap, nullptr, WICBitmapUseAlpha, &wicBitmap);
-	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IWICBitmapSource>(nullptr));
+	KaiCOMPtr<IWICBitmap> wicBitmap;
+	hr = KaiWICImagingFactory()->CreateBitmapFromHBITMAP(sourceBitmap, nullptr, WICBitmapUseAlpha, &wicBitmap);
+	KaiCHECK2_HRESULT_RET(hr, KaiCOMPtr<IWICBitmapSource>(nullptr));
 
-	wxCOMPtr<IWICFormatConverter> converter;
-	hr = wxWICImagingFactory()->CreateFormatConverter(&converter);
-	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IWICBitmapSource>(nullptr));
+	KaiCOMPtr<IWICFormatConverter> converter;
+	hr = KaiWICImagingFactory()->CreateFormatConverter(&converter);
+	KaiCHECK2_HRESULT_RET(hr, KaiCOMPtr<IWICBitmapSource>(nullptr));
 
 	WICPixelFormatGUID pixelFormat = hasAlpha ? GUID_WICPixelFormat32bppPBGRA : GUID_WICPixelFormat32bppBGR;
 
@@ -1987,26 +1927,26 @@ wxCOMPtr<IWICBitmapSource> wxCreateWICBitmap(const WXHBITMAP sourceBitmap, bool 
 		pixelFormat,
 		WICBitmapDitherTypeNone, nullptr, 0.f,
 		WICBitmapPaletteTypeMedianCut);
-	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IWICBitmapSource>(nullptr));
+	KaiCHECK2_HRESULT_RET(hr, KaiCOMPtr<IWICBitmapSource>(nullptr));
 
-	return wxCOMPtr<IWICBitmapSource>(converter);
+	return KaiCOMPtr<IWICBitmapSource>(converter);
 }
 
-wxCOMPtr<IWICBitmapSource> wxCreateWICBitmap(const wxBitmap& sourceBitmap, bool hasAlpha = false)
+KaiCOMPtr<IWICBitmapSource> KaiCreateWICBitmap(const KaiBitmap& sourceBitmap, bool hasAlpha = false)
 {
-	return wxCreateWICBitmap(sourceBitmap.GetHBITMAP(), hasAlpha);
+	return KaiCreateWICBitmap(sourceBitmap.GetHBITMAP(), hasAlpha);
 }
 
 // WIC Bitmap Source for creating hatch patterned bitmaps
-class wxHatchBitmapSource : public IWICBitmapSource
+class KaiHatchBitmapSource : public IWICBitmapSource
 {
 public:
-	wxHatchBitmapSource(wxBrushStyle brushStyle, const wxColor& color) :
+	KaiHatchBitmapSource(KaiBrushStyle brushStyle, const KaiColor& color) :
 		m_brushStyle(brushStyle), m_color(color), m_refCount(0l)
 	{
 	}
 
-	virtual ~wxHatchBitmapSource() {}
+	virtual ~KaiHatchBitmapSource() {}
 
 	HRESULT STDMETHODCALLTYPE GetSize(__RPC__out UINT *width, __RPC__out UINT *height) override
 	{
@@ -2049,22 +1989,22 @@ public:
 
 		switch (m_brushStyle)
 		{
-			case wxBRUSHSTYLE_BDIAGONAL_HATCH:
+			case KaiBRUSHSTYLE_BDIAGONAL_HATCH:
 				CopyPattern(buffer, BDIAGONAL_PATTERN);
 				break;
-			case wxBRUSHSTYLE_CROSSDIAG_HATCH:
+			case KaiBRUSHSTYLE_CROSSDIAG_HATCH:
 				CopyPattern(buffer, CROSSDIAG_PATTERN);
 				break;
-			case wxBRUSHSTYLE_FDIAGONAL_HATCH:
+			case KaiBRUSHSTYLE_FDIAGONAL_HATCH:
 				CopyPattern(buffer, FDIAGONAL_PATTERN);
 				break;
-			case wxBRUSHSTYLE_CROSS_HATCH:
+			case KaiBRUSHSTYLE_CROSS_HATCH:
 				CopyPattern(buffer, CROSS_PATTERN);
 				break;
-			case wxBRUSHSTYLE_HORIZONTAL_HATCH:
+			case KaiBRUSHSTYLE_HORIZONTAL_HATCH:
 				CopyPattern(buffer, HORIZONTAL_PATTERN);
 				break;
-			case wxBRUSHSTYLE_VERTICAL_HATCH:
+			case KaiBRUSHSTYLE_VERTICAL_HATCH:
 				CopyPattern(buffer, VERTICAL_PATTERN);
 				break;
 			default:
@@ -2086,7 +2026,7 @@ public:
 
 		*object = nullptr;
 
-		if (referenceId == IID_IUnknown || referenceId == wxIID_IWICBitmapSource)
+		if (referenceId == IID_IUnknown || referenceId == KaiIID_IWICBitmapSource)
 		{
 			*object = (LPVOID)this;
 			AddRef();
@@ -2104,7 +2044,7 @@ public:
 
 	ULONG STDMETHODCALLTYPE Release(void) override
 	{
-		wxCHECK_MSG(m_refCount > 0, 0, "Unbalanced number of calls to Release");
+		KaiCHECK_MSG(m_refCount > 0, 0, "Unbalanced number of calls to Release");
 
 		ULONG refCount = InterlockedDecrement(&m_refCount);
 		if (m_refCount == 0)
@@ -2119,7 +2059,7 @@ private:
 	// Copies an 8x8 bit pattern to a PBGRA byte buffer
 	void CopyPattern(BYTE* buffer, const unsigned char* pattern) const
 	{
-		static const wxPBGRAColor transparent(wxTransparentColour);
+		static const KaiPBGRAColor transparent(KaiTransparentColour);
 
 		int k = 0;
 
@@ -2136,10 +2076,10 @@ private:
 
 private:
 	// The hatch style produced by this bitmap source
-	const wxBrushStyle m_brushStyle;
+	const KaiBrushStyle m_brushStyle;
 
 	// The colour of the hatch
-	const wxPBGRAColor m_color;
+	const KaiPBGRAColor m_color;
 
 	// Internally used to implement IUnknown's reference counting
 	ULONG m_refCount;
@@ -2147,10 +2087,10 @@ private:
 
 // RAII class hosting a WIC bitmap lock used for writing
 // pixel data to a WICBitmap
-class wxBitmapPixelWriteLock
+class KaiBitmapPixelWriteLock
 {
 public:
-	wxBitmapPixelWriteLock(IWICBitmap* bitmap)
+	KaiBitmapPixelWriteLock(IWICBitmap* bitmap)
 	{
 		// Retrieve the size of the bitmap
 		UINT w, h;
@@ -2164,18 +2104,18 @@ public:
 	IWICBitmapLock* GetLock() { return m_pixelLock; }
 
 private:
-	wxCOMPtr<IWICBitmapLock> m_pixelLock;
+	KaiCOMPtr<IWICBitmapLock> m_pixelLock;
 };
 
-class wxD2DBitmapResourceHolder : public wxD2DResourceHolder<ID2D1Bitmap>
+class KaiD2DBitmapResourceHolder : public KaiD2DResourceHolder<ID2D1Bitmap>
 {
 public:
-	wxD2DBitmapResourceHolder(const wxBitmap& sourceBitmap) :
+	KaiD2DBitmapResourceHolder(const KaiBitmap& sourceBitmap) :
 		m_sourceBitmap(sourceBitmap)
 	{
 	}
 
-	const wxBitmap& GetSourceBitmap() const { return m_sourceBitmap; }
+	const KaiBitmap& GetSourceBitmap() const { return m_sourceBitmap; }
 
 protected:
 	void DoAcquireResource() override
@@ -2189,11 +2129,11 @@ protected:
 			int w = m_sourceBitmap.GetWidth();
 			int h = m_sourceBitmap.GetHeight();
 
-			wxCOMPtr<IWICBitmapSource> colorBitmap = wxCreateWICBitmap(m_sourceBitmap);
-			wxCOMPtr<IWICBitmapSource> maskBitmap = wxCreateWICBitmap(m_sourceBitmap.GetMask()->GetMaskBitmap());
-			wxCOMPtr<IWICBitmap> resultBitmap;
+			KaiCOMPtr<IWICBitmapSource> colorBitmap = KaiCreateWICBitmap(m_sourceBitmap);
+			KaiCOMPtr<IWICBitmapSource> maskBitmap = KaiCreateWICBitmap(m_sourceBitmap.GetMask()->GetMaskBitmap());
+			KaiCOMPtr<IWICBitmap> resultBitmap;
 
-			wxWICImagingFactory()->CreateBitmap(
+			KaiWICImagingFactory()->CreateBitmap(
 				w, h,
 				GUID_WICPixelFormat32bppPBGRA,
 				WICBitmapCacheOnLoad,
@@ -2207,18 +2147,18 @@ protected:
 			hr = maskBitmap->CopyPixels(nullptr, w * 4, 4 * w * h, maskBuffer);
 
 			{
-				wxBitmapPixelWriteLock lock(resultBitmap);
+				KaiBitmapPixelWriteLock lock(resultBitmap);
 
 				UINT bufferSize = 0;
 				hr = lock.GetLock()->GetDataPointer(&bufferSize, &resultBuffer);
 
-				static const wxPBGRAColor transparentColor(wxTransparentColour);
+				static const KaiPBGRAColor transparentColor(KaiTransparentColour);
 
 				// Create the result bitmap
 				for (int i = 0; i < w * h * 4; i += 4)
 				{
-					wxPBGRAColor color(colorBuffer + i);
-					wxPBGRAColor mask(maskBuffer + i);
+					KaiPBGRAColor color(colorBuffer + i);
+					KaiPBGRAColor mask(maskBuffer + i);
 
 					if (mask.IsBlack())
 					{
@@ -2233,43 +2173,43 @@ protected:
 			}
 
 			hr = renderTarget->CreateBitmapFromWicBitmap(resultBitmap, 0, &m_nativeResource);
-			wxCHECK_HRESULT_RET(hr);
+			KaiCHECK_HRESULT_RET(hr);
 
 			delete[] colorBuffer;
 			delete[] maskBuffer;
 		}
 		else
 		{
-			wxCOMPtr<IWICBitmapSource> bitmapSource = wxCreateWICBitmap(m_sourceBitmap, m_sourceBitmap.HasAlpha());
+			KaiCOMPtr<IWICBitmapSource> bitmapSource = KaiCreateWICBitmap(m_sourceBitmap, m_sourceBitmap.HasAlpha());
 			hr = renderTarget->CreateBitmapFromWicBitmap(bitmapSource, 0, &m_nativeResource);
 		}
 	}
 
 private:
-	const wxBitmap m_sourceBitmap;
+	const KaiBitmap m_sourceBitmap;
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DBitmapData declaration
+// KaiD2DBitmapData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DBitmapData : public GraphicsBitmapData, public wxD2DManagedGraphicsData
+class KaiD2DBitmapData : public GraphicsBitmapData, public KaiD2DManagedGraphicsData
 {
 public:
-	typedef wxD2DBitmapResourceHolder NativeType;
+	typedef KaiD2DBitmapResourceHolder NativeType;
 
-	wxD2DBitmapData(wxD2DRenderer* renderer, const wxBitmap& bitmap) :
+	KaiD2DBitmapData(KaiD2DRenderer* renderer, const KaiBitmap& bitmap) :
 		GraphicsBitmapData(renderer), m_bitmapHolder(bitmap) {}
 
-	wxD2DBitmapData(wxD2DRenderer* renderer, const void* pseudoNativeBitmap) :
+	KaiD2DBitmapData(KaiD2DRenderer* renderer, const void* pseudoNativeBitmap) :
 		GraphicsBitmapData(renderer), m_bitmapHolder(*static_cast<const NativeType*>(pseudoNativeBitmap)) {}
 
 	// returns the native representation
 	void* GetNativeBitmap() const override;
 
-	wxCOMPtr<ID2D1Bitmap> GetD2DBitmap();
+	KaiCOMPtr<ID2D1Bitmap> GetD2DBitmap();
 
-	wxD2DManagedObject* GetManagedObject() override
+	KaiD2DManagedObject* GetManagedObject() override
 	{
 		return &m_bitmapHolder;
 	}
@@ -2279,29 +2219,29 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DBitmapData implementation
+// KaiD2DBitmapData implementation
 //-----------------------------------------------------------------------------
 
-void* wxD2DBitmapData::GetNativeBitmap() const
+void* KaiD2DBitmapData::GetNativeBitmap() const
 {
 	return (void*)&m_bitmapHolder;
 }
 
-wxCOMPtr<ID2D1Bitmap> wxD2DBitmapData::GetD2DBitmap()
+KaiCOMPtr<ID2D1Bitmap> KaiD2DBitmapData::GetD2DBitmap()
 {
 	return m_bitmapHolder.GetD2DResource();
 }
 
-//wxD2DBitmapData* wxGetD2DBitmapData(const wxGraphicsBitmap& bitmap)
+//KaiD2DBitmapData* KaiGetD2DBitmapData(const KaiGraphicsBitmap& bitmap)
 //{
-//    return static_cast<wxD2DBitmapData*>(bitmap.GetRefData());
+//    return static_cast<KaiD2DBitmapData*>(bitmap.GetRefData());
 //}
 
-// Helper class used to create and safely release a ID2D1GradientStopCollection from wxGraphicsGradientStops
-class wxD2DGradientStopsHelper
+// Helper class used to create and safely release a ID2D1GradientStopCollection from KaiGraphicsGradientStops
+class KaiD2DGradientStopsHelper
 {
 public:
-	wxD2DGradientStopsHelper(const wxGraphicsGradientStops& gradientStops, ID2D1RenderTarget* renderTarget)
+	KaiD2DGradientStopsHelper(const KaiGraphicsGradientStops& gradientStops, ID2D1RenderTarget* renderTarget)
 	{
 		int stopCount = gradientStops.GetCount();
 
@@ -2309,7 +2249,7 @@ public:
 
 		for (int i = 0; i < stopCount; ++i)
 		{
-			gradientStopArray[i].color = wxD2DConvertColour(gradientStops.Item(i).GetColour());
+			gradientStopArray[i].color = KaiD2DConvertColour(gradientStops.Item(i).GetColour());
 			gradientStopArray[i].position = gradientStops.Item(i).GetPosition();
 		}
 
@@ -2324,43 +2264,43 @@ public:
 	}
 
 private:
-	wxCOMPtr<ID2D1GradientStopCollection> m_gradientStopCollection;
+	KaiCOMPtr<ID2D1GradientStopCollection> m_gradientStopCollection;
 };
 
 template <typename B>
-class wxD2DBrushResourceHolder : public wxD2DResourceHolder<B>
+class KaiD2DBrushResourceHolder : public KaiD2DResourceHolder<B>
 {
 public:
-	wxD2DBrushResourceHolder(const wxBrush& brush) : m_sourceBrush(brush) {}
-	virtual ~wxD2DBrushResourceHolder() {}
+	KaiD2DBrushResourceHolder(const KaiBrush& brush) : m_sourceBrush(brush) {}
+	virtual ~KaiD2DBrushResourceHolder() {}
 protected:
-	const wxBrush m_sourceBrush;
+	const KaiBrush m_sourceBrush;
 };
 
-class wxD2DSolidBrushResourceHolder : public wxD2DBrushResourceHolder<ID2D1SolidColorBrush>
+class KaiD2DSolidBrushResourceHolder : public KaiD2DBrushResourceHolder<ID2D1SolidColorBrush>
 {
 public:
-	wxD2DSolidBrushResourceHolder(const wxBrush& brush) : wxD2DBrushResourceHolder(brush) {}
+	KaiD2DSolidBrushResourceHolder(const KaiBrush& brush) : KaiD2DBrushResourceHolder(brush) {}
 
 protected:
 	void DoAcquireResource() override
 	{
-		wxColour colour = m_sourceBrush.GetColour();
-		HRESULT hr = GetContext()->CreateSolidColorBrush(wxD2DConvertColour(colour), &m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		KaiColour colour = m_sourceBrush.GetColour();
+		HRESULT hr = GetContext()->CreateSolidColorBrush(KaiD2DConvertColour(colour), &m_nativeResource);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 };
 
-class wxD2DBitmapBrushResourceHolder : public wxD2DBrushResourceHolder<ID2D1BitmapBrush>
+class KaiD2DBitmapBrushResourceHolder : public KaiD2DBrushResourceHolder<ID2D1BitmapBrush>
 {
 public:
-	wxD2DBitmapBrushResourceHolder(const wxBrush& brush) : wxD2DBrushResourceHolder(brush) {}
+	KaiD2DBitmapBrushResourceHolder(const KaiBrush& brush) : KaiD2DBrushResourceHolder(brush) {}
 
 protected:
 	void DoAcquireResource() override
 	{
 		// TODO: cache this bitmap
-		wxD2DBitmapResourceHolder bitmap(*(m_sourceBrush.GetStipple()));
+		KaiD2DBitmapResourceHolder bitmap(*(m_sourceBrush.GetStipple()));
 		bitmap.Bind(GetManager());
 
 		HRESULT result = GetContext()->CreateBitmapBrush(
@@ -2371,24 +2311,24 @@ protected:
 			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR),
 			&m_nativeResource);
 
-		wxCHECK_HRESULT_RET(result);
+		KaiCHECK_HRESULT_RET(result);
 	}
 };
 
-class wxD2DHatchBrushResourceHolder : public wxD2DBrushResourceHolder<ID2D1BitmapBrush>
+class KaiD2DHatchBrushResourceHolder : public KaiD2DBrushResourceHolder<ID2D1BitmapBrush>
 {
 public:
-	wxD2DHatchBrushResourceHolder(const wxBrush& brush) : wxD2DBrushResourceHolder(brush) {}
+	KaiD2DHatchBrushResourceHolder(const KaiBrush& brush) : KaiD2DBrushResourceHolder(brush) {}
 
 protected:
 	void DoAcquireResource() override
 	{
-		wxCOMPtr<wxHatchBitmapSource> hatchBitmapSource(new wxHatchBitmapSource(m_sourceBrush.GetStyle(), m_sourceBrush.GetColour()));
+		KaiCOMPtr<KaiHatchBitmapSource> hatchBitmapSource(new KaiHatchBitmapSource(m_sourceBrush.GetStyle(), m_sourceBrush.GetColour()));
 
-		wxCOMPtr<ID2D1Bitmap> bitmap;
+		KaiCOMPtr<ID2D1Bitmap> bitmap;
 
 		HRESULT hr = GetContext()->CreateBitmapFromWicBitmap(hatchBitmapSource, &bitmap);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		hr = GetContext()->CreateBitmapBrush(
 			bitmap,
@@ -2397,37 +2337,37 @@ protected:
 			D2D1_EXTEND_MODE_WRAP,
 			D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR),
 			&m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 };
 
-class wxD2DLinearGradientBrushResourceHolder : public wxD2DResourceHolder<ID2D1LinearGradientBrush>
+class KaiD2DLinearGradientBrushResourceHolder : public KaiD2DResourceHolder<ID2D1LinearGradientBrush>
 {
 public:
 	struct LinearGradientInfo {
-		const wxDouble x1;
-		const wxDouble y1;
-		const wxDouble x2;
-		const wxDouble y2;
-		const wxGraphicsGradientStops stops;
-		wxD2DMatrixData *matrix;
-		LinearGradientInfo(wxDouble& x1_, wxDouble& y1_, 
-						   wxDouble& x2_, wxDouble& y2_, 
-						   const wxGraphicsGradientStops& stops_,
-						   wxD2DMatrixData * matrix_)
+		const KaiDouble x1;
+		const KaiDouble y1;
+		const KaiDouble x2;
+		const KaiDouble y2;
+		const KaiGraphicsGradientStops stops;
+		KaiD2DMatrixData *matrix;
+		LinearGradientInfo(KaiDouble& x1_, KaiDouble& y1_, 
+						   KaiDouble& x2_, KaiDouble& y2_, 
+						   const KaiGraphicsGradientStops& stops_,
+						   KaiD2DMatrixData * matrix_)
 			: x1(x1_), y1(y1_), x2(x2_), y2(y2_), stops(stops_), matrix(matrix_) {}
 	};
 
-	wxD2DLinearGradientBrushResourceHolder(wxDouble& x1, wxDouble& y1, 
-										   wxDouble& x2, wxDouble& y2, 
-										   const wxGraphicsGradientStops& stops,
-										   wxD2DMatrixData* matrix)
+	KaiD2DLinearGradientBrushResourceHolder(KaiDouble& x1, KaiDouble& y1, 
+										   KaiDouble& x2, KaiDouble& y2, 
+										   const KaiGraphicsGradientStops& stops,
+										   KaiD2DMatrixData* matrix)
 		: m_linearGradientInfo(x1, y1, x2, y2, stops, matrix) {}
 
 protected:
 	void DoAcquireResource() override
 	{
-		wxD2DGradientStopsHelper helper(m_linearGradientInfo.stops, GetContext());
+		KaiD2DGradientStopsHelper helper(m_linearGradientInfo.stops, GetContext());
 		ID2D1LinearGradientBrush  *linearGradientBrush;
 
 		HRESULT hr = GetContext()->CreateLinearGradientBrush(
@@ -2436,7 +2376,7 @@ protected:
 				D2D1::Point2F(m_linearGradientInfo.x2, m_linearGradientInfo.y2)),
 			helper.GetGradientStopCollection(),
 			&linearGradientBrush);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		if (! m_linearGradientInfo.matrix)
 		{
@@ -2450,41 +2390,41 @@ private:
 	const LinearGradientInfo m_linearGradientInfo;
 };
 
-class wxD2DRadialGradientBrushResourceHolder : public wxD2DResourceHolder<ID2D1RadialGradientBrush>
+class KaiD2DRadialGradientBrushResourceHolder : public KaiD2DResourceHolder<ID2D1RadialGradientBrush>
 {
 public:
 	struct RadialGradientInfo {
-		const wxDouble x1;
-		const wxDouble y1;
-		const wxDouble x2;
-		const wxDouble y2;
-		const wxDouble radius;
-		const wxGraphicsGradientStops stops;
-		wxD2DMatrixData *matrix;
+		const KaiDouble x1;
+		const KaiDouble y1;
+		const KaiDouble x2;
+		const KaiDouble y2;
+		const KaiDouble radius;
+		const KaiGraphicsGradientStops stops;
+		KaiD2DMatrixData *matrix;
 
-		RadialGradientInfo(wxDouble x1_, wxDouble y1_, 
-						   wxDouble x2_, wxDouble y2_, 
-						   wxDouble r, 
-						   const wxGraphicsGradientStops& stops_,
-						   wxD2DMatrixData* matrix_)
+		RadialGradientInfo(KaiDouble x1_, KaiDouble y1_, 
+						   KaiDouble x2_, KaiDouble y2_, 
+						   KaiDouble r, 
+						   const KaiGraphicsGradientStops& stops_,
+						   KaiD2DMatrixData* matrix_)
 			: x1(x1_), y1(y1_), x2(x2_), y2(y2_), radius(r), stops(stops_), matrix(matrix_) {}
 	};
 
-	wxD2DRadialGradientBrushResourceHolder(wxDouble& x1, wxDouble& y1, 
-										   wxDouble& x2, wxDouble& y2, 
-										   wxDouble& r, 
-										   const wxGraphicsGradientStops& stops,
-										   wxD2DMatrixData* matrix)
+	KaiD2DRadialGradientBrushResourceHolder(KaiDouble& x1, KaiDouble& y1, 
+										   KaiDouble& x2, KaiDouble& y2, 
+										   KaiDouble& r, 
+										   const KaiGraphicsGradientStops& stops,
+										   KaiD2DMatrixData* matrix)
 		: m_radialGradientInfo(x1, y1, x2, y2, r, stops, matrix) {}
 
 protected:
 	void DoAcquireResource() override
 	{
-		wxD2DGradientStopsHelper helper(m_radialGradientInfo.stops, GetContext());
+		KaiD2DGradientStopsHelper helper(m_radialGradientInfo.stops, GetContext());
 		ID2D1RadialGradientBrush *radialGradientBrush;
 
-		wxDouble xo = m_radialGradientInfo.x1 - m_radialGradientInfo.x2;
-		wxDouble yo = m_radialGradientInfo.y1 - m_radialGradientInfo.y2;
+		KaiDouble xo = m_radialGradientInfo.x1 - m_radialGradientInfo.x2;
+		KaiDouble yo = m_radialGradientInfo.y1 - m_radialGradientInfo.y2;
 
 		HRESULT hr = GetContext()->CreateRadialGradientBrush(
 			D2D1::RadialGradientBrushProperties(
@@ -2493,7 +2433,7 @@ protected:
 				m_radialGradientInfo.radius, m_radialGradientInfo.radius),
 			helper.GetGradientStopCollection(),
 			&radialGradientBrush);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		if (! m_radialGradientInfo.matrix)
 		{
@@ -2509,150 +2449,150 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DBrushData declaration
+// KaiD2DBrushData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DBrushData : /*public GraphicsObjectRefData, */public wxD2DManagedGraphicsData
+class KaiD2DBrushData : /*public GraphicsObjectRefData, */public KaiD2DManagedGraphicsData
 {
 public:
-	wxD2DBrushData(wxD2DRenderer* renderer, const wxBrush brush);
+	KaiD2DBrushData(KaiD2DRenderer* renderer, const KaiBrush brush);
 
-	wxD2DBrushData(wxD2DRenderer* renderer);
+	KaiD2DBrushData(KaiD2DRenderer* renderer);
 
-	void CreateLinearGradientBrush(wxDouble x1, wxDouble y1, 
-								   wxDouble x2, wxDouble y2, 
-								   const wxGraphicsGradientStops& stops,
-								   wxD2DMatrixData* matrix = nullptr);
+	void CreateLinearGradientBrush(KaiDouble x1, KaiDouble y1, 
+								   KaiDouble x2, KaiDouble y2, 
+								   const KaiGraphicsGradientStops& stops,
+								   KaiD2DMatrixData* matrix = nullptr);
 
-	void CreateRadialGradientBrush(wxDouble startX, wxDouble startY, 
-								   wxDouble endX, wxDouble endY, 
-								   wxDouble radius, 
-								   const wxGraphicsGradientStops& stops,
-								   wxD2DMatrixData* matrix = nullptr);
+	void CreateRadialGradientBrush(KaiDouble startX, KaiDouble startY, 
+								   KaiDouble endX, KaiDouble endY, 
+								   KaiDouble radius, 
+								   const KaiGraphicsGradientStops& stops,
+								   KaiD2DMatrixData* matrix = nullptr);
 
 	ID2D1Brush* GetBrush() const
 	{
 		return (ID2D1Brush*)(m_brushResourceHolder->GetResource());
 	}
 
-	wxD2DManagedObject* GetManagedObject() override
+	KaiD2DManagedObject* GetManagedObject() override
 	{
 		return m_brushResourceHolder.get();
 	}
 
 private:
-	wxSharedPtr<wxManagedResourceHolder> m_brushResourceHolder;
+	KaiSharedPtr<KaiManagedResourceHolder> m_brushResourceHolder;
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DBrushData implementation
+// KaiD2DBrushData implementation
 //-----------------------------------------------------------------------------
 
-wxD2DBrushData::wxD2DBrushData(wxD2DRenderer* renderer, const wxBrush brush)
+KaiD2DBrushData::KaiD2DBrushData(KaiD2DRenderer* renderer, const KaiBrush brush)
 	: /*GraphicsObjectRefData(renderer), */m_brushResourceHolder(nullptr)
 {
-	if (brush.GetStyle() == wxBRUSHSTYLE_SOLID)
+	if (brush.GetStyle() == KaiBRUSHSTYLE_SOLID)
 	{
-		m_brushResourceHolder = new wxD2DSolidBrushResourceHolder(brush);
+		m_brushResourceHolder = new KaiD2DSolidBrushResourceHolder(brush);
 	}
 	else if (brush.IsHatch())
 	{
-		m_brushResourceHolder = new wxD2DHatchBrushResourceHolder(brush);
+		m_brushResourceHolder = new KaiD2DHatchBrushResourceHolder(brush);
 	}
 	else
 	{
-		m_brushResourceHolder = new wxD2DBitmapBrushResourceHolder(brush);
+		m_brushResourceHolder = new KaiD2DBitmapBrushResourceHolder(brush);
 	}
 }
 
-wxD2DBrushData::wxD2DBrushData(wxD2DRenderer* renderer) 
+KaiD2DBrushData::KaiD2DBrushData(KaiD2DRenderer* renderer) 
 	: /*GraphicsObjectRefData(renderer), */m_brushResourceHolder(nullptr)
 {
 }
 
-void wxD2DBrushData::CreateLinearGradientBrush(
-	wxDouble x1, wxDouble y1,
-	wxDouble x2, wxDouble y2,
-	const wxGraphicsGradientStops& stops,
-	wxD2DMatrixData * matrix)
+void KaiD2DBrushData::CreateLinearGradientBrush(
+	KaiDouble x1, KaiDouble y1,
+	KaiDouble x2, KaiDouble y2,
+	const KaiGraphicsGradientStops& stops,
+	KaiD2DMatrixData * matrix)
 {
-	m_brushResourceHolder = new wxD2DLinearGradientBrushResourceHolder(
+	m_brushResourceHolder = new KaiD2DLinearGradientBrushResourceHolder(
 		x1, y1, x2, y2, stops, matrix);
 }
 
-void wxD2DBrushData::CreateRadialGradientBrush(
-	wxDouble startX, wxDouble startY,
-	wxDouble endX, wxDouble endY,
-	wxDouble radius,
-	const wxGraphicsGradientStops& stops,
-	wxD2DMatrixData * matrix)
+void KaiD2DBrushData::CreateRadialGradientBrush(
+	KaiDouble startX, KaiDouble startY,
+	KaiDouble endX, KaiDouble endY,
+	KaiDouble radius,
+	const KaiGraphicsGradientStops& stops,
+	KaiD2DMatrixData * matrix)
 {
-	m_brushResourceHolder = new wxD2DRadialGradientBrushResourceHolder(
+	m_brushResourceHolder = new KaiD2DRadialGradientBrushResourceHolder(
 		startX, startY, endX, endY, radius, stops, matrix);
 }
 
-//wxD2DBrushData* wxGetD2DBrushData(const wxGraphicsBrush& brush)
+//KaiD2DBrushData* KaiGetD2DBrushData(const KaiGraphicsBrush& brush)
 //{
-//    return static_cast<wxD2DBrushData*>(brush.GetGraphicsData());
+//    return static_cast<KaiD2DBrushData*>(brush.GetGraphicsData());
 //}
 
-bool wxIsHatchPenStyle(wxPenStyle penStyle)
+bool KaiIsHatchPenStyle(KaiPenStyle penStyle)
 {
-	return penStyle >= wxPENSTYLE_FIRST_HATCH && penStyle <= wxPENSTYLE_LAST_HATCH;
+	return penStyle >= KaiPENSTYLE_FIRST_HATCH && penStyle <= KaiPENSTYLE_LAST_HATCH;
 }
 
-wxBrushStyle wxConvertPenStyleToBrushStyle(wxPenStyle penStyle)
+KaiBrushStyle KaiConvertPenStyleToBrushStyle(KaiPenStyle penStyle)
 {
 	switch(penStyle)
 	{
-	case wxPENSTYLE_BDIAGONAL_HATCH:
-		return wxBRUSHSTYLE_BDIAGONAL_HATCH;
-	case wxPENSTYLE_CROSSDIAG_HATCH:
-		return wxBRUSHSTYLE_CROSSDIAG_HATCH;
-	case wxPENSTYLE_FDIAGONAL_HATCH:
-		return wxBRUSHSTYLE_FDIAGONAL_HATCH;
-	case wxPENSTYLE_CROSS_HATCH:
-		return wxBRUSHSTYLE_CROSS_HATCH;
-	case wxPENSTYLE_HORIZONTAL_HATCH:
-		return wxBRUSHSTYLE_HORIZONTAL_HATCH;
-	case wxPENSTYLE_VERTICAL_HATCH:
-		return wxBRUSHSTYLE_VERTICAL_HATCH;
+	case KaiPENSTYLE_BDIAGONAL_HATCH:
+		return KaiBRUSHSTYLE_BDIAGONAL_HATCH;
+	case KaiPENSTYLE_CROSSDIAG_HATCH:
+		return KaiBRUSHSTYLE_CROSSDIAG_HATCH;
+	case KaiPENSTYLE_FDIAGONAL_HATCH:
+		return KaiBRUSHSTYLE_FDIAGONAL_HATCH;
+	case KaiPENSTYLE_CROSS_HATCH:
+		return KaiBRUSHSTYLE_CROSS_HATCH;
+	case KaiPENSTYLE_HORIZONTAL_HATCH:
+		return KaiBRUSHSTYLE_HORIZONTAL_HATCH;
+	case KaiPENSTYLE_VERTICAL_HATCH:
+		return KaiBRUSHSTYLE_VERTICAL_HATCH;
 	default:
 		break;
 	}
 
-	return wxBRUSHSTYLE_SOLID;
+	return KaiBRUSHSTYLE_SOLID;
 }
 
 // ----------------------------------------------------------------------------
-// wxGraphicsPenInfo describes a wxGraphicsPen
+// KaiGraphicsPenInfo describes a KaiGraphicsPen
 // ----------------------------------------------------------------------------
 
-class wxGraphicsPenInfo : public wxPenInfoBase<wxGraphicsPenInfo>
+class KaiGraphicsPenInfo : public KaiPenInfoBase<KaiGraphicsPenInfo>
 {
 public:
-	explicit wxGraphicsPenInfo(const wxColour& colour = wxColour(),
-		wxDouble width = 1.0,
-		wxPenStyle style = wxPENSTYLE_SOLID)
-		: wxPenInfoBase<wxGraphicsPenInfo>(colour, style)
+	explicit KaiGraphicsPenInfo(const KaiColour& colour = KaiColour(),
+		KaiDouble width = 1.0,
+		KaiPenStyle style = KaiPENSTYLE_SOLID)
+		: KaiPenInfoBase<KaiGraphicsPenInfo>(colour, style)
 	{
 		m_width = width;
-		m_gradientType = wxGRADIENT_NONE;
+		m_gradientType = KaiGRADIENT_NONE;
 	}
 
 	// Setters
 
-	wxGraphicsPenInfo& Width(wxDouble width)
+	KaiGraphicsPenInfo& Width(KaiDouble width)
 	{
 		m_width = width; return *this;
 	}
 
-	wxGraphicsPenInfo&
-		LinearGradient(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2,
-		const wxColour& c1, const wxColour& c2,
-		wxD2DMatrixData *  matrix = nullptr)
+	KaiGraphicsPenInfo&
+		LinearGradient(KaiDouble x1, KaiDouble y1, KaiDouble x2, KaiDouble y2,
+		const KaiColour& c1, const KaiColour& c2,
+		KaiD2DMatrixData *  matrix = nullptr)
 	{
-		m_gradientType = wxGRADIENT_LINEAR;
+		m_gradientType = KaiGRADIENT_LINEAR;
 		m_x1 = x1;
 		m_y1 = y1;
 		m_x2 = x2;
@@ -2663,12 +2603,12 @@ public:
 		return *this;
 	}
 
-	wxGraphicsPenInfo&
-		LinearGradient(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2,
-		const wxGraphicsGradientStops& stops,
-		wxD2DMatrixData *  matrix = nullptr)
+	KaiGraphicsPenInfo&
+		LinearGradient(KaiDouble x1, KaiDouble y1, KaiDouble x2, KaiDouble y2,
+		const KaiGraphicsGradientStops& stops,
+		KaiD2DMatrixData *  matrix = nullptr)
 	{
-		m_gradientType = wxGRADIENT_LINEAR;
+		m_gradientType = KaiGRADIENT_LINEAR;
 		m_x1 = x1;
 		m_y1 = y1;
 		m_x2 = x2;
@@ -2678,13 +2618,13 @@ public:
 		return *this;
 	}
 
-	wxGraphicsPenInfo&
-		RadialGradient(wxDouble startX, wxDouble startY,
-		wxDouble endX, wxDouble endY, wxDouble radius,
-		const wxColour& oColor, const wxColour& cColor,
-		wxD2DMatrixData * matrix = nullptr)
+	KaiGraphicsPenInfo&
+		RadialGradient(KaiDouble startX, KaiDouble startY,
+		KaiDouble endX, KaiDouble endY, KaiDouble radius,
+		const KaiColour& oColor, const KaiColour& cColor,
+		KaiD2DMatrixData * matrix = nullptr)
 	{
-		m_gradientType = wxGRADIENT_RADIAL;
+		m_gradientType = KaiGRADIENT_RADIAL;
 		m_x1 = startX;
 		m_y1 = startY;
 		m_x2 = endX;
@@ -2696,13 +2636,13 @@ public:
 		return *this;
 	}
 
-	wxGraphicsPenInfo&
-		RadialGradient(wxDouble startX, wxDouble startY,
-		wxDouble endX, wxDouble endY,
-		wxDouble radius, const wxGraphicsGradientStops& stops,
-		wxD2DMatrixData * matrix = nullptr)
+	KaiGraphicsPenInfo&
+		RadialGradient(KaiDouble startX, KaiDouble startY,
+		KaiDouble endX, KaiDouble endY,
+		KaiDouble radius, const KaiGraphicsGradientStops& stops,
+		KaiD2DMatrixData * matrix = nullptr)
 	{
-		m_gradientType = wxGRADIENT_RADIAL;
+		m_gradientType = KaiGRADIENT_RADIAL;
 		m_x1 = startX;
 		m_y1 = startY;
 		m_x2 = endX;
@@ -2715,39 +2655,39 @@ public:
 
 	// Accessors
 
-	wxDouble GetWidth() const { return m_width; }
-	wxGradientType GetGradientType() const { return m_gradientType; }
-	wxDouble GetX1() const { return m_x1; }
-	wxDouble GetY1() const { return m_y1; }
-	wxDouble GetX2() const { return m_x2; }
-	wxDouble GetY2() const { return m_y2; }
-	wxDouble GetStartX() const { return m_x1; }
-	wxDouble GetStartY() const { return m_y1; }
-	wxDouble GetEndX() const { return m_x2; }
-	wxDouble GetEndY() const { return m_y2; }
-	wxDouble GetRadius() const { return m_radius; }
-	const wxGraphicsGradientStops& GetStops() const { return m_stops; }
-	wxD2DMatrixData * GetMatrix() const { return m_matrix; }
+	KaiDouble GetWidth() const { return m_width; }
+	KaiGradientType GetGradientType() const { return m_gradientType; }
+	KaiDouble GetX1() const { return m_x1; }
+	KaiDouble GetY1() const { return m_y1; }
+	KaiDouble GetX2() const { return m_x2; }
+	KaiDouble GetY2() const { return m_y2; }
+	KaiDouble GetStartX() const { return m_x1; }
+	KaiDouble GetStartY() const { return m_y1; }
+	KaiDouble GetEndX() const { return m_x2; }
+	KaiDouble GetEndY() const { return m_y2; }
+	KaiDouble GetRadius() const { return m_radius; }
+	const KaiGraphicsGradientStops& GetStops() const { return m_stops; }
+	KaiD2DMatrixData * GetMatrix() const { return m_matrix; }
 
 private:
-	wxDouble m_width;
-	wxGradientType m_gradientType;
-	wxDouble m_x1, m_y1, m_x2, m_y2; // also used for m_xo, m_yo, m_xc, m_yc
-	wxDouble m_radius;
-	wxGraphicsGradientStops m_stops;
-	wxD2DMatrixData * m_matrix = nullptr;
+	KaiDouble m_width;
+	KaiGradientType m_gradientType;
+	KaiDouble m_x1, m_y1, m_x2, m_y2; // also used for m_xo, m_yo, m_xc, m_yc
+	KaiDouble m_radius;
+	KaiGraphicsGradientStops m_stops;
+	KaiD2DMatrixData * m_matrix = nullptr;
 };
 
 //-----------------------------------------------------------------------------
-// wxD2DPenData declaration
+// KaiD2DPenData declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DPenData : /*public GraphicsObjectRefData, */public wxD2DManagedGraphicsData
+class KaiD2DPenData : /*public GraphicsObjectRefData, */public KaiD2DManagedGraphicsData
 {
 public:
-	wxD2DPenData(wxD2DRenderer* renderer,
+	KaiD2DPenData(KaiD2DRenderer* renderer,
 				 ID2D1Factory* direct2dFactory,
-				 const wxGraphicsPenInfo& info);
+				 const KaiGraphicsPenInfo& info);
 
 
 	void CreateStrokeStyle(ID2D1Factory* const direct2dfactory);
@@ -2758,7 +2698,7 @@ public:
 
 	ID2D1StrokeStyle* GetStrokeStyle();
 
-	wxD2DManagedObject* GetManagedObject() override
+	KaiD2DManagedObject* GetManagedObject() override
 	{
 		return m_stippleBrush->GetManagedObject();
 	}
@@ -2766,14 +2706,14 @@ public:
 private:
 	// We store the original pen description for later when we need to recreate
 	// the device-dependent resources.
-	const wxGraphicsPenInfo m_penInfo;
+	const KaiGraphicsPenInfo m_penInfo;
 
 	// A stroke style is a device-independent resource.
 	// Describes the caps, miter limit, line join, and dash information.
-	wxCOMPtr<ID2D1StrokeStyle> m_strokeStyle;
+	KaiCOMPtr<ID2D1StrokeStyle> m_strokeStyle;
 
 	// Drawing outlines with Direct2D requires a brush for the color or stipple.
-	wxSharedPtr<wxD2DBrushData> m_stippleBrush;
+	KaiSharedPtr<KaiD2DBrushData> m_stippleBrush;
 
 	// The width of the stroke
 	FLOAT m_width;
@@ -2782,45 +2722,45 @@ private:
 
 
 //-----------------------------------------------------------------------------
-// wxD2DPenData implementation
+// KaiD2DPenData implementation
 //-----------------------------------------------------------------------------
 
-wxD2DPenData::wxD2DPenData(
-	wxD2DRenderer* renderer,
+KaiD2DPenData::KaiD2DPenData(
+	KaiD2DRenderer* renderer,
 	ID2D1Factory* direct2dFactory,
-	const wxGraphicsPenInfo& info)
+	const KaiGraphicsPenInfo& info)
 	: /*GraphicsObjectRefData(renderer),*/
 	  m_penInfo(info),
 	  m_width(info.GetWidth())
 {
 	CreateStrokeStyle(direct2dFactory);
 
-	wxBrush strokeBrush;
+	KaiBrush strokeBrush;
 
-	if (m_penInfo.GetStyle() == wxPENSTYLE_STIPPLE)
+	if (m_penInfo.GetStyle() == KaiPENSTYLE_STIPPLE)
 	{
 		strokeBrush.SetStipple(m_penInfo.GetStipple());
-		strokeBrush.SetStyle(wxBRUSHSTYLE_STIPPLE);
+		strokeBrush.SetStyle(KaiBRUSHSTYLE_STIPPLE);
 	}
-	else if(wxIsHatchPenStyle(m_penInfo.GetStyle()))
+	else if(KaiIsHatchPenStyle(m_penInfo.GetStyle()))
 	{
-		strokeBrush.SetStyle(wxConvertPenStyleToBrushStyle(m_penInfo.GetStyle()));
+		strokeBrush.SetStyle(KaiConvertPenStyleToBrushStyle(m_penInfo.GetStyle()));
 		strokeBrush.SetColour(m_penInfo.GetColour());
 	}
 	else
 	{
 		strokeBrush.SetColour(m_penInfo.GetColour());
-		strokeBrush.SetStyle(wxBRUSHSTYLE_SOLID);
+		strokeBrush.SetStyle(KaiBRUSHSTYLE_SOLID);
 	}
 
 	switch ( m_penInfo.GetGradientType() )
 	{
-	case wxGRADIENT_NONE:
-		m_stippleBrush = new wxD2DBrushData(renderer, strokeBrush);
+	case KaiGRADIENT_NONE:
+		m_stippleBrush = new KaiD2DBrushData(renderer, strokeBrush);
 		break;
 
-	case wxGRADIENT_LINEAR:
-		m_stippleBrush = new wxD2DBrushData(renderer);
+	case KaiGRADIENT_LINEAR:
+		m_stippleBrush = new KaiD2DBrushData(renderer);
 		m_stippleBrush->CreateLinearGradientBrush(
 								m_penInfo.GetX1(), m_penInfo.GetY1(),
 								m_penInfo.GetX2(), m_penInfo.GetY2(),
@@ -2828,8 +2768,8 @@ wxD2DPenData::wxD2DPenData(
 								m_penInfo.GetMatrix());
 		break;
 
-	case wxGRADIENT_RADIAL:
-		m_stippleBrush = new wxD2DBrushData(renderer);
+	case KaiGRADIENT_RADIAL:
+		m_stippleBrush = new KaiD2DBrushData(renderer);
 		m_stippleBrush->CreateRadialGradientBrush(
 								m_penInfo.GetStartX(), m_penInfo.GetStartY(),
 								m_penInfo.GetEndX(), m_penInfo.GetEndY(),
@@ -2841,11 +2781,11 @@ wxD2DPenData::wxD2DPenData(
 }
 
 
-void wxD2DPenData::CreateStrokeStyle(ID2D1Factory* const direct2dfactory)
+void KaiD2DPenData::CreateStrokeStyle(ID2D1Factory* const direct2dfactory)
 {
-	D2D1_CAP_STYLE capStyle = wxD2DConvertPenCap(m_penInfo.GetCap());
-	D2D1_LINE_JOIN lineJoin = wxD2DConvertPenJoin(m_penInfo.GetJoin());
-	D2D1_DASH_STYLE dashStyle = wxD2DConvertPenStyle(m_penInfo.GetStyle());
+	D2D1_CAP_STYLE capStyle = KaiD2DConvertPenCap(m_penInfo.GetCap());
+	D2D1_LINE_JOIN lineJoin = KaiD2DConvertPenJoin(m_penInfo.GetJoin());
+	D2D1_DASH_STYLE dashStyle = KaiD2DConvertPenStyle(m_penInfo.GetStyle());
 
 	int dashCount = 0;
 	FLOAT* dashes = nullptr;
@@ -2870,74 +2810,74 @@ void wxD2DPenData::CreateStrokeStyle(ID2D1Factory* const direct2dfactory)
 	delete[] dashes;
 }
 
-ID2D1Brush* wxD2DPenData::GetBrush()
+ID2D1Brush* KaiD2DPenData::GetBrush()
 {
 	return m_stippleBrush->GetBrush();
 }
 
-FLOAT wxD2DPenData::GetWidth()
+FLOAT KaiD2DPenData::GetWidth()
 {
 	return m_width;
 }
 
-ID2D1StrokeStyle* wxD2DPenData::GetStrokeStyle()
+ID2D1StrokeStyle* KaiD2DPenData::GetStrokeStyle()
 {
 	return m_strokeStyle;
 }
 
-//wxD2DPenData* wxGetD2DPenData(const wxGraphicsPen& pen)
+//KaiD2DPenData* KaiGetD2DPenData(const KaiGraphicsPen& pen)
 //{
-//    return static_cast<wxD2DPenData*>(pen.GetGraphicsData());
+//    return static_cast<KaiD2DPenData*>(pen.GetGraphicsData());
 //}
 
-class wxD2DFontData/* : public GraphicsObjectRefData*/// : public wxD2DManagedGraphicsData
+class KaiD2DFontData/* : public GraphicsObjectRefData*/// : public KaiD2DManagedGraphicsData
 {
 public:
-	wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color);
+	KaiD2DFontData(KaiD2DRenderer* renderer, const KaiFont& font, const KaiRealPoint& dpi, const KaiColor& color);
 
-	wxCOMPtr<IDWriteTextLayout> CreateTextLayout(const wxString& text) const;
+	KaiCOMPtr<IDWriteTextLayout> CreateTextLayout(const KaiString& text) const;
 
-	wxD2DBrushData& GetBrushData() { return m_brushData; }
+	KaiD2DBrushData& GetBrushData() { return m_brushData; }
 
-	wxCOMPtr<IDWriteTextFormat> GetTextFormat() const { return m_textFormat; }
+	KaiCOMPtr<IDWriteTextFormat> GetTextFormat() const { return m_textFormat; }
 
-	wxCOMPtr<IDWriteFont> GetFont() { return m_font; }
+	KaiCOMPtr<IDWriteFont> GetFont() { return m_font; }
 
 private:
 	// The native, device-independent font object
-	wxCOMPtr<IDWriteFont> m_font;
+	KaiCOMPtr<IDWriteFont> m_font;
 
 	// The native, device-independent font object
-	wxCOMPtr<IDWriteTextFormat> m_textFormat;
+	KaiCOMPtr<IDWriteTextFormat> m_textFormat;
 
 	// We use a color brush to render the font
-	wxD2DBrushData m_brushData;
+	KaiD2DBrushData m_brushData;
 
 	bool m_underlined;
 
 	bool m_strikethrough;
 };
 
-wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const wxRealPoint& dpi, const wxColor& color) :
-	/*GraphicsObjectRefData(renderer), */m_brushData(renderer, wxBrush(color)),
+KaiD2DFontData::KaiD2DFontData(KaiD2DRenderer* renderer, const KaiFont& font, const KaiRealPoint& dpi, const KaiColor& color) :
+	/*GraphicsObjectRefData(renderer), */m_brushData(renderer, KaiBrush(color)),
 	m_underlined(font.GetUnderlined()), m_strikethrough(font.GetStrikethrough())
 {
 	HRESULT hr;
 
-	wxCOMPtr<IDWriteGdiInterop> gdiInterop;
-	hr = wxDWriteFactory()->GetGdiInterop(&gdiInterop);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCOMPtr<IDWriteGdiInterop> gdiInterop;
+	hr = KaiDWriteFactory()->GetGdiInterop(&gdiInterop);
+	KaiCHECK_HRESULT_RET(hr);
 
 	LOGFONTW logfont;
 	int n = GetObjectW(font.GetHFONT(), sizeof(logfont), &logfont);
-	wxCHECK_RET( n > 0, wxS("Failed to obtain font info") );
+	KaiCHECK_RET( n > 0, KaiS("Failed to obtain font info") );
 
 	// Ensure the LOGFONT object contains the correct font face name
 	if (logfont.lfFaceName[0] == L'\0')
 	{
 		// The length of the font name must not exceed LF_FACESIZE TCHARs,
 		// including the terminating nullptr.
-		wxString name = font.GetFaceName().Mid(0, WXSIZEOF(logfont.lfFaceName)-1);
+		KaiString name = font.GetFaceName().Mid(0, WXSIZEOF(logfont.lfFaceName)-1);
 		for (unsigned int i = 0; i < name.Length(); ++i)
 		{
 			logfont.lfFaceName[i] = name.GetChar(i);
@@ -2952,30 +2892,30 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 		return;
 	}
 
-	wxCHECK_RET( SUCCEEDED(hr),
-				 wxString::Format("Failed to create font '%s' (HRESULT = %x)", logfont.lfFaceName, hr) );
+	KaiCHECK_RET( SUCCEEDED(hr),
+				 KaiString::Format("Failed to create font '%s' (HRESULT = %x)", logfont.lfFaceName, hr) );
 
-	wxCOMPtr<IDWriteFontFamily> fontFamily;
+	KaiCOMPtr<IDWriteFontFamily> fontFamily;
 	hr = m_font->GetFontFamily(&fontFamily);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
-	wxCOMPtr<IDWriteLocalizedStrings> familyNames;
+	KaiCOMPtr<IDWriteLocalizedStrings> familyNames;
 	hr = fontFamily->GetFamilyNames(&familyNames);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	UINT32 length;
 	hr = familyNames->GetStringLength(0, &length);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	wchar_t* name = new wchar_t[length+1];
 	hr = familyNames->GetString(0, name, length+1);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	FLOAT fontSize = (FLOAT)(!dpi.y
 		? font.GetPixelSize().GetHeight()
 		: (font.GetPointSize()/*.GetFractionalPointSize()*/ * dpi.y / 72.0f));
 
-	hr = wxDWriteFactory()->CreateTextFormat(
+	hr = KaiDWriteFactory()->CreateTextFormat(
 		name,
 		nullptr,
 		m_font->GetWeight(),
@@ -2987,26 +2927,26 @@ wxD2DFontData::wxD2DFontData(wxD2DRenderer* renderer, const wxFont& font, const 
 
 	delete[] name;
 
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 }
 
-wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text) const
+KaiCOMPtr<IDWriteTextLayout> KaiD2DFontData::CreateTextLayout(const KaiString& text) const
 {
 	static const FLOAT MAX_WIDTH = FLT_MAX;
 	static const FLOAT MAX_HEIGHT = FLT_MAX;
 
 	HRESULT hr;
 
-	wxCOMPtr<IDWriteTextLayout> textLayout;
+	KaiCOMPtr<IDWriteTextLayout> textLayout;
 
-	hr = wxDWriteFactory()->CreateTextLayout(
+	hr = KaiDWriteFactory()->CreateTextLayout(
 		text.c_str(),
 		text.length(),
 		m_textFormat,
 		MAX_WIDTH,
 		MAX_HEIGHT,
 		&textLayout);
-	wxCHECK2_HRESULT_RET(hr, wxCOMPtr<IDWriteTextLayout>(nullptr));
+	KaiCHECK2_HRESULT_RET(hr, KaiCOMPtr<IDWriteTextLayout>(nullptr));
 
 	DWRITE_TEXT_RANGE textRange = { 0, (UINT32) text.length() };
 
@@ -3023,14 +2963,14 @@ wxCOMPtr<IDWriteTextLayout> wxD2DFontData::CreateTextLayout(const wxString& text
 	return textLayout;
 }
 
-//wxD2DFontData* wxGetD2DFontData(const wxGraphicsFont& font)
+//KaiD2DFontData* KaiGetD2DFontData(const KaiGraphicsFont& font)
 //{
-//    return static_cast<wxD2DFontData*>(font.GetGraphicsData());
+//    return static_cast<KaiD2DFontData*>(font.GetGraphicsData());
 //}
 
 // A render target resource holder exposes methods relevant
 // for native render targets such as resize
-class wxD2DRenderTargetResourceHolder : public wxD2DResourceHolder<ID2D1RenderTarget>
+class KaiD2DRenderTargetResourceHolder : public KaiD2DResourceHolder<ID2D1RenderTarget>
 {
 public:
 	// This method is called when an external event signals the underlying DC
@@ -3050,15 +2990,15 @@ public:
 	// render target holders shouldn't need to override it, since none of the
 	// 1.0 render targets offer a better version of this method.
 	virtual void DrawBitmap(ID2D1Bitmap* bitmap, D2D1_POINT_2F offset,
-		D2D1_RECT_F imageRectangle, wxInterpolationQuality interpolationQuality,
-		wxCompositionMode WXUNUSED(compositionMode))
+		D2D1_RECT_F imageRectangle, KaiInterpolationQuality interpolationQuality,
+		KaiCompositionMode WXUNUSED(compositionMode))
 	{
 		D2D1_RECT_F destinationRectangle = D2D1::RectF(offset.x, offset.y, offset.x + imageRectangle.right, offset.y + imageRectangle.bottom);
 		m_nativeResource->DrawBitmap(
 			bitmap,
 			destinationRectangle,
 			1.0f,
-			wxD2DConvertBitmapInterpolationMode(interpolationQuality),
+			KaiD2DConvertBitmapInterpolationMode(interpolationQuality),
 			imageRectangle);
 	}
 
@@ -3072,15 +3012,15 @@ public:
 	}
 
 	// Composition is not supported at in D2D 1.0, and we only allow for:
-	// wxCOMPOSITION_DEST - which is essentially a no-op and is handled
+	// KaiCOMPOSITION_DEST - which is essentially a no-op and is handled
 	//                      externally by preventing any draw calls.
-	// wxCOMPOSITION_OVER - which copies the source over the destination using
+	// KaiCOMPOSITION_OVER - which copies the source over the destination using
 	//                      alpha blending. This is the default way D2D 1.0
 	//                      draws images.
-	virtual bool SetCompositionMode(wxCompositionMode compositionMode)
+	virtual bool SetCompositionMode(KaiCompositionMode compositionMode)
 	{
-		if (compositionMode == wxCOMPOSITION_DEST ||
-			compositionMode == wxCOMPOSITION_OVER)
+		if (compositionMode == KaiCOMPOSITION_DEST ||
+			compositionMode == KaiCOMPOSITION_OVER)
 		{
 			// There's nothing we can do but notify the caller the composition
 			// mode is supported
@@ -3091,11 +3031,11 @@ public:
 	}
 };
 
-#if wxUSE_IMAGE
-class wxD2DImageRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
+#if KaiUSE_IMAGE
+class KaiD2DImageRenderTargetResourceHolder : public KaiD2DRenderTargetResourceHolder
 {
 public:
-	wxD2DImageRenderTargetResourceHolder(wxImage* image, ID2D1Factory* factory) :
+	KaiD2DImageRenderTargetResourceHolder(KaiImage* image, ID2D1Factory* factory) :
 		m_resultImage(image), m_factory(factory)
 	{
 	}
@@ -3107,7 +3047,7 @@ public:
 		return hr;
 	}
 
-	~wxD2DImageRenderTargetResourceHolder()
+	~KaiD2DImageRenderTargetResourceHolder()
 	{
 		FlushRenderTargetToImage();
 	}
@@ -3118,13 +3058,13 @@ protected:
 		HRESULT hr;
 
 		// Create a compatible WIC Bitmap
-		hr = wxWICImagingFactory()->CreateBitmap(
+		hr = KaiWICImagingFactory()->CreateBitmap(
 			m_resultImage->GetWidth(),
 			m_resultImage->GetHeight(),
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapCacheOnDemand,
 			&m_wicBitmap);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Copy contents of source image to the WIC bitmap.
 		const int width = m_resultImage->GetWidth();
@@ -3132,14 +3072,14 @@ protected:
 		WICRect rcLock = { 0, 0, width, height };
 		IWICBitmapLock *pLock = nullptr;
 		hr = m_wicBitmap->Lock(&rcLock, WICBitmapLockWrite, &pLock);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		UINT rowStride = 0;
 		hr = pLock->GetStride(&rowStride);
 		if ( FAILED(hr) )
 		{
 			pLock->Release();
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 			return;
 		}
 
@@ -3149,7 +3089,7 @@ protected:
 		if ( FAILED(hr) )
 		{
 			pLock->Release();
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 			return;
 		}
 
@@ -3183,7 +3123,7 @@ protected:
 				D2D1_RENDER_TARGET_TYPE_SOFTWARE,
 				D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)),
 			&m_nativeResource);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 
 private:
@@ -3195,14 +3135,14 @@ private:
 		WICRect rcLock = { 0, 0, width, height };
 		IWICBitmapLock *pLock = nullptr;
 		HRESULT hr = m_wicBitmap->Lock(&rcLock, WICBitmapLockRead, &pLock);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		UINT rowStride = 0;
 		hr = pLock->GetStride(&rowStride);
 		if ( FAILED(hr) )
 		{
 			pLock->Release();
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 			return;
 		}
 
@@ -3212,7 +3152,7 @@ private:
 		if ( FAILED(hr) )
 		{
 			pLock->Release();
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 			return;
 		}
 
@@ -3221,12 +3161,12 @@ private:
 		if ( FAILED(hr) )
 		{
 			pLock->Release();
-			wxFAILED_HRESULT_MSG(hr);
+			KaiFAILED_HRESULT_MSG(hr);
 			return;
 		}
-		wxASSERT_MSG( pixelFormat == GUID_WICPixelFormat32bppPBGRA ||
+		KaiASSERT_MSG( pixelFormat == GUID_WICPixelFormat32bppPBGRA ||
 				  pixelFormat == GUID_WICPixelFormat32bppBGR,
-				  wxS("Unsupported pixel format") );
+				  KaiS("Unsupported pixel format") );
 
 		// Only premultiplied ARGB bitmaps are supported.
 		const bool hasAlpha = pixelFormat == GUID_WICPixelFormat32bppPBGRA;
@@ -3238,7 +3178,7 @@ private:
 			BYTE *pPixByte = pBmpBuffer;
 			for ( int x = 0; x < width; x++ )
 			{
-				wxPBGRAColor color = wxPBGRAColor(pPixByte);
+				KaiPBGRAColor color = KaiPBGRAColor(pPixByte);
 				unsigned char a =  hasAlpha ? color.a : 255;
 				// Undo premultiplication for ARGB bitmap
 				*destRGB++ = (a > 0 && a < 255) ? ( color.r * 255 ) / a : color.r;
@@ -3257,19 +3197,19 @@ private:
    }
 
 private:
-	wxImage* m_resultImage;
-	wxCOMPtr<IWICBitmap> m_wicBitmap;
+	KaiImage* m_resultImage;
+	KaiCOMPtr<IWICBitmap> m_wicBitmap;
 
 	ID2D1Factory* m_factory;
 };
-#endif // wxUSE_IMAGE
+#endif // KaiUSE_IMAGE
 
-class wxD2DHwndRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
+class KaiD2DHwndRenderTargetResourceHolder : public KaiD2DRenderTargetResourceHolder
 {
 public:
 	typedef ID2D1HwndRenderTarget* ImplementationType;
 
-	wxD2DHwndRenderTargetResourceHolder(HWND hwnd, ID2D1Factory* factory) :
+	KaiD2DHwndRenderTargetResourceHolder(HWND hwnd, ID2D1Factory* factory) :
 		m_hwnd(hwnd), m_factory(factory)
 	{
 	}
@@ -3294,7 +3234,7 @@ public:
 protected:
 	void DoAcquireResource() override
 	{
-		wxCOMPtr<ID2D1HwndRenderTarget> renderTarget;
+		KaiCOMPtr<ID2D1HwndRenderTarget> renderTarget;
 
 		HRESULT result;
 
@@ -3312,7 +3252,7 @@ protected:
 
 		if (FAILED(result))
 		{
-			wxFAIL_MSG("Could not create Direct2D render target");
+			KaiFAIL_MSG("Could not create Direct2D render target");
 		}
 
 		renderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
@@ -3333,26 +3273,26 @@ private:
 	ID2D1Factory* m_factory;
 };
 
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-class wxD2DDeviceContextResourceHolder : public wxD2DRenderTargetResourceHolder
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+class KaiD2DDeviceContextResourceHolder : public KaiD2DRenderTargetResourceHolder
 {
 public:
-	wxD2DDeviceContextResourceHolder(ID2D1Factory* factory, HWND hwnd) :
+	KaiD2DDeviceContextResourceHolder(ID2D1Factory* factory, HWND hwnd) :
 		m_factory(nullptr), m_hwnd(hwnd)
 	{
 		HRESULT hr = factory->QueryInterface(IID_ID2D1Factory1, (void**)&m_factory);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 
 	void DrawBitmap(ID2D1Bitmap* image, D2D1_POINT_2F offset,
-		D2D1_RECT_F imageRectangle, wxInterpolationQuality interpolationQuality,
-		wxCompositionMode compositionMode) override
+		D2D1_RECT_F imageRectangle, KaiInterpolationQuality interpolationQuality,
+		KaiCompositionMode compositionMode) override
 	{
 		m_context->DrawImage(image,
 			offset,
 			imageRectangle,
-			wxD2DConvertInterpolationMode(interpolationQuality),
-			wxD2DConvertCompositionMode(compositionMode));
+			KaiD2DConvertInterpolationMode(interpolationQuality),
+			KaiD2DConvertCompositionMode(compositionMode));
 	}
 
 	HRESULT Flush() override
@@ -3390,8 +3330,8 @@ protected:
 		};
 
 		// Create the DX11 API device object, and get a corresponding context.
-		wxCOMPtr<ID3D11Device> device;
-		wxCOMPtr<ID3D11DeviceContext> context;
+		KaiCOMPtr<ID3D11Device> device;
+		KaiCOMPtr<ID3D11DeviceContext> context;
 
 		hr = D3D11CreateDevice(
 			nullptr,                    // specify null to use the default adapter
@@ -3404,21 +3344,21 @@ protected:
 			&device,                    // returns the Direct3D device created
 			&m_featureLevel,            // returns feature level of device created
 			&context);                  // returns the device immediate context
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Obtain the underlying DXGI device of the Direct3D11 device.
 		hr = device->QueryInterface(IID_IDXGIDevice, (void**)&m_dxgiDevice);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Obtain the Direct2D device for 2-D rendering.
 		hr = m_factory->CreateDevice(m_dxgiDevice, &m_device);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Get Direct2D device's corresponding device context object.
 		hr = m_device->CreateDeviceContext(
 			D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
 			&m_context);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		m_nativeResource = m_context;
 
@@ -3445,14 +3385,14 @@ private:
 		swapChainDesc.Flags = 0;
 
 		// Identify the physical adapter (GPU or card) this device is runs on.
-		wxCOMPtr<IDXGIAdapter> dxgiAdapter;
+		KaiCOMPtr<IDXGIAdapter> dxgiAdapter;
 		hr = m_dxgiDevice->GetAdapter(&dxgiAdapter);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Get the factory object that created the DXGI device.
-		wxCOMPtr<IDXGIFactory2> dxgiFactory;
+		KaiCOMPtr<IDXGIFactory2> dxgiFactory;
 		hr = dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Get the final swap chain for this window from the DXGI factory.
 		hr = dxgiFactory->CreateSwapChainForHwnd(
@@ -3462,16 +3402,16 @@ private:
 			nullptr,    // allow on all displays
 			nullptr,
 			&m_swapChain);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Ensure that DXGI doesn't queue more than one frame at a time.
 		hr = m_dxgiDevice->SetMaximumFrameLatency(1);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Get the backbuffer for this window which is be the final 3D render target.
-		wxCOMPtr<ID3D11Texture2D> backBuffer;
+		KaiCOMPtr<ID3D11Texture2D> backBuffer;
 		hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(&backBuffer));
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		FLOAT dpiX, dpiY;
 		m_factory->GetDesktopDpi(&dpiX, &dpiY);
@@ -3485,22 +3425,22 @@ private:
 			dpiX, dpiY);
 
 		// Direct2D needs the dxgi version of the backbuffer surface pointer.
-		wxCOMPtr<IDXGISurface> dxgiBackBuffer;
+		KaiCOMPtr<IDXGISurface> dxgiBackBuffer;
 		hr = m_swapChain->GetBuffer(0, IID_PPV_ARGS(&dxgiBackBuffer));
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Get a D2D surface from the DXGI back buffer to use as the D2D render target.
 		hr = m_context->CreateBitmapFromDxgiSurface(
 			dxgiBackBuffer.get(),
 			&bitmapProperties,
 			&m_targetBitmap);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// Now we can set the Direct2D render target.
 		m_context->SetTarget(m_targetBitmap);
 	}
 
-	~wxD2DDeviceContextResourceHolder()
+	~KaiD2DDeviceContextResourceHolder()
 	{
 		DXGI_PRESENT_PARAMETERS params = { 0 };
 		m_swapChain->Present1(1, 0, &params);
@@ -3512,18 +3452,18 @@ private:
 	HWND m_hwnd;
 
 	D3D_FEATURE_LEVEL m_featureLevel;
-	wxCOMPtr<IDXGIDevice1> m_dxgiDevice;
-	wxCOMPtr<ID2D1Device> m_device;
-	wxCOMPtr<ID2D1DeviceContext> m_context;
-	wxCOMPtr<ID2D1Bitmap1> m_targetBitmap;
-	wxCOMPtr<IDXGISwapChain1> m_swapChain;
+	KaiCOMPtr<IDXGIDevice1> m_dxgiDevice;
+	KaiCOMPtr<ID2D1Device> m_device;
+	KaiCOMPtr<ID2D1DeviceContext> m_context;
+	KaiCOMPtr<ID2D1Bitmap1> m_targetBitmap;
+	KaiCOMPtr<IDXGISwapChain1> m_swapChain;
 };
 #endif
 
-class wxD2DDCRenderTargetResourceHolder : public wxD2DRenderTargetResourceHolder
+class KaiD2DDCRenderTargetResourceHolder : public KaiD2DRenderTargetResourceHolder
 {
 public:
-	wxD2DDCRenderTargetResourceHolder(ID2D1Factory* factory, HDC hdc, D2D1_ALPHA_MODE alphaMode) :
+	KaiD2DDCRenderTargetResourceHolder(ID2D1Factory* factory, HDC hdc, D2D1_ALPHA_MODE alphaMode) :
 		m_factory(factory), m_hdc(hdc), m_alphaMode(alphaMode)
 	{
 	}
@@ -3531,7 +3471,7 @@ public:
 protected:
 	void DoAcquireResource() override
 	{
-		wxCOMPtr<ID2D1DCRenderTarget> renderTarget;
+		KaiCOMPtr<ID2D1DCRenderTarget> renderTarget;
 		D2D1_RENDER_TARGET_PROPERTIES renderTargetProperties = D2D1::RenderTargetProperties(
 			D2D1_RENDER_TARGET_TYPE_DEFAULT,
 			D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, m_alphaMode));
@@ -3539,17 +3479,17 @@ protected:
 		HRESULT hr = m_factory->CreateDCRenderTarget(
 			&renderTargetProperties,
 			&renderTarget);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
 		// We want draw on the entire device area.
 		// GetClipBox() retrieves logical size of DC
 		// what is what we need to pass to BindDC.
 		RECT r;
 		int status = ::GetClipBox(m_hdc, &r);
-		wxCHECK_RET( status != ERROR, wxS("Error retrieving DC dimensions") );
+		KaiCHECK_RET( status != ERROR, KaiS("Error retrieving DC dimensions") );
 
 		hr = renderTarget->BindDC(m_hdc, &r);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 		renderTarget->SetTransform(
 					   D2D1::Matrix3x2F::Translation(-r.left, -r.top));
 
@@ -3565,84 +3505,84 @@ private:
 // The null context has no state of its own and does nothing.
 // It is only used as a base class for the lightweight
 // measuring context. The measuring context cannot inherit from
-// the default implementation wxD2DContext, because some methods
-// from wxD2DContext require the presence of a "context"
+// the default implementation KaiD2DContext, because some methods
+// from KaiD2DContext require the presence of a "context"
 // (render target) in order to acquire various device-dependent
 // resources. Without a proper context, those methods would fail.
 // The methods implemented in the null context are fundamentally no-ops.
-class wxNullContext : public GraphicsContext
+class KaiNullContext : public GraphicsContext
 {
 public:
-	wxNullContext(wxD2DRenderer* _renderer) : GraphicsContext(){ renderer = _renderer; }
-	~wxNullContext(){ wxDELETE(m_font); }
-	void GetTextExtent(const wxString&, wxDouble*, wxDouble*, wxDouble*, wxDouble*) const {}
-	void GetPartialTextExtents(const wxString&, wxArrayDouble&) const {}
-	void Clip(const wxRegion&) {}
-	void Clip(wxDouble, wxDouble, wxDouble, wxDouble) {}
+	KaiNullContext(KaiD2DRenderer* _renderer) : GraphicsContext(){ renderer = _renderer; }
+	~KaiNullContext(){ KaiDELETE(m_font); }
+	void GetTextExtent(const KaiString&, KaiDouble*, KaiDouble*, KaiDouble*, KaiDouble*) const {}
+	void GetPartialTextExtents(const KaiString&, KaiArrayDouble&) const {}
+	void Clip(const KaiRegion&) {}
+	void Clip(KaiDouble, KaiDouble, KaiDouble, KaiDouble) {}
 	void ResetClip() {}
-	void GetClipBox(wxDouble*, wxDouble*, wxDouble*, wxDouble*) {}
+	void GetClipBox(KaiDouble*, KaiDouble*, KaiDouble*, KaiDouble*) {}
 	void* GetNativeContext() { return nullptr; }
-	bool SetAntialiasMode(wxAntialiasMode) { return false; }
-	bool SetInterpolationQuality(wxInterpolationQuality) { return false; }
-	bool SetCompositionMode(wxCompositionMode) { return false; }
-	void BeginLayer(wxDouble) {}
+	bool SetAntialiasMode(KaiAntialiasMode) { return false; }
+	bool SetInterpolationQuality(KaiInterpolationQuality) { return false; }
+	bool SetCompositionMode(KaiCompositionMode) { return false; }
+	void BeginLayer(KaiDouble) {}
 	void EndLayer() {}
-	void Translate(wxDouble, wxDouble) {}
-	void Scale(wxDouble, wxDouble) {}
-	void Rotate(wxDouble) {}
-	void ConcatTransform(const wxGraphicsMatrix&) {}
-	void SetTransform(const wxGraphicsMatrix&) {}
-	wxD2DMatrixData *GetTransform() const { return nullptr; }
-	void StrokePath(const wxGraphicsPath&) {}
-	void FillPath(const wxGraphicsPath&, wxPolygonFillMode) {}
-	void DrawBitmap(const wxGraphicsBitmap&, wxDouble, wxDouble, wxDouble, wxDouble) {}
-	void DrawBitmap(const wxBitmap&, wxDouble, wxDouble, wxDouble, wxDouble) {}
-	void DrawIcon(const wxIcon&, wxDouble, wxDouble, wxDouble, wxDouble) {}
+	void Translate(KaiDouble, KaiDouble) {}
+	void Scale(KaiDouble, KaiDouble) {}
+	void Rotate(KaiDouble) {}
+	void ConcatTransform(const KaiGraphicsMatrix&) {}
+	void SetTransform(const KaiGraphicsMatrix&) {}
+	KaiD2DMatrixData *GetTransform() const { return nullptr; }
+	void StrokePath(const KaiGraphicsPath&) {}
+	void FillPath(const KaiGraphicsPath&, KaiPolygonFillMode) {}
+	void DrawBitmap(const KaiGraphicsBitmap&, KaiDouble, KaiDouble, KaiDouble, KaiDouble) {}
+	void DrawBitmap(const KaiBitmap&, KaiDouble, KaiDouble, KaiDouble, KaiDouble) {}
+	void DrawIcon(const KaiIcon&, KaiDouble, KaiDouble, KaiDouble, KaiDouble) {}
 	void PushState() {}
 	void PopState() {}
 	void Flush() {}
-	void SetFont(const wxFont& font, const wxColour& col);
+	void SetFont(const KaiFont& font, const KaiColour& col);
 
 protected:
-	void DoDrawText(const wxString&, wxDouble, wxDouble) {}
-	wxD2DFontData *m_font = nullptr;
-	wxD2DRenderer *renderer;
+	void DoDrawText(const KaiString&, KaiDouble, KaiDouble) {}
+	KaiD2DFontData *m_font = nullptr;
+	KaiD2DRenderer *renderer;
 };
 
 
 
-class wxD2DMeasuringContext : public wxNullContext
+class KaiD2DMeasuringContext : public KaiNullContext
 {
 public:
-	wxD2DMeasuringContext(wxD2DRenderer* renderer) : wxNullContext(renderer) {}
+	KaiD2DMeasuringContext(KaiD2DRenderer* renderer) : KaiNullContext(renderer) {}
 
-	void GetTextExtent(const wxString& str, wxDouble* width, wxDouble* height, wxDouble* descent, wxDouble* externalLeading) const
+	void GetTextExtent(const KaiString& str, KaiDouble* width, KaiDouble* height, KaiDouble* descent, KaiDouble* externalLeading) const
 	{
 		GetTextExtent(m_font, str, width, height, descent, externalLeading);
 	}
 
-	void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const
+	void GetPartialTextExtents(const KaiString& text, KaiArrayDouble& widths) const
 	{
 		GetPartialTextExtents(m_font, text, widths);
 	}
 
-	static void GetPartialTextExtents(wxD2DFontData* fontData, const wxString& text, wxArrayDouble& widths)
+	static void GetPartialTextExtents(KaiD2DFontData* fontData, const KaiString& text, KaiArrayDouble& widths)
 	{
 		for (unsigned int i = 0; i < text.Length(); ++i)
 		{
-			wxDouble width;
+			KaiDouble width;
 			GetTextExtent(fontData, text.SubString(0, i), &width, nullptr, nullptr, nullptr);
 			widths.push_back(width);
 		}
 	}
 
-	static void GetTextExtent(wxD2DFontData* fontData, const wxString& str, wxDouble* width, wxDouble* height, wxDouble* descent, wxDouble* externalLeading)
+	static void GetTextExtent(KaiD2DFontData* fontData, const KaiString& str, KaiDouble* width, KaiDouble* height, KaiDouble* descent, KaiDouble* externalLeading)
 	{
 		if (!fontData)
 			return;
 
-		wxCOMPtr<IDWriteTextLayout> textLayout = fontData->CreateTextLayout(str);
-		wxCOMPtr<IDWriteFont> font = fontData->GetFont();
+		KaiCOMPtr<IDWriteTextLayout> textLayout = fontData->CreateTextLayout(str);
+		KaiCOMPtr<IDWriteFont> font = fontData->GetFont();
 
 		DWRITE_TEXT_METRICS textMetrics;
 		textLayout->GetMetrics(&textMetrics);
@@ -3656,70 +3596,70 @@ public:
 		if (height != nullptr) *height = textMetrics.height;
 
 		if (descent != nullptr) *descent = fontMetrics.descent * ratio;
-		if (externalLeading != nullptr) *externalLeading = wxMax(0.0f, (fontMetrics.ascent + fontMetrics.descent) * ratio - textMetrics.height);
+		if (externalLeading != nullptr) *externalLeading = KaiMax(0.0f, (fontMetrics.ascent + fontMetrics.descent) * ratio - textMetrics.height);
 	}
 };
 
 
 
 //-----------------------------------------------------------------------------
-// wxD2DContext declaration
+// KaiD2DContext declaration
 //-----------------------------------------------------------------------------
 
-class wxD2DContext : public GraphicsContext, wxD2DResourceManager
+class KaiD2DContext : public GraphicsContext, KaiD2DResourceManager
 {
 private:
-	wxD2DRenderer* m_renderer;
+	KaiD2DRenderer* m_renderer;
 public:
 	// Create the context for the given HWND, which may be associated (if it's
-	// non-null) with the given wxWindow.
-	wxD2DContext(wxD2DRenderer* renderer,
+	// non-null) with the given KaiWindow.
+	KaiD2DContext(KaiD2DRenderer* renderer,
 				 ID2D1Factory* direct2dFactory,
 				 HWND hwnd,
-				 wxWindow* window = nullptr);
+				 KaiWindow* window = nullptr);
 
 	// Create the context for the given HDC which may be associated (if it's
-	// non-null) with the given wxDC.
-	wxD2DContext(wxD2DRenderer* renderer,
+	// non-null) with the given KaiDC.
+	KaiD2DContext(KaiD2DRenderer* renderer,
 				 ID2D1Factory* direct2dFactory,
 				 HDC hdc,
-				 const wxDC* dc = nullptr,
+				 const KaiDC* dc = nullptr,
 				 D2D1_ALPHA_MODE alphaMode = D2D1_ALPHA_MODE_IGNORE);
 
-#if wxUSE_IMAGE
-	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, wxImage& image);
-#endif // wxUSE_IMAGE
+#if KaiUSE_IMAGE
+	KaiD2DContext(KaiD2DRenderer* renderer, ID2D1Factory* direct2dFactory, KaiImage& image);
+#endif // KaiUSE_IMAGE
 
-	wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext);
+	KaiD2DContext(KaiD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext);
 
-	~wxD2DContext();
+	~KaiD2DContext();
 
-	void Clip(const wxRegion& region);
+	void Clip(const KaiRegion& region);
 
-	void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void Clip(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
 	void ResetClip();
 
-	void GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h);
+	void GetClipBox(KaiDouble* x, KaiDouble* y, KaiDouble* w, KaiDouble* h);
 
-	// The native context used by wxD2DContext is a Direct2D render target.
+	// The native context used by KaiD2DContext is a Direct2D render target.
 	void* GetNativeContext();
 
-	bool SetAntialiasMode(wxAntialiasMode antialias);
+	bool SetAntialiasMode(KaiAntialiasMode antialias);
 
-	bool SetInterpolationQuality(wxInterpolationQuality interpolation);
+	bool SetInterpolationQuality(KaiInterpolationQuality interpolation);
 
-	bool SetCompositionMode(wxCompositionMode op);
+	bool SetCompositionMode(KaiCompositionMode op);
 
-	void BeginLayer(wxDouble opacity);
+	void BeginLayer(KaiDouble opacity);
 
 	void EndLayer();
 
-	void Translate(wxDouble dx, wxDouble dy);
+	void Translate(KaiDouble dx, KaiDouble dy);
 
-	void Scale(wxDouble xScale, wxDouble yScale);
+	void Scale(KaiDouble xScale, KaiDouble yScale);
 
-	void Rotate(wxDouble angle);
+	void Rotate(KaiDouble angle);
 
 	void ConcatTransform(GraphicsMatrixData* matrix);
 
@@ -3729,50 +3669,50 @@ public:
 
 	void StrokePath(GraphicsPathData * p);
 
-	void FillPath(GraphicsPathData * p, wxPolygonFillMode fillStyle = wxODDEVEN_RULE);
+	void FillPath(GraphicsPathData * p, KaiPolygonFillMode fillStyle = KaiODDEVEN_RULE);
 
-	void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void DrawRectangle(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
-	void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius);
+	void DrawRoundedRectangle(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h, KaiDouble radius);
 
-	void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void DrawEllipse(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
-	void DrawBitmap(GraphicsBitmapData * bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void DrawBitmap(GraphicsBitmapData * bmp, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
-	void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void DrawBitmap(const KaiBitmap& bmp, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
-	void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	void DrawIcon(const KaiIcon& icon, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
 	GraphicsPathData * CreatePath();
 
-	void SetPen(const wxPen& pen, double width = 1.0);
+	void SetPen(const KaiPen& pen, double width = 1.0);
 
-	void SetBrush(const wxBrush& brush);
+	void SetBrush(const KaiBrush& brush);
 
-	void SetFont(const wxFont& font, const wxColour& col);
+	void SetFont(const KaiFont& font, const KaiColour& col);
 
 	void PushState();
 
 	void PopState();
 
 	void GetTextExtent(
-		const wxString& str,
-		wxDouble* width,
-		wxDouble* height,
-		wxDouble* descent,
-		wxDouble* externalLeading) const;
+		const KaiString& str,
+		KaiDouble* width,
+		KaiDouble* height,
+		KaiDouble* descent,
+		KaiDouble* externalLeading) const;
 
-	void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const;
+	void GetPartialTextExtents(const KaiString& text, KaiArrayDouble& widths) const;
 
 	bool ShouldOffset() const;
 
-	void SetPen(const wxD2DPenData& pen);
+	void SetPen(const KaiD2DPenData& pen);
 
 	void Flush();
 
-	void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const;
+	void GetDPI(KaiDouble* dpiX, KaiDouble* dpiY) const;
 
-	wxD2DContextSupplier::ContextType GetContext()
+	KaiD2DContextSupplier::ContextType GetContext()
 	{
 		return GetRenderTarget();
 	}
@@ -3780,7 +3720,7 @@ public:
 private:
 	void Init();
 
-	void DoDrawText(const wxString& str, wxDouble x, wxDouble y);
+	void DoDrawText(const KaiString& str, KaiDouble x, KaiDouble y);
 
 	void EnsureInitialized();
 
@@ -3794,18 +3734,18 @@ private:
 
 	void SetClipLayer(ID2D1Geometry* clipGeometry);
 
-	wxD2DRenderer *GetRenderer(){ return m_renderer; };
+	KaiD2DRenderer *GetRenderer(){ return m_renderer; };
 
-	GraphicsMatrixData *CreateMatrix(wxDouble a = 1.0, wxDouble b = 0.0, wxDouble c = 0.0, wxDouble d = 1.0,
-		wxDouble tx = 0.0, wxDouble ty = 0.0) const;
+	GraphicsMatrixData *CreateMatrix(KaiDouble a = 1.0, KaiDouble b = 0.0, KaiDouble c = 0.0, KaiDouble d = 1.0,
+		KaiDouble tx = 0.0, KaiDouble ty = 0.0) const;
 
-	wxWindow* GetWindow() const { return m_window; }
+	KaiWindow* GetWindow() const { return m_window; }
 
-	wxInterpolationQuality GetInterpolationQuality() const { return m_interpolation; }
+	KaiInterpolationQuality GetInterpolationQuality() const { return m_interpolation; }
 
-	wxCompositionMode GetCompositionMode() const { return m_composition; }
+	KaiCompositionMode GetCompositionMode() const { return m_composition; }
 
-	GraphicsBitmapData *CreateBitmap(const wxBitmap& bmp) const;
+	GraphicsBitmapData *CreateBitmap(const KaiBitmap& bmp) const;
 
 private:
 	enum LayerType
@@ -3818,8 +3758,8 @@ private:
 	{
 		LayerType type;
 		D2D1_LAYER_PARAMETERS params;
-		wxCOMPtr<ID2D1Layer> layer;
-		wxCOMPtr<ID2D1Geometry> geometry;
+		KaiCOMPtr<ID2D1Layer> layer;
+		KaiCOMPtr<ID2D1Geometry> geometry;
 		D2D1_MATRIX_3X2_F transformMatrix;
 	};
 
@@ -3828,48 +3768,48 @@ private:
 		// A ID2D1DrawingStateBlock represents the drawing state of a render target:
 		// the anti aliasing mode, transform, tags, and text-rendering options.
 		// The context owns these pointers and is responsible for releasing them.
-		wxCOMPtr<ID2D1DrawingStateBlock> drawingState;
+		KaiCOMPtr<ID2D1DrawingStateBlock> drawingState;
 		// We need to store also current layers.
-		wxStack<LayerData> layers;
+		KaiStack<LayerData> layers;
 	};
 
 private:
-	wxDouble m_width,
+	KaiDouble m_width,
 		m_height;
 
-	wxD2DPenData * m_pen = nullptr;
-	wxD2DBrushData * m_brush = nullptr;
-	wxD2DFontData * m_font = nullptr;
-	wxAntialiasMode m_antialias;
-	wxCompositionMode m_composition;
-	wxInterpolationQuality m_interpolation;
+	KaiD2DPenData * m_pen = nullptr;
+	KaiD2DBrushData * m_brush = nullptr;
+	KaiD2DFontData * m_font = nullptr;
+	KaiAntialiasMode m_antialias;
+	KaiCompositionMode m_composition;
+	KaiInterpolationQuality m_interpolation;
 	bool m_enableOffset;
 	ID2D1Factory* m_direct2dFactory;
-	wxSharedPtr<wxD2DRenderTargetResourceHolder> m_renderTargetHolder;
-	wxStack<StateData> m_stateStack;
-	wxStack<LayerData> m_layers;
+	KaiSharedPtr<KaiD2DRenderTargetResourceHolder> m_renderTargetHolder;
+	KaiStack<StateData> m_stateStack;
+	KaiStack<LayerData> m_layers;
 	ID2D1RenderTarget* m_cachedRenderTarget;
 	D2D1::Matrix3x2F m_initTransform;
 	// Clipping box
 	bool m_isClipBoxValid;
 	double m_clipX1, m_clipY1, m_clipX2, m_clipY2;
-	wxWindow* m_window;
+	KaiWindow* m_window;
 private:
-	//wxDECLARE_NO_COPY_CLASS(wxD2DContext);
+	//KaiDECLARE_NO_COPY_CLASS(KaiD2DContext);
 };
 
-class wxD2DOffsetHelper
+class KaiD2DOffsetHelper
 {
 public:
-	wxD2DOffsetHelper(wxD2DContext* g);
+	KaiD2DOffsetHelper(KaiD2DContext* g);
 
-	~wxD2DOffsetHelper();
+	~KaiD2DOffsetHelper();
 
 private:
-	wxD2DContext* m_context;
+	KaiD2DContext* m_context;
 };
 
-wxD2DOffsetHelper::wxD2DOffsetHelper(wxD2DContext* g) : m_context(g)
+KaiD2DOffsetHelper::KaiD2DOffsetHelper(KaiD2DContext* g) : m_context(g)
 {
 	if (m_context->ShouldOffset())
 	{
@@ -3877,7 +3817,7 @@ wxD2DOffsetHelper::wxD2DOffsetHelper(wxD2DContext* g) : m_context(g)
 	}
 }
 
-wxD2DOffsetHelper::~wxD2DOffsetHelper()
+KaiD2DOffsetHelper::~KaiD2DOffsetHelper()
 {
 	if (m_context->ShouldOffset())
 	{
@@ -3885,39 +3825,39 @@ wxD2DOffsetHelper::~wxD2DOffsetHelper()
 	}
 }
 //-----------------------------------------------------------------------------
-// wxD2DContext implementation
+// KaiD2DContext implementation
 //-----------------------------------------------------------------------------
 
-wxD2DContext::wxD2DContext(wxD2DRenderer* renderer,
+KaiD2DContext::KaiD2DContext(KaiD2DRenderer* renderer,
 						   ID2D1Factory* direct2dFactory,
 						   HWND hwnd,
-						   wxWindow* window) :
+						   KaiWindow* window) :
 	m_direct2dFactory(direct2dFactory),
-#if wxD2D_DEVICE_CONTEXT_SUPPORTED
-	m_renderTargetHolder(new wxD2DDeviceContextResourceHolder(direct2dFactory, hwnd)),
+#if KaiD2D_DEVICE_CONTEXT_SUPPORTED
+	m_renderTargetHolder(new KaiD2DDeviceContextResourceHolder(direct2dFactory, hwnd)),
 #else
-	m_renderTargetHolder(new wxD2DHwndRenderTargetResourceHolder(hwnd, direct2dFactory)),
+	m_renderTargetHolder(new KaiD2DHwndRenderTargetResourceHolder(hwnd, direct2dFactory)),
 #endif
 	m_renderer(renderer)
 {
-	RECT r = wxGetWindowRect(hwnd);
+	RECT r = KaiGetWindowRect(hwnd);
 	m_width = r.right - r.left;
 	m_height = r.bottom - r.top;
 	Init();
 }
 
-wxD2DContext::wxD2DContext(wxD2DRenderer* renderer,
+KaiD2DContext::KaiD2DContext(KaiD2DRenderer* renderer,
 						   ID2D1Factory* direct2dFactory,
 						   HDC hdc,
-						   const wxDC* dc,
+						   const KaiDC* dc,
 						   D2D1_ALPHA_MODE alphaMode) :
 	m_direct2dFactory(direct2dFactory),
-	m_renderTargetHolder(new wxD2DDCRenderTargetResourceHolder(direct2dFactory, hdc, alphaMode)),
+	m_renderTargetHolder(new KaiD2DDCRenderTargetResourceHolder(direct2dFactory, hdc, alphaMode)),
 	m_renderer(renderer)
 {
 	if ( dc )
 	{
-		const wxSize dcSize = dc->GetSize();
+		const KaiSize dcSize = dc->GetSize();
 		m_width = dcSize.GetWidth();
 		m_height = dcSize.GetHeight();
 	}
@@ -3925,42 +3865,42 @@ wxD2DContext::wxD2DContext(wxD2DRenderer* renderer,
 	Init();
 }
 
-#if wxUSE_IMAGE
-wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, wxImage& image) :
+#if KaiUSE_IMAGE
+KaiD2DContext::KaiD2DContext(KaiD2DRenderer* renderer, ID2D1Factory* direct2dFactory, KaiImage& image) :
 	m_direct2dFactory(direct2dFactory),
-	m_renderTargetHolder(new wxD2DImageRenderTargetResourceHolder(&image, direct2dFactory)),
+	m_renderTargetHolder(new KaiD2DImageRenderTargetResourceHolder(&image, direct2dFactory)),
 	m_renderer(renderer)
 {
 	m_width = image.GetWidth();
 	m_height = image.GetHeight();
 	Init();
 }
-#endif // wxUSE_IMAGE
+#endif // KaiUSE_IMAGE
 
-wxD2DContext::wxD2DContext(wxD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext) :
+KaiD2DContext::KaiD2DContext(KaiD2DRenderer* renderer, ID2D1Factory* direct2dFactory, void* nativeContext) :
 	m_direct2dFactory(direct2dFactory),
 	m_renderer(renderer)
 {
-	m_renderTargetHolder = *((wxSharedPtr<wxD2DRenderTargetResourceHolder>*)nativeContext);
+	m_renderTargetHolder = *((KaiSharedPtr<KaiD2DRenderTargetResourceHolder>*)nativeContext);
 	m_width = 0;
 	m_height = 0;
 	Init();
 }
 
-void wxD2DContext::Init()
+void KaiD2DContext::Init()
 {
 	m_cachedRenderTarget = nullptr;
-	m_composition = wxCOMPOSITION_OVER;
+	m_composition = KaiCOMPOSITION_OVER;
 	m_renderTargetHolder->Bind(this);
 	m_enableOffset = true;
 	m_isClipBoxValid = false;
 	m_clipX1 = m_clipY1 = m_clipX2 = m_clipY2 = 0.0;
-	m_interpolation = wxINTERPOLATION_BEST;
-	m_antialias = wxANTIALIAS_NONE;
+	m_interpolation = KaiINTERPOLATION_BEST;
+	m_antialias = KaiANTIALIAS_NONE;
 	EnsureInitialized();
 }
 
-wxD2DContext::~wxD2DContext()
+KaiD2DContext::~KaiD2DContext()
 {
 	// Remove all layers from the stack of layers.
 	while ( !m_layers.empty() )
@@ -3974,7 +3914,7 @@ wxD2DContext::~wxD2DContext()
 	}
 
 	HRESULT result = GetRenderTarget()->EndDraw();
-	wxCHECK_HRESULT_RET(result);
+	KaiCHECK_HRESULT_RET(result);
 
 	ReleaseResources();
 
@@ -3988,40 +3928,40 @@ wxD2DContext::~wxD2DContext()
 		delete m_font;
 }
 
-ID2D1RenderTarget* wxD2DContext::GetRenderTarget() const
+ID2D1RenderTarget* KaiD2DContext::GetRenderTarget() const
 {
 	return m_cachedRenderTarget;
 }
 
-void wxD2DContext::Clip(const wxRegion& region)
+void KaiD2DContext::Clip(const KaiRegion& region)
 {
-	wxCOMPtr<ID2D1Geometry> clipGeometry = wxD2DConvertRegionToGeometry(m_direct2dFactory, region);
+	KaiCOMPtr<ID2D1Geometry> clipGeometry = KaiD2DConvertRegionToGeometry(m_direct2dFactory, region);
 
 	SetClipLayer(clipGeometry);
 }
 
-void wxD2DContext::Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::Clip(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	wxCOMPtr<ID2D1RectangleGeometry> clipGeometry;
+	KaiCOMPtr<ID2D1RectangleGeometry> clipGeometry;
 	HRESULT hr = m_direct2dFactory->CreateRectangleGeometry(
 						D2D1::RectF(x, y, x + w, y + h), &clipGeometry);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	SetClipLayer(clipGeometry);
 }
 
-void wxD2DContext::SetClipLayer(ID2D1Geometry* clipGeometry)
+void KaiD2DContext::SetClipLayer(ID2D1Geometry* clipGeometry)
 {
 	EnsureInitialized();
 
-	wxCOMPtr<ID2D1Layer> clipLayer;
+	KaiCOMPtr<ID2D1Layer> clipLayer;
 	HRESULT hr = GetRenderTarget()->CreateLayer(&clipLayer);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	LayerData ld;
 	ld.type = CLIP_LAYER;
 	ld.params = D2D1::LayerParameters(D2D1::InfiniteRect(), clipGeometry,
-									  wxD2DConvertAntialiasMode(m_antialias));
+									  KaiD2DConvertAntialiasMode(m_antialias));
 	ld.layer = clipLayer;
 	ld.geometry = clipGeometry;
 	// We need to store CTM to be able to re-apply
@@ -4035,9 +3975,9 @@ void wxD2DContext::SetClipLayer(ID2D1Geometry* clipGeometry)
 	m_isClipBoxValid = false;
 }
 
-void wxD2DContext::ResetClip()
+void KaiD2DContext::ResetClip()
 {
-	wxStack<LayerData> layersToRestore;
+	KaiStack<LayerData> layersToRestore;
 	// Remove all clipping layers from the stack of layers.
 	while ( !m_layers.empty() )
 	{
@@ -4058,7 +3998,7 @@ void wxD2DContext::ResetClip()
 	}
 
 	HRESULT hr = GetRenderTarget()->Flush();
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	// Re-apply all remaining non-clipping layers.
 	// First, save current transformation matrix.
@@ -4081,7 +4021,7 @@ void wxD2DContext::ResetClip()
 	m_isClipBoxValid = false;
 }
 
-void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h)
+void KaiD2DContext::GetClipBox(KaiDouble* x, KaiDouble* y, KaiDouble* w, KaiDouble* h)
 {
 	if ( !m_isClipBoxValid )
 	{
@@ -4091,15 +4031,15 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		// (being intersection of all clipping layers) is a clipping box.
 
 		HRESULT hr;
-		wxCOMPtr<ID2D1RectangleGeometry> rectGeometry;
+		KaiCOMPtr<ID2D1RectangleGeometry> rectGeometry;
 		hr = m_direct2dFactory->CreateRectangleGeometry(
 					D2D1::RectF(0.0F, 0.0F, (FLOAT)m_width, (FLOAT)m_height),
 					&rectGeometry);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 
-		wxCOMPtr<ID2D1Geometry> clipGeometry(rectGeometry);
+		KaiCOMPtr<ID2D1Geometry> clipGeometry(rectGeometry);
 
-		wxStack<LayerData> layers(m_layers);
+		KaiStack<LayerData> layers(m_layers);
 		while( !layers.empty() )
 		{
 			LayerData ld = layers.top();
@@ -4112,34 +4052,34 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 				// then final result is "null" rectangle geometry.
 				FLOAT area;
 				hr = ld.geometry->ComputeArea(ld.transformMatrix, &area);
-				wxCHECK_HRESULT_RET(hr);
+				KaiCHECK_HRESULT_RET(hr);
 				D2D1_GEOMETRY_RELATION geomRel;
 				hr = clipGeometry->CompareWithGeometry(ld.geometry, ld.transformMatrix, &geomRel);
-				wxCHECK_HRESULT_RET(hr);
+				KaiCHECK_HRESULT_RET(hr);
 				if ( area <= FLT_MIN || geomRel == D2D1_GEOMETRY_RELATION_DISJOINT )
 				{
-					wxCOMPtr<ID2D1RectangleGeometry> nullGeometry;
+					KaiCOMPtr<ID2D1RectangleGeometry> nullGeometry;
 					hr = m_direct2dFactory->CreateRectangleGeometry(
 								D2D1::RectF(0.0F, 0.0F, 0.0F, 0.0F), &nullGeometry);
-					wxCHECK_HRESULT_RET(hr);
+					KaiCHECK_HRESULT_RET(hr);
 
 					clipGeometry.reset();
 					clipGeometry = nullGeometry;
 					break;
 				}
 
-				wxCOMPtr<ID2D1PathGeometry> pathGeometryClip;
+				KaiCOMPtr<ID2D1PathGeometry> pathGeometryClip;
 				hr = m_direct2dFactory->CreatePathGeometry(&pathGeometryClip);
-				wxCHECK_HRESULT_RET(hr);
-				wxCOMPtr<ID2D1GeometrySink> pGeometrySink;
+				KaiCHECK_HRESULT_RET(hr);
+				KaiCOMPtr<ID2D1GeometrySink> pGeometrySink;
 				hr = pathGeometryClip->Open(&pGeometrySink);
-				wxCHECK_HRESULT_RET(hr);
+				KaiCHECK_HRESULT_RET(hr);
 
 				hr = clipGeometry->CombineWithGeometry(ld.geometry, D2D1_COMBINE_MODE_INTERSECT,
 													   ld.transformMatrix, pGeometrySink);
-				wxCHECK_HRESULT_RET(hr);
+				KaiCHECK_HRESULT_RET(hr);
 				hr = pGeometrySink->Close();
-				wxCHECK_HRESULT_RET(hr);
+				KaiCHECK_HRESULT_RET(hr);
 				pGeometrySink.reset();
 
 				clipGeometry = pathGeometryClip;
@@ -4157,7 +4097,7 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		// First check if clip region is empty.
 		FLOAT clipArea;
 		hr = clipGeometry->ComputeArea(currTransform, &clipArea);
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 		if ( clipArea <= FLT_MIN )
 		{
 			bounds.left = bounds.top = bounds.right = bounds.bottom = 0.0F;
@@ -4166,7 +4106,7 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		{
 			// If it is not empty then get it bounds.
 			hr = clipGeometry->GetBounds(currTransform, &bounds);
-			wxCHECK_HRESULT_RET(hr);
+			KaiCHECK_HRESULT_RET(hr);
 		}
 
 		m_clipX1 = bounds.left;
@@ -4186,27 +4126,27 @@ void wxD2DContext::GetClipBox(wxDouble* x, wxDouble* y, wxDouble* w, wxDouble* h
 		*h = m_clipY2 - m_clipY1;
 }
 
-void* wxD2DContext::GetNativeContext()
+void* KaiD2DContext::GetNativeContext()
 {
 	return &m_renderTargetHolder;
 }
 
-void wxD2DContext::StrokePath(GraphicsPathData * p)
+void KaiD2DContext::StrokePath(GraphicsPathData * p)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	wxD2DOffsetHelper helper(this);
+	KaiD2DOffsetHelper helper(this);
 
 	EnsureInitialized();
 	AdjustRenderTargetSize();
 
-	wxD2DPathData *pathData = (wxD2DPathData*)p;
+	KaiD2DPathData *pathData = (KaiD2DPathData*)p;
 	pathData->Flush();
 
 	if (m_pen)
 	{
-		//wxD2DPenData* penData = wxGetD2DPenData(m_pen);
+		//KaiD2DPenData* penData = KaiGetD2DPenData(m_pen);
 		m_pen->Bind(this);
 
 		ID2D1Brush* nativeBrush = m_pen->GetBrush();
@@ -4215,40 +4155,40 @@ void wxD2DContext::StrokePath(GraphicsPathData * p)
 	delete pathData;
 }
 
-void wxD2DContext::FillPath(GraphicsPathData * p, wxPolygonFillMode fillStyle)
+void KaiD2DContext::FillPath(GraphicsPathData * p, KaiPolygonFillMode fillStyle)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
 	EnsureInitialized();
 	AdjustRenderTargetSize();
 
-	wxD2DPathData *pathData = (wxD2DPathData*)p;
-	pathData->SetFillMode(fillStyle == wxODDEVEN_RULE ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING);
+	KaiD2DPathData *pathData = (KaiD2DPathData*)p;
+	pathData->SetFillMode(fillStyle == KaiODDEVEN_RULE ? D2D1_FILL_MODE_ALTERNATE : D2D1_FILL_MODE_WINDING);
 	pathData->Flush();
 
 	if (m_brush)
 	{
-		//wxD2DBrushData* brushData = wxGetD2DBrushData(m_brush);
+		//KaiD2DBrushData* brushData = KaiGetD2DBrushData(m_brush);
 		m_brush->Bind(this);
 		GetRenderTarget()->FillGeometry((ID2D1Geometry*)pathData->GetNativePath(), m_brush->GetBrush());
 	}
 }
 
-bool wxD2DContext::SetAntialiasMode(wxAntialiasMode antialias)
+bool KaiD2DContext::SetAntialiasMode(KaiAntialiasMode antialias)
 {
 	if (m_antialias == antialias)
 	{
 		return true;
 	}
 
-	GetRenderTarget()->SetAntialiasMode(wxD2DConvertAntialiasMode(antialias));
+	GetRenderTarget()->SetAntialiasMode(KaiD2DConvertAntialiasMode(antialias));
 
 	m_antialias = antialias;
 	return true;
 }
 
-bool wxD2DContext::SetInterpolationQuality(wxInterpolationQuality interpolation)
+bool KaiD2DContext::SetInterpolationQuality(KaiInterpolationQuality interpolation)
 {
 	// Since different versions of Direct2D have different enumerations for
 	// interpolation quality, we deffer the conversion to the method which
@@ -4258,7 +4198,7 @@ bool wxD2DContext::SetInterpolationQuality(wxInterpolationQuality interpolation)
 	return true;
 }
 
-bool wxD2DContext::SetCompositionMode(wxCompositionMode compositionMode)
+bool KaiD2DContext::SetCompositionMode(KaiCompositionMode compositionMode)
 {
 	if (m_composition == compositionMode)
 		return true;
@@ -4273,13 +4213,13 @@ bool wxD2DContext::SetCompositionMode(wxCompositionMode compositionMode)
 	return false;
 }
 
-void wxD2DContext::BeginLayer(wxDouble opacity)
+void KaiD2DContext::BeginLayer(KaiDouble opacity)
 {
 	EnsureInitialized();
 
-	wxCOMPtr<ID2D1Layer> layer;
+	KaiCOMPtr<ID2D1Layer> layer;
 	HRESULT hr = GetRenderTarget()->CreateLayer(&layer);
-	wxCHECK_HRESULT_RET(hr);
+	KaiCHECK_HRESULT_RET(hr);
 
 	LayerData ld;
 	ld.type = OTHER_LAYER;
@@ -4298,9 +4238,9 @@ void wxD2DContext::BeginLayer(wxDouble opacity)
 	m_layers.push(ld);
 }
 
-void wxD2DContext::EndLayer()
+void KaiD2DContext::EndLayer()
 {
-	wxStack<LayerData> layersToRestore;
+	KaiStack<LayerData> layersToRestore;
 	// Temporarily remove all clipping layers
 	// above the first standard layer
 	// and next permanently remove this layer.
@@ -4325,7 +4265,7 @@ void wxD2DContext::EndLayer()
 	if ( m_layers.empty() )
 	{
 		HRESULT hr = GetRenderTarget()->Flush();
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 
 	// Re-apply all stored clipping layers.
@@ -4345,7 +4285,7 @@ void wxD2DContext::EndLayer()
 		}
 		else
 		{
-			wxFAIL_MSG( wxS("Invalid layer type") );
+			KaiFAIL_MSG( KaiS("Invalid layer type") );
 		}
 		// Store layer parameters.
 		m_layers.push(ld);
@@ -4354,7 +4294,7 @@ void wxD2DContext::EndLayer()
 	GetRenderTarget()->SetTransform(&currTransform);
 }
 
-void wxD2DContext::Translate(wxDouble dx, wxDouble dy)
+void KaiD2DContext::Translate(KaiDouble dx, KaiDouble dy)
 {
 	GraphicsMatrixData * translationMatrix = CreateMatrix();
 	translationMatrix->Translate(dx, dy);
@@ -4362,7 +4302,7 @@ void wxD2DContext::Translate(wxDouble dx, wxDouble dy)
 	delete translationMatrix;
 }
 
-void wxD2DContext::Scale(wxDouble xScale, wxDouble yScale)
+void KaiD2DContext::Scale(KaiDouble xScale, KaiDouble yScale)
 {
 	GraphicsMatrixData * scaleMatrix = CreateMatrix();
 	scaleMatrix->Scale(xScale, yScale);
@@ -4370,7 +4310,7 @@ void wxD2DContext::Scale(wxDouble xScale, wxDouble yScale)
 	delete scaleMatrix;
 }
 
-void wxD2DContext::Rotate(wxDouble angle)
+void KaiD2DContext::Rotate(KaiDouble angle)
 {
 	GraphicsMatrixData *rotationMatrix = CreateMatrix();
 	rotationMatrix->Rotate(angle);
@@ -4378,16 +4318,16 @@ void wxD2DContext::Rotate(wxDouble angle)
 	delete rotationMatrix;
 }
 
-void wxD2DContext::ConcatTransform(GraphicsMatrixData* matrix)
+void KaiD2DContext::ConcatTransform(GraphicsMatrixData* matrix)
 {
 	GraphicsMatrixData *getTransform = GetTransform();
-	D2D1::Matrix3x2F localMatrix = ((wxD2DMatrixData*)getTransform)->GetMatrix3x2F();
-	D2D1::Matrix3x2F concatMatrix = ((wxD2DMatrixData*)matrix)->GetMatrix3x2F();
+	D2D1::Matrix3x2F localMatrix = ((KaiD2DMatrixData*)getTransform)->GetMatrix3x2F();
+	D2D1::Matrix3x2F concatMatrix = ((KaiD2DMatrixData*)matrix)->GetMatrix3x2F();
 
 	D2D1::Matrix3x2F resultMatrix;
 	resultMatrix.SetProduct(concatMatrix, localMatrix);
 
-	wxD2DMatrixData *resultTransform = new wxD2DMatrixData(m_renderer, resultMatrix);
+	KaiD2DMatrixData *resultTransform = new KaiD2DMatrixData(m_renderer, resultMatrix);
 
 	delete getTransform;
 
@@ -4395,18 +4335,18 @@ void wxD2DContext::ConcatTransform(GraphicsMatrixData* matrix)
 	delete resultTransform;
 }
 
-void wxD2DContext::SetTransform(GraphicsMatrixData* matrix)
+void KaiD2DContext::SetTransform(GraphicsMatrixData* matrix)
 {
 	EnsureInitialized();
 
 	D2D1::Matrix3x2F m;
-	m.SetProduct(((wxD2DMatrixData*)matrix)->GetMatrix3x2F(), m_initTransform);
+	m.SetProduct(((KaiD2DMatrixData*)matrix)->GetMatrix3x2F(), m_initTransform);
 	GetRenderTarget()->SetTransform(&m);
 
 	m_isClipBoxValid = false;
 }
 
-GraphicsMatrixData *wxD2DContext::GetTransform() const
+GraphicsMatrixData *KaiD2DContext::GetTransform() const
 {
 	D2D1::Matrix3x2F transformMatrix;
 
@@ -4429,18 +4369,18 @@ GraphicsMatrixData *wxD2DContext::GetTransform() const
 		transformMatrix = D2D1::Matrix3x2F::Identity();
 	}
 
-	wxD2DMatrixData* matrixData = new wxD2DMatrixData(m_renderer, transformMatrix);
+	KaiD2DMatrixData* matrixData = new KaiD2DMatrixData(m_renderer, transformMatrix);
 
 
 	return matrixData;
 }
 
-void wxD2DContext::DrawBitmap(GraphicsBitmapData* bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::DrawBitmap(GraphicsBitmapData* bmp, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	wxD2DBitmapData* bitmapData = (wxD2DBitmapData*)bmp;
+	KaiD2DBitmapData* bitmapData = (KaiD2DBitmapData*)bmp;
 	bitmapData->Bind(this);
 
 	m_renderTargetHolder->DrawBitmap(
@@ -4451,19 +4391,19 @@ void wxD2DContext::DrawBitmap(GraphicsBitmapData* bmp, wxDouble x, wxDouble y, w
 		GetCompositionMode());
 }
 
-void wxD2DContext::DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::DrawBitmap(const KaiBitmap& bmp, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
 	GraphicsBitmapData * graphicsBitmap = CreateBitmap(bmp);
 	DrawBitmap(graphicsBitmap, x, y, w, h);
 	delete graphicsBitmap;
 }
 
-void wxD2DContext::DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::DrawIcon(const KaiIcon& icon, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	DrawBitmap(wxBitmap(icon), x, y, w, h);
+	DrawBitmap(KaiBitmap(icon), x, y, w, h);
 }
 
-void wxD2DContext::PushState()
+void KaiD2DContext::PushState()
 {
 	EnsureInitialized();
 
@@ -4475,9 +4415,9 @@ void wxD2DContext::PushState()
 	m_stateStack.push(state);
 }
 
-void wxD2DContext::PopState()
+void KaiD2DContext::PopState()
 {
-	wxCHECK_RET(!m_stateStack.empty(), wxS("No state to pop"));
+	KaiCHECK_RET(!m_stateStack.empty(), KaiS("No state to pop"));
 
 	// Remove all layers from the stack of layers.
 	while ( !m_layers.empty() )
@@ -4496,7 +4436,7 @@ void wxD2DContext::PopState()
 	m_stateStack.pop();
 
 	// Restore all saved layers.
-	wxStack<LayerData> layersToRestore;
+	KaiStack<LayerData> layersToRestore;
 	// We have to restore layers on the stack from "bottom" to "top",
 	// so we have to create a "reverted" stack.
 	while ( !state.layers.empty() )
@@ -4526,32 +4466,32 @@ void wxD2DContext::PopState()
 	m_isClipBoxValid = false;
 }
 
-void wxD2DContext::GetTextExtent(
-	const wxString& str,
-	wxDouble* width,
-	wxDouble* height,
-	wxDouble* descent,
-	wxDouble* externalLeading) const
+void KaiD2DContext::GetTextExtent(
+	const KaiString& str,
+	KaiDouble* width,
+	KaiDouble* height,
+	KaiDouble* descent,
+	KaiDouble* externalLeading) const
 {
-	//wxCHECK_RET(m_font,
-		//wxS("wxD2DContext::GetTextExtent - no valid font set"));
+	//KaiCHECK_RET(m_font,
+		//KaiS("KaiD2DContext::GetTextExtent - no valid font set"));
 	if (!m_font)
 		return;
 
-	wxD2DMeasuringContext::GetTextExtent(
+	KaiD2DMeasuringContext::GetTextExtent(
 		m_font, str, width, height, descent, externalLeading);
 }
 
-void wxD2DContext::GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const
+void KaiD2DContext::GetPartialTextExtents(const KaiString& text, KaiArrayDouble& widths) const
 {
-	wxCHECK_RET(m_font,
-		wxS("wxD2DContext::GetPartialTextExtents - no valid font set"));
+	KaiCHECK_RET(m_font,
+		KaiS("KaiD2DContext::GetPartialTextExtents - no valid font set"));
 
-	wxD2DMeasuringContext::GetPartialTextExtents(
+	KaiD2DMeasuringContext::GetPartialTextExtents(
 		m_font, text, widths);
 }
 
-bool wxD2DContext::ShouldOffset() const
+bool KaiD2DContext::ShouldOffset() const
 {
 	if (!m_enableOffset)
 	{
@@ -4562,26 +4502,26 @@ bool wxD2DContext::ShouldOffset() const
 	if (m_pen)
 	{
 		penWidth = m_pen->GetWidth();
-		penWidth = wxMax(penWidth, 1);
+		penWidth = KaiMax(penWidth, 1);
 	}
 
 	return (penWidth % 2) == 1;
 }
 
-void wxD2DContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
+void KaiD2DContext::DoDrawText(const KaiString& str, KaiDouble x, KaiDouble y)
 {
-	//wxCHECK_RET(m_font,
-		//wxS("wxD2DContext::DrawText - no valid font set"));
+	//KaiCHECK_RET(m_font,
+		//KaiS("KaiD2DContext::DrawText - no valid font set"));
 	if (!m_font)
 		return;
 
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	//wxD2DFontData* fontData = m_font;
+	//KaiD2DFontData* fontData = m_font;
 	//fontData->GetBrushData().Bind(this);
 	m_font->GetBrushData().Bind(this);
-	wxCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str);
+	KaiCOMPtr<IDWriteTextLayout> textLayout = m_font->CreateTextLayout(str);
 
 	// Render the text
 	GetRenderTarget()->DrawTextLayout(
@@ -4590,7 +4530,7 @@ void wxD2DContext::DoDrawText(const wxString& str, wxDouble x, wxDouble y)
 		m_font->GetBrushData().GetBrush());
 }
 
-void wxD2DContext::EnsureInitialized()
+void KaiD2DContext::EnsureInitialized()
 {
 	if (!m_renderTargetHolder->IsResourceAcquired())
 	{
@@ -4608,20 +4548,20 @@ void wxD2DContext::EnsureInitialized()
 	}
 }
 
-void wxD2DContext::SetPen(const wxD2DPenData& pen)
+void KaiD2DContext::SetPen(const KaiD2DPenData& pen)
 {
-	m_pen = new wxD2DPenData(pen);
+	m_pen = new KaiD2DPenData(pen);
 
 	if (m_pen)
 	{
 		EnsureInitialized();
 
-		//wxD2DPenData* penData = wxGetD2DPenData(pen);
+		//KaiD2DPenData* penData = KaiGetD2DPenData(pen);
 		m_pen->Bind(this);
 	}
 }
 
-void wxD2DContext::AdjustRenderTargetSize()
+void KaiD2DContext::AdjustRenderTargetSize()
 {
 	m_renderTargetHolder->Resize();
 
@@ -4636,17 +4576,17 @@ void wxD2DContext::AdjustRenderTargetSize()
 #endif // __VISUALC__
 }
 
-void wxD2DContext::ReleaseDeviceDependentResources()
+void KaiD2DContext::ReleaseDeviceDependentResources()
 {
 	ReleaseResources();
 }
 
-void wxD2DContext::DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::DrawRectangle(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	wxD2DOffsetHelper helper(this);
+	KaiD2DOffsetHelper helper(this);
 
 	EnsureInitialized();
 	AdjustRenderTargetSize();
@@ -4656,25 +4596,25 @@ void wxD2DContext::DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
 
 	if (m_brush)
 	{
-		//wxD2DBrushData* brushData = m_brush;
+		//KaiD2DBrushData* brushData = m_brush;
 		m_brush->Bind(this);
 		GetRenderTarget()->FillRectangle(rect, m_brush->GetBrush());
 	}
 
 	if (m_pen)
 	{
-		//wxD2DPenData* penData = m_pen;
+		//KaiD2DPenData* penData = m_pen;
 		m_pen->Bind(this);
 		GetRenderTarget()->DrawRectangle(rect, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
 	}
 }
 
-void wxD2DContext::DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius)
+void KaiD2DContext::DrawRoundedRectangle(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h, KaiDouble radius)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	wxD2DOffsetHelper helper(this);
+	KaiD2DOffsetHelper helper(this);
 
 	EnsureInitialized();
 	AdjustRenderTargetSize();
@@ -4685,25 +4625,25 @@ void wxD2DContext::DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDo
 
 	if (m_brush)
 	{
-		//wxD2DBrushData* brushData = m_brush;
+		//KaiD2DBrushData* brushData = m_brush;
 		m_brush->Bind(this);
 		GetRenderTarget()->FillRoundedRectangle(roundedRect, m_brush->GetBrush());
 	}
 
 	if (m_pen)
 	{
-		//wxD2DPenData* penData = m_pen;
+		//KaiD2DPenData* penData = m_pen;
 		m_pen->Bind(this);
 		GetRenderTarget()->DrawRoundedRectangle(roundedRect, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
 	}
 }
 
-void wxD2DContext::DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+void KaiD2DContext::DrawEllipse(KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	if (m_composition == wxCOMPOSITION_DEST)
+	if (m_composition == KaiCOMPOSITION_DEST)
 		return;
 
-	wxD2DOffsetHelper helper(this);
+	KaiD2DOffsetHelper helper(this);
 
 	EnsureInitialized();
 	AdjustRenderTargetSize();
@@ -4716,22 +4656,22 @@ void wxD2DContext::DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h)
 
 	if (m_brush)
 	{
-		//wxD2DBrushData* brushData = m_brush;
+		//KaiD2DBrushData* brushData = m_brush;
 		m_brush->Bind(this);
 		GetRenderTarget()->FillEllipse(ellipse, m_brush->GetBrush());
 	}
 
 	if (m_pen)
 	{
-		//wxD2DPenData* penData = m_pen;
+		//KaiD2DPenData* penData = m_pen;
 		m_pen->Bind(this);
 		GetRenderTarget()->DrawEllipse(ellipse, m_pen->GetBrush(), m_pen->GetWidth(), m_pen->GetStrokeStyle());
 	}
 }
 
-void wxD2DContext::Flush()
+void KaiD2DContext::Flush()
 {
-	wxStack<LayerData> layersToRestore;
+	KaiStack<LayerData> layersToRestore;
 	// Temporarily remove all layers from the stack of layers.
 	while ( !m_layers.empty() )
 	{
@@ -4752,7 +4692,7 @@ void wxD2DContext::Flush()
 	}
 	else
 	{
-		wxCHECK_HRESULT_RET(hr);
+		KaiCHECK_HRESULT_RET(hr);
 	}
 
 	// Re-apply all layers.
@@ -4775,12 +4715,12 @@ void wxD2DContext::Flush()
 	GetRenderTarget()->SetTransform(&currTransform);
 }
 
-void wxD2DContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
+void KaiD2DContext::GetDPI(KaiDouble* dpiX, KaiDouble* dpiY) const
 {
   //  if ( GetWindow() )
   //  {
 		//
-  //      const wxSize dpi = GetWindow()->GetDPI();
+  //      const KaiSize dpi = GetWindow()->GetDPI();
 
   //      if ( dpiX )
   //          *dpiX = dpi.x;
@@ -4802,21 +4742,21 @@ void wxD2DContext::GetDPI(wxDouble* dpiX, wxDouble* dpiY) const
 
 
 //-----------------------------------------------------------------------------
-// wxD2DRenderer implementation
+// KaiD2DRenderer implementation
 //-----------------------------------------------------------------------------
 
-class wxD2DRenderer : public GraphicsRenderer
+class KaiD2DRenderer : public GraphicsRenderer
 {
 public:
-	wxD2DRenderer();
+	KaiD2DRenderer();
 
-	virtual ~wxD2DRenderer();
+	virtual ~KaiD2DRenderer();
 
-	static wxD2DRenderer* GetDirect2DRenderer();
+	static KaiD2DRenderer* GetDirect2DRenderer();
 
-	GraphicsContext * CreateContext(const wxWindowDC& dc);
+	GraphicsContext * CreateContext(const KaiWindowDC& dc);
 
-	GraphicsContext * CreateContext(const wxMemoryDC& dc);
+	GraphicsContext * CreateContext(const KaiMemoryDC& dc);
 
 	GraphicsContext * CreateContextFromNativeContext(void* context);
 
@@ -4824,310 +4764,310 @@ public:
 
 	GraphicsContext * CreateContextFromNativeHDC(WXHDC dc);
 
-	GraphicsContext * CreateContext(wxWindow* window);
+	GraphicsContext * CreateContext(KaiWindow* window);
 
-#if wxUSE_IMAGE
-	GraphicsContext * CreateContextFromImage(wxImage& image);
-#endif // wxUSE_IMAGE
+#if KaiUSE_IMAGE
+	GraphicsContext * CreateContextFromImage(KaiImage& image);
+#endif // KaiUSE_IMAGE
 
 	GraphicsContext * CreateMeasuringContext();
 
-	wxD2DPathData * CreatePath();
+	KaiD2DPathData * CreatePath();
 
 	GraphicsMatrixData *CreateMatrix(
-		wxDouble a = 1.0, wxDouble b = 0.0, wxDouble c = 0.0, wxDouble d = 1.0,
-		wxDouble tx = 0.0, wxDouble ty = 0.0);
+		KaiDouble a = 1.0, KaiDouble b = 0.0, KaiDouble c = 0.0, KaiDouble d = 1.0,
+		KaiDouble tx = 0.0, KaiDouble ty = 0.0);
 
-	wxD2DPenData * CreatePen(const wxGraphicsPenInfo& info);
+	KaiD2DPenData * CreatePen(const KaiGraphicsPenInfo& info);
 
-	wxD2DBrushData * CreateBrush(const wxBrush& brush);
+	KaiD2DBrushData * CreateBrush(const KaiBrush& brush);
 
-	wxD2DBrushData * CreateLinearGradientBrush(
-		wxDouble x1, wxDouble y1,
-		wxDouble x2, wxDouble y2,
-		const wxGraphicsGradientStops& stops,
-		wxD2DMatrixData * matrix = nullptr);
+	KaiD2DBrushData * CreateLinearGradientBrush(
+		KaiDouble x1, KaiDouble y1,
+		KaiDouble x2, KaiDouble y2,
+		const KaiGraphicsGradientStops& stops,
+		KaiD2DMatrixData * matrix = nullptr);
 
-	wxD2DBrushData * CreateRadialGradientBrush(
-		wxDouble startX, wxDouble startY,
-		wxDouble endX, wxDouble endY,
-		wxDouble radius,
-		const wxGraphicsGradientStops& stops,
-		wxD2DMatrixData * matrix = nullptr);
+	KaiD2DBrushData * CreateRadialGradientBrush(
+		KaiDouble startX, KaiDouble startY,
+		KaiDouble endX, KaiDouble endY,
+		KaiDouble radius,
+		const KaiGraphicsGradientStops& stops,
+		KaiD2DMatrixData * matrix = nullptr);
 
 	// create a native bitmap representation
-	GraphicsBitmapData * CreateBitmap(const wxBitmap& bitmap);
+	GraphicsBitmapData * CreateBitmap(const KaiBitmap& bitmap);
 
-	//#if wxUSE_IMAGE
-	//	GraphicsBitmapData * CreateBitmapFromImage(const wxImage& image);
-	//	wxImage CreateImageFromBitmap(const wxGraphicsBitmap& bmp);
+	//#if KaiUSE_IMAGE
+	//	GraphicsBitmapData * CreateBitmapFromImage(const KaiImage& image);
+	//	KaiImage CreateImageFromBitmap(const KaiGraphicsBitmap& bmp);
 	//#endif
 
-	wxD2DFontData * CreateFont(const wxFont& font, const wxColour& col);
+	KaiD2DFontData * CreateFont(const KaiFont& font, const KaiColour& col);
 
-	/*wxD2DFontData * CreateFont(
-	double sizeInPixels, const wxString& facename,
-	int flags = wxFONTFLAG_DEFAULT,
-	const wxColour& col = *wxBLACK);*/
+	/*KaiD2DFontData * CreateFont(
+	double sizeInPixels, const KaiString& facename,
+	int flags = KaiFONTFLAG_DEFAULT,
+	const KaiColour& col = *KaiBLACK);*/
 
-	wxD2DFontData * CreateFontAtDPI(const wxFont& font,
-		const wxRealPoint& dpi,
-		const wxColour& col);
+	KaiD2DFontData * CreateFontAtDPI(const KaiFont& font,
+		const KaiRealPoint& dpi,
+		const KaiColour& col);
 
 	// create a graphics bitmap from a native bitmap
 	GraphicsBitmapData * CreateBitmapFromNativeBitmap(void* bitmap);
 
 	// create a sub-image from a native image representation
-	GraphicsBitmapData * CreateSubBitmap(const GraphicsBitmapData& bitmap, wxDouble x, wxDouble y, wxDouble w, wxDouble h);
+	GraphicsBitmapData * CreateSubBitmap(const GraphicsBitmapData& bitmap, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h);
 
-	wxString GetName() const;
+	KaiString GetName() const;
 	void GetVersion(int* major, int* minor, int* micro) const;
 
 	ID2D1Factory* GetD2DFactory();
 
 private:
-	wxCOMPtr<ID2D1Factory> m_direct2dFactory;
+	KaiCOMPtr<ID2D1Factory> m_direct2dFactory;
 
 private:
-	//wxDECLARE_DYNAMIC_CLASS_NO_COPY(wxD2DRenderer);
+	//KaiDECLARE_DYNAMIC_CLASS_NO_COPY(KaiD2DRenderer);
 };
 
-//wxIMPLEMENT_DYNAMIC_CLASS(wxD2DRenderer,wxGraphicsRenderer);
+//KaiIMPLEMENT_DYNAMIC_CLASS(KaiD2DRenderer,KaiGraphicsRenderer);
 
-void wxNullContext::SetFont(const wxFont& font, const wxColour& col){
-	wxDELETE(m_font);
+void KaiNullContext::SetFont(const KaiFont& font, const KaiColour& col){
+	KaiDELETE(m_font);
 	m_font = renderer->CreateFont(font, col);
 }
 
-GraphicsPathData * wxD2DContext::CreatePath(){ return m_renderer->CreatePath(); };
+GraphicsPathData * KaiD2DContext::CreatePath(){ return m_renderer->CreatePath(); };
 
-void wxD2DContext::SetPen(const wxPen& pen, double width){
-	wxGraphicsPenInfo info(pen.GetColour(), width, pen.GetStyle());
-	wxDELETE(m_pen);
+void KaiD2DContext::SetPen(const KaiPen& pen, double width){
+	KaiGraphicsPenInfo info(pen.GetColour(), width, pen.GetStyle());
+	KaiDELETE(m_pen);
 	m_pen = m_renderer->CreatePen(info);
 }
 
-void wxD2DContext::SetBrush(const wxBrush& brush){
-	wxDELETE(m_brush);
+void KaiD2DContext::SetBrush(const KaiBrush& brush){
+	KaiDELETE(m_brush);
 	m_brush = m_renderer->CreateBrush(brush);
 }
 
-void wxD2DContext::SetFont(const wxFont& font, const wxColour& col){
-	wxDELETE(m_font);
+void KaiD2DContext::SetFont(const KaiFont& font, const KaiColour& col){
+	KaiDELETE(m_font);
 	m_font = m_renderer->CreateFont(font, col);
 }
 
-GraphicsBitmapData *wxD2DContext::CreateBitmap(const wxBitmap& bmp) const
+GraphicsBitmapData *KaiD2DContext::CreateBitmap(const KaiBitmap& bmp) const
 {
 	return m_renderer->CreateBitmap(bmp);
 }
 
-GraphicsMatrixData *wxD2DContext::CreateMatrix(wxDouble a, wxDouble b, wxDouble c, wxDouble d,
-	wxDouble tx, wxDouble ty) const {
+GraphicsMatrixData *KaiD2DContext::CreateMatrix(KaiDouble a, KaiDouble b, KaiDouble c, KaiDouble d,
+	KaiDouble tx, KaiDouble ty) const {
 	return m_renderer->CreateMatrix(a, b, c, d, tx, ty);
 }
 
-static wxD2DRenderer *gs_D2DRenderer = nullptr;
+static KaiD2DRenderer *gs_D2DRenderer = nullptr;
 
-wxD2DRenderer* wxD2DRenderer::GetDirect2DRenderer()
+KaiD2DRenderer* KaiD2DRenderer::GetDirect2DRenderer()
 {
-	if (!wxDirect2D::Initialize())
+	if (!KaiDirect2D::Initialize())
 		return nullptr;
 
 	if (!gs_D2DRenderer)
 	{
-		gs_D2DRenderer = new wxD2DRenderer();
+		gs_D2DRenderer = new KaiD2DRenderer();
 	}
 
 	return gs_D2DRenderer;
 }
 
-wxD2DRenderer::wxD2DRenderer()
-	: m_direct2dFactory(wxD2D1Factory())
+KaiD2DRenderer::KaiD2DRenderer()
+	: m_direct2dFactory(KaiD2D1Factory())
 {
 	if ( m_direct2dFactory.get() == nullptr )
 	{
-		wxFAIL_MSG("Could not create Direct2D Factory.");
+		KaiFAIL_MSG("Could not create Direct2D Factory.");
 	}
 }
 
-wxD2DRenderer::~wxD2DRenderer()
+KaiD2DRenderer::~KaiD2DRenderer()
 {
 	m_direct2dFactory.reset();
 }
 
-GraphicsContext* wxD2DRenderer::CreateContext(const wxWindowDC& dc)
+GraphicsContext* KaiD2DRenderer::CreateContext(const KaiWindowDC& dc)
 {
-	return new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc);
+	return new KaiD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc);
 }
 
-GraphicsContext* wxD2DRenderer::CreateContext(const wxMemoryDC& dc)
+GraphicsContext* KaiD2DRenderer::CreateContext(const KaiMemoryDC& dc)
 {
-	wxBitmap bmp = dc.GetSelectedBitmap();
-	wxASSERT_MSG( bmp.IsOk(), wxS("Should select a bitmap before creating wxGraphicsContext") );
+	KaiBitmap bmp = dc.GetSelectedBitmap();
+	KaiASSERT_MSG( bmp.IsOk(), KaiS("Should select a bitmap before creating KaiGraphicsContext") );
 
-	return new wxD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
+	return new KaiD2DContext(this, m_direct2dFactory, dc.GetHDC(), &dc,
 							bmp.HasAlpha() ? D2D1_ALPHA_MODE_PREMULTIPLIED : D2D1_ALPHA_MODE_IGNORE);
 }
 
-GraphicsContext* wxD2DRenderer::CreateContextFromNativeContext(void* nativeContext)
+GraphicsContext* KaiD2DRenderer::CreateContextFromNativeContext(void* nativeContext)
 {
-	return new wxD2DContext(this, m_direct2dFactory, nativeContext);
+	return new KaiD2DContext(this, m_direct2dFactory, nativeContext);
 }
 
-GraphicsContext* wxD2DRenderer::CreateContextFromNativeWindow(void* window)
+GraphicsContext* KaiD2DRenderer::CreateContextFromNativeWindow(void* window)
 {
-	return new wxD2DContext(this, m_direct2dFactory, (HWND)window);
+	return new KaiD2DContext(this, m_direct2dFactory, (HWND)window);
 }
 
-GraphicsContext* wxD2DRenderer::CreateContextFromNativeHDC(WXHDC dc)
+GraphicsContext* KaiD2DRenderer::CreateContextFromNativeHDC(WXHDC dc)
 {
-	return new wxD2DContext(this, m_direct2dFactory, (HDC)dc);
+	return new KaiD2DContext(this, m_direct2dFactory, (HDC)dc);
 }
 
-GraphicsContext* wxD2DRenderer::CreateContext(wxWindow* window)
+GraphicsContext* KaiD2DRenderer::CreateContext(KaiWindow* window)
 {
-	return new wxD2DContext(this, m_direct2dFactory, (HWND)window->GetHWND(), window);
+	return new KaiD2DContext(this, m_direct2dFactory, (HWND)window->GetHWND(), window);
 }
 
-#if wxUSE_IMAGE
-GraphicsContext* wxD2DRenderer::CreateContextFromImage(wxImage& image)
+#if KaiUSE_IMAGE
+GraphicsContext* KaiD2DRenderer::CreateContextFromImage(KaiImage& image)
 {
-	return new wxD2DContext(this, m_direct2dFactory, image);
+	return new KaiD2DContext(this, m_direct2dFactory, image);
 }
-#endif // wxUSE_IMAGE
+#endif // KaiUSE_IMAGE
 
-GraphicsContext* wxD2DRenderer::CreateMeasuringContext()
+GraphicsContext* KaiD2DRenderer::CreateMeasuringContext()
 {
-	return new wxD2DMeasuringContext(this);
-}
-
-wxD2DPathData * wxD2DRenderer::CreatePath()
-{
-	return new wxD2DPathData(this, m_direct2dFactory);
+	return new KaiD2DMeasuringContext(this);
 }
 
-GraphicsMatrixData *wxD2DRenderer::CreateMatrix(
-	wxDouble a, wxDouble b, wxDouble c, wxDouble d,
-	wxDouble tx, wxDouble ty)
+KaiD2DPathData * KaiD2DRenderer::CreatePath()
 {
-	wxD2DMatrixData* matrixData = new wxD2DMatrixData(this);
+	return new KaiD2DPathData(this, m_direct2dFactory);
+}
+
+GraphicsMatrixData *KaiD2DRenderer::CreateMatrix(
+	KaiDouble a, KaiDouble b, KaiDouble c, KaiDouble d,
+	KaiDouble tx, KaiDouble ty)
+{
+	KaiD2DMatrixData* matrixData = new KaiD2DMatrixData(this);
 	matrixData->Set(a, b, c, d, tx, ty);
 
-  /*  wxGraphicsMatrix matrix;
+  /*  KaiGraphicsMatrix matrix;
 	matrix.SetRefData(matrixData);*/
 
 	return matrixData;
 }
 
-wxD2DPenData *wxD2DRenderer::CreatePen(const wxGraphicsPenInfo& info)
+KaiD2DPenData *KaiD2DRenderer::CreatePen(const KaiGraphicsPenInfo& info)
 {
-	if ( info.GetStyle() == wxPENSTYLE_TRANSPARENT )
+	if ( info.GetStyle() == KaiPENSTYLE_TRANSPARENT )
 	{
 		return nullptr;
 	}
 	else
 	{
 		
-		wxD2DPenData* penData = new wxD2DPenData(this, m_direct2dFactory, info);
+		KaiD2DPenData* penData = new KaiD2DPenData(this, m_direct2dFactory, info);
 		return penData;
 	}
 }
 
-wxD2DBrushData *wxD2DRenderer::CreateBrush(const wxBrush& brush)
+KaiD2DBrushData *KaiD2DRenderer::CreateBrush(const KaiBrush& brush)
 {
-	if ( !brush.IsOk() || brush.GetStyle() == wxBRUSHSTYLE_TRANSPARENT )
+	if ( !brush.IsOk() || brush.GetStyle() == KaiBRUSHSTYLE_TRANSPARENT )
 	{
 		return nullptr;
 	}
 	else
 	{
 		
-		return new wxD2DBrushData(this, brush);
+		return new KaiD2DBrushData(this, brush);
 	}
 }
 
-wxD2DBrushData * wxD2DRenderer::CreateLinearGradientBrush(
-	wxDouble x1, wxDouble y1,
-	wxDouble x2, wxDouble y2,
-	const wxGraphicsGradientStops& stops,
-	wxD2DMatrixData * matrix)
+KaiD2DBrushData * KaiD2DRenderer::CreateLinearGradientBrush(
+	KaiDouble x1, KaiDouble y1,
+	KaiDouble x2, KaiDouble y2,
+	const KaiGraphicsGradientStops& stops,
+	KaiD2DMatrixData * matrix)
 {
-	wxD2DBrushData* brushData = new wxD2DBrushData(this);
+	KaiD2DBrushData* brushData = new KaiD2DBrushData(this);
 	brushData->CreateLinearGradientBrush(x1, y1, x2, y2, stops, matrix);
 
 
 	return brushData;
 }
 
-wxD2DBrushData * wxD2DRenderer::CreateRadialGradientBrush(
-	wxDouble startX, wxDouble startY,
-	wxDouble endX, wxDouble endY,
-	wxDouble radius,
-	const wxGraphicsGradientStops& stops,
-	wxD2DMatrixData * matrix)
+KaiD2DBrushData * KaiD2DRenderer::CreateRadialGradientBrush(
+	KaiDouble startX, KaiDouble startY,
+	KaiDouble endX, KaiDouble endY,
+	KaiDouble radius,
+	const KaiGraphicsGradientStops& stops,
+	KaiD2DMatrixData * matrix)
 {
-	wxD2DBrushData* brushData = new wxD2DBrushData(this);
+	KaiD2DBrushData* brushData = new KaiD2DBrushData(this);
 	brushData->CreateRadialGradientBrush(startX, startY, endX, endY, radius, stops, matrix);
 
 	return brushData;
 }
 
 // create a native bitmap representation
-GraphicsBitmapData * wxD2DRenderer::CreateBitmap(const wxBitmap& bitmap)
+GraphicsBitmapData * KaiD2DRenderer::CreateBitmap(const KaiBitmap& bitmap)
 {
-	wxD2DBitmapData* bitmapData = new wxD2DBitmapData(this, bitmap);
+	KaiD2DBitmapData* bitmapData = new KaiD2DBitmapData(this, bitmap);
 
 	return bitmapData;
 }
 
 // create a graphics bitmap from a native bitmap
-GraphicsBitmapData * wxD2DRenderer::CreateBitmapFromNativeBitmap(void* bitmap)
+GraphicsBitmapData * KaiD2DRenderer::CreateBitmapFromNativeBitmap(void* bitmap)
 {
-	wxD2DBitmapData* bitmapData = new wxD2DBitmapData(this, bitmap);
+	KaiD2DBitmapData* bitmapData = new KaiD2DBitmapData(this, bitmap);
 
 	return bitmapData;
 }
 
-//#if wxUSE_IMAGE
-//GraphicsBitmapData * wxD2DRenderer::CreateBitmapFromImage(const wxImage& image)
+//#if KaiUSE_IMAGE
+//GraphicsBitmapData * KaiD2DRenderer::CreateBitmapFromImage(const KaiImage& image)
 //{
-//    return CreateBitmap(wxBitmap(image));
+//    return CreateBitmap(KaiBitmap(image));
 //}
 //
-//wxImage wxD2DRenderer::CreateImageFromBitmap(const wxGraphicsBitmap& bmp)
+//KaiImage KaiD2DRenderer::CreateImageFromBitmap(const KaiGraphicsBitmap& bmp)
 //{
-//    return static_cast<wxD2DBitmapData::NativeType*>(bmp.GetNativeBitmap())
+//    return static_cast<KaiD2DBitmapData::NativeType*>(bmp.GetNativeBitmap())
 //        ->GetSourceBitmap().ConvertToImage();
 //}
 //#endif
 
-wxD2DFontData * wxD2DRenderer::CreateFont(const wxFont& font, const wxColour& col)
+KaiD2DFontData * KaiD2DRenderer::CreateFont(const KaiFont& font, const KaiColour& col)
 {
-	return CreateFontAtDPI(font, wxRealPoint(), col);
+	return CreateFontAtDPI(font, KaiRealPoint(), col);
 }
 
-//wxD2DFontData * wxD2DRenderer::CreateFont(
-//    double sizeInPixels, const wxString& facename,
+//KaiD2DFontData * KaiD2DRenderer::CreateFont(
+//    double sizeInPixels, const KaiString& facename,
 //    int flags,
-//    const wxColour& col)
+//    const KaiColour& col)
 //{
-//    // Use the same DPI as wxFont will use in SetPixelSize, so these cancel
+//    // Use the same DPI as KaiFont will use in SetPixelSize, so these cancel
 //    // each other out and we are left with the actual pixel size.
 //    ScreenHDC hdc;
-//    wxRealPoint dpi(::GetDeviceCaps(hdc, LOGPIXELSX),
+//    KaiRealPoint dpi(::GetDeviceCaps(hdc, LOGPIXELSX),
 //                    ::GetDeviceCaps(hdc, LOGPIXELSY));
 //
 //    return CreateFontAtDPI(
-//        wxFont(wxSize(sizeInPixels, sizeInPixels)).AllFlags(flags).FaceName(facename),
+//        KaiFont(KaiSize(sizeInPixels, sizeInPixels)).AllFlags(flags).FaceName(facename),
 //        dpi, col);
 //}
 
-wxD2DFontData * wxD2DRenderer::CreateFontAtDPI(const wxFont& font,
-											  const wxRealPoint& dpi,
-											  const wxColour& col)
+KaiD2DFontData * KaiD2DRenderer::CreateFontAtDPI(const KaiFont& font,
+											  const KaiRealPoint& dpi,
+											  const KaiColour& col)
 {
-	wxD2DFontData* fontData = new wxD2DFontData(this, font, dpi, col);
+	KaiD2DFontData* fontData = new KaiD2DFontData(this, font, dpi, col);
 	if ( !fontData->GetFont() )
 	{
 		// Apparently a non-TrueType font is given and hence
@@ -5140,36 +5080,36 @@ wxD2DFontData * wxD2DRenderer::CreateFontAtDPI(const wxFont& font,
 }
 
 // create a sub-image from a native image representation
-GraphicsBitmapData* wxD2DRenderer::CreateSubBitmap(const GraphicsBitmapData& bitmap, wxDouble x, wxDouble y, wxDouble w, wxDouble h)
+GraphicsBitmapData* KaiD2DRenderer::CreateSubBitmap(const GraphicsBitmapData& bitmap, KaiDouble x, KaiDouble y, KaiDouble w, KaiDouble h)
 {
-	typedef wxD2DBitmapData::NativeType* NativeBitmap;
-	wxBitmap sourceBitmap = static_cast<NativeBitmap>(bitmap.GetNativeBitmap())->GetSourceBitmap();
-	return CreateBitmap(sourceBitmap.GetSubBitmap(wxRect(x, y, w, h)));
+	typedef KaiD2DBitmapData::NativeType* NativeBitmap;
+	KaiBitmap sourceBitmap = static_cast<NativeBitmap>(bitmap.GetNativeBitmap())->GetSourceBitmap();
+	return CreateBitmap(sourceBitmap.GetSubBitmap(KaiRect(x, y, w, h)));
 }
 
-wxString wxD2DRenderer::GetName() const
+KaiString KaiD2DRenderer::GetName() const
 {
 	return "direct2d";
 }
 
-void wxD2DRenderer::GetVersion(int* major, int* minor, int* micro) const
+void KaiD2DRenderer::GetVersion(int* major, int* minor, int* micro) const
 {
-	if (wxDirect2D::HasDirect2DSupport())
+	if (KaiDirect2D::HasDirect2DSupport())
 	{
 		if (major)
 			*major = 1;
 
 		if (minor)
 		{
-			switch(wxDirect2D::GetDirect2DVersion())
+			switch(KaiDirect2D::GetDirect2DVersion())
 			{
-			case wxDirect2D::wxD2D_VERSION_1_0:
+			case KaiDirect2D::KaiD2D_VERSION_1_0:
 				*minor = 0;
 				break;
-			case wxDirect2D::wxD2D_VERSION_1_1:
+			case KaiDirect2D::KaiD2D_VERSION_1_1:
 				*minor = 1;
 				break;
-			case wxDirect2D::wxD2D_VERSION_NONE:
+			case KaiDirect2D::KaiD2D_VERSION_NONE:
 				// This is not supposed to happen, but we handle this value in
 				// the switch to ensure that we'll get warnings if any new
 				// values, not handled here, are added to the enum later.
@@ -5183,12 +5123,12 @@ void wxD2DRenderer::GetVersion(int* major, int* minor, int* micro) const
 	}
 }
 
-ID2D1Factory* wxD2DRenderer::GetD2DFactory()
+ID2D1Factory* KaiD2DRenderer::GetD2DFactory()
 {
 	return m_direct2dFactory;
 }
 
-ID2D1Factory* wxGetD2DFactory(wxD2DRenderer* renderer)
+ID2D1Factory* KaiGetD2DFactory(KaiD2DRenderer* renderer)
 {
 	return renderer->GetD2DFactory();
 }
@@ -5197,10 +5137,10 @@ ID2D1Factory* wxGetD2DFactory(wxD2DRenderer* renderer)
 // Module ensuring all global/singleton objects are destroyed on shutdown.
 // ----------------------------------------------------------------------------
 
-class wxDirect2DModule : public wxModule
+class KaiDirect2DModule : public KaiModule
 {
 public:
-	wxDirect2DModule()
+	KaiDirect2DModule()
 	{
 	}
 
@@ -5208,7 +5148,7 @@ public:
 	{
 		HRESULT hr = ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
 		// RPC_E_CHANGED_MODE is not considered as an error
-		// - see remarks for wxOleInitialize().
+		// - see remarks for KaiOleInitialize().
 		return SUCCEEDED(hr) || hr == RPC_E_CHANGED_MODE;
 	}
 
@@ -5242,30 +5182,30 @@ public:
 	}
 
 private:
-	wxDECLARE_DYNAMIC_CLASS(wxDirect2DModule);
+	KaiDECLARE_DYNAMIC_CLASS(KaiDirect2DModule);
 };
 
-wxIMPLEMENT_DYNAMIC_CLASS(wxDirect2DModule, wxModule);
+KaiIMPLEMENT_DYNAMIC_CLASS(KaiDirect2DModule, KaiModule);
 
-GraphicsContext * Create(const wxWindowDC& dc)
+GraphicsContext * Create(const KaiWindowDC& dc)
 {
-	wxD2DRenderer * renderer = wxD2DRenderer::GetDirect2DRenderer();
+	KaiD2DRenderer * renderer = KaiD2DRenderer::GetDirect2DRenderer();
 	return renderer->CreateContext(dc);
 }
 
-GraphicsContext * Create(const wxMemoryDC& dc)
+GraphicsContext * Create(const KaiMemoryDC& dc)
 {
-	wxD2DRenderer * renderer = wxD2DRenderer::GetDirect2DRenderer();
+	KaiD2DRenderer * renderer = KaiD2DRenderer::GetDirect2DRenderer();
 	return renderer->CreateContext(dc);
 }
 
-GraphicsContext * Create(wxWindow* window)
+GraphicsContext * Create(KaiWindow* window)
 {
-	wxD2DRenderer * renderer = wxD2DRenderer::GetDirect2DRenderer();
+	KaiD2DRenderer * renderer = KaiD2DRenderer::GetDirect2DRenderer();
 	return renderer->CreateContext(window);
 }
 
-void GraphicsContext::StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble y2)
+void GraphicsContext::StrokeLine(KaiDouble x1, KaiDouble y1, KaiDouble x2, KaiDouble y2)
 {
 	GraphicsPathData * path = CreatePath();
 	path->MoveToPoint(x1, y1);
@@ -5273,13 +5213,13 @@ void GraphicsContext::StrokeLine(wxDouble x1, wxDouble y1, wxDouble x2, wxDouble
 	StrokePath(path);
 }
 
-void GraphicsContext::DrawTextU(const wxString& str, wxDouble x, wxDouble y)
+void GraphicsContext::DrawTextU(const KaiString& str, KaiDouble x, KaiDouble y)
 {
 	DoDrawText(str, x, y);
 }
 
 GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer()
 {
-	return wxD2DRenderer::GetDirect2DRenderer();
+	return KaiD2DRenderer::GetDirect2DRenderer();
 }
-#endif // wxUSE_GRAPHICS_DIRECT2D
+#endif // KaiUSE_GRAPHICS_DIRECT2D

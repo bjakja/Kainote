@@ -12,17 +12,17 @@
 
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
-#include "UtilsWindows.h"
+
 #include "ProviderFFMS2.h"
 #include "LogHandler.h"
-#include "Videoctrl.h"
+#include "VideoBox.h"
 #include "kainoteApp.h"
 #include "ListControls.h"
 #include "Stylelistbox.h"
 #include "SubsGrid.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
-
+#include "UtilsWindows.h"s
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)

@@ -17,7 +17,7 @@
 #include "SubsGrid.h"
 #include "KaiTextCtrl.h"
 #include "EditBox.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <math.h> 
@@ -855,7 +855,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 	if (event.GetWheelRotation() != 0) {
 		int step = event.GetWheelRotation() / event.GetWheelDelta();
 		tool -= step;
-		VideoCtrl *vc = tab->video;
+		VideoBox *vc = tab->video;
 		vc->GetVideoToolbar()->SetItemToggled(&tool);
 		return;
 	}

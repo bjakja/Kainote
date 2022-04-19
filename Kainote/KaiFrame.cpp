@@ -19,7 +19,7 @@
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "EditBox.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "Notebook.h"
 #include <wx/dc.h>
 #include <wx/dcclient.h>

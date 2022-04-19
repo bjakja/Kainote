@@ -16,7 +16,7 @@
 #include "VisualAllTagsControls.h"
 #include "Visuals.h"
 #include "TabPanel.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "EditBox.h"
 
 void AllTagsSlider::SetAllTags(AllTags* _parent)
@@ -51,7 +51,7 @@ void AllTagsSlider::OnMouseEvent(wxMouseEvent& evt)
 				parent->currentTag = 0;
 			int tool = parent->mode << 20;
 			tool += parent->currentTag;
-			VideoCtrl* vc = parent->tab->video;
+			VideoBox* vc = parent->tab->video;
 			vc->GetVideoToolbar()->SetItemToggled(&tool);
 			parent->ChangeTool(tool, false);
 			return;

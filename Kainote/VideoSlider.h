@@ -18,7 +18,7 @@
 #include <wx/window.h>
 #include <wx/bitmap.h>
 
-class VideoCtrl;
+class VideoBox;
 
 class VideoSlider : public wxWindow
 {
@@ -29,7 +29,7 @@ public:
 	virtual ~VideoSlider();
 
 	void SetValue(float pos);
-	VideoCtrl* VB;
+	VideoBox* VB;
 	void SendTime(int msTimePos);
 protected:
 	void OnPaint(wxPaintEvent& event);

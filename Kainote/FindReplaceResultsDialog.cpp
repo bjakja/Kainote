@@ -16,14 +16,16 @@
 #include "Config.h"
 #include "FindReplaceResultsDialog.h"
 #include "FindReplace.h"
+#include "MappedButton.h"
+#include "KaiCheckBox.h"
 
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
 FindReplaceResultsDialog::FindReplaceResultsDialog(wxWindow *parent, FindReplace *FR, bool _findInFiles)
-	: KaiDialog(parent, -1, _("Wyniki szukania"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)
+	 : KaiDialog(parent, -1, _("Wyniki szukania"), wxPoint(-1, -1), wxSize(-1, -1), wxRESIZE_BORDER)
 {
 	DialogSizer * main = new DialogSizer(wxVERTICAL);
-	resultsList = new KaiListCtrl(this, 23323, wxDefaultPosition, wxSize(700, 300));
+	resultsList = new KaiListCtrl(this, 23323, wxPoint(-1, -1), wxSize(700, 300));
 	resultsList->InsertColumn(0, emptyString, TYPE_TEXT, -1);
 	resultsList->SetHeaderHeight(0);
 	main->Add(resultsList, 1, wxEXPAND | wxALL, 2);

@@ -16,6 +16,10 @@
 #pragma once
 
 #include <wx/caret.h>
+#include <wx/dc.h>
+#include <wx/dcmemory.h>
+#include <wx/dcclient.h>
+#include <wx/window.h>
 #include "KaiScrollbar.h"
 #include "TextEditorTagList.h"
 #include <map>

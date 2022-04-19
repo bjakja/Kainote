@@ -14,7 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#undef GetClassInfo
+#include <vector>
+#include <wx\window.h>
+#undef GetClientRect
+#include <windows.h>
+
 
 struct tagRECT;
 

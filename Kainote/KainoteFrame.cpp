@@ -110,12 +110,9 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 
 	Menubar = new MenuBar(this);
 
-	//FrameSizer *mains1= new FrameSizer(wxVERTICAL);
-	//wxBoxSizer *mains1= new wxBoxSizer(wxVERTICAL);
-	//mains=new wxBoxSizer(wxHORIZONTAL);
+	
 
 	Tabs = new Notebook(this, ID_TABS);
-	//SetMinSize(wxSize(500,300));
 	Toolbar = new KaiToolbar(this, Menubar, -1);
 
 	StatusBar = new KaiStatusBar(this, ID_STATUS_BAR);
@@ -321,16 +318,16 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		_("Ukrywa tagi w nawiasach ASS i MDVD"), PTR_BITMAP_PNG(L"hidetags"));
 	Menubar->Append(SubsMenu, _("&Napisy"));
 
-	AutoMenu = new Menu();
-	AutoMenu->AppendTool(Toolbar, GLOBAL_AUTOMATION_LOAD_SCRIPT, _("Wczytaj skrypt"), 
+	m_AutoMenu = new Menu();
+	m_AutoMenu->AppendTool(Toolbar, GLOBAL_AUTOMATION_LOAD_SCRIPT, _("Wczytaj skrypt"), 
 		_("Wczytaj skrypt"), PTR_BITMAP_PNG(L"automation"));
-	AutoMenu->Append(GLOBAL_AUTOMATION_RELOAD_AUTOLOAD, _("Odśwież skrypty autoload"), 
+	m_AutoMenu->Append(GLOBAL_AUTOMATION_RELOAD_AUTOLOAD, _("Odśwież skrypty autoload"), 
 		_("Odśwież skrypty autoload"), true, PTR_BITMAP_PNG(L"automation"));
-	AutoMenu->Append(GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT, _("Uruchom ostatnio zaczytany skrypt"), 
+	m_AutoMenu->Append(GLOBAL_AUTOMATION_LOAD_LAST_SCRIPT, _("Uruchom ostatnio zaczytany skrypt"), 
 		_("Uruchom ostatnio zaczytany skrypt"));
-	AutoMenu->Append(GLOBAL_AUTOMATION_OPEN_HOTKEYS_WINDOW, _("Otwórz okno mapowania skrótów"), 
+	m_AutoMenu->Append(GLOBAL_AUTOMATION_OPEN_HOTKEYS_WINDOW, _("Otwórz okno mapowania skrótów"), 
 		_("Otwórz okno mapowania skrótów"));
-	Menubar->Append(AutoMenu, _("Au&tomatyzacja"));
+	Menubar->Append(m_AutoMenu, _("Au&tomatyzacja"));
 
 	HelpMenu = new Menu();
 	HelpMenu->AppendTool(Toolbar, GLOBAL_HELP, _("&Pomoc (niekompletna, ale jednak)"), 
@@ -402,7 +399,7 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 	
 	SetSubsResolution(false);
 	Auto = new Automation();
-	sendFocus.SetOwner(this, 6789);
+	m_sendFocus.SetOwner(this, 6789);
 
 	Bind(wxEVT_TIMER, [=](wxTimerEvent &evt){
 		//if it will crash on last focused window
@@ -715,7 +712,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (FileDialog1->ShowModal() == wxID_OK){
 			wxString file = FileDialog1->GetPath();
 			Options.SetString(AUTOMATION_RECENT_FILES, file.AfterLast(L'\\'));
-			//if(Auto->Add(file)){Auto->BuildMenu(&AutoMenu);}
+			//if(Auto->Add(file)){Auto->BuildMenu(&m_AutoMenu);}
 			Auto->Add(file);
 		}
 		FileDialog1->Destroy();
@@ -2064,21 +2061,21 @@ void KainoteFrame::OnMenuOpened(MenuEvent& event)
 			}
 		}
 	}
-	if (curMenu == AutoMenu)
+	if (curMenu == m_AutoMenu)
 	{
 		if (editor) {
-			if (!AutoMenu->FindItemByPosition(0)->IsEnabled()) {
-				for (size_t i = 0; i < AutoMenu->GetMenuItemCount(); i++) {
-					AutoMenu->FindItemByPosition(i)->Enable(true);
+			if (!m_AutoMenu->FindItemByPosition(0)->IsEnabled()) {
+				for (size_t i = 0; i < m_AutoMenu->GetMenuItemCount(); i++) {
+					m_AutoMenu->FindItemByPosition(i)->Enable(true);
 				}
 			}
 
-			Auto->BuildMenu(&AutoMenu);
+			Auto->BuildMenu(&m_AutoMenu);
 		}
 		//disable menuitems when editor not enabled
 		else {
-			for (size_t i = 0; i < AutoMenu->GetMenuItemCount(); i++) {
-				AutoMenu->FindItemByPosition(i)->Enable(false);
+			for (size_t i = 0; i < m_AutoMenu->GetMenuItemCount(); i++) {
+				m_AutoMenu->FindItemByPosition(i)->Enable(false);
 			}
 		}
 	}

@@ -19,9 +19,10 @@
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/event.h>
-#include <wx/rtti.h>
+#include <wx/Window.h>
+#include <wx/event.h>
 #include "config.h"
-//#include "Utils.h"
+
 #undef GetClassInfo
 
 
@@ -202,7 +203,7 @@ void KaiTreebook::OnMouseEvent(wxMouseEvent& event)
 		int subPage = Pages[elem]->whichSubpage * 20;
 		int posX = 20 + subPage;
 		int x = event.GetX();
-		if (x >= posX && elem != selection && !event.LeftDClick()){
+		if (x >= posX && elem != selection && !event.LeftDClick()) {
 			ChangePage(elem);
 			RefreshTree();
 		}

@@ -17,14 +17,16 @@
 
 #include "RendererVideo.h"
 #include "Provider.h"
+#include <d3d9.h>
+#include <d3dx9.h>
 
 class RendererFFMS2 : public RendererVideo
 {
 	friend class RendererVideo;
-	friend class VideoCtrl;
+	friend class VideoBox;
 	friend class Provider;
 public:
-	RendererFFMS2(VideoCtrl *control, bool visualDisabled);
+	RendererFFMS2(VideoBox *control, bool visualDisabled);
 	virtual ~RendererFFMS2();
 
 	bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true);

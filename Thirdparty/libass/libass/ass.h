@@ -17,8 +17,8 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef LIBASS_ASS_H
-#define LIBASS_ASS_H
+# pragma once
+
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -774,4 +774,4 @@ long long ass_step_sub(ASS_Track *track, long long now, int movement);
 }
 #endif
 
-#endif /* LIBASS_ASS_H */
+

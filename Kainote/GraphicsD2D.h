@@ -9,11 +9,11 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-//#include <..\shared\dxgitype.h>
-//#include <d2d1.h>
-//#include <dwrite.h>
+#include <dxgitype.h>
+#include <d2d1.h>
+#include <dwrite.h>
 
-//#include <..\um\wincodec.h>
+#include <wincodec.h>
 
 IWICImagingFactory* wxWICImagingFactory();
 ID2D1Factory* wxD2D1Factory();
@@ -21,7 +21,7 @@ IDWriteFactory* wxDWriteFactory();
 
 #include <wx/pen.h>
 #include <wx/font.h>
-//#include <wx/dcclient.h>
+#include <wx/dcclient.h>
 
 
 enum wxAntialiasMode
@@ -43,25 +43,6 @@ enum wxInterpolationQuality
 	// best quality, not suited for interactivity
 	wxINTERPOLATION_BEST
 };
-//
-//enum wxGradientType
-//{
-//	wxGRADIENT_NONE,
-//	wxGRADIENT_LINEAR,
-//	wxGRADIENT_RADIAL
-//};
-
-
-
-//enum wxPenJoin
-//{
-//	wxJOIN_INVALID = -1,
-//
-//	wxJOIN_BEVEL = 120,
-//	wxJOIN_MITER,
-//	wxJOIN_ROUND
-//};
-
 
 
 // ----------------------------------------------------------------------------
@@ -148,7 +129,6 @@ private:
 // ----------------------------------------------------------------------------
 // wxFontInfo describes a wxFont
 // ----------------------------------------------------------------------------
-
 class wxFontInfo
 {
 public:
@@ -340,7 +320,7 @@ public:
 		if (numWeight > 0) {
 			return;
 		};
-		if(numWeight <= 1000) {
+		if (numWeight <= 1000) {
 			return;
 		};
 
@@ -396,19 +376,6 @@ private:
 	wxFontEncoding m_encoding;
 };
 
-class wxD2DRenderer;
-
-//class GraphicsObjectRefData : public wxObjectRefData
-//{
-//public:
-//	GraphicsObjectRefData(wxD2DRenderer* renderer);
-//	GraphicsObjectRefData(const GraphicsObjectRefData* data);
-//	wxD2DRenderer* GetRenderer() const;
-//	virtual GraphicsObjectRefData* Clone() const;
-//
-//protected:
-//	wxD2DRenderer* m_renderer;
-//};
 
 class GraphicsBitmapData //: public GraphicsObjectRefData
 {
@@ -641,8 +608,6 @@ public:
 	virtual ~GraphicsRenderer(){};
 
 	static GraphicsRenderer * GetDirect2DRenderer();
-
-	virtual GraphicsContext * CreateContext(const wxWindowDC& dc){ return nullptr; };
 
 	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return nullptr; };
 

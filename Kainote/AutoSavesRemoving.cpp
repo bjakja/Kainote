@@ -14,18 +14,18 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "AutoSavesRemoving.h"
-#include "config.h"
+//#include "config.h"
 #include "MappedButton.h"
 #include "KaiStaticBoxSizer.h"
-#include "Notebook.h"
-#include "LogHandler.h"
+//#include "Notebook.h"
+//#include "LogHandler.h"
 #include <ctime>
 #include <wx/filedlg.h>
 #include <wx/dir.h>
 
 
 AutoSavesRemoving::AutoSavesRemoving(wxWindow* parent)
-	:KaiDialog(parent, -1, _("Usuń pliki tymczasowe"))
+	: KaiDialog(parent, -1, _("Usuń pliki tymczasowe"))
 {
 	std::time_t t = std::time(0);
 	std::tm* now = std::localtime(&t);

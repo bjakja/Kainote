@@ -19,7 +19,7 @@
 
 
 #include "Provider.h"
-//#include <dsound.h>
+#define INTERFACE IDirectSound8
 
 
 class DirectSoundPlayer2Thread {

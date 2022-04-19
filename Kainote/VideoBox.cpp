@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 
 #include "Menu.h"
 #include "KaiMessageBox.h"
@@ -82,16 +82,16 @@ int CRecycleFile::Recycle(const wchar_t *pszPath, BOOL bDelete)
 class AspectRatioDialog : public KaiDialog
 {
 public:
-	AspectRatioDialog(VideoCtrl *parent, float AspectRatio);
+	AspectRatioDialog(VideoBox *parent, float AspectRatio);
 	virtual ~AspectRatioDialog(){};
 
 	KaiSlider *slider;
 	KaiStaticText *actual;
 	void OnSlider(wxCommandEvent &event);
-	VideoCtrl *_parent;
+	VideoBox *_parent;
 };
 
-AspectRatioDialog::AspectRatioDialog(VideoCtrl *parent, float AspectRatio)
+AspectRatioDialog::AspectRatioDialog(VideoBox *parent, float AspectRatio)
 	: KaiDialog(parent->GetMessageWindowParent(), -1, emptyString, wxDefaultPosition, wxDefaultSize)
 {
 	_parent = parent;
@@ -114,7 +114,7 @@ void AspectRatioDialog::OnSlider(wxCommandEvent &event)
 }
 
 
-VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
+VideoBox::VideoBox(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	: wxWindow(parent, -1, wxDefaultPosition, size, wxWANTS_CHARS)
 	, Kai(kfpar)
 	, tab((TabPanel*)parent)
@@ -158,7 +158,7 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	m_TimesTextField->SetBackgroundColour(WINDOW_BACKGROUND);
 
 	m_VideoToolbar = new VideoToolbar(m_VideoPanel, wxPoint(0, m_PanelHeight - m_ToolBarHeight), wxSize(-1, m_ToolBarHeight));
-	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
+	Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoBox::OnChangeVisual, this, ID_VIDEO_TOOLBAR_EVENT);
 
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		renderer->VisualChangeTool(evt.GetInt());
@@ -170,21 +170,21 @@ VideoCtrl::VideoCtrl(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 		RefreshTime();
 	}, ID_REFRESH_TIME);
 	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);
-	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
-	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoCtrl::OnVolume);
+	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoBox::OnAccelerator);
+	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoBox::OnAccelerator);
+	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoBox::OnVolume);
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
 	idletime.SetOwner(this, ID_IDLE);
 
 }
 
-VideoCtrl::~VideoCtrl()
+VideoBox::~VideoBox()
 {
 	SAFE_DELETE(renderer);
 }
 
-bool VideoCtrl::Play()
+bool VideoBox::Play()
 {
 	if (!renderer)
 		return false;
@@ -197,7 +197,7 @@ bool VideoCtrl::Play()
 	return true;
 }
 
-void VideoCtrl::PlayLine(int start, int end)
+void VideoBox::PlayLine(int start, int end)
 {
 	if (!renderer)
 		return;
@@ -208,7 +208,7 @@ void VideoCtrl::PlayLine(int start, int end)
 	ChangeButtonBMP(false);
 }
 
-bool VideoCtrl::Pause(bool skipWhenOnEnd)
+bool VideoBox::Pause(bool skipWhenOnEnd)
 {
 	wxMutexLocker lock(vbmutex);
 
@@ -239,7 +239,7 @@ bool VideoCtrl::Pause(bool skipWhenOnEnd)
 	return true;
 }
 
-bool VideoCtrl::Stop()
+bool VideoBox::Stop()
 {
 	if (!renderer)
 		return false;
@@ -256,7 +256,7 @@ bool VideoCtrl::Stop()
 	return true;
 }
 
-bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, 
+bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= false*/, 
 	bool changeAudio, int customFFMS2, bool dontPlayOnStart)
 {
 	prevchap = -1;
@@ -399,7 +399,7 @@ bool VideoCtrl::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*=
 }
 
 
-PlaybackState VideoCtrl::GetState()
+PlaybackState VideoBox::GetState()
 {
 	if (!renderer)
 		return None;
@@ -407,7 +407,7 @@ PlaybackState VideoCtrl::GetState()
 	return renderer->m_State;
 }
 
-bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/, bool asynchonize /*= true*/)
+bool VideoBox::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/, bool asynchonize /*= true*/)
 {
 	wxMutexLocker lock(vbmutex);
 	if (!renderer){ return false; }
@@ -415,7 +415,7 @@ bool VideoCtrl::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool
 	return true;
 }
 
-int VideoCtrl::Tell()
+int VideoBox::Tell()
 {
 	if (!renderer)
 		return 0;
@@ -424,7 +424,7 @@ int VideoCtrl::Tell()
 }
 
 
-void VideoCtrl::OnSize(wxSizeEvent& event)
+void VideoBox::OnSize(wxSizeEvent& event)
 {
 	wxSize asize = GetClientSize();
 	if (m_VideoWindowLastSize == asize){ return; }
@@ -464,7 +464,7 @@ void VideoCtrl::OnSize(wxSizeEvent& event)
 }
 
 
-void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
+void VideoBox::OnMouseEvent(wxMouseEvent& event)
 {
 
 	if (event.ButtonUp())
@@ -598,12 +598,12 @@ void VideoCtrl::OnMouseEvent(wxMouseEvent& event)
 
 
 
-void VideoCtrl::OnPlaytime(wxTimerEvent& event)
+void VideoBox::OnPlaytime(wxTimerEvent& event)
 {
 	RefreshTime();
 }
 
-void VideoCtrl::OnKeyPress(wxKeyEvent& event)
+void VideoBox::OnKeyPress(wxKeyEvent& event)
 {
 	int key = event.GetKeyCode();
 	if (key == L'F'){ SetFullscreen(); }
@@ -640,7 +640,7 @@ void VideoCtrl::OnKeyPress(wxKeyEvent& event)
 }
 
 
-void VideoCtrl::OnIdle(wxTimerEvent& event)
+void VideoBox::OnIdle(wxTimerEvent& event)
 {
 	if (m_IsFullscreen && !m_FullScreenWindow->panel->IsShown() && !m_IsMenuShown){
 		SetCursor(wxCURSOR_BLANK);
@@ -650,7 +650,7 @@ void VideoCtrl::OnIdle(wxTimerEvent& event)
 
 
 
-void VideoCtrl::NextFile(bool next)
+void VideoBox::NextFile(bool next)
 {
 	wxMutexLocker lock(nextmutex);
 	wxString path;
@@ -706,7 +706,7 @@ void VideoCtrl::NextFile(bool next)
 	Pause(false);
 }
 
-void VideoCtrl::SetFullscreen(int monitor)
+void VideoBox::SetFullscreen(int monitor)
 {
 	if (!renderer)
 		return;
@@ -792,7 +792,7 @@ void VideoCtrl::SetFullscreen(int monitor)
 
 }
 
-bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool setstatus, bool calcH)
+bool VideoBox::CalcSize(int *width, int *height, int wwidth, int wheight, bool setstatus, bool calcH)
 {
 	wxSize size;
 	renderer->GetVideoSize(&size.x, &size.y);
@@ -820,7 +820,7 @@ bool VideoCtrl::CalcSize(int *width, int *height, int wwidth, int wheight, bool 
 	return !(size.x == wwidth && size.y == wheight);
 }
 
-void VideoCtrl::OnPrew()
+void VideoBox::OnPrew()
 {
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
@@ -831,7 +831,7 @@ void VideoCtrl::OnPrew()
 }
 
 
-void VideoCtrl::OnNext()
+void VideoBox::OnNext()
 {
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
@@ -841,14 +841,14 @@ void VideoCtrl::OnNext()
 	NextFile();
 }
 
-void VideoCtrl::OnVolume(wxScrollEvent& event)
+void VideoBox::OnVolume(wxScrollEvent& event)
 {
 	int pos = event.GetPosition();
 	Options.SetInt(VIDEO_VOLUME, pos);
 	renderer->SetVolume(-(pos * pos));
 }
 
-void VideoCtrl::ContextMenu(const wxPoint &pos)
+void VideoBox::ContextMenu(const wxPoint &pos)
 {
 	m_IsMenuShown = true;
 	Menu* menu = new Menu(VIDEO_HOTKEY);
@@ -983,7 +983,7 @@ void VideoCtrl::ContextMenu(const wxPoint &pos)
 }
 
 
-void VideoCtrl::OnHidePB()
+void VideoBox::OnHidePB()
 {
 	if (!renderer)
 		return;
@@ -995,7 +995,7 @@ void VideoCtrl::OnHidePB()
 	if (GetState() == Paused){ renderer->Render(false); }
 }
 
-void VideoCtrl::OnDeleteVideo()
+void VideoBox::OnDeleteVideo()
 {
 	wxString path = tab->VideoPath;
 	if (path == emptyString && KaiMessageBox(_("Czy na pewno chcesz przenieść wczytany plik wideo do kosza?"), _("Usuwanie"), wxYES_NO) == wxNO){ return; }
@@ -1004,7 +1004,7 @@ void VideoCtrl::OnDeleteVideo()
 	x.Recycle(path.data());
 }
 
-void VideoCtrl::OnOpVideo()
+void VideoBox::OnOpVideo()
 {
 	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik wideo"),
 		(tab->SubsPath != emptyString) ? tab->SubsPath.BeforeLast(L'\\') :
@@ -1017,7 +1017,7 @@ void VideoCtrl::OnOpVideo()
 	FileDialog2->Destroy();
 }
 
-void VideoCtrl::OnOpSubs()
+void VideoBox::OnOpSubs()
 {
 	if (Kai->SavePrompt(2)){ return; }
 	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
@@ -1032,7 +1032,7 @@ void VideoCtrl::OnOpSubs()
 	FileDialog->Destroy();
 }
 
-void VideoCtrl::OpenEditor(bool esc)
+void VideoBox::OpenEditor(bool esc)
 {
 
 	if (m_IsFullscreen){
@@ -1050,7 +1050,7 @@ void VideoCtrl::OpenEditor(bool esc)
 }
 
 
-void VideoCtrl::OnAccelerator(wxCommandEvent& event)
+void VideoBox::OnAccelerator(wxCommandEvent& event)
 {
 
 	id = event.GetId();
@@ -1097,7 +1097,7 @@ void VideoCtrl::OnAccelerator(wxCommandEvent& event)
 }
 
 
-void VideoCtrl::OnSMinus()
+void VideoBox::OnSMinus()
 {
 	if (!renderer)
 		return;
@@ -1123,7 +1123,7 @@ void VideoCtrl::OnSMinus()
 	}
 }
 
-void VideoCtrl::OnSPlus()
+void VideoBox::OnSPlus()
 {
 	if (!renderer)
 		return;
@@ -1151,7 +1151,7 @@ void VideoCtrl::OnSPlus()
 	}
 }
 
-void VideoCtrl::OnPaint(wxPaintEvent& event)
+void VideoBox::OnPaint(wxPaintEvent& event)
 {
 	if (renderer && !renderer->m_BlockResize && renderer->m_State == Paused){
 		renderer->Render(true, false);
@@ -1172,13 +1172,13 @@ void VideoCtrl::OnPaint(wxPaintEvent& event)
 
 }
 
-void VideoCtrl::OnEndFile(wxCommandEvent &event)
+void VideoBox::OnEndFile(wxCommandEvent &event)
 {
 	if ((!tab->editor || m_IsFullscreen) && m_IsDirectShow){ NextFile(); }
 	else{ if (GetState() == Playing){ Pause(false); } }
 }
 
-void VideoCtrl::SetAspectRatio(float _AR)
+void VideoBox::SetAspectRatio(float _AR)
 {
 	if (!renderer)
 		return;
@@ -1194,7 +1194,7 @@ void VideoCtrl::SetAspectRatio(float _AR)
 	if (GetState() == Paused){ renderer->Render(false); }
 }
 
-void VideoCtrl::SetScaleAndZoom()
+void VideoBox::SetScaleAndZoom()
 {
 	if (!renderer)
 		return;
@@ -1208,7 +1208,7 @@ void VideoCtrl::SetScaleAndZoom()
 	Kai->SetStatusText(zoom, 2);
 }
 
-void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
+void VideoBox::ChangeOnScreenResolution(TabPanel *tab)
 {
 	if (!renderer)
 		return;
@@ -1223,7 +1223,7 @@ void VideoCtrl::ChangeOnScreenResolution(TabPanel *tab)
 	visual->SetCurVisual();
 }
 
-void VideoCtrl::RefreshTime()
+void VideoBox::RefreshTime()
 {
 	if (!renderer && GetState() != None)
 		return;
@@ -1307,7 +1307,7 @@ void VideoCtrl::RefreshTime()
 
 }
 
-void VideoCtrl::OnCopyCoords(const wxPoint &pos)
+void VideoBox::OnCopyCoords(const wxPoint &pos)
 {
 	int w, h;
 	GetClientSize(&w, &h);
@@ -1326,13 +1326,13 @@ void VideoCtrl::OnCopyCoords(const wxPoint &pos)
 	}
 }
 
-void VideoCtrl::ChangeButtonBMP(bool play)
+void VideoBox::ChangeButtonBMP(bool play)
 {
 	if (m_IsFullscreen){ m_FullScreenWindow->bpause->ChangeBitmap(play); }
 	else{ m_ButtonPause->ChangeBitmap(play); }
 }
 
-void VideoCtrl::NextChap()
+void VideoBox::NextChap()
 {
 	if (!renderer)
 		return;
@@ -1358,7 +1358,7 @@ void VideoCtrl::NextChap()
 	}
 }
 
-void VideoCtrl::PrevChap()
+void VideoBox::PrevChap()
 {
 	if (!renderer)
 		return;
@@ -1381,12 +1381,12 @@ void VideoCtrl::PrevChap()
 	}
 }
 
-void VideoCtrl::ConnectAcc(int id)
+void VideoBox::ConnectAcc(int id)
 {
-	Connect(id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoCtrl::OnAccelerator);
+	Connect(id, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&VideoBox::OnAccelerator);
 }
 
-void VideoCtrl::ChangeStream()
+void VideoBox::ChangeStream()
 {
 	if (!m_IsDirectShow || !renderer){ return; }
 	wxArrayString enabled;
@@ -1427,7 +1427,7 @@ void VideoCtrl::ChangeStream()
 	
 }
 
-void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
+void VideoBox::OnChangeVisual(wxCommandEvent &evt)
 {
 	if (!renderer)
 		return;
@@ -1449,7 +1449,7 @@ void VideoCtrl::OnChangeVisual(wxCommandEvent &evt)
 
 }
 
-void VideoCtrl::OnLostCapture(wxMouseCaptureLostEvent& evt)
+void VideoBox::OnLostCapture(wxMouseCaptureLostEvent& evt)
 {
 	if (HasCapture()) { ReleaseMouse(); }
 	if (renderer && renderer->HasVisual(false)) {
@@ -1457,13 +1457,13 @@ void VideoCtrl::OnLostCapture(wxMouseCaptureLostEvent& evt)
 	}
 }
 
-bool VideoCtrl::SetBackgroundColour(const wxColour &col)
+bool VideoBox::SetBackgroundColour(const wxColour &col)
 {
 	m_VideoPanel->SetBackgroundColour(col);
 	return true;
 }
 
-bool VideoCtrl::SetFont(const wxFont &font)
+bool VideoBox::SetFont(const wxFont &font)
 {
 	wxWindow::SetFont(font);
 	int fw;
@@ -1498,7 +1498,7 @@ bool VideoCtrl::SetFont(const wxFont &font)
 	return true;
 }
 
-void VideoCtrl::GetVideoSize(int *width, int *height)
+void VideoBox::GetVideoSize(int *width, int *height)
 {
 	if (renderer){
 		renderer->GetVideoSize(width, height);
@@ -1508,7 +1508,7 @@ void VideoCtrl::GetVideoSize(int *width, int *height)
 		*height = 0;
 	}
 }
-wxSize VideoCtrl::GetVideoSize()
+wxSize VideoBox::GetVideoSize()
 {
 	wxSize size(0, 0);
 	if (renderer){
@@ -1517,7 +1517,7 @@ wxSize VideoCtrl::GetVideoSize()
 	return size;
 }
 
-void VideoCtrl::GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY)
+void VideoBox::GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *AspectRatioX, int *AspectRatioY)
 {
 	if (renderer){
 		if(FPS)
@@ -1531,7 +1531,7 @@ void VideoCtrl::GetFPSAndAspectRatio(float *FPS, float *AspectRatio, int *Aspect
 	}
 }
 
-int VideoCtrl::GetDuration()
+int VideoBox::GetDuration()
 {
 	if (renderer){
 		return renderer->GetDuration();
@@ -1539,7 +1539,7 @@ int VideoCtrl::GetDuration()
 	return false;
 }
 
-bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetParameters)
+bool VideoBox::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetParameters)
 {
 	if (renderer){
 		bool success = renderer->OpenSubs(flag, recreateFrame, nullptr, resetParameters);
@@ -1550,69 +1550,69 @@ bool VideoCtrl::OpenSubs(int flag, bool recreateFrame, bool refresh, bool resetP
 	}
 	return false;
 }
-void VideoCtrl::Render(bool recreateFrame)
+void VideoBox::Render(bool recreateFrame)
 {
 	if (renderer)
 		renderer->Render(recreateFrame);
 }
-void VideoCtrl::UpdateVideoWindow()
+void VideoBox::UpdateVideoWindow()
 {
 	if (renderer)
 		renderer->UpdateVideoWindow();
 }
-void VideoCtrl::ChangePositionByFrame(int cpos)
+void VideoBox::ChangePositionByFrame(int cpos)
 {
 	if (renderer)
 		renderer->ChangePositionByFrame(cpos);
 }
-bool VideoCtrl::RemoveVisual(bool noRefresh, bool disable)
+bool VideoBox::RemoveVisual(bool noRefresh, bool disable)
 {
 	if (renderer)
 		return renderer->RemoveVisual(noRefresh, disable);
 
 	return false;
 }
-int VideoCtrl::GetFrameTime(bool start)
+int VideoBox::GetFrameTime(bool start)
 {
 	if (renderer)
 		return renderer->GetFrameTime(start);
 
 	return 0;
 }
-int VideoCtrl::GetFrameTimeFromTime(int time, bool start)
+int VideoBox::GetFrameTimeFromTime(int time, bool start)
 {
 	if (renderer)
 		return renderer->GetFrameTimeFromTime(time, start);
 
 	return 0;
 }
-void VideoCtrl::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
+void VideoBox::GetStartEndDelay(int startTime, int endTime, int *retStart, int *retEnd)
 {
 	if (renderer)
 		renderer->GetStartEndDelay(startTime, endTime, retStart, retEnd);
 }
-int VideoCtrl::GetFrameTimeFromFrame(int frame, bool start)
+int VideoBox::GetFrameTimeFromFrame(int frame, bool start)
 {
 	if (renderer)
 		return renderer->GetFrameTimeFromFrame(frame, start);
 	return 0;
 }
-void VideoCtrl::SetZoom()
+void VideoBox::SetZoom()
 {
 	if (renderer)
 		renderer->SetZoom();
 }
-void VideoCtrl::GoToNextKeyframe()
+void VideoBox::GoToNextKeyframe()
 {
 	if (renderer)
 		renderer->GoToNextKeyframe();
 }
-void VideoCtrl::GoToPrevKeyframe()
+void VideoBox::GoToPrevKeyframe()
 {
 	if (renderer)
 		renderer->GoToPrevKeyframe();
 }
-void VideoCtrl::OpenKeyframes(const wxString &filename)
+void VideoBox::OpenKeyframes(const wxString &filename)
 {
 	if (renderer && renderer->HasFFMS2()) {
 		renderer->GetFFMS2()->OpenKeyframes(filename);
@@ -1629,18 +1629,18 @@ void VideoCtrl::OpenKeyframes(const wxString &filename)
 	//if there is no FFMS2 or audiobox we store keyframes path;
 	m_KeyframesFileName = filename;
 }
-void VideoCtrl::SetColorSpace(const wxString& matrix, bool render)
+void VideoBox::SetColorSpace(const wxString& matrix, bool render)
 {
 	if (renderer)
 		renderer->SetColorSpace(matrix, render);
 }
-int VideoCtrl::GetPlayEndTime(int time)
+int VideoBox::GetPlayEndTime(int time)
 {
 	if (renderer)
 		return renderer->GetPlayEndTime(time);
 	return 0;
 }
-void VideoCtrl::DisableVisuals(bool disable)
+void VideoBox::DisableVisuals(bool disable)
 {
 	m_VideoToolbar->DisableVisuals(disable);
 	if (renderer) {
@@ -1652,46 +1652,46 @@ void VideoCtrl::DisableVisuals(bool disable)
 		}
 	}
 }
-void VideoCtrl::DeleteAudioCache()
+void VideoBox::DeleteAudioCache()
 {
 	if (renderer)
 		renderer->DeleteAudioCache();
 }
-wxWindow *VideoCtrl::GetMessageWindowParent()
+wxWindow *VideoBox::GetMessageWindowParent()
 {
 	return (m_IsFullscreen && m_FullScreenWindow) ? (wxWindow*)m_FullScreenWindow : Kai;
 }
-bool VideoCtrl::IsFullScreen()
+bool VideoBox::IsFullScreen()
 {
 	return m_IsFullscreen;
 }
-bool VideoCtrl::IsDirectShow()
+bool VideoBox::IsDirectShow()
 {
 	return m_IsDirectShow;
 }
-void VideoCtrl::GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter)
+void VideoBox::GetVideoListsOptions(int *videoPlayAfter, int *videoSeekAfter)
 {
 	if (videoPlayAfter)
 		*videoPlayAfter = m_VideoToolbar->videoPlayAfter->GetSelection();
 	if (videoSeekAfter)
 		*videoSeekAfter = m_VideoToolbar->videoSeekAfter->GetSelection();
 }
-void VideoCtrl::SetVisual(bool settext, bool noRefresh)
+void VideoBox::SetVisual(bool settext, bool noRefresh)
 {
 	if (renderer)
 		renderer->SetVisual(settext, noRefresh);
 }
-void VideoCtrl::ResetVisual()
+void VideoBox::ResetVisual()
 {
 	if (renderer)
 		renderer->ResetVisual();
 }
 
-bool VideoCtrl::HasFFMS2()
+bool VideoBox::HasFFMS2()
 {
 	return renderer && renderer->HasFFMS2();
 }
-Provider *VideoCtrl::GetFFMS2()
+Provider *VideoBox::GetFFMS2()
 {
 	if (renderer)
 		return renderer->GetFFMS2();
@@ -1699,95 +1699,95 @@ Provider *VideoCtrl::GetFFMS2()
 	return nullptr;
 }
 
-void VideoCtrl::SetVisualEdition(bool value)
+void VideoBox::SetVisualEdition(bool value)
 {
 	if(renderer)
 		renderer->m_HasVisualEdition = value;
 }
 
-RendererVideo *VideoCtrl::GetRenderer()
+RendererVideo *VideoBox::GetRenderer()
 {
 	return renderer;
 }
 
-Fullscreen *VideoCtrl::GetFullScreenWindow()
+Fullscreen *VideoBox::GetFullScreenWindow()
 {
 	return m_FullScreenWindow;
 }
-VideoToolbar *VideoCtrl::GetVideoToolbar()
+VideoToolbar *VideoBox::GetVideoToolbar()
 {
 	return (m_IsFullscreen && m_FullScreenWindow) ? m_FullScreenWindow->vToolbar : m_VideoToolbar;
 }
 
-void VideoCtrl::HideVideoToolbar()
+void VideoBox::HideVideoToolbar()
 {
 	wxSize toolbarSize = m_VideoToolbar->GetSize();
 	m_VideoToolbar->Hide();
 	m_PanelHeight -= toolbarSize.y;
 }
 
-void VideoCtrl::ShowVideoToolbar()
+void VideoBox::ShowVideoToolbar()
 {
 	m_VideoToolbar->Show();
 	wxSize toolbarSize = m_VideoToolbar->GetSize();
 	m_PanelHeight += toolbarSize.y;
 }
 
-int VideoCtrl::GetPanelHeight()
+int VideoBox::GetPanelHeight()
 {
 	return m_PanelHeight;
 };
 
-//void VideoCtrl::SetPanelHeight(int panelHeight)
+//void VideoBox::SetPanelHeight(int panelHeight)
 //{
 //	m_PanelHeight = panelHeight;
 //}
 
-int VideoCtrl::GetCurrentFrame()
+int VideoBox::GetCurrentFrame()
 {
 	if (renderer)
 		return renderer->GetCurrentFrame();
 	return 0;
 }
 
-void VideoCtrl::ChangeVobsub(bool vobsub)
+void VideoBox::ChangeVobsub(bool vobsub)
 {
 	if (renderer)
 		renderer->ChangeVobsub(vobsub);
 }
 
-void VideoCtrl::SetPanelOnFullScreen(bool value)
+void VideoBox::SetPanelOnFullScreen(bool value)
 {
 	m_PanelOnFullscreen = value;
 }
 
-void VideoCtrl::SetVideoWindowLastSize(const wxSize & size)
+void VideoBox::SetVideoWindowLastSize(const wxSize & size)
 {
 	m_VideoWindowLastSize = size;
 }
 
-bool VideoCtrl::IsOnAnotherMonitor()
+bool VideoBox::IsOnAnotherMonitor()
 {
 	return m_IsOnAnotherMonitor;
 }
-void VideoCtrl::SaveVolume()
+void VideoBox::SaveVolume()
 {
 	Options.SetInt(VIDEO_VOLUME, m_VolumeSlider->GetValue());
 }
 
-bool VideoCtrl::IsMenuShown()
+bool VideoBox::IsMenuShown()
 {
 	return m_IsMenuShown;
 }
-const wxString & VideoCtrl::GetKeyFramesFileName()
+const wxString & VideoBox::GetKeyFramesFileName()
 {
 	return m_KeyframesFileName;
 }
-void VideoCtrl::SetKeyFramesFileName(const wxString & fileName)
+void VideoBox::SetKeyFramesFileName(const wxString & fileName)
 {
 	m_KeyframesFileName = fileName;
 }
-void VideoCtrl::GetWindowSize(int* x, int* y)
+void VideoBox::GetWindowSize(int* x, int* y)
 {
 	if (m_IsFullscreen) {
 		m_FullScreenWindow->GetClientSize(x, y);
@@ -1797,14 +1797,14 @@ void VideoCtrl::GetWindowSize(int* x, int* y)
 	}
 }
 
-BEGIN_EVENT_TABLE(VideoCtrl, wxWindow)
-EVT_SIZE(VideoCtrl::OnSize)
-EVT_MOUSE_EVENTS(VideoCtrl::OnMouseEvent)
-EVT_KEY_DOWN(VideoCtrl::OnKeyPress)
-EVT_PAINT(VideoCtrl::OnPaint)
-EVT_TIMER(ID_VIDEO_TIME, VideoCtrl::OnPlaytime)
-EVT_TIMER(ID_IDLE, VideoCtrl::OnIdle)
-EVT_ERASE_BACKGROUND(VideoCtrl::OnErase)
-EVT_BUTTON(ID_END_OF_STREAM, VideoCtrl::OnEndFile)
-EVT_MOUSE_CAPTURE_LOST(VideoCtrl::OnLostCapture)
+BEGIN_EVENT_TABLE(VideoBox, wxWindow)
+EVT_SIZE(VideoBox::OnSize)
+EVT_MOUSE_EVENTS(VideoBox::OnMouseEvent)
+EVT_KEY_DOWN(VideoBox::OnKeyPress)
+EVT_PAINT(VideoBox::OnPaint)
+EVT_TIMER(ID_VIDEO_TIME, VideoBox::OnPlaytime)
+EVT_TIMER(ID_IDLE, VideoBox::OnIdle)
+EVT_ERASE_BACKGROUND(VideoBox::OnErase)
+EVT_BUTTON(ID_END_OF_STREAM, VideoBox::OnEndFile)
+EVT_MOUSE_CAPTURE_LOST(VideoBox::OnLostCapture)
 END_EVENT_TABLE()

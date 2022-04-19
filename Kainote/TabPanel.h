@@ -17,16 +17,17 @@
 #pragma once
 
 #include "KaiPanel.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "KainoteFrame.h"
 #include "TabPanel.h"
+#include "KaiWindowResizer.h"
 #include <wx/sizer.h>
 
 class SubsGrid;
-class VideoCtrl;
+class VideoBox;
 class EditBox;
 class shiftTimes;
-class KaiWindowResizer;
+
 
 class TabPanel : public KaiPanel
 {
@@ -38,7 +39,7 @@ public:
 
 	SubsGrid* grid;
 	EditBox* edit;
-	VideoCtrl* video;
+	VideoBox* video;
 	shiftTimes* shiftTimes;
 
 	wxBoxSizer* MainSizer;

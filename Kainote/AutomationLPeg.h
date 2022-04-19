@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "lua.h"
+#include <lua.h>
 
 
 #define KEYNEWPATT	"lpeg.newpf"

@@ -5,72 +5,68 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Asembly Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>asm;h</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\libass\libass\ass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_bitmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_cache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_cache_template.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_drawing.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_font.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_library.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_parse.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_render.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_shaper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_types.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libass\libass\ass_utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libass\libass\x86\cpuid.h">
       <Filter>Asembly Files</Filter>
     </ClInclude>
-    <ClInclude Include="config.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\libass\libass\ass.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="dirent.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\libass\libass\ass_bitmap.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="strings.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\libass\libass\ass_cache.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="unistd.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="..\..\libass\libass\ass_cache_template.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_drawing.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_font.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libass\libass\ass_fontselect.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_library.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libass\libass\ass_outline.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_parse.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_render.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_shaper.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_types.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libass\libass\ass_utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="dirent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="strings.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="unistd.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

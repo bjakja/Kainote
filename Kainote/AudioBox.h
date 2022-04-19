@@ -43,8 +43,8 @@
 #include "AudioDisplay.h"
 #include "KaiPanel.h"
 #include "KaiSlider.h"
-#include <wx/sizer.h>
-#include <wx/string.h>
+//#include <wx/sizer.h>
+//#include <wx/string.h>
 
 
 //////////////
@@ -121,7 +121,7 @@ public:
 	bool loaded;
 
 	AudioBox(wxWindow *parent, wxWindow *Wgrid);
-	virtual ~AudioBox();
+	virtual ~AudioBox(){};
 
 	void SetFile(wxString file, bool fromvideo);
 	void SetKeyframes(const wxArrayInt &keyframes);

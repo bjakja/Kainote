@@ -36,7 +36,7 @@
 #include <wx/window.h>
 #include <wx/thread.h>
 #include <lua.h>
-
+#include <windows.h>
 
 //class LuaCommand;
 class TabPanel;
@@ -45,10 +45,6 @@ struct lua_State;
 
 class Menu;
 class MenuEvent;
-#ifndef HANDLE
-typedef void* HANDLE;
-#endif
-
 
 
 enum CommandFlags {

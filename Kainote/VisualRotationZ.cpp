@@ -16,7 +16,7 @@
 
 #include "TabPanel.h"
 #include "RendererVideo.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "SubsGrid.h"
 #include "EditBox.h"
 #include "config.h"

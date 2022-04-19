@@ -53,10 +53,6 @@ public:
 	KaiTextCtrl *debug_output;
 	MappedButton *cancel_button;
 	wxMutex data_mutex;
-	//float progress;
-	//wxString task;
-	//wxString title;
-	//wxString log;
 	wxString pending_debug_output;
 	volatile bool cancelled;
 	volatile bool finished;

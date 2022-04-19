@@ -1051,7 +1051,7 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 
 	RefreshColumns();
 	edit->RefreshStyle();
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 
 	const wxString &newResolution = GetSInfo(L"PlayResX") + L" x " + GetSInfo(L"PlayResY");
 	if (resolution != newResolution){
@@ -1107,7 +1107,7 @@ void SubsGridBase::DummyUndo(int newIter)
 	RefreshColumns();
 	UpdateUR();
 	Kai->Label(file->GetActualHistoryIter());
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(OPEN_DUMMY);
 		vb->Render();
@@ -1213,7 +1213,7 @@ void SubsGridBase::SetModified(unsigned char editionType, bool redit, bool dummy
 		file->SaveUndo(editionType, currentLine, markedLine);
 		Kai->Label(file->GetActualHistoryIter(), false, Kai->Tabs->FindPanel(tab));
 		if (!dummy){
-			VideoCtrl *vb = tab->video;
+			VideoBox *vb = tab->video;
 			if (edit->Visual >= CHANGEPOS){
 				vb->SetVisual(true);
 			}

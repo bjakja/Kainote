@@ -33,9 +33,9 @@
 // Website: http://aegisub.cellosoft.com
 // Contact: mailto:zeratul@cellosoft.com
 //
+// Normal licence lpensource
 
-///////////
-// Headers
+
 #include "Editbox.h"
 #include "AudioBox.h"
 #include "KainoteFrame.h"
@@ -44,12 +44,11 @@
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "SubsGrid.h"
+
 #include <math.h>
+//#include <dxgicommon.h>
 
 
-///////////////
-// Constructor
-//
 AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	KaiPanel(parent, -1, wxDefaultPosition, wxSize(0, 0))
 {
@@ -89,8 +88,6 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 		int volume = VerticalZoom->GetValue();
 		VolumeBar->SetValue(volume);
 		Options.SetInt(AUDIO_VOLUME, volume);
-		//VolumeBar->Enable(false);
-
 	}
 	VerticalLink = new ToggleButton(this, Audio_Vertical_Link, emptyString, emptyString, wxDefaultPosition, wxSize(40, -1));
 	VerticalLink->SetBitmap(wxBITMAP_PNG(L"button_link"));
@@ -100,7 +97,6 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	// Display sizer
 	DisplaySizer = new wxBoxSizer(wxVERTICAL);
 	DisplaySizer->Add(audioDisplay, 1, wxEXPAND, 0);
-	//DisplaySizer->Add(audioDisplay,0,wxEXPAND,0);
 	DisplaySizer->Add(audioScroll, 0, wxEXPAND | wxBOTTOM, 4);
 
 	// VertVol sider
@@ -207,7 +203,6 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	SetSizer(MainSizer);//}
 
 	SetAccels();
-	//SetFocusIgnoringChildren();
 	sliderPositionSave.SetOwner(this, AUDIO_TIMER);
 	Bind(wxEVT_TIMER, [=](wxTimerEvent) {
 		Options.SaveAudioOpts();
@@ -215,11 +210,6 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 }
 
 
-//////////////
-// Destructor
-AudioBox::~AudioBox() {
-
-}
 
 
 ////////////
@@ -615,7 +605,7 @@ void AudioBox::SetAccels()
 			//do nothing
 		}
 		else if (itype.id < 3000){
-			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, tab->video, itype.id);
+			Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoBox::OnAccelerator, tab->video, itype.id);
 		}
 		else if (itype.id < 4000){
 			Bind(wxEVT_COMMAND_MENU_SELECTED, &EditBox::OnAccelerator, tab->edit, itype.id);

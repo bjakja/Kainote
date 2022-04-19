@@ -209,7 +209,7 @@ static inline int mystrtoi32(char **p, int base, int32_t *res)
 {
     char *start = *p;
     long long temp_res = strtoll(*p, p, base);
-    *res = FFMINMAX(temp_res, INT32_MIN, INT32_MAX);
+    *res = FFMINMAX(temp_res, INT64_MIN, INT64_MAX);
     return *p != start;
 }
 

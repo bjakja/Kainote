@@ -6,11 +6,11 @@
 */
 
 
-#include <assert.h>
-#include <ctype.h>
-#include <limits.h>
-#include <stdio.h>
-#include <string.h>
+//#include <assert.h>
+//#include <ctype.h>
+//#include <limits.h>
+//#include <stdio.h>
+//#include <string.h>
 
 #include "lua.h"
 #include "lauxlib.h"
@@ -41,7 +41,7 @@
 
 #undef luaL_register
 #define luaL_register(L,n,f) \
-	{ if ((n) == nullptr) luaL_setfuncs(L,f,0); else luaL_newlib(L,f); }
+	{ if ((n) == 0) luaL_setfuncs(L,f,0); else luaL_newlib(L,f); }
 
 #endif
 
@@ -221,7 +221,7 @@ static int sizei (const Instruction *i) {
 
 static const char *val2str (lua_State *L, int idx) {
   const char *k = lua_tostring(L, idx);
-  if (k != nullptr)
+  if (k != 0)
     return lua_pushfstring(L, "rule '%s'", k);
   else
     return lua_pushfstring(L, "rule <a %s>", luaL_typename(L, idx));
@@ -443,15 +443,15 @@ static const char *match (lua_State *L,
       case IEnd: {
         assert(stack == getstackbase(L, ptop) + 1);
         capture[captop].kind = Cclose;
-        capture[captop].s = nullptr;
+        capture[captop].s = 0;
         return s;
       }
       case IGiveup: {
         assert(stack == getstackbase(L, ptop));
-        return nullptr;
+        return 0;
       }
       case IRet: {
-        assert(stack > getstackbase(L, ptop) && (stack - 1)->s == nullptr);
+        assert(stack > getstackbase(L, ptop) && (stack - 1)->s == 0);
         p = (--stack)->p;
         continue;
       }
@@ -489,7 +489,7 @@ static const char *match (lua_State *L,
       }
       case IFunc: {
         const char *r = (p+1)->f(s, e, o, (p+2)->buff);
-        if (r != nullptr) { s = r; p += funcinstsize(p); }
+        if (r != 0) { s = r; p += funcinstsize(p); }
         else condfailed(p);
         continue;
       }
@@ -510,27 +510,27 @@ static const char *match (lua_State *L,
       case ICall: {
         if (stack == stacklimit)
           stack = doublestack(L, &stacklimit, ptop);
-        stack->s = nullptr;
+        stack->s = 0;
         stack->p = p + 1;  /* save return address */
         stack++;
         p += p->i.offset;
         continue;
       }
       case ICommit: {
-        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != nullptr);
+        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != 0);
         stack--;
         p += p->i.offset;
         continue;
       }
       case IPartialCommit: {
-        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != nullptr);
+        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != 0);
         (stack - 1)->s = s;
         (stack - 1)->caplevel = captop;
         p += p->i.offset;
         continue;
       }
       case IBackCommit: {
-        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != nullptr);
+        assert(stack > getstackbase(L, ptop) && (stack - 1)->s != 0);
         s = (--stack)->s;
         captop = stack->caplevel;
         p += p->i.offset;
@@ -545,7 +545,7 @@ static const char *match (lua_State *L,
         do {  /* remove pending calls */
           assert(stack > getstackbase(L, ptop));
           s = (--stack)->s;
-        } while (s == nullptr);
+        } while (s == 0);
         captop = stack->caplevel;
         p = stack->p;
         continue;
@@ -615,7 +615,7 @@ static const char *match (lua_State *L,
         lua_rawgeti(L, penvidx(ptop), p->i.offset);
         luaL_error(L, "reference to %s outside a grammar", val2str(L, -1));
       }
-      default: assert(0); return nullptr;
+      default: assert(0); return 0;
     }
   }
 }
@@ -661,7 +661,7 @@ static int verify (lua_State *L, Instruction *op, const Instruction *p,
         assert((p + 1)->i.code != IRet);  /* no tail call */
         if (backtop >= MAXBACKVER)
           return luaL_error(L, "too many pending calls/choices");
-        back[backtop].s = nullptr;
+        back[backtop].s = 0;
         back[backtop++].p = p + 1;
         goto dojmp;
       }
@@ -670,12 +670,12 @@ static int verify (lua_State *L, Instruction *op, const Instruction *p,
         if (postable == 0)  /* grammar still not fixed? */
           goto fail;  /* to be verified later */
         for (i = 0; i < backtop; i++) {
-          if (back[i].s == nullptr && back[i].p == p + 1)
+          if (back[i].s == 0 && back[i].p == p + 1)
             return luaL_error(L, "%s is left recursive", val2str(L, rule));
         }
         if (backtop >= MAXBACKVER)
           return luaL_error(L, "too many pending calls/choices");
-        back[backtop].s = nullptr;
+        back[backtop].s = 0;
         back[backtop++].p = p + 1;
         p = op + getposition(L, postable, p->i.offset);
         continue;
@@ -738,7 +738,7 @@ static int verify (lua_State *L, Instruction *op, const Instruction *p,
         do {
           if (backtop-- == 0)
             return 1;  /* no more backtracking */
-        } while (back[backtop].s == nullptr);
+        } while (back[backtop].s == 0);
         p = back[backtop].p;
         continue;
       }
@@ -754,7 +754,7 @@ static int verify (lua_State *L, Instruction *op, const Instruction *p,
       }
       case IFunc: {
         const char *r = (p+1)->f(dummy, dummy, dummy, (p+2)->buff);
-        if (r != nullptr) { p += funcinstsize(p); }
+        if (r != 0) { p += funcinstsize(p); }
         else condfailed(p);
         continue;
       }
@@ -1101,7 +1101,7 @@ static int set_l (lua_State *L) {
   size_t l;
   const char *s = luaL_checklstring(L, 1, &l);
   if (l == 1)
-    getpatt(L, 1, nullptr);  /* a unit set is equivalent to a literal */
+    getpatt(L, 1, 0);  /* a unit set is equivalent to a literal */
   else {
     Instruction *p = newcharset(L);
     while (l--) {
@@ -1249,7 +1249,7 @@ static Instruction *getpatt (lua_State *L, int idx, int *size) {
       if (n == 0)  /* empty pattern? */
         p = newpatt(L, 0);
       else if (n > 0)
-        p = any(L, n, 0, nullptr);
+        p = any(L, n, 0, 0);
       else if (-n <= UCHAR_MAX) {
         p = newpatt(L, 2);
         setinstaux(p, IAny, 2, -n);
@@ -1305,7 +1305,7 @@ static int getpattl (lua_State *L, int idx) {
 
 static int pattern_l (lua_State *L) {
   lua_settop(L, 1);
-  getpatt(L, 1, nullptr);
+  getpatt(L, 1, 0);
   return 1;
 }
 
@@ -1324,7 +1324,7 @@ static int concat_l (lua_State *L) {
   else if (isfail(p2) || issucc(p1))
     lua_pushvalue(L, 2);  /* x * fail == fail; true * x == x */
   else if (isany(p1) && isany(p2))
-    any(L, p1->i.aux + p2->i.aux, 0, nullptr);
+    any(L, p1->i.aux + p2->i.aux, 0, 0);
   else {
     Instruction *op = newpatt(L, l1 + l2);
     Instruction *p = op + addpatt(L, op, 1);
@@ -1366,7 +1366,7 @@ static int diff_l (lua_State *L) {
 
 
 static int unm_l (lua_State *L) {
-  Instruction *p = getpatt(L, 1, nullptr);
+  Instruction *p = getpatt(L, 1, 0);
   if (isfail(p)) {  /* -false? */
     newpatt(L, 0);  /* true */
     return 1;
@@ -1901,7 +1901,7 @@ static Capture *findback (CapState *cs, Capture *cap) {
   for (;;) {
     if (cap == cs->ocap) {  /* not found */
       const char *s = lua_tostring(L, -1);
-      if (s == nullptr) s = lua_pushfstring(L, "(a %s)", luaL_typename(L, -1));
+      if (s == 0) s = lua_pushfstring(L, "(a %s)", luaL_typename(L, -1));
       luaL_error(L, "back reference '%s' not found", s);
     }
     cap--;
@@ -2291,7 +2291,7 @@ static int setmax (lua_State *L) {
 
 
 static int printpat_l (lua_State *L) {
-  Instruction *p = getpatt(L, 1, nullptr);
+  Instruction *p = getpatt(L, 1, 0);
   int n, i;
   lua_getfenv(L, 1);
   n = ktablelen(L, -1);
@@ -2315,7 +2315,7 @@ static int matchl (lua_State *L) {
   Capture capture[INITCAPSIZE];
   const char *r;
   size_t l;
-  Instruction *p = getpatt(L, 1, nullptr);
+  Instruction *p = getpatt(L, 1, 0);
   const char *s = luaL_checklstring(L, SUBJIDX, &l);
   int ptop = lua_gettop(L);
   lua_Integer ii = luaL_optinteger(L, 3, 1);
@@ -2326,7 +2326,7 @@ static int matchl (lua_State *L) {
   lua_pushlightuserdata(L, capture);  /* caplistidx */
   lua_getfenv(L, 1);  /* penvidx */
   r = match(L, s, s + i, s + l, p, capture, ptop);
-  if (r == nullptr) {
+  if (r == 0) {
     lua_pushnil(L);
     return 1;
   }
@@ -2356,7 +2356,7 @@ static struct luaL_Reg pattreg[] = {
   {"V", nter_l},
   {"type", type_l},
   {"version", version_l},
-  {nullptr, nullptr}
+  {0, 0}
 };
 
 
@@ -2368,7 +2368,7 @@ static struct luaL_Reg metapattreg[] = {
   {"__div", rcapture_l},
   {"__unm", unm_l},
   {"__len", pattand_l},
-  {nullptr, nullptr}
+  {0, 0}
 };
 
 
@@ -2379,7 +2379,7 @@ int luaopen_lpeg (lua_State *L) {
   luaL_newmetatable(L, PATTERN_T);
   lua_pushnumber(L, MAXBACK);
   lua_setfield(L, LUA_REGISTRYINDEX, MAXSTACKIDX);
-  luaL_register(L, nullptr, metapattreg);
+  luaL_register(L, 0, metapattreg);
   luaL_register(L, "lpeg", pattreg);
   lua_pushliteral(L, "__index");
   lua_pushvalue(L, -2);

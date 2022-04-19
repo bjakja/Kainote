@@ -25,7 +25,7 @@
 #include "KaiMessageBox.h"
 #include "FontEnumerator.h"
 #include "SubsGrid.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "Notebook.h"
 #include <wx/image.h>
 #include <wx/ipc.h>

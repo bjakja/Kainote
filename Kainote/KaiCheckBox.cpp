@@ -21,6 +21,8 @@
 #include "config.h"
 //#include "Utils.h"
 #include "GraphicsD2D.h"
+#undef GetClassInfo
+#undef DRAWTEXT
 
 void BlueUp(wxBitmap *bmp)
 {
@@ -125,20 +127,7 @@ void KaiCheckBox::OnPaint(wxPaintEvent& event)
 		tdc.SetTextForeground((enabled) ? Options.GetColour(foreground) : Options.GetColour(WINDOW_TEXT_INACTIVE));
 		tdc.DrawText(label, 18, (h - fontHeight) / 2);
 	}
-	/*}
-	else{
-	const wxColour & background = Options.GetColour(this->background);
-	gc->SetBrush(wxBrush(background));
-	gc->SetPen(wxPen(background));
-	gc->DrawRectangle(0, 0, w - 1, h - 1);
-	gc->DrawBitmap(checkboxBmp, 1, (h - 13) / 2, checkboxBmp.GetWidth(), checkboxBmp.GetHeight());
 
-	if (w > 18){
-	gc->SetFont(GetFont(), (enabled) ? Options.GetColour(foreground) : Options.GetColour(WINDOW_TEXT_INACTIVE));
-	gc->DrawTextU(label, 18, (h - fontHeight) / 2);
-	}
-	delete gc;
-	}*/
 	wxPaintDC dc(this);
 	dc.Blit(0, 0, w, h, &tdc, 0, 0);
 }

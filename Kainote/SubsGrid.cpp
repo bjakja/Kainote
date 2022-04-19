@@ -32,8 +32,9 @@
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "shiftTimes.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "Notebook.h"
+#include "stylestore.h"
 #include <wx/regex.h>
 
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
@@ -132,7 +133,7 @@ void SubsGrid::ContextMenu(const wxPoint &pos)
 {
 	//test if this blocking is needed
 	// it's dshow blocking
-	//VideoCtrl *VB = tab->video;
+	//VideoBox *VB = tab->video;
 	//VB->m_blockRender = true;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
@@ -742,7 +743,7 @@ void SubsGrid::OnAccelerator(wxCommandEvent &event)
 	if (Options.CheckLastKeyEvent(id))
 		return;
 
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 	file->GetSelections(selections);
 	int sels = selections.GetCount();
 	bool hasVideo = vb->GetState() != None;
@@ -1628,7 +1629,7 @@ void SubsGrid::RefreshSubsOnVideo(int newActiveLineKey, bool scroll)
 	file->InsertSelection(newActiveLine);
 	edit->SetLine(newActiveLine);
 	if (Comparison && (Options.GetInt(SUBS_COMPARISON_TYPE) & COMPARE_BY_VISIBLE)){ SubsComparison(); }
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 	if (vb->GetState() != None){
 		vb->OpenSubs(OPEN_DUMMY, true);
 	}

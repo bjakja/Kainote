@@ -18,13 +18,13 @@
 ///////////
 // Headers
 
-
+#undef BIND
 #include <dsound.h>
 #include <process.h>
 #include "LogHandler.h"
 #include "KainoteApp.h"
 #include "AudioPlayerDSound.h"
-#include "UtilsWindows.h"
+//#include "UtilsWindows.h"
 
 
 
@@ -401,7 +401,7 @@ void DirectSoundPlayer2Thread::CheckError()
 		switch (WaitForSingleObject(error_happened, 0))
 		{
 		case WAIT_OBJECT_0:
-			throw error_message;
+			//throw error_message;
 
 		case WAIT_ABANDONED:
 			throw _T("The DirectShowPlayer2Thread error signal event was abandoned, somehow. This should not happen.");
@@ -441,7 +441,7 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 
 	this->provider = provider;
 	unsigned int threadid = 0;
-	thread_handle.handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, &threadid);
+	thread_handle = (HANDLE)_beginthreadex(0, 0, ThreadProc, this, 0, &threadid);
 	SetThreadName(threadid, "AudioThread");
 
 	if (!thread_handle)
@@ -454,9 +454,6 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 		// running, all good
 		return;
 
-	case WAIT_OBJECT_0 + 1:
-		// error happened, we fail
-		throw error_message;
 
 	default:
 		throw _T("Failed wait for thread start or thread error in DirectSoundPlayer2. This is bad.");

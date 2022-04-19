@@ -15,7 +15,7 @@
 
 #pragma once
 
-//#include <wx/window.h>
+#include <wx/window.h>
 #include <vector>
 
 class wxWindow;

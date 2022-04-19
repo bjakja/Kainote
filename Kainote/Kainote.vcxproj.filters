@@ -1,50 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Video">
-      <UniqueIdentifier>{8ba4449e-7f5d-4750-a60d-35678ae8751b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Video\Visuals">
-      <UniqueIdentifier>{030b31e5-8731-43d9-934f-2623a961ec52}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="C">
+      <UniqueIdentifier>{8ba4449e-7f5d-4750-a60d-35678ae8751b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="A">
+      <UniqueIdentifier>{121a018e-deaf-4154-9081-fdca804168c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="B">
+      <UniqueIdentifier>{717587fe-ae86-4475-9ce9-d2598c985bee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="D">
+      <UniqueIdentifier>{228bc3cd-f866-45b1-9d5b-940f27b6471c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="E">
+      <UniqueIdentifier>{06072e0a-0ade-4484-afd4-4cd93d81a274}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="F">
+      <UniqueIdentifier>{0a4de224-b194-4410-8744-e9080983cbfd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContextDX9.cpp">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClCompile>
     <ClCompile Include="ContextVulkan.cpp">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClCompile>
     <ClCompile Include="Context.cpp">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClCompile>
-    <ClCompile Include="AudioBox.cpp" />
-    <ClCompile Include="AudioDeviceEnumeration.cpp" />
-    <ClCompile Include="AudioDisplay.cpp" />
-    <ClCompile Include="AudioPlayerDSound.cpp" />
-    <ClCompile Include="AudioSpectrum.cpp" />
     <ClCompile Include="GFFT\GFFT.cpp" />
     <ClCompile Include="KaraokeSplitting.cpp" />
-    <ClCompile Include="Automation.cpp" />
-    <ClCompile Include="AutomationDialog.cpp" />
-    <ClCompile Include="AutomationFileSystem.cpp" />
-    <ClCompile Include="AutomationHotkeysDialog.cpp" />
-    <ClCompile Include="AutomationLPeg.c" />
-    <ClCompile Include="AutomationProgress.cpp" />
-    <ClCompile Include="AutomationScriptReader.cpp" />
-    <ClCompile Include="AutomationToFile.cpp" />
-    <ClCompile Include="AutomationUtils.cpp" />
-    <ClCompile Include="FontCatalogList.cpp" />
-    <ClCompile Include="FontCollector.cpp" />
-    <ClCompile Include="FontDialog.cpp" />
-    <ClCompile Include="FontEnumerator.cpp" />
-    <ClCompile Include="BidiConversion.cpp" />
-    <ClCompile Include="BitmapButton.cpp" />
-    <ClCompile Include="DialogueTextEditor.cpp" />
     <ClCompile Include="GraphicsD2D.cpp" />
     <ClCompile Include="KaiCheckBox.cpp" />
     <ClCompile Include="KaiDialog.cpp" />
@@ -106,11 +97,6 @@
     <ClCompile Include="VisualRotationZ.cpp" />
     <ClCompile Include="Visuals.cpp" />
     <ClCompile Include="VisualScale.cpp" />
-    <ClCompile Include="ColorSpace.cpp" />
-    <ClCompile Include="Config.cpp" />
-    <ClCompile Include="ConfigConverter.cpp" />
-    <ClCompile Include="Demux.cpp" />
-    <ClCompile Include="DropFiles.cpp" />
     <ClCompile Include="Hotkeys.cpp" />
     <ClCompile Include="HotkeysNaming.cpp" />
     <ClCompile Include="Languages.cpp" />
@@ -121,9 +107,6 @@
     <ClCompile Include="SubtitlesVSFilter.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="UtilsWindows.cpp" />
-    <ClCompile Include="CsriMod.cpp" />
-    <ClCompile Include="DShowPlayer.cpp" />
-    <ClCompile Include="DshowRenderer.cpp" />
     <ClCompile Include="KeyframesLoader.cpp" />
     <ClCompile Include="Provider.cpp" />
     <ClCompile Include="ProviderDummy.cpp" />
@@ -131,18 +114,10 @@
     <ClCompile Include="RendererDirectShow.cpp" />
     <ClCompile Include="RendererFFMS2.cpp" />
     <ClCompile Include="RendererVideo.cpp" />
-    <ClCompile Include="VideoCtrl.cpp" />
+    <ClCompile Include="VideoBox.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
-    <ClCompile Include="AutoSaveOpen.cpp" />
-    <ClCompile Include="AutoSavesRemoving.cpp" />
-    <ClCompile Include="ColorPicker.cpp" />
-    <ClCompile Include="DummyVideo.cpp" />
-    <ClCompile Include="EditBox.cpp" />
-    <ClCompile Include="FindReplace.cpp" />
-    <ClCompile Include="FindReplaceDialog.cpp" />
-    <ClCompile Include="FindReplaceResultsDialog.cpp" />
     <ClCompile Include="KainoteApp.cpp" />
     <ClCompile Include="KainoteFrame.cpp" />
     <ClCompile Include="MispellReplacerDialog.cpp" />
@@ -158,41 +133,130 @@
     <ClCompile Include="SpellCheckerDialog.cpp" />
     <ClCompile Include="TabPanel.cpp" />
     <ClCompile Include="TLDialog.cpp" />
+    <ClCompile Include="ColorPicker.cpp">
+      <Filter>C</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorSpace.cpp">
+      <Filter>C</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>C</Filter>
+    </ClCompile>
+    <ClCompile Include="ConfigConverter.cpp">
+      <Filter>C</Filter>
+    </ClCompile>
+    <ClCompile Include="CsriMod.cpp">
+      <Filter>C</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioBox.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDeviceEnumeration.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioDisplay.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioPlayerDSound.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioSpectrum.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="Automation.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationDialog.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationFileSystem.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationHotkeysDialog.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationLPeg.c">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationProgress.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationScriptReader.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationToFile.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutomationUtils.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoSaveOpen.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoSavesRemoving.cpp">
+      <Filter>A</Filter>
+    </ClCompile>
+    <ClCompile Include="BidiConversion.cpp">
+      <Filter>B</Filter>
+    </ClCompile>
+    <ClCompile Include="BitmapButton.cpp">
+      <Filter>B</Filter>
+    </ClCompile>
+    <ClCompile Include="Demux.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogueTextEditor.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="DropFiles.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="DShowPlayer.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="DshowRenderer.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyVideo.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="EditBox.cpp">
+      <Filter>E</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplace.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceDialog.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FindReplaceResultsDialog.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FontCatalogList.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FontCollector.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FontDialog.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
+    <ClCompile Include="FontEnumerator.cpp">
+      <Filter>F</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextDX9.h">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClInclude>
     <ClInclude Include="ContextVulkan.h">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClInclude>
     <ClInclude Include="Context.h">
-      <Filter>Video</Filter>
+      <Filter>C</Filter>
     </ClInclude>
-    <ClInclude Include="GFFT\AssocVector.h" />
-    <ClInclude Include="AudioBox.h" />
-    <ClInclude Include="AudioDeviceEnumeration.h" />
-    <ClInclude Include="AudioDisplay.h" />
-    <ClInclude Include="AudioPlayerDSound.h" />
-    <ClInclude Include="AudioSpectrum.h" />
-    <ClInclude Include="GFFT\Factory.h" />
     <ClInclude Include="GFFT\GFFT.h" />
     <ClInclude Include="KaraokeSplitting.h" />
-    <ClInclude Include="Automation.h" />
-    <ClInclude Include="AutomationDialog.h" />
-    <ClInclude Include="AutomationHotkeysDialog.h" />
-    <ClInclude Include="AutomationLPeg.h" />
-    <ClInclude Include="AutomationProgress.h" />
-    <ClInclude Include="AutomationScriptReader.h" />
-    <ClInclude Include="AutomationToFile.h" />
-    <ClInclude Include="AutomationUtils.h" />
-    <ClInclude Include="FontEnumerator.h" />
-    <ClInclude Include="FontCatalogList.h" />
-    <ClInclude Include="FontCollector.h" />
-    <ClInclude Include="FontDialog.h" />
-    <ClInclude Include="BidiConversion.h" />
-    <ClInclude Include="BitmapButton.h" />
-    <ClInclude Include="DialogueTextEditor.h" />
     <ClInclude Include="GraphicsD2D.h" />
     <ClInclude Include="KaiCheckBox.h" />
     <ClInclude Include="KaiDialog.h" />
@@ -244,12 +308,6 @@
     <ClInclude Include="VisualAllTagsEdition.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
-    <ClInclude Include="ColorSpace.h" />
-    <ClInclude Include="Config.h" />
-    <ClInclude Include="ConfigConverter.h" />
-    <ClInclude Include="Demux.h" />
-    <ClInclude Include="DropFiles.h" />
-    <ClInclude Include="EnumFactory.h" />
     <ClInclude Include="Hotkeys.h" />
     <ClInclude Include="HotkeysNaming.h" />
     <ClInclude Include="LogHandler.h" />
@@ -260,9 +318,6 @@
     <ClInclude Include="TagFindReplace.h" />
     <ClInclude Include="UtilsWindows.h" />
     <ClInclude Include="VersionKainote.h" />
-    <ClInclude Include="CsriMod.h" />
-    <ClInclude Include="DShowPlayer.h" />
-    <ClInclude Include="DshowRenderer.h" />
     <ClInclude Include="KeyframesLoader.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />
@@ -270,18 +325,10 @@
     <ClInclude Include="RendererDirectShow.h" />
     <ClInclude Include="RendererFFMS2.h" />
     <ClInclude Include="RendererVideo.h" />
-    <ClInclude Include="VideoCtrl.h" />
+    <ClInclude Include="VideoBox.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
-    <ClInclude Include="AutoSaveOpen.h" />
-    <ClInclude Include="AutoSavesRemoving.h" />
-    <ClInclude Include="ColorPicker.h" />
-    <ClInclude Include="DummyVideo.h" />
-    <ClInclude Include="EditBox.h" />
-    <ClInclude Include="FindReplace.h" />
-    <ClInclude Include="FindReplaceDialog.h" />
-    <ClInclude Include="FindReplaceResultsDialog.h" />
     <ClInclude Include="KainoteApp.h" />
     <ClInclude Include="KainoteFrame.h" />
     <ClInclude Include="MispellReplacerDialog.h" />
@@ -297,6 +344,120 @@
     <ClInclude Include="SpellCheckerDialog.h" />
     <ClInclude Include="TabPanel.h" />
     <ClInclude Include="TLDialog.h" />
+    <ClInclude Include="CsriMod.h">
+      <Filter>C</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>C</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorSpace.h">
+      <Filter>C</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>C</Filter>
+    </ClInclude>
+    <ClInclude Include="ConfigConverter.h">
+      <Filter>C</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioBox.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDeviceEnumeration.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioDisplay.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioPlayerDSound.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioSpectrum.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="Automation.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationDialog.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationHotkeysDialog.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationLPeg.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationProgress.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationScriptReader.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationToFile.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutomationUtils.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSaveOpen.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoSavesRemoving.h">
+      <Filter>A</Filter>
+    </ClInclude>
+    <ClInclude Include="BidiConversion.h">
+      <Filter>B</Filter>
+    </ClInclude>
+    <ClInclude Include="BitmapButton.h">
+      <Filter>B</Filter>
+    </ClInclude>
+    <ClInclude Include="Demux.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogueTextEditor.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="DropFiles.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="DShowPlayer.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="DshowRenderer.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="DummyVideo.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="EditBox.h">
+      <Filter>E</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumFactory.h">
+      <Filter>E</Filter>
+    </ClInclude>
+    <ClInclude Include="GFFT\Factory.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplace.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceDialog.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FindReplaceResultsDialog.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCatalogList.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FontCollector.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FontDialog.h">
+      <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="FontEnumerator.h">
+      <Filter>F</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

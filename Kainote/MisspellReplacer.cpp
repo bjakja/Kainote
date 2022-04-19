@@ -22,6 +22,7 @@
 #include "KaiStaticText.h"
 #include "SubsGrid.h"
 #include "TabPanel.h"
+#include "EditBox.h"
 #include <algorithm>
 
 

@@ -17,7 +17,7 @@
 
 #include "KaiDialog.h"
 #include "KaiListCtrl.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include "MispellReplacerDialog.h"
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);

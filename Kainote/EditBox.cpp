@@ -26,6 +26,7 @@
 #include "StyleStore.h"
 #include "Notebook.h"
 #include "kainoteApp.h"
+#include "Toolbar.h"
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
@@ -445,7 +446,7 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 	if (setaudio && ABox && ABox->IsShown()){ ABox->audioDisplay->SetDialogue(line, currentLine); }
 
 done:
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 	int playAfter = 0, seekAfter = 0;
 	tab->video->GetVideoListsOptions(&playAfter, &seekAfter);
 
@@ -1807,7 +1808,7 @@ void EditBox::SetTextWithTags(bool RefreshVideo)
 	if (TextEditOrig->IsShown()){ TextEditOrig->SetTextS(line->Text, TextEditOrig->IsModified(), true, false, false); }
 done:
 	if (RefreshVideo){
-		VideoCtrl *vb = tab->video;
+		VideoBox *vb = tab->video;
 		if (vb->GetState() != None){
 			vb->OpenSubs(OPEN_DUMMY);
 			vb->Render();

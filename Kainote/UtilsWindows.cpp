@@ -16,7 +16,7 @@
 
 #include "UtilsWindows.h"
 #include "LogHandler.h"
-//#include <wx/msw/private.h>
+#include <wx/msw/private.h>
 #include <wx/mstream.h>
 #include <wx/dc.h>
 #include <vector>

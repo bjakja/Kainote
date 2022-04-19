@@ -28,7 +28,7 @@ class VideoToolbar;
 
 class Fullscreen : public wxFrame
 {
-	friend class VideoCtrl;
+	friend class VideoBox;
 public:
 	Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size);
 	virtual ~Fullscreen();

@@ -19,15 +19,14 @@
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "EditBox.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 
-//#include <vector>
-//#include <dxva2api.h>
-//#include <d3d9.h>
-//#include <d3dx9.h>
+#include <vector>
+#include <dxva2api.h>
+
 
 void CreateVERTEX(vertex *v, float X, float Y, D3DXCOLOR* Color, float Z)
 {
@@ -37,7 +36,7 @@ void CreateVERTEX(vertex *v, float X, float Y, D3DXCOLOR* Color, float Z)
 	v->Color = Color;
 }
 
-RendererVideo::RendererVideo(VideoCtrl *control, bool visualDisabled)
+RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 	: m_HasZoom(false)
 	, videoControl(control)
 {

@@ -33,13 +33,12 @@
 #include "kainoteApp.h"
 #include "RendererVideo.h"
 #include "shiftTimes.h"
-#include "VideoCtrl.h"
-#include <math.h>
+#include "VideoBox.h"
 #include <process.h>
 #include <wx/filename.h>
-#include <math.h>
 #include <vector>
 #include "UtilsWindows.h"
+#include <L:/Kainote/Thirdparty/DirectX9/d3dx9.h>
 
 
 wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);
@@ -617,7 +616,7 @@ void AudioDisplay::DoUpdateImage(bool weak) {
 		}
 		// Draw current frame
 		if (drawVideoPos) {
-			VideoCtrl *video = tab->video;
+			VideoBox *video = tab->video;
 			if (video->GetState() == Paused) {
 				d3dLine->SetWidth(2);
 
@@ -1282,7 +1281,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 	if (!file.IsEmpty()) {
 		try {
 			// Get provider
-			VideoCtrl *vb = tab->video;
+			VideoBox *vb = tab->video;
 			Provider *FFMS2 = vb->GetFFMS2();
 			kainoteApp *Kaia = (kainoteApp*)wxTheApp;
 			bool success = true;
@@ -1602,7 +1601,7 @@ void AudioDisplay::CommitChanges(bool nextLine, bool Save, bool moveToEnd) {
 	if (Save){
 		edit->Send(AUDIO_CHANGE_TIME, nextLine);
 		if (!nextLine){ edit->UpdateChars(); }
-		VideoCtrl *vb = ((TabPanel *)edit->GetParent())->video;
+		VideoBox *vb = ((TabPanel *)edit->GetParent())->video;
 		if (vb && vb->GetState() != None)
 			vb->RefreshTime();
 	}

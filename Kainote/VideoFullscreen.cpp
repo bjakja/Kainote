@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "VideoFullscreen.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "KainoteApp.h"
 #include "Config.h"
 
@@ -24,7 +24,7 @@ Fullscreen::Fullscreen(wxWindow* parent, const wxPoint& pos, const wxSize &size)
 {
 	SetFont(*Options.GetFont());
 	vb = parent;
-	VideoCtrl *vc = (VideoCtrl*)parent;
+	VideoBox *vc = (VideoBox*)parent;
 	SetBackgroundColour(L"#000000");
 	int fw;
 	GetTextExtent(L"#TWFfGH", &fw, &toolBarHeight);
@@ -106,7 +106,7 @@ Fullscreen::~Fullscreen()
 void Fullscreen::OnSize()
 {
 	wxSize asize = GetClientSize();
-	VideoCtrl *vc = (VideoCtrl*)vb;
+	VideoBox *vc = (VideoBox*)vb;
 	//if(vc->lastSize == asize){return;}
 	vc->SetVideoWindowLastSize(asize);
 	int fw;
@@ -166,19 +166,19 @@ void Fullscreen::HideToolbar(bool hide){
 		panelsize = buttonSection + toolBarHeight;
 	}
 	OnSize();
-	VideoCtrl *vc = (VideoCtrl*)vb;
+	VideoBox *vc = (VideoBox*)vb;
 	vc->UpdateVideoWindow();
 }
 
 void Fullscreen::OnMouseEvent(wxMouseEvent& evt)
 {
-	VideoCtrl* vc = (VideoCtrl*)vb;
+	VideoBox* vc = (VideoBox*)vb;
 	vc->OnMouseEvent(evt);
 }
 
 void Fullscreen::OnKeyPress(wxKeyEvent& evt)
 {
-	VideoCtrl* vc = (VideoCtrl*)vb;
+	VideoBox* vc = (VideoBox*)vb;
 	vc->OnKeyPress(evt);
 }
 
@@ -225,13 +225,13 @@ void Fullscreen::SetAccels()
 
 void Fullscreen::OnUseWindowHotkey(wxCommandEvent& event)
 {
-	VideoCtrl* vc = (VideoCtrl*)vb;
+	VideoBox* vc = (VideoBox*)vb;
 	vc->OnAccelerator(event);
 }
 
 void Fullscreen::OnPaint(wxPaintEvent& evt)
 {
-	VideoCtrl* vc = (VideoCtrl*)vb;
+	VideoBox* vc = (VideoBox*)vb;
 	vc->OnPaint(evt);
 }
 

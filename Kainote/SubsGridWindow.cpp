@@ -1522,7 +1522,7 @@ void SubsGridWindow::OnMouseEvent(wxMouseEvent &event) {
 		Refresh(false);
 		return;
 	}
-	VideoCtrl *video = tab->video;
+	VideoBox *video = tab->video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	int seekAfter = 0, playAfter = 0;
 	video->GetVideoListsOptions(&playAfter, &seekAfter);

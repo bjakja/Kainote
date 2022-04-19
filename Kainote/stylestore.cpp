@@ -14,13 +14,16 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StyleStore.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 
 #include "config.h"
-//#include "Utils.h"
+#include "SubsGrid.h"
+#include "Notebook.h"
+#include "TabPanel.h"
 #include "NewCatalog.h"
 #include "OpennWrite.h"
 #include "Stylelistbox.h"
+#include "EditBox.h"
 #include <wx/tokenzr.h>
 #include <vector>
 #include "Styles.h"
@@ -818,7 +821,8 @@ void StyleStore::LoadAssStyles(const wxString &styleName /*= ""*/)
 		grid->AddStyle(new Styles());
 	}
 	ASSList->SetArray(grid->GetStyleTable());
-	int wstyle = MAX(0, grid->FindStyle((styleName.empty())? Notebook::GetTab()->edit->line->Style : styleName));
+	int wstyle = MAX(0, grid->FindStyle((styleName.empty())? 
+		Notebook::GetTab()->edit->line->Style : styleName));
 	ASSList->SetSelection(wstyle, true);
 	if (cc->IsShown())
 	{

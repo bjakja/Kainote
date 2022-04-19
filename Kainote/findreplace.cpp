@@ -24,6 +24,8 @@
 #include <wx/clipbrd.h>
 #include <wx/dir.h>
 #include "UtilsWindows.h"
+#include "Notebook.h"
+#include "EditBox.h"
 
 FindReplace::FindReplace(KainoteFrame* kfparent, FindReplaceDialog *_FRD)
 	:FRD(_FRD)

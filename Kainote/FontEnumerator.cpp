@@ -15,7 +15,8 @@
 
 #include "FontEnumerator.h"
 #undef CreateDialog
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
+#include "Notebook.h"
 #include <wx/log.h>
 #include <wx/filefn.h>
 #include <Usp10.h>

@@ -80,7 +80,7 @@ DShowPlayer::~DShowPlayer()
 bool DShowPlayer::OpenFile(wxString sFileName, bool vobsub)
 {
 	PTR(InitializeGraph(), _("Błąd inicjalizacji Direct Show"));
-	VideoCtrl *video = (VideoCtrl*)parent;
+	VideoBox *video = (VideoBox*)parent;
 
 
 	Selfdest<IBaseFilter> pSource;

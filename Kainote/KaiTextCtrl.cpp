@@ -19,9 +19,9 @@
 #include <wx/dcclient.h>
 
 #include "Menu.h"
-//
-#include "config.h"
 
+#include "config.h"
+#include "GraphicsD2D.h"
 
 KaiTextCtrl::KaiTextCtrl(wxWindow *parent, int id, const wxString &text, const wxPoint& pos,
 	const wxSize& size, long _style, const wxValidator & validator, const wxString & name)

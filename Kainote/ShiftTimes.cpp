@@ -24,7 +24,7 @@
 #include "KaiPanel.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 
 class ProfileEdition : public KaiDialog
 {
@@ -143,7 +143,7 @@ void shiftTimes::Contents(bool addopts)
 {
 	bool state;
 	form = tab->grid->subsFormat;
-	VideoCtrl *vb = tab->video;
+	VideoBox *vb = tab->video;
 	Provider *FFMS2 = vb->GetFFMS2();
 	if (form < SRT){
 		state = true;

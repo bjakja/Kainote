@@ -83,7 +83,7 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(IncludePath);$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)bin\x64\Rel_AVX512\;L:\Kainote\Thirdparty\wxWidgets\include</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">L:\Kainote\Thirdparty\DirectX9\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;L:\Kainote\Thirdparty\wxWidgets\include</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(LibraryPath)</LibraryPath>
@@ -133,7 +133,7 @@
     </ResourceCompile>
     <Link>
       <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbasd.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Boost.lib;libhunspell.lib;icu.lib;%(AdditionalDependencies);libass.lib;dsound.lib;dxguid.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;L:\Kainote\Thirdparty\DirectX9\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib</IgnoreSpecificDefaultLibraries>
@@ -296,7 +296,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\DirectX9;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\BaseClasses;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;$(solutionDir)wxwidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;$(solutionDir)wxwidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -306,7 +306,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
@@ -487,7 +487,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="TimeCtrl.cpp" />
     <ClCompile Include="TLDialog.cpp" />
     <ClCompile Include="Toolbar.cpp" />
-    <ClCompile Include="VideoCtrl.cpp" />
+    <ClCompile Include="VideoBox.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VisualClips.cpp" />
@@ -542,7 +542,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="Demux.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />
-    <ClInclude Include="GFFT\AssocVector.h" />
     <ClInclude Include="GFFT\Factory.h" />
     <ClInclude Include="KaiGauge.h" />
     <ClInclude Include="KaiPanel.h" />
@@ -640,7 +639,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="SubsTime.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="TLDialog.h" />
-    <ClInclude Include="VideoCtrl.h" />
+    <ClInclude Include="VideoBox.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />

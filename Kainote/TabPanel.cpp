@@ -17,7 +17,7 @@
 #include "TabPanel.h"
 #include "KaiWindowResizer.h"
 
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "EditBox.h"
 #include "shiftTimes.h"
 #include "SubsGrid.h"
@@ -41,7 +41,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	int vw, vh;
 	Options.GetCoords(VIDEO_WINDOW_SIZE, &vw, &vh);
 	if (vw < 200){ vw = 550; vh = 400; }
-	video = new VideoCtrl(this, kai, wxSize(vw, vh));
+	video = new VideoBox(this, kai, wxSize(vw, vh));
 	video->Hide();
 	edit = new EditBox(this, -1);
 
@@ -57,9 +57,9 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	VideoEditboxSizer->Add(edit, 1, wxEXPAND | wxALIGN_TOP, 0);
 
 	//check if there is nothing in constructor that crash or get something wrong when construct
-	edit->StartEdit->SetVideoCtrl(video);
-	edit->EndEdit->SetVideoCtrl(video);
-	edit->DurEdit->SetVideoCtrl(video);
+	edit->StartEdit->SetVideoBox(video);
+	edit->EndEdit->SetVideoBox(video);
+	edit->DurEdit->SetVideoBox(video);
 	edit->SetMinSize(wxSize(-1, 200));
 	edit->SetLine(0);
 
@@ -120,11 +120,11 @@ void TabPanel::SetAccels(bool onlyGridAudio /*= false*/)
 		if (itype.Type != AUDIO_HOTKEY){
 			if (itype.id >= 2000 && itype.id < 3000 && itype.Type != VIDEO_HOTKEY){
 				if (itype.Type == GRID_HOTKEY){
-					grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
+					grid->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoBox::OnAccelerator, video, id);
 					gentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				else{
-					edit->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoCtrl::OnAccelerator, video, id);
+					edit->Bind(wxEVT_COMMAND_MENU_SELECTED, &VideoBox::OnAccelerator, video, id);
 					eentries.push_back(Hkeys.GetHKey(cur->first, &cur->second));
 				}
 				continue;

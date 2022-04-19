@@ -17,7 +17,8 @@
 #include "ProgressDialog.h"
 #include "kainoteApp.h"
 #include "SubsTime.h"
-#include "wx/gauge.h"
+#include "KaiStaticText.h"
+#include "KaiGauge.h"
 #include <ShObjIdl.h>
 
 

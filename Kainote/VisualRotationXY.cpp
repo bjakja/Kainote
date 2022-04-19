@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TabPanel.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "RendererVideo.h"
 #include "config.h"
 #include "Visuals.h"

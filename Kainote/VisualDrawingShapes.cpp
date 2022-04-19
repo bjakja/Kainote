@@ -22,7 +22,7 @@
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
 #include "EditBox.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 
 enum {
 	LEFT = 1,

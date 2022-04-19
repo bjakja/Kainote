@@ -68,7 +68,8 @@
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);L:\Kainote\Thirdparty\wxWidgets\include\wx\msw;L:\Kainote\Thirdparty\wxWidgets\include\;L:\Kainote\Thirdparty\wxWidgets\src\png;L:\Kainote\Thirdparty\wxWidgets\3rdparty</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);L:\Kainote\Thirdparty\wxWidgets\include\wx\msw;L:\Kainote\Thirdparty\wxWidgets\include\;L:\Kainote\Thirdparty\wxWidgets\src\png;L:\Kainote\Thirdparty\wxWidgets\3rdparty</IncludePath>
+    <IncludePath>
+    </IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -171,6 +172,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;NDEBUG;_UNICODE;WXBUILDING;wxUSE_BASE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>

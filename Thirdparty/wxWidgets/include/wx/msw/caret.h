@@ -8,8 +8,7 @@
 // Licence:     wxWindows licence
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef _WX_CARET_H_
-#define _WX_CARET_H_
+#pragma once
 
 class WXDLLIMPEXP_CORE wxCaret : public wxCaretBase
 {
@@ -56,6 +55,6 @@ private:
     wxDECLARE_NO_COPY_CLASS(wxCaret);
 };
 
-#endif // _WX_CARET_H_
+
 
 

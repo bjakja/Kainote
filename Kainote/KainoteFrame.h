@@ -23,7 +23,7 @@
 #pragma once
 
 #include "KaiFrame.h"
-//#include <wx/timer.h>
+#include <wx/timer.h>
 
 
 class FontCollector;
@@ -127,12 +127,12 @@ private:
 	Menu* VidMenu;
 	Menu* AudMenu;
 	Menu* ViewMenu;
-	Menu* AutoMenu;
+	Menu* m_AutoMenu;
 
 	bool badResolution;
 
-	wxMutex blockOpen;
-	wxTimer sendFocus;
+	wxMutex m_blockOpen;
+	wxTimer m_sendFocus;
 };
 
 

@@ -24,14 +24,12 @@
 #include "VideoFullscreen.h"
 #include "KaiTextCtrl.h"
 #include "VideoToolbar.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "RendererVideo.h"
 
-class KainoteFrame;
-class TabPanel;
-class Provider;
 
-class VideoCtrl : public wxWindow
+
+class VideoBox : public wxWindow
 {
 	friend class RendererVideo;
 	friend class RendererDirectShow;
@@ -40,8 +38,8 @@ class VideoCtrl : public wxWindow
 	friend class Fullscreen;
 public:
 
-	VideoCtrl(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
-	virtual ~VideoCtrl();
+	VideoBox(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
+	virtual ~VideoBox();
 	bool Play();
 	void PlayLine(int start, int end);
 	bool Pause(bool burstbl = true);

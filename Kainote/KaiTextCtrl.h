@@ -14,17 +14,16 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include "KaiTextValidator.h"
+#include "KaiScrollbar.h"
 #include <wx/window.h>
 #include <wx/caret.h>
 #include <wx/textctrl.h>
-#include "KaiTextValidator.h"
-#include "KaiScrollbar.h"
 #include "config.h"
 #include <vector>
 #include <map>
 
-#include "GraphicsD2D.h"
+
 
 enum COLOR;
 

@@ -20,7 +20,7 @@
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
 #include "SubsGridBase.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 
 
 #include "Editbox.h"
@@ -1600,7 +1600,7 @@ void Notebook::OnCharHook(wxKeyEvent& event)
 	int key = event.GetKeyCode();
 	int ukey = event.GetUnicodeKey();
 	//bool nmodif = !(event.AltDown() || event.ControlDown() || event.ShiftDown());
-	VideoCtrl *vb = GetTab()->video;
+	VideoBox *vb = GetTab()->video;
 	if (ukey == 179){ vb->Pause(); }
 	//else if(ukey==178){wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED,11015); vb->OnVButton(evt);}
 	else if (ukey == 177){ vb->PrevChap(); }

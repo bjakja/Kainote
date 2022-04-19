@@ -18,7 +18,7 @@
 #include "TabPanel.h"
 #include "VisualDrawingShapes.h"
 #include "SubsGrid.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "Editbox.h"
 #include "RendererVideo.h"
 #include <wx/regex.h>
@@ -522,7 +522,7 @@ void Visuals::GetVectorPoints(const wxString& vector, std::vector<ClipPoint>* po
 
 void Visuals::GetMoveTimes(int *start, int *end)
 {
-	VideoCtrl *video = tab->video;
+	VideoBox *video = tab->video;
 	EditBox *edit = tab->edit;
 	Provider *FFMS2 = video->GetFFMS2();
 	float fps;
@@ -841,7 +841,7 @@ void Visuals::SetModified(int action, bool dummy)
 	}
 	tab->grid->SetModified(action, true, dummy);
 	if (dummy) {
-		VideoCtrl* vb = tab->video;
+		VideoBox* vb = tab->video;
 		if (vb->IsShown() || vb->IsFullScreen()) { vb->OpenSubs(OPEN_DUMMY); }
 		if (vb->GetState() == Paused)
 			vb->Render();

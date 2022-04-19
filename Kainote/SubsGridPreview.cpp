@@ -704,7 +704,7 @@ void SubsGridPreview::OnMouseEvent(wxMouseEvent &event)
 		Refresh(false);
 		return;
 	}
-	VideoCtrl *video = tabp->video;
+	VideoBox *video = tabp->video;
 	bool changeActive = Options.GetBool(GRID_CHANGE_ACTIVE_ON_SELECTION);
 	if (!(row < previewGrid->scrollPosition || row >= size)) {
 

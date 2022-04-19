@@ -17,7 +17,7 @@
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
-#include "VideoCtrl.h"
+#include "VideoBox.h"
 #include "EditBox.h"
 #include <wx/regex.h>
 

@@ -18,6 +18,8 @@
 #include "KainoteFrame.h"
 #include "KaiStaticBoxSizer.h"
 #include "Notebook.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
 
 
 Stylelistbox::Stylelistbox(wxWindow* parent, bool styles, int numelem, wxString *arr, const wxPoint& pos, int style)

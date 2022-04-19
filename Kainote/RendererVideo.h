@@ -23,7 +23,7 @@
 
 class IDirectXVideoProcessorService;
 class IDirectXVideoProcessor;
-
+struct D3DXCOLOR;
 
 enum PlaybackState
 {
@@ -69,16 +69,16 @@ class AudioDisplay;
 class DShowPlayer;
 class Menu;
 class Provider;
-class VideoCtrl;
+class VideoBox;
 class SubtitlesProviderManager;
 
 class RendererVideo
 {
 	friend class RendererDirectShow;
 	friend class RendererFFMS2;
-	friend class VideoCtrl;
+	friend class VideoBox;
 public:
-	RendererVideo(VideoCtrl *control, bool visualDisabled);
+	RendererVideo(VideoBox *control, bool visualDisabled);
 	virtual ~RendererVideo();
 
 	virtual bool OpenFile(const wxString &fname, int subsFlag, bool vobsub, bool changeAudio = true){
@@ -140,8 +140,8 @@ public:
 	float m_ZoomParcent;
 	wxString m_ProgressBarTime;
 	ID3DXLine *m_D3DLine = nullptr;
-	LPD3DXFONT m_D3DFont = nullptr;
-	LPD3DXFONT m_D3DCalcFont = nullptr;
+	ID3DXFont *m_D3DFont = nullptr;
+	ID3DXFont * m_D3DCalcFont = nullptr;
 	wxCriticalSection m_MutexRendering;
 	wxMutex m_MutexProgressBar;
 	wxMutex m_MutexOpen;
@@ -155,8 +155,8 @@ public:
 	IDirectXVideoProcessor *m_DXVAProcessor;
 	LPDIRECT3D9 m_D3DObject;
 	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
-	VideoCtrl *videoControl;
-	Visuals *m_Visual/* = nullptr*/;
+	VideoBox *videoControl;
+	Visuals *m_Visual = nullptr;
 #if byvertices
 	LPDIRECT3DVERTEXBUFFER9 vertex;
 	LPDIRECT3DTEXTURE9 texture;

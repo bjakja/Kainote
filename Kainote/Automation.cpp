@@ -46,6 +46,9 @@
 #include "TabPanel.h"
 #include "Notebook.h"
 #include "Provider.h"
+#include "StyleStore.h"
+
+#include "EditBox.h"
 
 #include <algorithm>
 #include <cassert>

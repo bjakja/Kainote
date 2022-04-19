@@ -20,6 +20,7 @@
 #include "KaiTextCtrl.h"
 #include <vector>
 #include "Visuals.h"
+#include <d3dx9.h>
 
 class ShapesSetting
 {

@@ -21,10 +21,10 @@
 #include "KaiTreebook.h"
 #include "KaiListCtrl.h"
 #include "KaiDialog.h"
+#include "Tabpanel.h"
 
 #include <vector>
 
-class KainoteFrame;
 
 class ItemHotkey : public Item{
 public:
@@ -55,7 +55,7 @@ public:
 class OptionsDialog : public KaiDialog
 {
 public:
-	OptionsDialog(wxWindow *parent, KainoteFrame *kaiparent);
+	OptionsDialog(wxWindow *parent);
 	virtual ~OptionsDialog();
 	KaiTreebook *OptionsTree;
 	KaiListCtrl *Shortcuts;
@@ -80,12 +80,11 @@ private:
 	void ResetDefault();
 	void AddHotkeysOnList();
 
-	KainoteFrame *Kai;
-
 	unsigned char hkeymodif;
 	std::vector<bool> registeredExts;
 	std::vector<wxString> programLanguages;
 	wxArrayString dictionaryLanguagesSymbols;
+	TabPanel* tab;
 };
 
 enum{
