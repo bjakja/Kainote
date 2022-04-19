@@ -1087,7 +1087,7 @@ namespace Auto{
 		lua_getglobal(L, "aegisub");
 
 		set_field<&AutoToFile::LuaParseKaraokeData>(L, "parse_karaoke_data");
-		set_field<&AutoToFile::LuaGetFreqencyReach>(L, "get_frequency_peeks");
+		set_field<&AutoToFile::LuaGetFreqencyReach>(L, "get_frequency_peaks");
 		set_field<&AutoToFile::LuaSetUndoPoint>(L, "set_undo_point");
 
 		lua_pop(L, 1); // pop "aegisub" table
