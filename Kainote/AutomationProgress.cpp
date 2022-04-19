@@ -24,7 +24,7 @@
 #include <wx/filedlg.h>
 
 
-namespace Auto{
+
 
 	wxDEFINE_EVENT(EVT_TITLE, wxThreadEvent);
 	wxDEFINE_EVENT(EVT_TASK, wxThreadEvent);
@@ -461,6 +461,5 @@ namespace Auto{
 	}
 
 
-};
 
 

@@ -22,10 +22,10 @@
 struct lua_State;
 
 
-namespace Auto{
+
 	/// Load a Lua or Moonscript file at the given path
 	bool LoadFile(lua_State *L, wxString const& filename);
 	/// Install our module loader and add include_path to the module search
 	/// path of the given lua state
 	bool Install(lua_State *L, std::vector<wxString> const& include_path);
-} 
+

@@ -28,11 +28,8 @@
 //
 // Aegisub Project http://www.aegisub.org/
 
-/// @file auto4_lua.cpp
-/// @brief Lua 5.1-based scripting engine
-/// @ingroup scripting
-///
-//#include "config.h"
+
+#include "config.h"
 #include "Automation.h"
 #include "Hotkeys.h"
 
@@ -44,9 +41,11 @@
 #include "AutomationScriptReader.h"
 #include "KaiMessageBox.h"
 #include "AutomationHotkeysDialog.h"
+
 #include "SubsGrid.h"
 #include "TabPanel.h"
 #include "Notebook.h"
+#include "Provider.h"
 
 #include <algorithm>
 #include <cassert>
@@ -55,6 +54,8 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+
+
 
 
 
@@ -247,7 +248,7 @@
 		}
 
 		lua_pushvalue(L, 1);
-		SubsEntry *e = AutoToFile::LuaToLine(L);
+		SubsEntry *e = LuaToLine(L);
 		if (!e){ return 0; }
 		if (e->lclass != L"style"){ SAFE_DELETE(e); return 0; }
 		Styles *st = e->astyle;
@@ -377,8 +378,7 @@
 	{
 		include_path.push_back(filename.BeforeLast(L'\\') + L"\\");
 		include_path.push_back(Options.pathfull + L"\\Automation\\automation\\Include\\");
-		//include_path[0].Replace("\\","/");
-		//include_path[1].Replace("\\","/");
+		
 		Create();
 	}
 
@@ -395,13 +395,9 @@
 			return;
 		}
 
-		//bool loaded = false;
-		//BOOST_SCOPE_EXIT_ALL(&) { if (!loaded) Destroy(); };
-		LuaStackcheck stackcheck(L);
-
-		// register standard libs
+		
 		preload_modules(L);
-		stackcheck.check_stack(0);
+		
 
 		// dofile and loadfile are replaced with include
 		lua_pushnil(L);
@@ -419,19 +415,16 @@
 			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
-		stackcheck.check_stack(0);
-
-		// prepare stuff in the registry
-
+		
 		// store the script's filename
 		push_value(L, GetFilename());
 		lua_setfield(L, LUA_REGISTRYINDEX, "filename");
-		stackcheck.check_stack(0);
+		//stackcheck.check_stack(0);
 
 		// reference to the script object
 		push_value(L, this);
 		lua_setfield(L, LUA_REGISTRYINDEX, "aegisub");
-		stackcheck.check_stack(0);
+		//stackcheck.check_stack(0);
 
 		// make "aegisub" table
 		lua_pushstring(L, "aegisub");
@@ -454,7 +447,7 @@
 
 		// store aegisub table to globals
 		lua_settable(L, LUA_GLOBALSINDEX);
-		stackcheck.check_stack(0);
+		//stackcheck.check_stack(0);
 
 		// load user script
 		if (!LoadFile(L, GetFilename())) {
@@ -463,7 +456,7 @@
 			//lua_gc(L, LUA_GCCOLLECT, 0);
 			return;
 		}
-		stackcheck.check_stack(1);
+		//stackcheck.check_stack(1);
 
 		// Insert our error handler under the user's script
 		lua_pushcclosure(L, add_stack_trace, 0);
@@ -480,7 +473,7 @@
 			return;
 		}
 		lua_pop(L, 1); // error handler
-		stackcheck.check_stack(0);
+		//stackcheck.check_stack(0);
 
 		lua_getglobal(L, "version");
 		if (lua_isnumber(L, -1) && lua_tointeger(L, -1) == 3) {
@@ -795,9 +788,9 @@
 
 	void LuaCommand::Run(TabPanel *c)
 	{
-		LuaStackcheck stackcheck(L);
+		//LuaStackcheck stackcheck(L);
 
-		stackcheck.check_stack(0);
+		//stackcheck.check_stack(0);
 
 		GetFeatureFunction("run");
 		File *subs = c->grid->file->GetSubs();

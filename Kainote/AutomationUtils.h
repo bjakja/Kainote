@@ -25,10 +25,10 @@ extern "C" {
 //#include <type_traits>
 #include <wx/string.h>
 
-struct tm;
 
 
-namespace Auto{
+
+
 
 	/// Clamp `b` to the range [`a`,`c`]
 	template<typename T>
@@ -266,4 +266,4 @@ namespace Auto{
 	/// moonscript line rewriting support
 	int add_stack_trace(lua_State *L);
 
-}
+

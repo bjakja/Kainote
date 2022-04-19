@@ -27,7 +27,7 @@ namespace bfs = boost::filesystem;
 typedef boost::filesystem::path path;
 
 
-namespace Auto{
+
 
 	template<class T, class Del = void(*)(T)>
 	class scoped_holder {
@@ -310,20 +310,7 @@ namespace Auto{
 		do_register_lib_function(L, "dir_next", "char * (*)(DirectoryIterator &, char **)", dir_next);
 		do_register_lib_function(L, "dir_close", "void (*)(DirectoryIterator &)", dir_close);
 		lua_remove(L, -2);
-		/*register_lib_table(L, {"DirectoryIterator"},
-		"chdir", lfs_chdir,
-		"currentdir", currentdir,
-		"mkdir", mkdir,
-		"rmdir", lfs_rmdir,
-		"touch", touch,
-		"get_mtime", get_mtime,
-		"get_mode", get_mode,
-		"get_size", get_size,
-		"dir_new", dir_new,
-		"dir_free", dir_free,
-		"dir_next", dir_next,
-		"dir_close", dir_close);*/
+		
 		return 1;
 	}
 
-}

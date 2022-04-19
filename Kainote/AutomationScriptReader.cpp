@@ -25,7 +25,7 @@
 
 #include <lauxlib.h>
 
-namespace Auto {
+
 
 
 
@@ -170,4 +170,4 @@ namespace Auto {
 		lua_setfield(L, LUA_REGISTRYINDEX, "moonscript");
 		return true;
 	}
-}
+

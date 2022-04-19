@@ -17,6 +17,7 @@
 #include "MappedButton.h"
 #include "KaiMessageBox.h"
 #include "KainoteFrame.h"
+#include "Menu.h"
 #include <map>
 
 class AutomationHotkeyItem : public Item{

@@ -1,6 +1,6 @@
 ﻿
 // Copyright (c) 2006, 2007, Niels Martin Hansen
-// Copyright (c) 2016 - 2020, Marcin Drob
+// Copyright (c) 2016 - 2022, Marcin Drob
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -28,20 +28,20 @@
 // POSSIBILITY OF SUCH DAMAGE.
 //
 // Aegisub Project http://www.aegisub.org/
+
+//It's valid licence opensource
+//Everything is in help
+
 #include "Config.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
 #include "KainoteApp.h"
 #include "AudioSpectrum.h"
 #include <wx/regex.h>
+#include "Automation.h"
+#include "Notebook.h"
+#include "VideoCtrl.h"
 
-//template<int (AutoToFile::*closure)(lua_State *)>
-//	int closure_wrapper(lua_State *L)
-//	{
-//		return (AutoToFile::GetObjPointer(L, lua_upvalueindex(1), false)->*closure)(L);
-//	}
-
-namespace Auto{
 
 	SubsEntry::SubsEntry()
 	{
@@ -1106,7 +1106,8 @@ namespace Auto{
 		//if(!ud){return 0;}
 		//auto laf = *static_cast<AutoToFile **>(ud);
 		//delete laf;
+		//garbage collector not working at all leeking memory
+
 		return 0;
 	};
-}
 

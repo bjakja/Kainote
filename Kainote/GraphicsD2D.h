@@ -12,7 +12,7 @@
 
 #include <wx/pen.h>
 #include <wx/font.h>
-#include <wx/dcclient.h>
+//#include <wx/dcclient.h>
 
 
 enum wxAntialiasMode
@@ -34,13 +34,13 @@ enum wxInterpolationQuality
 	// best quality, not suited for interactivity
 	wxINTERPOLATION_BEST
 };
-
-enum wxGradientType
-{
-	wxGRADIENT_NONE,
-	wxGRADIENT_LINEAR,
-	wxGRADIENT_RADIAL
-};
+//
+//enum wxGradientType
+//{
+//	wxGRADIENT_NONE,
+//	wxGRADIENT_LINEAR,
+//	wxGRADIENT_RADIAL
+//};
 
 
 

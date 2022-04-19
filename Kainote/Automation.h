@@ -35,6 +35,7 @@
 #include <map>
 #include <wx/window.h>
 #include <wx/thread.h>
+#include <lua.h>
 
 
 //class LuaCommand;
@@ -109,10 +110,10 @@ public:
 	~LuaCommand();
 
 	//const char* name() const { return cmd_name.c_str(); }
-	wxString StrMenu() const { return display; }
-	wxString StrDisplay() const { return display; }
-	wxString StrHelp() const { return help; }
-	wxString StrHotkey() const { return hotkey; }
+	const wxString &StrMenu() const { return display; }
+	const wxString &StrDisplay() const { return display; }
+	const wxString &StrHelp() const { return help; }
+	const wxString &StrHotkey() const { return hotkey; }
 	void SetHotkey(const wxString &_hotkey){ hotkey = _hotkey; }
 
 	int Type() const { return cmd_type; }

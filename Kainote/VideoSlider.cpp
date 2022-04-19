@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "Videobox.h"
+#include "VideoCtrl.h"
 #include "SubsTime.h"
 #include "UtilsWindows.h"
 #include <wx/dc.h>

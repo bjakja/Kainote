@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "ShiftTimes.h"
+#include "shiftTimes.h"
 #include "Config.h"
 #include "Stylelistbox.h"
 #include "KainoteFrame.h"
@@ -95,7 +95,7 @@ void ProfileEdition::OnOKClick(wxCommandEvent &evt)
 }
 
 
-ShiftTimes::ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+shiftTimes::shiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	: KaiPanel(parent, id, pos, size, style/* | wxVERTICAL*/)
 {
 	Kai = kfparent;
@@ -120,26 +120,26 @@ ShiftTimes::ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, 
 	RefVals();
 }
 
-ShiftTimes::~ShiftTimes()
+shiftTimes::~shiftTimes()
 {
 	SaveOptions();
 }
 
-bool ShiftTimes::SetBackgroundColour(const wxColour &col)
+bool shiftTimes::SetBackgroundColour(const wxColour &col)
 {
 	wxWindow::SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	panel->SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	return true;
 }
 
-bool ShiftTimes::SetForegroundColour(const wxColour &col)
+bool shiftTimes::SetForegroundColour(const wxColour &col)
 {
 	wxWindow::SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	panel->SetForegroundColour(Options.GetColour(WINDOW_TEXT));
 	return true;
 }
 
-void ShiftTimes::Contents(bool addopts)
+void shiftTimes::Contents(bool addopts)
 {
 	bool state;
 	form = tab->grid->subsFormat;
@@ -195,7 +195,7 @@ void ShiftTimes::Contents(bool addopts)
 
 
 
-void ShiftTimes::OnAddStyles(wxCommandEvent& event)
+void shiftTimes::OnAddStyles(wxCommandEvent& event)
 {
 	wxString result = GetCheckedElements(Kai);
 	Stylestext->SetValue(result);
@@ -205,7 +205,7 @@ void ShiftTimes::OnAddStyles(wxCommandEvent& event)
 	}
 }
 
-void ShiftTimes::SaveOptions()
+void shiftTimes::SaveOptions()
 {
 	if (!LeadIn){
 		if (TimeText->HasShownFrames()){
@@ -244,7 +244,7 @@ void ShiftTimes::SaveOptions()
 	}
 }
 
-void ShiftTimes::CreateControls(bool normal /*= true*/)
+void shiftTimes::CreateControls(bool normal /*= true*/)
 {
 	//wxFont thisFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, L"Tahoma", wxFONTENCODING_DEFAULT);
 	panel->SetFont(*Options.GetFont(-2)/*thisFont*/);
@@ -280,14 +280,14 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		profileSizer = new KaiStaticBoxSizer(wxHORIZONTAL, panel, _("Edycja profilów"));
 		NewProfile = new MappedButton(panel, 31229, L"+", _("Dodawanie i edycja profilów"), 
 			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::OnAddProfile, this, 31229);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &shiftTimes::OnAddProfile, this, 31229);
 		RemoveProfile = new MappedButton(panel, 31230, L"-", _("Usuwanie profilów"), 
 			wxDefaultPosition, wxDefaultSize, -1, MAKE_SQUARE_BUTTON);
-		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ShiftTimes::OnRemoveProfile, this, 31230);
+		Bind(wxEVT_COMMAND_BUTTON_CLICKED, &shiftTimes::OnRemoveProfile, this, 31230);
 		wxArrayString profileList;
 		GetProfilesNames(profileList);
 		ProfilesList = new KaiChoice(panel, 31231, wxDefaultPosition, wxDefaultSize, profileList);
-		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShiftTimes::OnChangeProfile, this, 31231);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &shiftTimes::OnChangeProfile, this, 31231);
 		profileSizer->Add(NewProfile, 0, wxALL, 2);
 		profileSizer->Add(RemoveProfile, 0, wxBOTTOM | wxTOP | wxRIGHT, 2);
 		profileSizer->Add(ProfilesList, 1, wxEXPAND | wxBOTTOM | wxTOP | wxRIGHT, 2);
@@ -300,8 +300,8 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		Backward = new KaiRadioButton(panel, 22891, _("W tył"));
 		DisplayFrames = new KaiCheckBox(panel, 31221, _("Klatki"));
 		MoveTagTimes = new KaiCheckBox(panel, 22889, _("Czasy tagów"));
-		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimes::OnChangeDisplayUnits, this, 31221);
-		Bind(NUMBER_CHANGED, &ShiftTimes::OnEdition, this, 22890);
+		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &shiftTimes::OnChangeDisplayUnits, this, 31221);
+		Bind(NUMBER_CHANGED, &shiftTimes::OnEdition, this, 22890);
 		timegrid->Add(TimeText, 0, wxEXPAND | wxLEFT | wxRIGHT, 2);
 		timegrid->Add(MoveTime, 0, wxEXPAND | wxRIGHT, 2);
 		timegrid->Add(Forward, 1, wxEXPAND | wxLEFT | wxRIGHT, 2);
@@ -330,7 +330,7 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		MoveToAudioTime->SetForegroundColour(WINDOW_WARNING_ELEMENTS);
 		MoveToAudioTime->Enable(false);
 
-		Connect(ID_VIDEO, ID_AUDIO, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&ShiftTimes::AudioVideoTime);
+		Connect(ID_VIDEO, ID_AUDIO, wxEVT_COMMAND_CHECKBOX_CLICKED, (wxObjectEventFunction)&shiftTimes::AudioVideoTime);
 		//TextColorPicker *picker = new TextColorPicker(this, AssColor(wxString("#AABBCC")));
 		VAtiming->Add(SE, 0, wxEXPAND | wxTOP, 2);
 		VAtiming->Add(MoveToVideoTime, 1, wxEXPAND | wxLEFT, 2);
@@ -366,10 +366,10 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		Main->Add(cesizer, 0, wxEXPAND | wxALL, 2);
 
 		panel->SetSizerAndFit(Main);
-		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &ShiftTimes::OnEdition, this, 22888);
-		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ShiftTimes::OnEdition, this, 22889);
-		Bind(wxEVT_COMMAND_TEXT_UPDATED, &ShiftTimes::OnEdition, this, 22890);
-		Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &ShiftTimes::OnEdition, this, 22891);
+		Bind(wxEVT_COMMAND_CHOICE_SELECTED, &shiftTimes::OnEdition, this, 22888);
+		Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &shiftTimes::OnEdition, this, 22889);
+		Bind(wxEVT_COMMAND_TEXT_UPDATED, &shiftTimes::OnEdition, this, 22890);
+		Bind(wxEVT_COMMAND_RADIOBUTTON_SELECTED, &shiftTimes::OnEdition, this, 22891);
 	}
 	else{
 		int pe = Options.GetInt(POSTPROCESSOR_ON);
@@ -448,12 +448,12 @@ void ShiftTimes::CreateControls(bool normal /*= true*/)
 		panel->SetSizerAndFit(Main);
 	}
 	DoTooltips(normal);
-	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&ShiftTimes::OnOKClick);
-	Connect(ID_BSTYLE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimes::OnAddStyles);
-	Connect(22999, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&ShiftTimes::CollapsePane);
+	Connect(GLOBAL_SHIFT_TIMES, wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&shiftTimes::OnOKClick);
+	Connect(ID_BSTYLE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&shiftTimes::OnAddStyles);
+	Connect(22999, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&shiftTimes::CollapsePane);
 }
 
-void ShiftTimes::OnOKClick(wxCommandEvent& event)
+void shiftTimes::OnOKClick(wxCommandEvent& event)
 {
 	SaveOptions();
 	int acid = event.GetId();
@@ -468,7 +468,7 @@ void ShiftTimes::OnOKClick(wxCommandEvent& event)
 }
 
 
-void ShiftTimes::OnSize(wxSizeEvent& event)
+void shiftTimes::OnSize(wxSizeEvent& event)
 {
 	int h, gw, gh;
 	tab->grid->GetClientSize(&gw, &gh);
@@ -481,7 +481,7 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 		isscrollbar = true;
 		int thickness = scroll->GetThickness();
 		SetMinSize(wxSize(w + thickness, h));
-		tab->GridShiftTimesSizer->Layout();
+		tab->GridshiftTimesSizer->Layout();
 		scroll->SetSize(w - 1, 0, thickness, gh);
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		scroll->Show();
@@ -495,13 +495,13 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 		scroll->SetScrollbar(scPos, gh, h, gh - 10);
 		SetMinSize(wxSize(w, h));
 		panel->SetPosition(wxPoint(0, scPos));
-		tab->GridShiftTimesSizer->Layout();
+		tab->GridshiftTimesSizer->Layout();
 	}
 	else if (scroll->IsShown()){
 		int thickness = scroll->GetThickness();
 		if (ctw != w + thickness) {
 			SetMinSize(wxSize(w + thickness, h));
-			tab->GridShiftTimesSizer->Layout();
+			tab->GridshiftTimesSizer->Layout();
 			scPos = 0;
 		}
 		scroll->SetSize(ctw - thickness - 1, 0, thickness, gh);
@@ -514,12 +514,12 @@ void ShiftTimes::OnSize(wxSizeEvent& event)
 	}
 	else if (!isscrollbar && ctw != w){
 		SetMinSize(wxSize(w, h));
-		tab->GridShiftTimesSizer->Layout();
+		tab->GridshiftTimesSizer->Layout();
 	}
 
 }
 
-void ShiftTimes::DoTooltips(bool normal /*= true*/)
+void shiftTimes::DoTooltips(bool normal /*= true*/)
 {
 	WhichLines->SetToolTip(_("Wybór linijek do przesunięcia"));
 	AddStyles->SetToolTip(_("Wybierz style z listy"));
@@ -551,7 +551,7 @@ void ShiftTimes::DoTooltips(bool normal /*= true*/)
 	}
 }
 
-void ShiftTimes::AudioVideoTime(wxCommandEvent &event)
+void shiftTimes::AudioVideoTime(wxCommandEvent &event)
 {
 	int id = event.GetId();
 	if (id == ID_VIDEO && MoveToVideoTime->GetValue()){
@@ -563,7 +563,7 @@ void ShiftTimes::AudioVideoTime(wxCommandEvent &event)
 	OnEdition(event);
 }
 
-void ShiftTimes::RefVals(ShiftTimes *secondWindow)
+void shiftTimes::RefVals(shiftTimes *secondWindow)
 {
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 
 	//8 Move to audio time 16 display times / frames 32 move tag times;
@@ -637,7 +637,7 @@ void ShiftTimes::RefVals(ShiftTimes *secondWindow)
 
 }
 
-void ShiftTimes::CollapsePane(wxCommandEvent &event)
+void shiftTimes::CollapsePane(wxCommandEvent &event)
 {
 	bool collapsed = (LeadIn == nullptr);
 	SaveOptions();
@@ -674,7 +674,7 @@ void ShiftTimes::CollapsePane(wxCommandEvent &event)
 		{
 			int thickness = scroll->GetThickness();
 			SetMinSize(wxSize(w + thickness, h));
-			cur->GridShiftTimesSizer->Layout();
+			cur->GridshiftTimesSizer->Layout();
 			scroll->SetSize(w, 0, thickness, gh);
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 
@@ -685,7 +685,7 @@ void ShiftTimes::CollapsePane(wxCommandEvent &event)
 			scroll->Hide();
 			scroll->SetScrollbar(scPos, gh, h, gh - 10);
 			SetMinSize(wxSize(w, h));
-			cur->GridShiftTimesSizer->Layout();
+			cur->GridshiftTimesSizer->Layout();
 		}
 
 		panel->SetPosition(wxPoint(0, -scPos));
@@ -698,7 +698,7 @@ void ShiftTimes::CollapsePane(wxCommandEvent &event)
 	}
 }
 
-void ShiftTimes::OnScroll(wxScrollEvent& event)
+void shiftTimes::OnScroll(wxScrollEvent& event)
 {
 	int newPos = event.GetPosition();
 	if (scPos != newPos) {
@@ -708,7 +708,7 @@ void ShiftTimes::OnScroll(wxScrollEvent& event)
 	}
 }
 
-void ShiftTimes::OnMouseScroll(wxMouseEvent& event)
+void shiftTimes::OnMouseScroll(wxMouseEvent& event)
 {
 	if (event.GetWheelRotation() != 0){
 		int step = 30 * event.GetWheelRotation() / event.GetWheelDelta();
@@ -718,13 +718,13 @@ void ShiftTimes::OnMouseScroll(wxMouseEvent& event)
 	}
 }
 
-void ShiftTimes::OnChangeDisplayUnits(wxCommandEvent& event)
+void shiftTimes::OnChangeDisplayUnits(wxCommandEvent& event)
 {
 	ChangeDisplayUnits(!DisplayFrames->GetValue());
 	OnEdition(event);
 }
 
-void ShiftTimes::ChangeDisplayUnits(bool times)
+void shiftTimes::ChangeDisplayUnits(bool times)
 {
 	SubsTime ct = TimeText->GetTime();
 	if (times){
@@ -739,7 +739,7 @@ void ShiftTimes::ChangeDisplayUnits(bool times)
 	}
 }
 
-void ShiftTimes::GetProfilesNames(wxArrayString &list)
+void shiftTimes::GetProfilesNames(wxArrayString &list)
 {
 	wxArrayString fullProfiles;
 	Options.GetTable(SHIFT_TIMES_PROFILES, fullProfiles, wxTOKEN_STRTOK);
@@ -749,7 +749,7 @@ void ShiftTimes::GetProfilesNames(wxArrayString &list)
 	}
 }
 
-void ShiftTimes::CreateProfile(const wxString &name, bool overwrite)
+void shiftTimes::CreateProfile(const wxString &name, bool overwrite)
 {
 	wxString newProfile;
 	GetProfileString(name, &newProfile);
@@ -770,7 +770,7 @@ void ShiftTimes::CreateProfile(const wxString &name, bool overwrite)
 	ProfilesList->SetSelection(0);
 }
 
-void ShiftTimes::GetProfileString(const wxString& name, wxString* profileString)
+void shiftTimes::GetProfileString(const wxString& name, wxString* profileString)
 {
 	wxString moveToAudioTime = (MoveToAudioTime->GetValue()) ? L"1" : L"0";
 	wxString moveToVideoTime = (MoveToVideoTime->GetValue()) ? L"1" : L"0";
@@ -790,7 +790,7 @@ void ShiftTimes::GetProfileString(const wxString& name, wxString* profileString)
 		L" EndTimeCorrection: " << EndTimeCorrection->GetSelection();
 }
 
-void ShiftTimes::ChangeProfileIfIsSet()
+void shiftTimes::ChangeProfileIfIsSet()
 {
 	wxArrayString profiles;
 	Options.GetTable(SHIFT_TIMES_PROFILES, profiles);
@@ -816,7 +816,7 @@ void ShiftTimes::ChangeProfileIfIsSet()
 	}
 }
 
-void ShiftTimes::SetProfile(const wxString &name)
+void shiftTimes::SetProfile(const wxString &name)
 {
 	wxArrayString fullProfiles;
 	wxString profileWithoutName;
@@ -920,7 +920,7 @@ void ShiftTimes::SetProfile(const wxString &name)
 	}
 }
 
-void ShiftTimes::OnAddProfile(wxCommandEvent& event)
+void shiftTimes::OnAddProfile(wxCommandEvent& event)
 {
 	wxArrayString profilesNames;
 	GetProfilesNames(profilesNames);
@@ -935,7 +935,7 @@ void ShiftTimes::OnAddProfile(wxCommandEvent& event)
 	}
 }
 
-void ShiftTimes::OnRemoveProfile(wxCommandEvent& event)
+void shiftTimes::OnRemoveProfile(wxCommandEvent& event)
 {
 	int selectedProfile = ProfilesList->GetSelection();
 	wxSize plSize = ProfilesList->GetClientSize();
@@ -972,7 +972,7 @@ void ShiftTimes::OnRemoveProfile(wxCommandEvent& event)
 	ProfilesList->SetSelection(-1);
 }
 
-void ShiftTimes::OnChangeProfile(wxCommandEvent& event)
+void shiftTimes::OnChangeProfile(wxCommandEvent& event)
 {
 	int selectedProfile = ProfilesList->GetSelection();
 	if (selectedProfile < 0)
@@ -982,7 +982,7 @@ void ShiftTimes::OnChangeProfile(wxCommandEvent& event)
 	SetProfile(profileName);
 }
 
-void ShiftTimes::OnEdition(wxCommandEvent& event)
+void shiftTimes::OnEdition(wxCommandEvent& event)
 {
 	if (LeadIn /*|| ProfilesList->GetSelection() < 0*/)
 		return;
@@ -991,7 +991,7 @@ void ShiftTimes::OnEdition(wxCommandEvent& event)
 	ChangeProfileIfIsSet();
 }
 
-bool ShiftTimes::SetFont(const wxFont &font)
+bool shiftTimes::SetFont(const wxFont &font)
 {
 	wxFont stFont = font;
 	stFont.SetPointSize(font.GetPointSize() - 2);
@@ -1011,12 +1011,12 @@ bool ShiftTimes::SetFont(const wxFont &font)
 	OnSize(evt);
 	RefVals();
 	TabPanel* cur = (TabPanel*)GetParent();
-	cur->GridShiftTimesSizer->Layout();
+	cur->GridshiftTimesSizer->Layout();
 	return true;
 }
 
-BEGIN_EVENT_TABLE(ShiftTimes, wxWindow)
-EVT_SIZE(ShiftTimes::OnSize)
-EVT_COMMAND_SCROLL_THUMBTRACK(5558, ShiftTimes::OnScroll)
-EVT_MOUSEWHEEL(ShiftTimes::OnMouseScroll)
+BEGIN_EVENT_TABLE(shiftTimes, wxWindow)
+EVT_SIZE(shiftTimes::OnSize)
+EVT_COMMAND_SCROLL_THUMBTRACK(5558, shiftTimes::OnScroll)
+EVT_MOUSEWHEEL(shiftTimes::OnMouseScroll)
 END_EVENT_TABLE()

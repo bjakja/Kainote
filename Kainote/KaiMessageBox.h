@@ -18,6 +18,7 @@
 #include "KaiDialog.h"
 #include "KaiCheckBox.h"
 #include "config.h"
+#include <wx/string.h>
 
 class KaiMessageDialog : public KaiDialog
 {

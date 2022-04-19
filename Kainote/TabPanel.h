@@ -25,7 +25,7 @@
 class SubsGrid;
 class VideoCtrl;
 class EditBox;
-class ShiftTimes;
+class shiftTimes;
 class KaiWindowResizer;
 
 class TabPanel : public KaiPanel
@@ -39,11 +39,11 @@ public:
 	SubsGrid* grid;
 	EditBox* edit;
 	VideoCtrl* video;
-	ShiftTimes* shiftTimes;
+	shiftTimes* shiftTimes;
 
 	wxBoxSizer* MainSizer;
 	wxBoxSizer* VideoEditboxSizer;
-	wxBoxSizer* GridShiftTimesSizer;
+	wxBoxSizer* GridshiftTimesSizer;
 
 	void SetAccels(bool onlyGridAudio = false);
 	void SetVideoWindowSizes(int w, int h, bool allTabs);

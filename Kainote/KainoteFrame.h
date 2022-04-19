@@ -23,7 +23,7 @@
 #pragma once
 
 #include "KaiFrame.h"
-#include <wx/timer.h>
+//#include <wx/timer.h>
 
 
 class FontCollector;
@@ -100,7 +100,7 @@ public:
 	Automation *Auto = nullptr;
 	FontCollector *FC = nullptr;
 	MisspellReplacer *MR = nullptr;
-	RECT borders;
+	tagRECT borders;
 private:
 
 

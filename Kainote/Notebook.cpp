@@ -27,7 +27,7 @@
 #include "SubsGrid.h"
 #include "Toolbar.h"
 #include "TabPanel.h"
-#include "ShiftTimes.h"
+#include "shiftTimes.h"
 
 
 Notebook::Notebook(wxWindow *parent, int id)
@@ -164,7 +164,7 @@ void Notebook::AddPage(bool refresh, bool saveLastSession)
 		Thaw();
 		RefreshRect(wxRect(0, h - TabHeight, w, TabHeight), false);
 	}
-	else{ Pages[iter]->ShiftTimes->RefVals(Pages[olditer]->ShiftTimes); }
+	else{ Pages[iter]->shiftTimes->RefVals(Pages[olditer]->shiftTimes); }
 
 	if (saveLastSession) {
 		SaveLastSession();
@@ -1408,7 +1408,7 @@ void Notebook::LoadLastSession(bool loadCrashSession, const wxString &externalPa
 					}
 					
 					sthis->Kai->Label();
-					tab->ShiftTimes->Contents();
+					tab->shiftTimes->Contents();
 					video = emptyString;
 					videoPosition = 0;
 					subtitles = emptyString;

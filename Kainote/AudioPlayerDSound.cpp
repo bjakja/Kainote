@@ -18,8 +18,7 @@
 ///////////
 // Headers
 
-//#include <wx/wx.h>
-//#include <mmsystem.h>
+
 #include <dsound.h>
 #include <process.h>
 #include "LogHandler.h"
@@ -29,62 +28,7 @@
 
 
 
-class DirectSoundPlayer2Thread {
-	static unsigned int __stdcall ThreadProc(void* parameter);
-	void Run();
 
-	unsigned int FillAndUnlockBuffers(unsigned char* buf1, unsigned int buf1sz, unsigned char* buf2,
-		unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer);
-
-	void CheckError();
-
-	HANDLE thread_handle;
-
-	// Used to signal state-changes to thread
-	HANDLE
-		event_start_playback,
-		event_stop_playback,
-		event_update_end_time,
-		event_set_volume,
-		event_kill_self;
-
-	// Thread communicating back
-	HANDLE
-		thread_running,
-		is_playing,
-		error_happened;
-
-	const wxChar* error_message;
-	double volume;
-	long long start_frame;
-	long long end_frame;
-
-	int wanted_latency;
-	int buffer_length;
-
-	//std::chrono::system_clock::time_point last_playback_restart;
-	int last_playback_restart;
-
-	Provider* provider;
-
-public:
-	DirectSoundPlayer2Thread(Provider* provider, int WantedLatency, int BufferLength);
-	~DirectSoundPlayer2Thread();
-
-	void Play(long long start, long long count);
-	void Stop();
-	void SetEndFrame(long long new_end_frame);
-	void SetVolume(double new_volume);
-
-	bool IsPlaying();
-	long long GetStartFrame();
-	long long GetCurrentFrame();
-	int GetCurrentMS();
-	long long GetEndFrame();
-	double GetVolume();
-	bool IsDead();
-
-};
 
 
 unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
@@ -97,11 +41,7 @@ unsigned int __stdcall DirectSoundPlayer2Thread::ThreadProc(void *parameter)
 void DirectSoundPlayer2Thread::Run()
 {
 
-	//COMInitialization COM_library;
-	//try	{ COM_library.Init(); }
-	//catch (std::exception e) {
-		//KaiLogSilent("Could not initialise COM");
-	//}
+	
 
 
 	// Create DirectSound object
@@ -389,13 +329,13 @@ do_fill_buffer:
 		}
 	}
 
-#undef REPORT_ERROR
+
 }
 //if (DirectSoundCreate8(&DSDEVID_DefaultPlayback, &defaultPlayback, 0))
 //KaiLogSilent("Cound not create DirectSound object");
 
-DWORD DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char * buf1, unsigned long buf1sz, 
-	unsigned char * buf2, unsigned long buf2sz, long long &input_frame, audioBuffer)
+unsigned int DirectSoundPlayer2Thread::FillAndUnlockBuffers(unsigned char* buf1, unsigned int buf1sz, unsigned char* buf2,
+	unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer)
 {
 	// Assume buffers have been locked and are ready to be filled
 
@@ -493,10 +433,7 @@ DirectSoundPlayer2Thread::DirectSoundPlayer2Thread(Provider *provider, int _Want
 	, is_playing            (CreateEvent(0,  TRUE, FALSE, 0))
 	, error_happened        (CreateEvent(0, FALSE, FALSE, 0))
 {
-	error_message = 0;
-	volume = 1.0;
-	start_frame = 0;
-	end_frame = 0;
+	
 
 	wanted_latency	= _WantedLatency;
 	buffer_length	= _BufferLength;

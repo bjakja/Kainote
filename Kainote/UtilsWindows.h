@@ -16,20 +16,15 @@
 #pragma once
 #undef GetClassInfo
 
-//
-#include <vector>
-#include <wx/dc.h>
-//#include <windows.h>
+
 
 wxRect GetMonitorWorkArea(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxPoint &position, bool workArea);
 wxRect GetMonitorRect1(int wmonitor, std::vector<tagRECT> *MonitorRects, const wxRect &programRect);
 int FindMonitor(std::vector<tagRECT> *MonitorRects, const wxPoint &pos);
 
 
-#ifdef _M_IX86
-void SetThreadName(DWORD id, LPCSTR szThreadName);
-#else
-void SetThreadName(size_t id, LPCSTR szThreadName);
-#endif
+
+void SetThreadName(size_t id, const char * szThreadName);
+
 
 

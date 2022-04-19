@@ -41,7 +41,7 @@ extern "C" int luaopen_unicode_impl(lua_State *L);
 extern "C" int luaopen_lfs_impl(lua_State *L);
 extern "C" int luaopen_lpeg(lua_State *L);
 
-namespace Auto{
+
 	wxString get_string_or_default(lua_State *L, int idx) {
 		size_t len = 0;
 		const char *str = lua_tolstring(L, idx, &len);
@@ -486,7 +486,7 @@ namespace Auto{
 	}
 
 
-}
+
 
 
 

@@ -17,14 +17,66 @@
 
 #pragma once
 
-//#include <wx/wxprec.h>
-//#include <stdint.h>
-//#include <mmsystem.h>
-//
+
 #include "Provider.h"
+#include <dsound.h>
 
 
-class DirectSoundPlayer2Thread;
+class DirectSoundPlayer2Thread {
+	static unsigned int __stdcall ThreadProc(void* parameter);
+	void Run();
+
+	unsigned int FillAndUnlockBuffers(unsigned char* buf1, unsigned int buf1sz, unsigned char* buf2,
+		unsigned int buf2sz, long long& input_frame, IDirectSoundBuffer8* audioBuffer);
+
+	void CheckError();
+
+	HANDLE thread_handle;
+
+	// Used to signal state-changes to thread
+	HANDLE
+		event_start_playback,
+		event_stop_playback,
+		event_update_end_time,
+		event_set_volume,
+		event_kill_self;
+
+	// Thread communicating back
+	HANDLE
+		thread_running,
+		is_playing,
+		error_happened;
+
+	double volume =1.0;
+	long long start_frame = 0;
+	long long end_frame = 0;
+
+	int wanted_latency;
+	int buffer_length;
+
+	//std::chrono::system_clock::time_point last_playback_restart;
+	int last_playback_restart;
+
+	Provider* provider;
+
+public:
+	DirectSoundPlayer2Thread(Provider* provider, int WantedLatency, int BufferLength);
+	~DirectSoundPlayer2Thread();
+
+	void Play(long long start, long long count);
+	void Stop();
+	void SetEndFrame(long long new_end_frame);
+	void SetVolume(double new_volume);
+
+	bool IsPlaying();
+	long long GetStartFrame();
+	long long GetCurrentFrame();
+	int GetCurrentMS();
+	long long GetEndFrame();
+	double GetVolume();
+	bool IsDead();
+
+};
 
 class DirectSoundPlayer2 : public wxEvtHandler {
 	DirectSoundPlayer2Thread *thread;
@@ -56,10 +108,10 @@ public:
 
 	void SetVolume(double vol);
 	double GetVolume();
-	//void SetDisplayTimer(wxTimer *Timer);
+	
 
 	Provider * provider;
-	//wxTimer *displayTimer;
+	
 };
 
 

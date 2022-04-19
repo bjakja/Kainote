@@ -31,7 +31,7 @@
 #include "SubsGridDialogs.h"
 #include "TabPanel.h"
 #include "EditBox.h"
-#include "ShiftTimes.h"
+#include "shiftTimes.h"
 #include "VideoCtrl.h"
 #include "Notebook.h"
 #include <wx/regex.h>
@@ -1098,7 +1098,7 @@ void SubsGrid::OnMkvSubs(wxCommandEvent &event)
 		}
 
 		if (!tab->editor && !tab->video->IsFullScreen()){ Kai->HideEditor(); }
-		tab->ShiftTimes->Contents();
+		tab->shiftTimes->Contents();
 		file->InsertSelection(currentLine);
 		RefreshColumns();
 		edit->HideControls();

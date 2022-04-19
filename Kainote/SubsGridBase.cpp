@@ -1012,7 +1012,7 @@ void SubsGridBase::DoUndo(bool redo, int iter)
 	char oldformat = subsFormat;
 	SetSubsFormat();
 	if (oldformat != subsFormat){
-		tab->ShiftTimes->Contents();
+		tab->shiftTimes->Contents();
 		tab->edit->HideControls();
 		Kai->UpdateToolbar();
 		if (oldformat == ASS || subsFormat == ASS){

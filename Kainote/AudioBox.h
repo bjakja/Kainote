@@ -33,19 +33,19 @@
 // Website: http://aegisub.cellosoft.com
 // Contact: mailto:zeratul@cellosoft.com
 //
-
+// Its All Aegisub2 code it looks like proper opensource licence
+// The credits are in Kainote -> Credits
 
 #pragma once
 
 ///////////
 // Headers
-//#include <wx/wx.h>
-#include <wx/string.h>
+#include "AudioDisplay.h"
 #include "KaiPanel.h"
 #include "KaiSlider.h"
 #include <wx/sizer.h>
+#include <wx/string.h>
 
-#include "AudioDisplay.h"
 
 //////////////
 // Prototypes

@@ -30,13 +30,13 @@ class KaiScrollbar;
 class KaiStaticBoxSizer;
 
 
-class ShiftTimes: public KaiPanel
+class shiftTimes: public KaiPanel
 {
 public:
 	
-	ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
+	shiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style=0);
-	virtual ~ShiftTimes();
+	virtual ~shiftTimes();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
@@ -78,7 +78,7 @@ public:
 	wxWindow *panel; 
 
 	void Contents(bool addopts = true);
-	void RefVals(ShiftTimes *from = nullptr);
+	void RefVals(shiftTimes *from = nullptr);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);

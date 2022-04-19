@@ -32,7 +32,8 @@
 #include "SubsGrid.h"
 #include "kainoteApp.h"
 #include "RendererVideo.h"
-#include "ShiftTimes.h"
+#include "shiftTimes.h"
+#include "VideoCtrl.h"
 #include <math.h>
 #include <process.h>
 #include <wx/filename.h>
@@ -2387,7 +2388,7 @@ void AudioDisplay::SetMark(int time)
 	curMarkMS = time;
 	if (!hasMark){
 		hasMark = true;
-		tab->ShiftTimes->Contents();
+		tab->shiftTimes->Contents();
 	}
 	else
 		hasMark = true;

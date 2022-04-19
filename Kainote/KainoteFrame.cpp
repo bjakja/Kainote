@@ -25,7 +25,7 @@
 #include "UtilsWindows.h"
 #include "SubsTime.h"
 #include "ScriptInfo.h"
-#include "Config.h"
+//#include "Config.h"
 #include "OptionsDialog.h"
 #include "DropFiles.h"
 #include "OpennWrite.h"
@@ -51,9 +51,9 @@
 #include "MisspellReplacer.h"
 #include "EditBox.h"
 #include "TabPanel.h"
-#include "ShiftTimes.h"
+#include "shiftTimes.h"
 #include "Menu.h"
-#include "MenuBar.h"
+//#include "MenuBar.h"
 
 #include <wx/accel.h>
 #include <wx/dir.h>
@@ -659,9 +659,9 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		tab->grid->HideOverrideTags();
 	}
 	else if (id == GLOBAL_SHOW_SHIFT_TIMES){
-		bool show = !tab->ShiftTimes->IsShown();
+		bool show = !tab->shiftTimes->IsShown();
 		Options.SetBool(SHIFT_TIMES_ON, show);
-		tab->ShiftTimes->Show(show);
+		tab->shiftTimes->Show(show);
 		tab->GridShiftTimesSizer->Layout();
 	}
 	else if (id >= GLOBAL_SORT_ALL_BY_START_TIMES && id <= GLOBAL_SORT_SELECTED_BY_LAYER){
@@ -689,7 +689,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (id == GLOBAL_VIEW_ONLY_VIDEO){
 			tab->edit->Show(false);
 			tab->grid->Show(false);
-			tab->ShiftTimes->Show(false);
+			tab->shiftTimes->Show(false);
 			tab->windowResizer->Show(false);
 			wxSize tabSize = tab->GetClientSize();
 			tab->video->SetMinSize(tabSize);
@@ -697,7 +697,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		else if (!tab->edit->IsShown()){
 			tab->edit->Show();
 			tab->grid->Show();
-			tab->ShiftTimes->Show();
+			tab->shiftTimes->Show();
 			tab->windowResizer->Show();
 			int x = 0, y = 0;
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &x, &y);
@@ -788,7 +788,7 @@ void KainoteFrame::OnMenuSelected(wxCommandEvent& event)
 		if (item && config) { item->Check(false); }
 	}
 	else if (id == GLOBAL_SHIFT_TIMES){
-		tab->ShiftTimes->OnOKClick(event);
+		tab->shiftTimes->OnOKClick(event);
 	}
 	else if (id == GLOBAL_FIND_NEXT){
 		if(FR)
@@ -979,7 +979,7 @@ void KainoteFrame::OnConversion(char form)
 	}
 	tab->video->DisableVisuals(form != ASS);
 	tab->grid->Convert(form);
-	tab->ShiftTimes->Contents();
+	tab->shiftTimes->Contents();
 	UpdateToolbar();
 	tab->edit->HideControls();
 }
@@ -1224,7 +1224,7 @@ bool KainoteFrame::OpenFile(const wxString &filename, bool fulls/*=false*/, bool
 	else if (freeze)
 		Tabs->GetTab()->video->DeleteAudioCache();
 //done:
-	tab->ShiftTimes->Contents();
+	tab->shiftTimes->Contents();
 	UpdateToolbar();
 	if (freeze){
 		tab->Thaw();
@@ -1666,7 +1666,7 @@ void KainoteFrame::OpenFiles(wxArrayString &files, bool intab, bool nofreeze, bo
 				break;
 			}
 		}
-		tab->ShiftTimes->Contents();
+		tab->shiftTimes->Contents();
 
 	}
 
@@ -1756,7 +1756,7 @@ void KainoteFrame::OnPageChanged(wxCommandEvent& event)
 			else { cur->video->SetFocus(); }
 		}
 		if (Tabs->iter != Tabs->GetOldSelection() && Options.GetBool(SHIFT_TIMES_CHANGE_VALUES_WITH_TAB)){
-			cur->ShiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->ShiftTimes);
+			cur->shiftTimes->RefVals(Tabs->Page(Tabs->GetOldSelection())->shiftTimes);
 		}
 
 		if (Options.GetBool(AUTO_SELECT_LINES_FROM_LAST_TAB)){
@@ -1797,7 +1797,7 @@ void KainoteFrame::HideEditor(bool save)
 		}
 		else{ cur->video->Hide(); }
 		if (Options.GetBool(SHIFT_TIMES_ON)){
-			cur->ShiftTimes->Show();
+			cur->shiftTimes->Show();
 		}
 		cur->MainSizer->Layout();
 		Label();
@@ -1808,7 +1808,7 @@ void KainoteFrame::HideEditor(bool save)
 	}
 	else{//Turn off of editor
 		cur->video->RemoveVisual(false, true);
-		cur->ShiftTimes->Hide();
+		cur->shiftTimes->Hide();
 
 		if (!cur->video->IsShown()){ cur->video->Show(); }
 

@@ -15,7 +15,6 @@
 
 #pragma once
 
-#include <wx/wx.h>
 #include <wx/caret.h>
 #include "KaiScrollbar.h"
 #include "TextEditorTagList.h"

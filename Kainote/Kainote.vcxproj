@@ -26,7 +26,7 @@
     <ProjectGuid>{180DEA91-88AF-4FEB-8B82-7F3716E118BB}</ProjectGuid>
     <RootNamespace>Kaiplayer</RootNamespace>
     <ProjectName>KaiNote</ProjectName>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -83,7 +83,7 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(IncludePath);$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)bin\x64\Rel_AVX512\</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(IncludePath);$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)bin\x64\Rel_AVX512\;L:\Kainote\Thirdparty\wxWidgets\include</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(LibraryPath)</LibraryPath>
@@ -296,7 +296,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\DirectX9;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\BaseClasses;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)\Thirdparty\DirectX9;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\BaseClasses;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;$(solutionDir)wxwidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

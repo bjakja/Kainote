@@ -18,12 +18,12 @@
 #include "VisualAllTagsControls.h"
 #include "VisualAllTagsEdition.h"
 #include "TagFindReplace.h"
-#include <wx/string.h>
-#include <wx/bitmap.h>
-#include <wx/event.h>
-#include <wx/thread.h>
-#include <vector>
-#include <map>
+//#include <wx/string.h>
+//#include <wx/bitmap.h>
+//#include <wx/event.h>
+//#include <wx/thread.h>
+//#include <vector>
+//#include <map>
 
 
 #include <d3d9.h>

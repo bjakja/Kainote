@@ -15,7 +15,7 @@
 
 
 #pragma once
-//#include "ShiftTimes.h
+//#include "shiftTimes.h
 #include "config.h"
 #include <wx/window.h>
 #include <wx/timer.h>
