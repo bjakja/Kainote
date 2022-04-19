@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include "Config.h"
 #include <wx/window.h>
 #include <wx/toplevel.h>
 #include <wx/sizer.h>

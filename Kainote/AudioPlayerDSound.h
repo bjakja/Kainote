@@ -17,11 +17,10 @@
 
 #pragma once
 
-#include <wx/wxprec.h>
-#include <stdint.h>
-#include <mmsystem.h>
-#include <dsound.h>
-
+//#include <wx/wxprec.h>
+//#include <stdint.h>
+//#include <mmsystem.h>
+//
 #include "Provider.h"
 
 
@@ -59,7 +58,7 @@ public:
 	double GetVolume();
 	//void SetDisplayTimer(wxTimer *Timer);
 
-	Provider*provider;
+	Provider * provider;
 	//wxTimer *displayTimer;
 };
 

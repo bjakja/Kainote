@@ -19,7 +19,7 @@
 // Headers
 
 //#include <wx/wx.h>
-#include <mmsystem.h>
+//#include <mmsystem.h>
 #include <dsound.h>
 #include <process.h>
 #include "LogHandler.h"

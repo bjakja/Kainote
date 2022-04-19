@@ -15,7 +15,7 @@
 
 #include <string>
 #include <stdio.h>
-#include <windows.h>
+//#include <windows.h>
 #include <WinInet.h>
 #include "UpdateChecker.h"
 #include "Config.h"
