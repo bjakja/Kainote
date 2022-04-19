@@ -535,7 +535,7 @@ void RendererFFMS2::ChangePositionByFrame(int step)
 
 }
 
-byte *RendererFFMS2::GetFramewithSubs(bool subs, bool *del)
+byte *RendererFFMS2::GetFrameWithSubs(bool subs, bool *del)
 {
 	byte *cpy1;
 	int all = m_Height * m_Pitch;

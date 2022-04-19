@@ -149,8 +149,9 @@ void FontEnumerator::RefreshClientsFonts()
 	}
 }
 
-int CALLBACK FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
-												DWORD WXUNUSED(dwStyle), LPARAM lParam)
+static int __stdcall FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC* lptm,
+	unsigned int dwStyle, long* lParam)
+
 {
 	FontEnumerator *Enum = (FontEnumerator*)lParam;
 	if (lplf->lfOutPrecision == 1){

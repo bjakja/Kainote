@@ -9,39 +9,31 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include <dxgitype.h>
-#include <d2d1.h>
-#include <dwrite.h>
-
-#include <wincodec.h>
-
-IWICImagingFactory* wxWICImagingFactory();
-ID2D1Factory* wxD2D1Factory();
-IDWriteFactory* wxDWriteFactory();
+#
 
 #include <wx/pen.h>
 #include <wx/font.h>
 #include <wx/dcclient.h>
 
 
-enum wxAntialiasMode
+enum KaiAntialiasMode
 {
-	wxANTIALIAS_NONE, // should be 0
-	wxANTIALIAS_DEFAULT
+	KaiANTIALIAS_NONE, // should be 0
+	KaiANTIALIAS_DEFAULT
 };
 
-enum wxInterpolationQuality
+enum KaiInterpolationQuality
 {
 	// default interpolation
-	wxINTERPOLATION_DEFAULT,
+	KaiINTERPOLATION_DEFAULT,
 	// no interpolation
-	wxINTERPOLATION_NONE,
+	KaiINTERPOLATION_NONE,
 	// fast interpolation, suited for interactivity
-	wxINTERPOLATION_FAST,
+	KaiINTERPOLATION_FAST,
 	// better quality
-	wxINTERPOLATION_GOOD,
+	KaiINTERPOLATION_GOOD,
 	// best quality, not suited for interactivity
-	wxINTERPOLATION_BEST
+	KaiINTERPOLATION_BEST
 };
 
 
@@ -64,33 +56,33 @@ public:
 
 	T& Style(wxPenStyle style)
 	{
-		m_style = style; return This();
+		m_style = style; return this;
 	}
 	T& Stipple(const wxBitmap& stipple)
 	{
-		m_stipple = stipple; m_style = wxPENSTYLE_STIPPLE; return This();
+		m_stipple = stipple; m_style = wxPENSTYLE_STIPPLE; return this;
 	}
 	T& Dashes(int nb_dashes, const wxDash *dash)
 	{
-		m_nb_dashes = nb_dashes; m_dash = const_cast<wxDash*>(dash); return This();
+		m_nb_dashes = nb_dashes; m_dash = const_cast<wxDash*>(dash); return this;
 	}
 	T& Join(wxPenJoin join)
 	{
-		m_join = join; return This();
+		m_join = join; return this;
 	}
 	T& Cap(wxPenCap cap)
 	{
-		m_cap = cap; return This();
+		m_cap = cap; return this;
 	}
 
 	// Accessors are mostly meant to be used by wxWidgets itself.
 
-	wxColour GetColour() const { return m_colour; }
-	wxBitmap GetStipple() const { return m_stipple; }
-	wxPenStyle GetStyle() const { return m_style; }
-	wxPenJoin GetJoin() const { return m_join; }
-	wxPenCap GetCap() const { return m_cap; }
-	int GetDashes(wxDash **ptr) const { *ptr = m_dash; return m_nb_dashes; }
+	const wxColour &GetColour() { return m_colour; }
+	const wxBitmap &GetStipple() { return m_stipple; }
+	const wxPenStyle &GetStyle() { return m_style; }
+	const wxPenJoin &GetJoin() { return m_join; }
+	const wxPenCap &GetCap()  { return m_cap; }
+	int GetDashes(wxDash **ptr)  { *ptr = m_dash; return m_nb_dashes; }
 
 	int GetDashCount() const { return m_nb_dashes; }
 	wxDash* GetDash() const { return m_dash; }

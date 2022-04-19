@@ -21,6 +21,7 @@
 #include "KaiStaticText.h"
 #include "RendererDirectShow.h"
 #include "RendererFFMS2.h"
+#include "Notebook.h"
 #include "KaiSlider.h"
 #include "AudioBox.h"
 #include "EditBox.h"
@@ -114,9 +115,8 @@ void AspectRatioDialog::OnSlider(wxCommandEvent &event)
 }
 
 
-VideoBox::VideoBox(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
+VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	: wxWindow(parent, -1, wxDefaultPosition, size, wxWANTS_CHARS)
-	, Kai(kfpar)
 	, tab((TabPanel*)parent)
 	//, m_HasArrow(true)
 	, m_IsMenuShown(false)
@@ -169,9 +169,12 @@ VideoBox::VideoBox(wxWindow *parent, KainoteFrame *kfpar, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
 	}, ID_REFRESH_TIME);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, Kai, GLOBAL_PLAY_ACTUAL_LINE);
-	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoBox::OnAccelerator);
-	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED, (wxObjectEventFunction)&VideoBox::OnAccelerator);
+	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, 
+		Notebook::GetTabs()->GetParent(), GLOBAL_PLAY_ACTUAL_LINE);
+	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, 
+		(wxObjectEventFunction)&VideoBox::OnAccelerator);
+	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED,
+		(wxObjectEventFunction)&VideoBox::OnAccelerator);
 	Connect(ID_VOL, wxEVT_SCROLL_CHANGED, (wxObjectEventFunction)&VideoBox::OnVolume);
 
 	m_VideoTimeTimer.SetOwner(this, ID_VIDEO_TIME);
@@ -213,6 +216,7 @@ bool VideoBox::Pause(bool skipWhenOnEnd)
 	wxMutexLocker lock(vbmutex);
 
 	if (!renderer){
+		KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		if (index->IsChecked() && index->IsEnabled()){
 			EditBox *eb = tab->edit;
@@ -262,6 +266,7 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	prevchap = -1;
 	bool curentFFMS2 = !m_IsDirectShow;
 	bool byFFMS2;
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (customFFMS2 == -1){
 		MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 		byFFMS2 = index->IsChecked() && index->IsEnabled() && !fulls/* && !isFullscreen*/;
@@ -398,14 +403,6 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	return true;
 }
 
-
-PlaybackState VideoBox::GetState()
-{
-	if (!renderer)
-		return None;
-
-	return renderer->m_State;
-}
 
 bool VideoBox::Seek(int whre, bool starttime/*=true*/, bool disp/*=true*/, bool reloadSubs/*=true*/, bool correct /*= true*/, bool asynchonize /*= true*/)
 {
@@ -620,6 +617,7 @@ void VideoBox::OnKeyPress(wxKeyEvent& event)
 		}
 		if (key == L'B'){
 			if (GetState() == Playing){ Pause(); }
+			KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 			ShowWindow(Kai->GetHWND(), SW_SHOWMINNOACTIVE);
 		}
 	}
@@ -654,9 +652,11 @@ void VideoBox::NextFile(bool next)
 {
 	wxMutexLocker lock(nextmutex);
 	wxString path;
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (tab->VideoPath != emptyString){
 		path = tab->VideoPath;
 	}
+	
 	else{ path = Kai->videorec[Kai->videorec.size() - 1]; }
 	wxString pathwn = path.BeforeLast(L'\\');
 	wxDir kat(pathwn);
@@ -712,7 +712,7 @@ void VideoBox::SetFullscreen(int monitor)
 		return;
 	//wxMutexLocker lock(vbmutex);
 	m_IsFullscreen = !m_IsFullscreen;
-
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	//turn off full screen
 	if (!m_IsFullscreen){
 
@@ -796,6 +796,7 @@ bool VideoBox::CalcSize(int *width, int *height, int wwidth, int wheight, bool s
 {
 	wxSize size;
 	renderer->GetVideoSize(&size.x, &size.y);
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (setstatus){
 		Kai->SetVideoResolution(size.x, size.y, !Options.GetBool(DONT_ASK_FOR_BAD_RESOLUTION));
 	}
@@ -822,6 +823,7 @@ bool VideoBox::CalcSize(int *width, int *height, int wwidth, int wheight, bool s
 
 void VideoBox::OnPrew()
 {
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
 		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować poprzednie wideo?"), _("Potwierdzenie"), 
@@ -833,6 +835,7 @@ void VideoBox::OnPrew()
 
 void VideoBox::OnNext()
 {
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	MenuItem *index = Kai->Menubar->FindItem(GLOBAL_VIDEO_INDEXING);
 	if (index->IsChecked() && index->IsEnabled()/* && !isFullscreen*/){
 		if (KaiMessageBox(_("Czy na pewno chcesz zindeksować następne wideo?"), _("Potwierdzenie"), 
@@ -867,7 +870,7 @@ void VideoBox::ContextMenu(const wxPoint &pos)
 	else{ txt1 = _("Wyłącz pełny ekran\tEscape"); }
 	MenuItem *Item = menu->SetAccMenu(VIDEO_FULL_SCREEN, txt1);
 	Item->Enable(GetState() != None);
-	//Item->DisableMapping();
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	GetMonitorRect1(-1, &MonRects, Kai->GetRect());
 	for (size_t i = 1; i < MonRects.size(); i++)
 	{
@@ -1006,7 +1009,9 @@ void VideoBox::OnDeleteVideo()
 
 void VideoBox::OnOpVideo()
 {
-	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik wideo"),
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+	wxFileDialog* FileDialog2 = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : 
+		(wxWindow *)Kai, _("Wybierz plik wideo"),
 		(tab->SubsPath != emptyString) ? tab->SubsPath.BeforeLast(L'\\') :
 		(Kai->videorec.size() > 0) ? Kai->videorec[Kai->videorec.size() - 1].BeforeLast(L'\\') : emptyString,
 		emptyString, _("Pliki wideo(*.avi),(*.mkv),(*.mp4),(*.ogm),(*.wmv),(*.asf),(*.rmvb),(*.rm),(*.3gp),(*.avs)|*.avi;*.mkv;*.mp4;*.ogm;*.wmv;*.asf;*.rmvb;*.rm;*.3gp;*.avs|Wszystkie pliki (*.*)|*.*"),
@@ -1019,6 +1024,7 @@ void VideoBox::OnOpVideo()
 
 void VideoBox::OnOpSubs()
 {
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	if (Kai->SavePrompt(2)){ return; }
 	wxFileDialog* FileDialog = new wxFileDialog(m_IsFullscreen ? m_FullScreenWindow : (wxWindow *)Kai, _("Wybierz plik napisów"),
 		(tab->VideoPath != emptyString) ? tab->VideoPath.BeforeLast(L'\\') :
@@ -1043,7 +1049,7 @@ void VideoBox::OpenEditor(bool esc)
 		}
 
 		SetFullscreen();
-
+		KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 		if (!esc){ ShowWindow(Kai->GetHWND(), SW_MINIMIZE); }
 	}
 
@@ -1092,6 +1098,7 @@ void VideoBox::OnAccelerator(wxCommandEvent& event)
 		renderer->SaveFrame(id);
 	}
 	else {
+		KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 		Kai->OnMenuSelected(event);
 	}
 }
@@ -1202,9 +1209,11 @@ void VideoBox::SetScaleAndZoom()
 	wxString scale;
 	wxSize wsize = GetSize();
 	scale << (int)((wsize.x / (float)renderer->m_Width) * 100) << L"%";
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	Kai->SetStatusText(scale, 1);
 	wxString zoom;
 	zoom << (int)(renderer->m_ZoomParcent * 100) << L"%";
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	Kai->SetStatusText(zoom, 2);
 }
 
@@ -1659,6 +1668,7 @@ void VideoBox::DeleteAudioCache()
 }
 wxWindow *VideoBox::GetMessageWindowParent()
 {
+	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
 	return (m_IsFullscreen && m_FullScreenWindow) ? (wxWindow*)m_FullScreenWindow : Kai;
 }
 bool VideoBox::IsFullScreen()
@@ -1795,6 +1805,13 @@ void VideoBox::GetWindowSize(int* x, int* y)
 	else {
 		GetClientSize(x, y);
 	}
+}
+
+PlaybackState VideoBox::GetState() {
+	if (renderer)
+		return renderer->m_State;
+	else
+		return None;
 }
 
 BEGIN_EVENT_TABLE(VideoBox, wxWindow)

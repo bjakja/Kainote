@@ -29,7 +29,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 
-#include "config.h"
+
 #include "Automation.h"
 #include "Hotkeys.h"
 
@@ -49,6 +49,7 @@
 #include "StyleStore.h"
 
 #include "EditBox.h"
+#include "config.h"
 
 #include <algorithm>
 #include <cassert>

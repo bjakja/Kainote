@@ -53,14 +53,12 @@
 #include "TabPanel.h"
 #include "shiftTimes.h"
 #include "Menu.h"
-//#include "MenuBar.h"
-
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include <wx/filedlg.h>
 #include <wx/msw/private.h>
-#include "UtilsWindows.h"
+//#include "UtilsWindows.h"
 
 #include <boost/locale/generator.hpp>
 #ifdef TEST_FFMPEG
@@ -893,7 +891,7 @@ void KainoteFrame::OnMenuSelected1(wxCommandEvent& event)
 		asr.ShowModal();
 	}
 	else if (id == GLOBAL_SETTINGS){
-		OptionsDialog od(this, this);
+		OptionsDialog od(this);
 		od.OptionsTree->ChangeSelection(0);
 		od.ShowModal();
 	}

@@ -22,7 +22,7 @@
 #include "SubsGrid.h"
 #include <wx/dir.h>
 #include <wx/filename.h>
-#include "UtilsWindows.h"s
+#include "UtilsWindows.h"
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)

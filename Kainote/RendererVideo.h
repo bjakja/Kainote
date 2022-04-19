@@ -105,21 +105,21 @@ public:
 	virtual void GetVideoSize(int *width, int *height){};
 	virtual void GetFpsnRatio(float *fps, long *arx, long *ary){};
 	virtual void SetVolume(int vol){};
-	virtual bool DrawTexture(byte *nframe = nullptr, bool copy = false) { return false; };
+	virtual bool DrawTexture(unsigned char * nframe = nullptr, bool copy = false) { return false; };
 	virtual void Render(bool RecreateFrame = true, bool wait = true){};
 	virtual void RecreateSurface(){};
 	virtual void EnableStream(long index){};
 	virtual void ChangePositionByFrame(int cpos){};
 	virtual void ChangeVobsub(bool vobsub = false){};
 	virtual wxArrayString GetStreams(){ wxArrayString empty; return empty; };
-	virtual byte *GetFramewithSubs(bool subs, bool *del){ return nullptr; };
+	virtual unsigned char *GetFrameWithSubs(bool subs, bool *del){ return nullptr; };
 	//int GetPreciseTime(bool start = true){};
 	virtual void DeleteAudioCache(){}
 	virtual void SetColorSpace(const wxString& matrix, bool render = true){}
 	virtual void OpenKeyframes(const wxString &filename){};
 	
-	LPDIRECT3DSURFACE9 m_MainSurface;
-	LPDIRECT3DDEVICE9 m_D3DDevice;
+	IDirect3DSurface9 * m_MainSurface;
+	IDirect3DDevice9 *m_D3DDevice;
 	D3DFORMAT m_D3DFormat;
 	bool m_DirectShowSeeking;
 	volatile bool m_BlockResize;
@@ -153,14 +153,11 @@ public:
 	std::vector<chapter> m_Chapters;
 	IDirectXVideoProcessorService *m_DXVAService;
 	IDirectXVideoProcessor *m_DXVAProcessor;
-	LPDIRECT3D9 m_D3DObject;
-	LPDIRECT3DSURFACE9 m_BlackBarsSurface;
-	VideoBox *videoControl;
+	IDirect3D9 *m_D3DObject;
+	IDirect3DSurface9 *m_BlackBarsSurface;
+	VideoBox *videoControl = nullptr;
 	Visuals *m_Visual = nullptr;
-#if byvertices
-	LPDIRECT3DVERTEXBUFFER9 vertex;
-	LPDIRECT3DTEXTURE9 texture;
-#endif
+#
 
 	virtual bool EnumFilters(Menu *menu){ return false; };
 	virtual bool FilterConfig(wxString name, int idx, wxPoint pos){ return false; };
@@ -190,7 +187,7 @@ public:
 	Visuals *GetVisual();
 	void SetAudioPlayer(AudioDisplay *player);
 	void SaveFrame(int id);
-	
+	PlaybackState GetState();
 private:
 
 	bool InitDX();

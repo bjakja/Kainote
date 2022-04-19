@@ -25,7 +25,7 @@
 #include "KaiTextCtrl.h"
 #include "VideoToolbar.h"
 #include "VideoBox.h"
-#include "RendererVideo.h"
+#include "Provider.h"
 
 
 
@@ -38,7 +38,7 @@ class VideoBox : public wxWindow
 	friend class Fullscreen;
 public:
 
-	VideoBox(wxWindow *parent, KainoteFrame *kfparent, const wxSize &size = wxDefaultSize);
+	VideoBox(wxWindow *parent, const wxSize &size = wxDefaultSize);
 	virtual ~VideoBox();
 	bool Play();
 	void PlayLine(int start, int end);
@@ -47,7 +47,7 @@ public:
 	//custom FFMS2 -1 turn off, 0 Direct Show, 1 FFMS2
 	bool LoadVideo(const wxString& fileName, int subsFlag, bool fullscreen = false, 
 		bool changeAudio = true, int customFFMS2 = -1, bool dontPlayOnStart = false);
-	PlaybackState GetState();
+	
 
 	bool Seek(int newPosition, bool starttime = true, bool refreshTime = true, bool reloadSubs = true, bool correct = true, bool asynchonize = true);
 	int Tell();
@@ -149,6 +149,7 @@ public:
 	const wxString &GetKeyFramesFileName();
 	void SetKeyFramesFileName(const wxString &fileName);
 	void GetWindowSize(int* x, int* y);
+	PlaybackState GetState();
 private:
 
 	BitmapButton* m_ButtonPreviousFile;
@@ -157,7 +158,6 @@ private:
 	BitmapButton* m_ButtonNextFile;
 	BitmapButton* m_ButtonPlayLine;
 
-	KainoteFrame *Kai;
 	TabPanel *tab;
 	VideoSlider* m_SeekingSlider;
 	wxWindow* m_VideoPanel;

@@ -15,15 +15,15 @@
 
 #pragma once
 
-#include <windows.h>
-#include <wingdi.h>
+
+//#include <wingdi.h>
 #include <wx/arrstr.h>
 #include <wx/thread.h>
 #include <wx/window.h>
 #include <map>
 #include <vector>
 #include <functional>
-
+#include <windef.h>
 
 
 class KainoteFrame;
@@ -43,8 +43,8 @@ public:
 	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
 private:
 	void RefreshClientsFonts();
-	static int CALLBACK FontEnumeratorProc(LPLOGFONT lplf, LPTEXTMETRIC lptm,
-		DWORD WXUNUSED(dwStyle), LPARAM lParam);
+	static int __stdcall FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC *lptm,
+		unsigned int WXUNUSED(dwStyle), long* lParam);
 	static DWORD CheckFontsProc(int *threadNum);
 	wxArrayString *Fonts;
 	wxArrayString *FontsTmp;

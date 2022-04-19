@@ -44,7 +44,7 @@ public:
 
 	wxBoxSizer* MainSizer;
 	wxBoxSizer* VideoEditboxSizer;
-	wxBoxSizer* GridshiftTimesSizer;
+	wxBoxSizer* GridShiftTimesSizer;
 
 	void SetAccels(bool onlyGridAudio = false);
 	void SetVideoWindowSizes(int w, int h, bool allTabs);

@@ -19,12 +19,12 @@
 // Headers
 
 #undef BIND
-#include <dsound.h>
+
 #include <process.h>
 #include "LogHandler.h"
 #include "KainoteApp.h"
 #include "AudioPlayerDSound.h"
-//#include "UtilsWindows.h"
+#include "UtilsWindows.h"
 
 
 
@@ -161,6 +161,7 @@ void DirectSoundPlayer2Thread::Run()
 					if (bytes_filled < wanted_latency_bytes)
 					{
 						// Very short playback length, do without streaming playback
+						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
 						current_latency = (bytes_filled * 1000) / (waveFormat.nSamplesPerSec*provider->GetBytesPerSample());
 						if (FAILED(audioBuffer->Play(0, 0, 0)))
 							KaiLogSilent("Could not start single-buffer playback.");

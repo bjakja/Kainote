@@ -790,7 +790,7 @@ void RendererVideo::SetAudioPlayer(AudioDisplay *player)
 void RendererVideo::SaveFrame(int id)
 {
 	bool del = false;
-	byte* framebuf = GetFramewithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
+	byte* framebuf = GetFrameWithSubs(id > VIDEO_COPY_FRAME_TO_CLIPBOARD, &del);
 	if (!framebuf)
 		return;
 
@@ -841,4 +841,9 @@ void RendererVideo::SaveFrame(int id)
 		}
 	}
 	if (del) { delete[] framebuf; }
+}
+
+PlaybackState RendererVideo::GetState()
+{
+	return m_State;
 }

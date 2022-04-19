@@ -51,13 +51,13 @@ public:
 	void GetVideoSize(int *width, int *height);
 	void GetFpsnRatio(float *fps, long *arx, long *ary);
 	void SetVolume(int vol);
-	bool DrawTexture(byte *nframe = nullptr, bool copy = false);
+	bool DrawTexture(unsigned char * nframe = nullptr, bool copy = false);
 	void Render(bool RecreateFrame = true, bool wait = true);
 	void ChangePositionByFrame(int cpos);
 	//it's safe to not exist visual
 	//returns true if removed
 	//bool RemoveVisual(bool noRefresh = false);
-	byte *GetFramewithSubs(bool subs, bool *del) override;
+	unsigned char * GetFrameWithSubs(bool subs, bool *del) override;
 	void DeleteAudioCache(){ if (m_FFMS2){ m_FFMS2->DeleteOldAudioCache(); } }
 	void SetColorSpace(const wxString& matrix, bool render = true){
 		if (m_FFMS2){

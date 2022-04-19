@@ -19,7 +19,7 @@
 
 
 #include "Provider.h"
-#define INTERFACE IDirectSound8
+#include <dsound.h>
 
 
 class DirectSoundPlayer2Thread {
@@ -54,7 +54,7 @@ class DirectSoundPlayer2Thread {
 	int wanted_latency;
 	int buffer_length;
 
-	//std::chrono::system_clock::time_point last_playback_restart;
+	
 	int last_playback_restart;
 
 	Provider* provider;

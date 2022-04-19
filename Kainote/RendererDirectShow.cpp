@@ -774,7 +774,7 @@ bool RendererDirectShow::FilterConfig(wxString name, int idx, wxPoint pos)
 	return m_DirectShowPlayer->FilterConfig(name, idx, pos);
 }
 
-byte *RendererDirectShow::GetFramewithSubs(bool subs, bool *del)
+byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 {
 	bool dssubs = (videoControl->m_IsDirectShow && subs && Notebook::GetTab()->editor);
 	if (!m_D3DDevice) {
