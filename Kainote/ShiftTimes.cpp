@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "shiftTimes.h"
+#include "ShiftTimes.h"
 #include "Config.h"
 #include "Stylelistbox.h"
 #include "KainoteFrame.h"
@@ -25,6 +25,7 @@
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "VideoBox.h"
+#include "Provider.h"
 
 class ProfileEdition : public KaiDialog
 {

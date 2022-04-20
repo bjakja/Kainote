@@ -24,7 +24,7 @@
 #include "KaiRadioButton.h"
 #include "KaiDialog.h"
 
-//bool sortf(wxString name1,wxString name2);
+#include "Provider.h"
 
 class FontCatalogList;
 

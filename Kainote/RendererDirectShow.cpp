@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "config.h"
+#include "RendererVideo.h"
 #include "RendererDirectShow.h"
 #include "DShowPlayer.h"
 #include "DshowRenderer.h"

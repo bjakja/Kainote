@@ -307,42 +307,20 @@ bool VideoBox::LoadVideo(const wxString& fileName, int subsFlag, bool fulls /*= 
 	if (!m_IsFullscreen && !fulls){
 		int sx, sy;
 		//editor is turn off
-		if (!tab->editor){
-			if (!Kai->IsMaximized()){
-				int sizex, sizey;
-				Kai->GetClientSize(&sizex, &sizey);
-				CalcSize(&sx, &sy, 0, 0, true, true);
-				wxSize panelsize = m_VideoPanel->GetSize();
-				sx += Kai->borders.left + Kai->borders.right;
-				sy += (m_PanelHeight + Kai->borders.bottom + Kai->borders.top);
-				//here corect sx to >= 450
-				if (sx < 450)
-					sx = 450;
+		
+		int kw, kh;
+		Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
+		bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
+		if (ischanged || !shown){
+			//here corect sx to >= 450
+			if (sx < 450)
+				sx = 450;
 
-				if (sx == sizex && sy == sizey){
-					renderer->UpdateVideoWindow();
-				}
-				else{
-					Kai->SetClientSize(sx, sy);
-					tab->MainSizer->Layout();
-				}
-			}
-			
+			SetMinSize(wxSize(sx, sy + m_PanelHeight));
+			tab->MainSizer->Layout();
 		}
-		else{//editor is turn on
-			int kw, kh;
-			Options.GetCoords(VIDEO_WINDOW_SIZE, &kw, &kh);
-			bool ischanged = CalcSize(&sx, &sy, kw, kh, true, true);
-			if (ischanged || !shown){
-				//here corect sx to >= 450
-				if (sx < 450)
-					sx = 450;
-
-				SetMinSize(wxSize(sx, sy + m_PanelHeight));
-				tab->MainSizer->Layout();
-			}
-			Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + m_PanelHeight);
-		}
+		Options.SetCoords(VIDEO_WINDOW_SIZE, sx, sy + m_PanelHeight);
+		
 
 	}
 	if (m_IsFullscreen){
@@ -721,16 +699,7 @@ void VideoBox::SetFullscreen(int monitor)
 
 		int sx, sy, sizex, sizey;
 
-		if (!tab->editor){
-			if (!Kai->IsMaximized()){
-				Kai->GetSize(&sizex, &sizey);
-				int yDiff = m_PanelHeight + Kai->borders.bottom + Kai->borders.top;
-				int xDiff = Kai->borders.left + Kai->borders.right;
-				CalcSize(&sx, &sy, sizex - xDiff, sizey - yDiff);
-				Kai->SetSize(sx + xDiff, sy + yDiff);
-			}
-		}
-		else if(tab->edit->IsShown() && tab->grid->IsShown()) {
+		if(tab->edit->IsShown() && tab->grid->IsShown()) {
 			Options.GetCoords(VIDEO_WINDOW_SIZE, &sizex, &sizey);
 			CalcSize(&sx, &sy, sizex, sizey);
 			SetMinSize(wxSize(sx, sy + m_PanelHeight));
@@ -1213,7 +1182,7 @@ void VideoBox::SetScaleAndZoom()
 	Kai->SetStatusText(scale, 1);
 	wxString zoom;
 	zoom << (int)(renderer->m_ZoomParcent * 100) << L"%";
-	KainoteFrame* Kai = (KainoteFrame*)Notebook::GetTabs()->GetParent();
+	
 	Kai->SetStatusText(zoom, 2);
 }
 

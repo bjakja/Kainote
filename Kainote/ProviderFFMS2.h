@@ -23,8 +23,8 @@ class ProviderFFMS2 : public Provider
 public:
 	ProviderFFMS2(const wxString& filename, RendererVideo* renderer, wxWindow* progressSinkWindow, bool* success);
 	virtual ~ProviderFFMS2();
-	void GetFrameBuffer(byte** buffer) override;
-	void GetFrame(int frame, byte* buff) override;
+	void GetFrameBuffer(unsigned char** buffer) override;
+	void GetFrame(int frame, unsigned char* buff) override;
 	void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) override;
 	bool RAMCache();
 	int Init();

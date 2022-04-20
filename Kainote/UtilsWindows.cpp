@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "UtilsWindows.h"
 #include "LogHandler.h"
 #include <wx/msw/private.h>
@@ -116,33 +116,7 @@ int FindMonitor(std::vector<tagRECT> *MonitorRects, const wxPoint &pos) {
 }
 
 
-#ifdef _M_IX86
 
-typedef struct tagTHREADNAME_INFO
-{
-	DWORD dwType;
-	LPCSTR szName;
-	DWORD dwThreadID;
-	DWORD dwFlags;
-} THREADNAME_INFO;
-
-void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
-{
-	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = szThreadName;
-	info.dwThreadID = dwThreadID;
-	info.dwFlags = 0;
-
-	__try
-	{
-		::RaiseException(0x406D1388, 0, sizeof(info) / sizeof(DWORD), (DWORD *)& info);
-	}
-	__except (EXCEPTION_CONTINUE_EXECUTION)
-	{
-	}
-}
-#else
 typedef struct tagTHREADNAME_INFO
 {
 	size_t dwType;

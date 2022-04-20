@@ -12,12 +12,16 @@
 
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
+
+#include <wx/msw/winundef.h>
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "KaiTextCtrl.h"
 #include "EditBox.h"
 #include "VideoBox.h"
+#include "Provider.h"
+#include "RendererVideo.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <math.h> 

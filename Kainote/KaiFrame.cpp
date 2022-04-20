@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "kainoteApp.h"
 #include "KaiFrame.h"
 #include "Config.h"
@@ -533,30 +534,7 @@ WXLRESULT KaiFrame::MSWWindowProc(WXUINT uMsg, WXWPARAM wParam, WXLPARAM lParam)
 	return wxTopLevelWindow::MSWWindowProc(uMsg, wParam, lParam);
 }
 
-//void KaiFrame::GetClientSize(int *w, int *h) const
-//{
-//	wxTopLevelWindow::GetClientSize(w, h);
-//	*w -= (frameBorder * 2);
-//	*h -= (frameTopBorder + frameBorder);
-//}
-//
-//wxSize KaiFrame::GetClientSize() const
-//{
-//	wxSize size = wxTopLevelWindow::GetClientSize();
-//	size.x -= (frameBorder * 2);
-//	size.y -= (frameTopBorder + frameBorder);
-//	return size;
-//}
-//void KaiFrame::SetClientSize(const wxSize &size)
-//{
-//	SetClientSize(size.x, size.y);
-//}
-//void KaiFrame::SetClientSize(int x, int y)
-//{
-//	x += (frameBorder * 2);
-//	y += (frameTopBorder + frameBorder);
-//	wxWindow::SetClientSize(x, y);
-//}
+
 
 
 bool KaiFrame::SetFont(const wxFont &font)
@@ -585,3 +563,5 @@ bool KaiFrame::SetFont(const wxFont &font)
 
 
 wxIMPLEMENT_ABSTRACT_CLASS(KaiFrame, wxTopLevelWindow);
+
+#endif

@@ -21,6 +21,7 @@
 
 #include "KaiScrollbar.h"
 #include "LineParse.h"
+#include "RendererVideo.h"
 #include <vector>
 #include <set>
 #undef DRAWTEXT

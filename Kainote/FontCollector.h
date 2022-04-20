@@ -15,8 +15,8 @@
 
 #pragma once
 
-//#include <wx/wx.h>
-//#include <Windows.h>
+
+#include <wx/msw/winundef.h>
 #include <vector>
 #include <map>
 #include <set>

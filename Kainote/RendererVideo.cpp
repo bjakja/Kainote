@@ -21,6 +21,7 @@
 #include "RendererFFMS2.h"
 #include "VideoBox.h"
 #include "EditBox.h"
+#include "Provider.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 

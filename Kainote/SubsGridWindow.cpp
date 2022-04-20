@@ -15,10 +15,10 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
-//#include "Utils.h"
+#include "SubsGrid.h"
 #include "EditBox.h"
 
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include "kaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"

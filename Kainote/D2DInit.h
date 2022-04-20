@@ -13,3 +13,12 @@
 
 #undef GetHwnd
 
+#include <dxgitype.h>
+#include <d2d1.h>
+#include <dwrite.h>
+
+#include <wincodec.h>
+
+IWICImagingFactory* wxWICImagingFactory();
+ID2D1Factory* wxD2D1Factory();
+IDWriteFactory* wxDWriteFactory();

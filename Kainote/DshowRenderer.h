@@ -15,7 +15,7 @@
 
 #pragma once
 
-//typedef wchar_t* PTCHAR;
+typedef wchar_t* PTCHAR;
 
 #include <streams.h>
 

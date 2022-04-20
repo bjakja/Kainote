@@ -19,6 +19,7 @@
 #include "KaiListCtrl.h"
 #include "kainoteFrame.h"
 #include "MispellReplacerDialog.h"
+#include "KaiListCtrl.h"
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 
@@ -65,9 +66,11 @@ public:
 	wxPoint findPosition;
 	wxSize GetTextExtents(KaiListCtrl *theList);
 private:
-	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, KaiListCtrl *theList, Item **changed /* = nullptr */);
+	void OnMouseEvent(wxMouseEvent &event, bool enter, bool leave, 
+		KaiListCtrl *theList, Item **changed /* = nullptr */);
 	void OnPaint(wxMemoryDC *dc, int x, int y, int width, int height, KaiListCtrl *theList);
 	Item* Copy(){ return new SeekResults(*this); }
+	void OnCheckUncheckAll(wxCommandEvent& event);
 	int OnVisibilityChange(int mode){
 		if (mode == 1)
 			return VISIBLE_BLOCK;

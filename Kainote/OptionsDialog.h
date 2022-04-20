@@ -15,6 +15,7 @@
 
 #pragma once
 
+//#ifdef guano
 
 #include "ListControls.h"
 #include "MappedButton.h"
@@ -101,4 +102,4 @@ enum{
 };
 
 
-
+//#endif

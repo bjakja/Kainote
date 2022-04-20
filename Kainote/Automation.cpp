@@ -252,7 +252,7 @@
 		}
 
 		lua_pushvalue(L, 1);
-		SubsEntry *e = LuaToLine(L);
+		SubsEntry *e = AutoToFile::LuaToLine(L);
 		if (!e){ return 0; }
 		if (e->lclass != L"style"){ SAFE_DELETE(e); return 0; }
 		Styles *st = e->astyle;

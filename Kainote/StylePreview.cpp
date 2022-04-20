@@ -15,6 +15,7 @@
 
 
 #include "StylePreview.h"
+#include "RendererVideo.h"
 #include "config.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>

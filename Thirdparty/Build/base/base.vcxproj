@@ -147,6 +147,7 @@
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>wx\wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\lib.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

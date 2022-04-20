@@ -20,6 +20,7 @@
 #include "KaiTextCtrl.h"
 #include <vector>
 #include "Visuals.h"
+#include <d3dx9.h>
 
 class ShapesSetting
 {
@@ -94,11 +95,11 @@ class Shapes : public DrawingAndClip {
 public:
 	Shapes();
 	
-	virtual void OnMouseEvent(wxMouseEvent& evt) override;
-	virtual void DrawVisual(int time) override;
-	virtual void SetShape(int shape) override;
-	virtual void GetVisual(wxString* drawing) override;
-	virtual void SetScale(wxString* txt, size_t position, int* diff) override;
+	void OnMouseEvent(wxMouseEvent& evt) override;
+	void DrawVisual(int time) override;
+	void SetShape(int shape) override;
+	void GetVisual(wxString* drawing) override;
+	void SetScale(wxString* txt, size_t position, int* diff) override;
 private:
 	void SortPoints();
 	void SetDrawingScale();
@@ -106,7 +107,7 @@ private:
 	D3DXVECTOR2 PointToVideo(const D3DXVECTOR2& point);
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
-	D3DXVECTOR2 CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* points);
+	D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
 	std::vector<ShapesSetting> *shapes = nullptr;
 	int shape = -1;
 	ShapesSetting currentShape;

@@ -83,7 +83,7 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(IncludePath)</IncludePath>
-    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">L:\Kainote\Thirdparty\DirectX9\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;L:\Kainote\Thirdparty\wxWidgets\include</IncludePath>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">L:\Kainote\Thirdparty\DirectX9\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;L:\Kainote\Thirdparty\wxWidgets\include;L:\Kainote\Thirdparty\BaseClasses</IncludePath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">$(LibraryPath)</LibraryPath>
@@ -99,6 +99,7 @@
     <LinkIncremental>true</LinkIncremental>
     <EmbedManifest>true</EmbedManifest>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <ExternalIncludePath>L:\Kainote\Thirdparty\DirectX9</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX|x64'">
     <OutDir>$(SolutionDir)$(Platform) AVX\$(Configuration)\</OutDir>
@@ -115,7 +116,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(solutionDir)kainote.;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;c:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)kainote.;..\Thirdparty\Hunspell\src\hunspell;..\Thirdparty\wxWidgets\lib\vc_lib\mswu;..\Thirdparty\wxWidgets\include;..\Thirdparty\BaseClasses;L:\Kainote\Thirdparty\DirectX9;..\Thirdparty\luabins\include;..\Thirdparty\luajit\src;..\Thirdparty\boost;..\Thirdparty\icu\source\i18n;..\Thirdparty\icu\source\common;..\Thirdparty\libass;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;WIN32;__WXMSW__;_WINDOWS;_DEBUG;__WXDEBUG__;BOOST_LOCALE_WITH_ICU=1;BOOST_LOCALE_NO_STD_BACKEND=1;BOOST_LOCALE_NO_WINAPI_BACKEND=1;BOOST_LOCALE_NO_POSIX_BACKEND=1;BOOST_THREAD_BUILD_LIB;BOOST_ALL_NO_LIB		;BOOST_HAS_ICU				;BOOST_SYSTEM_NO_DEPRECATED;BOOST_MULTI_INDEX_DISABLE_SERIALIZATION;U_ENABLE_DYLOAD=0;U_CHECK_DYLOAD=0;UCONFIG_NO_FILE_IO=1;UCONFIG_NO_LEGACY_CONVERSION=1;U_CHARSET_IS_UTF8=1;UCONFIG_NO_IDNA=1;UCONFIG_NO_FORMATTING=1;UCONFIG_NO_TRANSLITERATION=1;U_ATTRIBUTE_DEPRECATED=;_CRT_SECURE_NO_DEPRECATE;U_COMMON_IMPLEMENTATION;U_I18N_IMPLEMENTATION;U_STATIC_IMPLEMENTATION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -297,7 +298,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\Hunspell\src\hunspell;$(solutionDir)Thirdparty\luabins\include;$(solutionDir)Thirdparty\luajit\src;$(solutionDir)Thirdparty\boost;$(solutionDir)Thirdparty\icu\source\i18n;$(solutionDir)Thirdparty\icu\source\common;$(solutionDir)Thirdparty\libass;$(solutionDir)wxwidgets\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;_WINSOCK2API_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING;_CRT_SECURE_NO_WARNINGS;NDEBUG;_WINDOWS;__WXMSW__;__WXDEBUG__;_MBCS;HUNSPELL_STATIC;_WS2DEF_;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <WarningLevel>Level3</WarningLevel>
@@ -306,7 +307,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <MinimalRebuild>false</MinimalRebuild>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
@@ -342,6 +343,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Demux.cpp" />
+    <ClCompile Include="DshowRenderer.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="VisualAllTags.cpp" />
     <ClCompile Include="AudioBox.cpp" />
@@ -460,7 +462,6 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClCompile Include="StyleChange.cpp" />
     <ClCompile Include="ColorPicker.cpp" />
     <ClCompile Include="DropFiles.cpp" />
-    <ClCompile Include="DshowRenderer.cpp" />
     <ClCompile Include="EditBox.cpp" />
     <ClCompile Include="FontCollector.cpp" />
     <ClCompile Include="FontDialog.cpp" />
@@ -539,6 +540,7 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX2|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="D2DInit.h" />
     <ClInclude Include="Demux.h" />
     <ClInclude Include="DummyVideo.h" />
     <ClInclude Include="FontCatalogList.h" />

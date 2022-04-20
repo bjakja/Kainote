@@ -23,6 +23,7 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include "UtilsWindows.h"
+#include "Provider.h"
 
 ProviderFFMS2::ProviderFFMS2(const wxString& filename, RendererVideo* renderer, 
 	wxWindow* progressSinkWindow, bool* _success)
@@ -540,7 +541,7 @@ done:
 
 }
 
-void ProviderFFMS2::GetFrame(int ttime, byte* buff)
+void ProviderFFMS2::GetFrame(int ttime, unsigned char* buff)
 {
 	byte* cpy = (byte*)m_FFMS2frame->Data[0];
 	memcpy(&buff[0], cpy, m_framePlane);
@@ -801,7 +802,7 @@ void ProviderFFMS2::DeleteOldAudioCache()
 
 }
 
-void ProviderFFMS2::GetFrameBuffer(byte** buffer)
+void ProviderFFMS2::GetFrameBuffer(unsigned char** buffer)
 {
 	if (m_renderer->m_Frame != m_lastFrame) {
 		GetFFMSFrame();

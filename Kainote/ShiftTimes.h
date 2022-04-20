@@ -15,7 +15,7 @@
 
 #pragma once
 
-
+#include "wx/msw/winundef.h"
 #include "KaiPanel.h"
 #include "TabPanel.h"
 

@@ -38,7 +38,7 @@
 #include <wx/filename.h>
 #include <vector>
 #include "UtilsWindows.h"
-#include <L:/Kainote/Thirdparty/DirectX9/d3dx9.h>
+
 
 
 wxDEFINE_EVENT(EVENT_UPDATE_SCROLLBAR, wxThreadEvent);

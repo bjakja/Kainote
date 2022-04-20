@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "SubsGrid.h"
-
+#include "RendererVideo.h"
 #include "config.h"
 #include <wx/intl.h>
 #include <wx/string.h>

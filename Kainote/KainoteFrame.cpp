@@ -22,10 +22,10 @@
 
 
 #include "KainoteFrame.h"
-#include "UtilsWindows.h"
+
 #include "SubsTime.h"
 #include "ScriptInfo.h"
-//#include "Config.h"
+#include "Config.h"
 #include "OptionsDialog.h"
 #include "DropFiles.h"
 #include "OpennWrite.h"
@@ -53,20 +53,21 @@
 #include "TabPanel.h"
 #include "shiftTimes.h"
 #include "Menu.h"
+#include "KaiFrame.h"
 #include <wx/accel.h>
 #include <wx/dir.h>
 #include <wx/sysopt.h>
 #include <wx/filedlg.h>
 #include <wx/msw/private.h>
-//#include "UtilsWindows.h"
+#include "UtilsWindows.h"
 
 #include <boost/locale/generator.hpp>
-#ifdef TEST_FFMPEG
-extern "C" {
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
-}
-#endif
+
+
+
+#include <windows.h>
+
+
 #undef IsMaximized
 #if _DEBUG
 #define logging 5
@@ -120,12 +121,6 @@ KainoteFrame::KainoteFrame(const wxPoint &pos, const wxSize &size)
 		_("Klatki na Sekundę"), _("Rozdzielczość wideo"), _("Proporcje wideo"), _("Rozdzielczość napisów"), _("Nazwa pliku wideo") };
 	StatusBar->SetTooltips(tooltips, 9);
 
-
-	/*mains->Add(Toolbar,0,wxEXPAND,0);
-	mains->Add(Tabs,1,wxEXPAND,0);
-	mains1->Add(Menubar,0,wxEXPAND,0);
-	mains1->Add(mains,1,wxEXPAND,0);
-	mains1->Add(StatusBar,0,wxEXPAND,0);*/
 
 	FileMenu = new Menu();
 	SubsRecMenu = new Menu();
@@ -1417,42 +1412,49 @@ void KainoteFrame::OnSize(wxSizeEvent& event)
 	wxSize size = GetSize();
 	int fborder, ftopBorder;
 	GetBorders(&fborder, &ftopBorder);
-	borders.left = borders.right = borders.bottom = fborder;
-	borders.top = ftopBorder;
+	borders.x = borders.width = borders.height = fborder;
+	borders.y = ftopBorder;
 
 	int menuHeight = Menubar->GetSize().GetHeight();
 	int toolbarWidth = Toolbar->GetThickness();
 	int statusbarHeight = StatusBar->GetSize().GetHeight();
 	//0 left, 1 top, 2 right, 3 bottom
 	int toolbarAlignment = Options.GetInt(TOOLBAR_ALIGNMENT);
-	borders.top += menuHeight;
-	borders.bottom += statusbarHeight;
+	borders.x += menuHeight;
+	borders.height += statusbarHeight;
 	Menubar->SetSize(fborder, ftopBorder, size.x - (fborder * 2), menuHeight);
 	switch (toolbarAlignment){
 	case 0://left
-		Toolbar->SetSize(borders.left, borders.top, toolbarWidth, size.y - borders.top - borders.bottom);
-		borders.left += toolbarWidth;
+		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth, 
+			size.y - borders.y - borders.height);
+		borders.x += toolbarWidth;
 		break;
 	case 1://top
-		Toolbar->SetSize(borders.left, borders.top, size.x - borders.left - borders.right, toolbarWidth);
-		borders.top += toolbarWidth;
+		Toolbar->SetSize(borders.GetX(), borders.y, 
+			size.x - borders.height, toolbarWidth);
+		borders.y += toolbarWidth;
 		break;
 	case 2://right
-		borders.right += toolbarWidth;
-		Toolbar->SetSize(size.x - borders.right, borders.top, toolbarWidth, size.y - borders.top - borders.bottom);
+		borders.width += toolbarWidth;
+		Toolbar->SetSize(size.x - borders.width, borders.y, 
+			toolbarWidth, size.y - borders.y - borders.height);
 		break;
 	case 3://bottom
-		borders.bottom += toolbarWidth;
-		Toolbar->SetSize(borders.left, size.y - borders.bottom, size.x - borders.left - borders.right, toolbarWidth);
+		borders.height += toolbarWidth;
+		Toolbar->SetSize(borders.GetX(), size.y - borders.height, 
+			size.x - borders.GetX() - borders.width, toolbarWidth);
 		break;
 	default:
-		Toolbar->SetSize(borders.left, borders.top, toolbarWidth, size.y - borders.top - borders.bottom);
-		borders.left += toolbarWidth;
+		Toolbar->SetSize(borders.GetX(), borders.y, toolbarWidth, 
+			size.y - borders.y - borders.height);
+		borders.x += toolbarWidth;
 		break;
 	}
-	Tabs->SetSize(borders.left, borders.top, size.x - borders.left - borders.right, size.y - borders.top - borders.bottom);
-	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder, size.x - (fborder * 2), statusbarHeight);
-	borders.bottom += Tabs->GetHeight();
+	Tabs->SetSize(borders.GetX(), borders.y, 
+		size.x - borders.GetX() - borders.width, size.y - borders.x - borders.height);
+	StatusBar->SetSize(fborder, size.y - statusbarHeight - fborder,
+		size.x - (fborder * 2), statusbarHeight);
+	borders.height += Tabs->GetHeight();
 	event.Skip();
 }
 
@@ -1818,12 +1820,13 @@ void KainoteFrame::HideEditor(bool save)
 		if (cur->video->GetState() != None && !cur->video->IsFullScreen() && !IsMaximized()){
 			int sx, sy, sizex, sizey;
 			GetClientSize(&sizex, &sizey);
-			sizex -= borders.left + borders.right;
-			sizey -= (panelHeight + borders.bottom + borders.top);
+			sizex -= borders.GetX() + borders.width;
+			sizey -= (panelHeight + borders.height + borders.y);
 
 			cur->video->CalcSize(&sx, &sy, sizex, sizey, false, true);
 
-			SetClientSize(sx + borders.left + borders.right, sy + panelHeight + borders.bottom + borders.top);
+			SetClientSize(sx + borders.GetX() + borders.width, 
+				sy + panelHeight + borders.height + borders.y);
 
 		}
 		cur->video->SetFocus();
@@ -2414,3 +2417,4 @@ bool KainoteFrame::Layout()
 void KainoteFrame::SetStatusText(const wxString& label, int field) {
 	StatusBar->SetLabelText(field, label); 
 }
+

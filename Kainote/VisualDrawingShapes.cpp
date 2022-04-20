@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <wx/msw/winundef.h>
 #include "VisualDrawingShapes.h"
 #include "KaiStaticBoxSizer.h"
 #include "MappedButton.h"
@@ -23,7 +24,8 @@
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "VideoBox.h"
-//#include <d3dx9.h>
+#include "Visuals.h"
+//
 
 enum {
 	LEFT = 1,
@@ -751,7 +753,7 @@ D3DXVECTOR2 Shapes::PointToSubtitles(float x, float y)
 	return D3DXVECTOR2(pointx, pointy);
 }
 
-D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, std::vector<ClipPoint>* points)
+D3DXVECTOR2 Shapes::CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points)
 {
 	if (points->size() < 1) { return D3DXVECTOR2(0, 0); }
 

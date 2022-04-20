@@ -22,9 +22,11 @@
 #include "Editbox.h"
 #include "RendererVideo.h"
 #include <wx/regex.h>
+#include "config.h"
 
 #include "Visuals.h"
-#include "config.h"
+#include <wx/msw/winundef.h>
+
 
 Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 {

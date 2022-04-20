@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <wx/msw/winundef.h>
 #include "config.h"
 #include "Visuals.h"
 #include "KainoteFrame.h"
@@ -21,6 +22,7 @@
 #include "VideoBox.h"
 #include "SubsGrid.h"
 #include "EditBox.h"
+#include "Provider.h"
 
 
 Cross::Cross()

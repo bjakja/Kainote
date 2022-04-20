@@ -31,62 +31,59 @@
 #include <wx/ipc.h>
 #include <wx/utils.h>
 #include <wx/intl.h>
-//#include <locale.h>
+#include "loghandler.h"
 
-
-#include <DbgHelp.h>
-#include <signal.h>
 #include "UtilsWindows.h"
 
 
 
-void seg_handler(int sig)
-{
-	unsigned int   i;
-	void         * stack[100];
-	unsigned short frames;
-	SYMBOL_INFO  * symbol;
-	HANDLE         process;
+//void seg_handler(int sig)
+//{
+//	unsigned int   i;
+//	void         * stack[100];
+//	unsigned short frames;
+//	SYMBOL_INFO  * symbol;
+//	HANDLE         process;
+//
+//	process = GetCurrentProcess();
+//	SymInitialize(process, nullptr, TRUE);
+//	frames = CaptureStackBackTrace(0, 100, stack, nullptr);
+//	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+//	symbol->MaxNameLen = 255;
+//	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+//
+//	wxString result;
+//	for (i = 0; i < frames; i++) {
+//		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+//		result += wxString::Format(L"%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+//	}
+//
+//	free(symbol);
+//
+//	OpenWrite ow;
+//	ow.FileWrite(Options.pathfull + "\\CrashInfo.txt", result);
+//	Options.SaveOptions(true, false, true);
+//	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
+//	TabPanel* tab = Kai->GetTab();
+//	wxWindow* messageWindow = nullptr;
+//	if (tab) {
+//		messageWindow = tab->video->GetMessageWindowParent();
+//	}
+//
+//	Notebook::SaveLastSession(false, true);
+//	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
+//		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
+//		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n") +
+//		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n") +
+//		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n") + 
+//		_("Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem.");
+//	KaiMessageBox(Info, L"Crash", wxOK, (messageWindow)? messageWindow : Kai);
+//	exit(1);
+//}
 
-	process = GetCurrentProcess();
-	SymInitialize(process, nullptr, TRUE);
-	frames = CaptureStackBackTrace(0, 100, stack, nullptr);
-	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
-	symbol->MaxNameLen = 255;
-	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-
-	wxString result;
-	for (i = 0; i < frames; i++) {
-		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-		result += wxString::Format(L"%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
-	}
-
-	free(symbol);
-
-	OpenWrite ow;
-	ow.FileWrite(Options.pathfull + "\\CrashInfo.txt", result);
-	Options.SaveOptions(true, false, true);
-	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
-	TabPanel* tab = Kai->GetTab();
-	wxWindow* messageWindow = nullptr;
-	if (tab) {
-		messageWindow = tab->video->GetMessageWindowParent();
-	}
-
-	Notebook::SaveLastSession(false, true);
-	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
-		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
-		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n") +
-		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n") +
-		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n") + 
-		_("Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem.");
-	KaiMessageBox(Info, L"Crash", wxOK, (messageWindow)? messageWindow : Kai);
-	exit(1);
-}
-
-void std_handler(void) {
-	seg_handler(1);
-}
+//void std_handler(void) {
+//	seg_handler(1);
+//}
 
 
 void EnableCrashingOnCrashes()
@@ -192,10 +189,10 @@ bool kainoteApp::OnInit()
 			}
 		}
 
-		if (!Options.GetBool(DONT_SHOW_CRASH_INFO)) {
+		/*if (!Options.GetBool(DONT_SHOW_CRASH_INFO)) {
 			signal(SIGSEGV, seg_handler);
 			std::set_terminate(std_handler);
-		}
+		}*/
 		//on x64 it makes not working unicode toupper tolower conversion
 		//setlocale(LC_CTYPE, "C");
 		//locale numbers changes here cause of it is set with wxlocale, I have to change it back
@@ -333,7 +330,7 @@ bool kainoteApp::OnInit()
 		while (!hWnd){
 			//prevent to total dedlock, when main Kainote is crashed or closed
 			if (count > 100){
-				wxMessageBox(L"Cannot open: %s", subs);
+				KaiLogSilent(wxString::Format(L"Cannot open: %s", subs));
 				return false;
 			}
 

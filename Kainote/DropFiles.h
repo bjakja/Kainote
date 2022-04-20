@@ -15,6 +15,8 @@
 
 #pragma once
 
+
+
 #include <wx/dnd.h>
 #include <wx/timer.h>
 #include <wx/arrstr.h>
@@ -34,15 +36,6 @@ class DragnDrop : public wxFileDropTarget
 	void OnDropTimer(wxTimerEvent &evt);
 };
 
-//class DragScripts : public wxFileDropTarget
-//	{
-//	private:
-//		kainoteFrame* Kai;
-//
-//	public:
-//		DragScripts(kainoteFrame* kfparent);
-//		virtual ~DragScripts(){ };
-//		bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
-//	};
+
 
 

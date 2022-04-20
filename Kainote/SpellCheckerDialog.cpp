@@ -25,6 +25,7 @@
 #include "TabPanel.h"
 #include "EditBox.h"
 #include "Notebook.h"
+#include "Provider.h"
 #include <wx/regex.h>
 
 SpellCheckerDialog::SpellCheckerDialog(KainoteFrame *parent)

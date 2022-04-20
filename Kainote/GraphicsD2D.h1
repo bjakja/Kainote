@@ -8,85 +8,34 @@
 // Licence:     wxWindows licence
 /////////////////////////////////////////////////////////////////////////////
 
-//#ifdef guano
 #pragma once
+#
 
-#include <wx/colour.h>
-#include <wx/gdicmn.h>  // for wxDash
-#include <wx/object.h>
+#include <wx/pen.h>
 #include <wx/font.h>
+#include <wx/dcclient.h>
 
-enum wxAntialiasMode
+
+enum KaiAntialiasMode
 {
-	wxANTIALIAS_NONE, // should be 0
-	wxANTIALIAS_DEFAULT
+	KaiANTIALIAS_NONE, // should be 0
+	KaiANTIALIAS_DEFAULT
 };
 
-enum wxInterpolationQuality
+enum KaiInterpolationQuality
 {
 	// default interpolation
-	wxINTERPOLATION_DEFAULT,
+	KaiINTERPOLATION_DEFAULT,
 	// no interpolation
-	wxINTERPOLATION_NONE,
+	KaiINTERPOLATION_NONE,
 	// fast interpolation, suited for interactivity
-	wxINTERPOLATION_FAST,
+	KaiINTERPOLATION_FAST,
 	// better quality
-	wxINTERPOLATION_GOOD,
+	KaiINTERPOLATION_GOOD,
 	// best quality, not suited for interactivity
-	wxINTERPOLATION_BEST
+	KaiINTERPOLATION_BEST
 };
 
-enum wxGradientType
-{
-	wxGRADIENT_NONE,
-	wxGRADIENT_LINEAR,
-	wxGRADIENT_RADIAL
-};
-
-//enum wxPenStyle
-//{
-//	wxPENSTYLE_INVALID = -1,
-//
-//	//wxPENSTYLE_SOLID = wxSOLID,
-//	wxPENSTYLE_DOT = wxDOT,
-//	wxPENSTYLE_LONG_DASH = wxLONG_DASH,
-//	wxPENSTYLE_SHORT_DASH = wxSHORT_DASH,
-//	wxPENSTYLE_DOT_DASH = wxDOT_DASH,
-//	wxPENSTYLE_USER_DASH = wxUSER_DASH,
-//
-//	wxPENSTYLE_TRANSPARENT = wxTRANSPARENT,
-//
-//	wxPENSTYLE_STIPPLE_MASK_OPAQUE = wxSTIPPLE_MASK_OPAQUE,
-//	wxPENSTYLE_STIPPLE_MASK = wxSTIPPLE_MASK,
-//	wxPENSTYLE_STIPPLE = wxSTIPPLE,
-//
-//	wxPENSTYLE_BDIAGONAL_HATCH = wxHATCHSTYLE_BDIAGONAL,
-//	wxPENSTYLE_CROSSDIAG_HATCH = wxHATCHSTYLE_CROSSDIAG,
-//	wxPENSTYLE_FDIAGONAL_HATCH = wxHATCHSTYLE_FDIAGONAL,
-//	wxPENSTYLE_CROSS_HATCH = wxHATCHSTYLE_CROSS,
-//	wxPENSTYLE_HORIZONTAL_HATCH = wxHATCHSTYLE_HORIZONTAL,
-//	wxPENSTYLE_VERTICAL_HATCH = wxHATCHSTYLE_VERTICAL,
-//	wxPENSTYLE_FIRST_HATCH = wxHATCHSTYLE_FIRST,
-//	wxPENSTYLE_LAST_HATCH = wxHATCHSTYLE_LAST
-//};
-
-enum wxPenJoin
-{
-	wxJOIN_INVALID = -1,
-
-	wxJOIN_BEVEL = 120,
-	wxJOIN_MITER,
-	wxJOIN_ROUND
-};
-
-enum wxPenCap
-{
-	wxCAP_INVALID = -1,
-
-	wxCAP_ROUND = 130,
-	wxCAP_PROJECTING,
-	wxCAP_BUTT
-};
 
 // ----------------------------------------------------------------------------
 // wxPenInfoBase is a common base for wxPenInfo and wxGraphicsPenInfo
@@ -107,33 +56,33 @@ public:
 
 	T& Style(wxPenStyle style)
 	{
-		m_style = style; return This();
+		m_style = style; return this;
 	}
 	T& Stipple(const wxBitmap& stipple)
 	{
-		m_stipple = stipple; m_style = wxPENSTYLE_STIPPLE; return This();
+		m_stipple = stipple; m_style = wxPENSTYLE_STIPPLE; return this;
 	}
 	T& Dashes(int nb_dashes, const wxDash *dash)
 	{
-		m_nb_dashes = nb_dashes; m_dash = const_cast<wxDash*>(dash); return This();
+		m_nb_dashes = nb_dashes; m_dash = const_cast<wxDash*>(dash); return this;
 	}
 	T& Join(wxPenJoin join)
 	{
-		m_join = join; return This();
+		m_join = join; return this;
 	}
 	T& Cap(wxPenCap cap)
 	{
-		m_cap = cap; return This();
+		m_cap = cap; return this;
 	}
 
 	// Accessors are mostly meant to be used by wxWidgets itself.
 
-	wxColour GetColour() const { return m_colour; }
-	wxBitmap GetStipple() const { return m_stipple; }
-	wxPenStyle GetStyle() const { return m_style; }
-	wxPenJoin GetJoin() const { return m_join; }
-	wxPenCap GetCap() const { return m_cap; }
-	int GetDashes(wxDash **ptr) const { *ptr = m_dash; return m_nb_dashes; }
+	const wxColour &GetColour() { return m_colour; }
+	const wxBitmap &GetStipple() { return m_stipple; }
+	const wxPenStyle &GetStyle() { return m_style; }
+	const wxPenJoin &GetJoin() { return m_join; }
+	const wxPenCap &GetCap()  { return m_cap; }
+	int GetDashes(wxDash **ptr)  { *ptr = m_dash; return m_nb_dashes; }
 
 	int GetDashCount() const { return m_nb_dashes; }
 	wxDash* GetDash() const { return m_dash; }
@@ -147,7 +96,7 @@ protected:
 		: m_colour(colour)
 	{
 		m_nb_dashes = 0;
-		m_dash = NULL;
+		m_dash = nullptr;
 		m_join = wxJOIN_ROUND;
 		m_cap = wxCAP_ROUND;
 		m_style = style;
@@ -172,7 +121,6 @@ private:
 // ----------------------------------------------------------------------------
 // wxFontInfo describes a wxFont
 // ----------------------------------------------------------------------------
-
 class wxFontInfo
 {
 public:
@@ -340,16 +288,16 @@ public:
 	static int ToIntPointSize(float pointSize) { return wxRound(pointSize); }
 	static float ToFloatPointSize(int pointSize)
 	{
-		wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
-			-1, "Invalid font point size");
+		//wxCHECK_MSG(pointSize == -1 || pointSize >= 0,
+			//-1, "Invalid font point size");
 
 		// Huge values are not exactly representable as floats, so don't accept
 		// those neither as they can only be due to a mistake anyhow: nobody
 		// could possibly need a font of size 16777217pt (which is the first
 		// value for which this fails).
 		const float f = static_cast<float>(pointSize);
-		wxCHECK_MSG(static_cast<int>(f) == pointSize,
-			-1, "Font point size out of range");
+		//wxCHECK_MSG(static_cast<int>(f) == pointSize,
+			//-1, "Font point size out of range");
 
 		return f;
 	}
@@ -361,8 +309,12 @@ public:
 	// contains backwards compatibility hacks, but we don't need it here).
 	static wxFontWeight GetWeightClosestToNumericValue(int numWeight)
 	{
-		wxASSERT(numWeight > 0);
-		wxASSERT(numWeight <= 1000);
+		if (numWeight > 0) {
+			return;
+		};
+		if (numWeight <= 1000) {
+			return;
+		};
 
 		// round to nearest hundredth = wxFONTWEIGHT_ constant
 		int weight = ((numWeight + 50) / 100) * 100;
@@ -416,19 +368,6 @@ private:
 	wxFontEncoding m_encoding;
 };
 
-class wxD2DRenderer;
-
-//class GraphicsObjectRefData : public wxObjectRefData
-//{
-//public:
-//	GraphicsObjectRefData(wxD2DRenderer* renderer);
-//	GraphicsObjectRefData(const GraphicsObjectRefData* data);
-//	wxD2DRenderer* GetRenderer() const;
-//	virtual GraphicsObjectRefData* Clone() const;
-//
-//protected:
-//	wxD2DRenderer* m_renderer;
-//};
 
 class GraphicsBitmapData //: public GraphicsObjectRefData
 {
@@ -458,8 +397,8 @@ public:
 		wxDouble tx = 0.0, wxDouble ty = 0.0) = 0;
 
 	// gets the component valuess of the matrix
-	virtual void Get(wxDouble* a = NULL, wxDouble* b = NULL, wxDouble* c = NULL,
-		wxDouble* d = NULL, wxDouble* tx = NULL, wxDouble* ty = NULL) const = 0;
+	virtual void Get(wxDouble* a = nullptr, wxDouble* b = nullptr, wxDouble* c = nullptr,
+		wxDouble* d = nullptr, wxDouble* tx = nullptr, wxDouble* ty = nullptr) const = 0;
 
 	// makes this the inverse matrix
 	virtual void Invert() = 0;
@@ -566,79 +505,79 @@ public:
 	virtual bool Contains(wxDouble x, wxDouble y, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) const = 0;
 };
 
-class GraphicsContext 
+class GraphicsContext
 {
 public:
-	static wxGraphicsContext * Create(const wxWindowDC& dc);
-	static wxGraphicsContext * Create(const wxMemoryDC& dc);
-	static wxGraphicsContext * Create(wxWindow* window);
+	wxGraphicsContext* Create(const wxWindowDC& dc);
+	wxGraphicsContext* Create(const wxMemoryDC& dc);
+	wxGraphicsContext* Create(wxWindow* window);
 
-	virtual ~GraphicsContext(){};
+	virtual ~GraphicsContext() {};
 
-	virtual void Clip(const wxRegion& region){};
+	virtual void Clip(const wxRegion& region) {};
 
-	virtual void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void Clip(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void ResetClip(){};
+	virtual void ResetClip() {};
 	// The native context used by GraphicsContext is a Direct2D render target.
-	virtual void* GetNativeContext(){ return NULL; };
+	virtual void* GetNativeContext() { return nullptr; };
 
-	virtual bool SetAntialiasMode(wxAntialiasMode antialias){ return false; };
+	virtual bool SetAntialiasMode(wxAntialiasMode antialias) { return false; };
 
-	virtual bool SetInterpolationQuality(wxInterpolationQuality interpolation){ return false; };
+	virtual bool SetInterpolationQuality(wxInterpolationQuality interpolation) { return false; };
 
-	virtual void BeginLayer(wxDouble opacity){};
+	virtual void BeginLayer(wxDouble opacity) {};
 
-	virtual void EndLayer(){};
+	virtual void EndLayer() {};
 
-	virtual void Translate(wxDouble dx, wxDouble dy){};
+	virtual void Translate(wxDouble dx, wxDouble dy) {};
 
-	virtual void Scale(wxDouble xScale, wxDouble yScale){};
+	virtual void Scale(wxDouble xScale, wxDouble yScale) {};
 
-	virtual void Rotate(wxDouble angle){};
+	virtual void Rotate(wxDouble angle) {};
 
-	virtual void ConcatTransform(GraphicsMatrixData* matrix){};
+	virtual void ConcatTransform(GraphicsMatrixData* matrix) {};
 
-	virtual void SetTransform(GraphicsMatrixData* matrix){};
+	virtual void SetTransform(GraphicsMatrixData* matrix) {};
 
-	virtual GraphicsMatrixData *GetTransform() const{ return NULL; };
+	virtual GraphicsMatrixData* GetTransform() const { return nullptr; };
 
-	virtual void StrokePath(GraphicsPathData * p){};
+	virtual void StrokePath(GraphicsPathData* p) {};
 
-	virtual void FillPath(GraphicsPathData * p, wxPolygonFillMode fillStyle = wxODDEVEN_RULE){};
+	virtual void FillPath(GraphicsPathData* p, wxPolygonFillMode fillStyle = wxODDEVEN_RULE) {};
 
-	virtual void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius){};
+	virtual void DrawRoundedRectangle(wxDouble x, wxDouble y, wxDouble w, wxDouble h, wxDouble radius) {};
 
-	virtual void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawEllipse(wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawBitmap(const wxBitmap& bmp, wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h){};
+	virtual void DrawIcon(const wxIcon& icon, wxDouble x, wxDouble y, wxDouble w, wxDouble h) {};
 
-	virtual GraphicsPathData * CreatePath(){ return NULL; };
+	virtual GraphicsPathData* CreatePath() { return nullptr; };
 
-	virtual void SetPen(const wxPen& pen, double width = 1.0){};
+	virtual void SetPen(const wxPen& pen, double width = 1.0) {};
 
-	virtual void SetBrush(const wxBrush& brush){};
+	virtual void SetBrush(const wxBrush& brush) {};
 
-	virtual void SetFont(const wxFont& font, const wxColour& col){};
+	virtual void SetFont(const wxFont& font, const wxColour& col) {};
 
-	virtual void PushState(){};
+	virtual void PushState() {};
 
-	virtual void PopState(){};
+	virtual void PopState() {};
 
 	virtual void GetTextExtent(
 		const wxString& str,
 		wxDouble* width,
-		wxDouble* height = NULL,
-		wxDouble* descent = NULL,
-		wxDouble* externalLeading = NULL) const {};
+		wxDouble* height = nullptr,
+		wxDouble* descent = nullptr,
+		wxDouble* externalLeading = nullptr) const {};
 
 	virtual void GetPartialTextExtents(const wxString& text, wxArrayDouble& widths) const {};
 
-	virtual void Flush(){};
+	virtual void Flush() {};
 
 	virtual void GetDPI(wxDouble* dpiX, wxDouble* dpiY) const {};
 	// non virtual functions
@@ -646,7 +585,7 @@ public:
 
 	void DrawTextU(const wxString& str, wxDouble x, wxDouble y);
 private:
-	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y){};
+	virtual void DoDrawText(const wxString& str, wxDouble x, wxDouble y) {};
 };
 
 //-----------------------------------------------------------------------------
@@ -662,24 +601,21 @@ public:
 
 	static GraphicsRenderer * GetDirect2DRenderer();
 
-	virtual GraphicsContext * CreateContext(const wxWindowDC& dc){ return NULL; };
+	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return nullptr; };
 
-	virtual GraphicsContext * CreateContext(const wxMemoryDC& dc){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeContext(void* context){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeContext(void* context){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeWindow(void* window){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeWindow(void* window){ return NULL; };
+	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc){ return nullptr; };
 
-	virtual GraphicsContext * CreateContextFromNativeHDC(WXHDC dc){ return NULL; };
-
-	virtual GraphicsContext * CreateContext(wxWindow* window){ return NULL; };
+	virtual GraphicsContext * CreateContext(wxWindow* window){ return nullptr; };
 
 #if wxUSE_IMAGE
-	virtual GraphicsContext * CreateContextFromImage(wxImage& image){ return NULL; };
+	virtual GraphicsContext * CreateContextFromImage(wxImage& image){ return nullptr; };
 #endif // wxUSE_IMAGE
 
-	virtual GraphicsContext * CreateMeasuringContext(){ return NULL; };
+	virtual GraphicsContext * CreateMeasuringContext(){ return nullptr; };
 
 };
 
-//#endif

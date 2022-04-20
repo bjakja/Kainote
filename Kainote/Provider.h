@@ -16,6 +16,9 @@
 #pragma once
 
 #include "RendererVideo.h"
+#include "KainoteFrame.h"
+#include "MisspellReplacer.h"
+#include "SubsGrid.h"
 #include <vector>
 #include <thread>
 #include "include\ffms.h"
@@ -30,8 +33,8 @@ public:
 	static Provider* Get(const wxString& filename, RendererVideo* renderer, 
 		wxWindow* progressSinkWindow, bool* success);
 	virtual ~Provider();
-	virtual void GetFrameBuffer(byte** buffer) {};
-	virtual void GetFrame(int frame, byte* buff) {};
+	virtual void GetFrameBuffer(unsigned char** buffer) {};
+	virtual void GetFrame(int frame, unsigned char* buff) {};
 	virtual void GetBuffer(void* buf, long long start, long long count, double vol = 1.0) {};
 	virtual void GetChapters(std::vector<chapter>* _chapters) {}
 	virtual void DeleteOldAudioCache() {};
@@ -72,7 +75,7 @@ protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
 	volatile bool audioNotInitialized = true;
 	volatile float m_audioProgress = 0;
-	RendererVideo* m_renderer = nullptr;
+	RendererVideo* m_renderer = 0;
 	int m_width = -1;
 	int m_height;
 	int m_arwidth;

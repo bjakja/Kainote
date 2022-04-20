@@ -24,8 +24,7 @@
 
 #include "KaiFrame.h"
 #include <wx/timer.h>
-#include <windows.h>
-
+#include <wx/window.h>
 
 class FontCollector;
 class FindReplaceDialog;
@@ -39,6 +38,7 @@ class MenuBar;
 class KaiToolbar;
 class TabPanel;
 class MenuEvent;
+
 
 
 
@@ -100,7 +100,7 @@ public:
 	Automation *Auto = nullptr;
 	FontCollector *FC = nullptr;
 	MisspellReplacer *MR = nullptr;
-	RECT borders;
+	wxRect borders;
 private:
 
 

@@ -19,8 +19,8 @@
 #include "SubsGridFiltering.h"
 #include "config.h"
 #include "EditBox.h"
-
-#include "kainoteMain.h"
+#include "RendererVideo.h"
+#include "kainoteFrame.h"
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
 #include "Notebook.h"
@@ -30,52 +30,55 @@
 #include <wx/ffile.h>
 #include "KaiMessageBox.h"
 #include "SubsGridPreview.h"
+#include "SubsGrid.h"
+#include "stylestore.h"
+#include "Toolbar.h"
+#include "ShiftTimes.h"
 #include <algorithm>
 
 
-bool sortstart(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+bool sortstart(Dialogue *i, Dialogue *j)
+{
 	if (i->Start.mstime != j->Start.mstime){
 		return (i->Start.mstime < j->Start.mstime);
 	}
 	return i->End.mstime < j->End.mstime;
 }
-bool sortend(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+
+bool sortend(Dialogue *i, Dialogue *j)
+{
 	if (i->End.mstime != j->End.mstime){
 		return (i->End.mstime < j->End.mstime);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
-bool sortstyle(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+
+bool sortstyle(Dialogue *i, Dialogue *j)
+{
 	if (i->Style != j->Style){
 		return (i->Style.CmpNoCase(j->Style) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
-bool sortactor(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+
+bool sortactor(Dialogue *i, Dialogue *j)
+{
 	if (i->Actor != j->Actor){
 		return (i->Actor.CmpNoCase(j->Actor) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
-bool sorteffect(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+
+bool sorteffect(Dialogue *i, Dialogue *j)
+{
 	if (i->Effect != j->Effect){
 		return (i->Effect.CmpNoCase(j->Effect) < 0);
 	}
 	return i->Start.mstime < j->Start.mstime;
 }
-bool sortlayer(Dialogue *i, Dialogue *j){
-	/*if (i->treeState != j->treeState)
-		return i->treeState < j->treeState;*/
+
+bool sortlayer(Dialogue *i, Dialogue *j)
+{
 	if (i->Layer != j->Layer){
 		return (i->Layer < j->Layer);
 	}
@@ -197,7 +200,7 @@ void SubsGridBase::ChangeCell(long cells, size_t wline, Dialogue *what)
 void SubsGridBase::Convert(char type)
 {
 	if (Options.GetBool(CONVERT_SHOW_SETTINGS)){
-		OptionsDialog od(Kai, Kai);
+		OptionsDialog od(Kai);
 		od.OptionsTree->ChangeSelection(1);
 		od.okok->SetFocus();
 		if (od.ShowModal() == wxID_CANCEL){

@@ -23,6 +23,18 @@
     <Filter Include="F">
       <UniqueIdentifier>{0a4de224-b194-4410-8744-e9080983cbfd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="G">
+      <UniqueIdentifier>{34a4412c-5068-4ec5-af73-1651579ba1f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="H">
+      <UniqueIdentifier>{18cfee59-78e1-43ab-8352-639d6d2f09ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="K">
+      <UniqueIdentifier>{5cde6404-3231-46ad-a015-fa5c1e347635}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="L">
+      <UniqueIdentifier>{7768bb7a-dddd-4f84-b095-953a3490c7ad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContextDX9.cpp">
@@ -34,28 +46,6 @@
     <ClCompile Include="Context.cpp">
       <Filter>C</Filter>
     </ClCompile>
-    <ClCompile Include="GFFT\GFFT.cpp" />
-    <ClCompile Include="KaraokeSplitting.cpp" />
-    <ClCompile Include="GraphicsD2D.cpp" />
-    <ClCompile Include="KaiCheckBox.cpp" />
-    <ClCompile Include="KaiDialog.cpp" />
-    <ClCompile Include="KaiFrame.cpp" />
-    <ClCompile Include="KaiGauge.cpp" />
-    <ClCompile Include="KaiListCtrl.cpp" />
-    <ClCompile Include="KaiMessageBox.cpp" />
-    <ClCompile Include="KaiPanel.cpp" />
-    <ClCompile Include="KaiRadioButton.cpp" />
-    <ClCompile Include="KaiScrollbar.cpp" />
-    <ClCompile Include="KaiSlider.cpp" />
-    <ClCompile Include="KaiStaticBoxSizer.cpp" />
-    <ClCompile Include="KaiStaticText.cpp" />
-    <ClCompile Include="KaiStatusBar.cpp" />
-    <ClCompile Include="KaiTabBar.cpp" />
-    <ClCompile Include="KaiTextCtrl.cpp" />
-    <ClCompile Include="KaiTextValidator.cpp" />
-    <ClCompile Include="KaiTreeBook.cpp" />
-    <ClCompile Include="KaiWindowResizer.cpp" />
-    <ClCompile Include="ListControls.cpp" />
     <ClCompile Include="MappedButton.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="MenuButton.cpp" />
@@ -69,7 +59,6 @@
     <ClCompile Include="StylePreview.cpp" />
     <ClCompile Include="Styles.cpp" />
     <ClCompile Include="StyleStore.cpp" />
-    <ClCompile Include="LineParse.cpp" />
     <ClCompile Include="SubsDialogue.cpp" />
     <ClCompile Include="SubsFile.cpp" />
     <ClCompile Include="SubsGrid.cpp" />
@@ -97,17 +86,12 @@
     <ClCompile Include="VisualRotationZ.cpp" />
     <ClCompile Include="Visuals.cpp" />
     <ClCompile Include="VisualScale.cpp" />
-    <ClCompile Include="Hotkeys.cpp" />
-    <ClCompile Include="HotkeysNaming.cpp" />
-    <ClCompile Include="Languages.cpp" />
-    <ClCompile Include="LogHandler.cpp" />
     <ClCompile Include="OpennWrite.cpp" />
     <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SpellChecker.cpp" />
     <ClCompile Include="SubtitlesVSFilter.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="UtilsWindows.cpp" />
-    <ClCompile Include="KeyframesLoader.cpp" />
     <ClCompile Include="Provider.cpp" />
     <ClCompile Include="ProviderDummy.cpp" />
     <ClCompile Include="ProviderFFMS2.cpp" />
@@ -118,8 +102,6 @@
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
-    <ClCompile Include="KainoteApp.cpp" />
-    <ClCompile Include="KainoteFrame.cpp" />
     <ClCompile Include="MispellReplacerDialog.cpp" />
     <ClCompile Include="MisspellReplacer.cpp" />
     <ClCompile Include="NewCatalog.cpp" />
@@ -214,9 +196,6 @@
     <ClCompile Include="DShowPlayer.cpp">
       <Filter>D</Filter>
     </ClCompile>
-    <ClCompile Include="DshowRenderer.cpp">
-      <Filter>D</Filter>
-    </ClCompile>
     <ClCompile Include="DummyVideo.cpp">
       <Filter>D</Filter>
     </ClCompile>
@@ -244,6 +223,99 @@
     <ClCompile Include="FontEnumerator.cpp">
       <Filter>F</Filter>
     </ClCompile>
+    <ClCompile Include="GFFT\GFFT.cpp">
+      <Filter>G</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsD2D.cpp">
+      <Filter>G</Filter>
+    </ClCompile>
+    <ClCompile Include="DshowRenderer.cpp">
+      <Filter>D</Filter>
+    </ClCompile>
+    <ClCompile Include="Hotkeys.cpp">
+      <Filter>H</Filter>
+    </ClCompile>
+    <ClCompile Include="HotkeysNaming.cpp">
+      <Filter>H</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiCheckBox.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiDialog.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiFrame.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiGauge.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiListCtrl.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiMessageBox.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteApp.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KainoteFrame.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiPanel.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiRadioButton.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiScrollbar.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiSlider.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStaticBoxSizer.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStaticText.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiStatusBar.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTabBar.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTextCtrl.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTextValidator.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiTreeBook.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaiWindowResizer.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KaraokeSplitting.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyframesLoader.cpp">
+      <Filter>K</Filter>
+    </ClCompile>
+    <ClCompile Include="Languages.cpp">
+      <Filter>L</Filter>
+    </ClCompile>
+    <ClCompile Include="LineParse.cpp">
+      <Filter>L</Filter>
+    </ClCompile>
+    <ClCompile Include="ListControls.cpp">
+      <Filter>L</Filter>
+    </ClCompile>
+    <ClCompile Include="LogHandler.cpp">
+      <Filter>L</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextDX9.h">
@@ -255,28 +327,6 @@
     <ClInclude Include="Context.h">
       <Filter>C</Filter>
     </ClInclude>
-    <ClInclude Include="GFFT\GFFT.h" />
-    <ClInclude Include="KaraokeSplitting.h" />
-    <ClInclude Include="GraphicsD2D.h" />
-    <ClInclude Include="KaiCheckBox.h" />
-    <ClInclude Include="KaiDialog.h" />
-    <ClInclude Include="KaiFrame.h" />
-    <ClInclude Include="KaiGauge.h" />
-    <ClInclude Include="KaiListCtrl.h" />
-    <ClInclude Include="KaiMessageBox.h" />
-    <ClInclude Include="KaiPanel.h" />
-    <ClInclude Include="KaiRadioButton.h" />
-    <ClInclude Include="KaiScrollbar.h" />
-    <ClInclude Include="KaiSlider.h" />
-    <ClInclude Include="KaiStaticBoxSizer.h" />
-    <ClInclude Include="KaiStaticText.h" />
-    <ClInclude Include="KaiStatusBar.h" />
-    <ClInclude Include="KaiTabBar.h" />
-    <ClInclude Include="KaiTextCtrl.h" />
-    <ClInclude Include="KaiTextValidator.h" />
-    <ClInclude Include="KaiTreebook.h" />
-    <ClInclude Include="KaiWindowResizer.h" />
-    <ClInclude Include="ListControls.h" />
     <ClInclude Include="MappedButton.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="MenuButton.h" />
@@ -290,7 +340,6 @@
     <ClInclude Include="StylePreview.h" />
     <ClInclude Include="Styles.h" />
     <ClInclude Include="StyleStore.h" />
-    <ClInclude Include="LineParse.h" />
     <ClInclude Include="SubsDialogue.h" />
     <ClInclude Include="SubsFile.h" />
     <ClInclude Include="SubsGrid.h" />
@@ -308,9 +357,6 @@
     <ClInclude Include="VisualAllTagsEdition.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
-    <ClInclude Include="Hotkeys.h" />
-    <ClInclude Include="HotkeysNaming.h" />
-    <ClInclude Include="LogHandler.h" />
     <ClInclude Include="OpennWrite.h" />
     <ClInclude Include="Registry.h" />
     <ClInclude Include="resource.h" />
@@ -318,7 +364,6 @@
     <ClInclude Include="TagFindReplace.h" />
     <ClInclude Include="UtilsWindows.h" />
     <ClInclude Include="VersionKainote.h" />
-    <ClInclude Include="KeyframesLoader.h" />
     <ClInclude Include="Provider.h" />
     <ClInclude Include="ProviderDummy.h" />
     <ClInclude Include="ProviderFFMS2.h" />
@@ -329,8 +374,6 @@
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
-    <ClInclude Include="KainoteApp.h" />
-    <ClInclude Include="KainoteFrame.h" />
     <ClInclude Include="MispellReplacerDialog.h" />
     <ClInclude Include="MisspellReplacer.h" />
     <ClInclude Include="NewCatalog.h" />
@@ -457,6 +500,96 @@
     </ClInclude>
     <ClInclude Include="FontEnumerator.h">
       <Filter>F</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DInit.h">
+      <Filter>D</Filter>
+    </ClInclude>
+    <ClInclude Include="GFFT\GFFT.h">
+      <Filter>G</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsD2D.h">
+      <Filter>G</Filter>
+    </ClInclude>
+    <ClInclude Include="Hotkeys.h">
+      <Filter>H</Filter>
+    </ClInclude>
+    <ClInclude Include="HotkeysNaming.h">
+      <Filter>H</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiCheckBox.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiDialog.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiFrame.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiGauge.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiListCtrl.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiMessageBox.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteApp.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KainoteFrame.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiPanel.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiRadioButton.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiScrollbar.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiSlider.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticBoxSizer.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStaticText.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiStatusBar.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTabBar.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextCtrl.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTextValidator.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiTreebook.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaiWindowResizer.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KaraokeSplitting.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyframesLoader.h">
+      <Filter>K</Filter>
+    </ClInclude>
+    <ClInclude Include="LineParse.h">
+      <Filter>L</Filter>
+    </ClInclude>
+    <ClInclude Include="ListControls.h">
+      <Filter>L</Filter>
+    </ClInclude>
+    <ClInclude Include="LogHandler.h">
+      <Filter>L</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

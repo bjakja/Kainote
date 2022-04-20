@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ProviderDummy.h"
+#include "Provider.h"
 #include "ColorSpace.h"
 #include <wx/tokenzr.h>
 #include "UtilsWindows.h"
@@ -54,7 +55,7 @@ ProviderDummy::ProviderDummy(const wxString& filename, RendererVideo* renderer, 
 	*success = false;
 }
 
-void ProviderDummy::GetFrameBuffer(byte** buffer)
+void ProviderDummy::GetFrameBuffer(unsigned char** buffer)
 {
 	if (!m_FrameBuffer)
 		GenerateFrame();
@@ -62,7 +63,7 @@ void ProviderDummy::GetFrameBuffer(byte** buffer)
 	memcpy(*buffer, m_FrameBuffer, m_framePlane);
 }
 
-void ProviderDummy::GetFrame(int frame, byte* buff)
+void ProviderDummy::GetFrame(int frame, unsigned char* buff)
 {
 	GetFrameBuffer(&buff);
 }

@@ -16,6 +16,8 @@
 #include "VisualAllTagsEdition.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
+#include "Provider.h"
+//#include "RendererVideo.h
 #include "config.h"
 
 AllTagsEdition::AllTagsEdition(wxWindow* parent, const wxPoint& pos,
