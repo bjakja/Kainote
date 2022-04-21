@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
@@ -820,3 +821,4 @@ void Scale::ChangeClipScale(wxString* txt, const D3DXVECTOR2& activeLinePos, flo
 		}
 	}
 }
+#endif

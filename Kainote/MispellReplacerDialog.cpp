@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "Config.h"
 #include "MispellReplacerDialog.h"
 #include "MisspellReplacer.h"
@@ -267,3 +268,4 @@ void FindResultDialog::FilterList()
 	ResultsList->Refresh(false);
 }
 
+#endif

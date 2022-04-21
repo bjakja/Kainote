@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 
 #include "TabPanel.h"
 #include "VisualDrawingShapes.h"
@@ -1268,3 +1268,5 @@ void Visuals::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D
 	p_y = b[0] + b[1] + b[2] + b[3];
 	table->push_back(D3DXVECTOR2(p_x, p_y));
 }
+
+#endif
