@@ -14,11 +14,15 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#ifdef guano
+
+
 
 #include <vector>
 #include "ListControls.h"
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
+#include "Visuals.h"
 #include "VisualAllTagsEdition.h"
 #include "VisualDrawingShapes.h"
 #include <wx/msw/winundef.h>
@@ -369,3 +373,4 @@ enum{
 	ID_PLAY_AFTER
 };
 
+#endif

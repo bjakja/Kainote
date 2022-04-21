@@ -33,7 +33,9 @@
 // Website: http://aegisub.cellosoft.com
 // Contact: mailto:zeratul@cellosoft.com
 //
-// Normal licence lpensource
+// Normal licence opensource
+
+#ifdef guano
 
 #include <wx/msw/winundef.h>
 #include "Editbox.h"
@@ -733,3 +735,4 @@ EVT_TOGGLEBUTTON(Audio_Check_AutoCommit, AudioBox::OnAutoCommit)
 EVT_TOGGLEBUTTON(Audio_Check_NextCommit, AudioBox::OnNextLineCommit)
 END_EVENT_TABLE()
 
+#endif

@@ -42,22 +42,25 @@ public:
 	void RemoveClient(const wxWindow *client);
 	void RemoveFilteredClient(const wxWindow *client, bool clearFiltered = true);
 	bool CheckGlyphsExists(HDC dc, const wxString &textForCheck, wxString &missing); 
+	wxArrayString* Fonts;
+	wxArrayString* FontsTmp;
+	wxArrayString* FilteredFonts;
+	wxArrayString* FilteredFontsTmp;
+	HDC hdc;
+	wxString filter;
 private:
 	void RefreshClientsFonts();
 	static int __stdcall FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC *lptm,
 		unsigned int WXUNUSED(dwStyle), long* lParam);
 	static DWORD CheckFontsProc(int *threadNum);
-	wxArrayString *Fonts;
-	wxArrayString *FontsTmp;
-	wxArrayString *FilteredFonts;
-	wxArrayString *FilteredFontsTmp;
-	wxString filter;
+	
+	
 	std::map<const wxWindow*, std::function<void()>> observers;
 	KainoteFrame* parent;
 	HANDLE eventKillSelf[2];
 	HANDLE checkFontsThread;
 	wxMutex enumerateMutex;
-	HDC hdc;
+	
 	//bool hasLocalFonts = false;
 };
 

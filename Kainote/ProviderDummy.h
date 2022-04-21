@@ -16,7 +16,7 @@
 #pragma once
 
 #include "Provider.h"
-
+#include <vx>
 
 class ProviderDummy : public Provider 
 {

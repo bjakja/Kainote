@@ -17,7 +17,7 @@
 //old trash licence not OpenSource.
 
 
-
+#ifdef guano
 // Headers
 #include "KaiMessageBox.h"
 
@@ -2551,3 +2551,5 @@ EVT_KILL_FOCUS(AudioDisplay::OnLoseFocus)
 EVT_MOUSE_CAPTURE_LOST(AudioDisplay::OnLostCapture)
 EVT_ERASE_BACKGROUND(AudioDisplay::OnEraseBackground)
 END_EVENT_TABLE()
+
+#endif

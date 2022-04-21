@@ -19,7 +19,8 @@
 #include "KaiListCtrl.h"
 #include "kainoteFrame.h"
 #include "MispellReplacerDialog.h"
-#include "KaiListCtrl.h"
+#include "FindReplace.h"
+#include "ShiftTimes.h"
 
 wxDECLARE_EVENT(CHOOSE_RESULT, wxCommandEvent);
 

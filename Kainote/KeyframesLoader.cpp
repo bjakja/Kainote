@@ -15,6 +15,8 @@
 
 //Kayframes formats loading methods taken from Aegisub
 
+#ifdef guano
+
 #include "KeyframesLoader.h"
 #include <wx/file.h>
 #include "OpennWrite.h"
@@ -86,3 +88,4 @@ void KeyframeLoader::OpenOtherKeyframes(int type, wxStringTokenizer *kftokenizer
 			frameCounter++;
 	}
 }
+#endif

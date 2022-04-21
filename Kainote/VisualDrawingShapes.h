@@ -20,9 +20,9 @@
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
 #include "Visuals.h"
-#include "TabPanel.h"
+#include "Notebook.h"
 #include <vector>
-
+#include <wx/msw/winundef.h>
 #include <d3dx9.h>
 
 class ShapesSetting

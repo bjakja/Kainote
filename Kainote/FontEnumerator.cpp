@@ -19,8 +19,9 @@
 #include "wx/msw/winundef.h"
 #include <wx/arrstr.h>
 #include <wx/filefn.h>
-#include <Usp10.h>
 #include <unicode/utf16.h>
+#include <Usp10.h>
+
 #include <ShlObj.h>
 
 	

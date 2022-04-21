@@ -13,11 +13,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
+
 #include "Config.h"
 #include "FindReplaceResultsDialog.h"
 #include "FindReplace.h"
 #include "MappedButton.h"
 #include "KaiCheckBox.h"
+#include "ShiftTimes.h"
 
 
 wxDEFINE_EVENT(CHOOSE_RESULT, wxCommandEvent);
@@ -304,3 +307,5 @@ wxSize SeekResults::GetTextExtents(KaiListCtrl *theList){
 	size.y += 4;
 	return size;
 }
+
+#endif

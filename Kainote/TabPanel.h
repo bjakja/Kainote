@@ -23,7 +23,7 @@
 #include "KaiWindowResizer.h"
 #include "SubsGrid.h"
 #include "Editbox.h"
-#include "ShiftTimes.h"
+
 #include <wx/sizer.h>
 
 

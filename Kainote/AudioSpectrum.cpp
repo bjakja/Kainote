@@ -15,6 +15,7 @@
 
 //this code piervously was taken from Aegisub 2 it's rewritten by me almost all.
 
+#ifdef guano
 
 #include "Config.h"
 #include "AudioSpectrum.h"
@@ -517,3 +518,5 @@ void AudioSpectrumMultiThreading::SetAudio(unsigned long _start, int _len, FFT *
 }
 
 AudioSpectrumMultiThreading *AudioSpectrumMultiThreading::sthread = nullptr;
+
+#endif

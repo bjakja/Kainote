@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "Config.h"
 #include "FindReplaceDialog.h"
 #include "FindReplace.h"
@@ -578,3 +579,5 @@ void FindReplaceDialog::Reset()
 	FR->fromstart = true;
 	FR->fnext = false;
 }
+
+#endif

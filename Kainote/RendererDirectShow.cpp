@@ -16,6 +16,7 @@
 #include "config.h"
 #include "RendererVideo.h"
 #include "RendererDirectShow.h"
+#include "VisualDrawingShapes.h"
 #include "DShowPlayer.h"
 #include "DshowRenderer.h"
 #include "kainoteApp.h"

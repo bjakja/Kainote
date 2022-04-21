@@ -19,6 +19,8 @@
  * along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
  **************************************************************/
 
+#ifdef guano
+ 
 #include "KainoteApp.h"
 #include "OpennWrite.h"
 #include "Hotkeys.h"
@@ -37,76 +39,30 @@
 
 
 
-//void seg_handler(int sig)
+
+
+
+//void EnableCrashingOnCrashes()
 //{
-//	unsigned int   i;
-//	void         * stack[100];
-//	unsigned short frames;
-//	SYMBOL_INFO  * symbol;
-//	HANDLE         process;
+//	typedef BOOL(WINAPI *tGetPolicy)(LPDWORD lpFlags);
+//	typedef BOOL(WINAPI *tSetPolicy)(DWORD dwFlags);
+//	const DWORD EXCEPTION_SWALLOWING = 0x1;
 //
-//	process = GetCurrentProcess();
-//	SymInitialize(process, nullptr, TRUE);
-//	frames = CaptureStackBackTrace(0, 100, stack, nullptr);
-//	symbol = (SYMBOL_INFO *)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
-//	symbol->MaxNameLen = 255;
-//	symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-//
-//	wxString result;
-//	for (i = 0; i < frames; i++) {
-//		SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-//		result += wxString::Format(L"%i: %s - 0x%0X\n", frames - i - 1, symbol->Name, symbol->Address);
+//	HMODULE kernel32 = LoadLibraryA("kernel32.dll");
+//	tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32,
+//		"GetProcessUserModeExceptionPolicy");
+//	tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32,
+//		"SetProcessUserModeExceptionPolicy");
+//	if (pGetPolicy && pSetPolicy)
+//	{
+//		DWORD dwFlags;
+//		if (pGetPolicy(&dwFlags))
+//		{
+//			// Turn off the filter
+//			pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
+//		}
 //	}
-//
-//	free(symbol);
-//
-//	OpenWrite ow;
-//	ow.FileWrite(Options.pathfull + "\\CrashInfo.txt", result);
-//	Options.SaveOptions(true, false, true);
-//	KainoteFrame *Kai = ((kainoteApp *)wxTheApp)->Frame;
-//	TabPanel* tab = Kai->GetTab();
-//	wxWindow* messageWindow = nullptr;
-//	if (tab) {
-//		messageWindow = tab->video->GetMessageWindowParent();
-//	}
-//
-//	Notebook::SaveLastSession(false, true);
-//	wxString Info = _("Kainote się scrashował i próbuje pozyskać istotne dane.\n") +
-//		_("Napisy zostały zapisane do folderu \"Recovery\".\n") +
-//		_("Ostatnia sesja zostanie wznowiona po następnym uruchomieniu.\n") +
-//		_("W przypadku, gdyby zostały uszkodzone, autozapisy są w folderze \"Subs\".\n") +
-//		_("Info o crashu zostało zapisane do pliku \"CrashInfo.txt\" w folderze Kainote.\n") + 
-//		_("Podesłanie go na adres mailowy (bjakja7@gmail.com) może pomóc rozwiązać ten problem.");
-//	KaiMessageBox(Info, L"Crash", wxOK, (messageWindow)? messageWindow : Kai);
-//	exit(1);
 //}
-
-//void std_handler(void) {
-//	seg_handler(1);
-//}
-
-
-void EnableCrashingOnCrashes()
-{
-	typedef BOOL(WINAPI *tGetPolicy)(LPDWORD lpFlags);
-	typedef BOOL(WINAPI *tSetPolicy)(DWORD dwFlags);
-	const DWORD EXCEPTION_SWALLOWING = 0x1;
-
-	HMODULE kernel32 = LoadLibraryA("kernel32.dll");
-	tGetPolicy pGetPolicy = (tGetPolicy)GetProcAddress(kernel32,
-		"GetProcessUserModeExceptionPolicy");
-	tSetPolicy pSetPolicy = (tSetPolicy)GetProcAddress(kernel32,
-		"SetProcessUserModeExceptionPolicy");
-	if (pGetPolicy && pSetPolicy)
-	{
-		DWORD dwFlags;
-		if (pGetPolicy(&dwFlags))
-		{
-			// Turn off the filter
-			pSetPolicy(dwFlags & ~EXCEPTION_SWALLOWING);
-		}
-	}
-}
 
 void kainoteApp::OnOutofMemory()
 {
@@ -258,7 +214,7 @@ bool kainoteApp::OnInit()
 		std::set_new_handler(OnOutofMemory);
 		//start listen to font folders notifications
 		FontEnum.StartListening(Frame);
-		EnableCrashingOnCrashes();
+		//EnableCrashingOnCrashes();
 		if (isGood == 2)
 			Frame->CenterOnScreen();
 
@@ -419,3 +375,4 @@ bool kainoteApp::IsBusy()
 	return false;
 }
 
+#endif

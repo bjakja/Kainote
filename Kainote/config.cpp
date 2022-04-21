@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "VersionKainote.h"
 #include "OpennWrite.h"
 #include "KaiMessageBox.h"
@@ -1158,5 +1158,5 @@ DEFINE_ENUM(COLOR, CLR);
 config Options;
 
 
-
+#endif
 

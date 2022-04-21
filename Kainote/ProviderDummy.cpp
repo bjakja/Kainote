@@ -13,12 +13,14 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "ProviderDummy.h"
 #include "Provider.h"
 #include "ColorSpace.h"
 #include <wx/tokenzr.h>
 #include "UtilsWindows.h"
 #include "Videobox.h"
+#include "VideoToolbar.h"
 
 ProviderDummy::~ProviderDummy()
 {
@@ -315,3 +317,5 @@ void ProviderDummy::Processing()
 
 	}
 }
+
+#endif

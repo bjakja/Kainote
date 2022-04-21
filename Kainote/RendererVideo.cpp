@@ -22,8 +22,9 @@
 #include "VideoBox.h"
 #include "EditBox.h"
 #include "Provider.h"
-#include "VisualDrawingShapes.h"
+
 #include "Visuals.h"
+#include "VideoToolbar.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 

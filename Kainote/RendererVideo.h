@@ -21,6 +21,7 @@
 #include "SubtitlesProviderManager.h"
 #include "Provider.h"
 #include "KainoteFrame.h"
+#include "VisualDrawingShapes.h"
 #include <d3d9.h>
 #include <d3dx9.h>
 #include <dxva2api.h>

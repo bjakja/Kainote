@@ -8,7 +8,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 
-
+#ifdef guano
 #ifndef wxFALLTHROUGH
 #define wxFALLTHROUGH ((void)0)
 #endif
@@ -5612,3 +5612,4 @@ GraphicsRenderer* GraphicsRenderer::GetDirect2DRenderer()
 }
 #endif // wxUSE_GRAPHICS_DIRECT2D
 
+#endif
