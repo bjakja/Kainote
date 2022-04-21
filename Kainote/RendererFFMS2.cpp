@@ -19,6 +19,7 @@
 #include "OpennWrite.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
+#include "VisualDrawingShapes.h"
 
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)

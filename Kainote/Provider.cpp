@@ -20,8 +20,8 @@
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "Notebook.h"
-#include "TabPanel.h"
-#include "EditBox.h"
+#include "VisualDrawingShapes.h"
+
 
 Provider::Provider(const wxString& filename, RendererVideo* renderer)
 	: m_renderer(renderer)

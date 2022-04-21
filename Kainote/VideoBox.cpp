@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#include "VideoBox.h"
+
 
 #include "Menu.h"
 #include "KaiMessageBox.h"
@@ -26,6 +26,7 @@
 #include "AudioBox.h"
 #include "EditBox.h"
 #include "SubsGrid.h"
+#include "VideoBox.h"
 #include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>

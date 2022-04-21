@@ -15,15 +15,8 @@
 
 #include <wx/msw/winundef.h>
 #include "Visuals.h"
+#include "VisualDrawingShapes.h"
 #include "TabPanel.h"
-#include "VideoToolbar.h"
-#include "Hotkeys.h"
-#include "Editbox.h"
-#include "TabPanel.h"
-#include "SubsGrid.h"
-#include "Provider.h"
-//#include "RendererVideo.h
-
 
 AllTags::AllTags()
 {

@@ -16,13 +16,14 @@
 #include "SubtitlesProvider.h"
 #include "RendererVideo.h"
 #include "OpennWrite.h"
-#include "kainoteMain.h"
+#include "kainoteFrame.h"
 #include "DshowRenderer.h"
 #include <wx/thread.h>
 #include <boost/gil/algorithm.hpp>
 #include <process.h>
 #include "config.h"
 #include "utilswindows.h"
+#include "Notebook.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };
 wxMutex SubtitlesLibass::openMutex;

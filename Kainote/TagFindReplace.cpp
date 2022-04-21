@@ -15,10 +15,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "TagFindReplace.h"
-#include "TabPanel.h"
-#include "DialogueTextEditor.h"
-#include "EditBox.h"
-#include "SubsGrid.h"
+#include "VisualDrawingShapes.h"
 
 
 bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int mode, bool toEndOfSelection)

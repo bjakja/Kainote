@@ -35,7 +35,7 @@
 //
 // Normal licence lpensource
 
-
+#include <wx/msw/winundef.h>
 #include "Editbox.h"
 #include "AudioBox.h"
 #include "KainoteFrame.h"
@@ -44,6 +44,9 @@
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
 #include "SubsGrid.h"
+#include "Visuals.h"
+#include "VisualDrawingShapes.h"
+#include "TabPanel.h"
 
 #include <math.h>
 //#include <dxgicommon.h>

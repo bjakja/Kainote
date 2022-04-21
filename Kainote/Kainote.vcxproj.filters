@@ -35,6 +35,21 @@
     <Filter Include="L">
       <UniqueIdentifier>{7768bb7a-dddd-4f84-b095-953a3490c7ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="M">
+      <UniqueIdentifier>{60068347-c4e9-40fe-b558-08d735d1b0d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="O">
+      <UniqueIdentifier>{d39890f3-e90f-48e8-a916-dde266bb1f07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="R">
+      <UniqueIdentifier>{74276480-997a-4ff3-b2bc-b9199d5f9781}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="P">
+      <UniqueIdentifier>{19a36fc8-490e-4b5e-b489-a9c0a6fcb191}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="N">
+      <UniqueIdentifier>{c3ca781e-b31b-488d-b3a1-917354efddb0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ContextDX9.cpp">
@@ -46,10 +61,6 @@
     <ClCompile Include="Context.cpp">
       <Filter>C</Filter>
     </ClCompile>
-    <ClCompile Include="MappedButton.cpp" />
-    <ClCompile Include="Menu.cpp" />
-    <ClCompile Include="MenuButton.cpp" />
-    <ClCompile Include="NumCtrl.cpp" />
     <ClCompile Include="TextEditorTagList.cpp" />
     <ClCompile Include="TimeCtrl.cpp" />
     <ClCompile Include="Toolbar.cpp" />
@@ -86,29 +97,14 @@
     <ClCompile Include="VisualRotationZ.cpp" />
     <ClCompile Include="Visuals.cpp" />
     <ClCompile Include="VisualScale.cpp" />
-    <ClCompile Include="OpennWrite.cpp" />
-    <ClCompile Include="Registry.cpp" />
     <ClCompile Include="SpellChecker.cpp" />
     <ClCompile Include="SubtitlesVSFilter.cpp" />
     <ClCompile Include="TagFindReplace.cpp" />
     <ClCompile Include="UtilsWindows.cpp" />
-    <ClCompile Include="Provider.cpp" />
-    <ClCompile Include="ProviderDummy.cpp" />
-    <ClCompile Include="ProviderFFMS2.cpp" />
-    <ClCompile Include="RendererDirectShow.cpp" />
-    <ClCompile Include="RendererFFMS2.cpp" />
-    <ClCompile Include="RendererVideo.cpp" />
     <ClCompile Include="VideoBox.cpp" />
     <ClCompile Include="VideoFullscreen.cpp" />
     <ClCompile Include="VideoSlider.cpp" />
     <ClCompile Include="VideoToolbar.cpp" />
-    <ClCompile Include="MispellReplacerDialog.cpp" />
-    <ClCompile Include="MisspellReplacer.cpp" />
-    <ClCompile Include="NewCatalog.cpp" />
-    <ClCompile Include="Notebook.cpp" />
-    <ClCompile Include="OptionsDialog.cpp" />
-    <ClCompile Include="OptionsPanels.cpp" />
-    <ClCompile Include="ProgressDialog.cpp" />
     <ClCompile Include="ScriptInfo.cpp" />
     <ClCompile Include="SelectLines.cpp" />
     <ClCompile Include="ShiftTimes.cpp" />
@@ -316,6 +312,63 @@
     <ClCompile Include="LogHandler.cpp">
       <Filter>L</Filter>
     </ClCompile>
+    <ClCompile Include="MappedButton.cpp">
+      <Filter>M</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>M</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuButton.cpp">
+      <Filter>M</Filter>
+    </ClCompile>
+    <ClCompile Include="MispellReplacerDialog.cpp">
+      <Filter>M</Filter>
+    </ClCompile>
+    <ClCompile Include="MisspellReplacer.cpp">
+      <Filter>M</Filter>
+    </ClCompile>
+    <ClCompile Include="OpennWrite.cpp">
+      <Filter>O</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsDialog.cpp">
+      <Filter>O</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionsPanels.cpp">
+      <Filter>O</Filter>
+    </ClCompile>
+    <ClCompile Include="Registry.cpp">
+      <Filter>R</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererDirectShow.cpp">
+      <Filter>R</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererFFMS2.cpp">
+      <Filter>R</Filter>
+    </ClCompile>
+    <ClCompile Include="RendererVideo.cpp">
+      <Filter>R</Filter>
+    </ClCompile>
+    <ClCompile Include="ProgressDialog.cpp">
+      <Filter>P</Filter>
+    </ClCompile>
+    <ClCompile Include="Provider.cpp">
+      <Filter>P</Filter>
+    </ClCompile>
+    <ClCompile Include="ProviderDummy.cpp">
+      <Filter>P</Filter>
+    </ClCompile>
+    <ClCompile Include="ProviderFFMS2.cpp">
+      <Filter>P</Filter>
+    </ClCompile>
+    <ClCompile Include="NewCatalog.cpp">
+      <Filter>N</Filter>
+    </ClCompile>
+    <ClCompile Include="Notebook.cpp">
+      <Filter>N</Filter>
+    </ClCompile>
+    <ClCompile Include="NumCtrl.cpp">
+      <Filter>N</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ContextDX9.h">
@@ -327,10 +380,6 @@
     <ClInclude Include="Context.h">
       <Filter>C</Filter>
     </ClInclude>
-    <ClInclude Include="MappedButton.h" />
-    <ClInclude Include="Menu.h" />
-    <ClInclude Include="MenuButton.h" />
-    <ClInclude Include="NumCtrl.h" />
     <ClInclude Include="TextEditorTagList.h" />
     <ClInclude Include="TimeCtrl.h" />
     <ClInclude Include="Toolbar.h" />
@@ -357,30 +406,14 @@
     <ClInclude Include="VisualAllTagsEdition.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
-    <ClInclude Include="OpennWrite.h" />
-    <ClInclude Include="Registry.h" />
-    <ClInclude Include="resource.h" />
     <ClInclude Include="SpellChecker.h" />
     <ClInclude Include="TagFindReplace.h" />
     <ClInclude Include="UtilsWindows.h" />
     <ClInclude Include="VersionKainote.h" />
-    <ClInclude Include="Provider.h" />
-    <ClInclude Include="ProviderDummy.h" />
-    <ClInclude Include="ProviderFFMS2.h" />
-    <ClInclude Include="RendererDirectShow.h" />
-    <ClInclude Include="RendererFFMS2.h" />
-    <ClInclude Include="RendererVideo.h" />
     <ClInclude Include="VideoBox.h" />
     <ClInclude Include="VideoFullscreen.h" />
     <ClInclude Include="VideoSlider.h" />
     <ClInclude Include="VideoToolbar.h" />
-    <ClInclude Include="MispellReplacerDialog.h" />
-    <ClInclude Include="MisspellReplacer.h" />
-    <ClInclude Include="NewCatalog.h" />
-    <ClInclude Include="Notebook.h" />
-    <ClInclude Include="OptionsDialog.h" />
-    <ClInclude Include="OptionsPanels.h" />
-    <ClInclude Include="ProgressDialog.h" />
     <ClInclude Include="ScriptInfo.h" />
     <ClInclude Include="SelectLines.h" />
     <ClInclude Include="ShiftTimes.h" />
@@ -590,6 +623,66 @@
     </ClInclude>
     <ClInclude Include="LogHandler.h">
       <Filter>L</Filter>
+    </ClInclude>
+    <ClInclude Include="MappedButton.h">
+      <Filter>M</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
+      <Filter>M</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuButton.h">
+      <Filter>M</Filter>
+    </ClInclude>
+    <ClInclude Include="MispellReplacerDialog.h">
+      <Filter>M</Filter>
+    </ClInclude>
+    <ClInclude Include="MisspellReplacer.h">
+      <Filter>M</Filter>
+    </ClInclude>
+    <ClInclude Include="OpennWrite.h">
+      <Filter>O</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsDialog.h">
+      <Filter>O</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionsPanels.h">
+      <Filter>O</Filter>
+    </ClInclude>
+    <ClInclude Include="Registry.h">
+      <Filter>R</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererDirectShow.h">
+      <Filter>R</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererFFMS2.h">
+      <Filter>R</Filter>
+    </ClInclude>
+    <ClInclude Include="RendererVideo.h">
+      <Filter>R</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>R</Filter>
+    </ClInclude>
+    <ClInclude Include="ProgressDialog.h">
+      <Filter>P</Filter>
+    </ClInclude>
+    <ClInclude Include="Provider.h">
+      <Filter>P</Filter>
+    </ClInclude>
+    <ClInclude Include="ProviderDummy.h">
+      <Filter>P</Filter>
+    </ClInclude>
+    <ClInclude Include="ProviderFFMS2.h">
+      <Filter>P</Filter>
+    </ClInclude>
+    <ClInclude Include="NewCatalog.h">
+      <Filter>N</Filter>
+    </ClInclude>
+    <ClInclude Include="Notebook.h">
+      <Filter>N</Filter>
+    </ClInclude>
+    <ClInclude Include="NumCtrl.h">
+      <Filter>N</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

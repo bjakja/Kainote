@@ -248,11 +248,11 @@ void AllTagsSlider::OnDraw()
 	float thumbpos = ((thumbValue + thumbposdiff) * coeff) + left;
 	float thumbleft = thumbpos - 4;
 	float thumbright = thumbpos + 4;
-	D3DXCOLOR fill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
-	CreateVERTEX(&v9[0], thumbleft, thumbtop, &fill);
-	CreateVERTEX(&v9[1], thumbright, thumbtop, &fill);
-	CreateVERTEX(&v9[2], thumbleft, thumbbottom,&fill);
-	CreateVERTEX(&v9[3], thumbright, thumbbottom, &fill);
+	D3DXCOLOR refill = (thumbState == 1) ? 0xAACC8748 : (thumbState == 2) ? 0xAAFCE6B1 : 0xAA121150;
+	CreateVERTEX(&v9[0], thumbleft, thumbtop, &refill);
+	CreateVERTEX(&v9[1], thumbright, thumbtop, &refill);
+	CreateVERTEX(&v9[2], thumbleft, thumbbottom,&refill);
+	CreateVERTEX(&v9[3], thumbright, thumbbottom, &refill);
 	CreateVERTEX(&v9[4], thumbleft, thumbtop, &border);
 	CreateVERTEX(&v9[5], thumbright, thumbtop, &border);
 	CreateVERTEX(&v9[6], thumbright, thumbbottom, &border);

@@ -14,9 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include <wx/msw/winundef.h>
 #include <wx/string.h>
+#include <wx/msw/winundef.h>
 #include <wx/arrstr.h>
+#include <wx/msw/winundef.h>
 #include <wx/zipstrm.h>
 #include "include/ffms.h"
 #include <vector>

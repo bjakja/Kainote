@@ -910,7 +910,7 @@ int AutoToFile::LuaParseKaraokeData(lua_State *L)
 			size_t bracketstartpos = newtxt.Find(L'{', true);
 			if (bracketstartpos == wxNOT_FOUND){
 				size_t bracketendpos = newtxt.Find(L'}', true);
-				size_t firstSlash = newtxt.find(L'//', bracketendpos + 1);
+				size_t firstSlash = newtxt.find(wxString(L'//'), bracketendpos + 1);
 				if (firstSlash != wxNOT_FOUND)
 					nextKstart = firstSlash - 1;
 			}

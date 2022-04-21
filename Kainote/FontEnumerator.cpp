@@ -14,10 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "FontEnumerator.h"
-#undef CreateDialog
 #include "kainoteFrame.h"
 #include "Notebook.h"
-#include <wx/log.h>
+#include "wx/msw/winundef.h"
+#include <wx/arrstr.h>
 #include <wx/filefn.h>
 #include <Usp10.h>
 #include <unicode/utf16.h>

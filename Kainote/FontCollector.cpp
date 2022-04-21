@@ -23,6 +23,7 @@
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "StyleStore.h"
+#include "ShiftTimes.h"
 #include <wx/wfstream.h>
 #include <wx/dir.h>
 #include <wx/regex.h>

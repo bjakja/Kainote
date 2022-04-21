@@ -21,7 +21,11 @@
 #include "MappedButton.h"
 #include "Styles.h"
 #include "KaiStatusBar.h"
+#include <wx/msw/winundef.h>
 #include <wx/timer.h>
+#include <wx/tokenzr.h>
+#include <wx/filedlg.h>
+#include <wx/window.h>
 
 enum {
 	TYPE_LIST = 10,

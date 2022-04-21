@@ -15,17 +15,12 @@
 
 
 #include "TabPanel.h"
-#include "KaiWindowResizer.h"
 
-#include "VideoBox.h"
-#include "EditBox.h"
-#include "shiftTimes.h"
-#include "SubsGrid.h"
 #include "Notebook.h"
 
 #include "KainoteFrame.h"
 #include "Config.h"
-#include "Hotkeys.h
+#include "Hotkeys.h"
 #include <wx/sizer.h>"
 #undef DRAWTEXT
 
@@ -49,7 +44,7 @@ TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, cons
 	grid = new SubsGrid(this, kai, -1, wxDefaultPosition, wxSize(400, 200), wxWANTS_CHARS);
 	edit->SetGrid1(grid);
 
-	shiftTimes = new shiftTimes(this, kai, -1);
+	shiftTimes = new ShiftTimes(this, kai, -1);
 	shiftTimes->Show(Options.GetBool(SHIFT_TIMES_ON));
 	GridShiftTimesSizer->Add(grid, 1, wxEXPAND, 0);
 	GridShiftTimesSizer->Add(shiftTimes, 0, wxEXPAND, 0);

@@ -16,20 +16,25 @@
 
 #pragma once
 
-#include <wx/tokenzr.h>
-#include <map>
-#include <vector>
-#include <algorithm>
 #include "Styles.h"
-#include <wx/utils.h> 
 #include "EnumFactory.h"
+#include "LogHandler.h"
+#include <wx/msw/winundef.h>
+#include <wx/tokenzr.h>
+#include <wx/utils.h>
+
 #include <wx/colour.h>
 #include <wx/string.h>
 #include <wx/window.h>
 #include <wx/bitmap.h>
-#include "Styles.h"
-#include "LogHandler.h"
-#include "config.h"
+#include <map>
+#include <vector>
+#include <algorithm>
+
+#
+
+
+
 
 const wxString emptyString;
 

@@ -34,7 +34,9 @@
 #include "stylestore.h"
 #include "Toolbar.h"
 #include "ShiftTimes.h"
+#include "SubsFile.h"
 #include <algorithm>
+
 
 
 bool sortstart(Dialogue *i, Dialogue *j)

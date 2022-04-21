@@ -15,6 +15,7 @@
 
 
 #pragma once
+#include <wx/msw/winundef.h>
 #include <wx/regex.h>
 #include <wx/arrstr.h>
 #include <wx/gdicmn.h>

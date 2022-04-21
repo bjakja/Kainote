@@ -87,14 +87,14 @@ public:
 	void HideControls();
 	void UpdateChars();
 
-	AudioBox* ABox;
-	TextEditor* TextEdit;
-	TextEditor* TextEditOrig;
-	KaiCheckBox* TlMode;
-	KaiRadioButton* Times;
-	KaiRadioButton* Frames;
-	KaiCheckBox* Comment;
-	NumCtrl* LayerEdit;
+	AudioBox* ABox = nullptr;
+	TextEditor* TextEdit = nullptr;
+	TextEditor* TextEditOrig = nullptr;
+	KaiCheckBox* TlMode = nullptr;
+	KaiRadioButton* Times = nullptr;
+	KaiRadioButton* Frames = nullptr;
+	KaiCheckBox* Comment = nullptr;
+	NumCtrl* LayerEdit = nullptr;
 	TimeCtrl* StartEdit;
 	TimeCtrl* EndEdit;
 	TimeCtrl* DurEdit;
@@ -145,9 +145,9 @@ public:
 	void OnAccelerator(wxCommandEvent& event);
 	int GetFormat();
 
-	wxBoxSizer* BoxSizer1;
+	wxBoxSizer* BoxSizer1 = nullptr;
 
-	Dialogue *line;
+	Dialogue *line = nullptr;
 	bool splittedTags;
 	bool lastVisible;
 	int Visual;
@@ -155,11 +155,11 @@ public:
 	KaiWindowResizer *windowResizer;
 private:
 	
-	wxBoxSizer* BoxSizer2;
-	wxBoxSizer* BoxSizer3;
-	wxBoxSizer* BoxSizer4;
-	wxBoxSizer* BoxSizer5;
-	wxBoxSizer* BoxSizer6;
+	wxBoxSizer* BoxSizer2 = nullptr;
+	wxBoxSizer* BoxSizer3 = nullptr;
+	wxBoxSizer* BoxSizer4 = nullptr;
+	wxBoxSizer* BoxSizer5 = nullptr;
+	wxBoxSizer* BoxSizer6 = nullptr;
 
 	void PutinNonass(const wxString& text, const wxString& tag);
 	void ChangeFont(Styles *retStyle, Styles *editedStyle);
@@ -204,8 +204,8 @@ private:
 	int CurrentDoubtful;
 	int CurrentUntranslated;
 	int currentLine;
-	SubsGrid *grid;
-	TabPanel *tab;
+	SubsGrid *grid = nullptr;
+	TabPanel *tab = nullptr;
 };
 
 

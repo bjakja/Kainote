@@ -19,6 +19,8 @@
 #include "KainoteFrame.h"
 #include "MisspellReplacer.h"
 #include "SubsGrid.h"
+#include "Provider.h"
+#include "TabPanel.h"
 #include <vector>
 #include <thread>
 #include "include\ffms.h"

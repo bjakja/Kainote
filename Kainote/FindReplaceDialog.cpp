@@ -20,6 +20,7 @@
 #include "Stylelistbox.h"
 #include "KaiStaticBoxSizer.h"
 #include "EditBox.h"
+#include "wx/msw/winundef.h"
 #include "wx/dirdlg.h"
 
 TabWindow::TabWindow(wxWindow *parent, int id, int tabNum, FindReplace * _FR)

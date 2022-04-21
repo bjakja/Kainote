@@ -14,11 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma  once
-#include "TabPanel.h"
 #include "wx/arrstr.h"
 #include "wx/window.h"
 #include <vector>
 
+class TabPanel;
 enum
 {
 	//set close subtitles to 0 to work with nullptr

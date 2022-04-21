@@ -13,16 +13,32 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+//#if guano
+
 
 #pragma once
-#include <wx/msw/winundef.h>
+
 #include "VisualAllTagsControls.h"
 #include "VisualAllTagsEdition.h"
+#include "VisualDrawingShapes.h"
 #include "TagFindReplace.h"
+
+#include "TabPanel.h"
+#include "VideoToolbar.h"
+#include "Hotkeys.h"
+#include "Editbox.h"
+#include "TabPanel.h"
+#include "SubsGrid.h"
+#include "Provider.h"
 #include "RendererVideo.h"
+
+
 #include <wx/string.h>
+
 #include <wx/bitmap.h>
+
 #include <wx/event.h>
+
 #include <wx/thread.h>
 #include <vector>
 #include <map>
@@ -47,10 +63,6 @@ enum{
 	ALL_TAGS
 };
 
-class Dialogue;
-class TabPanel;
-class DrawingAndClip;
-class TextEditor;
 
 class ClipPoint
 {
@@ -557,5 +569,6 @@ private:
 };
 
 
+//#endif // guano
 
 

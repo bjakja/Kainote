@@ -16,9 +16,9 @@
 #pragma once
 
 #include "KaiScrollbar.h"
-#include <vector>
 #include "Styles.h"
 #include "ListControls.h"
+#include <vector>
 
 
 wxDECLARE_EVENT(SELECTION_CHANGED, wxCommandEvent);

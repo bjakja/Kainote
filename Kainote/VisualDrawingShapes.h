@@ -14,12 +14,15 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+//#ifdef guano
 
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
-#include <vector>
 #include "Visuals.h"
+#include "TabPanel.h"
+#include <vector>
+
 #include <d3dx9.h>
 
 class ShapesSetting
@@ -125,3 +128,4 @@ void LoadSettings(std::vector<ShapesSetting>* shapes);
 void GetNames(std::vector<ShapesSetting>* shapes, wxArrayString* nameList);
 
 void SaveSettings(std::vector<ShapesSetting>* shapes);
+//#endif // 0

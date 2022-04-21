@@ -22,6 +22,10 @@
 #include <wx/regex.h>
 #include "Styles.h"
 #include "Config.h"
+#include "TabPanel.h"
+#include "DialogueTextEditor.h"
+#include "EditBox.h"
+#include "SubsGrid.h"
 
 class FindData {
 public:
@@ -39,7 +43,6 @@ public:
 	wxString finding;
 };
 
-class TabPanel;
 
 class TagFindReplace
 {

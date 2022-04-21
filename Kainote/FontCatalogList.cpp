@@ -24,9 +24,7 @@
 #include "KaiMessageBox.h"
 #include "KaiStaticBoxSizer.h"
 #include "LogHandler.h"
-#include <wx/tokenzr.h>
-#include <wx/filedlg.h>
-#include <wx/window.h>
+
 
 wxDEFINE_EVENT(CATALOG_CHANGED, wxCommandEvent);
 
