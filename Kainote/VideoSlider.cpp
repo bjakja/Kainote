@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "VideoBox.h"
 #include "SubsTime.h"
 #include "UtilsWindows.h"
@@ -465,4 +465,3 @@ EVT_MOUSE_CAPTURE_LOST(VideoSlider::OnMouseLeave)
 EVT_ERASE_BACKGROUND(VideoSlider::OnEraseBackground)
 END_EVENT_TABLE()
 
-#endif

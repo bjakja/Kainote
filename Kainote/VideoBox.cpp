@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 
 #include "Menu.h"
 #include "KaiMessageBox.h"
@@ -1796,4 +1796,3 @@ EVT_BUTTON(ID_END_OF_STREAM, VideoBox::OnEndFile)
 EVT_MOUSE_CAPTURE_LOST(VideoBox::OnLostCapture)
 END_EVENT_TABLE()
 
-#endif

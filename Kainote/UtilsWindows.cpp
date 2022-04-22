@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "UtilsWindows.h"
 #include "LogHandler.h"
 #include <wx/msw/private.h>
@@ -141,4 +141,3 @@ void SetThreadName(size_t dwThreadID, LPCSTR szThreadName)
 	{
 	}
 }
-#endif

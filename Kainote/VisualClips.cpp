@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
@@ -1435,4 +1435,3 @@ void DrawingAndClip::ChangeTool(int _tool, bool blockSetCurVisual) {
 	else
 		tool = clipTool;
 };
-#endif

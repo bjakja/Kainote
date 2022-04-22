@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 //#include "Toolbar.h"
 #include "Hotkeys.h"
 #include "KainoteApp.h"
@@ -681,4 +681,3 @@ EVT_MOUSE_CAPTURE_LOST(ToolbarMenu::OnLostCapture)
 EVT_SCROLL(ToolbarMenu::OnScroll)
 END_EVENT_TABLE()
 
-#endif

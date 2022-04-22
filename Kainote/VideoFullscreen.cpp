@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 
 #include "VideoFullscreen.h"
 #include "VideoBox.h"
@@ -244,4 +244,3 @@ EVT_KEY_DOWN(Fullscreen::OnKeyPress)
 EVT_PAINT(Fullscreen::OnPaint)
 END_EVENT_TABLE()
 
-#endif

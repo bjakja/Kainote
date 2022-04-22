@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "TimeCtrl.h"
 #include "NumCtrl.h"
 #include "SubsDialogue.h"
@@ -387,4 +387,3 @@ BEGIN_EVENT_TABLE(TimeCtrl, KaiTextCtrl)
 EVT_MOUSE_CAPTURE_LOST(TimeCtrl::OnMouseLost)
 END_EVENT_TABLE()
 
-#endif
