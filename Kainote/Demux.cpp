@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
 #include "Demux.h"
 #include "LogHandler.h"
 #include "KaiMessageBox.h"
@@ -279,3 +281,4 @@ int __stdcall Demux::GetSubtitles(long long Start, long long Duration, long long
 	demux->progress->Progress(prog);
 	return demux->progress->WasCancelled();
 }
+#endif

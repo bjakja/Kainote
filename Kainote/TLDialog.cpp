@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
+
 #include "TLDialog.h"
 #include "KaiStaticBoxSizer.h"
 #include "KaiStaticText.h"
@@ -96,3 +98,5 @@ void TLDialog::OnDownDel(wxCommandEvent& event)
 {
 	Sbsgrid->MoveTextTL(5);
 }
+
+#endif

@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
 #include "SubsGridPreview.h"
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
@@ -951,22 +953,7 @@ void SubsGridPreview::ContextMenu(const wxPoint &pos)
 
 void SubsGridPreview::OnFocus(wxFocusEvent &evt)
 {
-	/*if (this == evt.GetWindow()){
-
-	}*/
 	Refresh(false);
 }
 
-//size_t SubsGridPreview::GetKeyFromScrollPos(size_t numOfLines)
-//{
-//	size_t visibleLines = 0;
-//	for (size_t i = previewGrid->scrollPosition; i < previewGrid->GetCount(); i++){
-//		if (numOfLines == visibleLines)
-//			return i;
-//
-//		if (*previewGrid->GetDialogue(i)->isVisible)
-//			visibleLines++;
-//	}
-//
-//	return -1;
-//}
+#endif

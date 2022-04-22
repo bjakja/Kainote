@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 //#include "Utils.h"
 #include "StyleChange.h"
 //#include <wx/settings.h>
@@ -770,3 +770,5 @@ bool StyleChange::SetFont(const wxFont &font)
 
 	return wxWindow::SetFont(scFont);
 }
+
+#endif

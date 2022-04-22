@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "StylePreview.h"
 #include "RendererVideo.h"
 #include "config.h"
@@ -129,15 +129,8 @@ void StylePreview::SubsText(wxString *text)
 		<< L"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
 		<< previewStyle->GetRaw() << L"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," 
 		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) << L"\r\n"
-		/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
-
-	//previewStyle->Alignment = "5";
-	//wchar_t bom = 0xFEFF;
-	//*text << wxString(bom);
-	//*text << "[Script Info]\r\nPlayResX: " << width << "\r\nPlayResY: " << height << "\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
-	//	<< "\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-	//	<< previewStyle->GetRaw() << "\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," << previewStyle->Name << ",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) <<
-	//	"\r\n"/*Dialogue: 0,0:00:01.00,1:01:26.00,jakistamstyl,,0000,0000,0000,,Jakiśtam testowy tekst"*/;
+		
+	
 }
 
 void StylePreview::OnMouseEvent(wxMouseEvent& event)
@@ -163,3 +156,5 @@ BEGIN_EVENT_TABLE(StylePreview, wxWindow)
 EVT_PAINT(StylePreview::OnPaint)
 EVT_MOUSE_EVENTS(StylePreview::OnMouseEvent)
 END_EVENT_TABLE()
+
+#endif

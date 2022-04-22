@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "SpellCheckerDialog.h"
 #include "SubsGrid.h"
 #include "KaiStaticText.h"
@@ -337,3 +337,5 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 		}
 	}
 }
+
+#endif

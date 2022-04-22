@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "EditBox.h"
 #include "SubsGrid.h"
 #include "KainoteApp.h"
@@ -2160,3 +2160,5 @@ bool EditBox::SetFont(const wxFont &font)
 	Layout();
 	return true;
 }
+
+#endif

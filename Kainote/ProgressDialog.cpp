@@ -19,6 +19,7 @@
 #include "SubsTime.h"
 #include "KaiStaticText.h"
 #include "KaiGauge.h"
+#include <wx/gauge.h>
 #include <ShObjIdl.h>
 
 
