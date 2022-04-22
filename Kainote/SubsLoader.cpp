@@ -13,6 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
+
 #include "SubsLoader.h"
 #include "SubsGrid.h"
 #include "KaiMessageBox.h"
@@ -188,3 +191,4 @@ bool SubsLoader::LoadTXT(const wxString &text)
 	return grid->GetCount() > 0;
 }
 
+#endif

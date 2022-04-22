@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "config.h"
 #include "DShowPlayer.h"
 #include "Videobox.h"
@@ -577,61 +577,4 @@ bool DShowPlayer::FilterConfig(wxString name, int idx, wxPoint pos)
 }
 
 
-/*void DShowPlayer::Disconvobsub()
-	{
-	if(!m_pGraph||vobsub){return;}
-	IBaseFilter *Avobsub=nullptr;
-	m_pGraph->FindFilterByName(L"Vobsub Autoload",&Avobsub);
-	if(!Avobsub){return;}
-	if(m_state==Playing){Pause();}
-	IEnumPins *enumIn=nullptr;
-	IPin *vobpin1=nullptr;
-	IPin *vobpin2=nullptr;
-	IPin *vobpin3=nullptr;
-	IPin *Outpin1=nullptr;
-	IPin *Outpin2=nullptr;
-	IPin *Outpin3=nullptr;
-
-	HRESULT hr;
-	CHECK_HR1(hr=Avobsub->EnumPins(&enumIn),L"Enum Pins");
-	if(S_OK == enumIn->Next(1, &vobpin1, nullptr)){
-	vobpin1->ConnectedTo(&Outpin1);if(Outpin1){CHECK_HR1(hr=Outpin1->Disconnect(),L"Cannot Disconnect Outpin1");MessageBox(nullptr, L"Outpin1!", L"vinfo", MB_OK);}
-	if(S_OK == enumIn->Next(1, &vobpin2, nullptr)){
-	vobpin2->ConnectedTo(&Outpin2);if(Outpin2){CHECK_HR1(hr=Outpin2->Disconnect(),L"Cannot Disconnect Outpin2");MessageBox(nullptr, L"Outpin2!", L"vinfo", MB_OK);}}
-	if(S_OK == enumIn->Next(1, &vobpin3, nullptr)){
-	vobpin3->ConnectedTo(&Outpin3);if(Outpin3){
-
-	PIN_DIRECTION pd2;CHECK_HR1(hr=Outpin3->QueryDirection(&pd2),L"pin dir outpin3");
-	if(pd2==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin3", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin3!", L"vinfo", MB_OK);}
-	}}
-	MessageBox(nullptr, L"Connection!", L"vinfo", MB_OK);
-	Outpin1->
-
-	if(Outpin3){PIN_DIRECTION pd;CHECK_HR1(hr=Outpin3->QueryDirection(&pd),L"pin dir outpin1");
-	if(pd==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin1!", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin1!", L"vinfo", MB_OK);}
-
-	if(Outpin2){PIN_DIRECTION pd1;CHECK_HR1(hr=Outpin2->QueryDirection(&pd1),L"pin dir outpin1");
-	if(pd1==PINDIR_INPUT){MessageBox(nullptr, L"Pindir input outpin2!", L"vinfo", MB_OK);}else{MessageBox(nullptr, L"Pindir output outpin2!", L"vinfo", MB_OK);}
-
-	CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin2:Outpin3,(pd==PINDIR_INPUT)?Outpin3:Outpin2),L"Connect outpin1 and 2 failed");}
-	//if(Outpin3){CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin3:Outpin1,(pd==PINDIR_INPUT)?Outpin1:Outpin3),L"Connect outpin1 and 3 failed");}
-	}
-	else if(Outpin2){PIN_DIRECTION pd;CHECK_HR1(hr=Outpin2->QueryDirection(&pd),L"pin dir outpin2");
-	if(Outpin1){CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin1:Outpin2,(pd==PINDIR_INPUT)?Outpin2:Outpin1),L"Connect outpin2 and 1 failed");}
-	if(Outpin3){CHECK_HR1(hr=m_pGraph->Connect((pd==PINDIR_INPUT)?Outpin3:Outpin2,(pd==PINDIR_INPUT)?Outpin2:Outpin3),L"Connect outpin2 and 3 failed");}
-	}
-	CHECK_HR1(hr=m_pGraph->RemoveFilter(Avobsub),L"vobsub remove failed");
-
-	done:
-	SAFE_RELEASE(Avobsub);
-	SAFE_RELEASE(enumIn);
-	SAFE_RELEASE(vobpin1);
-	SAFE_RELEASE(vobpin2);
-	SAFE_RELEASE(vobpin3);
-	SAFE_RELEASE(Outpin1);
-	SAFE_RELEASE(Outpin2);
-	SAFE_RELEASE(Outpin3);
-	}
-
-
-	*/
+#endif

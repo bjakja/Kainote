@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "RendererVideo.h"
 #include "Config.h"
 #include "kainoteFrame.h"
@@ -851,3 +852,5 @@ PlaybackState RendererVideo::GetState()
 {
 	return m_State;
 }
+
+#endif

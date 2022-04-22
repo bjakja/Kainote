@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "TabPanel.h"
 #include "RendererVideo.h"
 #include "VideoBox.h"
@@ -543,3 +543,5 @@ void RotationZ::ChangeClipRotationZ(wxString* txt, const D3DXVECTOR2& orgPivot, 
 		}
 	}
 }
+
+#endif

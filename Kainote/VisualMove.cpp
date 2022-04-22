@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//#include <wx/msw/winundef.h>
+#ifdef guano
 #include "TabPanel.h"
 #include "VideoBox.h"
 #include "EditBox.h"
@@ -408,3 +408,4 @@ void Move::ChangeTool(int _tool, bool blockSetCurVisual)
 {
 	hasLineToMove = _tool != -1;
 }
+#endif

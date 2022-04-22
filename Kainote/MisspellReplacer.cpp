@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#ifdef guano
 #include "MisspellReplacer.h"
 #include "OpennWrite.h"
 #include "KaiStaticBoxSizer.h"
@@ -774,31 +774,4 @@ fail:
 	KaiLog(wxString::Format(_("Reguła \"%s\" jest nieprawidłowa."), stringRule));
 }
 
-//CheckBoxListButton::CheckBoxListButton(wxWindow *parent, int id, const wxString &name, const wxArrayString &listElements, const wxPoint &pos, const wxSize &size, long style) 
-//	:MappedButton(parent, id, name, -1, pos, size, style)
-//{
-//	Bind(wxEVT_COMMAND_BUTTON_CLICKED, [=](wxCommandEvent &evt){
-//		if (!checkList)
-//			checkList = new CustomCheckListBox(this, listElements, name);
-//
-//		if (checkList->ShowModal() != wxID_OK){
-//			for (size_t i = 0; i < checkList->CheckListBox->GetCount(); i++){
-//				Item *item = checkList->CheckListBox->GetItem(i, 0);
-//				if (item)
-//					item->modified = false;
-//			}
-//		}
-//		
-//	}, GetId());
-//}
-//
-//void CheckBoxListButton::GetChecked(wxArrayInt & checks)
-//{
-//	if (checkList){
-//		for (size_t i = 0; i < checkList->CheckListBox->GetCount(); i++){
-//			Item *item = checkList->CheckListBox->GetItem(i, 0);
-//			if (item)
-//				checks.Add(i);
-//		}
-//	}
-//}
+#endif

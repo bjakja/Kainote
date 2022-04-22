@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
 #include "VideoToolbar.h"
 #include "Config.h"
 #include "Notebook.h"
@@ -1237,3 +1239,5 @@ void RotationXYItem::Synchronize(VisualItem* item)
 	RotationXYItem* rxyi = (RotationXYItem*)item;
 	toggled = rxyi->toggled;
 }
+
+#endif

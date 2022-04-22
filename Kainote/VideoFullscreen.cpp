@@ -13,6 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
+
 #include "VideoFullscreen.h"
 #include "VideoBox.h"
 #include "KainoteApp.h"
@@ -240,3 +243,5 @@ EVT_MOUSE_EVENTS(Fullscreen::OnMouseEvent)
 EVT_KEY_DOWN(Fullscreen::OnKeyPress)
 EVT_PAINT(Fullscreen::OnPaint)
 END_EVENT_TABLE()
+
+#endif

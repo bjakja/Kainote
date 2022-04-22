@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#ifdef guano
+
 
 
 
@@ -373,4 +373,3 @@ enum{
 	ID_PLAY_AFTER
 };
 
-#endif

@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
+
 #include <wx/msw/winundef.h>
 #include "TabPanel.h"
 #include "VideoBox.h"
@@ -383,3 +385,5 @@ void RotationXY::ChangeTool(int _tool, bool blockSetCurVisual)
 		tab->video->Render(false);
 	}
 }
+
+#endif

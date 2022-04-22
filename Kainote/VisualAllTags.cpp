@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <wx/msw/winundef.h>
+#ifdef guano
 #include "Visuals.h"
 #include "VisualDrawingShapes.h"
 #include "TabPanel.h"
@@ -535,3 +535,4 @@ void AllTags::OnMouseCaptureLost(wxMouseCaptureLostEvent& evt)
 	}
 }
 
+#endif
