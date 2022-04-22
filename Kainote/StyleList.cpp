@@ -15,12 +15,13 @@
 
 
 #include "StyleList.h"
+#include "FontEnumerator.h"
 #include "config.h"
 #include <wx/dc.h>
 #include <wx/dcmemory.h>
 #include <wx/dcclient.h>
 #include <algorithm>
-#include "FontEnumerator.h"
+
 
 wxDEFINE_EVENT(SELECTION_CHANGED, wxCommandEvent);
 
@@ -143,13 +144,6 @@ void StyleList::OnSize(wxSizeEvent& event)
 
 void StyleList::OnScroll(wxScrollWinEvent& event)
 {
-	/*int newPos = event.GetPosition();
-
-	//if(newPos<0 || newPos>(int)stylenames->size()-1){return;}
-	if (scPos != newPos) {
-	scPos = newPos;
-	Refresh(false);
-	}*/
 	int newPos = 0;
 	if (event.GetEventType() == wxEVT_SCROLLWIN_LINEUP)
 	{
@@ -259,12 +253,7 @@ void StyleList::OnMouseEvent(wxMouseEvent& event)
 			else{
 				for (int i = 0; i < (int)sels.size(); i++){
 					if ((sels[i] + diff) < 0){ break; }
-					//int fst=sels[i]-1;
-					//int snd=sels[i];
-
-					//Styles *tmp=stylenames->at(fst);
-					//stylenames->at(fst)=stylenames->at(snd);
-					//stylenames->at(snd)=tmp;
+					
 					Styles *tmp = stylenames->at(sels[i]);
 					stylenames->erase(stylenames->begin() + sels[i]);
 					stylenames->insert(stylenames->begin() + sels[i] + diff, tmp);

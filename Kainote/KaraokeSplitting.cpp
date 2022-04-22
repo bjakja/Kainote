@@ -13,12 +13,13 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifdef guano
 #include "KaraokeSplitting.h"
 #include "Config.h"
 #include "AudioDisplay.h"
 #include <math.h>
 #include <wx/regex.h>
-//#undef DrawText
+
 
 Karaoke::Karaoke(AudioDisplay *_AD)
 {
@@ -364,7 +365,7 @@ void Karaoke::GetTextStripped(int line, wxString &textStripped)
 	if (block && lastBlock < len - 1){
 		textStripped += sylText.Mid(lastBlock);
 	}
-	//textStripped.Replace(L"\\N", emptyString);
-	//textStripped.Replace(L"\\n", emptyString);
-	//textStripped.Replace(L"\\h", emptyString);
+	
 }
+
+#endif

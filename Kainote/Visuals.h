@@ -24,7 +24,7 @@
 #include "TagFindReplace.h"
 
 #include "TabPanel.h"
-#include "VideoToolbar.h"
+//#include "VideoToolbar.h"
 #include "Hotkeys.h"
 #include "Editbox.h"
 #include "TabPanel.h"
@@ -63,7 +63,7 @@ enum{
 	ALL_TAGS
 };
 
-
+class DrawingAndClip;
 class ClipPoint
 {
 public:

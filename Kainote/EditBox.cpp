@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "EditBox.h"
 #include "SubsGrid.h"
 #include "KainoteApp.h"
@@ -27,6 +27,7 @@
 #include "Notebook.h"
 #include "kainoteApp.h"
 #include "Toolbar.h"
+#include "RendererVideo.h"
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
@@ -2161,4 +2162,3 @@ bool EditBox::SetFont(const wxFont &font)
 	return true;
 }
 
-#endif

@@ -15,9 +15,11 @@
 
 #pragma once
 
-#include "wx/msw/winundef.h"
+
 #include "KaiPanel.h"
 #include "TabPanel.h"
+#include "MappedButton.h"
+#include "NumCtrl.h"
 
 class KainoteFrame;
 
@@ -30,13 +32,13 @@ class KaiScrollbar;
 class KaiStaticBoxSizer;
 
 
-class shiftTimes: public KaiPanel
+class ShiftTimes: public KaiPanel
 {
 public:
 	
-	shiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
+	ShiftTimes(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id = -1, 
 		const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style=0);
-	virtual ~shiftTimes();
+	virtual ~ShiftTimes();
 	KaiRadioButton* StartVAtime;
 	KaiRadioButton* EndVAtime;
 	KaiChoice *WhichLines;
@@ -78,7 +80,7 @@ public:
 	wxWindow *panel; 
 
 	void Contents(bool addopts = true);
-	void RefVals(shiftTimes *from = nullptr);
+	void RefVals(ShiftTimes *from = nullptr);
 	void OnOKClick(wxCommandEvent& event);
 	wxBoxSizer *Main;
 	bool SetBackgroundColour(const wxColour &col);

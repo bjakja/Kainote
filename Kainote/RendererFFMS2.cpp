@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
 #include "AudioBox.h"
 #include "EditBox.h"
 #include "kainoteApp.h"
@@ -593,3 +595,5 @@ bool RendererFFMS2::InitRendererDX()
 #endif
 	return true;
 }
+
+#endif

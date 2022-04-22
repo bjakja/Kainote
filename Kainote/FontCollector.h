@@ -16,14 +16,14 @@
 #pragma once
 
 
-#include <wx/msw/winundef.h>
-#include <vector>
-#include <map>
-#include <set>
 #include "KaiRadioButton.h"
 #include "MappedButton.h"
 #include "KaiTextCtrl.h"
 #include "KaiDialog.h"
+#include <vector>
+#include <map>
+#include <set>
+
 #include <wx/zipstrm.h>
 #include <wx/thread.h>
 

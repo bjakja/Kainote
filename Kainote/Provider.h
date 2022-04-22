@@ -26,7 +26,7 @@
 #include "include\ffms.h"
 
 class chapter;
-
+class RendererVideo;
 
 class Provider
 {
@@ -77,7 +77,7 @@ protected:
 	Provider(const wxString& filename, RendererVideo* renderer);
 	volatile bool audioNotInitialized = true;
 	volatile float m_audioProgress = 0;
-	RendererVideo* m_renderer = 0;
+	RendererVideo* m_renderer = nullptr;
 	int m_width = -1;
 	int m_height;
 	int m_arwidth;

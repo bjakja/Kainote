@@ -32,6 +32,7 @@
 //It's valid licence opensource
 //Everything is in help
 
+#ifdef guano
 #include "Config.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
@@ -1107,3 +1108,4 @@ int AutoToFile::ObjectGarbageCollect(lua_State *L)
 	return 0;
 };
 
+#endif

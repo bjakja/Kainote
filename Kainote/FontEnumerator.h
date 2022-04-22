@@ -24,6 +24,8 @@
 #include <map>
 #include <vector>
 #include <functional>
+
+//#include <windows.h>
 #include <windef.h>
 #include <wingdi.h>
 
@@ -61,7 +63,7 @@ private:
 	HANDLE checkFontsThread;
 	wxMutex enumerateMutex;
 	
-	//bool hasLocalFonts = false;
+	
 };
 
 extern FontEnumerator FontEnum;

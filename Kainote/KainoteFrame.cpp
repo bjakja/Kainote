@@ -20,7 +20,7 @@
 
 **************************************************************/
 
-
+#ifdef guano
 #include "KainoteFrame.h"
 
 #include "SubsTime.h"
@@ -2418,3 +2418,4 @@ void KainoteFrame::SetStatusText(const wxString& label, int field) {
 	StatusBar->SetLabelText(field, label); 
 }
 
+#endif

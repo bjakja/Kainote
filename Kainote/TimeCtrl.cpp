@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#undef DRAWTEXT
+#ifdef guano
 #include "TimeCtrl.h"
 #include "NumCtrl.h"
 #include "SubsDialogue.h"
@@ -382,39 +382,9 @@ void TimeCtrl::OnMouseEvent(wxMouseEvent &event) {
 	event.Skip();
 }
 
-//void TimeCtrl::OnCopy(wxCommandEvent &event)
-//{
-//	SetFocus();
-//	SetSelection(0,GetValue().Length());
-//	Copy();
-//}
-//
-//void TimeCtrl::OnPaste(wxCommandEvent &event)
-//{
-//	pastes=true;
-//	SetFocus();
-//	SetSelection(0,GetValue().Length());
-//	Paste();
-//	SetSelection(0,GetValue().Length());
-//	timeUnchanged=false;
-//	pastes=false;
-//}
-
-//void TimeCtrl::SetModified(bool modified)
-//{
-//	if(modified)
-//	{
-//		SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
-//	}else{
-//		SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-//
-//	}
-//	wxTextCtrl::SetModified(modified);
-//}
 
 BEGIN_EVENT_TABLE(TimeCtrl, KaiTextCtrl)
-//EVT_MOUSE_EVENTS(TimeCtrl::OnMouseEvent)
-//EVT_MENU(Time_Copy,TimeCtrl::OnCopy)
-//EVT_MENU(Time_Paste,TimeCtrl::OnPaste)
 EVT_MOUSE_CAPTURE_LOST(TimeCtrl::OnMouseLost)
 END_EVENT_TABLE()
+
+#endif

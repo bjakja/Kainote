@@ -14,6 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
+
 #include "FontCollector.h"
 #include "KainoteApp.h"
 #include "Config.h"
@@ -24,29 +25,19 @@
 #include "SubsGrid.h"
 #include "StyleStore.h"
 #include "ShiftTimes.h"
+#include "KaiMessageBox.h"
+//#include "UtilsWindows.h"
+#include <wx/msw/winundef.h>
+#include <wx/dirdlg.h>
+#include <wx/filedlg.h>
 #include <wx/wfstream.h>
 #include <wx/dir.h>
 #include <wx/regex.h>
-#include "KaiMessageBox.h"
 #include <ShlObj.h>
-#include "UtilsWindows.h"
-#include <wx/dirdlg.h>
-#include <wx/filedlg.h>
 
 wxDEFINE_EVENT(EVT_APPEND_MESSAGE, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_BUTTONS, wxThreadEvent);
 wxDEFINE_EVENT(EVT_ENABLE_OPEN_FOLDER, wxThreadEvent);
-
-//void ThreadFunction(std::tuple<FontCollector*, SubsFile*, int*> *data)
-//{
-//	FontCollector *fc = std::get<0>(*data);
-//	SubsFile *file = std::get<1>(*data);
-//	int *num = std::get<2>(*data);
-//	//fc->SendMessageD(wxString::Format(_("Wystartował wątek %i.\n\n"), *num), wxColour("#FFFFFF"));
-//	fc->GetAssFonts(file, *num);
-//	delete data;
-//	delete num;
-//}
 
 SubsFont::SubsFont(const wxString &_name, const LOGFONTW &_logFont, int _bold, bool _italic){
 	name = _name;
@@ -1287,17 +1278,3 @@ wxThread::ExitCode FontCollectorThread::Entry()
 	return 0;
 }
 
-//TabFontSeekThread::TabFontSeekThread(FontCollector *_fc, SubsFile *_file, int num)
-//	:wxThread(wxTHREAD_JOINABLE)
-//{
-//	fc = _fc;
-//	file = _file;
-//	numTab = num;
-//	Create();
-//	Run();
-//}
-//
-//wxThread::ExitCode TabFontSeekThread::Entry()
-//{
-//	fc->GetAssFonts(file, numTab);
-//}

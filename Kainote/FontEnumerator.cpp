@@ -16,10 +16,11 @@
 #include "FontEnumerator.h"
 #include "kainoteFrame.h"
 #include "Notebook.h"
-#include "wx/msw/winundef.h"
+
 #include <wx/arrstr.h>
 #include <wx/filefn.h>
 #include <unicode/utf16.h>
+#include <windows.h>
 #include <Usp10.h>
 
 #include <ShlObj.h>
@@ -150,7 +151,8 @@ void FontEnumerator::RefreshClientsFonts()
 	}
 }
 
-static int __stdcall FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC* lptm,
+
+int __stdcall FontEnumerator::FontEnumeratorProc(LPLOGFONT lplf, TEXTMETRIC* lptm,
 	unsigned int dwStyle, long* lParam)
 
 {

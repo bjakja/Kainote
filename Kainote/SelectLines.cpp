@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "KainoteFrame.h"
 #include "KaiMessageBox.h"
 #include "Stylelistbox.h"
@@ -467,4 +467,3 @@ void SelectLines::OnChooseStyles(wxCommandEvent& event)
 	RegEx->SetValue(true);
 	FindText->SetValue(styles);
 }
-#endif

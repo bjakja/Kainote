@@ -14,16 +14,20 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-//#ifdef guano
+
 
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
 #include "Visuals.h"
+#include "VisualDrawingShapes.h"
 #include "Notebook.h"
 #include <vector>
-#include <wx/msw/winundef.h>
+
 #include <d3dx9.h>
+
+class ClipPoint;
+class DrawingAndClip;
 
 class ShapesSetting
 {
@@ -117,7 +121,7 @@ private:
 	std::vector<ClipPoint> points;
 	D3DXVECTOR2 shapeSize;
 	D3DXVECTOR2 shapeScale = D3DXVECTOR2(1.f, 1.f);
-	//D3DXVECTOR2 position = D3DXVECTOR2(0.f, 0.f);
+	
 	D3DXVECTOR2 drawingRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
 	bool rectangleVisible = false;
 	int grabbed = -1;
@@ -128,4 +132,3 @@ void LoadSettings(std::vector<ShapesSetting>* shapes);
 void GetNames(std::vector<ShapesSetting>* shapes, wxArrayString* nameList);
 
 void SaveSettings(std::vector<ShapesSetting>* shapes);
-//#endif // 0

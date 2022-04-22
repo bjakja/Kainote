@@ -14,6 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#ifdef guano
+#include "SubsFile.h"
 #include "SubsGridBase.h"
 #include "SubsLoader.h"
 #include "SubsGridFiltering.h"
@@ -34,7 +36,10 @@
 #include "stylestore.h"
 #include "Toolbar.h"
 #include "ShiftTimes.h"
-#include "SubsFile.h"
+#include "Visuals.h"
+
+#include "VisualDrawingShapes.h"
+
 #include <algorithm>
 
 
@@ -1942,3 +1947,5 @@ SubsGrid* SubsGridBase::CG1 = nullptr;
 SubsGrid* SubsGridBase::CG2 = nullptr;
 bool SubsGridBase::hasCompare = false;
 wxArrayString SubsGridBase::compareStyles = wxArrayString();
+
+#endif

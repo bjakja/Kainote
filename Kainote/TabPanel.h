@@ -23,10 +23,10 @@
 #include "KaiWindowResizer.h"
 #include "SubsGrid.h"
 #include "Editbox.h"
-
+#include "ShiftTimes.h"
 #include <wx/sizer.h>
 
-
+class ShiftTimes;
 
 class TabPanel : public KaiPanel
 {
@@ -34,12 +34,11 @@ public:
 	TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize);
 	virtual ~TabPanel();
 	bool Hide();
-	//bool Show(bool show=true);
-
+	
 	SubsGrid* grid;
 	EditBox* edit;
 	VideoBox* video;
-	shiftTimes* shiftTimes;
+	ShiftTimes* shiftTimes;
 
 	wxBoxSizer* MainSizer;
 	wxBoxSizer* VideoEditboxSizer;
@@ -64,13 +63,8 @@ public:
 private:
 
 	bool holding;
-	//void OnMouseEvent(wxMouseEvent& event);
 	void OnFocus(wxChildFocusEvent& event);
 	void OnSize(wxSizeEvent & evt);
-	/*void OnNavigation(wxNavigationKeyEvent& evt);
-	void SetNextControl(bool next);
-	void FindFocusable(bool next, wxWindowListNode** node);*/
-	//bool HasMultiplePages() const { return true; };
 	DECLARE_EVENT_TABLE()
 };
 

@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+
+#ifdef guano
 #include "Notebook.h"
 
 #include "kainoteApp.h"
@@ -1711,3 +1713,5 @@ EVT_SIZE(Notebook::OnSize)
 EVT_PAINT(Notebook::OnPaint)
 EVT_MOUSE_CAPTURE_LOST(Notebook::OnLostCapture)
 END_EVENT_TABLE()
+
+#endif

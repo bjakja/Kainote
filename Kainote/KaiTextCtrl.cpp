@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 #include "KaiTextCtrl.h"
+
 #include <wx/clipbrd.h>
 #include <wx/dc.h>
 #include <wx/dcmemory.h>

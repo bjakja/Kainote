@@ -22,9 +22,12 @@
 #include "KaiScrollbar.h"
 #include "LineParse.h"
 #include "RendererVideo.h"
+#include "SubsFile.h"
+#include "Visuals.h"
+#include "VisualDrawingShapes.h"
 #include <vector>
 #include <set>
-#undef DRAWTEXT
+
 
 
 class EditBox;

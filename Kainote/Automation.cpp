@@ -29,7 +29,7 @@
 // Aegisub Project http://www.aegisub.org/
 
 
-
+#ifdef guano
 #include "Automation.h"
 #include "Hotkeys.h"
 
@@ -1289,3 +1289,4 @@
 	}
 
 
+#endif
