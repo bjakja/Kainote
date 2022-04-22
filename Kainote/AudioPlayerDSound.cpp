@@ -17,7 +17,7 @@
 
 ///////////
 // Headers
-#ifdef guano
+
 #undef BIND
 
 #include <process.h>
@@ -847,5 +847,5 @@ double DirectSoundPlayer2::GetVolume()
 }
 
 
-#endif
+
 

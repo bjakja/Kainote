@@ -75,10 +75,7 @@ RendererVideo::RendererVideo(VideoBox *control, bool visualDisabled)
 	diff = 0;
 	m_AverangeFrameTime = 42;
 	m_ZoomParcent = 1.f;
-#if byvertices
-	vertex = nullptr;
-	texture = nullptr;
-#endif
+
 	m_DXVAProcessor = nullptr;
 	m_DXVAService = nullptr;
 }
@@ -129,14 +126,8 @@ bool RendererVideo::UpdateRects(bool changeZoom)
 	if (arwidth > rt.width)
 	{
 		int onebar = (rt.height - arheight) / 2;
-		//KaiLog(wxString::Format("onebar w %i, h %i, %i", onebar, rt.height, arheight));
-		/*if(zoomParcent>1){
-		int zoomARHeight = ((zoomRect.width - zoomRect.x)) * AR;
-		onebar = (zoomRect.width - zoomRect.x > rt.width)? (rt.height - zoomARHeight)/2 : 0;
-		wLogStatus("height %i %i %i, %i", zoomARHeight,arheight,rt.height,onebar);
-		}*/
+		
 		m_BackBufferRect.bottom = arheight + onebar;
-		//if(backBufferRect.bottom % 2 != 0){backBufferRect.bottom++;}
 		m_BackBufferRect.right = rt.width;//zostaje bez zmian
 		m_BackBufferRect.left = 0;
 		m_BackBufferRect.top = onebar;
@@ -144,25 +135,18 @@ bool RendererVideo::UpdateRects(bool changeZoom)
 	else if (arheight > rt.height)
 	{
 		int onebar = (rt.width - arwidth) / 2;
-		//KaiLog(wxString::Format("onebar w %i, h %i, %i", onebar, rt.width, arwidth));
-		/*if(zoomParcent>1){
-		int zoomARWidth = ((zoomRect.height - zoomRect.y)) / AR;
-		onebar = (zoomRect.height - zoomRect.y > rt.height)? (rt.width - zoomARWidth)/2 : 0;
-		wLogStatus("width %i %i %i, %i", zoomARWidth,arwidth,rt.width,onebar);
-		}*/
+		
 		m_BackBufferRect.bottom = rt.height;//zostaje bez zmian
 		m_BackBufferRect.right = arwidth + onebar;
-		//if(backBufferRect.right % 2 != 0){backBufferRect.right++;}
 		m_BackBufferRect.left = onebar;
 		m_BackBufferRect.top = 0;
 	}
 	else
 	{
-		//KaiLog(wxString::Format("equal %i %i", windowRect.right, windowRect.bottom));
 		m_BackBufferRect = m_WindowRect;
 	}
-	//}
-	if (/*zoomRect.width>0 && */changeZoom){
+	
+	if (changeZoom){
 		wxSize s(m_BackBufferRect.right, m_BackBufferRect.bottom);
 		float videoToScreenX = (float)s.x / (float)m_Width;
 		float videoToScreenY = (float)s.y / (float)m_Height;
@@ -242,7 +226,7 @@ bool RendererVideo::InitDX()
 	}
 	else{
 		hr = m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
-			D3DCREATE_HARDWARE_VERTEXPROCESSING /*| D3DCREATE_MULTITHREADED*/ /*| D3DCREATE_FPU_PRESERVE*//* | D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice);//| D3DCREATE_FPU_PRESERVE
+			D3DCREATE_HARDWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE/* | D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice);
 		if (FAILED(hr)){
 			HR(m_D3DObject->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_HWND,
 				D3DCREATE_SOFTWARE_VERTEXPROCESSING | D3DCREATE_MULTITHREADED | D3DCREATE_FPU_PRESERVE /*| D3DCREATE_PUREDEVICE*/, &d3dpp, &m_D3DDevice),
@@ -281,53 +265,18 @@ bool RendererVideo::InitDX()
 	HR(m_D3DDevice->SetTransform(D3DTS_WORLD, &matIdentity), _("Nie można ustawić macierzy świata"));
 	HR(m_D3DDevice->SetTransform(D3DTS_VIEW, &matIdentity), _("Nie można ustawić macierzy widoku"));
 
-#if byvertices
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
-	// Add filtering
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-	hr = m_D3DDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-	HR(hr, _("Zawiodło któreś z ustawień DirectX vertices"));
-	HR(m_D3DDevice->CreateTexture(m_Width, m_Height, 1, D3DUSAGE_RENDERTARGET,
-		D3DFMT_X8R8G8B8, D3DPOOL_DEFAULT, &texture, nullptr), "Nie można utworzyć tekstury");
-
-	HR(texture->GetSurfaceLevel(0, &m_BlackBarsSurface), "nie można utworzyć powierzchni");
-
-	HR(m_D3DDevice->CreateOffscreenPlainSurface(m_Width, m_Height, m_D3DFormat, D3DPOOL_DEFAULT, &m_MainSurface, 0), "Nie można utworzyć powierzchni");
-
-	HR(m_D3DDevice->CreateVertexBuffer(4 * sizeof(CUSTOMVERTEX), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, D3DFVF_CUSTOMVERTEX, D3DPOOL_DEFAULT, &vertex, nullptr),
-		"Nie można utworzyć bufora wertex")
-
-		CUSTOMVERTEX* pVertices;
-	HR(hr = vertex->Lock(0, 0, (void**)&pVertices, 0), "nie można zablokować bufora vertex");
-
-	pVertices[0].position = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	pVertices[0].tu = 0.0f;
-	pVertices[0].tv = 0.0f;
-	pVertices[1].position = D3DXVECTOR3(m_Width, 0.0f, 0.0f);
-	pVertices[1].tu = 1.0f;
-	pVertices[1].tv = 0.0f;
-	pVertices[2].position = D3DXVECTOR3(m_Width, m_Height, 0.0f);
-	pVertices[2].tu = 1.0f;
-	pVertices[2].tv = 1.0f;
-	pVertices[3].position = D3DXVECTOR3(0.0f, m_Height, 0.0f);
-	pVertices[3].tu = 0.0f;
-	pVertices[3].tv = 1.0f;
-
-	vertex->Unlock();
-#endif
 
 	if (!InitRendererDX())
 		return false;
 
 	wxFont *font12 = Options.GetFont(4);
 	wxSize pixelSize = font12->GetPixelSize();
-	//HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-	//	DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
-	//HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
-		//DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
-	//HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DFont), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateFontW(m_D3DDevice, pixelSize.y, pixelSize.x, FW_BOLD, 0, FALSE, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLEARTYPE_QUALITY,
+		DEFAULT_PITCH | FF_DONTCARE, L"Tahoma", &m_D3DCalcFont), _("Nie można stworzyć czcionki D3DX"));
+	HR(D3DXCreateLine(m_D3DDevice, &m_D3DLine), _("Nie można stworzyć linii D3DX"));
 
 	return true;
 }
@@ -339,10 +288,6 @@ void RendererVideo::Clear(bool clearObject)
 	SAFE_RELEASE(m_D3DLine);
 	SAFE_RELEASE(m_D3DFont);
 	SAFE_RELEASE(m_D3DCalcFont);
-#if byvertices
-	SAFE_RELEASE(vertex);
-	SAFE_RELEASE(texture);
-#endif
 	SAFE_RELEASE(m_DXVAProcessor);
 	SAFE_RELEASE(m_DXVAService);
 
@@ -395,7 +340,6 @@ void RendererVideo::ResetZoom()
 
 void RendererVideo::Zoom(const wxSize &size)
 {
-	//wxSize s1(backBufferRect.right - backBufferRect.left, backBufferRect.bottom - backBufferRect.top);
 	m_HasZoom = true;
 	float videoToScreenXX = size.x / (float)m_Width;
 	float videoToScreenYY = size.y / (float)m_Height;
@@ -569,17 +513,7 @@ void RendererVideo::ZoomMouseHandle(wxMouseEvent &evt)
 				m_ZoomRect.y = MID(miny, m_ZoomRect.y, (s.y - zoomheight));
 				m_ZoomRect.height += (m_ZoomRect.y - oldzy);
 			}
-			/*if (m_ZoomRect.x >= minx && m_ZoomRect.width <= s.x){
-				m_ZoomRect.width += (m_ZoomRect.x - oldzx);
-				if (m_ZoomRect.width > s.x) {
-
-				}
-				m_ZoomRect.width = MIN(m_ZoomRect.width, s.x);
-			}
-			if (m_ZoomRect.y >= miny && m_ZoomRect.height <= s.y){
-				m_ZoomRect.height += (m_ZoomRect.y - oldzy);
-				m_ZoomRect.height = MIN(m_ZoomRect.height, s.y);
-			}*/
+		
 			
 			
 			if(m_ZoomRect.x != oldzx || m_ZoomRect.y != oldzy)

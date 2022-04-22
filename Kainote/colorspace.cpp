@@ -1,5 +1,5 @@
 
-#ifdef guano
+
 #include "Config.h"
 //#include "Utils.h"
 #include "ColorSpace.h"
@@ -387,4 +387,3 @@ void rgb_to_yuv(int R, int G, int B, unsigned char *Y, unsigned char *U, unsigne
 	*U = clip_colorval((-int(0.147 * 65536) * R - int(0.289 * 65536) * G + int(0.436 * 65536) * B) / 65536 + 128);
 	*V = clip_colorval((int(0.615 * 65536) * R - int(0.515 * 65536) * G - int(0.100 * 65536) * B) / 65536 + 128);
 }
-#endif

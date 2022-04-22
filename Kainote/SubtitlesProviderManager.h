@@ -19,7 +19,7 @@
 #include "wx/window.h"
 #include <vector>
 
-//class TabPanel;
+
 enum
 {
 	//set close subtitles to 0 to work with nullptr
