@@ -27,7 +27,7 @@
 #include <d3dx9.h>
 
 class ClipPoint;
-class DrawingAndClip;
+//class DrawingAndClip;
 
 class ShapesSetting
 {

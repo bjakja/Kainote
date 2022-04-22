@@ -25,9 +25,12 @@
 #include "Visuals.h"
 #include "VisualAllTagsEdition.h"
 #include "VisualDrawingShapes.h"
+#include "VisualAllTagsControls.h"
 #include <wx/msw/winundef.h>
 #include <wx/bitmap.h>
 #include <wx/window.h>
+
+class ShapesSetting;
 
 class itemdata{
 public:

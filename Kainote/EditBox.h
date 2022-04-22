@@ -30,11 +30,12 @@
 #include "ColorPicker.h"
 #include "KaiWindowResizer.h"
 #include "KaiPanel.h"
+#include "TagFindReplace.h"
 
 
 class SubsGrid;
 class TabPanel;
-class TagFindReplace;
+//class TagFindReplace;
 
 
 class ComboBoxCtrl : public KaiChoice

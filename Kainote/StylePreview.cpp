@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "StylePreview.h"
 #include "RendererVideo.h"
 #include "config.h"
@@ -157,4 +157,3 @@ EVT_PAINT(StylePreview::OnPaint)
 EVT_MOUSE_EVENTS(StylePreview::OnMouseEvent)
 END_EVENT_TABLE()
 
-#endif

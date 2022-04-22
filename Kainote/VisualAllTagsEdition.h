@@ -22,7 +22,9 @@
 #include "KaiStaticText.h"
 #include "KaiCheckBox.h"
 #include "NumCtrl.h"
+#include "VisualAllTagsEdition.h"
 #include <vector>
+#include <wx/arrstr.h>
 
 enum TagType {
 	IS_HEX_ALPHA = 1,
