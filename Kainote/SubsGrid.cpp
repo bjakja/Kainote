@@ -1326,7 +1326,7 @@ void SubsGrid::OnMakeContinous(int idd)
 
 void SubsGrid::OnShowPreview()
 {
-	if (CG1 == this || CG2 == this){
+	if (CG1 == (SubsGridBase*)this || CG2 == (SubsGridBase*)this){
 		ShowSecondComparedLine(currentLine, true);
 	}
 	else{

@@ -15,13 +15,14 @@
 
 
 #include "SubtitlesProvider.h"
-#ifdef subsProvider
+
 #include "Config.h"
 
 #include "RendererVideo.h"
 #include "OpennWrite.h"
-#include "kainoteMain.h"
+#include "kainoteframe.h"
 #include "DshowRenderer.h"
+#include "CsriMod.h"
 
 
 csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
@@ -237,7 +238,7 @@ void SubtitlesVSFilter::GetProviders(wxArrayString *providerList)
 	//if yes than just set nullptr to renderer
 	//without destroying it it makes memory leaks
 	csri_close_renderer(m_CsriRenderer);
-	m_CsriRenderer = nullptr;
+	m_CsriRenderer = 0;
 }
 
 void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char format, bool isSwapped)
@@ -253,8 +254,8 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 		m_CsriFrame = new csri_frame;
 		//we only uses first planes and strides rest can be reset just once
 		for (int i = 1; i < 4; i++) {
-			m_CsriFrame->planes[i] = nullptr;
-			m_CsriFrame->strides[i] = nullptr;
+			m_CsriFrame->planes[i] = 0;
+			m_CsriFrame->strides[i] = 0;
 		}
 	}
 	if (!m_CsriFormat) { m_CsriFormat = new csri_fmt; }
@@ -277,4 +278,4 @@ void SubtitlesVSFilter::SetVideoParameters(const wxSize & size, unsigned char fo
 	}
 }
 
-#endif
+

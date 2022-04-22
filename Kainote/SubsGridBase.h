@@ -16,6 +16,7 @@
 #pragma once
 
 #include "Styles.h"
+#include "SubsGridBase.h"
 #include "SubsDialogue.h"
 #include "SubsFile.h"
 
@@ -148,11 +149,11 @@ public:
 	bool ignoreFiltered = false;
 	std::vector<TextData> SpellErrors;
 	std::vector<compareData> *Comparison;
-	SubsFile* file;
-	EditBox *edit;
+	SubsFile* file = nullptr;
+	EditBox *edit = nullptr;
 	//comparison static pointers needs short name because we not use this class
-	SubsGrid* CG1;
-	SubsGrid* CG2;
+	SubsGrid* CG1 = nullptr;
+	SubsGrid* CG2 = nullptr;
 	void SubsComparison();
 	void RemoveComparison();
 	wxArrayString compareStyles;

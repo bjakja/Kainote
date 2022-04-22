@@ -17,10 +17,10 @@
 
 #include "SubsGridWindow.h"
 #include "SubsGridBase.h"
+#include "SubsGridPreview.h"
 #include "KainoteFrame.h"
 #include <wx/window.h>
 
-//class KainoteFrame;
 
 
 class SubsGrid: public SubsGridWindow

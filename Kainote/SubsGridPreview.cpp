@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "SubsGridPreview.h"
 #include "SubsGrid.h"
 #include "SubsGridFiltering.h"
@@ -956,4 +956,3 @@ void SubsGridPreview::OnFocus(wxFocusEvent &evt)
 	Refresh(false);
 }
 
-#endif

@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "SubsGridFiltering.h"
 #include "SubsGrid.h"
 #include "RendererVideo.h"
@@ -246,4 +246,3 @@ inline bool SubsGridFiltering::CheckHiding(Dialogue *dial, int i)
 	return result != 0;
 }
 
-#endif
