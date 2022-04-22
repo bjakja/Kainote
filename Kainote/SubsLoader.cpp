@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 
 #include "SubsLoader.h"
 #include "SubsGrid.h"
@@ -191,4 +191,3 @@ bool SubsLoader::LoadTXT(const wxString &text)
 	return grid->GetCount() > 0;
 }
 
-#endif

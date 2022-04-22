@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "SubsFile.h"
 #include "SubsGridBase.h"
 #include "SubsLoader.h"
@@ -1943,9 +1943,8 @@ size_t SubsGridBase::GetKeyFromPosition(size_t position, int delta, bool safe /*
 }
 
 
-SubsGrid* SubsGridBase::CG1 = nullptr;
-SubsGrid* SubsGridBase::CG2 = nullptr;
-bool SubsGridBase::hasCompare = false;
-wxArrayString SubsGridBase::compareStyles = wxArrayString();
+//SubsGrid* SubsGridBase::CG1 = nullptr;
+//SubsGrid* SubsGridBase::CG2 = nullptr;
+//bool SubsGridBase::hasCompare = false;
+//wxArrayString SubsGridBase::compareStyles = wxArrayString();
 
-#endif

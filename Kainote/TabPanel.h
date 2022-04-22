@@ -26,7 +26,6 @@
 #include "ShiftTimes.h"
 #include <wx/sizer.h>
 
-class ShiftTimes;
 
 class TabPanel : public KaiPanel
 {

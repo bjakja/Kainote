@@ -20,16 +20,23 @@
 #include "TabPanel.h"
 #include "MappedButton.h"
 #include "NumCtrl.h"
+#include "ListControls.h"
+#include "Notebook.h"
+#include "KainoteFrame.h"
+#include "KaiRadioButton.h"
+#include "KaiCheckBox.h"
+#include "TimeCtrl.h"
+#include "KaiScrollbar.h"
+#include "KaiStaticBoxSizer.h"
 
-class KainoteFrame;
+//class KainoteFrame;
 
-class Notebook;
-class KaiRadioButton;
-class KaiChoice;
-class KaiCheckBox;
-class TimeCtrl;
-class KaiScrollbar;
-class KaiStaticBoxSizer;
+//class KaiRadioButton;
+//class KaiChoice;
+//class KaiCheckBox;
+//class TimeCtrl;
+//class KaiScrollbar;
+//class KaiStaticBoxSizer;
 
 
 class ShiftTimes: public KaiPanel
@@ -94,7 +101,7 @@ private:
 	bool isscrollbar;
 	int scPos;
 	MappedButton *coll;
-	TabPanel *tab;
+	TabPanel *tab = nullptr;
 
 	void OnAddStyles(wxCommandEvent& event);
 	void OnChangeDisplayUnits(wxCommandEvent& event);

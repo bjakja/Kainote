@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "SubsGrid.h"
 #include "RendererVideo.h"
 #include "config.h"
@@ -1643,4 +1643,3 @@ EVT_MENU(GRID_COPY, SubsGrid::OnAccelerator)
 EVT_MENU(GRID_PASTE, SubsGrid::OnAccelerator)
 END_EVENT_TABLE()
 
-#endif

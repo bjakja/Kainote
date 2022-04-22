@@ -102,11 +102,11 @@ class Shapes : public DrawingAndClip {
 public:
 	Shapes();
 	
-	void OnMouseEvent(wxMouseEvent& evt) override;
-	void DrawVisual(int time) override;
-	void SetShape(int shape) override;
-	void GetVisual(wxString* drawing) override;
-	void SetScale(wxString* txt, size_t position, int* diff) override;
+	void OnMouseEvent(wxMouseEvent& evt) /*override*/;
+	void DrawVisual(int time) /*override*/;
+	void SetShape(int shape) /*override*/;
+	void GetVisual(wxString* drawing) /*override*/;
+	void SetScale(wxString* txt, size_t position, int* diff) /*override*/;
 private:
 	void SortPoints();
 	void SetDrawingScale();

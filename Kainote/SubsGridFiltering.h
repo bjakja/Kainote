@@ -14,11 +14,12 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include "SubsGrid.h"
 #include <wx/dynarray.h>
 #include <wx/arrstr.h>
 
 class Dialogue;
-class SubsGrid;
+//class SubsGrid;
 
 class SubsGridFiltering
 {

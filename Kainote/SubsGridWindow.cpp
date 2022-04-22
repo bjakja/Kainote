@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "SubsGridWindow.h"
 #include "config.h"
 #include "SubsGrid.h"
@@ -2052,4 +2052,3 @@ void SubsGridWindow::MakeVisible(int rowKey)
 		Refresh(false);
 	}
 }
-#endif

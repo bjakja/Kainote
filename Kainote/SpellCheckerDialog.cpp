@@ -112,7 +112,8 @@ wxString SpellCheckerDialog::FindNextMisspell()
 		errors.clear();
 		Dialogue *Dial = tab->grid->GetDialogue(i);
 		if (Dial->IsComment && noComments){ continue; }
-		const wxString &Text = (tab->grid->hasTLMode) ? Dial->TextTl : Dial->Text;
+		const wxString Text = 
+			(tab->grid->hasTLMode) ? Dial->TextTl : Dial->Text;
 		SpellChecker::Get()->CheckText(Text, &errors, tab->grid->subsFormat);
 		if (i != lastLine){ lastMisspell = 0; }
 		while (lastMisspell < errors.size()){
@@ -330,7 +331,8 @@ void SpellCheckerDialog::OnActive(wxActivateEvent &evt)
 	if (evt.GetActive()){
 		if (blockOnActive){ blockOnActive = false; return; }
 		TabPanel *tab1 = Kai->GetTab();
-		wxString &ActualText = tab1->edit->line->Text.CheckTlRef(tab1->edit->line->TextTl, tab->grid->hasTLMode);
+		wxString &ActualText = 
+			tab1->edit->line->Text.CheckTlRef(tab1->edit->line->TextTl, tab->grid->hasTLMode);
 		if (tab != tab1 || lastActiveLine != tab1->grid->currentLine || lastText != ActualText){
 			lastMisspell = 0;
 			SetNextMisspell();

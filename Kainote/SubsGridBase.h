@@ -23,8 +23,10 @@
 #include "LineParse.h"
 #include "RendererVideo.h"
 #include "SubsFile.h"
+#include "SubsGrid.h"
 #include "Visuals.h"
 #include "VisualDrawingShapes.h"
+#include "TabPanel.h"
 #include <vector>
 #include <set>
 
@@ -32,9 +34,7 @@
 
 class EditBox;
 class KainoteFrame;
-class SubsGrid;
 class SubsGridPreview;
-class TabPanel;
 
 
 class compareData{
@@ -151,12 +151,12 @@ public:
 	SubsFile* file;
 	EditBox *edit;
 	//comparison static pointers needs short name because we not use this class
-	static SubsGrid* CG1;
-	static SubsGrid* CG2;
-	static void SubsComparison();
-	static void RemoveComparison();
-	static wxArrayString compareStyles;
-	static bool hasCompare;
+	SubsGrid* CG1;
+	SubsGrid* CG2;
+	void SubsComparison();
+	void RemoveComparison();
+	wxArrayString compareStyles;
+	bool hasCompare;
 	wxMutex &GetMutex() { return editionMutex; }
 private:
 	virtual void AdjustWidths(int cell = 16383){};
@@ -166,7 +166,7 @@ private:
 	virtual void ScrollTo(int y, bool center = false, int offset = 0, bool useUpdate = false){};
 	
 protected:
-	static void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
+	void CompareTexts(compareData &firstTable, compareData &secondTable, const wxString &first, const wxString &second);
 	short numsave;
 	bool hideOverrideTags;
 	bool ismenushown = false;

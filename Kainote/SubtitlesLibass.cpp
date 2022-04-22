@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "SubtitlesProvider.h"
 #include "RendererVideo.h"
 #include "OpennWrite.h"
@@ -261,17 +261,14 @@ void SubtitlesLibass::ReloadLibraries(bool destroyExisted)
 		}
 	}
 	if (!m_Library) {
-		//KaiLog("Libass create");
 		m_IsReady.store(false);
 		m_Library = ass_library_init();
 		ass_set_message_cb(m_Library, MessageCallback, nullptr);
 		if (!m_Libass) {
 			unsigned int threadid = 0;
 			thread = (HANDLE)_beginthreadex(0, 0, ProcessLibassCache, this, 0, &threadid);
-			//SetThreadPriority(thread, THREAD_PRIORITY_TIME_CRITICAL);
 			SetThreadName(threadid, "LibassCache");
 		}
 	}
 }
 
-#endif

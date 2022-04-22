@@ -124,11 +124,11 @@ void StylePreview::SubsText(wxString *text)
 	previewStyle->Alignment = L"5";
 	wchar_t bom = 0xFEFF;
 	*text << wxString(bom);
-	*text << L"[Script Info]\r\nPlayResX: " << width << L"\r\nPlayResY: " << height 
+	*text << L"[Script Info]\r\nPlayResX: " << width << L"\r\nPlayResY: " << height
 		<< L"\r\nScaledBorderAndShadow: Yes\r\nScriptType: v4.00+\r\nWrapStyle: 0"
 		<< L"\r\n[V4+ Styles]\r\nFormat: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding\r\n"
-		<< previewStyle->GetRaw() << L"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00," 
-		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) << L"\r\n"
+		<< previewStyle->GetRaw() << L"\r\n \r\n[Events]\r\nFormat: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\r\nDialogue: 0,0:00:00.00,1:01:26.00,"
+		<< previewStyle->Name << L",,0000,0000,0000,," << Options.GetString(STYLE_PREVIEW_TEXT) << L"\r\n";
 		
 	
 }

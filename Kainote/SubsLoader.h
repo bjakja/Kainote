@@ -13,9 +13,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "SubsGrid.h"
 #include <wx/string.h>
 
-class SubsGrid;
+//class SubsGrid;
 
 class SubsLoader{
 public:

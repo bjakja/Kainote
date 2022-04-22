@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "TabPanel.h"
 
 #include "Notebook.h"
@@ -23,7 +23,7 @@
 #include "Hotkeys.h"
 #include "ShiftTimes.h"
 #include <wx/sizer.h>"
-#undef DRAWTEXT
+
 
 
 TabPanel::TabPanel(wxWindow *parent, KainoteFrame *kai, const wxPoint &pos, const wxSize &size)
@@ -391,4 +391,3 @@ BEGIN_EVENT_TABLE(TabPanel, wxWindow)
 EVT_SIZE(TabPanel::OnSize)
 EVT_CHILD_FOCUS(TabPanel::OnFocus)
 END_EVENT_TABLE()
-#endif

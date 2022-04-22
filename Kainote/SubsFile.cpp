@@ -18,10 +18,7 @@
 #include "KaiListCtrl.h"
 #include "MappedButton.h"
 #include "Config.h"
-//#include "Utils.h"
 
-//pamiętaj ilość elementów tablicy musi być równa ilości enumów
-//wxString 
 
 HistoryDialog::HistoryDialog(wxWindow *parent, SubsFile *file, std::function<void(int)> func)
 	: KaiDialog(parent, -1, _("Historia"), wxDefaultPosition, wxDefaultSize, wxRESIZE_BORDER)

@@ -16,9 +16,11 @@
 #pragma once
 
 #include "SubsGridWindow.h"
+#include "SubsGridBase.h"
+#include "KainoteFrame.h"
 #include <wx/window.h>
 
-class KainoteFrame;
+//class KainoteFrame;
 
 
 class SubsGrid: public SubsGridWindow

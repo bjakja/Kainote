@@ -31,9 +31,10 @@
 #include "KaiWindowResizer.h"
 #include "KaiPanel.h"
 #include "TagFindReplace.h"
+#include "SubsGrid.h"
 
 
-class SubsGrid;
+//class SubsGrid;
 class TabPanel;
 //class TagFindReplace;
 
