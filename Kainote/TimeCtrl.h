@@ -15,7 +15,7 @@
 
 #pragma once
 
-//#include <wx/wx.h>
+#include <wx/window.h>
 #include "SubsTime.h"
 #include "KaiTextCtrl.h"
 #include "VideoBox.h"

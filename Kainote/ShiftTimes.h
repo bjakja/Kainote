@@ -29,14 +29,6 @@
 #include "KaiScrollbar.h"
 #include "KaiStaticBoxSizer.h"
 
-//class KainoteFrame;
-
-//class KaiRadioButton;
-//class KaiChoice;
-//class KaiCheckBox;
-//class TimeCtrl;
-//class KaiScrollbar;
-//class KaiStaticBoxSizer;
 
 
 class ShiftTimes: public KaiPanel
