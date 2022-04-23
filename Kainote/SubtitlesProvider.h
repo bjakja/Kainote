@@ -50,7 +50,7 @@ protected:
 	bool m_IsSwapped;
 	bool m_HasParameters = false;
 	char m_BytesPerColor = 4;
-	const csri_rend *m_CsriRenderer = 0;
+	static csri_rend *m_CsriRenderer;
 };
 
 

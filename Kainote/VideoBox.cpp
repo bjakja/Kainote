@@ -27,6 +27,7 @@
 #include "EditBox.h"
 #include "SubsGrid.h"
 #include "VideoBox.h"
+#include "VideoToolbar.h"
 #include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
@@ -40,7 +41,6 @@
 #include "Hotkeys.h"
 #include "UtilsWindows.h"
 
-#undef DrawText
 
 #pragma warning ( disable: 4482 )
 

@@ -36,7 +36,7 @@
 
 #pragma once
 
-#include <wx/wxprec.h>
+//#include <wx/wxprec.h>
 //#include <stdint.h>
 #include "GFFT/GFFT.h"
 #include "Provider.h"

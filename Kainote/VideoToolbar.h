@@ -16,16 +16,17 @@
 #pragma once
 
 
+#include "VisualDrawingShapes.h"
 
 
-#include <vector>
 #include "ListControls.h"
 #include "KaiCheckBox.h"
 #include "MappedButton.h"
 #include "Visuals.h"
 #include "VisualAllTagsEdition.h"
-#include "VisualDrawingShapes.h"
+
 #include "VisualAllTagsControls.h"
+#include <vector>
 #include <wx/msw/winundef.h>
 #include <wx/bitmap.h>
 #include <wx/window.h>
@@ -279,6 +280,24 @@ private:
 
 
 class VideoToolbar: public wxWindow {
+private:
+
+	void OnMouseEvent(wxMouseEvent& evt);
+	void OnPaint(wxPaintEvent& evt);
+	void OnSize(wxSizeEvent& evt);
+	int Toggled;
+	int sel;
+	const static int toolsSize = 11;
+	bool clicked;
+	bool iconsEnabled = true;
+	bool hasHiddenLists = false;
+	bool insufficentPlace = false;
+	wxBitmap* bmp;
+	std::vector<VisualItem*> visualItems;
+	static std::vector<AllTagsSetting> tags;
+	static std::vector<ShapesSetting> shapes;
+	int startDrawPos = 2;
+	int endDrawPos = 162;
 public:
 	VideoToolbar (wxWindow *parent, const wxPoint &pos, const wxSize &size);
 	virtual ~VideoToolbar(){
@@ -304,7 +323,7 @@ public:
 	}
 	static std::vector<AllTagsSetting>* GetTagsSettings() {
 		if (!tags.size()) {
-			LoadSettings(&tags);
+			//LoadSettings(&tags);
 		}
 		return &tags;
 	}
@@ -313,7 +332,7 @@ public:
 	}
 	static std::vector<ShapesSetting>* GetShapesSettings() {
 		if (!shapes.size()) {
-			LoadSettings(&shapes);
+			//LoadSettings(&shapes);
 		}
 		return &shapes;
 	}
@@ -341,24 +360,7 @@ public:
 	KaiChoice *videoPlayAfter;
 	static std::vector<itemdata*> icons;
 	bool blockScroll;
-private:
-	
-	void OnMouseEvent(wxMouseEvent &evt);
-	void OnPaint(wxPaintEvent &evt);
-	void OnSize(wxSizeEvent &evt);
-	int Toggled;
-	int sel;
-	const static int toolsSize = 11;
-	bool clicked;
-	bool iconsEnabled = true;
-	bool hasHiddenLists = false;
-	bool insufficentPlace = false;
-	wxBitmap *bmp;
-	std::vector<VisualItem*> visualItems;
-	static std::vector<AllTagsSetting> tags;
-	static std::vector<ShapesSetting> shapes;
-	int startDrawPos = 2;
-	int endDrawPos = 162;
+
 };
 
 enum{

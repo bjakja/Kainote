@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "MisspellReplacer.h"
 #include "OpennWrite.h"
 #include "KaiStaticBoxSizer.h"
@@ -774,4 +774,3 @@ fail:
 	KaiLog(wxString::Format(_("Reguła \"%s\" jest nieprawidłowa."), stringRule));
 }
 
-#endif

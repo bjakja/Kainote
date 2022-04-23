@@ -14,9 +14,10 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-#include "TabPanel.h"
 #include "VisualDrawingShapes.h"
+#include "Visuals.h"
+#include "TabPanel.h"
+
 #include "SubsGrid.h"
 #include "VideoBox.h"
 #include "Editbox.h"
@@ -24,8 +25,8 @@
 #include <wx/regex.h>
 #include "config.h"
 
-#include "Visuals.h"
-#include <wx/msw/winundef.h>
+
+//#include <wx/msw/winundef.h>
 
 
 Visuals *Visuals::Get(int Visual, wxWindow *_parent)
@@ -63,9 +64,6 @@ Visuals *Visuals::Get(int Visual, wxWindow *_parent)
 	case VECTORDRAW:
 		visual = new Shapes();
 		break;
-	/*case SCALE_ROTATION:
-		visual = new ScaleRotation();
-		break;*/
 	case ALL_TAGS:
 		visual = new AllTags();
 		break;

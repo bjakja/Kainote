@@ -37,18 +37,19 @@
 
 
 
-#include <wx/msw/winundef.h>
-#include "Editbox.h"
+#include <wx/slider.h>
+//#include "Editbox.h"
 #include "AudioBox.h"
-#include "KainoteFrame.h"
-#include "Notebook.h"
+//#include "KainoteFrame.h"
+//#include "Notebook.h"
 #include "MappedButton.h"
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
-#include "SubsGrid.h"
-#include "Visuals.h"
-#include "VisualDrawingShapes.h"
-#include "TabPanel.h"
+#include "KaiSlider.h"
+//#include "SubsGrid.h"
+//#include "Visuals.h"
+//#include "VisualDrawingShapes.h"
+//#include "TabPanel.h"
 
 #include <math.h>
 //#include <dxgicommon.h>
@@ -66,7 +67,8 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	SetBackgroundColour(Options.GetColour(WINDOW_BACKGROUND));
 	// Display
 	int thickness = KaiScrollbar::CalculateThickness(this);
-	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, wxPoint(0, height - thickness), wxSize(100, thickness));
+	audioScroll = new KaiScrollbar(this, Audio_Scrollbar, 
+		wxPoint(0, height - thickness), wxSize(100, thickness));
 	audioScroll->SetToolTip(_("Pasek szukania"));
 
 	audioDisplay = new AudioDisplay(this);
@@ -79,12 +81,14 @@ AudioBox::AudioBox(wxWindow *parent, wxWindow *Wgrid) :
 	// Zoom
 	int zoom = Options.GetInt(AUDIO_HORIZONTAL_ZOOM);
 	audioDisplay->SetSamplesPercent(zoom, false);
-	HorizontalZoom = new KaiSlider(this, Audio_Horizontal_Zoom, zoom, 0, 100, wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH);
+	HorizontalZoom = new KaiSlider(this, Audio_Horizontal_Zoom, 
+		zoom, 0, 100, wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH);
 	HorizontalZoom->SetToolTip(_("Rozciągnięcie w poziomie"));
 	int pos = Options.GetInt(AUDIO_VERTICAL_ZOOM);
 	float value = pow(float(pos) / 50.0f, 3);
 	audioDisplay->SetScale(value);
-	VerticalZoom = new KaiSlider(this, Audio_Vertical_Zoom, pos, 1, 100, wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH | wxSL_INVERSE);
+	VerticalZoom = new KaiSlider(this, Audio_Vertical_Zoom, pos, 1, 100, 
+		wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH | wxSL_INVERSE);
 	VerticalZoom->SetToolTip(_("Rozciągnięcie w pionie"));
 	VolumeBar = new KaiSlider(this, Audio_Volume, Options.GetInt(AUDIO_VOLUME), 1, 100, wxDefaultPosition, wxSize(-1, 20), wxSL_VERTICAL | wxSL_BOTH | wxSL_INVERSE);
 	VolumeBar->SetToolTip(_("Głośność"));

@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "config.h"
 #include "RendererVideo.h"
 #include "RendererDirectShow.h"
@@ -882,4 +882,3 @@ byte *RendererDirectShow::GetFrameWithSubs(bool subs, bool *del)
 	return cpy;
 }
 
-#endif

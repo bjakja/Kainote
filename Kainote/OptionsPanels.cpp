@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "OptionsPanels.h"
 //#include "Hotkeys.h"
 #include "OptionsDialog.h"
@@ -60,4 +60,3 @@ SubtitlesProperties::SubtitlesProperties(wxWindow *parent, OptionsDialog *option
 	SetSizerAndFit(main);
 }
 
-#endif

@@ -18,7 +18,7 @@
 //Adapted by me
 
 
-#ifdef guano
+
 //#include <iostream>
 //#include <cmath>
 //#include <math.h>
@@ -283,4 +283,3 @@ float FFT::Get(int i){
 	return sqrt(output[i] * output[i] + output[i + 1] * output[i + 1]);
 }
 
-#endif

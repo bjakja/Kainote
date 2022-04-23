@@ -15,8 +15,8 @@
 
 
 #include "Visuals.h"
-#include "VisualDrawingShapes.h"
-#include "TabPanel.h"
+//#include "VisualDrawingShapes.h"
+//#include "TabPanel.h"
 
 AllTags::AllTags()
 {
@@ -26,7 +26,7 @@ AllTags::AllTags()
 	}
 	tags = VideoToolbar::GetTagsSettings();
 	if (!tags->size()) {
-		LoadSettings(tags);
+		//LoadSettings(tags);
 	}
 }
 

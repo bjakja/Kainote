@@ -15,17 +15,13 @@
 
 
 #include "RendererVideo.h"
-#include "Config.h"
+#include "VideoToolbar.h"
 #include "kainoteFrame.h"
 #include "CsriMod.h"
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
-#include "VideoBox.h"
-#include "EditBox.h"
 #include "Provider.h"
 
-#include "Visuals.h"
-#include "VideoToolbar.h"
 #include <wx/dir.h>
 #include <wx/clipbrd.h>
 

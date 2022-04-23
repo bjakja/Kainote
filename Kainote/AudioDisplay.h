@@ -24,7 +24,7 @@
 #include "SubsDialogue.h"
 #include "KaraokeSplitting.h"
 #include "KaiScrollbar.h"
-#include "SubsGrid.h"
+//#include "SubsGrid.h"
 #include <wx/window.h>
 #include <wx/bitmap.h>
 //#include <stdint.h>
@@ -35,7 +35,7 @@
 //////////////
 // Prototypes
 
-//class SubsGrid;
+class SubsGrid;
 class AudioBox;
 class EditBox;
 class TabPanel;

@@ -18,12 +18,10 @@
 ///////////
 // Headers
 
-#undef BIND
-
+#include "AudioPlayerDSound.h"
 #include <process.h>
 #include "LogHandler.h"
-#include "KainoteApp.h"
-#include "AudioPlayerDSound.h"
+//#include "KainoteApp.h"
 #include "UtilsWindows.h"
 
 
@@ -279,7 +277,7 @@ do_fill_buffer:
 							SUCCEEDED(audioBuffer->Lock(0, bufSize, (void**)buf1, &buf1sz, (void**)buf2, &buf2sz, 0)) &&
 							SUCCEEDED(audioBuffer->Play(0, 0, DSBPLAY_LOOPING)))
 						{
-							wxLogDebug(_T("DirectSoundPlayer2: Lost and restored buffer"));
+							KaiLogDebug("DirectSoundPlayer2: Lost and restored buffer");
 							break;
 						}
 						KaiLogDebug("Lost buffer and could not restore it.");

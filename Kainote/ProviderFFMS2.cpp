@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 
 #include "ProviderFFMS2.h"
 #include "LogHandler.h"
@@ -860,4 +860,3 @@ bool ProviderFFMS2::HasVideo()
 	return m_videoSource != nullptr;
 }
 
-#endif

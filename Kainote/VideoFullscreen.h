@@ -20,11 +20,11 @@
 #include "KaiTextCtrl.h"
 #include "KaiStaticText.h"
 #include "KaiCheckBox.h"
+#include "VideoToolbar.h"
 #include <wx/panel.h>
 #include <wx/frame.h>
 
-#undef GetClassInfo
-class VideoToolbar;
+
 
 class Fullscreen : public wxFrame
 {

@@ -58,6 +58,7 @@
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+#include <wx/filedlg.h>
 
 
 

@@ -20,8 +20,8 @@
 #include "TabPanel.h"
 #include <vector>
 
-//class SubsGrid;
-//class TabPanel;
+class SubsGrid;
+class TabPanel;
 
 class MultiPreviewData{
 public:

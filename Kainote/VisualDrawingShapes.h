@@ -15,18 +15,18 @@
 
 #pragma once
 
-
+#include "VisualDrawingShapes.h"
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
 #include "Visuals.h"
-#include "VisualDrawingShapes.h"
+
 #include "Notebook.h"
 #include <vector>
 
 #include <d3dx9.h>
 
-class ClipPoint;
+//class ClipPoint;
 class DrawingAndClip;
 
 class ShapesSetting
@@ -102,7 +102,7 @@ class Shapes : public DrawingAndClip {
 public:
 	Shapes();
 	
-	void OnMouseEvent(wxMouseEvent& evt) /*override*/;
+	void OnMouseEvent(wxMouseEvent& evt)/* override*/;
 	void DrawVisual(int time) /*override*/;
 	void SetShape(int shape) /*override*/;
 	void GetVisual(wxString* drawing) /*override*/;
@@ -114,11 +114,11 @@ private:
 	D3DXVECTOR2 PointToVideo(const D3DXVECTOR2& point);
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
-	D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
+	//D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
 	std::vector<ShapesSetting> *shapes = nullptr;
 	int shape = -1;
 	ShapesSetting currentShape;
-	std::vector<ClipPoint> points;
+	//std::vector<ClipPoint> points;
 	D3DXVECTOR2 shapeSize;
 	D3DXVECTOR2 shapeScale = D3DXVECTOR2(1.f, 1.f);
 	
@@ -127,7 +127,7 @@ private:
 	int grabbed = -1;
 };
 
-void LoadSettings(std::vector<ShapesSetting>* shapes);
+//void LoadSettings(std::vector<ShapesSetting>* shapes);
 
 void GetNames(std::vector<ShapesSetting>* shapes, wxArrayString* nameList);
 

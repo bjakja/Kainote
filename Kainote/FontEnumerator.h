@@ -16,7 +16,6 @@
 #pragma once
 
 
-//
 #include <wx/arrstr.h>
 #include <wx/thread.h>
 #include <wx/window.h>

@@ -36,8 +36,9 @@ extern "C" {
 
 #include "SubsDialogue.h"
 #include "SubsFile.h"
+#include "AudioSpectrum.h"
 
-class AudioSpectrum;
+//class AudioSpectrum;
 
 
 

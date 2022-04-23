@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "DshowRenderer.h"
 #include "RendererVideo.h"
 #include "VideoBox.h"
@@ -242,4 +242,3 @@ HRESULT CD2DVideoRender::GetVidInfo(VideoInf &vi)
 	vi = Vinfo;
 	return S_OK;
 }
-#endif

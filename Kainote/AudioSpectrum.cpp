@@ -17,10 +17,10 @@
 
 
 
-#include "Config.h"
+//#include "Config.h"
 #include "AudioSpectrum.h"
 
-#include "ColorSpace.h"
+//#include "ColorSpace.h"
 #include <wx/log.h>
 #include <process.h>
 #include <assert.h>
@@ -28,7 +28,7 @@
 #include <list>
 #include <utility>
 #include <algorithm>
-#include "UtilsWindows.h"
+//#include "UtilsWindows.h"
 
 
 const unsigned int orgsubcachelen = 16;//original subcache length when overlaps = 1

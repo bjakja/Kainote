@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 
 #include "Hotkeys.h"
 #include "KainoteFrame.h"
@@ -664,4 +664,3 @@ Hotkeys Hkeys;
 
 DEFINE_ENUM(Id, IDS)
 
-#endif

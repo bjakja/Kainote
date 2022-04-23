@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "config.h"
 #include "DShowPlayer.h"
 #include "Videobox.h"
@@ -577,4 +577,3 @@ bool DShowPlayer::FilterConfig(wxString name, int idx, wxPoint pos)
 }
 
 
-#endif

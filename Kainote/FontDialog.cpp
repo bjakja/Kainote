@@ -13,7 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifdef guano
+
 #include "FontDialog.h"
 #include "FontEnumerator.h"
 #include <wx/regex.h>
@@ -774,4 +774,3 @@ void FontPickerButton::OnClick(wxCommandEvent &evt)
 
 wxIMPLEMENT_ABSTRACT_CLASS(FontPickerButton, MappedButton);
 
-#endif

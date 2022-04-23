@@ -17,13 +17,14 @@
 #pragma once
 
 #include "KaiPanel.h"
+#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include "KainoteFrame.h"
 #include "TabPanel.h"
 #include "KaiWindowResizer.h"
 #include "SubsGrid.h"
 #include "Editbox.h"
-#include "ShiftTimes.h"
+
 #include <wx/sizer.h>
 
 

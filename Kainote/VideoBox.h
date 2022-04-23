@@ -23,9 +23,9 @@
 #include "RendererVideo.h"
 #include "VideoFullscreen.h"
 #include "KaiTextCtrl.h"
-#include "VideoToolbar.h"
 #include "VideoBox.h"
 #include "Provider.h"
+#include "TabPanel.h"
 
 class Provider;
 
@@ -78,9 +78,27 @@ public:
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
-	void CaptureMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->CaptureMouse(); } else{ wxWindow::CaptureMouse(); } }
-	void ReleaseMouse(){ if (m_IsFullscreen && m_FullScreenWindow){ m_FullScreenWindow->ReleaseMouse(); } else{ wxWindow::ReleaseMouse(); } }
-	bool HasCapture(){ if (m_IsFullscreen && m_FullScreenWindow){ return m_FullScreenWindow->HasCapture(); } else{ return wxWindow::HasCapture(); } }
+	void CaptureMouse(){ 
+		if (m_IsFullscreen && m_FullScreenWindow){ 
+			m_FullScreenWindow->CaptureMouse(); 
+		} else{ 
+			wxWindow::CaptureMouse(); 
+		} 
+	}
+	void ReleaseMouse(){ 
+		if (m_IsFullscreen && m_FullScreenWindow){ 
+			m_FullScreenWindow->ReleaseMouse(); 
+		} else{ 
+			wxWindow::ReleaseMouse(); 
+		} 
+	}
+	bool HasCapture(){ 
+		if (m_IsFullscreen && m_FullScreenWindow){ 
+			return m_FullScreenWindow->HasCapture(); 
+		} else{ 
+			return wxWindow::HasCapture(); 
+		} 
+	}
 	bool SetCursor(int cursorId){ 
 		if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId){
 			m_LastFullScreenCursor = cursorId;

@@ -13,17 +13,15 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-//#if guano
-
 
 #pragma once
 
 #include "VisualAllTagsControls.h"
 #include "VisualAllTagsEdition.h"
 #include "VisualDrawingShapes.h"
-#include "TagFindReplace.h"
+//#include "TagFindReplace.h"
 
-#include "TabPanel.h"
+//#include "TabPanel.h"
 //#include "VideoToolbar.h"
 #include "Hotkeys.h"
 #include "Editbox.h"
@@ -176,7 +174,7 @@ public:
 	wxArrayInt selPositions;
 	wxString currentLineText;
 private:
-	TextEditor* editor = nullptr;
+	TextEditor* editor;
 	//int activeLineInTable = -1;
 	//Dialogue adresses are valid only for one modification
 	//need recreate on every checking

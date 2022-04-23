@@ -15,7 +15,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "Provider.h"
 #include "ProviderDummy.h"
 #include "ProviderFFMS2.h"
@@ -186,4 +186,3 @@ void Provider::SetPosition(int time, bool starttime)
 	SetEvent(m_eventSetPosition);
 }
 
-#endif

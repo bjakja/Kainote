@@ -26,6 +26,7 @@
 #include "SubsGrid.h"
 #include "VideoBox.h"
 #include "Provider.h"
+//#include "DialogueTextEditor.h"
 
 class ProfileEdition : public KaiDialog
 {
