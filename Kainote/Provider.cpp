@@ -21,7 +21,7 @@
 #include "ProviderFFMS2.h"
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
-#include "Notebook.h"
+//#include "Notebook.h"
 #include "VisualDrawingShapes.h"
 
 

@@ -56,7 +56,12 @@ protected:
 	void OnPaint(wxPaintEvent& event);
 	void OnScroll(wxScrollWinEvent& event);
 	void OnSize(wxSizeEvent& event);
-	void OnLostCapture(wxMouseCaptureLostEvent &evt) { if (HasCapture()) { ReleaseMouse(); } holding = false; };
+	void OnLostCapture(wxMouseCaptureLostEvent &evt) { 
+		if (HasCapture()) { 
+			ReleaseMouse(); 
+		} 
+		holding = false; 
+	};
 	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
 	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg);
 	int GridWidth[14];

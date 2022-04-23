@@ -17,7 +17,7 @@
 
 #include "Notebook.h"
 
-#include "kainoteApp.h"
+//#include "kainoteApp.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"

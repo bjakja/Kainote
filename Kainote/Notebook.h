@@ -15,22 +15,10 @@
 
 
 #pragma once
-#include "shiftTimes.h"
-#include "config.h"
 
 
-#include "kainoteApp.h"
-#include "Menu.h"
-#include "KaiMessageBox.h"
-#include "OpennWrite.h"
-#include "VideoBox.h"
-
-
-#include "Editbox.h"
-#include "SubsGrid.h"
-#include "Toolbar.h"
 #include "TabPanel.h"
-#include "shiftTimes.h"
+
 #include <wx/msw/winundef.h>
 #include <wx/window.h>
 #include <wx/timer.h>

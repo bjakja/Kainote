@@ -152,12 +152,12 @@ public:
 	SubsFile* file = nullptr;
 	EditBox *edit = nullptr;
 	//comparison static pointers needs short name because we not use this class
-	SubsGrid* CG1 = nullptr;
-	SubsGrid* CG2 = nullptr;
-	void SubsComparison();
-	void RemoveComparison();
-	wxArrayString compareStyles;
-	bool hasCompare;
+	static SubsGrid* CG1;
+	static SubsGrid* CG2;
+	static void SubsComparison();
+	static void RemoveComparison();
+	static wxArrayString compareStyles;
+	static bool hasCompare;
 	wxMutex &GetMutex() { return editionMutex; }
 private:
 	virtual void AdjustWidths(int cell = 16383){};

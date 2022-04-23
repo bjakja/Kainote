@@ -36,15 +36,16 @@
 #include "Config.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
-#include "KainoteApp.h"
+//#include "KainoteApp.h"
 #include "AudioSpectrum.h"
 #include <wx/regex.h>
 #include "Automation.h"
-#include "Notebook.h"
-#include "VideoBox.h"
-#include "SubsGrid.h"
+//#include "Notebook.h"
+//#include "VideoBox.h"
+//#include "SubsGrid.h"
 #include "TabPanel.h"
-#include "EditBox.h"
+//#include "EditBox.h"
+#include "AudioSpectrum.h"
 
 SubsEntry::SubsEntry()
 {

@@ -16,16 +16,17 @@
 
 #pragma once
 
+
+#include "Styles.h"
+#include "Config.h"
+#include "TabPanel.h"
+//#include "DialogueTextEditor.h"
+//#include "EditBox.h"
+//#include "SubsGrid.h"
 #include <wx/string.h>
 #include <wx/gdicmn.h>
 #include <functional>
 #include <wx/regex.h>
-#include "Styles.h"
-#include "Config.h"
-#include "TabPanel.h"
-#include "DialogueTextEditor.h"
-#include "EditBox.h"
-#include "SubsGrid.h"
 
 class FindData {
 public:

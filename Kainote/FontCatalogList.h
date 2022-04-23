@@ -122,7 +122,6 @@ private:
 	KaiChoice* catalog;
 	KaiTextCtrl* fontSeek;
 	KaiTextCtrl* fontFilter;
-	//MappedButton *replaceChecked;
 	KaiListCtrl* fontList;
 	StylePreview* preview;
 	KaiStatusBar* status;
