@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|Win32">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|x64">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>system</ProjectName>
@@ -40,7 +48,13 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -52,11 +66,25 @@
     <Import Project="..\..\..\common.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\h;h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;NOMINMAX;WIN32_LEAN_AND_MEAN;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp14</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">stdcpp14</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Default</LanguageStandard_C>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Default</LanguageStandard_C>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">MultiThreaded</RuntimeLibrary>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
       <AdditionalDependencies>Winmm.lib</AdditionalDependencies>
@@ -112,6 +140,7 @@
     <ClCompile Include="source\zip.cpp" />
     <ClCompile Include="source\stdaccel.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)'=='Release'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)'=='Rel_AVX512'">true</ExcludedFromBuild>
       <PrecompiledHeader Condition="'$(Configuration)'=='Debug'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\stdafx.cpp">

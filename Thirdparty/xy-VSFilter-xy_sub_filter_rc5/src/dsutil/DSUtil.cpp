@@ -26,7 +26,7 @@
 #include "DSUtil.h"
 #include "Mpeg2Def.h"
 #include "vd.h"
-#include "..\..\..\include\moreuuids.h"
+#include "moreuuids.h"
 #include <emmintrin.h>
 #include <math.h>
 #include <InitGuid.h>

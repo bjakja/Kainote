@@ -24,7 +24,7 @@
 
 #include <initguid.h>
 #include "../../../../include/moreuuids.h"
-#include "../../subpic/color_conv_table.h"
+#include "color_conv_table.h"
 
 #include "xy_logger.h"
 

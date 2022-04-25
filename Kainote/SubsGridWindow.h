@@ -62,8 +62,10 @@ protected:
 		} 
 		holding = false; 
 	};
-	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, int activeLine, int diffPosition);
-	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, wxPoint previewpos, wxSize previewsize, bool bg);
+	bool ShowPreviewWindow(SubsGrid *previewGrid, SubsGrid *windowToDraw, 
+		int activeLine, int diffPosition);
+	void PaintD2D(GraphicsContext *gc, int w, int h, int size, int scrows, 
+		wxPoint previewpos, wxSize previewsize, bool bg);
 	int GridWidth[14];
 	int posY = 0;
 	int posX = 0;

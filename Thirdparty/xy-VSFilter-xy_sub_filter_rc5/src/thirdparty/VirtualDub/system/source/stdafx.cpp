@@ -23,7 +23,7 @@
 //	3.	This notice may not be removed or altered from any source
 //		distribution.
 
-#include <stdafx.h>
+#include "stdafx.h"
 
 #ifdef _MSC_VER
 	#pragma hdrstop

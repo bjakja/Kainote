@@ -18,6 +18,7 @@
 
 
 #include "TabPanel.h"
+#include "KainoteFrame.h"
 
 #include <wx/msw/winundef.h>
 #include <wx/window.h>

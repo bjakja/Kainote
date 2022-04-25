@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|Win32">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|x64">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>basevideofilter</ProjectName>
@@ -41,7 +49,13 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -55,6 +69,25 @@
   <PropertyGroup>
     <IncludePath>$(SolutionDir)src\filters\transform\vsfilter;$(SolutionDir)src\filters\BaseClasses;$(SolutionDir)src\thirdparty\boost_lib\;$(SolutionDir)src\thirdparty\log4cplus\include\;$(SolutionDir)src\thirdparty\VirtualDub\h\;$(SolutionDir)include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseVideoFilter.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -64,6 +97,11 @@
   <ItemGroup>
     <ClInclude Include="BaseVideoFilter.h" />
     <ClInclude Include="stdafx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Build\BaseClasses\baseclasses.vcxproj">
+      <Project>{e8a3f6fa-ae1c-4c8e-a0b6-9c8480324eaa}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

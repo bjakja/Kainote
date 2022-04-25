@@ -37,6 +37,7 @@
 #include "Notebook.h"
 #include "stylestore.h"
 #include <wx/regex.h>
+#include <wx/filedlg.h>
 
 SubsGrid::SubsGrid(wxWindow* parent, KainoteFrame* kfparent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 	:SubsGridWindow(parent, id, pos, size, style)
@@ -1225,7 +1226,8 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 							resizedTag << getfloat(tagValue) << lastC << L" ";
 						}
 						else{
-							wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i + 1, tkn, tag->tagName);
+							KaiLog(wxString::Format(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"),
+								i + 1, tkn, tag->tagName));
 							resizedTag << tkn << lastC << L" ";
 						}
 
@@ -1253,7 +1255,9 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 					else
 					{
 						if (ii < 4){
-							wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i + 1, tkn, tag->tagName);
+							KaiLog(wxString::Format(
+								_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), 
+								i + 1, tkn, tag->tagName));
 						}
 						resizedTag << tkn << L",";
 						ii++;
@@ -1271,7 +1275,9 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 					resizedTag = getfloat(tagValue);
 				}
 				else{
-					wxLogMessage(_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), i + 1, tag->value, tag->tagName);
+					KaiLog(wxString::Format((
+						_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), 
+						i + 1, tag->value, tag->tagName));
 					resizedTag = tag->value;
 				}
 			}

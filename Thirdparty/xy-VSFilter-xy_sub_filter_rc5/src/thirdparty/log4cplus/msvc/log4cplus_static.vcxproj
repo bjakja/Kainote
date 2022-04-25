@@ -72,6 +72,7 @@
     </Midl>
     <ClCompile>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">true</MultiProcessorCompilation>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release Unicode|x64'">stdcpp14</LanguageStandard>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug Unicode'">

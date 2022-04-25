@@ -21,7 +21,7 @@
 #include "AudioPlayerDSound.h"
 #include <process.h>
 #include "LogHandler.h"
-//#include "KainoteApp.h"
+#include "KainoteApp.h"
 #include "UtilsWindows.h"
 
 

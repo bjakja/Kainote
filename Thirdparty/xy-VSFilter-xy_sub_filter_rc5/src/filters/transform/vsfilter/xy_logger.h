@@ -5,7 +5,7 @@
 #ifndef __XY_LOGGER_H_3716A27F_2940_4636_8BC9_C764648362AE__
 #define __XY_LOGGER_H_3716A27F_2940_4636_8BC9_C764648362AE__
 
-#include "log4cplus/logger.h"
+#include <log4cplus/logger.h>
 #include "log4cplus/configurator.h"
 #include "timing_logger.h"
 #include "once_logger.h"

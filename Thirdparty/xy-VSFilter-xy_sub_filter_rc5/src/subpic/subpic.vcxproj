@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|Win32">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Rel_AVX512|x64">
+      <Configuration>Rel_AVX512</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>subpic</ProjectName>
@@ -41,7 +49,13 @@
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|Win32'" Label="Configuration">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'" Label="Configuration">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -55,13 +69,28 @@
   <PropertyGroup>
     <IncludePath>$(SolutionDir)src\filters\transform\vsfilter\;$(SolutionDir)include\;$(SolutionDir)src\thirdparty\log4cplus\include\;$(SolutionDir)src\thirdparty\boost_lib\;$(IncludePath)</IncludePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
+    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>../../include/dx;../Filters/BaseClasses;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>L:\Kainote\Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp14</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">stdcpp14</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Default</LanguageStandard_C>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Default</LanguageStandard_C>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Use</PrecompiledHeader>
+      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</MultiProcessorCompilation>
     </ClCompile>
     <Lib>
-      <AdditionalDependencies>d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;strmbase.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)Lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>

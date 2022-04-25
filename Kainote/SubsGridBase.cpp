@@ -497,7 +497,8 @@ public:
 void SubsGridBase::ChangeTimes(bool byFrame)
 {
 	Provider *FFMS2 = tab->video->GetFFMS2();
-	if (byFrame && !FFMS2){ wxLogMessage(_("Wideo nie zostało wczytane przez FFMS2")); return; }
+	if (byFrame && !FFMS2){ 
+		KaiLog(_("Wideo nie zostało wczytane przez FFMS2")); return; }
 	//1 forward / backward, 2 Start Time For V/A Timing, 4 Move to video time, 8 Move to audio time;
 	int moveTimeOptions = Options.GetInt(SHIFT_TIMES_OPTIONS);
 
@@ -1728,7 +1729,8 @@ void SubsGridBase::SubsComparison()
 	bool compareByStyles = (comparisonType & COMPARE_BY_STYLES) != 0;
 	bool compareByChosenStyles = compareStyles.size() > 0;
 	bool compareBySelections = (comparisonType & COMPARE_BY_SELECTIONS) != 0;
-	int firstSize = CG1->file->GetCount(), secondSize = CG2->file->GetCount();
+	int firstSize = CG1->file->GetCount(), 
+		secondSize = CG2->file->GetCount();
 	if (CG1->Comparison){ CG1->Comparison->clear(); }
 	else{ CG1->Comparison = new std::vector<compareData>; }
 	if (CG2->Comparison){ CG2->Comparison->clear(); }
@@ -1758,7 +1760,8 @@ void SubsGridBase::SubsComparison()
 
 			compareData & firstCompare = CG1->Comparison->at(i);
 			compareData & secondCompare = CG2->Comparison->at(j);
-			CompareTexts(firstCompare, secondCompare, (CG1->hasTLMode && dial1->TextTl != emptyString) ? dial1->TextTl : dial1->Text,
+			CompareTexts(firstCompare, secondCompare, 
+				(CG1->hasTLMode && dial1->TextTl != emptyString) ? dial1->TextTl : dial1->Text,
 				(CG2->hasTLMode && dial2->TextTl != emptyString) ? dial2->TextTl : dial2->Text);
 			firstCompare.secondComparedLine = j;
 			secondCompare.secondComparedLine = i;

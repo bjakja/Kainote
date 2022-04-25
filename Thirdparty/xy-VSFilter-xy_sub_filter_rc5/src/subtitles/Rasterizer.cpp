@@ -784,7 +784,7 @@ static void Bilinear(unsigned char *buf, int w, int h, int stride, int x_factor,
     xy_free(col_pix_buf_base);
 }
 
-extern "C" void* memsetSSE2(void* dest, int c, size_t count);
+//extern "C" void* memsetSSE2(void* dest, int c, size_t count);
 
 bool Rasterizer::Rasterize(const ScanLineData2& scan_line_data2, int xsub, int ysub, SharedPtrOverlay overlay)
 {
@@ -830,7 +830,7 @@ bool Rasterizer::Rasterize(const ScanLineData2& scan_line_data2, int xsub, int y
         return false;
     }
     overlay->mBody.reset(body, xy_free);
-    memsetSSE2(body, 0, overlay->mOverlayPitch * overlay->mOverlayHeight);
+    memset(body, 0, overlay->mOverlayPitch * overlay->mOverlayHeight);
     BYTE* border = NULL;
     if (!overlay->mfWideOutlineEmpty)
     {
@@ -840,7 +840,7 @@ bool Rasterizer::Rasterize(const ScanLineData2& scan_line_data2, int xsub, int y
             return false;
         }
         overlay->mBorder.reset(border, xy_free);
-        memsetSSE2(border, 0, overlay->mOverlayPitch * overlay->mOverlayHeight);
+        memset(border, 0, overlay->mOverlayPitch * overlay->mOverlayHeight);
     }
 
     // Are we doing a border?

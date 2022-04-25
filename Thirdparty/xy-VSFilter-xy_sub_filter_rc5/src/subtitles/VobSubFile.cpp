@@ -25,7 +25,7 @@
 #include "TextFile.h"
 #include "VobSubFile.h"
 #ifndef USE_UNRAR_STATIC
-#include "unrar.h"
+#include "unrar/unrar.h"
 #else
 #include "unrar/dll.hpp"
 #endif
