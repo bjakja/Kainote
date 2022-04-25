@@ -23,10 +23,11 @@
 #pragma once
 
 #include "KaiFrame.h"
+#include "FontCollector.h"
 #include <wx/timer.h>
 #include <wx/window.h>
 
-class FontCollector;
+//class FontCollector;
 class FindReplaceDialog;
 class SelectLines;
 class MisspellReplacer;

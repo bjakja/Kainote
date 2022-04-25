@@ -128,7 +128,7 @@ private:
 	int grabbed = -1;
 };
 
-//void LoadSettings(std::vector<ShapesSetting>* shapes);
+void LoadSettings(std::vector<ShapesSetting>* shapes);
 
 void GetNames(std::vector<ShapesSetting>* shapes, wxArrayString* nameList);
 

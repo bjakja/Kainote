@@ -23,6 +23,7 @@
 #include "SubsGrid.h"
 #include "EditBox.h"
 #include "Provider.h"
+#include "VideoFullscreen.h"
 
 
 Cross::Cross()
@@ -208,7 +209,8 @@ void Cross::DrawLines(wxPoint point)
 void Cross::SetCurVisual()
 {
 	if ((tab->video->IsFullScreen() && tab->video->GetFullScreenWindow() && 
-		!tab->video->GetFullScreenWindow()->showToolbar->GetValue()) || tab->video->IsMenuShown()){
+		!tab->video->GetFullScreenWindow()->showToolbar->GetValue()) || 
+		tab->video->IsMenuShown()){
 		if (cross){
 			tab->video->SetCursor(wxCURSOR_ARROW);
 			cross = false;

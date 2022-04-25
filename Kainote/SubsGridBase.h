@@ -149,8 +149,8 @@ public:
 	SubsFile* file = nullptr;
 	EditBox *edit = nullptr;
 	//comparison static pointers needs short name because we not use this class
-	static SubsGrid* CG1;
-	static SubsGrid* CG2;
+	//static SubsGrid* CG1;
+	//static SubsGrid* CG2;
 	static void SubsComparison();
 	static void RemoveComparison();
 	static wxArrayString compareStyles;

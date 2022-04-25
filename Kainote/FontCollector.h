@@ -26,6 +26,7 @@
 
 #include <wx/zipstrm.h>
 #include <wx/thread.h>
+#include <wx/stopwatch.h>
 
 class SubsFile;
 

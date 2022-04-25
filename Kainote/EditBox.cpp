@@ -28,6 +28,7 @@
 #include "kainoteApp.h"
 #include "Toolbar.h"
 #include "RendererVideo.h"
+#include "AudioBox.h"
 
 
 ComboBoxCtrl::ComboBoxCtrl(wxWindow *parent, int id, const wxSize &size, const wxString &desc, const wxValidator &validator)
@@ -427,7 +428,9 @@ void EditBox::SetLine(int Row, bool setaudio, bool save, bool nochangeline, bool
 		MarginREdit->SetInt(line->MarginR);
 		MarginVEdit->SetInt(line->MarginV);
 		EffectEdit->ChangeValue(line->Effect);
-		TextEdit->SetState((!line->IsComment) ? 0 : (line->Effect->StartsWith(L"template")) ? 2 : (line->Effect->StartsWith(L"code")) ? 3 : 1);
+		TextEdit->SetState((!line->IsComment) ? 0 : 
+			(line->Effect->StartsWith(L"template")) ? 2 : 
+			(line->Effect->StartsWith(L"code")) ? 3 : 1);
 		SetTextWithTags();
 
 		if (DoubtfulTL->IsShown()) {

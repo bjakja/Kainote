@@ -34,6 +34,7 @@
 #include "EditBox.h"
 #include "Notebook.h"
 #include "SubsGrid.h"
+#include "AudioBox.h"
 
 #include <wx/dir.h>
 //config have Windows trash
