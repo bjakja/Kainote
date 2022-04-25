@@ -33,6 +33,7 @@
 class EditBox;
 class KainoteFrame;
 class SubsGridPreview;
+class SubsGrid;
 
 
 class compareData{
