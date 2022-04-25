@@ -23,7 +23,11 @@
 #include "kaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
+#include "Visuals.h"
+#include "AudioBox.h"
 #include <wx/regex.h>
+#include <wx/msw/winundef.h>
+#include <wx/dc.h>
 #include "GraphicsD2D.h"
 #include "BidiConversion.h"
 
@@ -2052,3 +2056,10 @@ void SubsGridWindow::MakeVisible(int rowKey)
 		Refresh(false);
 	}
 }
+
+void SubsGridWindow::OnLostCapture(wxMouseCaptureLostEvent& evt) {
+	if (HasCapture()) {
+		ReleaseMouse();
+	}
+	holding = false;
+};

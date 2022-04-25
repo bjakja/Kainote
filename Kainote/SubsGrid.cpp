@@ -36,6 +36,8 @@
 #include "VideoBox.h"
 #include "Notebook.h"
 #include "stylestore.h"
+#include "AudioBox.h"
+#include "SubtitlesProviderManager.h"
 #include <wx/regex.h>
 #include <wx/filedlg.h>
 
@@ -1275,7 +1277,7 @@ void SubsGrid::ResizeSubs(float xnsize, float ynsize, bool stretch)
 					resizedTag = getfloat(tagValue);
 				}
 				else{
-					KaiLog(wxString::Format((
+					KaiLog(wxString::Format(
 						_("W linii %i nie można przeskalować wartości '%s'\nw tagu '%s'"), 
 						i + 1, tag->value, tag->tagName));
 					resizedTag = tag->value;

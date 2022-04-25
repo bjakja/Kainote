@@ -16,7 +16,10 @@
 
 
 #include "TagFindReplace.h"
-//#include "VisualDrawingShapes.h"
+#include "DialogueTextEditor.h"
+#include "Config.h"
+#include "EditBox.h"
+#include "TabPanel.h"
 
 
 bool TagFindReplace::FindTag(const wxString& pattern, const wxString& text, int mode, bool toEndOfSelection)

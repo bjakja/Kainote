@@ -18,8 +18,8 @@
 
 
 #include "Styles.h"
-#include "Config.h"
-#include "TabPanel.h"
+//
+//#include "TabPanel.h"
 //#include "DialogueTextEditor.h"
 //#include "EditBox.h"
 //#include "SubsGrid.h"
@@ -27,6 +27,8 @@
 #include <wx/gdicmn.h>
 #include <functional>
 #include <wx/regex.h>
+
+class TabPanel;
 
 class FindData {
 public:
@@ -54,7 +56,9 @@ public:
 	void SetTabPanel(TabPanel* _tab) { currentTab = _tab; }
 	//when founds nothing it returns place and inbracket that says if need to put in brackets or not
 	//always for seeking first tag in cursor bracket
-	bool FindTag(const wxString &pattern, const wxString &text = emptyString, int mode = 0, bool toEndOfSelection = false);
+	bool FindTag(const wxString &pattern, 
+		const wxString &text = wxString(L""),
+		int mode = 0, bool toEndOfSelection = false);
 	//replaces all values using normal regex seeking
 	//cause it works only when tags exists else always return false
 	//void (*function)(EventArg &)

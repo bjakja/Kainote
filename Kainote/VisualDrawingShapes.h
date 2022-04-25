@@ -19,14 +19,14 @@
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
-//#include "Visuals.h"
+//#include "TabPanel.h"
 
-#include "Notebook.h"
+//#include "Notebook.h"
 #include <vector>
 
 #include <d3dx9.h>
 
-//class ClipPoint;
+class TabPanel;
 //class DrawingAndClip;
 class Visuals;
 

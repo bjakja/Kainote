@@ -19,6 +19,7 @@
 #include "TabPanel.h"
 #include "VideoBox.h"
 #include "EditBox.h"
+#include "VideoToolbar.h"
 
 void AllTagsSlider::SetAllTags(AllTags* _parent)
 {

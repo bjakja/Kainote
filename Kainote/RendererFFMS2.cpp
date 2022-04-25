@@ -24,6 +24,7 @@
 #include "VisualDrawingShapes.h"
 #include "Visuals.h"
 #include "VideoFullscreen.h"
+#include "SubtitlesProviderManager.h"
 
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)

@@ -22,6 +22,7 @@
 #include "VideoBox.h"
 #include "Editbox.h"
 #include "RendererVideo.h"
+#include "SubtitlesProviderManager.h"
 #include <wx/regex.h>
 #include "config.h"
 

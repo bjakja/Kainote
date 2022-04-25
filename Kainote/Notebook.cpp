@@ -17,7 +17,7 @@
 
 #include "Notebook.h"
 
-//#include "kainoteApp.h"
+#include "SubtitlesProviderManager.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "OpennWrite.h"
@@ -1214,8 +1214,10 @@ int Notebook::LoadVideo(TabPanel *tab, const wxString & path,
 			hasAudioPath = false;
 	}
 	if (found) {
-		if (!tab->video->LoadVideo((hasVideoPath) ? videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
-			fullscreen, !hasAudioPath && !dontLoadAudio, (position != -1) ? isFFMS2 : -1, (position != -1))) {
+		if (!tab->video->LoadVideo((hasVideoPath) ? 
+			videopath : path, (tab->editor) ? OPEN_DUMMY : 0,
+			fullscreen, !hasAudioPath && !dontLoadAudio, 
+			(position != -1) ? isFFMS2 : -1, (position != -1))) {
 			return 0;
 		}
 	}

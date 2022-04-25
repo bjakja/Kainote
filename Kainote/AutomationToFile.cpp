@@ -36,7 +36,7 @@
 #include "Config.h"
 #include "AutomationToFile.h"
 #include "AutomationUtils.h"
-//#include "KainoteApp.h"
+#include "Notebook.h"
 #include "AudioSpectrum.h"
 #include <wx/regex.h>
 #include "Automation.h"

@@ -29,6 +29,7 @@
 #include "VideoBox.h"
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"
+#include "SubtitlesProviderManager.h"
 #include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
 #include <wx/regex.h>

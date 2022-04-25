@@ -17,7 +17,7 @@
 #pragma once
 
 #include "KaiPanel.h"
-#include "ShiftTimes.h"
+//#include "ShiftTimes.h"
 #include "VideoBox.h"
 #include "KainoteFrame.h"
 #include "TabPanel.h"
@@ -27,6 +27,7 @@
 
 #include <wx/sizer.h>
 
+class ShiftTimes;
 
 class TabPanel : public KaiPanel
 {

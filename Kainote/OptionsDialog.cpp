@@ -35,7 +35,7 @@
 #include "Notebook.h"
 #include "SubsGrid.h"
 #include "AudioBox.h"
-
+#include "KaiStaticBoxSizer.h"
 #include <wx/dir.h>
 //config have Windows trash
 #include "config.h"

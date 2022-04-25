@@ -23,9 +23,10 @@
 #include "kainoteframe.h"
 #include "DshowRenderer.h"
 #include "CsriMod.h"
+#include "Visuals.h"
 
 
-csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
+//csri_rend *SubtitlesProvider::m_CsriRenderer = nullptr;
 ASS_Renderer *SubtitlesProvider::m_Libass = nullptr;
 ASS_Library *SubtitlesProvider::m_Library = nullptr;
 
@@ -130,7 +131,9 @@ bool SubtitlesVSFilter::Open(TabPanel *tab, int flag, wxString *text)
 	csri_rend *vobsub = GetVSFilter();
 	if (!vobsub){ KaiLog(_("Nie można zinicjalizować CSRI.")); delete textsubs; return false; }
 
-	m_CsriInstance = (fromFile) ? csri_open_file(vobsub, buffer, nullptr) : csri_open_mem(vobsub, buffer, size, nullptr);
+	m_CsriInstance = (fromFile) ? 
+		csri_open_file(vobsub, buffer, nullptr) : 
+		csri_open_mem(vobsub, buffer, size, nullptr);
 	if (!m_CsriInstance){ KaiLog(_("Nie można utworzyć instancji CSRI.")); delete textsubs; return false; }
 
 

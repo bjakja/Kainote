@@ -18,13 +18,16 @@
 #include "RendererVideo.h"
 #include "RendererDirectShow.h"
 #include "VisualDrawingShapes.h"
+#include "SubtitlesProviderManager.h"
 #include "DShowPlayer.h"
+#include "Visuals.h"
 #include "DshowRenderer.h"
 #include "kainoteApp.h"
 #include "CsriMod.h"
 #include "OpennWrite.h"
 #include "Notebook.h"
 #include "SubsGrid.h"
+#include "VideoFullscreen.h"
 
 
 const IID IID_IDirectXVideoProcessorService = { 0xfc51a552, 0xd5e7, 0x11d9, { 0xaf, 0x55, 0x00, 0x05, 0x4e, 0x43, 0xff, 0x02 }};
@@ -511,7 +514,9 @@ bool RendererDirectShow::OpenSubs(int flag, bool redraw, wxString *text, bool re
 bool RendererDirectShow::Play(int end)
 {
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
+	if (!(videoControl->IsShown() || 
+		(videoControl->m_FullScreenWindow && 
+			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
 	if (m_HasVisualEdition){
 		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 		SAFE_DELETE(m_Visual->dummytext);

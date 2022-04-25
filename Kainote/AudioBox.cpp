@@ -41,7 +41,7 @@
 #include "Editbox.h"
 #include "AudioBox.h"
 //#include "KainoteFrame.h"
-//#include "Notebook.h"
+#include "Notebook.h"
 #include "MappedButton.h"
 #include "KeyframesLoader.h"
 #include "KaiMessageBox.h"
@@ -264,7 +264,8 @@ bool AudioBox::OpenKeyframes(const wxString & filename)
 		SetKeyframes(keyframes);
 	}
 	else{
-		KaiMessageBox(_("Nieprawidłowy format klatek kluczowych"), _("Błąd"), 4L, Notebook::GetTab());
+		KaiMessageBox(_("Nieprawidłowy format klatek kluczowych"), 
+			_("Błąd"), 4L, Notebook::GetTab());
 	}
 	return true;
 }

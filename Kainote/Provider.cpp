@@ -23,6 +23,7 @@
 #include "KaiMessageBox.h"
 #include "AudioBox.h"
 #include "VisualDrawingShapes.h"
+#include "Notebook.h"
 
 
 Provider::Provider(const wxString& filename, RendererVideo* renderer)

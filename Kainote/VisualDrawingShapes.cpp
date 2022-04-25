@@ -29,6 +29,7 @@
 #include "EditBox.h"
 #include "VideoBox.h"
 #include "Visuals.h"
+#include "RendererVideo.h"
 //
 
 enum {

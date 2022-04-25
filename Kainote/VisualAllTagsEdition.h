@@ -121,7 +121,7 @@ private:
 	int selection = 0;
 };
 
-//void LoadSettings(std::vector<AllTagsSetting>* tags);
+void LoadSettings(std::vector<AllTagsSetting>* tags);
 
 void GetNames(std::vector<AllTagsSetting>* tags, wxArrayString *nameList);
 

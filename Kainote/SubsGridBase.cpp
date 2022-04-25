@@ -40,7 +40,7 @@
 #include "Visuals.h"
 
 #include "VisualDrawingShapes.h"
-
+#include "SubtitlesProviderManager.h"
 #include <algorithm>
 
 

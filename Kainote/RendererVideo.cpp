@@ -21,6 +21,8 @@
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 #include "Provider.h"
+#include "VideoFullscreen.h"
+#include "SubtitlesProviderManager.h"
 
 #include <wx/dir.h>
 #include <wx/clipbrd.h>

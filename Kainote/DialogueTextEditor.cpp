@@ -23,6 +23,7 @@
 #include "config.h"
 #include "Menu.h"
 #include <wx/regex.h>
+#include <wx/msw/winundef.h>
 #include <wx/clipbrd.h>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
@@ -30,10 +31,10 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
-#undef DRAWTEXT;
+//#undef DRAWTEXT;
 
 
-#undef DrawText
+//#undef DrawText
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 

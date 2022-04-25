@@ -25,6 +25,8 @@
 #include "Notebook.h"
 #include "RendererVideo.h"
 #include <wx/regex.h>
+#include <wx/msw/winundef.h>
+#include <wx/dc.h>
 
 SubsGridPreview::SubsGridPreview(SubsGrid *_previewGrid, SubsGrid *windowToDraw, int posY, const wxSize &size)
 	:wxWindow((wxWindow*)windowToDraw, -1, wxPoint(0, posY), size)
