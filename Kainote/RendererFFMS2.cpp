@@ -22,6 +22,8 @@
 #include "DshowRenderer.h"
 #include "RendererFFMS2.h"
 #include "VisualDrawingShapes.h"
+#include "Visuals.h"
+#include "VideoFullscreen.h"
 
 RendererFFMS2::RendererFFMS2(VideoBox *control, bool visualDisabled)
 	: RendererVideo(control, visualDisabled)
@@ -306,7 +308,9 @@ bool RendererFFMS2::Play(int end)
 {
 	if (m_Time >= GetDuration()){ return false; }
 	SetThreadExecutionState(ES_DISPLAY_REQUIRED | ES_CONTINUOUS);
-	if (!(videoControl->IsShown() || (videoControl->m_FullScreenWindow && videoControl->m_FullScreenWindow->IsShown()))){ return false; }
+	if (!(videoControl->IsShown() || 
+		(videoControl->m_FullScreenWindow && 
+			videoControl->m_FullScreenWindow->IsShown()))){ return false; }
 	if (m_HasVisualEdition){
 		OpenSubs(OPEN_WHOLE_SUBTITLES, false);
 		SAFE_DELETE(m_Visual->dummytext);

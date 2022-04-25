@@ -151,7 +151,7 @@ size_t RegexUtil::wstringMatch(const std::wregex& pattern, const std::wstring& t
 #endif
 
 #ifndef ReftimeToCString
-#  define  ReftimeToCString(rt) ReftimeToString(rt).GetString()
+#  define  ReftimeToCString(rt) ReftimeToString(rt).GetStrWing()
 #endif
 
 // gathered from http://www.netwave.or.jp/~shikai/shikai/shcolor.htm
@@ -1693,7 +1693,7 @@ static bool OpenVPlayer(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet)
     return(!ret.IsEmpty());
 }
 
-static inline CStringW GetStr(CStringW& buff, WCHAR sep = L',') //throw(...)
+static inline CStringW GetStrWW(CStringW& buff, WCHAR sep = L',') //throw(...)
 {
     buff.TrimLeft();
 
@@ -1714,7 +1714,7 @@ static inline int GetInt(CStringW& buff, WCHAR sep = L',') //throw(...)
 {
     CStringW str;
 
-    str = GetStr(buff, sep);
+    str = GetStrWW(buff, sep);
     str.MakeLower();
 
     CStringW fmtstr = str.GetLength() > 2 && (str.Left(2) == L"&h" || str.Left(2) == L"0x")
@@ -1731,7 +1731,7 @@ static inline double GetFloat(CStringW& buff, WCHAR sep = L',') //throw(...)
 {
     CStringW str;
 
-    str = GetStr(buff, sep);
+    str = GetStrWW(buff, sep);
     str.MakeLower();
 
     float ret;
@@ -1914,7 +1914,7 @@ static bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int C
         FastTrim(buff);
         if(buff.IsEmpty() || buff.GetAt(0) == ';') continue;
 
-        CStringW entry = GetStr(buff, ':');
+        CStringW entry = GetStrWW(buff, ':');
 //  }
 //      catch(...) {continue;}
 
@@ -1980,8 +1980,8 @@ static bool OpenSubStationAlpha(CTextFile* file, CSimpleTextSubtitle& ret, int C
                 int alpha;
                 CRect tmp_rect;
 
-                StyleName = GetStr(buff);
-                style->fontName = GetStr(buff);
+                StyleName = GetStrWW(buff);
+                style->fontName = GetStrWW(buff);
                 style->fontSize = GetFloat(buff);
                 for(size_t i = 0; i < 4; i++) style->colors[i] = (COLORREF)GetInt(buff);
                 style->fontWeight = !!GetInt(buff) ? FW_BOLD : FW_NORMAL;
@@ -2073,13 +2073,13 @@ if(sver <= 4)   style->scrAlignment = (style->scrAlignment&4) ? ((style->scrAlig
         }
         else if(entry == L"collisions")
         {
-            buff = GetStr(buff);
+            buff = GetStrWW(buff);
             buff.MakeLower();
             ret.m_collisions = buff.Find(L"reverse") >= 0 ? 1 : 0;
         }
         else if(entry == L"scaledborderandshadow")
         {
-            buff = GetStr(buff);
+            buff = GetStrWW(buff);
             buff.MakeLower();
             ret.m_fScaledBAS = buff.Find(L"yes") >= 0;
         }
@@ -2108,7 +2108,7 @@ if(sver <= 4)   style->scrAlignment = (style->scrAlignment&4) ? ((style->scrAlig
         }
         else if(entry == L"ycbcr matrix")
         {
-            buff = GetStr(buff);
+            buff = GetStrWW(buff);
             buff.MakeLower();
             if (buff.Left(4)==L"none")
             {
@@ -2164,7 +2164,7 @@ static bool OpenXombieSub(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet
         FastTrim(buff);
         if(buff.IsEmpty() || buff.GetAt(0) == ';') continue;
 
-        CStringW entry = GetStr(buff, L'=');
+        CStringW entry = GetStrWW(buff, L'=');
 //  }
 //      catch(...) {continue;}
 
@@ -2208,8 +2208,8 @@ static bool OpenXombieSub(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet
                 CString StyleName;
                 CRect tmp_rect;
 
-                StyleName = GetStr(buff) + _T("_") + GetStr(buff);
-                style->fontName = GetStr(buff);
+                StyleName = GetStrWW(buff) + _T("_") + GetStrWW(buff);
+                style->fontName = GetStrWW(buff);
                 style->fontSize = GetFloat(buff);
                 for(size_t  i = 0; i < 4; i++) style->colors[i] = (COLORREF)GetInt(buff);
                 for(size_t  i = 0; i < 4; i++) style->alpha[i] = GetInt(buff);
@@ -2262,8 +2262,8 @@ static bool OpenXombieSub(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet
                 CString Style, Actor;
                 CRect marginRect;
 
-                if(GetStr(buff) != L"D") continue;
-                id = GetStr(buff);
+                if(GetStrWW(buff) != L"D") continue;
+                id = GetStrWW(buff);
                 layer = GetInt(buff);
                 hh1 = GetInt(buff, L':');
                 mm1 = GetInt(buff, L':');
@@ -2273,8 +2273,8 @@ static bool OpenXombieSub(CTextFile* file, CSimpleTextSubtitle& ret, int CharSet
                 mm2 = GetInt(buff, L':');
                 ss2 = GetInt(buff, L'.');
                 ms2 = GetInt(buff);
-                Style = GetStr(buff) + _T("_") + GetStr(buff);
-                Actor = GetStr(buff);
+                Style = GetStrWW(buff) + _T("_") + GetStrWW(buff);
+                Actor = GetStrWW(buff);
                 marginRect.left = GetInt(buff);
                 marginRect.right = GetInt(buff);
                 marginRect.top = marginRect.bottom = GetInt(buff);
@@ -2519,9 +2519,9 @@ static bool SegmentCompStart(const STSSegment& segment, REFERENCE_TIME start)
 void CSimpleTextSubtitle::Add(CStringW str, bool fUnicode, REFERENCE_TIME start, REFERENCE_TIME end,
     CString style, const CString& actor, const CString& effect, const CRect& marginRect, int layer, int readorder)
 {
-    TRACE_SUB(ReftimeToCString(start)<<" "<<ReftimeToCString(end)<<" "<<str.GetString()<<" style:"<<style.GetString()
+    TRACE_SUB(ReftimeToCString(start)<<" "<<ReftimeToCString(end)<<" "<<str.GetStrWing()<<" style:"<<style.GetStrWing()
         <<" Unicode:"<<fUnicode
-        <<" actor:"<<actor.GetString()<<" effect:"<<effect.GetString()
+        <<" actor:"<<actor.GetStrWing()<<" effect:"<<effect.GetStrWing()
         <<" (l:"<<marginRect.left<<",t:"<<marginRect.top<<",r:"<<marginRect.right<<",b:"<<marginRect.bottom
         <<" layer:"<<layer<<" readorder:"<<readorder
         <<" entries:"<<m_entries.GetCount()<<" seg:"<<m_segments.GetCount());
@@ -3248,7 +3248,7 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
              TEXT("OpenUSF"),
              TEXT("OpenMPL2"),
              TEXT("OpenRealText")};
-        XY_LOG_INFO("Open '"<<f->GetFilePath().GetString()<<"' with "<<func_name[i]<<" begin" );
+        XY_LOG_INFO("Open '"<<f->GetFilePath().GetStrWing()<<"' with "<<func_name[i]<<" begin" );
         if(!OpenFuncts[i].open(f, *this, CharSet) /*|| !GetCount()*/)
         {
             if(m_entries.GetCount() > 0)
@@ -3266,7 +3266,7 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
             Empty();
             continue;
         }
-        XY_LOG_INFO("Open '"<<f->GetFilePath().GetString()<<"' with "<<func_name[i]<<" succeeded" );
+        XY_LOG_INFO("Open '"<<f->GetFilePath().GetStrWing()<<"' with "<<func_name[i]<<" succeeded" );
 
         m_name = name;
         m_subtitleType = OpenFuncts[i].type;
@@ -3294,26 +3294,282 @@ bool CSimpleTextSubtitle::Open(CTextFile* f, int CharSet, CString name)
 
 bool CSimpleTextSubtitle::Open(BYTE* data, int len, int CharSet, CString name)
 {
-    TCHAR path[MAX_PATH];
-    if(!GetTempPath(MAX_PATH, path)) return(false);
+    bool fRet = false;
 
-    TCHAR fn[MAX_PATH];
-    if(!GetTempFileName(path, _T("vs"), 0, fn)) return(false);
+    int version = 3, sver = 3;
+    CSimpleTextSubtitle ret;
+    ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+    ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
 
-    FILE* tmp = _tfopen(fn, _T("wb"));
-    if(!tmp) return(false);
+    CStringW dat(data);
+    while (true)
+    {
+        CStringW buff = GetStrWW(dat, '\n');
+        FastTrim(buff);
+        if (buff.IsEmpty() || buff.GetAt(0) == ';') continue;
 
-    int i = 0;
-    for(; i <= (len-1024); i += 1024) fwrite(&data[i], 1024, 1, tmp);
-    if(len > i) fwrite(&data[i], len - i, 1, tmp);
+        CStringW entry = GetStrWW(buff, ':');
+       
 
-    fclose(tmp);
+        entry.MakeLower();
 
-    bool fRet = Open(fn, CharSet, name);
+        if (entry == L"dialogue")
+        {
+            try
+            {
+                CStringW::PXSTR __buff = buff.GetBuffer();
+                int hh1, mm1, ss1, ms1_div10, hh2, mm2, ss2, ms2_div10, layer = 0;
+                CString Style, Actor, Effect;
+                CRect marginRect;
 
-    _tremove(fn);
+                if (version <= 4) { TryNextStr(&__buff, L'='); NextInt(&__buff); } /* Marked = */
+                if (version >= 5)layer = NextInt(&__buff);
+                hh1 = NextInt(&__buff, L':');
+                mm1 = NextInt(&__buff, L':');
+                ss1 = NextInt(&__buff, L'.');
+                ms1_div10 = NextInt(&__buff);
+                hh2 = NextInt(&__buff, L':');
+                mm2 = NextInt(&__buff, L':');
+                ss2 = NextInt(&__buff, L'.');
+                ms2_div10 = NextInt(&__buff);
+                Style = TryNextStr(&__buff);
+                Actor = TryNextStr(&__buff);
+                marginRect.left = NextInt(&__buff);
+                marginRect.right = NextInt(&__buff);
+                marginRect.top = marginRect.bottom = NextInt(&__buff);
+                if (version >= 6)marginRect.bottom = NextInt(&__buff);
+                Effect = TryNextStr(&__buff);
 
-    return(fRet);
+                CStringW buff2 = __buff;
+                int len = min(Effect.GetLength(), buff2.GetLength());
+                if (Effect.Left(len) == buff2.Left(len)) Effect.Empty();
+
+                Style.TrimLeft(_T('*'));
+                if (!Style.CompareNoCase(_T("Default"))) Style = _T("Default");
+
+                ret.AddSTSEntryOnly(buff2,
+                    true,
+                    MS2RT((((hh1 * 60i64 + mm1) * 60i64) + ss1) * 1000i64 + ms1_div10 * 10i64),
+                    MS2RT((((hh2 * 60i64 + mm2) * 60i64) + ss2) * 1000i64 + ms2_div10 * 10i64),
+                    Style, Actor, Effect,
+                    marginRect,
+                    layer);
+            }
+            catch (...)
+            {
+                //                ASSERT(0);
+                //                throw;
+                return(false);
+            }
+        }
+        else if (entry == L"style")
+        {
+            STSStyle* style = DEBUG_NEW STSStyle;
+            if (!style) return(false);
+
+            try
+            {
+                CString StyleName;
+                int alpha;
+                CRect tmp_rect;
+
+                StyleName = GetStrWW(buff);
+                style->fontName = GetStrWW(buff);
+                style->fontSize = GetFloat(buff);
+                for (size_t i = 0; i < 4; i++) style->colors[i] = (COLORREF)GetInt(buff);
+                style->fontWeight = !!GetInt(buff) ? FW_BOLD : FW_NORMAL;
+                style->fItalic = !!GetInt(buff);
+                if (sver >= 5)   style->fUnderline = !!GetInt(buff);
+                if (sver >= 5)   style->fStrikeOut = !!GetInt(buff);
+                if (sver >= 5)   style->fontScaleX = GetFloat(buff);
+                if (sver >= 5)   style->fontScaleY = GetFloat(buff);
+                if (sver >= 5)   style->fontSpacing = GetFloat(buff);
+                if (sver >= 5)   style->fontAngleZ = GetFloat(buff);
+                if (sver >= 4)   style->borderStyle = GetInt(buff);
+                style->outlineWidthX = style->outlineWidthY = GetFloat(buff);
+                style->shadowDepthX = style->shadowDepthY = GetFloat(buff);
+                style->scrAlignment = GetInt(buff);
+                tmp_rect.left = GetInt(buff);
+                tmp_rect.right = GetInt(buff);
+                tmp_rect.top = tmp_rect.bottom = GetInt(buff);
+                if (sver >= 6)   tmp_rect.bottom = GetInt(buff);
+                style->marginRect = tmp_rect;
+                if (sver <= 4)   alpha = GetInt(buff);
+                style->charSet = GetInt(buff);
+                if (sver >= 6)   style->relativeTo = GetInt(buff);
+
+                if (sver <= 4)   style->colors[2] = style->colors[3]; // style->colors[2] is used for drawing the outline
+                if (sver <= 4)   alpha = max(min(alpha, 0xff), 0);
+                if (sver <= 4) { for (size_t i = 0; i < 3; i++) style->alpha[i] = alpha; style->alpha[3] = 0x80; }
+                if (sver >= 5)   for (size_t i = 0; i < 4; i++) { style->alpha[i] = (BYTE)(style->colors[i] >> 24); style->colors[i] &= 0xffffff; }
+                if (sver >= 5)   style->fontScaleX = max(style->fontScaleX, 0);
+                if (sver >= 5)   style->fontScaleY = max(style->fontScaleY, 0);
+                if (sver >= 5)   style->fontSpacing = max(style->fontSpacing, 0);
+                style->fontAngleX = style->fontAngleY = 0;
+                style->borderStyle = style->borderStyle == 1 ? 0 : style->borderStyle == 3 ? 1 : 0;
+                style->outlineWidthX = max(style->outlineWidthX, 0);
+                style->outlineWidthY = max(style->outlineWidthY, 0);
+                style->shadowDepthX = max(style->shadowDepthX, 0);
+                style->shadowDepthY = max(style->shadowDepthY, 0);
+                if (sver <= 4)   style->scrAlignment = (style->scrAlignment & 4) ? ((style->scrAlignment & 3) + 6) // top
+                    : (style->scrAlignment & 8) ? ((style->scrAlignment & 3) + 3) // mid
+                    : (style->scrAlignment & 3); // bottom
+
+                StyleName.TrimLeft(_T('*'));
+
+                ret.AddStyle(StyleName, style);
+            }
+            catch (...)
+            {
+                delete style;
+                return(false);
+            }
+        }
+        else if (entry == L"[script info]")
+        {
+            fRet = true;
+        }
+        else if (entry == L"playresx")
+        {
+            try { ret.m_dstScreenSize.cx = GetInt(buff); }
+            catch (...) { ret.m_dstScreenSize = CSize(0, 0); return(false); }
+
+            if (ret.m_dstScreenSize.cy <= 0)
+            {
+                ret.m_dstScreenSize.cy = (ret.m_dstScreenSize.cx == 1280)
+                    ? 1024
+                    : ret.m_dstScreenSize.cx * 3 / 4;
+            }
+        }
+        else if (entry == L"playresy")
+        {
+            try { ret.m_dstScreenSize.cy = GetInt(buff); }
+            catch (...) { ret.m_dstScreenSize = CSize(0, 0); return(false); }
+
+            if (ret.m_dstScreenSize.cx <= 0)
+            {
+                ret.m_dstScreenSize.cx = (ret.m_dstScreenSize.cy == 1024)
+                    ? 1280
+                    : ret.m_dstScreenSize.cy * 4 / 3;
+            }
+        }
+        else if (entry == L"wrapstyle")
+        {
+            try { ret.m_defaultWrapStyle = GetInt(buff); }
+            catch (...) { ret.m_defaultWrapStyle = 1; return(false); }
+        }
+        else if (entry == L"scripttype")
+        {
+            if (buff.GetLength() >= 4 && !buff.Right(4).CompareNoCase(L"4.00")) version = sver = 4;
+            else if (buff.GetLength() >= 5 && !buff.Right(5).CompareNoCase(L"4.00+")) version = sver = 5;
+            else if (buff.GetLength() >= 6 && !buff.Right(6).CompareNoCase(L"4.00++")) version = sver = 6;
+        }
+        else if (entry == L"collisions")
+        {
+            buff = GetStrWW(buff);
+            buff.MakeLower();
+            ret.m_collisions = buff.Find(L"reverse") >= 0 ? 1 : 0;
+        }
+        else if (entry == L"scaledborderandshadow")
+        {
+            buff = GetStrWW(buff);
+            buff.MakeLower();
+            ret.m_fScaledBAS = buff.Find(L"yes") >= 0;
+        }
+        else if (entry == L"[v4 styles]")
+        {
+            fRet = true;
+            sver = 4;
+        }
+        else if (entry == L"[v4+ styles]")
+        {
+            fRet = true;
+            sver = 5;
+        }
+        else if (entry == L"[v4++ styles]")
+        {
+            fRet = true;
+            sver = 6;
+        }
+        else if (entry == L"[events]")
+        {
+            fRet = true;
+        }
+        else if (entry == L"fontname")
+        {
+            //LoadUUEFont(file);
+            CString font;
+            
+            FastTrim(buff);
+            if (buff.IsEmpty()) break;
+            if (buff[0] == '[') // check for standard section headers
+            {
+                if (buff.Find(_T("[Script Info]")) == 0) break;
+                if (buff.Find(_T("[V4+ Styles]")) == 0) break;
+                if (buff.Find(_T("[V4 Styles]")) == 0) break;
+                if (buff.Find(_T("[Events]")) == 0) break;
+                if (buff.Find(_T("[Fonts]")) == 0) break;
+                if (buff.Find(_T("[Graphics]")) == 0) break;
+            }
+            if (buff.Find(_T("fontname:")) == 0) {
+                LoadFont(font); 
+                font.Empty(); 
+                continue; }
+
+            
+
+            if (!font.IsEmpty())
+                LoadFont(font);
+        }
+        else if (entry == L"ycbcr matrix")
+        {
+            buff = GetStrWW(buff);
+            buff.MakeLower();
+            if (buff.Left(4) == L"none")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_AUTO;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_AUTO;
+            }
+            else if (buff.Left(6) == L"tv.601")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+            }
+            else if (buff.Left(6) == L"tv.709")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+            }
+            else if (buff.Left(7) == L"tv.2020")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_TV;
+            }
+            else if (buff.Left(6) == L"pc.601")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT601;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+            }
+            else if (buff.Left(6) == L"pc.709")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT709;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+            }
+            else if (buff.Left(7) == L"pc.2020")
+            {
+                ret.m_eYCbCrMatrix = CSimpleTextSubtitle::YCbCrMatrix_BT2020;
+                ret.m_eYCbCrRange = CSimpleTextSubtitle::YCbCrRange_PC;
+            }
+        }
+        //if (fEOF) break;
+    }
+    //    ret.Sort();
+    CreateSegments();
+
+    ChangeUnknownStylesToDefault();
+
+    if (m_dstScreenSize == CSize(0, 0)) m_dstScreenSize = CSize(384, 288);
+    return true;
 }
 
 bool CSimpleTextSubtitle::SaveAs(CString fn, exttype et, double fps, CTextFile::enc e)
@@ -3758,7 +4014,7 @@ STSStyle& operator <<= (STSStyle& s, const CString& style)
             for(size_t i = 0; i < 4; i++) s.colors[i] = (COLORREF)GetInt(str,L';');
             for(size_t i = 0; i < 4; i++) s.alpha[i] = GetInt(str,L';');
             s.charSet     = GetInt(str,L';');
-            s.fontName    = GetStr(str,L';');   s.fontSize   = GetFloat(str,L';');
+            s.fontName    = GetStrWW(str,L';');   s.fontSize   = GetFloat(str,L';');
             s.fontScaleX  = GetFloat(str,L';'); s.fontScaleY = GetFloat(str,L';');
             s.fontSpacing = GetFloat(str,L';'); s.fontWeight = GetInt  (str,L';');
             s.fItalic     = !!GetInt(str,L';'); s.fUnderline = !!GetInt(str,L';'); s.fStrikeOut = !!GetInt(str,L';'); s.fBlur = GetFloat(str,L';'); s.fGaussianBlur = GetFloat(str,L';');

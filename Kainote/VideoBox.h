@@ -21,13 +21,16 @@
 #include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "RendererVideo.h"
-#include "VideoFullscreen.h"
+//#include "VideoFullscreen.h"
+
 #include "KaiTextCtrl.h"
 #include "VideoBox.h"
 #include "Provider.h"
 #include "TabPanel.h"
 
 class Provider;
+class Fullscreen;
+class VideoToolbar;
 
 enum PlaybackState;
 
@@ -78,44 +81,11 @@ public:
 	void ContextMenu(const wxPoint &pos);
 	void OnMouseEvent(wxMouseEvent& event);
 	void OnKeyPress(wxKeyEvent& event);
-	void CaptureMouse(){ 
-		if (m_IsFullscreen && m_FullScreenWindow){ 
-			m_FullScreenWindow->CaptureMouse(); 
-		} else{ 
-			wxWindow::CaptureMouse(); 
-		} 
-	}
-	void ReleaseMouse(){ 
-		if (m_IsFullscreen && m_FullScreenWindow){ 
-			m_FullScreenWindow->ReleaseMouse(); 
-		} else{ 
-			wxWindow::ReleaseMouse(); 
-		} 
-	}
-	bool HasCapture(){ 
-		if (m_IsFullscreen && m_FullScreenWindow){ 
-			return m_FullScreenWindow->HasCapture(); 
-		} else{ 
-			return wxWindow::HasCapture(); 
-		} 
-	}
-	bool SetCursor(int cursorId){ 
-		if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId){
-			m_LastFullScreenCursor = cursorId;
-			return m_FullScreenWindow->SetCursor((wxStockCursor)cursorId);
-		} 
-		else if(m_LastCursor != cursorId){
-			m_LastCursor = cursorId;
-			return wxWindow::SetCursor((wxStockCursor)cursorId);
-		} 
-		return false;
-	};
-	bool HasArrow(){
-		if (m_IsFullscreen){
-			return m_LastFullScreenCursor == wxCURSOR_ARROW;
-		}else
-			return m_LastCursor == wxCURSOR_ARROW;
-	}
+	void CaptureMouse();
+	void ReleaseMouse();
+	bool HasCapture();
+	bool SetCursor(int cursorId);
+	bool HasArrow();
 	bool SetBackgroundColour(const wxColour &col);
 	bool SetFont(const wxFont &font);
 	void GetVideoSize(int *width, int *height);

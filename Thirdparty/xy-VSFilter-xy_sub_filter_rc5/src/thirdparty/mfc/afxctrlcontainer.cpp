@@ -14,7 +14,7 @@
 #include "stdafx.h"
 #undef SubclassWindow
 #include "afxctrlcontainer.h"
-#if 0
+//#if 0
 #include "afxtagmanager.h"
 #include "afxbutton.h"
 #include "afxcolorbutton.h"
@@ -27,7 +27,7 @@
 #include "afxshelllistctrl.h"
 #include "afxshelltreectrl.h"
 #include "afxvslistbox.h"
-#endif
+//#endif
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +46,8 @@ static void DoRegisterWindowClass(LPCTSTR lpszClassName, LPCTSTR lpszBaseClassNa
 #if (_MSC_VER == 1700)
 	if (!GetClassInfo(hInst, lpszBaseClassName, &wnd))
 #else
-	if (!AfxCtxGetClassInfo(hInst, lpszBaseClassName, &wnd))
+	//if (!AfxCtxGetClassInfo(hInst, lpszBaseClassName, &wnd))
+    if (!GetClassInfo(hInst, lpszBaseClassName, &wnd))
 #endif
 	{
 		wnd.style = CS_DBLCLKS;

@@ -19,7 +19,7 @@
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"
-#include "Visuals.h"
+//#include "Visuals.h"
 
 #include "Notebook.h"
 #include <vector>
@@ -27,7 +27,8 @@
 #include <d3dx9.h>
 
 //class ClipPoint;
-class DrawingAndClip;
+//class DrawingAndClip;
+class Visuals;
 
 class ShapesSetting
 {
@@ -102,11 +103,11 @@ class Shapes : public DrawingAndClip {
 public:
 	Shapes();
 	
-	void OnMouseEvent(wxMouseEvent& evt) override;
-	void DrawVisual(int time) override;
-	void SetShape(int shape) override;
-	void GetVisual(wxString* drawing) override;
-	void SetScale(wxString* txt, size_t position, int* diff) override;
+	void OnMouseEvent(wxMouseEvent& evt) /*override*/;
+	void DrawVisual(int time) /*override*/;
+	void SetShape(int shape) /*override*/;
+	void GetVisual(wxString* drawing) /*override*/;
+	void SetScale(wxString* txt, size_t position, int* diff) /*override*/;
 private:
 	void SortPoints();
 	void SetDrawingScale();

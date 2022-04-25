@@ -511,7 +511,7 @@
 // Default is 1
 //
 // Recommended setting: 1 (needed by wxSocket)
-#define wxUSE_STOPWATCH     1
+#define wxUSE_STOPWATCH     0
 
 // Set wxUSE_FSWATCHER to 1 if you want to enable wxFileSystemWatcher
 //

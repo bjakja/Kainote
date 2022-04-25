@@ -1342,7 +1342,7 @@
 #if wxUSE_ARCHIVE_STREAMS
 #   if !wxUSE_DATETIME
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxArchive requires wxUSE_DATETIME"
+#           //error "wxArchive requires wxUSE_DATETIME"
 #       else
 #           undef wxUSE_ARCHIVE_STREAMS
 #           define wxUSE_ARCHIVE_STREAMS 0
@@ -1415,14 +1415,14 @@
 #           define wxUSE_FILESYSTEM 1
 #       endif
 #   endif
-#   if !wxUSE_ARCHIVE_STREAMS
+#   /*if !wxUSE_ARCHIVE_STREAMS
 #       ifdef wxABORT_ON_CONFIG_ERROR
 #           error "wxArchiveFSHandler requires wxArchive"
 #       else
 #           undef wxUSE_ARCHIVE_STREAMS
 #           define wxUSE_ARCHIVE_STREAMS 1
 #       endif
-#   endif
+#   endif*/
 #endif /* wxUSE_FS_ARCHIVE */
 
 #if wxUSE_FILESYSTEM
@@ -1514,26 +1514,26 @@
 #           define wxUSE_ZLIB 1
 #       endif
 #   endif
-#   if !wxUSE_ARCHIVE_STREAMS
+#   /*if !wxUSE_ARCHIVE_STREAMS
 #       ifdef wxABORT_ON_CONFIG_ERROR
 #           error "wxZip requires wxArchive"
 #       else
 #           undef wxUSE_ARCHIVE_STREAMS
 #           define wxUSE_ARCHIVE_STREAMS 1
 #       endif
-#   endif
+#   endif*/
 #endif /* wxUSE_ZIPSTREAM */
 
-#if wxUSE_TARSTREAM
-#   if !wxUSE_ARCHIVE_STREAMS
-#       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxTar requires wxArchive"
-#       else
-#           undef wxUSE_ARCHIVE_STREAMS
-#           define wxUSE_ARCHIVE_STREAMS 1
-#       endif
-#   endif
-#endif /* wxUSE_TARSTREAM */
+//#if wxUSE_TARSTREAM
+//#   if !wxUSE_ARCHIVE_STREAMS
+//#       ifdef wxABORT_ON_CONFIG_ERROR
+//#           error "wxTar requires wxArchive"
+//#       else
+//#           undef wxUSE_ARCHIVE_STREAMS
+//#           define wxUSE_ARCHIVE_STREAMS 1
+//#       endif
+//#   endif
+//#endif /* wxUSE_TARSTREAM */
 
 /*
    Section 3b: the tests for the GUI settings only.
@@ -1837,7 +1837,7 @@
 
 #   if !wxUSE_DATETIME
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxCalendarCtrl requires wxUSE_DATETIME"
+#           //error "wxCalendarCtrl requires wxUSE_DATETIME"
 #       else
 #           undef wxUSE_DATETIME
 #           define wxUSE_DATETIME 1
@@ -1862,7 +1862,7 @@
 #if wxUSE_DATEPICKCTRL || wxUSE_TIMEPICKCTRL
 #   if !wxUSE_DATETIME
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxDatePickerCtrl and wxTimePickerCtrl requires wxUSE_DATETIME"
+#           //error "wxDatePickerCtrl and wxTimePickerCtrl requires wxUSE_DATETIME"
 #       else
 #           undef wxUSE_DATETIME
 #           define wxUSE_DATETIME 1
@@ -1895,7 +1895,7 @@
 #if wxUSE_FILECTRL
 #   if !wxUSE_DATETIME
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxFileCtrl requires wxDateTime"
+#           //error "wxFileCtrl requires wxDateTime"
 #       else
 #           undef wxUSE_DATETIME
 #           define wxUSE_DATETIME 1
@@ -2249,7 +2249,7 @@
 
 #if wxUSE_SOCKETS && !wxUSE_STOPWATCH
 #   ifdef wxABORT_ON_CONFIG_ERROR
-#       error "wxUSE_SOCKETS requires wxUSE_STOPWATCH"
+#       //error "wxUSE_SOCKETS requires wxUSE_STOPWATCH"
 #   else
 #       undef wxUSE_SOCKETS
 #       define wxUSE_SOCKETS 0
@@ -2379,7 +2379,7 @@
 #if wxUSE_MEDIACTRL
 #   if !wxUSE_LONGLONG
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxMediaCtrl requires wxUSE_LONLONG"
+#           //error "wxMediaCtrl requires wxUSE_LONLONG"
 #       else
 #           undef wxUSE_LONLONG
 #           define wxUSE_LONLONG 1
@@ -2390,7 +2390,7 @@
 #if wxUSE_STC
 #   if !wxUSE_STOPWATCH
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxStyledTextCtrl requires wxUSE_STOPWATCH"
+#           //error "wxStyledTextCtrl requires wxUSE_STOPWATCH"
 #       else
 #           undef wxUSE_STC
 #           define wxUSE_STC 0
@@ -2418,7 +2418,7 @@
 #   endif
 #   if !wxUSE_LONGLONG
 #       ifdef wxABORT_ON_CONFIG_ERROR
-#           error "wxRichTextCtrl requires wxUSE_LONLONG"
+#           //error "wxRichTextCtrl requires wxUSE_LONLONG"
 #       else
 #           undef wxUSE_LONLONG
 #           define wxUSE_LONLONG 1

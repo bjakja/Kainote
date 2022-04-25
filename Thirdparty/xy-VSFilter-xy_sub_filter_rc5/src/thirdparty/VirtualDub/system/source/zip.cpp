@@ -24,7 +24,7 @@
 //		distribution.
 
 #include "stdafx.h"
-#include <vd2/system/zip.h>
+#include <vd2/system\zip.h>
 #include <vd2/system/error.h>
 #include <vd2/system/binary.h>
 
@@ -365,11 +365,11 @@ bool VDZipStream::ParseBlockHeader() {
 			for(i=0; i< 32; ++i) mCodeLengths[i+288] = 5;
 
 			if (!InflateExpandTable32K(mCodeDecode, mCodeLengths, 288)) {
-				VDASSERT(false);		// code table bad
+				//VDASSERT(false);		// code table bad
 				return false;
 			}
 			if (!InflateExpandTable32K(mDistDecode, mCodeLengths+288, 32)) {
-				VDASSERT(false);		// distance table bad
+				//VDASSERT(false);		// distance table bad
 				return false;
 			}
 
@@ -402,7 +402,7 @@ bool VDZipStream::ParseBlockHeader() {
 			}
 
 			if (!InflateExpandTable256(ltbl_decode, ltbl_lengths, 20)) {
-				VDASSERT(false);	// tree table bad
+				//VDASSERT(false);	// tree table bad
 				return false;
 			}
 
@@ -440,7 +440,7 @@ bool VDZipStream::ParseBlockHeader() {
 				}
 
 				if (run+j > total_count) {
-					VDASSERT(false);	// tree table bad
+					//VDASSERT(false);	// tree table bad
 					return false;
 				}
 
@@ -452,11 +452,11 @@ bool VDZipStream::ParseBlockHeader() {
 			memmove(mCodeLengths + 288, mCodeLengths + code_count, dist_count);
 
 			if (!InflateExpandTable32K(mCodeDecode, mCodeLengths, code_count)) {
-				VDASSERT(false);	// code table bad
+				//VDASSERT(false);	// code table bad
 				return false;
 			}
 			if (!InflateExpandTable32K(mDistDecode, mCodeLengths+288, dist_count)) {
-				VDASSERT(false);	// data table bad
+				//VDASSERT(false);	// data table bad
 				return false;
 			}
 			mBlockType = kDeflatedBlock;
@@ -621,7 +621,7 @@ sint32 VDZipArchive::GetFileCount() {
 }
 
 const VDZipArchive::FileInfo& VDZipArchive::GetFileInfo(sint32 idx) {
-	VDASSERT((size_t)idx < mDirectory.size());
+	//VDASSERT((size_t)idx < mDirectory.size());
 	return mDirectory[idx];
 }
 

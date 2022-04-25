@@ -27,6 +27,7 @@
 #include "EditBox.h"
 #include "SubsGrid.h"
 #include "VideoBox.h"
+#include "VideoFullscreen.h"
 #include "VideoToolbar.h"
 #include <wx/clipbrd.h>
 #include <wx/gdicmn.h>
@@ -1782,6 +1783,48 @@ PlaybackState VideoBox::GetState() {
 		return renderer->GetState();
 	else
 		return None;
+}
+void VideoBox::CaptureMouse() {
+	if (m_IsFullscreen && m_FullScreenWindow) {
+		m_FullScreenWindow->CaptureMouse();
+	}
+	else {
+		wxWindow::CaptureMouse();
+	}
+}
+void VideoBox::ReleaseMouse() {
+	if (m_IsFullscreen && m_FullScreenWindow) {
+		m_FullScreenWindow->ReleaseMouse();
+	}
+	else {
+		wxWindow::ReleaseMouse();
+	}
+}
+bool VideoBox::HasCapture() {
+	if (m_IsFullscreen && m_FullScreenWindow) {
+		return m_FullScreenWindow->HasCapture();
+	}
+	else {
+		return wxWindow::HasCapture();
+	}
+}
+bool VideoBox::SetCursor(int cursorId) {
+	if (m_IsFullscreen && m_FullScreenWindow && m_LastFullScreenCursor != cursorId) {
+		m_LastFullScreenCursor = cursorId;
+		return m_FullScreenWindow->SetCursor((wxStockCursor)cursorId);
+	}
+	else if (m_LastCursor != cursorId) {
+		m_LastCursor = cursorId;
+		return wxWindow::SetCursor((wxStockCursor)cursorId);
+	}
+	return false;
+};
+bool VideoBox::HasArrow() {
+	if (m_IsFullscreen) {
+		return m_LastFullScreenCursor == wxCURSOR_ARROW;
+	}
+	else
+		return m_LastCursor == wxCURSOR_ARROW;
 }
 
 BEGIN_EVENT_TABLE(VideoBox, wxWindow)

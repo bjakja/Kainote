@@ -19,7 +19,7 @@
 #include "VisualAllTagsControls.h"
 #include "VisualAllTagsEdition.h"
 #include "VisualDrawingShapes.h"
-//#include "TagFindReplace.h"
+#include "TagFindReplace.h"
 
 //#include "TabPanel.h"
 //#include "VideoToolbar.h"

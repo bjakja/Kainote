@@ -18,7 +18,7 @@
 #include <wx/window.h>
 #include "SubsTime.h"
 #include "KaiTextCtrl.h"
-#include "VideoBox.h"
+//#include "VideoBox.h"
 
 class VideoBox;
 

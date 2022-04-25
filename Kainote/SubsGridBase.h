@@ -16,18 +16,15 @@
 #pragma once
 
 #include "Styles.h"
-#include "SubsGridBase.h"
 #include "SubsDialogue.h"
-#include "SubsFile.h"
-
 #include "KaiScrollbar.h"
 #include "LineParse.h"
 #include "RendererVideo.h"
 #include "SubsFile.h"
-#include "SubsGrid.h"
-#include "Visuals.h"
-#include "VisualDrawingShapes.h"
-#include "TabPanel.h"
+//#include "SubsGrid.h"
+//#include "Visuals.h"
+//#include "VisualDrawingShapes.h"
+//#include "TabPanel.h"
 #include <vector>
 #include <set>
 

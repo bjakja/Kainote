@@ -22,6 +22,7 @@
 #include "VideoBox.h"
 #include "Provider.h"
 #include "RendererVideo.h"
+#include "VideoToolbar.h"
 #include <wx/tokenzr.h>
 #include <wx/regex.h>
 #include <math.h> 

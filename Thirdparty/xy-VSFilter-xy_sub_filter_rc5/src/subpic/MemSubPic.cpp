@@ -684,7 +684,7 @@ HRESULT CMemSubPic::AlphaBltOther(const RECT* pSrc, const RECT* pDst, SubPicDesc
         }
         dst.pitch = -dst.pitch;
     }
-    DbgLog((LOG_TRACE, 5, TEXT("w=%d h=%d"), w, h));
+    //DbgLog((LOG_TRACE, 5, TEXT("w=%d h=%d"), w, h));
     switch(dst.type)
     {
     case MSP_RGBA:

@@ -26,6 +26,7 @@
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
 #include "Notebook.h"
+#include "AudioBox.h"
 #include <wx/tokenzr.h>
 #include <wx/event.h>
 #include <wx/regex.h>

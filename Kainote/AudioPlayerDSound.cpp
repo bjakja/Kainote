@@ -21,7 +21,7 @@
 #include "AudioPlayerDSound.h"
 #include <process.h>
 #include "LogHandler.h"
-#include "KainoteApp.h"
+//#include "KainoteApp.h"
 #include "UtilsWindows.h"
 
 
@@ -50,8 +50,8 @@ void DirectSoundPlayer2Thread::Run()
 
 
 		// Ensure we can get interesting wave formats (unless we have PRIORITY we can only use a standard 8 bit format)
-		kainoteApp *app = (kainoteApp*) wxTheApp;
-		defaultPlayback->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
+		//kainoteApp *app = (kainoteApp*) wxTheApp;
+		//defaultPlayback->SetCooperativeLevel((HWND)app->Frame->GetHandle(), DSSCL_PRIORITY);
 
 	// Describe the wave format
 	WAVEFORMATEX waveFormat;

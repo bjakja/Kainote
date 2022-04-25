@@ -38,7 +38,7 @@
 
 
 #include <wx/slider.h>
-//#include "Editbox.h"
+#include "Editbox.h"
 #include "AudioBox.h"
 //#include "KainoteFrame.h"
 //#include "Notebook.h"
@@ -671,6 +671,15 @@ bool AudioBox::SetFont(const wxFont &font)
 
 	wxWindow::SetFont(font);
 	return true;
+}
+
+bool AudioBox::Show(bool show) {
+	audioDisplay->isHidden = !show;
+	return wxWindow::Show(show);
+}
+bool AudioBox::Hide() {
+	audioDisplay->isHidden = true;
+	return wxWindow::Show(false);
 }
 
 void AudioBox::OnAccelerator(wxCommandEvent &event)

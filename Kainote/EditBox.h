@@ -21,7 +21,7 @@
 #include "DialogueTextEditor.h"
 #include "NumCtrl.h"
 #include "ListControls.h"
-#include "AudioBox.h"
+//#include "AudioBox.h"
 #include "MappedButton.h"
 #include "KaiRadioButton.h"
 #include "KaiDialog.h"
@@ -31,12 +31,12 @@
 #include "KaiWindowResizer.h"
 #include "KaiPanel.h"
 #include "TagFindReplace.h"
-#include "SubsGrid.h"
+//#include "SubsGrid.h"
 
 
-//class SubsGrid;
+class SubsGrid;
 class TabPanel;
-//class TagFindReplace;
+class AudioBox;
 
 
 class ComboBoxCtrl : public KaiChoice

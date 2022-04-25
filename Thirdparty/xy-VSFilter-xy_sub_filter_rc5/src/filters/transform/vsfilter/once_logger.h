@@ -25,10 +25,10 @@ public:
 		s_entered[id]++;
         if(logger.isEnabledFor(TRACE_LOG_LEVEL))
         {
-            std::wostringstream buff;
-            buff<<LOG4CPLUS_TEXT("ENTER :")<<msg;
+            //std::wostringstream buff;
+            //buff<<LOG4CPLUS_TEXT("ENTER :")<<msg;
 //            logger.forcedLog(TRACE_LOG_LEVEL, LOG4CPLUS_TEXT("ENTER at ")<<_start<<LOG4CPLUS_TEXT(" ms: ")<<msg, file, line);
-            logger.forcedLog(TRACE_LOG_LEVEL, buff.str(), file, line);
+            //logger.forcedLog(TRACE_LOG_LEVEL, buff.str(), file, line);
         }
     }
 
@@ -41,10 +41,10 @@ public:
 		s_entered[id]++;
         if(logger.isEnabledFor(TRACE_LOG_LEVEL))
         {
-            std::wostringstream buff;
-            buff<<LOG4CPLUS_TEXT("EXIT :")<<msg;
-            logger.forcedLog(TRACE_LOG_LEVEL, buff.str(),
-                file, line);
+            //std::wostringstream buff;
+            //buff<<LOG4CPLUS_TEXT("EXIT :")<<msg;
+            //logger.forcedLog(TRACE_LOG_LEVEL, buff.str(),
+                //file, line);
         }
     }
 private:

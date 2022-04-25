@@ -65,7 +65,7 @@ void EditStyle(HWND hWnd, IXyOptions *filter, /* in-out */STSStyle* default_styl
 DirectVobSubXyOptions::SubStyle * NewSubStyles(int count)
 {
     using namespace DirectVobSubXyOptions;
-    SubStyle * ret = DEBUG_NEW SubStyle[count];
+    SubStyle * ret = new SubStyle[count];
     if (ret==NULL)
     {
         XY_LOG_FATAL("Overflow");
@@ -77,7 +77,7 @@ DirectVobSubXyOptions::SubStyle * NewSubStyles(int count)
     }
     for (int i=0;i<count;i++)
     {
-        ret[i].style = DEBUG_NEW STSStyle();
+        ret[i].style = new STSStyle();
         if (ret[i].style==NULL)
         {
             XY_LOG_FATAL("Overflow");
@@ -130,7 +130,7 @@ HRESULT CreateSubStyleEditDialog(const STSStyle& default_style
     , CPropertySheet& dlg, /*out*/CStyleEditorPPage **pages)
 {
     ASSERT(pages);
-    *pages = DEBUG_NEW CStyleEditorPPage[count+1];
+    *pages = new CStyleEditorPPage[count+1];
     if (!*pages)
     {
         return E_FAIL;
@@ -207,7 +207,7 @@ STDMETHODIMP CDVSBasePPage::GetPageInfo(LPPROPPAGEINFO pPageInfo)
 
     LPOLESTR pszTitle;
     HRESULT hr = AMGetWideString(wszTitle, &pszTitle);
-    if(FAILED(hr)) {NOTE("No caption memory"); return hr;}
+    if(FAILED(hr)) {/*NOTE("No caption memory"); */return hr;}
 
     pPageInfo->cb               = sizeof(PROPPAGEINFO);
     pPageInfo->pszTitle         = pszTitle;

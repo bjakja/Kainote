@@ -16,7 +16,7 @@
 #pragma once
 
 
-#include "Visuals.h"
+//#include "Visuals.h"
 //#include "Menu.h"
 #include "SubtitlesProviderManager.h"
 #include "Provider.h"
@@ -74,6 +74,7 @@ class DShowPlayer;
 class Menu;
 class Provider;
 class VideoBox;
+class Visuals;
 
 class RendererVideo
 {

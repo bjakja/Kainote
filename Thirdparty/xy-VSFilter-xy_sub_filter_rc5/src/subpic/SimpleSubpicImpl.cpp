@@ -187,7 +187,7 @@ HRESULT SimpleSubpic::AlphaBlt( SubPicDesc* target, const Bitmap& src )
         }
         dst.pitch = -dst.pitch;
     }
-    DbgLog((LOG_TRACE, 5, TEXT("w=%d h=%d"), w, h));
+    //DbgLog((LOG_TRACE, 5, TEXT("w=%d h=%d"), w, h));
     switch(dst.type)
     {
     case MSP_RGBA:

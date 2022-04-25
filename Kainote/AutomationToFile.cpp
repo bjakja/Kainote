@@ -44,7 +44,7 @@
 //#include "VideoBox.h"
 //#include "SubsGrid.h"
 #include "TabPanel.h"
-//#include "EditBox.h"
+#include "Audiobox.h"
 #include "AudioSpectrum.h"
 
 SubsEntry::SubsEntry()

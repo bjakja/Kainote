@@ -16,12 +16,12 @@
 #pragma once
 #include "KaiScrollbar.h"
 #include "KaiListCtrl.h"
-#include "SubsGrid.h"
+//#include "SubsGrid.h"
 #include "TabPanel.h"
 #include <vector>
 
 class SubsGrid;
-class TabPanel;
+
 
 class MultiPreviewData{
 public:

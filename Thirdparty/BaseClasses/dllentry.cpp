@@ -246,9 +246,9 @@ DllInitClasses(BOOL bLoading)
 STDAPI
 DllCanUnloadNow()
 {
-    DbgLog((LOG_MEMORY,2,TEXT("DLLCanUnloadNow called - IsLocked = %d, Active objects = %d"),
-        CClassFactory::IsLocked(),
-        CBaseObject::ObjectsActive()));
+    //DbgLog((LOG_MEMORY,2,TEXT("DLLCanUnloadNow called - IsLocked = %d, Active objects = %d"),
+        //CClassFactory::IsLocked(),
+        //CBaseObject::ObjectsActive()));
 
     if (CClassFactory::IsLocked() || CBaseObject::ObjectsActive()) {
 	return S_FALSE;

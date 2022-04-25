@@ -1,6 +1,6 @@
 /* Manually edited version used for building PCRE as part of wxWidgets. */
 
-#include "L:\Kainote\Thirdparty\wxWidgets\include\wx/chartype.h"
+#include "wx/chartype.h"
 
 #if !wxUSE_UNICODE || wxUSE_UNICODE_UTF8
     #define PCRE2_CODE_UNIT_WIDTH 8

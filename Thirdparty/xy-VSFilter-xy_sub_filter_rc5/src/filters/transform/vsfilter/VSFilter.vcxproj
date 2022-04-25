@@ -80,13 +80,21 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\csri</OutDir>
     <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\csri</OutDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
       <ModuleDefinitionFile>VSFilter.def</ModuleDefinitionFile>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">delayimp.lib;strmbase.lib;subtitlesR.lib;boost.lib;subpicR.lib;KasumiR.lib;systemR.lib;dsutilR.lib;libssfR.lib;basevideofilterR.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">delayimp.lib;strmbase.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;basevideofilter.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">delayimp.lib;strmbase.lib;libssf.lib;subtitles.lib;boost.lib;subpic.lib;Kasumi.lib;system.lib;dsutil.lib;basevideofilter.lib;winmm.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
+      </IgnoreSpecificDefaultLibraries>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">strmbasD.lib;dsutilD.lib;subtitlesD.lib;subpicD.lib;basevideofilterD.lib;libssfD.lib;KasumiD.lib;systemD.lib;dwmapi.lib;Mfuuid.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration);$(OutDir)..</AdditionalLibraryDirectories>
     </Link>
     <ResourceCompile>
       <PreprocessorDefinitions>_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -95,11 +103,15 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">true</MultiProcessorCompilation>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;L:\Kainote\Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;L:\Kainote\Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp14</LanguageStandard>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">stdcpp14</LanguageStandard>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Default</LanguageStandard_C>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Default</LanguageStandard_C>
+      <EnableEnhancedInstructionSet Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
+    </ClCompile>
+    <ClCompile>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\include;$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\filters\transform\vsfilter;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\log4cplus\include;$(SolutionDir)Thirdparty\boost\;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\subpic;$(SolutionDir)Thirdparty\xy-VSFilter-xy_sub_filter_rc5\src\thirdparty\VirtualDub\h</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -164,23 +176,6 @@
   <ItemGroup>
     <None Include="res\Icon_147.ico" />
     <None Include="VSFilter.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\dsutil\dsutil.vcxproj">
-      <Project>{fc70988b-1ae5-4381-866d-4f405e28ac42}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\subpic\subpic.vcxproj">
-      <Project>{d514ea4d-eafb-47a9-a437-a582ca571251}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\subtitles\libssf\libssf.vcxproj">
-      <Project>{dd9d2d92-2241-408a-859e-b85d444b7e3c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\thirdparty\VirtualDub\Kasumi\Kasumi.vcxproj">
-      <Project>{0d252872-7542-4232-8d02-53f9182aee15}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\basevideofilter\basevideofilter.vcxproj">
-      <Project>{54dda60f-e528-4d07-a152-960a1e818680}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

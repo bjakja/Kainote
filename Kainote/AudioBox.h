@@ -131,14 +131,8 @@ public:
 	void OnPlaySelection(wxCommandEvent &event);
 	void SetVolume(int vol);
 	int GetVolume();
-	bool Show(bool show = true){
-		audioDisplay->isHidden = !show;
-		return wxWindow::Show(show);
-	}
-	bool Hide(){
-		audioDisplay->isHidden = true;
-		return wxWindow::Show(false);
-	}
+	bool Show(bool show = true);
+	bool Hide();
 	bool SetFont(const wxFont &font);
 	void OnAccelerator(wxCommandEvent &event);
 	DECLARE_EVENT_TABLE()

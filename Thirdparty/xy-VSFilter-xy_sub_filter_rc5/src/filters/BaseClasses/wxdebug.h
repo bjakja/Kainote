@@ -159,7 +159,7 @@ typedef struct tag_ObjectDesc {
         DbgBreakPoint(TEXT(#_x_),TEXT(__FILE__),__LINE__)
 
     #define EXECUTE_ASSERT(_x_) ASSERT(_x_)
-    #define DbgLog(_x_) DbgLogInfo _x_
+    //#define DbgLog(_x_) DbgLogInfo _x_
     // MFC style trace macros
 
     #define NOTE(_x_)             DbgLog((LOG_TRACE,5,TEXT(_x_)))

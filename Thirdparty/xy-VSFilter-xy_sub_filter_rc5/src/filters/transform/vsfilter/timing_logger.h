@@ -21,9 +21,9 @@ public:
         {
             std::wostringstream buff;
             _start = GetTickCount();
-            buff<<LOG4CPLUS_TEXT("ENTER at ")<<_start<<LOG4CPLUS_TEXT(" ms: ")<<msg;
+            //buff<<LOG4CPLUS_TEXT("ENTER at ")<<_start<<LOG4CPLUS_TEXT(" ms: ")<<msg;
 //            logger.forcedLog(TRACE_LOG_LEVEL, LOG4CPLUS_TEXT("ENTER at ")<<_start<<LOG4CPLUS_TEXT(" ms: ")<<msg, file, line);
-            logger.forcedLog(TRACE_LOG_LEVEL, buff.str(), file, line);
+            //logger.forcedLog(TRACE_LOG_LEVEL, buff.str(), file, line);
         }
     }
 
@@ -37,9 +37,9 @@ public:
 //             logger.forcedLog(TRACE_LOG_LEVEL, LOG4CPLUS_TEXT("EXIT after ")<<_end-_start<<
 //                 LOG4CPLUS_TEXT(" at ")<<_end<<LOG4CPLUS_TEXT(" ms:  ")<<msg,
 //                 file, line);
-            buff<<LOG4CPLUS_TEXT("EXIT after ")<<_end-_start<<LOG4CPLUS_TEXT(" at ")<<_end<<LOG4CPLUS_TEXT(" ms:  ")<<msg;
-            logger.forcedLog(TRACE_LOG_LEVEL, buff.str(),
-                file, line);
+            //buff<<LOG4CPLUS_TEXT("EXIT after ")<<_end-_start<<LOG4CPLUS_TEXT(" at ")<<_end<<LOG4CPLUS_TEXT(" ms:  ")<<msg;
+            //logger.forcedLog(TRACE_LOG_LEVEL, buff.str(),
+               // file, line);
         }
     }
 private:

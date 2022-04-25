@@ -675,8 +675,10 @@ uint64 VDFileGetLastWriteTime(const wchar_t *path) {
 }
 
 VDStringW VDFileGetRootPath(const wchar_t *path) {
-	static tpGetVolumePathNameW spGetVolumePathNameW = (tpGetVolumePathNameW)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "GetVolumePathNameW");
-	static tpGetFullPathNameW spGetFullPathNameW = (tpGetFullPathNameW)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "GetFullPathNameW");
+	static tpGetVolumePathNameW spGetVolumePathNameW = 
+        (tpGetVolumePathNameW)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "GetVolumePathNameW");
+	static tpGetFullPathNameW spGetFullPathNameW = 
+        (tpGetFullPathNameW)GetProcAddress(GetModuleHandle(L"kernel32.dll"), "GetFullPathNameW");
 
 	VDStringW fullPath(VDGetFullPath(path));
 
