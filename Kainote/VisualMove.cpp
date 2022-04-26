@@ -18,6 +18,8 @@
 #include "VideoBox.h"
 #include "EditBox.h"
 #include "config.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 
 Move::Move()

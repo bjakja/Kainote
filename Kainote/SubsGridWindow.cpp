@@ -23,6 +23,8 @@
 #include "kaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 #include "AudioBox.h"
 #include <wx/regex.h>

@@ -20,6 +20,8 @@
 #include "VideoBox.h"
 #include "RendererVideo.h"
 #include "config.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 
 RotationXY::RotationXY()

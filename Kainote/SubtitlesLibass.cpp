@@ -26,6 +26,8 @@
 #include "config.h"
 #include "utilswindows.h"
 #include "Notebook.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 
 std::atomic<bool> SubtitlesLibass::m_IsReady{ false };

@@ -38,9 +38,9 @@
 #include "stylestore.h"
 #include "Toolbar.h"
 #include "ShiftTimes.h"
-#include "Visuals.h"
-
 #include "VisualDrawingShapes.h"
+#include "VisualClips.h"
+#include "Visuals.h"
 #include "SubtitlesProviderManager.h"
 #include <algorithm>
 

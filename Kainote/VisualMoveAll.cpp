@@ -16,6 +16,8 @@
 
 
 #include "config.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 #include "TabPanel.h"
 #include "VideoBox.h"

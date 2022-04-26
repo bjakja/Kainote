@@ -23,6 +23,9 @@
 #include "kainoteframe.h"
 #include "DshowRenderer.h"
 #include "CsriMod.h"
+
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 
 

@@ -20,9 +20,9 @@
 #include "SubsGrid.h"
 #include "EditBox.h"
 #include "config.h"
-#include "Visuals.h"
-#include "VisualClipPoint.h"
+#include "VisualDrawingShapes.h"
 #include "VisualClips.h"
+#include "Visuals.h"
 
 RotationZ::RotationZ()
 	: Visuals()

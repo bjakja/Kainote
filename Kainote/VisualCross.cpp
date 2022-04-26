@@ -15,6 +15,8 @@
 
 
 #include "config.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 #include "KainoteFrame.h"
 #include "RendererVideo.h"

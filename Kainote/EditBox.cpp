@@ -20,6 +20,8 @@
 #include <wx/regex.h>
 #include "TabPanel.h"
 #include "FontDialog.h"
+#include "VisualDrawingShapes.h"
+#include "VisualClips.h"
 #include "Visuals.h"
 #include "KaiMessageBox.h"
 #include "TabPanel.h"
