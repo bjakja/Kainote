@@ -16,8 +16,8 @@
 #pragma once
 
 #include "SubsGridWindow.h"
-#include "SubsGridBase.h"
-#include "SubsGridPreview.h"
+//#include "SubsGridBase.h"
+//#include "SubsGridPreview.h"
 #include "KainoteFrame.h"
 //#include <wx/window.h>
 

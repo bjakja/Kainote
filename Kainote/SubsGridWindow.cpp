@@ -1960,8 +1960,8 @@ void SubsGridWindow::SelVideoLine(int curtime)
 
 void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fromPreview, bool setViaScroll)
 {
-	SubsGridWindow* thisgrid = this;
-	SubsGridWindow* secondgrid = nullptr;
+	SubsGridBase* thisgrid = this;
+	SubsGridBase* secondgrid = nullptr;
 	if (thisgrid == CG1)
 		secondgrid = CG2;
 	else if (thisgrid == CG2)
@@ -1976,18 +1976,18 @@ void SubsGridWindow::ShowSecondComparedLine(int Line, bool showPreview, bool fro
 	int secondGridLine = data.secondComparedLine;
 	if (secondGridLine < 0){ return; }
 	if (setViaScroll){
-		secondgrid->scrollPosition = secondGridLine;
-		secondgrid->scrollPositionId = file->GetElementByKey(secondGridLine);
+		((SubsGridWindow*)secondgrid)->scrollPosition = secondGridLine;
+		((SubsGridWindow*)secondgrid)->scrollPositionId = file->GetElementByKey(secondGridLine);
 		secondgrid->Refresh(false);
 		secondgrid->Update();
 		return;
 	}
 	int diffPosition = Line - scrollPosition;
-	secondgrid->scrollPosition = secondGridLine - diffPosition;
-	secondgrid->ChangeActiveLine(secondGridLine, true, fromPreview, !fromPreview);
+	((SubsGridWindow*)secondgrid)->scrollPosition = secondGridLine - diffPosition;
+	((SubsGridWindow*)secondgrid)->ChangeActiveLine(secondGridLine, true, fromPreview, !fromPreview);
 	if (!fromPreview && hiddenSecondGrid){
 		if (!preview){
-			ShowPreviewWindow(secondgrid, thisgrid, Line, diffPosition);
+			ShowPreviewWindow((SubsGridWindow*)secondgrid, (SubsGridWindow*)thisgrid, Line, diffPosition);
 		}
 		else{
 			preview->MakeVisible();
@@ -2002,7 +2002,8 @@ void SubsGridWindow::RefreshPreview()
 		preview->Refresh(false);
 }
 
-bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, SubsGridWindow *windowToDraw, int activeLine, int diffPosition)
+bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, 
+	SubsGridWindow *windowToDraw, int activeLine, int diffPosition)
 {
 	int w, h;
 	GetClientSize(&w, &h);
@@ -2017,7 +2018,8 @@ bool SubsGridWindow::ShowPreviewWindow(SubsGridWindow *previewGrid, SubsGridWind
 		scrollPosition = (activeLine - newLine) + 2;
 		previewPosition = newLine * realGridHeight;
 	}
-	preview = new SubsGridPreview(previewGrid, windowToDraw, previewPosition + 2, wxSize(w, previewHeight));
+	preview = new SubsGridPreview((SubsGrid*)previewGrid, 
+		(SubsGrid*)windowToDraw, previewPosition + 2, wxSize(w, previewHeight));
 	Refresh(false);
 	return true;
 }

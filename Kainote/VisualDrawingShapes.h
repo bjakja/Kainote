@@ -21,7 +21,7 @@
 #include "KaiTextCtrl.h"
 #include "TabPanel.h"
 
-//#include "Notebook.h"
+//#include "VisualDrawingShapes.h"
 #include <vector>
 
 #include <d3dx9.h>
@@ -29,6 +29,8 @@
 //class TabPanel;
 //class DrawingAndClip;
 //class Visuals;
+
+
 
 class ShapesSetting
 {
@@ -102,7 +104,7 @@ private:
 class Shapes : public DrawingAndClip {
 public:
 	Shapes();
-	
+
 	void OnMouseEvent(wxMouseEvent& evt) /*override*/;
 	void DrawVisual(int time) /*override*/;
 	void SetShape(int shape) /*override*/;
@@ -116,13 +118,13 @@ private:
 	D3DXVECTOR2 PointToSubtitles(float x, float y);
 	int HitTest(const D3DXVECTOR2& pos, bool diff = false);
 	//D3DXVECTOR2 CalcDrawingAnchor(int alignment, const std::vector<ClipPoint>* points);
-	std::vector<ShapesSetting> *shapes = nullptr;
+	std::vector<ShapesSetting>* shapes = nullptr;
 	int shape = -1;
 	ShapesSetting currentShape;
 	//std::vector<ClipPoint> points;
 	D3DXVECTOR2 shapeSize;
 	D3DXVECTOR2 shapeScale = D3DXVECTOR2(1.f, 1.f);
-	
+
 	D3DXVECTOR2 drawingRectangle[2] = { D3DXVECTOR2(0.f, 0.f), D3DXVECTOR2(0.f, 0.f) };
 	bool rectangleVisible = false;
 	int grabbed = -1;

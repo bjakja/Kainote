@@ -24,9 +24,9 @@
 #include <vector>
 #include <functional>
 
-//#include <windows.h>
-#include <windef.h>
-#include <wingdi.h>
+#include <windows.h>
+//#include <windef.h>
+//#include <wingdi.h>
 
 class KainoteFrame;
 

@@ -35,7 +35,7 @@
 //class EditBox;
 //class KainoteFrame;
 //class SubsGridPreview;
-class SubsGridWindow;
+//class SubsGridWindow;
 
 
 class compareData{
@@ -152,8 +152,8 @@ public:
 	SubsFile* file = nullptr;
 	EditBox *edit = nullptr;
 	//comparison static pointers needs short name because we not use this class
-	static SubsGridWindow* CG1;
-	static SubsGridWindow* CG2;
+	static SubsGridBase* CG1;
+	static SubsGridBase* CG2;
 	static void SubsComparison();
 	static void RemoveComparison();
 	static wxArrayString compareStyles;

@@ -20,7 +20,7 @@
 #include <wx/arrstr.h>
 #include <wx/filefn.h>
 #include <unicode/utf16.h>
-#include <windows.h>
+//#include <windows.h>
 #include <Usp10.h>
 
 #include <ShlObj.h>
