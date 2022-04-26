@@ -16,6 +16,7 @@
 
 
 #include "SubsFile.h"
+#include "KaiScrollbar.h"
 #include "SubsGridBase.h"
 #include "SubsLoader.h"
 #include "SubsGridFiltering.h"
@@ -33,8 +34,6 @@
 #include <wx/ffile.h>
 #include <wx/window.h>
 #include "KaiMessageBox.h"
-#include "SubsGridPreview.h"
-#include "SubsGrid.h"
 #include "stylestore.h"
 #include "Toolbar.h"
 #include "ShiftTimes.h"

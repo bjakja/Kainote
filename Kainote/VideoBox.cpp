@@ -14,8 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
+//#include "KainoteFrame.h"
+#include "VideoBox.h"
 #include "Menu.h"
 #include "KaiMessageBox.h"
 #include "KaiStaticText.h"
@@ -26,7 +26,7 @@
 #include "AudioBox.h"
 #include "EditBox.h"
 #include "SubsGrid.h"
-#include "VideoBox.h"
+
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"
 #include "SubtitlesProviderManager.h"
@@ -39,7 +39,7 @@
 #include <wx/filedlg.h>
 #include <wx/slider.h>
 #include <shellapi.h>
-#include "KainoteFrame.h"
+
 #include "Hotkeys.h"
 #include "UtilsWindows.h"
 
@@ -172,8 +172,8 @@ VideoBox::VideoBox(wxWindow *parent, const wxSize &size)
 	Bind(wxEVT_COMMAND_MENU_SELECTED, [=](wxCommandEvent &evt){
 		RefreshTime();
 	}, ID_REFRESH_TIME);
-	Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, 
-		Notebook::GetTabs()->GetParent(), GLOBAL_PLAY_ACTUAL_LINE);
+	//Bind(wxEVT_COMMAND_BUTTON_CLICKED, &KainoteFrame::OnMenuSelected1, 
+		//Notebook::GetTabs()->GetParent(), GLOBAL_PLAY_ACTUAL_LINE);
 	Connect(VIDEO_PREVIOUS_FILE, VIDEO_NEXT_FILE, wxEVT_COMMAND_BUTTON_CLICKED, 
 		(wxObjectEventFunction)&VideoBox::OnAccelerator);
 	Connect(VIDEO_PLAY_PAUSE, VIDEO_STOP, wxEVT_COMMAND_BUTTON_CLICKED,

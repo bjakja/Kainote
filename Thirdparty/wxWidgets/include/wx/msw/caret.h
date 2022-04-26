@@ -22,7 +22,7 @@ public:
     {
         Init();
 
-        (void)Create(window, width, height);
+        (void)Create((wxWindowBase *)window, width, height);
     }
         // same as above
     wxCaret(wxWindowBase *window, const wxSize& size)

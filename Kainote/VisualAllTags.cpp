@@ -13,9 +13,9 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "Visuals.h"
+#include "VisualDrawingShapes.h"
 #include "VisualClips.h"
+#include "Visuals.h"
 #include "RendererVideo.h"
 #include "VideoToolbar.h"
 

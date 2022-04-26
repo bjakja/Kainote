@@ -13,6 +13,7 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "VisualDrawingShapes.h"
 #include "VisualClipPoint.h"
 #include "VisualClips.h"
 #include "TabPanel.h"
@@ -27,7 +28,7 @@
 #include <wx/regex.h>
 #include <math.h> 
 #include "KaiMessageBox.h"
-#include "VisualDrawingShapes.h"
+
 
 
 ClipPoint::ClipPoint()

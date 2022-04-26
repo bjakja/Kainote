@@ -14,10 +14,9 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
+#include "SubsGridBase.h"
+#include "SubsGridPreview.h"
 #include "SubsGridWindow.h"
-//#include "SubsGridBase.h"
-//#include "SubsGridPreview.h"
 #include "KainoteFrame.h"
 //#include <wx/window.h>
 

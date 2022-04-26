@@ -15,14 +15,14 @@
 
 
 
-#include <wx/msw/winundef.h>
-#include "TabPanel.h"
-#include "VideoBox.h"
-#include "RendererVideo.h"
-#include "config.h"
+
+//#include "VideoBox.h"
+//#include "RendererVideo.h"
+//#include "config.h"
 #include "VisualDrawingShapes.h"
 #include "VisualClips.h"
 #include "Visuals.h"
+//#include "TabPanel.h"
 
 RotationXY::RotationXY()
 	: Visuals()
