@@ -684,6 +684,8 @@
     <ClInclude Include="NumCtrl.h">
       <Filter>N</Filter>
     </ClInclude>
+    <ClInclude Include="VisualClips.h" />
+    <ClInclude Include="VisualClipPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc">

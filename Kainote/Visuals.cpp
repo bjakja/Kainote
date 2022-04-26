@@ -13,8 +13,10 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
+#include "VisualClipPoint.h"
 #include "VisualDrawingShapes.h"
+#include "VisualClips.h"
+
 #include "Visuals.h"
 #include "TabPanel.h"
 
@@ -1173,7 +1175,8 @@ void Visuals::RotateZ(D3DXVECTOR2* point, float sinOfAngle, float cosOfAngle, D3
 	point->y = (x * sinOfAngle) + (y * cosOfAngle) + orgpivot.y;
 }
 
-void Visuals::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
+void Visuals::RotateDrawing(ClipPoint* point, 
+	float sinOfAngle, float cosOfAngle, D3DXVECTOR2 orgpivot)
 {
 	float x = point->x + orgpivot.x;
 	float y = point->y + orgpivot.y;
@@ -1181,9 +1184,12 @@ void Visuals::RotateDrawing(ClipPoint* point, float sinOfAngle, float cosOfAngle
 	point->y = (x * sinOfAngle) + (y * cosOfAngle) - orgpivot.y;
 }
 
-D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* points, bool withoutAlignment)
+D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, 
+	std::vector<ClipPoint>* points, bool withoutAlignment)
 {
-	if ((alignment == 7 && !withoutAlignment) || points->size() < 1) { return D3DXVECTOR2(0, 0); }
+	if ((alignment == 7 && !withoutAlignment) || points->size() < 1) { 
+		return D3DXVECTOR2(0, 0); 
+	}
 
 	float minx = FLT_MAX;
 	float miny = FLT_MAX;
@@ -1217,7 +1223,8 @@ D3DXVECTOR2 Visuals::CalcDrawingSize(int alignment, std::vector<ClipPoint>* poin
 	return result;
 }
 
-void Visuals::Curve(int pos, std::vector<ClipPoint>* vectorPoints, std::vector<D3DXVECTOR2>* table, bool bspline, int nBsplinePoints, int currentPoint)
+void Visuals::Curve(int pos, std::vector<ClipPoint>* vectorPoints, 
+	std::vector<D3DXVECTOR2>* table, bool bspline, int nBsplinePoints, int currentPoint)
 {
 	float a[4], b[4];
 	float x[4], y[4];

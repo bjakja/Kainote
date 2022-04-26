@@ -14,8 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-
-#include "Visuals.h"
+#include "VisualClipPoint.h"
+#include "VisualClips.h"
 #include "KaiDialog.h"
 #include "ListControls.h"
 #include "KaiTextCtrl.h"

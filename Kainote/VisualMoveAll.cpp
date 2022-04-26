@@ -14,7 +14,7 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
-#ifdef guano
+
 #include "config.h"
 #include "Visuals.h"
 #include "TabPanel.h"
@@ -734,4 +734,4 @@ void MoveAll::Clear()
 	elems.clear();
 }
 
-#endif
+

@@ -16,6 +16,8 @@
 
 #include "config.h"
 #include "Visuals.h"
+#include "VisualClipPoint.h"
+#include "VisualClips.h"
 #include "KainoteFrame.h"
 #include "RendererVideo.h"
 #include "TabPanel.h"

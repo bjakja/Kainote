@@ -13,8 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
-
-#include "Visuals.h"
+#include "VisualClipPoint.h"
+#include "VisualClips.h"
 #include "TabPanel.h"
 #include "SubsGrid.h"
 #include "KaiTextCtrl.h"
@@ -933,7 +933,7 @@ void DrawingAndClip::OnMouseEvent(wxMouseEvent &event)
 		size_t i = (psize > 1) ? 1 : 0;
 		for (size_t i = 0; i < psize; i++)
 		{
-			float pointx = Points[i].wx(this), pointy = Points[i].wy(this);
+			float pointx = Points[i].wx(this, false), pointy = Points[i].wy(this, false);
 			if (abs(pointx - zx) < pointArea && abs(pointy - zy) < pointArea)
 			{
 				int j = i;

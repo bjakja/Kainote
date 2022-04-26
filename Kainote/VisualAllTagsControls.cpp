@@ -16,6 +16,8 @@
 
 #include "VisualAllTagsControls.h"
 #include "Visuals.h"
+#include "VisualClipPoint.h"
+#include "VisualClips.h"
 #include "TabPanel.h"
 #include "VideoBox.h"
 #include "EditBox.h"

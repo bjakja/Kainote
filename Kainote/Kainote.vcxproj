@@ -648,6 +648,8 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
     <ClInclude Include="VideoToolbar.h" />
     <ClInclude Include="VisualAllTagsControls.h" />
     <ClInclude Include="VisualAllTagsEdition.h" />
+    <ClInclude Include="VisualClipPoint.h" />
+    <ClInclude Include="VisualClips.h" />
     <ClInclude Include="VisualDrawingShapes.h" />
     <ClInclude Include="Visuals.h" />
     <ClInclude Include="CsriMod.h" />
