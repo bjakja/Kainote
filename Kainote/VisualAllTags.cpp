@@ -15,8 +15,6 @@
 
 
 #include "Visuals.h"
-#include "VisualClipPoint.h"
-#include "VisualClips.h"
 #include "RendererVideo.h"
 #include "VideoToolbar.h"
 

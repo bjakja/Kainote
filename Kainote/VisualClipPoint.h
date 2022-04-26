@@ -14,11 +14,13 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "VisualClips.h"
+//#include "VisualClips.h"
 #include <wx/string.h>
 #include <wx/window.h>
 #include <d3d9.h>
 #include <d3dx9.h>
+
+class DrawingAndClip;
 
 class ClipPoint
 {

@@ -19,7 +19,9 @@
 #include "VisualAllTagsControls.h"
 #include "VisualAllTagsEdition.h"
 #include "VisualDrawingShapes.h"
-#include "VisualClips.h"
+#include "VisualClipPoint.h"
+//#include "VisualClips.h"
+
 #include "TagFindReplace.h"
 
 //#include "TabPanel.h"
@@ -62,7 +64,7 @@ enum{
 	ALL_TAGS
 };
 
-class ClipPoint;
+class DrawingAndClips;
 
 class Visuals : public TagFindReplace
 {

@@ -21,7 +21,8 @@
 #include "EditBox.h"
 #include "config.h"
 #include "Visuals.h"
-#include <wx/msw/winundef.h>
+#include "VisualClipPoint.h"
+#include "VisualClips.h"
 
 RotationZ::RotationZ()
 	: Visuals()
