@@ -14,6 +14,8 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 
+#include "VideoSlider.h"
+#include "config.h"
 #include "VideoBox.h"
 #include "SubsTime.h"
 #include "UtilsWindows.h"

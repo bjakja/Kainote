@@ -295,6 +295,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\baseclasses;$(SolutionDir)Thirdparty\AviSynthPlus\imageseq\lib\devil_x64;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\filters;$(SolutionDir)Thirdparty\AviSynthPlus\avs_core\include;$(SolutionDir)\Thirdparty\AviSynthPlus\plugins\ImageSeq\lib\DevIL_x64;$(SolutionDir)Thirdparty\Build\AvisynthPlus\avs_core;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

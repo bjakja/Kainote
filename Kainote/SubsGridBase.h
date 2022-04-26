@@ -19,21 +19,22 @@
 #include "SubsDialogue.h"
 #include "KaiScrollbar.h"
 #include "LineParse.h"
-#include "RendererVideo.h"
+//#include "RendererVideo.h"
 #include "SubsFile.h"
-#include "SubsGridPreview.h"
-#include "KainoteFrame.h"
-#include "EditBox.h"
+//#include "SubsGridPreview.h"
+//#include "KainoteFrame.h"
+//#include "EditBox.h"
 //#include "SubsGridWindow.h"
 
-#include "TabPanel.h"
+//#include "TabPanel.h"
 #include <vector>
 #include <set>
 
 
 
-//class EditBox;
-//class KainoteFrame;
+class EditBox;
+class KainoteFrame;
+class TabPanel;
 //class SubsGridPreview;
 //class SubsGridWindow;
 

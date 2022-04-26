@@ -16,33 +16,29 @@
 
 
 #include "SubsFile.h"
-#include "KaiScrollbar.h"
 #include "SubsGridBase.h"
+#include "SubsGridPreview.h"
 #include "SubsLoader.h"
 #include "SubsGridFiltering.h"
 #include "config.h"
-#include "EditBox.h"
-#include "RendererVideo.h"
-#include "kainoteFrame.h"
 #include "OpennWrite.h"
 #include "OptionsDialog.h"
-#include "Notebook.h"
 #include "AudioBox.h"
-#include <wx/tokenzr.h>
-#include <wx/event.h>
-#include <wx/regex.h>
-#include <wx/ffile.h>
-#include <wx/window.h>
 #include "KaiMessageBox.h"
 #include "stylestore.h"
 #include "Toolbar.h"
+#include "TabPanel.h"
 #include "ShiftTimes.h"
 #include "VisualDrawingShapes.h"
 #include "VisualClips.h"
 #include "Visuals.h"
 #include "SubtitlesProviderManager.h"
 #include <algorithm>
-
+#include <wx/tokenzr.h>
+#include <wx/event.h>
+#include <wx/regex.h>
+#include <wx/ffile.h>
+#include <wx/window.h>
 
 
 bool sortstart(Dialogue *i, Dialogue *j)
@@ -1328,7 +1324,8 @@ void SubsGridBase::LoadSubtitles(const wxString &str, wxString &ext)
 	if (StyleStore::HasStore() && subsFormat == ASS){ StyleStore::Get()->LoadAssStyles(); }
 	if (subsFormat == ASS){
 		int filterBy = Options.GetInt(GRID_FILTER_BY);
-		if (filterBy && Options.GetBool(GRID_FILTER_AFTER_LOAD) && filterBy != FILTER_BY_SELECTIONS){
+		if (filterBy && Options.GetBool(GRID_FILTER_AFTER_LOAD) && 
+			filterBy != FILTER_BY_SELECTIONS){
 			isFiltered = true;
 			SubsGridFiltering filter((SubsGrid*)this, currentLine);
 			filter.Filter(true);

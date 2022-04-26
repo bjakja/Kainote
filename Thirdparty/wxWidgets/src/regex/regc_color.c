@@ -34,10 +34,10 @@
  * NFA arc maintenance, which perhaps ought to be cleaned up sometime.
  */
 
-#include "regex.h"
+//#include "regex.h"
 #include "regguts.h"
 #include "regerrs.h"
-#include "regcustom.h"
+//#include "regcustom.h"
 
 
 #define	CISERR()	VISERR(cm->v)

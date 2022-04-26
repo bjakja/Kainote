@@ -32,8 +32,7 @@
 
 #include "regex.h"
 #include "regguts.h"
-#include "regerrs.h"
-#include "regcustom.h"
+//#include "regcustom.h"
 
 /*
  * forward declarations, up here so forward datatypes etc. are defined early
@@ -145,9 +144,7 @@ static VOID pullback _ANSI_ARGS_((struct nfa *, FILE *));
 static int pull _ANSI_ARGS_((struct nfa *, struct arc *));
 static VOID pushfwd _ANSI_ARGS_((struct nfa *, FILE *));
 static int push _ANSI_ARGS_((struct nfa *, struct arc *));
-#define	INCOMPATIBLE	1	/* destroys arc */
-#define	SATISFIED	2	/* constraint satisfied */
-#define	COMPATIBLE	3	/* compatible but not satisfied yet */
+
 static int combine _ANSI_ARGS_((struct arc *, struct arc *));
 static VOID fixempties _ANSI_ARGS_((struct nfa *, FILE *));
 static int unempty _ANSI_ARGS_((struct nfa *, struct arc *));
@@ -196,39 +193,6 @@ static int casecmp _ANSI_ARGS_((CONST chr *, CONST chr *, size_t));
 
 
 /* internal variables, bundled for easy passing around */
-struct vars {
-	regex_t *re;
-	chr *now;		/* scan pointer into string */
-	chr *stop;		/* end of string */
-	chr *savenow;		/* saved now and stop for "subroutine call" */
-	chr *savestop;
-	int err;		/* error code (0 if none) */
-	int cflags;		/* copy of compile flags */
-	int lasttype;		/* type of previous token */
-	int nexttype;		/* type of next token */
-	chr nextvalue;		/* value (if any) of next token */
-	int lexcon;		/* lexical context type (see lex.c) */
-	int nsubexp;		/* subexpression count */
-	struct subre **subs;	/* subRE pointer vector */
-	size_t nsubs;		/* length of vector */
-	struct subre *sub10[10];	/* initial vector, enough for most */
-	struct nfa *nfa;	/* the NFA */
-	struct colormap *cm;	/* character color map */
-	color nlcolor;		/* color of newline */
-	struct state *wordchrs;	/* state in nfa holding word-char outarcs */
-	struct subre *tree;	/* subexpression tree */
-	struct subre *treechain;	/* all tree nodes allocated */
-	struct subre *treefree;		/* any free tree nodes */
-	int ntree;		/* number of tree nodes */
-	struct cvec *cv;	/* interface cvec */
-	struct cvec *cv2;	/* utility cvec */
-	struct cvec *mcces;	/* collating-element information */
-#		define	ISCELEADER(v,c)	(v->mcces != NULL && haschr(v->mcces, (c)))
-	struct state *mccepbegin;	/* in nfa, start of MCCE prototypes */
-	struct state *mccepend;	/* in nfa, end of MCCE prototypes */
-	struct subre *lacons;	/* lookahead-constraint vector */
-	int nlacons;		/* size of lacons */
-};
 
 /* parsing macros; most know that `v' is the struct vars pointer */
 #define	NEXT()	(next(v))		/* advance by one token */
@@ -246,25 +210,7 @@ struct vars {
 #define	NOTE(b)	(v->re->re_info |= (b))		/* note visible condition */
 #define	EMPTYARC(x, y)	newarc(v->nfa, EMPTY, 0, x, y)
 
-/* token type codes, some also used as NFA arc types */
-#define	EMPTY	'n'		/* no token present */
-#define	EOS	'e'		/* end of string */
-#define	PLAIN	'p'		/* ordinary character */
-#define	DIGIT	'd'		/* digit (in bound) */
-#define	BACKREF	'b'		/* back reference */
-#define	COLLEL	'I'		/* start of [. */
-#define	ECLASS	'E'		/* start of [= */
-#define	CCLASS	'C'		/* start of [: */
-#define	END	'X'		/* end of [. [= [: */
-#define	RANGE	'R'		/* - within [] which might be range delim. */
-#define	LACON	'L'		/* lookahead constraint subRE */
-#define	AHEAD	'a'		/* color-lookahead arc */
-#define	BEHIND	'r'		/* color-lookbehind arc */
-#define	WBDRY	'w'		/* word boundary constraint */
-#define	NWBDRY	'W'		/* non-word-boundary constraint */
-#define	SBEGIN	'A'		/* beginning of string (even if not BOL) */
-#define	SEND	'Z'		/* end of string (even if not EOL) */
-#define	PREFER	'P'		/* length preference */
+
 
 /* is an arc colored, and hence on a color chain? */
 #define	COLORED(a)	((a)->type == PLAIN || (a)->type == AHEAD || \

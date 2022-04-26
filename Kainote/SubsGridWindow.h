@@ -16,12 +16,13 @@
 #pragma once
 
 #include "SubsGridBase.h"
-#include "SubsGridPreview.h"
-#include "SubsGrid.h"
+//#include "SubsGridPreview.h"
+//#include "SubsGrid.h"
 //#include "Graphicsd2d.h"
-#include <wx/window.h>
+//#include <wx/window.h>
 
-//class SubsGrid;
+class TabPanel;
+class SubsGridPreview;
 class GraphicsContext;
 
 class SubsGridWindow : public SubsGridBase

@@ -29,7 +29,7 @@
 #include "wx/osx/private.h"
 
 #include <map>
-#include <string>
+//#include <string>
 
 class WXDLLEXPORT wxFontRefData: public wxGDIRefData
 {

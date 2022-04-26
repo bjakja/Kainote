@@ -15,7 +15,7 @@
 #include "wx/chartype.h"
 #include "wx/wxcrtbase.h"
 
-#include <stdlib.h>             // malloc() and free()
+//#include <stdlib.h>             // malloc() and free()
 
 class WXDLLIMPEXP_FWD_BASE wxCStrData;
 

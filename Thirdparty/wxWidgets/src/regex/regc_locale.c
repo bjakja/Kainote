@@ -21,14 +21,12 @@
 #endif
 
 //#include <wx/chartype.h>
-#include "regex.h"
+//#include "regex.h"
 #include "regguts.h"
 #include "regerrs.h"
 #include "regcustom.h"
 
 /* ASCII character-name table */
-typedef char chr;
-typedef char* pchr;
 
 static struct cname {
     chr *name;

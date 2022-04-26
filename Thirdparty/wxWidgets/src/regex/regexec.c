@@ -31,92 +31,6 @@
 
 #include "regguts.h"
 
-
-
-/* lazy-DFA representation */
-struct arcp {			/* "pointer" to an outarc */
-	struct sset *ss;
-	color co;
-};
-
-struct sset {			/* state set */
-	unsigned *states;	/* pointer to bitvector */
-	unsigned hash;		/* hash of bitvector */
-#		define	HASH(bv, nw)	(((nw) == 1) ? *(bv) : hash(bv, nw))
-#	define	HIT(h,bv,ss,nw)	((ss)->hash == (h) && ((nw) == 1 || \
-		memcmp(VS(bv), VS((ss)->states), (nw)*sizeof(unsigned)) == 0))
-	int flags;
-#		define	STARTER		01	/* the initial state set */
-#		define	POSTSTATE	02	/* includes the goal state */
-#		define	LOCKED		04	/* locked in cache */
-#		define	NOPROGRESS	010	/* zero-progress state set */
-	struct arcp ins;	/* chain of inarcs pointing here */
-	chr *lastseen;		/* last entered on arrival here */
-	struct sset **outs;	/* outarc vector indexed by color */
-	struct arcp *inchain;	/* chain-pointer vector for outarcs */
-};
-
-struct dfa {
-	int nssets;		/* size of cache */
-	int nssused;		/* how many entries occupied yet */
-	int nstates;		/* number of states */
-	int ncolors;		/* length of outarc and inchain vectors */
-	int wordsper;		/* length of state-set bitvectors */
-	struct sset *ssets;	/* state-set cache */
-	unsigned *statesarea;	/* bitvector storage */
-	unsigned *work;		/* pointer to work area within statesarea */
-	struct sset **outsarea;	/* outarc-vector storage */
-	struct arcp *incarea;	/* inchain storage */
-	struct cnfa *cnfa;
-	struct colormap *cm;
-	chr *lastpost;		/* location of last cache-flushed success */
-	chr *lastnopr;		/* location of last cache-flushed NOPROGRESS */
-	struct sset *search;	/* replacement-search-pointer memory */
-	int cptsmalloced;	/* were the areas individually malloced? */
-	char *mallocarea;	/* self, or master malloced area, or NULL */
-};
-
-#define	WORK	1		/* number of work bitvectors needed */
-
-/* setup for non-malloc allocation for small cases */
-#define	FEWSTATES	20	/* must be less than UBITS */
-#define	FEWCOLORS	15
-struct smalldfa {
-	struct dfa dfa;
-	struct sset ssets[FEWSTATES*2];
-	unsigned statesarea[FEWSTATES*2 + WORK];
-	struct sset *outsarea[FEWSTATES*2 * FEWCOLORS];
-	struct arcp incarea[FEWSTATES*2 * FEWCOLORS];
-};
-#define	DOMALLOC	((struct smalldfa *)NULL)	/* force malloc */
-
-
-
-/* internal variables, bundled for easy passing around */
-struct vars {
-	regex_t *re;
-	struct guts *g;
-	int eflags;		/* copies of arguments */
-	size_t nmatch;
-	regmatch_t *pmatch;
-	rm_detail_t *details;
-	chr *start;		/* start of string */
-	chr *stop;		/* just past end of string */
-	int err;		/* error code if any (0 none) */
-	regoff_t *mem;		/* memory vector for backtracking */
-	struct smalldfa dfa1;
-	struct smalldfa dfa2;
-};
-#define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
-#define	ISERR()	VISERR(v)
-#define	VERR(vv,e)	(((vv)->err) ? (vv)->err : ((vv)->err = (e)))
-#define	ERR(e)	(void)VERR(v, e)		/* record an error */
-#define	NOERR()	{if (ISERR()) return v->err;}	/* if error seen, return it */
-#define	OFF(p)	((p) - v->start)
-#define	LOFF(p)	((long)OFF(p))
-
-
-
 /*
  * forward declarations
  */
@@ -170,8 +84,8 @@ size_t nmatch;
 regmatch_t pmatch[];
 int flags;
 {
-	struct vars var;
-	register struct vars *v = &var;
+	struct vars1 var;
+	register struct vars1 *v = &var;
 	int st;
 	size_t n;
 	int backref;
@@ -258,7 +172,7 @@ int flags;
  */
 static int
 find(v, cnfa, cm)
-struct vars *v;
+struct vars1 *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 {
@@ -343,7 +257,7 @@ struct colormap *cm;
  */
 static int
 cfind(v, cnfa, cm)
-struct vars *v;
+struct vars1 *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 {
@@ -384,7 +298,7 @@ struct colormap *cm;
  */
 static int
 cfindloop(v, cnfa, cm, d, s, coldp)
-struct vars *v;
+struct vars1 *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 struct dfa *d;
@@ -486,7 +400,7 @@ size_t n;
  */
 static VOID
 zapmem(v, t)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 {
 	if (t == NULL)
@@ -512,7 +426,7 @@ struct subre *t;
  */
 static VOID
 subset(v, sub, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *sub;
 chr *begin;
 chr *end;
@@ -576,7 +490,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 condissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -655,7 +569,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 altdissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -739,7 +653,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 ccondissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -833,7 +747,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 crevdissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -924,7 +838,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 cbrdissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -991,7 +905,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 caltdissect(v, t, begin, end)
-struct vars *v;
+struct vars1 *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */

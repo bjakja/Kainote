@@ -16,10 +16,9 @@
 
 #include "SubsGridWindow.h"
 #include "config.h"
-#include "SubsGridBase.h"
-#include "EditBox.h"
+//#include "TabPanel.h"
 
-#include "kainoteFrame.h"
+//#include "kainoteFrame.h"
 #include "kaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridPreview.h"
@@ -27,11 +26,11 @@
 #include "VisualClips.h"
 #include "Visuals.h"
 #include "AudioBox.h"
+#include "GraphicsD2D.h"
+#include "BidiConversion.h"
 #include <wx/regex.h>
 #include <wx/msw/winundef.h>
 #include <wx/dc.h>
-#include "GraphicsD2D.h"
-#include "BidiConversion.h"
 
 
 SubsGridWindow::SubsGridWindow(wxWindow *parent, const long int id, const wxPoint& pos, const wxSize& size, long style)

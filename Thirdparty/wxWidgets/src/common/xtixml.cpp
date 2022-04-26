@@ -37,7 +37,7 @@
 #include "wx/beforestd.h"
 #include <map>
 #include <vector>
-#include <string>
+//#include <string>
 #include "wx/afterstd.h"
 
 using namespace std;

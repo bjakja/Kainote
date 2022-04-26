@@ -19,7 +19,7 @@
 
 #include "wx/string.h"
 
-#include <limits.h>     // for LONG_MAX
+//#include <limits.h>     // for LONG_MAX
 
 // define this to compile wxLongLongWx in "test" mode: the results of all
 // calculations will be compared with the real results taken from
@@ -323,10 +323,10 @@ public:
 #if wxUSE_STD_IOSTREAM
         // input/output
     friend WXDLLIMPEXP_BASE
-    wxSTD ostream& operator<<(wxSTD ostream&, const wxLongLongNative&);
+    //wxSTD ostream& operator<<(wxSTD ostream&, const wxLongLongNative&);
 #endif
 
-    friend WXDLLIMPEXP_BASE
+    //friend WXDLLIMPEXP_BASE
     wxString& operator<<(wxString&, const wxLongLongNative&);
 
 #if wxUSE_STREAMS
@@ -1092,7 +1092,7 @@ WXDLLIMPEXP_BASE class wxTextInputStream &operator>>(class wxTextInputStream &st
 // specialization syntax.
 #ifndef __VISUALC6__
 
-#include <limits>
+//#include <limits>
 
 namespace std
 {
@@ -1103,8 +1103,8 @@ namespace std
   template<> struct numeric_limits<wxLongLong>  : public numeric_limits<wxLongLong_t> {};
   template<> struct numeric_limits<wxULongLong> : public numeric_limits<wxULongLong_t> {};
 #else
-  template<> class numeric_limits<wxLongLong>  : public numeric_limits<wxLongLong_t> {};
-  template<> class numeric_limits<wxULongLong> : public numeric_limits<wxULongLong_t> {};
+  //template<> class numeric_limits<wxLongLong>  : public numeric_limits<wxLongLong_t> {};
+  //template<> class numeric_limits<wxULongLong> : public numeric_limits<wxULongLong_t> {};
 #endif
 
 } // namespace std

@@ -81,21 +81,22 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>L:\Kainote\Thirdparty\wxWidgets\include\wx\msw;L:\Kainote\Thirdparty\wxWidgets\include\;L:\Kainote\Thirdparty\wxWidgets\include\wx;$(solutionDir)\Thirdparty\wxWidgets\include;$(solutionDir)thirdparty\src\png;$(solutionDir)thirdparty\zlib;L:\Kainote\Thirdparty\wxWidgets\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_BASE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
       <ExceptionHandling>Sync</ExceptionHandling>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>wx/wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\core.pch</PrecompiledHeaderOutputFile>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions512</EnableEnhancedInstructionSet>
     </ClCompile>
     <ResourceCompile>
@@ -232,11 +233,6 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\docview.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dpycmn.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dseldlg.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dummy.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\effects.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\event.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fddlgcmn.cpp" />

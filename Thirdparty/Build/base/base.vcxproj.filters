@@ -93,7 +93,6 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tarstrm.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textbuf.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textfile.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\threadinfo.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\time.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timercmn.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timerimpl.cpp" />

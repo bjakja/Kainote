@@ -20,8 +20,9 @@
 // forward declarations
 // ---------------------------------------------------------------------------
 
-class WXDLLIMPEXP_FWD_CORE wxWindow;
-class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+//class WXDLLIMPEXP_FWD_CORE wxWindow;
+//class WXDLLIMPEXP_FWD_CORE wxWindowBase;
+#include "wx/window.h"
 
 // ----------------------------------------------------------------------------
 // headers we have to include

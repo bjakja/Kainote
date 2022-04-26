@@ -34,7 +34,7 @@
 
 #include "wx/beforestd.h"
 #include <map>
-#include <string>
+//#include <string>
 #include <list>
 #include "wx/afterstd.h"
 

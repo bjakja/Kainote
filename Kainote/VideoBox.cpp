@@ -24,8 +24,8 @@
 #include "Notebook.h"
 #include "KaiSlider.h"
 #include "AudioBox.h"
-#include "EditBox.h"
-#include "SubsGrid.h"
+//#include "EditBox.h"
+//#include "SubsGrid.h"
 
 #include "VideoFullscreen.h"
 #include "VideoToolbar.h"

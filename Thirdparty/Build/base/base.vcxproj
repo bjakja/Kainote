@@ -75,15 +75,15 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>wx\wxprec.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\base.pch</PrecompiledHeaderOutputFile>
       <ProgramDataBaseFileName>$(OutDir)$(TargetName).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <LanguageStandard>stdcpp14</LanguageStandard>
-      <LanguageStandard_C>Default</LanguageStandard_C>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NON_CONFORMING_SWPRINTFS=1;_SCL_SECURE_NO_WARNINGS=1;__WXMSW__;_UNICODE;WXBUILDING;wxUSE_GUI=0;wxUSE_BASE=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -226,7 +226,6 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tarstrm.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textbuf.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textfile.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\threadinfo.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\time.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timercmn.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timerimpl.cpp" />
@@ -467,6 +466,9 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\evtloopsrc.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Core\core.vcxproj">
+      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\wxPng\wx_wxpng.vcxproj">
       <Project>{8acc122a-ca6a-5aa6-9c97-9cdd2e533db0}</Project>
     </ProjectReference>

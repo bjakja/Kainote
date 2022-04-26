@@ -15,29 +15,29 @@
 
 
 #include "SubsGrid.h"
-#include "RendererVideo.h"
-#include "config.h"
-#include <wx/intl.h>
-#include <wx/string.h>
-#include <wx/clipbrd.h>
-#include "KainoteFrame.h"
-#include "Hotkeys.h"
+//#include "RendererVideo.h"
+//#include "config.h"
+//#include "KainoteFrame.h"
+//#include "Hotkeys.h"
 #include "OpennWrite.h"
 #include "TLDialog.h"
 #include "Demux.h"
-#include "Stylelistbox.h"
-#include "Menu.h"
+//#include "Stylelistbox.h"
+//#include "Menu.h"
 #include "KaiMessageBox.h"
 #include "SubsGridFiltering.h"
 #include "SubsGridDialogs.h"
-#include "TabPanel.h"
-#include "EditBox.h"
+//#include "TabPanel.h"
+//#include "EditBox.h"
 #include "shiftTimes.h"
 #include "VideoBox.h"
 #include "Notebook.h"
 #include "stylestore.h"
 #include "AudioBox.h"
 #include "SubtitlesProviderManager.h"
+#include <wx/intl.h>
+#include <wx/string.h>
+#include <wx/clipbrd.h>
 #include <wx/regex.h>
 #include <wx/filedlg.h>
 

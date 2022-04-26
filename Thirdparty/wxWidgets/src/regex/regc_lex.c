@@ -30,7 +30,7 @@
  *
  */
 
-#include "regex.h"
+//#include "regex.h"
 #include "regguts.h"
 #include "regerrs.h"
 #include "regcustom.h"

@@ -16,9 +16,7 @@
 
 #pragma once
 
-
-
-#include "VideoSlider.h"
+//#include "VideoSlider.h"
 #include "BitmapButton.h"
 #include "RendererVideo.h"
 //#include "VideoFullscreen.h"
@@ -31,6 +29,8 @@
 class Provider;
 class Fullscreen;
 class VideoToolbar;
+class VideoSlider;
+class VolSlider;
 
 enum PlaybackState;
 

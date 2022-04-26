@@ -36,6 +36,8 @@
  */
 
 #include "regguts.h"
+//#include "regcustom.h"
+
 
 #define	NISERR()	VISERR(nfa->v)
 #define	NERR(e)		(void)VERR(nfa->v, (e))

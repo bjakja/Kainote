@@ -21,7 +21,7 @@
 
 #include "wx/regex.h"
 #include "wx/tokenzr.h"
-#include <string>
+//#include <string>
 
 using CppUnit::Test;
 using CppUnit::TestCase;

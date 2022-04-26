@@ -28,10 +28,6 @@
 #include "Stylelistbox.h"
 #include "SubsFile.h"
 #include <regex>
-//#undef DRAWTEXT;
-
-
-//#undef DrawText
 
 wxDEFINE_EVENT(CURSOR_MOVED, wxCommandEvent);
 
