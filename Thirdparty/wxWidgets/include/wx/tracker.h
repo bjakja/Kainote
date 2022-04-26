@@ -55,7 +55,7 @@ public:
             }
         }
 
-        wxFAIL_MSG( "removing invalid tracker node" );
+        //wxFAIL_MSG( "removing invalid tracker node" );
     }
 
     wxTrackerNode *GetFirst() const { return m_first; }

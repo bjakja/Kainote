@@ -38,7 +38,7 @@ public:
         ButtonLabel(int stockId)
             : m_stockId(stockId)
         {
-            wxASSERT_MSG( wxIsStockID(stockId), "invalid stock id" );
+            //wxASSERT_MSG( wxIsStockID(stockId), "invalid stock id" );
         }
 
         ButtonLabel(const wxString& label)
@@ -119,7 +119,7 @@ public:
     // change the dialog style flag
     void SetMessageDialogStyle(long style)
     {
-        wxASSERT_MSG( ((style & wxYES_NO) == wxYES_NO) || !(style & wxYES_NO),
+        /*wxASSERT_MSG( ((style & wxYES_NO) == wxYES_NO) || !(style & wxYES_NO),
                       "wxYES and wxNO may only be used together" );
 
         wxASSERT_MSG( !(style & wxYES) || !(style & wxOK),
@@ -138,7 +138,7 @@ public:
                       "wxCANCEL_DEFAULT is invalid without wxCANCEL" );
 
         wxASSERT_MSG( !(style & wxCANCEL_DEFAULT) || !(style & wxNO_DEFAULT),
-                      "only one default button can be specified" );
+                      "only one default button can be specified" );*/
 
         m_dialogStyle = style;
     }

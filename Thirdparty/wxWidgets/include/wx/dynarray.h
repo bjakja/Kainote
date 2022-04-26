@@ -340,9 +340,9 @@ private:                                                            \
 // common declaration used by both _WX_DEFINE_TYPEARRAY and
 // _WX_DEFINE_TYPEARRAY_PTR
 #define  _WX_DEFINE_TYPEARRAY_HELPER(T, name, base, classexp, ptrop)  \
-wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
+/*wxCOMPILE_TIME_ASSERT2(sizeof(T) <= sizeof(base::base_type),          \
                        TypeTooBigToBeStoredIn##base,                  \
-                       name);                                         \
+                       name); */                                        \
 typedef int (CMPFUNC_CONV *CMPFUNC##T)(T *pItem1, T *pItem2);         \
 classexp name : public base                                           \
 {                                                                     \
@@ -369,7 +369,7 @@ public:                                                               \
     { base::RemoveAt(uiIndex, nRemove); }                             \
   void Remove(T lItem)                                                \
     { int iIndex = Index(lItem);                                      \
-      wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE);          \
+      /*wxCHECK_RET( iIndex != wxNOT_FOUND, _WX_ERROR_REMOVE);*/          \
       base::RemoveAt((size_t)iIndex); }                               \
                                                                       \
   void Sort(CMPFUNC##T fCmp) { base::Sort((CMPFUNC)fCmp); }           \

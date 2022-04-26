@@ -100,11 +100,11 @@ public:
 
             case wxMOUSE_BTN_NONE:
             case wxMOUSE_BTN_MAX:
-                wxFAIL_MSG(wxS("invalid parameter"));
+                //wxFAIL_MSG(wxS("invalid parameter"));
                 return false;
 
             default:
-                wxFAIL_MSG(wxS("unknown parameter"));
+                //wxFAIL_MSG(wxS("unknown parameter"));
                 return false;
         }
     }

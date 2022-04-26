@@ -821,14 +821,14 @@ private:
             ptrop                                                           \
             itor& operator++()                                              \
             {                                                               \
-                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
+                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") ); */     \
                 m_node = m_node->GetNext();                                 \
                 return *this;                                               \
             }                                                               \
             const itor operator++(int)                                      \
             {                                                               \
                 itor tmp = *this;                                           \
-                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
+                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
                 m_node = m_node->GetNext();                                 \
                 return tmp;                                                 \
             }                                                               \
@@ -874,14 +874,14 @@ private:
             ptrop                                                           \
             itor& operator++()                                              \
             {                                                               \
-                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
+                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
                 m_node = m_node->GetNext();                                 \
                 return *this;                                               \
             }                                                               \
             const itor operator++(int)                                      \
             {                                                               \
                 itor tmp = *this;                                           \
-                wxASSERT_MSG( m_node, wxT("uninitialized iterator") );      \
+                /*wxASSERT_MSG( m_node, wxT("uninitialized iterator") );*/      \
                 m_node = m_node->GetNext();                                 \
                 return tmp;                                                 \
             }                                                               \

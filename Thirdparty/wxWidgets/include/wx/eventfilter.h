@@ -46,7 +46,7 @@ public:
 
     virtual ~wxEventFilter()
     {
-        wxASSERT_MSG( !m_next, "Forgot to call wxEvtHandler::RemoveFilter()?" );
+        //wxASSERT_MSG( !m_next, "Forgot to call wxEvtHandler::RemoveFilter()?" );
     }
 
     // This method allows to filter all the events processed by the program, so

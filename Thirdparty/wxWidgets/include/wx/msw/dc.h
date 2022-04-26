@@ -350,8 +350,8 @@ public:
 
     virtual void DoGetSize(int *w, int *h) const
     {
-        wxASSERT_MSG( m_size.IsFullySpecified(),
-                      wxT("size of this DC hadn't been set and is unknown") );
+        /*wxASSERT_MSG( m_size.IsFullySpecified(),
+                      wxT("size of this DC hadn't been set and is unknown") );*/
 
         if ( w )
             *w = m_size.x;

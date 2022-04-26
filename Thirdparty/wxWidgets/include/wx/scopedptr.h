@@ -140,7 +140,7 @@ public:                             \
                                     \
     T & operator*() const           \
     {                               \
-        wxASSERT(m_ptr != NULL);    \
+        /*wxASSERT(m_ptr != NULL);*/    \
         return *m_ptr;              \
     }                               \
                                     \

@@ -310,13 +310,13 @@ public:
 
     const value_type& at(size_type idx) const
     {
-        wxASSERT(idx < m_size);
+        //wxASSERT(idx < m_size);
         return m_values[idx];
     }
 
     value_type& at(size_type idx)
     {
-        wxASSERT(idx < m_size);
+        //wxASSERT(idx < m_size);
         return m_values[idx];
     }
 

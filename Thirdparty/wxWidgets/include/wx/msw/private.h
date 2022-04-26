@@ -474,7 +474,7 @@ public:
 
     void Init(HDC hdc, HGDIOBJ hgdiobj)
     {
-        wxASSERT_MSG( !m_hdc, wxT("initializing twice?") );
+        //wxASSERT_MSG( !m_hdc, wxT("initializing twice?") );
 
         m_hdc = hdc;
 
@@ -503,7 +503,7 @@ protected:
 
     void InitGdiobj(HGDIOBJ gdiobj)
     {
-        wxASSERT_MSG( !m_gdiobj, wxT("initializing twice?") );
+        //wxASSERT_MSG( !m_gdiobj, wxT("initializing twice?") );
 
         m_gdiobj = gdiobj;
     }
@@ -771,7 +771,7 @@ public:
     bool Register(const WNDCLASS& wc)
     {
         // we should only be called if we hadn't been initialized yet
-        wxASSERT_MSG( m_registered == -1,
+        //wxASSERT_MSG( m_registered == -1,
                         wxT("calling ClassRegistrar::Register() twice?") );
 
         m_registered = ::RegisterClass(&wc) ? 1 : 0;

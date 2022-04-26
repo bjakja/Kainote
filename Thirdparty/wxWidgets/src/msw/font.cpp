@@ -521,7 +521,7 @@ wxFontFamily wxNativeFontInfo::GetFamily() const
             break;
 
         default:
-            wxFAIL_MSG( "unknown LOGFONT::lfFamily value" );
+            //wxFAIL_MSG( "unknown LOGFONT::lfFamily value" );
             family = wxFONTFAMILY_UNKNOWN;
                 // just to avoid a warning
     }
@@ -563,7 +563,7 @@ void wxNativeFontInfo::SetStyle(wxFontStyle style)
     switch ( style )
     {
         default:
-            wxFAIL_MSG( "unknown font style" );
+            //wxFAIL_MSG( "unknown font style" );
             // fall through
 
         case wxFONTSTYLE_NORMAL:
@@ -582,7 +582,7 @@ void wxNativeFontInfo::SetWeight(wxFontWeight weight)
     switch ( weight )
     {
         default:
-            wxFAIL_MSG( "unknown font weight" );
+            //wxFAIL_MSG( "unknown font weight" );
             // fall through
 
         case wxFONTWEIGHT_NORMAL:
