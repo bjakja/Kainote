@@ -88,6 +88,39 @@ struct colormap *cm;
 }
 
 /*
+ - cmtreefree - free a non-terminal part of a colormap tree
+ ^ static VOID cmtreefree(struct colormap *, union tree *, int);
+ */
+static VOID
+cmtreefree(cm, tree, level)
+struct colormap* cm;
+union tree* tree;
+int level;			/* level number (top == 0) of this block */
+{
+	int i;
+	union tree* t;
+	union tree* fillt = &cm->tree[level + 1];
+	union tree* cb;
+
+	assert(level < NBYTS - 1);	/* this level has pointers */
+	for (i = BYTTAB - 1; i >= 0; i--) {
+		t = tree->tptr[i];
+		assert(t != NULL);
+		if (t != fillt) {
+			if (level < NBYTS - 2) {	/* more pointer blocks below */
+				cmtreefree(cm, t, level + 1);
+				FREE(t);
+			}
+			else {		/* color block below */
+				cb = cm->cd[t->tcolor[0]].block;
+				if (t != cb)	/* not a solid block */
+					FREE(t);
+			}
+		}
+	}
+}
+
+/*
  - freecm - free dynamically-allocated things in a colormap
  ^ static VOID freecm(struct colormap *);
  */
@@ -111,37 +144,7 @@ struct colormap *cm;
 		FREE(cm->cd);
 }
 
-/*
- - cmtreefree - free a non-terminal part of a colormap tree
- ^ static VOID cmtreefree(struct colormap *, union tree *, int);
- */
-static VOID
-cmtreefree(cm, tree, level)
-struct colormap *cm;
-union tree *tree;
-int level;			/* level number (top == 0) of this block */
-{
-	int i;
-	union tree *t;
-	union tree *fillt = &cm->tree[level+1];
-	union tree *cb;
 
-	assert(level < NBYTS-1);	/* this level has pointers */
-	for (i = BYTTAB-1; i >= 0; i--) {
-		t = tree->tptr[i];
-		assert(t != NULL);
-		if (t != fillt) {
-			if (level < NBYTS-2) {	/* more pointer blocks below */
-				cmtreefree(cm, t, level+1);
-				FREE(t);
-			} else {		/* color block below */
-				cb = cm->cd[t->tcolor[0]].block;
-				if (t != cb)	/* not a solid block */
-					FREE(t);
-			}
-		}
-	}
-}
 
 /*
  - setcolor - set the color of a character in a colormap

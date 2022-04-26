@@ -32,7 +32,15 @@
 
 #include "regex.h"
 #include "regguts.h"
-//#include "regcustom.h"
+#include <malloc.h>
+
+#define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
+#define	ISERR()	VISERR(v)
+#define	VERR(vv,e)	(((vv)->err) ? (vv)->err : ((vv)->err = (e)))
+#define	ERR(e)	(void)VERR(v, e)		/* record an error */
+#define	NOERR()	{if (ISERR()) return v->err;}	/* if error seen, return it */
+#define	OFF(p)	((p) - v->start)
+#define	LOFF(p)	((long)OFF(p))
 
 /*
  * forward declarations, up here so forward datatypes etc. are defined early
@@ -200,10 +208,10 @@ static int casecmp _ANSI_ARGS_((CONST chr *, CONST chr *, size_t));
 #define	EAT(t)	(SEE(t) && next(v))	/* if next is this, swallow it */
 #define	VISERR(vv)	((vv)->err != 0)	/* have we seen an error yet? */
 #define	ISERR()	VISERR(v)
-#define	VERR(vv,e)	((vv)->nexttype = EOS, ((vv)->err) ? (vv)->err :\
-							((vv)->err = (e)))
+//#define	VERR(vv,e)	((vv)->nexttype = EOS, ((vv)->err) ? (vv)->err :\
+							//((vv)->err = (e)))
 #define	ERR(e)	(void)VERR(v, e)		/* record an error */
-#define	NOERR()	{if (ISERR()) return;}	/* if error seen, return */
+//#define	NOERR()	{if (ISERR()) return;}	/* if error seen, return */
 #define	NOERRN()	{if (ISERR()) return NULL;}	/* NOERR with retval */
 #define	NOERRZ()	{if (ISERR()) return 0;}	/* NOERR with retval */
 #define	INSIST(c, e)	(void)((c) ? (void)0 : ERR(e))	/* if condition false, error */

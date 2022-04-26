@@ -44,7 +44,7 @@
 
 static chr *			/* endpoint, or NULL */
 longest(v, d, start, stop, hitstopp)
-struct vars1 *v;			/* used only for debug and exec flags */
+struct vars *v;			/* used only for debug and exec flags */
 struct dfa *d;
 chr *start;			/* where the match should start */
 chr *stop;			/* match must end at or before here */
@@ -143,7 +143,7 @@ int *hitstopp;			/* record whether hit v->stop, if non-NULL */
  */
 static chr *			/* endpoint, or NULL */
 shortest(v, d, start, min, max, coldp, hitstopp)
-struct vars1 *v;
+struct vars *v;
 struct dfa *d;
 chr *start;			/* where the match should start */
 chr *min;			/* match must end at or after here */
@@ -244,7 +244,7 @@ int *hitstopp;			/* record whether hit v->stop, if non-NULL */
  */
 static chr *			/* endpoint, or NULL */
 lastcold(v, d)
-struct vars1 *v;
+struct vars *v;
 struct dfa *d;
 {
 	struct sset *ss;
@@ -273,7 +273,7 @@ struct dfa *d;
  
 static struct dfa *
 newdfa(v, cnfa, cm, small)
-struct vars1 *v;
+struct vars *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 struct smalldfa *small;		/* preallocated space, may be NULL */
@@ -532,7 +532,7 @@ chr *start;			/* where the attempt got started */
  */
 static int			/* predicate:  constraint satisfied? */
 lacon(v, pcnfa, cp, co)
-struct vars1 *v;
+struct vars *v;
 struct cnfa *pcnfa;		/* parent cnfa */
 chr *cp;
 pcolor co;			/* "color" of the lookahead constraint */

@@ -40,6 +40,30 @@
 #include "regerrs.h"
 #include "regcustom.h"
 
+/*
+ - clearcvec - clear a possibly-new cvec
+ * Returns pointer as convenience.
+ ^ static struct cvec *clearcvec(struct cvec *);
+ */
+static struct cvec*
+clearcvec(cv)
+struct cvec* cv;			/* character vector */
+{
+    int i;
+
+    assert(cv != NULL);
+    cv->nchrs = 0;
+    assert(cv->chrs == (chr*)&cv->mcces[cv->mccespace]);
+    cv->nmcces = 0;
+    cv->nmccechrs = 0;
+    cv->nranges = 0;
+    for (i = 0; i < cv->mccespace; i++) {
+        cv->mcces[i] = NULL;
+    }
+
+    return cv;
+}
+
 static struct cvec *
 newcvec(nchrs, nranges, nmcces)
     int nchrs;				/* to hold this many chrs... */
@@ -65,29 +89,7 @@ newcvec(nchrs, nranges, nmcces)
     return clearcvec(cv);
 }
 
-/*
- - clearcvec - clear a possibly-new cvec
- * Returns pointer as convenience.
- ^ static struct cvec *clearcvec(struct cvec *);
- */
-static struct cvec *
-clearcvec(cv)
-    struct cvec *cv;			/* character vector */
-{
-    int i;
 
-    assert(cv != NULL);
-    cv->nchrs = 0;
-    assert(cv->chrs == (chr *)&cv->mcces[cv->mccespace]);
-    cv->nmcces = 0;
-    cv->nmccechrs = 0;
-    cv->nranges = 0;
-    for (i = 0; i < cv->mccespace; i++) {
-	cv->mcces[i] = NULL;
-    }
-
-    return cv;
-}
 
 /*
  - addchr - add a chr to a cvec

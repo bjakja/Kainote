@@ -84,8 +84,8 @@ size_t nmatch;
 regmatch_t pmatch[];
 int flags;
 {
-	struct vars1 var;
-	register struct vars1 *v = &var;
+	struct vars var;
+	register struct vars *v = &var;
 	int st;
 	size_t n;
 	int backref;
@@ -172,7 +172,7 @@ int flags;
  */
 static int
 find(v, cnfa, cm)
-struct vars1 *v;
+struct vars *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 {
@@ -257,7 +257,7 @@ struct colormap *cm;
  */
 static int
 cfind(v, cnfa, cm)
-struct vars1 *v;
+struct vars *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 {
@@ -298,7 +298,7 @@ struct colormap *cm;
  */
 static int
 cfindloop(v, cnfa, cm, d, s, coldp)
-struct vars1 *v;
+struct vars *v;
 struct cnfa *cnfa;
 struct colormap *cm;
 struct dfa *d;
@@ -400,7 +400,7 @@ size_t n;
  */
 static VOID
 zapmem(v, t)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 {
 	if (t == NULL)
