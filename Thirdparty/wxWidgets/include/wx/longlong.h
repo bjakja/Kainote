@@ -161,10 +161,10 @@ public:
     // accessors
         // get high part
     wxInt32 GetHi() const
-        { return wx_truncate_cast(wxInt32, m_ll >> 32); }
+        { return (wxInt32) m_ll; }
         // get low part
     wxUint32 GetLo() const
-        { return wx_truncate_cast(wxUint32, m_ll); }
+        { return (wxUint32)m_ll; }
 
         // get absolute value
     wxLongLongNative Abs() const { return wxLongLongNative(*this).Abs(); }
@@ -179,11 +179,11 @@ public:
         //wxASSERT_MSG( (m_ll >= LONG_MIN) && (m_ll <= LONG_MAX),
                       //wxT("wxLongLong to long conversion loss of precision") );
 
-        return wx_truncate_cast(long, m_ll);
+        return (long) m_ll;
     }
 
         // convert to double
-    double ToDouble() const { return wx_truncate_cast(double, m_ll); }
+    double ToDouble() const { return (double) m_ll; }
 
     // don't provide implicit conversion to wxLongLong_t or we will have an
     // ambiguity for all arithmetic operations
@@ -393,10 +393,10 @@ public:
     // accessors
         // get high part
     wxUint32 GetHi() const
-        { return wx_truncate_cast(wxUint32, m_ll >> 32); }
+        { return (wxUint32)m_ll; }
         // get low part
     wxUint32 GetLo() const
-        { return wx_truncate_cast(wxUint32, m_ll); }
+        { return (wxUint32)m_ll; }
 
         // convert to native ulong long
     wxULongLong_t GetValue() const { return m_ll; }
@@ -407,7 +407,7 @@ public:
         //wxASSERT_MSG( m_ll <= ULONG_MAX,
                       //wxT("wxULongLong to long conversion loss of precision") );
 
-        return wx_truncate_cast(unsigned long, m_ll);
+        return (unsigned long) m_ll;
     }
 
         // convert to double
@@ -419,7 +419,7 @@ public:
 #ifdef __VISUALC6__
     double ToDouble() const;
 #else
-    double ToDouble() const { return wx_truncate_cast(double, m_ll); }
+    /*double ToDouble() const { return wx_truncate_cast(double, m_ll); }*/
 #endif
 
     // operations

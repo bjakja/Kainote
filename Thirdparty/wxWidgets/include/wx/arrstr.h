@@ -482,7 +482,7 @@ public:
     bool IsEmpty() const { return GetCount() == 0; }
     const wxString& operator[] (unsigned int i) const
     {
-        wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
+        //wxASSERT_MSG( i < GetCount(), wxT("index out of bounds") );
         if(m_type == wxSTRING_POINTER)
             return m_data.ptr[i];
         return m_data.array->Item(i);

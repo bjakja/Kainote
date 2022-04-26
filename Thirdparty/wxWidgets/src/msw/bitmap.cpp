@@ -1237,7 +1237,7 @@ void wxBitmap::SetSelectedInto(wxDC *dc)
     if ( GetBitmapData() )
         GetBitmapData()->m_selectedInto = dc;
 #else
-    wxUnusedVar(dc);
+    //wxUnusedVar(dc);
 #endif
 }
 

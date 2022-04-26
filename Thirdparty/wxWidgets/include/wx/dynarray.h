@@ -229,7 +229,7 @@ public:                                                             \
                                                                     \
 protected:                                                          \
   T& Item(size_t uiIndex) const                                     \
-    { wxASSERT( uiIndex < m_nCount ); return m_pItems[uiIndex]; }   \
+    { /*wxASSERT( uiIndex < m_nCount );*/ return m_pItems[uiIndex]; }   \
   T& operator[](size_t uiIndex) const { return Item(uiIndex); }     \
                                                                     \
   int Index(T lItem, bool bFromEnd = false) const;                  \

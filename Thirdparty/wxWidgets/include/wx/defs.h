@@ -307,17 +307,17 @@ typedef short int WXTYPE;
     #define wx_truncate_cast(t, x) wx_truncate_cast_impl<t>(x)
 
 #elif defined(__cplusplus) && defined(__VISUALC__) && __VISUALC__ >= 1310
-    template <typename T, typename X>
-    inline T wx_truncate_cast_impl(X x)
-    {
-        #pragma warning(push)
-        /* conversion from 'X' to 'T', possible loss of data */
-        #pragma warning(disable: 4267)
+    //template <typename T, typename X>
+    //inline T wx_truncate_cast_impl(X x)
+    //{
+    //    #pragma warning(push)
+    //    /* conversion from 'X' to 'T', possible loss of data */
+    //    #pragma warning(disable: 4267)
 
-        return x;
+    //    return x;
 
-        #pragma warning(pop)
-    }
+    //    #pragma warning(pop)
+    //}
 
     #define wx_truncate_cast(t, x) wx_truncate_cast_impl<t>(x)
 #else

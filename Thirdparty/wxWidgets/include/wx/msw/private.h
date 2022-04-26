@@ -772,7 +772,7 @@ public:
     {
         // we should only be called if we hadn't been initialized yet
         //wxASSERT_MSG( m_registered == -1,
-                        wxT("calling ClassRegistrar::Register() twice?") );
+                        //wxT("calling ClassRegistrar::Register() twice?") );
 
         m_registered = ::RegisterClass(&wc) ? 1 : 0;
         if ( !IsRegistered() )

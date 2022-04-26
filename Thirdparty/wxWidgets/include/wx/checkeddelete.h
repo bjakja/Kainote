@@ -32,7 +32,7 @@
     #define wxPOST_NO_WARNING_SCOPE(name)
 #else
     #define wxPRE_NO_WARNING_SCOPE(name)  do
-    #define wxPOST_NO_WARNING_SCOPE(name) while ( wxFalse )
+    #define wxPOST_NO_WARNING_SCOPE(name) while ( false )
 #endif
 
 #define wxCHECKED_DELETE(ptr)                                                 \
