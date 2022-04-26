@@ -494,7 +494,7 @@
 #ifdef __WXWINCE__
 #   include "wx/msw/wince/libraries.h"
 #elif defined __WINDOWS__
-#   include "wx/msw/libraries.h"
+#   //include "wx/msw/libraries.h"
 #endif
 
 /*

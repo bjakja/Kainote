@@ -56,7 +56,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">$(ProjectName)</TargetName>
@@ -197,15 +197,9 @@
     <ClInclude Include="..\..\wxWidgets\src\regex\regguts.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regcomp.c" />
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_color.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\regc_cvec.c" />
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_lex.c" />
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_locale.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\regc_nfa.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\regerror.c" />
-    <ClCompile Include="..\..\wxWidgets\src\regex\regexec.c" />
-    <ClCompile Include="..\..\wxWidgets\src\regex\rege_dfa.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\regfree.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\regfronts.c" />
     <ClCompile Include="..\..\wxWidgets\src\regex\tclUniData.c" />

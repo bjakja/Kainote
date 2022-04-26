@@ -198,7 +198,7 @@ getcvec(v, nchrs, nranges, nmcces)
     }
     v->cv = newcvec(nchrs, nranges, nmcces);
     if (v->cv == NULL) {
-	ERR(REG_ESPACE);
+	//ERR(REG_ESPACE);
     }
 
     return v->cv;
@@ -208,9 +208,9 @@ getcvec(v, nchrs, nranges, nmcces)
  - freecvec - free a cvec
  ^ static VOID freecvec(struct cvec *);
  */
-static VOID
-freecvec(cv)
-    struct cvec *cv;			/* character vector */
-{
-    FREE(cv);
-}
+//static VOID
+//freecvec(cv)
+//    struct cvec *cv;			/* character vector */
+//{
+//    FREE(cv);
+//}

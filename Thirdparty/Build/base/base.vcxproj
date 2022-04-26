@@ -31,6 +31,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <PlatformToolset>v143</PlatformToolset>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -60,6 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <IncludePath>$(SolutionDir)\ThirdParty\wxWidgets\include</IncludePath>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -145,10 +147,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <ClCompile>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <PrecompiledHeader>Create</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>wx\wxprec.h</PrecompiledHeaderFile>
-      <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\lib.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>$(SolutionDir)obj\$(Platform)\$(Configuration)\base.pch</PrecompiledHeaderOutputFile>
       <PreprocessorDefinitions>_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(solutionDir)Thirdparty\wxWidgets\include;$(solutionDir)Thirdparty\wxWidgets\src\regex;$(solutionDir)Thirdparty\zlib;$(solutionDir)Thirdparty\wxWidgets\3rdparty\pcre\src\wx</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -165,84 +169,21 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\convauto.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datetime.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datetimefmt.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\datstrm.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dircmn.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dynlib.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\dynload.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\encconv.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\event.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\evtloopcmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\extended.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-      </PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-      </PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ffile.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\file.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fileback.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fileconf.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filefn.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filename.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filesys.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filtall.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\filtfind.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fmapbase.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_arc.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_filter.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fs_mem.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\fswatchercmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\hash.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\hashmap.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\init.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\intl.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ipcbase.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\languageinfo.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\list.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\log.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\longlong.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\memory.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\mimecmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\module.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\msgout.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\mstream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\numformatter.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\object.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\platinfo.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\powercmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\process.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\regex.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\sstream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stdpbase.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stdstream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stopwatch.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\strconv.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\string.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stringimpl.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\stringops.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\strvararg.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\sysopt.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tarstrm.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textbuf.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\textfile.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\time.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timercmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\timerimpl.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\tokenzr.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\translation.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\txtstrm.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\unichar.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\uri.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\ustring.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\utilscmn.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\variant.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wfstream.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wxcrt.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\wxprintf.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xlocale.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xti.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\xtistrm.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\zipstrm.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\common\zstream.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\basemsw.cpp" />
@@ -251,58 +192,14 @@
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\debughlp.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dir.cpp" />
     <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\dlmsw.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\fswatcher.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\main.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\mimetype.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\power.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\regconf.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\registry.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\snglinst.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\stackwalk.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\stdpaths.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\thread.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\timer.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\utils.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\utilsexc.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\volume.cpp" />
-    <ClCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\generic\fswatcherg.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="$(SolutionDir)Thirdparty\wxwidgets\src\msw\version.rc">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\setup.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </CustomBuild>
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\apptbase.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\apptrait.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\chkconf.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\crashrpt.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\dde.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\debughlp.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\fswatcher.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\gccpriv.h" />
-    <CustomBuild Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\genrcdefs.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </CustomBuild>
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\libraries.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\mimetype.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\private.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\regconf.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\registry.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\seh.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stackwalk.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\stdpaths.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\winundef.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcctl.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapcdlg.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msw\wrapwin.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\generic\fswatcher.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\afterstd.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\any.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\anystr.h" />
@@ -329,7 +226,6 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\cpp.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\crt.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\datetime.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\datstrm.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\dde.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\debug.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\defs.h" />
@@ -347,128 +243,18 @@
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\features.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ffile.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\file.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fileconf.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filefn.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filename.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\filesys.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\flags.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fontenc.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fontmap.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_arc.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_filter.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_mem.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fs_zip.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\fswatcher.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hash.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hashmap.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\hashset.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\iconloc.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\if.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\implicitconversion.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\init.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\int2type.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\intl.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\iosfwrap.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ioswrap.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ipc.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ipcbase.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\kbdstate.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\language.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\link.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\list.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\log.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\longlong.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\math.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memconf.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memory.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\memtext.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mimetype.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\module.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mousestate.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\movable.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msgout.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\msgqueue.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\mstream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\numformatter.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\object.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\platform.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\platinfo.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\meta\pod.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\power.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\process.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ptr_scpd.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ptr_shrd.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\recguard.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\regex.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\rtti.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopedarray.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopedptr.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\scopeguard.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sharedptr.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\snglinst.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sstream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stack.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stackwalk.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stdpaths.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stdstream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stockitem.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stopwatch.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\strconv.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\string.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stringimpl.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\stringops.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\strvararg.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\sysopt.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tarstrm.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\textbuf.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\textfile.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\thread.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\time.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\timer.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tls.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tokenzr.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\tracker.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\translation.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\txtstrm.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\typeinfo.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\types.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\unichar.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\uri.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\ustring.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\utils.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\variant.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\vector.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\version.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\versioninfo.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\volume.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\weakref.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wfstream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wx.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxchar.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrt.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrtbase.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxcrtvararg.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\wxprec.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xlocale.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xti.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xti2.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtictor.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtihandler.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtiprop.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtistrm.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\xtitypes.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zipstrm.h" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\zstream.h" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\listimpl.cpp" />
-    <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\thrimpl.cpp" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\arrimpl.cpp" />
     <ClInclude Include="$(SolutionDir)Thirdparty\wxwidgets\include\wx\evtloopsrc.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\core.vcxproj">
-      <Project>{6744dad8-9c70-574a-bff2-9f8dddb24a75}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\wxPng\wx_wxpng.vcxproj">
       <Project>{8acc122a-ca6a-5aa6-9c97-9cdd2e533db0}</Project>
     </ProjectReference>

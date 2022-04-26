@@ -291,7 +291,7 @@ struct smalldfa *small;		/* preallocated space, may be NULL */
 			small = (struct smalldfa *)MALLOC(
 						sizeof(struct smalldfa));
 			if (small == NULL) {
-				ERR(REG_ESPACE);
+				//ERR(REG_ESPACE);
 				return NULL;
 			}
 		}
@@ -306,7 +306,7 @@ struct smalldfa *small;		/* preallocated space, may be NULL */
 	} else {
 		d = (struct dfa *)MALLOC(sizeof(struct dfa));
 		if (d == NULL) {
-			ERR(REG_ESPACE);
+			/*ERR(REG_ESPACE);*/
 			return NULL;
 		}
 		d->ssets = (struct sset *)MALLOC(nss * sizeof(struct sset));
@@ -322,7 +322,7 @@ struct smalldfa *small;		/* preallocated space, may be NULL */
 		if (d->ssets == NULL || d->statesarea == NULL ||
 				d->outsarea == NULL || d->incarea == NULL) {
 			freedfa(d);
-			ERR(REG_ESPACE);
+			/*ERR(REG_ESPACE);*/
 			return NULL;
 		}
 	}
@@ -549,7 +549,7 @@ pcolor co;			/* "color" of the lookahead constraint */
 	sub = &v->g->lacons[n];
 	d = newdfa(v, &sub->cnfa, &v->g->cmap, &sd);
 	if (d == NULL) {
-		ERR(REG_ESPACE);
+		/*ERR(REG_ESPACE);*/
 		return 0;
 	}
 	end = longest(v, d, cp, v->stop, (int *)NULL);
@@ -686,6 +686,6 @@ chr *start;
 	/* nobody's old enough?!? -- something's really wrong */
 	FDEBUG(("can't find victim to replace!\n"));
 	assert(NOTREACHED);
-	ERR(REG_ASSERT);
+	//ERR(REG_ASSERT);
 	return d->ssets;
 }

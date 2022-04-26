@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//#include "wx/wxprec.h"
 
 #if defined(__BORLANDC__)
     #pragma hdrstop
@@ -83,6 +83,7 @@
 #include <ctype.h>
 
 #include "wx/msw/missing.h"
+#include <windows.h>
 
 // instead of including <shlwapi.h> which is not part of the core SDK and not
 // shipped at all with other compilers, we always define the parts of it we
@@ -528,8 +529,8 @@ bool wxConsoleStderr::IsHistoryUnchanged() const
 
 bool wxConsoleStderr::Write(const wxString& text)
 {
-    wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
-                    wxT("should only be called if Init() returned true") );
+    //wxASSERT_MSG( m_hStderr != INVALID_HANDLE_VALUE,
+                    //wxT("should only be called if Init() returned true") );
 
     // get current position
     CONSOLE_SCREEN_BUFFER_INFO csbi;
@@ -1052,7 +1053,7 @@ terminate the program,\r\n\
             throw;
 
         default:
-            wxFAIL_MSG( wxT("unexpected MessageBox() return code") );
+            //wxFAIL_MSG( wxT("unexpected MessageBox() return code") );
             // fall through
 
         case IDRETRY:

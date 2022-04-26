@@ -21,11 +21,11 @@
 #include "wx/colour.h"
 #include "wx/image.h"
 
-class WXDLLIMPEXP_FWD_CORE wxBitmap;
-class WXDLLIMPEXP_FWD_CORE wxBitmapHandler;
-class WXDLLIMPEXP_FWD_CORE wxIcon;
-class WXDLLIMPEXP_FWD_CORE wxMask;
-class WXDLLIMPEXP_FWD_CORE wxPalette;
+class wxBitmap;
+class wxBitmapHandler;
+class wxIcon;
+class wxMask;
+class wxPalette;
 
 // ----------------------------------------------------------------------------
 // wxVariant support
@@ -42,7 +42,7 @@ DECLARE_VARIANT_OBJECT_EXPORTED(wxBitmap,WXDLLIMPEXP_CORE)
 
 // TODO: all implementation of wxMask, except the generic one,
 //       do not derive from wxMaskBase,,, they should
-class WXDLLIMPEXP_CORE wxMaskBase : public wxObject
+class wxMaskBase : public wxObject
 {
 public:
     // create the mask from bitmap pixels of the given colour
@@ -93,7 +93,7 @@ protected:
 // different formats
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapHandler : public wxObject
+class wxBitmapHandler : public wxObject
 {
 public:
     wxBitmapHandler() { m_type = wxBITMAP_TYPE_INVALID; }
@@ -137,7 +137,7 @@ private:
 // wxBitmap: class which represents platform-dependent bitmap (unlike wxImage)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapBase : public wxGDIObject
+class wxBitmapBase : public wxGDIObject
 {
 public:
     /*

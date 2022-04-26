@@ -19,6 +19,7 @@
 
 #include "KeyframesLoader.h"
 #include <wx/file.h>
+#include <wx/arrstr.h>
 #include "OpennWrite.h"
 #include "Provider.h"
 

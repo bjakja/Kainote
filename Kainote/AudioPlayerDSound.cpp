@@ -263,9 +263,9 @@ do_fill_buffer:
 					unsigned long buf1sz, buf2sz;
 					unsigned char *buf1 = nullptr, *buf2 = nullptr;
 
-					assert(bytes_needed > 0);
-					assert(buffer_offset < bufSize);
-					assert((unsigned long)bytes_needed <= bufSize);
+					//assert(bytes_needed > 0);
+					//assert(buffer_offset < bufSize);
+					//assert((unsigned long)bytes_needed <= bufSize);
 
 					HRESULT res = audioBuffer->Lock(buffer_offset, bytes_needed, (void** )buf1, &buf1sz, (void** )buf2, &buf2sz, 0);
 					switch (res)

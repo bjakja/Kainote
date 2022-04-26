@@ -49,7 +49,7 @@ union wxAnyValueBuffer
 // types used with wxAny. Usually the default template (wxAnyValueTypeImpl<>)
 // will create a satisfactory wxAnyValueType implementation for a data type.
 //
-class WXDLLIMPEXP_BASE wxAnyValueType
+class wxAnyValueType
 {
     WX_DECLARE_ABSTRACT_TYPEINFO(wxAnyValueType)
 public:
@@ -408,7 +408,7 @@ _WX_ANY_DEFINE_SUB_TYPE(T, CLSTYPE)\
 #endif
 
 
-class WXDLLIMPEXP_BASE wxAnyValueTypeImplInt :
+class wxAnyValueTypeImplInt :
     public wxAnyValueTypeImplBase<wxAnyBaseIntType>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplInt)
@@ -423,7 +423,7 @@ public:
 };
 
 
-class WXDLLIMPEXP_BASE wxAnyValueTypeImplUint :
+class wxAnyValueTypeImplUint :
     public wxAnyValueTypeImplBase<wxAnyBaseUintType>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplUint)
@@ -460,7 +460,7 @@ WX_ANY_DEFINE_SUB_TYPE(wxULongLong_t, Uint)
 // WX_IMPLEMENT_ANY_VALUE_TYPE(wxAnyValueTypeImpl##TYPENAME)
 //
 #define _WX_ANY_DEFINE_CONVERTIBLE_TYPE(T, TYPENAME, CONVFUNC, GV) \
-class WXDLLIMPEXP_BASE wxAnyValueTypeImpl##TYPENAME : \
+class wxAnyValueTypeImpl##TYPENAME : \
     public wxAnyValueTypeImplBase<T> \
 { \
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImpl##TYPENAME) \
@@ -496,7 +496,7 @@ _WX_ANY_DEFINE_CONVERTIBLE_TYPE(T, TYPENAME, \
 //
 
 // Convert wxString to destination wxAny value type
-extern WXDLLIMPEXP_BASE bool wxAnyConvertString(const wxString& value,
+extern bool wxAnyConvertString(const wxString& value,
                                                 wxAnyValueType* dstType,
                                                 wxAnyValueBuffer& dst);
 
@@ -510,7 +510,7 @@ WX_ANY_DEFINE_CONVERTIBLE_TYPE(const wchar_t*, ConstWchar_tPtr,
 // Bool value type
 //
 template<>
-class WXDLLIMPEXP_BASE wxAnyValueTypeImpl<bool> :
+class wxAnyValueTypeImpl<bool> :
     public wxAnyValueTypeImplBase<bool>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImpl<bool>)
@@ -527,7 +527,7 @@ public:
 //
 // Floating point value type
 //
-class WXDLLIMPEXP_BASE wxAnyValueTypeImplDouble :
+class wxAnyValueTypeImplDouble :
     public wxAnyValueTypeImplBase<double>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplDouble)
@@ -606,7 +606,7 @@ class WXDLLIMPEXP_FWD_BASE wxAnyToVariantRegistration;
 // wxAny<->wxVariant conversion code is missing.
 //
 
-class WXDLLIMPEXP_BASE wxAnyValueTypeImplVariantData :
+class wxAnyValueTypeImplVariantData :
     public wxAnyValueTypeImplBase<wxVariantData*>
 {
     WX_DECLARE_ANY_VALUE_TYPE(wxAnyValueTypeImplVariantData)
@@ -712,11 +712,11 @@ bool operator==(TUS value) const \
 // so that it can reside entirely in header and lack the export declaration.
 
 // Helper function used to associate wxAnyValueType with a wxVariantData.
-extern WXDLLIMPEXP_BASE void
+extern void
 wxPreRegisterAnyToVariant(wxAnyToVariantRegistration* reg);
 
 // This function performs main wxAny to wxVariant conversion duties.
-extern WXDLLIMPEXP_BASE bool
+extern bool
 wxConvertAnyToVariant(const wxAny& any, wxVariant* variant);
 
 #endif // wxUSE_VARIANT

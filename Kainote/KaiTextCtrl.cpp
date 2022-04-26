@@ -244,7 +244,7 @@ void KaiTextCtrl::MoveStyles(size_t textPos, int moveIndex)
 
 void KaiTextCtrl::DeleteStyles(size_t textStart, size_t textEnd)
 {
-	assert(textEnd > textStart);
+	//assert(textEnd > textStart);
 	size_t i = 0;
 	size_t newIndex = textEnd - textStart;
 	while (i < textStyles.size()){

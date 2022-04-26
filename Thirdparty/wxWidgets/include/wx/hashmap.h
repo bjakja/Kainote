@@ -70,7 +70,7 @@ typedef int ptrdiff_t;
 #endif
 
 // private
-struct WXDLLIMPEXP_BASE _wxHashTable_NodeBase
+struct _wxHashTable_NodeBase
 {
     _wxHashTable_NodeBase() : m_next(NULL) {}
 
@@ -82,7 +82,7 @@ struct WXDLLIMPEXP_BASE _wxHashTable_NodeBase
 };
 
 // private
-class WXDLLIMPEXP_BASE _wxHashTableBase2
+class _wxHashTableBase2
 {
 public:
     typedef void (*NodeDtor)(_wxHashTable_NodeBase*);
@@ -483,7 +483,7 @@ inline bool grow_lf70( size_t buckets, size_t items )
 #ifndef wxNEEDS_WX_HASH_MAP
 
 // integer types
-class WXDLLIMPEXP_BASE wxIntegerHash
+class wxIntegerHash
 {
     WX_HASH_MAP_NAMESPACE::hash<long> longHash;
     WX_HASH_MAP_NAMESPACE::hash<unsigned long> ulongHash;
@@ -527,7 +527,7 @@ public:
 #else // wxNEEDS_WX_HASH_MAP
 
 // integer types
-class WXDLLIMPEXP_BASE wxIntegerHash
+class wxIntegerHash
 {
 public:
     wxIntegerHash() { }
@@ -547,7 +547,7 @@ public:
 
 #endif // !wxNEEDS_WX_HASH_MAP/wxNEEDS_WX_HASH_MAP
 
-class WXDLLIMPEXP_BASE wxIntegerEqual
+class wxIntegerEqual
 {
 public:
     wxIntegerEqual() { }
@@ -566,7 +566,7 @@ public:
 };
 
 // pointers
-class WXDLLIMPEXP_BASE wxPointerHash
+class wxPointerHash
 {
 public:
     wxPointerHash() { }
@@ -580,7 +580,7 @@ public:
     wxPointerHash& operator=(const wxPointerHash&) { return *this; }
 };
 
-class WXDLLIMPEXP_BASE wxPointerEqual
+class wxPointerEqual
 {
 public:
     wxPointerEqual() { }
@@ -590,7 +590,7 @@ public:
 };
 
 // wxString, char*, wchar_t*
-class WXDLLIMPEXP_BASE wxStringHash
+class wxStringHash
 {
 public:
     wxStringHash() {}
@@ -616,17 +616,17 @@ public:
     wxStringHash& operator=(const wxStringHash&) { return *this; }
 };
 
-class WXDLLIMPEXP_BASE wxStringEqual
+class wxStringEqual
 {
 public:
     wxStringEqual() {}
     bool operator()( const wxString& a, const wxString& b ) const
         { return a == b; }
-    bool operator()( const wxChar* a, const wxChar* b ) const
-        { return wxStrcmp( a, b ) == 0; }
+    /*bool operator()( const wxChar* a, const wxChar* b ) const
+        { return wxStrcmp( a, b ) == 0; }*/
 #if wxUSE_UNICODE
-    bool operator()( const char* a, const char* b ) const
-        { return strcmp( a, b ) == 0; }
+    /*bool operator()( const char* a, const char* b ) const
+        { return strcmp( a, b ) == 0; }*/
 #endif // wxUSE_UNICODE
 
     wxStringEqual& operator=(const wxStringEqual&) { return *this; }
@@ -750,13 +750,13 @@ public: \
 // Declarations of common hashmap classes
 
 WX_DECLARE_HASH_MAP_WITH_DECL( long, long, wxIntegerHash, wxIntegerEqual,
-                               wxLongToLongHashMap, class WXDLLIMPEXP_BASE );
+                               wxLongToLongHashMap, class );
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL( wxString, wxStringToStringHashMap,
-                                      class WXDLLIMPEXP_BASE );
+                                      class );
 
 WX_DECLARE_STRING_HASH_MAP_WITH_DECL( wxUIntPtr, wxStringToNumHashMap,
-                                      class WXDLLIMPEXP_BASE );
+                                      class );
 
 
 #endif // _WX_HASHMAP_H_

@@ -39,7 +39,7 @@ enum wxBrushStyle
 
 
 // wxBrushBase
-class WXDLLIMPEXP_CORE wxBrushBase: public wxGDIObject
+class wxBrushBase: public wxGDIObject
 {
 public:
     virtual ~wxBrushBase() { }
@@ -88,7 +88,7 @@ public:
     #include "wx/os2/brush.h"
 #endif
 
-class WXDLLIMPEXP_CORE wxBrushList: public wxGDIObjListBase
+class wxBrushList: public wxGDIObjListBase
 {
 public:
     wxBrush *FindOrCreateBrush(const wxColour& colour,

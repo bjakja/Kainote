@@ -15,9 +15,9 @@
 #include "wx/chartype.h"
 #include "wx/wxcrtbase.h"
 
-//#include <stdlib.h>             // malloc() and free()
+#include <stdlib.h>             // malloc() and free()
 
-class WXDLLIMPEXP_FWD_BASE wxCStrData;
+class  wxCStrData;
 
 // ----------------------------------------------------------------------------
 // Special classes for (wide) character strings: they use malloc/free instead
@@ -55,7 +55,7 @@ struct UntypedBufferData
 };
 
 // NB: this is defined in string.cpp and not the (non-existent) buffer.cpp
-WXDLLIMPEXP_BASE UntypedBufferData * GetUntypedNullData();
+ UntypedBufferData * GetUntypedNullData();
 
 } // namespace wxPrivate
 
@@ -475,7 +475,7 @@ private:
         if ( m_data == NULL )
             return NULL;
 
-        wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
+        //wxASSERT_MSG( m_ref == 1, "can't release shared buffer" );
 
         void *p = m_data;
         m_data = NULL;
@@ -544,7 +544,7 @@ public:
     void   SetBufSize(size_t size) { m_bufdata->ResizeIfNeeded(size); }
     void   SetDataLen(size_t len)
     {
-        wxASSERT(len <= m_bufdata->m_size);
+        //wxASSERT(len <= m_bufdata->m_size);
         m_bufdata->m_len = len;
     }
 
@@ -576,7 +576,7 @@ public:
     // Other ways to append to the buffer
     void  AppendByte(char data)
     {
-        wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
+        //wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
 
         m_bufdata->ResizeIfNeeded(m_bufdata->m_len + 1);
         *(((char*)m_bufdata->m_data) + m_bufdata->m_len) = data;

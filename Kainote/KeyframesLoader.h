@@ -14,9 +14,11 @@
 //  along with Kainote.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <wx/dynarray.h>
+//#include <wx/dynarray.h>
 #include <wx/tokenzr.h>
 class Provider;
+class wxArrayInt;
+
 
 class KeyframeLoader
 {

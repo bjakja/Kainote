@@ -169,8 +169,8 @@ pcolor co;
 	color prev;
 
 	assert(cm->magic == CMMAGIC);
-	if (CISERR() || co == COLORLESS)
-		return COLORLESS;
+	//if (CISERR() || co == COLORLESS)
+		//return COLORLESS;
 
 	t = cm->tree;
 	for (level = 0, shift = BYTBITS * (NBYTS - 1); shift > 0;
@@ -186,7 +186,7 @@ pcolor co;
 			newt = (union tree *)MALLOC((bottom) ?
 				sizeof(struct colors) : sizeof(struct ptrs));
 			if (newt == NULL) {
-				CERR(REG_ESPACE);
+				//CERR(REG_ESPACE);
 				return COLORLESS;
 			}
 			if (bottom)
@@ -214,8 +214,8 @@ static color
 maxcolor(cm)
 struct colormap *cm;
 {
-	if (CISERR())
-		return COLORLESS;
+	//if (CISERR())
+		//return COLORLESS;
 
 	return (color)cm->max;
 }
@@ -233,8 +233,8 @@ struct colormap *cm;
 	struct colordesc *new;
 	size_t n;
 
-	if (CISERR())
-		return COLORLESS;
+	//if (CISERR())
+		//return COLORLESS;
 
 	if (cm->free != 0) {
 		assert(cm->free > 0);
@@ -259,7 +259,7 @@ struct colormap *cm;
 			new = (struct colordesc *)REALLOC(cm->cd,
 						n * sizeof(struct colordesc));
 		if (new == NULL) {
-			CERR(REG_ESPACE);
+			//CERR(REG_ESPACE);
 			return COLORLESS;
 		}
 		cm->cd = new;
@@ -341,8 +341,8 @@ struct colormap *cm;
 	color co;
 
 	co = newcolor(cm);
-	if (CISERR())
-		return COLORLESS;
+	/*if (CISERR())
+		return COLORLESS;*/
 	cm->cd[co].nchrs = 1;
 	cm->cd[co].flags = PSEUDO;
 	return co;
@@ -362,8 +362,8 @@ pchr c;
 
 	co = GETCOLOR(cm, c);
 	sco = newsub(cm, co);
-	if (CISERR())
-		return COLORLESS;
+	//if (CISERR())
+		//return COLORLESS;
 	assert(sco != COLORLESS);
 
 	if (co == sco)		/* already in an open subcolor */
@@ -478,7 +478,7 @@ struct state *rp;
 		if (t == fillt && shift > BYTBITS) {	/* need new ptr block */
 			t = (union tree *)MALLOC(sizeof(struct ptrs));
 			if (t == NULL) {
-				CERR(REG_ESPACE);
+				//CERR(REG_ESPACE);
 				return;
 			}
 			memcpy(VS(t->tptr), VS(fillt->tptr),
@@ -497,7 +497,7 @@ struct state *rp;
 		if (t == NULL) {	/* must set it up */
 			t = (union tree *)MALLOC(sizeof(struct colors));
 			if (t == NULL) {
-				CERR(REG_ESPACE);
+				/*CERR(REG_ESPACE);*/
 				return;
 			}
 			for (i = 0; i < BYTTAB; i++)
@@ -656,7 +656,7 @@ struct state *to;
 	struct colordesc *end = CDEND(cm);
 	color co;
 
-	for (cd = cm->cd, co = 0; cd < end && !CISERR(); cd++, co++)
+	for (cd = cm->cd, co = 0; cd < end/* && !CISERR()*/; cd++, co++)
 		if (!UNUSEDCOLOR(cd) && cd->sub != co && co != but &&
 							!(cd->flags&PSEUDO))
 			newarc(nfa, type, co, from, to);
@@ -682,7 +682,7 @@ struct state *to;
 	color co;
 
 	assert(of != from);
-	for (cd = cm->cd, co = 0; cd < end && !CISERR(); cd++, co++)
+	for (cd = cm->cd, co = 0; cd < end /*&& !CISERR()*/; cd++, co++)
 		if (!UNUSEDCOLOR(cd) && !(cd->flags&PSEUDO))
 			if (findarc(of, PLAIN, co) == NULL)
 				newarc(nfa, type, co, from, to);

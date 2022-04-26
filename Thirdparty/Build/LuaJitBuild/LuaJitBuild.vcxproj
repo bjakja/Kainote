@@ -202,7 +202,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <Target Name="MiniLua" BeforeTargets="ClCompile" DependsOnTargets="PrepareForBuild" Inputs="..\..\LuaJIT\src\dynasm\dynasm.lua" Outputs="..\..\LuaJIT\src\host\buildvm_arch.h">
     <Exec Command="$(MiniLuaCommand) ..\dynasm\dynasm.lua -LN -D WIN -D JIT -D FFI $(MiniLuaPlat) -o ..\..\LuaJIT\src\host\buildvm_arch.h $(MiniLuaVM)" WorkingDirectory="..\..\LuaJIT\src" />

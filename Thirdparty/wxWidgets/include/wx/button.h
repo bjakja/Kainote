@@ -24,7 +24,7 @@ extern WXDLLIMPEXP_DATA_CORE(const char) wxButtonNameStr[];
 // wxButton: a push button
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxButtonBase : public wxAnyButton
+class wxButtonBase : public wxAnyButton
 {
 public:
     wxButtonBase() { }

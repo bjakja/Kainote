@@ -1337,7 +1337,7 @@ void AudioDisplay::SetFile(wxString file, bool fromvideo) {
 
 	if (!loaded) return;
 
-	assert(loaded == (provider != nullptr));
+	//assert(loaded == (provider != nullptr));
 	if (provider->AudioNotInitialized()){
 		ProgressTimer.Start(50);
 	}

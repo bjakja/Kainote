@@ -40,7 +40,7 @@ public:
 		}
 	};
 	void Store(const StoreHelper &sh, bool copy){
-		assert(sh.stored);
+		//assert(sh.stored);
 		if (*deleteReference < 1 && stored != sh.stored){
 			delete stored; stored = nullptr;
 			delete deleteReference; deleteReference = nullptr;
@@ -62,30 +62,30 @@ public:
 		return *this;
 	}
 	void operator =(const unsigned char value){
-		assert(stored);
+		//assert(stored);
 		*stored = value;
 	}
 	bool operator ==(const unsigned char value){
-		assert(stored);
+		//assert(stored);
 		return *stored == value;
 	}
 	bool operator !=(const unsigned char value){
 		return *stored != value;
 	}
 	bool operator >(const unsigned char value){
-		assert(stored);
+		//assert(stored);
 		return *stored > value;
 	}
 	bool operator <(const unsigned char value){
-		assert(stored);
+		//assert(stored);
 		return *stored < value;
 	}
 	bool operator !(){
-		assert(stored);
+		//assert(stored);
 		return !(*stored);
 	}
 	unsigned char &operator *(){
-		assert(stored);
+		//assert(stored);
 		return *stored;
 	};
 private:

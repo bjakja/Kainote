@@ -163,26 +163,26 @@ inline char* wxSetlocale(int category, const wxCStrData& locale)
 // NB: these are defined in wxcrtbase.h, see the comment there
 // inline size_t wxStrlen(const char *s) { return s ? strlen(s) : 0; }
 // inline size_t wxStrlen(const wchar_t *s) { return s ? wxCRT_Strlen_(s) : 0; }
-inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
+//inline size_t wxStrlen(const wxScopedCharBuffer& s) { return wxStrlen(s.data()); }
 inline size_t wxStrlen(const wxScopedWCharBuffer& s) { return wxStrlen(s.data()); }
-inline size_t wxStrlen(const wxString& s) { return s.length(); }
-inline size_t wxStrlen(const wxCStrData& s) { return s.AsString().length(); }
+//inline size_t wxStrlen(const wxString& s) { return s.length(); }
+//inline size_t wxStrlen(const wxCStrData& s) { return s.AsString().length(); }
 
 // this is a function new in 2.9 so we don't care about backwards compatibility and
 // so don't need to support wxScopedCharBuffer/wxScopedWCharBuffer overloads
-#if defined(wxCRT_StrnlenA)
-inline size_t wxStrnlen(const char *str, size_t maxlen) { return wxCRT_StrnlenA(str, maxlen); }
-#else
-inline size_t wxStrnlen(const char *str, size_t maxlen)
-{
-    size_t n;
-    for ( n = 0; n < maxlen; n++ )
-        if ( !str[n] )
-            break;
-
-    return n;
-}
-#endif
+//#if defined(wxCRT_StrnlenA)
+//inline size_t wxStrnlen(const char *str, size_t maxlen) { return wxCRT_StrnlenA(str, maxlen); }
+//#else
+//inline size_t wxStrnlen(const char *str, size_t maxlen)
+//{
+//    size_t n;
+//    for ( n = 0; n < maxlen; n++ )
+//        if ( !str[n] )
+//            break;
+//
+//    return n;
+//}
+//#endif
 
 #if defined(wxCRT_StrnlenW)
 inline size_t wxStrnlen(const wchar_t *str, size_t maxlen) { return wxCRT_StrnlenW(str, maxlen); }
@@ -201,69 +201,69 @@ inline size_t wxStrnlen(const wchar_t *str, size_t maxlen)
 // NB: these are defined in wxcrtbase.h, see the comment there
 // inline char* wxStrdup(const char *s) { return wxStrdupA(s); }
 // inline wchar_t* wxStrdup(const wchar_t *s) { return wxStrdupW(s); }
-inline char* wxStrdup(const wxScopedCharBuffer& s) { return wxStrdup(s.data()); }
+//inline char* wxStrdup(const wxScopedCharBuffer& s) { return wxStrdup(s.data()); }
 inline wchar_t* wxStrdup(const wxScopedWCharBuffer& s) { return wxStrdup(s.data()); }
-inline char* wxStrdup(const wxString& s) { return wxStrdup(s.mb_str()); }
-inline char* wxStrdup(const wxCStrData& s) { return wxStrdup(s.AsCharBuf()); }
+//inline char* wxStrdup(const wxString& s) { return wxStrdup(s.mb_str()); }
+//inline char* wxStrdup(const wxCStrData& s) { return wxStrdup(s.AsCharBuf()); }
 
-inline char *wxStrcpy(char *dest, const char *src)
-    { return wxCRT_StrcpyA(dest, src); }
+//inline char *wxStrcpy(char *dest, const char *src)
+//    { return wxCRT_StrcpyA(dest, src); }
 inline wchar_t *wxStrcpy(wchar_t *dest, const wchar_t *src)
     { return wxCRT_StrcpyW(dest, src); }
-inline char *wxStrcpy(char *dest, const wxString& src)
+/*inline char* wxStrcpy(char* dest, const wxString& src)
     { return wxCRT_StrcpyA(dest, src.mb_str()); }
 inline char *wxStrcpy(char *dest, const wxCStrData& src)
     { return wxCRT_StrcpyA(dest, src.AsCharBuf()); }
 inline char *wxStrcpy(char *dest, const wxScopedCharBuffer& src)
-    { return wxCRT_StrcpyA(dest, src.data()); }
+    { return wxCRT_StrcpyA(dest, src.data()); }*/
 inline wchar_t *wxStrcpy(wchar_t *dest, const wxString& src)
     { return wxCRT_StrcpyW(dest, src.wc_str()); }
 inline wchar_t *wxStrcpy(wchar_t *dest, const wxCStrData& src)
     { return wxCRT_StrcpyW(dest, src.AsWCharBuf()); }
 inline wchar_t *wxStrcpy(wchar_t *dest, const wxScopedWCharBuffer& src)
     { return wxCRT_StrcpyW(dest, src.data()); }
-inline char *wxStrcpy(char *dest, const wchar_t *src)
-    { return wxCRT_StrcpyA(dest, wxConvLibc.cWC2MB(src)); }
-inline wchar_t *wxStrcpy(wchar_t *dest, const char *src)
-    { return wxCRT_StrcpyW(dest, wxConvLibc.cMB2WC(src)); }
+//inline char *wxStrcpy(char *dest, const wchar_t *src)
+//    { return wxCRT_StrcpyA(dest, wxConvLibc.cWC2MB(src)); }
+//inline wchar_t *wxStrcpy(wchar_t *dest, const char *src)
+//    { return wxCRT_StrcpyW(dest, wxConvLibc.cMB2WC(src)); }
 
-inline char *wxStrncpy(char *dest, const char *src, size_t n)
-    { return wxCRT_StrncpyA(dest, src, n); }
+//inline char *wxStrncpy(char *dest, const char *src, size_t n)
+//    { return wxCRT_StrncpyA(dest, src, n); }
 inline wchar_t *wxStrncpy(wchar_t *dest, const wchar_t *src, size_t n)
     { return wxCRT_StrncpyW(dest, src, n); }
-inline char *wxStrncpy(char *dest, const wxString& src, size_t n)
-    { return wxCRT_StrncpyA(dest, src.mb_str(), n); }
-inline char *wxStrncpy(char *dest, const wxCStrData& src, size_t n)
-    { return wxCRT_StrncpyA(dest, src.AsCharBuf(), n); }
-inline char *wxStrncpy(char *dest, const wxScopedCharBuffer& src, size_t n)
-    { return wxCRT_StrncpyA(dest, src.data(), n); }
+//inline char *wxStrncpy(char *dest, const wxString& src, size_t n)
+//    { return wxCRT_StrncpyA(dest, src.mb_str(), n); }
+//inline char *wxStrncpy(char *dest, const wxCStrData& src, size_t n)
+//    { return wxCRT_StrncpyA(dest, src.AsCharBuf(), n); }
+//inline char *wxStrncpy(char *dest, const wxScopedCharBuffer& src, size_t n)
+//    { return wxCRT_StrncpyA(dest, src.data(), n); }
 inline wchar_t *wxStrncpy(wchar_t *dest, const wxString& src, size_t n)
     { return wxCRT_StrncpyW(dest, src.wc_str(), n); }
 inline wchar_t *wxStrncpy(wchar_t *dest, const wxCStrData& src, size_t n)
     { return wxCRT_StrncpyW(dest, src.AsWCharBuf(), n); }
 inline wchar_t *wxStrncpy(wchar_t *dest, const wxScopedWCharBuffer& src, size_t n)
     { return wxCRT_StrncpyW(dest, src.data(), n); }
-inline char *wxStrncpy(char *dest, const wchar_t *src, size_t n)
-    { return wxCRT_StrncpyA(dest, wxConvLibc.cWC2MB(src), n); }
-inline wchar_t *wxStrncpy(wchar_t *dest, const char *src, size_t n)
-    { return wxCRT_StrncpyW(dest, wxConvLibc.cMB2WC(src), n); }
+/*nline char *wxStrncpy(char *dest, const wchar_t *src, size_t n)
+    { return wxCRT_StrncpyA(dest, wxConvLibc.cWC2MB(src), n); }*/
+//inline wchar_t *wxStrncpy(wchar_t *dest, const char *src, size_t n)
+//    { return wxCRT_StrncpyW(dest, wxConvLibc.cMB2WC(src), n); }
 
 // this is a function new in 2.9 so we don't care about backwards compatibility and
 // so don't need to support wchar_t/char overloads
-inline size_t wxStrlcpy(char *dest, const char *src, size_t n)
-{
-    const size_t len = wxCRT_StrlenA(src);
-
-    if ( n )
-    {
-        if ( n-- > len )
-            n = len;
-        wxCRT_StrncpyA(dest, src, n);
-        dest[n] = '\0';
-    }
-
-    return len;
-}
+//inline size_t wxStrlcpy(char *dest, const char *src, size_t n)
+//{
+//    const size_t len = wxCRT_StrlenA(src);
+//
+//    if ( n )
+//    {
+//        if ( n-- > len )
+//            n = len;
+//        wxCRT_StrncpyA(dest, src, n);
+//        dest[n] = '\0';
+//    }
+//
+//    return len;
+//}
 inline size_t wxStrlcpy(wchar_t *dest, const wchar_t *src, size_t n)
 {
     const size_t len = wxCRT_StrlenW(src);
@@ -278,47 +278,47 @@ inline size_t wxStrlcpy(wchar_t *dest, const wchar_t *src, size_t n)
     return len;
 }
 
-inline char *wxStrcat(char *dest, const char *src)
-    { return wxCRT_StrcatA(dest, src); }
+//inline char *wxStrcat(char *dest, const char *src)
+//    { return wxCRT_StrcatA(dest, src); }
 inline wchar_t *wxStrcat(wchar_t *dest, const wchar_t *src)
     { return wxCRT_StrcatW(dest, src); }
-inline char *wxStrcat(char *dest, const wxString& src)
-    { return wxCRT_StrcatA(dest, src.mb_str()); }
-inline char *wxStrcat(char *dest, const wxCStrData& src)
-    { return wxCRT_StrcatA(dest, src.AsCharBuf()); }
-inline char *wxStrcat(char *dest, const wxScopedCharBuffer& src)
-    { return wxCRT_StrcatA(dest, src.data()); }
+//inline char *wxStrcat(char *dest, const wxString& src)
+//    { return wxCRT_StrcatA(dest, src.mb_str()); }
+//inline char *wxStrcat(char *dest, const wxCStrData& src)
+//    { return wxCRT_StrcatA(dest, src.AsCharBuf()); }
+//inline char *wxStrcat(char *dest, const wxScopedCharBuffer& src)
+//    { return wxCRT_StrcatA(dest, src.data()); }
 inline wchar_t *wxStrcat(wchar_t *dest, const wxString& src)
     { return wxCRT_StrcatW(dest, src.wc_str()); }
 inline wchar_t *wxStrcat(wchar_t *dest, const wxCStrData& src)
     { return wxCRT_StrcatW(dest, src.AsWCharBuf()); }
 inline wchar_t *wxStrcat(wchar_t *dest, const wxScopedWCharBuffer& src)
     { return wxCRT_StrcatW(dest, src.data()); }
-inline char *wxStrcat(char *dest, const wchar_t *src)
-    { return wxCRT_StrcatA(dest, wxConvLibc.cWC2MB(src)); }
-inline wchar_t *wxStrcat(wchar_t *dest, const char *src)
-    { return wxCRT_StrcatW(dest, wxConvLibc.cMB2WC(src)); }
+//inline char *wxStrcat(char *dest, const wchar_t *src)
+//    { return wxCRT_StrcatA(dest, wxConvLibc.cWC2MB(src)); }
+//inline wchar_t *wxStrcat(wchar_t *dest, const char *src)
+//    { return wxCRT_StrcatW(dest, wxConvLibc.cMB2WC(src)); }
 
-inline char *wxStrncat(char *dest, const char *src, size_t n)
-    { return wxCRT_StrncatA(dest, src, n); }
+//inline char *wxStrncat(char *dest, const char *src, size_t n)
+//    { return wxCRT_StrncatA(dest, src, n); }
 inline wchar_t *wxStrncat(wchar_t *dest, const wchar_t *src, size_t n)
     { return wxCRT_StrncatW(dest, src, n); }
-inline char *wxStrncat(char *dest, const wxString& src, size_t n)
-    { return wxCRT_StrncatA(dest, src.mb_str(), n); }
-inline char *wxStrncat(char *dest, const wxCStrData& src, size_t n)
-    { return wxCRT_StrncatA(dest, src.AsCharBuf(), n); }
-inline char *wxStrncat(char *dest, const wxScopedCharBuffer& src, size_t n)
-    { return wxCRT_StrncatA(dest, src.data(), n); }
+//inline char *wxStrncat(char *dest, const wxString& src, size_t n)
+//    { return wxCRT_StrncatA(dest, src.mb_str(), n); }
+//inline char *wxStrncat(char *dest, const wxCStrData& src, size_t n)
+//    { return wxCRT_StrncatA(dest, src.AsCharBuf(), n); }
+//inline char *wxStrncat(char *dest, const wxScopedCharBuffer& src, size_t n)
+//    { return wxCRT_StrncatA(dest, src.data(), n); }
 inline wchar_t *wxStrncat(wchar_t *dest, const wxString& src, size_t n)
     { return wxCRT_StrncatW(dest, src.wc_str(), n); }
 inline wchar_t *wxStrncat(wchar_t *dest, const wxCStrData& src, size_t n)
     { return wxCRT_StrncatW(dest, src.AsWCharBuf(), n); }
 inline wchar_t *wxStrncat(wchar_t *dest, const wxScopedWCharBuffer& src, size_t n)
     { return wxCRT_StrncatW(dest, src.data(), n); }
-inline char *wxStrncat(char *dest, const wchar_t *src, size_t n)
-    { return wxCRT_StrncatA(dest, wxConvLibc.cWC2MB(src), n); }
-inline wchar_t *wxStrncat(wchar_t *dest, const char *src, size_t n)
-    { return wxCRT_StrncatW(dest, wxConvLibc.cMB2WC(src), n); }
+//inline char *wxStrncat(char *dest, const wchar_t *src, size_t n)
+//    { return wxCRT_StrncatA(dest, wxConvLibc.cWC2MB(src), n); }
+/*nline wchar_t *wxStrncat(wchar_t *dest, const char *src, size_t n)
+    { return wxCRT_StrncatW(dest, wxConvLibc.cMB2WC(src), n); }*/
 
 
 #define WX_STR_DECL(name, T1, T2)  name(T1 s1, T2 s2)
@@ -449,15 +449,15 @@ inline wchar_t *wxStrncat(wchar_t *dest, const char *src, size_t n)
     inline rettype WX_STR_DECL(name, const wxScopedWCharBuffer&, const wxString&)   \
         { return WX_STR_CALL(crtW, s1.data(), s2.wc_str()); }
 
-template<typename T>
-inline int wxStrcmp_String(const wxString& s1, const T& s2)
-    { return s1.compare(s2); }
-WX_STRCMP_FUNC(wxStrcmp, wxCRT_StrcmpA, wxCRT_StrcmpW, wxStrcmp_String)
-
-template<typename T>
-inline int wxStricmp_String(const wxString& s1, const T& s2)
-    { return s1.CmpNoCase(s2); }
-WX_STRCMP_FUNC(wxStricmp, wxCRT_StricmpA, wxCRT_StricmpW, wxStricmp_String)
+//template<typename T>
+//inline int wxStrcmp_String(const wxString& s1, const T& s2)
+//    { return s1.compare(s2); }
+//WX_STRCMP_FUNC(wxStrcmp, wxCRT_StrcmpA, wxCRT_StrcmpW, wxStrcmp_String)
+//
+//template<typename T>
+//inline int wxStricmp_String(const wxString& s1, const T& s2)
+//    { return s1.CmpNoCase(s2); }
+///WX_STRCMP_FUNC(wxStricmp, wxCRT_StricmpA, wxCRT_StricmpW, wxStricmp_String)
 
 #if defined(wxCRT_StrcollA) && defined(wxCRT_StrcollW)
 
@@ -485,7 +485,7 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
     //     wc_str() even if wxUSE_UNICODE_UTF8; the (const wchar_t*) cast is
     //     there just as optimization to avoid going through
     //     wxStrcoll<wxScopedWCharBuffer>:
-    return wxStrcoll((const wchar_t*)s1.wc_str(), s2);
+    return /*wxStrcoll_String(*/(const wchar_t*)s1.wc_str()/*, s2)*/;
 #else
     return wxStrcoll((const char*)s1.mb_str(), s2);
 #endif
@@ -494,41 +494,41 @@ inline int wxStrcoll_String(const wxString& s1, const T& s2)
 #ifndef wxNEEDS_DECL_BEFORE_TEMPLATE
 // this is exactly the same WX_STRCMP_FUNC line as above, insde the
 // wxNEEDS_DECL_BEFORE_TEMPLATE case
-WX_STRCMP_FUNC(wxStrcoll, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
+//WX_STRCMP_FUNC(wxStrcoll, wxCRT_StrcollA, wxCRT_StrcollW, wxStrcoll_String)
 #endif
 
 #endif // defined(wxCRT_Strcoll[AW])
 
-template<typename T>
-inline size_t wxStrspn_String(const wxString& s1, const T& s2)
-{
-    size_t pos = s1.find_first_not_of(s2);
-    return pos == wxString::npos ? s1.length() : pos;
-}
-WX_STR_FUNC(size_t, wxStrspn, wxCRT_StrspnA, wxCRT_StrspnW, wxStrspn_String)
-
-template<typename T>
-inline size_t wxStrcspn_String(const wxString& s1, const T& s2)
-{
-    size_t pos = s1.find_first_of(s2);
-    return pos == wxString::npos ? s1.length() : pos;
-}
-WX_STR_FUNC(size_t, wxStrcspn, wxCRT_StrcspnA, wxCRT_StrcspnW, wxStrcspn_String)
+//template<typename T>
+//inline size_t wxStrspn_String(const wxString& s1, const T& s2)
+//{
+//    size_t pos = s1.find_first_not_of(s2);
+//    return pos == wxString::npos ? s1.length() : pos;
+//}
+//WX_STR_FUNC(size_t, wxStrspn, wxCRT_StrspnA, wxCRT_StrspnW, wxStrspn_String)
+//
+//template<typename T>
+//inline size_t wxStrcspn_String(const wxString& s1, const T& s2)
+//{
+//    size_t pos = s1.find_first_of(s2);
+//    return pos == wxString::npos ? s1.length() : pos;
+//}
+//WX_STR_FUNC(size_t, wxStrcspn, wxCRT_StrcspnA, wxCRT_StrcspnW, wxStrcspn_String)
 
 #undef WX_STR_DECL
 #undef WX_STR_CALL
 #define WX_STR_DECL(name, T1, T2)  name(T1 s1, T2 s2, size_t n)
 #define WX_STR_CALL(func, a1, a2)  func(a1, a2, n)
 
-template<typename T>
-inline int wxStrncmp_String(const wxString& s1, const T& s2, size_t n)
-    { return s1.compare(0, n, s2, 0, n); }
-WX_STRCMP_FUNC(wxStrncmp, wxCRT_StrncmpA, wxCRT_StrncmpW, wxStrncmp_String)
-
-template<typename T>
-inline int wxStrnicmp_String(const wxString& s1, const T& s2, size_t n)
-    { return s1.substr(0, n).CmpNoCase(wxString(s2).substr(0, n)); }
-WX_STRCMP_FUNC(wxStrnicmp, wxCRT_StrnicmpA, wxCRT_StrnicmpW, wxStrnicmp_String)
+//template<typename T>
+//inline int wxStrncmp_String(const wxString& s1, const T& s2, size_t n)
+//    { return s1.compare(0, n, s2, 0, n); }
+//WX_STRCMP_FUNC(wxStrncmp, wxCRT_StrncmpA, wxCRT_StrncmpW, wxStrncmp_String)
+//
+//template<typename T>
+//inline int wxStrnicmp_String(const wxString& s1, const T& s2, size_t n)
+//    { return s1.substr(0, n).CmpNoCase(wxString(s2).substr(0, n)); }
+///WX_STRCMP_FUNC(wxStrnicmp, wxCRT_StrnicmpA, wxCRT_StrnicmpW, wxStrnicmp_String)
 
 #undef WX_STR_DECL
 #undef WX_STR_CALL
@@ -538,19 +538,19 @@ WX_STRCMP_FUNC(wxStrnicmp, wxCRT_StrnicmpA, wxCRT_StrnicmpW, wxStrnicmp_String)
 
 #if defined(wxCRT_StrxfrmA) && defined(wxCRT_StrxfrmW)
 
-inline size_t wxStrxfrm(char *dest, const char *src, size_t n)
-    { return wxCRT_StrxfrmA(dest, src, n); }
+//inline size_t wxStrxfrm(char *dest, const char *src, size_t n)
+//    { return wxCRT_StrxfrmA(dest, src, n); }
 inline size_t wxStrxfrm(wchar_t *dest, const wchar_t *src, size_t n)
     { return wxCRT_StrxfrmW(dest, src, n); }
 template<typename T>
 inline size_t wxStrxfrm(T *dest, const wxScopedCharTypeBuffer<T>& src, size_t n)
     { return wxStrxfrm(dest, src.data(), n); }
-inline size_t wxStrxfrm(char *dest, const wxString& src, size_t n)
-    { return wxCRT_StrxfrmA(dest, src.mb_str(), n); }
+//inline size_t wxStrxfrm(char *dest, const wxString& src, size_t n)
+//    { return wxCRT_StrxfrmA(dest, src.mb_str(), n); }
 inline size_t wxStrxfrm(wchar_t *dest, const wxString& src, size_t n)
     { return wxCRT_StrxfrmW(dest, src.wc_str(), n); }
-inline size_t wxStrxfrm(char *dest, const wxCStrData& src, size_t n)
-    { return wxCRT_StrxfrmA(dest, src.AsCharBuf(), n); }
+//inline size_t wxStrxfrm(char *dest, const wxCStrData& src, size_t n)
+//    { return wxCRT_StrxfrmA(dest, src.AsCharBuf(), n); }
 inline size_t wxStrxfrm(wchar_t *dest, const wxCStrData& src, size_t n)
     { return wxCRT_StrxfrmW(dest, src.AsWCharBuf(), n); }
 
@@ -683,34 +683,34 @@ inline const wchar_t* wxStrchr(const wxCStrData& s, wchar_t c)
 inline const wchar_t* wxStrrchr(const wxCStrData& s, wchar_t c)
     { return wxCRT_StrrchrW(s.AsWChar(), c); }
 
-inline const char *wxStrpbrk(const char *s, const char *accept)
-    { return wxCRT_StrpbrkA(s, accept); }
+//inline const char *wxStrpbrk(const char *s, const char *accept)
+//    { return wxCRT_StrpbrkA(s, accept); }
 inline const wchar_t *wxStrpbrk(const wchar_t *s, const wchar_t *accept)
     { return wxCRT_StrpbrkW(s, accept); }
-inline const char *wxStrpbrk(const char *s, const wxString& accept)
-    { return wxCRT_StrpbrkA(s, accept.mb_str()); }
-inline const char *wxStrpbrk(const char *s, const wxCStrData& accept)
-    { return wxCRT_StrpbrkA(s, accept.AsCharBuf()); }
+//inline const char *wxStrpbrk(const char *s, const wxString& accept)
+//    { return wxCRT_StrpbrkA(s, accept.mb_str()); }
+//inline const char *wxStrpbrk(const char *s, const wxCStrData& accept)
+//    { return wxCRT_StrpbrkA(s, accept.AsCharBuf()); }
 inline const wchar_t *wxStrpbrk(const wchar_t *s, const wxString& accept)
     { return wxCRT_StrpbrkW(s, accept.wc_str()); }
 inline const wchar_t *wxStrpbrk(const wchar_t *s, const wxCStrData& accept)
     { return wxCRT_StrpbrkW(s, accept.AsWCharBuf()); }
-inline const char *wxStrpbrk(const wxString& s, const wxString& accept)
-    { return wxCRT_StrpbrkA(s.c_str(), accept.mb_str()); }
-inline const char *wxStrpbrk(const wxString& s, const char *accept)
-    { return wxCRT_StrpbrkA(s.c_str(), accept); }
+//inline const char *wxStrpbrk(const wxString& s, const wxString& accept)
+//    { return wxCRT_StrpbrkA(s.c_str(), accept.mb_str()); }
+//inline const char *wxStrpbrk(const wxString& s, const char *accept)
+//    { return wxCRT_StrpbrkA(s.c_str(), accept); }
 inline const wchar_t *wxStrpbrk(const wxString& s, const wchar_t *accept)
     { return wxCRT_StrpbrkW(s.wc_str(), accept); }
-inline const char *wxStrpbrk(const wxString& s, const wxCStrData& accept)
-    { return wxCRT_StrpbrkA(s.c_str(), accept.AsCharBuf()); }
-inline const char *wxStrpbrk(const wxCStrData& s, const wxString& accept)
-    { return wxCRT_StrpbrkA(s.AsChar(), accept.mb_str()); }
-inline const char *wxStrpbrk(const wxCStrData& s, const char *accept)
-    { return wxCRT_StrpbrkA(s.AsChar(), accept); }
+//inline const char *wxStrpbrk(const wxString& s, const wxCStrData& accept)
+//    { return wxCRT_StrpbrkA(s.c_str(), accept.AsCharBuf()); }
+//inline const char *wxStrpbrk(const wxCStrData& s, const wxString& accept)
+//    { return wxCRT_StrpbrkA(s.AsChar(), accept.mb_str()); }
+//inline const char *wxStrpbrk(const wxCStrData& s, const char *accept)
+//    { return wxCRT_StrpbrkA(s.AsChar(), accept); }
 inline const wchar_t *wxStrpbrk(const wxCStrData& s, const wchar_t *accept)
     { return wxCRT_StrpbrkW(s.AsWChar(), accept); }
-inline const char *wxStrpbrk(const wxCStrData& s, const wxCStrData& accept)
-    { return wxCRT_StrpbrkA(s.AsChar(), accept.AsCharBuf()); }
+//inline const char *wxStrpbrk(const wxCStrData& s, const wxCStrData& accept)
+//    { return wxCRT_StrpbrkA(s.AsChar(), accept.AsCharBuf()); }
 template <typename S, typename T>
 inline const T *wxStrpbrk(const S& s, const wxScopedCharTypeBuffer<T>& accept)
     { return wxStrpbrk(s, accept.data()); }
@@ -837,15 +837,15 @@ template<> struct wxStrtoxCharType<wchar_t**>
     typedef const wchar_t* Type;
     static wchar_t** AsPointer(wchar_t **p) { return p; }
 };
-template<> struct wxStrtoxCharType<int>
-{
-    typedef const char* Type; /* this one is never used */
-    static char** AsPointer(int WXUNUSED_UNLESS_DEBUG(p))
-    {
-        wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
-        return NULL;
-    }
-};
+//template<> struct wxStrtoxCharType<int>
+//{
+//    typedef const char* Type; /* this one is never used */
+//    static char** AsPointer(int WXUNUSED_UNLESS_DEBUG(p))
+//    {
+//        //wxASSERT_MSG( p == 0, "passing non-NULL int is invalid" );
+//        return NULL;
+//    }
+//};
 
 template<typename T>
 inline double wxStrtod(const wxString& nptr, T endptr)
@@ -932,9 +932,9 @@ inline wchar_t* wxGetenv(const wxScopedWCharBuffer& name) { return wxCRT_GetenvW
 //                            time.h functions
 // ----------------------------------------------------------------------------
 
-inline size_t wxStrftime(char *s, size_t max,
-                         const wxString& format, const struct tm *tm)
-    { return wxCRT_StrftimeA(s, max, format.mb_str(), tm); }
+//inline size_t wxStrftime(char *s, size_t max,
+//                         const wxString& format, const struct tm *tm)
+//    { return wxCRT_StrftimeA(s, max, format.mb_str(), tm); }
 
 inline size_t wxStrftime(wchar_t *s, size_t max,
                          const wxString& format, const struct tm *tm)

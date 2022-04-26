@@ -386,9 +386,9 @@ public:
     // accessors
     wxKeyType GetKeyType() const { return m_keyType; }
     const wxString GetString() const
-        { wxASSERT( m_keyType == wxKEY_STRING ); return *m_key.string; }
+        { /*wxASSERT( m_keyType == wxKEY_STRING );*/ return *m_key.string; }
     long GetNumber() const
-        { wxASSERT( m_keyType == wxKEY_INTEGER ); return m_key.integer; }
+        { /*wxASSERT( m_keyType == wxKEY_INTEGER );*/ return m_key.integer; }
 
     // comparison
     // Note: implementation moved to list.cpp to prevent BC++ inline
@@ -513,7 +513,7 @@ public:
 
       // set the keytype (required by the serial code)
     void SetKeyType(wxKeyType keyType)
-        { wxASSERT( m_count==0 ); m_keyType = keyType; }
+        {/* wxASSERT( m_count==0 );*/ m_keyType = keyType; }
 
 #ifdef wxLIST_COMPATIBILITY
     // compatibility methods from old wxList

@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -208,8 +208,8 @@ bool wxDirData::Read(wxString *filename)
 
         if ( err != ERROR_FILE_NOT_FOUND && err != ERROR_NO_MORE_FILES )
         {
-            wxLogSysError(err, _("Cannot enumerate files in directory '%s'"),
-                          m_dirname.c_str());
+            //wxLogSysError(err, _("Cannot enumerate files in directory '%s'"),
+                          //m_dirname.c_str());
         }
 #endif // __WIN32__
         //else: not an error, just no (such) files
@@ -356,7 +356,7 @@ bool wxDir::GetFirst(wxString *filename,
                      const wxString& filespec,
                      int flags) const
 {
-    wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
+    //wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
 
     M_DIR->Rewind();
 
@@ -368,9 +368,9 @@ bool wxDir::GetFirst(wxString *filename,
 
 bool wxDir::GetNext(wxString *filename) const
 {
-    wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
+    //wxCHECK_MSG( IsOpened(), false, wxT("must wxDir::Open() first") );
 
-    wxCHECK_MSG( filename, false, wxT("bad pointer in wxDir::GetNext()") );
+    //wxCHECK_MSG( filename, false, wxT("bad pointer in wxDir::GetNext()") );
 
     return M_DIR->Read(filename);
 }
@@ -391,8 +391,8 @@ wxGetDirectoryTimes(const wxString& dirname,
                   wxT("incorrect directory name format in wxGetDirectoryTimes") );
 #else
     // FindFirst() is going to fail
-    wxASSERT_MSG( !dirname.empty() && dirname.Last() != wxT('\\'),
-                  wxT("incorrect directory name format in wxGetDirectoryTimes") );
+    //wxASSERT_MSG( !dirname.empty() && dirname.Last() != wxT('\\'),
+                  //wxT("incorrect directory name format in wxGetDirectoryTimes") );
 #endif
 
     FIND_STRUCT fs;

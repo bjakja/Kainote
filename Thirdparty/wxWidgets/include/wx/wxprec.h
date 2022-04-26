@@ -33,7 +33,7 @@
     #define INCLUDE_COMMDLG_H  1
 #endif
 
-#ifdef WX_PRECOMP
+//#ifdef WX_PRECOMP
 
 // include "wx/chartype.h" first to ensure that UNICODE macro is correctly set
 // _before_ including <windows.h>
@@ -56,4 +56,4 @@
 // include the most common wx headers
 #include "wx/wx.h"
 
-#endif // WX_PRECOMP
+//#endif // WX_PRECOMP

@@ -202,7 +202,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)bin\$(Platform)\$(Configuration)\</IncludePath>
   </PropertyGroup>
   <Target Name="BuildVM" Inputs="..\..\LuaJIT\src\host\buildvm.c;..\..\LuaJIT\src\lj_opt_fold.c" Outputs="$(SolutionDir)obj\$(Platform)\$(Configuration)\lj_vm.obj;$(SolutionDir)obj\$(Platform)\$(Configuration)\lj_folddef.h">

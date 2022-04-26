@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -58,7 +58,7 @@ wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner, wxBitmap& bitmap )
 wxMemoryDCImpl::wxMemoryDCImpl( wxMemoryDC *owner, wxDC *dc )
         : wxMSWDCImpl( owner )
 {
-    wxCHECK_RET( dc, wxT("NULL dc in wxMemoryDC ctor") );
+    //wxCHECK_RET( dc, wxT("NULL dc in wxMemoryDC ctor") );
 
     CreateCompatible(dc);
 
@@ -112,9 +112,9 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
     }
 
     // check for whether the bitmap is already selected into a device context
-    wxASSERT_MSG( !bitmap.GetSelectedInto() ||
+    /*wxASSERT_MSG( !bitmap.GetSelectedInto() ||
                   (bitmap.GetSelectedInto() == GetOwner()),
-                  wxT("Bitmap is selected in another wxMemoryDC, delete the first wxMemoryDC or use SelectObject(NULL)") );
+                  wxT("Bitmap is selected in another wxMemoryDC, delete the first wxMemoryDC or use SelectObject(NULL)") );*/
 
     m_selectedBitmap = bitmap;
     WXHBITMAP hBmp = m_selectedBitmap.GetHBITMAP();
@@ -128,7 +128,7 @@ void wxMemoryDCImpl::DoSelect( const wxBitmap& bitmap )
     {
         wxLogLastError(wxT("SelectObject(memDC, bitmap)"));
 
-        wxFAIL_MSG(wxT("Couldn't select a bitmap into wxMemoryDC"));
+        //wxFAIL_MSG(wxT("Couldn't select a bitmap into wxMemoryDC"));
     }
     else if ( !m_oldBitmap )
     {

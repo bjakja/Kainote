@@ -18,7 +18,7 @@
 // ----------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -197,7 +197,7 @@ bool wxDialog::Show(bool show)
 // show dialog modally
 int wxDialog::ShowModal()
 {
-    wxASSERT_MSG( !IsModal(), wxT("ShowModal() can't be called twice") );
+    //wxASSERT_MSG( !IsModal(), wxT("ShowModal() can't be called twice") );
 
     Show();
 
@@ -216,7 +216,7 @@ int wxDialog::ShowModal()
 
 void wxDialog::EndModal(int retCode)
 {
-    wxASSERT_MSG( IsModal(), wxT("EndModal() called for non modal dialog") );
+    //wxASSERT_MSG( IsModal(), wxT("EndModal() called for non modal dialog") );
 
     SetReturnCode(retCode);
 
@@ -271,9 +271,9 @@ void wxDialog::DestroyGripper()
         // isn't the case automatically (but notice that this could be false if
         // we're not shown at all as in this case ResizeGripper() might not
         // have been called yet)
-        wxASSERT_MSG( !IsShown() ||
-                      ::GetWindow((HWND)m_hGripper, GW_HWNDNEXT) == 0,
-            wxT("Bug in wxWidgets: gripper should be at the bottom of Z-order") );
+        //wxASSERT_MSG( !IsShown() ||
+                      //::GetWindow((HWND)m_hGripper, GW_HWNDNEXT) == 0,
+            //wxT("Bug in wxWidgets: gripper should be at the bottom of Z-order") );
         ::DestroyWindow((HWND) m_hGripper);
         m_hGripper = 0;
     }
@@ -281,7 +281,7 @@ void wxDialog::DestroyGripper()
 
 void wxDialog::ShowGripper(bool show)
 {
-    wxASSERT_MSG( m_hGripper, wxT("shouldn't be called if we have no gripper") );
+    //wxASSERT_MSG( m_hGripper, wxT("shouldn't be called if we have no gripper") );
 
     if ( show )
         ResizeGripper();
@@ -291,7 +291,7 @@ void wxDialog::ShowGripper(bool show)
 
 void wxDialog::ResizeGripper()
 {
-    wxASSERT_MSG( m_hGripper, wxT("shouldn't be called if we have no gripper") );
+    //wxASSERT_MSG( m_hGripper, wxT("shouldn't be called if we have no gripper") );
 
     HWND hwndGripper = (HWND)m_hGripper;
 

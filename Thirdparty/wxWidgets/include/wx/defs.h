@@ -594,11 +594,11 @@ typedef short int WXTYPE;
         wxDEPRECATED(func) { body }
 #endif
 
-/*  NULL declaration: it must be defined as 0 for C++ programs (in particular, */
+/*  nullptr declaration: it must be defined as 0 for C++ programs (in particular, */
 /*  it must not be defined as "(void *)0" which is standard for C but completely */
 /*  breaks C++ code) */
 #if !defined(__HANDHELDPC__)
-#include <stddef.h>
+//#include <stddef.h>
 #endif
 
 #ifdef __cplusplus
@@ -606,29 +606,29 @@ typedef short int WXTYPE;
 // everybody gets the assert and other debug macros
 #include "wx/debug.h"
 
-    // delete pointer if it is not NULL and NULL it afterwards
+    // delete pointer if it is not nullptr and nullptr it afterwards
     template <typename T>
     inline void wxDELETE(T*& ptr)
     {
         typedef char TypeIsCompleteCheck[sizeof(T)];
 
-        if ( ptr != NULL )
+        if ( ptr != nullptr )
         {
             delete ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
     }
 
-    // delete an array and NULL it (see comments above)
+    // delete an array and nullptr it (see comments above)
     template <typename T>
     inline void wxDELETEA(T*& ptr)
     {
         typedef char TypeIsCompleteCheck[sizeof(T)];
 
-        if ( ptr != NULL )
+        if ( ptr != nullptr )
         {
             delete [] ptr;
-            ptr = NULL;
+            ptr = nullptr;
         }
     }
 
@@ -1242,16 +1242,16 @@ typedef double wxDouble;
 #endif /* wxWCHAR_T_IS_REAL_TYPE/!wxWCHAR_T_IS_REAL_TYPE */
 
 /*
-   This constant should be used instead of NULL in vararg functions taking
-   wxChar* arguments: passing NULL (which is the same as 0, unless the compiler
-   defines it specially, e.g. like gcc does with its __null built-in) doesn't
+   This constant should be used instead of nullptr in vararg functions taking
+   wxChar* arguments: passing nullptr (which is the same as 0, unless the compiler
+   defines it specially, e.g. like gcc does with its __nullptr built-in) doesn't
    work in this case as va_arg() wouldn't interpret the integer 0 correctly
    when trying to convert it to a pointer on architectures where sizeof(int) is
    strictly less than sizeof(void *).
 
    Examples of places where this must be used include wxFileTypeInfo ctor.
  */
-#define wxNullPtr ((void *)NULL)
+#define wxnullptrPtr ((void *)nullptr)
 
 
 /* Define wxChar16 and wxChar32                                              */
@@ -1419,8 +1419,8 @@ typedef double wxDouble;
 #  define wxTEMPLATED_MEMBER_CALL( method, type ) method<type>()
 #  define wxTEMPLATED_MEMBER_FIX( type )
 #else
-#  define wxTEMPLATED_MEMBER_CALL( method, type ) method((type*)NULL)
-#  define wxTEMPLATED_MEMBER_FIX( type ) type* =NULL
+#  define wxTEMPLATED_MEMBER_CALL( method, type ) method((type*)nullptr)
+#  define wxTEMPLATED_MEMBER_FIX( type ) type* =nullptr
 #endif
 
 #if defined(_MSC_VER) && _MSC_VER <= 1200

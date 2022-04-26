@@ -22,7 +22,7 @@
 #include "wx/dataobj.h"     // for wxDataFormat
 #include "wx/vector.h"
 
-class WXDLLIMPEXP_FWD_CORE wxClipboard;
+class wxClipboard;
 
 // ----------------------------------------------------------------------------
 // wxClipboard represents the system clipboard. Normally, you should use
@@ -32,7 +32,7 @@ class WXDLLIMPEXP_FWD_CORE wxClipboard;
 // with wxDataObject.
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxClipboardBase : public wxObject
+class wxClipboardBase : public wxObject
 {
 public:
     wxClipboardBase() { m_usePrimary = false; }
@@ -101,7 +101,7 @@ public:
 // asynchronous clipboard event
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxClipboardEvent : public wxEvent
+class wxClipboardEvent : public wxEvent
 {
 public:
     wxClipboardEvent(wxEventType evtType = wxEVT_NULL)
@@ -172,7 +172,7 @@ typedef void (wxEvtHandler::*wxClipboardEventFunction)(wxClipboardEvent&);
 // helpful class for opening the clipboard and automatically closing it
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxClipboardLocker
+class wxClipboardLocker
 {
 public:
     wxClipboardLocker(wxClipboard *clipboard = NULL)

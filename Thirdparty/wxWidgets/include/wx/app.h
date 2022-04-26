@@ -25,11 +25,11 @@
 #include "wx/intl.h"        // for wxLayoutDirection
 #include "wx/log.h"         // for wxDISABLE_DEBUG_LOGGING_IN_RELEASE_BUILD()
 
-class WXDLLIMPEXP_FWD_BASE wxAppConsole;
-class WXDLLIMPEXP_FWD_BASE wxAppTraits;
-class WXDLLIMPEXP_FWD_BASE wxCmdLineParser;
-class WXDLLIMPEXP_FWD_BASE wxEventLoopBase;
-class WXDLLIMPEXP_FWD_BASE wxMessageOutput;
+class wxAppConsole;
+class wxAppTraits;
+class wxCmdLineParser;
+class wxEventLoopBase;
+class wxMessageOutput;
 
 #if wxUSE_GUI
     struct WXDLLIMPEXP_FWD_CORE wxVideoMode;
@@ -487,7 +487,7 @@ protected:
     // flag modified by Suspend/ResumeProcessingOfPendingEvents()
     bool m_bDoPendingEventProcessing;
 
-    friend class WXDLLIMPEXP_FWD_BASE wxEvtHandler;
+    friend class wxEvtHandler;
 
     // the application object is a singleton anyhow, there is no sense in
     // copying it

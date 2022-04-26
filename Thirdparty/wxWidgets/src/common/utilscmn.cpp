@@ -823,7 +823,7 @@ typedef struct
 void wxQsort(void* pbase, size_t total_elems,
              size_t size, wxSortCallback cmp, const void* user_data)
 {
-  register char *base_ptr = (char *) pbase;
+  /*register */char *base_ptr = (char *) pbase;
   const size_t max_thresh = MAX_THRESH * size;
 
   if (total_elems == 0)

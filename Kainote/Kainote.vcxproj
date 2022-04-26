@@ -112,7 +112,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Rel_AVX512|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)obj\$(Platform)\$(Configuration)\$(ProjectName)</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -316,14 +316,14 @@ git rev-parse --abbrev-ref HEAD &gt;&gt;  gitparams.h</Command>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\lib\vc_lib\mswd;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>usp10.lib;core.lib;base.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbase.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Dxva2.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib;Dwmapi.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>usp10.lib;base.lib;core.lib;wxpng.lib;wxregex.lib;zlib.lib;winmm.lib;comctl32.lib;rpcrt4.lib;wsock32.lib;Dbghelp.lib;strmbase.lib;ffms2.lib;Luajit.lib;LuaBins.lib;d3d9.lib;D3dx9d.lib;Dxva2.lib;Boost.lib;libhunspell.lib;%(AdditionalDependencies);libass.lib;Dwmapi.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)$(Platform)\$(Configuration)\;$(SolutionDir)bin\$(Platform)\$(Configuration)\;$(SolutionDir)Thirdparty\DirectX9;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.LIB;libboost_filesystem-vc143-mt-s-x64-1_79.lib;libboost_locale-vc143-mt-s-x64-1_79.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <PostBuildEvent>

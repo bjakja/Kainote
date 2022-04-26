@@ -26,14 +26,14 @@
     #include <type_traits>
 #elif defined(HAVE_TR1_TYPE_TRAITS)
     #ifdef __VISUALC__
-        #include <type_traits>
+        //#include <type_traits>
     #else
         #include <tr1/type_traits>
     #endif
 #endif
 
-class WXDLLIMPEXP_FWD_BASE wxCStrData;
-class WXDLLIMPEXP_FWD_BASE wxString;
+class  wxCStrData;
+class  wxString;
 
 // ----------------------------------------------------------------------------
 // WX_DEFINE_VARARG_FUNC* macros
@@ -134,7 +134,7 @@ class WXDLLIMPEXP_FWD_BASE wxString;
 // accounts for string changes done by wxArgNormalizer<>
 //
 // Note that this class can _only_ be used for function arguments!
-class WXDLLIMPEXP_BASE wxFormatString
+class  wxFormatString
 {
 public:
     wxFormatString(const char *str)
@@ -248,8 +248,8 @@ struct wxFormatStringArgument
     // overriding this operator allows us to reuse _WX_VARARG_JOIN macro
     wxFormatStringArgument operator,(const wxFormatStringArgument& a) const
     {
-        wxASSERT_MSG( m_str == NULL || a.m_str == NULL,
-                      "can't have two format strings in vararg function" );
+        //wxASSERT_MSG( m_str == NULL || a.m_str == NULL,
+                      //"can't have two format strings in vararg function" );
         return wxFormatStringArgument(m_str ? m_str : a.m_str);
     }
 
@@ -346,7 +346,7 @@ struct wxFormatStringSpecifier
 #ifdef HAVE_TYPE_TRAITS
     typedef std::is_enum<T> is_enum;
 #elif defined HAVE_TR1_TYPE_TRAITS
-    typedef std/*::tr1*/::is_enum<T> is_enum;
+    typedef std::/*tr1::*/is_enum<T> is_enum;
 #endif
     enum { value = wxFormatStringSpecifierNonPodType<is_enum::value>::value };
 };
@@ -395,24 +395,24 @@ struct wxFormatStringSpecifier<const T*>
         enum { value = arg };                                               \
     };
 
-wxFORMAT_STRING_SPECIFIER(bool, wxFormatString::Arg_Int)
-wxFORMAT_STRING_SPECIFIER(int, wxFormatString::Arg_Int)
-wxFORMAT_STRING_SPECIFIER(unsigned int, wxFormatString::Arg_Int)
-wxFORMAT_STRING_SPECIFIER(short int, wxFormatString::Arg_Int)
-wxFORMAT_STRING_SPECIFIER(short unsigned int, wxFormatString::Arg_Int)
-wxFORMAT_STRING_SPECIFIER(long int, wxFormatString::Arg_LongInt)
-wxFORMAT_STRING_SPECIFIER(long unsigned int, wxFormatString::Arg_LongInt)
-#ifdef wxLongLong_t
-wxFORMAT_STRING_SPECIFIER(wxLongLong_t, wxFormatString::Arg_LongLongInt)
-wxFORMAT_STRING_SPECIFIER(wxULongLong_t, wxFormatString::Arg_LongLongInt)
-#endif
-wxFORMAT_STRING_SPECIFIER(float, wxFormatString::Arg_Double)
-wxFORMAT_STRING_SPECIFIER(double, wxFormatString::Arg_Double)
-wxFORMAT_STRING_SPECIFIER(long double, wxFormatString::Arg_LongDouble)
-
-#if wxWCHAR_T_IS_REAL_TYPE
-wxFORMAT_STRING_SPECIFIER(wchar_t, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
-#endif
+//wxFORMAT_STRING_SPECIFIER(bool, wxFormatString::Arg_Int)
+//wxFORMAT_STRING_SPECIFIER(int, wxFormatString::Arg_Int)
+//wxFORMAT_STRING_SPECIFIER(unsigned int, wxFormatString::Arg_Int)
+//wxFORMAT_STRING_SPECIFIER(short int, wxFormatString::Arg_Int)
+//wxFORMAT_STRING_SPECIFIER(short unsigned int, wxFormatString::Arg_Int)
+//wxFORMAT_STRING_SPECIFIER(long int, wxFormatString::Arg_LongInt)
+//wxFORMAT_STRING_SPECIFIER(long unsigned int, wxFormatString::Arg_LongInt)
+//#ifdef wxLongLong_t
+//wxFORMAT_STRING_SPECIFIER(wxLongLong_t, wxFormatString::Arg_LongLongInt)
+//wxFORMAT_STRING_SPECIFIER(wxULongLong_t, wxFormatString::Arg_LongLongInt)
+//#endif
+//wxFORMAT_STRING_SPECIFIER(float, wxFormatString::Arg_Double)
+//wxFORMAT_STRING_SPECIFIER(double, wxFormatString::Arg_Double)
+//wxFORMAT_STRING_SPECIFIER(long double, wxFormatString::Arg_LongDouble)
+//
+//#if wxWCHAR_T_IS_REAL_TYPE
+//wxFORMAT_STRING_SPECIFIER(wchar_t, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
+//#endif
 
 #if !wxUSE_UNICODE
 wxFORMAT_STRING_SPECIFIER(char, wxFormatString::Arg_Char | wxFormatString::Arg_Int)
@@ -519,7 +519,7 @@ struct wxArgNormalizerWithBuffer
 
 // string objects:
 template<>
-struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxString&>
+struct  wxArgNormalizerNative<const wxString&>
 {
     wxArgNormalizerNative(const wxString& s,
                           const wxFormatString *fmt,
@@ -536,7 +536,7 @@ struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxString&>
 
 // c_str() values:
 template<>
-struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxCStrData&>
+struct  wxArgNormalizerNative<const wxCStrData&>
 {
     wxArgNormalizerNative(const wxCStrData& value,
                           const wxFormatString *fmt,
@@ -554,7 +554,7 @@ struct WXDLLIMPEXP_BASE wxArgNormalizerNative<const wxCStrData&>
 // wxString/wxCStrData conversion to wchar_t* value
 #if wxUSE_UNICODE_UTF8 && !wxUSE_UTF8_LOCALE_ONLY
 template<>
-struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxString&>
+struct  wxArgNormalizerWchar<const wxString&>
     : public wxArgNormalizerWithBuffer<wchar_t>
 {
     wxArgNormalizerWchar(const wxString& s,
@@ -562,7 +562,7 @@ struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxString&>
 };
 
 template<>
-struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxCStrData&>
+struct  wxArgNormalizerWchar<const wxCStrData&>
     : public wxArgNormalizerWithBuffer<wchar_t>
 {
     wxArgNormalizerWchar(const wxCStrData& s,
@@ -575,14 +575,14 @@ struct WXDLLIMPEXP_BASE wxArgNormalizerWchar<const wxCStrData&>
 // char* for wchar_t Unicode build or UTF8):
 #if wxUSE_UNICODE_WCHAR
 
-template<>
-struct wxArgNormalizerWchar<const char*>
-    : public wxArgNormalizerWithBuffer<wchar_t>
-{
-    wxArgNormalizerWchar(const char* s,
-                         const wxFormatString *fmt, unsigned index)
-        : wxArgNormalizerWithBuffer<wchar_t>(wxConvLibc.cMB2WC(s), fmt, index) {}
-};
+//template<>
+//struct wxArgNormalizerWchar<const char*>
+//    : public wxArgNormalizerWithBuffer<wchar_t>
+//{
+//    wxArgNormalizerWchar(const char* s,
+//                         const wxFormatString *fmt, unsigned index)
+//        : wxArgNormalizerWithBuffer<wchar_t>(wxConvLibc.cMB2WC(s), fmt, index) {}
+//};
 
 #elif wxUSE_UNICODE_UTF8
 
@@ -834,7 +834,7 @@ WX_ARG_NORMALIZER_FORWARD(const signed char&, signed char);
 // Replacement for va_arg() for use with strings in functions that accept
 // strings normalized by wxArgNormalizer<T>:
 
-struct WXDLLIMPEXP_BASE wxArgNormalizedString
+struct  wxArgNormalizedString
 {
     wxArgNormalizedString(const void* ptr) : m_ptr(ptr) {}
 

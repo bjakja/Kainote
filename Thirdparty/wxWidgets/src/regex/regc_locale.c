@@ -16,9 +16,7 @@
  *  for wxWidgets are under the wxWindows licence, see README for details.
  */
 
-#ifndef CONST
-#define CONST const
-#endif
+
 
 //#include <wx/chartype.h>
 //#include "regex.h"
@@ -707,7 +705,7 @@ element(v, startp, endp)
 	return *startp;
     }
 
-    NOTE(REG_ULOCALE);
+    //NOTE(REG_ULOCALE);
 
     /* search table */
     for (cn=cnames; cn->name!=NULL; cn++) {
@@ -720,7 +718,7 @@ element(v, startp, endp)
     }
 
     /* couldn't find it */
-    ERR(REG_ECOLLATE);
+    //ERR(REG_ECOLLATE);
     return 0;
 }
 
@@ -740,13 +738,13 @@ range(v, a, b, cases)
     celt c, lc, uc, tc;
 
     if (a != b && !before(a, b)) {
-	ERR(REG_ERANGE);
+	//ERR(REG_ERANGE);
 	return NULL;
     }
 
     if (!cases) {			/* easy version */
 	cv = getcvec(v, 0, 1, 0);
-	NOERRN();
+	//NOERRN();
 	addrange(cv, a, b);
 	return cv;
     }
@@ -761,7 +759,7 @@ range(v, a, b, cases)
     nchrs = (b - a + 1)*2 + 4;
 
     cv = getcvec(v, nchrs, 0, 0);
-    NOERRN();
+    /*NOERRN();*/
 
     for (c=a; c<=b; c++) {
 	addchr(cv, c);
@@ -896,7 +894,7 @@ cclass(v, startp, endp, cases)
 	}
     }
     if (index == -1) {
-	ERR(REG_ECTYPE);
+	/*ERR(REG_ECTYPE);*/
 	return NULL;
     }
     
@@ -1038,7 +1036,7 @@ cclass(v, startp, endp, cases)
 	break;
     }
     if (cv == NULL) {
-	ERR(REG_ESPACE);
+	/*ERR(REG_ESPACE)*/;
     }
     return cv;
 }
@@ -1122,10 +1120,8 @@ int cases;                      /* case-independent? */
  * messy cases are done via range().
  ^ static struct cvec *allcases(struct vars *, pchr);
  */
-static struct cvec *
-allcases(v, pc)
-    struct vars *v;			/* context */
-    pchr pc;				/* character to get case equivs of */
+static cvec *
+allcases(vars* v, pchr pc)
 {
     struct cvec *cv;
     chr c = (chr)pc;

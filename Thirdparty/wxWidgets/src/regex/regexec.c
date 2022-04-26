@@ -189,12 +189,12 @@ struct colormap *cm;
 	/* first, a shot with the search RE */
 	s = newdfa(v, &v->g->search, cm, &v->dfa1);
 	assert(!(ISERR() && s != NULL));
-	NOERR();
+	//NOERR();
 	MDEBUG(("\nsearch at %ld\n", LOFF(v->start)));
 	cold = NULL;
 	close = shortest(v, s, v->start, v->start, v->stop, &cold, (int *)NULL);
 	freedfa(s);
-	NOERR();
+	//NOERR();
 	if (v->g->cflags&REG_EXPECT) {
 		assert(v->details != NULL);
 		if (cold != NULL)
@@ -215,7 +215,7 @@ struct colormap *cm;
 	MDEBUG(("between %ld and %ld\n", LOFF(open), LOFF(close)));
 	d = newdfa(v, cnfa, cm, &v->dfa1);
 	assert(!(ISERR() && d != NULL));
-	NOERR();
+	/*NOERR();*/
 	for (begin = open; begin <= close; begin++) {
 		MDEBUG(("\nfind trying at %ld\n", LOFF(begin)));
 		if (shorter)
@@ -223,7 +223,7 @@ struct colormap *cm;
 							(chr **)NULL, &hitend);
 		else
 			end = longest(v, d, begin, v->stop, &hitend);
-		NOERR();
+		/*NOERR();*/
 		if (hitend && cold == NULL)
 			cold = begin;
 		if (end != NULL)
@@ -267,19 +267,19 @@ struct colormap *cm;
 	int ret;
 
 	s = newdfa(v, &v->g->search, cm, &v->dfa1);
-	NOERR();
+	//NOERR();
 	d = newdfa(v, cnfa, cm, &v->dfa2);
-	if (ISERR()) {
+	/*if (ISERR()) {
 		assert(d == NULL);
 		freedfa(s);
 		return v->err;
-	}
+	}*/
     cold = NULL;// WX: fix gcc warnings about cold being possibly uninitialized
 	ret = cfindloop(v, cnfa, cm, d, s, &cold);
 
 	freedfa(d);
 	freedfa(s);
-	NOERR();
+	//NOERR();
 	if (v->g->cflags&REG_EXPECT) {
 		assert(v->details != NULL);
 		if (cold != NULL)
@@ -356,7 +356,7 @@ chr **coldp;			/* where to put coldstart pointer */
 					return REG_OKAY;
 				}
 				if (er != REG_NOMATCH) {
-					ERR(er);
+					//ERR(er);
 					return er;
 				}
 				if ((shorter) ? end == estop : end == begin) {
@@ -426,7 +426,7 @@ struct subre *t;
  */
 static VOID
 subset(v, sub, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *sub;
 chr *begin;
 chr *end;
@@ -490,7 +490,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 condissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -507,13 +507,13 @@ chr *end;			/* end of same */
 	assert(t->right != NULL && t->right->cnfa.nstates > 0);
 
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
-	NOERR();
+	//NOERR();
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, &v->dfa2);
-	if (ISERR()) {
+	/*if (ISERR()) {
 		assert(d2 == NULL);
 		freedfa(d);
 		return v->err;
-	}
+	}*/
 
 	/* pick a tentative midpoint */
 	if (shorter)
@@ -569,7 +569,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 altdissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -584,8 +584,8 @@ chr *end;			/* end of same */
 		MDEBUG(("trying %dth\n", i));
 		assert(t->left != NULL && t->left->cnfa.nstates > 0);
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, &v->dfa1);
-		if (ISERR())
-			return v->err;
+		/*if (ISERR())
+			return v->err;*/
 		if (longest(v, d, begin, end, (int *)NULL) == end) {
 			MDEBUG(("success\n"));
 			freedfa(d);
@@ -653,7 +653,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 ccondissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -671,13 +671,13 @@ chr *end;			/* end of same */
 		return crevdissect(v, t, begin, end);
 
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-	if (ISERR())
-		return v->err;
+	//if (ISERR())
+		//return v->err;
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, DOMALLOC);
-	if (ISERR()) {
+	/*if (ISERR()) {
 		freedfa(d);
 		return v->err;
-	}
+	}*/
 	MDEBUG(("cconcat %d\n", t->retry));
 
 	/* pick a tentative midpoint */
@@ -747,7 +747,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 crevdissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -764,13 +764,13 @@ chr *end;			/* end of same */
 
 	/* concatenation -- need to split the substring between parts */
 	d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-	if (ISERR())
-		return v->err;
+	/*if (ISERR())
+		return v->err;*/
 	d2 = newdfa(v, &t->right->cnfa, &v->g->cmap, DOMALLOC);
-	if (ISERR()) {
+	/*if (ISERR()) {
 		freedfa(d);
 		return v->err;
-	}
+	}*/
 	MDEBUG(("crev %d\n", t->retry));
 
 	/* pick a tentative midpoint */
@@ -838,7 +838,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 cbrdissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -905,7 +905,7 @@ chr *end;			/* end of same */
  */
 static int			/* regexec return code */
 caltdissect(v, t, begin, end)
-struct vars1 *v;
+struct vars *v;
 struct subre *t;
 chr *begin;			/* beginning of relevant substring */
 chr *end;			/* end of same */
@@ -927,8 +927,8 @@ chr *end;			/* end of same */
 
 	if (v->mem[t->retry] == UNTRIED) {
 		d = newdfa(v, &t->left->cnfa, &v->g->cmap, DOMALLOC);
-		if (ISERR())
-			return v->err;
+		//if (ISERR())
+			//return v->err;
 		if (longest(v, d, begin, end, (int *)NULL) != end) {
 			freedfa(d);
 			v->mem[t->retry] = TRIED;

@@ -42,31 +42,13 @@
     <ClCompile Include="..\..\wxWidgets\src\regex\tclUniData.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_color.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\regex\regc_cvec.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_lex.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regc_locale.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\regex\regc_nfa.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regcomp.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\rege_dfa.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\regex\regerror.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\wxWidgets\src\regex\regexec.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\wxWidgets\src\regex\regfree.c">

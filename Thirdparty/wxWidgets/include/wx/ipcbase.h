@@ -15,6 +15,7 @@
 #include "wx/defs.h"
 #include "wx/object.h"
 #include "wx/string.h"
+#include <string.h>
 
 enum wxIPCFormat
 {

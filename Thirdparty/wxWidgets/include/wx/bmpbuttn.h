@@ -30,7 +30,7 @@
 // It has different bitmaps for different states (focused/disabled/pressed)
 // ----------------------------------------------------------------------------
 
-class WXDLLIMPEXP_CORE wxBitmapButtonBase : public wxButton
+class wxBitmapButtonBase : public wxButton
 {
 public:
     wxBitmapButtonBase()

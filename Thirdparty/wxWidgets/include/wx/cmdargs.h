@@ -47,7 +47,7 @@ public:
         return *this;
     }
 
-    operator char**() const
+   /* operator char**() const
     {
         if ( !m_argsA )
         {
@@ -58,7 +58,7 @@ public:
         }
 
         return m_argsA;
-    }
+    }*/
 
     operator wchar_t**() const
     {

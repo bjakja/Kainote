@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+// "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -3649,12 +3649,12 @@ void wxAssociateWinWithHandle(HWND hwnd, wxWindowMSW *win)
     {
         if ( i->second != win )
         {
-            wxFAIL_MSG(
+           /* wxFAIL_MSG(
                 wxString::Format(
                     wxT("HWND %p already associated with another window (%s)"),
                     hwnd, win->GetClassInfo()->GetClassName()
                 )
-            );
+            );*/
         }
         //else: this actually happens currently because we associate the window
         //      with its HWND during creation (if we create it) and also when

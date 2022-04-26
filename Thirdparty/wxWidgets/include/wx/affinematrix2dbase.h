@@ -35,7 +35,7 @@ struct wxMatrix2D
 // This is an abstract base class implemented by wxAffineMatrix2D only so far,
 // but in the future we also plan to derive wxGraphicsMatrix from it (it should
 // also be documented then as currently only wxAffineMatrix2D itself is).
-class WXDLLIMPEXP_CORE wxAffineMatrix2DBase
+class wxAffineMatrix2DBase
 {
 public:
     wxAffineMatrix2DBase() {}

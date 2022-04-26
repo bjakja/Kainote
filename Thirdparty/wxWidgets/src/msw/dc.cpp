@@ -18,7 +18,7 @@
 // ---------------------------------------------------------------------------
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+//#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
     #pragma hdrstop
@@ -49,6 +49,7 @@
 #endif
 
 #include <string.h>
+#include <cmath>
 
 #include "wx/msw/private/dc.h"
 
@@ -811,7 +812,7 @@ void wxMSWDCImpl::DoDrawArc(wxCoord x1, wxCoord y1,
     wxCoord yyc = YLOG2DEV(yc);
     dx = xxc - xx1;
     dy = yyc - yy1;
-    wxCoord ray = (wxCoord)sqrt(dx*dx + dy*dy);
+    wxCoord ray = (wxCoord)sqrt(float(dx*dx + dy*dy));
 
     wxCoord xxx1 = (wxCoord) (xxc-ray);
     wxCoord yyy1 = (wxCoord) (yyc-ray);
